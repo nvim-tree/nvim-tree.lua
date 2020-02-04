@@ -2,7 +2,7 @@
 
 ## Notice
 
-This work is under development, do not try to use it, it does not work.
+This is under development, do not try to use it, it does not work.
 
 I am working on this plugin to learn lua, become better with neovim api and create a **simple** file explorer with features i need.
 
