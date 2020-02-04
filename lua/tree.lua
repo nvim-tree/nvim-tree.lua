@@ -1,9 +1,10 @@
-local dir_struct = vim.fn.systemlist('ls')
-local sys = function(v) vim.fn.system(v) end
-local syslist = function(v) vim.fn.systemlist(v) end
 local api = vim.api
-local buf = nil
-local win = nil
+local function sys(v) return vim.fn.system(v) end
+local function syslist(v) return vim.fn.systemlist(v) end
+
+local dir_struct = syslist('ls')
+local BUF_NAME = 'LuaTree'
+print(dir_struct)
 
 local function open()
     local win_width = 30
@@ -13,18 +14,45 @@ local function open()
         modifiable = false;
     }
 
-    buf = api.nvim_create_buf(false, true)
+    local buf = api.nvim_create_buf(false, true)
+    api.nvim_buf_set_name(buf, BUF_NAME)
 
     for opt, val in pairs(options) do
         api.nvim_buf_set_option(buf, opt, val)
     end
 
     api.nvim_command('topleft '..win_width..'vnew | set nonumber norelativenumber')
-    win = api.nvim_win_get_number(0)
-    api.nvim_win_set_buf(win, buf)
+    api.nvim_win_set_buf(0, buf)
+end
+
+local function get_buf()
+    local regex = '.*'..BUF_NAME..'$';
+
+    for _, win in pairs(api.nvim_list_wins()) do
+        local buf = api.nvim_win_get_buf(win)
+        local buf_name = api.nvim_buf_get_name(buf)
+
+        if string.match(buf_name, regex) ~= nil then return buf end
+    end
+
+    return nil
+end
+
+local function get_win()
+    local regex = '.*'..BUF_NAME..'$';
+
+    for _, win in pairs(api.nvim_list_wins()) do
+        local buf_name = api.nvim_buf_get_name(api.nvim_win_get_buf(win))
+        if string.match(buf_name, regex) ~= nil then return win end
+    end
+
+    return nil
 end
 
 local function update_view()
+    local buf = get_buf();
+    if buf == nil then return end
+
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 1, -1, false, dir_struct)
     api.nvim_buf_set_option(buf, 'modifiable', false)
@@ -35,9 +63,10 @@ local function is_dir(path)
 end
 
 local function close()
+    local win = get_win()
+    if not win then return end
+
     api.nvim_win_close(win, true)
-    win = nil
-    buf = nil
 end
 
 local function set_mappings()
@@ -75,11 +104,11 @@ local function find_file()
 end
 
 local function win_open()
-    return false
+    return get_buf() ~= nil
 end
 
 local function toggle()
-    if win_open() then
+    if win_open() == true then
         close()
     else
         open()
