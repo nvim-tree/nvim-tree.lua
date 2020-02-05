@@ -11,14 +11,14 @@ I really don't like any of the vim trees, they are all too complicated for their
 ## Goals / Features
 
 ### 0.1
-- [] moving around the file structure like any basic tree
+- [ ] moving around the file structure like any basic tree
 - [x] open file in current buffer or in split with FzF like bindings (CR, C-v, C-x)
 
 ### 0.2
-- [] add / delete file in directory
-- [] quickly find file in the directory structure
+- [ ] add / delete file in directory
+- [ ] quickly find file in the directory structure
 
 ### 0.3
-- [] icons for files
-- [] simple git integration (color of file changing when staged/changed)
+- [ ] icons for files
+- [ ] simple git integration (color of file changing when staged/changed)
 
