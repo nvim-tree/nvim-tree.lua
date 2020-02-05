@@ -2,9 +2,22 @@ local api = vim.api
 local function sys(v) return vim.fn.system(v) end
 local function syslist(v) return vim.fn.systemlist(v) end
 
-local dir_struct = syslist('ls')
-local BUF_NAME = 'LuaTree'
-print(dir_struct)
+local BUF_NAME = '_LuaTree_'
+
+-- TODO: think of a better way to implement the whole thing
+-- because right now the code is quite bad
+-- I shouldnt base the code on tree indentation to handle logic
+-- But for now its a first draft. It works a little
+
+-- TODO: maybe this should not be required, as the tree is only used in dev projects.
+-- In the README we should then precise to install vim-rooter.
+-- Or maybe we should just keep this functionnality
+local function add_dotdot(dirs)
+    table.insert(dirs, 1, '..')
+    return dirs
+end
+
+local dir_struct = add_dotdot(syslist('ls'))
 
 local function open()
     local win_width = 30
@@ -21,8 +34,9 @@ local function open()
         api.nvim_buf_set_option(buf, opt, val)
     end
 
-    api.nvim_command('topleft '..win_width..'vnew | set nonumber norelativenumber')
+    api.nvim_command('topleft '..win_width..'vnew')
     api.nvim_win_set_buf(0, buf)
+    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
 end
 
 local function get_buf()
@@ -51,11 +65,13 @@ end
 
 local function update_view()
     local buf = get_buf();
-    if buf == nil then return end
+    if not buf then return end
 
+    local cursor_pos = api.nvim_win_get_cursor(0)
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 1, -1, false, dir_struct)
     api.nvim_buf_set_option(buf, 'modifiable', false)
+    api.nvim_win_set_cursor(0, cursor_pos)
 end
 
 local function is_dir(path)
@@ -70,6 +86,9 @@ local function close()
 end
 
 local function set_mappings()
+    local buf = get_buf()
+    if not buf then return end
+
     local mappings = {
         ['<CR>'] = 'open_file("edit")';
         ['<C-v>'] = 'open_file("vsplit")';
@@ -84,17 +103,36 @@ local function set_mappings()
     end
 end
 
-local function open_file(open_type)
-    local str = api.nvim_get_current_line()
-    if is_dir(str) then
-        local cur_dir = syslist('ls')
-        local sub_dir = syslist('ls')
-        -- local final_data = {}
+local function update_struct(folder_name)
+    local dirs = syslist('ls '..folder_name)
 
+    local index = 0
+    for i, v in pairs(dir_struct) do
+        if v == folder_name then
+            index = i
+            break
+        end
+    end
+
+    if string.match(dir_struct[index + 1] or '', '^  .*$') ~= nil then
+        while string.match(dir_struct[index + 1] or '', '^  .*$') ~= nil do
+            table.remove(dir_struct, index + 1)
+        end
+    else
+        for i, v in pairs(dirs) do
+            table.insert(dir_struct, index+i, '  '..v)
+        end
+    end
+end
+
+local function open_file(open_type)
+    local file = api.nvim_get_current_line()
+
+    if is_dir(file) then
+        update_struct(file)
         update_view()
     else
-        print(open_type)
-        -- api.nvim_command(open_type..' '..str)
+        api.nvim_command('wincmd l | '..open_type..' '..file)
     end
 end
 
