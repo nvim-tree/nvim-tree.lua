@@ -3,40 +3,53 @@ local function sys(v) return vim.fn.system(v) end
 local function syslist(v) return vim.fn.systemlist(v) end
 
 local BUF_NAME = '_LuaTree_'
+local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/' -- get rid of \n and add leading '/'
 
--- TODO: think of a better way to implement the whole thing
--- because right now the code is quite bad
--- I shouldnt base the code on tree indentation to handle logic
--- But for now its a first draft. It works a little
-
--- TODO: maybe this should not be required, as the tree is only used in dev projects.
--- In the README we should then precise to install vim-rooter.
--- Or maybe we should just keep this functionnality
-local function add_dotdot(dirs)
-    table.insert(dirs, 1, '..')
-    return dirs
+local function is_dir(path)
+    return string.match(sys('ls -l '..path), 'total [0-9].*') ~= nil
 end
 
-local dir_struct = add_dotdot(syslist('ls'))
+local function create_dirs(path, depth, dirs)
+    local tree = {}
 
-local function open()
-    local win_width = 30
-    local options = {
-        bufhidden = 'wipe';
-        buftype = 'nowrite';
-        modifiable = false;
-    }
+    if not string.find(path, '^.*/$') then path = path .. '/' end
 
-    local buf = api.nvim_create_buf(false, true)
-    api.nvim_buf_set_name(buf, BUF_NAME)
-
-    for opt, val in pairs(options) do
-        api.nvim_buf_set_option(buf, opt, val)
+    for i, name in pairs(dirs) do
+        tree[i] = {
+            path = path,
+            name = name,
+            depth = depth,
+            dir = is_dir(path .. name)
+        }
     end
 
-    api.nvim_command('topleft '..win_width..'vnew')
-    api.nvim_win_set_buf(0, buf)
-    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
+    table.sort(tree, function(n) return n.dir == true end)
+
+    return tree
+end
+
+local Tree = create_dirs(ROOT_PATH, 0, syslist('ls'))
+
+local function get_padding(depth)
+    local str = ""
+
+    while 0 < depth do
+        str = str .. "  "
+        depth = depth - 1
+    end
+
+    return str
+end
+
+local function format_tree(tree)
+    local dirs = {}
+    local previous_parent_index = -1
+
+    for i, node in pairs(tree) do
+        dirs[i] = get_padding(node.depth) .. node.name
+    end
+
+    return dirs
 end
 
 local function get_buf()
@@ -63,19 +76,25 @@ local function get_win()
     return nil
 end
 
-local function update_view()
-    local buf = get_buf();
-    if not buf then return end
+local function open()
+    local win_width = 30
+    local options = {
+        bufhidden = 'wipe';
+        buftype = 'nowrite';
+        modifiable = false;
+    }
 
-    local cursor_pos = api.nvim_win_get_cursor(0)
-    api.nvim_buf_set_option(buf, 'modifiable', true)
-    api.nvim_buf_set_lines(buf, 1, -1, false, dir_struct)
-    api.nvim_buf_set_option(buf, 'modifiable', false)
-    api.nvim_win_set_cursor(0, cursor_pos)
-end
+    local buf = api.nvim_create_buf(false, true)
+    api.nvim_buf_set_name(buf, BUF_NAME)
 
-local function is_dir(path)
-    return string.match(sys('ls -l '..path), 'total [0-9].*') ~= nil
+    for opt, val in pairs(options) do
+        api.nvim_buf_set_option(buf, opt, val)
+    end
+
+    api.nvim_command('topleft '..win_width..'vnew')
+    api.nvim_win_set_buf(0, buf)
+    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
+    api.nvim_command('echo "'..ROOT_PATH..'"')
 end
 
 local function close()
@@ -83,6 +102,47 @@ local function close()
     if not win then return end
 
     api.nvim_win_close(win, true)
+end
+
+local function update_view()
+    local buf = get_buf();
+    if not buf then return end
+
+    local cursor_pos = api.nvim_win_get_cursor(0)
+    api.nvim_buf_set_option(buf, 'modifiable', true)
+    api.nvim_buf_set_lines(buf, 0, -1, false, format_tree(Tree))
+    api.nvim_buf_set_option(buf, 'modifiable', false)
+    api.nvim_win_set_cursor(0, cursor_pos)
+end
+
+local function is_win_open()
+    return get_buf() ~= nil
+end
+
+local function open_file(open_type)
+    local tree_index = api.nvim_win_get_cursor(0)[1]
+    local node = Tree[tree_index]
+
+    if is_dir(node.path .. node.name) then
+        local index = tree_index + 1;
+        local next_node = Tree[index]
+        if next_node ~= nil and next_node.depth > node.depth then
+            while next_node ~= nil and next_node.depth ~= node.depth do
+                table.remove(Tree, index)
+                next_node = Tree[index]
+            end
+        else
+            local dirlist = syslist('ls ' .. node.path .. node.name)
+            local child_dirs = create_dirs(node.path .. node.name .. '/', node.depth + 1, dirlist)
+            for i, node in pairs(child_dirs) do
+                table.insert(Tree, tree_index + i, node)
+            end
+        end
+
+        update_view()
+    else
+        api.nvim_command('wincmd l | '..open_type..' '.. node.path .. node.name)
+    end
 end
 
 local function set_mappings()
@@ -103,50 +163,8 @@ local function set_mappings()
     end
 end
 
-local function update_struct(folder_name)
-    local dirs = syslist('ls '..folder_name)
-
-    local index = 0
-    for i, v in pairs(dir_struct) do
-        if v == folder_name then
-            index = i
-            break
-        end
-    end
-
-    if string.match(dir_struct[index + 1] or '', '^  .*$') ~= nil then
-        while string.match(dir_struct[index + 1] or '', '^  .*$') ~= nil do
-            table.remove(dir_struct, index + 1)
-        end
-    else
-        for i, v in pairs(dirs) do
-            table.insert(dir_struct, index+i, '  '..v)
-        end
-    end
-end
-
-local function open_file(open_type)
-    local file = api.nvim_get_current_line()
-
-    if is_dir(file) then
-        update_struct(file)
-        update_view()
-    else
-        api.nvim_command('wincmd l | '..open_type..' '..file)
-    end
-end
-
-local function find_file()
-    local str = api.nvim_get_current_line()
-    print(str)
-end
-
-local function win_open()
-    return get_buf() ~= nil
-end
-
 local function toggle()
-    if win_open() == true then
+    if is_win_open() == true then
         close()
     else
         open()
@@ -158,5 +176,5 @@ end
 return {
     toggle = toggle;
     open_file = open_file;
-    find_file = find_file;
 }
+
