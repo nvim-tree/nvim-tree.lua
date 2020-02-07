@@ -9,6 +9,19 @@ local function is_dir(path)
     return string.match(sys('ls -l '..path), 'total [0-9].*') ~= nil
 end
 
+local function sort_dirs(dirs)
+    local sorted_tree = {}
+    for _, node in pairs(dirs) do
+        if node.dir == true then
+            table.insert(sorted_tree, 1, node)
+        else
+            table.insert(sorted_tree, node)
+        end
+    end
+
+    return sorted_tree
+end
+
 local function create_dirs(path, depth, dirs)
     local tree = {}
 
@@ -19,13 +32,12 @@ local function create_dirs(path, depth, dirs)
             path = path,
             name = name,
             depth = depth,
-            dir = is_dir(path .. name)
+            dir = is_dir(path .. name),
+            open = false -- only relevant when its a dir
         }
     end
 
-    table.sort(tree, function(n) return n.dir == true end)
-
-    return tree
+    return sort_dirs(tree)
 end
 
 local Tree = create_dirs(ROOT_PATH, 0, syslist('ls'))
@@ -41,12 +53,39 @@ local function get_padding(depth)
     return str
 end
 
+local function default_icons(_, isdir, open)
+    if isdir == true then
+        if open == true then return " " end
+        return " "
+    end
+
+    return ""
+end
+
+local function dev_icons(pathname, isdir, open)
+    if isdir == true then return default_icons(pathname, isdir, open) end
+
+    return api.nvim_call_function('WebDevIconsGetFileTypeSymbol', { pathname, isdir }) .. " "
+end
+
+local function get_icon_func_gen()
+    if api.nvim_call_function('exists', { "WebDevIconsGetFileTypeSymbol" }) == 0 then
+        return dev_icons
+    else
+        return default_icons
+    end
+end
+
+local get_icon = get_icon_func_gen()
+
 local function format_tree(tree)
     local dirs = {}
     local previous_parent_index = -1
 
     for i, node in pairs(tree) do
-        dirs[i] = get_padding(node.depth) .. node.name
+        local padding = get_padding(node.depth)
+        local icon = get_icon(node.path .. node.name, node.dir, node.open)
+        dirs[i] = padding ..  icon .. node.name
     end
 
     return dirs
@@ -109,6 +148,7 @@ local function update_view()
     if not buf then return end
 
     local cursor_pos = api.nvim_win_get_cursor(0)
+    cursor_pos[2] = 4
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 0, -1, false, format_tree(Tree))
     api.nvim_buf_set_option(buf, 'modifiable', false)
@@ -125,6 +165,7 @@ local function open_file(open_type)
 
     if node.dir == true then
         local index = tree_index + 1;
+        node.open = not node.open
         local next_node = Tree[index]
         if next_node ~= nil and next_node.depth > node.depth then
             while next_node ~= nil and next_node.depth ~= node.depth do

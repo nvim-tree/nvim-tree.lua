@@ -11,8 +11,9 @@
 
 - [x] moving around the file structure like any basic tree
 - [x] open file in current buffer or in split with FzF like bindings (CR, C-v, C-x)
+- [x] icons for files
 - [ ] add / delete file in directory
 - [ ] quickly find file in the directory structure
-- [ ] icons for files
+- [ ] syntax highlighting
 - [ ] simple git integration (color of file changing when staged/changed)
 
