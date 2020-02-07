@@ -123,7 +123,7 @@ local function open_file(open_type)
     local tree_index = api.nvim_win_get_cursor(0)[1]
     local node = Tree[tree_index]
 
-    if is_dir(node.path .. node.name) then
+    if node.dir == true then
         local index = tree_index + 1;
         local next_node = Tree[index]
         if next_node ~= nil and next_node.depth > node.depth then
@@ -134,8 +134,8 @@ local function open_file(open_type)
         else
             local dirlist = syslist('ls ' .. node.path .. node.name)
             local child_dirs = create_dirs(node.path .. node.name .. '/', node.depth + 1, dirlist)
-            for i, node in pairs(child_dirs) do
-                table.insert(Tree, tree_index + i, node)
+            for i, n in pairs(child_dirs) do
+                table.insert(Tree, tree_index + i, n)
             end
         end
 
