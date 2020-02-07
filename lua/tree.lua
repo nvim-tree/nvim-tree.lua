@@ -6,7 +6,8 @@ local BUF_NAME = '_LuaTree_'
 local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/' -- get rid of \n and add leading '/'
 
 local function is_dir(path)
-    return string.match(sys('ls -l '..path), 'total [0-9].*') ~= nil
+    local file_list = sys('ls -l '..path)
+    return string.match(file_list, 'total [0-9].*') ~= nil
 end
 
 local function sort_dirs(dirs)
@@ -148,7 +149,6 @@ local function update_view()
     if not buf then return end
 
     local cursor_pos = api.nvim_win_get_cursor(0)
-    cursor_pos[2] = 4
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 0, -1, false, format_tree(Tree))
     api.nvim_buf_set_option(buf, 'modifiable', false)
