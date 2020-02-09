@@ -1,9 +1,13 @@
-local api = vim.api
-local function sys(v) return vim.fn.system(v) end
-local function syslist(v) return vim.fn.systemlist(v) end
+local lib_file = require 'lib/file'
+local format = require 'lib/format'.format_tree
 
+local api = vim.api
+local function sys(v) return api.nvim_call_function('system', { v }) end
+local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
+
+-- get rid of \n and add leading '/'
+local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/'
 local BUF_NAME = '_LuaTree_'
-local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/' -- get rid of \n and add leading '/'
 
 local function is_dir(path)
     local stat = vim.loop.fs_stat(path)
@@ -43,55 +47,6 @@ end
 
 local Tree = create_dirs(ROOT_PATH, 0, syslist('ls'))
 
-local function get_padding(depth)
-    local str = ""
-
-    while 0 < depth do
-        str = str .. "  "
-        depth = depth - 1
-    end
-
-    return str
-end
-
-local function default_icons(_, isdir, open)
-    if isdir == true then
-        if open == true then return " " end
-        return " "
-    end
-
-    return ""
-end
-
-local function dev_icons(pathname, isdir, open)
-    if isdir == true then return default_icons(pathname, isdir, open) end
-
-    return api.nvim_call_function('WebDevIconsGetFileTypeSymbol', { pathname, isdir }) .. " "
-end
-
-local function get_icon_func_gen()
-    if api.nvim_call_function('exists', { "WebDevIconsGetFileTypeSymbol" }) == 0 then
-        return dev_icons
-    else
-        return default_icons
-    end
-end
-
-local get_icon = get_icon_func_gen()
-
-local function format_tree(tree)
-    local dirs = {}
-    local previous_parent_index = -1
-
-    for i, node in pairs(tree) do
-        local padding = get_padding(node.depth)
-        local icon = get_icon(node.path .. node.name, node.dir, node.open)
-        dirs[i] = padding ..  icon .. node.name
-    end
-
-    return dirs
-end
-
 local function get_buf()
     local regex = '.*'..BUF_NAME..'$';
 
@@ -118,8 +73,7 @@ end
 
 local function buf_setup()
     api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
-    api.nvim_command('hi NoEndOfBuffer guifg=bg')
-    api.nvim_command('setlocal winhighlight=EndOfBuffer:NoEndOfBuffer')
+    api.nvim_command('setlocal winhighlight=EndOfBuffer:LuaTreeEndOfBuffer')
 end
 
 local function open()
@@ -156,7 +110,7 @@ local function update_view()
 
     local cursor_pos = api.nvim_win_get_cursor(0)
     api.nvim_buf_set_option(buf, 'modifiable', true)
-    api.nvim_buf_set_lines(buf, 0, -1, false, format_tree(Tree))
+    api.nvim_buf_set_lines(buf, 0, -1, false, format(Tree))
     api.nvim_buf_set_option(buf, 'modifiable', false)
     api.nvim_win_set_cursor(0, cursor_pos)
 end
@@ -200,11 +154,27 @@ local function set_mappings()
         ['<CR>'] = 'open_file("edit")';
         ['<C-v>'] = 'open_file("vsplit")';
         ['<C-x>'] = 'open_file("split")';
+        a = 'edit_file("add")';
+        d = 'edit_file("delete")';
+        r = 'edit_file("rename")';
         f = 'find_file()';
     }
 
     for k,v in pairs(mappings) do
         api.nvim_buf_set_keymap(buf, 'n', k, ':lua require"tree".'..v..'<cr>', {
+            nowait = true, noremap = true, silent = true
+        })
+    end
+
+    local maps = {
+        j = 'j$B',
+        k = 'k$B',
+        l = '<Nop>',
+        h = '<Nop>'
+    }
+
+    for k,v in pairs(maps) do
+        api.nvim_buf_set_keymap(buf, 'n', k, v, {
             nowait = true, noremap = true, silent = true
         })
     end
@@ -220,8 +190,26 @@ local function toggle()
     end
 end
 
+local function edit_file(edit_type)
+    local tree_index = api.nvim_win_get_cursor(0)[1]
+    local node = Tree[tree_index]
+
+    if edit_type == 'add' then
+        if node.dir == true then
+            lib_file.add_file(node.path .. node.name .. '/')
+        else
+            lib_file.add_file(node.path)
+        end
+    elseif edit_type == 'delete' then
+        lib_file.remove_file(node.name, node.path, node.dir)
+    elseif edit_type == 'rename' then
+        lib_file.rename_file(node.name, node.path, node.dir)
+    end
+end
+
 return {
     toggle = toggle;
     open_file = open_file;
+    edit_file = edit_file;
 }
 
