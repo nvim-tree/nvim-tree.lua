@@ -6,8 +6,8 @@ local BUF_NAME = '_LuaTree_'
 local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/' -- get rid of \n and add leading '/'
 
 local function is_dir(path)
-    local file_list = sys('ls -l '..path)
-    return string.match(file_list, 'total [0-9].*') ~= nil
+    local stat = vim.loop.fs_stat(path)
+    return stat and stat.type == 'directory' or false
 end
 
 local function sort_dirs(dirs)
@@ -116,6 +116,12 @@ local function get_win()
     return nil
 end
 
+local function buf_setup()
+    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
+    api.nvim_command('hi NoEndOfBuffer guifg=bg')
+    api.nvim_command('setlocal winhighlight=EndOfBuffer:NoEndOfBuffer')
+end
+
 local function open()
     local win_width = 30
     local options = {
@@ -133,7 +139,7 @@ local function open()
 
     api.nvim_command('topleft '..win_width..'vnew')
     api.nvim_win_set_buf(0, buf)
-    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
+    buf_setup()
     api.nvim_command('echo "'..ROOT_PATH..'"')
 end
 
