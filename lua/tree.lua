@@ -196,14 +196,14 @@ local function edit_file(edit_type)
 
     if edit_type == 'add' then
         if node.dir == true then
-            lib_file.add_file(node.path .. node.name .. '/')
+            lib_file.edit_add(node.path .. node.name .. '/')
         else
-            lib_file.add_file(node.path)
+            lib_file.edit_add(node.path)
         end
     elseif edit_type == 'delete' then
-        lib_file.remove_file(node.name, node.path, node.dir)
+        lib_file.edit_remove(node.name, node.path, node.dir)
     elseif edit_type == 'rename' then
-        lib_file.rename_file(node.name, node.path, node.dir)
+        lib_file.edit_rename(node.name, node.path, node.dir)
     end
 end
 

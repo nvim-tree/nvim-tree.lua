@@ -49,9 +49,9 @@ local function scratch_buffer()
     api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "'..border_buf)
 end
 
-local function set_mappings()
+local function set_mappings(path)
     local chars = {
-        'a', 'b', 'c', 'd', 'e', 'f', 'h', 'j', 'l', 'q', 'k', 'g', 'i', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+        'a', 'b', 'd', 'e', 'f', 'h', 'l', 'j', 'q', 'k', 'g', 'i', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     }
     for _,v in ipairs(chars) do
         api.nvim_buf_set_keymap(buf, 'n', v, '', { nowait = true, noremap = true, silent = true })
@@ -60,6 +60,12 @@ local function set_mappings()
         api.nvim_buf_set_keymap(buf, 'i',  '<c-'..v..'>', '', { nowait = true, noremap = true, silent = true })
         api.nvim_buf_set_keymap(buf, 'i', '<c-' ..v:upper()..'>', '', { nowait = true, noremap = true, silent = true })
     end
+
+    -- TODO: launch different functions here
+    api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.add_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    api.nvim_buf_set_keymap(buf, 'i', '<esc>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
+    api.nvim_buf_set_keymap(buf, 'i', '<C-c>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
+    api.nvim_buf_set_keymap(buf, 'i', '<C-[>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
 end
 
 local function update_view(...)
@@ -68,29 +74,45 @@ local function update_view(...)
     api.nvim_command('startinsert!')
 end
 
-local function wrapper(...)
+local function wrapper(path, ...)
     scratch_buffer()
     update_view(...)
-    set_mappings()
+    set_mappings(path)
+end
+
+local function edit_add(path)
+    wrapper(path, { "Create File", path })
+end
+
+local function edit_remove(filename, path, isdir)
+    local name = "File"
+    if isdir == true then name = "Directory" end
+    wrapper(path .. filename, { "Remove " .. name .. " " .. filename .. " ?",  "y/n: " })
+end
+
+local function edit_rename(filename, path, isdir)
+    local name = "File"
+    if isdir == true then name = "Directory" end
+    wrapper(path .. filename, { "Rename " .. name, path .. filename })
 end
 
 local function add_file(path)
-    wrapper({ "Create File", path })
+    print(path)
+    api.nvim_command("q!")
 end
 
-local function remove_file(filename, path, isdir)
-    local name = "File"
-    if isdir == true then name = "Directory" end
-    wrapper({ "Remove " .. name .. " " .. filename .. " ?",  "y/n: " })
+local function remove_file(path, confirm)
+    print(path)
+    api.nvim_command("q!")
 end
 
-local function rename_file(filename, path, isdir)
-    local name = "File"
-    if isdir == true then name = "Directory" end
-    wrapper({ "Rename " .. name, path .. filename })
+local function rename_file(path)
 end
 
 return {
+    edit_add = edit_add;
+    edit_remove = edit_remove;
+    edit_rename = edit_rename;
     add_file = add_file;
     remove_file = remove_file;
     rename_file = rename_file;
