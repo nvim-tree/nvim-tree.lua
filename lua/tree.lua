@@ -2,16 +2,30 @@ local lib_file = require 'lib/file'
 local format = require 'lib/format'.format_tree
 
 local api = vim.api
-local function sys(v) return api.nvim_call_function('system', { v }) end
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
 
--- get rid of \n and add leading '/'
-local ROOT_PATH = string.sub(sys('pwd'), 1, -2) .. '/'
+local ROOT_PATH = vim.loop.cwd() .. '/'
+local Tree = {}
 local BUF_NAME = '_LuaTree_'
 
 local function is_dir(path)
     local stat = vim.loop.fs_stat(path)
     return stat and stat.type == 'directory' or false
+end
+
+local function check_dir_access(path)
+    return vim.loop.fs_access(path, 'R') == true
+end
+
+local function list_dirs(path)
+    if path == nil then
+        return syslist('ls')
+    elseif check_dir_access(path) == false then
+        -- TODO: display an error here (permission denied)
+        return {}
+    else
+        return syslist('ls ' .. path)
+    end
 end
 
 local function sort_dirs(dirs)
@@ -27,7 +41,7 @@ local function sort_dirs(dirs)
     return sorted_tree
 end
 
-local function create_dirs(path, depth, dirs)
+local function create_nodes(path, depth, dirs)
     local tree = {}
 
     if not string.find(path, '^.*/$') then path = path .. '/' end
@@ -38,14 +52,30 @@ local function create_dirs(path, depth, dirs)
             name = name,
             depth = depth,
             dir = is_dir(path .. name),
-            open = false -- only relevant when its a dir
+            open = false, -- only relevant when its a dir
+            icon = true
         }
     end
 
     return sort_dirs(tree)
 end
 
-local Tree = create_dirs(ROOT_PATH, 0, syslist('ls'))
+
+local function init_tree()
+    Tree = create_nodes(ROOT_PATH, 0, list_dirs())
+    if ROOT_PATH ~= '/' then
+        table.insert(Tree, 1, {
+            path = ROOT_PATH,
+            name = '..',
+            depth = 0,
+            dir = true,
+            open = false,
+            icon = false
+        })
+    end
+end
+
+init_tree()
 
 local function get_buf()
     local regex = '.*'..BUF_NAME..'$';
@@ -104,15 +134,19 @@ local function close()
     api.nvim_win_close(win, true)
 end
 
-local function update_view()
+local function update_view(update_cursor)
     local buf = get_buf();
     if not buf then return end
 
-    local cursor_pos = api.nvim_win_get_cursor(0)
+    local cursor = api.nvim_win_get_cursor(0)
+
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 0, -1, false, format(Tree))
     api.nvim_buf_set_option(buf, 'modifiable', false)
-    api.nvim_win_set_cursor(0, cursor_pos)
+
+    if update_cursor == true then
+        api.nvim_win_set_cursor(0, cursor)
+    end
 end
 
 local function is_win_open()
@@ -123,7 +157,22 @@ local function open_file(open_type)
     local tree_index = api.nvim_win_get_cursor(0)[1]
     local node = Tree[tree_index]
 
-    if node.dir == true then
+    if node.name == '..' then
+        api.nvim_command('cd ..')
+        if vim.loop.cwd() == '/' then
+            ROOT_PATH = '/'
+        else
+            ROOT_PATH = vim.loop.cwd() .. '/'
+        end
+        init_tree()
+        update_view()
+    elseif open_type == 'chdir' then
+        if node.dir == false or check_dir_access(node.path .. node.name) == false then return end
+        api.nvim_command('cd ' .. node.path .. node.name)
+        ROOT_PATH = vim.loop.cwd() .. '/'
+        init_tree()
+        update_view()
+    elseif node.dir == true then
         local index = tree_index + 1;
         node.open = not node.open
         local next_node = Tree[index]
@@ -133,14 +182,14 @@ local function open_file(open_type)
                 next_node = Tree[index]
             end
         else
-            local dirlist = syslist('ls ' .. node.path .. node.name)
-            local child_dirs = create_dirs(node.path .. node.name .. '/', node.depth + 1, dirlist)
+            local dirlist = list_dirs(node.path .. node.name)
+            local child_dirs = create_nodes(node.path .. node.name .. '/', node.depth + 1, dirlist)
             for i, n in pairs(child_dirs) do
                 table.insert(Tree, tree_index + i, n)
             end
         end
 
-        update_view()
+        update_view(true)
     else
         api.nvim_command('wincmd l | '..open_type..' '.. node.path .. node.name)
     end
@@ -154,6 +203,7 @@ local function set_mappings()
         ['<CR>'] = 'open_file("edit")';
         ['<C-v>'] = 'open_file("vsplit")';
         ['<C-x>'] = 'open_file("split")';
+        ['<C-[>'] = 'open_file("chdir")';
         a = 'edit_file("add")';
         d = 'edit_file("delete")';
         r = 'edit_file("rename")';

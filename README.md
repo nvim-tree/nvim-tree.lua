@@ -11,13 +11,17 @@
 - [x] moving around the file structure like any basic tree
 - [x] open file in current buffer or in split with FzF like bindings (CR, C-v, C-x)
 - [x] icons for files
-- [ ] add / delete file in directory
+
+- [x] change directory base
+- [x] add / rename / delete file in directory
+- [ ] update tree when altering the FS
+
 - [ ] syntax highlighting
 - [ ] simple git integration (color of file changing when staged/changed)
+
 - [ ] quickly find file in the directory structure
 - [ ] update tree automatically on window change
 
-## TOFIX
-
-- [ ] handle permissions properly
-- [ ] buffer / window should always stay on the left and never disappear (open a file with only the tree open to reproduce this bug)
+- [ ] handle permissions properly (TODO: display error on Read access denied)
+- [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
+- [ ] buffer / window should not disappear when only the tree is opened

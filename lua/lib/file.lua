@@ -1,5 +1,8 @@
 local api = vim.api
 local buf, win
+local system = function(v) api.nvim_call_function('system', { v }) end
+
+local EDIT_FILE = nil
 
 local function scratch_buffer()
     buf = api.nvim_create_buf(false, true)
@@ -49,7 +52,7 @@ local function scratch_buffer()
     api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "'..border_buf)
 end
 
-local function set_mappings(path)
+local function set_mappings(edit_type)
     local chars = {
         'a', 'b', 'd', 'e', 'f', 'h', 'l', 'j', 'q', 'k', 'g', 'i', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     }
@@ -62,7 +65,13 @@ local function set_mappings(path)
     end
 
     -- TODO: launch different functions here
-    api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.add_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    if edit_type == 'add' then
+        api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.add_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    elseif edit_type == 'rename' then
+        api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.rename_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    elseif edit_type == 'delete' then
+        api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.remove_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    end
     api.nvim_buf_set_keymap(buf, 'i', '<esc>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
     api.nvim_buf_set_keymap(buf, 'i', '<C-c>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
     api.nvim_buf_set_keymap(buf, 'i', '<C-[>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
@@ -74,39 +83,47 @@ local function update_view(...)
     api.nvim_command('startinsert!')
 end
 
-local function wrapper(path, ...)
+local function wrapper(edit_type, ...)
     scratch_buffer()
     update_view(...)
-    set_mappings(path)
+    set_mappings(edit_type)
 end
 
 local function edit_add(path)
-    wrapper(path, { "Create File", path })
+    wrapper("add", { "Create File", path })
 end
 
-local function edit_remove(filename, path, isdir)
-    local name = "File"
-    if isdir == true then name = "Directory" end
-    wrapper(path .. filename, { "Remove " .. name .. " " .. filename .. " ?",  "y/n: " })
+local function edit_remove(filename, path)
+    EDIT_FILE = path .. filename
+    wrapper("delete", { "Remove " .. filename .. " ?",  "y/n: " })
 end
 
-local function edit_rename(filename, path, isdir)
-    local name = "File"
-    if isdir == true then name = "Directory" end
-    wrapper(path .. filename, { "Rename " .. name, path .. filename })
+local function edit_rename(filename, path)
+    EDIT_FILE = path .. filename
+    wrapper("rename", { "Rename " .. path, path .. filename })
 end
 
 local function add_file(path)
-    print(path)
+    if string.match(path, '.*/$') then
+        system('mkdir -p ' .. path)
+    else
+        system('touch ' .. path)
+    end
     api.nvim_command("q!")
 end
 
-local function remove_file(path, confirm)
-    print(path)
+local function remove_file(confirmation)
+    if string.match(confirmation, '^y/n: y.*$') ~= nil then
+        system('rm -rf ' .. EDIT_FILE)
+    end
+    EDIT_FILE = nil
     api.nvim_command("q!")
 end
 
 local function rename_file(path)
+    system('mv '..EDIT_FILE..' '..path)
+    EDIT_FILE = nil
+    api.nvim_command("q!")
 end
 
 return {

@@ -41,7 +41,10 @@ local function format_tree(tree)
 
     for i, node in pairs(tree) do
         local padding = get_padding(node.depth)
-        local icon = get_icon(node.path .. node.name, node.dir, node.open)
+        local icon = ""
+        if node.icon == true then
+            icon = get_icon(node.path .. node.name, node.dir, node.open)
+        end
         dirs[i] = padding ..  icon .. node.name
     end
 
