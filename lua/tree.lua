@@ -18,13 +18,14 @@ local function check_dir_access(path)
 end
 
 local function list_dirs(path)
+    local ls_cmd = 'ls -A --ignore=.git '
     if path == nil then
-        return syslist('ls')
+        return syslist(ls_cmd)
     elseif check_dir_access(path) == false then
         -- TODO: display an error here (permission denied)
         return {}
     else
-        return syslist('ls ' .. path)
+        return syslist(ls_cmd .. path)
     end
 end
 
@@ -219,8 +220,8 @@ local function set_mappings()
     local maps = {
         j = 'j$B',
         k = 'k$B',
-        l = '<Nop>',
-        h = '<Nop>'
+        l = '',
+        h = ''
     }
 
     for k,v in pairs(maps) do
