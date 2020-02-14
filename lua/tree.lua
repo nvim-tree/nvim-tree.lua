@@ -216,19 +216,6 @@ local function set_mappings()
             nowait = true, noremap = true, silent = true
         })
     end
-
-    local maps = {
-        j = 'j$B',
-        k = 'k$B',
-        l = '',
-        h = ''
-    }
-
-    for k,v in pairs(maps) do
-        api.nvim_buf_set_keymap(buf, 'n', k, v, {
-            nowait = true, noremap = true, silent = true
-        })
-    end
 end
 
 local function toggle()
