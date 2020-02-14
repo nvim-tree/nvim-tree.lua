@@ -64,7 +64,6 @@ local function set_mappings(edit_type)
         api.nvim_buf_set_keymap(buf, 'i', '<c-' ..v:upper()..'>', '', { nowait = true, noremap = true, silent = true })
     end
 
-    -- TODO: launch different functions here
     if edit_type == 'add' then
         api.nvim_buf_set_keymap(buf, 'i', '<CR>', "<esc>:lua require'lib/file'.add_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
     elseif edit_type == 'rename' then

@@ -62,7 +62,6 @@ local function create_nodes(path, depth, dirs)
     return sort_dirs(tree)
 end
 
-
 local function init_tree()
     Tree = create_nodes(ROOT_PATH, 0, list_dirs())
     if ROOT_PATH ~= '/' then
@@ -150,6 +149,34 @@ local function update_view(update_cursor)
     if update_cursor == true then
         api.nvim_win_set_cursor(0, cursor)
     end
+end
+
+local function refresh_tree()
+    local cache = {}
+
+    for _, v in pairs(Tree) do
+        if v.dir == true and v.open == true then
+            table.insert(cache, v.path .. v.name)
+        end
+    end
+
+    init_tree()
+
+    for i, node in pairs(Tree) do
+        if node.dir == true then
+            for _, path in pairs(cache) do
+                if node.path .. node.name == path then
+                    node.open = true
+                    local dirs = list_dirs(path)
+                    for j, n in pairs(create_nodes(path, node.depth + 1, dirs)) do
+                        table.insert(Tree, i + j, n)
+                    end
+                end
+            end
+        end
+    end
+
+    update_view()
 end
 
 local function is_win_open()
@@ -245,11 +272,14 @@ local function edit_file(edit_type)
     elseif edit_type == 'rename' then
         lib_file.edit_rename(node.name, node.path, node.dir)
     end
+
+    refresh_tree()
 end
 
 return {
     toggle = toggle;
     open_file = open_file;
     edit_file = edit_file;
+    refresh = refresh_tree;
 }
 
