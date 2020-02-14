@@ -16,7 +16,7 @@
 - [x] add / rename / delete file in directory
 - [ ] update tree when altering the FS
 
-- [ ] syntax highlighting
+- [x] syntax highlighting
 - [ ] simple git integration (color of file changing when staged/changed)
 
 - [ ] quickly find file in the directory structure
@@ -25,3 +25,4 @@
 - [ ] handle permissions properly (TODO: display error on Read access denied)
 - [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
 - [ ] buffer / window should not disappear when only the tree is opened
+

@@ -1,5 +1,6 @@
 local lib_file = require 'lib/file'
 local format = require 'lib/format'.format_tree
+local highlight = require 'lib/format'.highlight_buffer
 
 local api = vim.api
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
@@ -143,6 +144,7 @@ local function update_view(update_cursor)
 
     api.nvim_buf_set_option(buf, 'modifiable', true)
     api.nvim_buf_set_lines(buf, 0, -1, false, format(Tree))
+    highlight(buf, Tree)
     api.nvim_buf_set_option(buf, 'modifiable', false)
 
     if update_cursor == true then
