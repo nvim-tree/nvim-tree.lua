@@ -16,7 +16,7 @@
 - [x] add / rename / delete file in directory
 - [ ] update tree when altering the FS
 
-- [x] syntax highlighting
+- [x] syntax highlighting ([exa](https://github.com/ogham/exa) like) and file icons with vim-devicons
 - [ ] simple git integration (color of file changing when staged/changed)
 
 - [ ] quickly find file in the directory structure
@@ -26,3 +26,4 @@
 - [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
 - [ ] buffer / window should not disappear when only the tree is opened
 
+- [ ] symbolic links

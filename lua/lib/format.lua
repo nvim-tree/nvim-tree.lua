@@ -20,8 +20,36 @@ local function default_icons(_, isdir, open)
     return ""
 end
 
+local function create_matcher(arr)
+    return function(name)
+        for _, n in pairs(arr) do
+            if string.match(name, n) then return true end
+        end
+        return false
+    end
+end
+
+local is_special = create_matcher({
+    'README',
+    'readme',
+    'Makefile',
+    'Cargo%.toml',
+})
+
+local is_pic = create_matcher({
+    '%.jpe?g$',
+    '%.png',
+    '%.gif'
+})
+
+local function is_executable(name)
+    return api.nvim_call_function('executable', { name }) == 1
+end
+
 local function dev_icons(pathname, isdir, open)
-    if isdir == true then return default_icons(pathname, isdir, open) end
+    if isdir == true or is_special(pathname) == true or is_executable(pathname) == true or is_pic(pathname) == true then
+        return default_icons(pathname, isdir, open)
+    end
 
     local icon = api.nvim_call_function('WebDevIconsGetFileTypeSymbol', { pathname, isdir })
     if icon == "" then return "" end
@@ -78,8 +106,6 @@ local HIGHLIGHT_GROUPS = {
     ['^.*%.jsx$'] = 'ReactFile';
     ['^.*%.tsx$'] = 'ReactFile';
     ['^.*%.html?$'] = 'HtmlFile';
-    ['^.*%.png$'] = 'ImageFile';
-    ['^.*%.jpe?g$'] = 'ImageFile';
 }
 
 local function highlight_line(buffer)
@@ -95,6 +121,12 @@ local function highlight_line(buffer)
             else
                 highlight('LuaTreeFolderName', line, 0, -1)
             end
+        elseif is_special(node.name) == true then
+            highlight('LuaTreeSpecialFile', line, 0, -1)
+        elseif is_executable(node.path .. node.name) then
+            highlight('LuaTreeExecFile', line, 0, -1)
+        elseif is_pic(node.path .. node.name) then
+            highlight('LuaTreeImageFile', line, 0, -1)
         else
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then

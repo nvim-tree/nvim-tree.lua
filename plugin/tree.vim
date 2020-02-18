@@ -9,12 +9,15 @@ let g:loaded_netrwPlugin = 1 " Disable netrw
 hi def link LuaTreePopup Normal
 hi def LuaTreeEndOfBuffer guifg=bg
 
-execute 'hi def LuaTreeFolderName guifg='.g:terminal_color_4.' gui=bold'
+execute 'hi def LuaTreeFolderName gui=bold guifg='.g:terminal_color_4
 execute 'hi def LuaTreeFolderIcon guifg='.g:terminal_color_11
+
+execute 'hi def LuaTreeExecFile gui=bold guifg='.g:terminal_color_2
+execute 'hi def LuaTreeSpecialFile gui=bold,underline guifg='.g:terminal_color_3
+execute 'hi def LuaTreeImageFile gui=bold guifg='.g:terminal_color_5
 
 execute 'hi def LuaTreeLicenseFile guifg='.g:terminal_color_3
 execute 'hi def LuaTreeMarkdownFile guifg='.g:terminal_color_5
-execute 'hi def LuaTreeImageFile guifg='.g:terminal_color_5
 execute 'hi def LuaTreeYamlFile guifg='.g:terminal_color_3
 execute 'hi def LuaTreeTomlFile guifg='.g:terminal_color_3
 execute 'hi def LuaTreeGitignoreFile guifg='.g:terminal_color_3
