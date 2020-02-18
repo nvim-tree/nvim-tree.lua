@@ -1,8 +1,8 @@
 local api = vim.api
 local buf, win
 local system = function(v) api.nvim_call_function('system', { v }) end
--- local update_tree_view = require ''
-local update_tree_state = require 'lib/state'.update_tree
+local update_tree_view = require 'lib/winutils'.update_view
+local update_tree_state = require 'lib/state'.refresh_tree
 
 local EDIT_FILE = nil
 

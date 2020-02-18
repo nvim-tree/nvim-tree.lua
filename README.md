@@ -14,7 +14,7 @@
 
 - [x] change directory base
 - [x] add / rename / delete file in directory
-- [ ] update tree when altering the FS
+- [x] update tree when altering the FS
 
 - [x] syntax highlighting ([exa](https://github.com/ogham/exa) like) and file icons with vim-devicons
 - [ ] simple git integration (color of file changing when staged/changed)

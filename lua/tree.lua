@@ -20,10 +20,9 @@ local set_mappings = winutils.set_mappings
 
 local conf = require 'lib/conf'
 local set_root_path = conf.set_root_path
-local get_root_path = conf.get_root_path
 local get_cwd = conf.get_cwd
 
-init_tree(get_root_path())
+init_tree()
 
 local function toggle()
     if is_win_open() == true then

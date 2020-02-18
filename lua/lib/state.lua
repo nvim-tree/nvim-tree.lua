@@ -1,5 +1,6 @@
 local api = vim.api
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
+local get_root_path = require 'lib/conf'.get_root_path
 
 local Tree = {}
 
@@ -56,7 +57,8 @@ local function create_nodes(path, depth, dirs)
     return sort_dirs(tree)
 end
 
-local function init_tree(ROOT_PATH)
+local function init_tree()
+    local ROOT_PATH = get_root_path()
     Tree = create_nodes(ROOT_PATH, 0, list_dirs())
     if ROOT_PATH ~= '/' then
         table.insert(Tree, 1, {
@@ -90,10 +92,6 @@ local function refresh_tree()
                     for j, n in pairs(create_nodes(path, node.depth + 1, dirs)) do
                         table.insert(Tree, i + j, n)
                     end
-                    -- TODO: maybe extract this function to make a recursive call to reexplore the list
-                    -- when adding a new list of dirs to make sure we go to the bottom of the opened structure
-                    -- otherwise it might close opened directories
-                    -- im not sure how lua behaves in this matter
                 end
             end
         end
