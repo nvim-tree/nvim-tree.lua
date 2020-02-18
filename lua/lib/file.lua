@@ -1,6 +1,8 @@
 local api = vim.api
 local buf, win
 local system = function(v) api.nvim_call_function('system', { v }) end
+-- local update_tree_view = require ''
+local update_tree_state = require 'lib/state'.update_tree
 
 local EDIT_FILE = nil
 
@@ -109,6 +111,8 @@ local function add_file(path)
         system('touch ' .. path)
     end
     api.nvim_command("q!")
+    update_tree_state()
+    update_tree_view(true)
 end
 
 local function remove_file(confirmation)
@@ -117,12 +121,16 @@ local function remove_file(confirmation)
     end
     EDIT_FILE = nil
     api.nvim_command("q!")
+    update_tree_state()
+    update_tree_view(true)
 end
 
 local function rename_file(path)
     system('mv '..EDIT_FILE..' '..path)
     EDIT_FILE = nil
     api.nvim_command("q!")
+    update_tree_state()
+    update_tree_view(true)
 end
 
 return {
