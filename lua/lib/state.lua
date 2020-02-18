@@ -1,6 +1,7 @@
 local api = vim.api
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
 local get_root_path = require 'lib/conf'.get_root_path
+local get_git_attr = require 'lib/git'.get_git_attr
 
 local Tree = {}
 
@@ -44,13 +45,16 @@ local function create_nodes(path, depth, dirs)
     if not string.find(path, '^.*/$') then path = path .. '/' end
 
     for i, name in pairs(dirs) do
+        local full_path = path..name
+        local dir = is_dir(full_path)
         tree[i] = {
             path = path,
             name = name,
             depth = depth,
-            dir = is_dir(path .. name),
-            open = false, -- only relevant when its a dir
-            icon = true
+            dir = dir,
+            open = false,
+            icon = true,
+            git = get_git_attr(full_path, dir)
         }
     end
 
@@ -67,7 +71,8 @@ local function init_tree()
             depth = 0,
             dir = true,
             open = false,
-            icon = false
+            icon = false,
+            git = ''
         })
     end
 end
@@ -129,4 +134,5 @@ return {
     get_tree = get_tree;
     refresh_tree = refresh_tree;
     open_dir = open_dir;
+    check_dir_access = check_dir_access;
 }

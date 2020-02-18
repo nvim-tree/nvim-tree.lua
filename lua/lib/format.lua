@@ -108,6 +108,15 @@ local HIGHLIGHT_GROUPS = {
     ['^.*%.html?$'] = 'HtmlFile';
 }
 
+local function highlight_git(highlight, node, line, col_start)
+    if node.git ~= '' then
+        highlight('LuaTreeGit'..node.git, line, col_start, -1)
+        return true
+    end
+
+    return false
+end
+
 local function highlight_line(buffer)
     local function highlight(group, line, from, to)
         vim.api.nvim_buf_add_highlight(buffer, -1, group, line, from, to)
@@ -117,10 +126,14 @@ local function highlight_line(buffer)
         if node.dir then
             if node.name ~= '..' then
                 highlight('LuaTreeFolderIcon', line, 0, text_start)
-                highlight('LuaTreeFolderName', line, text_start, -1)
+
+                if highlight_git(highlight, node, line, text_start) == false then
+                    highlight('LuaTreeFolderName', line, text_start, -1)
+                end
             else
                 highlight('LuaTreeFolderName', line, 0, -1)
             end
+            return
         elseif is_special(node.name) == true then
             highlight('LuaTreeSpecialFile', line, 0, -1)
         elseif is_executable(node.path .. node.name) then
@@ -131,10 +144,12 @@ local function highlight_line(buffer)
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
                     highlight('LuaTree' .. v, line, 0, text_start)
-                    break
+                    highlight_git(highlight, node, line, text_start)
+                    return
                 end
             end
         end
+        highlight_git(highlight, node, line, text_start - 4)
     end
 end
 

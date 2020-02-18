@@ -6,18 +6,18 @@
 - I really don't like any of the vim trees, they are all too complicated for their purposes and are kind of buggy. I have my shell to do most commands.
 - This plugin will not work on windows.
 
+## Features
+- [x] open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
+- [x] file icons with vim-devicons
+- [x] syntax highlighting ([exa](https://github.com/ogham/exa) like)
+- [x] Change directory with `C-[`
+- [x] Add / Rename / delete files
+- [x] Git integration
+
 ## TODO
-
-- [x] moving around the file structure like any basic tree
-- [x] open file in current buffer or in split with FzF like bindings (CR, C-v, C-x)
-- [x] icons for files
-
-- [x] change directory base
-- [x] add / rename / delete file in directory
-- [x] update tree when altering the FS
-
-- [x] syntax highlighting ([exa](https://github.com/ogham/exa) like) and file icons with vim-devicons
-- [ ] simple git integration (color of file changing when staged/changed)
+- [ ] refresh tree (for git) on file save
+- [ ] find a good way to display git info
+- [ ] better parsing of the git porcelain results
 
 - [ ] quickly find file in the directory structure
 - [ ] update tree automatically on window change
@@ -26,4 +26,4 @@
 - [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
 - [ ] buffer / window should not disappear when only the tree is opened
 
-- [ ] symbolic links
+- [ ] handle symbolic links

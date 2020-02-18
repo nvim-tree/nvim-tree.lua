@@ -66,16 +66,14 @@ local function open()
 end
 
 local function close()
-    local BUF_NAME = get_buf_name()
-    local win = get_win(BUF_NAME)
+    local win = get_win()
     if not win then return end
 
     api.nvim_win_close(win, true)
 end
 
 local function update_view(update_cursor)
-    local BUF_NAME = get_buf_name()
-    local buf = get_buf(BUF_NAME);
+    local buf = get_buf();
     if not buf then return end
 
     local cursor = api.nvim_win_get_cursor(0)

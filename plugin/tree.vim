@@ -34,6 +34,13 @@ execute 'hi def LuaTreeRustFile guifg='.g:terminal_color_11
 execute 'hi def LuaTreeVimFile guifg='.g:terminal_color_10
 execute 'hi def LuaTreeTypescriptFile guifg='.g:terminal_color_12
 
+" TODO: fix those colors to be better or maybe info git with letters instead of colors
+execute 'hi def LuaTreeGitModified gui=NONE guifg='.g:terminal_color_13
+execute 'hi def LuaTreeGitStaged gui=NONE guifg='.g:terminal_color_2
+execute 'hi def LuaTreeGitUntracked gui=NONE guifg='.g:terminal_color_6
+execute 'hi def LuaTreeGitUnmerged gui=NONE guifg='.g:terminal_color_3
+execute 'hi def LuaTreeGitDirty gui=NONE guifg='.g:terminal_color_13
+
 command! LuaTree lua require'tree'.toggle()
 
 let &cpo = s:save_cpo
