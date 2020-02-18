@@ -122,34 +122,34 @@ local function highlight_line(buffer)
         vim.api.nvim_buf_add_highlight(buffer, -1, group, line, from, to)
     end
     return function(line, node)
-        local text_start = node.depth * 2 + 4
+        local text_start = node.depth * 2
         if node.dir then
             if node.name ~= '..' then
-                highlight('LuaTreeFolderIcon', line, 0, text_start)
+                highlight('LuaTreeFolderIcon', line, 0, text_start + 4)
 
-                if highlight_git(highlight, node, line, text_start) == false then
-                    highlight('LuaTreeFolderName', line, text_start, -1)
+                if highlight_git(highlight, node, line, text_start + 4) == false then
+                    highlight('LuaTreeFolderName', line, text_start + 4, -1)
                 end
             else
                 highlight('LuaTreeFolderName', line, 0, -1)
             end
             return
         elseif is_special(node.name) == true then
-            highlight('LuaTreeSpecialFile', line, 0, -1)
+            highlight('LuaTreeSpecialFile', line, text_start, -1)
         elseif is_executable(node.path .. node.name) then
-            highlight('LuaTreeExecFile', line, 0, -1)
+            highlight('LuaTreeExecFile', line, text_start, -1)
         elseif is_pic(node.path .. node.name) then
-            highlight('LuaTreeImageFile', line, 0, -1)
+            highlight('LuaTreeImageFile', line, text_start, -1)
         else
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
-                    highlight('LuaTree' .. v, line, 0, text_start)
-                    highlight_git(highlight, node, line, text_start)
+                    highlight('LuaTree' .. v, line, 0, text_start + 4)
+                    highlight_git(highlight, node, line, text_start + 4)
                     return
                 end
             end
         end
-        highlight_git(highlight, node, line, text_start - 4)
+        highlight_git(highlight, node, line, text_start)
     end
 end
 
