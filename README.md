@@ -1,4 +1,6 @@
-# A simple tree for neovim written in lua
+# A File Explorer For Neovim Written In Lua
+
+![alt text](.github/tree.png?raw=true "screenshot")
 
 ## Notice
 
