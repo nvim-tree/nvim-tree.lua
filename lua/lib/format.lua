@@ -83,31 +83,27 @@ local function format_tree(tree)
 end
 
 local HIGHLIGHT_GROUPS = {
-    ['^.*%.md$'] = 'MarkdownFile';
     ['^LICENSE$'] = 'LicenseFile';
     ['^%.?vimrc$'] = 'VimFile';
-    ['^.*%.vim$'] = 'VimFile';
-    ['^.*%.c$'] = 'CFile';
-    ['^.*%.cpp$'] = 'CFile';
-    ['^.*%.cxx$'] = 'CFile';
-    ['^.*%.h$'] = 'CFile';
-    ['^.*%.hpp$'] = 'CFile';
-    ['^.*%.py$'] = 'PythonFile';
-    ['^.*%.lua$'] = 'LuaFile';
-    ['^.*%.rs$'] = 'RustFile';
-    ['^.*%.sh$'] = 'ShellFile';
-    ['^.*%.zsh$'] = 'ShellFile';
-    ['^.*%.csh$'] = 'ShellFile';
-    ['^.*%.rs$'] = 'RustFile';
-    ['^.*%.js$'] = 'JavascriptFile';
-    ['^.*%.json$'] = 'JsonFile';
-    ['^.*%.toml$'] = 'TomlFile';
-    ['^.*%.yml$'] = 'YamlFile';
-    ['^.*%.gitignore$'] = 'GitignoreFile';
-    ['^.*%.ts$'] = 'TypescriptFile';
-    ['^.*%.jsx$'] = 'ReactFile';
-    ['^.*%.tsx$'] = 'ReactFile';
-    ['^.*%.html?$'] = 'HtmlFile';
+    ['%.vim$'] = 'VimFile';
+    ['%.c$'] = 'CFile';
+    ['%.cpp$'] = 'CFile';
+    ['%.cxx$'] = 'CFile';
+    ['%.h$'] = 'CFile';
+    ['%.hpp$'] = 'CFile';
+    ['%.py$'] = 'PythonFile';
+    ['%.lua$'] = 'LuaFile';
+    ['%.rs$'] = 'RustFile';
+    ['%.[cz]?sh$'] = 'ShellFile';
+    ['%.md$'] = 'MarkdownFile';
+    ['%.json$'] = 'JsonFile';
+    ['%.toml$'] = 'TomlFile';
+    ['%.yml$'] = 'YamlFile';
+    ['%.gitignore$'] = 'GitignoreFile';
+    ['%.js$'] = 'JavascriptFile';
+    ['%.ts$'] = 'TypescriptFile';
+    ['%.[tj]sx$'] = 'ReactFile';
+    ['%.html?$'] = 'HtmlFile';
 }
 
 local function highlight_line(buffer)
