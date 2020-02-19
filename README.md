@@ -17,15 +17,16 @@
 - [x] Git integration
 
 ## TODO
-- [ ] refresh tree (for git) on file save
+- [ ] refresh tree (for git) on file save and update git status when needed
 - [ ] find a good way to display git info
 - [ ] better parsing of the git porcelain results
 
+- [ ] handle permissions properly (TODO: display error on Read access denied)
+- [ ] buffer / window should not disappear when only the tree is opened
+- [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
+
+- [ ] handle symbolic links
 - [ ] quickly find file in the directory structure
 - [ ] update tree automatically on window change
 
-- [ ] handle permissions properly (TODO: display error on Read access denied)
-- [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
-- [ ] buffer / window should not disappear when only the tree is opened
-
-- [ ] handle symbolic links
+- [ ] mouse integration

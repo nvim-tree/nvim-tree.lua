@@ -5,16 +5,28 @@ local function is_git_repo()
     return string.match(is_git, 'fatal') == nil
 end
 
-local GIT_CMD = 'git status --porcelain=v1 '
+local IS_GIT_REPO = is_git_repo()
 
-local function is_folder_dirty(path)
-    local ret = system(GIT_CMD..path)
-    return ret ~= nil and ret ~= ''
+local function set_git_status()
+    if IS_GIT_REPO == false then return '' end
+    return system('git status --porcelain=v1')
+end
+
+local GIT_STATUS = set_git_status()
+
+local function refresh_git()
+    IS_GIT_REPO = is_git_repo()
+    GIT_STATUS = set_git_status()
+end
+
+local function is_folder_dirty(relpath)
+    return string.match(GIT_STATUS, relpath) ~= nil
 end
 
 local function create_git_checker(pattern)
-    return function(path)
-        local ret = system(GIT_CMD..path)
+    return function(relpath)
+        local ret = string.match(GIT_STATUS, '^.*' .. relpath)
+        if ret == nil then return false end
         return string.match(ret, pattern) ~= nil
     end
 end
@@ -25,7 +37,7 @@ local is_unmerged = create_git_checker('^ ?UU')
 local is_untracked = create_git_checker('^%?%?')
 
 local function get_git_attr(path, is_dir)
-    if is_git_repo() == false then return '' end
+    if IS_GIT_REPO == false then return '' end
     if is_dir then
         if is_folder_dirty(path) == true then return 'Dirty' end
     else
@@ -41,4 +53,5 @@ end
 
 return {
     get_git_attr = get_git_attr;
+    refresh_git = refresh_git;
 }

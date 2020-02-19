@@ -39,22 +39,24 @@ local function sort_dirs(dirs)
     return sorted_tree
 end
 
-local function create_nodes(path, depth, dirs)
+local function create_nodes(path, relpath, depth, dirs)
     local tree = {}
 
     if not string.find(path, '^.*/$') then path = path .. '/' end
+    if not string.find(relpath, '^.*/$') and depth > 0 then relpath = relpath .. '/' end
 
     for i, name in pairs(dirs) do
-        local full_path = path..name
-        local dir = is_dir(full_path)
+        local dir = is_dir(path..name)
+        local rel_path = relpath ..name
         tree[i] = {
             path = path,
+            relpath = rel_path,
             name = name,
             depth = depth,
             dir = dir,
             open = false,
             icon = true,
-            git = get_git_attr(full_path, dir)
+            git = get_git_attr(rel_path, dir)
         }
     end
 
@@ -63,7 +65,7 @@ end
 
 local function init_tree()
     local ROOT_PATH = get_root_path()
-    Tree = create_nodes(ROOT_PATH, 0, list_dirs())
+    Tree = create_nodes(ROOT_PATH, '', 0, list_dirs())
     if ROOT_PATH ~= '/' then
         table.insert(Tree, 1, {
             path = ROOT_PATH,
@@ -94,7 +96,7 @@ local function refresh_tree()
                 if node.path .. node.name == path then
                     node.open = true
                     local dirs = list_dirs(path)
-                    for j, n in pairs(create_nodes(path, node.depth + 1, dirs)) do
+                    for j, n in pairs(create_nodes(path, node.relpath, node.depth + 1, dirs)) do
                         table.insert(Tree, i + j, n)
                     end
                 end
@@ -111,13 +113,13 @@ local function open_dir(tree_index)
         local next_index = tree_index + 1;
         local next_node = Tree[next_index]
 
-        while next_node ~= nil and next_node.depth ~= node.depth do
+        while next_node ~= nil and next_node.depth > node.depth do
             table.remove(Tree, next_index)
             next_node = Tree[next_index]
         end
     else
         local dirlist = list_dirs(node.path .. node.name)
-        local child_dirs = create_nodes(node.path .. node.name .. '/', node.depth + 1, dirlist)
+        local child_dirs = create_nodes(node.path .. node.name .. '/', node.relpath, node.depth + 1, dirlist)
 
         for i, n in pairs(child_dirs) do
             table.insert(Tree, tree_index + i, n)

@@ -84,6 +84,7 @@ end
 local HIGHLIGHT_GROUPS = {
     ['^.*%.md$'] = 'MarkdownFile';
     ['^LICENSE$'] = 'LicenseFile';
+    ['^%.?vimrc$'] = 'VimFile';
     ['^.*%.vim$'] = 'VimFile';
     ['^.*%.c$'] = 'CFile';
     ['^.*%.cpp$'] = 'CFile';
