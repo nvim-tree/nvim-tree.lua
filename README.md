@@ -18,8 +18,7 @@
 - [x] Mouse support
 
 ## TODO
-- [ ] find a good way to display git info
-- [ ] better parsing of the git porcelain results
+- [ ] handle colorscheme better (right now its based on random global variables that might not be loaded at vim start)
 
 - [ ] handle permissions properly (TODO: display error on Read access denied)
 - [ ] buffer / window should not disappear when only the tree is opened

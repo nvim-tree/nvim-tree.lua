@@ -71,11 +71,12 @@ local function format_tree(tree)
 
     for i, node in pairs(tree) do
         local padding = get_padding(node.depth)
+        local git = node.git
         local icon = ""
         if node.icon == true then
             icon = get_icon(node.path .. node.name, node.dir, node.open)
         end
-        dirs[i] = padding ..  icon .. node.name
+        dirs[i] = padding ..  icon .. git .. node.name
     end
 
     return dirs
@@ -109,48 +110,60 @@ local HIGHLIGHT_GROUPS = {
     ['^.*%.html?$'] = 'HtmlFile';
 }
 
-local function highlight_git(highlight, node, line, col_start)
-    if node.git ~= '' then
-        highlight('LuaTreeGit'..node.git, line, col_start, -1)
-        return true
-    end
-
-    return false
-end
-
 local function highlight_line(buffer)
     local function highlight(group, line, from, to)
         vim.api.nvim_buf_add_highlight(buffer, -1, group, line, from, to)
     end
     return function(line, node)
-        local text_start = node.depth * 2
-        if node.dir then
-            if node.name ~= '..' then
-                highlight('LuaTreeFolderIcon', line, 0, text_start + 4)
+        local text_start = node.depth * 2 + 4
+        local gitlen = string.len(node.git)
+        if node.name == '..' then
+            highlight('LuaTreeFolderName', line, 0, -1)
 
-                if highlight_git(highlight, node, line, text_start + 4) == false then
-                    highlight('LuaTreeFolderName', line, text_start + 4, -1)
-                end
-            else
-                highlight('LuaTreeFolderName', line, 0, -1)
-            end
-            return
+        elseif node.dir == true then
+            highlight('LuaTreeFolderIcon', line, 0, text_start)
+            highlight('LuaTreeFolderName', line, text_start + gitlen, -1)
+
         elseif is_special(node.name) == true then
-            highlight('LuaTreeSpecialFile', line, text_start, -1)
+            text_start = text_start - 4
+            highlight('LuaTreeSpecialFile', line, text_start + gitlen, -1)
+
         elseif is_executable(node.path .. node.name) then
-            highlight('LuaTreeExecFile', line, text_start, -1)
+            text_start = text_start - 4
+            highlight('LuaTreeExecFile', line, text_start + gitlen, -1)
+
         elseif is_pic(node.path .. node.name) then
-            highlight('LuaTreeImageFile', line, text_start, -1)
+            text_start = text_start - 4
+            highlight('LuaTreeImageFile', line, text_start + gitlen, -1)
+
         else
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
-                    highlight('LuaTree' .. v, line, 0, text_start + 4)
-                    highlight_git(highlight, node, line, text_start + 4)
-                    return
+                    highlight('LuaTree' .. v, line, 0, text_start)
+                    break
                 end
             end
         end
-        highlight_git(highlight, node, line, text_start)
+
+        if node.git == '' then return end
+
+        if node.git == '✗ ' then
+            highlight('LuaTreeGitDirty', line, text_start, text_start + gitlen)
+        elseif node.git == '✓ ' then
+            highlight('LuaTreeGitStaged', line, text_start, text_start + gitlen)
+        elseif node.git == '✓★ ' then
+            highlight('LuaTreeGitStaged', line, text_start, text_start + 3)
+            highlight('LuaTreeGitNew', line, text_start + 3, text_start + gitlen)
+        elseif node.git == '✓✗ ' then
+            highlight('LuaTreeGitStaged', line, text_start, text_start + 3)
+            highlight('LuaTreeGitDirty', line, text_start + 3, text_start + gitlen)
+        elseif node.git == '═ ' then
+            highlight('LuaTreeGitMerge', line, text_start, text_start + gitlen)
+        elseif node.git == '➜ ' then
+            highlight('LuaTreeGitRenamed', line, text_start, text_start + gitlen)
+        elseif node.git == '★ ' then
+            highlight('LuaTreeGitNew', line, text_start, text_start + gitlen)
+        end
     end
 end
 
