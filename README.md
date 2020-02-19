@@ -18,7 +18,6 @@
 - [x] Mouse support
 
 ## TODO
-- [ ] refresh tree (for git) on file save and update git status when needed
 - [ ] find a good way to display git info
 - [ ] better parsing of the git porcelain results
 

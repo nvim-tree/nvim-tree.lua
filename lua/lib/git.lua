@@ -15,8 +15,14 @@ end
 local GIT_STATUS = set_git_status()
 
 local function refresh_git()
-    IS_GIT_REPO = is_git_repo()
+    if IS_GIT_REPO == false then return false end
     GIT_STATUS = set_git_status()
+    return true
+end
+
+local function force_refresh_git()
+    IS_GIT_REPO = is_git_repo()
+    refresh_git()
 end
 
 local function is_folder_dirty(relpath)
@@ -54,4 +60,5 @@ end
 return {
     get_git_attr = get_git_attr;
     refresh_git = refresh_git;
+    force_refresh_git = force_refresh_git;
 }

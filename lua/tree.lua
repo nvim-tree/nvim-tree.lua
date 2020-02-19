@@ -10,6 +10,7 @@ local get_tree = stateutils.get_tree
 local init_tree = stateutils.init_tree
 local open_dir = stateutils.open_dir
 local check_dir_access = stateutils.check_dir_access
+local refresh_tree = stateutils.refresh_tree
 
 local winutils = require 'lib/winutils'
 local update_view = winutils.update_view
@@ -21,6 +22,10 @@ local set_mappings = winutils.set_mappings
 local conf = require 'lib/conf'
 local set_root_path = conf.set_root_path
 local get_cwd = conf.get_cwd
+
+local git = require 'lib/git'
+local refresh_git = git.refresh_git
+local force_refresh_git = git.force_refresh_git
 
 init_tree()
 
@@ -40,7 +45,6 @@ local function open_file(open_type)
     local node = tree[tree_index]
 
     if node.name == '..' then
-        -- TODO: git update
         api.nvim_command('cd ..')
 
         local new_path
@@ -51,15 +55,16 @@ local function open_file(open_type)
         end
 
         set_root_path(new_path)
+        force_refresh_git()
         init_tree(new_path)
         update_view()
     elseif open_type == 'chdir' then
-        -- TODO: git update
         if node.dir == false or check_dir_access(node.path .. node.name) == false then return end
 
         api.nvim_command('cd ' .. node.path .. node.name)
         local new_path = get_cwd() .. '/'
         set_root_path(new_path)
+        force_refresh_git()
         init_tree(new_path)
         update_view()
     elseif node.dir == true then
@@ -88,9 +93,17 @@ local function edit_file(edit_type)
     end
 end
 
+local function refresh()
+    if refresh_git() == true then
+        refresh_tree()
+        update_view()
+    end
+end
+
 return {
     toggle = toggle;
     open_file = open_file;
     edit_file = edit_file;
+    refresh = refresh;
 }
 

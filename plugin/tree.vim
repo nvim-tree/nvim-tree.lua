@@ -41,6 +41,8 @@ execute 'hi def LuaTreeGitUntracked gui=NONE guifg='.g:terminal_color_6
 execute 'hi def LuaTreeGitUnmerged gui=NONE guifg='.g:terminal_color_3
 execute 'hi def LuaTreeGitDirty gui=NONE guifg='.g:terminal_color_13
 
+au BufWritePost * lua require'tree'.refresh()
+
 command! LuaTree lua require'tree'.toggle()
 
 let &cpo = s:save_cpo
