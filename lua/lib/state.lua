@@ -6,8 +6,17 @@ local get_git_attr = require 'lib/git'.get_git_attr
 local Tree = {}
 
 local function is_dir(path)
-    local stat = vim.loop.fs_stat(path)
+    local stat = vim.loop.fs_lstat(path)
     return stat and stat.type == 'directory' or false
+end
+
+local function is_symlink(path)
+    local stat = vim.loop.fs_lstat(path)
+    return stat and stat.type == 'link' or false
+end
+
+local function link_to(path)
+    return vim.loop.fs_readlink(path) or ''
 end
 
 local function check_dir_access(path)
@@ -46,11 +55,16 @@ local function create_nodes(path, relpath, depth, dirs)
     if not string.find(relpath, '^.*/$') and depth > 0 then relpath = relpath .. '/' end
 
     for i, name in pairs(dirs) do
-        local dir = is_dir(path..name)
+        local full_path = path..name
+        local dir = is_dir(full_path)
+        local link = is_symlink(full_path)
+        local linkto = link == true and link_to(full_path) or nil
         local rel_path = relpath ..name
         tree[i] = {
             path = path,
             relpath = rel_path,
+            link = link,
+            linkto = linkto,
             name = name,
             depth = depth,
             dir = dir,
@@ -137,4 +151,5 @@ return {
     refresh_tree = refresh_tree;
     open_dir = open_dir;
     check_dir_access = check_dir_access;
+    is_dir = is_dir;
 }

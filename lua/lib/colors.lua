@@ -14,6 +14,7 @@ local colors = {
 }
 
 local HIGHLIGHTS = {
+    Symlink = { gui = 'bold', fg = colors.cyan },
     FolderName = { gui = 'bold', fg = colors.blue },
     FolderIcon = { fg = colors.orange },
 

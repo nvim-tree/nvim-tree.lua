@@ -11,6 +11,7 @@ local init_tree = stateutils.init_tree
 local open_dir = stateutils.open_dir
 local check_dir_access = stateutils.check_dir_access
 local refresh_tree = stateutils.refresh_tree
+local is_dir = stateutils.is_dir
 
 local winutils = require 'lib/winutils'
 local update_view = winutils.update_view
@@ -60,6 +61,7 @@ local function open_file(open_type)
         force_refresh_git()
         init_tree(new_path)
         update_view()
+
     elseif open_type == 'chdir' then
         if node.dir == false or check_dir_access(node.path .. node.name) == false then return end
 
@@ -69,9 +71,26 @@ local function open_file(open_type)
         force_refresh_git()
         init_tree(new_path)
         update_view()
+
+    elseif node.link == true then
+        local link_to_dir = is_dir(node.linkto)
+        if link_to_dir == true and check_dir_access(node.linkto) == false then return end
+
+        if link_to_dir == true then
+            api.nvim_command('cd ' .. node.linkto)
+            local new_path = get_cwd() .. '/'
+            set_root_path(new_path)
+            force_refresh_git()
+            init_tree(new_path)
+            update_view()
+        else
+            api.nvim_command('wincmd l | '..open_type..' '.. node.linkto)
+        end
+
     elseif node.dir == true then
         open_dir(tree_index)
         update_view(true)
+
     else
         api.nvim_command('wincmd l | '..open_type..' '.. node.path .. node.name)
     end

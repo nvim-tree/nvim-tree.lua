@@ -73,10 +73,13 @@ local function format_tree(tree)
         local padding = get_padding(node.depth)
         local git = node.git
         local icon = ""
-        if node.icon == true then
+        local name = node.name
+        if node.link == true then
+            name = name .. ' ➛ ' .. node.linkto
+        elseif node.icon == true then
             icon = get_icon(node.path .. node.name, node.dir, node.open)
         end
-        dirs[i] = padding ..  icon .. git .. node.name
+        dirs[i] = padding ..  icon .. git .. name
     end
 
     return dirs
@@ -119,6 +122,9 @@ local function highlight_line(buffer)
         elseif node.dir == true then
             highlight('LuaTreeFolderIcon', line, 0, text_start)
             highlight('LuaTreeFolderName', line, text_start + gitlen, -1)
+
+        elseif node.link == true then
+            highlight('LuaTreeSymlink', line, 0, -1)
 
         elseif is_special(node.name) == true then
             text_start = text_start - 4
