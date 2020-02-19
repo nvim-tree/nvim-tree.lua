@@ -27,6 +27,8 @@ local git = require 'lib/git'
 local refresh_git = git.refresh_git
 local force_refresh_git = git.force_refresh_git
 
+require 'lib/colors'.init_colors()
+
 init_tree()
 
 local function toggle()

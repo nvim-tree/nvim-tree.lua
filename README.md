@@ -18,8 +18,6 @@
 - [x] Mouse support
 
 ## TODO
-- [ ] handle colorscheme better (right now its based on random global variables that might not be loaded at vim start)
-
 - [ ] handle permissions properly (TODO: display error on Read access denied)
 - [ ] buffer / window should not disappear when only the tree is opened
 - [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
@@ -27,3 +25,4 @@
 - [ ] handle symbolic links
 - [ ] quickly find file in the directory structure
 - [ ] update tree automatically on window change
+
