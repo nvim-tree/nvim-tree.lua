@@ -35,7 +35,8 @@ end
 local function create_git_checker(pattern)
     return function(relpath)
         for _, status in pairs(GIT_STATUS) do
-            local ret = string.match(status, '^.. ' .. relpath)
+            -- TODO: fix .* as it could be problematic
+            local ret = string.match(status, '^.. .*' .. relpath)
             if ret ~= nil and string.match(ret, pattern) ~= nil then return true end
         end
         return false

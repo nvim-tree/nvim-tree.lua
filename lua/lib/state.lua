@@ -30,14 +30,12 @@ local function check_dir_access(path)
 end
 
 local function list_dirs(path)
-    local ls_cmd = 'ls -A --ignore=.git '
-    if path == nil then
-        return syslist(ls_cmd)
-    elseif check_dir_access(path) == false then
+    if check_dir_access(path) == false then
         -- TODO: display an error here (permission denied)
         return {}
     else
-        return syslist(ls_cmd .. path)
+        local ls_cmd = 'ls -A --ignore=.git ' ..path
+        return syslist(ls_cmd)
     end
 end
 
@@ -84,7 +82,7 @@ local function create_nodes(path, relpath, depth, dirs)
 end
 
 local function init_tree()
-    Tree = create_nodes(ROOT_PATH, '', 0, list_dirs())
+    Tree = create_nodes(ROOT_PATH, '', 0, list_dirs(ROOT_PATH))
     if ROOT_PATH ~= '/' then
         table.insert(Tree, 1, {
             path = ROOT_PATH,
