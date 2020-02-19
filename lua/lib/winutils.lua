@@ -34,11 +34,6 @@ local function get_win()
     return nil
 end
 
-local function buf_setup()
-    api.nvim_command('setlocal nonumber norelativenumber winfixwidth winfixheight')
-    api.nvim_command('setlocal winhighlight=EndOfBuffer:LuaTreeEndOfBuffer')
-end
-
 local function scratch_buffer()
     scratch_buf = api.nvim_create_buf(false, true)
     api.nvim_buf_set_option(scratch_buf, 'bufhidden', 'wipe')
@@ -91,24 +86,22 @@ local function set_scratch_mappings(edit_type)
     local chars = {
         'a', 'b', 'd', 'e', 'f', 'h', 'l', 'j', 'q', 'k', 'g', 'i', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     }
+    local options = { nowait = true, noremap = true, silent = true }
+
     for _,v in ipairs(chars) do
-        api.nvim_buf_set_keymap(scratch_buf, 'n', v, '', { nowait = true, noremap = true, silent = true })
-        api.nvim_buf_set_keymap(scratch_buf, 'n', v:upper(), '', { nowait = true, noremap = true, silent = true })
-        api.nvim_buf_set_keymap(scratch_buf, 'n',  '<c-'..v..'>', '', { nowait = true, noremap = true, silent = true })
-        api.nvim_buf_set_keymap(scratch_buf, 'i',  '<c-'..v..'>', '', { nowait = true, noremap = true, silent = true })
-        api.nvim_buf_set_keymap(scratch_buf, 'i', '<c-' ..v:upper()..'>', '', { nowait = true, noremap = true, silent = true })
+        api.nvim_buf_set_keymap(scratch_buf, 'n', v, '', options)
+        api.nvim_buf_set_keymap(scratch_buf, 'n', v:upper(), '', options)
+        api.nvim_buf_set_keymap(scratch_buf, 'n',  '<c-'..v..'>', '', options)
+        api.nvim_buf_set_keymap(scratch_buf, 'i',  '<c-'..v..'>', '', options)
+        api.nvim_buf_set_keymap(scratch_buf, 'i', '<c-' ..v:upper()..'>', '', options)
     end
 
-    if edit_type == 'add' then
-        api.nvim_buf_set_keymap(scratch_buf, 'i', '<CR>', "<esc>:lua require'lib/file'.add_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
-    elseif edit_type == 'rename' then
-        api.nvim_buf_set_keymap(scratch_buf, 'i', '<CR>', "<esc>:lua require'lib/file'.rename_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
-    elseif edit_type == 'delete' then
-        api.nvim_buf_set_keymap(scratch_buf, 'i', '<CR>', "<esc>:lua require'lib/file'.remove_file(vim.api.nvim_get_current_line())<CR>", { nowait = true, noremap = true, silent = true })
+    api.nvim_buf_set_keymap(scratch_buf, 'i', '<CR>', "<esc>:lua require'lib/file'."..edit_type.."_file()<CR>", options)
+
+    local ikeys = { '<esc>', '<C-c>', '<C-[' }
+    for _, map in pairs(ikeys) do
+        api.nvim_buf_set_keymap(scratch_buf, 'i', map, "<esc>:q!<CR>", options)
     end
-    api.nvim_buf_set_keymap(scratch_buf, 'i', '<esc>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
-    api.nvim_buf_set_keymap(scratch_buf, 'i', '<C-c>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
-    api.nvim_buf_set_keymap(scratch_buf, 'i', '<C-[>', "<esc>:q!<CR>", { nowait = true, noremap = true, silent = true })
 end
 
 local function update_scratch_view(...)
@@ -122,6 +115,11 @@ local function scratch_wrapper(edit_type, ...)
     update_scratch_view(...)
     set_scratch_mappings(edit_type)
 end
+
+
+local BUF_OPTIONS = {
+    'nonumber', 'norelativenumber', 'winfixwidth', 'winfixheight', 'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer',
+}
 
 local function open()
     local win_width = 30
@@ -140,7 +138,9 @@ local function open()
 
     api.nvim_command('topleft '..win_width..'vnew')
     api.nvim_win_set_buf(0, buf)
-    buf_setup()
+    for _, opt in pairs(BUF_OPTIONS) do
+        api.nvim_command('setlocal '..opt)
+    end
 end
 
 local function close()
@@ -183,7 +183,7 @@ local function set_mappings()
         ['<C-x>'] = 'open_file("split")';
         ['<C-[>'] = 'open_file("chdir")';
         a = 'edit_file("add")';
-        d = 'edit_file("delete")';
+        d = 'edit_file("remove")';
         r = 'edit_file("rename")';
     }
 

@@ -1,4 +1,5 @@
 local api = vim.api
+local luv = vim.loop
 local system = function(v) api.nvim_call_function('system', { v }) end
 local update_tree_view = require 'lib/winutils'.update_view
 local scratch_wrapper = require 'lib/winutils'.scratch_wrapper
@@ -13,7 +14,7 @@ end
 
 local function edit_remove(filename, path)
     EDIT_FILE = path .. filename
-    scratch_wrapper("delete", { "Remove " .. filename .. " ?",  "y/n: " })
+    scratch_wrapper("remove", { "Remove " .. filename .. " ?",  "y/n: " })
 end
 
 local function edit_rename(filename, path)
@@ -21,39 +22,47 @@ local function edit_rename(filename, path)
     scratch_wrapper("rename", { "Rename " .. path, path .. filename })
 end
 
-local function add_file(path)
+local function add_file()
+    local path = api.nvim_get_current_line()
     if string.match(path, '.*/$') then
         system('mkdir -p ' .. path)
         refresh_git()
         update_tree_state()
-        update_tree_view(true)
+        update_tree_view()
     else
         system('touch ' .. path)
         refresh_git()
         update_tree_state()
-        update_tree_view(true)
+        update_tree_view()
     end
     api.nvim_command("q!")
 end
 
-local function remove_file(confirmation)
+local function remove_file()
+    local confirmation = api.nvim_get_current_line()
     if string.match(confirmation, '^y/n: y.*$') ~= nil then
-        system('rm -rf ' .. EDIT_FILE)
+        local stat = luv.fs_lstat(EDIT_FILE)
+        if stat.type == 'directory' then
+            luv.fs_rmdir(EDIT_FILE)
+        else
+            luv.fs_unlink(EDIT_FILE)
+        end
         refresh_git()
         update_tree_state()
-        update_tree_view(true)
+        update_tree_view()
     end
     EDIT_FILE = nil
     api.nvim_command("q!")
 end
 
-local function rename_file(path)
-    system('mv '..EDIT_FILE..' '..path)
-    EDIT_FILE = nil
-    api.nvim_command("q!")
+local function rename_file()
+    local path = api.nvim_get_current_line()
+    luv.fs_rename(EDIT_FILE, path)
     refresh_git()
     update_tree_state()
-    update_tree_view(true)
+    update_tree_view()
+    EDIT_FILE = nil
+    api.nvim_command("q!")
 end
 
 return {

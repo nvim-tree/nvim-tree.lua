@@ -23,3 +23,4 @@
 - open automatically when opening neovim with `nvim` or `nvim .`
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
+- use libuv functions instead of `touch` and `mkdir` in `add_file()`

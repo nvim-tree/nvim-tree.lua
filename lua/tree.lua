@@ -105,7 +105,7 @@ local function edit_file(edit_type)
         else
             edit_add(node.path)
         end
-    elseif edit_type == 'delete' then
+    elseif edit_type == 'remove' then
         edit_remove(node.name, node.path, node.dir)
     elseif edit_type == 'rename' then
         edit_rename(node.name, node.path, node.dir)
