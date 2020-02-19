@@ -12,6 +12,8 @@ local open_dir = stateutils.open_dir
 local check_dir_access = stateutils.check_dir_access
 local refresh_tree = stateutils.refresh_tree
 local is_dir = stateutils.is_dir
+local set_root_path = stateutils.set_root_path
+local get_cwd = stateutils.get_cwd
 
 local winutils = require 'lib/winutils'
 local update_view = winutils.update_view
@@ -19,10 +21,6 @@ local is_win_open = winutils.is_win_open
 local close = winutils.close
 local open = winutils.open
 local set_mappings = winutils.set_mappings
-
-local conf = require 'lib/conf'
-local set_root_path = conf.set_root_path
-local get_cwd = conf.get_cwd
 
 local git = require 'lib/git'
 local refresh_git = git.refresh_git

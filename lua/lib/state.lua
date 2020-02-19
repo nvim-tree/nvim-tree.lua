@@ -1,7 +1,13 @@
 local api = vim.api
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
-local get_root_path = require 'lib/conf'.get_root_path
 local get_git_attr = require 'lib/git'.get_git_attr
+
+local function get_cwd() return vim.loop.cwd() end
+local ROOT_PATH = get_cwd() .. '/'
+
+local function set_root_path(path)
+    ROOT_PATH = path
+end
 
 local Tree = {}
 
@@ -78,7 +84,6 @@ local function create_nodes(path, relpath, depth, dirs)
 end
 
 local function init_tree()
-    local ROOT_PATH = get_root_path()
     Tree = create_nodes(ROOT_PATH, '', 0, list_dirs())
     if ROOT_PATH ~= '/' then
         table.insert(Tree, 1, {
@@ -152,4 +157,6 @@ return {
     open_dir = open_dir;
     check_dir_access = check_dir_access;
     is_dir = is_dir;
+    set_root_path = set_root_path;
+    get_cwd = get_cwd;
 }

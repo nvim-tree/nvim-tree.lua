@@ -1,3 +1,4 @@
+local BUF_NAME = 'LuaTree'
 local api = vim.api
 
 local libformat = require 'lib/format'
@@ -7,14 +8,9 @@ local highlight = libformat.highlight_buffer
 local stateutils = require 'lib/state'
 local get_tree = stateutils.get_tree
 
-local confutils = require 'lib/conf'
-local get_buf_name = confutils.get_buf_name
-local get_root_path = confutils.get_root_path
-
 local scratch_buf = nil
 
 local function get_buf()
-    local BUF_NAME = get_buf_name()
     local regex = '.*'..BUF_NAME..'$';
 
     for _, win in pairs(api.nvim_list_wins()) do
@@ -28,7 +24,6 @@ local function get_buf()
 end
 
 local function get_win()
-    local BUF_NAME = get_buf_name()
     local regex = '.*'..BUF_NAME..'$';
 
     for _, win in pairs(api.nvim_list_wins()) do
@@ -129,8 +124,6 @@ local function scratch_wrapper(edit_type, ...)
 end
 
 local function open()
-    local BUF_NAME = get_buf_name()
-    local ROOT_PATH = get_root_path()
     local win_width = 30
     local options = {
         bufhidden = 'wipe';
@@ -148,7 +141,6 @@ local function open()
     api.nvim_command('topleft '..win_width..'vnew')
     api.nvim_win_set_buf(0, buf)
     buf_setup()
-    api.nvim_command('echo "'..ROOT_PATH..'"')
 end
 
 local function close()
