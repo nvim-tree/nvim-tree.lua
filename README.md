@@ -24,3 +24,5 @@
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
 - use libuv functions instead of `touch` and `mkdir` in `add_file()`
+- fix colors fucks up on refresh sometimes (and git is wrong when cd into a subdirectory)
+
