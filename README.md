@@ -9,12 +9,13 @@
 - This plugin will not work on windows.
 
 ## Features
-- [x] open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
-- [x] file icons with vim-devicons
-- [x] syntax highlighting ([exa](https://github.com/ogham/exa) like)
+- [x] Open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
+- [x] File icons with vim-devicons
+- [x] Syntax highlighting ([exa](https://github.com/ogham/exa) like)
 - [x] Change directory with `C-[`
 - [x] Add / Rename / delete files
 - [x] Git integration
+- [x] Mouse support
 
 ## TODO
 - [ ] refresh tree (for git) on file save and update git status when needed
@@ -28,5 +29,3 @@
 - [ ] handle symbolic links
 - [ ] quickly find file in the directory structure
 - [ ] update tree automatically on window change
-
-- [ ] mouse integration
