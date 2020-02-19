@@ -1,12 +1,11 @@
 # A File Explorer For Neovim Written In Lua
 
-![alt text](.github/tree.png?raw=true "screenshot")
+![alt text](.github/tree.png?raw=true "file explorer")
 
 ## Notice
 
-- I am working on this plugin to learn lua, learn neovim api and create a file explorer with features i need.
-- I really don't like any of the vim trees, they are all too complicated for their purposes and are kind of buggy. I have my shell to do most commands.
-- This plugin will not work on windows.
+- I am working on this plugin to learn lua, neovim's api and create a file explorer with features i need.
+- This plugin does not work on windows.
 
 ## Features
 - [x] Open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
@@ -18,10 +17,9 @@
 - [x] Mouse support
 
 ## TODO
-- [ ] handle permissions properly (TODO: display error on Read access denied)
-- [ ] buffer / window should not disappear when only the tree is opened
-- [ ] buffer / window should always stay on the left and never change size (open a file with only the tree open to reproduce this bug)
-
-- [ ] quickly find file in the directory structure
-- [ ] update tree automatically on window change
-
+- handle permissions properly (display error on Read access denied)
+- fix all window problems (force size to stay always the same and keep it on the left)
+- kill window when its the last one (BufLeave)
+- open automatically when opening neovim with `nvim` or `nvim .`
+- cd command to move faster accross the fs if needed
+- quickly find file in the directory structure
