@@ -17,10 +17,9 @@
 - [x] Mouse support
 
 ## TODO
-- handle permissions properly (display error on Read access denied)
-- fix all window problems (force size to stay always the same and keep it on the left)
-- kill window when its the last one (BufLeave)
-- open automatically when opening neovim with `nvim` or `nvim .`
+- display error on Read access denied (and better handling of errors if any)
+- fix all window problems (force size to stay always the same and keep it on the side)
+- add options for users
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
 - use libuv functions instead of `touch` and `mkdir` in `add_file()`

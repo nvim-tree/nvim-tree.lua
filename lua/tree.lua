@@ -119,10 +119,26 @@ local function refresh()
     end
 end
 
+local function check_windows_and_close()
+    local wins = api.nvim_list_wins()
+
+    if #wins == 1 and is_win_open() then
+        -- TODO: find why it hangs
+        api.nvim_command('q!')
+    end
+end
+
+local function check_buffer_and_open()
+    local bufname = api.nvim_buf_get_name(0)
+    if bufname == '' or is_dir(bufname) then toggle() end
+end
+
 return {
     toggle = toggle;
     open_file = open_file;
     edit_file = edit_file;
     refresh = refresh;
+    check_windows_and_close = check_windows_and_close;
+    check_buffer_and_open = check_buffer_and_open;
 }
 
