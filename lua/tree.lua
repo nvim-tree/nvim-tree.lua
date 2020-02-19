@@ -40,6 +40,7 @@ local function open_file(open_type)
     local node = tree[tree_index]
 
     if node.name == '..' then
+        -- TODO: git update
         api.nvim_command('cd ..')
 
         local new_path
@@ -53,6 +54,7 @@ local function open_file(open_type)
         init_tree(new_path)
         update_view()
     elseif open_type == 'chdir' then
+        -- TODO: git update
         if node.dir == false or check_dir_access(node.path .. node.name) == false then return end
 
         api.nvim_command('cd ' .. node.path .. node.name)
