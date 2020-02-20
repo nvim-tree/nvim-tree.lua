@@ -1,11 +1,40 @@
 # A File Explorer For Neovim Written In Lua
 
-![alt text](.github/tree.png?raw=true "file explorer")
-
 ## Notice
 
 - I am working on this plugin to learn lua, neovim's api and create a file explorer with features i need.
 - This plugin does not work on windows.
+
+## Install
+
+Install with [vim-plug](https://github.com/junegunn/vim-plug):
+```vim
+Plug 'kyazdani42/nvim-tree.lua'
+```
+
+## Setup
+
+```vim
+let g:lua_tree_side = 'right' | 'left'  "left by default
+let g:lua_tree_size = 40  "30 by default
+
+nnoremap <C-n> :LuaTreeToggle<CR>
+nnoremap <leader>n :LuaTreeRefresh<CR>
+```
+
+## KeyBindings
+
+- move around like in any vim buffer
+- `<CR>` on `..` will cd in the above directory
+- `<C-[>` will cd in the directory under the cursor
+- type `a` to add a file
+- type `r` to rename a file
+- type `d` to delete a file (will prompt for confirmation)
+- if the file is a directory, `<CR>` will open the directory
+- otherwise it will open the file in the buffer near the tree
+- if the file is a symlink, `<CR>` will follow the symlink
+- type `<C-v>` will open the file in a vertical split
+- type `<C-x>` will open the file in a horizontal split
 
 ## Features
 - [x] Open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
@@ -16,10 +45,13 @@
 - [x] Git integration
 - [x] Mouse support
 
+## Screenshot
+
+![alt text](.github/tree.png?raw=true "file explorer")
+
 ## TODO
 - add docs
 - fix coloring when no dev icons
-- add options for users (tree side, tree size)
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`

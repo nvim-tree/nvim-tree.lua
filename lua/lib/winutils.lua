@@ -34,11 +34,24 @@ end
 
 local BUF_OPTIONS = {
     'nonumber', 'norelativenumber', 'winfixwidth', 'winfixheight',
-    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer', 'noswapfile'
+    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer', 'noswapfile',
+    'splitbelow'
 }
 
+local WIN_WIDTH = 30
+local SIDE = 'topleft'
+
+if api.nvim_call_function('exists', { 'g:lua_tree_width' }) == 1 then
+    WIN_WIDTH = api.nvim_get_var('lua_tree_width')
+end
+
+if api.nvim_call_function('exists', { 'g:lua_tree_side' }) == 1 then
+    if api.nvim_get_var('lua_tree_side') == 'right' then
+        SIDE = 'rightbelow'
+    end
+end
+
 local function open()
-    local win_width = 30
     local options = {
         bufhidden = 'delete';
         buftype = 'nowrite';
@@ -52,7 +65,7 @@ local function open()
         api.nvim_buf_set_option(buf, opt, val)
     end
 
-    api.nvim_command('topleft '..win_width..'vnew')
+    api.nvim_command(SIDE.. ' '..WIN_WIDTH..'vnew')
     api.nvim_win_set_buf(0, buf)
     for _, opt in pairs(BUF_OPTIONS) do
         api.nvim_command('setlocal '..opt)

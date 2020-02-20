@@ -12,7 +12,8 @@ au BufWritePost * lua require'tree'.refresh()
 au BufEnter * lua require'tree'.check_windows_and_close()
 au VimEnter * lua require'tree'.check_buffer_and_open()
 
-command! LuaTree lua require'tree'.toggle()
+command! LuaTreeToggle lua require'tree'.toggle()
+command! LuaTreeRefresh lua require'tree'.refresh()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
