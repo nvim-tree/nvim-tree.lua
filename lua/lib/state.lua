@@ -1,8 +1,13 @@
 local api = vim.api
-local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
-local get_git_attr = require 'lib/git'.get_git_attr
 
-local function get_cwd() return vim.loop.cwd() end
+local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
+
+local get_git_attr = require 'lib/git'.get_git_attr
+local fs = require 'lib/fs'
+local is_dir = fs.is_dir
+local is_symlink = fs.is_symlink
+local get_cwd = fs.get_cwd
+
 local ROOT_PATH = get_cwd() .. '/'
 
 local function set_root_path(path)
@@ -11,32 +16,9 @@ end
 
 local Tree = {}
 
-local function is_dir(path)
-    local stat = vim.loop.fs_lstat(path)
-    return stat and stat.type == 'directory' or false
-end
-
-local function is_symlink(path)
-    local stat = vim.loop.fs_lstat(path)
-    return stat and stat.type == 'link' or false
-end
-
-local function link_to(path)
-    return vim.loop.fs_readlink(path) or ''
-end
-
-local function check_dir_access(path)
-    return vim.loop.fs_access(path, 'R') == true
-end
-
 local function list_dirs(path)
-    if check_dir_access(path) == false then
-        -- TODO: display an error here (permission denied)
-        return {}
-    else
-        local ls_cmd = 'ls -A --ignore=.git ' ..path
-        return syslist(ls_cmd)
-    end
+    local ls_cmd = 'ls -A --ignore=.git ' ..path
+    return syslist(ls_cmd)
 end
 
 local function sort_dirs(dirs)
@@ -153,8 +135,6 @@ return {
     get_tree = get_tree;
     refresh_tree = refresh_tree;
     open_dir = open_dir;
-    check_dir_access = check_dir_access;
-    is_dir = is_dir;
     set_root_path = set_root_path;
     get_cwd = get_cwd;
 }

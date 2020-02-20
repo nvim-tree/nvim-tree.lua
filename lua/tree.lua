@@ -1,19 +1,21 @@
 local api = vim.api
 
-local lib_file = require 'lib/file'
-local edit_add = lib_file.edit_add
-local edit_remove = lib_file.edit_remove
-local edit_rename = lib_file.edit_rename
+local fs_update = require 'lib/fs_update'
+local create_file = fs_update.create_file
+local rename_file = fs_update.rename_file
+local remove_file = fs_update.remove_file
 
-local stateutils = require 'lib/state'
-local get_tree = stateutils.get_tree
-local init_tree = stateutils.init_tree
-local open_dir = stateutils.open_dir
-local check_dir_access = stateutils.check_dir_access
-local refresh_tree = stateutils.refresh_tree
-local is_dir = stateutils.is_dir
-local set_root_path = stateutils.set_root_path
-local get_cwd = stateutils.get_cwd
+local fs = require 'lib/fs'
+local check_dir_access = fs.check_dir_access
+local is_dir = fs.is_dir
+local get_cwd = fs.get_cwd
+
+local state = require 'lib/state'
+local get_tree = state.get_tree
+local init_tree = state.init_tree
+local open_dir = state.open_dir
+local refresh_tree = state.refresh_tree
+local set_root_path = state.set_root_path
 
 local winutils = require 'lib/winutils'
 local update_view = winutils.update_view
@@ -86,6 +88,7 @@ local function open_file(open_type)
         end
 
     elseif node.dir == true then
+        if check_dir_access(node.path .. node.name) == false then return end
         open_dir(tree_index)
         update_view(true)
 
@@ -99,16 +102,16 @@ local function edit_file(edit_type)
     local tree_index = api.nvim_win_get_cursor(0)[1]
     local node = tree[tree_index]
 
-    if edit_type == 'add' then
+    if edit_type == 'create' then
         if node.dir == true then
-            edit_add(node.path .. node.name .. '/')
+            create_file(node.path .. node.name .. '/')
         else
-            edit_add(node.path)
+            create_file(node.path)
         end
     elseif edit_type == 'remove' then
-        edit_remove(node.name, node.path, node.dir)
+        remove_file(node.name, node.path)
     elseif edit_type == 'rename' then
-        edit_rename(node.name, node.path, node.dir)
+        rename_file(node.name, node.path)
     end
 end
 

@@ -17,9 +17,10 @@
 - [x] Mouse support
 
 ## TODO
-- display error on Read access denied (and better handling of errors if any)
-- fix all window problems (force size to stay always the same and keep it on the side)
-- add options for users
+- add docs
+- add options for users (tree side, tree size)
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
-- use libuv functions instead of `touch` and `mkdir` in `add_file()`
+- use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
+- tree should always stay on the left no matter what
+

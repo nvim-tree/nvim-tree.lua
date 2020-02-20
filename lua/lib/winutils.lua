@@ -8,8 +8,6 @@ local highlight = libformat.highlight_buffer
 local stateutils = require 'lib/state'
 local get_tree = stateutils.get_tree
 
-local scratch_buf = nil
-
 local function get_buf()
     local regex = '.*'..BUF_NAME..'$';
 
@@ -33,89 +31,6 @@ local function get_win()
 
     return nil
 end
-
-local function scratch_buffer()
-    scratch_buf = api.nvim_create_buf(false, true)
-    api.nvim_buf_set_option(scratch_buf, 'bufhidden', 'wipe')
-
-    local width = api.nvim_get_option("columns")
-    local height = api.nvim_get_option("lines")
-
-    local win_height = 2
-    local win_width = 90
-
-    local row = math.ceil((height - win_height) / 2 - 1)
-    local col = math.ceil((width - win_width) / 2)
-
-    local opts = {
-        style = "minimal",
-        relative = "editor",
-        width = win_width,
-        height = win_height,
-        row = row,
-        col = col
-    }
-
-    local border_buf = api.nvim_create_buf(false, true)
-
-    local border_opts = {
-        style = "minimal",
-        relative = "editor",
-        width = win_width + 2,
-        height = win_height + 2,
-        row = row - 1,
-        col = col - 1
-    }
-
-    local border_lines = { '┌' .. string.rep('─', win_width) .. '┐' }
-    local middle_line = '│' .. string.rep(' ', win_width) .. '│'
-    for _ = 1, win_height do
-        table.insert(border_lines, middle_line)
-    end
-    table.insert(border_lines, '└' .. string.rep('─', win_width) .. '┘')
-    api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
-
-    api.nvim_open_win(border_buf, true, border_opts)
-    api.nvim_command('setlocal nocursorline winhighlight=Normal:LuaNoEndOfBufferPopup')
-    api.nvim_open_win(scratch_buf, true, opts)
-    api.nvim_command('setlocal nocursorline winhighlight=Normal:LuaTreePopup')
-    api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "'..border_buf)
-end
-
-local function set_scratch_mappings(edit_type)
-    local chars = {
-        'a', 'b', 'd', 'e', 'f', 'h', 'l', 'j', 'q', 'k', 'g', 'i', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    }
-    local options = { nowait = true, noremap = true, silent = true }
-
-    for _,v in ipairs(chars) do
-        api.nvim_buf_set_keymap(scratch_buf, 'n', v, '', options)
-        api.nvim_buf_set_keymap(scratch_buf, 'n', v:upper(), '', options)
-        api.nvim_buf_set_keymap(scratch_buf, 'n',  '<c-'..v..'>', '', options)
-        api.nvim_buf_set_keymap(scratch_buf, 'i',  '<c-'..v..'>', '', options)
-        api.nvim_buf_set_keymap(scratch_buf, 'i', '<c-' ..v:upper()..'>', '', options)
-    end
-
-    api.nvim_buf_set_keymap(scratch_buf, 'i', '<CR>', "<esc>:lua require'lib/file'."..edit_type.."_file()<CR>", options)
-
-    local ikeys = { '<esc>', '<C-c>', '<C-[' }
-    for _, map in pairs(ikeys) do
-        api.nvim_buf_set_keymap(scratch_buf, 'i', map, "<esc>:q!<CR>", options)
-    end
-end
-
-local function update_scratch_view(...)
-    api.nvim_buf_set_lines(scratch_buf, 0, -1, false, ...)
-    api.nvim_command('normal G')
-    api.nvim_command('startinsert!')
-end
-
-local function scratch_wrapper(edit_type, ...)
-    scratch_buffer()
-    update_scratch_view(...)
-    set_scratch_mappings(edit_type)
-end
-
 
 local BUF_OPTIONS = {
     'nonumber', 'norelativenumber', 'winfixwidth', 'winfixheight',
@@ -183,7 +98,7 @@ local function set_mappings()
         ['<C-v>'] = 'open_file("vsplit")';
         ['<C-x>'] = 'open_file("split")';
         ['<C-[>'] = 'open_file("chdir")';
-        a = 'edit_file("add")';
+        a = 'edit_file("create")';
         d = 'edit_file("remove")';
         r = 'edit_file("rename")';
     }
@@ -203,5 +118,4 @@ return {
     get_buf = get_buf;
     get_win = get_win;
     set_mappings = set_mappings;
-    scratch_wrapper = scratch_wrapper;
 }
