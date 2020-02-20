@@ -52,10 +52,9 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 ![alt text](.github/tree.png?raw=true "file explorer")
 
 ## TODO
-- add docs
-- fix coloring when no dev icons
+- use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
+- better vim help docs
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
-- use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
-- tree should always stay on the left no matter what
+- tree should always stay on the side no matter what
 

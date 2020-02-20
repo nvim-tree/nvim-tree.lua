@@ -1,5 +1,7 @@
 local api = vim.api
 
+local HAS_DEV_ICONS = api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1
+
 local function get_padding(depth)
     local str = ""
 
@@ -57,7 +59,7 @@ local function dev_icons(pathname, isdir, open)
 end
 
 local function get_icon_func_gen()
-    if api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1 then
+    if HAS_DEV_ICONS then
         return dev_icons
     else
         return default_icons
@@ -136,7 +138,7 @@ local function highlight_line(buffer)
         elseif is_pic(node.path .. node.name) then
             highlight('LuaTreeImageFile', line, text_start + gitlen, -1)
 
-        else
+        elseif HAS_DEV_ICONS then
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
                     text_start = text_start + 4
