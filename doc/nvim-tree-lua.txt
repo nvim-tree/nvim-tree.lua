@@ -1,0 +1,31 @@
+*nvim-tree.lua* A file explorer written in lua
+
+Minimum version of neovim: 0.4.0
+
+Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
+
+==============================================================================
+INTRODUCTION                                       *nvim-tree-lua-introduction*
+
+==============================================================================
+QUICK START                                        *nvim-tree-lua-quickstart*
+
+open the tree with :LuaTreeToggle
+>
+  nnoremap <C-n> :LuaTreeToggle<CR>
+  lua require 'tree'.toggle()
+<
+
+==============================================================================
+COMMANDS                                           *nvim-tree-lua-commands*
+
+|:LuaTreeToggle| 	                          *:LuaTreeToggle*
+
+open or close the tree
+
+|:LuaTreeRefresh|			          *:LuaTreeRefresh*
+
+refresh the tree
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
+

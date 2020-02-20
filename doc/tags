@@ -1,0 +1,6 @@
+:LuaTreeRefresh	nvim-tree-lua.txt	/*:LuaTreeRefresh*
+:LuaTreeToggle	nvim-tree-lua.txt	/*:LuaTreeToggle*
+nvim-tree-lua-commands	nvim-tree-lua.txt	/*nvim-tree-lua-commands*
+nvim-tree-lua-introduction	nvim-tree-lua.txt	/*nvim-tree-lua-introduction*
+nvim-tree-lua-quickstart	nvim-tree-lua.txt	/*nvim-tree-lua-quickstart*
+nvim-tree.lua	nvim-tree-lua.txt	/*nvim-tree.lua*
