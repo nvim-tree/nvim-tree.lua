@@ -56,6 +56,5 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
-- tree should always stay on the side no matter what
-- add global ignore parameter
-- html docs ?
+- tree should always stay on the side
+- html docs
