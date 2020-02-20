@@ -1,15 +1,22 @@
 local cmd = vim.api.nvim_command
-local get = vim.api.nvim_get_var
+
+local function get(var, fallback)
+    if vim.api.nvim_call_function('exists', { var }) == 1 then
+        return vim.api.nvim_get_var(var)
+    else
+        return fallback
+    end
+end
 
 local colors = {
-    red = get('terminal_color_1') or 'red',
-    green = get('terminal_color_2') or 'green',
-    yellow = get('terminal_color_3') or 'yellow',
-    blue = get('terminal_color_4') or 'blue',
-    purple = get('terminal_color_5') or 'purple',
-    cyan = get('terminal_color_6') or 'cyan',
-    orange = get('terminal_color_11') or 'orange',
-    dark_red = get('terminal_color_9') or 'dark red',
+    red = get('terminal_color_1', 'Red'),
+    green = get('terminal_color_2', 'Green'),
+    yellow = get('terminal_color_3', 'Yellow'),
+    blue = get('terminal_color_4', 'Blue'),
+    purple = get('terminal_color_5', 'Purple'),
+    cyan = get('terminal_color_6', 'Cyan'),
+    orange = get('terminal_color_11', 'Orange'),
+    dark_red = get('terminal_color_9', 'DarkRed'),
     lua = '#2947b1'
 }
 
