@@ -7,6 +7,7 @@ local fs = require 'lib/fs'
 local is_dir = fs.is_dir
 local is_symlink = fs.is_symlink
 local get_cwd = fs.get_cwd
+local link_to = fs.link_to
 
 local ROOT_PATH = get_cwd() .. '/'
 
@@ -117,7 +118,7 @@ local function open_dir(tree_index)
             next_node = Tree[next_index]
         end
     else
-        local dirlist = list_dirs(node.path .. node.name)
+        local dirlist = list_dirs('"' .. node.path .. node.name ..'"')
         local child_dirs = create_nodes(node.path .. node.name .. '/', node.relpath, node.depth + 1, dirlist)
 
         for i, n in pairs(child_dirs) do

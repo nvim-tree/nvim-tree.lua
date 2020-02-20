@@ -36,15 +36,20 @@ local function rm(path)
 end
 
 local function rename(file, new_path)
-    return luv.fs_rename(file, new_path)
+    luv.fs_rename(file, new_path, function(err)
+        if err ~= nil then
+            -- TODO: display error somehow.
+            -- it wont work with vim.api
+        end
+    end)
 end
 
 return {
     check_dir_access = check_dir_access;
-    is_dir = is_dir;
     is_symlink = is_symlink;
     link_to = link_to;
     get_cwd = get_cwd;
-    rm = rm;
+    is_dir = is_dir;
     rename = rename;
+    rm = rm;
 }

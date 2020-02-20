@@ -95,6 +95,7 @@ local function set_mappings()
     local mappings = {
         ['<CR>'] = 'open_file("edit")';
         ['<2-LeftMouse>'] = 'open_file("edit")';
+        ['<2-RightMouse>'] = 'open_file("chdir")';
         ['<C-v>'] = 'open_file("vsplit")';
         ['<C-x>'] = 'open_file("split")';
         ['<C-[>'] = 'open_file("chdir")';
