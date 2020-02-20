@@ -18,6 +18,7 @@
 
 ## TODO
 - add docs
+- fix coloring when no dev icons
 - add options for users (tree side, tree size)
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure

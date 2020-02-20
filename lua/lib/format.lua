@@ -57,7 +57,7 @@ local function dev_icons(pathname, isdir, open)
 end
 
 local function get_icon_func_gen()
-    if api.nvim_call_function('exists', { "WebDevIconsGetFileTypeSymbol" }) == 0 then
+    if api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1 then
         return dev_icons
     else
         return default_icons
