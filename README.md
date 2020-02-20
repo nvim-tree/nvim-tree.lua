@@ -35,6 +35,8 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 - if the file is a symlink, `<CR>` will follow the symlink
 - type `<C-v>` will open the file in a vertical split
 - type `<C-x>` will open the file in a horizontal split
+- Double left click acts like `<CR>`
+- Double right click acts like `<C-[>`
 
 ## Features
 - [x] Open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
