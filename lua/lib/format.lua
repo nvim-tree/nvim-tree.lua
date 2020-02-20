@@ -114,12 +114,13 @@ local function highlight_line(buffer)
         vim.api.nvim_buf_add_highlight(buffer, -1, group, line, from, to)
     end
     return function(line, node)
-        local text_start = node.depth * 2 + 4
+        local text_start = node.depth * 2
         local gitlen = string.len(node.git)
         if node.name == '..' then
             highlight('LuaTreeFolderName', line, 0, -1)
 
         elseif node.dir == true then
+            text_start = text_start + 4
             highlight('LuaTreeFolderIcon', line, 0, text_start)
             highlight('LuaTreeFolderName', line, text_start + gitlen, -1)
 
@@ -127,20 +128,18 @@ local function highlight_line(buffer)
             highlight('LuaTreeSymlink', line, 0, -1)
 
         elseif is_special(node.name) == true then
-            text_start = text_start - 4
             highlight('LuaTreeSpecialFile', line, text_start + gitlen, -1)
 
         elseif is_executable(node.path .. node.name) then
-            text_start = text_start - 4
             highlight('LuaTreeExecFile', line, text_start + gitlen, -1)
 
         elseif is_pic(node.path .. node.name) then
-            text_start = text_start - 4
             highlight('LuaTreeImageFile', line, text_start + gitlen, -1)
 
         else
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
+                    text_start = text_start + 4
                     highlight('LuaTree' .. v, line, 0, text_start)
                     break
                 end
