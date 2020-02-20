@@ -118,13 +118,14 @@ end
 
 
 local BUF_OPTIONS = {
-    'nonumber', 'norelativenumber', 'winfixwidth', 'winfixheight', 'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer',
+    'nonumber', 'norelativenumber', 'winfixwidth', 'winfixheight',
+    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer', 'noswapfile'
 }
 
 local function open()
     local win_width = 30
     local options = {
-        bufhidden = 'wipe';
+        bufhidden = 'delete';
         buftype = 'nowrite';
         modifiable = false;
     }
