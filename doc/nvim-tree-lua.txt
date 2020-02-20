@@ -5,10 +5,10 @@ Minimum version of neovim: 0.4.0
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
 ==============================================================================
-INTRODUCTION                                       *nvim-tree-lua-introduction*
+INTRODUCTION                                       *nvim-tree-introduction*
 
 ==============================================================================
-QUICK START                                        *nvim-tree-lua-quickstart*
+QUICK START                                        *nvim-tree-quickstart*
 
 open the tree with :LuaTreeToggle
 >
@@ -17,7 +17,7 @@ open the tree with :LuaTreeToggle
 <
 
 ==============================================================================
-COMMANDS                                           *nvim-tree-lua-commands*
+COMMANDS                                           *nvim-tree-commands*
 
 |:LuaTreeToggle| 	                          *:LuaTreeToggle*
 
@@ -26,6 +26,68 @@ open or close the tree
 |:LuaTreeRefresh|			          *:LuaTreeRefresh*
 
 refresh the tree
+==============================================================================
+OPTIONS				                  *nvim-tree-options*
+
+|g:lua_tree_size|				*g:lua_tree_size*
+
+width of the window (default to 30)
+
+|g:lua_tree_side|				*g:lua_tree_side*
+
+where the window will open (default to 'left')
+- 'left' or 'right'
+
+|g:lua_tree_ignore|				*g:lua_tree_ignore*
+
+An array of strings that the tree won't display.
+Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
+>
+    example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
+<
+==============================================================================
+INFORMATIONS				        *nvim-tree-info*
+
+|KeyBindings|				        *nvim-tree-keybindings*
+
+- move around like in any vim buffer
+- '<CR>' on '..' will cd in the above directory
+- '<C-[>' will cd in the directory under the cursor
+
+- type 'a' to add a file
+- type 'r' to rename a file
+- type 'd' to delete a file (will prompt for confirmation)
+
+- if the file is a directory, '<CR>' will open the directory
+- otherwise it will open the file in the buffer near the tree
+- if the file is a symlink, '<CR>' will follow the symlink
+- type '<C-v>' will open the file in a vertical split
+- type '<C-x>' will open the file in a horizontal split
+
+- Double left click acts like '<CR>'
+- Double right click acts like '<C-[>'
+
+|Features|					*nvim-tree-features*
+
+File icons with vim-devicons.
+
+Uses other type of icons so a good font support is recommended.
+If the tree renders weird glyphs, install correct fonts or try to change
+your terminal.
+
+Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
+ugly colors otherwise.
+
+Git integration tells when a file is:
+- ✗  unstaged or folder is dirty
+- ✓  staged
+- ★  new file
+- ✓✗ partially staged
+- ✓★ new file staged
+- ═  merging
+- ➜  renamed
+
+Mouse support defined in |KeyBindings|
 
  vim:tw=78:ts=8:noet:ft=help:norl:
 

@@ -15,8 +15,9 @@ Plug 'kyazdani42/nvim-tree.lua'
 ## Setup
 
 ```vim
-let g:lua_tree_side = 'right' | 'left'  "left by default
-let g:lua_tree_size = 40  "30 by default
+let g:lua_tree_side = 'right' | 'left' "left by default
+let g:lua_tree_size = 40 "30 by default
+let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
 
 nnoremap <C-n> :LuaTreeToggle<CR>
 nnoremap <leader>n :LuaTreeRefresh<CR>
@@ -53,8 +54,8 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 
 ## TODO
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
-- better vim help docs
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
 - tree should always stay on the side no matter what
 - add global ignore parameter
+- html docs ?

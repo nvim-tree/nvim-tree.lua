@@ -17,8 +17,19 @@ end
 
 local Tree = {}
 
+local IGNORE_LIST = ""
+
+if api.nvim_call_function('exists', { 'g:lua_tree_ignore' }) == 1 then
+    local ignore_patterns = api.nvim_get_var('lua_tree_ignore')
+    if type(ignore_patterns) == 'table' then
+        for _, pattern in pairs(ignore_patterns) do
+            IGNORE_LIST = IGNORE_LIST .. '--ignore='..pattern..' '
+        end
+    end
+end
+
 local function list_dirs(path)
-    local ls_cmd = 'ls -A --ignore=.git ' ..path
+    local ls_cmd = 'ls -A '..IGNORE_LIST..path
     return syslist(ls_cmd)
 end
 
