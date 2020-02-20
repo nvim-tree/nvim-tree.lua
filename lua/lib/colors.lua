@@ -20,7 +20,7 @@ local HIGHLIGHTS = {
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
-    ImageFile = { gui = 'bold', fg = colors.blue },
+    ImageFile = { gui = 'bold', fg = colors.purple },
     MarkdownFile = { fg = colors.purple },
     LicenseFile = { fg = colors.yellow },
     YamlFile = { fg = colors.yellow },
