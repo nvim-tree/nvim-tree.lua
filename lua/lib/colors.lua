@@ -17,13 +17,12 @@ local colors = {
     cyan = get('terminal_color_6', 'Cyan'),
     orange = get('terminal_color_11', 'Orange'),
     dark_red = get('terminal_color_9', 'DarkRed'),
-    lua = '#2947b1'
 }
 
 local HIGHLIGHTS = {
     Symlink = { gui = 'bold', fg = colors.cyan },
     FolderName = { gui = 'bold', fg = colors.blue },
-    FolderIcon = { fg = colors.orange },
+    FolderIcon = { fg = '#90a4ae' },
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
@@ -35,7 +34,7 @@ local HIGHLIGHTS = {
     GitignoreFile = { fg = colors.yellow },
     JsonFile = { fg = colors.yellow },
 
-    LuaFile = { fg = colors.lua },
+    LuaFile = { fg = '#42a5f5' },
     PythonFile = { fg = colors.green },
     ShellFile = { fg = colors.green },
     JavascriptFile = { fg = colors.yellow },

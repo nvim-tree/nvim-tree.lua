@@ -54,6 +54,7 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 
 ## TODO
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
+- create highlight function to give the user ability to setup colors themselves
 - cd command to move faster accross the fs if needed
 - quickly find file in the directory structure
 - html docs
