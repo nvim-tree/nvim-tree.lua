@@ -126,7 +126,6 @@ local function check_windows_and_close()
     local wins = api.nvim_list_wins()
 
     if #wins == 1 and is_win_open() then
-        -- TODO: find why it hangs
         api.nvim_command('q!')
     end
 end
