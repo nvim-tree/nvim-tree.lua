@@ -19,7 +19,10 @@ local Tree = {}
 
 local IGNORE_LIST = ""
 
-if api.nvim_call_function('exists', { 'g:lua_tree_ignore' }) == 1 then
+local UNIX = api.nvim_call_function('has', { 'unix' }) == 1
+
+-- --ignore does not work with mac ls
+if UNIX and api.nvim_call_function('exists', { 'g:lua_tree_ignore' }) == 1 then
     local ignore_patterns = api.nvim_get_var('lua_tree_ignore')
     if type(ignore_patterns) == 'table' then
         for _, pattern in pairs(ignore_patterns) do
