@@ -26,22 +26,25 @@ local function check_dir_access(path)
     end
 end
 
+function print_err(err)
+    if err ~= nil then
+        api.nvim_command('echohl ErrorMsg')
+        api.nvim_command('echomsg "'..err..'"')
+        api.nvim_command('echohl None')
+    end
+end
+
 local function rm(path)
     local stat = luv.fs_lstat(path)
     if stat and stat.type == 'directory' then
-        return luv.fs_rmdir(path)
+        return luv.fs_rmdir(path, vim.schedule_wrap(print_err))
     else
-        return luv.fs_unlink(path)
+        return luv.fs_unlink(path, vim.schedule_wrap(print_err))
     end
 end
 
 local function rename(file, new_path)
-    luv.fs_rename(file, new_path, function(err)
-        if err ~= nil then
-            -- TODO: display error somehow.
-            -- it wont work with vim.api
-        end
-    end)
+    luv.fs_rename(file, new_path, vim.schedule_wrap(print_err))
 end
 
 return {
