@@ -27,7 +27,7 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 
 - move around like in any vim buffer
 - `<CR>` on `..` will cd in the above directory
-- `<C-[>` will cd in the directory under the cursor
+- `.` will cd in the directory under the cursor
 - type `a` to add a file
 - type `r` to rename a file
 - type `d` to delete a file (will prompt for confirmation)
@@ -37,13 +37,13 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 - type `<C-v>` will open the file in a vertical split
 - type `<C-x>` will open the file in a horizontal split
 - Double left click acts like `<CR>`
-- Double right click acts like `<C-[>`
+- Double right click acts like `.`
 
 ## Features
-- [x] Open file in current buffer or in split with FzF like bindings (`CR`, `C-v`, `C-x`)
+- [x] Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`)
 - [x] File icons with vim-devicons
 - [x] Syntax highlighting ([exa](https://github.com/ogham/exa) like)
-- [x] Change directory with `C-[`
+- [x] Change directory with `.`
 - [x] Add / Rename / delete files
 - [x] Git integration
 - [x] Mouse support
