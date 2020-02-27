@@ -17,7 +17,7 @@ Plug 'kyazdani42/nvim-tree.lua'
 ```vim
 let g:lua_tree_side = 'right' | 'left' "left by default
 let g:lua_tree_size = 40 "30 by default
-let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
+let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default, not working on mac atm
 
 nnoremap <C-n> :LuaTreeToggle<CR>
 nnoremap <leader>n :LuaTreeRefresh<CR>
@@ -55,14 +55,15 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 ## TODO
 - Tree creation should be async
 - better error checking when fs updates
-- open tree when running vim on a folder
 - sneak like cd command to find a directory
 - better default colors (use default vim groups)
+- give user option to choose for file generation command
 - command to find current file in the directory structure
 - create proper highlight groups or add highlight function to give the user ability to setup colors themselves
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
-- better window management:
+- better window management: 
   - check tree buffer/window for change so we can avoid it being resized or moved around or replaced by another file
   - monitor window layout in current tab to open files in the right place
   - add `<C-t>` to open buffer in new tab
+> this might be a little hard to implement since window layout events do not exist yet

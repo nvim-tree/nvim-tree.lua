@@ -40,7 +40,7 @@ local BUF_OPTIONS = {
 }
 
 local WIN_WIDTH = 30
-local SIDE = 'topleft'
+local SIDE = 'H'
 
 if api.nvim_call_function('exists', { 'g:lua_tree_width' }) == 1 then
     WIN_WIDTH = api.nvim_get_var('lua_tree_width')
@@ -48,7 +48,7 @@ end
 
 if api.nvim_call_function('exists', { 'g:lua_tree_side' }) == 1 then
     if api.nvim_get_var('lua_tree_side') == 'right' then
-        SIDE = 'rightbelow'
+        SIDE = 'L'
     end
 end
 
@@ -66,11 +66,31 @@ local function open()
         api.nvim_buf_set_option(buf, opt, val)
     end
 
-    api.nvim_command(SIDE.. ' '..WIN_WIDTH..'vnew')
+    api.nvim_command('vnew')
+    api.nvim_command('wincmd '..SIDE)
+    api.nvim_command('vertical resize '..WIN_WIDTH)
     api.nvim_win_set_buf(0, buf)
     for _, opt in pairs(BUF_OPTIONS) do
         api.nvim_command('setlocal '..opt)
     end
+end
+
+local function replace_tree()
+    local win = get_win()
+    if not win then return end
+
+    local tree_position = api.nvim_win_get_position(win)
+    local win_width = api.nvim_win_get_width(win)
+    -- TODO: change this to check on right side with window width - win_width == tree_position[2]
+    if win_width == WIN_WIDTH and tree_position[2] == 0 then return end
+
+    local current_win = api.nvim_get_current_win()
+
+    api.nvim_set_current_win(win)
+    api.nvim_command('wincmd '..SIDE)
+    api.nvim_command('vertical resize '..WIN_WIDTH)
+
+    api.nvim_set_current_win(current_win)
 end
 
 local function close()
@@ -97,11 +117,6 @@ local function update_view(update_cursor)
     end
 end
 
-
-local function is_win_open()
-    return get_buf() ~= nil
-end
-
 local function set_mappings()
     local buf = get_buf()
     if not buf then return end
@@ -125,6 +140,10 @@ local function set_mappings()
     end
 end
 
+local function is_win_open()
+    return get_buf() ~= nil
+end
+
 return {
     open = open;
     close = close;
@@ -133,4 +152,5 @@ return {
     get_buf = get_buf;
     get_win = get_win;
     set_mappings = set_mappings;
+    replace_tree = replace_tree;
 }

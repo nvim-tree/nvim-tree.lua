@@ -23,6 +23,7 @@ local is_win_open = winutils.is_win_open
 local close = winutils.close
 local open = winutils.open
 local set_mappings = winutils.set_mappings
+local replace_tree = winutils.replace_tree
 
 local git = require 'lib/git'
 local refresh_git = git.refresh_git
@@ -50,11 +51,9 @@ local function open_file(open_type)
     if node.name == '..' then
         api.nvim_command('cd ..')
 
-        local new_path
-        if get_cwd() == '/' then
-            new_path = '/'
-        else
-            new_path = get_cwd() .. '/'
+        local new_path = get_cwd()
+        if new_path ~= '/' then
+            new_path = new_path .. '/'
         end
 
         set_root_path(new_path)
@@ -132,7 +131,20 @@ end
 
 local function check_buffer_and_open()
     local bufname = api.nvim_buf_get_name(0)
-    if bufname == '' or is_dir(bufname) then toggle() end
+    if bufname == '' then
+        toggle()
+    elseif is_dir(bufname) then
+        api.nvim_command('cd ' .. bufname)
+
+        local new_path = get_cwd()
+        if new_path ~= '/' then
+            new_path = new_path .. '/'
+        end
+        set_root_path(new_path)
+        init_tree()
+
+        toggle()
+    end
 end
 
 return {
@@ -142,5 +154,6 @@ return {
     refresh = refresh;
     check_windows_and_close = check_windows_and_close;
     check_buffer_and_open = check_buffer_and_open;
+    replace_tree = replace_tree;
 }
 
