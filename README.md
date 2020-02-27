@@ -54,7 +54,15 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 
 ## TODO
 - Tree creation should be async
+- better error checking when fs updates
+- open tree when running vim on a folder
+- sneak like cd command to find a directory
+- better default colors (use default vim groups)
 - command to find current file in the directory structure
+- create proper highlight groups or add highlight function to give the user ability to setup colors themselves
+- bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
 - use libuv functions instead of `touch` and `mkdir` in `create_file()` and allow file creation with path like `foo/bar/baz`
-- create highlight function to give the user ability to setup colors themselves
-- better default colors
+- better window management:
+  - check tree buffer/window for change so we can avoid it being resized or moved around or replaced by another file
+  - monitor window layout in current tab to open files in the right place
+  - add `<C-t>` to open buffer in new tab
