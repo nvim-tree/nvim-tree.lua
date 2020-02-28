@@ -18,9 +18,12 @@ Plug 'kyazdani42/nvim-tree.lua'
 let g:lua_tree_side = 'right' | 'left' "left by default
 let g:lua_tree_size = 40 "30 by default
 let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default, not working on mac atm
+let g:lua_tree_follow = 1 "0 by default, this option will bind BufEnter to the LuaTreeFindFile command
+" :help LuaTreeFindFile for more info
 
 nnoremap <C-n> :LuaTreeToggle<CR>
-nnoremap <leader>n :LuaTreeRefresh<CR>
+nnoremap <leader>r :LuaTreeRefresh<CR>
+nnoremap <leader>n :LuaTreeFindFile<CR>
 ```
 
 ## KeyBindings
@@ -52,18 +55,22 @@ nnoremap <leader>n :LuaTreeRefresh<CR>
 
 ![alt text](.github/screenshot.png?raw=true "file explorer")
 
-## TODO 1
+## TODO
+
+### Perf / Fixes
 - Tree creation should be async
-- sneak like cd command to find a directory
-- better default colors (use default vim groups)
-- give user option to choose for file generation command
-- command to find current file in the directory structure
 - refactor all `system` call to `libuv` functions, with better error management
-- create proper highlight groups or add highlight function to give the user ability to setup colors themselves
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
+
+### Features
+- sneak like cd command to find a file/directory
+- better default colors (use default vim groups)
+- create proper highlight groups or add highlight function to give the user ability to setup colors themselves
+- add `<C-t>` to open buffer in new tab
+
+### Window Feature
 - better window management: 
   - check tree buffer/window for change so we can avoid it being resized or moved around or replaced by another file
   - monitor window layout in current tab to open files in the right place
-  - add `<C-t>` to open buffer in new tab
 > this might be a little hard to implement since window layout events do not exist yet
 

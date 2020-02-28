@@ -16,6 +16,7 @@ local init_tree = state.init_tree
 local open_dir = state.open_dir
 local refresh_tree = state.refresh_tree
 local set_root_path = state.set_root_path
+local find_file = state.find_file
 
 local winutils = require 'lib/winutils'
 local update_view = winutils.update_view
@@ -24,6 +25,7 @@ local close = winutils.close
 local open = winutils.open
 local set_mappings = winutils.set_mappings
 local replace_tree = winutils.replace_tree
+local get_win = winutils.get_win
 
 local git = require 'lib/git'
 local refresh_git = git.refresh_git
@@ -147,6 +149,19 @@ local function check_buffer_and_open()
     end
 end
 
+local function find()
+    local line = find_file(api.nvim_buf_get_name(0))
+    if not line then return end
+
+    update_view()
+
+    local win = get_win()
+    if win then 
+        api.nvim_win_set_cursor(win, { line, 0 })
+    end
+
+end
+
 return {
     toggle = toggle;
     open_file = open_file;
@@ -155,5 +170,6 @@ return {
     check_windows_and_close = check_windows_and_close;
     check_buffer_and_open = check_buffer_and_open;
     replace_tree = replace_tree;
+    find = find;
 }
 

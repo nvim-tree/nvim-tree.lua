@@ -119,6 +119,38 @@ local function refresh_tree()
     end
 end
 
+local function clone(obj)
+  if type(obj) ~= 'table' then return obj end
+  local res = {}
+  for k, v in pairs(obj) do res[clone(k)] = clone(v) end
+  return res
+end
+
+local function find_file(path)
+    local relpath = string.sub(path, #ROOT_PATH + 1, -1)
+
+    local tree_copy = clone(Tree)
+
+    for i, node in pairs(tree_copy) do
+        if node.relpath and string.match(relpath, node.relpath) then
+            if node.relpath == relpath then
+                Tree = clone(tree_copy)
+                return i
+            end
+            if node.dir and not node.open then
+                local path = node.path .. node.name
+                node.open = true
+                local dirs = list_dirs(path)
+                for j, n in pairs(create_nodes(path, node.relpath, node.depth + 1, dirs)) do
+                    table.insert(tree_copy, i + j, n)
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
 local function open_dir(tree_index)
     local node = Tree[tree_index];
     node.open = not node.open
@@ -152,4 +184,5 @@ return {
     open_dir = open_dir;
     set_root_path = set_root_path;
     get_cwd = get_cwd;
+    find_file = find_file;
 }

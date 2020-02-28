@@ -26,6 +26,14 @@ open or close the tree
 |:LuaTreeRefresh|			          *:LuaTreeRefresh*
 
 refresh the tree
+
+|:LuaTreeFindFile|				  *:LuaTreeFindFile*
+
+The command will change the cursor in the tree for the current bufname.
+
+It will also open the leafs of the tree leading to the file in the buffer 
+(if you opened a file with something else than the LuaTree, like `fzf`)
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
@@ -45,6 +53,12 @@ Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
 >
     example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
 <
+
+|g:lua_tree_follow|				*g:lua_tree_follow*
+
+Can be `0` or `1`. When `1`, will bind |:LuaTreeFindFile| to |BufEnter|
+
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
