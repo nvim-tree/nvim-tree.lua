@@ -68,7 +68,8 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - create proper highlight groups or add highlight function to give the user ability to setup colors themselves
 - add `<C-t>` to open buffer in new tab
 
-### Window Feature
+### Window Feature / Fixes
+- opening help should open on the bottom
 - better window management: 
   - check tree buffer/window for change so we can avoid it being resized or moved around or replaced by another file
   - monitor window layout in current tab to open files in the right place
