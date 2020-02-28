@@ -3,12 +3,11 @@ local api = vim.api
 local update_view = require 'lib/winutils'.update_view
 local refresh_tree = require 'lib/state'.refresh_tree
 local refresh_git = require 'lib/git'.refresh_git
-local rm = require 'lib/fs'.rm
-local rename = require 'lib/fs'.rename
 
-local function system(v)
-    api.nvim_call_function('system', { v })
-end
+local fs = require 'lib/fs'
+local rm = fs.rm
+local rename = fs.rename
+local create = fs.create
 
 local function input(v)
     local param
@@ -17,20 +16,27 @@ local function input(v)
 end
 
 local function clear_prompt()
-    api.nvim_command('echo "\r' .. string.rep(" ", 80) .. '"')
+    api.nvim_command('echo "\r' .. string.rep(" ", 200) .. '\n"')
 end
 
 local function create_file(path)
-    -- TODO: create files dynamically
     local new_file = input("Create file: " .. path)
-    local new_path = path .. new_file
     clear_prompt()
-    -- TODO: replace system() calls with luv calls
-    if string.match(new_file, '.*/$') then
-        system('mkdir -p ' .. new_path)
-    else
-        system('touch ' .. new_path)
+
+    local file = nil
+    if not string.match(new_file, '.*/$') then
+        file = string.reverse(string.gsub(string.reverse(new_file), '/.*$', ''))
+        new_file = string.gsub(new_file, '[^/]*$', '')
     end
+
+    local folders = ""
+    if #new_file ~= 0 then
+        for p in string.gmatch(new_file, '[^/]*') do
+            folders = folders .. p .. '/'
+        end
+    end
+
+    create(file, folders)
     refresh_git()
     refresh_tree()
     update_view()

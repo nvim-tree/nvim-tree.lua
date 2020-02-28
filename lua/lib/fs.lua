@@ -17,16 +17,7 @@ local function link_to(path)
     return luv.fs_readlink(path) or ''
 end
 
-local function check_dir_access(path)
-    if luv.fs_access(path, 'R') == true then
-        return true
-    else
-        api.nvim_err_writeln('Permission denied: ' .. path)
-        return false
-    end
-end
-
-function print_err(err)
+local function print_err(err)
     if err ~= nil then
         api.nvim_command('echohl ErrorMsg')
         api.nvim_command('echomsg "'..err..'"')
@@ -34,17 +25,32 @@ function print_err(err)
     end
 end
 
-local function rm(path)
-    local stat = luv.fs_lstat(path)
-    if stat and stat.type == 'directory' then
-        return luv.fs_rmdir(path, vim.schedule_wrap(print_err))
+local function system(v)
+    print_err(api.nvim_call_function('system', { v }))
+end
+
+local function check_dir_access(path)
+    if luv.fs_access(path, 'R') == true then
+        return true
     else
-        return luv.fs_unlink(path, vim.schedule_wrap(print_err))
+        print_err('Permission denied: ' .. path)
+        return false
     end
 end
 
+-- TODO: better handling of path removal, rename and file creation with luv calls
+-- it will take some time so leave it for a dedicated PR
+local function rm(path)
+    system('rm -rf ' ..path)
+end
+
 local function rename(file, new_path)
-    luv.fs_rename(file, new_path, vim.schedule_wrap(print_err))
+    system('mv '..file..' '..new_path)
+end
+
+local function create(file, folders)
+    if folders ~= "" then system('mkdir -p '..folders) end
+    if file ~= nil then system('touch ' ..folders..file) end
 end
 
 return {
@@ -55,4 +61,5 @@ return {
     is_dir = is_dir;
     rename = rename;
     rm = rm;
+    create = create;
 }
