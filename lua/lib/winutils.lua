@@ -36,7 +36,7 @@ local BUF_OPTIONS = {
     'nowrap', 'nospell', 'nolist', 'nofoldenable', 'foldmethod=manual',
     'foldcolumn=0', 'nonumber', 'norelativenumber', 'winfixwidth',
     'noswapfile', 'winfixheight', 'bufhidden=wipe', 'splitbelow',
-    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer', 
+    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer'
 }
 
 local WIN_WIDTH = 30
@@ -81,8 +81,11 @@ local function replace_tree()
 
     local tree_position = api.nvim_win_get_position(win)
     local win_width = api.nvim_win_get_width(win)
-    -- TODO: change this to check on right side with window width - win_width == tree_position[2]
-    if win_width == WIN_WIDTH and tree_position[2] == 0 then return end
+    if win_width == WIN_WIDTH then
+        if SIDE == 'H' and tree_position[2] == 0 then return end
+        local columns = api.nvim_get_option('columns')
+        if SIDE == 'L' and tree_position[2] ~= columns - win_width then return end
+    end
 
     local current_win = api.nvim_get_current_win()
 
