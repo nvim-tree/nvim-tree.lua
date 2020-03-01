@@ -16,12 +16,11 @@ local function input(v)
 end
 
 local function clear_prompt()
-    api.nvim_command('echo "\r' .. string.rep(" ", 200) .. '\n"')
+    api.nvim_command('normal :<esc>')
 end
 
 local function create_file(path)
     local new_file = input("Create file: " .. path)
-    clear_prompt()
 
     local file = nil
     if not string.match(new_file, '.*/$') then
@@ -32,11 +31,14 @@ local function create_file(path)
     local folders = ""
     if #new_file ~= 0 then
         for p in string.gmatch(new_file, '[^/]*') do
-            folders = folders .. p .. '/'
+            if p and p ~= "" then
+                folders = folders .. p .. '/'
+            end
         end
     end
 
-    create(file, folders)
+    clear_prompt()
+    create(path, file, folders)
     refresh_git()
     refresh_tree()
     update_view()

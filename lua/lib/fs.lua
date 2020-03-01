@@ -20,7 +20,8 @@ end
 local function print_err(err)
     if err ~= nil then
         api.nvim_command('echohl ErrorMsg')
-        api.nvim_command('echomsg "'..err..'"')
+        -- remove the \n with string.sub
+        api.nvim_command('echomsg "'..string.sub(err, 0, -2)..'"')
         api.nvim_command('echohl None')
     end
 end
@@ -48,9 +49,9 @@ local function rename(file, new_path)
     system('mv '..file..' '..new_path)
 end
 
-local function create(file, folders)
+local function create(path, file, folders)
     if folders ~= "" then system('mkdir -p '..folders) end
-    if file ~= nil then system('touch ' ..folders..file) end
+    if file ~= nil then system('touch '..path..folders..file) end
 end
 
 return {
