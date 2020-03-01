@@ -35,9 +35,8 @@ end
 local BUF_OPTIONS = {
     'nowrap', 'sidescroll=5', 'nospell', 'nolist', 'nofoldenable',
     'foldmethod=manual', 'foldcolumn=0', 'nonumber', 'norelativenumber',
-    'winfixwidth', 'winfixheight', 'noswapfile', 'bufhidden=wipe',
-    'splitbelow', 'splitright', 'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer',
-    'noshowmode', 'noruler', 'noshowcmd',
+    'winfixwidth', 'winfixheight', 'noswapfile', 'splitbelow', 'noruler',
+    'noshowmode', 'noshowcmd'
 }
 
 local WIN_WIDTH = 30
@@ -55,7 +54,7 @@ end
 
 local function open()
     local options = {
-        bufhidden = 'delete';
+        bufhidden = 'wipe';
         buftype = 'nowrite';
         modifiable = false;
     }
@@ -71,8 +70,15 @@ local function open()
     api.nvim_command('wincmd '..SIDE)
     api.nvim_command('vertical resize '..WIN_WIDTH)
     api.nvim_win_set_buf(0, buf)
+
+    api.nvim_command('setlocal winhighlight=EndOfBuffer:LuaTreeEndOfBuffer')
     for _, opt in pairs(BUF_OPTIONS) do
         api.nvim_command('setlocal '..opt)
+    end
+    if SIDE == 'L' then
+        api.nvim_command('setlocal nosplitright')
+    else
+        api.nvim_command('setlocal splitright')
     end
 end
 

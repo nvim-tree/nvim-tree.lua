@@ -45,6 +45,13 @@ local function toggle()
     end
 end
 
+local MOVE_TO = 'l'
+if api.nvim_call_function('exists', { 'g:lua_tree_side' }) == 1 then
+    if api.nvim_get_var('lua_tree_side') == 'right' then
+         MOVE_TO = 'h'
+    end
+end
+
 local function open_file(open_type)
     local tree_index = api.nvim_win_get_cursor(0)[1]
     local tree = get_tree()
@@ -85,7 +92,7 @@ local function open_file(open_type)
             init_tree(new_path)
             update_view()
         else
-            api.nvim_command('wincmd l | '..open_type..' '.. node.linkto)
+            api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '.. node.linkto)
         end
 
     elseif node.dir == true then
@@ -94,7 +101,7 @@ local function open_file(open_type)
         update_view(true)
 
     else
-        api.nvim_command('wincmd l | '..open_type..' '.. node.path .. node.name)
+        api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '.. node.path .. node.name)
     end
 end
 
