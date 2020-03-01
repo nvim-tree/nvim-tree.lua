@@ -127,6 +127,7 @@ local function set_mappings()
         ['<2-RightMouse>'] = 'open_file("chdir")';
         ['<C-v>'] = 'open_file("vsplit")';
         ['<C-x>'] = 'open_file("split")';
+        ['<C-t>'] = 'open_file("tabnew")';
         ['.'] = 'open_file("chdir")';
         a = 'edit_file("create")';
         d = 'edit_file("remove")';

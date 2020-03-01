@@ -39,11 +39,12 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - if the file is a symlink, `<CR>` will follow the symlink
 - type `<C-v>` will open the file in a vertical split
 - type `<C-x>` will open the file in a horizontal split
+- type `<C-t>` will open the file in a new tab
 - Double left click acts like `<CR>`
 - Double right click acts like `.`
 
 ## Features
-- [x] Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`)
+- [x] Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)
 - [x] File icons with vim-devicons
 - [x] Syntax highlighting ([exa](https://github.com/ogham/exa) like)
 - [x] Change directory with `.`
@@ -66,7 +67,6 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - sneak like cd command to find a file/directory
 - better default colors (use default vim groups)
 - create proper highlight groups or add highlight function to give the user ability to setup colors themselves
-- add `<C-t>` to open buffer in new tab
 
 ### Window Feature / Fixes
 - opening help should open on the bottom
