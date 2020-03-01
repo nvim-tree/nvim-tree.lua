@@ -33,10 +33,11 @@ local function get_win()
 end
 
 local BUF_OPTIONS = {
-    'nowrap', 'nospell', 'nolist', 'nofoldenable', 'foldmethod=manual',
-    'foldcolumn=0', 'nonumber', 'norelativenumber', 'winfixwidth',
-    'noswapfile', 'winfixheight', 'bufhidden=wipe', 'splitbelow',
-    'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer'
+    'nowrap', 'sidescroll=5', 'nospell', 'nolist', 'nofoldenable',
+    'foldmethod=manual', 'foldcolumn=0', 'nonumber', 'norelativenumber',
+    'winfixwidth', 'winfixheight', 'noswapfile', 'bufhidden=wipe',
+    'splitbelow', 'splitright', 'winhighlight=EndOfBuffer:LuaTreeEndOfBuffer',
+    'noshowmode', 'noruler', 'noshowcmd',
 }
 
 local WIN_WIDTH = 30
