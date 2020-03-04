@@ -66,7 +66,6 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - Tree creation should be async
 - refactor all `system` call to `libuv` functions, with better error management
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
-- make config module to make it easier to add/modify user options
 
 ### Features
 - sneak like cd command to find a file/directory

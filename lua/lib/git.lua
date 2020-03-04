@@ -1,3 +1,5 @@
+local config = require 'lib/config'
+
 local function system(v) return vim.api.nvim_call_function('system', { v }) end
 local function systemlist(v) return vim.api.nvim_call_function('systemlist', { v }) end
 
@@ -51,18 +53,8 @@ local unmerged = create_git_checker('^[U ][U ]')
 local renamed = create_git_checker('^R')
 local untracked = create_git_checker('^%?%?')
 
-local function get(var, fallback)
-    if vim.api.nvim_call_function('exists', { 'g:'..var }) == 1 then
-        return vim.api.nvim_get_var(var)
-    else
-        return fallback
-    end
-end
-
-local SHOW_GIT_ICON = get('lua_tree_show_git_icons', 1) == 1
-
 local function get_git_attr(path, is_dir)
-    if IS_GIT_REPO == false or not SHOW_GIT_ICON then return '' end
+    if IS_GIT_REPO == false or not config.SHOW_GIT_ICON then return '' end
     if is_dir then
         if is_folder_dirty(path) == true then return '✗ ' end
     else
