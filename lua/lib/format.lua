@@ -2,6 +2,16 @@ local api = vim.api
 
 local HAS_DEV_ICONS = api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1
 
+local function get(var, fallback)
+    if api.nvim_call_function('exists', { 'g:'..var }) == 1 then
+        return api.nvim_get_var(var)
+    else
+        return fallback
+    end
+end
+
+local SHOW_FOLDER_ICON = get('lua_tree_show_folders', 1) == 1
+
 local function get_padding(depth)
     local str = ""
 
@@ -14,7 +24,7 @@ local function get_padding(depth)
 end
 
 local function default_icons(_, isdir, open)
-    if isdir == true then
+    if isdir == true and SHOW_FOLDER_ICON then
         if open == true then return " " end
         return " "
     end
@@ -122,8 +132,10 @@ local function highlight_line(buffer)
             highlight('LuaTreeFolderName', line, 0, -1)
 
         elseif node.dir == true then
-            text_start = text_start + 4
-            highlight('LuaTreeFolderIcon', line, 0, text_start)
+            if SHOW_FOLDER_ICON then
+                text_start = text_start + 4
+                highlight('LuaTreeFolderIcon', line, 0, text_start)
+            end
             highlight('LuaTreeFolderName', line, text_start + gitlen, -1)
 
         elseif node.link == true then

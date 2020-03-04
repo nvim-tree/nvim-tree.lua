@@ -52,7 +52,16 @@ An array of strings that the tree won't display.
 Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
 >
     example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
-<
+
+|g:lua_tree_show_folders|                         *g:lua_tree_show_folders*
+
+Can be `0` or `1`. When `0` it will not show the folder icons
+Default is 1
+
+|g:lua_tree_show_git_icons|                       *g:lua_tree_show_git_icons*
+
+Can be `0` or `1`. When `0` it will not show git icons.
+Default is 1
 
 |g:lua_tree_follow|				*g:lua_tree_follow*
 
