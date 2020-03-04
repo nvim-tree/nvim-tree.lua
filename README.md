@@ -67,6 +67,9 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - refactor all `system` call to `libuv` functions, with better error management
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
 
+### Code
+- change `lua_tree_show...` to an object
+
 ### Features
 - sneak like cd command to find a file/directory
 - better default colors (use default vim groups)
