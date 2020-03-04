@@ -9,8 +9,14 @@ let g:loaded_netrwPlugin = 1
 hi def link LuaTreePopup Normal
 
 au BufWritePost * lua require'tree'.refresh()
-au BufEnter * lua require'tree'.check_windows_and_close()
-au VimEnter * lua require'tree'.check_buffer_and_open()
+
+if get(g:, 'lua_tree_auto_close') != 0
+    au BufEnter * lua require'tree'.check_windows_and_close()
+endif
+
+if get(g:, 'lua_tree_auto_open') != 0
+    au VimEnter * lua require'tree'.check_buffer_and_open()
+endif
 
 " TODO set status line dynamically on bufenter in the luatree
 " to remove lightline and other possible components

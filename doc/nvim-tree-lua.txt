@@ -57,7 +57,19 @@ Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
 |g:lua_tree_follow|				*g:lua_tree_follow*
 
 Can be `0` or `1`. When `1`, will bind |:LuaTreeFindFile| to |BufEnter|
+Default is 0
 
+|g:lua_tree_auto_open|				*g:lua_tree_auto_open*
+
+Can be `0` or `1`. When `1`, will bind |VimEnter| to automatically
+open tree on startup if no files are specified.
+Default is 0
+
+|g:lua_tree_auto_close|				*g:lua_tree_auto_close*
+
+Can be `0` or `1`. When `1`, will bind |BufEnter| to automatically
+close the tree if it's the last window.
+Default is 0
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

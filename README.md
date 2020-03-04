@@ -18,6 +18,8 @@ Plug 'kyazdani42/nvim-tree.lua'
 let g:lua_tree_side = 'right' | 'left' "left by default
 let g:lua_tree_size = 40 "30 by default
 let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default, not working on mac atm
+let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR` or `vim`
+let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
 let g:lua_tree_follow = 1 "0 by default, this option will bind BufEnter to the LuaTreeFindFile command
 " :help LuaTreeFindFile for more info
 
@@ -62,6 +64,7 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 - Tree creation should be async
 - refactor all `system` call to `libuv` functions, with better error management
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
+- make config module to make it easier to add/modify user options
 
 ### Features
 - sneak like cd command to find a file/directory

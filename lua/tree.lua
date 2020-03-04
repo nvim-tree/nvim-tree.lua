@@ -37,7 +37,8 @@ init_tree()
 
 local function toggle()
     if is_win_open() == true then
-        close()
+        local wins = api.nvim_list_wins()
+        if #wins > 1 then close() end
     else
         open()
         update_view()
