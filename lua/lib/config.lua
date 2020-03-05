@@ -10,9 +10,11 @@ end
 
 local HAS_DEV_ICONS = api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1
 
-local SHOW_FOLDER_ICON = get('lua_tree_show_folders', 1) == 1
+local show_icons = get('lua_tree_show_icons', { git = 1, folders = 1, files = 1 })
 
-local SHOW_GIT_ICON = get('lua_tree_show_git_icons', 1) == 1
+local SHOW_FILE_ICON = HAS_DEV_ICONS and show_icons.files == 1
+local SHOW_FOLDER_ICON = show_icons.folders == 1
+local SHOW_GIT_ICON = show_icons.git == 1
 
 local colors = {
     red = get('terminal_color_1', 'Red'),
@@ -26,7 +28,7 @@ local colors = {
 }
 return {
     SHOW_FOLDER_ICON = SHOW_FOLDER_ICON,
-    HAS_DEV_ICONS = HAS_DEV_ICONS,
+    SHOW_FILE_ICON = SHOW_FILE_ICON,
     SHOW_GIT_ICON = SHOW_GIT_ICON,
     colors = colors
 }

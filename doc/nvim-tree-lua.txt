@@ -53,15 +53,21 @@ Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
 >
     example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
 
-|g:lua_tree_show_folders|                         *g:lua_tree_show_folders*
+|g:lua_tree_show_icons|			        *g:lua_tree_show_icons*
 
-Can be `0` or `1`. When `0` it will not show the folder icons
-Default is 1
+Dictionnary, if your terminal or font doesn't support certain unicode
+character, the tree UI might be messed up. The following configuration
+can disable icons per type:
+>
+    let g:lua_tree_show_icons = {
+	\ 'git': 1,
+	\ 'folders': 1,
+	\ 'icons': 1
+	\}
 
-|g:lua_tree_show_git_icons|                       *g:lua_tree_show_git_icons*
-
-Can be `0` or `1`. When `0` it will not show git icons.
-Default is 1
+Can be one of `1` and `0` for each key. By default the tree will try
+to render the icons. The `icons` key can only work if `vim-devicons`
+is installed and in your |runtimepath|
 
 |g:lua_tree_follow|				*g:lua_tree_follow*
 

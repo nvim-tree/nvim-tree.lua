@@ -59,7 +59,7 @@ local function dev_icons(pathname, isdir, open)
 end
 
 local function get_icon_func_gen()
-    if config.HAS_DEV_ICONS then
+    if config.SHOW_FILE_ICON then
         return dev_icons
     else
         return default_icons
@@ -140,7 +140,7 @@ local function highlight_line(buffer)
         elseif is_pic(node.path .. node.name) then
             highlight('LuaTreeImageFile', line, text_start + gitlen, -1)
 
-        elseif config.HAS_DEV_ICONS then
+        elseif config.SHOW_FILE_ICON then
             for k, v in pairs(HIGHLIGHT_GROUPS) do
                 if string.match(node.name, k) ~= nil then
                     text_start = text_start + 4
