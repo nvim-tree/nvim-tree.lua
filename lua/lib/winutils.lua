@@ -66,7 +66,7 @@ local function open()
         api.nvim_buf_set_option(buf, opt, val)
     end
 
-    api.nvim_command('vnew')
+    api.nvim_command('vsplit')
     api.nvim_command('wincmd '..SIDE)
     api.nvim_command('vertical resize '..WIN_WIDTH)
     api.nvim_win_set_buf(0, buf)
