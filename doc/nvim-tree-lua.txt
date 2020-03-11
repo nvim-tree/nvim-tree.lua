@@ -131,5 +131,49 @@ Git integration tells when a file is:
 
 Mouse support defined in |KeyBindings|
 
+==============================================================================
+HIGHLIGHT GROUPS				        *nvim-tree-highlight*
+
+All the following highlight groups can be configured by hand. It is not
+advised to colorize the background of these groups.
+
+Example (in your `init.vim`):
+>
+    highlight LuaTreeSymlink guifg=blue gui=bold,underline
+<
+You should have 'termguicolors' enabled, otherwise, colors will not be
+applied.
+
+LuaTreeSymlink
+LuaTreeFolderName 
+LuaTreeFolderIcon 
+LuaTreeExecFile 
+LuaTreeSpecialFile 
+LuaTreeImageFile 
+LuaTreeMarkdownFile 
+
+LuaTreeLicenseIcon 
+LuaTreeYamlIcon 
+LuaTreeTomlIcon 
+LuaTreeGitignoreIcon 
+LuaTreeJsonIcon 
+
+LuaTreeLuaIcon 
+LuaTreePythonIcon 
+LuaTreeShellIcon 
+LuaTreeJavascriptIcon 
+LuaTreeCIcon 
+LuaTreeReactIcon 
+LuaTreeHtmlIcon 
+LuaTreeRustIcon 
+LuaTreeVimIcon 
+LuaTreeTypescriptIcon 
+
+LuaTreeGitDirty 
+LuaTreeGitStaged 
+LuaTreeGitMerge 
+LuaTreeGitRenamed 
+LuaTreeGitNew 
+
  vim:tw=78:ts=8:noet:ft=help:norl:
 

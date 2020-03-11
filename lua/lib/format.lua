@@ -87,28 +87,28 @@ local function format_tree(tree)
     return dirs
 end
 
-local HIGHLIGHT_GROUPS = {
-    ['^LICENSE$'] = 'LicenseFile';
-    ['^%.?vimrc$'] = 'VimFile';
-    ['%.vim$'] = 'VimFile';
-    ['%.c$'] = 'CFile';
-    ['%.cpp$'] = 'CFile';
-    ['%.cxx$'] = 'CFile';
-    ['%.h$'] = 'CFile';
-    ['%.hpp$'] = 'CFile';
-    ['%.py$'] = 'PythonFile';
-    ['%.lua$'] = 'LuaFile';
-    ['%.rs$'] = 'RustFile';
-    ['%.[cz]?sh$'] = 'ShellFile';
-    ['%.md$'] = 'MarkdownFile';
-    ['%.json$'] = 'JsonFile';
-    ['%.toml$'] = 'TomlFile';
-    ['%.yml$'] = 'YamlFile';
-    ['%.gitignore$'] = 'GitignoreFile';
-    ['%.js$'] = 'JavascriptFile';
-    ['%.ts$'] = 'TypescriptFile';
-    ['%.[tj]sx$'] = 'ReactFile';
-    ['%.html?$'] = 'HtmlFile';
+local HIGHLIGHT_ICON_GROUPS = {
+    ['^LICENSE$'] = 'LicenseIcon';
+    ['^%.?vimrc$'] = 'VimIcon';
+    ['%.vim$'] = 'VimIcon';
+    ['%.c$'] = 'CIcon';
+    ['%.cpp$'] = 'CIcon';
+    ['%.cxx$'] = 'CIcon';
+    ['%.h$'] = 'CIcon';
+    ['%.hpp$'] = 'CIcon';
+    ['%.py$'] = 'PythonIcon';
+    ['%.lua$'] = 'LuaIcon';
+    ['%.rs$'] = 'RustIcon';
+    ['%.[cz]?sh$'] = 'ShellIcon';
+    ['%.md$'] = 'MarkdownIcon';
+    ['%.json$'] = 'JsonIcon';
+    ['%.toml$'] = 'TomlIcon';
+    ['%.yml$'] = 'YamlIcon';
+    ['%.gitignore$'] = 'GitignoreIcon';
+    ['%.js$'] = 'JavascriptIcon';
+    ['%.ts$'] = 'TypescriptIcon';
+    ['%.[tj]sx$'] = 'ReactIcon';
+    ['%.html?$'] = 'HtmlIcon';
 }
 
 local function highlight_line(buffer)
@@ -141,7 +141,7 @@ local function highlight_line(buffer)
             highlight('LuaTreeImageFile', line, text_start + gitlen, -1)
 
         elseif config.SHOW_FILE_ICON then
-            for k, v in pairs(HIGHLIGHT_GROUPS) do
+            for k, v in pairs(HIGHLIGHT_ICON_GROUPS) do
                 if string.match(node.name, k) ~= nil then
                     text_start = text_start + 4
                     highlight('LuaTree' .. v, line, 0, text_start)

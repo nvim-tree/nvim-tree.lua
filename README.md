@@ -34,6 +34,14 @@ let g:lua_tree_show_icons = {
 nnoremap <C-n> :LuaTreeToggle<CR>
 nnoremap <leader>r :LuaTreeRefresh<CR>
 nnoremap <leader>n :LuaTreeFindFile<CR>
+
+" a list of highlight groups is available at :help nvim-tree-highlight
+" example configuration:
+set termguicolors " this variable must be enabled for colors to be applied properly
+
+highlight LuaTreeFolderName guibg=cyan gui=bold,underline
+highlight LuaTreeFolderIcon guibg=blue
+" ...
 ```
 
 ## KeyBindings
@@ -74,5 +82,4 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 
 ### Features
 - better default colors (use vim highlight groups)
-- create proper highlight groups or add highlight function to give the user ability to setup colors themselves
 - bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open

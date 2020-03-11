@@ -10,6 +10,7 @@ g:lua_tree_side	nvim-tree-lua.txt	/*g:lua_tree_side*
 g:lua_tree_size	nvim-tree-lua.txt	/*g:lua_tree_size*
 nvim-tree-commands	nvim-tree-lua.txt	/*nvim-tree-commands*
 nvim-tree-features	nvim-tree-lua.txt	/*nvim-tree-features*
+nvim-tree-highlight	nvim-tree-lua.txt	/*nvim-tree-highlight*
 nvim-tree-info	nvim-tree-lua.txt	/*nvim-tree-info*
 nvim-tree-introduction	nvim-tree-lua.txt	/*nvim-tree-introduction*
 nvim-tree-keybindings	nvim-tree-lua.txt	/*nvim-tree-keybindings*
