@@ -69,19 +69,10 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 ## TODO
 
 ### Perf / Fixes
-- Tree creation should be async
+- Tree creation could be async
 - refactor all `system` call to `libuv` functions, with better error management
-- bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
 
 ### Features
-- sneak like cd command to find a file/directory
-- better default colors (use default vim groups)
+- better default colors (use vim highlight groups)
 - create proper highlight groups or add highlight function to give the user ability to setup colors themselves
-
-### Window Feature / Fixes
-- opening help should open on the bottom
-- better window management: 
-  - check tree buffer/window for change so we can avoid it being resized or moved around or replaced by another file
-  - monitor window layout in current tab to open files in the right place
-> this might be a little hard to implement since window layout events do not exist yet
-
+- bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open

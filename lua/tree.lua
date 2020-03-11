@@ -53,6 +53,17 @@ if api.nvim_call_function('exists', { 'g:lua_tree_side' }) == 1 then
     end
 end
 
+local function create_new_buf(open_type, bufname)
+    if open_type == 'edit' or open_type == 'split' then
+        api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '..bufname)
+    elseif open_type == 'vsplit' then
+        local windows = api.nvim_list_wins();
+        api.nvim_command(#windows..'wincmd '..MOVE_TO..' | vsplit '..bufname)
+    elseif open_type == 'tabnew' then
+        api.nvim_command('tabnew '..bufname)
+    end
+end
+
 local function open_file(open_type)
     local tree_index = api.nvim_win_get_cursor(0)[1]
     local tree = get_tree()
@@ -93,16 +104,15 @@ local function open_file(open_type)
             init_tree(new_path)
             update_view()
         else
-            api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '.. node.linkto)
+            create_new_buf(open_type, node.link_to);
         end
 
     elseif node.dir == true then
         if check_dir_access(node.path .. node.name) == false then return end
         open_dir(tree_index)
         update_view(true)
-
     else
-        api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '.. node.path .. node.name)
+        create_new_buf(open_type, node.path .. node.name);
     end
 end
 
