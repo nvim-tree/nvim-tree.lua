@@ -27,10 +27,24 @@ local colors = {
     dark_red = get('terminal_color_9', 'DarkRed'),
 }
 
+local keybindings = get('lua_tree_bindings', {});
+
+local bindings = {
+    edit = keybindings.edit or '<CR>',
+    edit_vsplit = keybindings.edit_vsplit or '<C-v>',
+    edit_split = keybindings.edit_split or '<C-x>',
+    edit_tab = keybindings.edit_tab or '<C-t>',
+    cd = keybindings.cd or '.',
+    create = keybindings.create or 'a',
+    remove = keybindings.remove or 'd',
+    rename = keybindings.remove or 'r',
+}
+
 return {
     SHOW_FOLDER_ICON = SHOW_FOLDER_ICON,
     SHOW_FILE_ICON = SHOW_FILE_ICON,
     SHOW_GIT_ICON = SHOW_GIT_ICON,
-    colors = colors
+    colors = colors,
+    bindings = bindings
 }
 
