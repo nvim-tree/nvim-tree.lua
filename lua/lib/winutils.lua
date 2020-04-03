@@ -8,6 +8,8 @@ local highlight = libformat.highlight_buffer
 local stateutils = require 'lib/state'
 local get_tree = stateutils.get_tree
 
+local bindings = require 'lib/config'.bindings
+
 local function get_buf()
     local regex = '.*'..BUF_NAME..'$';
 
@@ -132,16 +134,16 @@ local function set_mappings()
     if not buf then return end
 
     local mappings = {
-        ['<CR>'] = 'open_file("edit")';
         ['<2-LeftMouse>'] = 'open_file("edit")';
         ['<2-RightMouse>'] = 'open_file("chdir")';
-        ['<C-v>'] = 'open_file("vsplit")';
-        ['<C-x>'] = 'open_file("split")';
-        ['<C-t>'] = 'open_file("tabnew")';
-        ['.'] = 'open_file("chdir")';
-        a = 'edit_file("create")';
-        d = 'edit_file("remove")';
-        r = 'edit_file("rename")';
+        [bindings.edit] = 'open_file("edit")';
+        [bindings.edit_vsplit] = 'open_file("vsplit")';
+        [bindings.edit_split] = 'open_file("split")';
+        [bindings.edit_tab] = 'open_file("tabnew")';
+        [bindings.cd] = 'open_file("chdir")';
+        [bindings.create] = 'edit_file("create")';
+        [bindings.remove] = 'edit_file("remove")';
+        [bindings.rename] = 'edit_file("rename")';
     }
 
     for k,v in pairs(mappings) do

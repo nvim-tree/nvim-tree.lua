@@ -31,6 +31,20 @@ let g:lua_tree_show_icons = {
 "1 by default, notice that if 'files' is 1, it will only display
 "if web-devicons is installed and on your runtimepath
 
+" You can edit keybindings be defining this variable
+" You don't have to define all keys.
+" NOTE: the 'edit' key will wrap/unwrap a folder and open a file
+let g:lua_tree_bindings = {
+    \ 'edit':        '<CR>',
+    \ 'edit_vsplit': '<C-v>',
+    \ 'edit_split':  '<C-x>',
+    \ 'edit_tab':    '<C-t>',
+    \ 'cd':          '.',
+    \ 'create':      'a',
+    \ 'remove':      'd',
+    \ 'rename':      'r'
+    \ }
+
 nnoremap <C-n> :LuaTreeToggle<CR>
 nnoremap <leader>r :LuaTreeRefresh<CR>
 nnoremap <leader>n :LuaTreeFindFile<CR>

@@ -3,6 +3,7 @@
 :LuaTreeToggle	nvim-tree-lua.txt	/*:LuaTreeToggle*
 g:lua_tree_auto_close	nvim-tree-lua.txt	/*g:lua_tree_auto_close*
 g:lua_tree_auto_open	nvim-tree-lua.txt	/*g:lua_tree_auto_open*
+g:lua_tree_bindings	nvim-tree-lua.txt	/*g:lua_tree_bindings*
 g:lua_tree_follow	nvim-tree-lua.txt	/*g:lua_tree_follow*
 g:lua_tree_ignore	nvim-tree-lua.txt	/*g:lua_tree_ignore*
 g:lua_tree_show_icons	nvim-tree-lua.txt	/*g:lua_tree_show_icons*

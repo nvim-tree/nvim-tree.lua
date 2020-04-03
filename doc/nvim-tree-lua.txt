@@ -109,6 +109,22 @@ INFORMATIONS				        *nvim-tree-info*
 - Double left click acts like '<CR>'
 - Double right click acts like '.'
 
+|g:lua_tree_bindings|                             *g:lua_tree_bindings*
+
+you can change default keybindings by defining this variable.
+default keybindings will be applied to undefined keys.
+>
+    let g:lua_tree_bindings = {
+	\ edit:        '<cr>',
+        \ edit_vsplit: '<c-v>',
+        \ edit_split:  '<c-x>',
+        \ edit_tab:    '<c-t>',
+        \ cd:          '.',
+        \ create:      'a',
+        \ remove:      'd',
+        \ rename:      'r'
+	\ }
+
 |Features|					*nvim-tree-features*
 
 File icons with vim-devicons.
