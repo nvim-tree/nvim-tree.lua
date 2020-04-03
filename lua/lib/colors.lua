@@ -32,15 +32,25 @@ local HIGHLIGHTS = {
     GitStaged = { fg = colors.green },
     GitMerge = { fg = colors.orange },
     GitRenamed = { fg = colors.purple },
-    GitNew = { fg = colors.yellow },
+    GitNew = { fg = colors.yellow }
+}
 
-    EndOfBuffer = { fg = 'bg' }
+local LINKS = {
+    Normal = 'Normal',
+    EndOfBuffer = 'EndOfBuffer',
+    CursorLine = 'CursorLine',
+    VertSplit = 'VertSplit',
+    CursorColumn = 'CursorColumn'
 }
 
 local function init_colors()
     for k, d in pairs(HIGHLIGHTS) do
         local gui = d.gui or 'NONE'
         vim.api.nvim_command('hi def LuaTree'..k..' gui='..gui..' guifg='..d.fg)
+    end
+
+    for k, d in pairs(LINKS) do
+        vim.api.nvim_command('hi def link LuaTree'..k..' '..d)
     end
 end
 

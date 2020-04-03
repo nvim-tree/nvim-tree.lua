@@ -39,9 +39,9 @@ nnoremap <leader>n :LuaTreeFindFile<CR>
 " example configuration:
 set termguicolors " this variable must be enabled for colors to be applied properly
 
+" a list of groups can be found in `:help lua_tree_highlight`
 highlight LuaTreeFolderName guibg=cyan gui=bold,underline
 highlight LuaTreeFolderIcon guibg=blue
-" ...
 ```
 
 ## KeyBindings

@@ -71,7 +71,7 @@ local function open()
     api.nvim_command('vertical resize '..WIN_WIDTH)
     api.nvim_win_set_buf(0, buf)
 
-    api.nvim_command('setlocal winhighlight=EndOfBuffer:LuaTreeEndOfBuffer')
+    api.nvim_command('setlocal winhighlight=EndOfBuffer:LuaTreeEndOfBuffer,Normal:LuaTreeNormal,CursorLine:LuaTreeCursorLine,VertSplit:LuaTreeVertSplit')
     for _, opt in pairs(BUF_OPTIONS) do
         api.nvim_command('setlocal '..opt)
     end

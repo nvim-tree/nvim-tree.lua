@@ -26,6 +26,7 @@ local colors = {
     orange = get('terminal_color_11', 'Orange'),
     dark_red = get('terminal_color_9', 'DarkRed'),
 }
+
 return {
     SHOW_FOLDER_ICON = SHOW_FOLDER_ICON,
     SHOW_FILE_ICON = SHOW_FILE_ICON,

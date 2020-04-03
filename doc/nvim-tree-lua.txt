@@ -134,6 +134,8 @@ Mouse support defined in |KeyBindings|
 ==============================================================================
 HIGHLIGHT GROUPS				        *nvim-tree-highlight*
 
+|lua_tree_highlight|				        *lua_tree_highlight*
+
 All the following highlight groups can be configured by hand. It is not
 advised to colorize the background of these groups.
 
@@ -174,6 +176,14 @@ LuaTreeGitStaged
 LuaTreeGitMerge 
 LuaTreeGitRenamed 
 LuaTreeGitNew 
+
+There are also links to normal bindings to style the tree itself.
+
+Normal
+EndOfBuffer
+CursorLine
+VertSplit
+CursorColumn
 
  vim:tw=78:ts=8:noet:ft=help:norl:
 

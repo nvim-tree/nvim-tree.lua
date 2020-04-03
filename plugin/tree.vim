@@ -18,10 +18,6 @@ if get(g:, 'lua_tree_auto_open') != 0
     au VimEnter * lua require'tree'.check_buffer_and_open()
 endif
 
-" TODO set status line dynamically on bufenter in the luatree
-" to remove lightline and other possible components
-au BufEnter LuaTree setlocal statusline="" 
-
 if get(g:, 'lua_tree_follow') != 0
     au BufEnter * :LuaTreeFindFile
 endif
