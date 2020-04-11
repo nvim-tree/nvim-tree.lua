@@ -50,7 +50,7 @@ local function rename(file, new_path)
 end
 
 local function create(path, file, folders)
-    if folders ~= "" then system('mkdir -p '..folders) end
+    if folders ~= "" then system('mkdir -p '..path..folders) end
     if file ~= nil then system('touch '..path..folders..file) end
 end
 
