@@ -37,7 +37,7 @@ local bindings = {
     cd = keybindings.cd or '.',
     create = keybindings.create or 'a',
     remove = keybindings.remove or 'd',
-    rename = keybindings.remove or 'r',
+    rename = keybindings.rename or 'r',
 }
 
 return {
