@@ -30,15 +30,16 @@ end
 
 local function is_folder_dirty(relpath)
     for _, status in pairs(GIT_STATUS) do
-        if string.match(status, relpath) ~= nil then return true end
+        local match_path = relpath:gsub('(%-)', '%%-')
+        if string.match(status, match_path) ~= nil then return true end
     end
 end
 
 local function create_git_checker(pattern)
     return function(relpath)
         for _, status in pairs(GIT_STATUS) do
-            -- TODO: fix .* as it could be problematic
-            local ret = string.match(status, '^.. .*' .. relpath)
+            local match_path = relpath:gsub('(%-)', '%%-')
+            local ret = string.match(status, '^.. .*' .. match_path)
             if ret ~= nil and string.match(ret, pattern) ~= nil then return true end
         end
         return false
