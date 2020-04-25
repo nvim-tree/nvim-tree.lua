@@ -17,6 +17,12 @@ local function link_to(path)
     return luv.fs_readlink(path) or ''
 end
 
+local function print_err(err)
+  if err then
+    api.nvim_err_writeln(err)
+  end
+end
+
 local function system(v)
     print_err(api.nvim_call_function('system', { v }))
 end
