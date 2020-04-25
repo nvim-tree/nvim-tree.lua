@@ -1,11 +1,12 @@
 local config = require 'lib/config'
+local utils = require'lib.utils'
 
 local function system(v) return vim.api.nvim_call_function('system', { v }) end
 local function systemlist(v) return vim.api.nvim_call_function('systemlist', { v }) end
 
 local function is_git_repo()
     local is_git = system('git rev-parse')
-    return string.match(is_git, 'fatal') == nil
+    return is_git:match('fatal') == nil
 end
 
 local IS_GIT_REPO = is_git_repo()
@@ -30,17 +31,17 @@ end
 
 local function is_folder_dirty(relpath)
     for _, status in pairs(GIT_STATUS) do
-        local match_path = relpath:gsub('(%-)', '%%-')
-        if string.match(status, match_path) ~= nil then return true end
+        if status:match(utils.path_to_matching_str(relpath)) ~= nil then
+          return true
+        end
     end
 end
 
 local function create_git_checker(pattern)
     return function(relpath)
         for _, status in pairs(GIT_STATUS) do
-            local match_path = relpath:gsub('(%-)', '%%-')
-            local ret = string.match(status, '^.. .*' .. match_path)
-            if ret ~= nil and string.match(ret, pattern) ~= nil then return true end
+            local ret = status:match('^.. .*' .. utils.path_to_matching_str(relpath))
+            if ret ~= nil and ret:match(pattern) ~= nil then return true end
         end
         return false
     end

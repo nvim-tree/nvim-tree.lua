@@ -1,4 +1,5 @@
 local api = vim.api
+local utils = require'lib.utils'
 
 local function syslist(v) return api.nvim_call_function('systemlist', { v }) end
 
@@ -52,8 +53,8 @@ end
 local function create_nodes(path, relpath, depth, dirs)
     local tree = {}
 
-    if not string.find(path, '^.*/$') then path = path .. '/' end
-    if not string.find(relpath, '^.*/$') and depth > 0 then relpath = relpath .. '/' end
+    if not path:find('^.*/$') then path = path .. '/' end
+    if not relpath:find('^.*/$') and depth > 0 then relpath = relpath .. '/' end
 
     for i, name in pairs(dirs) do
         local full_path = path..name
@@ -132,7 +133,7 @@ local function find_file(path)
     local tree_copy = clone(Tree)
 
     for i, node in pairs(tree_copy) do
-        if node.relpath and string.match(relpath, node.relpath) then
+        if node.relpath and relpath:find(utils.path_to_matching_str(node.relpath)) then
             if node.relpath == relpath then
                 Tree = clone(tree_copy)
                 return i

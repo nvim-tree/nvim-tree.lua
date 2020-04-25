@@ -3,6 +3,7 @@ local api = vim.api
 local update_view = require 'lib/winutils'.update_view
 local refresh_tree = require 'lib/state'.refresh_tree
 local refresh_git = require 'lib/git'.refresh_git
+local utils = require'lib/utils'
 
 local fs = require 'lib/fs'
 local rm = fs.rm
@@ -23,14 +24,14 @@ local function create_file(path)
     local new_file = input("Create file: " .. path)
 
     local file = nil
-    if not string.match(new_file, '.*/$') then
-        file = string.reverse(string.gsub(string.reverse(new_file), '/.*$', ''))
-        new_file = string.gsub(new_file, '[^/]*$', '')
+    if not new_file:match('.*/$') then
+        file = new_file:reverse():gsub('/.*$', ''):reverse()
+        new_file = new_file:gsub('[^/]*$', '')
     end
 
     local folders = ""
     if #new_file ~= 0 then
-        for p in string.gmatch(new_file, '[^/]*') do
+        for p in new_file:gmatch('[^/]*') do
             if p and p ~= "" then
                 folders = folders .. p .. '/'
             end

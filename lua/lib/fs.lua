@@ -17,15 +17,6 @@ local function link_to(path)
     return luv.fs_readlink(path) or ''
 end
 
-local function print_err(err)
-    if err ~= nil then
-        api.nvim_command('echohl ErrorMsg')
-        -- remove the \n with string.sub
-        api.nvim_command('echomsg "'..string.sub(err, 0, -2)..'"')
-        api.nvim_command('echohl None')
-    end
-end
-
 local function system(v)
     print_err(api.nvim_call_function('system', { v }))
 end

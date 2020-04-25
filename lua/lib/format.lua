@@ -25,7 +25,7 @@ end
 local function create_matcher(arr)
     return function(name)
         for _, n in pairs(arr) do
-            if string.match(name, n) then return true end
+            if name:match(n) then return true end
         end
         return false
     end
@@ -142,7 +142,7 @@ local function highlight_line(buffer)
 
         elseif config.SHOW_FILE_ICON then
             for k, v in pairs(HIGHLIGHT_ICON_GROUPS) do
-                if string.match(node.name, k) ~= nil then
+                if node.name:match(k) ~= nil then
                     text_start = text_start + 4
                     highlight('LuaTree' .. v, line, 0, text_start)
                     break
