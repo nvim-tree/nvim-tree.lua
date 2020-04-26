@@ -2,7 +2,6 @@
 
 ## Notice
 
-- I am working on this plugin to learn lua, neovim's api and create a file explorer with features i need.
 - This plugin does not work on windows.
 
 ## Install
@@ -49,11 +48,9 @@ nnoremap <C-n> :LuaTreeToggle<CR>
 nnoremap <leader>r :LuaTreeRefresh<CR>
 nnoremap <leader>n :LuaTreeFindFile<CR>
 
-" a list of highlight groups is available at :help nvim-tree-highlight
-" example configuration:
 set termguicolors " this variable must be enabled for colors to be applied properly
 
-" a list of groups can be found in `:help lua_tree_highlight`
+" a list of groups can be found at `:help lua_tree_highlight`
 highlight LuaTreeFolderName guibg=cyan gui=bold,underline
 highlight LuaTreeFolderIcon guibg=blue
 ```
@@ -90,10 +87,6 @@ highlight LuaTreeFolderIcon guibg=blue
 
 ## TODO
 
-### Perf / Fixes
 - Tree creation could be async
-- refactor all `system` call to `libuv` functions, with better error management
-
-### Features
+- bufferize tree
 - better default colors (use vim highlight groups)
-- bufferize leafs of node being closed so when opening again the node, we open every directory that was previously open
