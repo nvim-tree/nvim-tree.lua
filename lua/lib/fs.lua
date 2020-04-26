@@ -1,63 +1,77 @@
 local api = vim.api
 local luv = vim.loop
 
-local function get_cwd() return luv.cwd() end
+local M = {}
 
-local function is_dir(path)
-    local stat = luv.fs_lstat(path)
-    return stat and stat.type == 'directory' or false
+function M.get_cwd() return luv.cwd() end
+
+function M.is_dir(path)
+  local stat = luv.fs_lstat(path)
+  return stat and stat.type == 'directory' or false
 end
 
-local function is_symlink(path)
-    local stat = luv.fs_lstat(path)
-    return stat and stat.type == 'link' or false
+function M.is_symlink(path)
+  local stat = luv.fs_lstat(path)
+  return stat and stat.type == 'link' or false
 end
 
-local function link_to(path)
-    return luv.fs_readlink(path) or ''
+function M.link_to(path)
+  return luv.fs_readlink(path) or ''
 end
 
-local function print_err(err)
-  if err then
-    api.nvim_err_writeln(err)
+function M.check_dir_access(path)
+  if luv.fs_access(path, 'R') == true then
+    return true
+  else
+    api.nvim_err_writeln('Permission denied: ' .. path)
+    return false
   end
 end
 
-local function system(v)
-    print_err(api.nvim_call_function('system', { v }))
-end
+local handle = nil
 
-local function check_dir_access(path)
-    if luv.fs_access(path, 'R') == true then
-        return true
-    else
-        print_err('Permission denied: ' .. path)
-        return false
+local function run_process(opt, err, cb)
+  handle = luv.spawn(opt.cmd, { args = opt.args }, vim.schedule_wrap(function(code)
+    handle:close()
+    if code ~= 0 then
+      return api.nvim_err_writeln(err)
     end
+    cb()
+  end))
 end
 
--- TODO: better handling of path removal, rename and file creation with luv calls
--- it will take some time so leave it for a dedicated PR
-local function rm(path)
-    system('rm -rf ' ..path)
+function M.rm(path, cb)
+  local opt = { cmd='rm', args = {'-rf', path } };
+  run_process(opt, 'Error removing '..path, cb)
 end
 
-local function rename(file, new_path)
-    system('mv '..file..' '..new_path)
+
+function M.rename(file, new_path, cb)
+  local opt = { cmd='mv', args = {file, new_path } };
+  run_process(opt, 'Error renaming '..file..' to '..new_path, cb)
 end
 
-local function create(path, file, folders)
-    if folders ~= "" then system('mkdir -p '..path..folders) end
-    if file ~= nil then system('touch '..path..folders..file) end
+function M.create(path, file, folders, cb)
+  local opt_file = nil
+  local file_path = nil
+  if file ~= nil then
+    file_path = path..folders..file
+    opt_file = { cmd='touch', args = {file_path} }
+  end
+
+  if folders ~= "" then
+    local folder_path = path..folders
+    local opt = {cmd = 'mkdir', args = {'-p', folder_path }}
+    run_process(opt, 'Error creating folder '..folder_path, function()
+      if opt_file then
+        run_process(opt, 'Error creating file '..file_path, cb)
+      else
+        cb()
+      end
+    end)
+  elseif opt_file then
+    run_process(opt_file, 'Error creating file '..file_path, cb)
+  end
 end
 
-return {
-    check_dir_access = check_dir_access;
-    is_symlink = is_symlink;
-    link_to = link_to;
-    get_cwd = get_cwd;
-    is_dir = is_dir;
-    rename = rename;
-    rm = rm;
-    create = create;
-}
+return M
