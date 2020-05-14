@@ -13,7 +13,6 @@ local M = {
   BUF_NAME = 'LuaTree'
 }
 
-
 function M.get_buf()
   local regex = '.*'..M.BUF_NAME..'$';
 

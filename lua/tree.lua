@@ -73,7 +73,7 @@ function M.open_file(open_type)
   local node = tree[tree_index]
 
   if node.name == '..' then
-    api.nvim_command('cd ..')
+    api.nvim_command('cd '..node.path..'/..')
 
     local new_path = get_cwd()
     if new_path ~= '/' then
