@@ -66,6 +66,7 @@ function M.open()
 
   local buf = api.nvim_create_buf(false, true)
   api.nvim_buf_set_name(buf, M.BUF_NAME)
+  api.nvim_buf_set_option(buf, 'filetype', M.BUF_NAME)
 
   for opt, val in pairs(options) do
     api.nvim_buf_set_option(buf, opt, val)
