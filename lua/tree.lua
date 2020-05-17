@@ -30,7 +30,8 @@ local git = require 'lib/git'
 local refresh_git = git.refresh_git
 local force_refresh_git = git.force_refresh_git
 
-require 'lib/colors'.init_colors()
+local colors = require 'lib/colors'
+colors.init_colors()
 
 local M = {}
 
@@ -181,6 +182,11 @@ function M.find()
     api.nvim_win_set_cursor(win, { line, 0 })
   end
 
+end
+
+function M.reset_highlight()
+  colors.init_colors()
+  update_view()
 end
 
 return M

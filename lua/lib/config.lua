@@ -10,6 +10,16 @@ local function get(var, fallback)
   end
 end
 
+local function get_color_from_hl(hl_name, fallback)
+  local id = api.nvim_get_hl_id_by_name(hl_name)
+  if not id then return fallback end
+
+  local hl = api.nvim_get_hl_by_id(id, true)
+  if not hl or not hl.foreground then return fallback end
+
+  return hl.foreground
+end
+
 local HAS_DEV_ICONS = api.nvim_call_function('exists', { "*WebDevIconsGetFileTypeSymbol" }) == 1
 
 local show_icons = get('lua_tree_show_icons', { git = 1, folders = 1, files = 1 })
@@ -18,16 +28,18 @@ M.SHOW_FILE_ICON = HAS_DEV_ICONS and show_icons.files == 1
 M.SHOW_FOLDER_ICON = show_icons.folders == 1
 M.SHOW_GIT_ICON = show_icons.git == 1
 
-M.colors = {
-  red = get('terminal_color_1', 'Red'),
-  green = get('terminal_color_2', 'Green'),
-  yellow = get('terminal_color_3', 'Yellow'),
-  blue = get('terminal_color_4', 'Blue'),
-  purple = get('terminal_color_5', 'Purple'),
-  cyan = get('terminal_color_6', 'Cyan'),
-  orange = get('terminal_color_11', 'Orange'),
-  dark_red = get('terminal_color_9', 'DarkRed'),
-}
+function M.get_colors()
+  return {
+    red = get('terminal_color_1', get_color_from_hl('Keyword', 'Red')),
+    green = get('terminal_color_2', get_color_from_hl('Character', 'Green')),
+    yellow = get('terminal_color_3', get_color_from_hl('PreProc', 'Yellow')),
+    blue = get('terminal_color_4', get_color_from_hl('Include', 'Blue')),
+    purple = get('terminal_color_5', get_color_from_hl('Define', 'Purple')),
+    cyan = get('terminal_color_6', get_color_from_hl('Conditional', 'Cyan')),
+    orange = get('terminal_color_11', get_color_from_hl('Number', 'Orange')),
+    dark_red = get('terminal_color_9', get_color_from_hl('Keyword', 'DarkRed')),
+  }
+end
 
 local keybindings = get('lua_tree_bindings', {});
 
