@@ -52,7 +52,6 @@ local LINKS = {
 
 function M.init_colors()
   colors = get_colors()
-  print(vim.inspect(colors))
   HIGHLIGHTS = create_hl()
   for k, d in pairs(HIGHLIGHTS) do
     local gui = d.gui or 'NONE'
