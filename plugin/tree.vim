@@ -23,6 +23,7 @@ augroup LuaTree
     au BufEnter * :LuaTreeFindFile
   endif
 
+  au BufEnter * lua require'tree'.navigate_to_buffer_dir()
   au ColorScheme * lua require'tree'.reset_highlight()
 augroup end
 

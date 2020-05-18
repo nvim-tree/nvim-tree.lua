@@ -153,6 +153,15 @@ function M.check_windows_and_close()
   end
 end
 
+function M.navigate_to_buffer_dir(bufname)
+  local new_path = get_cwd()
+  if new_path ~= '/' then
+    new_path = new_path .. '/'
+  end
+  set_root_path(new_path)
+  init_tree()
+end
+
 function M.check_buffer_and_open()
   local bufname = api.nvim_buf_get_name(0)
   if bufname == '' then
@@ -169,12 +178,7 @@ function M.check_buffer_and_open()
 
     M.toggle()
   else
-    local new_path = get_cwd()
-    if new_path ~= '/' then
-      new_path = new_path .. '/'
-    end
-    set_root_path(new_path)
-    init_tree()
+    M.navigate_to_buffer_dir()
   end
 end
 
