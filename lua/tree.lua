@@ -168,6 +168,13 @@ function M.check_buffer_and_open()
     init_tree()
 
     M.toggle()
+  else
+    local new_path = get_cwd()
+    if new_path ~= '/' then
+      new_path = new_path .. '/'
+    end
+    set_root_path(new_path)
+    init_tree()
   end
 end
 
