@@ -158,6 +158,9 @@ function M.navigate_to_buffer_dir(bufname)
   if new_path ~= '/' then
     new_path = new_path .. '/'
   end
+  if new_path == state.get_root_path() then
+    return
+  end
   set_root_path(new_path)
   init_tree()
 end

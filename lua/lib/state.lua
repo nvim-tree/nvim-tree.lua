@@ -11,6 +11,10 @@ function M.set_root_path(path)
   ROOT_PATH = path
 end
 
+function M.get_root_path()
+  return ROOT_PATH
+end
+
 local Tree = {}
 
 local IGNORE_LIST = ""
