@@ -1,206 +1,150 @@
+local luv = vim.loop
+local tree = require'lib.tree'
+local colors = require'lib.colors'
+local renderer = require'lib.renderer'
+local fs = require'lib.fs'
 local api = vim.api
-
-local fs_update = require 'lib/fs_update'
-local create_file = fs_update.create_file
-local rename_file = fs_update.rename_file
-local remove_file = fs_update.remove_file
-
-local fs = require 'lib/fs'
-local check_dir_access = fs.check_dir_access
-local is_dir = fs.is_dir
-local get_cwd = fs.get_cwd
-
-local state = require 'lib/state'
-local get_tree = state.get_tree
-local init_tree = state.init_tree
-local open_dir = state.open_dir
-local refresh_tree = state.refresh_tree
-local set_root_path = state.set_root_path
-local find_file = state.find_file
-
-local winutils = require 'lib/winutils'
-local update_view = winutils.update_view
-local is_win_open = winutils.is_win_open
-local close = winutils.close
-local open = winutils.open
-local set_mappings = winutils.set_mappings
-local get_win = winutils.get_win
-
-local git = require 'lib/git'
-local refresh_git = git.refresh_git
-local force_refresh_git = git.force_refresh_git
-
-local colors = require 'lib/colors'
-colors.init_colors()
 
 local M = {}
 
-M.replace_tree = winutils.replace_tree
-
-init_tree()
-
 function M.toggle()
-  if is_win_open() == true then
-    local wins = api.nvim_list_wins()
-    if #wins > 1 then close() end
+  if tree.win_open() then
+    tree.close()
   else
-    open()
-    update_view()
-    set_mappings()
+    tree.open()
   end
 end
 
-local MOVE_TO = 'l'
-if api.nvim_call_function('exists', { 'g:lua_tree_side' }) == 1 then
-  if api.nvim_get_var('lua_tree_side') == 'right' then
-    MOVE_TO = 'h'
+function M.close()
+  if tree.win_open() then
+    tree.close()
   end
 end
 
-local function create_new_buf(open_type, bufname)
-  if open_type == 'edit' or open_type == 'split' then
-    api.nvim_command('wincmd '..MOVE_TO..' | '..open_type..' '..bufname)
-  elseif open_type == 'vsplit' then
-    local windows = api.nvim_list_wins();
-    api.nvim_command(#windows..'wincmd '..MOVE_TO..' | vsplit '..bufname)
-  elseif open_type == 'tabnew' then
-    api.nvim_command('tabnew '..bufname)
+function M.open()
+  if not tree.win_open() then
+    tree.open()
   end
 end
 
-function M.open_file(open_type)
-  local tree_index = api.nvim_win_get_cursor(0)[1]
-  local tree = get_tree()
-  local node = tree[tree_index]
+function M.on_keypress(mode)
+  local node = tree.get_node_at_cursor()
+  if not node then return end
 
-  if node.name == '..' then
-    api.nvim_command('cd '..node.path..'/..')
+  if mode == 'create' then
+    return fs.create(node)
+  elseif mode == 'remove' then
+    return fs.remove(node)
+  elseif mode == 'rename' then
+    return fs.rename(node)
+  end
 
-    local new_path = get_cwd()
-    if new_path ~= '/' then
-      new_path = new_path .. '/'
-    end
+  if node.name == ".." then
+    return tree.change_dir("..")
+  elseif mode == "cd" and node.entries ~= nil then
+    return tree.change_dir(node.absolute_path)
+  elseif mode == "cd" then
+    return
+  end
 
-    set_root_path(new_path)
-    force_refresh_git()
-    init_tree(new_path)
-    update_view()
-
-  elseif open_type == 'chdir' then
-    if node.dir == false or check_dir_access(node.path .. node.name) == false then return end
-
-    api.nvim_command('cd ' .. node.path .. node.name)
-    local new_path = get_cwd() .. '/'
-    set_root_path(new_path)
-    force_refresh_git()
-    init_tree(new_path)
-    update_view()
-
-  elseif node.link == true then
-    local link_to_dir = is_dir(node.linkto)
-    if link_to_dir == true and check_dir_access(node.linkto) == false then return end
-
-    if link_to_dir == true then
-      api.nvim_command('cd ' .. node.linkto)
-      local new_path = get_cwd() .. '/'
-      set_root_path(new_path)
-      force_refresh_git()
-      init_tree(new_path)
-      update_view()
-    else
-      create_new_buf(open_type, node.link_to);
-    end
-
-  elseif node.dir == true then
-    if check_dir_access(node.path .. node.name) == false then return end
-    open_dir(tree_index)
-    update_view(true)
+  if node.link_to then
+    local stat = luv.fs_stat(node.link_to)
+    if stat.type == 'directory' then return end
+    tree.open_file(mode, node.link_to)
+  elseif node.entries ~= nil then
+    tree.unroll_dir(node)
   else
-    create_new_buf(open_type, node.path .. node.name);
-  end
-end
-
-function M.edit_file(edit_type)
-  local tree = get_tree()
-  local tree_index = api.nvim_win_get_cursor(0)[1]
-  local node = tree[tree_index]
-
-  if edit_type == 'create' then
-    if node.dir == true then
-      create_file(node.path .. node.name .. '/')
-    else
-      create_file(node.path)
-    end
-  elseif edit_type == 'remove' then
-    remove_file(node.name, node.path)
-  elseif edit_type == 'rename' then
-    rename_file(node.name, node.path)
+    tree.open_file(mode, node.absolute_path)
   end
 end
 
 function M.refresh()
-  if refresh_git() == true then
-    refresh_tree()
-    update_view()
+  tree.refresh_tree()
+end
+
+function M.on_enter()
+  local bufnr = api.nvim_get_current_buf()
+  local bufname = api.nvim_buf_get_name(bufnr)
+
+  local stats = luv.fs_stat(bufname)
+  local is_dir = stats and stats.type == 'directory'
+  if is_dir then
+    api.nvim_command('cd '..bufname)
+  end
+  local should_open = vim.g.lua_tree_auto_open == 1 and (bufname == '' or is_dir)
+  colors.setup()
+  tree.init(should_open, should_open)
+end
+
+local function is_file_readable(fname)
+  local stat = luv.fs_stat(fname)
+  if not stat or not stat.type == 'file' or not luv.fs_access(fname, 'R') then return false end
+  return true
+end
+
+local function find_file()
+  if not tree.win_open() then return end
+  local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
+  if not is_file_readable(bufname) then return end
+
+  tree.set_index_and_redraw(bufname)
+end
+
+local function on_leave()
+  if #api.nvim_list_wins() == 1 and tree.win_open() then
+    api.nvim_command(':qa!')
   end
 end
 
-function M.check_windows_and_close()
-  local wins = api.nvim_list_wins()
+local function update_root_dir()
+  local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
+  if not is_file_readable(bufname) or not tree.Tree.cwd then return end
 
-  if #wins == 1 and is_win_open() then
-    api.nvim_command('q!')
-  end
-end
-
-function M.navigate_to_buffer_dir(bufname)
-  local new_path = get_cwd()
-  if new_path ~= '/' then
-    new_path = new_path .. '/'
-  end
-  if new_path == state.get_root_path() then
+  -- this logic is a hack
+  -- depending on vim-rooter or autochdir, it would not behave the same way when those two are not enabled
+  -- until i implement multiple workspaces/project, it should stay like this
+  if bufname:match(tree.Tree.cwd:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)')) ~= nil then
     return
   end
-  set_root_path(new_path)
-  init_tree()
+  local new_cwd = luv.cwd()
+  if tree.Tree.cwd == new_cwd then return end
+
+  tree.change_dir(new_cwd)
 end
 
-function M.check_buffer_and_open()
-  local bufname = api.nvim_buf_get_name(0)
-  if bufname == '' then
-    M.toggle()
-  elseif is_dir(bufname) then
-    api.nvim_command('cd ' .. bufname)
-
-    local new_path = get_cwd()
-    if new_path ~= '/' then
-      new_path = new_path .. '/'
-    end
-    set_root_path(new_path)
-    init_tree()
-
-    M.toggle()
-  else
-    M.navigate_to_buffer_dir()
-  end
-end
-
-function M.find()
-  local line = find_file(api.nvim_buf_get_name(0))
-  if not line then return end
-
-  update_view()
-
-  local win = get_win()
-  if win then
-    api.nvim_win_set_cursor(win, { line, 0 })
+function M.buf_enter()
+  if vim.g.lua_tree_auto_close ~= 0 then
+    on_leave()
   end
 
+  update_root_dir()
+  if vim.g.lua_tree_follow ~= 0 then
+    find_file()
+  end
 end
 
 function M.reset_highlight()
-  colors.init_colors()
-  update_view()
+  colors.setup()
+  renderer.render_hl(tree.Tree.bufnr)
+end
+
+function M.xdg_open()
+  local node = tree.get_node_at_cursor()
+  -- TODO: this should open symlink targets
+  if not node or node.entries or node.link_to then return end
+
+  local cmd
+  if vim.fn.has('unix') == 1 then
+    cmd = 'xdg-open'
+  else
+    cmd = 'open'
+  end
+
+  vim.loop.spawn(cmd, {args={node.absolute_path}}, vim.schedule_wrap(function(code)
+    if code ~= 0 then
+      api.nvim_err_writeln("Could not open "..node.absolute_path)
+    end
+  end))
 end
 
 return M

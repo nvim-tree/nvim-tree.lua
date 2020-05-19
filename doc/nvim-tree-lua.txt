@@ -7,6 +7,8 @@ Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 ==============================================================================
 INTRODUCTION                                       *nvim-tree-introduction*
 
+This file explorer doesn't work on windows and requires neovim `nightly`
+
 ==============================================================================
 QUICK START                                        *nvim-tree-quickstart*
 
@@ -18,6 +20,14 @@ open the tree with :LuaTreeToggle
 
 ==============================================================================
 COMMANDS                                           *nvim-tree-commands*
+
+|:LuaTreeOpen| 	                                  *:LuaTreeOpen*
+
+opens the tree
+
+|:LuaTreeClose| 	                          *:LuaTreeClose*
+
+closes the tree
 
 |:LuaTreeToggle| 	                          *:LuaTreeToggle*
 
@@ -32,7 +42,8 @@ refresh the tree
 The command will change the cursor in the tree for the current bufname.
 
 It will also open the leafs of the tree leading to the file in the buffer 
-(if you opened a file with something else than the LuaTree, like `fzf`)
+(if you opened a file with something else than the LuaTree, like `fzf` or
+`:split`)
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
@@ -48,8 +59,8 @@ where the window will open (default to 'left')
 
 |g:lua_tree_ignore|				*g:lua_tree_ignore*
 
-An array of strings that the tree won't display.
-Each pattern is passed into the 'ls' function as `--ignore=PATTERN`
+An array of strings that the tree won't load and display.
+useful to hide large data/cache folders.
 >
     example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
 
@@ -66,12 +77,30 @@ can disable icons per type:
 	\}
 
 Can be one of `1` and `0` for each key. By default the tree will try
-to render the icons. The `icons` key can only work if `vim-devicons`
+to render the icons. The `icons` key can only work if `nvim-web-devicons`
 is installed and in your |runtimepath|
+(https://github.com/kyazdani42/nvim-web-devicons)
 
+|g:lua_tree_icons|                                *g:lua_tree_icons*
+
+You can set some icons for the git status and the default icon that shows
+when no icon is found for a file.
+>
+  let g:lua_tree_icons = {
+      \ 'default': '',
+      \ 'git': {
+      \   'unstaged': "✗",
+      \   'staged': "✓",
+      \   'unmerged': "═",
+      \   'renamed': "➜",
+      \   'untracked': "★"
+      \   }
+      \ }
+<
 |g:lua_tree_follow|				*g:lua_tree_follow*
 
-Can be `0` or `1`. When `1`, will bind |:LuaTreeFindFile| to |BufEnter|
+Can be `0` or `1`. When `1`, will update the cursor to update to the correct
+location in the tree on |BufEnter|.
 Default is 0
 
 |g:lua_tree_auto_open|				*g:lua_tree_auto_open*
@@ -105,6 +134,8 @@ INFORMATIONS				        *nvim-tree-info*
 - type '<C-v>' will open the file in a vertical split
 - type '<C-x>' will open the file in a horizontal split
 - type '<C-t>' will open the file in a new tab
+- type 'gx' to open the file with the `open` command on macos and `xdg-open`
+on linux.
 
 - Double left click acts like '<CR>'
 - Double right click acts like '.'
@@ -130,8 +161,7 @@ default keybindings will be applied to undefined keys.
 File icons with vim-devicons.
 
 Uses other type of icons so a good font support is recommended.
-If the tree renders weird glyphs, install correct fonts or try to change
-your terminal.
+If the tree renders weird glyphs, install the correct fonts.
 
 Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
 ugly colors otherwise.
@@ -140,8 +170,9 @@ Git integration tells when a file is:
 - ✗  unstaged or folder is dirty
 - ✓  staged
 - ★  new file
-- ✓✗ partially staged
-- ✓★ new file staged
+- ✓ ✗ partially staged
+- ✓ ★ new file staged
+- ✓ ★ ✗ new file staged and has unstaged modifications
 - ═  merging
 - ➜  renamed
 
