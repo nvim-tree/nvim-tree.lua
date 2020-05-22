@@ -8,7 +8,6 @@ local M = {}
 local function create_hl() 
   return {
     Symlink = { gui = 'bold', fg = colors.cyan },
-    FolderName = { gui = 'bold', fg = colors.blue },
     FolderIcon = { fg = '#90a4ae' },
 
     ExecFile = { gui = 'bold', fg = colors.green },
@@ -43,6 +42,7 @@ end
 local HIGHLIGHTS = create_hl()
 
 local LINKS = {
+  FolderName = 'Directory',
   Normal = 'Normal',
   EndOfBuffer = 'EndOfBuffer',
   CursorLine = 'CursorLine',
