@@ -90,8 +90,11 @@ local function find_file()
   tree.set_index_and_redraw(bufname)
 end
 
-local function on_leave()
-  if #api.nvim_list_wins() == 1 and tree.win_open() then
+function M.on_leave()
+  if #api.nvim_list_wins() == 2
+    and tree.win_open()
+    and api.nvim_get_current_buf() ~= tree.Tree.bufnr
+    then
     api.nvim_command(':qa!')
   end
 end
@@ -113,10 +116,6 @@ local function update_root_dir()
 end
 
 function M.buf_enter()
-  if vim.g.lua_tree_auto_close ~= 0 then
-    on_leave()
-  end
-
   update_root_dir()
   if vim.g.lua_tree_follow ~= 0 then
     find_file()
