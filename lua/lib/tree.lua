@@ -20,9 +20,19 @@ M.Tree = {
   bufnr = nil,
   winnr = nil,
   buf_options = {
-    'nowrap', 'sidescroll=5', 'nospell', 'nolist', 'nofoldenable',
-    'foldmethod=manual', 'foldcolumn=0', 'nonumber',
-    'noswapfile', 'splitbelow', 'noruler', 'noshowmode', 'noshowcmd'
+    'sidescroll=5', 'noswapfile', 'splitbelow',
+    'noruler', 'noshowmode', 'noshowcmd'
+  },
+  win_options = {
+    relativenumber = false,
+    number =  false,
+    list = false,
+    winfixwidth = true,
+    winfixheight = true,
+    foldenable = false,
+    spell = false,
+    foldmethod = 'manual',
+    foldcolumn = '0'
   }
 }
 
@@ -238,9 +248,9 @@ local function create_win()
 
   M.Tree.winnr = api.nvim_get_current_win()
 
-  api.nvim_win_set_option(M.Tree.winnr, 'relativenumber', false)
-  api.nvim_win_set_option(M.Tree.winnr, 'winfixwidth', true)
-  api.nvim_win_set_option(M.Tree.winnr, 'winfixheight', true)
+  for opt, val in pairs(M.Tree.win_options) do
+    api.nvim_win_set_option(M.Tree.winnr, opt, val)
+  end
   api.nvim_command('setlocal winhighlight+=EndOfBuffer:LuaTreeEndOfBuffer,Normal:LuaTreeNormal,CursorLine:LuaTreeCursorLine,VertSplit:LuaTreeVertSplit')
 end
 
