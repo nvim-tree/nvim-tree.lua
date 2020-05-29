@@ -19,7 +19,7 @@ local function create_file(file)
     else
       -- FIXME: i don't know why but libuv keeps creating file with executable permissions
       -- this is why we need to chmod to default file permissions
-      luv.fs_chmod(file, 0644)
+      luv.fs_chmod(file, 420)
       luv.fs_close(fd)
       api.nvim_out_write('File '..file..' was properly created\n')
       refresh_tree()
