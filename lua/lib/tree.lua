@@ -164,11 +164,10 @@ function M.set_index_and_redraw(fname)
   end
 
   local index = iter(M.Tree.entries)
+  renderer.draw(M.Tree, reload)
   if index then
     api.nvim_win_set_cursor(M.Tree.winnr, {index, 0})
   end
-
-  renderer.draw(M.Tree, reload)
 
   return index
 end
