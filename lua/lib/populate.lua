@@ -1,4 +1,5 @@
 local config = require'lib.config'
+local git = require'lib.git'
 local icon_config = config.get_icon_state()
 
 local api = vim.api
@@ -190,52 +191,7 @@ function M.populate(entries, cwd)
     return
   end
 
-  M.update_git_status(entries, cwd)
-end
-
-function M.update_git_status(entries, cwd)
-  local git_root = vim.fn.system('cd '..cwd..' && git rev-parse --show-toplevel')
-  if not git_root or #git_root == 0 or git_root:match('fatal: not a git repository') then
-    return
-  end
-  git_root = git_root:sub(0, -2)
-
-  local git_statuslist = vim.fn.systemlist('cd '..cwd..' && git status --porcelain=v1')
-  local git_status = {}
-
-  for _, v in pairs(git_statuslist) do
-    local head = v:sub(0, 2)
-    local body = v:sub(4, -1)
-    if body:match('%->') ~= nil then
-      body = body:gsub('^.* %-> ', '')
-    end
-    git_status[body] = head
-  end
-
-
-  local matching_cwd = path_to_matching_str(git_root..'/')
-  for _, node in pairs(entries) do
-    local relpath = node.absolute_path:gsub(matching_cwd, '')
-    if node.entries ~= nil then
-      relpath = relpath..'/'
-      node.git_status = nil
-    end
-
-    local status = git_status[relpath]
-    if status then
-      node.git_status = status
-    elseif node.entries ~= nil then
-      local matcher = '^'..path_to_matching_str(relpath)
-      for key, _ in pairs(git_status) do
-        if key:match(matcher) then
-          node.git_status = 'dirty'
-          break
-        end
-      end
-    else
-      node.git_status = nil
-    end
-  end
+  git.update_status(entries, cwd)
 end
 
 return M
