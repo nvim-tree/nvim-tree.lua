@@ -3,10 +3,10 @@ local luv = vim.loop
 
 local renderer = require'lib.renderer'
 local config = require'lib.config'
+local git = require'lib.git'
 local pops = require'lib.populate'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
-local update_git = pops.update_git_status
 
 local M = {}
 
@@ -98,7 +98,7 @@ function M.unroll_dir(node)
 end
 
 local function refresh_git(node)
-  update_git(node.entries, node.absolute_path or node.cwd)
+  git.update_status(node.entries, node.absolute_path or node.cwd)
   for _, entry in pairs(node.entries) do
     if entry.entries ~= nil then
       refresh_git(entry)
@@ -122,6 +122,7 @@ function M.refresh_tree()
     refresh_nodes(M.Tree)
   -- end
   if config.get_icon_state().show_git_icon then
+    git.reload_roots()
     refresh_git(M.Tree)
   end
   if M.Tree.winnr ~= nil then
