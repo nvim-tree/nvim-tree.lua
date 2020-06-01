@@ -7,9 +7,7 @@ local luv = vim.loop
 
 local M = {}
 
-local function path_to_matching_str(path)
-  return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)')
-end
+local path_to_matching_str = require'lib.utils'.path_to_matching_str
 
 local function dir_new(cwd, name)
   local absolute_path = cwd..'/'..name
