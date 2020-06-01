@@ -125,8 +125,10 @@ function M.refresh_tree()
     git.reload_roots()
     refresh_git(M.Tree)
   end
-  if M.Tree.winnr ~= nil then
+  if M.win_open() then
     renderer.draw(M.Tree, true)
+  else
+    M.Tree.loaded = false
   end
 end
 
@@ -165,12 +167,14 @@ function M.set_index_and_redraw(fname)
   end
 
   local index = iter(M.Tree.entries)
+  if not M.win_open() then
+    M.Tree.loaded = false
+    return
+  end
   renderer.draw(M.Tree, reload)
   if index then
     api.nvim_win_set_cursor(M.Tree.winnr, {index, 0})
   end
-
-  return index
 end
 
 function M.open_file(mode, filename)

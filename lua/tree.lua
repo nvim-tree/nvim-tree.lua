@@ -83,7 +83,6 @@ local function is_file_readable(fname)
 end
 
 local function find_file()
-  if not tree.win_open() then return end
   local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
   if not is_file_readable(bufname) then return end
 
