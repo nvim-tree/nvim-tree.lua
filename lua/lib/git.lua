@@ -43,7 +43,7 @@ end
 
 local function create_root(cwd)
   local git_root = vim.fn.system('cd '..cwd..' && git rev-parse --show-toplevel')
-  if not git_root or #git_root == 0 or git_root:match('fatal: not a git repository') then
+  if not git_root or #git_root == 0 or git_root:match('fatal') then
     roots[cwd] = not_git
     return false
   end
