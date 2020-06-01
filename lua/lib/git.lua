@@ -1,3 +1,4 @@
+local utils = require'lib.utils'
 local M = {}
 
 local roots = {}
@@ -26,10 +27,6 @@ function M.reload_roots()
   end
 end
 
-local function path_to_matching_str(path)
-  return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)')
-end
-
 local function get_git_root(path)
   if roots[path] then
     return path, roots[path]
@@ -37,7 +34,7 @@ local function get_git_root(path)
 
   for name, status in pairs(roots) do
     if status ~= not_git then
-      if path:match(path_to_matching_str(name)) then
+      if path:match(utils.path_to_matching_str(name)) then
         return name, status
       end
     end
@@ -65,7 +62,7 @@ function M.update_status(entries, cwd)
     return
   end
 
-  local matching_cwd = path_to_matching_str(git_root..'/')
+  local matching_cwd = utils.path_to_matching_str(git_root..'/')
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
     if node.entries ~= nil then
@@ -77,7 +74,7 @@ function M.update_status(entries, cwd)
     if status then
       node.git_status = status
     elseif node.entries ~= nil then
-      local matcher = '^'..path_to_matching_str(relpath)
+      local matcher = '^'..utils.path_to_matching_str(relpath)
       for key, _ in pairs(git_status) do
         if key:match(matcher) then
           node.git_status = 'dirty'
