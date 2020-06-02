@@ -18,9 +18,9 @@ end
 if icon_state.show_folder_icon then
   get_folder_icon = function(open)
     if open then
-      return " "
+      return icon_state.icons.folder_icons.open .. " "
     else
-      return " "
+      return icon_state.icons.folder_icons.default .. " "
     end
   end
   set_folder_hl = function(index, depth, icon_len, name_len)

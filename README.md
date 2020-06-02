@@ -63,6 +63,10 @@ let g:lua_tree_icons = {
     \   'unmerged': "═",
     \   'renamed': "➜",
     \   'untracked': "★"
+    \   },
+    \ 'folder': {
+    \   'default': "",
+    \   'open': ""
     \   }
     \ }
 
