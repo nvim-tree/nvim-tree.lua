@@ -10,6 +10,10 @@ function M.get_icon_state()
       unmerged = "═",
       renamed = "➜",
       untracked = "★"
+    },
+    folder_icons = {
+      default = "",
+      open = ""
     }
   }
 
@@ -21,6 +25,11 @@ function M.get_icon_state()
     for key, val in pairs(user_icons.git) do
       if icons.git_icons[key] then
         icons.git_icons[key] = val
+      end
+    end
+    for key, val in pairs(user_icons.folder) do
+      if icons.folder_icons[key] then
+        icons.folder_icons[key] = val
       end
     end
   end
