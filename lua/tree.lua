@@ -90,12 +90,11 @@ local function find_file()
 end
 
 function M.on_leave()
-  if #api.nvim_list_wins() == 2
-    and tree.win_open()
-    and api.nvim_get_current_buf() ~= tree.Tree.bufnr
-    then
-    api.nvim_command(':qa!')
-  end
+  vim.defer_fn(function()
+    if #api.nvim_list_wins() == 1 and tree.win_open() then
+      api.nvim_command(':qa!')
+    end
+  end, 50)
 end
 
 local function update_root_dir()
