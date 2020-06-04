@@ -52,6 +52,7 @@ local function create_root(cwd)
 end
 
 function M.update_status(entries, cwd)
+  local cwd = cwd:gsub(' ', '\\ ')
   local git_root, git_status = get_git_root(cwd)
   if not git_root then
     if not create_root(cwd) then
