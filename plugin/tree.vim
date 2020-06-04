@@ -12,7 +12,7 @@ augroup LuaTree
   au BufWritePost * lua require'tree'.refresh()
   au BufEnter * lua require'tree'.buf_enter()
   if get(g:, 'lua_tree_auto_close') == 1
-    au QuitPre * lua require'tree'.on_leave()
+    au WinClosed * lua require'tree'.on_leave()
   endif
   au VimEnter * lua require'tree'.on_enter()
   au ColorScheme * lua require'tree'.reset_highlight()
