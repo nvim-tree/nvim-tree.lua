@@ -104,6 +104,15 @@ function M.refresh_entries(entries, cwd)
     ::continue::
   end
 
+  local idx = 1
+  for _, name in ipairs(cached_entries) do
+    if not new_entries[name] then
+      table.remove(entries, idx, idx + 1)
+    else
+      idx = idx + 1
+    end
+  end
+
   local all = {
     { entries = dirs, fn = dir_new },
     { entries = links, fn = link_new },
@@ -125,15 +134,6 @@ function M.refresh_entries(entries, cwd)
         cached_entries[idx] = name
       end
       prev = name
-    end
-  end
-
-  local idx = 1
-  for _, name in ipairs(cached_entries) do
-    if not new_entries[name] then
-      table.remove(entries, idx, idx + 1)
-    else
-      idx = idx + 1
     end
   end
 end

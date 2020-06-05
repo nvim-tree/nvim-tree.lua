@@ -77,23 +77,10 @@ function M.create(node)
   end
 end
 
-local remove_ok = true
-
-local function remove_callback(name, absolute_path)
-  return function(err, success)
-    if err ~= nil then
-      api.nvim_err_writeln(err)
-      remove_ok = false
-    elseif not success then
-      remove_ok = false
-      api.nvim_err_writeln('Could not remove '..name)
-    else
-      api.nvim_out_write(name..' has been removed\n')
-      for _, buf in pairs(api.nvim_list_bufs()) do
-        if api.nvim_buf_get_name(buf) == absolute_path then
-          api.nvim_command(':bd! '..buf)
-        end
-      end
+local function clear_buffer(absolute_path)
+  for _, buf in pairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_get_name(buf) == absolute_path then
+      api.nvim_command(':bd! '..buf)
     end
   end
 end
@@ -110,14 +97,16 @@ local function remove_dir(cwd)
 
     local new_cwd = cwd..'/'..name
     if t == 'directory' then
-      remove_dir(new_cwd)
+      local success = remove_dir(new_cwd)
+      if not success then return false end
     else
-      luv.fs_unlink(new_cwd, vim.schedule_wrap(remove_callback(new_cwd, new_cwd)))
+      local success = luv.fs_unlink(new_cwd)
+      if not success then return false end
+      clear_buffer(new_cwd)
     end
-    if not remove_ok then return end
   end
 
-  luv.fs_rmdir(cwd, vim.schedule_wrap(remove_callback(cwd, cwd)))
+  return luv.fs_rmdir(cwd)
 end
 
 function M.remove(node)
@@ -126,44 +115,42 @@ function M.remove(node)
   local ans = vim.fn.input("Remove " ..node.name.. " ? y/n: ")
   clear_prompt()
   if ans:match('^y') then
-    remove_ok = true
     if node.entries ~= nil then
-      remove_dir(node.absolute_path)
+      local success = remove_dir(node.absolute_path)
+      if not success then
+        return api.nvim_err_writeln('Could not remove '..node.name)
+      end
+      api.nvim_out_write(node.name..' has been removed\n')
     else
-      luv.fs_unlink(node.absolute_path, vim.schedule_wrap(
-        remove_callback(node.name, node.absolute_path)
-      ))
+      local success = luv.fs_unlink(node.absolute_path)
+      if not success then
+        return api.nvim_err_writeln('Could not remove '..node.name)
+      end
+      api.nvim_out_write(node.name..' has been removed\n')
+      clear_buffer(node.absolute_path)
     end
     refresh_tree()
-  end
-end
-
-local function rename_callback(node, new_name)
-  return function(err, success)
-    if err ~= nil then
-      api.nvim_err_writeln(err)
-    elseif not success then
-      api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
-    else
-      api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
-      for _, buf in pairs(api.nvim_list_bufs()) do
-        if api.nvim_buf_get_name(buf) == node.absolute_path then
-          api.nvim_buf_set_name(buf, new_name)
-        end
-      end
-      refresh_tree()
-    end
   end
 end
 
 function M.rename(node)
   if node.name == '..' then return end
 
-  local ans = vim.fn.input("Rename " ..node.name.. " to ", node.absolute_path)
+  local new_name = vim.fn.input("Rename " ..node.name.. " to ", node.absolute_path)
   clear_prompt()
-  if not ans or #ans == 0 then return end
+  if not new_name or #new_name == 0 then return end
 
-  luv.fs_rename(node.absolute_path, ans, vim.schedule_wrap(rename_callback(node, ans)))
+  local success = luv.fs_rename(node.absolute_path, new_name) --, vim.schedule_wrap(rename_callback(node, ans)))
+  if not success then
+    return api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
+  end
+  api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
+  for _, buf in pairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_get_name(buf) == node.absolute_path then
+      api.nvim_buf_set_name(buf, new_name)
+    end
+  end
+  refresh_tree()
 end
 
 return M
