@@ -156,6 +156,7 @@ end
 local M = {}
 
 function M.draw(tree, reload)
+  if not tree.bufnr then return end
   api.nvim_buf_set_option(tree.bufnr, 'modifiable', true)
   local cursor = api.nvim_win_get_cursor(tree.winnr)
   if reload then
@@ -174,6 +175,7 @@ function M.draw(tree, reload)
 end
 
 function M.render_hl(bufnr)
+  if not bufnr then return end
   api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
   for _, data in ipairs(hl) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
