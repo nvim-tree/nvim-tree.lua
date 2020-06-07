@@ -39,6 +39,11 @@ function M.on_keypress(mode)
     return fs.rename(node)
   end
 
+  if mode == 'preview' then
+    if node.entries ~= nil or node.name == '..' then return end
+    return tree.open_file(mode, node.absolute_path)
+  end
+
   if node.name == ".." then
     return tree.change_dir("..")
   elseif mode == "cd" and node.entries ~= nil then
@@ -49,6 +54,7 @@ function M.on_keypress(mode)
 
   if node.link_to then
     local stat = luv.fs_stat(node.link_to)
+    -- TODO: potentially CD here
     if stat.type == 'directory' then return end
     tree.open_file(mode, node.link_to)
   elseif node.entries ~= nil then

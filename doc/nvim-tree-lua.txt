@@ -122,7 +122,7 @@ INFORMATIONS				        *nvim-tree-info*
 
 - move around like in any vim buffer
 - '<CR>' on '..' will cd in the above directory
-- typing '.' will cd in the directory under the cursor
+- typing '<C-]>' will cd in the directory under the cursor
 
 - type 'a' to add a file
 - type 'r' to rename a file
@@ -131,14 +131,15 @@ INFORMATIONS				        *nvim-tree-info*
 - if the file is a directory, '<CR>' will open the directory
 - otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, '<CR>' will follow the symlink
-- type '<C-v>' will open the file in a vertical split
-- type '<C-x>' will open the file in a horizontal split
-- type '<C-t>' will open the file in a new tab
-- type 'gx' to open the file with the `open` command on macos and `xdg-open`
+- '<C-v>' will open the file in a vertical split
+- '<C-x>' will open the file in a horizontal split
+- '<C-t>' will open the file in a new tab
+- '<Tab>' will open the file as a preview (keeps the cursor in the tree)
+- 'gx' opens the file with the `open` command on macos and `xdg-open`
 on linux.
 
 - Double left click acts like '<CR>'
-- Double right click acts like '.'
+- Double right click acts like '<C-]>'
 
 |g:lua_tree_bindings|                             *g:lua_tree_bindings*
 
@@ -150,7 +151,8 @@ default keybindings will be applied to undefined keys.
         \ edit_vsplit: '<c-v>',
         \ edit_split:  '<c-x>',
         \ edit_tab:    '<c-t>',
-        \ cd:          '.',
+        \ cd:          '<c-]>',
+	\ preview:     '<Tab>',
         \ create:      'a',
         \ remove:      'd',
         \ rename:      'r'
