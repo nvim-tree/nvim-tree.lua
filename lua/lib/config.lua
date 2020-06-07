@@ -49,6 +49,7 @@ function M.get_bindings()
     edit_vsplit = keybindings.edit_vsplit or '<C-v>',
     edit_split  = keybindings.edit_split or '<C-x>',
     edit_tab    = keybindings.edit_tab or '<C-t>',
+    preview     = keybindings.preview or '<Tab>',
     cd          = keybindings.cd or '<C-]>',
     create      = keybindings.create or 'a',
     remove      = keybindings.remove or 'd',

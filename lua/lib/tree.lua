@@ -183,7 +183,16 @@ function M.open_file(mode, filename)
   else
     api.nvim_command('noautocmd wincmd l')
   end
-  api.nvim_command(string.format("%s %s", mode, filename))
+  if mode == 'preview' then
+    api.nvim_command(string.format("edit %s", filename))
+    if vim.g.lua_tree_side == 'right' then
+      api.nvim_command('noautocmd wincmd l')
+    else
+      api.nvim_command('noautocmd wincmd h')
+    end
+  else
+    api.nvim_command(string.format("%s %s", mode, filename))
+  end
 end
 
 function M.change_dir(foldername)
@@ -207,6 +216,7 @@ local function set_mappings()
     [bindings.create] = 'on_keypress("create")';
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
+    [bindings.preview] = 'on_keypress("preview")';
     gx = "xdg_open()";
   }
 

@@ -47,12 +47,8 @@ let g:lua_tree_bindings = {
     \ 'edit_vsplit': '<C-v>',
     \ 'edit_split':  '<C-x>',
     \ 'edit_tab':    '<C-t>',
-    \ 'cd':          '.',
-    \ 'create':      'a',
-    \ 'remove':      'd',
-    \ 'rename':      'r'
-    \ }
-
+    \ 'preview':     '<Tab>',
+    \ 'cd':          '<C-]>',
 " default will show icon by default if no icon is provided
 " default shows no icon by default
 let g:lua_tree_icons = {
@@ -85,19 +81,20 @@ highlight LuaTreeFolderIcon guibg=blue
 
 - move around like in any vim buffer
 - `<CR>` on `..` will cd in the above directory
-- `.` will cd in the directory under the cursor
+- `<C-]>` will cd in the directory under the cursor
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
 > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
 - type `r` to rename a file
 - type `d` to delete a file (will prompt for confirmation)
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
-- type `<C-v>` will open the file in a vertical split
-- type `<C-x>` will open the file in a horizontal split
-- type `<C-t>` will open the file in a new tab
-- type `gx` to open the file with the `open` command on MACOS and `xdg-open` in linux
+- `<C-v>` will open the file in a vertical split
+- `<C-x>` will open the file in a horizontal split
+- `<C-t>` will open the file in a new tab
+- `<Tab>` will open the file as a preview (keeps the cursor in the tree)
+- `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
-- Double right click acts like `.`
+- Double right click acts like `<C-]>`
 
 ## Note
 
