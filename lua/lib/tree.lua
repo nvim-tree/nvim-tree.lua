@@ -8,6 +8,8 @@ local pops = require'lib.populate'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
+local window_opts = config.window_options()
+
 local M = {}
 
 M.Tree = {
@@ -16,7 +18,6 @@ M.Tree = {
   cwd = nil,
   win_width =  vim.g.lua_tree_width or 30,
   loaded = false,
-  side = 'H',
   bufnr = nil,
   winnr = nil,
   buf_options = {
@@ -35,10 +36,6 @@ M.Tree = {
     foldcolumn = '0'
   }
 }
-
-if vim.g.lua_tree_side == 'right' then
-  M.Tree.side = 'L'
-end
 
 function M.init(with_open, with_render)
   M.Tree.cwd = luv.cwd()
@@ -178,18 +175,10 @@ function M.set_index_and_redraw(fname)
 end
 
 function M.open_file(mode, filename)
-  if vim.g.lua_tree_side == 'right' then
-    api.nvim_command('noautocmd wincmd h')
-  else
-    api.nvim_command('noautocmd wincmd l')
-  end
+  api.nvim_command('noautocmd wincmd '..window_opts.open_command)
   if mode == 'preview' then
     api.nvim_command(string.format("edit %s", filename))
-    if vim.g.lua_tree_side == 'right' then
-      api.nvim_command('noautocmd wincmd l')
-    else
-      api.nvim_command('noautocmd wincmd h')
-    end
+    api.nvim_command('noautocmd wincmd '..window_opts.preview_command)
   else
     api.nvim_command(string.format("%s %s", mode, filename))
   end
@@ -246,18 +235,13 @@ local function create_buf()
     api.nvim_command('setlocal '..opt)
   end
 
-  if M.Tree.side == 'L' then
-    api.nvim_command('setlocal nosplitright')
-  else
-    api.nvim_command('setlocal splitright')
-  end
-
+  api.nvim_command('setlocal '..window_opts.split_command)
   set_mappings()
 end
 
 local function create_win()
   api.nvim_command("vsplit")
-  api.nvim_command("wincmd "..M.Tree.side)
+  api.nvim_command("wincmd "..window_opts.side)
   api.nvim_command("vertical resize "..M.Tree.win_width)
 
   M.Tree.winnr = api.nvim_get_current_win()
