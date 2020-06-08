@@ -3,6 +3,7 @@ local lib = require'lib.lib'
 local colors = require'lib.colors'
 local renderer = require'lib.renderer'
 local fs = require'lib.fs'
+local utils = require'lib.utils'
 local api = vim.api
 
 local M = {}
@@ -110,7 +111,7 @@ local function update_root_dir()
   -- this logic is a hack
   -- depending on vim-rooter or autochdir, it would not behave the same way when those two are not enabled
   -- until i implement multiple workspaces/project, it should stay like this
-  if bufname:match(lib.Tree.cwd:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)')) ~= nil then
+  if bufname:match(utils.path_to_matching_str(lib.Tree.cwd)) then
     return
   end
   local new_cwd = luv.cwd()
