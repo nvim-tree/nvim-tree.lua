@@ -28,7 +28,7 @@ local function create_file(file)
 end
 
 local function get_num_entries(iter)
-  i = 0
+  local i = 0
   for _ in iter do
     i = i + 1
   end
@@ -37,7 +37,7 @@ end
 
 function M.create(node)
   if node.name == '..' then return end
-  
+
   local add_into
   if node.entries ~= nil then
     add_into = node.absolute_path..'/'

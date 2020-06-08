@@ -21,8 +21,12 @@ M.Tree = {
   bufnr = nil,
   winnr = nil,
   buf_options = {
-    'sidescroll=5', 'noswapfile', 'splitbelow',
-    'noruler', 'noshowmode', 'noshowcmd'
+    'sidescroll=5',
+    'noswapfile',
+    'splitbelow',
+    'noruler',
+    'noshowmode',
+    'noshowcmd'
   },
   win_options = {
     relativenumber = false,
@@ -114,7 +118,7 @@ local function refresh_nodes(node)
 end
 
 function M.refresh_tree()
-  local stat = luv.fs_stat(M.Tree.cwd)
+  -- local stat = luv.fs_stat(M.Tree.cwd)
   -- if stat.mtime.sec ~= M.Tree.last_modified then
     refresh_nodes(M.Tree)
   -- end

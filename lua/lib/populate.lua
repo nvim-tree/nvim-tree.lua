@@ -125,7 +125,7 @@ function M.refresh_entries(entries, cwd)
       if not named_entries[name] then
         local n = e.fn(cwd, name)
 
-        local idx = 1
+        idx = 1
         if prev then
           idx = entries_idx[prev] + 1
         end

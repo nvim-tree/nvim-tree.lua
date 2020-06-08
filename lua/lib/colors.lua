@@ -25,7 +25,7 @@ local function get_colors()
   }
 end
 
-local function get_hl_groups() 
+local function get_hl_groups()
   local colors = get_colors()
 
   return {
@@ -96,7 +96,7 @@ M.hl_groups = {
   ['ejs'] = 'HtmlIcon';
 }
 
-local function get_links() 
+local function get_links()
   return {
     FolderName = 'Directory',
     Normal = 'Normal',
