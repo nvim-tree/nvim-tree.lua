@@ -37,6 +37,11 @@ local function file_new(cwd, name)
   }
 end
 
+-- TODO-INFO: sometimes fs_realpath returns nil
+-- I expect this be a bug in glibc, because it fails to retrieve the path for some
+-- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
+-- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
+-- So we need to check for link_to ~= nil when adding new links to the main tree
 local function link_new(cwd, name)
   local absolute_path = cwd..'/'..name
   local link_to = luv.fs_realpath(absolute_path)
@@ -114,9 +119,9 @@ function M.refresh_entries(entries, cwd)
   end
 
   local all = {
-    { entries = dirs, fn = dir_new },
-    { entries = links, fn = link_new },
-    { entries = files, fn = file_new }
+    { entries = dirs, fn = dir_new, check = function(_, abs) return luv.fs_access(abs, 'R') end },
+    { entries = links, fn = link_new, check = function(name) return name ~= nil end },
+    { entries = files, fn = file_new, check = function() return true end }
   }
 
   local prev = nil
@@ -124,6 +129,9 @@ function M.refresh_entries(entries, cwd)
     for _, name in ipairs(e.entries) do
       if not named_entries[name] then
         local n = e.fn(cwd, name)
+        if not e.check(n.link_to, n.absolute_path) then
+          goto continue
+        end
 
         idx = 1
         if prev then
@@ -134,6 +142,7 @@ function M.refresh_entries(entries, cwd)
         cached_entries[idx] = name
       end
       prev = name
+      ::continue::
     end
   end
 end
@@ -152,6 +161,7 @@ function M.populate(entries, cwd)
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
+    if should_ignore(name) then goto continue end
 
     if t == 'directory' then
       table.insert(dirs, name)
@@ -160,29 +170,29 @@ function M.populate(entries, cwd)
     elseif t == 'link' then
       table.insert(links, name)
     end
+
+    ::continue::
   end
 
   -- Create Nodes --
 
   for _, dirname in ipairs(dirs) do
     local dir = dir_new(cwd, dirname)
-    if not should_ignore(dir.name) and luv.fs_access(dir.absolute_path, 'R') then
+    if luv.fs_access(dir.absolute_path, 'R') then
       table.insert(entries, dir)
     end
   end
 
   for _, linkname in ipairs(links) do
     local link = link_new(cwd, linkname)
-    if not should_ignore(link.name) then
+    if link.link_to ~= nil then
       table.insert(entries, link)
     end
   end
 
   for _, filename in ipairs(files) do
     local file = file_new(cwd, filename)
-    if not should_ignore(file.name) then
-      table.insert(entries, file)
-    end
+    table.insert(entries, file)
   end
 
   if not icon_config.show_git_icon then
