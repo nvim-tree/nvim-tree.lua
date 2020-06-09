@@ -11,8 +11,8 @@ local namespace_id = api.nvim_create_namespace('LuaTreeHighlights')
 local icon_state = config.get_icon_state()
 
 local get_folder_icon = function() return "" end
-local set_folder_hl = function(index, depth, git_icon_len)
-  table.insert(hl, {'LuaTreeFolderName', index, depth+git_icon_len, -1})
+local set_folder_hl = function(line, depth, git_icon_len)
+  table.insert(hl, {'LuaTreeFolderName', line, depth+git_icon_len, -1})
 end
 
 if icon_state.show_folder_icon then
@@ -23,9 +23,9 @@ if icon_state.show_folder_icon then
       return icon_state.icons.folder_icons.default .. " "
     end
   end
-  set_folder_hl = function(index, depth, icon_len, name_len)
-    table.insert(hl, {'LuaTreeFolderName', index, depth+icon_len, depth+icon_len+name_len})
-    table.insert(hl, {'LuaTreeFolderIcon', index, depth, depth+icon_len})
+  set_folder_hl = function(line, depth, icon_len, name_len)
+    table.insert(hl, {'LuaTreeFolderName', line, depth+icon_len, depth+icon_len+name_len})
+    table.insert(hl, {'LuaTreeFolderIcon', line, depth, depth+icon_len})
   end
 end
 
@@ -33,8 +33,9 @@ local get_file_icon = function() return "" end
 if icon_state.show_file_icon then
   local web_devicons = require'nvim-web-devicons'
 
-  get_file_icon = function(fname, extension, index, depth)
-    local icon, hl_group = web_devicons.get_icon(fname, extension)
+  get_file_icon = function(fname, extension, line, depth)
+    local hl_group
+    local icon, _ = web_devicons.get_icon(fname, extension)
     -- TODO: remove this hl_group and make this in nvim-web-devicons
     if #extension == 0 then
       hl_group = colors.hl_groups[fname]
@@ -42,7 +43,7 @@ if icon_state.show_file_icon then
       hl_group = colors.hl_groups[extension]
     end
     if hl_group and icon then
-      table.insert(hl, { 'LuaTree'..hl_group, index, depth, depth + #icon })
+      table.insert(hl, { 'LuaTree'..hl_group, line, depth, depth + #icon })
       return icon.." "
     else
       return icon_state.icons.default and icon_state.icons.default.." " or ""
@@ -52,10 +53,8 @@ if icon_state.show_file_icon then
 end
 
 local get_git_icons = function() return "" end
-local git_icon_state = {}
 if icon_state.show_git_icon then
-
-  git_icon_state = {
+  local git_icon_state = {
     ["M "] = { { icon = icon_state.icons.git_icons.staged, hl = "LuaTreeGitStaged" } },
     [" M"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" } },
     ["MM"] = {
@@ -77,14 +76,14 @@ if icon_state.show_git_icon then
     dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" } },
   }
 
-  get_git_icons = function(node, index, depth, icon_len)
+  get_git_icons = function(node, line, depth, icon_len)
     local git_status = node.git_status
     if not git_status then return "" end
 
     local icon = ""
     local icons = git_icon_state[git_status]
     for _, v in ipairs(icons) do
-      table.insert(hl, { v.hl, index, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
+      table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
       icon = icon..v.icon.." "
     end
 
@@ -166,7 +165,7 @@ function M.draw(tree, reload)
     update_draw_data(tree, 0)
   end
 
-  api.nvim_buf_set_lines(tree.bufnr, 0, -1, false, lines)    
+  api.nvim_buf_set_lines(tree.bufnr, 0, -1, false, lines)
   M.render_hl(tree.bufnr)
   if #lines > cursor[1] then
     api.nvim_win_set_cursor(tree.winnr, cursor)

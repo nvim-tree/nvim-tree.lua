@@ -57,4 +57,21 @@ function M.get_bindings()
   }
 end
 
+function M.window_options()
+  local opts = {}
+  if vim.g.lua_tree_side == 'right' then
+    opts.side = 'L'
+    opts.open_command = 'h'
+    opts.preview_command = 'l'
+    opts.split_command = 'nosplitright'
+  else
+    opts.side = 'H'
+    opts.open_command = 'l'
+    opts.preview_command = 'h'
+    opts.split_command = 'splitright'
+  end
+
+  return opts
+end
+
 return M

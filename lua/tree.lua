@@ -1,34 +1,35 @@
 local luv = vim.loop
-local tree = require'lib.tree'
+local lib = require'lib.lib'
 local colors = require'lib.colors'
 local renderer = require'lib.renderer'
 local fs = require'lib.fs'
+local utils = require'lib.utils'
 local api = vim.api
 
 local M = {}
 
 function M.toggle()
-  if tree.win_open() then
-    tree.close()
+  if lib.win_open() then
+    lib.close()
   else
-    tree.open()
+    lib.open()
   end
 end
 
 function M.close()
-  if tree.win_open() then
-    tree.close()
+  if lib.win_open() then
+    lib.close()
   end
 end
 
 function M.open()
-  if not tree.win_open() then
-    tree.open()
+  if not lib.win_open() then
+    lib.open()
   end
 end
 
 function M.on_keypress(mode)
-  local node = tree.get_node_at_cursor()
+  local node = lib.get_node_at_cursor()
   if not node then return end
 
   if mode == 'create' then
@@ -41,13 +42,13 @@ function M.on_keypress(mode)
 
   if mode == 'preview' then
     if node.entries ~= nil or node.name == '..' then return end
-    return tree.open_file(mode, node.absolute_path)
+    return lib.open_file(mode, node.absolute_path)
   end
 
   if node.name == ".." then
-    return tree.change_dir("..")
+    return lib.change_dir("..")
   elseif mode == "cd" and node.entries ~= nil then
-    return tree.change_dir(node.absolute_path)
+    return lib.change_dir(node.absolute_path)
   elseif mode == "cd" then
     return
   end
@@ -56,16 +57,16 @@ function M.on_keypress(mode)
     local stat = luv.fs_stat(node.link_to)
     -- TODO: potentially CD here
     if stat.type == 'directory' then return end
-    tree.open_file(mode, node.link_to)
+    lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
-    tree.unroll_dir(node)
+    lib.unroll_dir(node)
   else
-    tree.open_file(mode, node.absolute_path)
+    lib.open_file(mode, node.absolute_path)
   end
 end
 
 function M.refresh()
-  tree.refresh_tree()
+  lib.refresh_tree()
 end
 
 function M.on_enter()
@@ -79,7 +80,7 @@ function M.on_enter()
   end
   local should_open = vim.g.lua_tree_auto_open == 1 and (bufname == '' or is_dir)
   colors.setup()
-  tree.init(should_open, should_open)
+  lib.init(should_open, should_open)
 end
 
 local function is_file_readable(fname)
@@ -92,12 +93,12 @@ local function find_file()
   local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
   if not is_file_readable(bufname) then return end
 
-  tree.set_index_and_redraw(bufname)
+  lib.set_index_and_redraw(bufname)
 end
 
 function M.on_leave()
   vim.defer_fn(function()
-    if #api.nvim_list_wins() == 1 and tree.win_open() then
+    if #api.nvim_list_wins() == 1 and lib.win_open() then
       api.nvim_command(':qa!')
     end
   end, 50)
@@ -105,18 +106,18 @@ end
 
 local function update_root_dir()
   local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
-  if not is_file_readable(bufname) or not tree.Tree.cwd then return end
+  if not is_file_readable(bufname) or not lib.Tree.cwd then return end
 
   -- this logic is a hack
   -- depending on vim-rooter or autochdir, it would not behave the same way when those two are not enabled
   -- until i implement multiple workspaces/project, it should stay like this
-  if bufname:match(tree.Tree.cwd:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)')) ~= nil then
+  if bufname:match(utils.path_to_matching_str(lib.Tree.cwd)) then
     return
   end
   local new_cwd = luv.cwd()
-  if tree.Tree.cwd == new_cwd then return end
+  if lib.Tree.cwd == new_cwd then return end
 
-  tree.change_dir(new_cwd)
+  lib.change_dir(new_cwd)
 end
 
 function M.buf_enter()
@@ -128,11 +129,11 @@ end
 
 function M.reset_highlight()
   colors.setup()
-  renderer.render_hl(tree.Tree.bufnr)
+  renderer.render_hl(lib.Tree.bufnr)
 end
 
 function M.xdg_open()
-  local node = tree.get_node_at_cursor()
+  local node = lib.get_node_at_cursor()
   -- TODO: this should open symlink targets
   if not node or node.entries or node.link_to then return end
 
