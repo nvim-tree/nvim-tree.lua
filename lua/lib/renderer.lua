@@ -34,15 +34,11 @@ if icon_state.show_file_icon then
   local web_devicons = require'nvim-web-devicons'
 
   get_file_icon = function(fname, extension, line, depth)
-    local hl_group
-    local icon, _ = web_devicons.get_icon(fname, extension)
-    -- TODO: remove this hl_group and make this in nvim-web-devicons
-    if #extension == 0 then
-      hl_group = colors.hl_groups[fname]
-    else
-      hl_group = colors.hl_groups[extension]
-    end
-    if hl_group and icon then
+    local icon, hl_group = web_devicons.get_icon(fname, extension)
+    local hl_override = colors.hl_groups[fname] or colors.hl_groups[extension]
+    hl_group = hl_override or hl_group
+
+    if icon then
       table.insert(hl, { 'LuaTree'..hl_group, line, depth, depth + #icon })
       return icon.." "
     else
