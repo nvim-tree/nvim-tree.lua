@@ -222,24 +222,17 @@ end
 
 local function create_buf()
   local options = {
-    bufhidden = 'delete';
+    bufhidden = 'wipe';
     buftype = 'nofile';
     modifiable = false;
   }
 
   M.Tree.bufnr = api.nvim_create_buf(false, true)
   api.nvim_buf_set_name(M.Tree.bufnr, M.Tree.buf_name)
-  api.nvim_buf_set_option(M.Tree.bufnr, 'filetype', M.Tree.buf_name)
 
   for opt, val in pairs(options) do
     api.nvim_buf_set_option(M.Tree.bufnr, opt, val)
   end
-
-  for _, opt in pairs(M.Tree.buf_options) do
-    api.nvim_command('setlocal '..opt)
-  end
-
-  api.nvim_command('setlocal '..window_opts.split_command)
   set_mappings()
 end
 
@@ -253,7 +246,6 @@ local function create_win()
   for opt, val in pairs(M.Tree.win_options) do
     api.nvim_win_set_option(M.Tree.winnr, opt, val)
   end
-  api.nvim_command('setlocal winhighlight+=EndOfBuffer:LuaTreeEndOfBuffer,Normal:LuaTreeNormal,CursorLine:LuaTreeCursorLine,VertSplit:LuaTreeVertSplit')
 end
 
 function M.close()
@@ -266,8 +258,16 @@ function M.open()
   create_buf()
   create_win()
   api.nvim_win_set_buf(M.Tree.winnr, M.Tree.bufnr)
+
+  for _, opt in pairs(M.Tree.buf_options) do
+    api.nvim_command('setlocal '..opt)
+  end
+  api.nvim_command('setlocal '..window_opts.split_command)
+
   renderer.draw(M.Tree, not M.Tree.loaded)
   M.Tree.loaded = true
+
+  api.nvim_buf_set_option(M.Tree.bufnr, 'filetype', M.Tree.buf_name)
 end
 
 function M.win_open()

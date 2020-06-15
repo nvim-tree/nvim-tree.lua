@@ -59,6 +59,7 @@ end
 
 function M.window_options()
   local opts = {}
+  opts.winhl = 'EndOfBuffer:LuaTreeEndOfBuffer,Normal:LuaTreeNormal,CursorLine:LuaTreeCursorLine,VertSplit:LuaTreeVertSplit'
   if vim.g.lua_tree_side == 'right' then
     opts.side = 'L'
     opts.open_command = 'h'
