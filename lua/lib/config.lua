@@ -22,12 +22,12 @@ function M.get_icon_state()
     if user_icons.default then
       icons.default = user_icons.default
     end
-    for key, val in pairs(user_icons.git) do
+    for key, val in pairs(user_icons.git or {}) do
       if icons.git_icons[key] then
         icons.git_icons[key] = val
       end
     end
-    for key, val in pairs(user_icons.folder) do
+    for key, val in pairs(user_icons.folder or {}) do
       if icons.folder_icons[key] then
         icons.folder_icons[key] = val
       end

@@ -110,6 +110,7 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 - Mouse support
 - It's fast
 
-## Screenshot
+## Screenshots
 
-![alt text](.github/screenshot.png?raw=true "file explorer")
+![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
+![alt text](.github/screenshot2.png?raw=true "akin909 tree")
