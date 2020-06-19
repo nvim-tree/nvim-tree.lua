@@ -195,6 +195,10 @@ function M.change_dir(foldername)
 end
 
 local function set_mappings()
+  if vim.g.lua_tree_disable_keybindings == 1 then
+      return
+  end
+
   local buf = M.Tree.bufnr
   local bindings = config.get_bindings()
 

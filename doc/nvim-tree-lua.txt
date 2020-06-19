@@ -115,6 +115,13 @@ Can be `0` or `1`. When `1`, will bind |BufEnter| to automatically
 close the tree if it's the last window.
 Default is 0
 
+|g:lua_tree_disable_keybindings|          *g:lua_tree_disable_keybindings*
+
+Can be `0` or `1`. When `1`, will disable all keybindings by the plugin.
+|g:lua_tree_bindings| as well as default bindings will not take effect.
+Default is 0
+
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
