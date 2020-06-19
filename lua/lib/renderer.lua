@@ -87,6 +87,32 @@ if icon_state.show_git_icon then
   end
 end
 
+local get_padding = function(depth)
+  return string.rep(' ', depth), 0
+end
+
+local add_padding_glyph = true
+if vim.g.lua_tree_indent_markers == 1 then
+  get_padding = function(depth, idx, tree, node)
+    local padding = ""
+    local offset = 0
+    if depth ~= 0 then
+      padding = string.rep(" ", depth-2)
+      if add_padding_glyph and (idx == #tree.entries or node.open) then
+        padding = padding..'└ '
+        offset = string.len('└ ') -2
+        add_padding_glyph = false
+      elseif add_padding_glyph then
+        padding = padding..'│ '
+        offset = string.len('│ ') -2
+      else
+        padding = padding..'  '
+      end
+    end
+    return padding, offset
+  end
+end
+
 local picture = {
   jpg = true,
   jpeg = true,
@@ -108,12 +134,13 @@ local function update_draw_data(tree, depth)
     index = 1
   end
 
-  for _, node in ipairs(tree.entries) do
-    local padding = string.rep(" ", depth)
+  add_padding_glyph = true
+  for idx, node in ipairs(tree.entries) do
+    local padding, offset = get_padding(depth, idx, tree, node, add_padding_glyph)
     if node.entries then
       local icon = get_folder_icon(node.open)
-      local git_icon = get_git_icons(node, index, depth+#node.name, #icon+1)
-      set_folder_hl(index, depth, #icon, #node.name)
+      local git_icon = get_git_icons(node, index, depth+offset+#node.name, #icon+1)
+      set_folder_hl(index, depth+offset, #icon, #node.name)
       index = index + 1
       if node.open then
         table.insert(lines, padding..icon..node.name.." "..git_icon)
@@ -122,7 +149,7 @@ local function update_draw_data(tree, depth)
         table.insert(lines, padding..icon..node.name.." "..git_icon)
       end
     elseif node.link_to then
-      table.insert(hl, { 'LuaTreeSymlink', index, depth, -1 })
+      table.insert(hl, { 'LuaTreeSymlink', index, depth+offset, -1 })
       table.insert(lines, padding..node.name.." ➛ "..node.link_to)
       index = index + 1
 
@@ -131,17 +158,17 @@ local function update_draw_data(tree, depth)
       local git_icons
       if special[node.name] then
         icon = ""
-        git_icons = get_git_icons(node, index, depth, 0)
-        table.insert(hl, {'LuaTreeSpecialFile', index, depth+#git_icons, -1})
+        git_icons = get_git_icons(node, index, depth+offset, 0)
+        table.insert(hl, {'LuaTreeSpecialFile', index, depth+offset+#git_icons, -1})
       else
-        icon = get_file_icon(node.name, node.extension, index, depth)
-        git_icons = get_git_icons(node, index, depth, #icon)
+        icon = get_file_icon(node.name, node.extension, index, depth+offset)
+        git_icons = get_git_icons(node, index, depth+offset, #icon)
       end
       table.insert(lines, padding..icon..git_icons..node.name)
       if node.executable then
-        table.insert(hl, {'LuaTreeExecFile', index, depth+#icon+#git_icons, -1 })
+        table.insert(hl, {'LuaTreeExecFile', index, depth+offset+#icon+#git_icons, -1 })
       elseif picture[node.extension] then
-        table.insert(hl, {'LuaTreeImageFile', index, depth+#icon+#git_icons, -1 })
+        table.insert(hl, {'LuaTreeImageFile', index, depth+offset+#icon+#git_icons, -1 })
       end
       index = index + 1
     end
