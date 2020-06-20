@@ -30,6 +30,7 @@ let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
 let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR` or `vim`
 let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
 let g:lua_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
+let g:lua_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
 let g:lua_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
@@ -113,6 +114,7 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 - Change directory with `.`
 - Add / Rename / delete files
 - Git integration
+- Indent markers
 - Mouse support
 - It's fast
 

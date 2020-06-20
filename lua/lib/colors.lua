@@ -29,6 +29,7 @@ local function get_hl_groups()
   local colors = get_colors()
 
   return {
+    IndentMarker = { fg = '#90a4ae' },
     Symlink = { gui = 'bold', fg = colors.cyan },
     FolderIcon = { fg = '#90a4ae' },
 
