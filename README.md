@@ -49,6 +49,12 @@ let g:lua_tree_bindings = {
     \ 'edit_tab':    '<C-t>',
     \ 'preview':     '<Tab>',
     \ 'cd':          '<C-]>',
+    }
+
+" Disable default mappings by plugin
+" Bindings are enable by default, disabled on any non-zero value
+" let lua_tree_disable_keybindings=1
+
 " default will show icon by default if no icon is provided
 " default shows no icon by default
 let g:lua_tree_icons = {
