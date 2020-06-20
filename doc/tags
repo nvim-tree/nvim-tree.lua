@@ -9,6 +9,7 @@ g:lua_tree_bindings	nvim-tree-lua.txt	/*g:lua_tree_bindings*
 g:lua_tree_follow	nvim-tree-lua.txt	/*g:lua_tree_follow*
 g:lua_tree_icons	nvim-tree-lua.txt	/*g:lua_tree_icons*
 g:lua_tree_ignore	nvim-tree-lua.txt	/*g:lua_tree_ignore*
+g:lua_tree_indent_markers	nvim-tree-lua.txt	/*g:lua_tree_indent_markers*
 g:lua_tree_show_icons	nvim-tree-lua.txt	/*g:lua_tree_show_icons*
 g:lua_tree_side	nvim-tree-lua.txt	/*g:lua_tree_side*
 g:lua_tree_size	nvim-tree-lua.txt	/*g:lua_tree_size*
