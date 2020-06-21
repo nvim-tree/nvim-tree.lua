@@ -89,7 +89,7 @@ local function is_file_readable(fname)
   return true
 end
 
-local function find_file()
+function M.find_file()
   local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
   if not is_file_readable(bufname) then return end
 
@@ -122,8 +122,8 @@ end
 
 function M.buf_enter()
   update_root_dir()
-  if vim.g.lua_tree_follow ~= 0 then
-    find_file()
+  if vim.g.lua_tree_follow == 1 then
+    M.find_file()
   end
 end
 

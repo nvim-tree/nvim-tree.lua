@@ -21,12 +21,7 @@ M.Tree = {
   bufnr = nil,
   winnr = nil,
   buf_options = {
-    'sidescroll=5',
     'noswapfile',
-    'splitbelow',
-    'noruler',
-    'noshowmode',
-    'noshowcmd'
   },
   win_options = {
     relativenumber = false,
