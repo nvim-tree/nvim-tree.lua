@@ -92,14 +92,16 @@ local get_padding = function(depth)
 end
 
 if vim.g.lua_tree_indent_markers == 1 then
-  get_padding = function(depth, idx, tree, node)
+  get_padding = function(depth, idx, tree, node, last_node)
     local padding = ""
     if depth ~= 0 then
       for i=1,depth/2 do
         if idx == #tree.entries and i == depth/2 then
           padding = padding..'└ '
-        else
+        elseif not last_node or i < (depth/2) - 1 then
           padding = padding..'│ '
+        else
+          padding = padding..'  '
         end
       end
     end
@@ -121,7 +123,7 @@ local special = {
   ["readme.md"] = true,
 }
 
-local function update_draw_data(tree, depth)
+local function update_draw_data(tree, depth, last_node)
   if tree.cwd and tree.cwd ~= '/' then
     table.insert(lines, "..")
     table.insert(hl, {'LuaTreeFolderName', index, 0, 2})
@@ -129,7 +131,7 @@ local function update_draw_data(tree, depth)
   end
 
   for idx, node in ipairs(tree.entries) do
-    local padding = get_padding(depth, idx, tree, node)
+    local padding = get_padding(depth, idx, tree, node, last_node)
     local offset = string.len(padding)
     if depth > 0 then
       table.insert(hl, { 'LuaTreeIndentMarker', index, 0, offset })
@@ -141,7 +143,7 @@ local function update_draw_data(tree, depth)
       index = index + 1
       if node.open then
         table.insert(lines, padding..icon..node.name.." "..git_icon)
-        update_draw_data(node, depth + 2)
+        update_draw_data(node, depth + 2, idx == #tree.entries)
       else
         table.insert(lines, padding..icon..node.name.." "..git_icon)
       end

@@ -107,6 +107,8 @@ highlight LuaTreeFolderIcon guibg=blue
 
 This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next` functions instead of spawning an `ls` process which can get slow on large files when combining with `stat` to get file informations.
 
+The Netrw vim plugin is disabled, hence features like `gx` don't work accross your windows/buffers. You could use a plugin like [this one](https://github.com/stsewd/gx-extended.vim) if you wish to use that feature.
+
 ## Features
 - Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)
 - File icons with nvim-web-devicons
