@@ -92,13 +92,15 @@ local get_padding = function(depth)
 end
 
 if vim.g.lua_tree_indent_markers == 1 then
-  get_padding = function(depth, idx, tree, node, last_node)
+  get_padding = function(depth, idx, tree, node, markers)
     local padding = ""
     if depth ~= 0 then
-      for i=1,depth/2 do
-        if idx == #tree.entries and i == depth/2 then
+      local rdepth = depth/2
+      markers[rdepth] = idx ~= #tree.entries
+      for i=1,rdepth do
+        if idx == #tree.entries and i == rdepth then
           padding = padding..'└ '
-        elseif not last_node or i < (depth/2) - 1 then
+        elseif markers[i] then
           padding = padding..'│ '
         else
           padding = padding..'  '
@@ -123,7 +125,7 @@ local special = {
   ["readme.md"] = true,
 }
 
-local function update_draw_data(tree, depth, last_node)
+local function update_draw_data(tree, depth, markers)
   if tree.cwd and tree.cwd ~= '/' then
     table.insert(lines, "..")
     table.insert(hl, {'LuaTreeFolderName', index, 0, 2})
@@ -131,7 +133,7 @@ local function update_draw_data(tree, depth, last_node)
   end
 
   for idx, node in ipairs(tree.entries) do
-    local padding = get_padding(depth, idx, tree, node, last_node)
+    local padding = get_padding(depth, idx, tree, node, markers)
     local offset = string.len(padding)
     if depth > 0 then
       table.insert(hl, { 'LuaTreeIndentMarker', index, 0, offset })
@@ -143,7 +145,7 @@ local function update_draw_data(tree, depth, last_node)
       index = index + 1
       if node.open then
         table.insert(lines, padding..icon..node.name.." "..git_icon)
-        update_draw_data(node, depth + 2, idx == #tree.entries)
+        update_draw_data(node, depth + 2, markers)
       else
         table.insert(lines, padding..icon..node.name.." "..git_icon)
       end
@@ -184,7 +186,7 @@ function M.draw(tree, reload)
     index = 0
     lines = {}
     hl = {}
-    update_draw_data(tree, 0)
+    update_draw_data(tree, 0, {})
   end
 
   api.nvim_buf_set_lines(tree.bufnr, 0, -1, false, lines)
