@@ -38,6 +38,12 @@ function M.on_keypress(mode)
     return fs.remove(node)
   elseif mode == 'rename' then
     return fs.rename(node)
+  elseif mode == 'copy' then
+    return fs.copy(node)
+  elseif mode == 'cut' then
+    return fs.cut(node)
+  elseif mode == 'paste' then
+    return fs.paste(node)
   end
 
   if mode == 'preview' then

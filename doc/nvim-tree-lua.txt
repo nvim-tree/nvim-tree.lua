@@ -136,6 +136,10 @@ INFORMATIONS				        *nvim-tree-info*
 
 - type 'a' to add a file
 - type 'r' to rename a file
+- type 'x' to add/remove file/directory to cut clipboard
+- type 'c' to add/remove file/directory to copy clipboard
+- type 'p' to paste from clipboard. Cut clipboard has precedence over copy
+  (will prompt for confirmation)
 - type 'd' to delete a file (will prompt for confirmation)
 
 - if the file is a directory, '<CR>' will open the directory
@@ -165,7 +169,10 @@ default keybindings will be applied to undefined keys.
 	\ preview:     '<Tab>',
         \ create:      'a',
         \ remove:      'd',
-        \ rename:      'r'
+        \ rename:      'r',
+        \ cut:         'x',
+        \ copy:        'c',
+        \ paste:       'p',
 	\ }
 
 |Features|					*nvim-tree-features*
