@@ -45,15 +45,16 @@ end
 function M.get_bindings()
   local keybindings = vim.g.lua_tree_bindings or {}
   return {
-    edit        = keybindings.edit or '<CR>',
-    edit_vsplit = keybindings.edit_vsplit or '<C-v>',
-    edit_split  = keybindings.edit_split or '<C-x>',
-    edit_tab    = keybindings.edit_tab or '<C-t>',
-    preview     = keybindings.preview or '<Tab>',
-    cd          = keybindings.cd or '<C-]>',
-    create      = keybindings.create or 'a',
-    remove      = keybindings.remove or 'd',
-    rename      = keybindings.rename or 'r',
+    edit           = keybindings.edit or '<CR>',
+    edit_vsplit    = keybindings.edit_vsplit or '<C-v>',
+    edit_split     = keybindings.edit_split or '<C-x>',
+    edit_tab       = keybindings.edit_tab or '<C-t>',
+    preview        = keybindings.preview or '<Tab>',
+    toggle_ignored = keybindings.toggle_ignored or 'I',
+    cd             = keybindings.cd or '<C-]>',
+    create         = keybindings.create or 'a',
+    remove         = keybindings.remove or 'd',
+    rename         = keybindings.rename or 'r',
   }
 end
 

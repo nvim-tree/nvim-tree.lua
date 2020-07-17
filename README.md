@@ -44,12 +44,13 @@ let g:lua_tree_show_icons = {
 " You don't have to define all keys.
 " NOTE: the 'edit' key will wrap/unwrap a folder and open a file
 let g:lua_tree_bindings = {
-    \ 'edit':        '<CR>',
-    \ 'edit_vsplit': '<C-v>',
-    \ 'edit_split':  '<C-x>',
-    \ 'edit_tab':    '<C-t>',
-    \ 'preview':     '<Tab>',
-    \ 'cd':          '<C-]>',
+    \ 'edit':           '<CR>',
+    \ 'edit_vsplit':    '<C-v>',
+    \ 'edit_split':     '<C-x>',
+    \ 'edit_tab':       '<C-t>',
+    \ 'toggle_ignored': 'I',
+    \ 'preview':        '<Tab>',
+    \ 'cd':             '<C-]>',
     }
 
 " Disable default mappings by plugin
@@ -99,6 +100,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - `<C-x>` will open the file in a horizontal split
 - `<C-t>` will open the file in a new tab
 - `<Tab>` will open the file as a preview (keeps the cursor in the tree)
+- `I` will toggle visibility of folders hidden via |g:lua_tree_ignore|
 - `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`

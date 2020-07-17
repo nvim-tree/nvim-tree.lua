@@ -145,6 +145,7 @@ INFORMATIONS				        *nvim-tree-info*
 - '<C-x>' will open the file in a horizontal split
 - '<C-t>' will open the file in a new tab
 - '<Tab>' will open the file as a preview (keeps the cursor in the tree)
+- 'I' will toggle visibility of folders hidden via |g:lua_tree_ignore|
 - 'gx' opens the file with the `open` command on macos and `xdg-open`
 on linux.
 
