@@ -51,6 +51,10 @@ function M.on_keypress(mode)
     return lib.open_file(mode, node.absolute_path)
   end
 
+  if mode == 'toggle_ignored' then
+    return lib.toggle_ignored()
+  end
+
   if node.name == ".." then
     return lib.change_dir("..")
   elseif mode == "cd" and node.entries ~= nil then

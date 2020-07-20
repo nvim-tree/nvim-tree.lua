@@ -205,6 +205,7 @@ local function set_mappings()
     [bindings.edit_vsplit] = 'on_keypress("vsplit")';
     [bindings.edit_split] = 'on_keypress("split")';
     [bindings.edit_tab] = 'on_keypress("tabnew")';
+    [bindings.toggle_ignored] = 'on_keypress("toggle_ignored")';
     [bindings.create] = 'on_keypress("create")';
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
@@ -279,6 +280,11 @@ function M.win_open()
     end
   end
   return false
+end
+
+function M.toggle_ignored()
+  pops.show_ignored = not pops.show_ignored
+  return M.refresh_tree()
 end
 
 return M

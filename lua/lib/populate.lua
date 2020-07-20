@@ -5,7 +5,9 @@ local icon_config = config.get_icon_state()
 local api = vim.api
 local luv = vim.loop
 
-local M = {}
+local M = {
+  show_ignored = false
+}
 
 local path_to_matching_str = require'lib.utils'.path_to_matching_str
 
@@ -63,7 +65,7 @@ local function gen_ignore_check()
   end
 
   return function(path)
-    return ignore_list[path] == true
+    return not M.show_ignored and ignore_list[path] == true
   end
 end
 
