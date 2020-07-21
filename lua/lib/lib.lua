@@ -210,6 +210,9 @@ local function set_mappings()
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
     [bindings.preview] = 'on_keypress("preview")';
+    [bindings.cut] = 'on_keypress("cut")';
+    [bindings.copy] = 'on_keypress("copy")';
+    [bindings.paste] = 'on_keypress("paste")';
     gx = "xdg_open()";
   }
 

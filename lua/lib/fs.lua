@@ -3,6 +3,10 @@ local luv = vim.loop
 local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants.O_TRUNC
 
 local M = {}
+local clipboard = {
+  move = {},
+  copy = {}
+}
 
 local function clear_prompt()
   vim.api.nvim_command('normal :esc<CR>')
@@ -109,6 +113,95 @@ local function remove_dir(cwd)
   return luv.fs_rmdir(cwd)
 end
 
+local function do_copy(source, destination)
+  local source_stats = luv.fs_stat(source)
+
+  if source_stats and source_stats.type == 'file' then
+    return luv.fs_copyfile(source, destination)
+  end
+
+  local handle = luv.fs_scandir(source)
+
+  if type(handle) == 'string' then
+    return false, handle
+  end
+
+  luv.fs_mkdir(destination, source_stats.mode)
+
+  while true do
+    local name, t = luv.fs_scandir_next(handle)
+    if not name then break end
+
+    local new_name = source..'/'..name
+    local new_destination = destination..'/'..name
+    local success, msg = do_copy(new_name, new_destination)
+    if not success then return success, msg end
+  end
+
+  return true
+end
+
+local function do_paste(node, action_type, action_fn)
+  if node.name == '..' then return end
+  local clip = clipboard[action_type]
+  if #clip == 0 then return end
+
+  local destination = node.absolute_path
+  local stats = luv.fs_stat(destination)
+  local is_dir = stats and stats.type == 'directory'
+
+  if not is_dir then
+    destination = vim.fn.fnamemodify(destination, ':p:h')
+  elseif not node.open then
+    destination = vim.fn.fnamemodify(destination, ':p:h:h')
+  end
+
+  local msg = #clip..' entries'
+
+  if #clip == 1 then
+    msg = clip[1].absolute_path
+  end
+
+  local ans = vim.fn.input(action_type..' '..msg..' to '..destination..'? y/n: ')
+  clear_prompt()
+  if not ans:match('^y') then
+    return api.nvim_out_write('Canceled.\n')
+  end
+
+  for _, entry in ipairs(clip) do
+    local dest = destination..'/'..entry.name
+    local dest_stats = luv.fs_stat(dest)
+    local should_process = true
+    if dest_stats then
+      local ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
+      clear_prompt()
+      should_process = ans:match('^y')
+    end
+
+    if should_process then
+      local success, msg = action_fn(entry.absolute_path, dest)
+      if not success then
+        api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..msg)
+      end
+    end
+  end
+  clipboard[action_type] = {}
+  return refresh_tree()
+end
+
+local function add_to_clipboard(node, clip)
+  if node.name == '..' then return end
+
+  for idx, entry in ipairs(clip) do
+    if entry.absolute_path == node.absolute_path then
+      table.remove(clip, idx)
+      return api.nvim_out_write(node.absolute_path..' removed to clipboard.\n')
+    end
+  end
+  table.insert(clip, node)
+  api.nvim_out_write(node.absolute_path..' added to clipboard.\n')
+end
+
 function M.remove(node)
   if node.name == '..' then return end
 
@@ -151,6 +244,40 @@ function M.rename(node)
     end
   end
   refresh_tree()
+end
+
+function M.copy(node)
+  add_to_clipboard(node, clipboard.copy)
+end
+
+function M.cut(node)
+  add_to_clipboard(node, clipboard.move)
+end
+
+function M.paste(node)
+  if clipboard.move[1] ~= nil then
+    return do_paste(node, 'move', luv.fs_rename)
+  end
+
+  return do_paste(node, 'copy', do_copy)
+end
+
+function M.print_clipboard()
+  local content = {}
+  if #clipboard.move > 0 then
+    table.insert(content, 'Cut')
+    for _, item in pairs(clipboard.move) do
+      table.insert(content, ' * '..item.absolute_path)
+    end
+  end
+  if #clipboard.copy > 0 then
+    table.insert(content, 'Copy')
+    for _, item in pairs(clipboard.copy) do
+      table.insert(content, ' * '..item.absolute_path)
+    end
+  end
+
+  return api.nvim_out_write(table.concat(content, '\n')..'\n')
 end
 
 return M

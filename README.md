@@ -93,6 +93,9 @@ highlight LuaTreeFolderIcon guibg=blue
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
 > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
 - type `r` to rename a file
+- type `x` to add/remove file/directory to cut clipboard
+- type `c` to add/remove file/directory to copy clipboard
+- type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
