@@ -79,6 +79,10 @@ function M.refresh()
   lib.refresh_tree()
 end
 
+function M.print_clipboard()
+  fs.print_clipboard()
+end
+
 function M.on_enter()
   local bufnr = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(bufnr)

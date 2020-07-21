@@ -262,4 +262,22 @@ function M.paste(node)
   return do_paste(node, 'copy', do_copy)
 end
 
+function M.print_clipboard()
+  local content = {}
+  if #clipboard.move > 0 then
+    table.insert(content, 'Cut')
+    for _, item in pairs(clipboard.move) do
+      table.insert(content, ' * '..item.absolute_path)
+    end
+  end
+  if #clipboard.copy > 0 then
+    table.insert(content, 'Copy')
+    for _, item in pairs(clipboard.copy) do
+      table.insert(content, ' * '..item.absolute_path)
+    end
+  end
+
+  return api.nvim_out_write(table.concat(content, '\n')..'\n')
+end
+
 return M

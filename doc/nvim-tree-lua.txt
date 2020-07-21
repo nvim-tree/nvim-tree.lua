@@ -45,6 +45,10 @@ It will also open the leafs of the tree leading to the file in the buffer
 (if you opened a file with something else than the LuaTree, like `fzf` or
 `:split`)
 
+|:LuaTreeClipboard|			          *:LuaTreeClipboard*
+
+Print clipboard content for both cut and copy
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
