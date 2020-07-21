@@ -121,8 +121,9 @@ local function do_copy(source, destination)
   end
 
   local handle = luv.fs_scandir(source)
+
   if type(handle) == 'string' then
-    return api.nvim_err_writeln(handle)
+    return false, handle
   end
 
   luv.fs_mkdir(destination, source_stats.mode)
@@ -133,13 +134,8 @@ local function do_copy(source, destination)
 
     local new_name = source..'/'..name
     local new_destination = destination..'/'..name
-    if t == 'directory' then
-      local success = do_copy(new_name, new_destination)
-      if not success then return false end
-    else
-      local success = luv.fs_copyfile(new_name, new_destination)
-      if not success then return false end
-    end
+    local success, msg = do_copy(new_name, new_destination)
+    if not success then return success, msg end
   end
 
   return true
@@ -173,10 +169,18 @@ local function do_paste(node, action_type, action_fn)
 
   for _, entry in ipairs(clip) do
     local dest = destination..'/'..entry.name
-    local success = action_fn(entry.absolute_path, dest)
-    if not success then
-      api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path)
+    local dest_stats = luv.fs_stat(dest)
+    if dest_stats then
+      local ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
+      clear_prompt()
+      if not ans:match('^y') then goto continue end
     end
+
+    local success, msg = action_fn(entry.absolute_path, dest)
+    if not success then
+      api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..msg)
+    end
+    ::continue::
   end
   clipboard[action_type] = {}
   return refresh_tree()
