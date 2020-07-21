@@ -142,6 +142,7 @@ local function do_copy(source, destination)
 end
 
 local function do_paste(node, action_type, action_fn)
+  if node.name == '..' then return end
   local clip = clipboard[action_type]
   if #clip == 0 then return end
 
@@ -170,17 +171,19 @@ local function do_paste(node, action_type, action_fn)
   for _, entry in ipairs(clip) do
     local dest = destination..'/'..entry.name
     local dest_stats = luv.fs_stat(dest)
+    local should_process = true
     if dest_stats then
       local ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
       clear_prompt()
-      if not ans:match('^y') then goto continue end
+      should_process = ans:match('^y')
     end
 
-    local success, msg = action_fn(entry.absolute_path, dest)
-    if not success then
-      api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..msg)
+    if should_process then
+      local success, msg = action_fn(entry.absolute_path, dest)
+      if not success then
+        api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..msg)
+      end
     end
-    ::continue::
   end
   clipboard[action_type] = {}
   return refresh_tree()
