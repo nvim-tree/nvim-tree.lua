@@ -95,20 +95,19 @@ function M.refresh_entries(entries, cwd)
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
-    if should_ignore(name) then goto continue end
 
-    if t == 'directory' then
-      table.insert(dirs, name)
-      new_entries[name] = true
-    elseif t == 'file' then
-      table.insert(files, name)
-      new_entries[name] = true
-    elseif t == 'link' then
-      table.insert(links, name)
-      new_entries[name] = true
+    if not should_ignore(name) then
+      if t == 'directory' then
+        table.insert(dirs, name)
+        new_entries[name] = true
+      elseif t == 'file' then
+        table.insert(files, name)
+        new_entries[name] = true
+      elseif t == 'link' then
+        table.insert(links, name)
+        new_entries[name] = true
+      end
     end
-
-    ::continue::
   end
 
   local idx = 1
@@ -127,24 +126,25 @@ function M.refresh_entries(entries, cwd)
   }
 
   local prev = nil
+  local change_prev
   for _, e in ipairs(all) do
     for _, name in ipairs(e.entries) do
+      chang_prev = true
       if not named_entries[name] then
         local n = e.fn(cwd, name)
-        if not e.check(n.link_to, n.absolute_path) then
-          goto continue
+        if e.check(n.link_to, n.absolute_path) then
+          idx = 1
+          if prev then
+            idx = entries_idx[prev] + 1
+          end
+          table.insert(entries, idx, n)
+          entries_idx[name] = idx
+          cached_entries[idx] = name
+        else
+          chang_prev = false
         end
-
-        idx = 1
-        if prev then
-          idx = entries_idx[prev] + 1
-        end
-        table.insert(entries, idx, n)
-        entries_idx[name] = idx
-        cached_entries[idx] = name
       end
-      prev = name
-      ::continue::
+      if chang_prev then prev = name end
     end
   end
 end
@@ -163,17 +163,16 @@ function M.populate(entries, cwd)
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
-    if should_ignore(name) then goto continue end
 
-    if t == 'directory' then
-      table.insert(dirs, name)
-    elseif t == 'file' then
-      table.insert(files, name)
-    elseif t == 'link' then
-      table.insert(links, name)
+    if not should_ignore(name) then
+      if t == 'directory' then
+        table.insert(dirs, name)
+      elseif t == 'file' then
+        table.insert(files, name)
+      elseif t == 'link' then
+        table.insert(links, name)
+      end
     end
-
-    ::continue::
   end
 
   -- Create Nodes --
