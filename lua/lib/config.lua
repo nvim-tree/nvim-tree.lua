@@ -58,6 +58,8 @@ function M.get_bindings()
     cut            = keybindings.cut or 'x',
     copy           = keybindings.copy or 'c',
     paste          = keybindings.paste or 'p',
+    prev_git_item  = keybindings.prev_git_item or '[c',
+    next_git_item  = keybindings.next_git_item or ']c',
   }
 end
 

@@ -1,5 +1,6 @@
 local luv = vim.loop
 local lib = require'lib.lib'
+local config = require'lib.config'
 local colors = require'lib.colors'
 local renderer = require'lib.renderer'
 local fs = require'lib.fs'
@@ -28,6 +29,18 @@ function M.open()
   end
 end
 
+local function gen_go_to(mode)
+  local icon_state = config.get_icon_state()
+  local flags = mode == 'prev_git_item' and 'b' or ''
+  local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
+  return function()
+    return icon_state.show_git_icon and vim.fn.search(icons, flags)
+  end
+end
+
+local go_to_prev_git_item = gen_go_to('prev_git_item')
+local go_to_next_git_item = gen_go_to('next_git_item')
+
 function M.on_keypress(mode)
   local node = lib.get_node_at_cursor()
   if not node then return end
@@ -53,6 +66,14 @@ function M.on_keypress(mode)
 
   if mode == 'toggle_ignored' then
     return lib.toggle_ignored()
+  end
+
+  if mode == 'prev_git_item' then
+    return go_to_prev_git_item()
+  end
+
+  if mode == 'next_git_item' then
+    return go_to_next_git_item()
   end
 
   if node.name == ".." then

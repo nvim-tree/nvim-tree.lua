@@ -51,6 +51,14 @@ let g:lua_tree_bindings = {
     \ 'toggle_ignored': 'I',
     \ 'preview':        '<Tab>',
     \ 'cd':             '<C-]>',
+    \ 'create':         'a',
+    \ 'remove':         'd',
+    \ 'rename':         'r',
+    \ 'cut':            'x',
+    \ 'copy':           'c',
+    \ 'paste':          'p',
+    \ 'prev_git_item':  '[c',
+    \ 'next_git_item':  ']c',
     }
 
 " Disable default mappings by plugin
@@ -97,6 +105,8 @@ highlight LuaTreeFolderIcon guibg=blue
 - type `c` to add/remove file/directory to copy clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
+- type `]c` to go to next git item
+- type `[c` to go to prev git item
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
 - `<C-v>` will open the file in a vertical split

@@ -213,6 +213,8 @@ local function set_mappings()
     [bindings.cut] = 'on_keypress("cut")';
     [bindings.copy] = 'on_keypress("copy")';
     [bindings.paste] = 'on_keypress("paste")';
+    [bindings.prev_git_item] = 'on_keypress("prev_git_item")';
+    [bindings.next_git_item] = 'on_keypress("next_git_item")';
     gx = "xdg_open()";
   }
 
