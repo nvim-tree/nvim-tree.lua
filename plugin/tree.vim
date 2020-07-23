@@ -23,7 +23,7 @@ command! LuaTreeClose lua require'tree'.close()
 command! LuaTreeToggle lua require'tree'.toggle()
 command! LuaTreeRefresh lua require'tree'.refresh()
 command! LuaTreeClipboard lua require'tree'.print_clipboard()
-command! LuaTreeFindFile lua require'tree'.find_file()
+command! LuaTreeFindFile lua require'tree'.find_file(true)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
