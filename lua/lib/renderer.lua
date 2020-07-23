@@ -92,7 +92,7 @@ local get_padding = function(depth)
 end
 
 if vim.g.lua_tree_indent_markers == 1 then
-  get_padding = function(depth, idx, tree, node, markers)
+  get_padding = function(depth, idx, tree, _, markers)
     local padding = ""
     if depth ~= 0 then
       local rdepth = depth/2

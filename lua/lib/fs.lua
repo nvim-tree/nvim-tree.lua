@@ -129,7 +129,7 @@ local function do_copy(source, destination)
   luv.fs_mkdir(destination, source_stats.mode)
 
   while true do
-    local name, t = luv.fs_scandir_next(handle)
+    local name, _ = luv.fs_scandir_next(handle)
     if not name then break end
 
     local new_name = source..'/'..name
@@ -173,15 +173,15 @@ local function do_paste(node, action_type, action_fn)
     local dest_stats = luv.fs_stat(dest)
     local should_process = true
     if dest_stats then
-      local ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
+      ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
       clear_prompt()
       should_process = ans:match('^y')
     end
 
     if should_process then
-      local success, msg = action_fn(entry.absolute_path, dest)
+      local success, errmsg = action_fn(entry.absolute_path, dest)
       if not success then
-        api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..msg)
+        api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..errmsg)
       end
     end
   end
