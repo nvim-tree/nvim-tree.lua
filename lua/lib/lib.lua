@@ -19,7 +19,13 @@ M.Tree = {
   win_width =  vim.g.lua_tree_width or 30,
   loaded = false,
   bufnr = nil,
-  winnr = nil,
+  winnr = function()
+    for _, i in ipairs(api.nvim_list_wins()) do
+      if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*/'..M.Tree.buf_name..'$') then
+        return i
+      end
+    end
+  end,
   buf_options = {
     'noswapfile',
   },
@@ -71,7 +77,7 @@ local function get_node_at_line(line)
 end
 
 function M.get_node_at_cursor()
-  local cursor = api.nvim_win_get_cursor(M.Tree.winnr)
+  local cursor = api.nvim_win_get_cursor(M.Tree.winnr())
   local line = cursor[1]
   if line == 1 and M.Tree.cwd ~= "/" then
     return { name = ".." }
@@ -169,7 +175,7 @@ function M.set_index_and_redraw(fname)
   end
   renderer.draw(M.Tree, reload)
   if index then
-    api.nvim_win_set_cursor(M.Tree.winnr, {index, 0})
+    api.nvim_win_set_cursor(M.Tree.winnr(), {index, 0})
   end
 end
 
@@ -246,23 +252,25 @@ local function create_win()
   api.nvim_command("wincmd "..window_opts.side)
   api.nvim_command("vertical resize "..M.Tree.win_width)
 
-  M.Tree.winnr = api.nvim_get_current_win()
+  local winnr = api.nvim_get_current_win()
 
   for opt, val in pairs(M.Tree.win_options) do
-    api.nvim_win_set_option(M.Tree.winnr, opt, val)
+    api.nvim_win_set_option(winnr, opt, val)
   end
 end
 
 function M.close()
-  api.nvim_win_close(M.Tree.winnr, true)
-  M.Tree.winnr = nil
+  if #api.nvim_list_wins() == 1 then
+    return vim.cmd ':q!'
+  end
+  api.nvim_win_close(M.Tree.winnr(), true)
   M.Tree.bufnr = nil
 end
 
 function M.open()
   create_buf()
   create_win()
-  api.nvim_win_set_buf(M.Tree.winnr, M.Tree.bufnr)
+  api.nvim_win_set_buf(M.Tree.winnr(), M.Tree.bufnr)
 
   for _, opt in pairs(M.Tree.buf_options) do
     api.nvim_command('setlocal '..opt)
@@ -276,12 +284,7 @@ function M.open()
 end
 
 function M.win_open()
-  for _, win in pairs(api.nvim_list_wins()) do
-    if win == M.Tree.winnr then
-      return true
-    end
-  end
-  return false
+  return M.Tree.winnr() ~= nil
 end
 
 function M.toggle_ignored()
