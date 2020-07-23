@@ -129,7 +129,7 @@ function M.refresh_entries(entries, cwd)
   local change_prev
   for _, e in ipairs(all) do
     for _, name in ipairs(e.entries) do
-      chang_prev = true
+      change_prev = true
       if not named_entries[name] then
         local n = e.fn(cwd, name)
         if e.check(n.link_to, n.absolute_path) then
@@ -141,10 +141,10 @@ function M.refresh_entries(entries, cwd)
           entries_idx[name] = idx
           cached_entries[idx] = name
         else
-          chang_prev = false
+          change_prev = false
         end
       end
-      if chang_prev then prev = name end
+      if change_prev then prev = name end
     end
   end
 end
