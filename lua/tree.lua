@@ -38,42 +38,28 @@ local function gen_go_to(mode)
   end
 end
 
-local go_to_prev_git_item = gen_go_to('prev_git_item')
-local go_to_next_git_item = gen_go_to('next_git_item')
+local keypress_funcs = {
+  create = fs.create,
+  remove = fs.remove,
+  rename = fs.rename,
+  copy = fs.copy,
+  cut = fs.cut,
+  paste = fs.paste,
+  toggle_ignored = lib.toggle_ignored,
+  prev_git_item = gen_go_to('prev_git_item'),
+  next_git_item = gen_go_to('next_git_item'),
+  preview = function(node)
+    if node.entries ~= nil or node.name == '..' then return end
+    return lib.open_file('preview', node.absolute_path)
+  end,
+}
 
 function M.on_keypress(mode)
   local node = lib.get_node_at_cursor()
   if not node then return end
 
-  if mode == 'create' then
-    return fs.create(node)
-  elseif mode == 'remove' then
-    return fs.remove(node)
-  elseif mode == 'rename' then
-    return fs.rename(node)
-  elseif mode == 'copy' then
-    return fs.copy(node)
-  elseif mode == 'cut' then
-    return fs.cut(node)
-  elseif mode == 'paste' then
-    return fs.paste(node)
-  end
-
-  if mode == 'preview' then
-    if node.entries ~= nil or node.name == '..' then return end
-    return lib.open_file(mode, node.absolute_path)
-  end
-
-  if mode == 'toggle_ignored' then
-    return lib.toggle_ignored()
-  end
-
-  if mode == 'prev_git_item' then
-    return go_to_prev_git_item()
-  end
-
-  if mode == 'next_git_item' then
-    return go_to_next_git_item()
+  if keypress_funcs[mode] then
+    return keypress_funcs[mode](node)
   end
 
   if node.name == ".." then
