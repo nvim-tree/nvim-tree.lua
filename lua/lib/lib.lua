@@ -287,6 +287,10 @@ function M.win_open()
   return M.Tree.winnr() ~= nil
 end
 
+function M.win_focus()
+  api.nvim_set_current_win(M.Tree.winnr())
+end
+
 function M.toggle_ignored()
   pops.show_ignored = not pops.show_ignored
   return M.refresh_tree()
