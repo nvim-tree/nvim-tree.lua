@@ -11,8 +11,8 @@ local namespace_id = api.nvim_create_namespace('LuaTreeHighlights')
 local icon_state = config.get_icon_state()
 
 local get_folder_icon = function() return "" end
-local set_folder_hl = function(line, depth, git_icon_len)
-  table.insert(hl, {'LuaTreeFolderName', line, depth+git_icon_len, -1})
+local set_folder_hl = function(line, depth, git_icon_len, hl_group)
+  table.insert(hl, {hl_group, line, depth+git_icon_len, -1})
 end
 
 if icon_state.show_folder_icon then
@@ -23,8 +23,8 @@ if icon_state.show_folder_icon then
       return icon_state.icons.folder_icons.default .. " "
     end
   end
-  set_folder_hl = function(line, depth, icon_len, name_len)
-    table.insert(hl, {'LuaTreeFolderName', line, depth+icon_len, depth+icon_len+name_len})
+  set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
+    table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len})
     table.insert(hl, {'LuaTreeFolderIcon', line, depth, depth+icon_len})
   end
 end
@@ -140,14 +140,21 @@ local function update_draw_data(tree, depth, markers)
     end
     if node.entries then
       local icon = get_folder_icon(node.open)
-      local git_icon = get_git_icons(node, index, offset+#node.name, #icon+1)
-      set_folder_hl(index, offset, #icon, #node.name)
+      local git_icon = get_git_icons(node, index, offset, #icon+1)
+      local git_display
+      if git_icon and #git_icon ~= 0 then
+        git_display = " "..git_icon
+        set_folder_hl(index, offset, #icon+#git_display, #node.name, 'LuaTreeFolderDirty')
+      else
+        git_display = ""
+        set_folder_hl(index, offset, #icon, #node.name, 'LuaTreeFolderName')
+      end
       index = index + 1
       if node.open then
-        table.insert(lines, padding..icon..node.name.." "..git_icon)
+        table.insert(lines, padding..icon..git_display..node.name)
         update_draw_data(node, depth + 2, markers)
       else
-        table.insert(lines, padding..icon..node.name.." "..git_icon)
+        table.insert(lines, padding..icon..git_display..node.name)
       end
     elseif node.link_to then
       table.insert(hl, { 'LuaTreeSymlink', index, offset, -1 })

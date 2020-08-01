@@ -104,7 +104,8 @@ local function get_links()
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
-    CursorColumn = 'CursorColumn'
+    CursorColumn = 'CursorColumn',
+    FolderDirty = 'LuaTreeFolderName'
   }
 end
 
