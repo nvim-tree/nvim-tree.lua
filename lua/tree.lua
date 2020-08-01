@@ -116,6 +116,7 @@ function M.find_file(with_open)
 
   if with_open then
     M.open()
+    lib.win_focus()
   end
   lib.set_index_and_redraw(bufname)
 end
