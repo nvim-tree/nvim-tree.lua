@@ -212,6 +212,7 @@ local function set_mappings()
     [bindings.edit_split] = 'on_keypress("split")';
     [bindings.edit_tab] = 'on_keypress("tabnew")';
     [bindings.toggle_ignored] = 'on_keypress("toggle_ignored")';
+    [bindings.refresh] = 'on_keypress("refresh")';
     [bindings.create] = 'on_keypress("create")';
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
