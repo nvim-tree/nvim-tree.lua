@@ -212,6 +212,7 @@ local function set_mappings()
     [bindings.edit_split] = 'on_keypress("split")';
     [bindings.edit_tab] = 'on_keypress("tabnew")';
     [bindings.toggle_ignored] = 'on_keypress("toggle_ignored")';
+    [bindings.toggle_hidden] = 'on_keypress("toggle_hidden")';
     [bindings.create] = 'on_keypress("create")';
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
@@ -293,6 +294,11 @@ end
 
 function M.toggle_ignored()
   pops.show_ignored = not pops.show_ignored
+  return M.refresh_tree()
+end
+
+function M.toggle_hidden()
+  pops.show_hidden = not pops.show_hidden
   return M.refresh_tree()
 end
 

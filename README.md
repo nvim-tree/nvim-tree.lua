@@ -49,6 +49,7 @@ let g:lua_tree_bindings = {
     \ 'edit_split':     '<C-x>',
     \ 'edit_tab':       '<C-t>',
     \ 'toggle_ignored': 'I',
+    \ 'toggle_ignored': 'H',
     \ 'preview':        '<Tab>',
     \ 'cd':             '<C-]>',
     \ 'create':         'a',
@@ -114,6 +115,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - `<C-t>` will open the file in a new tab
 - `<Tab>` will open the file as a preview (keeps the cursor in the tree)
 - `I` will toggle visibility of folders hidden via |g:lua_tree_ignore|
+- `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
 - `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`

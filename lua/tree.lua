@@ -46,6 +46,7 @@ local keypress_funcs = {
   cut = fs.cut,
   paste = fs.paste,
   toggle_ignored = lib.toggle_ignored,
+  toggle_hidden = lib.toggle_hidden,
   prev_git_item = gen_go_to('prev_git_item'),
   next_git_item = gen_go_to('next_git_item'),
   preview = function(node)
