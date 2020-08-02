@@ -100,7 +100,13 @@ when no icon is found for a file.
       \   'untracked': "★"
       \   }
       \ }
-<
+
+|g:lua_tree_git_hl|                                *g:lua_tree_git_hl*
+
+You can enable file highlight for git attributes by setting this property.
+This can be used with or without the icons.
+
+
 |g:lua_tree_follow|				*g:lua_tree_follow*
 
 Can be `0` or `1`. When `1`, will update the cursor to update to the correct
@@ -231,6 +237,7 @@ LuaTreeImageFile
 LuaTreeMarkdownFile
 LuaTreeIndentMarker
 
+<<<<<<< HEAD
 LuaTreeLicenseIcon
 LuaTreeYamlIcon
 LuaTreeTomlIcon
@@ -261,6 +268,15 @@ EndOfBuffer
 CursorLine
 VertSplit
 CursorColumn
+
+There are also links for file highlight with git properties
+These all link to there Git equivalent
+
+LuaTreeFileDirty
+LuaTreeFileStaged
+LuaTreeFileMerge
+LuaTreeFileNew
+LuaTreeFileRenamed
 
  vim:tw=78:ts=8:noet:ft=help:norl:
 

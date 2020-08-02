@@ -31,6 +31,7 @@ let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR
 let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
 let g:lua_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
 let g:lua_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
+let g:lua_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:lua_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
@@ -130,7 +131,7 @@ The Netrw vim plugin is disabled, hence features like `gx` don't work accross yo
 - Syntax highlighting ([exa](https://github.com/ogham/exa) like)
 - Change directory with `.`
 - Add / Rename / delete files
-- Git integration
+- Git integration (icons and file highlight)
 - Indent markers
 - Mouse support
 - It's fast

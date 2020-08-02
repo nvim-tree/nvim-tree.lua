@@ -105,7 +105,11 @@ local function get_links()
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
     CursorColumn = 'CursorColumn',
-    FolderDirty = 'LuaTreeFolderName'
+    FileDirty = 'LuaTreeGitDirty',
+    FileNew = 'LuaTreeGitNew',
+    FileRenamed = 'LuaTreeGitRenamed',
+    FileMerge = 'LuaTreeGitMerge',
+    FileStaged = 'LuaTreeGitStaged',
   }
 end
 

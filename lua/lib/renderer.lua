@@ -49,6 +49,41 @@ if icon_state.show_file_icon then
 end
 
 local get_git_icons = function() return "" end
+local get_git_hl = function() return end
+
+if vim.g.lua_tree_git_hl == 1 then
+  local git_hl = {
+    ["M "] = { { hl = "LuaTreeFileStaged" } },
+    [" M"] = { { hl = "LuaTreeFileDirty" } },
+    ["MM"] = {
+      { hl = "LuaTreeFileStaged" },
+      { hl = "LuaTreeFileDirty" }
+    },
+    ["A "] = {
+      { hl = "LuaTreeFileStaged" },
+      { hl = "LuaTreeFileNew" }
+    },
+    ["AM"] = {
+      { hl = "LuaTreeFileStaged" },
+      { hl = "LuaTreeFileNew" },
+      { hl = "LuaTreeFileDirty" }
+    },
+    ["??"] = { { hl = "LuaTreeFileNew" } },
+    ["R "] = { { hl = "LuaTreeFileRenamed" } },
+    ["UU"] = { { hl = "LuaTreeFileMerge" } },
+    dirty = { { hl = "LuaTreeFileDirty" } },
+  }
+  get_git_hl = function(node)
+    local git_status = node.git_status
+    if not git_status then return end
+
+    local icons = git_hl[git_status]
+    -- TODO: how would we determine hl color when multiple git status are active ?
+    return icons[1].hl
+    -- return icons[#icons].hl
+  end
+end
+
 if icon_state.show_git_icon then
   local git_icon_state = {
     ["M "] = { { icon = icon_state.icons.git_icons.staged, hl = "LuaTreeGitStaged" } },
@@ -138,26 +173,27 @@ local function update_draw_data(tree, depth, markers)
     if depth > 0 then
       table.insert(hl, { 'LuaTreeIndentMarker', index, 0, offset })
     end
+
+    local git_hl = get_git_hl(node)
+
     if node.entries then
       local icon = get_folder_icon(node.open)
-      local git_icon = get_git_icons(node, index, offset, #icon+1)
-      local git_display
-      if git_icon and #git_icon ~= 0 then
-        git_display = " "..git_icon
-        set_folder_hl(index, offset, #icon+#git_display, #node.name, 'LuaTreeFolderDirty')
-      else
-        git_display = ""
-        set_folder_hl(index, offset, #icon, #node.name, 'LuaTreeFolderName')
+      local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
+      -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
+      set_folder_hl(index, offset, #icon, #node.name+#git_icon, 'LuaTreeFolderName')
+      if git_hl then
+        set_folder_hl(index, offset, #icon, #node.name+#git_icon, git_hl)
       end
       index = index + 1
       if node.open then
-        table.insert(lines, padding..icon..git_display..node.name)
+        table.insert(lines, padding..icon..git_icon..node.name)
         update_draw_data(node, depth + 2, markers)
       else
-        table.insert(lines, padding..icon..git_display..node.name)
+        table.insert(lines, padding..icon..git_icon..node.name)
       end
     elseif node.link_to then
-      table.insert(hl, { 'LuaTreeSymlink', index, offset, -1 })
+      local link_hl = git_hl or 'LuaTreeSymlink'
+      table.insert(hl, { link_hl, index, offset, -1 })
       table.insert(lines, padding..node.name.." ➛ "..node.link_to)
       index = index + 1
 
@@ -173,10 +209,15 @@ local function update_draw_data(tree, depth, markers)
         git_icons = get_git_icons(node, index, offset, #icon)
       end
       table.insert(lines, padding..icon..git_icons..node.name)
+
       if node.executable then
         table.insert(hl, {'LuaTreeExecFile', index, offset+#icon+#git_icons, -1 })
       elseif picture[node.extension] then
         table.insert(hl, {'LuaTreeImageFile', index, offset+#icon+#git_icons, -1 })
+      end
+
+      if git_hl then
+        table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
       end
       index = index + 1
     end
