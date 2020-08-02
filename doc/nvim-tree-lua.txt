@@ -41,7 +41,7 @@ refresh the tree
 
 The command will change the cursor in the tree for the current bufname.
 
-It will also open the leafs of the tree leading to the file in the buffer 
+It will also open the leafs of the tree leading to the file in the buffer
 (if you opened a file with something else than the LuaTree, like `fzf` or
 `:split`)
 
@@ -156,6 +156,7 @@ INFORMATIONS				        *nvim-tree-info*
 - '<C-t>' will open the file in a new tab
 - '<Tab>' will open the file as a preview (keeps the cursor in the tree)
 - 'I' will toggle visibility of folders hidden via |g:lua_tree_ignore|
+- 'R' will refresh the tree
 - 'gx' opens the file with the `open` command on macos and `xdg-open`
 on linux.
 
@@ -222,36 +223,36 @@ You should have 'termguicolors' enabled, otherwise, colors will not be
 applied.
 
 LuaTreeSymlink
-LuaTreeFolderName 
-LuaTreeFolderIcon 
-LuaTreeExecFile 
-LuaTreeSpecialFile 
-LuaTreeImageFile 
-LuaTreeMarkdownFile 
+LuaTreeFolderName
+LuaTreeFolderIcon
+LuaTreeExecFile
+LuaTreeSpecialFile
+LuaTreeImageFile
+LuaTreeMarkdownFile
 LuaTreeIndentMarker
 
-LuaTreeLicenseIcon 
-LuaTreeYamlIcon 
-LuaTreeTomlIcon 
-LuaTreeGitignoreIcon 
-LuaTreeJsonIcon 
+LuaTreeLicenseIcon
+LuaTreeYamlIcon
+LuaTreeTomlIcon
+LuaTreeGitignoreIcon
+LuaTreeJsonIcon
 
-LuaTreeLuaIcon 
-LuaTreePythonIcon 
-LuaTreeShellIcon 
-LuaTreeJavascriptIcon 
-LuaTreeCIcon 
-LuaTreeReactIcon 
-LuaTreeHtmlIcon 
-LuaTreeRustIcon 
-LuaTreeVimIcon 
-LuaTreeTypescriptIcon 
+LuaTreeLuaIcon
+LuaTreePythonIcon
+LuaTreeShellIcon
+LuaTreeJavascriptIcon
+LuaTreeCIcon
+LuaTreeReactIcon
+LuaTreeHtmlIcon
+LuaTreeRustIcon
+LuaTreeVimIcon
+LuaTreeTypescriptIcon
 
-LuaTreeGitDirty 
-LuaTreeGitStaged 
-LuaTreeGitMerge 
-LuaTreeGitRenamed 
-LuaTreeGitNew 
+LuaTreeGitDirty
+LuaTreeGitStaged
+LuaTreeGitMerge
+LuaTreeGitRenamed
+LuaTreeGitNew
 
 There are also links to normal bindings to style the tree itself.
 

@@ -51,6 +51,7 @@ function M.get_bindings()
     edit_tab       = keybindings.edit_tab or '<C-t>',
     preview        = keybindings.preview or '<Tab>',
     toggle_ignored = keybindings.toggle_ignored or 'I',
+    refresh        = keybindings.refresh or 'R',
     cd             = keybindings.cd or '<C-]>',
     create         = keybindings.create or 'a',
     remove         = keybindings.remove or 'd',
