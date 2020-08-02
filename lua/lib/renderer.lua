@@ -29,7 +29,7 @@ if icon_state.show_folder_icon then
   end
 end
 
-local get_file_icon = function() return "" end
+local get_file_icon = function() return icon_state.icons.default end
 if icon_state.show_file_icon then
   local web_devicons = require'nvim-web-devicons'
 
@@ -158,7 +158,7 @@ local function update_draw_data(tree, depth, markers)
       local icon
       local git_icons
       if special[node.name] then
-        icon = ""
+        icon = icon_state.icons.default
         git_icons = get_git_icons(node, index, offset, 0)
         table.insert(hl, {'LuaTreeSpecialFile', index, offset+#git_icons, -1})
       else
