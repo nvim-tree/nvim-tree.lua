@@ -50,7 +50,7 @@ let g:lua_tree_bindings = {
     \ 'edit_split':     '<C-x>',
     \ 'edit_tab':       '<C-t>',
     \ 'toggle_ignored': 'I',
-    \ 'toggle_ignored': 'H',
+    \ 'toggle_hidden':  'H',
     \ 'preview':        '<Tab>',
     \ 'cd':             '<C-]>',
     \ 'create':         'a',
