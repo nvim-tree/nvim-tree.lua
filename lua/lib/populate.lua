@@ -7,7 +7,7 @@ local luv = vim.loop
 
 local M = {
   show_ignored = false,
-  show_hidden = false,
+  show_hidden = vim.g.lua_tree_show_hidden == 1,
 }
 
 local path_to_matching_str = require'lib.utils'.path_to_matching_str
@@ -66,14 +66,13 @@ local function gen_ignore_check()
   end
 
   return function(path)
-    return not M.show_ignored and ignore_list[path] == true
+    local ignore_path = not M.show_ignored and ignore_list[path] == true
+    local ignore_hidden = not M.show_hidden and path:sub(1, 1) == '.'
+    return ignore_path or ignore_hidden
   end
 end
 
-local function should_ignore(path)
-  local ignore_func = gen_ignore_check()
-  return ignore_func(path) or (M.show_hidden and path:sub(1, 1) == '.')
-end
+local should_ignore = gen_ignore_check()
 
 function M.refresh_entries(entries, cwd)
   local handle = luv.fs_scandir(cwd)
