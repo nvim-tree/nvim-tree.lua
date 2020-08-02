@@ -3,7 +3,7 @@ local M = {}
 function M.get_icon_state()
   local show_icons = vim.g.lua_tree_show_icons or { git = 1, folders = 1, files = 1 }
   local icons = {
-    default = nil,
+    default = "",
     git_icons = {
       unstaged = "✗",
       staged = "✓",
