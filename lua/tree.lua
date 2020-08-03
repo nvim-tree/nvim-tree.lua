@@ -13,7 +13,11 @@ function M.toggle()
   if lib.win_open() then
     lib.close()
   else
-    lib.open()
+    if vim.g.lua_tree_follow == 1 then
+      M.find_file(true)
+    else
+      lib.open()
+    end
   end
 end
 
@@ -113,14 +117,15 @@ local function is_file_readable(fname)
 end
 
 function M.find_file(with_open)
-  local bufname = api.nvim_buf_get_name(api.nvim_get_current_buf())
-  if not is_file_readable(bufname) then return end
+  local bufname = vim.fn.bufname()
+  local filepath = vim.fn.fnamemodify(bufname, ':p')
+  if not is_file_readable(filepath) then return end
 
   if with_open then
     M.open()
     lib.win_focus()
   end
-  lib.set_index_and_redraw(bufname)
+  lib.set_index_and_redraw(filepath)
 end
 
 function M.on_leave()
