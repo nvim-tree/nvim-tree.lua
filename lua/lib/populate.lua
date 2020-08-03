@@ -6,7 +6,8 @@ local api = vim.api
 local luv = vim.loop
 
 local M = {
-  show_ignored = false
+  show_ignored = false,
+  show_dotfiles = vim.g.lua_tree_hide_dotfiles ~= 1,
 }
 
 local path_to_matching_str = require'lib.utils'.path_to_matching_str
@@ -65,7 +66,9 @@ local function gen_ignore_check()
   end
 
   return function(path)
-    return not M.show_ignored and ignore_list[path] == true
+    local ignore_path = not M.show_ignored and ignore_list[path] == true
+    local ignore_dotfiles = not M.show_dotfiles and path:sub(1, 1) == '.'
+    return ignore_path or ignore_dotfiles
   end
 end
 

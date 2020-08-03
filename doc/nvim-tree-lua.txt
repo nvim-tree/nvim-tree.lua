@@ -138,6 +138,13 @@ Default is 0
 |g:lua_tree_indent_markers|                       *g:lua_tree_indent_markers*
 
 Can be `0` or `1`. When `1`, will display indent markers when folders are open
+Default is 0
+
+|g:lua_tree_hide_dotfiles|			*g:lua_tree_hide_dotfiles*
+
+Can be `0` or `1`. When `1`, will hide dotfiles, files or folders which start
+with the `.` character.
+Default is 0
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

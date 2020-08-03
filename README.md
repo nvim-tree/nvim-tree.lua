@@ -31,6 +31,7 @@ let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR
 let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
 let g:lua_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
 let g:lua_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
+let g:lua_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
 let g:lua_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:lua_tree_show_icons = {
     \ 'git': 1,
@@ -45,21 +46,22 @@ let g:lua_tree_show_icons = {
 " You don't have to define all keys.
 " NOTE: the 'edit' key will wrap/unwrap a folder and open a file
 let g:lua_tree_bindings = {
-    \ 'edit':           '<CR>',
-    \ 'edit_vsplit':    '<C-v>',
-    \ 'edit_split':     '<C-x>',
-    \ 'edit_tab':       '<C-t>',
-    \ 'toggle_ignored': 'I',
-    \ 'preview':        '<Tab>',
-    \ 'cd':             '<C-]>',
-    \ 'create':         'a',
-    \ 'remove':         'd',
-    \ 'rename':         'r',
-    \ 'cut':            'x',
-    \ 'copy':           'c',
-    \ 'paste':          'p',
-    \ 'prev_git_item':  '[c',
-    \ 'next_git_item':  ']c',
+    \ 'edit':            '<CR>',
+    \ 'edit_vsplit':     '<C-v>',
+    \ 'edit_split':      '<C-x>',
+    \ 'edit_tab':        '<C-t>',
+    \ 'toggle_ignored':  'I',
+    \ 'toggle_dotfiles': 'H',
+    \ 'preview':         '<Tab>',
+    \ 'cd':              '<C-]>',
+    \ 'create':          'a',
+    \ 'remove':          'd',
+    \ 'rename':          'r',
+    \ 'cut':             'x',
+    \ 'copy':            'c',
+    \ 'paste':           'p',
+    \ 'prev_git_item':   '[c',
+    \ 'next_git_item':   ']c',
     }
 
 " Disable default mappings by plugin
@@ -115,6 +117,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - `<C-t>` will open the file in a new tab
 - `<Tab>` will open the file as a preview (keeps the cursor in the tree)
 - `I` will toggle visibility of folders hidden via |g:lua_tree_ignore|
+- `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
 - `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
