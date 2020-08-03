@@ -31,7 +31,7 @@ let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR
 let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
 let g:lua_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
 let g:lua_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
-let g:lua_tree_show_hidden = 0 "1 by default, this option shows files and folders starting with a dot `.`
+let g:lua_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
 let g:lua_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
@@ -45,22 +45,22 @@ let g:lua_tree_show_icons = {
 " You don't have to define all keys.
 " NOTE: the 'edit' key will wrap/unwrap a folder and open a file
 let g:lua_tree_bindings = {
-    \ 'edit':           '<CR>',
-    \ 'edit_vsplit':    '<C-v>',
-    \ 'edit_split':     '<C-x>',
-    \ 'edit_tab':       '<C-t>',
-    \ 'toggle_ignored': 'I',
-    \ 'toggle_hidden':  'H',
-    \ 'preview':        '<Tab>',
-    \ 'cd':             '<C-]>',
-    \ 'create':         'a',
-    \ 'remove':         'd',
-    \ 'rename':         'r',
-    \ 'cut':            'x',
-    \ 'copy':           'c',
-    \ 'paste':          'p',
-    \ 'prev_git_item':  '[c',
-    \ 'next_git_item':  ']c',
+    \ 'edit':            '<CR>',
+    \ 'edit_vsplit':     '<C-v>',
+    \ 'edit_split':      '<C-x>',
+    \ 'edit_tab':        '<C-t>',
+    \ 'toggle_ignored':  'I',
+    \ 'toggle_dotfiles': 'H',
+    \ 'preview':         '<Tab>',
+    \ 'cd':              '<C-]>',
+    \ 'create':          'a',
+    \ 'remove':          'd',
+    \ 'rename':          'r',
+    \ 'cut':             'x',
+    \ 'copy':            'c',
+    \ 'paste':           'p',
+    \ 'prev_git_item':   '[c',
+    \ 'next_git_item':   ']c',
     }
 
 " Disable default mappings by plugin
