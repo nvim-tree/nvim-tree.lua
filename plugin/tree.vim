@@ -16,6 +16,7 @@ augroup LuaTree
   endif
   au VimEnter * lua require'tree'.on_enter()
   au ColorScheme * lua require'tree'.reset_highlight()
+  au User FugitiveChanged lua require'tree'.refresh()
 augroup end
 
 command! LuaTreeOpen lua require'tree'.open()
