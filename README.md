@@ -47,7 +47,7 @@ let g:lua_tree_show_icons = {
 " You don't have to define all keys.
 " NOTE: the 'edit' key will wrap/unwrap a folder and open a file
 let g:lua_tree_bindings = {
-    \ 'edit':            '<CR>',
+    \ 'edit':            ['<CR>', 'o'],
     \ 'edit_vsplit':     '<C-v>',
     \ 'edit_split':      '<C-x>',
     \ 'edit_tab':        '<C-t>',

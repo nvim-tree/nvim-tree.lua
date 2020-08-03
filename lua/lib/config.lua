@@ -45,7 +45,7 @@ end
 function M.get_bindings()
   local keybindings = vim.g.lua_tree_bindings or {}
   return {
-    edit            = keybindings.edit or '<CR>',
+    edit            = keybindings.edit or {'<CR>', 'o'},
     edit_vsplit     = keybindings.edit_vsplit or '<C-v>',
     edit_split      = keybindings.edit_split or '<C-x>',
     edit_tab        = keybindings.edit_tab or '<C-t>',

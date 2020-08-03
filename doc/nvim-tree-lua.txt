@@ -192,7 +192,7 @@ you can change default keybindings by defining this variable.
 default keybindings will be applied to undefined keys.
 >
     let g:lua_tree_bindings = {
-        \ edit:          '<cr>',
+        \ edit:          ['<cr>', 'o'], // Multiple keys provided via list
         \ edit_vsplit:   '<c-v>',
         \ edit_split:    '<c-x>',
         \ edit_tab:      '<c-t>',
