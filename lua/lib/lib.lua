@@ -26,19 +26,17 @@ M.Tree = {
       end
     end
   end,
-  buf_options = {
+  options = {
     'noswapfile',
-  },
-  win_options = {
-    relativenumber = false,
-    number =  false,
-    list = false,
-    winfixwidth = true,
-    winfixheight = true,
-    foldenable = false,
-    spell = false,
-    foldmethod = 'manual',
-    foldcolumn = '0'
+    'norelativenumber',
+    'nonumber',
+    'nolist',
+    'winfixwidth',
+    'winfixheight',
+    'nofoldenable',
+    'nospell',
+    'foldmethod=manual',
+    'foldcolumn=0'
   }
 }
 
@@ -179,14 +177,28 @@ function M.set_index_and_redraw(fname)
   end
 end
 
+local function check_and_open_split()
+  if #api.nvim_list_wins() == 1 then
+    api.nvim_command("vnew")
+  end
+end
+
 function M.open_file(mode, filename)
   api.nvim_command('noautocmd wincmd '..window_opts.open_command)
   if mode == 'preview' then
+    check_and_open_split()
     api.nvim_command(string.format("edit %s", filename))
     api.nvim_command('noautocmd wincmd '..window_opts.preview_command)
   else
+    if mode == 'edit' then
+      check_and_open_split()
+    end
     api.nvim_command(string.format("%s %s", mode, filename))
   end
+  local cur_win = api.nvim_get_current_win()
+  M.win_focus()
+  api.nvim_command('vertical resize '..M.Tree.win_width)
+  M.win_focus(cur_win)
 end
 
 function M.change_dir(foldername)
@@ -252,12 +264,6 @@ local function create_win()
   api.nvim_command("vsplit")
   api.nvim_command("wincmd "..window_opts.side)
   api.nvim_command("vertical resize "..M.Tree.win_width)
-
-  local winnr = api.nvim_get_current_win()
-
-  for opt, val in pairs(M.Tree.win_options) do
-    api.nvim_win_set_option(winnr, opt, val)
-  end
 end
 
 function M.close()
@@ -273,23 +279,24 @@ function M.open()
   create_win()
   api.nvim_win_set_buf(M.Tree.winnr(), M.Tree.bufnr)
 
-  for _, opt in pairs(M.Tree.buf_options) do
+  for _, opt in pairs(M.Tree.options) do
     api.nvim_command('setlocal '..opt)
   end
-  api.nvim_command('setlocal '..window_opts.split_command)
 
   renderer.draw(M.Tree, not M.Tree.loaded)
   M.Tree.loaded = true
 
   api.nvim_buf_set_option(M.Tree.bufnr, 'filetype', M.Tree.buf_name)
+  api.nvim_command('setlocal '..window_opts.split_command)
 end
 
 function M.win_open()
   return M.Tree.winnr() ~= nil
 end
 
-function M.win_focus()
-  api.nvim_set_current_win(M.Tree.winnr())
+function M.win_focus(winnr)
+  local wnr = winnr or M.Tree.winnr()
+  api.nvim_set_current_win(wnr)
 end
 
 function M.toggle_ignored()
