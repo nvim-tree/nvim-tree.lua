@@ -53,6 +53,7 @@ let g:lua_tree_bindings = {
     \ 'edit_tab':        '<C-t>',
     \ 'toggle_ignored':  'I',
     \ 'toggle_dotfiles': 'H',
+    \ 'refresh':         'R',
     \ 'preview':         '<Tab>',
     \ 'cd':              '<C-]>',
     \ 'create':          'a',
@@ -73,6 +74,7 @@ let g:lua_tree_bindings = {
 " default shows no icon by default
 let g:lua_tree_icons = {
     \ 'default': '',
+    \ 'symlink': '',
     \ 'git': {
     \   'unstaged': "✗",
     \   'staged': "✓",
@@ -119,6 +121,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - `<Tab>` will open the file as a preview (keeps the cursor in the tree)
 - `I` will toggle visibility of folders hidden via |g:lua_tree_ignore|
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
+- `R` will refresh the tree
 - `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
@@ -127,7 +130,7 @@ highlight LuaTreeFolderIcon guibg=blue
 
 This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next` functions instead of spawning an `ls` process which can get slow on large files when combining with `stat` to get file informations.
 
-The Netrw vim plugin is disabled, hence features like `gx` don't work accross your windows/buffers. You could use a plugin like [this one](https://github.com/stsewd/gx-extended.vim) if you wish to use that feature.
+The Netrw vim plugin is disabled, hence features like `gx` don't work across your windows/buffers. You could use a plugin like [this one](https://github.com/stsewd/gx-extended.vim) if you wish to use that feature.
 
 ## Features
 - Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)

@@ -49,6 +49,20 @@ if icon_state.show_file_icon then
 
 end
 
+local get_symlink_icon = function() return icon_state.icons.symlink end
+if icon_state.show_file_icon then
+  get_symlink_icon = function()
+    return #icon_state.icons.symlink > 0 and icon_state.icons.symlink.." " or ""
+  end
+end
+
+local get_special_icon = function() return icon_state.icons.default end
+if icon_state.show_file_icon then
+  get_special_icon = function()
+    return icon_state.icons.default.." "
+  end
+end
+
 local get_git_icons = function() return "" end
 local get_git_hl = function() return end
 
@@ -210,17 +224,17 @@ local function update_draw_data(tree, depth, markers)
         table.insert(lines, padding..icon..git_icon..node.name)
       end
     elseif node.link_to then
+      local icon = get_symlink_icon()
       local link_hl = git_hl or 'LuaTreeSymlink'
       table.insert(hl, { link_hl, index, offset, -1 })
-      table.insert(lines, padding..node.name.." ➛ "..node.link_to)
+      table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
       index = index + 1
 
     else
       local icon
       local git_icons
       if special[node.name] then
-        icon = icon_state.icons.default
-        if icon ~= "" then icon = icon.." " end
+        icon = get_special_icon()
         git_icons = get_git_icons(node, index, offset, 0)
         table.insert(hl, {'LuaTreeSpecialFile', index, offset+#git_icons, -1})
       else

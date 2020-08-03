@@ -4,6 +4,7 @@ function M.get_icon_state()
   local show_icons = vim.g.lua_tree_show_icons or { git = 1, folders = 1, files = 1 }
   local icons = {
     default = "",
+    symlink = "",
     git_icons = {
       unstaged = "✗",
       staged = "✓",
@@ -22,6 +23,10 @@ function M.get_icon_state()
   if user_icons then
     if user_icons.default then
       icons.default = user_icons.default
+      icons.symlink = user_icons.default
+    end
+    if user_icons.symlink then
+      icons.symlink = user_icons.symlink
     end
     for key, val in pairs(user_icons.git or {}) do
       if icons.git_icons[key] then
