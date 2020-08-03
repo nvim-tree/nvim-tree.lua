@@ -207,6 +207,12 @@ function M.change_dir(foldername)
   M.init(false, M.Tree.bufnr ~= nil)
 end
 
+local function set_mapping(buf, key, fn)
+  api.nvim_buf_set_keymap(buf, 'n', key, ':lua require"tree".'..fn..'<cr>', {
+      nowait = true, noremap = true, silent = true
+    })
+end
+
 local function set_mappings()
   if vim.g.lua_tree_disable_keybindings == 1 then
       return
@@ -239,9 +245,13 @@ local function set_mappings()
   }
 
   for k,v in pairs(mappings) do
-    api.nvim_buf_set_keymap(buf, 'n', k, ':lua require"tree".'..v..'<cr>', {
-        nowait = true, noremap = true, silent = true
-      })
+    if type(k) == 'table' then
+      for _, key in pairs(k) do
+        set_mapping(buf, key, v)
+      end
+    else
+      set_mapping(buf, k, v)
+    end
   end
 end
 
