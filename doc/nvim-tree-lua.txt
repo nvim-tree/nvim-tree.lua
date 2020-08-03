@@ -95,10 +95,14 @@ when no icon is found for a file.
       \ 'git': {
       \   'unstaged': "✗",
       \   'staged': "✓",
-      \   'unmerged': "═",
+      \   'unmerged': "",
       \   'renamed': "➜",
       \   'untracked': "★"
-      \   }
+      \   },
+      \ 'folder': {
+      \   'default': "",
+      \   'open': ""
+      \  }
       \ }
 
 |g:lua_tree_git_hl|                                *g:lua_tree_git_hl*
@@ -237,7 +241,6 @@ LuaTreeImageFile
 LuaTreeMarkdownFile
 LuaTreeIndentMarker
 
-<<<<<<< HEAD
 LuaTreeLicenseIcon
 LuaTreeYamlIcon
 LuaTreeTomlIcon

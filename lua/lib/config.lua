@@ -7,13 +7,13 @@ function M.get_icon_state()
     git_icons = {
       unstaged = "✗",
       staged = "✓",
-      unmerged = "═",
+      unmerged = "",
       renamed = "➜",
       untracked = "★"
     },
     folder_icons = {
-      default = "",
-      open = ""
+      default = "",
+      open = ""
     }
   }
 

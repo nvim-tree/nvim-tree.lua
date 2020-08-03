@@ -73,13 +73,13 @@ let g:lua_tree_icons = {
     \ 'git': {
     \   'unstaged': "✗",
     \   'staged': "✓",
-    \   'unmerged': "═",
+    \   'unmerged': "",
     \   'renamed': "➜",
     \   'untracked': "★"
     \   },
     \ 'folder': {
-    \   'default': "",
-    \   'open': ""
+    \   'default': "",
+    \   'open': ""
     \   }
     \ }
 
