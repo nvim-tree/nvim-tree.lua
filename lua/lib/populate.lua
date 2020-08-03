@@ -196,7 +196,7 @@ function M.populate(entries, cwd)
     table.insert(entries, file)
   end
 
-  if not icon_config.show_git_icon then
+  if not icon_config.show_git_icon and vim.g.lua_tree_git_hl ~= 1 then
     return
   end
 
