@@ -47,6 +47,7 @@ local keypress_funcs = {
   paste = fs.paste,
   toggle_ignored = lib.toggle_ignored,
   toggle_dotfiles = lib.toggle_dotfiles,
+  refresh = lib.refresh_tree,
   prev_git_item = gen_go_to('prev_git_item'),
   next_git_item = gen_go_to('next_git_item'),
   preview = function(node)

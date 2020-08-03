@@ -29,9 +29,9 @@ local function get_hl_groups()
   local colors = get_colors()
 
   return {
-    IndentMarker = { fg = '#90a4ae' },
+    IndentMarker = { fg = '#8094b4' },
     Symlink = { gui = 'bold', fg = colors.cyan },
-    FolderIcon = { fg = '#90a4ae' },
+    FolderIcon = { fg = '#8094b4' },
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
@@ -104,7 +104,12 @@ local function get_links()
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
-    CursorColumn = 'CursorColumn'
+    CursorColumn = 'CursorColumn',
+    FileDirty = 'LuaTreeGitDirty',
+    FileNew = 'LuaTreeGitNew',
+    FileRenamed = 'LuaTreeGitRenamed',
+    FileMerge = 'LuaTreeGitMerge',
+    FileStaged = 'LuaTreeGitStaged',
   }
 end
 

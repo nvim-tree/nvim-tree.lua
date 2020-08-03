@@ -3,17 +3,17 @@ local M = {}
 function M.get_icon_state()
   local show_icons = vim.g.lua_tree_show_icons or { git = 1, folders = 1, files = 1 }
   local icons = {
-    default = nil,
+    default = "",
     git_icons = {
       unstaged = "✗",
       staged = "✓",
-      unmerged = "═",
+      unmerged = "",
       renamed = "➜",
       untracked = "★"
     },
     folder_icons = {
-      default = "",
-      open = ""
+      default = "",
+      open = ""
     }
   }
 
@@ -52,6 +52,7 @@ function M.get_bindings()
     preview         = keybindings.preview or '<Tab>',
     toggle_ignored  = keybindings.toggle_ignored or 'I',
     toggle_dotfiles = keybindings.toggle_dotfiles or 'H',
+    refresh         = keybindings.refresh or 'R',
     cd              = keybindings.cd or '<C-]>',
     create          = keybindings.create or 'a',
     remove          = keybindings.remove or 'd',
