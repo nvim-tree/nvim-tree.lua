@@ -32,6 +32,7 @@ local function get_hl_groups()
     IndentMarker = { fg = '#8094b4' },
     Symlink = { gui = 'bold', fg = colors.cyan },
     FolderIcon = { fg = '#8094b4' },
+    RootFolder = { fg = colors.purple },
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
