@@ -204,8 +204,11 @@ local function update_draw_data(tree, depth, markers)
       local icon
       local git_icons
       if special[node.name] then
-        icon = icon_state.icons.default
-        if icon ~= "" then icon = icon.." " end
+        if icon_state.show_file_icon then
+          icon = " "
+        else
+          icon = icon_state.icons.default
+        end
         git_icons = get_git_icons(node, index, offset, 0)
         table.insert(hl, {'LuaTreeSpecialFile', index, offset+#git_icons, -1})
       else
