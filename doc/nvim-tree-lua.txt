@@ -87,11 +87,16 @@ is installed and in your |runtimepath|
 
 |g:lua_tree_icons|                                *g:lua_tree_icons*
 
-You can set some icons for the git status and the default icon that shows
-when no icon is found for a file.
+You can set icons for:
+
+- The git status.
+- The default icon that shows when no icon is found for a file
+  or if you are not using icons.
+- Symlinks. If an icon is not provided, the `default` icon is used.
 >
   let g:lua_tree_icons = {
       \ 'default': '',
+      \ 'symlink': '',
       \ 'git': {
       \   'unstaged': "✗",
       \   'staged': "✓",
