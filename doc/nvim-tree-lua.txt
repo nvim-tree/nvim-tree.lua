@@ -146,7 +146,7 @@ Can be `0` or `1`. When `1`, will hide dotfiles, files or folders which start
 with the `.` character.
 Default is 0
 
-|g:lua_tree_root_folder_modifier|			*g:lua_tree_hide_dotfiles*
+|g:lua_tree_root_folder_modifier|		*g:lua_tree_root_folder_modifier*
 
 In what format to show root folder. See `:help filename-modifiers` for
 available options.
