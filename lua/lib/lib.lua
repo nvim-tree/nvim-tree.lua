@@ -58,7 +58,7 @@ function M.init(with_open, with_render)
 end
 
 local function get_node_at_line(line)
-  local index = 2
+  local index = 3
   local function iter(entries)
     for _, node in ipairs(entries) do
       if index == line then
@@ -135,9 +135,9 @@ end
 function M.set_index_and_redraw(fname)
   local i
   if M.Tree.cwd == '/' then
-    i = 0
-  else
     i = 1
+  else
+    i = 2
   end
   local reload = false
 

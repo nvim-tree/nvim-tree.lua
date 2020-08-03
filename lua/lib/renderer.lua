@@ -160,11 +160,20 @@ local special = {
   ["readme.md"] = true,
 }
 
+local root_folder_modifier = vim.g.lua_tree_root_folder_modifier or ':~'
+
 local function update_draw_data(tree, depth, markers)
   if tree.cwd and tree.cwd ~= '/' then
-    table.insert(lines, "..")
-    table.insert(hl, {'LuaTreeFolderName', index, 0, 2})
+    table.insert(lines, ".. (up a dir)")
+    table.insert(hl, {'LuaTreeFolderName', index, 0, 13})
     index = 1
+  end
+
+  if tree.cwd then
+    local root_name = vim.fn.fnamemodify(tree.cwd, root_folder_modifier)
+    table.insert(lines, root_name)
+    table.insert(hl, {'LuaTreeRootFolder', index, 0, string.len(root_name)})
+    index = tree.cwd ~= '/' and 2 or 1
   end
 
   for idx, node in ipairs(tree.entries) do
