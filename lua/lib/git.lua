@@ -6,7 +6,7 @@ local roots = {}
 local not_git = 'not a git repo'
 
 local function update_root_status(root)
-  local status = vim.fn.systemlist('cd '..root..' && git status --porcelain=v1')
+  local status = vim.fn.systemlist('cd '..root..' && git status --porcelain=v1 -u')
   roots[root] = {}
 
   for _, v in pairs(status) do
@@ -76,9 +76,9 @@ function M.update_status(entries, _cwd)
       node.git_status = status
     elseif node.entries ~= nil then
       local matcher = '^'..utils.path_to_matching_str(relpath)
-      for key, _ in pairs(git_status) do
+      for key, entry_status in pairs(git_status) do
         if key:match(matcher) then
-          node.git_status = 'dirty'
+          node.git_status = entry_status
           break
         end
       end
