@@ -1,4 +1,5 @@
 local api = vim.api
+local config = require'lib.config'
 
 local M = {}
 
@@ -42,61 +43,9 @@ local function get_hl_groups()
     GitStaged = { fg = colors.green },
     GitMerge = { fg = colors.orange },
     GitRenamed = { fg = colors.purple },
-    GitNew = { fg = colors.yellow },
-
-    -- TODO: remove those when we add this to nvim-web-devicons
-    MarkdownIcon = { fg = colors.purple },
-    LicenseIcon = { fg = colors.yellow },
-    YamlIcon = { fg = colors.yellow },
-    TomlIcon = { fg = colors.yellow },
-    GitignoreIcon = { fg = colors.yellow },
-    JsonIcon = { fg = colors.yellow },
-    LuaIcon = { fg = '#42a5f5' },
-    GoIcon = { fg = '#7Fd5EA' },
-    PythonIcon = { fg = colors.green },
-    ShellIcon = { fg = colors.green },
-    JavascriptIcon = { fg = colors.yellow },
-    CIcon = { fg = colors.blue },
-    ReactIcon = { fg = colors.cyan },
-    HtmlIcon = { fg = colors.orange },
-    RustIcon = { fg = colors.orange },
-    VimIcon = { fg = colors.green },
-    TypescriptIcon = { fg = colors.blue },
+    GitNew = { fg = colors.yellow }
   }
 end
-
--- TODO: remove those when we add this to nvim-web-devicons
-M.hl_groups = {
-  ['LICENSE'] = 'LicenseIcon';
-  ['license'] = 'LicenseIcon';
-  ['vim'] = 'VimIcon';
-  ['.vimrc'] = 'VimIcon';
-  ['c'] = 'CIcon';
-  ['cpp'] = 'CIcon';
-  ['python'] = 'PythonIcon';
-  ['lua'] = 'LuaIcon';
-  ['rs'] = 'RustIcon';
-  ['sh'] = 'ShellIcon';
-  ['csh'] = 'ShellIcon';
-  ['zsh'] = 'ShellIcon';
-  ['bash'] = 'ShellIcon';
-  ['md'] = 'MarkdownIcon';
-  ['json'] = 'JsonIcon';
-  ['toml'] = 'TomlIcon';
-  ['go'] = 'GoIcon';
-  ['yaml'] = 'YamlIcon';
-  ['yml'] = 'YamlIcon';
-  ['conf'] = 'GitignoreIcon';
-  ['javascript'] = 'JavascriptIcon';
-  ['typescript'] = 'TypescriptIcon';
-  ['jsx'] = 'ReactIcon';
-  ['tsx'] = 'ReactIcon';
-  ['htm'] = 'HtmlIcon';
-  ['html'] = 'HtmlIcon';
-  ['slim'] = 'HtmlIcon';
-  ['haml'] = 'HtmlIcon';
-  ['ejs'] = 'HtmlIcon';
-}
 
 local function get_links()
   return {
@@ -115,6 +64,9 @@ local function get_links()
 end
 
 function M.setup()
+  if config.get_icon_state().show_file_icon then
+    require'nvim-web-devicons'.setup()
+  end
   local higlight_groups = get_hl_groups()
   for k, d in pairs(higlight_groups) do
     local gui = d.gui or 'NONE'

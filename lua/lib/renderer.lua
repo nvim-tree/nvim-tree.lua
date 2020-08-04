@@ -35,14 +35,14 @@ if icon_state.show_file_icon then
 
   get_file_icon = function(fname, extension, line, depth)
     local icon, hl_group = web_devicons.get_icon(fname, extension)
-    local hl_override = colors.hl_groups[fname] or colors.hl_groups[extension]
-    hl_group = hl_override or hl_group
 
     if icon then
-      table.insert(hl, { 'LuaTree'..hl_group, line, depth, depth + #icon })
+      if hl_group then
+        table.insert(hl, { hl_group, line, depth, depth + #icon })
+      end
       return icon.." "
     else
-      return icon_state.icons.default and icon_state.icons.default.." " or ""
+      return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
     end
   end
 
