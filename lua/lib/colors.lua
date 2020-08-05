@@ -40,6 +40,7 @@ local function get_hl_groups()
     ImageFile = { gui = 'bold', fg = colors.purple },
 
     GitDirty = { fg = colors.dark_red },
+    GitDeleted = { fg = colors.dark_red },
     GitStaged = { fg = colors.green },
     GitMerge = { fg = colors.orange },
     GitRenamed = { fg = colors.purple },
@@ -60,6 +61,7 @@ local function get_links()
     FileRenamed = 'LuaTreeGitRenamed',
     FileMerge = 'LuaTreeGitMerge',
     FileStaged = 'LuaTreeGitStaged',
+    FileDeleted = 'LuaTreeGitDeleted',
   }
 end
 

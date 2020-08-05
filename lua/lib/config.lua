@@ -9,7 +9,8 @@ function M.get_icon_state()
       staged = "✓",
       unmerged = "",
       renamed = "➜",
-      untracked = "★"
+      untracked = "★",
+      deleted = ""
     },
     folder_icons = {
       default = "",

@@ -71,6 +71,7 @@ if vim.g.lua_tree_git_hl == 1 then
     ["??"] = { { hl = "LuaTreeFileNew" } },
     ["R "] = { { hl = "LuaTreeFileRenamed" } },
     ["UU"] = { { hl = "LuaTreeFileMerge" } },
+    [" D"] = { { hl = "LuaTreeFileDeleted" } },
     dirty = { { hl = "LuaTreeFileDirty" } },
   }
   get_git_hl = function(node)
@@ -78,6 +79,11 @@ if vim.g.lua_tree_git_hl == 1 then
     if not git_status then return end
 
     local icons = git_hl[git_status]
+
+    if icons == nil then
+      icons = git_hl.dirty
+    end
+
     -- TODO: how would we determine hl color when multiple git status are active ?
     return icons[1].hl
     -- return icons[#icons].hl
@@ -104,6 +110,7 @@ if icon_state.show_git_icon then
     ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitNew" } },
     ["R "] = { { icon = icon_state.icons.git_icons.renamed, hl = "LuaTreeGitRenamed" } },
     ["UU"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "LuaTreeGitMerge" } },
+    [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "LuaTreeGitDeleted" } },
     dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" } },
   }
 
@@ -112,7 +119,7 @@ if icon_state.show_git_icon then
     if not git_status then return "" end
 
     local icon = ""
-    local icons = git_icon_state[git_status]
+    local icons = git_icon_state[git_status] or git_icon_state.dirty
     for _, v in ipairs(icons) do
       table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
       icon = icon..v.icon.." "
