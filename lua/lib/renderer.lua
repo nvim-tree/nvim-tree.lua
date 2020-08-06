@@ -1,5 +1,6 @@
 local colors = require'lib.colors'
 local config = require'lib.config'
+local utils = require'lib.utils'
 
 local api = vim.api
 
@@ -81,6 +82,7 @@ if vim.g.lua_tree_git_hl == 1 then
     local icons = git_hl[git_status]
 
     if icons == nil then
+      utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
       icons = git_hl.dirty
     end
 
@@ -119,7 +121,13 @@ if icon_state.show_git_icon then
     if not git_status then return "" end
 
     local icon = ""
-    local icons = git_icon_state[git_status] or git_icon_state.dirty
+    local icons = git_icon_state[git_status]
+    if not icons then
+      if vim.g.lua_tree_git_hl ~= 1 then
+        utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
+      end
+      icons = git_icon_state.dirty
+    end
     for _, v in ipairs(icons) do
       table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
       icon = icon..v.icon.." "
