@@ -59,7 +59,7 @@ end
 local get_special_icon = function() return icon_state.icons.default end
 if icon_state.show_file_icon then
   get_special_icon = function()
-    return icon_state.icons.default.." "
+    return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
   end
 end
 
