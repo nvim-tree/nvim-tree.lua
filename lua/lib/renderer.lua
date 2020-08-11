@@ -12,7 +12,7 @@ local namespace_id = api.nvim_create_namespace('LuaTreeHighlights')
 local icon_state = config.get_icon_state()
 
 local get_folder_icon = function() return "" end
-local set_folder_hl = function(line, depth, git_icon_len, hl_group)
+local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
   table.insert(hl, {hl_group, line, depth+git_icon_len, -1})
 end
 
