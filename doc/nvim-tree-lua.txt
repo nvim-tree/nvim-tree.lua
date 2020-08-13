@@ -52,7 +52,7 @@ Print clipboard content for both cut and copy
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
-|g:lua_tree_size|				*g:lua_tree_size*
+|g:lua_tree_width|				*g:lua_tree_width*
 
 width of the window (default to 30)
 
