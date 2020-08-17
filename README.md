@@ -147,3 +147,4 @@ The Netrw vim plugin is disabled, hence features like `gx` don't work across you
 
 ![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
 ![alt text](.github/screenshot2.png?raw=true "akin909 tree")
+![alt text](.github/screenshot3.png?raw=true "stsewd tree")
