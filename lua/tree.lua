@@ -24,6 +24,7 @@ end
 function M.close()
   if lib.win_open() then
     lib.close()
+    return true
   end
 end
 
@@ -31,6 +32,17 @@ function M.open()
   if not lib.win_open() then
     lib.open()
   end
+end
+
+local winopts = config.window_options()
+function M.tab_change()
+  -- we need defer_fn to make sure we close/open after we enter the tab
+  vim.defer_fn(function()
+    if M.close() then
+      M.open()
+      api.nvim_command('wincmd '..winopts.open_command)
+    end
+  end, 1)
 end
 
 local function gen_go_to(mode)

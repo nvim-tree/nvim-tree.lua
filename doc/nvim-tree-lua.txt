@@ -157,6 +157,12 @@ In what format to show root folder. See `:help filename-modifiers` for
 available options.
 Default is `:~`
 
+|g:lua_tree_tab_open|		                *g:lua_tree_tab_open*
+
+Can be 0 or 1. When 1, will open the tree when entering a new tab if the
+tree was previously open.
+Default is 0
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
