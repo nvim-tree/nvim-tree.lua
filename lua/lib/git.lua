@@ -28,6 +28,7 @@ function M.reload_roots()
 end
 
 local function get_git_root(path)
+  --- FIXME this does not check if the path is a subdirectory of the roots
   if roots[path] then
     return path, roots[path]
   end
@@ -63,6 +64,9 @@ function M.update_status(entries, _cwd)
     return
   end
 
+  -- setting the git root above can still result in no git root being
+  -- found despite the repository being a git repo
+  if not git_root then return end
   local matching_cwd = utils.path_to_matching_str(git_root..'/')
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
