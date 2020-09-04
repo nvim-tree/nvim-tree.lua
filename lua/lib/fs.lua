@@ -141,6 +141,30 @@ local function do_copy(source, destination)
   return true
 end
 
+local function do_single_paste(source, dest, action_type, action_fn)
+  local dest_stats = luv.fs_stat(dest)
+  local should_process = true
+  local should_rename = false
+  if dest_stats then
+    ans = vim.fn.input(dest..' already exists, overwrite ? y/n/r(ename): ')
+    clear_prompt()
+    should_process = ans:match('^y')
+    should_rename = ans:match('^r')
+  end
+
+  if should_rename then
+    new_dest = vim.fn.input('New name: ', dest)
+    return do_single_paste(source, new_dest, action_type, action_fn)
+  end
+
+  if should_process then
+    local success, errmsg = action_fn(source, dest)
+    if not success then
+      api.nvim_err_writeln('Could not '..action_type..' '..source..' - '..errmsg)
+    end
+  end
+end
+
 local function do_paste(node, action_type, action_fn)
   if node.name == '..' then return end
   local clip = clipboard[action_type]
@@ -170,21 +194,9 @@ local function do_paste(node, action_type, action_fn)
 
   for _, entry in ipairs(clip) do
     local dest = destination..'/'..entry.name
-    local dest_stats = luv.fs_stat(dest)
-    local should_process = true
-    if dest_stats then
-      ans = vim.fn.input(dest..' already exists, overwrite ? y/n: ')
-      clear_prompt()
-      should_process = ans:match('^y')
-    end
-
-    if should_process then
-      local success, errmsg = action_fn(entry.absolute_path, dest)
-      if not success then
-        api.nvim_err_writeln('Could not '..action_type..' '..entry.absolute_path..' - '..errmsg)
-      end
-    end
+    do_single_paste(entry.absolute_path, dest, action_type, action_fn)
   end
+
   clipboard[action_type] = {}
   return refresh_tree()
 end
