@@ -6,7 +6,7 @@ local roots = {}
 local not_git = 'not a git repo'
 
 local function update_root_status(root)
-  local status = vim.fn.systemlist('cd '..root..' && git status --porcelain=v1 -u')
+  local status = vim.fn.systemlist('cd "'..root..'" && git status --porcelain=v1 -u')
   roots[root] = {}
 
   for _, v in pairs(status) do
@@ -42,17 +42,18 @@ local function get_git_root(path)
 end
 
 local function create_root(cwd)
-  local git_root = vim.fn.system('cd '..cwd..' && git rev-parse --show-toplevel')
+  local git_root = vim.fn.system('cd "'..cwd..'" && git rev-parse --show-toplevel')
+
   if not git_root or #git_root == 0 or git_root:match('fatal') then
     roots[cwd] = not_git
     return false
   end
+
   update_root_status(git_root:sub(0, -2))
   return true
 end
 
-function M.update_status(entries, _cwd)
-  local cwd = _cwd:gsub(' ', '\\ '):gsub('%[', '\\['):gsub('%(', '\\(')
+function M.update_status(entries, cwd)
   local git_root, git_status = get_git_root(cwd)
   if not git_root then
     if not create_root(cwd) then
