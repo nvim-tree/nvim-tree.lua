@@ -272,7 +272,7 @@ function M.draw(tree, reload)
 
   api.nvim_buf_set_lines(tree.bufnr, 0, -1, false, lines)
   M.render_hl(tree.bufnr)
-  if #lines > cursor[1] then
+  if #lines >= cursor[1] then
     api.nvim_win_set_cursor(tree.winnr, cursor)
   end
   api.nvim_buf_set_option(tree.bufnr, 'modifiable', false)
