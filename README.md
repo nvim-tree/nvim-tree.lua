@@ -16,7 +16,7 @@ Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 
 " old version that runs on neovim 0.4.x
-Plug 'kyazdani42/nvim-tree.lua' { 'commit': 'afc86a9' }
+Plug 'kyazdani42/nvim-tree.lua', { 'commit': 'afc86a9' }
 " for icons in old version
 Plug 'ryanoasis/vim-devicons'
 ```
