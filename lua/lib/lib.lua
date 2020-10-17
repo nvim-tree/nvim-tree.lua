@@ -199,6 +199,9 @@ function M.open_file(mode, filename)
   M.win_focus()
   api.nvim_command('vertical resize '..M.Tree.win_width)
   M.win_focus(cur_win)
+  if vim.g.lua_tree_quit_on_open then
+    M.close()
+  end
 end
 
 function M.change_dir(foldername)
