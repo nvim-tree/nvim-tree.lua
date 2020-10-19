@@ -131,12 +131,13 @@ end
 function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
-  if not is_file_readable(filepath) then return end
 
   if with_open then
     M.open()
     lib.win_focus()
   end
+
+  if not is_file_readable(filepath) then return end
   lib.set_index_and_redraw(filepath)
 end
 
