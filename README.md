@@ -10,6 +10,7 @@ Note that the old version has less features and is much slower than the new one.
 ## Install
 
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
+
 ```vim
 " master (neovim git)
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
@@ -40,7 +41,7 @@ let g:lua_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
     \ 'files': 0,
-    \}
+    \ }
 "If 0, do not show the icons for one of 'git' 'folder' and 'files'
 "1 by default, notice that if 'files' is 1, it will only display
 "if nvim-web-devicons is installed and on your runtimepath
@@ -66,7 +67,7 @@ let g:lua_tree_bindings = {
     \ 'paste':           'p',
     \ 'prev_git_item':   '[c',
     \ 'next_git_item':   ']c',
-    }
+    \ }
 
 " Disable default mappings by plugin
 " Bindings are enable by default, disabled on any non-zero value
@@ -107,7 +108,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - `<CR>` on `..` will cd in the above directory
 - `<C-]>` will cd in the directory under the cursor
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
-> you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
+  > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
 - type `r` to rename a file
 - type `x` to add/remove file/directory to cut clipboard
 - type `c` to add/remove file/directory to copy clipboard
@@ -135,6 +136,7 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 The Netrw vim plugin is disabled, hence features like `gx` don't work across your windows/buffers. You could use a plugin like [this one](https://github.com/stsewd/gx-extended.vim) if you wish to use that feature.
 
 ## Features
+
 - Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)
 - File icons with nvim-web-devicons
 - Syntax highlighting ([exa](https://github.com/ogham/exa) like)
