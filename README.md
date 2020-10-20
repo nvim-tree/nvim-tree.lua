@@ -16,7 +16,7 @@ Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 
 " old version that runs on neovim 0.4.x
-Plug 'kyazdani42/nvim-tree.lua' { 'commit': 'afc86a9' }
+Plug 'kyazdani42/nvim-tree.lua', { 'commit': 'afc86a9' }
 " for icons in old version
 Plug 'ryanoasis/vim-devicons'
 ```
@@ -29,6 +29,7 @@ let g:lua_tree_width = 40 "30 by default
 let g:lua_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
 let g:lua_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR` or `vim`
 let g:lua_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
+let g:lua_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
 let g:lua_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
 let g:lua_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
 let g:lua_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`

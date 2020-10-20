@@ -197,10 +197,13 @@ function M.open_file(mode, filename)
     api.nvim_command(string.format("%s %s", mode, filename))
   end
   if M.Tree.win_width_allow_resize ~= true then
-      local cur_win = api.nvim_get_current_win()
-      M.win_focus()
-      api.nvim_command('vertical resize '..M.Tree.win_width)
-      M.win_focus(cur_win)
+    local cur_win = api.nvim_get_current_win()
+    M.win_focus()
+    api.nvim_command('vertical resize '..M.Tree.win_width)
+    M.win_focus(cur_win)
+  end
+  if vim.g.lua_tree_quit_on_open then
+    M.close()
   end
 end
 
