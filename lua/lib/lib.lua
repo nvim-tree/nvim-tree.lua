@@ -17,6 +17,7 @@ M.Tree = {
   buf_name = 'LuaTree',
   cwd = nil,
   win_width =  vim.g.lua_tree_width or 30,
+  win_width_allow_resize = vim.g.lua_tree_width_allow_resize,
   loaded = false,
   bufnr = nil,
   winnr = function()
@@ -195,10 +196,12 @@ function M.open_file(mode, filename)
     end
     api.nvim_command(string.format("%s %s", mode, filename))
   end
-  local cur_win = api.nvim_get_current_win()
-  M.win_focus()
-  api.nvim_command('vertical resize '..M.Tree.win_width)
-  M.win_focus(cur_win)
+  if M.Tree.win_width_allow_resize ~= true then
+    local cur_win = api.nvim_get_current_win()
+    M.win_focus()
+    api.nvim_command('vertical resize '..M.Tree.win_width)
+    M.win_focus(cur_win)
+  end
   if vim.g.lua_tree_quit_on_open then
     M.close()
   end
