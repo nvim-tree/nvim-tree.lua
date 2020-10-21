@@ -9,10 +9,11 @@ local api = vim.api
 
 local M = {}
 
-function M.toggle()
+function M.toggle()  
   if lib.win_open() then
     lib.close()
   else
+    M.on_enter()
     if vim.g.lua_tree_follow == 1 then
       M.find_file(true)
     else
@@ -30,6 +31,7 @@ end
 
 function M.open()
   if not lib.win_open() then
+    M.on_enter()
     lib.open()
   end
 end
