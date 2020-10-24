@@ -196,7 +196,7 @@ function M.open_file(mode, filename)
     end
     api.nvim_command(string.format("%s %s", mode, filename))
   end
-  if M.Tree.win_width_allow_resize ~= true then
+  if not M.Tree.win_width_allow_resize then
     local cur_win = api.nvim_get_current_win()
     M.win_focus()
     api.nvim_command('vertical resize '..M.Tree.win_width)
