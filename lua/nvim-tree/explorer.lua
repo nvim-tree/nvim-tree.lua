@@ -6,10 +6,11 @@ local M = {}
 M.Explorer = {
   cwd = uv.cwd(),
   node_tree = {},
-  node_pool = {}
+  node_pool = {},
+  node_flat = {}
 }
 
-local path_sep = vim.fn.has('win32') == 1 and '\\' or '/'
+local path_sep = vim.fn.has('win32') == 1 and [[\]] or '/'
 
 local function path_join(root, path)
   return root..path_sep..path
@@ -60,8 +61,8 @@ function M.Explorer:is_file_ignored(file)
     or (M.config.show_ignored and M.config.ignore[file] == true)
 end
 
-function M.Explorer:explore(dir_extension)
-  local cwd = dir_extension and path_join(self.cwd, dir_extension) or self.cwd
+function M.Explorer:explore(root)
+  local cwd = root or self.cwd
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
     return nil
@@ -94,7 +95,38 @@ function M.Explorer:explore(dir_extension)
     end
   end
 
-  return vim.tbl_extend("keep", entries.directories, entries.symlinks, entries.files)
+  for _, node in pairs(entries.symlinks) do
+    table.insert(entries.directories, node)
+  end
+  for _, node in pairs(entries.files) do
+    table.insert(entries.directories, node)
+  end
+
+  return entries.directories
+end
+
+function M.Explorer:get_node_under_cursor()
+  local curpos = a.nvim_win_get_cursor(0)
+  for i, node in ipairs(self.node_flat) do
+    if i == curpos[1] then
+      return node, i
+    end
+  end
+
+  return nil, nil
+end
+
+function M.Explorer:explore_children(node, idx)
+  local entries = self:explore(node.absolute_path)
+  if entries then
+    -- TODO: this will not work
+    -- we need to properly add entries to self.tree_node.node
+    node.entries = require'nvim-tree.git'.gitify(entries)
+    for i, n in ipairs(entries) do
+      self.node_pool[n.absolute_path] = n
+      table.insert(self.node_flat, idx+i, node)
+    end
+  end
 end
 
 function M.Explorer:new()
@@ -104,6 +136,7 @@ function M.Explorer:new()
     self.node_tree = require'nvim-tree.git'.gitify(entries)
     for _, node in ipairs(entries) do
       self.node_pool[node.absolute_path] = node
+      table.insert(self.node_flat, node)
     end
   end
 
