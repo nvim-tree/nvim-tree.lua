@@ -4,6 +4,7 @@ M.config = {
   width = 30,
   side = 'left',
   ignore = {'.git', 'node_modules'},
+  show_ignored = false,
   update_cursor = false,
   auto_open = false,
   auto_close = false,
@@ -64,6 +65,7 @@ function M.setup(opts)
   require'nvim-tree.git'.configure(M.config)
   require'nvim-tree.colors'.configure(M.config)
   require'nvim-tree.buffers.tree'.configure(M.config)
+  require'nvim-tree.explorer'.configure(M.config)
 
   if M.config.auto_open then
     require'nvim-tree'.open()
