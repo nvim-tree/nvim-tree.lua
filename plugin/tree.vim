@@ -11,10 +11,6 @@ hi def link LuaTreePopup Normal
 augroup LuaTree
   au BufWritePost * lua require'tree'.refresh()
   au BufEnter * lua require'tree'.buf_enter()
-  if get(g:, 'lua_tree_auto_close') == 1
-    au WinClosed * lua require'tree'.on_leave()
-  endif
-  au ColorScheme * lua require'tree'.reset_highlight()
   au User FugitiveChanged lua require'tree'.refresh()
   if get(g:, 'lua_tree_tab_open') == 1
     au TabEnter * lua require'tree'.tab_change()

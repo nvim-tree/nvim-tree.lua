@@ -4,7 +4,6 @@ local M = {}
 
 M.config = {
   name = "NvimTree",
-  filetype = "NvimTree"
 }
 
 local function is_open()
@@ -31,7 +30,7 @@ function M.open()
   else
     bufnr = a.nvim_create_buf(false, true)
     a.nvim_buf_set_name(bufnr, M.config.name)
-    vim.bo[bufnr].filetype = M.config.filetype
+    vim.bo[bufnr].filetype = M.config.name
     vim.bo[bufnr].modifiable = false
     vim.bo[bufnr].swapfile = false
   end
@@ -64,10 +63,10 @@ function M.render(lines, highlights)
   a.nvim_buf_clear_namespace(bufnr, ns_id)
   for _, hl in ipairs(highlights) do
     a.nvim_buf_set_extmark(bufnr, ns_id, hl.line, hl.col, {
-        end_line = hl.line,
-        end_col = hl.end_col,
-        hl_group = hl.group
-      })
+      end_line = hl.line,
+      end_col = hl.end_col,
+      hl_group = hl.group
+    })
   end
 
   vim.bo[bufnr].modifiable = false

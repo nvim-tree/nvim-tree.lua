@@ -34,12 +34,10 @@ M.config = {
       opened = ""
     }
   },
-  others = {
+  symlink_icon = "",
+  web_devicons = {
     show = true,
-    icons = {
-      default = "",
-      symlink = ""
-    }
+    default = true, -- true || false || replacement str
   },
   keybindings = {
     ["<CR>"]  = ":lua require'nvim-tree'.open_file()<CR>",
@@ -63,16 +61,12 @@ M.config = {
 function M.setup(opts)
   M.config = vim.tbl_deep_extend("keep", opts or {}, M.config)
 
-  require'nvim-tree.git'.configure(M.config.git)
-  require'nvim-tree.buffers.tree'.configure {
-    keybindings = M.config.keybindings,
-    width = M.config.width,
-    side = M.config.side,
-    auto_close = M.config.auto_close
-  }
+  require'nvim-tree.git'.configure(M.config)
+  require'nvim-tree.colors'.configure(M.config)
+  require'nvim-tree.buffers.tree'.configure(M.config)
 
   if M.config.auto_open then
-    require'nvim-tree.buffers.tree'.open()
+    require'nvim-tree'.open()
   end
 end
 
