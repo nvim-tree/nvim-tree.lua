@@ -124,8 +124,8 @@ Default is 0
 
 |g:lua_tree_auto_open|				*g:lua_tree_auto_open*
 
-Can be `0` or `1`. When `1`, will bind |VimEnter| to automatically
-open tree on startup if no files are specified.
+Can be `0` or `1`. When `1`, will open the tree when the package is loaded.
+It's not relying on VimEnter anymore.
 Default is 0
 
 |g:lua_tree_auto_close|				*g:lua_tree_auto_close*

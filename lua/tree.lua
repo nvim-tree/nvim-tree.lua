@@ -196,4 +196,6 @@ function M.xdg_open()
   end))
 end
 
+M.on_enter()
+
 return M
