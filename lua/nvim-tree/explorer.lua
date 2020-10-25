@@ -5,9 +5,9 @@ local M = {}
 
 M.Explorer = {
   cwd = uv.cwd(),
+  cursor = nil,
   node_tree = {},
-  node_pool = {},
-  node_flat = {}
+  file_pool = {}
 }
 
 local path_sep = vim.fn.has('win32') == 1 and [[\]] or '/'
@@ -16,45 +16,55 @@ local function path_join(root, path)
   return root..path_sep..path
 end
 
-local function create_dir(parent, name)
-  local absolute_path = path_join(parent, name)
-  -- local stat = uv.fs_stat(absolute_path)
-  return {
-    name = name,
-    absolute_path = absolute_path,
-    opened = false,
-    entries = {},
-    -- INFO/TODO: last modified could also involve atime and ctime
-    -- last_modified = stat.mtime.sec,
-    -- match_name = path_to_matching_str(name),
-    -- match_path = path_to_matching_str(absolute_path),
+local node_type_funcs = {
+  directory = {
+    create = function(parent, name)
+      local absolute_path = path_join(parent, name)
+      -- local stat = uv.fs_stat(absolute_path)
+      return {
+        name = name,
+        absolute_path = absolute_path,
+        opened = false,
+        entries = {},
+        -- INFO/TODO: last modified could also involve atime and ctime
+        -- last_modified = stat.mtime.sec,
+        -- match_name = path_to_matching_str(name),
+        -- match_path = path_to_matching_str(absolute_path),
+      }
+    end,
+    check = function(node)
+      return uv.fs_access(node.absolute_path, 'R')
+    end
+  },
+  file = {
+    create = function(parent, name)
+      local absolute_path = path_join(parent, name)
+      local executable = uv.fs_access(absolute_path, 'X')
+      return {
+        name = name,
+        absolute_path = absolute_path,
+        executable = executable,
+        extension = vim.fn.fnamemodify(name, ':e') or "",
+        -- match_name = path_to_matching_str(name),
+        -- match_path = path_to_matching_str(absolute_path),
+      }
+    end
+  },
+  link = {
+    create = function(parent, name)
+      local absolute_path = path_join(parent, name)
+      local link_to = uv.fs_realpath(absolute_path)
+      return {
+        name = name,
+        absolute_path = absolute_path,
+        link_to = link_to,
+        -- match_name = path_to_matching_str(name),
+        -- match_path = path_to_matching_str(absolute_path),
+      }
+    end,
+    check = function(node) return node.link_to ~= nil end
   }
-end
-
-local function create_file(parent, name)
-  local absolute_path = path_join(parent, name)
-  local executable = uv.fs_access(absolute_path, 'X')
-  return {
-    name = name,
-    absolute_path = absolute_path,
-    executable = executable,
-    extension = vim.fn.fnamemodify(name, ':e') or "",
-    -- match_name = path_to_matching_str(name),
-    -- match_path = path_to_matching_str(absolute_path),
-  }
-end
-
-local function create_symlink(parent, name)
-  local absolute_path = path_join(parent, name)
-  local link_to = uv.fs_realpath(absolute_path)
-  return {
-    name = name,
-    absolute_path = absolute_path,
-    link_to = link_to,
-    -- match_name = path_to_matching_str(name),
-    -- match_path = path_to_matching_str(absolute_path),
-  }
-end
+}
 
 function M.Explorer:is_file_ignored(file)
   return (M.config.ignore_dotfiles and file:sub(1, 1) == '.')
@@ -69,9 +79,9 @@ function M.Explorer:explore(root)
   end
 
   local entries = {
-    directories = {},
-    symlinks = {},
-    files = {}
+    directory = {},
+    symlink = {},
+    file = {}
   }
 
   while true do
@@ -79,53 +89,57 @@ function M.Explorer:explore(root)
     if not entry_name then break end
 
     if not self:is_file_ignored(entry_name) then
-      if entry_type == 'file' then
-        local dir = create_file(cwd, entry_name)
-        if uv.fs_access(dir.absolute_path, 'R') then
-          table.insert(entries.files, dir)
-        end
-      elseif entry_type == 'directory' then
-        table.insert(entries.directories, create_dir(cwd, entry_name))
-      elseif entry_type == 'link' then
-        local symlink = create_symlink(cwd, entry_name)
-        if symlink.link_to ~= nil then
-          table.insert(entries.symlinks, symlink)
-        end
+      local funcs = node_type_funcs[entry_type]
+      local entry = funcs.create(cwd, entry_name)
+
+      if not funcs.check or funcs.check(entry) then
+        self.file_pool[entry.absolute_path] = 1
+        table.insert(entries[entry_type], entry)
       end
     end
   end
 
-  for _, node in pairs(entries.symlinks) do
-    table.insert(entries.directories, node)
+  for _, node in pairs(entries.symlink) do
+    table.insert(entries.directory, node)
   end
-  for _, node in pairs(entries.files) do
-    table.insert(entries.directories, node)
+  for _, node in pairs(entries.file) do
+    table.insert(entries.directory, node)
   end
 
-  return entries.directories
+  return entries.directory
+end
+
+local function find_node(entries, row, idx)
+  for _, node in ipairs(entries) do
+    if idx == row then return node, idx end
+
+    idx = idx + 1
+    if node.opened and #node.entries > 0 then
+      local n, i = find_node(node.entries, row, idx)
+      if n then return n, i end
+
+      idx = i + 1
+    end
+  end
 end
 
 function M.Explorer:get_node_under_cursor()
   local curpos = a.nvim_win_get_cursor(0)
-  for i, node in ipairs(self.node_flat) do
-    if i == curpos[1] then
-      return node, i
-    end
-  end
-
-  return nil, nil
+  local index = 1
+  return find_node(self.node_tree, curpos[1], index)
 end
 
-function M.Explorer:explore_children(node, idx)
+-- TODO advanced update/caching mecanism
+-- right now it will not remember opened leafs underneath
+-- when closing then reopening
+function M.Explorer:switch_open_dir(node)
+  node.opened = not node.opened
+
+  if not node.opened then return end
+
   local entries = self:explore(node.absolute_path)
   if entries then
-    -- TODO: this will not work
-    -- we need to properly add entries to self.tree_node.node
     node.entries = require'nvim-tree.git'.gitify(entries)
-    for i, n in ipairs(entries) do
-      self.node_pool[n.absolute_path] = n
-      table.insert(self.node_flat, idx+i, node)
-    end
   end
 end
 
@@ -134,10 +148,6 @@ function M.Explorer:new()
   local entries = self:explore()
   if entries then
     self.node_tree = require'nvim-tree.git'.gitify(entries)
-    for _, node in ipairs(entries) do
-      self.node_pool[node.absolute_path] = node
-      table.insert(self.node_flat, node)
-    end
   end
 
   return self

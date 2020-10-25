@@ -56,6 +56,7 @@ local ns_id = a.nvim_create_namespace(M.config.name)
 function M.render(lines, highlights)
   if not is_open() then return end
 
+  local cursor = a.nvim_win_get_cursor(0)
   local bufnr = vim.fn.bufnr(M.config.name)
   vim.bo[bufnr].modifiable = true
 
@@ -70,6 +71,7 @@ function M.render(lines, highlights)
   end
 
   vim.bo[bufnr].modifiable = false
+  a.nvim_win_set_cursor(0, cursor)
 end
 
 function M.configure(opts)

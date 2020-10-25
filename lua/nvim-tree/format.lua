@@ -36,8 +36,8 @@ end
 local function walk(lines, highlights, children, depth)
   for i, node in ipairs(children) do
     format_node(lines, highlights, node, depth, i == #children)
-    if node.children then
-      walk(lines, highlights, node.children, depth + 1)
+    if node.opened and #node.entries > 0 then
+      walk(lines, highlights, node.entries, depth + 1)
     end
   end
 end

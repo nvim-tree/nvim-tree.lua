@@ -66,6 +66,7 @@ function M.setup(opts)
   require'nvim-tree.colors'.configure(M.config)
   require'nvim-tree.buffers.tree'.configure(M.config)
   require'nvim-tree.explorer'.configure(M.config)
+  require'nvim-tree.format'.configure(M.config)
 
   if M.config.auto_open then
     require'nvim-tree'.open()

@@ -11,8 +11,8 @@ return {
   close = require'nvim-tree.buffers.tree'.close,
   open_file = function()
     local node, idx = explorer:get_node_under_cursor()
-    if node.entries and not node.opened and #node.entries == 0 then
-      explorer:explore_children(node, idx)
+    if node.entries ~= nil then
+      explorer:switch_open_dir(node, idx)
       local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree)
       require'nvim-tree.buffers.tree'.render(lines, highlights)
     end
