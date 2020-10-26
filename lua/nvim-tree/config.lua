@@ -71,6 +71,10 @@ function M.setup(opts)
   if M.config.auto_open then
     require'nvim-tree'.open()
   end
+
+  if M.config.tab_open then
+    vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
+  end
 end
 
 return M

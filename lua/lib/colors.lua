@@ -56,12 +56,12 @@ local function get_links()
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
     CursorColumn = 'CursorColumn',
-    FileDirty = 'GitDirty',
-    FileNew = 'GitNew',
-    FileRenamed = 'GitRenamed',
-    FileMerge = 'GitMerge',
-    FileStaged = 'GitStaged',
-    FileDeleted = 'GitDeleted',
+    FileDirty = 'LuaTreeGitDirty',
+    FileNew = 'LuaTreeGitNew',
+    FileRenamed = 'LuaTreeGitRenamed',
+    FileMerge = 'LuaTreeGitMerge',
+    FileStaged = 'LuaTreeGitStaged',
+    FileDeleted = 'LuaTreeGitDeleted',
   }
 end
 

@@ -6,8 +6,11 @@ M.config = {
   name = "NvimTree",
 }
 
+M.windows = {}
+
 local function is_open()
-  return vim.fn.bufwinnr(M.config.name) ~= -1
+  local tabpage = a.nvim_get_current_tabpage()
+  return M.windows[tabpage] ~= nil
 end
 
 local function bind(buf, left, right, opts)
@@ -25,6 +28,7 @@ function M.open()
   vim.wo[win].relativenumber = false
 
   local bufnr
+  local ret = ''
   if vim.fn.bufexists(M.config.name) ~= 0 then
     bufnr = vim.fn.bufnr(M.config.name)
   else
@@ -33,13 +37,17 @@ function M.open()
     vim.bo[bufnr].filetype = M.config.name
     vim.bo[bufnr].modifiable = false
     vim.bo[bufnr].swapfile = false
-  end
 
-  for left, right in pairs(M.config.keybindings) do
-    bind(bufnr, left, right)
+    for left, right in pairs(M.config.keybindings) do
+      bind(bufnr, left, right)
+    end
+
+    ret = 'norestore'
   end
 
   a.nvim_win_set_buf(win, bufnr)
+  M.windows[a.nvim_get_current_tabpage()] = win
+  return ret
 end
 
 function M.close()
@@ -47,7 +55,9 @@ function M.close()
   if #a.nvim_list_wins() == 1 then
     vim.cmd "q!"
   else
-    a.nvim_win_close(vim.fn.bufwinid(M.config.name), true)
+    local tabpage = a.nvim_get_current_tabpage()
+    a.nvim_win_close(M.windows[tabpage], true)
+    M.windows[tabpage] = nil
   end
 end
 
@@ -82,4 +92,5 @@ function M.configure(opts)
   end
 end
 
+M.is_open = is_open
 return M

@@ -53,12 +53,12 @@ local function get_links()
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
     CursorColumn = 'CursorColumn',
-    FileDirty = 'GitDirty',
-    FileNew = 'GitNew',
-    FileRenamed = 'GitRenamed',
-    FileMerge = 'GitMerge',
-    FileStaged = 'GitStaged',
-    FileDeleted = 'GitDeleted',
+    FileDirty = 'NvimTreeGitDirty',
+    FileNew = 'NvimTreeGitNew',
+    FileRenamed = 'NvimTreeGitRenamed',
+    FileMerge = 'NvimTreeGitMerge',
+    FileStaged = 'NvimTreeGitStaged',
+    FileDeleted = 'NvimTreeGitDeleted',
   }
 end
 
