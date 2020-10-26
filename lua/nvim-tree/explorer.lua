@@ -109,24 +109,26 @@ function M.Explorer:explore(root)
   return entries.directory
 end
 
-local function find_node(entries, row, idx)
-  for _, node in ipairs(entries) do
-    if idx == row then return node, idx end
+local function find_node(e, row)
+  local idx = 1
 
-    idx = idx + 1
-    if node.opened and #node.entries > 0 then
-      local n, i = find_node(node.entries, row, idx)
-      if n then return n, i end
+  local function iter(entries)
+    for _, node in ipairs(entries) do
+      if idx == row then return node end
 
-      idx = i + 1
+      idx = idx + 1
+      if node.opened and #node.entries > 0 then
+        local n = iter(node.entries)
+        if n then return n end
+      end
     end
   end
+
+  return iter(e)
 end
 
 function M.Explorer:get_node_under_cursor()
-  local curpos = a.nvim_win_get_cursor(0)
-  local index = 1
-  return find_node(self.node_tree, curpos[1], index)
+  return find_node(self.node_tree, a.nvim_win_get_cursor(0)[1])
 end
 
 -- TODO advanced update/caching mecanism
