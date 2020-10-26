@@ -196,6 +196,6 @@ function M.xdg_open()
   end))
 end
 
-M.on_enter()
+vim.defer_fn(M.on_enter, 1)
 
 return M
