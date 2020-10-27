@@ -31,5 +31,11 @@ return {
       require'nvim-tree.buffers.tree'.render(lines, highlights)
     end
   end,
+  rename_file = function()
+    local node, idx = explorer:get_node_under_cursor()
+    if not node then return end
+
+    require'nvim-tree.buffers.overlay'.new(node, idx+1)
+  end,
   ex = function() return explorer end
 }

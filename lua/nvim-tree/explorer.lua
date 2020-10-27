@@ -119,7 +119,7 @@ local function find_node(e, row)
     end
   end
 
-  return iter(e)
+  return iter(e), idx
 end
 
 function M.Explorer:get_node_under_cursor()
