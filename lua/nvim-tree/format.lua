@@ -107,7 +107,7 @@ local function format_node(lines, highlights, node, depth, row, markers)
 end
 
 local function walk(lines, highlights, e)
-  local idx = 0
+  local idx = 1
 
   local function iter(entries, depth, markers)
     if markers and depth > 0 then markers = markers..'│ ' end
@@ -129,9 +129,15 @@ local function walk(lines, highlights, e)
   return iter(e, 0, M.config.show_indent_markers and "" or nil)
 end
 
-function M.format_nodes(node_tree)
-  local lines = {}
-  local highlights = {}
+function M.format_nodes(node_tree, cwd)
+  local modifier = M.config.root_folder_modifier or ':~'
+  local lines = {vim.fn.fnamemodify(cwd, modifier):gsub('/$', '').."/.."}
+  local highlights = {{
+    line = 0,
+    start_col = 0,
+    end_col = #lines[1],
+    group = "NvimTreeRootFolder"
+  }}
   walk(lines, highlights, node_tree)
 
   return lines, highlights

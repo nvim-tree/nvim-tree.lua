@@ -15,16 +15,19 @@ return {
   end,
   open = function()
     explorer = require'nvim-tree.explorer'.Explorer:new()
-    local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree)
+    local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
     if require'nvim-tree.buffers.tree'.open() == 'norestore' then
       require'nvim-tree.buffers.tree'.render(lines, highlights)
     end
   end,
   open_file = function()
-    local node, idx = explorer:get_node_under_cursor()
+    local node = explorer:get_node_under_cursor()
+    -- cd ..
+    if not node then return end
+
     if node.entries ~= nil then
-      explorer:switch_open_dir(node, idx)
-      local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree)
+      explorer:switch_open_dir(node)
+      local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
       require'nvim-tree.buffers.tree'.render(lines, highlights)
     end
   end,

@@ -1,3 +1,7 @@
+-- TODOS
+-- refresh the tree nodes (for each tree with values, refresh the content if atime or ctime has been changed in the folder)
+-- find a node in the fs under the root
+-- change root cwd
 local uv = vim.loop
 local a = vim.api
 
@@ -20,16 +24,11 @@ local node_type_funcs = {
   directory = {
     create = function(parent, name)
       local absolute_path = path_join(parent, name)
-      -- local stat = uv.fs_stat(absolute_path)
       return {
         name = name,
         absolute_path = absolute_path,
         opened = false,
-        entries = {},
-        -- INFO/TODO: last modified could also involve atime and ctime
-        -- last_modified = stat.mtime.sec,
-        -- match_name = path_to_matching_str(name),
-        -- match_path = path_to_matching_str(absolute_path),
+        entries = {}
       }
     end,
     check = function(node)
@@ -44,9 +43,7 @@ local node_type_funcs = {
         name = name,
         absolute_path = absolute_path,
         executable = executable,
-        extension = vim.fn.fnamemodify(name, ':e') or "",
-        -- match_name = path_to_matching_str(name),
-        -- match_path = path_to_matching_str(absolute_path),
+        extension = vim.fn.fnamemodify(name, ':e') or ""
       }
     end
   },
@@ -57,9 +54,7 @@ local node_type_funcs = {
       return {
         name = name,
         absolute_path = absolute_path,
-        link_to = link_to,
-        -- match_name = path_to_matching_str(name),
-        -- match_path = path_to_matching_str(absolute_path),
+        link_to = link_to
       }
     end,
     check = function(node) return node.link_to ~= nil end
@@ -128,16 +123,18 @@ local function find_node(e, row)
 end
 
 function M.Explorer:get_node_under_cursor()
-  return find_node(self.node_tree, a.nvim_win_get_cursor(0)[1])
+  local row = a.nvim_win_get_cursor(0)[1]
+  if row == 1 then
+    return nil
+  end
+  return find_node(self.node_tree, row-1)
 end
 
--- TODO advanced update/caching mecanism
--- right now it will not remember opened leafs underneath
--- when closing then reopening
 function M.Explorer:switch_open_dir(node)
   node.opened = not node.opened
 
   if not node.opened then return end
+  if #node.entries > 0 then return end
 
   local entries = self:explore(node.absolute_path)
   if entries then
