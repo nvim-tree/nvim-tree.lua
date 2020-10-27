@@ -15,30 +15,95 @@ local function get_padding(depth, markers)
   return padding, hl
 end
 
+local file_highlights = {
+  jpg = "NvimTreeImageFile",
+  jpeg = "NvimTreeImageFile",
+  png = "NvimTreeImageFile",
+  gif = "NvimTreeImageFile",
+  ["Cargo.toml"] = "NvimTreeSpecialFile",
+  Makefile =  "NvimTreeSpecialFile",
+  ["README.md"] = "NvimTreeSpecialFile",
+  ["readme.md"] = "NvimTreeSpecialFile",
+}
+
+-- TODO: fix shouldn't add icon on special files (readme, cargo.toml) and executables
+-- but only on zshrc. Not sure there
 local function format_node(lines, highlights, node, depth, row, markers)
   local padding, padding_hl = get_padding(depth, markers)
-  local start_of_text = string.len(padding)
+  local text_start = string.len(padding)
   if padding_hl then
     table.insert(highlights, {
       line = row,
       start_col = 0,
-      end_col = start_of_text,
+      end_col = text_start,
       group = padding_hl
     })
   end
 
+  local icon = ""
   if node.entries then
+    if M.config.show_folder then
+      icon = (node.opened and M.config.folders.opened or M.config.folders.closed).." "
+      local icon_len = string.len(icon)
+      table.insert(highlights, {
+        line = row,
+        start_col = text_start,
+        end_col = text_start + icon_len,
+        group = "NvimTreeFolderIcon"
+      })
+      text_start = text_start + string.len(icon)
+    end
     table.insert(highlights, {
       line = row,
-      start_col = start_of_text,
-      end_col = start_of_text + #node.name,
+      start_col = text_start,
+      end_col = text_start + string.len(node.name),
       group = "NvimTreeFolderName"
     })
-  -- elseif node.link_to then
-  -- else
+  elseif node.link_to then
+    icon = M.config.symlink_icon.." "
+    table.insert(highlights, {
+      line = row,
+      start_col = text_start,
+      end_col = text_start + string.len(node.name),
+      group = "NvimTreeSymlink"
+    })
+  else
+    local ext = vim.fn.fnamemodify(node.name, ':e') or ""
+    if M.config.show_icons then
+      local i, hl = require'nvim-web-devicons'.get_icon(node.name, ext, {default = M.config.show_default})
+      if i then
+        icon = i..' '
+        local icon_len = string.len(icon)
+        table.insert(highlights, {
+          line = row,
+          start_col = text_start,
+          end_col = text_start + icon_len,
+          group = hl
+        })
+        text_start = text_start + icon_len
+      end
+    end
+
+    local text_length = string.len(node.name)
+    local custom_file_hl = file_highlights[node.name] or file_highlights[ext]
+    if vim.fn.executable(node.absolute_path) == 1 then
+      table.insert(highlights, {
+        line = row,
+        start_col = text_start,
+        end_col = text_start + text_length,
+        group = "NvimTreeExecFile"
+      })
+    elseif custom_file_hl then
+      table.insert(highlights, {
+        line = row,
+        start_col = text_start,
+        end_col = text_start + text_length,
+        group = custom_file_hl
+      })
+    end
   end
 
-  table.insert(lines, padding..node.name)
+  table.insert(lines, padding..icon..node.name)
 end
 
 local function walk(lines, highlights, e)
@@ -74,7 +139,12 @@ end
 
 function M.configure(opts)
   M.config = {
-    show_indent_markers = opts.show_indent_markers
+    show_indent_markers = opts.show_indent_markers,
+    show_folder = opts.folders.show,
+    folders = opts.folders.icons,
+    symlink_icon = opts.simlink_icon,
+    show_icons = opts.web_devicons.show,
+    show_default = opts.web_devicons.default
   }
 end
 

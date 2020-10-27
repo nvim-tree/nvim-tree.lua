@@ -21,7 +21,7 @@ function M.open()
   if is_open() then return end
 
   local side = M.config.side == 'left' and 'topleft' or 'botright'
-  vim.cmd(string.format("%s %svsplit", side, M.config.width))
+  vim.cmd(string.format("%s vsplit | vert resize %s", side, M.config.width))
 
   local win = a.nvim_get_current_win()
   vim.wo[win].number = false
