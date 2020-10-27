@@ -65,7 +65,9 @@ end
 return {
   configure = function(opts)
     if opts and opts.web_devicons.show == true then
-      require'nvim-web-devicons'.setup()
+      if not require'nvim-web-devicons'.has_loaded() then
+        require'nvim-web-devicons'.setup()
+      end
     end
 
     local higlight_groups = get_hl_groups()
