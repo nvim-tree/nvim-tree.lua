@@ -1,21 +1,11 @@
 local M = {}
 
--- todo: fix this for indent markers
--- this wont work when having
--- |
--- |_
---   |_
---     |_
-local function get_padding(depth, last_node)
+local function get_padding(depth, markers)
   local padding = ""
   local hl = nil
   if depth > 0 then
-    if M.config.show_indent_markers then
-      if last_node then
-        padding = string.rep('│ ', depth-1)..'└ '
-      else
-        padding = string.rep('│ ', depth)
-      end
+    if markers then
+      padding = markers
       hl = "NvimTreeIndentMarker"
     else
       padding = string.rep('  ', depth)
@@ -25,15 +15,14 @@ local function get_padding(depth, last_node)
   return padding, hl
 end
 
--- TODO: fix weird extmarks rendering
-local function format_node(lines, highlights, node, depth, row, last_node)
-  local padding, padding_hl = get_padding(depth, last_node)
-  local start_of_text = depth * 2
+local function format_node(lines, highlights, node, depth, row, markers)
+  local padding, padding_hl = get_padding(depth, markers)
+  local start_of_text = string.len(padding)
   if padding_hl then
     table.insert(highlights, {
       line = row,
-      col = 0,
-      end_col = start_of_text - 1,
+      start_col = 0,
+      end_col = start_of_text,
       group = padding_hl
     })
   end
@@ -41,7 +30,7 @@ local function format_node(lines, highlights, node, depth, row, last_node)
   if node.entries then
     table.insert(highlights, {
       line = row,
-      col = start_of_text,
+      start_col = start_of_text,
       end_col = start_of_text + #node.name,
       group = "NvimTreeFolderName"
     })
@@ -55,17 +44,24 @@ end
 local function walk(lines, highlights, e)
   local idx = 0
 
-  local function iter(entries, depth)
+  local function iter(entries, depth, markers)
+    if markers and depth > 0 then markers = markers..'│ ' end
+
     for i, node in ipairs(entries) do
-      format_node(lines, highlights, node, depth, idx, i == #entries)
+      local last_node = markers and i == #entries and depth > 0
+      if last_node then markers = markers:gsub('│ $', '└ ') end
+
+      format_node(lines, highlights, node, depth, idx, markers)
+      if last_node then markers = markers:gsub('└ $', '  ') end
+
       idx = idx + 1
       if node.opened and #node.entries > 0 then
-        iter(node.entries, depth + 1)
+        iter(node.entries, depth + 1, markers)
       end
     end
   end
 
-  return iter(e, 0)
+  return iter(e, 0, M.config.show_indent_markers and "" or nil)
 end
 
 function M.format_nodes(node_tree)

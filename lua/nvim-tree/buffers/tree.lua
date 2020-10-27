@@ -73,7 +73,7 @@ function M.render(lines, highlights)
   a.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   a.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
   for _, hl in ipairs(highlights) do
-    a.nvim_buf_set_extmark(bufnr, ns_id, hl.line, hl.col, {
+    a.nvim_buf_set_extmark(bufnr, ns_id, hl.line, hl.start_col, {
       end_line = hl.line,
       end_col = hl.end_col,
       hl_group = hl.group
