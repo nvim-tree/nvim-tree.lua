@@ -284,6 +284,7 @@ function M.draw(tree, reload)
     api.nvim_win_set_cursor(tree.winnr, cursor)
   end
   api.nvim_buf_set_option(tree.bufnr, 'modifiable', false)
+  api.nvim_win_set_option(tree.winnr, 'wrap', false)
 end
 
 function M.render_hl(bufnr)
