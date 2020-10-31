@@ -202,7 +202,7 @@ function M.open_file(mode, filename)
     api.nvim_command('vertical resize '..M.Tree.win_width)
     M.win_focus(cur_win)
   end
-  if vim.g.lua_tree_quit_on_open == 1 then
+  if vim.g.lua_tree_quit_on_open == 1 and mode ~= 'preview' then
     M.close()
   end
 end
