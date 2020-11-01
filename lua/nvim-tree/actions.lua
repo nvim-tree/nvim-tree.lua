@@ -23,7 +23,10 @@ function M.redraw()
     end, 1)
 end
 
-function M.open()
+function M.open(dirname)
+  if dirname and dirname ~= "." then
+    vim.cmd("cd "..dirname)
+  end
   explorer = require'nvim-tree.explorer'.Explorer:new()
   local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
   if require'nvim-tree.buffers.tree'.open() == 'norestore' then
@@ -58,7 +61,7 @@ function M.open_file(mode)
   local prevw = config.side == 'left' and 'h' or 'l'
 
   if mode == 'vsplit' then
-    vim.cmd("vnew "..node.absolute_path)
+    vim.cmd("wincmd "..nextw.." | vnew "..node.absolute_path)
   elseif mode == 'split' then
     vim.cmd("wincmd "..nextw.." | new "..node.absolute_path)
   elseif mode == 'tab' then

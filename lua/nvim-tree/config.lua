@@ -77,6 +77,26 @@ function M.setup(opts)
   require'nvim-tree.explorer'.configure(M.config)
   require'nvim-tree.format'.configure(M.config)
 
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+  vim.cmd "hi def link NvimTreePopup Normal"
+
+  -- vim.cmd "au BufWritePost * lua require'nvim-tree'.refresh()"
+  -- nope, maybe with watcher ?
+  -- basically the watcher should, every updatetime ms, run a check function to see if a folder was modifier
+  -- or the root was altered (ctime atime stuff)
+  -- reload the appropriate nodes, and redraw the tree
+
+  -- au BufEnter * lua require'tree'.buf_enter() -- this is the follow stuff
+  -- au User FugitiveChanged lua require'tree'.refresh() -- this should be implemented with watcher
+  --
+  vim.cmd "command! NvimTreeOpen lua require'nvim-tree'.open()"
+  vim.cmd "command! NvimTreeClose lua require'nvim-tree'.close()"
+  vim.cmd "command! NvimTreeToggle lua require'nvim-tree'.toggle()"
+  vim.cmd "command! NvimTreeRefresh lua require'nvim-tree'.refresh()"
+  vim.cmd "command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()"
+  vim.cmd "command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)"
+
   if M.config.tab_open then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
   end
@@ -86,8 +106,13 @@ function M.setup(opts)
   end
 
   if M.config.auto_open then
-    -- defer_fn required to open after cwd is set if using vim-rooter or something like that
-    vim.defer_fn(require'nvim-tree'.open, 1)
+    vim.defer_fn(function()
+      local bufname = vim.api.nvim_buf_get_name(0)
+      if bufname == "" then bufname = "." end
+      if bufname and vim.fn.isdirectory(bufname) == 0 then return end
+
+      require'nvim-tree'.open(bufname)
+    end, 1)
   end
 end
 
