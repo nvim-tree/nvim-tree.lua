@@ -10,6 +10,17 @@ M.windows = {}
 
 local function is_open()
   local tabpage = a.nvim_get_current_tabpage()
+  local window = M.windows[tabpage]
+
+  local success, b = pcall(a.nvim_win_get_buf, window)
+  if not success then
+    M.windows[tabpage] = nil
+  end
+
+  if not a.nvim_buf_get_name(b):match(M.config.name..'$') then
+    M.windows[tabpage] = nil
+  end
+
   return M.windows[tabpage] ~= nil
 end
 
