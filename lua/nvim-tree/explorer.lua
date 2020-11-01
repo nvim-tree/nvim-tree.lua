@@ -75,7 +75,7 @@ function M.Explorer:explore(root)
 
   local entries = {
     directory = {},
-    symlink = {},
+    link = {},
     file = {}
   }
 
@@ -94,7 +94,7 @@ function M.Explorer:explore(root)
     end
   end
 
-  for _, node in pairs(entries.symlink) do
+  for _, node in pairs(entries.link) do
     table.insert(entries.directory, node)
   end
   for _, node in pairs(entries.file) do

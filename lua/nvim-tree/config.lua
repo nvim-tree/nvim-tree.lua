@@ -8,12 +8,12 @@ M.config = {
   update_cursor = false, -- TODO
   auto_open = false, -- CHECK
   auto_close = false, -- CHECK
-  close_on_open_file = false, -- CHECK
+  close_on_open_file = false,
   show_indent_markers = false,
   hide_dotfiles = false, -- CHECK
-  home_folder_modifier = "~", -- TODO
+  home_folder_modifier = "~", -- CHECK
   tab_open = false, -- CHECK
-  keep_width = false, -- TODO
+  keep_width = false,
   git = {
     show = {
       icons = true,
@@ -74,6 +74,10 @@ function M.setup(opts)
 
   if M.config.tab_open then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
+  end
+
+  if M.config.keep_width then
+    vim.cmd "au BufEnter * lua require'nvim-tree.buffers.tree'.resize(true)"
   end
 end
 

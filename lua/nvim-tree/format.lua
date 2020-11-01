@@ -60,7 +60,7 @@ local function format_node(lines, highlights, node, depth, row, markers)
       group = "NvimTreeFolderName"
     })
   elseif node.link_to then
-    icon = M.config.symlink_icon.." "
+    icon = #M.config.symlink_icon > 0 and M.config.symlink_icon.." " or ""
     table.insert(highlights, {
       line = row,
       start_col = text_start,
@@ -131,7 +131,11 @@ end
 
 function M.format_nodes(node_tree, cwd)
   local modifier = M.config.root_folder_modifier or ':~'
-  local lines = {vim.fn.fnamemodify(cwd, modifier):gsub('/$', '').."/.."}
+  local root = vim.fn.fnamemodify(cwd, modifier)
+  if root ~= "/" then
+    root = root:gsub('/$', '').."/.."
+  end
+  local lines = {root}
   local highlights = {{
     line = 0,
     start_col = 0,
@@ -148,7 +152,7 @@ function M.configure(opts)
     show_indent_markers = opts.show_indent_markers,
     show_folder = opts.folders.show,
     folders = opts.folders.icons,
-    symlink_icon = opts.simlink_icon,
+    symlink_icon = opts.symlink_icon,
     show_icons = opts.web_devicons.show,
     show_default = opts.web_devicons.default
   }

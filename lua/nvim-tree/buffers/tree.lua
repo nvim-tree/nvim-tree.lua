@@ -61,6 +61,23 @@ function M.close()
   end
 end
 
+function M.resize(with_replace)
+  if not is_open() then return end
+
+  local tabpage = a.nvim_get_current_tabpage()
+  local treewin = M.windows[tabpage]
+
+  if with_replace then
+    local wincmd = M.config.side == 'left' and 'wincmd H' or 'wincmd L'
+    local curwin = a.nvim_get_current_win()
+    a.nvim_set_current_win(treewin)
+    vim.cmd(wincmd)
+    a.nvim_set_current_win(curwin)
+  end
+
+  a.nvim_win_set_width(treewin, M.config.width)
+end
+
 local ns_id = a.nvim_create_namespace(M.config.name)
 
 function M.render(lines, highlights)
