@@ -1,4 +1,8 @@
+-- TODO: debug for lazy loading (seems like it doesn't work quite right with packer)
 -- TODO: git
+-- TODO: find file
+-- TODO: symlink open ?
+-- TODO: xdg open
 -- TODO: refresh logic
 -- TODO: watcher ?
 -- TODO: multi explorer ? (would be hard to manage multiple cwds though)
@@ -13,14 +17,17 @@ M.config = {
   show_indent_markers = false,
   hide_dotfiles = false,
   home_folder_modifier = "~",
+
   -- dynamics
   close_on_open_file = false,
-  auto_open = false, --> will open when opening nvim as a pager (should not happen)
+  open_on_setup = false, --> will open when opening nvim as a pager (should not happen)
+
   -- autocmds
-  auto_close = false,
-  set_cursor = false, -- TODO
-  tab_open = false,
-  keep_width = false,
+  close_when_last_window = false,
+  set_cursor_on_bufenter = false, -- TODO
+  keep_open_on_tabenter = false,
+  resize_replace_on_bufenter = false,
+
   -- formatting / git / icons
   git = { -- TODO
     show = {
@@ -48,6 +55,7 @@ M.config = {
     show = true,
     default = true,
   },
+
   -- actions
   keybindings = {
     ["<CR>"]  = ":lua require'nvim-tree'.open_file()<CR>",
@@ -56,7 +64,7 @@ M.config = {
     ["<C-x>"] = ":lua require'nvim-tree'.open_file('split')<CR>",
     ["<C-t>"] = ":lua require'nvim-tree'.open_file('tab')<CR>",
     ["<Tab>"] = ":lua require'nvim-tree'.open_file('preview')<CR>",
-    ["<C-]>"] = ":lua require'nvim-tree'.change_cwd()<CR>", -- TODO
+    ["<C-]>"] = ":lua require'nvim-tree'.change_cwd()<CR>",
     ["a"]     = ":lua require'nvim-tree'.create_file()<CR>", -- TODO
     ["d"]     = ":lua require'nvim-tree'.delete_file()<CR>", -- TODO
     ["r"]     = ":lua require'nvim-tree'.rename_file()<CR>", -- TODO
@@ -99,15 +107,15 @@ function M.setup(opts)
 
   vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.setup()"
 
-  if M.config.tab_open then
+  if M.config.keep_open_on_tabenter then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
   end
 
-  if M.config.keep_width then
+  if M.config.resize_replace_on_bufenter then
     vim.cmd "au BufEnter * lua require'nvim-tree.buffers.tree'.resize(true)"
   end
 
-  if M.config.auto_open then
+  if M.config.open_on_setup then
     vim.defer_fn(function()
       local bufname = vim.api.nvim_buf_get_name(0)
       if bufname == "" then bufname = "." end
