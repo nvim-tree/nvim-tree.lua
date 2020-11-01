@@ -61,8 +61,10 @@ function M.Explorer:is_file_ignored(file)
     or (not M.config.show_ignored and M.config.ignore[file] == true)
 end
 
-function M.Explorer:explore(root)
+function M.Explorer:explore(root, idxlist)
   local cwd = root or self.cwd
+  local idxpath = idxlist or {}
+  table.insert(idxpath, 1)
 
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
@@ -86,8 +88,9 @@ function M.Explorer:explore(root)
         local entry = funcs.create(cwd, entry_name)
 
         if not funcs.check or funcs.check(entry) then
-          self.file_pool[entry.absolute_path] = 1
+          self.file_pool[entry.absolute_path] = idxpath
           table.insert(entries[entry_type], entry)
+          idxpath[#idxpath] = idxpath[#idxpath] + 1
         end
       end
     end
@@ -142,13 +145,21 @@ function M.Explorer:switch_open_dir(node)
 
   local entries = self:explore(node.absolute_path)
   if entries then
-    node.entries = require'nvim-tree.git'.gitify(entries)
+    node.entries = require'nvim-tree.git'.gitify(entries, node.absolute_path)
   end
 end
 
 function M.Explorer:refresh(files)
   return function()
-    dump(files)
+    for _, file in ipairs(files) do
+      if not self.file_pool[file] then
+        -- print('new file')
+      elseif uv.fs_stat(file) ~= nil then
+        -- print('old file has been edited')
+      else
+        -- print('file was removed or renamed')
+      end
+    end
   end
 end
 
@@ -156,9 +167,8 @@ function M.Explorer:new(cwd)
   self.cwd = cwd or uv.cwd()
   local entries = self:explore()
   if entries then
-    self.node_tree = require'nvim-tree.git'.gitify(entries)
+    self.node_tree = require'nvim-tree.git'.gitify(entries, self.cwd)
   end
-
 
   return self
 end

@@ -48,6 +48,7 @@ end
 local function get_links()
   return {
     FolderName = 'Directory',
+    Popup = 'Normal',
     Normal = 'Normal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
@@ -66,14 +67,13 @@ local opts = nil
 
 return {
   configure = function(o)
-    opts = o
-  end,
-  setup = function()
     if opts and opts.web_devicons.show == true then
       if not require'nvim-web-devicons'.has_loaded() then
         require'nvim-web-devicons'.setup({ default = opts.web_devicons.default })
       end
     end
+
+    opts = o
 
     local higlight_groups = get_hl_groups()
     for k, d in pairs(higlight_groups) do

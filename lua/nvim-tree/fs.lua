@@ -10,7 +10,8 @@ function M.rename(node_name)
 
   -- rename node
   -- for each buf that has .*/nodename/?.*, replace nodename with new name
-  -- send refresh node
+
+  -- send refresh node or just leave the watcher handle that
 end
 
 return M

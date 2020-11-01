@@ -79,15 +79,14 @@ M.config = {
 function M.setup(opts)
   M.config = vim.tbl_deep_extend("keep", opts or {}, M.config)
 
-  require'nvim-tree.git'.configure(M.config)
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+
   require'nvim-tree.colors'.configure(M.config)
   require'nvim-tree.buffers.tree'.configure(M.config)
   require'nvim-tree.explorer'.configure(M.config)
   require'nvim-tree.format'.configure(M.config)
-
-  vim.g.loaded_netrw = 1
-  vim.g.loaded_netrwPlugin = 1
-  vim.cmd "hi def link NvimTreePopup Normal"
+  require'nvim-tree.git'.configure(M.config)
 
   -- vim.cmd "au BufWritePost * lua require'nvim-tree'.refresh()"
   -- nope, maybe with watcher ?
@@ -104,8 +103,7 @@ function M.setup(opts)
   vim.cmd "command! NvimTreeRefresh lua require'nvim-tree'.refresh()"
   vim.cmd "command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()"
   vim.cmd "command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)"
-
-  vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.setup()"
+  vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.configure()"
 
   if M.config.keep_open_on_tabenter then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
