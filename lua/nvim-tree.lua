@@ -5,6 +5,7 @@ return {
   redraw = require'nvim-tree.actions'.redraw,
   open = require'nvim-tree.actions'.open,
   open_file = require'nvim-tree.actions'.open_file,
+  change_cwd = require'nvim-tree.actions'.change_cwd,
   rename_file = require'nvim-tree.actions'.rename_file,
   add_file = require'nvim-tree.actions'.add_file,
   remove_file = require'nvim-tree.actions'.remove_file,

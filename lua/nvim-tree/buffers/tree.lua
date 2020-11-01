@@ -110,7 +110,9 @@ function M.render(lines, highlights)
   end
 
   vim.bo[bufnr].modifiable = false
-  a.nvim_win_set_cursor(0, cursor)
+  if cursor[1] <= #a.nvim_buf_get_lines(bufnr, 0, -1, true) then
+    a.nvim_win_set_cursor(0, cursor)
+  end
 end
 
 function M.auto_close()

@@ -42,6 +42,19 @@ local function cd(to)
   require'nvim-tree.buffers.tree'.render(lines, highlights)
 end
 
+function M.change_cwd()
+  local node = explorer:get_node_under_cursor()
+
+  local go_to
+  if not node then
+    go_to = explorer.cwd:gsub('[^/]*$', '')
+  else
+    go_to = node.absolute_path
+  end
+
+  cd(go_to)
+end
+
 function M.open_file(mode)
   local node = explorer:get_node_under_cursor()
 
