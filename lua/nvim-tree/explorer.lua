@@ -4,6 +4,7 @@
 -- change root cwd
 local uv = vim.loop
 local a = vim.api
+local utils = require'nvim-tree.utils'
 
 local M = {}
 
@@ -14,16 +15,10 @@ M.Explorer = {
   file_pool = {}
 }
 
-local path_sep = vim.fn.has('win32') == 1 and [[\]] or '/'
-
-local function path_join(root, path)
-  return root..path_sep..path
-end
-
 local node_type_funcs = {
   directory = {
     create = function(parent, name)
-      local absolute_path = path_join(parent, name)
+      local absolute_path = utils.path_join(parent, name)
       return {
         name = name,
         absolute_path = absolute_path,
@@ -37,7 +32,7 @@ local node_type_funcs = {
   },
   file = {
     create = function(parent, name)
-      local absolute_path = path_join(parent, name)
+      local absolute_path = utils.path_join(parent, name)
       local executable = uv.fs_access(absolute_path, 'X')
       return {
         name = name,
@@ -49,7 +44,7 @@ local node_type_funcs = {
   },
   link = {
     create = function(parent, name)
-      local absolute_path = path_join(parent, name)
+      local absolute_path = utils.path_join(parent, name)
       local link_to = uv.fs_realpath(absolute_path)
       return {
         name = name,
@@ -68,6 +63,7 @@ end
 
 function M.Explorer:explore(root)
   local cwd = root or self.cwd
+
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
     return nil
@@ -95,6 +91,11 @@ function M.Explorer:explore(root)
         end
       end
     end
+  end
+
+  require'nvim-tree.watcher'.run(self, cwd)
+  for _, dir in pairs(entries.directory) do
+    require'nvim-tree.watcher'.run(self, dir.absolute_path)
   end
 
   for _, node in pairs(entries.link) do
@@ -145,12 +146,19 @@ function M.Explorer:switch_open_dir(node)
   end
 end
 
-function M.Explorer:new()
-  self.cwd = uv.cwd()
+function M.Explorer:refresh(files)
+  return function()
+    dump(files)
+  end
+end
+
+function M.Explorer:new(cwd)
+  self.cwd = cwd or uv.cwd()
   local entries = self:explore()
   if entries then
     self.node_tree = require'nvim-tree.git'.gitify(entries)
   end
+
 
   return self
 end
@@ -159,7 +167,7 @@ function M.configure(opts)
   M.config = {
     ignore = {},
     show_ignored = opts.show_ignored,
-    ignore_dotfiles = opts.hide_dotfiles
+    ignore_dotfiles = opts.hide_dotfiles,
   }
 
   for _, ignore_pattern in ipairs(opts.ignore) do
