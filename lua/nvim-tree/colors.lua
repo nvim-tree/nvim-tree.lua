@@ -66,7 +66,7 @@ return {
   configure = function(opts)
     if opts and opts.web_devicons.show == true then
       if not require'nvim-web-devicons'.has_loaded() then
-        require'nvim-web-devicons'.setup()
+        require'nvim-web-devicons'.setup({ default = opts.web_devicons.default })
       end
     end
 

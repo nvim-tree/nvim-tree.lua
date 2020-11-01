@@ -26,8 +26,6 @@ local file_highlights = {
   ["readme.md"] = "NvimTreeSpecialFile",
 }
 
--- TODO: fix shouldn't add icon on special files (readme, cargo.toml) and executables
--- but only on zshrc. Not sure there
 local function format_node(lines, highlights, node, depth, row, markers)
   local padding, padding_hl = get_padding(depth, markers)
   local text_start = string.len(padding)
@@ -70,7 +68,7 @@ local function format_node(lines, highlights, node, depth, row, markers)
   else
     local ext = vim.fn.fnamemodify(node.name, ':e') or ""
     if M.config.show_icons then
-      local i, hl = require'nvim-web-devicons'.get_icon(node.name, ext, {default = M.config.show_default})
+      local i, hl = require'nvim-web-devicons'.get_icon(node.name, ext)
       if i then
         icon = i..' '
         local icon_len = string.len(icon)
@@ -130,7 +128,7 @@ local function walk(lines, highlights, e)
 end
 
 function M.format_nodes(node_tree, cwd)
-  local modifier = M.config.root_folder_modifier or ':~'
+  local modifier = M.config.home_folder_modifier or ':~'
   local root = vim.fn.fnamemodify(cwd, modifier)
   if root ~= "/" then
     root = root:gsub('/$', '').."/.."

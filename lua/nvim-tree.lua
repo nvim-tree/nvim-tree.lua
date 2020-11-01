@@ -1,6 +1,7 @@
 return {
   setup = require'nvim-tree.actions'.setup,
   close = require'nvim-tree.actions'.close,
+  toggle = require'nvim-tree.actions'.toggle,
   redraw = require'nvim-tree.actions'.redraw,
   open = require'nvim-tree.actions'.open,
   open_file = require'nvim-tree.actions'.open_file,

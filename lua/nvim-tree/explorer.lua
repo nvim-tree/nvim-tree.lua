@@ -63,7 +63,7 @@ local node_type_funcs = {
 
 function M.Explorer:is_file_ignored(file)
   return (M.config.ignore_dotfiles and file:sub(1, 1) == '.')
-    or (M.config.show_ignored and M.config.ignore[file] == true)
+    or (not M.config.show_ignored and M.config.ignore[file] == true)
 end
 
 function M.Explorer:explore(root)
@@ -85,11 +85,14 @@ function M.Explorer:explore(root)
 
     if not self:is_file_ignored(entry_name) then
       local funcs = node_type_funcs[entry_type]
-      local entry = funcs.create(cwd, entry_name)
+      -- handle fifo and sockets at some point ?
+      if funcs then
+        local entry = funcs.create(cwd, entry_name)
 
-      if not funcs.check or funcs.check(entry) then
-        self.file_pool[entry.absolute_path] = 1
-        table.insert(entries[entry_type], entry)
+        if not funcs.check or funcs.check(entry) then
+          self.file_pool[entry.absolute_path] = 1
+          table.insert(entries[entry_type], entry)
+        end
       end
     end
   end

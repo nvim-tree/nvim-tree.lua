@@ -1,20 +1,28 @@
+-- TODO: git
+-- TODO: refresh logic
+-- TODO: watcher ?
+-- TODO: multi explorer ? (would be hard to manage multiple cwds though)
 local M = {}
 
 M.config = {
+  -- static
   width = 30,
   side = 'left',
   ignore = {'.git', 'node_modules'},
-  show_ignored = false, -- TODO
-  update_cursor = false, -- TODO
-  auto_open = false, -- CHECK
-  auto_close = false, -- CHECK
-  close_on_open_file = false,
+  show_ignored = false,
   show_indent_markers = false,
-  hide_dotfiles = false, -- CHECK
-  home_folder_modifier = "~", -- CHECK
-  tab_open = false, -- CHECK
+  hide_dotfiles = false,
+  home_folder_modifier = "~",
+  -- dynamics
+  close_on_open_file = false,
+  auto_open = false, --> will open when opening nvim as a pager (should not happen)
+  -- autocmds
+  auto_close = false,
+  set_cursor = false, -- TODO
+  tab_open = false,
   keep_width = false,
-  git = {
+  -- formatting / git / icons
+  git = { -- TODO
     show = {
       icons = true,
       highlight = true,
@@ -38,8 +46,9 @@ M.config = {
   symlink_icon = "",
   web_devicons = {
     show = true,
-    default = true, -- true || false || replacement str
+    default = true,
   },
+  -- actions
   keybindings = {
     ["<CR>"]  = ":lua require'nvim-tree'.open_file()<CR>",
     ["o"]     = ":lua require'nvim-tree'.open_file()<CR>",
@@ -47,15 +56,15 @@ M.config = {
     ["<C-x>"] = ":lua require'nvim-tree'.open_file('split')<CR>",
     ["<C-t>"] = ":lua require'nvim-tree'.open_file('tab')<CR>",
     ["<Tab>"] = ":lua require'nvim-tree'.open_file('preview')<CR>",
-    ["<C-]>"] = ":lua require'nvim-tree'.change_cwd()<CR>",
-    ["a"]     = ":lua require'nvim-tree'.create_file()<CR>",
-    ["d"]     = ":lua require'nvim-tree'.delete_file()<CR>",
-    ["r"]     = ":lua require'nvim-tree'.rename_file()<CR>",
-    ["x"]     = ":lua require'nvim-tree'.cut_file()<CR>",
-    ["c"]     = ":lua require'nvim-tree'.copy_file()<CR>",
-    ["p"]     = ":lua require'nvim-tree'.paste_file()<CR>",
-    ["[c"]    = ":lua require'nvim-tree'.go_to_prev('git')<CR>",
-    ["]c"]    = ":lua require'nvim-tree'.go_to_next('git')<CR>",
+    ["<C-]>"] = ":lua require'nvim-tree'.change_cwd()<CR>", -- TODO
+    ["a"]     = ":lua require'nvim-tree'.create_file()<CR>", -- TODO
+    ["d"]     = ":lua require'nvim-tree'.delete_file()<CR>", -- TODO
+    ["r"]     = ":lua require'nvim-tree'.rename_file()<CR>", -- TODO
+    ["x"]     = ":lua require'nvim-tree'.cut_file()<CR>", -- TODO
+    ["c"]     = ":lua require'nvim-tree'.copy_file()<CR>", -- TODO
+    ["p"]     = ":lua require'nvim-tree'.paste_file()<CR>", -- TODO
+    ["[c"]    = ":lua require'nvim-tree'.go_to_prev('git')<CR>", -- TODO
+    ["]c"]    = ":lua require'nvim-tree'.go_to_next('git')<CR>", -- TODO
   }
 }
 
@@ -68,16 +77,17 @@ function M.setup(opts)
   require'nvim-tree.explorer'.configure(M.config)
   require'nvim-tree.format'.configure(M.config)
 
-  if M.config.auto_open then
-    require'nvim-tree'.open()
-  end
-
   if M.config.tab_open then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
   end
 
   if M.config.keep_width then
     vim.cmd "au BufEnter * lua require'nvim-tree.buffers.tree'.resize(true)"
+  end
+
+  if M.config.auto_open then
+    -- defer_fn required to open after cwd is set if using vim-rooter or something like that
+    vim.defer_fn(require'nvim-tree'.open, 1)
   end
 end
 

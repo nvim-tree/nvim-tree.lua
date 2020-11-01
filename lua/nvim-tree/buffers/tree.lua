@@ -37,6 +37,7 @@ function M.open()
   local win = a.nvim_get_current_win()
   vim.wo[win].number = false
   vim.wo[win].relativenumber = false
+  vim.wo[win].wrap = false
 
   local bufnr
   local ret = ''
@@ -112,11 +113,19 @@ function M.render(lines, highlights)
   a.nvim_win_set_cursor(0, cursor)
 end
 
+function M.auto_close()
+  if not is_open() then return end
+  local wins = a.nvim_list_wins()
+  if #wins == 1 then
+    vim.cmd":q!"
+  end
+end
+
 function M.configure(opts)
   M.config = vim.tbl_extend("keep", opts, M.config)
 
   if opts.auto_close then
-    vim.cmd "au! WinClosed * lua vim.defer_fn(require'nvim-tree'.close, 1)"
+    vim.cmd "au! WinClosed * lua vim.defer_fn(require'nvim-tree.buffers.tree'.auto_close, 1)"
   end
 end
 

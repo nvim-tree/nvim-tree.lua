@@ -4,6 +4,13 @@ local explorer = nil
 
 M.setup = require'nvim-tree.config'.setup
 M.close = require'nvim-tree.buffers.tree'.close
+function M.toggle()
+  if require'nvim-tree.buffers.tree'.is_open() then
+    require'nvim-tree.buffers.tree'.close()
+  else
+    M.open()
+  end
+end
 
 function M.redraw()
   local buffers_tree = require'nvim-tree.buffers.tree'
@@ -77,7 +84,7 @@ end
 function M.rename_file()
   local node, idx = explorer:get_node_under_cursor()
   if not node then return end
-  require'nvim-tree.buffers.popups'.rename(node, idx+1)
+  require'nvim-tree.buffers.popups'.rename(node, idx)
 end
 
 return M
