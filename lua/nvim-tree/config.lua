@@ -97,6 +97,8 @@ function M.setup(opts)
   vim.cmd "command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()"
   vim.cmd "command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)"
 
+  vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.setup()"
+
   if M.config.tab_open then
     vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
   end

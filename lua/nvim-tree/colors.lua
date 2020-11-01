@@ -62,8 +62,13 @@ local function get_links()
   }
 end
 
+local opts = nil
+
 return {
-  configure = function(opts)
+  configure = function(o)
+    opts = o
+  end,
+  setup = function()
     if opts and opts.web_devicons.show == true then
       if not require'nvim-web-devicons'.has_loaded() then
         require'nvim-web-devicons'.setup({ default = opts.web_devicons.default })
@@ -80,7 +85,5 @@ return {
     for k, d in pairs(links) do
       vim.cmd('hi def link NvimTree'..k..' '..d)
     end
-
-    vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.configure()"
   end
 }
