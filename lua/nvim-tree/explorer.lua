@@ -12,16 +12,16 @@ M.Explorer = {
   cwd = uv.cwd(),
   cursor = nil,
   node_tree = {},
-  file_pool = {}
 }
 
 local node_type_funcs = {
   directory = {
-    create = function(parent, name)
-      local absolute_path = utils.path_join(parent, name)
+    create = function(parent_cwd, name, parent_node)
+      local absolute_path = utils.path_join(parent_cwd, name)
       return {
         name = name,
         absolute_path = absolute_path,
+        parent = parent_node,
         opened = false,
         entries = {}
       }
@@ -31,24 +31,26 @@ local node_type_funcs = {
     end
   },
   file = {
-    create = function(parent, name)
-      local absolute_path = utils.path_join(parent, name)
+    create = function(parent_cwd, name, parent_node)
+      local absolute_path = utils.path_join(parent_cwd, name)
       local executable = uv.fs_access(absolute_path, 'X')
       return {
         name = name,
         absolute_path = absolute_path,
         executable = executable,
+        parent = parent_node,
         extension = vim.fn.fnamemodify(name, ':e') or ""
       }
     end
   },
   link = {
-    create = function(parent, name)
-      local absolute_path = utils.path_join(parent, name)
+    create = function(parent_cwd, name, parent_node)
+      local absolute_path = utils.path_join(parent_cwd, name)
       local link_to = uv.fs_realpath(absolute_path)
       return {
         name = name,
         absolute_path = absolute_path,
+        parent = parent_node,
         link_to = link_to
       }
     end,
@@ -61,10 +63,8 @@ function M.Explorer:is_file_ignored(file)
     or (not M.config.show_ignored and M.config.ignore[file] == true)
 end
 
-function M.Explorer:explore(root, idxlist)
+function M.Explorer:explore(root, parent)
   local cwd = root or self.cwd
-  local idxpath = idxlist or {}
-  table.insert(idxpath, 1)
 
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
@@ -85,21 +85,18 @@ function M.Explorer:explore(root, idxlist)
       local funcs = node_type_funcs[entry_type]
       -- handle fifo and sockets at some point ?
       if funcs then
-        local entry = funcs.create(cwd, entry_name)
-
+        local entry = funcs.create(cwd, entry_name, parent)
         if not funcs.check or funcs.check(entry) then
-          self.file_pool[entry.absolute_path] = idxpath
           table.insert(entries[entry_type], entry)
-          idxpath[#idxpath] = idxpath[#idxpath] + 1
         end
       end
     end
   end
 
-  require'nvim-tree.watcher'.run(self, cwd)
-  for _, dir in pairs(entries.directory) do
-    require'nvim-tree.watcher'.run(self, dir.absolute_path)
-  end
+  -- require'nvim-tree.watcher'.run(self, cwd)
+  -- for _, dir in pairs(entries.directory) do
+  --   require'nvim-tree.watcher'.run(self, dir.absolute_path)
+  -- end
 
   for _, node in pairs(entries.link) do
     table.insert(entries.directory, node)
@@ -143,7 +140,7 @@ function M.Explorer:switch_open_dir(node)
   if not node.opened then return end
   if #node.entries > 0 then return end
 
-  local entries = self:explore(node.absolute_path)
+  local entries = self:explore(node.absolute_path, node)
   if entries then
     node.entries = require'nvim-tree.git'.gitify(entries, node.absolute_path)
   end
@@ -152,13 +149,6 @@ end
 function M.Explorer:refresh(files)
   return function()
     for _, file in ipairs(files) do
-      if not self.file_pool[file] then
-        -- print('new file')
-      elseif uv.fs_stat(file) ~= nil then
-        -- print('old file has been edited')
-      else
-        -- print('file was removed or renamed')
-      end
     end
   end
 end

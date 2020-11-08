@@ -106,7 +106,7 @@ function M.setup(opts)
   vim.cmd "au! Colorscheme * lua require'nvim-tree.colors'.configure()"
 
   if M.config.keep_open_on_tabenter then
-    vim.cmd "au TabEnter * lua require'nvim-tree'.redraw()"
+    vim.cmd "au TabEnter * lua require'nvim-tree'.defer_redraw()"
   end
 
   if M.config.resize_replace_on_bufenter then

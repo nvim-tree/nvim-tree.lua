@@ -1,6 +1,8 @@
 local M = {}
 
 local explorer = nil
+local lines = {}
+local highlights = {}
 
 M.setup = require'nvim-tree.config'.setup
 M.close = require'nvim-tree.buffers.tree'.close
@@ -12,7 +14,7 @@ function M.toggle()
   end
 end
 
-function M.redraw()
+function M.defer_redraw()
   local buffers_tree = require'nvim-tree.buffers.tree'
   vim.defer_fn(
     function()
@@ -23,12 +25,16 @@ function M.redraw()
     end, 1)
 end
 
+function M.redraw()
+  require'nvim-tree.buffers.tree'.render(lines, highlights)
+end
+
 function M.open(dirname)
   if dirname and dirname ~= "." then
     vim.cmd("cd "..dirname)
   end
   explorer = require'nvim-tree.explorer'.Explorer:new()
-  local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
+  lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
   if require'nvim-tree.buffers.tree'.open() == 'norestore' then
     require'nvim-tree.buffers.tree'.render(lines, highlights)
   end
@@ -38,7 +44,7 @@ local function cd(to)
   if not to or #to == 0 then return end
   vim.cmd(":cd "..to)
   explorer = require'nvim-tree.explorer'.Explorer:new()
-  local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
+  lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
   require'nvim-tree.buffers.tree'.render(lines, highlights)
 end
 
@@ -65,7 +71,7 @@ function M.open_file(mode)
 
   if node.entries ~= nil then
     explorer:switch_open_dir(node)
-    local lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
+    lines, highlights = require'nvim-tree.format'.format_nodes(explorer.node_tree, explorer.cwd)
     return require'nvim-tree.buffers.tree'.render(lines, highlights)
   end
 
@@ -101,6 +107,30 @@ function M.rename_file()
   local node, idx = explorer:get_node_under_cursor()
   if not node then return end
   require'nvim-tree.buffers.popups'.rename(node, idx)
+end
+
+function M.refresh()
+end
+
+function M.create_file()
+  local node, idx = explorer:get_node_under_cursor()
+  if not node then return end
+
+  local _lines = vim.deepcopy(lines)
+  table.insert(_lines, idx+2, "")
+
+  local _highlights = vim.tbl_map(
+    function(hl)
+      if hl.line > idx then
+        hl.line = hl.line+1
+      end
+      return hl
+    end,
+    vim.deepcopy(highlights)
+  )
+
+  require'nvim-tree.buffers.tree'.render(_lines, _highlights)
+  require'nvim-tree.buffers.popups'.create(node, idx+1)
 end
 
 return M
