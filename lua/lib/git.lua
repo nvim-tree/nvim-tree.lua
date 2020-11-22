@@ -64,6 +64,10 @@ function M.update_status(entries, cwd)
     return
   end
 
+  if not git_root then
+    return
+  end
+
   local matching_cwd = utils.path_to_matching_str(git_root..'/')
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
