@@ -27,7 +27,19 @@ function M.reload_roots()
   end
 end
 
-local function get_git_root(path)
+local function create_root(cwd)
+  local git_root = vim.fn.system('cd "'..cwd..'" && git rev-parse --show-toplevel')
+
+  if not git_root or #git_root == 0 or git_root:match('fatal') then
+    roots[cwd] = not_git
+    return false
+  end
+
+  update_root_status(git_root:sub(0, -2))
+  return true
+end
+
+function M.get_git_root(path)
   if roots[path] then
     return path, roots[path]
   end
@@ -41,25 +53,15 @@ local function get_git_root(path)
   end
 end
 
-local function create_root(cwd)
-  local git_root = vim.fn.system('cd "'..cwd..'" && git rev-parse --show-toplevel')
-
-  if not git_root or #git_root == 0 or git_root:match('fatal') then
-    roots[cwd] = not_git
-    return false
-  end
-
-  update_root_status(git_root:sub(0, -2))
-  return true
-end
+M.not_git = 'not a git repo'
 
 function M.update_status(entries, cwd)
-  local git_root, git_status = get_git_root(cwd)
+  local git_root, git_status = M.get_git_root(cwd)
   if not git_root then
     if not create_root(cwd) then
       return
     end
-    git_root, git_status = get_git_root(cwd)
+    git_root, git_status = M.get_git_root(cwd)
   elseif git_status == not_git then
     return
   end

@@ -120,12 +120,17 @@ end
 function M.refresh_tree()
   -- local stat = luv.fs_stat(M.Tree.cwd)
   -- if stat.mtime.sec ~= M.Tree.last_modified then
-    refresh_nodes(M.Tree)
+  refresh_nodes(M.Tree)
   -- end
+  local _, status = git.get_git_root(M.Tree.cwd)
+
   if config.get_icon_state().show_git_icon or vim.g.lua_tree_git_hl then
-    git.reload_roots()
-    refresh_git(M.Tree)
+    if status ~= git.not_git then
+      git.reload_roots()
+      refresh_git(M.Tree)
+    end
   end
+
   if M.win_open() then
     renderer.draw(M.Tree, true)
   else
