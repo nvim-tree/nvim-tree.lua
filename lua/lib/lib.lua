@@ -118,19 +118,22 @@ local function refresh_nodes(node)
 end
 
 function M.refresh_tree()
-  -- local stat = luv.fs_stat(M.Tree.cwd)
-  -- if stat.mtime.sec ~= M.Tree.last_modified then
-    refresh_nodes(M.Tree)
-  -- end
-  if config.get_icon_state().show_git_icon or vim.g.lua_tree_git_hl then
-    git.reload_roots()
-    refresh_git(M.Tree)
-  end
-  if M.win_open() then
-    renderer.draw(M.Tree, true)
-  else
-    M.Tree.loaded = false
-  end
+  vim.schedule(
+    function ()
+      -- local stat = luv.fs_stat(M.Tree.cwd)
+      -- if stat.mtime.sec ~= M.Tree.last_modified then
+      refresh_nodes(M.Tree)
+      -- end
+      if config.get_icon_state().show_git_icon or vim.g.lua_tree_git_hl then
+        git.reload_roots()
+        refresh_git(M.Tree)
+      end
+      if M.win_open() then
+        renderer.draw(M.Tree, true)
+      else
+        M.Tree.loaded = false
+      end
+    end)
 end
 
 function M.set_index_and_redraw(fname)
