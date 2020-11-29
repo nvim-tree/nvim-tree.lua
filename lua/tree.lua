@@ -14,9 +14,9 @@ function M.toggle()
     lib.close()
   else
     if vim.g.lua_tree_follow == 1 then
-      M.find_file(true)
+      vim.schedule(function() M.find_file(true) end)
     else
-      lib.open()
+      vim.schedule(lib.open)
     end
   end
 end
@@ -30,7 +30,7 @@ end
 
 function M.open()
   if not lib.win_open() then
-    lib.open()
+    vim.schedule(lib.open)
   end
 end
 
