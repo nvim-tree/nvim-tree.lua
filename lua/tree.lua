@@ -28,9 +28,12 @@ function M.close()
   end
 end
 
-function M.open()
+function M.open(cb)
   if not lib.win_open() then
-    vim.schedule(lib.open)
+    vim.schedule(function()
+        lib.open()
+        cb()
+      end)
   end
 end
 
@@ -39,8 +42,9 @@ function M.tab_change()
   -- we need defer_fn to make sure we close/open after we enter the tab
   vim.defer_fn(function()
     if M.close() then
-      M.open()
-      api.nvim_command('wincmd '..winopts.open_command)
+      M.open(function()
+        api.nvim_command('wincmd '..winopts.open_command)
+      end)
     end
   end, 1)
 end
@@ -133,8 +137,13 @@ function M.find_file(with_open)
   local filepath = vim.fn.fnamemodify(bufname, ':p')
 
   if with_open then
-    M.open()
-    lib.win_focus()
+    return M.open(
+      function()
+        lib.win_focus()
+        if not is_file_readable(filepath) then return end
+        lib.set_index_and_redraw(filepath)
+      end
+    )
   end
 
   if not is_file_readable(filepath) then return end
