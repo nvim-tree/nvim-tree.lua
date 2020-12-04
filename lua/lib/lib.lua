@@ -238,6 +238,7 @@ local function set_mappings()
     [bindings.edit_vsplit] = 'on_keypress("vsplit")';
     [bindings.edit_split] = 'on_keypress("split")';
     [bindings.edit_tab] = 'on_keypress("tabnew")';
+    [bindings.close_node] = 'on_keypress("close_node")';
     [bindings.toggle_ignored] = 'on_keypress("toggle_ignored")';
     [bindings.toggle_dotfiles] = 'on_keypress("toggle_dotfiles")';
     [bindings.refresh] = 'on_keypress("refresh")';
@@ -308,6 +309,41 @@ function M.open()
 
   api.nvim_buf_set_option(M.Tree.bufnr, 'filetype', M.Tree.buf_name)
   api.nvim_command('setlocal '..window_opts.split_command)
+end
+
+function M.close_node(node)
+  if node.name == '..' then return end
+
+  local sep = '/'
+  local dname = node.absolute_path:match("(.*"..sep..")")
+  local index = 2
+
+  local function iter(entries)
+    for _, entry in ipairs(entries) do
+      if dname:match('^'..entry.match_path..sep..'$') ~= nil then
+        return entry
+      end
+
+      index = index + 1
+      if entry.open == true then
+        local child = iter(entry.entries)
+        if child ~= nil then return child end
+      end
+    end
+  end
+
+  if node.open == true then
+    node.open = false
+  else
+    local parent = iter(M.Tree.entries)
+    if parent == nil then
+      index = 1
+    else
+      parent.open = false
+    end
+    api.nvim_win_set_cursor(M.Tree.winnr(), {index, 0})
+  end
+  renderer.draw(M.Tree, true)
 end
 
 function M.win_open()

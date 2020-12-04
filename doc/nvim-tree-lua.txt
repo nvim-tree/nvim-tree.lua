@@ -183,6 +183,7 @@ INFORMATIONS				        *nvim-tree-info*
 - move around like in any vim buffer
 - '<CR>' on '..' will cd in the above directory
 - typing '<C-]>' will cd in the directory under the cursor
+- typing '<BS>' will close current opened directory or parent
 
 - type 'a' to add a file
 - type 'r' to rename a file
@@ -219,6 +220,7 @@ default keybindings will be applied to undefined keys.
         \ edit_vsplit:   '<c-v>',
         \ edit_split:    '<c-x>',
         \ edit_tab:      '<c-t>',
+        \ close_node:    ['<s-cr>', '<bs>'],
         \ cd:            '<c-]>',
         \ preview:       '<Tab>',
         \ create:        'a',
