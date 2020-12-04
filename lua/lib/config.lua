@@ -55,6 +55,7 @@ function M.get_bindings()
     edit_vsplit     = keybindings.edit_vsplit or '<C-v>',
     edit_split      = keybindings.edit_split or '<C-x>',
     edit_tab        = keybindings.edit_tab or '<C-t>',
+    close_node      = keybindings.close_node or {'<S-CR>', '<BS>'},
     preview         = keybindings.preview or '<Tab>',
     toggle_ignored  = keybindings.toggle_ignored or 'I',
     toggle_dotfiles = keybindings.toggle_dotfiles or 'H',
