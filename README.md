@@ -55,6 +55,7 @@ let g:lua_tree_bindings = {
     \ 'edit_vsplit':     '<C-v>',
     \ 'edit_split':      '<C-x>',
     \ 'edit_tab':        '<C-t>',
+    \ 'close_node':      ['<S-CR>', '<BS>'],
     \ 'toggle_ignored':  'I',
     \ 'toggle_dotfiles': 'H',
     \ 'refresh':         'R',
@@ -108,6 +109,7 @@ highlight LuaTreeFolderIcon guibg=blue
 - move around like in any vim buffer
 - `<CR>` on `..` will cd in the above directory
 - `<C-]>` will cd in the directory under the cursor
+- `<BS>` will close current opened directory or parent
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
   > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
 - type `r` to rename a file
