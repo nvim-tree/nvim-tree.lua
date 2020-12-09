@@ -137,7 +137,7 @@ function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
 
-  if with_open then
+  if with_open and not lib.win_open() then
     return M.open(
       function()
         lib.win_focus()
