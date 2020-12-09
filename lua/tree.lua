@@ -29,12 +29,14 @@ function M.close()
 end
 
 function M.open(cb)
-  if not lib.win_open() then
-    vim.schedule(function()
+  vim.schedule(
+    function()
+      if not lib.win_open() then
         lib.open()
-        cb()
-      end)
-  end
+      end
+      pcall(cb)
+    end
+  )
 end
 
 local winopts = config.window_options()
@@ -137,7 +139,7 @@ function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
 
-  if with_open and not lib.win_open() then
+  if with_open then
     return M.open(
       function()
         lib.win_focus()
