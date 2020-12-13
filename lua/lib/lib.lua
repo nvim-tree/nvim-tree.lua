@@ -93,7 +93,7 @@ function M.unroll_dir(node)
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
-    populate(node.entries, node.absolute_path)
+    populate(node.entries, node.link_to or node.absolute_path)
     renderer.draw(M.Tree, true)
   end
 end

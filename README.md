@@ -89,7 +89,8 @@ let g:lua_tree_icons = {
     \   },
     \ 'folder': {
     \   'default': "",
-    \   'open': ""
+    \   'open': "",
+    \   'symlink': "",
     \   }
     \ }
 

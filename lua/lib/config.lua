@@ -15,7 +15,8 @@ function M.get_icon_state()
     },
     folder_icons = {
       default = "",
-      open = ""
+      open = "",
+      symlink = "",
     }
   }
 

@@ -106,7 +106,8 @@ You can set icons for:
       \   },
       \ 'folder': {
       \   'default': "",
-      \   'open': ""
+      \   'open': "",
+      \   'symlink': "",
       \  }
       \ }
 

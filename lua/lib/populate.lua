@@ -48,10 +48,17 @@ end
 local function link_new(cwd, name)
   local absolute_path = cwd..'/'..name
   local link_to = luv.fs_realpath(absolute_path)
+  local open, entries
+  if luv.fs_stat(link_to).type == 'directory' then
+    open = false
+    entries = {}
+  end
   return {
     name = name,
     absolute_path = absolute_path,
     link_to = link_to,
+    open = open,
+    entries = entries,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
   }

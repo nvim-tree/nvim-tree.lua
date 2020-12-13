@@ -16,12 +16,16 @@ local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
 end
 
 if icon_state.show_folder_icon then
-  get_folder_icon = function(open)
-    if open then
-      return icon_state.icons.folder_icons.open .. " "
+  get_folder_icon = function(open, is_symlink)
+    local n = ""
+    if is_symlink then
+      n = icon_state.icons.folder_icons.symlink
+    elseif open then
+      n = icon_state.icons.folder_icons.open
     else
-      return icon_state.icons.folder_icons.default .. " "
+      n = icon_state.icons.folder_icons.default
     end
+    return n.." "
   end
   set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
     table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len})
@@ -225,7 +229,7 @@ local function update_draw_data(tree, depth, markers)
     local git_hl = get_git_hl(node)
 
     if node.entries then
-      local icon = get_folder_icon(node.open)
+      local icon = get_folder_icon(node.open, node.link_to ~= nil)
       local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       set_folder_hl(index, offset, #icon, #node.name+#git_icon, 'LuaTreeFolderName')
