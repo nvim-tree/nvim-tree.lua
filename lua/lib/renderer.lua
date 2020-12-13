@@ -126,12 +126,15 @@ if icon_state.show_git_icon then
       { icon = icon_state.icons.git_icons.staged, hl = "LuaTreeGitStaged" },
       { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitNew" }
     },
+    [" A"] = {
+      { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitNew" },
+    },
     ["AM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "LuaTreeGitStaged" },
       { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitNew" },
       { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" }
     },
-    ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitNew" } },
+    ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitDirty" } },
     ["R "] = { { icon = icon_state.icons.git_icons.renamed, hl = "LuaTreeGitRenamed" } },
     ["UU"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "LuaTreeGitMerge" } },
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "LuaTreeGitDeleted" } },
