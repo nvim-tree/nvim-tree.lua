@@ -1,4 +1,3 @@
-local colors = require'lib.colors'
 local config = require'lib.config'
 local utils = require'lib.utils'
 
@@ -80,7 +79,7 @@ if vim.g.lua_tree_git_hl == 1 then
     },
     ["AD"] = {
       { hl = "LuaTreeFileStaged" },
-      { hl = "LuaTreeFileDeleted" } 
+      { hl = "LuaTreeFileDeleted" }
     },
     ["AM"] = {
       { hl = "LuaTreeFileStaged" },
@@ -95,6 +94,8 @@ if vim.g.lua_tree_git_hl == 1 then
       { hl = "LuaTreeFileDeleted" },
       { hl = "LuaTreeFileStaged" }
     },
+    [" A"] = { { hl = "none" } },
+    ["RM"] = { { hl = "LuaTreeFileRenamed" } },
     dirty = { { hl = "LuaTreeFileDirty" } },
   }
   get_git_hl = function(node)
@@ -136,6 +137,10 @@ if icon_state.show_git_icon then
     },
     ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "LuaTreeGitDirty" } },
     ["R "] = { { icon = icon_state.icons.git_icons.renamed, hl = "LuaTreeGitRenamed" } },
+    ["RM"] = {
+      { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" },
+      { icon = icon_state.icons.git_icons.renamed, hl = "LuaTreeGitRenamed" },
+    },
     ["UU"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "LuaTreeGitMerge" } },
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "LuaTreeGitDeleted" } },
     dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "LuaTreeGitDirty" } },
