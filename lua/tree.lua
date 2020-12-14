@@ -154,7 +154,7 @@ end
 function M.on_leave()
   vim.defer_fn(function()
     if #api.nvim_list_wins() == 1 and lib.win_open() then
-      api.nvim_command(':qa!')
+      api.nvim_command(':silent qa!')
     end
   end, 50)
 end
