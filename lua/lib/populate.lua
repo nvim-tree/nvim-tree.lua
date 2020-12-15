@@ -74,6 +74,7 @@ local function gen_ignore_check()
 
   return function(path)
     idx = path:match(".+()%.%w+$")
+    local ignore_extension
     if idx then
         ignore_extension = ignore_list['*'..string.sub(path, idx)]
     end
