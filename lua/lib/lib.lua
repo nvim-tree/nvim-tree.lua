@@ -36,6 +36,7 @@ M.Tree = {
     'winfixheight',
     'nofoldenable',
     'nospell',
+    'signcolumn=yes',
     'foldmethod=manual',
     'foldcolumn=0'
   }
