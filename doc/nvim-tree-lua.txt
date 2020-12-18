@@ -170,7 +170,7 @@ Can be 0 or 1. When 1, will open the tree when entering a new tab if the
 tree was previously open.
 Default is 0
 
-|g:lua_tree_allow_resize|		        *g:lua_tree_allow_resize*
+|g:lua_tree_width_allow_resize|		        *g:lua_tree_width_allow_resize*
 
 Can be 0 or 1. When 1, it will not resize the tree to it's original width
 when opening a new file.
