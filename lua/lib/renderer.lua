@@ -42,7 +42,7 @@ if icon_state.show_file_icon then
 
     if icon then
       if hl_group then
-        table.insert(hl, { hl_group, line, depth, depth + #icon })
+        table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
       end
       return icon.." "
     else
