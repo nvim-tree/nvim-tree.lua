@@ -146,14 +146,14 @@ local function do_single_paste(source, dest, action_type, action_fn)
   local should_process = true
   local should_rename = false
   if dest_stats then
-    ans = vim.fn.input(dest..' already exists, overwrite ? y/n/r(ename): ')
+    local ans = vim.fn.input(dest..' already exists, overwrite ? y/n/r(ename): ')
     clear_prompt()
     should_process = ans:match('^y')
     should_rename = ans:match('^r')
   end
 
   if should_rename then
-    new_dest = vim.fn.input('New name: ', dest)
+    local new_dest = vim.fn.input('New name: ', dest)
     return do_single_paste(source, new_dest, action_type, action_fn)
   end
 
@@ -245,14 +245,16 @@ function M.rename(node)
   clear_prompt()
   if not new_name or #new_name == 0 then return end
 
-  local success = luv.fs_rename(node.absolute_path, new_name) --, vim.schedule_wrap(rename_callback(node, ans)))
+  local success = luv.fs_rename(node.absolute_path, new_name)
   if not success then
     return api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
   end
   api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
   for _, buf in pairs(api.nvim_list_bufs()) do
-    if api.nvim_buf_get_name(buf) == node.absolute_path then
-      api.nvim_buf_set_name(buf, new_name)
+    if api.nvim_buf_is_loaded(buf) then
+      if api.nvim_buf_get_name(buf) == node.absolute_path then
+        api.nvim_buf_set_name(buf, new_name)
+      end
     end
   end
   refresh_tree()
