@@ -6,27 +6,27 @@ set cpo&vim
 let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 
-hi def link LuaTreePopup Normal
+hi def link NvimTreePopup Normal
 
-augroup LuaTree
-  au BufWritePost * lua require'tree'.refresh()
-  au BufEnter * lua require'tree'.buf_enter()
+augroup NvimTree
+  au BufWritePost * lua require'nvim-tree'.refresh()
+  au BufEnter * lua require'nvim-tree'.buf_enter()
   if get(g:, 'lua_tree_auto_close') == 1
-    au WinClosed * lua require'tree'.on_leave()
+    au WinClosed * lua require'nvim-tree'.on_leave()
   endif
-  au ColorScheme * lua require'tree'.reset_highlight()
-  au User FugitiveChanged lua require'tree'.refresh()
+  au ColorScheme * lua require'nvim-tree'.reset_highlight()
+  au User FugitiveChanged lua require'nvim-tree'.refresh()
   if get(g:, 'lua_tree_tab_open') == 1
-    au TabEnter * lua require'tree'.tab_change()
+    au TabEnter * lua require'nvim-tree'.tab_change()
   endif
 augroup end
 
-command! LuaTreeOpen lua require'tree'.open()
-command! LuaTreeClose lua require'tree'.close()
-command! LuaTreeToggle lua require'tree'.toggle()
-command! LuaTreeRefresh lua require'tree'.refresh()
-command! LuaTreeClipboard lua require'tree'.print_clipboard()
-command! LuaTreeFindFile lua require'tree'.find_file(true)
+command! NvimTreeOpen lua require'nvim-tree'.open()
+command! NvimTreeClose lua require'nvim-tree'.close()
+command! NvimTreeToggle lua require'nvim-tree'.toggle()
+command! NvimTreeRefresh lua require'nvim-tree'.refresh()
+command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
+command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

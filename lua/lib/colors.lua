@@ -56,12 +56,12 @@ local function get_links()
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
     CursorColumn = 'CursorColumn',
-    FileDirty = 'LuaTreeGitDirty',
-    FileNew = 'LuaTreeGitNew',
-    FileRenamed = 'LuaTreeGitRenamed',
-    FileMerge = 'LuaTreeGitMerge',
-    FileStaged = 'LuaTreeGitStaged',
-    FileDeleted = 'LuaTreeGitDeleted',
+    FileDirty = 'NvimTreeGitDirty',
+    FileNew = 'NvimTreeGitNew',
+    FileRenamed = 'NvimTreeGitRenamed',
+    FileMerge = 'NvimTreeGitMerge',
+    FileStaged = 'NvimTreeGitStaged',
+    FileDeleted = 'NvimTreeGitDeleted',
   }
 end
 
@@ -72,12 +72,12 @@ function M.setup()
   local higlight_groups = get_hl_groups()
   for k, d in pairs(higlight_groups) do
     local gui = d.gui or 'NONE'
-    api.nvim_command('hi def LuaTree'..k..' gui='..gui..' guifg='..d.fg)
+    api.nvim_command('hi def NvimTree'..k..' gui='..gui..' guifg='..d.fg)
   end
 
   local links = get_links()
   for k, d in pairs(links) do
-    api.nvim_command('hi def link LuaTree'..k..' '..d)
+    api.nvim_command('hi def link NvimTree'..k..' '..d)
   end
 end
 
