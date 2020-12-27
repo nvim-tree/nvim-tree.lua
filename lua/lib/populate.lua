@@ -7,7 +7,7 @@ local luv = vim.loop
 
 local M = {
   show_ignored = false,
-  show_dotfiles = vim.g.lua_tree_hide_dotfiles ~= 1,
+  show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
 }
 
 local path_to_matching_str = require'lib.utils'.path_to_matching_str
@@ -66,8 +66,8 @@ end
 
 local function gen_ignore_check()
   local ignore_list = {}
-  if vim.g.lua_tree_ignore and #vim.g.lua_tree_ignore > 0 then
-    for _, entry in pairs(vim.g.lua_tree_ignore) do
+  if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
+    for _, entry in pairs(vim.g.nvim_tree_ignore) do
       ignore_list[entry] = true
     end
   end
@@ -211,7 +211,7 @@ function M.populate(entries, cwd)
     table.insert(entries, file)
   end
 
-  if (not icon_config.show_git_icon) and vim.g.lua_tree_git_hl ~= 1 then
+  if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
     return
   end
 

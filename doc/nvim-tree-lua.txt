@@ -12,69 +12,69 @@ This file explorer doesn't work on windows and requires neovim `nightly`
 ==============================================================================
 QUICK START                                        *nvim-tree-quickstart*
 
-open the tree with :LuaTreeToggle
+open the tree with :NvimTreeToggle
 >
-  nnoremap <C-n> :LuaTreeToggle<CR>
-  lua require 'tree'.toggle()
+  nnoremap <C-n> :NvimTreeToggle<CR>
+  lua require 'nvim-tree'.toggle()
 <
 
 ==============================================================================
 COMMANDS                                           *nvim-tree-commands*
 
-|:LuaTreeOpen| 	                                  *:LuaTreeOpen*
+|:NvimTreeOpen| 	                                  *:NvimTreeOpen*
 
 opens the tree
 
-|:LuaTreeClose| 	                          *:LuaTreeClose*
+|:NvimTreeClose| 	                          *:NvimTreeClose*
 
 closes the tree
 
-|:LuaTreeToggle| 	                          *:LuaTreeToggle*
+|:NvimTreeToggle| 	                          *:NvimTreeToggle*
 
 open or close the tree
 
-|:LuaTreeRefresh|			          *:LuaTreeRefresh*
+|:NvimTreeRefresh|			          *:NvimTreeRefresh*
 
 refresh the tree
 
-|:LuaTreeFindFile|				  *:LuaTreeFindFile*
+|:NvimTreeFindFile|				  *:NvimTreeFindFile*
 
 The command will change the cursor in the tree for the current bufname.
 
 It will also open the leafs of the tree leading to the file in the buffer
-(if you opened a file with something else than the LuaTree, like `fzf` or
+(if you opened a file with something else than the NvimTree, like `fzf` or
 `:split`)
 
-|:LuaTreeClipboard|			          *:LuaTreeClipboard*
+|:NvimTreeClipboard|			          *:NvimTreeClipboard*
 
 Print clipboard content for both cut and copy
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
-|g:lua_tree_width|				*g:lua_tree_width*
+|g:nvim_tree_width|				*g:nvim_tree_width*
 
 width of the window (default to 30)
 
-|g:lua_tree_side|				*g:lua_tree_side*
+|g:nvim_tree_side|				*g:nvim_tree_side*
 
 where the window will open (default to 'left')
 - 'left' or 'right'
 
-|g:lua_tree_ignore|				*g:lua_tree_ignore*
+|g:nvim_tree_ignore|				*g:nvim_tree_ignore*
 
 An array of strings that the tree won't load and display.
 useful to hide large data/cache folders.
 >
-    example: let g:lua_tree_ignore = [ '.git', 'node_modules' ]
+    example: let g:nvim_tree_ignore = [ '.git', 'node_modules' ]
 
-|g:lua_tree_show_icons|			        *g:lua_tree_show_icons*
+|g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
 
 Dictionnary, if your terminal or font doesn't support certain unicode
 character, the tree UI might be messed up. The following configuration
 can disable icons per type:
 >
-    let g:lua_tree_show_icons = {
+    let g:nvim_tree_show_icons = {
 	\ 'git': 1,
 	\ 'folders': 1,
 	\ 'icons': 1
@@ -85,7 +85,7 @@ to render the icons. The `icons` key can only work if `nvim-web-devicons`
 is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
 
-|g:lua_tree_icons|                                *g:lua_tree_icons*
+|g:nvim_tree_icons|                                *g:nvim_tree_icons*
 
 You can set icons for:
 
@@ -94,7 +94,7 @@ You can set icons for:
   or if you are not using icons.
 - Symlinks. If an icon is not provided, the `default` icon is used.
 >
-  let g:lua_tree_icons = {
+  let g:nvim_tree_icons = {
       \ 'default': '',
       \ 'symlink': '',
       \ 'git': {
@@ -111,66 +111,66 @@ You can set icons for:
       \  }
       \ }
 
-|g:lua_tree_git_hl|                                *g:lua_tree_git_hl*
+|g:nvim_tree_git_hl|                                *g:nvim_tree_git_hl*
 
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
 
 
-|g:lua_tree_follow|				*g:lua_tree_follow*
+|g:nvim_tree_follow|				*g:nvim_tree_follow*
 
 Can be `0` or `1`. When `1`, will update the cursor to update to the correct
 location in the tree on |BufEnter|.
 Default is 0
 
-|g:lua_tree_auto_open|				*g:lua_tree_auto_open*
+|g:nvim_tree_auto_open|				*g:nvim_tree_auto_open*
 
 Can be `0` or `1`. When `1`, will open the tree when the package is loaded.
 It's not relying on VimEnter anymore.
 Default is 0
 
-|g:lua_tree_auto_close|				*g:lua_tree_auto_close*
+|g:nvim_tree_auto_close|				*g:nvim_tree_auto_close*
 
 Can be `0` or `1`. When `1`, will bind |BufEnter| to automatically
 close the tree if it's the last window.
 Default is 0
 
-|g:lua_tree_quit_on_open|			*g:lua_tree_quit_on_open*
+|g:nvim_tree_quit_on_open|			*g:nvim_tree_quit_on_open*
 
 Can be `0` or `1`. When `1`, will close the tree when a file is opened.
 Applies to: `preview`, `edit`, `edit_vsplit`, `edit_split`, `edit_tab`.
 Default is 0
 
-|g:lua_tree_disable_keybindings|          *g:lua_tree_disable_keybindings*
+|g:nvim_tree_disable_keybindings|          *g:nvim_tree_disable_keybindings*
 
 Can be `0` or `1`. When `1`, will disable all keybindings by the plugin.
-|g:lua_tree_bindings| as well as default bindings will not take effect.
+|g:nvim_tree_bindings| as well as default bindings will not take effect.
 Default is 0
 
-|g:lua_tree_indent_markers|                       *g:lua_tree_indent_markers*
+|g:nvim_tree_indent_markers|                       *g:nvim_tree_indent_markers*
 
 Can be `0` or `1`. When `1`, will display indent markers when folders are open
 Default is 0
 
-|g:lua_tree_hide_dotfiles|			*g:lua_tree_hide_dotfiles*
+|g:nvim_tree_hide_dotfiles|			*g:nvim_tree_hide_dotfiles*
 
 Can be `0` or `1`. When `1`, will hide dotfiles, files or folders which start
 with the `.` character.
 Default is 0
 
-|g:lua_tree_root_folder_modifier|		*g:lua_tree_root_folder_modifier*
+|g:nvim_tree_root_folder_modifier|		*g:nvim_tree_root_folder_modifier*
 
 In what format to show root folder. See `:help filename-modifiers` for
 available options.
 Default is `:~`
 
-|g:lua_tree_tab_open|		                *g:lua_tree_tab_open*
+|g:nvim_tree_tab_open|		                *g:nvim_tree_tab_open*
 
 Can be 0 or 1. When 1, will open the tree when entering a new tab if the
 tree was previously open.
 Default is 0
 
-|g:lua_tree_width_allow_resize|		        *g:lua_tree_width_allow_resize*
+|g:nvim_tree_width_allow_resize|		        *g:nvim_tree_width_allow_resize*
 
 Can be 0 or 1. When 1, it will not resize the tree to it's original width
 when opening a new file.
@@ -203,7 +203,7 @@ INFORMATIONS				        *nvim-tree-info*
 - '<C-x>' will open the file in a horizontal split
 - '<C-t>' will open the file in a new tab
 - '<Tab>' will open the file as a preview (keeps the cursor in the tree)
-- 'I' will toggle visibility of folders hidden via |g:lua_tree_ignore|
+- 'I' will toggle visibility of folders hidden via |g:nvim_tree_ignore|
 - 'R' will refresh the tree
 - 'gx' opens the file with the `open` command on macos and `xdg-open`
 on linux.
@@ -211,12 +211,12 @@ on linux.
 - Double left click acts like '<CR>'
 - Double right click acts like '<C-]>'
 
-|g:lua_tree_bindings|                             *g:lua_tree_bindings*
+|g:nvim_tree_bindings|                             *g:nvim_tree_bindings*
 
 you can change default keybindings by defining this variable.
 default keybindings will be applied to undefined keys.
 >
-    let g:lua_tree_bindings = {
+    let g:nvim_tree_bindings = {
         \ edit:          ['<cr>', 'o'], // Multiple keys provided via list
         \ edit_vsplit:   '<c-v>',
         \ edit_split:    '<c-x>',
@@ -259,50 +259,50 @@ Mouse support defined in |KeyBindings|
 ==============================================================================
 HIGHLIGHT GROUPS				        *nvim-tree-highlight*
 
-|lua_tree_highlight|				        *lua_tree_highlight*
+|nvim_tree_highlight|				        *nvim_tree_highlight*
 
 All the following highlight groups can be configured by hand. It is not
 advised to colorize the background of these groups.
 
 Example (in your `init.vim`):
 >
-    highlight LuaTreeSymlink guifg=blue gui=bold,underline
+    highlight NvimTreeSymlink guifg=blue gui=bold,underline
 <
 You should have 'termguicolors' enabled, otherwise, colors will not be
 applied.
 
-LuaTreeSymlink
-LuaTreeFolderName
-LuaTreeRootFolder
-LuaTreeFolderIcon
-LuaTreeExecFile
-LuaTreeSpecialFile
-LuaTreeImageFile
-LuaTreeMarkdownFile
-LuaTreeIndentMarker
+NvimTreeSymlink
+NvimTreeFolderName
+NvimTreeRootFolder
+NvimTreeFolderIcon
+NvimTreeExecFile
+NvimTreeSpecialFile
+NvimTreeImageFile
+NvimTreeMarkdownFile
+NvimTreeIndentMarker
 
-LuaTreeLicenseIcon
-LuaTreeYamlIcon
-LuaTreeTomlIcon
-LuaTreeGitignoreIcon
-LuaTreeJsonIcon
+NvimTreeLicenseIcon
+NvimTreeYamlIcon
+NvimTreeTomlIcon
+NvimTreeGitignoreIcon
+NvimTreeJsonIcon
 
-LuaTreeLuaIcon
-LuaTreePythonIcon
-LuaTreeShellIcon
-LuaTreeJavascriptIcon
-LuaTreeCIcon
-LuaTreeReactIcon
-LuaTreeHtmlIcon
-LuaTreeRustIcon
-LuaTreeVimIcon
-LuaTreeTypescriptIcon
+NvimTreeLuaIcon
+NvimTreePythonIcon
+NvimTreeShellIcon
+NvimTreeJavascriptIcon
+NvimTreeCIcon
+NvimTreeReactIcon
+NvimTreeHtmlIcon
+NvimTreeRustIcon
+NvimTreeVimIcon
+NvimTreeTypescriptIcon
 
-LuaTreeGitDirty
-LuaTreeGitStaged
-LuaTreeGitMerge
-LuaTreeGitRenamed
-LuaTreeGitNew
+NvimTreeGitDirty
+NvimTreeGitStaged
+NvimTreeGitMerge
+NvimTreeGitRenamed
+NvimTreeGitNew
 
 There are also links to normal bindings to style the tree itself.
 
@@ -315,10 +315,10 @@ CursorColumn
 There are also links for file highlight with git properties
 These all link to there Git equivalent
 
-LuaTreeFileDirty
-LuaTreeFileStaged
-LuaTreeFileMerge
-LuaTreeFileNew
-LuaTreeFileRenamed
+NvimTreeFileDirty
+NvimTreeFileStaged
+NvimTreeFileMerge
+NvimTreeFileNew
+NvimTreeFileRenamed
 
  vim:tw=78:ts=8:noet:ft=help:norl:

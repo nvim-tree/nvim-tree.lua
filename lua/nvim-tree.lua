@@ -13,7 +13,7 @@ function M.toggle()
   if lib.win_open() then
     lib.close()
   else
-    if vim.g.lua_tree_follow == 1 then
+    if vim.g.nvim_tree_follow == 1 then
       vim.schedule(function() M.find_file(true) end)
     else
       vim.schedule(lib.open)
@@ -122,7 +122,7 @@ function M.on_enter()
   if is_dir then
     api.nvim_command('cd '..bufname)
   end
-  local should_open = vim.g.lua_tree_auto_open == 1 and (bufname == '' or is_dir)
+  local should_open = vim.g.nvim_tree_auto_open == 1 and (bufname == '' or is_dir)
   colors.setup()
   lib.init(should_open, should_open)
 end
@@ -177,7 +177,7 @@ end
 
 function M.buf_enter()
   update_root_dir()
-  if vim.g.lua_tree_follow == 1 then
+  if vim.g.nvim_tree_follow == 1 then
     M.find_file(false)
   end
 end

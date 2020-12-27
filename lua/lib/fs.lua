@@ -13,7 +13,7 @@ local function clear_prompt()
 end
 
 local function refresh_tree()
-  vim.api.nvim_command(":LuaTreeRefresh")
+  vim.api.nvim_command(":NvimTreeRefresh")
 end
 
 local function create_file(file)

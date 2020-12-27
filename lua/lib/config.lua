@@ -1,7 +1,7 @@
 local M = {}
 
 function M.get_icon_state()
-  local show_icons = vim.g.lua_tree_show_icons or { git = 1, folders = 1, files = 1 }
+  local show_icons = vim.g.nvim_tree_show_icons or { git = 1, folders = 1, files = 1 }
   local icons = {
     default = "",
     symlink = "",
@@ -20,7 +20,7 @@ function M.get_icon_state()
     }
   }
 
-  local user_icons = vim.g.lua_tree_icons
+  local user_icons = vim.g.nvim_tree_icons
   if user_icons then
     if user_icons.default then
       icons.default = user_icons.default
@@ -50,7 +50,7 @@ function M.get_icon_state()
 end
 
 function M.get_bindings()
-  local keybindings = vim.g.lua_tree_bindings or {}
+  local keybindings = vim.g.nvim_tree_bindings or {}
   return {
     edit            = keybindings.edit or {'<CR>', 'o'},
     edit_vsplit     = keybindings.edit_vsplit or '<C-v>',
@@ -75,8 +75,8 @@ end
 
 function M.window_options()
   local opts = {}
-  opts.winhl = 'EndOfBuffer:LuaTreeEndOfBuffer,Normal:LuaTreeNormal,CursorLine:LuaTreeCursorLine,VertSplit:LuaTreeVertSplit'
-  if vim.g.lua_tree_side == 'right' then
+  opts.winhl = 'EndOfBuffer:NvimTreeEndOfBuffer,Normal:NvimTreeNormal,CursorLine:NvimTreeCursorLine,VertSplit:NvimTreeVertSplit'
+  if vim.g.nvim_tree_side == 'right' then
     opts.side = 'L'
     opts.open_command = 'h'
     opts.preview_command = 'l'

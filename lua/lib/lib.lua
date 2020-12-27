@@ -14,10 +14,10 @@ local M = {}
 
 M.Tree = {
   entries = {},
-  buf_name = 'LuaTree',
+  buf_name = 'NvimTree',
   cwd = nil,
-  win_width =  vim.g.lua_tree_width or 30,
-  win_width_allow_resize = vim.g.lua_tree_width_allow_resize,
+  win_width =  vim.g.nvim_tree_width or 30,
+  win_width_allow_resize = vim.g.nvim_tree_width_allow_resize,
   loaded = false,
   bufnr = nil,
   winnr = function()
@@ -125,7 +125,7 @@ function M.refresh_tree()
       -- if stat.mtime.sec ~= M.Tree.last_modified then
       refresh_nodes(M.Tree)
       -- end
-      if config.get_icon_state().show_git_icon or vim.g.lua_tree_git_hl then
+      if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl then
         git.reload_roots()
         refresh_git(M.Tree)
       end
@@ -206,7 +206,7 @@ function M.open_file(mode, filename)
     api.nvim_command('vertical resize '..M.Tree.win_width)
     M.win_focus(cur_win)
   end
-  if vim.g.lua_tree_quit_on_open == 1 and mode ~= 'preview' then
+  if vim.g.nvim_tree_quit_on_open == 1 and mode ~= 'preview' then
     M.close()
   end
 end
@@ -218,13 +218,13 @@ function M.change_dir(foldername)
 end
 
 local function set_mapping(buf, key, fn)
-  api.nvim_buf_set_keymap(buf, 'n', key, ':lua require"tree".'..fn..'<cr>', {
+  api.nvim_buf_set_keymap(buf, 'n', key, ':lua require"nvim-tree".'..fn..'<cr>', {
       nowait = true, noremap = true, silent = true
     })
 end
 
 local function set_mappings()
-  if vim.g.lua_tree_disable_keybindings == 1 then
+  if vim.g.nvim_tree_disable_keybindings == 1 then
       return
   end
 

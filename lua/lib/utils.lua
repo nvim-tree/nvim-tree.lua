@@ -7,7 +7,7 @@ end
 
 function M.echo_warning(msg)
   api.nvim_command('echohl WarningMsg')
-  api.nvim_command("echom '[LuaTree] "..msg:gsub("'", "''").."'")
+  api.nvim_command("echom '[NvimTree] "..msg:gsub("'", "''").."'")
   api.nvim_command('echohl None')
 end
 
