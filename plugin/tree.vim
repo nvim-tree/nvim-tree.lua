@@ -11,12 +11,12 @@ hi def link NvimTreePopup Normal
 augroup NvimTree
   au BufWritePost * lua require'nvim-tree'.refresh()
   au BufEnter * lua require'nvim-tree'.buf_enter()
-  if get(g:, 'lua_tree_auto_close') == 1
+  if get(g:, 'nvim_tree_auto_close') == 1
     au WinClosed * lua require'nvim-tree'.on_leave()
   endif
   au ColorScheme * lua require'nvim-tree'.reset_highlight()
   au User FugitiveChanged lua require'nvim-tree'.refresh()
-  if get(g:, 'lua_tree_tab_open') == 1
+  if get(g:, 'nvim_tree_tab_open') == 1
     au TabEnter * lua require'nvim-tree'.tab_change()
   endif
 augroup end
