@@ -105,6 +105,19 @@ function M.on_keypress(mode)
   end
 end
 
+function M.dir_up()
+    local node = lib.get_node_at_cursor()
+    if not node then
+        return lib.change_dir('..')
+    else
+        local newdir = vim.fn.fnamemodify(node.absolute_path, ':h')
+        if newdir == lib.Tree.cwd then
+            lib.change_dir('..')
+        end
+        lib.set_index_and_redraw(newdir)
+    end
+end
+
 function M.refresh()
   lib.refresh_tree()
 end
