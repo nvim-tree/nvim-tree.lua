@@ -195,6 +195,7 @@ INFORMATIONS				        *nvim-tree-info*
 - type 'd' to delete a file (will prompt for confirmation)
 - type ']c' to go to next git item
 - type '[c' to go to prev git item
+- type '-' to navigate up one directory
 
 - if the file is a directory, '<CR>' will open the directory
 - otherwise it will open the file in the buffer near the tree
@@ -232,6 +233,7 @@ default keybindings will be applied to undefined keys.
         \ paste:         'p',
         \ prev_git_item: '[c',
         \ next_git_item: ']c',
+        \ dir_up:        '-',
 	\ }
 
 |Features|					*nvim-tree-features*
