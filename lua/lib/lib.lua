@@ -252,6 +252,7 @@ local function set_mappings()
     [bindings.paste] = 'on_keypress("paste")';
     [bindings.prev_git_item] = 'on_keypress("prev_git_item")';
     [bindings.next_git_item] = 'on_keypress("next_git_item")';
+    [bindings.dir_up] = 'on_keypress("dir_up")';
     gx = "xdg_open()";
   }
 
@@ -364,6 +365,18 @@ end
 function M.toggle_dotfiles()
   pops.show_dotfiles = not pops.show_dotfiles
   return M.refresh_tree()
+end
+
+function M.dir_up(node)
+  if not node then
+    return M.change_dir('..')
+  else
+    local newdir = vim.fn.fnamemodify(node.absolute_path, ':h')
+    if newdir == M.Tree.cwd then
+      M.change_dir('..')
+    end
+    return M.set_index_and_redraw(newdir)
+  end
 end
 
 return M

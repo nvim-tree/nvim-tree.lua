@@ -62,6 +62,7 @@ let g:nvim_tree_bindings = {
     \ 'paste':           'p',
     \ 'prev_git_item':   '[c',
     \ 'next_git_item':   ']c',
+    \ 'dir_up':          '-',
     \ }
 
 " Disable default mappings by plugin
@@ -113,6 +114,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `d` to delete a file (will prompt for confirmation)
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
+- type '-' to naviate up to the parent directory of the current file/directory
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
 - `<C-v>` will open the file in a vertical split

@@ -73,6 +73,7 @@ local keypress_funcs = {
   refresh = lib.refresh_tree,
   prev_git_item = gen_go_to('prev_git_item'),
   next_git_item = gen_go_to('next_git_item'),
+  dir_up = lib.dir_up,
   preview = function(node)
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
@@ -103,19 +104,6 @@ function M.on_keypress(mode)
   else
     lib.open_file(mode, node.absolute_path)
   end
-end
-
-function M.dir_up()
-    local node = lib.get_node_at_cursor()
-    if not node then
-        return lib.change_dir('..')
-    else
-        local newdir = vim.fn.fnamemodify(node.absolute_path, ':h')
-        if newdir == lib.Tree.cwd then
-            lib.change_dir('..')
-        end
-        lib.set_index_and_redraw(newdir)
-    end
 end
 
 function M.refresh()
