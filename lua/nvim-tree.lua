@@ -33,6 +33,8 @@ function M.open(cb)
     function()
       if not lib.win_open() then
         lib.open()
+      else
+        lib.set_target_win()
       end
       pcall(cb)
     end

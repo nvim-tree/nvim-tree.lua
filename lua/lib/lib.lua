@@ -20,6 +20,7 @@ M.Tree = {
   win_width_allow_resize = vim.g.nvim_tree_width_allow_resize,
   loaded = false,
   bufnr = nil,
+  target_winid = nil,
   winnr = function()
     for _, i in ipairs(api.nvim_list_wins()) do
       if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*/'..M.Tree.buf_name..'$') then
@@ -189,17 +190,47 @@ local function check_and_open_split()
 end
 
 function M.open_file(mode, filename)
+  local target_winnr = api.nvim_eval(string.format('win_id2win(%d)', M.Tree.target_winid))
+  local target_bufnr = target_winnr > 0 and api.nvim_eval(string.format('winbufnr(%d)', M.Tree.target_winid))
+  local splitcmd = window_opts.split_command == 'splitright' and 'vsplit' or 'split'
+  local ecmd = target_bufnr and string.format('%dwindo %s', target_winnr, mode == 'preview' and 'edit' or mode) or (mode == 'preview' and 'edit' or mode)
+
   api.nvim_command('noautocmd wincmd '..window_opts.open_command)
-  if mode == 'preview' then
-    check_and_open_split()
-    api.nvim_command(string.format("edit %s", filename))
-    api.nvim_command('noautocmd wincmd '..window_opts.preview_command)
-  else
-    if mode == 'edit' then
-      check_and_open_split()
+
+  local found = false
+  for _, win in ipairs(api.nvim_list_wins()) do
+    if filename == api.nvim_buf_get_name(api.nvim_win_get_buf(win)) then
+      found = true
+      ecmd = function() M.win_focus(win) end
     end
-    api.nvim_command(string.format("%s %s", mode, filename))
   end
+
+  if not found and (mode == 'edit' or mode == 'preview') then
+    if target_bufnr then
+      if api.nvim_buf_get_option(target_bufnr, 'modified') then
+        ecmd = string.format('%dwindo %s', target_winnr, splitcmd)
+      end
+    else
+      ecmd = splitcmd
+    end
+  end
+
+  if type(ecmd) == 'string' then
+      api.nvim_command(string.format('%s %s', ecmd, filename))
+  else
+      ecmd()
+  end
+
+  if mode == 'preview' then
+    if not found then M.set_target_win() end
+    M.win_focus()
+    return
+  end
+
+  if found then
+    return
+  end
+
   if not M.Tree.win_width_allow_resize then
     local cur_win = api.nvim_get_current_win()
     M.win_focus()
@@ -297,7 +328,12 @@ function M.close()
   M.Tree.bufnr = nil
 end
 
+function M.set_target_win()
+  M.Tree.target_winid = api.nvim_eval(string.format('win_getid(bufwinnr(%d))', api.nvim_get_current_buf()))
+end
+
 function M.open()
+  M.set_target_win()
   create_buf()
   create_win()
   api.nvim_win_set_buf(M.Tree.winnr(), M.Tree.bufnr)
