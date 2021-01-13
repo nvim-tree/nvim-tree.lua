@@ -371,11 +371,9 @@ function M.dir_up(node)
   if not node then
     return M.change_dir('..')
   else
-    local newdir = vim.fn.fnamemodify(node.absolute_path, ':h')
-    if newdir == M.Tree.cwd then
-      M.change_dir('..')
-    end
-    return M.set_index_and_redraw(newdir)
+    local newdir = vim.fn.fnamemodify(M.Tree.cwd, ':h')
+    M.change_dir(newdir)
+    return M.set_index_and_redraw(node.absolute_path)
   end
 end
 
