@@ -190,8 +190,8 @@ local function check_and_open_split()
 end
 
 function M.open_file(mode, filename)
-  local target_winnr = api.nvim_eval(string.format('win_id2win(%d)', M.Tree.target_winid))
-  local target_bufnr = target_winnr > 0 and api.nvim_eval(string.format('winbufnr(%d)', M.Tree.target_winid))
+  local target_winnr = vim.fn.win_id2win(M.Tree.target_winid)
+  local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)
   local splitcmd = window_opts.split_command == 'splitright' and 'vsplit' or 'split'
   local ecmd = target_bufnr and string.format('%dwindo %s', target_winnr, mode == 'preview' and 'edit' or mode) or (mode == 'preview' and 'edit' or mode)
 
@@ -329,7 +329,7 @@ function M.close()
 end
 
 function M.set_target_win()
-  M.Tree.target_winid = api.nvim_eval(string.format('win_getid(bufwinnr(%d))', api.nvim_get_current_buf()))
+  M.Tree.target_winid = vim.fn.win_getid(vim.fn.bufwinnr(api.nvim_get_current_buf()))
 end
 
 function M.open()
