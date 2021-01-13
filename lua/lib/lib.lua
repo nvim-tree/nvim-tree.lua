@@ -306,6 +306,9 @@ function M.open()
     api.nvim_command('setlocal '..opt)
   end
 
+  if M.Tree.loaded then
+    M.change_dir(vim.fn.getcwd())
+  end
   renderer.draw(M.Tree, not M.Tree.loaded)
   M.Tree.loaded = true
 
