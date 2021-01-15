@@ -279,9 +279,10 @@ end
 
 local M = {}
 
-function is_bufnr_valid(bufnr)
+local function is_bufnr_valid(bufnr)
   return vim.fn.bufexists(bufnr) == 1
 end
+
 function M.draw(tree, reload)
   if not is_bufnr_valid(tree.bufnr) then return end
   api.nvim_buf_set_option(tree.bufnr, 'modifiable', true)
