@@ -207,7 +207,7 @@ function M.open_file(mode, filename)
 
   if not found and (mode == 'edit' or mode == 'preview') then
     if target_bufnr then
-      if api.nvim_buf_get_option(target_bufnr, 'modified') then
+      if not vim.o.hidden and api.nvim_buf_get_option(target_bufnr, 'modified') then
         ecmd = string.format('%dwindo %s', target_winnr, splitcmd)
       end
     else
