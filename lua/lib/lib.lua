@@ -183,12 +183,6 @@ function M.set_index_and_redraw(fname)
   end
 end
 
-local function check_and_open_split()
-  if #api.nvim_list_wins() == 1 then
-    api.nvim_command("vnew")
-  end
-end
-
 function M.open_file(mode, filename)
   local target_winnr = vim.fn.win_id2win(M.Tree.target_winid)
   local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)
