@@ -71,6 +71,7 @@ function M.get_bindings()
     prev_git_item   = keybindings.prev_git_item or '[c',
     next_git_item   = keybindings.next_git_item or ']c',
     dir_up          = keybindings.dir_up or '-',
+    close           = keybindings.close or 'q',
   }
 end
 

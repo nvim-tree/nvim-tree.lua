@@ -76,6 +76,7 @@ local keypress_funcs = {
   prev_git_item = gen_go_to('prev_git_item'),
   next_git_item = gen_go_to('next_git_item'),
   dir_up = lib.dir_up,
+  close = function(node) M.close() end,
   preview = function(node)
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
