@@ -100,7 +100,6 @@ function M.on_keypress(mode)
   end
 
   if node.link_to and not node.entries then
-    local stat = luv.fs_stat(node.link_to)
     lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
     lib.unroll_dir(node)
