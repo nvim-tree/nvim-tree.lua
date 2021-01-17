@@ -6,7 +6,11 @@ local roots = {}
 local not_git = 'not a git repo'
 
 local function update_root_status(root)
-  local status = vim.fn.systemlist('cd "'..root..'" && git status --porcelain=v1 -u')
+  local untracked = ' -u'
+  if vim.fn.trim(vim.fn.system('git config --type=bool status.showUntrackedFiles')) == 'false' then
+    untracked = ''
+  end
+  local status = vim.fn.systemlist('cd "'..root..'" && git status --porcelain=v1'..untracked)
   roots[root] = {}
 
   for _, v in pairs(status) do
