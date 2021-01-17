@@ -128,7 +128,7 @@ function M.refresh_entries(entries, cwd)
   local idx = 1
   for _, name in ipairs(cached_entries) do
     if not new_entries[name] then
-      table.remove(entries, idx, idx + 1)
+      table.remove(entries, idx)
     else
       idx = idx + 1
     end
