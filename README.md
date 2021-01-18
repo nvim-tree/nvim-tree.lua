@@ -63,6 +63,7 @@ let g:nvim_tree_bindings = {
     \ 'prev_git_item':   '[c',
     \ 'next_git_item':   ']c',
     \ 'dir_up':          '-',
+    \ 'close':           'q',
     \ }
 
 " Disable default mappings by plugin
