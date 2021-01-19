@@ -1,10 +1,10 @@
 local api = vim.api
 local luv = vim.loop
 
-local renderer = require'lib.renderer'
-local config = require'lib.config'
-local git = require'lib.git'
-local pops = require'lib.populate'
+local renderer = require'nvim-tree.renderer'
+local config = require'nvim-tree.config'
+local git = require'nvim-tree.git'
+local pops = require'nvim-tree.populate'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 

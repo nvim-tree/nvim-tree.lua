@@ -1,5 +1,5 @@
-local config = require'lib.config'
-local git = require'lib.git'
+local config = require'nvim-tree.config'
+local git = require'nvim-tree.git'
 local icon_config = config.get_icon_state()
 
 local api = vim.api
@@ -10,7 +10,7 @@ local M = {
   show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
 }
 
-local path_to_matching_str = require'lib.utils'.path_to_matching_str
+local path_to_matching_str = require'nvim-tree.utils'.path_to_matching_str
 
 local function dir_new(cwd, name)
   local absolute_path = cwd..'/'..name

@@ -1,10 +1,10 @@
 local luv = vim.loop
-local lib = require'lib.lib'
-local config = require'lib.config'
-local colors = require'lib.colors'
-local renderer = require'lib.renderer'
-local fs = require'lib.fs'
-local utils = require'lib.utils'
+local lib = require'nvim-tree.lib'
+local config = require'nvim-tree.config'
+local colors = require'nvim-tree.colors'
+local renderer = require'nvim-tree.renderer'
+local fs = require'nvim-tree.fs'
+local utils = require'nvim-tree.utils'
 local api = vim.api
 
 local M = {}

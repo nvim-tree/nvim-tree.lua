@@ -1,5 +1,5 @@
-local config = require'lib.config'
-local utils = require'lib.utils'
+local config = require'nvim-tree.config'
+local utils = require'nvim-tree.utils'
 
 local api = vim.api
 
