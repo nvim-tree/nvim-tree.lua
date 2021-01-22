@@ -210,7 +210,7 @@ function M.open_file(mode, filename)
   end
 
   if type(ecmd) == 'string' then
-      api.nvim_command(string.format('%s %s', ecmd, filename))
+      api.nvim_command(string.format('%s %s', ecmd, vim.fn.fnameescape(filename)))
   else
       ecmd()
   end
