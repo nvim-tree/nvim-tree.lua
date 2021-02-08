@@ -3,8 +3,10 @@ if has('win32') || exists('g:loaded_tree') | finish | endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
+if !exists("g:nvim_tree_enable_netrw") || (exists("g:nvim_tree_enable_netrw") && g:nvim_tree_enable_netrw == 0)
+    let g:loaded_netrw = 1
+    let g:loaded_netrwPlugin = 1
+endif
 
 hi def link NvimTreePopup Normal
 
