@@ -119,13 +119,17 @@ end
 function M.on_enter()
   local bufnr = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(bufnr)
+  local buftype = api.nvim_buf_get_option(bufnr, 'filetype')
+  local ft_ignore = vim.g.nvim_tree_auto_ignore_ft or {}
 
   local stats = luv.fs_stat(bufname)
   local is_dir = stats and stats.type == 'directory'
   if is_dir then
     api.nvim_command('cd '..bufname)
   end
-  local should_open = vim.g.nvim_tree_auto_open == 1 and (bufname == '' or is_dir)
+  local should_open = vim.g.nvim_tree_auto_open == 1 and
+    (bufname == '' or is_dir) and
+    not vim.tbl_contains(ft_ignore, buftype)
   colors.setup()
   lib.init(should_open, should_open)
 end
