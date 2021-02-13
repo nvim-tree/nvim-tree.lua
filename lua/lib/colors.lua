@@ -63,6 +63,7 @@ local function get_links()
     FileMerge = 'NvimTreeGitMerge',
     FileStaged = 'NvimTreeGitStaged',
     FileDeleted = 'NvimTreeGitDeleted',
+    Popup = 'Normal',
   }
 end
 

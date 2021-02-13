@@ -8,7 +8,6 @@ if get(g:, 'nvim_tree_disable_netrw', 1) == 1
     let g:loaded_netrwPlugin = 1
 endif
 
-hi def link NvimTreePopup Normal
 lua require'nvim-tree'.reset_highlight()
 
 augroup NvimTree
