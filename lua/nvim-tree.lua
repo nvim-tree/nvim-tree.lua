@@ -130,7 +130,6 @@ function M.on_enter()
   local should_open = vim.g.nvim_tree_auto_open == 1 and
     (bufname == '' or is_dir) and
     not vim.tbl_contains(ft_ignore, buftype)
-  colors.setup()
   lib.init(should_open, should_open)
 end
 
