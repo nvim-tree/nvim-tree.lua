@@ -126,7 +126,7 @@ function M.on_enter()
   local is_dir = stats and stats.type == 'directory'
 
   local disable_netrw = vim.g.nvim_tree_disable_netrw or 1
-  local hijack_netrw = vim.g.nvim_tree_hijack_netrw or 0
+  local hijack_netrw = vim.g.nvim_tree_hijack_netrw or 1
   if is_dir then
     api.nvim_command('cd '..bufname)
   end

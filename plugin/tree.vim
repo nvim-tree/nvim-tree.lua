@@ -11,7 +11,7 @@ endif
 hi def link NvimTreePopup Normal
 
 augroup NvimTree
-  if get(g:, 'nvim_tree_hijack_netrw') == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0
+  if get(g:, 'nvim_tree_hijack_netrw', 1) == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0
     autocmd! FileExplorer *
   endif
   au BufWritePost * lua require'nvim-tree'.refresh()
