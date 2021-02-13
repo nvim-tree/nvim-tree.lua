@@ -9,6 +9,7 @@ if get(g:, 'nvim_tree_disable_netrw', 1) == 1
 endif
 
 hi def link NvimTreePopup Normal
+lua require'nvim-tree'.reset_highlight()
 
 augroup NvimTree
   if get(g:, 'nvim_tree_hijack_netrw', 1) == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0

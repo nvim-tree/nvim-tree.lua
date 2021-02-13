@@ -133,7 +133,6 @@ function M.on_enter()
   local should_open = vim.g.nvim_tree_auto_open == 1 and
     ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '') and
     not vim.tbl_contains(ft_ignore, buftype)
-  colors.setup()
   lib.init(should_open, should_open)
 end
 
