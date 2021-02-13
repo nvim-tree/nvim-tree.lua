@@ -122,10 +122,13 @@ function M.on_enter()
 
   local stats = luv.fs_stat(bufname)
   local is_dir = stats and stats.type == 'directory'
+
+  local disable_netrw = vim.g.nvim_tree_disable_netrw or 1
+  local hijack_netrw = vim.g.nvim_tree_hijack_netrw or 0
   if is_dir then
     api.nvim_command('cd '..bufname)
   end
-  local should_open = vim.g.nvim_tree_auto_open == 1 and (bufname == '' or is_dir)
+  local should_open = vim.g.nvim_tree_auto_open == 1 and ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '')
   colors.setup()
   lib.init(should_open, should_open)
 end
