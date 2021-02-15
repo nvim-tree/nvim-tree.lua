@@ -3,12 +3,17 @@ if has('win32') || exists('g:loaded_tree') | finish | endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
+if get(g:, 'nvim_tree_disable_netrw', 1) == 1
+    let g:loaded_netrw = 1
+    let g:loaded_netrwPlugin = 1
+endif
 
 hi def link NvimTreePopup Normal
 
 augroup NvimTree
+  if get(g:, 'nvim_tree_hijack_netrw', 1) == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0
+    autocmd! FileExplorer *
+  endif
   au BufWritePost * lua require'nvim-tree'.refresh()
   au BufEnter * lua require'nvim-tree'.buf_enter()
   if get(g:, 'nvim_tree_auto_close') == 1
