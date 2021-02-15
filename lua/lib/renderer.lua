@@ -280,7 +280,7 @@ end
 local M = {}
 
 local function is_bufnr_valid(bufnr)
-  return vim.fn.bufexists(bufnr) == 1
+  return vim.fn.bufexists(bufnr) == 1 and vim.fn.bufloaded(bufnr) == 1
 end
 
 function M.draw(tree, reload)
