@@ -122,10 +122,10 @@ end
 function M.refresh_tree()
   vim.schedule(
     function ()
-      -- local stat = luv.fs_stat(M.Tree.cwd)
-      -- if stat.mtime.sec ~= M.Tree.last_modified then
+      if vim.v.exiting ~= nil then return end
+
       refresh_nodes(M.Tree)
-      -- end
+
       if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl then
         git.reload_roots()
         refresh_git(M.Tree)
