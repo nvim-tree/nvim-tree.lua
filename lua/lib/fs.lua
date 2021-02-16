@@ -82,7 +82,6 @@ function M.create(node)
 end
 
 local function clear_buffer(absolute_path)
-  dump(api.nvim_list_bufs())
   for _, buf in pairs(api.nvim_list_bufs()) do
     if vim.fn.bufloaded(buf) == 1 and api.nvim_buf_get_name(buf) == absolute_path then
       api.nvim_command(':bd! '..buf)
