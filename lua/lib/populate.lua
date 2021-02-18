@@ -16,7 +16,7 @@ local function dir_new(cwd, name)
   local absolute_path = cwd..'/'..name
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_opendir(absolute_path, nil, 1)
-  local children = luv.fs_readdir(handle)
+  local child = luv.fs_readdir(handle)
   luv.fs_closedir(handle)
   return {
     name = name,
@@ -26,7 +26,7 @@ local function dir_new(cwd, name)
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
-    empty = children == nil,
+    has_children = child ~= nil,
     entries = {}
   }
 end

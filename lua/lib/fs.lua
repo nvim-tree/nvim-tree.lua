@@ -54,6 +54,7 @@ function M.create(node)
   if not ans or #ans == 0 then return end
 
   if not ans:match('/') then
+    node.open = true
     return create_file(add_into..ans)
   end
 

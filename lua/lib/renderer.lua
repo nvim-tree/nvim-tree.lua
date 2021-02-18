@@ -16,21 +16,21 @@ local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
 end
 
 if icon_state.show_folder_icon then
-  get_folder_icon = function(open, is_symlink, is_empty)
+  get_folder_icon = function(open, is_symlink, has_children)
     local n = ""
     if is_symlink then
       n = icon_state.icons.folder_icons.symlink
     elseif open then
-      if is_empty then
-        n = icon_state.icons.folder_icons.empty_open
-      else
+      if has_children then
         n = icon_state.icons.folder_icons.open
+      else
+        n = icon_state.icons.folder_icons.empty_open
       end
     else
-      if is_empty then
-        n = icon_state.icons.folder_icons.empty
-      else
+      if has_children then
         n = icon_state.icons.folder_icons.default
+      else
+        n = icon_state.icons.folder_icons.empty
       end
     end
     return n.." "
@@ -238,7 +238,8 @@ local function update_draw_data(tree, depth, markers)
     local git_hl = get_git_hl(node)
 
     if node.entries then
-      local icon = get_folder_icon(node.open, node.link_to ~= nil, node.empty)
+      local icon = get_folder_icon(node.open, node.link_to ~= nil, #node.entries ~= 0 or node.has_children)
+      if node.has_children then node.has_children = nil end
       local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       set_folder_hl(index, offset, #icon, #node.name+#git_icon, 'NvimTreeFolderName')
