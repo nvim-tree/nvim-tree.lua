@@ -241,7 +241,8 @@ end
 function M.rename(node)
   if node.name == '..' then return end
 
-  local abs_path = string.gsub(node.absolute_path, node.name, '')
+  local namelen = node.name:len()
+  local abs_path = node.absolute_path:sub(0, namelen * (-1) -1)
   local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
   clear_prompt()
   if not new_name or #new_name == 0 then return end
