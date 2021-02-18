@@ -92,6 +92,7 @@ end
 
 function M.unroll_dir(node)
   node.open = not node.open
+  if node.children_initial then node.children_initial = false end
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
