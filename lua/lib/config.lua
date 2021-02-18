@@ -16,6 +16,8 @@ function M.get_icon_state()
     folder_icons = {
       default = "",
       open = "",
+      empty = "",
+      empty_open = "",
       symlink = "",
     }
   }
