@@ -238,8 +238,7 @@ local function update_draw_data(tree, depth, markers)
     local git_hl = get_git_hl(node)
 
     if node.entries then
-      local icon = get_folder_icon(node.open, node.link_to ~= nil, #node.entries ~= 0 or node.has_children)
-      if node.has_children then node.has_children = nil end
+      local icon = get_folder_icon(node.open, node.link_to ~= nil, #node.entries ~= 0 or node.children_initial)
       local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       set_folder_hl(index, offset, #icon, #node.name+#git_icon, 'NvimTreeFolderName')

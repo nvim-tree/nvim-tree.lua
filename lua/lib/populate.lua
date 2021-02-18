@@ -15,9 +15,8 @@ local path_to_matching_str = require'lib.utils'.path_to_matching_str
 local function dir_new(cwd, name)
   local absolute_path = cwd..'/'..name
   local stat = luv.fs_stat(absolute_path)
-  local handle = luv.fs_opendir(absolute_path, nil, 1)
-  local child = luv.fs_readdir(handle)
-  luv.fs_closedir(handle)
+  local handle = luv.fs_scandir(absolute_path)
+  local has_children = luv.fs_scandir_next(handle) ~= nil
   return {
     name = name,
     absolute_path = absolute_path,
@@ -26,7 +25,7 @@ local function dir_new(cwd, name)
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
-    has_children = child ~= nil,
+    children_initial = has_children,
     entries = {}
   }
 end
