@@ -8,8 +8,6 @@ if get(g:, 'nvim_tree_disable_netrw', 1) == 1
     let g:loaded_netrwPlugin = 1
 endif
 
-lua require'nvim-tree'.reset_highlight()
-
 augroup NvimTree
   if get(g:, 'nvim_tree_hijack_netrw', 1) == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0
     autocmd! FileExplorer *
