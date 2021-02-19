@@ -212,6 +212,7 @@ function M.xdg_open()
   end))
 end
 
+colors.setup()
 vim.defer_fn(M.on_enter, 1)
 
 return M

@@ -6,8 +6,6 @@ set cpo&vim
 let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 
-lua require'nvim-tree'.reset_highlight()
-
 augroup NvimTree
   au BufWritePost * lua require'nvim-tree'.refresh()
   au BufEnter * lua require'nvim-tree'.buf_enter()
