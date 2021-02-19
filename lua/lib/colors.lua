@@ -51,6 +51,7 @@ end
 local function get_links()
   return {
     FolderName = 'Directory',
+    EmptyFolderName = 'Directory',
     Normal = 'Normal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
