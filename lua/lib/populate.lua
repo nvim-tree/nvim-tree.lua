@@ -25,7 +25,7 @@ local function dir_new(cwd, name)
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
-    children_initial = has_children,
+    has_children = has_children,
     entries = {}
   }
 end
