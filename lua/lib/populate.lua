@@ -16,7 +16,7 @@ local function dir_new(cwd, name)
   local absolute_path = cwd..'/'..name
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
-  local has_children = luv.fs_scandir_next(handle) ~= nil
+  local has_children = handle and luv.fs_scandir_next(handle) ~= nil
   return {
     name = name,
     absolute_path = absolute_path,
