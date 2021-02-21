@@ -180,11 +180,24 @@ Can be 0 or 1. When 1, will open the tree when entering a new tab if the
 tree was previously open.
 Default is 0
 
-|g:nvim_tree_width_allow_resize|		        *g:nvim_tree_width_allow_resize*
+|g:nvim_tree_width_allow_resize|		*g:nvim_tree_width_allow_resize*
 
 Can be 0 or 1. When 1, it will not resize the tree to it's original width
 when opening a new file.
 Default is 0
+
+|g:nvim_tree_hijack_netrw|		        *g:nvim_tree_hijack_netrw*
+
+Can be 0 or 1. When 1, disable netrw buffers when nvim-tree start but keeps
+existing netrw functionnalities accross buffers (like `gx`).
+1 by default.
+
+|g:nvim_tree_disable_netrw|			*g:nvim_tree_disable_netrw*
+
+Can be 0 or 1. When 1, completely disable netrw and all related
+functionnalities.
+1 by default.
+
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
@@ -216,8 +229,6 @@ INFORMATIONS				        *nvim-tree-info*
 - '<Tab>' will open the file as a preview (keeps the cursor in the tree)
 - 'I' will toggle visibility of folders hidden via |g:nvim_tree_ignore|
 - 'R' will refresh the tree
-- 'gx' opens the file with the `open` command on macos and `xdg-open`
-on linux.
 
 - Double left click acts like '<CR>'
 - Double right click acts like '<C-]>'

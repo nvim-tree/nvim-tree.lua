@@ -130,15 +130,12 @@ highlight NvimTreeFolderIcon guibg=blue
 - `I` will toggle visibility of folders hidden via |g:nvim_tree_ignore|
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
 - `R` will refresh the tree
-- `gx` opens the file with the `open` command on MACOS and `xdg-open` in linux
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
 
 ## Note
 
 This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next` functions instead of spawning an `ls` process which can get slow on large files when combining with `stat` to get file informations.
-
-The Netrw vim plugin is disabled, hence features like `gx` don't work across your windows/buffers. You could use a plugin like [this one](https://github.com/stsewd/gx-extended.vim) if you wish to use that feature.
 
 ## Features
 

@@ -280,7 +280,6 @@ local function set_mappings()
     [bindings.next_git_item] = 'on_keypress("next_git_item")';
     [bindings.dir_up] = 'on_keypress("dir_up")';
     [bindings.close] = 'on_keypress("close")';
-    gx = "xdg_open()";
   }
 
   for k,v in pairs(mappings) do

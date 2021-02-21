@@ -196,25 +196,6 @@ function M.reset_highlight()
   renderer.render_hl(lib.Tree.bufnr)
 end
 
-function M.xdg_open()
-  local node = lib.get_node_at_cursor()
-  -- TODO: this should open symlink targets
-  if not node or node.entries or node.link_to then return end
-
-  local cmd
-  if vim.fn.has('unix') == 1 then
-    cmd = 'xdg-open'
-  else
-    cmd = 'open'
-  end
-
-  vim.loop.spawn(cmd, {args={node.absolute_path}}, vim.schedule_wrap(function(code)
-    if code ~= 0 then
-      api.nvim_err_writeln("Could not open "..node.absolute_path)
-    end
-  end))
-end
-
 colors.setup()
 vim.defer_fn(M.on_enter, 1)
 
