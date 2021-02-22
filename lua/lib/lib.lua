@@ -272,6 +272,7 @@ local function set_mappings()
     [bindings.create] = 'on_keypress("create")';
     [bindings.remove] = 'on_keypress("remove")';
     [bindings.rename] = 'on_keypress("rename")';
+    [bindings.full_rename] = 'on_keypress("full_rename")';
     [bindings.preview] = 'on_keypress("preview")';
     [bindings.cut] = 'on_keypress("cut")';
     [bindings.copy] = 'on_keypress("copy")';
