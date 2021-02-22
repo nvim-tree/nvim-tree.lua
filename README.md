@@ -60,6 +60,7 @@ let g:nvim_tree_bindings = {
     \ 'create':          'a',
     \ 'remove':          'd',
     \ 'rename':          'r',
+    \ 'full_rename':     '<C-r>',
     \ 'cut':             'x',
     \ 'copy':            'c',
     \ 'paste':           'p',
@@ -114,6 +115,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
   > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
 - type `r` to rename a file
+- type `<C-r>` to rename a file and omit the filename on input
 - type `x` to add/remove file/directory to cut clipboard
 - type `c` to add/remove file/directory to copy clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)

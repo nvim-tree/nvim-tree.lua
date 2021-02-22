@@ -211,6 +211,7 @@ INFORMATIONS				        *nvim-tree-info*
 
 - type 'a' to add a file
 - type 'r' to rename a file
+- type `<C-r>` to rename a file and omit the filename on input
 - type 'x' to add/remove file/directory to cut clipboard
 - type 'c' to add/remove file/directory to copy clipboard
 - type 'p' to paste from clipboard. Cut clipboard has precedence over copy

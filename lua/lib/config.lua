@@ -67,6 +67,7 @@ function M.get_bindings()
     create          = keybindings.create or 'a',
     remove          = keybindings.remove or 'd',
     rename          = keybindings.rename or 'r',
+    full_rename     = keybindings.full_rename or '<C-r>',
     cut             = keybindings.cut or 'x',
     copy            = keybindings.copy or 'c',
     paste           = keybindings.paste or 'p',

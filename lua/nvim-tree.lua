@@ -65,7 +65,8 @@ end
 local keypress_funcs = {
   create = fs.create,
   remove = fs.remove,
-  rename = fs.rename,
+  rename = fs.rename(false),
+  full_rename = fs.rename(true),
   copy = fs.copy,
   cut = fs.cut,
   paste = fs.paste,

@@ -239,28 +239,32 @@ function M.remove(node)
   end
 end
 
-function M.rename(node)
-  if node.name == '..' then return end
+function M.rename(with_sub)
+  return function(node)
+    if node.name == '..' then return end
 
-  local namelen = node.name:len()
-  local abs_path = node.absolute_path:sub(0, namelen * (-1) -1)
-  local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
-  clear_prompt()
-  if not new_name or #new_name == 0 then return end
+    local namelen = node.name:len()
+    local abs_path = with_sub and node.absolute_path:sub(0, namelen * (-1) -1) or node.absolute_path
+    local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
+    clear_prompt()
+    if not new_name or #new_name == 0 then return end
 
-  local success = luv.fs_rename(node.absolute_path, new_name)
-  if not success then
-    return api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
-  end
-  api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
-  for _, buf in pairs(api.nvim_list_bufs()) do
-    if api.nvim_buf_is_loaded(buf) then
-      if api.nvim_buf_get_name(buf) == node.absolute_path then
-        api.nvim_buf_set_name(buf, new_name)
+    local success = luv.fs_rename(node.absolute_path, new_name)
+    if not success then
+      return api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
+    end
+    api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
+    for _, buf in pairs(api.nvim_list_bufs()) do
+      if api.nvim_buf_is_loaded(buf) then
+        if api.nvim_buf_get_name(buf) == node.absolute_path then
+          api.nvim_buf_set_name(buf, new_name)
+          -- to avoid the 'overwrite existing file' error message on write
+          vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
+        end
       end
     end
+    refresh_tree()
   end
-  refresh_tree()
 end
 
 function M.copy(node)
