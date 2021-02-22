@@ -1,4 +1,4 @@
-local utils = require'lib.utils'
+local utils = require'nvim-tree.utils'
 local M = {}
 
 local roots = {}
