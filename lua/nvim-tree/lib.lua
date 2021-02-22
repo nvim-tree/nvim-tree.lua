@@ -211,9 +211,9 @@ function M.open_file(mode, filename)
   end
 
   if type(ecmd) == 'string' then
-      api.nvim_command(string.format('%s %s', ecmd, vim.fn.fnameescape(filename)))
+    api.nvim_command(string.format('%s %s', ecmd, vim.fn.fnameescape(filename)))
   else
-      ecmd()
+    ecmd()
   end
 
   if mode == 'preview' then
@@ -243,54 +243,22 @@ function M.change_dir(foldername)
   M.init(false, M.Tree.bufnr ~= nil)
 end
 
-local function set_mapping(buf, key, fn)
-  api.nvim_buf_set_keymap(buf, 'n', key, ':lua require"nvim-tree".'..fn..'<cr>', {
-      nowait = true, noremap = true, silent = true
-    })
+local function set_mapping(buf, key, cb)
+  api.nvim_buf_set_keymap(buf, 'n', key, cb, {
+    nowait = true, noremap = true, silent = true
+  })
 end
 
 local function set_mappings()
   if vim.g.nvim_tree_disable_keybindings == 1 then
-      return
+    return
   end
 
   local buf = M.Tree.bufnr
   local bindings = config.get_bindings()
 
-  local mappings = {
-    ['<2-LeftMouse>'] = 'on_keypress("edit")';
-    ['<2-RightMouse>'] = 'on_keypress("cd")';
-    [bindings.cd] = 'on_keypress("cd")';
-    [bindings.edit] = 'on_keypress("edit")';
-    [bindings.edit_vsplit] = 'on_keypress("vsplit")';
-    [bindings.edit_split] = 'on_keypress("split")';
-    [bindings.edit_tab] = 'on_keypress("tabnew")';
-    [bindings.close_node] = 'on_keypress("close_node")';
-    [bindings.toggle_ignored] = 'on_keypress("toggle_ignored")';
-    [bindings.toggle_dotfiles] = 'on_keypress("toggle_dotfiles")';
-    [bindings.refresh] = 'on_keypress("refresh")';
-    [bindings.create] = 'on_keypress("create")';
-    [bindings.remove] = 'on_keypress("remove")';
-    [bindings.rename] = 'on_keypress("rename")';
-    [bindings.full_rename] = 'on_keypress("full_rename")';
-    [bindings.preview] = 'on_keypress("preview")';
-    [bindings.cut] = 'on_keypress("cut")';
-    [bindings.copy] = 'on_keypress("copy")';
-    [bindings.paste] = 'on_keypress("paste")';
-    [bindings.prev_git_item] = 'on_keypress("prev_git_item")';
-    [bindings.next_git_item] = 'on_keypress("next_git_item")';
-    [bindings.dir_up] = 'on_keypress("dir_up")';
-    [bindings.close] = 'on_keypress("close")';
-  }
-
-  for k,v in pairs(mappings) do
-    if type(k) == 'table' then
-      for _, key in pairs(k) do
-        set_mapping(buf, key, v)
-      end
-    else
-      set_mapping(buf, k, v)
-    end
+  for key,cb in pairs(bindings) do
+    set_mapping(buf, key, cb)
   end
 end
 

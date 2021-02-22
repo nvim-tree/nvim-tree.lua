@@ -236,27 +236,18 @@ INFORMATIONS				        *nvim-tree-info*
 
 |g:nvim_tree_bindings|                             *g:nvim_tree_bindings*
 
-you can change default keybindings by defining this variable.
-default keybindings will be applied to undefined keys.
+Default keybindings can be overriden. You can also define your own keymappings for the tree view:
 >
-    let g:nvim_tree_bindings = {
-        \ edit:          ['<cr>', 'o'], // Multiple keys provided via list
-        \ edit_vsplit:   '<c-v>',
-        \ edit_split:    '<c-x>',
-        \ edit_tab:      '<c-t>',
-        \ close_node:    ['<s-cr>', '<bs>'],
-        \ cd:            '<c-]>',
-        \ preview:       '<Tab>',
-        \ create:        'a',
-        \ remove:        'd',
-        \ rename:        'r',
-        \ cut:           'x',
-        \ copy:          'c',
-        \ paste:         'p',
-        \ prev_git_item: '[c',
-        \ next_git_item: ']c',
-        \ dir_up:        '-',
-	\ }
+  lua <<EOF
+      vim.g.nvim_tree_bindings = {
+	["<CR>"] = ":YourVimFunction()<cr>",
+	["u"] = ":lua require'some_module'.some_function()<cr>",
+      }
+  EOF
+
+You can check the default binding table in `nvim-tree/config.lua`, under the `get_bindings` function.
+This basically maps the default keys to the `on_keypress` function with different string parameters.
+All mappings are set in `normal` `mode`.
 
 |Features|					*nvim-tree-features*
 

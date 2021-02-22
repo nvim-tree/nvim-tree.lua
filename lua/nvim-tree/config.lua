@@ -51,31 +51,39 @@ function M.get_icon_state()
   }
 end
 
+local function get_lua_cb(cb_name)
+  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", cb_name)
+end
+
 function M.get_bindings()
   local keybindings = vim.g.nvim_tree_bindings or {}
-  return {
-    edit            = keybindings.edit or {'<CR>', 'o'},
-    edit_vsplit     = keybindings.edit_vsplit or '<C-v>',
-    edit_split      = keybindings.edit_split or '<C-x>',
-    edit_tab        = keybindings.edit_tab or '<C-t>',
-    close_node      = keybindings.close_node or {'<S-CR>', '<BS>'},
-    preview         = keybindings.preview or '<Tab>',
-    toggle_ignored  = keybindings.toggle_ignored or 'I',
-    toggle_dotfiles = keybindings.toggle_dotfiles or 'H',
-    refresh         = keybindings.refresh or 'R',
-    cd              = keybindings.cd or '<C-]>',
-    create          = keybindings.create or 'a',
-    remove          = keybindings.remove or 'd',
-    rename          = keybindings.rename or 'r',
-    full_rename     = keybindings.full_rename or '<C-r>',
-    cut             = keybindings.cut or 'x',
-    copy            = keybindings.copy or 'c',
-    paste           = keybindings.paste or 'p',
-    prev_git_item   = keybindings.prev_git_item or '[c',
-    next_git_item   = keybindings.next_git_item or ']c',
-    dir_up          = keybindings.dir_up or '-',
-    close           = keybindings.close or 'q',
-  }
+  return vim.tbl_extend('force', {
+    ["<CR>"]           = get_lua_cb("edit"),
+    ["o"]              = get_lua_cb("edit"),
+    ["<2-LeftMouse>"]  = get_lua_cb("edit"),
+    ["<2-RightMouse>"] = get_lua_cb("cd"),
+    ["<C-]>"]          = get_lua_cb("cd"),
+    ["<C-v>"]          = get_lua_cb("vsplit"),
+    ["<C-x>"]          = get_lua_cb("split"),
+    ["<C-t>"]          = get_lua_cb("tabnew"),
+    ["<BS>"]           = get_lua_cb("close_node"),
+    ["<S-CR>"]         = get_lua_cb("close_node"),
+    ["<Tab>"]          = get_lua_cb("preview"),
+    ["I"]              = get_lua_cb("toggle_ignored"),
+    ["H"]              = get_lua_cb("toggle_dotfiles"),
+    ["R"]              = get_lua_cb("refresh"),
+    ["a"]              = get_lua_cb("create"),
+    ["d"]              = get_lua_cb("remove"),
+    ["r"]              = get_lua_cb("rename"),
+    ["<C-r>"]          = get_lua_cb("full_rename"),
+    ["x"]              = get_lua_cb("cut"),
+    ["c"]              = get_lua_cb("copy"),
+    ["p"]              = get_lua_cb("paste"),
+    ["[c"]             = get_lua_cb("prev_git_item"),
+    ["]c"]             = get_lua_cb("next_git_item"),
+    ["-"]              = get_lua_cb("dir_up"),
+    ["q"]              = get_lua_cb("close"),
+  }, keybindings)
 end
 
 function M.window_options()
