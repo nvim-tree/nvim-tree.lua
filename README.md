@@ -43,37 +43,6 @@ let g:nvim_tree_show_icons = {
 "1 by default, notice that if 'files' is 1, it will only display
 "if nvim-web-devicons is installed and on your runtimepath
 
-" You can edit keybindings be defining this variable
-" You don't have to define all keys.
-" NOTE: the 'edit' key will wrap/unwrap a folder and open a file
-let g:nvim_tree_bindings = {
-    \ 'edit':            ['<CR>', 'o'],
-    \ 'edit_vsplit':     '<C-v>',
-    \ 'edit_split':      '<C-x>',
-    \ 'edit_tab':        '<C-t>',
-    \ 'close_node':      ['<S-CR>', '<BS>'],
-    \ 'toggle_ignored':  'I',
-    \ 'toggle_dotfiles': 'H',
-    \ 'refresh':         'R',
-    \ 'preview':         '<Tab>',
-    \ 'cd':              '<C-]>',
-    \ 'create':          'a',
-    \ 'remove':          'd',
-    \ 'rename':          'r',
-    \ 'full_rename':     '<C-r>',
-    \ 'cut':             'x',
-    \ 'copy':            'c',
-    \ 'paste':           'p',
-    \ 'prev_git_item':   '[c',
-    \ 'next_git_item':   ']c',
-    \ 'dir_up':          '-',
-    \ 'close':           'q',
-    \ }
-
-" Disable default mappings by plugin
-" Bindings are enable by default, disabled on any non-zero value
-" let nvim_tree_disable_keybindings=1
-
 " default will show icon by default if no icon is provided
 " default shows no icon by default
 let g:nvim_tree_icons = {
@@ -108,8 +77,10 @@ highlight NvimTreeFolderIcon guibg=blue
 
 ## KeyBindings
 
+### Default actions
+
 - move around like in any vim buffer
-- `<CR>` on `..` will cd in the above directory
+- `<CR>` or `o` on `..` will cd in the above directory
 - `<C-]>` will cd in the directory under the cursor
 - `<BS>` will close current opened directory or parent
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
@@ -134,6 +105,28 @@ highlight NvimTreeFolderIcon guibg=blue
 - `R` will refresh the tree
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
+
+### Setup
+
+You can disable default mappings with
+```vim
+" let nvim_tree_disable_keybindings=1
+```
+But you won't be able to map any keys from the setup with nvim_tree_bindings. Use with caution.
+
+
+Default keybindings can be overriden. You can also define your own keymappings for the tree view:
+```vim
+lua <<EOF
+    vim.g.nvim_tree_bindings = {
+      ["<CR>"] = ":YourVimFunction()<cr>",
+      ["u"] = ":lua require'some_module'.some_function()<cr>",
+    }
+EOF
+```
+You can check the default binding table in `nvim-tree/config.lua`, under the `get_bindings` function.
+This basically maps the default keys to the `on_keypress` function with different string parameters.
+All mappings are set in `normal mode`.
 
 ## Note
 
