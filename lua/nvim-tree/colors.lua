@@ -1,5 +1,5 @@
 local api = vim.api
-local config = require'lib.config'
+local config = require'nvim-tree.config'
 
 local M = {}
 
