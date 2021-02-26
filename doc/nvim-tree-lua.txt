@@ -95,21 +95,21 @@ You can set icons for:
 - Symlinks. If an icon is not provided, the `default` icon is used.
 >
   let g:nvim_tree_icons = {
-      \ 'default': '',
-      \ 'symlink': '',
+      \ 'default':      '',
+      \ 'symlink':      '',
       \ 'git': {
-      \   'unstaged': "✗",
-      \   'staged': "✓",
-      \   'unmerged': "",
-      \   'renamed': "➜",
-      \   'untracked': "★"
+      \   'unstaged':   "✗",
+      \   'staged':     "✓",
+      \   'unmerged':   "",
+      \   'renamed':    "➜",
+      \   'untracked':  "★"
       \   },
       \ 'folder': {
-      \   'default': "",
-      \   'open': "",
-      \    empty = "",
-      \    empty_open = "",
-      \   'symlink': "",
+      \   'default':    "",
+      \   'open':       "",
+      \   'empty':      "",
+      \   'empty_open': "",
+      \   'symlink':    "",
       \  }
       \ }
 
