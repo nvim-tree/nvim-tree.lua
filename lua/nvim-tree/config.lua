@@ -51,38 +51,38 @@ function M.get_icon_state()
   }
 end
 
-local function get_lua_cb(cb_name)
-  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", cb_name)
+function M.nvim_tree_callback(callback_name)
+  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
 end
 
 function M.get_bindings()
   local keybindings = vim.g.nvim_tree_bindings or {}
   return vim.tbl_extend('force', {
-    ["<CR>"]           = get_lua_cb("edit"),
-    ["o"]              = get_lua_cb("edit"),
-    ["<2-LeftMouse>"]  = get_lua_cb("edit"),
-    ["<2-RightMouse>"] = get_lua_cb("cd"),
-    ["<C-]>"]          = get_lua_cb("cd"),
-    ["<C-v>"]          = get_lua_cb("vsplit"),
-    ["<C-x>"]          = get_lua_cb("split"),
-    ["<C-t>"]          = get_lua_cb("tabnew"),
-    ["<BS>"]           = get_lua_cb("close_node"),
-    ["<S-CR>"]         = get_lua_cb("close_node"),
-    ["<Tab>"]          = get_lua_cb("preview"),
-    ["I"]              = get_lua_cb("toggle_ignored"),
-    ["H"]              = get_lua_cb("toggle_dotfiles"),
-    ["R"]              = get_lua_cb("refresh"),
-    ["a"]              = get_lua_cb("create"),
-    ["d"]              = get_lua_cb("remove"),
-    ["r"]              = get_lua_cb("rename"),
-    ["<C-r>"]          = get_lua_cb("full_rename"),
-    ["x"]              = get_lua_cb("cut"),
-    ["c"]              = get_lua_cb("copy"),
-    ["p"]              = get_lua_cb("paste"),
-    ["[c"]             = get_lua_cb("prev_git_item"),
-    ["]c"]             = get_lua_cb("next_git_item"),
-    ["-"]              = get_lua_cb("dir_up"),
-    ["q"]              = get_lua_cb("close"),
+    ["<CR>"]           = M.nvim_tree_callback("edit"),
+    ["o"]              = M.nvim_tree_callback("edit"),
+    ["<2-LeftMouse>"]  = M.nvim_tree_callback("edit"),
+    ["<2-RightMouse>"] = M.nvim_tree_callback("cd"),
+    ["<C-]>"]          = M.nvim_tree_callback("cd"),
+    ["<C-v>"]          = M.nvim_tree_callback("vsplit"),
+    ["<C-x>"]          = M.nvim_tree_callback("split"),
+    ["<C-t>"]          = M.nvim_tree_callback("tabnew"),
+    ["<BS>"]           = M.nvim_tree_callback("close_node"),
+    ["<S-CR>"]         = M.nvim_tree_callback("close_node"),
+    ["<Tab>"]          = M.nvim_tree_callback("preview"),
+    ["I"]              = M.nvim_tree_callback("toggle_ignored"),
+    ["H"]              = M.nvim_tree_callback("toggle_dotfiles"),
+    ["R"]              = M.nvim_tree_callback("refresh"),
+    ["a"]              = M.nvim_tree_callback("create"),
+    ["d"]              = M.nvim_tree_callback("remove"),
+    ["r"]              = M.nvim_tree_callback("rename"),
+    ["<C-r>"]          = M.nvim_tree_callback("full_rename"),
+    ["x"]              = M.nvim_tree_callback("cut"),
+    ["c"]              = M.nvim_tree_callback("copy"),
+    ["p"]              = M.nvim_tree_callback("paste"),
+    ["[c"]             = M.nvim_tree_callback("prev_git_item"),
+    ["]c"]             = M.nvim_tree_callback("next_git_item"),
+    ["-"]              = M.nvim_tree_callback("dir_up"),
+    ["q"]              = M.nvim_tree_callback("close"),
   }, keybindings)
 end
 
