@@ -22,8 +22,9 @@ M.Tree = {
   bufnr = nil,
   target_winid = nil,
   winnr = function()
+    local path_separator = package.config:sub(1,1)
     for _, i in ipairs(api.nvim_list_wins()) do
-      if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*/'..M.Tree.buf_name..'$') then
+      if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*'..path_separator..M.Tree.buf_name..'$') then
         return i
       end
     end
@@ -319,7 +320,7 @@ end
 function M.close_node(node)
   if node.name == '..' then return end
 
-  local sep = '/'
+  local sep = package.config:sub(1,1)
   local dname = node.absolute_path:match("(.*"..sep..")")
   local index = 2
 
