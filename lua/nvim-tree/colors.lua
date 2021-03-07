@@ -7,10 +7,10 @@ local function get_color_from_hl(hl_name, fallback)
   local id = vim.api.nvim_get_hl_id_by_name(hl_name)
   if not id then return fallback end
 
-  local hl = vim.api.nvim_get_hl_by_id(id, true)
-  if not hl or not hl.foreground then return fallback end
+  local foreground = vim.fn.synIDattr(id, "fg")
+  if not foreground then return fallback end
 
-  return hl.foreground
+  return foreground
 end
 
 local function get_colors()
