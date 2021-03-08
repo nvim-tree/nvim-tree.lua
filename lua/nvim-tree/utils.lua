@@ -20,5 +20,17 @@ function M.path_split(path)
   return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
 end
 
+function M.path_add_trailing(path)
+  if path:sub(-1) == path_separator then
+    return path
+  end
+
+  return path..path_separator
+end
+
+function M.path_remove_trailing(path)
+  return path:gsub(path_separator..'$', '')
+end
+
 M.path_separator = path_separator
 return M

@@ -45,7 +45,7 @@ function M.create(node)
 
   local add_into
   if node.entries ~= nil then
-    add_into = node.absolute_path..utils.path_separator
+    add_into = utils.path_add_trailing(node.absolute_path)
   else
     add_into = node.absolute_path:sub(0, -(#node.name + 1))
   end

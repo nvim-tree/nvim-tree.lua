@@ -84,12 +84,12 @@ function M.update_status(entries, cwd)
     return
   end
 
-  local matching_cwd = utils.path_to_matching_str(git_root..utils.path_separator)
+  local matching_cwd = utils.path_to_matching_str( utils.path_add_trailing(git_root) )
 
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
     if node.entries ~= nil then
-      relpath = relpath..utils.path_separator
+      relpath = utils.path_add_trailing(relpath)
       node.git_status = nil
     end
 
