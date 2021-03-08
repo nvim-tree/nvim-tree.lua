@@ -5,6 +5,7 @@ local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
 local pops = require'nvim-tree.populate'
+local utils = require'nvim-tree.utils'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
@@ -22,9 +23,8 @@ M.Tree = {
   bufnr = nil,
   target_winid = nil,
   winnr = function()
-    local path_separator = package.config:sub(1,1)
     for _, i in ipairs(api.nvim_list_wins()) do
-      if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*'..path_separator..M.Tree.buf_name..'$') then
+      if api.nvim_buf_get_name(api.nvim_win_get_buf(i)):match('.*'..utils.path_separator..M.Tree.buf_name..'$') then
         return i
       end
     end

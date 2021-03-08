@@ -10,12 +10,12 @@ local M = {
   show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
 }
 
-local path_to_matching_str = require'nvim-tree.utils'.path_to_matching_str
+local utils = require'nvim-tree.utils'
+local path_to_matching_str = utils.path_to_matching_str
 
 local function dir_new(cwd, name)
-  local path_separator = package.config:sub(1,1)
 
-  local absolute_path = cwd..path_separator..name
+  local absolute_path = utils.path_join({cwd, name})
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
   local has_children = handle and luv.fs_scandir_next(handle) ~= nil
@@ -40,8 +40,7 @@ local function dir_new(cwd, name)
 end
 
 local function file_new(cwd, name)
-  local path_separator = package.config:sub(1,1)
-  local absolute_path = cwd..path_separator..name
+  local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
   return {
     name = name,
@@ -61,9 +60,7 @@ end
 local function link_new(cwd, name)
 
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
-  local path_separator = package.config:sub(1,1)
-
-  local absolute_path = cwd..path_separator..name
+  local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
   local open, entries
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then

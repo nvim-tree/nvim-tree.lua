@@ -60,10 +60,10 @@ local function create_root(cwd)
     return false
   end
 
-	local is_win = vim.api.nvim_call_function("has", {"win32"})
-	if is_win then
-		git_root = git_root:gsub("/", "\\")
-	end
+  local is_win = vim.api.nvim_call_function("has", {"win32"})
+  if is_win then
+    git_root = git_root:gsub("/", "\\")
+  end
 
   update_root_status(git_root:sub(0, -2))
   return true
@@ -84,13 +84,12 @@ function M.update_status(entries, cwd)
     return
   end
 
-  local path_separator = package.config:sub(1,1)
-  local matching_cwd = utils.path_to_matching_str(git_root..path_separator)
+  local matching_cwd = utils.path_to_matching_str(git_root..utils.path_separator)
 
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
     if node.entries ~= nil then
-      relpath = relpath..path_separator
+      relpath = relpath..utils.path_separator
       node.git_status = nil
     end
 
