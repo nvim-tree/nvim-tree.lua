@@ -21,10 +21,10 @@ local function update_root_status(root)
       body = body:gsub('^.* %-> ', '')
     end
 
-		--- Git returns paths with a forward slash wherever you run it, thats why i have to replace it only on windows
-		if is_win then
-			body = body:gsub("/", "\\")
-		end
+    --- Git returns paths with a forward slash wherever you run it, thats why i have to replace it only on windows
+    if is_win then
+      body = body:gsub("/", "\\")
+    end
 
     roots[root][body] = head
   end
