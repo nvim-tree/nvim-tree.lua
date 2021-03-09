@@ -4,6 +4,7 @@ local M = {}
 local roots = {}
 
 local not_git = 'not a git repo'
+local is_win = vim.api.nvim_call_function("has", {"win32"}) == 1
 
 local function update_root_status(root)
   local untracked = ' -u'
@@ -13,7 +14,6 @@ local function update_root_status(root)
   local status = vim.fn.systemlist('cd "'..root..'" && git status --porcelain=v1'..untracked)
   roots[root] = {}
 
-	local is_win = vim.api.nvim_call_function("has", {"win32"})
   for _, v in pairs(status) do
     local head = v:sub(0, 2)
     local body = v:sub(4, -1)
@@ -60,7 +60,6 @@ local function create_root(cwd)
     return false
   end
 
-  local is_win = vim.api.nvim_call_function("has", {"win32"})
   if is_win then
     git_root = git_root:gsub("/", "\\")
   end
