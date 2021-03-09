@@ -4,6 +4,7 @@ local M = {}
 local roots = {}
 
 local not_git = 'not a git repo'
+local is_win = vim.api.nvim_call_function("has", {"win32"}) == 1
 
 local function update_root_status(root)
   local untracked = ' -u'
@@ -19,6 +20,12 @@ local function update_root_status(root)
     if body:match('%->') ~= nil then
       body = body:gsub('^.* %-> ', '')
     end
+
+    --- Git returns paths with a forward slash wherever you run it, thats why i have to replace it only on windows
+    if is_win then
+      body = body:gsub("/", "\\")
+    end
+
     roots[root][body] = head
   end
 end
@@ -53,6 +60,10 @@ local function create_root(cwd)
     return false
   end
 
+  if is_win then
+    git_root = git_root:gsub("/", "\\")
+  end
+
   update_root_status(git_root:sub(0, -2))
   return true
 end
@@ -72,11 +83,12 @@ function M.update_status(entries, cwd)
     return
   end
 
-  local matching_cwd = utils.path_to_matching_str(git_root..'/')
+  local matching_cwd = utils.path_to_matching_str( utils.path_add_trailing(git_root) )
+
   for _, node in pairs(entries) do
     local relpath = node.absolute_path:gsub(matching_cwd, '')
     if node.entries ~= nil then
-      relpath = relpath..'/'
+      relpath = utils.path_add_trailing(relpath)
       node.git_status = nil
     end
 

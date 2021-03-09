@@ -10,18 +10,27 @@ local M = {
   show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
 }
 
-local path_to_matching_str = require'nvim-tree.utils'.path_to_matching_str
+local utils = require'nvim-tree.utils'
+local path_to_matching_str = utils.path_to_matching_str
 
 local function dir_new(cwd, name)
-  local absolute_path = cwd..'/'..name
+
+  local absolute_path = utils.path_join({cwd, name})
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
   local has_children = handle and luv.fs_scandir_next(handle) ~= nil
+
+  --- This is because i have some folders that i dont have permissions to read its metadata, so i have to check that stat returns a valid info
+  local last_modified = 0
+  if stat ~= nil then
+    last_modified = stat.mtime.sec
+  end
+
   return {
     name = name,
     absolute_path = absolute_path,
     -- TODO: last modified could also involve atime and ctime
-    last_modified = stat.mtime.sec,
+    last_modified = last_modified,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
@@ -31,7 +40,7 @@ local function dir_new(cwd, name)
 end
 
 local function file_new(cwd, name)
-  local absolute_path = cwd..'/'..name
+  local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
   return {
     name = name,
@@ -49,7 +58,9 @@ end
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
 local function link_new(cwd, name)
-  local absolute_path = cwd..'/'..name
+
+  --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
+  local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
   local open, entries
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then

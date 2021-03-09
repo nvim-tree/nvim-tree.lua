@@ -1,4 +1,4 @@
-if has('win32') || exists('g:loaded_tree') | finish | endif
+if !has('nvim-0.5') || exists('g:loaded_tree') | finish | endif
 
 let s:save_cpo = &cpo
 set cpo&vim

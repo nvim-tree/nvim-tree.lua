@@ -222,7 +222,10 @@ local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ':~'
 
 local function update_draw_data(tree, depth, markers)
   if tree.cwd and tree.cwd ~= '/' then
-    local root_name = vim.fn.fnamemodify(tree.cwd, root_folder_modifier):gsub('/$', '').."/.."
+    local root_name = utils.path_join({
+      utils.path_remove_trailing(vim.fn.fnamemodify(tree.cwd, root_folder_modifier)),
+      ".."
+    })
     table.insert(lines, root_name)
     table.insert(hl, {'NvimTreeRootFolder', index, 0, string.len(root_name)})
     index = 1

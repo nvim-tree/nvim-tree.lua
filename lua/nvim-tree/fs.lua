@@ -2,6 +2,7 @@ local api = vim.api
 local luv = vim.loop
 local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants.O_TRUNC
 
+local utils = require'nvim-tree.utils'
 local M = {}
 local clipboard = {
   move = {},
@@ -44,7 +45,7 @@ function M.create(node)
 
   local add_into
   if node.entries ~= nil then
-    add_into = node.absolute_path..'/'
+    add_into = utils.path_add_trailing(node.absolute_path)
   else
     add_into = node.absolute_path:sub(0, -(#node.name + 1))
   end
@@ -53,7 +54,7 @@ function M.create(node)
   clear_prompt()
   if not ans or #ans == 0 then return end
 
-  if not ans:match('/') then
+  if not ans:match(utils.path_separator) then
     return create_file(add_into..ans)
   end
 
@@ -61,11 +62,12 @@ function M.create(node)
   -- if element is ending with / and it's the last element, we need to manually refresh
   local relpath = ''
   local idx = 0
-  local num_entries = get_num_entries(ans:gmatch('[^/]+/?'))
-  for path in ans:gmatch('[^/]+/?') do
+
+  local num_entries = get_num_entries(utils.path_split(ans))
+  for path in utils.path_split(ans) do
     idx = idx + 1
     relpath = relpath..path
-    if relpath:match('.*/$') then
+    if relpath:match('.*'..utils.path_separator..'$') then
       local success = luv.fs_mkdir(add_into..relpath, 493)
       if not success then
         api.nvim_err_writeln('Could not create folder '..add_into..relpath)
@@ -99,7 +101,7 @@ local function remove_dir(cwd)
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
 
-    local new_cwd = cwd..'/'..name
+    local new_cwd = utils.path_join({cwd, name})
     if t == 'directory' then
       local success = remove_dir(new_cwd)
       if not success then return false end
@@ -132,8 +134,8 @@ local function do_copy(source, destination)
     local name, _ = luv.fs_scandir_next(handle)
     if not name then break end
 
-    local new_name = source..'/'..name
-    local new_destination = destination..'/'..name
+    local new_name = utils.path_join({source, name})
+    local new_destination = utils.path_join({destination, name})
     local success, msg = do_copy(new_name, new_destination)
     if not success then return success, msg end
   end
@@ -193,7 +195,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   for _, entry in ipairs(clip) do
-    local dest = destination..'/'..entry.name
+    local dest = utils.path_join({destination, entry.name })
     do_single_paste(entry.absolute_path, dest, action_type, action_fn)
   end
 
