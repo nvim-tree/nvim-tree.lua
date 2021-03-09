@@ -8,7 +8,7 @@ local function get_color_from_hl(hl_name, fallback)
   if not id then return fallback end
 
   local foreground = vim.fn.synIDattr(id, "fg")
-  if not foreground then return fallback end
+  if not foreground or foreground == "" then return fallback end
 
   return foreground
 end
