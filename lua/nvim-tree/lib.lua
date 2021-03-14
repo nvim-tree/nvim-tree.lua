@@ -128,7 +128,7 @@ function M.refresh_tree()
 
       refresh_nodes(M.Tree)
 
-      if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl then
+      if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1 then
         git.reload_roots()
         refresh_git(M.Tree)
       end
