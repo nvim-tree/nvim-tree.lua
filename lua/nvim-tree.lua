@@ -131,9 +131,9 @@ function M.on_enter()
   if is_dir then
     api.nvim_command('cd '..bufname)
   end
-  local should_open = vim.g.nvim_tree_auto_open == 1 and
-    ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '') and
-    not vim.tbl_contains(ft_ignore, buftype)
+  local should_open = vim.g.nvim_tree_auto_open == 1
+    and ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '')
+    and not vim.tbl_contains(ft_ignore, buftype)
   lib.init(should_open, should_open)
 end
 

@@ -198,6 +198,10 @@ Can be 0 or 1. When 1, completely disable netrw and all related
 functionnalities.
 1 by default.
 
+|g:nvim_tree_add_trailing|			*g:nvim_tree_add_trailing*
+
+Can be 0 or 1. When 1, appends a trailing slash to folder names.
+0 by default.
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

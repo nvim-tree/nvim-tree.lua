@@ -11,8 +11,12 @@ local namespace_id = api.nvim_create_namespace('NvimTreeHighlights')
 local icon_state = config.get_icon_state()
 
 local get_folder_icon = function() return "" end
+local function get_trailing_length()
+  return vim.g.nvim_tree_add_trailing and 1 or 0
+end
+
 local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
-  table.insert(hl, {hl_group, line, depth+git_icon_len, -1})
+  table.insert(hl, {hl_group, line, depth+git_icon_len+get_trailing_length(), -1})
 end
 
 if icon_state.show_folder_icon then
@@ -36,7 +40,7 @@ if icon_state.show_folder_icon then
     return n.." "
   end
   set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
-    table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len})
+    table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len+get_trailing_length()})
     table.insert(hl, {'NvimTreeFolderIcon', line, depth, depth+icon_len})
   end
 end
@@ -253,10 +257,10 @@ local function update_draw_data(tree, depth, markers)
       end
       index = index + 1
       if node.open then
-        table.insert(lines, padding..icon..git_icon..node.name)
+        table.insert(lines, padding..icon..git_icon..node.name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
         update_draw_data(node, depth + 2, markers)
       else
-        table.insert(lines, padding..icon..git_icon..node.name)
+        table.insert(lines, padding..icon..git_icon..node.name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
       end
     elseif node.link_to then
       local icon = get_symlink_icon()
