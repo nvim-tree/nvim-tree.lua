@@ -22,7 +22,9 @@ end
 if icon_state.show_folder_icon then
   get_folder_icon = function(open, is_symlink, has_children)
     local n = ""
-    if is_symlink then
+    if is_symlink and open then
+      n = icon_state.icons.folder_icons.symlink_open
+    elseif is_symlink then
       n = icon_state.icons.folder_icons.symlink
     elseif open then
       if has_children then
