@@ -283,6 +283,7 @@ local function create_win()
   api.nvim_command("vsplit")
   api.nvim_command("wincmd "..window_opts.side)
   api.nvim_command("vertical resize "..M.Tree.win_width)
+  api.nvim_win_set_option(0, 'winhl', window_opts.winhl)
 end
 
 function M.close()
