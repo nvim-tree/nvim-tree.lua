@@ -41,6 +41,19 @@ function M.open(cb)
   )
 end
 
+function M.focus(cb)
+  vim.schedule(
+    function ()
+      if not lib.win_open() then
+        lib.open()
+      else
+        lib.win_focus()
+      end
+      pcall(cb)
+    end
+    )
+end
+
 local winopts = config.window_options()
 function M.tab_change()
   -- we need defer_fn to make sure we close/open after we enter the tab
