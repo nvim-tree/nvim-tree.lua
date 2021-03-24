@@ -269,7 +269,6 @@ end
 
 local function create_buf()
   local options = {
-    -- bufhidden = 'wipe';
     buftype = 'nofile';
     modifiable = false;
   }
