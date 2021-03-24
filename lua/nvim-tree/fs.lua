@@ -3,6 +3,7 @@ local luv = vim.loop
 local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants.O_TRUNC
 
 local utils = require'nvim-tree.utils'
+local lib = require'nvim-tree.lib'
 local M = {}
 local clipboard = {
   move = {},
@@ -41,6 +42,7 @@ local function get_num_entries(iter)
 end
 
 function M.create(node)
+  node = lib.get_last_group_node(node)
   if node.name == '..' then return end
 
   local add_into
@@ -168,6 +170,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
 end
 
 local function do_paste(node, action_type, action_fn)
+  node = lib.get_last_group_node(node)
   if node.name == '..' then return end
   local clip = clipboard[action_type]
   if #clip == 0 then return end
@@ -242,6 +245,7 @@ end
 
 function M.rename(with_sub)
   return function(node)
+    node = lib.get_last_group_node(node)
     if node.name == '..' then return end
 
     local namelen = node.name:len()

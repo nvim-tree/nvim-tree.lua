@@ -34,6 +34,7 @@ local function dir_new(cwd, name)
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
+    group_next = nil,
     has_children = has_children,
     entries = {}
   }
@@ -78,6 +79,20 @@ local function link_new(cwd, name)
   }
 end
 
+local function should_group(cwd, dirs, files, links)
+  if #dirs == 1 and #files == 0 and #links == 0 then
+    return true
+  end
+
+  if #dirs == 0 and #files == 0 and #links == 1 then
+    local absolute_path = utils.path_join({ cwd, links[1] })
+    local link_to = luv.fs_realpath(absolute_path)
+    return (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory'
+  end
+
+  return false
+end
+
 local function gen_ignore_check()
   local ignore_list = {}
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
@@ -100,7 +115,7 @@ end
 
 local should_ignore = gen_ignore_check()
 
-function M.refresh_entries(entries, cwd)
+function M.refresh_entries(entries, cwd, node_entry)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -120,10 +135,12 @@ function M.refresh_entries(entries, cwd)
   local links = {}
   local files = {}
   local new_entries = {}
+  local num_new_entries = 0
 
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
+    num_new_entries = num_new_entries + 1
 
     if not should_ignore(name) then
       if t == 'directory' then
@@ -136,6 +153,21 @@ function M.refresh_entries(entries, cwd)
         table.insert(links, name)
         new_entries[name] = true
       end
+    end
+  end
+
+  -- Handle grouped dirs
+  local next_node = node_entry.group_next
+  if next_node then
+    next_node.open = node_entry.open
+    if num_new_entries ~= 1 or not new_entries[next_node.name] then
+      -- dir is no longer only containing a group dir, or group dir has been removed
+      -- either way: sever the group link on current dir
+      node_entry.group_next = nil
+      named_entries[next_node.name] = next_node
+    else
+      M.refresh_entries(entries, next_node.absolute_path, next_node)
+      return
     end
   end
 
@@ -173,12 +205,18 @@ function M.refresh_entries(entries, cwd)
           change_prev = false
         end
       end
-      if change_prev then prev = name end
+      if change_prev and not (next_node and next_node.name == name) then
+        prev = name
+      end
     end
+  end
+
+  if next_node then
+    table.insert(entries, 1, next_node)
   end
 end
 
-function M.populate(entries, cwd)
+function M.populate(entries, cwd, dir_entry)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -205,6 +243,20 @@ function M.populate(entries, cwd)
   end
 
   -- Create Nodes --
+
+  -- Group empty dirs
+  if dir_entry and vim.g.nvim_tree_group_empty == 1 then
+    if should_group(cwd, dirs, files, links) then
+      local child
+      if dirs[1] then child = dir_new(cwd, dirs[1]) end
+      if links[1] then child = link_new(cwd, links[1]) end
+      if luv.fs_access(child.absolute_path, 'R') then
+          dir_entry.group_next = child
+          M.populate(entries, child.absolute_path, child)
+          return
+      end
+    end
+  end
 
   for _, dirname in ipairs(dirs) do
     local dir = dir_new(cwd, dirname)
