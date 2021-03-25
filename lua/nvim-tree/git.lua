@@ -94,7 +94,7 @@ function M.update_status(entries, cwd)
     if node.entries ~= nil then
       relpath = utils.path_add_trailing(relpath)
       node.git_status = nil
-  end
+    end
 
     local status = git_status[relpath]
     if status then
