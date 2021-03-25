@@ -91,6 +91,7 @@ function M.get_node_at_cursor()
   return get_node_at_line(line)(M.Tree.entries)
 end
 
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
 function M.get_last_group_node(node)
   local next = node
   while next.group_next do

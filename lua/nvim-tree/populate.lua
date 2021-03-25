@@ -34,7 +34,7 @@ local function dir_new(cwd, name)
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
     open = false,
-    group_next = nil,
+    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     entries = {}
   }
@@ -79,6 +79,11 @@ local function link_new(cwd, name)
   }
 end
 
+-- Returns true if there is either exactly 1 dir, or exactly 1 symlink dir. Otherwise, false.
+-- @param cwd Absolute path to the parent directory
+-- @param dirs List of dir names
+-- @param files List of file names
+-- @param links List of symlink names
 local function should_group(cwd, dirs, files, links)
   if #dirs == 1 and #files == 0 and #links == 0 then
     return true
@@ -115,7 +120,7 @@ end
 
 local should_ignore = gen_ignore_check()
 
-function M.refresh_entries(entries, cwd, node_entry)
+function M.refresh_entries(entries, cwd, parent_node)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -157,13 +162,13 @@ function M.refresh_entries(entries, cwd, node_entry)
   end
 
   -- Handle grouped dirs
-  local next_node = node_entry.group_next
+  local next_node = parent_node.group_next
   if next_node then
-    next_node.open = node_entry.open
+    next_node.open = parent_node.open
     if num_new_entries ~= 1 or not new_entries[next_node.name] then
       -- dir is no longer only containing a group dir, or group dir has been removed
       -- either way: sever the group link on current dir
-      node_entry.group_next = nil
+      parent_node.group_next = nil
       named_entries[next_node.name] = next_node
     else
       M.refresh_entries(entries, next_node.absolute_path, next_node)
@@ -216,7 +221,7 @@ function M.refresh_entries(entries, cwd, node_entry)
   end
 end
 
-function M.populate(entries, cwd, dir_entry)
+function M.populate(entries, cwd, parent_node)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -245,14 +250,14 @@ function M.populate(entries, cwd, dir_entry)
   -- Create Nodes --
 
   -- Group empty dirs
-  if dir_entry and vim.g.nvim_tree_group_empty == 1 then
+  if parent_node and vim.g.nvim_tree_group_empty == 1 then
     if should_group(cwd, dirs, files, links) then
-      local child
-      if dirs[1] then child = dir_new(cwd, dirs[1]) end
-      if links[1] then child = link_new(cwd, links[1]) end
-      if luv.fs_access(child.absolute_path, 'R') then
-          dir_entry.group_next = child
-          M.populate(entries, child.absolute_path, child)
+      local child_node
+      if dirs[1] then child_node = dir_new(cwd, dirs[1]) end
+      if links[1] then child_node = link_new(cwd, links[1]) end
+      if luv.fs_access(child_node.absolute_path, 'R') then
+          parent_node.group_next = child_node
+          M.populate(entries, child_node.absolute_path, child_node)
           return
       end
     end
