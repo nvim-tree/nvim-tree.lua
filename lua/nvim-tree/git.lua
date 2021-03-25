@@ -30,6 +30,10 @@ local function update_root_status(root)
   end
 end
 
+function M.get_path_gitexclude()
+  return vim.fn.system("git config --get core.excludesFile")
+end
+
 function M.reload_roots()
   for root, status in pairs(roots) do
     if status ~= not_git then
@@ -90,7 +94,7 @@ function M.update_status(entries, cwd)
     if node.entries ~= nil then
       relpath = utils.path_add_trailing(relpath)
       node.git_status = nil
-    end
+  end
 
     local status = git_status[relpath]
     if status then

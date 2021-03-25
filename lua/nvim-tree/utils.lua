@@ -11,6 +11,14 @@ function M.echo_warning(msg)
   api.nvim_command('echohl None')
 end
 
+function M.read_file(path)
+  local file = io.open(path, "r")
+  if not file then return '' end
+  local content = file:read "*a"
+  file:close()
+  return content
+end
+
 local path_separator = package.config:sub(1,1)
 function M.path_join(paths)
   return table.concat(paths, path_separator)
