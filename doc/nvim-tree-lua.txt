@@ -29,6 +29,11 @@ opens the tree
 
 closes the tree
 
+|:NvimTreeFocus| 	                          *:NvimTreeFocus*
+
+Opens, and focuses the tree if it's closed. Otherwise, bring focus to the
+already open window.
+
 |:NvimTreeToggle| 	                          *:NvimTreeToggle*
 
 open or close the tree
