@@ -88,10 +88,10 @@ local function gen_ignore_check()
     end
   end
 
-  if vim.g.nvim_tree_gitgnore > 0 then
+  if (vim.g.nvim_tree_gitignore or 0) > 0 then
     add_toignore('.gitignore')
   end
-  if vim.g.nvim_tree_gitgnore == 2 then
+  if (vim.g.nvim_tree_gitignore or 0) == 2 then
     add_toignore(git.get_path_gitexclude())
   end
   

@@ -1,4 +1,5 @@
 local M = {}
+local uv = vim.loop -- or require("luv") ? i dont understand
 local api = vim.api
 
 function M.path_to_matching_str(path)
@@ -12,11 +13,11 @@ function M.echo_warning(msg)
 end
 
 function M.read_file(path)
-  local file = io.open(path, "r")
-  if not file then return '' end
-  local content = file:read "*a"
-  file:close()
-  return content
+  local fd = uv.fs_open(path, "r", 438)
+  local stat = uv.fs_fstat(fd)
+  local data = uv.fs_read(fd, stat.size, 0)
+  uv.fs_close(fd)
+  return data
 end
 
 local path_separator = package.config:sub(1,1)
