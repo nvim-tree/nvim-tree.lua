@@ -95,7 +95,7 @@ function M.on_keypress(mode)
   if node.name == ".." then
     return lib.change_dir("..")
   elseif mode == "cd" and node.entries ~= nil then
-    return lib.change_dir(node.absolute_path)
+    return lib.change_dir(lib.get_last_group_node(node).absolute_path)
   elseif mode == "cd" then
     return
   end

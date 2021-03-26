@@ -46,7 +46,7 @@ M.Tree = {
 
 function M.init(with_open, with_render)
   M.Tree.cwd = luv.cwd()
-  populate(M.Tree.entries, M.Tree.cwd, M.Tree)
+  populate(M.Tree.entries, M.Tree.cwd)
 
   local stat = luv.fs_stat(M.Tree.cwd)
   M.Tree.last_modified = stat.mtime.sec
@@ -91,13 +91,22 @@ function M.get_node_at_cursor()
   return get_node_at_line(line)(M.Tree.entries)
 end
 
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
+function M.get_last_group_node(node)
+  local next = node
+  while next.group_next do
+    next = next.group_next
+  end
+  return next
+end
+
 function M.unroll_dir(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
-    populate(node.entries, node.link_to or node.absolute_path)
+    populate(node.entries, node.link_to or node.absolute_path, node)
     renderer.draw(M.Tree, true)
   end
 end
@@ -113,7 +122,7 @@ end
 
 -- TODO update only entries where directory has changed
 local function refresh_nodes(node)
-  refresh_entries(node.entries, node.absolute_path or node.cwd)
+  refresh_entries(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in ipairs(node.entries) do
     if entry.entries and entry.open then
       refresh_nodes(entry)
@@ -159,7 +168,7 @@ function M.set_index_and_redraw(fname)
       if fname:match(entry.match_path..'/') ~= nil then
         if #entry.entries == 0 then
           reload = true
-          populate(entry.entries, entry.absolute_path)
+          populate(entry.entries, entry.absolute_path, entry)
         end
         if entry.open == false then
           reload = true

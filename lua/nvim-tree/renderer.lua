@@ -252,17 +252,23 @@ local function update_draw_data(tree, depth, markers)
       local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       local folder_hl = "NvimTreeFolderName"
+      local name = node.name
+      local next = node.group_next
+      while next do
+        name = name .. "/" .. next.name
+        next = next.group_next
+      end
       if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
-      set_folder_hl(index, offset, #icon, #node.name+#git_icon, folder_hl)
+      set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
       if git_hl then
-        set_folder_hl(index, offset, #icon, #node.name+#git_icon, git_hl)
+        set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
       end
       index = index + 1
       if node.open then
-        table.insert(lines, padding..icon..git_icon..node.name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
+        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
         update_draw_data(node, depth + 2, markers)
       else
-        table.insert(lines, padding..icon..git_icon..node.name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
+        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
       end
     elseif node.link_to then
       local icon = get_symlink_icon()

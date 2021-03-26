@@ -203,6 +203,11 @@ functionnalities.
 Can be 0 or 1. When 1, appends a trailing slash to folder names.
 0 by default.
 
+|g:nvim_tree_group_empty|                         *g:nvim_tree_group_empty*
+
+Can be 0 or 1. When 1, folders that contain only one folder are grouped
+together. 0 by default.
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
