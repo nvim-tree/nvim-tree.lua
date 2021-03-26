@@ -26,7 +26,7 @@ augroup end
 
 command! NvimTreeOpen lua require'nvim-tree'.open()
 command! NvimTreeClose lua require'nvim-tree'.close()
-command! NvimTreeFocus lua require'nvim-tree'.focus()
+command! NvimTreeFocus lua require'nvim-tree.lib'.win_focus(nil, true)
 command! NvimTreeToggle lua require'nvim-tree'.toggle()
 command! NvimTreeRefresh lua require'nvim-tree'.refresh()
 command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
