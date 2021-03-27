@@ -14,10 +14,12 @@ end
 
 function M.read_file(path)
   local fd = uv.fs_open(path, "r", 438)
+  if not fd then return '' end
   local stat = uv.fs_fstat(fd)
+  if not stat then return '' end
   local data = uv.fs_read(fd, stat.size, 0)
   uv.fs_close(fd)
-  return data
+  return data or ''
 end
 
 local path_separator = package.config:sub(1,1)
