@@ -10,7 +10,7 @@ endif
 
 augroup NvimTree
   if get(g:, 'nvim_tree_hijack_netrw', 1) == 1 && get(g:, 'nvim_tree_disable_netrw', 1) == 0
-    autocmd! FileExplorer *
+    silent! autocmd! FileExplorer *
   endif
   au BufWritePost * lua require'nvim-tree'.refresh()
   au BufEnter * lua require'nvim-tree'.buf_enter()
