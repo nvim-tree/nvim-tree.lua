@@ -352,6 +352,31 @@ function M.open()
   api.nvim_command('setlocal '..window_opts.split_command)
 end
 
+function M.sibling(node, direction)
+  if not direction then return end
+
+  local iter = get_line_from_node(node, true)
+  local _, parent = iter(M.Tree.entries, true)
+  if parent ~= nil and #parent.entries > 1 then
+    local line, _ = get_line_from_node(node)(parent.entries)
+
+    -- Ignore parent line count
+    line = line - 1
+
+    local index = line + direction
+    if index < 1 then
+      index = 1
+    elseif index > #parent.entries then
+      index = #parent.entries
+    end
+    local target_node = parent.entries[index]
+
+    line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
+    api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})
+  end
+  renderer.draw(M.Tree, true)
+end
+
 function M.close_node(node)
   M.parent_node(node, true)
 end

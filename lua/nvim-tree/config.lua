@@ -67,6 +67,8 @@ function M.get_bindings()
     ["<C-v>"]          = M.nvim_tree_callback("vsplit"),
     ["<C-x>"]          = M.nvim_tree_callback("split"),
     ["<C-t>"]          = M.nvim_tree_callback("tabnew"),
+    ["<C-k>"]          = M.nvim_tree_callback("prev_sibling"),
+    ["<C-j>"]          = M.nvim_tree_callback("next_sibling"),
     ["<BS>"]           = M.nvim_tree_callback("close_node"),
     ["<S-CR>"]         = M.nvim_tree_callback("close_node"),
     ["<Tab>"]          = M.nvim_tree_callback("preview"),
