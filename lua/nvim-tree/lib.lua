@@ -364,13 +364,13 @@ function M.parent_node(node, should_close)
   if node.open == true and should_close then
     node.open = false
   else
-    local index, parent = iter(M.Tree.entries, true)
+    local line, parent = iter(M.Tree.entries, true)
     if parent == nil then
-      index = 1
+      line = 1
     elseif should_close then
       parent.open = false
     end
-    api.nvim_win_set_cursor(M.Tree.winnr(), {index, 0})
+    api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})
   end
   renderer.draw(M.Tree, true)
 end
