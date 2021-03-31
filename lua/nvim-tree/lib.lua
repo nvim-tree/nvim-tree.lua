@@ -78,6 +78,31 @@ local function get_node_at_line(line)
   return iter
 end
 
+local function get_line_from_node(node, find_parent)
+  local sep = package.config:sub(1,1)
+  local node_path = node.absolute_path
+
+  if find_parent then
+    node_path = node.absolute_path:match("(.*)"..sep)
+  end
+
+  local line = 2
+  local function iter(entries, recursive)
+    for _, entry in ipairs(entries) do
+      if node_path:match('^'..entry.match_path..'$') ~= nil then
+        return line, entry
+      end
+
+      line = line + 1
+      if entry.open == true and recursive then
+        local _, child = iter(entry.entries, recursive)
+        if child ~= nil then return line, child end
+      end
+    end
+  end
+  return iter
+end
+
 function M.get_node_at_cursor()
   local cursor = api.nvim_win_get_cursor(M.Tree.winnr())
   local line = cursor[1]
@@ -335,28 +360,11 @@ function M.parent_node(node, should_close)
   if node.name == '..' then return end
   should_close = should_close or false
 
-  local sep = package.config:sub(1,1)
-  local dname = node.absolute_path:match("(.*"..sep..")")
-  local index = 2
-
-  local function iter(entries)
-    for _, entry in ipairs(entries) do
-      if dname:match('^'..entry.match_path..sep..'$') ~= nil then
-        return entry
-      end
-
-      index = index + 1
-      if entry.open == true then
-        local child = iter(entry.entries)
-        if child ~= nil then return child end
-      end
-    end
-  end
-
+  local iter = get_line_from_node(node, true)
   if node.open == true and should_close then
     node.open = false
   else
-    local parent = iter(M.Tree.entries)
+    local index, parent = iter(M.Tree.entries, true)
     if parent == nil then
       index = 1
     elseif should_close then
