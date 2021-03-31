@@ -73,6 +73,8 @@ function M.get_bindings()
     ["<S-CR>"]         = M.nvim_tree_callback("close_node"),
     ["<Tab>"]          = M.nvim_tree_callback("preview"),
     ["I"]              = M.nvim_tree_callback("toggle_ignored"),
+    ["K"]              = M.nvim_tree_callback("first_sibling"),
+    ["J"]              = M.nvim_tree_callback("last_sibling"),
     ["H"]              = M.nvim_tree_callback("toggle_dotfiles"),
     ["R"]              = M.nvim_tree_callback("refresh"),
     ["a"]              = M.nvim_tree_callback("create"),
