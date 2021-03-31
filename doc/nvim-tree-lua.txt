@@ -75,8 +75,7 @@ files ignored by git.
 
 Must be:
     0: not ignored
-    1: ignored files from .gitignore
-    2: ignored files from .gitignore and git exclude
+    1: ignored files from `git ls-files --others --ignored --exclude-standard --directory`
 
 >
 |g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
