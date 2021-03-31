@@ -101,20 +101,16 @@ end
 local function gen_ignore_check()
   local ignore_list = {}
 
-  local function add_toignore(path)
-    local content = utils.read_file(path)
+  local function add_toignore(content)
     for s in content:gmatch("[^\r\n]+") do
       ignore_list[s] = true
     end
   end
 
-  if (vim.g.nvim_tree_gitignore or 0) > 0 then
-    add_toignore('.gitignore')
+  if (vim.g.nvim_tree_gitignore or 0) == 1 then
+    add_toignore(git.get_gitexclude())
   end
-  if (vim.g.nvim_tree_gitignore or 0) == 2 then
-    add_toignore(git.get_path_gitexclude())
-  end
-  
+
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
     for _, entry in pairs(vim.g.nvim_tree_ignore) do
       ignore_list[entry] = true

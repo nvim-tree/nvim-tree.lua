@@ -30,8 +30,8 @@ local function update_root_status(root)
   end
 end
 
-function M.get_path_gitexclude()
-  return vim.fn.system("git config --get core.excludesFile")
+function M.get_gitexclude()
+  return vim.fn.system("git ls-files --others --ignored --exclude-standard --directory")
 end
 
 function M.reload_roots()
