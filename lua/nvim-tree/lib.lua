@@ -366,13 +366,15 @@ function M.win_open()
   return M.Tree.winnr() ~= nil
 end
 
-function M.win_focus(winnr)
+function M.win_focus(winnr, open_if_closed)
   local wnr = winnr or M.Tree.winnr()
 
   if vim.api.nvim_win_get_tabpage(wnr) ~= vim.api.nvim_win_get_tabpage(0) then
     M.close()
     M.open()
     wnr = M.Tree.winnr()
+  elseif open_if_closed and not M.win_open() then
+    M.open()
   end
 
   api.nvim_set_current_win(wnr)
