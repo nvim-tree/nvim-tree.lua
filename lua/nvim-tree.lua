@@ -71,6 +71,7 @@ local keypress_funcs = {
   cut = fs.cut,
   paste = fs.paste,
   close_node = lib.close_node,
+  parent_node = lib.parent_node,
   toggle_ignored = lib.toggle_ignored,
   toggle_dotfiles = lib.toggle_dotfiles,
   refresh = lib.refresh_tree,

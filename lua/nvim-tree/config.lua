@@ -80,6 +80,7 @@ function M.get_bindings()
     ["x"]              = M.nvim_tree_callback("cut"),
     ["c"]              = M.nvim_tree_callback("copy"),
     ["p"]              = M.nvim_tree_callback("paste"),
+    ["P"]              = M.nvim_tree_callback("parent_node"),
     ["[c"]             = M.nvim_tree_callback("prev_git_item"),
     ["]c"]             = M.nvim_tree_callback("next_git_item"),
     ["-"]              = M.nvim_tree_callback("dir_up"),

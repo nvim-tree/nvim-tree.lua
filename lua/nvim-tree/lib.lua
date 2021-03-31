@@ -328,7 +328,12 @@ function M.open()
 end
 
 function M.close_node(node)
+  M.parent_node(node, true)
+end
+
+function M.parent_node(node, should_close)
   if node.name == '..' then return end
+  should_close = should_close or false
 
   local sep = package.config:sub(1,1)
   local dname = node.absolute_path:match("(.*"..sep..")")
@@ -348,13 +353,13 @@ function M.close_node(node)
     end
   end
 
-  if node.open == true then
+  if node.open == true and should_close then
     node.open = false
   else
     local parent = iter(M.Tree.entries)
     if parent == nil then
       index = 1
-    else
+    elseif should_close then
       parent.open = false
     end
     api.nvim_win_set_cursor(M.Tree.winnr(), {index, 0})
