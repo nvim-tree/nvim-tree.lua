@@ -261,6 +261,7 @@ local function update_draw_data(tree, depth, markers)
         next = next.group_next
       end
       if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
+      if node.open then folder_hl = "NvimTreeOpenedFolderName" end
       set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
       if git_hl then
         set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
@@ -296,6 +297,17 @@ local function update_draw_data(tree, depth, markers)
         table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
       elseif picture[node.extension] then
         table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
+      end
+
+      if vim.fn.bufloaded(node.absolute_path) > 0 then
+        table.insert(hl, {'NvimTreeOpenedFile', index, offset+#git_icons, -1})
+      else
+        for i, value in pairs(hl) do
+          if value[1] == 'NvimTreeOpenedFile' and value[2] == index then
+            table.remove(hl, i)
+            break
+          end
+        end
       end
 
       if git_hl then
