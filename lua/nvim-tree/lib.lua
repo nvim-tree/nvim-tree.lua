@@ -356,24 +356,39 @@ function M.sibling(node, direction)
   if not direction then return end
 
   local iter = get_line_from_node(node, true)
-  local _, parent = iter(M.Tree.entries, true)
-  if parent ~= nil and #parent.entries > 1 then
-    local line, _ = get_line_from_node(node)(parent.entries)
+  local node_path = node.absolute_path
+
+  local line, parent = 0, nil
+
+  -- Check if current node is already at root entries
+  for index, entry in ipairs(M.Tree.entries) do
+    if node_path:match('^'..entry.match_path..'$') ~= nil then
+      line = index
+    end
+  end
+
+  if line > 0 then
+    parent = M.Tree
+  else
+    _, parent = iter(M.Tree.entries, true)
+    if parent ~= nil and #parent.entries > 1 then
+      line, _ = get_line_from_node(node)(parent.entries)
+    end
 
     -- Ignore parent line count
     line = line - 1
-
-    local index = line + direction
-    if index < 1 then
-      index = 1
-    elseif index > #parent.entries then
-      index = #parent.entries
-    end
-    local target_node = parent.entries[index]
-
-    line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
-    api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})
   end
+
+  local index = line + direction
+  if index < 1 then
+    index = 1
+  elseif index > #parent.entries then
+    index = #parent.entries
+  end
+  local target_node = parent.entries[index]
+
+  line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
+  api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})
   renderer.draw(M.Tree, true)
 end
 
