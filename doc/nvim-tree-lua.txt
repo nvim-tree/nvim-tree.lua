@@ -361,7 +361,9 @@ NvimTreeFolderName
 NvimTreeRootFolder
 NvimTreeFolderIcon
 NvimTreeEmptyFolderName
+NvimTreeOpenedFolderName
 NvimTreeExecFile
+NvimTreeOpenedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeMarkdownFile
