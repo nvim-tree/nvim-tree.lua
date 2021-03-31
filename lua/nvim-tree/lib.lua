@@ -248,6 +248,10 @@ function M.open_file(mode, filename)
 end
 
 function M.change_dir(foldername)
+  if vim.fn.expand(foldername) == M.Tree.cwd then
+    return
+  end
+
   api.nvim_command('cd '..foldername)
   M.Tree.entries = {}
   M.init(false, M.Tree.bufnr ~= nil)
@@ -274,13 +278,13 @@ end
 
 local function create_buf()
   local options = {
-    bufhidden = 'wipe';
     buftype = 'nofile';
     modifiable = false;
   }
 
   M.Tree.bufnr = api.nvim_create_buf(false, true)
   api.nvim_buf_set_name(M.Tree.bufnr, M.Tree.buf_name)
+  api.nvim_buf_set_var(M.Tree.bufnr, "nvim_tree_buffer_ready", 1)
 
   for opt, val in pairs(options) do
     api.nvim_buf_set_option(M.Tree.bufnr, opt, val)
@@ -300,7 +304,6 @@ function M.close()
     return vim.cmd ':q!'
   end
   api.nvim_win_close(M.Tree.winnr(), true)
-  M.Tree.bufnr = nil
 end
 
 function M.set_target_win()
@@ -309,7 +312,11 @@ end
 
 function M.open()
   M.set_target_win()
-  create_buf()
+
+  if not M.buf_exists() then
+    create_buf()
+  end
+
   create_win()
   api.nvim_win_set_buf(M.Tree.winnr(), M.Tree.bufnr)
 
@@ -378,6 +385,23 @@ function M.win_focus(winnr, open_if_closed)
   end
 
   api.nvim_set_current_win(wnr)
+end
+
+function M.buf_exists()
+  local status, exists = pcall(function ()
+    return (
+      M.Tree.bufnr ~= nil
+      and vim.api.nvim_buf_is_valid(M.Tree.bufnr)
+      and vim.api.nvim_buf_get_var(M.Tree.bufnr, "nvim_tree_buffer_ready") == 1
+      and vim.fn.bufname(M.Tree.bufnr) == M.Tree.buf_name
+    )
+  end)
+
+  if not status then
+    return false
+  else
+    return exists
+  end
 end
 
 function M.toggle_ignored()
