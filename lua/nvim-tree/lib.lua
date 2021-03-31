@@ -79,11 +79,10 @@ local function get_node_at_line(line)
 end
 
 local function get_line_from_node(node, find_parent)
-  local sep = package.config:sub(1,1)
   local node_path = node.absolute_path
 
   if find_parent then
-    node_path = node.absolute_path:match("(.*)"..sep)
+    node_path = node.absolute_path:match("(.*)"..utils.path_separator)
   end
 
   local line = 2
