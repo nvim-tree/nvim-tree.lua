@@ -275,6 +275,7 @@ local function create_buf()
 
   M.Tree.bufnr = api.nvim_create_buf(false, true)
   api.nvim_buf_set_name(M.Tree.bufnr, M.Tree.buf_name)
+  api.nvim_buf_set_var(M.Tree.bufnr, "nvim_tree_buffer_ready", 1)
 
   for opt, val in pairs(options) do
     api.nvim_buf_set_option(M.Tree.bufnr, opt, val)
@@ -376,10 +377,20 @@ function M.win_focus(winnr)
 end
 
 function M.buf_exists()
-  return ( M.Tree.bufnr
-    and vim.fn.bufexists(M.Tree.bufnr) == 1
-    and vim.fn.bufname(M.Tree.bufnr) == M.Tree.buf_name
+  local status, exists = pcall(function ()
+    return (
+      M.Tree.bufnr ~= nil
+      and vim.api.nvim_buf_is_valid(M.Tree.bufnr)
+      and vim.api.nvim_buf_get_var(M.Tree.bufnr, "nvim_tree_buffer_ready") == 1
+      and vim.fn.bufname(M.Tree.bufnr) == M.Tree.buf_name
     )
+  end)
+
+  if not status then
+    return false
+  else
+    return exists
+  end
 end
 
 function M.toggle_ignored()
