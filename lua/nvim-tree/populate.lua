@@ -103,6 +103,8 @@ local function gen_ignore_check()
 
   local function add_toignore(content)
     for s in content:gmatch("[^\r\n]+") do
+      -- Trim trailing / from directories.
+      s = s:gsub("/+$", "")
       ignore_list[s] = true
     end
   end
