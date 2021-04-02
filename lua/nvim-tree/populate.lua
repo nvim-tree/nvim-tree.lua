@@ -105,14 +105,10 @@ end
 local function gen_ignore_check()
   local ignore_list = {}
 
-  local function add_toignore(content)
-    for s in content:gmatch("[^\r\n]+") do
-      ignore_list[s] = true
+  if vim.g.nvim_tree_gitignore == 1 then
+    for _, s in ipairs(git.get_gitignored()) do
+      ignore_list[utils.path_remove_trailing(s, "/")] = true
     end
-  end
-
-  if (vim.g.nvim_tree_gitignore or 0) == 1 then
-    add_toignore(git.get_gitexclude())
   end
 
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
@@ -212,6 +208,7 @@ function M.refresh_entries(entries, cwd, parent_node)
       change_prev = true
       if not named_entries[name] then
         local n = e.fn(cwd, name)
+        git.invalidate_gitignore_list()
         if e.check(n.link_to, n.absolute_path) then
           n.ignore = should_ignore(name)
           idx = 1

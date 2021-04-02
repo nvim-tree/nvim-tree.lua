@@ -31,16 +31,28 @@ function M.path_split(path)
   return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
 end
 
-function M.path_add_trailing(path)
-  if path:sub(-1) == path_separator then
+---Add a trailing separator to a given path. If no separator is given, the
+---platform default is used.
+---@param path string
+---@param separator string|nil
+---@return string
+function M.path_add_trailing(path, separator)
+  if not separator then separator = path_separator end
+  if path:sub(-1) == separator then
     return path
   end
 
-  return path..path_separator
+  return path..separator
 end
 
-function M.path_remove_trailing(path)
-  return path:gsub(path_separator..'$', '')
+---Remove a trailing separator from a given path. If no separator is given,
+---the platform default is used.
+---@param path string
+---@param separator string|nil
+---@return string
+function M.path_remove_trailing(path, separator)
+  if not separator then separator = path_separator end
+  return path:gsub(separator..'$', '')
 end
 
 M.path_separator = path_separator

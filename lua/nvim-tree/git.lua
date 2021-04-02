@@ -32,29 +32,16 @@ local function update_root_status(root)
   end
 end
 
-function M.get_gitexclude()
-  return vim.fn.system("git ls-files --others --ignored --exclude-standard --directory")
-end
-
---- Returns a list of all ignored files and directories in the given git directory.
----@param git_root string
+---Returns a list of all ignored files and directories in the given git directory.
+---@param git_root string|nil
 ---@return table
 function M.get_gitignored(git_root)
-  local seen = {}
-  local result = {}
-  local exclude_dirs = vim.fn.systemlist("cd " .. git_root .. " && git ls-files --others --ignored --exclude-standard --directory")
-  local exclude_files = vim.fn.systemlist("cd " .. git_root .. " && git ls-files --others --ignored --exclude-standard")
-
-  for _, t in ipairs({exclude_dirs, exclude_files}) do
-    for _, s in ipairs(t) do
-      if not seen[s] then
-        seen[s] = true
-        table.insert(result, s)
-      end
-    end
+  local cmd = "git ls-files --others --ignored --exclude-standard --directory"
+  if git_root then
+    cmd = "cd '" .. git_root .. "' && " .. cmd
   end
 
-  return result
+  return vim.fn.systemlist(cmd)
 end
 
 function M.reload_roots()
@@ -113,7 +100,7 @@ function M.update_status(entries, cwd, parent_node)
   if not parent_node then parent_node = {} end
 
   local matching_cwd = utils.path_to_matching_str( utils.path_add_trailing(git_root) )
-  local should_gitignore = M.gen_should_gitignore(cwd)
+  local should_gitignore = M.gen_should_gitignore(git_root)
   local num_ignored = 0
 
   for _, node in pairs(entries) do
@@ -151,24 +138,16 @@ function M.update_status(entries, cwd, parent_node)
   end
 end
 
-local gitignore_list = {}
+local gitignore_list = {
+  valid = true
+}
 
---- Generates a function that checks if a given path is ignored by git.
----@param cwd string Absolute path to current directory
+---Generates a function that checks if a given path is ignored by git.
+---@param git_root string Absolute path to a git directory
 ---@return function
-function M.gen_should_gitignore(cwd)
+function M.gen_should_gitignore(git_root)
   local should_gitignore = function(path)
     return gitignore_list[path] == true
-  end
-
-  local git_root, git_status = get_git_root(cwd)
-  if not git_root then
-    if not create_root(cwd) then
-      return should_gitignore
-    end
-    git_root, git_status = get_git_root(cwd)
-  elseif git_status == not_git then
-    return should_gitignore
   end
 
   -- The mtime for `.gitignore` and `.git/info/exclude` is cached such that the
@@ -192,19 +171,26 @@ function M.gen_should_gitignore(cwd)
 
   -- if we get a cache hit on all ignore files, there's no need to recreate the
   -- ignore list.
-  if not recreate then
+  if not recreate and gitignore_list.valid == true then
     return should_gitignore
   end
 
-  gitignore_list = {}
+  gitignore_list = {
+    valid = true
+  }
+
   for _, s in ipairs(M.get_gitignored(git_root)) do
-    if s:sub(#s, #s) == "/" then
-      s = s:sub(1, #s - 1)
-    end
-    gitignore_list[utils.path_join({cwd, s})] = true
+    s = utils.path_remove_trailing(s, "/")
+    gitignore_list[utils.path_join({git_root, s})] = true
   end
 
   return should_gitignore
+end
+
+---Force the gitignore list to be recreated on the next call to
+---`gen_should_gitignore`.
+function M.invalidate_gitignore_list()
+  gitignore_list.valid = false
 end
 
 return M
