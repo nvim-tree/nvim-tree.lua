@@ -82,6 +82,26 @@ local function create_root(cwd)
   return true
 end
 
+---Get the root of the git dir containing the given path or `nil` if it's not a
+---git dir.
+---@param path string
+---@return string|nil
+function M.git_root(path)
+  local git_root, git_status = get_git_root(path)
+  if not git_root then
+    if not create_root(path) then
+      return
+    end
+    git_root, git_status = get_git_root(path)
+  end
+
+  if git_status == not_git then
+    return
+  end
+
+  return git_root
+end
+
 function M.update_status(entries, cwd, parent_node)
   local git_root, git_status = get_git_root(cwd)
   if not git_root then

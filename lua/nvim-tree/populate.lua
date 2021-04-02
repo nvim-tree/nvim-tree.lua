@@ -107,9 +107,12 @@ local function gen_ignore_check(cwd)
   if not cwd then cwd = vim.fn.getcwd() end
 
   if vim.g.nvim_tree_gitignore == 1 then
-    for _, s in ipairs(git.get_gitignored()) do
-      s = utils.path_join({cwd, utils.path_remove_trailing(s, "/")})
-      ignore_list[s] = true
+    local git_root = git.git_root(cwd)
+    if git_root then
+      for _, s in ipairs(git.get_gitignored(git_root)) do
+        s = utils.path_join({cwd, utils.path_remove_trailing(s, "/")})
+        ignore_list[s] = true
+      end
     end
   end
 
