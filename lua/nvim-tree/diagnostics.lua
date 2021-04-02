@@ -26,6 +26,7 @@ local function find_node_with_name(tree, name)
     end
     i = i + 1
   end
+  return nil, i
 end
 
 vim.cmd "hi! NvimTreeLspDiagnostic gui=underline"
