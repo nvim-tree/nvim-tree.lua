@@ -4,6 +4,7 @@ local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants
 
 local utils = require'nvim-tree.utils'
 local lib = require'nvim-tree.lib'
+local events = require'nvim-tree.events'
 local M = {}
 local clipboard = {
   move = {},
@@ -29,8 +30,17 @@ local function create_file(file)
       luv.fs_close(fd)
       api.nvim_out_write('File '..file..' was properly created\n')
       refresh_tree()
+      events._dispatch_file_created(file)
     end
   end))
+end
+
+local function remove_file(file)
+    local result = luv.fs_unlink(file)
+    if result then
+        events._dispatch_file_removed(file)
+    end
+    return result
 end
 
 local function get_num_entries(iter)
@@ -78,6 +88,7 @@ function M.create(node)
       if idx == num_entries then
         api.nvim_out_write('Folder '..add_into..relpath..' was properly created\n')
         refresh_tree()
+        events._dispatch_folder_created(add_into..relpath)
       end
     else
       create_file(add_into..relpath)
@@ -108,13 +119,17 @@ local function remove_dir(cwd)
       local success = remove_dir(new_cwd)
       if not success then return false end
     else
-      local success = luv.fs_unlink(new_cwd)
+      local success = remove_file(new_cwd)
       if not success then return false end
       clear_buffer(new_cwd)
     end
   end
 
-  return luv.fs_rmdir(cwd)
+  local result = luv.fs_rmdir(cwd)
+  if result then
+    events._dispatch_folder_removed(cwd)
+  end
+  return result
 end
 
 local function do_copy(source, destination)
@@ -232,7 +247,7 @@ function M.remove(node)
       end
       api.nvim_out_write(node.name..' has been removed\n')
     else
-      local success = luv.fs_unlink(node.absolute_path)
+      local success = remove_file(node.absolute_path)
       if not success then
         return api.nvim_err_writeln('Could not remove '..node.name)
       end
@@ -269,6 +284,7 @@ function M.rename(with_sub)
       end
     end
     refresh_tree()
+    events._dispatch_node_renamed(abs_path, new_name)
   end
 end
 
