@@ -9,7 +9,7 @@ This plugin requires [neovim nightly (>=0.5.0)](https://github.com/neovim/neovim
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
 
 ```vim
-" requires 
+" requires
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 ```
@@ -136,6 +136,8 @@ lua <<EOF
       ["<C-v>"]          = tree_cb("vsplit"),
       ["<C-x>"]          = tree_cb("split"),
       ["<C-t>"]          = tree_cb("tabnew"),
+      ["<"]              = tree_cb("prev_sibling"),
+      [">"]              = tree_cb("next_sibling"),
       ["<BS>"]           = tree_cb("close_node"),
       ["<S-CR>"]         = tree_cb("close_node"),
       ["<Tab>"]          = tree_cb("preview"),

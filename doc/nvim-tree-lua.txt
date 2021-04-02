@@ -229,6 +229,7 @@ INFORMATIONS				        *nvim-tree-info*
 - '<CR>' on '..' will cd in the above directory
 - typing '<C-]>' will cd in the directory under the cursor
 - typing '<BS>' will close current opened directory or parent
+- typing 'P' will move cursor to the parent directory
 
 - type 'a' to add a file
 - type 'r' to rename a file
@@ -241,6 +242,10 @@ INFORMATIONS				        *nvim-tree-info*
 - type ']c' to go to next git item
 - type '[c' to go to prev git item
 - type '-' to navigate up one directory
+- type '<' to navigate to the previous sibling of current file/directory
+- type '>' to navigate to the next sibling of current file/directory
+- type 'J' to navigate to the first sibling of current file/directory
+- type 'K' to navigate to the last sibling of current file/directory
 
 - if the file is a directory, '<CR>' will open the directory
 - otherwise it will open the file in the buffer near the tree
@@ -280,9 +285,14 @@ Default keybindings can be overriden. You can also define your own keymappings f
 	  ["<C-v>"]          = tree_cb("vsplit"),
 	  ["<C-x>"]          = tree_cb("split"),
 	  ["<C-t>"]          = tree_cb("tabnew"),
+	  ["<"]              = tree_cb("prev_sibling"),
+	  [">"]              = tree_cb("next_sibling"),
+	  ["P"]              = tree_cb("parent_node"),
 	  ["<BS>"]           = tree_cb("close_node"),
 	  ["<S-CR>"]         = tree_cb("close_node"),
 	  ["<Tab>"]          = tree_cb("preview"),
+	  ["K"]              = tree_cb("first_sibling"),
+	  ["J"]              = tree_cb("last_sibling"),
 	  ["I"]              = tree_cb("toggle_ignored"),
 	  ["H"]              = tree_cb("toggle_dotfiles"),
 	  ["R"]              = tree_cb("refresh"),
