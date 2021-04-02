@@ -52,7 +52,8 @@ end
 ---@return string
 function M.path_remove_trailing(path, separator)
   if not separator then separator = path_separator end
-  return path:gsub(separator..'$', '')
+  local p, _ = path:gsub(separator..'$', '')
+  return p
 end
 
 M.path_separator = path_separator

@@ -102,12 +102,14 @@ local function should_group(cwd, dirs, files, links)
   return false
 end
 
-local function gen_ignore_check()
+local function gen_ignore_check(cwd)
   local ignore_list = {}
+  if not cwd then cwd = vim.fn.getcwd() end
 
   if vim.g.nvim_tree_gitignore == 1 then
     for _, s in ipairs(git.get_gitignored()) do
-      ignore_list[utils.path_remove_trailing(s, "/")] = true
+      s = utils.path_join({cwd, utils.path_remove_trailing(s, "/")})
+      ignore_list[s] = true
     end
   end
 
@@ -142,7 +144,7 @@ function M.refresh_entries(entries, cwd, parent_node)
   local cached_entries = {}
   local entries_idx = {}
   for i, node in ipairs(entries) do
-    node.ignore = should_ignore(node.name)
+    node.ignore = should_ignore(node.absolute_path)
     cached_entries[i] = node.name
     entries_idx[node.name] = i
     named_entries[node.name] = node
@@ -210,7 +212,7 @@ function M.refresh_entries(entries, cwd, parent_node)
         local n = e.fn(cwd, name)
         git.invalidate_gitignore_list()
         if e.check(n.link_to, n.absolute_path) then
-          n.ignore = should_ignore(name)
+          n.ignore = should_ignore(n.absolute_path)
           idx = 1
           if prev then
             idx = entries_idx[prev] + 1
@@ -248,14 +250,12 @@ function M.populate(entries, cwd, parent_node)
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
 
-    if not should_ignore(name) then
-      if t == 'directory' then
-        table.insert(dirs, name)
-      elseif t == 'file' then
-        table.insert(files, name)
-      elseif t == 'link' then
-        table.insert(links, name)
-      end
+    if t == 'directory' then
+      table.insert(dirs, name)
+    elseif t == 'file' then
+      table.insert(files, name)
+    elseif t == 'link' then
+      table.insert(links, name)
     end
   end
 
@@ -278,6 +278,7 @@ function M.populate(entries, cwd, parent_node)
 
   for _, dirname in ipairs(dirs) do
     local dir = dir_new(cwd, dirname)
+    dir.ignore = should_ignore(dir.absolute_path)
     if luv.fs_access(dir.absolute_path, 'R') then
       table.insert(entries, dir)
     end
@@ -285,6 +286,7 @@ function M.populate(entries, cwd, parent_node)
 
   for _, linkname in ipairs(links) do
     local link = link_new(cwd, linkname)
+    link.ignore = should_ignore(link.absolute_path)
     if link.link_to ~= nil then
       table.insert(entries, link)
     end
@@ -292,6 +294,7 @@ function M.populate(entries, cwd, parent_node)
 
   for _, filename in ipairs(files) do
     local file = file_new(cwd, filename)
+    file.ignore = should_ignore(file.absolute_path)
     table.insert(entries, file)
   end
 
