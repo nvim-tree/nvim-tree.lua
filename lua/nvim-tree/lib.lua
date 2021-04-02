@@ -65,13 +65,15 @@ local function get_node_at_line(line)
   local index = 2
   local function iter(entries)
     for _, node in ipairs(entries) do
-      if index == line then
-        return node
-      end
-      index = index + 1
-      if node.open == true then
-        local child = iter(node.entries)
-        if child ~= nil then return child end
+      if not node.ignore then
+        if index == line then
+          return node
+        end
+        index = index + 1
+        if node.open == true then
+          local child = iter(node.entries)
+          if child ~= nil then return child end
+        end
       end
     end
   end
@@ -112,7 +114,7 @@ function M.unroll_dir(node)
 end
 
 local function refresh_git(node)
-  git.update_status(node.entries, node.absolute_path or node.cwd)
+  git.update_status(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in pairs(node.entries) do
     if entry.entries ~= nil then
       refresh_git(entry)

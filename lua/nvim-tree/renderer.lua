@@ -115,6 +115,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     [" A"] = { { hl = "none" } },
     ["RM"] = { { hl = "NvimTreeFileRenamed" } },
     dirty = { { hl = "NvimTreeFileDirty" } },
+    ignored = { { hl = "NvimTreeGitIgnored" } },
   }
   get_git_hl = function(node)
     local git_status = node.git_status
@@ -163,6 +164,7 @@ if icon_state.show_git_icon then
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["D "] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ignored = { { icon = icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
   }
 
   get_git_icons = function(node, line, depth, icon_len)
@@ -238,68 +240,70 @@ local function update_draw_data(tree, depth, markers)
   end
 
   for idx, node in ipairs(tree.entries) do
-    local padding = get_padding(depth, idx, tree, node, markers)
-    local offset = string.len(padding)
-    if depth > 0 then
-      table.insert(hl, { 'NvimTreeIndentMarker', index, 0, offset })
-    end
-
-    local git_hl = get_git_hl(node)
-
-    if node.entries then
-      local has_children = #node.entries ~= 0 or node.has_children
-      local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
-      local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
-      -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
-      local folder_hl = "NvimTreeFolderName"
-      local name = node.name
-      local next = node.group_next
-      while next do
-        name = name .. "/" .. next.name
-        next = next.group_next
+    if not node.ignore then
+      local padding = get_padding(depth, idx, tree, node, markers)
+      local offset = string.len(padding)
+      if depth > 0 then
+        table.insert(hl, { 'NvimTreeIndentMarker', index, 0, offset })
       end
-      if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
-      set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
-      if git_hl then
-        set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
-      end
-      index = index + 1
-      if node.open then
-        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
-        update_draw_data(node, depth + 2, markers)
+
+      local git_hl = get_git_hl(node)
+
+      if node.entries then
+        local has_children = #node.entries ~= 0 or node.has_children
+        local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
+        local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
+        -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
+        local folder_hl = "NvimTreeFolderName"
+        local name = node.name
+        local next = node.group_next
+        while next do
+          name = name .. "/" .. next.name
+          next = next.group_next
+        end
+        if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
+        set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
+        if git_hl then
+          set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
+        end
+        index = index + 1
+        if node.open then
+          table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
+          update_draw_data(node, depth + 2, markers)
+        else
+          table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
+        end
+      elseif node.link_to then
+        local icon = get_symlink_icon()
+        local link_hl = git_hl or 'NvimTreeSymlink'
+        table.insert(hl, { link_hl, index, offset, -1 })
+        table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
+        index = index + 1
+
       else
-        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
-      end
-    elseif node.link_to then
-      local icon = get_symlink_icon()
-      local link_hl = git_hl or 'NvimTreeSymlink'
-      table.insert(hl, { link_hl, index, offset, -1 })
-      table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
-      index = index + 1
+        local icon
+        local git_icons
+        if special[node.name] then
+          icon = get_special_icon()
+          git_icons = get_git_icons(node, index, offset, 0)
+          table.insert(hl, {'NvimTreeSpecialFile', index, offset+#git_icons, -1})
+        else
+          icon = get_file_icon(node.name, node.extension, index, offset)
+          git_icons = get_git_icons(node, index, offset, #icon)
+        end
+        table.insert(lines, padding..icon..git_icons..node.name)
 
-    else
-      local icon
-      local git_icons
-      if special[node.name] then
-        icon = get_special_icon()
-        git_icons = get_git_icons(node, index, offset, 0)
-        table.insert(hl, {'NvimTreeSpecialFile', index, offset+#git_icons, -1})
-      else
-        icon = get_file_icon(node.name, node.extension, index, offset)
-        git_icons = get_git_icons(node, index, offset, #icon)
-      end
-      table.insert(lines, padding..icon..git_icons..node.name)
+        if node.executable then
+          table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
+        elseif picture[node.extension] then
+          table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
+        end
 
-      if node.executable then
-        table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
-      elseif picture[node.extension] then
-        table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
+        if git_hl then
+          table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
+        end
+        index = index + 1
       end
-
-      if git_hl then
-        table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
-      end
-      index = index + 1
     end
   end
 end

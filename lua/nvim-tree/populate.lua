@@ -36,6 +36,7 @@ local function dir_new(cwd, name)
     open = false,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
+    ignore = false,     -- True if this node should be hidden
     entries = {}
   }
 end
@@ -47,6 +48,7 @@ local function file_new(cwd, name)
     name = name,
     absolute_path = absolute_path,
     executable = is_exec,
+    ignore = false,     -- True if this node should be hidden
     extension = vim.fn.fnamemodify(name, ':e') or "",
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
@@ -73,6 +75,8 @@ local function link_new(cwd, name)
     absolute_path = absolute_path,
     link_to = link_to,
     open = open,
+    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
+    ignore = false,     -- True if this node should be hidden
     entries = entries,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
@@ -142,6 +146,7 @@ function M.refresh_entries(entries, cwd, parent_node)
   local cached_entries = {}
   local entries_idx = {}
   for i, node in ipairs(entries) do
+    node.ignore = should_ignore(node.name)
     cached_entries[i] = node.name
     entries_idx[node.name] = i
     named_entries[node.name] = node
@@ -158,17 +163,15 @@ function M.refresh_entries(entries, cwd, parent_node)
     if not name then break end
     num_new_entries = num_new_entries + 1
 
-    if not should_ignore(name) then
-      if t == 'directory' then
-        table.insert(dirs, name)
-        new_entries[name] = true
-      elseif t == 'file' then
-        table.insert(files, name)
-        new_entries[name] = true
-      elseif t == 'link' then
-        table.insert(links, name)
-        new_entries[name] = true
-      end
+    if t == 'directory' then
+      table.insert(dirs, name)
+      new_entries[name] = true
+    elseif t == 'file' then
+      table.insert(files, name)
+      new_entries[name] = true
+    elseif t == 'link' then
+      table.insert(links, name)
+      new_entries[name] = true
     end
   end
 
@@ -210,6 +213,7 @@ function M.refresh_entries(entries, cwd, parent_node)
       if not named_entries[name] then
         local n = e.fn(cwd, name)
         if e.check(n.link_to, n.absolute_path) then
+          n.ignore = should_ignore(name)
           idx = 1
           if prev then
             idx = entries_idx[prev] + 1
@@ -267,9 +271,10 @@ function M.populate(entries, cwd, parent_node)
       if dirs[1] then child_node = dir_new(cwd, dirs[1]) end
       if links[1] then child_node = link_new(cwd, links[1]) end
       if luv.fs_access(child_node.absolute_path, 'R') then
-          parent_node.group_next = child_node
-          M.populate(entries, child_node.absolute_path, child_node)
-          return
+        parent_node.group_next = child_node
+        child_node.git_status = parent_node.git_status
+        M.populate(entries, child_node.absolute_path, child_node)
+        return
       end
     end
   end
@@ -297,7 +302,7 @@ function M.populate(entries, cwd, parent_node)
     return
   end
 
-  git.update_status(entries, cwd)
+  git.update_status(entries, cwd, parent_node)
 end
 
 return M

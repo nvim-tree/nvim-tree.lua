@@ -64,6 +64,7 @@ local function get_links()
     FileStaged = 'NvimTreeGitStaged',
     FileDeleted = 'NvimTreeGitDeleted',
     Popup = 'Normal',
+    GitIgnored = 'Comment',
   }
 end
 
