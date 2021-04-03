@@ -164,8 +164,11 @@ local gitignore_list = {
 
 ---Generates a function that checks if a given path is ignored by git.
 ---@param git_root string Absolute path to a git directory
----@return function
 function M.gen_gitignore_check(git_root)
+
+  ---Check if the given path is ignored by git.
+  ---@param path string Absolute path
+  ---@return boolean
   local should_gitignore = function(path)
     return gitignore_list[path] == true
   end

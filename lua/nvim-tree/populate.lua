@@ -103,7 +103,7 @@ local function should_group(cwd, dirs, files, links)
 end
 
 local function gen_ignore_check(cwd)
-  if not cwd then cwd = vim.fn.getcwd() end
+  if not cwd then cwd = luv.cwd() end
   local ignore_list = {}
   local git_root = git.git_root(cwd)
   local should_gitignore

@@ -62,11 +62,16 @@ function M.init(with_open, with_render)
 end
 
 ---Returns a new list of nodes that are not ignored, and are visible in the
----file tree.
+---file tree. If the given list of entries is already the list of only visible
+---nodes, it is returned as is, without creating a new list.
 ---@param entries table
 ---@return table
 function M.get_visible_nodes(entries)
-  local result = {}
+  if entries.only_visible == true then return entries end
+
+  local result = {
+    only_visible = true
+  }
   for _, entry in ipairs(entries) do
     if not entry.ignore then
       table.insert(result, entry)
