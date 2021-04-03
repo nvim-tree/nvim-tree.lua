@@ -23,12 +23,23 @@ function M.read_file(path)
 end
 
 local path_separator = package.config:sub(1,1)
-function M.path_join(paths)
-  return table.concat(paths, path_separator)
+
+---Join a list of paths.
+---@param paths table
+---@param separator string|nil If nil, the platform default is used.
+---@return string
+function M.path_join(paths, separator)
+  if not separator then separator = path_separator end
+  return table.concat(paths, separator)
 end
 
-function M.path_split(path)
-  return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
+---Split a given path.
+---@param path string
+---@param separator string|nil If nil, the platform default is used.
+---@return function Iterator
+function M.path_split(path, separator)
+  if not separator then separator = path_separator end
+  return path:gmatch('[^'..separator..']+'..separator..'?')
 end
 
 ---Get the basename of the given path.

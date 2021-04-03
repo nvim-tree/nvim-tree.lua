@@ -204,7 +204,7 @@ function M.gen_gitignore_check(git_root)
 
   for _, s in ipairs(M.get_gitignored(git_root)) do
     s = utils.path_remove_trailing(s, "/")
-    gitignore_list[utils.path_join({git_root, s})] = true
+    gitignore_list[utils.path_join({git_root, s}, "/")] = true
   end
 
   return should_gitignore
