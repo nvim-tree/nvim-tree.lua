@@ -124,12 +124,13 @@ local function gen_ignore_check(cwd)
 
   return function(path)
     local idx = path:match(".+()%.%w+$")
+    local basename = utils.path_basename(path)
     local ignore_extension
     if idx then
         ignore_extension = ignore_list['*'..string.sub(path, idx)]
     end
     local ignore_path = not M.show_ignored and ignore_list[path] == true
-    local ignore_dotfiles = not M.show_dotfiles and path:sub(1, 1) == '.'
+    local ignore_dotfiles = not M.show_dotfiles and basename:sub(1, 1) == '.'
     return ignore_extension or ignore_path or ignore_dotfiles
   end
 end

@@ -31,6 +31,17 @@ function M.path_split(path)
   return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
 end
 
+function M.path_basename(path)
+  path = M.path_remove_trailing(path)
+  local i = path:match("^.*()" .. path_separator)
+  if not i then return path end
+  return path:sub(i + 1, #path)
+end
+
+function M.path_relative(path, relative_to)
+  return path:gsub("^" .. M.path_to_matching_str(M.path_add_trailing(relative_to)), "")
+end
+
 ---Add a trailing separator to a given path. If no separator is given, the
 ---platform default is used.
 ---@param path string

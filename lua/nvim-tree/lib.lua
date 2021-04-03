@@ -61,19 +61,31 @@ function M.init(with_open, with_render)
   end
 end
 
+---Returns a new list of nodes that are not ignored, and are visible in the
+---file tree.
+---@param entries table
+---@return table
+function M.get_visible_nodes(entries)
+  local result = {}
+  for _, entry in ipairs(entries) do
+    if not entry.ignore then
+      table.insert(result, entry)
+    end
+  end
+  return result
+end
+
 local function get_node_at_line(line)
   local index = 2
   local function iter(entries)
-    for _, node in ipairs(entries) do
-      if not node.ignore then
-        if index == line then
-          return node
-        end
-        index = index + 1
-        if node.open == true then
-          local child = iter(node.entries)
-          if child ~= nil then return child end
-        end
+    for _, node in ipairs(M.get_visible_nodes(entries)) do
+      if index == line then
+        return node
+      end
+      index = index + 1
+      if node.open == true then
+        local child = iter(node.entries)
+        if child ~= nil then return child end
       end
     end
   end
@@ -89,7 +101,7 @@ local function get_line_from_node(node, find_parent)
 
   local line = 2
   local function iter(entries, recursive)
-    for _, entry in ipairs(entries) do
+    for _, entry in ipairs(M.get_visible_nodes(entries)) do
       if node_path:match('^'..entry.match_path..'$') ~= nil then
         return line, entry
       end
@@ -366,10 +378,10 @@ function M.sibling(node, direction)
   local iter = get_line_from_node(node, true)
   local node_path = node.absolute_path
 
-  local line, parent = 0, nil
+  local line, parent, parent_entries = 0, nil, nil
 
   -- Check if current node is already at root entries
-  for index, entry in ipairs(M.Tree.entries) do
+  for index, entry in ipairs(M.get_visible_nodes(M.Tree.entries)) do
     if node_path:match('^'..entry.match_path..'$') ~= nil then
       line = index
     end
@@ -377,10 +389,12 @@ function M.sibling(node, direction)
 
   if line > 0 then
     parent = M.Tree
+    parent_entries = M.get_visible_nodes(parent.entries)
   else
     _, parent = iter(M.Tree.entries, true)
-    if parent ~= nil and #parent.entries > 1 then
-      line, _ = get_line_from_node(node)(parent.entries)
+    parent_entries = M.get_visible_nodes(parent.entries)
+    if parent ~= nil and #parent_entries > 1 then
+      line, _ = get_line_from_node(node)(parent_entries)
     end
 
     -- Ignore parent line count
@@ -390,10 +404,10 @@ function M.sibling(node, direction)
   local index = line + direction
   if index < 1 then
     index = 1
-  elseif index > #parent.entries then
-    index = #parent.entries
+  elseif index > #parent_entries then
+    index = #parent_entries
   end
-  local target_node = parent.entries[index]
+  local target_node = parent_entries[index]
 
   line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
   api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})

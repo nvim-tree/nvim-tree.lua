@@ -194,12 +194,13 @@ end
 
 if vim.g.nvim_tree_indent_markers == 1 then
   get_padding = function(depth, idx, tree, _, markers)
+    local entries = require("nvim-tree.lib").get_visible_nodes(tree.entries)
     local padding = ""
     if depth ~= 0 then
       local rdepth = depth/2
-      markers[rdepth] = idx ~= #tree.entries
+      markers[rdepth] = idx ~= #entries
       for i=1,rdepth do
-        if idx == #tree.entries and i == rdepth then
+        if idx == #entries and i == rdepth then
           padding = padding..'└ '
         elseif markers[i] then
           padding = padding..'│ '
@@ -239,71 +240,69 @@ local function update_draw_data(tree, depth, markers)
     index = 1
   end
 
-  for idx, node in ipairs(tree.entries) do
-    if not node.ignore then
-      local padding = get_padding(depth, idx, tree, node, markers)
-      local offset = string.len(padding)
-      if depth > 0 then
-        table.insert(hl, { 'NvimTreeIndentMarker', index, 0, offset })
+  for idx, node in ipairs(require("nvim-tree.lib").get_visible_nodes(tree.entries)) do
+    local padding = get_padding(depth, idx, tree, node, markers)
+    local offset = string.len(padding)
+    if depth > 0 then
+      table.insert(hl, { 'NvimTreeIndentMarker', index, 0, offset })
+    end
+
+    local git_hl = get_git_hl(node)
+
+    if node.entries then
+      local has_children = #node.entries ~= 0 or node.has_children
+      local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
+      local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
+      -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
+      local folder_hl = "NvimTreeFolderName"
+      local name = node.name
+      local next = node.group_next
+      while next do
+        name = name .. "/" .. next.name
+        next = next.group_next
       end
-
-      local git_hl = get_git_hl(node)
-
-      if node.entries then
-        local has_children = #node.entries ~= 0 or node.has_children
-        local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
-        local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
-        -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
-        local folder_hl = "NvimTreeFolderName"
-        local name = node.name
-        local next = node.group_next
-        while next do
-          name = name .. "/" .. next.name
-          next = next.group_next
-        end
-        if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
-        set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
-        if git_hl then
-          set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
-        end
-        index = index + 1
-        if node.open then
-          table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
-          update_draw_data(node, depth + 2, markers)
-        else
-          table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
-        end
-      elseif node.link_to then
-        local icon = get_symlink_icon()
-        local link_hl = git_hl or 'NvimTreeSymlink'
-        table.insert(hl, { link_hl, index, offset, -1 })
-        table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
-        index = index + 1
-
+      if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
+      set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
+      if git_hl then
+        set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
+      end
+      index = index + 1
+      if node.open then
+        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
+        update_draw_data(node, depth + 2, markers)
       else
-        local icon
-        local git_icons
-        if special[node.name] then
-          icon = get_special_icon()
-          git_icons = get_git_icons(node, index, offset, 0)
-          table.insert(hl, {'NvimTreeSpecialFile', index, offset+#git_icons, -1})
-        else
-          icon = get_file_icon(node.name, node.extension, index, offset)
-          git_icons = get_git_icons(node, index, offset, #icon)
-        end
-        table.insert(lines, padding..icon..git_icons..node.name)
-
-        if node.executable then
-          table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
-        elseif picture[node.extension] then
-          table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
-        end
-
-        if git_hl then
-          table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
-        end
-        index = index + 1
+        table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
       end
+    elseif node.link_to then
+      local icon = get_symlink_icon()
+      local link_hl = git_hl or 'NvimTreeSymlink'
+      table.insert(hl, { link_hl, index, offset, -1 })
+      table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
+      index = index + 1
+
+    else
+      local icon
+      local git_icons
+      if special[node.name] then
+        icon = get_special_icon()
+        git_icons = get_git_icons(node, index, offset, 0)
+        table.insert(hl, {'NvimTreeSpecialFile', index, offset+#git_icons, -1})
+      else
+        icon = get_file_icon(node.name, node.extension, index, offset)
+        git_icons = get_git_icons(node, index, offset, #icon)
+      end
+      table.insert(lines, padding..icon..git_icons..node.name)
+
+      if node.executable then
+        table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
+      elseif picture[node.extension] then
+        table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
+      end
+
+      if git_hl then
+        table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
+      end
+      index = index + 1
     end
   end
 end
