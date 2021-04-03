@@ -120,7 +120,7 @@ function M.update_status(entries, cwd, parent_node)
   if not parent_node then parent_node = {} end
 
   local matching_cwd = utils.path_to_matching_str( utils.path_add_trailing(git_root) )
-  local should_gitignore = M.gen_should_gitignore(git_root)
+  local should_gitignore = M.gen_gitignore_check(git_root)
   local num_ignored = 0
 
   for _, node in pairs(entries) do
@@ -165,7 +165,7 @@ local gitignore_list = {
 ---Generates a function that checks if a given path is ignored by git.
 ---@param git_root string Absolute path to a git directory
 ---@return function
-function M.gen_should_gitignore(git_root)
+function M.gen_gitignore_check(git_root)
   local should_gitignore = function(path)
     return gitignore_list[path] == true
   end
@@ -208,7 +208,7 @@ function M.gen_should_gitignore(git_root)
 end
 
 ---Force the gitignore list to be recreated on the next call to
----`gen_should_gitignore`.
+---`gen_gitignore_check`.
 function M.invalidate_gitignore_list()
   gitignore_list.valid = false
 end

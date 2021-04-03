@@ -103,17 +103,13 @@ local function should_group(cwd, dirs, files, links)
 end
 
 local function gen_ignore_check(cwd)
-  local ignore_list = {}
   if not cwd then cwd = vim.fn.getcwd() end
+  local ignore_list = {}
+  local git_root = git.git_root(cwd)
+  local should_gitignore
 
-  if vim.g.nvim_tree_gitignore == 1 then
-    local git_root = git.git_root(cwd)
-    if git_root then
-      for _, s in ipairs(git.get_gitignored(git_root)) do
-        s = utils.path_join({cwd, utils.path_remove_trailing(s, "/")})
-        ignore_list[s] = true
-      end
-    end
+  if git_root then
+    should_gitignore = git.gen_gitignore_check(git_root)
   end
 
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
@@ -122,16 +118,29 @@ local function gen_ignore_check(cwd)
     end
   end
 
+  ---Check if the given path should be ignored.
+  ---@param path string Absolute path
+  ---@return boolean
   return function(path)
-    local idx = path:match(".+()%.%w+$")
     local basename = utils.path_basename(path)
-    local ignore_extension
-    if idx then
+    local relpath = utils.path_relative(path, cwd)
+
+    local ignore_extension = false
+    if not M.show_ignored then
+      local idx = path:match(".+()%.%w+$")
+      if idx then
         ignore_extension = ignore_list['*'..string.sub(path, idx)]
+      end
     end
-    local ignore_path = not M.show_ignored and ignore_list[path] == true
+
+    local ignore_git = false
+    if not M.show_ignored and vim.g.nvim_tree_gitignore == 1 and should_gitignore then
+      ignore_git = should_gitignore(path)
+    end
+
+    local ignore_path = not M.show_ignored and ignore_list[relpath] == true
     local ignore_dotfiles = not M.show_dotfiles and basename:sub(1, 1) == '.'
-    return ignore_extension or ignore_path or ignore_dotfiles
+    return ignore_git or ignore_extension or ignore_path or ignore_dotfiles
   end
 end
 

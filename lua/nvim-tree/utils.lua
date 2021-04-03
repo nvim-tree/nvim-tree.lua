@@ -31,21 +31,32 @@ function M.path_split(path)
   return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
 end
 
-function M.path_basename(path)
+---Get the basename of the given path.
+---@param path string
+---@param separator string|nil If nil, the platform default is used.
+---@return string
+function M.path_basename(path, separator)
+  if not separator then separator = path_separator end
   path = M.path_remove_trailing(path)
-  local i = path:match("^.*()" .. path_separator)
+  local i = path:match("^.*()" .. separator)
   if not i then return path end
   return path:sub(i + 1, #path)
 end
 
-function M.path_relative(path, relative_to)
-  return path:gsub("^" .. M.path_to_matching_str(M.path_add_trailing(relative_to)), "")
+---Get a path relative to another path.
+---@param path string
+---@param relative_to string
+---@param separator string|nil If nil, the platform default is used.
+---@return string
+function M.path_relative(path, relative_to, separator)
+  if not separator then separator = path_separator end
+  local p, _ = path:gsub("^" .. M.path_to_matching_str(M.path_add_trailing(relative_to, separator)), "")
+  return p
 end
 
----Add a trailing separator to a given path. If no separator is given, the
----platform default is used.
+---Add a trailing separator to a given path.
 ---@param path string
----@param separator string|nil
+---@param separator string|nil If nil, the platform default is used.
 ---@return string
 function M.path_add_trailing(path, separator)
   if not separator then separator = path_separator end
@@ -56,10 +67,9 @@ function M.path_add_trailing(path, separator)
   return path..separator
 end
 
----Remove a trailing separator from a given path. If no separator is given,
----the platform default is used.
+---Remove a trailing separator from a given path.
 ---@param path string
----@param separator string|nil
+---@param separator string|nil If nil, the platform default is used.
 ---@return string
 function M.path_remove_trailing(path, separator)
   if not separator then separator = path_separator end
