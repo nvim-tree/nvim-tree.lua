@@ -1,6 +1,6 @@
 local M = {}
 
-local handlers = {}
+local global_handlers = {}
 
 local Event = {
     NodeRenamed = 'NodeRenamed',
@@ -11,11 +11,13 @@ local Event = {
 }
 
 local function get_handlers(event_name)
-    return handlers[event_name] or {}
+    return global_handlers[event_name] or {}
 end
 
 local function register_handler(event_name, handler)
-    handlers[event_name] = table.insert(get_handlers(event_name), handler)
+    local handlers = get_handlers(event_name)
+    table.insert(handlers, handler)
+    global_handlers[event_name] = handlers
 end
 
 
