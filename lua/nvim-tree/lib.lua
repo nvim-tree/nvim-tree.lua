@@ -189,7 +189,7 @@ function M.set_index_and_redraw(fname)
         return i
       end
 
-      if fname:match(entry.match_path..'/') ~= nil then
+      if fname:match(entry.match_path..utils.path_separator) ~= nil then
         if #entry.entries == 0 then
           reload = true
           populate(entry.entries, entry.absolute_path, entry)
