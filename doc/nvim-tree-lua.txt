@@ -436,6 +436,7 @@ For example, registering a handler for when a node is renamed is done like this:
 ==============================================================================
 Lua module: nvim-tree.events                           *nvim-tree.events*
 
+                                     *nvim-tree.events.on_node_renamed()*
 on_node_renamed({handler})
                 Registers a handler for when a node is renamed.
                 • Note: A node can either be a file or a directory.
@@ -444,12 +445,15 @@ on_node_renamed({handler})
                     {handler}    (function) Handler function, with the
                                  signature `function(payload)`.
 
+                                     *nvim-tree.events.on_file_created()*
 on_file_created({handler})
                 Registers a handler for when a file is created.
 
                 Parameters: ~
                     {handler}    (function) Handler function, with the
                                  signature `function(payload)`.
+
+                                     *nvim-tree.events.on_file_removed()*
 on_file_removed({handler})
                 Registers a handler for when a file is removed.
 
@@ -457,6 +461,7 @@ on_file_removed({handler})
                     {handler}    (function) Handler function, with the
                                  signature `function(payload)`.
 
+                                   *nvim-tree.events.on_folder_created()*
 on_folder_created({handler})
                 Registers a handler for when a folder is created.
 
@@ -464,6 +469,7 @@ on_folder_created({handler})
                     {handler}    (function) Handler function, with the
                                  signature `function(payload)`.
 
+                                   *nvim-tree.events.on_folder_removed()*
 on_folder_removed({handler})
                 Registers a handler for when a folder is removed.
 
