@@ -105,12 +105,6 @@ end
 local function gen_ignore_check(cwd)
   if not cwd then cwd = luv.cwd() end
   local ignore_list = {}
-  local git_root = git.git_root(cwd)
-  local should_gitignore
-
-  if git_root then
-    should_gitignore = git.gen_gitignore_check(git_root)
-  end
 
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
     for _, entry in pairs(vim.g.nvim_tree_ignore) do
@@ -122,25 +116,26 @@ local function gen_ignore_check(cwd)
   ---@param path string Absolute path
   ---@return boolean
   return function(path)
-    local basename = utils.path_basename(path)
-    local relpath = utils.path_relative(path, cwd)
-
-    local ignore_extension = false
     if not M.show_ignored then
+      if vim.g.nvim_tree_gitignore == 1 then
+        if git.should_gitignore(path) then return true end
+      end
+
+      local relpath = utils.path_relative(path, cwd)
+      if ignore_list[relpath] == true then return true end
+
       local idx = path:match(".+()%.%w+$")
       if idx then
-        ignore_extension = ignore_list['*'..string.sub(path, idx)]
+        if ignore_list['*'..string.sub(path, idx)] == true then return true end
       end
     end
 
-    local ignore_git = false
-    if not M.show_ignored and vim.g.nvim_tree_gitignore == 1 and should_gitignore then
-      ignore_git = should_gitignore(path)
+    if not M.show_dotfiles then
+      local basename = utils.path_basename(path)
+      if basename:sub(1, 1) == '.' then return true end
     end
 
-    local ignore_path = not M.show_ignored and ignore_list[relpath] == true
-    local ignore_dotfiles = not M.show_dotfiles and basename:sub(1, 1) == '.'
-    return ignore_git or ignore_extension or ignore_path or ignore_dotfiles
+    return false
   end
 end
 
@@ -223,8 +218,8 @@ function M.refresh_entries(entries, cwd, parent_node)
       change_prev = true
       if not named_entries[name] then
         local n = e.fn(cwd, name)
-        git.invalidate_gitignore_list()
         if e.check(n.link_to, n.absolute_path) then
+          git.invalidate_gitignore_map(n.absolute_path)
           n.ignore = should_ignore(n.absolute_path)
           idx = 1
           if prev then

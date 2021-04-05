@@ -46,6 +46,7 @@ M.Tree = {
 
 function M.init(with_open, with_render)
   M.Tree.cwd = luv.cwd()
+  git.git_root(M.Tree.cwd)
   populate(M.Tree.entries, M.Tree.cwd)
 
   local stat = luv.fs_stat(M.Tree.cwd)
@@ -67,10 +68,10 @@ end
 ---@param entries table
 ---@return table
 function M.get_visible_nodes(entries)
-  if entries.only_visible == true then return entries end
+  if entries._only_visible == true then return entries end
 
   local result = {
-    only_visible = true
+    _only_visible = true
   }
   for _, entry in ipairs(entries) do
     if not entry.ignore then
@@ -149,6 +150,7 @@ function M.unroll_dir(node)
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
+    git.git_root(node.absolute_path)
     populate(node.entries, node.link_to or node.absolute_path, node)
     renderer.draw(M.Tree, true)
   end
