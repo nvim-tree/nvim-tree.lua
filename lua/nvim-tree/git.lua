@@ -1,5 +1,6 @@
 local luv = vim.loop
 local utils = require'nvim-tree.utils'
+local config = require'nvim-tree.config'
 local M = {}
 
 local roots = {}
@@ -36,9 +37,14 @@ end
 ---@param git_root string|nil
 ---@return table
 function M.get_gitignored(git_root)
-  return vim.fn.systemlist(
+  local result = vim.fn.systemlist(
     "git -C '" .. (git_root or "") .. "' ls-files --others --ignored --exclude-standard --directory"
   )
+  if result[1] and result[1]:match("^fatal:") then
+    return {}
+  end
+
+  return result
 end
 
 function M.reload_roots()
@@ -124,30 +130,29 @@ function M.update_status(entries, cwd, parent_node)
     if parent_node.git_status == "ignored" or M.should_gitignore(node.absolute_path) then
       node.git_status = "ignored"
       num_ignored = num_ignored + 1
-      goto continue
-    end
 
-    local relpath = node.absolute_path:gsub(matching_cwd, '')
-    if node.entries ~= nil then
-      relpath = utils.path_add_trailing(relpath)
-      node.git_status = nil
-    end
-
-    local status = git_status[relpath]
-    if status then
-      node.git_status = status
-    elseif node.entries ~= nil then
-      local matcher = '^'..utils.path_to_matching_str(relpath)
-      for key, entry_status in pairs(git_status) do
-        if key:match(matcher) then
-          node.git_status = entry_status
-          break
-        end
-      end
     else
-      node.git_status = nil
+      local relpath = node.absolute_path:gsub(matching_cwd, '')
+      if node.entries ~= nil then
+        relpath = utils.path_add_trailing(relpath)
+        node.git_status = nil
+      end
+
+      local status = git_status[relpath]
+      if status then
+        node.git_status = status
+      elseif node.entries ~= nil then
+        local matcher = '^'..utils.path_to_matching_str(relpath)
+        for key, entry_status in pairs(git_status) do
+          if key:match(matcher) then
+            node.git_status = entry_status
+            break
+          end
+        end
+      else
+        node.git_status = nil
+      end
     end
-    ::continue::
   end
 
   if num_ignored > 0 and num_ignored == #entries then
@@ -167,6 +172,7 @@ function M.should_gitignore(path)
       return true
     end
   end
+  return false
 end
 
 ---Updates the gitignore map if it's needed. Each entry in the map is only
@@ -174,12 +180,17 @@ end
 ---`.git/info/exclude` files, or it's been invalidated by the
 ---`invalidate_gitignore_map` function.
 function M.update_gitignore_map()
+  if not (config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1) then
+    return
+  end
+
+  local ignore_files = { ".gitignore", utils.path_join({".git", "info", "exclude"}) }
   for git_root, git_status in pairs(roots) do
     if git_status ~= not_git then
       -- The mtime for `.gitignore` and `.git/info/exclude` is cached such that
       -- the list of ignored files is only recreated when one of the said files
       -- are modified.
-      for _, s in ipairs({".gitignore", ".git/info/exclude"}) do
+      for _, s in ipairs(ignore_files) do
         local path = utils.path_join({git_root, s})
         local stat = luv.fs_stat(path)
         if stat and stat.mtime then
@@ -207,7 +218,8 @@ function M.update_gitignore_map()
 
       for _, s in ipairs(M.get_gitignored(git_root)) do
         s = utils.path_remove_trailing(s, "/")
-        paths[utils.path_join({git_root, s}, "/")] = true
+        if is_win then s = s:gsub("/", "\\") end
+        paths[utils.path_join({git_root, s})] = true
       end
     end
   end
