@@ -1,6 +1,6 @@
 *nvim-tree.lua* A file explorer written in lua
 
-Minimum version of neovim: 0.4.0
+Minimum version of neovim: 0.5.0
 
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
@@ -404,3 +404,75 @@ NvimTreeFileNew
 NvimTreeFileDeleted
 
  vim:tw=78:ts=8:noet:ft=help:norl:
+
+==============================================================================
+EVENTS                                                 *nvim-tree-events*
+
+|nvim_tree_events|                                     *nvim_tree_events*
+
+nvim-tree will dispatch events whenever an action is made. These events can be
+subscribed to through handler functions. This allows for even further
+customization of nvim-tree.
+
+A handler for an event is just a function which receives one argument -
+the payload of the event. The payload is different for each event type. Refer
+to |nvim_tree_registering_handlers| for more information.
+<
+
+|nvim_tree_registering_handlers|                *nvim_tree_registering_handlers*
+
+Handlers are registered by calling the `on_*` functions available in the
+`require('nvim-tree.events')` module. See |nvim-tree.events|.
+
+
+For example, registering a handler for when a node is renamed is done like this: >
+
+    local events = require('nvim-tree.events')
+
+    events.on_node_renamed(function(data)
+        print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
+    end)
+
+==============================================================================
+Lua module: nvim-tree.events                           *nvim-tree.events*
+
+                                     *nvim-tree.events.on_node_renamed()*
+on_node_renamed({handler})
+                Registers a handler for when a node is renamed.
+                • Note: A node can either be a file or a directory.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function(payload)`.
+
+                                     *nvim-tree.events.on_file_created()*
+on_file_created({handler})
+                Registers a handler for when a file is created.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function(payload)`.
+
+                                     *nvim-tree.events.on_file_removed()*
+on_file_removed({handler})
+                Registers a handler for when a file is removed.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function(payload)`.
+
+                                   *nvim-tree.events.on_folder_created()*
+on_folder_created({handler})
+                Registers a handler for when a folder is created.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function(payload)`.
+
+                                   *nvim-tree.events.on_folder_removed()*
+on_folder_removed({handler})
+                Registers a handler for when a folder is removed.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function(payload)`.

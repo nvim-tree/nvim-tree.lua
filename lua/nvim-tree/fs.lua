@@ -4,6 +4,7 @@ local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants
 
 local utils = require'nvim-tree.utils'
 local lib = require'nvim-tree.lib'
+local events = require'nvim-tree.events'
 local M = {}
 local clipboard = {
   move = {},
@@ -34,6 +35,7 @@ local function create_file(file)
       -- this is why we need to chmod to default file permissions
       luv.fs_chmod(file, 420)
       luv.fs_close(fd)
+      events._dispatch_file_created(file)
       api.nvim_out_write('File '..file..' was properly created\n')
       refresh_tree()
     end
@@ -88,6 +90,7 @@ function M.create(node)
         return
       end
       if idx == num_entries then
+        events._dispatch_folder_created(add_into..relpath)
         api.nvim_out_write('Folder '..add_into..relpath..' was properly created\n')
         refresh_tree()
       end
@@ -242,12 +245,14 @@ function M.remove(node)
       if not success then
         return api.nvim_err_writeln('Could not remove '..node.name)
       end
+      events._dispatch_folder_removed(node.absolute_path)
       api.nvim_out_write(node.name..' has been removed\n')
     else
       local success = luv.fs_unlink(node.absolute_path)
       if not success then
         return api.nvim_err_writeln('Could not remove '..node.name)
       end
+      events._dispatch_file_removed(node.absolute_path)
       api.nvim_out_write(node.name..' has been removed\n')
       clear_buffer(node.absolute_path)
     end
@@ -280,6 +285,7 @@ function M.rename(with_sub)
         end
       end
     end
+    events._dispatch_node_renamed(abs_path, new_name)
     refresh_tree()
   end
 end
