@@ -19,6 +19,13 @@ local function refresh_tree()
 end
 
 local function create_file(file)
+  if luv.fs_access(file, "r") ~= false then
+    local ans = vim.fn.input(file..' already exists, overwrite ? y/n: ')
+    clear_prompt()
+    if ans ~= "y" then
+      return
+    end
+  end
   luv.fs_open(file, "w", open_mode, vim.schedule_wrap(function(err, fd)
     if err then
       api.nvim_err_writeln('Could not create file '..file)
@@ -43,7 +50,12 @@ end
 
 function M.create(node)
   node = lib.get_last_group_node(node)
-  if node.name == '..' then return end
+  if node.name == '..' then
+    node = {
+      absolute_path = lib.Tree.cwd,
+      entries = lib.Tree.entries,
+    }
+  end
 
   local add_into
   if node.entries ~= nil then
