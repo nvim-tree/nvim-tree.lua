@@ -139,7 +139,6 @@ lua <<EOF
       ["<C-t>"]          = tree_cb("tabnew"),
       ["<"]              = tree_cb("prev_sibling"),
       [">"]              = tree_cb("next_sibling"),
-      ["P"]              = tree_cb("parent_node"),
       ["<BS>"]           = tree_cb("close_node"),
       ["<S-CR>"]         = tree_cb("close_node"),
       ["<Tab>"]          = tree_cb("preview"),

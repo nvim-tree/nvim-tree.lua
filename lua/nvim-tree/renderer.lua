@@ -194,14 +194,12 @@ end
 
 if vim.g.nvim_tree_indent_markers == 1 then
   get_padding = function(depth, idx, tree, _, markers)
-    local lib = require("nvim-tree.lib")
-    local entries = lib.get_visible_nodes(tree.entries)
     local padding = ""
     if depth ~= 0 then
       local rdepth = depth/2
-      markers[rdepth] = idx ~= #entries
+      markers[rdepth] = idx ~= #tree.entries
       for i=1,rdepth do
-        if idx == #entries and i == rdepth then
+        if idx == #tree.entries and i == rdepth then
           padding = padding..'└ '
         elseif markers[i] then
           padding = padding..'│ '
@@ -241,8 +239,7 @@ local function update_draw_data(tree, depth, markers)
     index = 1
   end
 
-  local lib = require("nvim-tree.lib")
-  for idx, node in ipairs(lib.get_visible_nodes(tree.entries)) do
+  for idx, node in ipairs(tree.entries) do
     local padding = get_padding(depth, idx, tree, node, markers)
     local offset = string.len(padding)
     if depth > 0 then
