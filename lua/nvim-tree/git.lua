@@ -179,7 +179,7 @@ end
 ---updated if changes have been made to the git root's `.gitignore` or
 ---`.git/info/exclude` files, or it's been invalidated by the
 ---`invalidate_gitignore_map` function.
-function M.update_gitignore_map()
+function M.update_gitignore_map_sync()
   if not (config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1) then
     return
   end
@@ -223,8 +223,13 @@ function M.update_gitignore_map()
       end
     end
   end
+end
 
-  return
+---Updates the gitignore map asynchronously if it's needed.
+function M.update_gitignore_map()
+  vim.schedule(function()
+    M.update_gitignore_map_sync()
+  end)
 end
 
 ---Force the ignore list of this path's git root to be recreated on the next

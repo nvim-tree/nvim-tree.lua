@@ -113,13 +113,17 @@ local function gen_ignore_check(cwd)
   ---@param path string Absolute path
   ---@return boolean
   return function(path)
+    local basename = utils.path_basename(path)
+
     if not M.show_ignored then
       if vim.g.nvim_tree_gitignore == 1 then
         if git.should_gitignore(path) then return true end
       end
 
       local relpath = utils.path_relative(path, cwd)
-      if ignore_list[relpath] == true then return true end
+      if ignore_list[relpath] == true or ignore_list[basename] == true then
+        return true
+      end
 
       local idx = path:match(".+()%.%w+$")
       if idx then
@@ -128,7 +132,6 @@ local function gen_ignore_check(cwd)
     end
 
     if not M.show_dotfiles then
-      local basename = utils.path_basename(path)
       if basename:sub(1, 1) == '.' then return true end
     end
 
