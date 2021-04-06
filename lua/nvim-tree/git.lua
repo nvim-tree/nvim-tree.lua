@@ -217,8 +217,8 @@ function M.update_gitignore_map_sync()
       paths = gitignore_map[git_root]
 
       for _, s in ipairs(M.get_gitignored(git_root)) do
-        s = utils.path_remove_trailing(s, "/")
         if is_win then s = s:gsub("/", "\\") end
+        s = utils.path_remove_trailing(s)
         paths[utils.path_join({git_root, s})] = true
       end
     end

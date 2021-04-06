@@ -23,33 +23,20 @@ function M.read_file(path)
 end
 
 local path_separator = package.config:sub(1,1)
-
----Join a list of paths.
----@param paths table
----@param separator string|nil If nil, the platform default is used.
----@return string
-function M.path_join(paths, separator)
-  if not separator then separator = path_separator end
-  return table.concat(paths, separator)
+function M.path_join(paths)
+  return table.concat(paths, path_separator)
 end
 
----Split a given path.
----@param path string
----@param separator string|nil If nil, the platform default is used.
----@return function Iterator
-function M.path_split(path, separator)
-  if not separator then separator = path_separator end
-  return path:gmatch('[^'..separator..']+'..separator..'?')
+function M.path_split(path)
+  return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
 end
 
 ---Get the basename of the given path.
 ---@param path string
----@param separator string|nil If nil, the platform default is used.
 ---@return string
-function M.path_basename(path, separator)
-  if not separator then separator = path_separator end
+function M.path_basename(path)
   path = M.path_remove_trailing(path)
-  local i = path:match("^.*()" .. separator)
+  local i = path:match("^.*()" .. path_separator)
   if not i then return path end
   return path:sub(i + 1, #path)
 end
@@ -57,34 +44,22 @@ end
 ---Get a path relative to another path.
 ---@param path string
 ---@param relative_to string
----@param separator string|nil If nil, the platform default is used.
 ---@return string
-function M.path_relative(path, relative_to, separator)
-  if not separator then separator = path_separator end
-  local p, _ = path:gsub("^" .. M.path_to_matching_str(M.path_add_trailing(relative_to, separator)), "")
+function M.path_relative(path, relative_to)
+  local p, _ = path:gsub("^" .. M.path_to_matching_str(M.path_add_trailing(relative_to)), "")
   return p
 end
 
----Add a trailing separator to a given path.
----@param path string
----@param separator string|nil If nil, the platform default is used.
----@return string
-function M.path_add_trailing(path, separator)
-  if not separator then separator = path_separator end
-  if path:sub(-1) == separator then
+function M.path_add_trailing(path)
+  if path:sub(-1) == path_separator then
     return path
   end
 
-  return path..separator
+  return path..path_separator
 end
 
----Remove a trailing separator from a given path.
----@param path string
----@param separator string|nil If nil, the platform default is used.
----@return string
-function M.path_remove_trailing(path, separator)
-  if not separator then separator = path_separator end
-  local p, _ = path:gsub(separator..'$', '')
+function M.path_remove_trailing(path)
+  local p, _ = path:gsub(path_separator..'$', '')
   return p
 end
 
