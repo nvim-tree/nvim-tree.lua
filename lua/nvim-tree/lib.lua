@@ -146,7 +146,7 @@ local function refresh_git(node, update_gitignore)
   end
   git.update_status(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in pairs(node.entries) do
-    if entry.entries ~= nil then
+    if entry.entries and #entry.entries > 0 then
       refresh_git(entry, false)
     end
   end
