@@ -39,7 +39,7 @@ local function get_hl_groups()
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
     ImageFile = { gui = 'bold', fg = colors.purple },
-    OpenedFile = { gui = 'bold', fg = colors.red },
+    OpenedFile = { gui = 'bold', fg = colors.green },
 
     GitDirty = { fg = colors.dark_red },
     GitDeleted = { fg = colors.dark_red },
@@ -54,7 +54,7 @@ local function get_links()
   return {
     FolderName = 'Directory',
     EmptyFolderName = 'Directory',
-    OpenedFolderName = 'ErrorMsg',
+    OpenedFolderName = 'NvimTreeOpenedFile',
     Normal = 'Normal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
