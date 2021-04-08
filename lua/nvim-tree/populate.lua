@@ -73,6 +73,7 @@ local function link_new(cwd, name)
     absolute_path = absolute_path,
     link_to = link_to,
     open = open,
+    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
@@ -98,20 +99,9 @@ local function should_group(cwd, dirs, files, links)
   return false
 end
 
-local function gen_ignore_check()
+local function gen_ignore_check(cwd)
+  if not cwd then cwd = luv.cwd() end
   local ignore_list = {}
-
-  local function add_toignore(content)
-    for s in content:gmatch("[^\r\n]+") do
-      -- Trim trailing / from directories.
-      s = s:gsub("/+$", "")
-      ignore_list[s] = true
-    end
-  end
-
-  if (vim.g.nvim_tree_gitignore or 0) == 1 then
-    add_toignore(git.get_gitexclude())
-  end
 
   if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
     for _, entry in pairs(vim.g.nvim_tree_ignore) do
@@ -119,15 +109,33 @@ local function gen_ignore_check()
     end
   end
 
+  ---Check if the given path should be ignored.
+  ---@param path string Absolute path
+  ---@return boolean
   return function(path)
-    local idx = path:match(".+()%.%w+$")
-    local ignore_extension
-    if idx then
-        ignore_extension = ignore_list['*'..string.sub(path, idx)]
+    local basename = utils.path_basename(path)
+
+    if not M.show_ignored then
+      if vim.g.nvim_tree_gitignore == 1 then
+        if git.should_gitignore(path) then return true end
+      end
+
+      local relpath = utils.path_relative(path, cwd)
+      if ignore_list[relpath] == true or ignore_list[basename] == true then
+        return true
+      end
+
+      local idx = path:match(".+()%.%w+$")
+      if idx then
+        if ignore_list['*'..string.sub(path, idx)] == true then return true end
+      end
     end
-    local ignore_path = not M.show_ignored and ignore_list[path] == true
-    local ignore_dotfiles = not M.show_dotfiles and path:sub(1, 1) == '.'
-    return ignore_extension or ignore_path or ignore_dotfiles
+
+    if not M.show_dotfiles then
+      if basename:sub(1, 1) == '.' then return true end
+    end
+
+    return false
   end
 end
 
@@ -160,7 +168,7 @@ function M.refresh_entries(entries, cwd, parent_node)
     if not name then break end
     num_new_entries = num_new_entries + 1
 
-    if not should_ignore(name) then
+    if not should_ignore(utils.path_join({cwd, name})) then
       if t == 'directory' then
         table.insert(dirs, name)
         new_entries[name] = true
@@ -212,6 +220,7 @@ function M.refresh_entries(entries, cwd, parent_node)
       if not named_entries[name] then
         local n = e.fn(cwd, name)
         if e.check(n.link_to, n.absolute_path) then
+          git.invalidate_gitignore_map(n.absolute_path)
           idx = 1
           if prev then
             idx = entries_idx[prev] + 1
@@ -249,7 +258,7 @@ function M.populate(entries, cwd, parent_node)
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
 
-    if not should_ignore(name) then
+    if not should_ignore(utils.path_join({cwd, name})) then
       if t == 'directory' then
         table.insert(dirs, name)
       elseif t == 'file' then
@@ -269,9 +278,10 @@ function M.populate(entries, cwd, parent_node)
       if dirs[1] then child_node = dir_new(cwd, dirs[1]) end
       if links[1] then child_node = link_new(cwd, links[1]) end
       if luv.fs_access(child_node.absolute_path, 'R') then
-          parent_node.group_next = child_node
-          M.populate(entries, child_node.absolute_path, child_node)
-          return
+        parent_node.group_next = child_node
+        child_node.git_status = parent_node.git_status
+        M.populate(entries, child_node.absolute_path, child_node)
+        return
       end
     end
   end
@@ -299,7 +309,7 @@ function M.populate(entries, cwd, parent_node)
     return
   end
 
-  git.update_status(entries, cwd)
+  git.update_status(entries, cwd, parent_node)
 end
 
 return M

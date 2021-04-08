@@ -56,7 +56,8 @@ let g:nvim_tree_icons = {
     \   'unmerged': "",
     \   'renamed': "➜",
     \   'untracked': "★",
-    \   'deleted': ""
+    \   'deleted': "",
+    \   'ignored': "◌"
     \   },
     \ 'folder': {
     \   'default': "",

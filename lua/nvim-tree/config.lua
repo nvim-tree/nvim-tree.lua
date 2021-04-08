@@ -11,7 +11,8 @@ function M.get_icon_state()
       unmerged = "",
       renamed = "➜",
       untracked = "★",
-      deleted = ""
+      deleted = "",
+      ignored = "◌"
     },
     folder_icons = {
       default = "",

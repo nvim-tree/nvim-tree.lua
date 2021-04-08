@@ -46,6 +46,8 @@ M.Tree = {
 
 function M.init(with_open, with_render)
   M.Tree.cwd = luv.cwd()
+  git.git_root(M.Tree.cwd)
+  git.update_gitignore_map_sync()
   populate(M.Tree.entries, M.Tree.cwd)
 
   local stat = luv.fs_stat(M.Tree.cwd)
@@ -130,16 +132,22 @@ function M.unroll_dir(node)
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
+    git.git_root(node.absolute_path)
+    git.update_gitignore_map_sync()
     populate(node.entries, node.link_to or node.absolute_path, node)
     renderer.draw(M.Tree, true)
   end
 end
 
-local function refresh_git(node)
-  git.update_status(node.entries, node.absolute_path or node.cwd)
+local function refresh_git(node, update_gitignore)
+  if not node then node = M.Tree end
+  if update_gitignore == nil or update_gitignore == true then
+    git.update_gitignore_map_sync()
+  end
+  git.update_status(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in pairs(node.entries) do
-    if entry.entries ~= nil then
-      refresh_git(entry)
+    if entry.entries and #entry.entries > 0 then
+      refresh_git(entry, false)
     end
   end
 end
