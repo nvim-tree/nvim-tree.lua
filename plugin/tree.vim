@@ -13,7 +13,7 @@ augroup NvimTree
     silent! autocmd! FileExplorer *
   endif
   au BufWritePost * lua require'nvim-tree'.refresh()
-  if get(g:, 'nvim_tree_lint_lsp', 0) == 1
+  if get(g:, 'nvim_tree_lsp_diagnostics', 0) == 1
     au BufWritePost * lua require'nvim-tree.diagnostics'.update()
   endif
   au BufEnter * lua require'nvim-tree'.buf_enter()

@@ -34,6 +34,7 @@ local function get_hl_groups()
     Symlink = { gui = 'bold', fg = colors.cyan },
     FolderIcon = { fg = '#8094b4' },
     RootFolder = { fg = colors.purple },
+    LspDiagnostics = { gui = 'underline' },
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
@@ -74,8 +75,9 @@ function M.setup()
   end
   local higlight_groups = get_hl_groups()
   for k, d in pairs(higlight_groups) do
-    local gui = d.gui or 'NONE'
-    api.nvim_command('hi def NvimTree'..k..' gui='..gui..' guifg='..d.fg)
+    local gui = d.gui and ' gui='..d.gui or ''
+    local fg = d.fg and ' guifg='..d.fg or ''
+    api.nvim_command('hi def NvimTree'..k..gui..fg)
   end
 
   local links = get_links()
