@@ -304,13 +304,6 @@ local function update_draw_data(tree, depth, markers)
       if vim.g.nvim_tree_highlight_opened_files then
         if vim.fn.bufloaded(node.absolute_path) > 0 then
           table.insert(hl, {'NvimTreeOpenedFile', index, offset, offset+#icon })
-        else
-          for i, value in pairs(hl) do
-            if value[1] == 'NvimTreeOpenedFile' and value[2] == index then
-              table.remove(hl, i)
-              break
-            end
-          end
         end
       end
 
