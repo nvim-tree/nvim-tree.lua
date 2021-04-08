@@ -155,22 +155,19 @@ local function refresh_nodes(node)
 end
 
 function M.refresh_tree()
-  vim.schedule(
-    function ()
-      if vim.v.exiting ~= nil then return end
+  if vim.v.exiting ~= nil then return end
 
-      refresh_nodes(M.Tree)
+  refresh_nodes(M.Tree)
 
-      if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1 then
-        git.reload_roots()
-        refresh_git(M.Tree)
-      end
-      if M.win_open() then
-        renderer.draw(M.Tree, true)
-      else
-        M.Tree.loaded = false
-      end
-    end)
+  if config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1 then
+    git.reload_roots()
+    refresh_git(M.Tree)
+  end
+  if M.win_open() then
+    renderer.draw(M.Tree, true)
+  else
+    M.Tree.loaded = false
+  end
 end
 
 function M.set_index_and_redraw(fname)
