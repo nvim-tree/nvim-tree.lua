@@ -106,8 +106,6 @@ function M.on_keypress(mode)
   else
     lib.open_file(mode, node.absolute_path)
   end
-
-  renderer.draw(lib.Tree, true)
 end
 
 function M.refresh()
