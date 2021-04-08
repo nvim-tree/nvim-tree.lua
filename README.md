@@ -36,6 +36,7 @@ let g:nvim_tree_disable_netrw = 0 "1 by default, disables netrw
 let g:nvim_tree_hijack_netrw = 0 "1 by default, prevents netrw from automatically opening when opening directories (but lets you keep its other utilities)
 let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
 let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
+let g:nvim_tree_lsp_diagnostics = 1 "0 by default, will show lsp diagnostics in the tree. See :help nvim_tree_lsp_diagnostics
 let g:nvim_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
@@ -173,6 +174,7 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 - Change directory with `.`
 - Add / Rename / delete files
 - Git integration (icons and file highlight)
+- Lsp diagnostics integration (file highlight)
 - Indent markers
 - Mouse support
 - It's fast

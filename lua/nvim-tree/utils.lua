@@ -64,4 +64,22 @@ function M.path_remove_trailing(path)
 end
 
 M.path_separator = path_separator
+
+-- get the node from the tree that matches the predicate
+-- @param nodes list of node
+-- @param fn    function(node): boolean
+function M.find_node(nodes, fn)
+  local i = 1
+  for _, node in ipairs(nodes) do
+    if fn(node) then return node, i end
+    if node.open and #node.entries > 0 then
+      local n, idx = M.find_node(node.entries, fn)
+      i = i + idx
+      if n then return n, i end
+    end
+    i = i + 1
+  end
+  return nil, i
+end
+
 return M
