@@ -14,9 +14,9 @@ function M.toggle()
     lib.close()
   else
     if vim.g.nvim_tree_follow == 1 then
-      vim.schedule(function() M.find_file(true) end)
+      M.find_file(true)
     else
-      vim.schedule(lib.open)
+      lib.open()
     end
   end
 end
@@ -28,17 +28,12 @@ function M.close()
   end
 end
 
-function M.open(cb)
-  vim.schedule(
-    function()
-      if not lib.win_open() then
-        lib.open()
-      else
-        lib.set_target_win()
-      end
-      pcall(cb)
-    end
-  )
+function M.open()
+  if not lib.win_open() then
+    lib.open()
+  else
+    lib.set_target_win()
+  end
 end
 
 local winopts = config.window_options()
@@ -46,9 +41,8 @@ function M.tab_change()
   -- we need defer_fn to make sure we close/open after we enter the tab
   vim.defer_fn(function()
     if M.close() then
-      M.open(function()
-        api.nvim_command('wincmd '..winopts.open_command)
-      end)
+      M.open()
+      api.nvim_command('wincmd '..winopts.open_command)
     end
   end, 1)
 end
@@ -82,7 +76,7 @@ local keypress_funcs = {
   prev_git_item = gen_go_to('prev_git_item'),
   next_git_item = gen_go_to('next_git_item'),
   dir_up = lib.dir_up,
-  close = function(node) M.close() end,
+  close = function() M.close() end,
   preview = function(node)
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
@@ -153,13 +147,11 @@ function M.find_file(with_open)
   local filepath = vim.fn.fnamemodify(bufname, ':p')
 
   if with_open then
-    return M.open(
-      function()
-        lib.win_focus()
-        if not is_file_readable(filepath) then return end
-        lib.set_index_and_redraw(filepath)
-      end
-    )
+    M.open()
+    lib.win_focus()
+    if not is_file_readable(filepath) then return end
+    lib.set_index_and_redraw(filepath)
+    return
   end
 
   if not is_file_readable(filepath) then return end
