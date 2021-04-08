@@ -1,6 +1,7 @@
 local api = vim.api
 local luv = vim.loop
 
+local debug = require'nvim-tree.debug'
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
@@ -25,6 +26,7 @@ M.Tree = {
 }
 
 function M.init(with_open, with_reload)
+  debug.mark("init")
   M.Tree.cwd = luv.cwd()
   git.git_root(M.Tree.cwd)
   populate(M.Tree.entries, M.Tree.cwd)
@@ -45,9 +47,11 @@ function M.init(with_open, with_reload)
     events._dispatch_ready()
     first_init_done = true
   end
+  debug.debug("init")
 end
 
 local function get_node_at_line(line)
+  debug.mark("get_node_at_line")
   local index = 2
   local function iter(entries)
     for _, node in ipairs(entries) do
@@ -61,10 +65,12 @@ local function get_node_at_line(line)
       end
     end
   end
+  debug.debug("get_node_at_line")
   return iter
 end
 
 local function get_line_from_node(node, find_parent)
+  debug.mark("get_line_from_node")
   local node_path = node.absolute_path
 
   if find_parent then
@@ -85,10 +91,12 @@ local function get_line_from_node(node, find_parent)
       end
     end
   end
+  debug.debug("get_line_from_node")
   return iter
 end
 
 function M.get_node_at_cursor()
+  debug.mark("get_node_at_cursor")
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if line == 1 and M.Tree.cwd ~= "/" then
@@ -98,19 +106,23 @@ function M.get_node_at_cursor()
   if M.Tree.cwd == "/" then
     line = line + 1
   end
+  debug.debug("get_node_at_cursor")
   return get_node_at_line(line)(M.Tree.entries)
 end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 function M.get_last_group_node(node)
+  debug.mark("get_last_group_node")
   local next = node
   while next.group_next do
     next = next.group_next
   end
+  debug.debug("get_last_group_node")
   return next
 end
 
 function M.unroll_dir(node)
+  debug.mark("unroll_dir")
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.entries > 0 then
@@ -125,9 +137,11 @@ function M.unroll_dir(node)
   if vim.g.nvim_tree_lsp_diagnostics == 1 then
     diagnostics.update()
   end
+  debug.debug("unroll_dir")
 end
 
 local function refresh_git(node)
+  debug.mark("git")
   if not node then node = M.Tree end
   git.update_status(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in pairs(node.entries) do
@@ -135,19 +149,23 @@ local function refresh_git(node)
       refresh_git(entry)
     end
   end
+  debug.debug("git")
 end
 
 -- TODO update only entries where directory has changed
 local function refresh_nodes(node)
+  debug.mark("refresh_nodes")
   refresh_entries(node.entries, node.absolute_path or node.cwd, node)
   for _, entry in ipairs(node.entries) do
     if entry.entries and entry.open then
       refresh_nodes(entry)
     end
   end
+  debug.debug("refresh_nodes")
 end
 
 function M.refresh_tree()
+  debug.mark("refresh_tree")
   if vim.v.exiting ~= vim.NIL then return end
 
   refresh_nodes(M.Tree)
@@ -166,9 +184,11 @@ function M.refresh_tree()
   else
     M.Tree.loaded = false
   end
+  debug.debug("refresh_tree")
 end
 
 function M.set_index_and_redraw(fname)
+  debug.mark("set_index_and_redraw")
   local i
   if M.Tree.cwd == '/' then
     i = 0
@@ -205,12 +225,14 @@ function M.set_index_and_redraw(fname)
   local index = iter(M.Tree.entries)
   if not view.win_open() then
     M.Tree.loaded = false
+    debug.debug("set_index_and_redraw")
     return
   end
   renderer.draw(M.Tree, reload)
   if index then
     view.set_cursor({index, 0})
   end
+  debug.debug("set_index_and_redraw")
 end
 
 ---Get user to pick a window. Selectable windows are all windows in the current
@@ -418,6 +440,7 @@ function M.set_target_win()
 end
 
 function M.open()
+  debug.mark("open")
   M.set_target_win()
 
   view.open()
