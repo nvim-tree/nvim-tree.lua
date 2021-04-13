@@ -95,6 +95,11 @@ to render the icons. The `icons` key can only work if `nvim-web-devicons`
 is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
 
+|g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
+
+Can be `0` or `1`. When `1`, will highlight icons for opened files and directories
+Default is 0
+
 |g:nvim_tree_icons|                                *g:nvim_tree_icons*
 
 You can set icons for:
@@ -361,7 +366,9 @@ NvimTreeFolderName
 NvimTreeRootFolder
 NvimTreeFolderIcon
 NvimTreeEmptyFolderName
+NvimTreeOpenedFolderName
 NvimTreeExecFile
+NvimTreeOpenedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeMarkdownFile

@@ -274,6 +274,8 @@ function M.open_file(mode, filename)
   if vim.g.nvim_tree_quit_on_open == 1 and mode ~= 'preview' then
     M.close()
   end
+
+  renderer.draw(M.Tree, true)
 end
 
 function M.change_dir(foldername)
