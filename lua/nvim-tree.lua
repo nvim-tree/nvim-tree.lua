@@ -5,13 +5,15 @@ local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local utils = require'nvim-tree.utils'
+local view = require'nvim-tree.view'
+
 local api = vim.api
 
 local M = {}
 
 function M.toggle()
-  if lib.win_open() then
-    lib.close()
+  if view.win_open() then
+    view.close()
   else
     if vim.g.nvim_tree_follow == 1 then
       M.find_file(true)
@@ -22,27 +24,27 @@ function M.toggle()
 end
 
 function M.close()
-  if lib.win_open() then
-    lib.close()
+  if view.win_open() then
+    view.close()
     return true
   end
 end
 
 function M.open()
-  if not lib.win_open() then
+  if not view.win_open() then
     lib.open()
   else
     lib.set_target_win()
   end
 end
 
-local winopts = config.window_options()
+-- this is completely broken, but i'm not sure why
+-- this is definitely upstream related, but i could find a workaround
 function M.tab_change()
   -- we need defer_fn to make sure we close/open after we enter the tab
   vim.defer_fn(function()
     if M.close() then
       M.open()
-      api.nvim_command('wincmd '..winopts.open_command)
     end
   end, 1)
 end
@@ -148,7 +150,7 @@ function M.find_file(with_open)
 
   if with_open then
     M.open()
-    lib.win_focus()
+    view.focus()
     if not is_file_readable(filepath) then return end
     lib.set_index_and_redraw(filepath)
     return
@@ -194,6 +196,7 @@ function M.reset_highlight()
   renderer.render_hl(lib.Tree.bufnr)
 end
 
+view.setup()
 colors.setup()
 vim.defer_fn(M.on_enter, 1)
 
