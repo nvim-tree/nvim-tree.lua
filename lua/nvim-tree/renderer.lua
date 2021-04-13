@@ -1,5 +1,6 @@
 local config = require'nvim-tree.config'
 local utils = require'nvim-tree.utils'
+local view = require'nvim-tree.view'
 
 local api = vim.api
 
@@ -315,14 +316,12 @@ end
 
 local M = {}
 
-local function is_bufnr_valid(bufnr)
-  return vim.fn.bufexists(bufnr) == 1 and vim.fn.bufloaded(bufnr) == 1
-end
-
 function M.draw(tree, reload)
-  if not is_bufnr_valid(tree.bufnr) then return end
-  api.nvim_buf_set_option(tree.bufnr, 'modifiable', true)
-  local cursor = api.nvim_win_get_cursor(tree.winnr())
+  api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
+  local cursor
+  if view.win_open() then
+    cursor = api.nvim_win_get_cursor(view.View.winnr)
+  end
   if reload then
     index = 0
     lines = {}
@@ -330,17 +329,18 @@ function M.draw(tree, reload)
     update_draw_data(tree, 0, {})
   end
 
-  api.nvim_buf_set_lines(tree.bufnr, 0, -1, false, lines)
-  M.render_hl(tree.bufnr)
-  if #lines >= cursor[1] then
-    api.nvim_win_set_cursor(tree.winnr(), cursor)
+  api.nvim_buf_set_lines(view.View.bufnr, 0, -1, false, lines)
+  M.render_hl(view.View.bufnr)
+  if cursor and #lines >= cursor[1] then
+    api.nvim_win_set_cursor(view.View.winnr, cursor)
   end
-  api.nvim_buf_set_option(tree.bufnr, 'modifiable', false)
-  api.nvim_win_set_option(tree.winnr(), 'wrap', false)
+  api.nvim_buf_set_option(view.View.bufnr, 'modifiable', false)
+  if cursor then
+    api.nvim_win_set_option(view.View.winnr, 'wrap', false)
+  end
 end
 
 function M.render_hl(bufnr)
-  if not is_bufnr_valid(bufnr) then return end
   api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
   for _, data in ipairs(hl) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])

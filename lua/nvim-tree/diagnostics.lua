@@ -21,7 +21,6 @@ local function highlight_node(node, linenr)
   a.nvim_buf_add_highlight(buf, -1, 'NvimTreeLspDiagnostics', linenr, starts_at, -1)
 end
 
-
 function M.update()
   local buffer_severity = {}
 

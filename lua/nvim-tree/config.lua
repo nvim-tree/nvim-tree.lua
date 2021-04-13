@@ -57,52 +57,13 @@ function M.nvim_tree_callback(callback_name)
   return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
 end
 
-function M.get_bindings()
-  local keybindings = vim.g.nvim_tree_bindings or {}
-  return vim.tbl_extend('force', {
-    ["<CR>"]           = M.nvim_tree_callback("edit"),
-    ["o"]              = M.nvim_tree_callback("edit"),
-    ["<2-LeftMouse>"]  = M.nvim_tree_callback("edit"),
-    ["<2-RightMouse>"] = M.nvim_tree_callback("cd"),
-    ["<C-]>"]          = M.nvim_tree_callback("cd"),
-    ["<C-v>"]          = M.nvim_tree_callback("vsplit"),
-    ["<C-x>"]          = M.nvim_tree_callback("split"),
-    ["<C-t>"]          = M.nvim_tree_callback("tabnew"),
-    ["<"]              = M.nvim_tree_callback("prev_sibling"),
-    [">"]              = M.nvim_tree_callback("next_sibling"),
-    ["P"]              = M.nvim_tree_callback("parent_node"),
-    ["<BS>"]           = M.nvim_tree_callback("close_node"),
-    ["<S-CR>"]         = M.nvim_tree_callback("close_node"),
-    ["<Tab>"]          = M.nvim_tree_callback("preview"),
-    ["K"]              = M.nvim_tree_callback("first_sibling"),
-    ["J"]              = M.nvim_tree_callback("last_sibling"),
-    ["I"]              = M.nvim_tree_callback("toggle_ignored"),
-    ["H"]              = M.nvim_tree_callback("toggle_dotfiles"),
-    ["R"]              = M.nvim_tree_callback("refresh"),
-    ["a"]              = M.nvim_tree_callback("create"),
-    ["d"]              = M.nvim_tree_callback("remove"),
-    ["r"]              = M.nvim_tree_callback("rename"),
-    ["<C-r>"]          = M.nvim_tree_callback("full_rename"),
-    ["x"]              = M.nvim_tree_callback("cut"),
-    ["c"]              = M.nvim_tree_callback("copy"),
-    ["p"]              = M.nvim_tree_callback("paste"),
-    ["[c"]             = M.nvim_tree_callback("prev_git_item"),
-    ["]c"]             = M.nvim_tree_callback("next_git_item"),
-    ["-"]              = M.nvim_tree_callback("dir_up"),
-    ["q"]              = M.nvim_tree_callback("close"),
-  }, keybindings)
-end
-
 function M.window_options()
   local opts = {}
-  opts.winhl = 'EndOfBuffer:NvimTreeEndOfBuffer,Normal:NvimTreeNormal,CursorLine:NvimTreeCursorLine,VertSplit:NvimTreeVertSplit'
   if vim.g.nvim_tree_side == 'right' then
-    opts.side = 'L'
     opts.open_command = 'h'
     opts.preview_command = 'l'
     opts.split_command = 'nosplitright'
   else
-    opts.side = 'H'
     opts.open_command = 'l'
     opts.preview_command = 'h'
     opts.split_command = 'splitright'
