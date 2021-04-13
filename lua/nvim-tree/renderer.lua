@@ -261,10 +261,8 @@ local function update_draw_data(tree, depth, markers)
         next = next.group_next
       end
       if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
+      if node.open then folder_hl = "NvimTreeOpenedFolderName" end
       set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
-      if vim.g.nvim_tree_highlight_opened_files and node.open then
-        set_folder_hl(index, offset, 0, #icon, "NvimTreeOpenedFolderName")
-      end
       if git_hl then
         set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
       end
