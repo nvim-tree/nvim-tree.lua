@@ -54,7 +54,7 @@ local function get_links()
   return {
     FolderName = 'Directory',
     EmptyFolderName = 'Directory',
-    OpenedFolderName = 'NvimTreeOpenedFile',
+    OpenedFolderName = 'Directory',
     Normal = 'Normal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
