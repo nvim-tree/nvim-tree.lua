@@ -138,6 +138,7 @@ function M.open()
     a.nvim_win_set_option(M.View.winnr, k, v)
   end
   a.nvim_win_set_buf(M.View.winnr, M.View.bufnr)
+  vim.cmd ":wincmd ="
 end
 
 function M.close()
