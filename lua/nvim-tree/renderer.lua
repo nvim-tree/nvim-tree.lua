@@ -318,7 +318,10 @@ local M = {}
 
 function M.draw(tree, reload)
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
-  local cursor = api.nvim_win_get_cursor(view.View.winnr)
+  local cursor
+  if view.win_open() then
+    cursor = api.nvim_win_get_cursor(view.View.winnr)
+  end
   if reload then
     index = 0
     lines = {}
@@ -328,11 +331,13 @@ function M.draw(tree, reload)
 
   api.nvim_buf_set_lines(view.View.bufnr, 0, -1, false, lines)
   M.render_hl(view.View.bufnr)
-  if #lines >= cursor[1] then
+  if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.View.winnr, cursor)
   end
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', false)
-  api.nvim_win_set_option(view.View.winnr, 'wrap', false)
+  if cursor then
+    api.nvim_win_set_option(view.View.winnr, 'wrap', false)
+  end
 end
 
 function M.render_hl(bufnr)

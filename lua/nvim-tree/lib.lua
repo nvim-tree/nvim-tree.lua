@@ -21,7 +21,7 @@ M.Tree = {
   target_winid = nil,
 }
 
-function M.init(with_open, with_render)
+function M.init(with_open, with_reload)
   M.Tree.cwd = luv.cwd()
   git.git_root(M.Tree.cwd)
   git.update_gitignore_map_sync()
@@ -34,7 +34,7 @@ function M.init(with_open, with_render)
     M.open()
   end
 
-  if with_render then
+  if with_reload then
     renderer.draw(M.Tree, true)
     M.Tree.loaded = true
   end
@@ -258,7 +258,7 @@ function M.change_dir(foldername)
 
   api.nvim_command('cd '..foldername)
   M.Tree.entries = {}
-  M.init(false, view.View.bufnr ~= nil)
+  M.init(false, true)
 end
 
 function M.set_target_win()
