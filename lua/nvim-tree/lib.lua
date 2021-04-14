@@ -206,7 +206,7 @@ function M.open_file(mode, filename)
   local splitcmd = window_opts.split_command == 'splitright' and 'vsplit' or 'split'
   local ecmd = target_bufnr and string.format('%dwindo %s', target_winnr, mode == 'preview' and 'edit' or mode) or (mode == 'preview' and 'edit' or mode)
 
-  api.nvim_command('noautocmd wincmd '..window_opts.open_command)
+  api.nvim_command('wincmd '..window_opts.open_command)
 
   local found = false
   for _, win in ipairs(api.nvim_list_wins()) do
