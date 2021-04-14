@@ -14,7 +14,7 @@ local function get_severity(diagnostics)
 end
 
 local function highlight_node(node, linenr)
-  local buf = require'nvim-tree.lib'.Tree.bufnr
+  local buf = require'nvim-tree.view'.View.bufnr
   if not vim.fn.bufexists(buf) or not vim.fn.bufloaded(buf) then return end
   local line = a.nvim_buf_get_lines(buf, linenr, linenr+1, false)[1]
   local starts_at = vim.fn.stridx(line, node.name)
