@@ -30,6 +30,7 @@ M.View = {
     buftype = 'nofile';
     modifiable = false;
     filetype = 'NvimTree';
+    bufhidden = 'hide';
   },
   bindings = {
     ["<CR>"]           = M.nvim_tree_callback("edit"),
@@ -67,11 +68,6 @@ M.View = {
 
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
-  M.View.bindings = vim.tbl_extend(
-    'force',
-    M.View.bindings,
-    vim.g.nvim_tree_bindings or {}
-  )
   M.View.auto_resize = vim.g.nvim_tree_auto_resize or M.View.auto_resize
   M.View.side = vim.g.nvim_tree_side or M.View.side
   M.View.width = vim.g.nvim_tree_width or M.View.width
@@ -83,6 +79,11 @@ function M.setup()
   a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
 
   if not vim.g.nvim_tree_disable_keybindings then
+    M.View.bindings = vim.tbl_extend(
+      'force',
+      M.View.bindings,
+      vim.g.nvim_tree_bindings or {}
+    )
     for key, cb in pairs(M.View.bindings) do
       a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true })
     end
