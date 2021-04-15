@@ -335,7 +335,7 @@ function M.parent_node(node, should_close)
     elseif should_close then
       parent.open = false
     end
-    api.nvim_win_set_cursor(M.Tree.winnr(), {line, 0})
+    api.nvim_win_set_cursor(view.View.winnr, {line, 0})
   end
   renderer.draw(M.Tree, true)
 end
