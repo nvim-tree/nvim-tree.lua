@@ -130,7 +130,7 @@ local move_tbl = {
 }
 
 function M.open()
-  a.nvim_command("vsplit")
+  a.nvim_command("vnew")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..M.View.width)
@@ -138,7 +138,8 @@ function M.open()
   for k, v in pairs(M.View.winopts) do
     a.nvim_win_set_option(M.View.winnr, k, v)
   end
-  a.nvim_win_set_buf(M.View.winnr, M.View.bufnr)
+
+  vim.cmd("buffer "..M.View.bufnr)
   vim.cmd ":wincmd ="
 end
 
