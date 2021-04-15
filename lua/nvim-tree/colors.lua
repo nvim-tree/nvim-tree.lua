@@ -34,7 +34,6 @@ local function get_hl_groups()
     Symlink = { gui = 'bold', fg = colors.cyan },
     FolderIcon = { fg = '#8094b4' },
     RootFolder = { fg = colors.purple },
-    LspDiagnostics = { gui = 'underline' },
 
     ExecFile = { gui = 'bold', fg = colors.green },
     SpecialFile = { gui = 'bold,underline', fg = colors.yellow },
@@ -68,6 +67,10 @@ local function get_links()
     FileDeleted = 'NvimTreeGitDeleted',
     Popup = 'Normal',
     GitIgnored = 'Comment',
+    LspDiagnosticsError = "LspDiagnosticsDefaultError",
+    LspDiagnosticsWarning = "LspDiagnosticsDefaultWarning",
+    LspDiagnosticsInformation = "LspDiagnosticsDefaultInformation",
+    LspDiagnosticsHint = "LspDiagnosticsDefaultHint",
   }
 end
 
