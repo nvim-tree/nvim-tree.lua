@@ -454,6 +454,14 @@ For example, registering a handler for when a node is renamed is done like this:
 ==============================================================================
 Lua module: nvim-tree.events                           *nvim-tree.events*
 
+                                     *nvim-tree.events.on_nvim_tree_ready()*
+on_nvim_tree_ready({handler})
+                Registers a handler for when NvimTree has been initialized.
+
+                Parameters: ~
+                    {handler}    (function) Handler function, with the
+                                 signature `function()`.
+
                                      *nvim-tree.events.on_node_renamed()*
 on_node_renamed({handler})
                 Registers a handler for when a node is renamed.

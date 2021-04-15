@@ -3,6 +3,7 @@ local M = {}
 local global_handlers = {}
 
 local Event = {
+  Ready = 'Ready',
   NodeRenamed = 'NodeRenamed',
   FileCreated = 'FileCreated',
   FileRemoved = 'FileRemoved',
@@ -31,6 +32,11 @@ local function dispatch(event_name, payload)
 end
 
 --@private
+function M._dispatch_ready()
+  dispatch(Event.Ready)
+end
+
+--@private
 function M._dispatch_node_renamed(old_name, new_name)
   dispatch(Event.NodeRenamed, {old_name=old_name, new_name=new_name})
 end
@@ -53,6 +59,12 @@ end
 --@private
 function M._dispatch_folder_removed(folder_name)
   dispatch(Event.FolderRemoved, {folder_name=folder_name})
+end
+
+--Registers a handler for the Ready event.
+--@param handler (function) Handler with the signature `function()`
+function M.on_nvim_tree_ready(handler)
+  register_handler(Event.Ready, handler)
 end
 
 --Registers a handler for the NodeRenamed event.
