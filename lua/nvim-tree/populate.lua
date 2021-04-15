@@ -14,7 +14,6 @@ local utils = require'nvim-tree.utils'
 local path_to_matching_str = utils.path_to_matching_str
 
 local function dir_new(cwd, name)
-
   local absolute_path = utils.path_join({cwd, name})
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)

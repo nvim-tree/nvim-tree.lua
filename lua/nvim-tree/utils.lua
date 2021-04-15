@@ -76,8 +76,9 @@ function M.find_node(nodes, fn)
       local n, idx = M.find_node(node.entries, fn)
       i = i + idx
       if n then return n, i end
+    else
+      i = i + 1
     end
-    i = i + 1
   end
   return nil, i
 end
