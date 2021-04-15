@@ -130,7 +130,7 @@ local move_tbl = {
 }
 
 function M.open()
-  a.nvim_command("vnew")
+  a.nvim_command("vsp")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..M.View.width)
