@@ -4,6 +4,7 @@ local luv = vim.loop
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
+local diagnostics = require'nvim-tree.diagnostics'
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local populate = pops.populate
@@ -50,6 +51,10 @@ function M.init(with_open, with_render)
   git.update_gitignore_map_sync()
   populate(M.Tree.entries, M.Tree.cwd)
 
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+    diagnostics.update()
+  end
+
   local stat = luv.fs_stat(M.Tree.cwd)
   M.Tree.last_modified = stat.mtime.sec
 
@@ -61,6 +66,8 @@ function M.init(with_open, with_render)
     renderer.draw(M.Tree, true)
     M.Tree.loaded = true
   end
+
+  vim.g.nvim_tree_ready = 1
 end
 
 local function get_node_at_line(line)
@@ -135,6 +142,11 @@ function M.unroll_dir(node)
     git.git_root(node.absolute_path)
     git.update_gitignore_map_sync()
     populate(node.entries, node.link_to or node.absolute_path, node)
+
+    if vim.g.nvim_tree_lsp_diagnostics == 1 then
+      diagnostics.update()
+    end
+
     renderer.draw(M.Tree, true)
   end
 end
@@ -171,6 +183,11 @@ function M.refresh_tree()
     git.reload_roots()
     refresh_git(M.Tree)
   end
+
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+    diagnostics.update()
+  end
+
   if M.win_open() then
     renderer.draw(M.Tree, true)
   else

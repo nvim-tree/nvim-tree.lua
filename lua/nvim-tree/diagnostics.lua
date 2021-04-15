@@ -18,7 +18,9 @@ local function highlight_node(node, linenr)
   if not vim.fn.bufexists(buf) or not vim.fn.bufloaded(buf) then return end
   local line = a.nvim_buf_get_lines(buf, linenr, linenr+1, false)[1]
   local starts_at = vim.fn.stridx(line, node.name)
-  a.nvim_buf_add_highlight(buf, -1, 'NvimTreeLspDiagnostics', linenr, starts_at, -1)
+  if starts_at ~= -1 then
+    a.nvim_buf_add_highlight(buf, -1, 'NvimTreeLspDiagnostics', linenr, starts_at, -1)
+  end
 end
 
 
@@ -26,10 +28,12 @@ function M.update()
   local buffer_severity = {}
 
   for buf, diagnostics in pairs(get_diagnostics()) do
-    local bufname = a.nvim_buf_get_name(buf)
-    if not buffer_severity[bufname] then
-      local severity = get_severity(diagnostics)
-      buffer_severity[bufname] = severity
+    if a.nvim_buf_is_valid(buf) then
+      local bufname = a.nvim_buf_get_name(buf)
+      if not buffer_severity[bufname] then
+        local severity = get_severity(diagnostics)
+        buffer_severity[bufname] = severity
+      end
     end
   end
 
