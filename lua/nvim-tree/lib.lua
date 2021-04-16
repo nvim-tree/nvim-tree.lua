@@ -43,8 +43,6 @@ function M.init(with_open, with_reload)
     renderer.draw(M.Tree, true)
     M.Tree.loaded = true
   end
-
-  vim.g.nvim_tree_ready = 1
 end
 
 local function get_node_at_line(line)
