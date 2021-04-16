@@ -7,6 +7,7 @@ local git = require'nvim-tree.git'
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
+local events = require'nvim-tree.events'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
@@ -38,6 +39,8 @@ function M.init(with_open, with_reload)
     renderer.draw(M.Tree, true)
     M.Tree.loaded = true
   end
+
+  events._dispatch_ready()
 end
 
 local function get_node_at_line(line)
