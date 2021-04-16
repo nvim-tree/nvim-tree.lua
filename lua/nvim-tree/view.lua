@@ -77,6 +77,24 @@ local function find_rogue_buffer()
   return nil
 end
 
+---Check if the tree buffer is valid. The buffer is only valid if it exists and
+---hasn't been deleted or wiped.
+---@return boolean
+local function is_buf_valid()
+  local success, valid = pcall(function ()
+    return (
+      a.nvim_buf_is_valid(M.View.bufnr)
+      and a.nvim_buf_get_var(M.View.bufnr, "nvim_tree_buffer_ready") == 1
+      )
+  end)
+
+  if not success then
+    return false
+  else
+    return valid
+  end
+end
+
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
   M.View.auto_resize = vim.g.nvim_tree_auto_resize or M.View.auto_resize
@@ -96,6 +114,8 @@ function M.setup()
       a.nvim_command("bw " .. bn)
     end
   end
+
+  a.nvim_buf_set_var(M.View.bufnr, "nvim_tree_buffer_ready", 1)
 
   for k, v in pairs(M.View.bufopts) do
     a.nvim_buf_set_option(M.View.bufnr, k, v)
@@ -153,7 +173,7 @@ local move_tbl = {
 }
 
 function M.open()
-  if not a.nvim_buf_is_valid(M.View.bufnr) then
+  if not is_buf_valid() then
     M.setup()
   end
 
