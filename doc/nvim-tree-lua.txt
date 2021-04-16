@@ -174,62 +174,76 @@ Can be `0` or `1`. When `1`, will disable all keybindings by the plugin.
 |g:nvim_tree_bindings| as well as default bindings will not take effect.
 Default is 0
 
-|g:nvim_tree_indent_markers|                       *g:nvim_tree_indent_markers*
+|g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
 
 Can be `0` or `1`. When `1`, will display indent markers when folders are open
 Default is 0
 
-|g:nvim_tree_hide_dotfiles|			*g:nvim_tree_hide_dotfiles*
+|g:nvim_tree_hide_dotfiles|                    *g:nvim_tree_hide_dotfiles*
 
 Can be `0` or `1`. When `1`, will hide dotfiles, files or folders which start
 with the `.` character.
 Default is 0
 
-|g:nvim_tree_root_folder_modifier|		*g:nvim_tree_root_folder_modifier*
+|g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
 
 In what format to show root folder. See `:help filename-modifiers` for
 available options.
 Default is `:~`
 
-|g:nvim_tree_tab_open|		                *g:nvim_tree_tab_open*
+|g:nvim_tree_tab_open|		                 *g:nvim_tree_tab_open*
 
 Can be 0 or 1. When 1, will open the tree when entering a new tab if the
 tree was previously open.
 Default is 0
 
-|g:nvim_tree_width_allow_resize|		*g:nvim_tree_width_allow_resize*
+|g:nvim_tree_width_allow_resize|		     *g:nvim_tree_width_allow_resize*
 
 Can be 0 or 1. When 1, it will not resize the tree to it's original width
 when opening a new file.
 Default is 0
 
-|g:nvim_tree_hijack_netrw|		        *g:nvim_tree_hijack_netrw*
+|g:nvim_tree_hijack_netrw|		             *g:nvim_tree_hijack_netrw*
 
 Can be 0 or 1. When 1, disable netrw buffers when nvim-tree start but keeps
 existing netrw functionnalities accross buffers (like `gx`).
 1 by default.
 
-|g:nvim_tree_disable_netrw|			*g:nvim_tree_disable_netrw*
+|g:nvim_tree_disable_netrw|		             *g:nvim_tree_disable_netrw*
 
 Can be 0 or 1. When 1, completely disable netrw and all related
 functionnalities.
 1 by default.
 
-|g:nvim_tree_add_trailing|			*g:nvim_tree_add_trailing*
+|g:nvim_tree_add_trailing|			         *g:nvim_tree_add_trailing*
 
 Can be 0 or 1. When 1, appends a trailing slash to folder names.
 0 by default.
 
-|g:nvim_tree_group_empty|                         *g:nvim_tree_group_empty*
+|g:nvim_tree_group_empty|                      *g:nvim_tree_group_empty*
 
 Can be 0 or 1. When 1, folders that contain only one folder are grouped
 together. 0 by default.
 
-|g:nvim_tree_lsp_diagnostics|         *g:nvim_tree_lsp_diagnostics*
+|g:nvim_tree_lsp_diagnostics|                  *g:nvim_tree_lsp_diagnostics*
 
 Can be 0 or 1. When 1, will show nvim-lsp diagnostics in the signcolumn
 of the tree highlighted by diagnostic severity.
 Code will be executed on `LspDiagnosticsChanged`. 0 by default.
+
+|g:nvim_tree_special_files|                    *g:nvim_tree_special_files*
+
+A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
+default table is
+
+>
+    {
+      ["Cargo.toml"] = true,
+      Makefile = true,
+      ["README.md"] = true,
+      ["readme.md"] = true,
+   }
+<
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

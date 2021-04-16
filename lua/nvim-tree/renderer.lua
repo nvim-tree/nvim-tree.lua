@@ -220,7 +220,7 @@ local picture = {
   gif = true,
 }
 
-local special = {
+local special = vim.g.nvim_tree_special_files or {
   ["Cargo.toml"] = true,
   Makefile = true,
   ["README.md"] = true,
