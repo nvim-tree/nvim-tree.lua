@@ -146,7 +146,13 @@ end
 function M.close()
   if not M.win_open() then return end
   if #a.nvim_list_wins() == 1 then
-    return vim.cmd ':q!'
+    local ans = vim.fn.input(
+      '[NvimTree] this is the last open window, are you sure you want to quit nvim ? y/n: '
+    )
+    if ans == 'y' then
+      vim.cmd "q!"
+    end
+    return
   end
   a.nvim_win_hide(M.View.winnr)
 end
