@@ -28,10 +28,6 @@ function M.init(with_open, with_reload)
   git.update_gitignore_map_sync()
   populate(M.Tree.entries, M.Tree.cwd)
 
-  if vim.g.nvim_tree_lsp_diagnostics == 1 then
-    diagnostics.update()
-  end
-
   local stat = luv.fs_stat(M.Tree.cwd)
   M.Tree.last_modified = stat.mtime.sec
 
