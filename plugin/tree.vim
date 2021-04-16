@@ -14,7 +14,7 @@ augroup NvimTree
   endif
   au BufWritePost * lua require'nvim-tree'.refresh()
   if get(g:, 'nvim_tree_lsp_diagnostics', 0) == 1
-    au BufWritePost * lua require'nvim-tree.diagnostics'.update()
+    au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()
   endif
   au BufEnter * lua require'nvim-tree'.buf_enter()
   if get(g:, 'nvim_tree_auto_close') == 1

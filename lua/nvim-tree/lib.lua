@@ -4,6 +4,7 @@ local luv = vim.loop
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
+local diagnostics = require'nvim-tree.diagnostics'
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
@@ -115,6 +116,11 @@ function M.unroll_dir(node)
     git.git_root(node.absolute_path)
     git.update_gitignore_map_sync()
     populate(node.entries, node.link_to or node.absolute_path, node)
+
+    if vim.g.nvim_tree_lsp_diagnostics == 1 then
+      diagnostics.update()
+    end
+
     renderer.draw(M.Tree, true)
   end
 end
@@ -151,6 +157,11 @@ function M.refresh_tree()
     git.reload_roots()
     refresh_git(M.Tree)
   end
+
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+    diagnostics.update()
+  end
+
   if view.win_open() then
     renderer.draw(M.Tree, true)
   else

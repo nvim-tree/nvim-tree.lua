@@ -21,7 +21,13 @@ function M.get_icon_state()
       empty_open = "",
       symlink = "",
       symlink_open = "",
-    }
+    },
+    lsp = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    },
   }
 
   local user_icons = vim.g.nvim_tree_icons
@@ -41,6 +47,11 @@ function M.get_icon_state()
     for key, val in pairs(user_icons.folder or {}) do
       if icons.folder_icons[key] then
         icons.folder_icons[key] = val
+      end
+    end
+    for key, val in pairs(user_icons.lsp or {}) do
+      if icons.lsp[key] then
+        icons.lsp[key] = val
       end
     end
   end
