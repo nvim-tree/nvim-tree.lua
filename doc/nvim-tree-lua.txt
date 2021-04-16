@@ -229,7 +229,7 @@ together. 0 by default.
 
 Can be 0 or 1. When 1, will show nvim-lsp diagnostics in the signcolumn
 of the tree highlighted by diagnostic severity.
-Code will be executed on `BufWritePost`. 0 by default.
+Code will be executed on `LspDiagnosticsChanged`. 0 by default.
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

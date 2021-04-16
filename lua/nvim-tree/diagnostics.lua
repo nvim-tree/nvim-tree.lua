@@ -33,7 +33,7 @@ local signs = {}
 
 local function add_sign(linenr, severity)
   local buf = view.View.bufnr
-  if not vim.fn.bufexists(buf) or not vim.fn.bufloaded(buf) then return end
+  if not a.nvim_buf_is_valid(buf) or not a.nvim_buf_is_loaded(buf) then return end
   local sign_name = sign_names[severity][1]
   table.insert(signs, vim.fn.sign_place(1, 'NvimTreeDiagnosticSigns', sign_name, buf, { lnum = linenr+1 }))
 end
@@ -63,7 +63,7 @@ function M.update()
     signs = {}
   end
   for bufname, severity in pairs(buffer_severity) do
-    if 1 <= severity and severity <= 4 then
+    if 0 < severity and severity < 5 then
       local node, line = utils.find_node(nodes, function(node)
         return node.absolute_path == bufname
       end)
