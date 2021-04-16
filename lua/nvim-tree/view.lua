@@ -77,21 +77,22 @@ local function find_rogue_buffer()
   return nil
 end
 
----Check if the tree buffer is valid. The buffer is only valid if it exists and
----hasn't been deleted or wiped.
+---Check if the tree buffer is valid and loaded.
 ---@return boolean
 local function is_buf_valid()
-  local success, valid = pcall(function ()
-    return (
-      a.nvim_buf_is_valid(M.View.bufnr)
-      and a.nvim_buf_get_var(M.View.bufnr, "nvim_tree_buffer_ready") == 1
-      )
-  end)
+  return a.nvim_buf_is_valid(M.View.bufnr) and a.nvim_buf_is_loaded(M.View.bufnr)
+end
 
-  if not success then
-    return false
-  else
-    return valid
+---Find pre-existing NvimTree buffer, delete its windows then wipe it.
+---@private
+function M._wipe_rogue_buffer()
+  local bn = find_rogue_buffer()
+  if bn then
+    local win_ids = a.nvim_eval("win_findbuf(" .. bn .. ")")
+    for _, id in ipairs(win_ids) do
+      a.nvim_win_close(id, true)
+    end
+    a.nvim_buf_delete(bn, {})
   end
 end
 
@@ -104,18 +105,9 @@ function M.setup()
   M.View.bufnr = a.nvim_create_buf(false, false)
 
   if not pcall(a.nvim_buf_set_name, M.View.bufnr, 'NvimTree') then
-    -- Find the pre-existing NvimTree buffer, delete its windows then wipe it.
-    local bn = find_rogue_buffer()
-    if bn then
-      local win_ids = a.nvim_eval("win_findbuf(" .. bn .. ")")
-      for _, id in ipairs(win_ids) do
-        a.nvim_win_close(id, true)
-      end
-      a.nvim_command("bw " .. bn)
-    end
+    M._wipe_rogue_buffer()
+    a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
   end
-
-  a.nvim_buf_set_var(M.View.bufnr, "nvim_tree_buffer_ready", 1)
 
   for k, v in pairs(M.View.bufopts) do
     a.nvim_buf_set_option(M.View.bufnr, k, v)
