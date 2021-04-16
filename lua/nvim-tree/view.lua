@@ -11,7 +11,6 @@ M.View = {
   winnr = nil,
   width = 30,
   side = 'left',
-  auto_resize = false,
   winopts = {
     relativenumber = false,
     number = false,
@@ -98,7 +97,6 @@ end
 
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
-  M.View.auto_resize = vim.g.nvim_tree_auto_resize or M.View.auto_resize
   M.View.side = vim.g.nvim_tree_side or M.View.side
   M.View.width = vim.g.nvim_tree_width or M.View.width
 
@@ -123,6 +121,30 @@ function M.setup()
       a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true })
     end
   end
+
+  vim.cmd "au! BufWinEnter * lua require'nvim-tree.view'._prevent_buffer_override()"
+end
+
+local goto_tbl = {
+  right = 'h',
+  left = 'l',
+  top = 'j',
+  bottom = 'k',
+}
+
+function M._prevent_buffer_override()
+  local curwin = a.nvim_get_current_win()
+  local curbuf = a.nvim_win_get_buf(curwin)
+  if curwin ~= M.View.winnr or curbuf == M.View.bufnr then return end
+
+  vim.cmd("buffer "..M.View.bufnr)
+
+  if #vim.api.nvim_list_wins() < 2 then
+    vim.cmd("vsplit")
+  else
+    vim.cmd("wincmd "..goto_tbl[M.View.side])
+  end
+  vim.cmd("buffer "..curbuf)
 end
 
 function M.win_open()
@@ -150,7 +172,7 @@ function M.focus(winnr, open_if_closed)
 end
 
 function M.resize()
-  if not M.View.auto_resize then
+  if not a.nvim_win_is_valid(M.View.winnr) then
     return
   end
 

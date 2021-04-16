@@ -260,11 +260,11 @@ function M.open_file(mode, filename)
     return
   end
 
-  view.resize()
-
   if vim.g.nvim_tree_quit_on_open == 1 and mode ~= 'preview' then
     view.close()
   end
+
+  view.resize()
 
   renderer.draw(M.Tree, true)
 end
