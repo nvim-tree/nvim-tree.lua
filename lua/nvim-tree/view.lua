@@ -88,7 +88,7 @@ end
 function M._wipe_rogue_buffer()
   local bn = find_rogue_buffer()
   if bn then
-    local win_ids = a.nvim_eval("win_findbuf(" .. bn .. ")")
+    local win_ids = vim.fn.win_findbuf(bn)
     for _, id in ipairs(win_ids) do
       a.nvim_win_close(id, true)
     end
