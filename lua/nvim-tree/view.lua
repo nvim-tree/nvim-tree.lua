@@ -66,6 +66,36 @@ M.View = {
   }
 }
 
+---Find a rogue NvimTree buffer that might have been spawned by i.e. a session.
+---@return integer|nil
+local function find_rogue_buffer()
+  for i = 1, vim.fn.bufnr("$"), 1 do
+    if vim.fn.bufname(i) == "NvimTree" then
+      return i
+    end
+  end
+  return nil
+end
+
+---Check if the tree buffer is valid and loaded.
+---@return boolean
+local function is_buf_valid()
+  return a.nvim_buf_is_valid(M.View.bufnr) and a.nvim_buf_is_loaded(M.View.bufnr)
+end
+
+---Find pre-existing NvimTree buffer, delete its windows then wipe it.
+---@private
+function M._wipe_rogue_buffer()
+  local bn = find_rogue_buffer()
+  if bn then
+    local win_ids = vim.fn.win_findbuf(bn)
+    for _, id in ipairs(win_ids) do
+      a.nvim_win_close(id, true)
+    end
+    a.nvim_buf_delete(bn, {})
+  end
+end
+
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
   M.View.auto_resize = vim.g.nvim_tree_auto_resize or M.View.auto_resize
@@ -73,10 +103,15 @@ function M.setup()
   M.View.width = vim.g.nvim_tree_width or M.View.width
 
   M.View.bufnr = a.nvim_create_buf(false, false)
+
+  if not pcall(a.nvim_buf_set_name, M.View.bufnr, 'NvimTree') then
+    M._wipe_rogue_buffer()
+    a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
+  end
+
   for k, v in pairs(M.View.bufopts) do
     a.nvim_buf_set_option(M.View.bufnr, k, v)
   end
-  a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
 
   if not vim.g.nvim_tree_disable_keybindings then
     M.View.bindings = vim.tbl_extend(
@@ -130,6 +165,10 @@ local move_tbl = {
 }
 
 function M.open()
+  if not is_buf_valid() then
+    M.setup()
+  end
+
   a.nvim_command("vsp")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)

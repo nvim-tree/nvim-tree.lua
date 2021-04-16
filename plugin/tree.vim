@@ -25,6 +25,7 @@ augroup NvimTree
   if get(g:, 'nvim_tree_tab_open') == 1
     au TabEnter * lua require'nvim-tree'.tab_change()
   endif
+  au SessionLoadPost * lua require'nvim-tree.view'._wipe_rogue_buffer()
 augroup end
 
 command! NvimTreeOpen lua require'nvim-tree'.open()

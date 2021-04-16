@@ -12,6 +12,7 @@ local events = require'nvim-tree.events'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
+local first_init_done = false
 local window_opts = config.window_options()
 
 local M = {}
@@ -41,7 +42,10 @@ function M.init(with_open, with_reload)
     M.Tree.loaded = true
   end
 
-  events._dispatch_ready()
+  if not first_init_done then
+    events._dispatch_ready()
+    first_init_done = true
+  end
 end
 
 local function get_node_at_line(line)
