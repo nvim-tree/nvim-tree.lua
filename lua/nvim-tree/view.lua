@@ -22,7 +22,7 @@ M.View = {
     signcolumn = 'yes',
     foldmethod = 'manual',
     foldcolumn = '0',
-    winhl = 'EndOfBuffer:NvimTreeEndOfBuffer,Normal:NvimTreeNormal,CursorLine:NvimTreeCursorLine,VertSplit:NvimTreeVertSplit,SignColumn:Normal'
+    winhl = 'EndOfBuffer:NvimTreeEndOfBuffer,Normal:NvimTreeNormal,CursorLine:NvimTreeCursorLine,VertSplit:NvimTreeVertSplit,SignColumn:NvimTreeNormal'
   },
   bufopts = {
     swapfile = false,
