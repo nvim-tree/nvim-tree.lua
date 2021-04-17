@@ -111,7 +111,7 @@ function M.setup()
     a.nvim_buf_set_option(M.View.bufnr, k, v)
   end
 
-  if not vim.g.nvim_tree_disable_keybindings then
+  if vim.g.nvim_tree_disable_keybindings ~= 1 then
     M.View.bindings = vim.tbl_extend(
       'force',
       M.View.bindings,
