@@ -133,18 +133,20 @@ local goto_tbl = {
 }
 
 function M._prevent_buffer_override()
-  local curwin = a.nvim_get_current_win()
-  local curbuf = a.nvim_win_get_buf(curwin)
-  if curwin ~= M.View.winnr or curbuf == M.View.bufnr then return end
+  vim.schedule(function()
+    local curwin = a.nvim_get_current_win()
+    local curbuf = a.nvim_win_get_buf(curwin)
+    if curwin ~= M.View.winnr or curbuf == M.View.bufnr then return end
 
-  vim.cmd("buffer "..M.View.bufnr)
+    vim.cmd("buffer "..M.View.bufnr)
 
-  if #vim.api.nvim_list_wins() < 2 then
-    vim.cmd("vsplit")
-  else
-    vim.cmd("wincmd "..goto_tbl[M.View.side])
-  end
-  vim.cmd("buffer "..curbuf)
+    if #vim.api.nvim_list_wins() < 2 then
+      vim.cmd("vsplit")
+    else
+      vim.cmd("wincmd "..goto_tbl[M.View.side])
+    end
+    vim.cmd("buffer "..curbuf)
+  end)
 end
 
 function M.win_open()
@@ -153,7 +155,7 @@ end
 
 function M.set_cursor(opts)
   if M.win_open() then
-    a.nvim_win_set_cursor(M.View.winnr, opts)
+    pcall(a.nvim_win_set_cursor, M.View.winnr, opts)
   end
 end
 
