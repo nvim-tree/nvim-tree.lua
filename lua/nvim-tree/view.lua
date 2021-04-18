@@ -8,7 +8,7 @@ end
 
 M.View = {
   bufnr = nil,
-  winnr = nil,
+  tabpages = {},
   width = 30,
   side = 'left',
   winopts = {
@@ -136,7 +136,7 @@ function M._prevent_buffer_override()
   vim.schedule(function()
     local curwin = a.nvim_get_current_win()
     local curbuf = a.nvim_win_get_buf(curwin)
-    if curwin ~= M.View.winnr or curbuf == M.View.bufnr then return end
+    if curwin ~= M.get_winnr() or curbuf == M.View.bufnr then return end
 
     vim.cmd("buffer "..M.View.bufnr)
 
@@ -150,22 +150,22 @@ function M._prevent_buffer_override()
 end
 
 function M.win_open()
-  return M.View.winnr ~= nil and a.nvim_win_is_valid(M.View.winnr)
+  return M.get_winnr() ~= nil and a.nvim_win_is_valid(M.get_winnr())
 end
 
 function M.set_cursor(opts)
   if M.win_open() then
-    pcall(a.nvim_win_set_cursor, M.View.winnr, opts)
+    pcall(a.nvim_win_set_cursor, M.get_winnr(), opts)
   end
 end
 
 function M.focus(winnr, open_if_closed)
-  local wnr = winnr or M.View.winnr
+  local wnr = winnr or M.get_winnr()
 
   if a.nvim_win_get_tabpage(wnr) ~= a.nvim_win_get_tabpage(0) then
     M.close()
     M.open()
-    wnr = M.View.winnr
+    wnr = M.get_winnr()
   elseif open_if_closed and not M.win_open() then
     M.open()
   end
@@ -174,11 +174,11 @@ function M.focus(winnr, open_if_closed)
 end
 
 function M.resize()
-  if not a.nvim_win_is_valid(M.View.winnr) then
+  if not a.nvim_win_is_valid(M.get_winnr()) then
     return
   end
 
-  a.nvim_win_set_width(M.View.winnr, M.View.width)
+  a.nvim_win_set_width(M.get_winnr(), M.View.width)
 end
 
 local move_tbl = {
@@ -197,9 +197,10 @@ function M.open()
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..M.View.width)
-  M.View.winnr = a.nvim_get_current_win()
+  local winnr = a.nvim_get_current_win()
+  M.View.tabpages[a.nvim_get_current_tabpage()] = winnr
   for k, v in pairs(M.View.winopts) do
-    a.nvim_win_set_option(M.View.winnr, k, v)
+    a.nvim_win_set_option(winnr, k, v)
   end
 
   vim.cmd("buffer "..M.View.bufnr)
@@ -217,7 +218,11 @@ function M.close()
     end
     return
   end
-  a.nvim_win_hide(M.View.winnr)
+  a.nvim_win_hide(M.get_winnr())
+end
+
+function M.get_winnr()
+  return M.View.tabpages[a.nvim_get_current_tabpage()]
 end
 
 return M

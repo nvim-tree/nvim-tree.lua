@@ -90,7 +90,7 @@ local function get_line_from_node(node, find_parent)
 end
 
 function M.get_node_at_cursor()
-  local cursor = api.nvim_win_get_cursor(view.View.winnr)
+  local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if line == 1 and M.Tree.cwd ~= "/" then
     return { name = ".." }
@@ -353,7 +353,7 @@ function M.parent_node(node, should_close)
     elseif should_close then
       parent.open = false
     end
-    api.nvim_win_set_cursor(view.View.winnr, {line, 0})
+    api.nvim_win_set_cursor(view.get_winnr(), {line, 0})
   end
   renderer.draw(M.Tree, true)
 end
