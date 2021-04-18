@@ -95,7 +95,7 @@ function M._wipe_rogue_buffer()
     end
     -- Do not use `nvim_buf_delete` here as it throws an uncacthable error if
     -- the buffer is in an autocmd window.
-    vim.api.nvim_command("silent! bw " .. bn)
+    a.nvim_command("silent! bw " .. bn)
   end
 end
 
