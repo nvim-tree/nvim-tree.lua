@@ -68,9 +68,9 @@ M.View = {
 ---Find a rogue NvimTree buffer that might have been spawned by i.e. a session.
 ---@return integer|nil
 local function find_rogue_buffer()
-  for i = 1, vim.fn.bufnr("$"), 1 do
-    if vim.fn.bufname(i) == "NvimTree" then
-      return i
+  for _, v in ipairs(a.nvim_list_bufs()) do
+    if vim.fn.bufname(v) == "NvimTree" then
+      return v
     end
   end
   return nil
@@ -89,9 +89,14 @@ function M._wipe_rogue_buffer()
   if bn then
     local win_ids = vim.fn.win_findbuf(bn)
     for _, id in ipairs(win_ids) do
-      a.nvim_win_close(id, true)
+      if vim.fn.win_gettype(id) ~= "autocmd" then
+        a.nvim_win_close(id, true)
+      end
     end
-    a.nvim_buf_delete(bn, {})
+
+    vim.schedule(function ()
+      pcall(a.nvim_buf_delete, bn, {})
+    end)
   end
 end
 
