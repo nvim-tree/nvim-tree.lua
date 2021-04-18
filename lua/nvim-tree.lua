@@ -38,15 +38,10 @@ function M.open()
   end
 end
 
--- this is completely broken, but i'm not sure why
--- this is definitely upstream related, but i could find a workaround
 function M.tab_change()
-  -- we need defer_fn to make sure we close/open after we enter the tab
-  vim.defer_fn(function()
-    if M.close() then
-      M.open()
-    end
-  end, 1)
+  if not view.win_open() then
+    view.open()
+  end
 end
 
 local function gen_go_to(mode)

@@ -320,7 +320,7 @@ function M.draw(tree, reload)
   if not api.nvim_buf_is_loaded(view.View.bufnr) then return end
   local cursor
   if view.win_open() then
-    cursor = api.nvim_win_get_cursor(view.View.winnr)
+    cursor = api.nvim_win_get_cursor(view.get_winnr())
   end
   if reload then
     index = 0
@@ -335,10 +335,10 @@ function M.draw(tree, reload)
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', false)
 
   if cursor and #lines >= cursor[1] then
-    api.nvim_win_set_cursor(view.View.winnr, cursor)
+    api.nvim_win_set_cursor(view.get_winnr(), cursor)
   end
   if cursor then
-    api.nvim_win_set_option(view.View.winnr, 'wrap', false)
+    api.nvim_win_set_option(view.get_winnr(), 'wrap', false)
   end
 end
 
