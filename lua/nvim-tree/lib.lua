@@ -250,6 +250,8 @@ function M.open_file(mode, filename)
     ecmd()
   end
 
+  view.resize()
+
   if mode == 'preview' then
     if not found then M.set_target_win() end
     view.focus()
@@ -263,8 +265,6 @@ function M.open_file(mode, filename)
   if vim.g.nvim_tree_quit_on_open == 1 and mode ~= 'preview' then
     view.close()
   end
-
-  view.resize()
 
   renderer.draw(M.Tree, true)
 end

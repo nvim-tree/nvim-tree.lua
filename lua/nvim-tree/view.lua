@@ -113,7 +113,7 @@ function M.setup()
   end
 
   for k, v in pairs(M.View.bufopts) do
-    a.nvim_buf_set_option(M.View.bufnr, k, v)
+    vim.bo[M.View.bufnr][k] = v
   end
 
   if vim.g.nvim_tree_disable_keybindings ~= 1 then
@@ -205,7 +205,7 @@ function M.open()
   local winnr = a.nvim_get_current_win()
   M.View.tabpages[a.nvim_get_current_tabpage()] = winnr
   for k, v in pairs(M.View.winopts) do
-    a.nvim_win_set_option(winnr, k, v)
+    vim.wo[winnr][k] = v
   end
 
   vim.cmd("buffer "..M.View.bufnr)
