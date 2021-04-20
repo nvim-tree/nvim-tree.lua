@@ -22,7 +22,15 @@ M.View = {
     signcolumn = 'yes',
     foldmethod = 'manual',
     foldcolumn = '0',
-    winhl = 'EndOfBuffer:NvimTreeEndOfBuffer,Normal:NvimTreeNormal,CursorLine:NvimTreeCursorLine,VertSplit:NvimTreeVertSplit,SignColumn:NvimTreeNormal'
+    winhl = table.concat({
+      'EndOfBuffer:NvimTreeEndOfBuffer',
+      'Normal:NvimTreeNormal',
+      'CursorLine:NvimTreeCursorLine',
+      'VertSplit:NvimTreeVertSplit',
+      'SignColumn:NvimTreeNormal',
+      'StatusLine:NvimTreeStatusLine',
+      'StatusLineNC:NvimTreeStatuslineNC'
+    }, ',')
   },
   bufopts = {
     swapfile = false,
