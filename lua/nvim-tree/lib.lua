@@ -116,20 +116,16 @@ function M.unroll_dir(node)
   if node.has_children then node.has_children = false end
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
-
-    if vim.g.nvim_tree_lsp_diagnostics == 1 then
-      diagnostics.update()
-    end
   else
     git.git_root(node.absolute_path)
     git.update_gitignore_map_sync()
     populate(node.entries, node.link_to or node.absolute_path, node)
 
     renderer.draw(M.Tree, true)
+  end
 
-    if vim.g.nvim_tree_lsp_diagnostics == 1 then
-      diagnostics.update()
-    end
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+    diagnostics.update()
   end
 end
 
