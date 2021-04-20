@@ -102,6 +102,7 @@ function M._wipe_rogue_buffer()
       end
     end
 
+    a.nvim_buf_set_name(bn, "")
     vim.schedule(function ()
       pcall(a.nvim_buf_delete, bn, {})
     end)
