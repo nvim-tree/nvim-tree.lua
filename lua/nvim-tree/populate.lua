@@ -62,15 +62,23 @@ local function link_new(cwd, name)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
+  local stat = luv.fs_stat(absolute_path)
   local open, entries
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then
     open = false
     entries = {}
   end
+
+  local last_modified = 0
+  if stat ~= nil then
+    last_modified = stat.mtime.sec
+  end
+
   return {
     name = name,
     absolute_path = absolute_path,
     link_to = link_to,
+    last_modified = last_modified,
     open = open,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
@@ -198,6 +206,16 @@ function M.refresh_entries(entries, cwd, parent_node)
 
   local idx = 1
   for _, name in ipairs(cached_entries) do
+    local node = named_entries[name]
+    if node and node.link_to then
+      -- If the link has been modified: remove it in case the link target has changed.
+      local stat = luv.fs_stat(node.absolute_path)
+      if stat and node.last_modified ~= stat.mtime.sec then
+        new_entries[name] = nil
+        named_entries[name] = nil
+      end
+    end
+
     if not new_entries[name] then
       table.remove(entries, idx)
     else
