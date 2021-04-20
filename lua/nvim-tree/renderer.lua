@@ -44,7 +44,9 @@ if icon_state.show_folder_icon then
   end
   set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
     table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len+get_trailing_length()})
-    table.insert(hl, {'NvimTreeFolderIcon', line, depth, depth+icon_len})
+    local hl_icon = 'NvimTreeFolderIcon'
+    if vim.g.nvim_tree_highlight_opened_files then hl_icon = hl_group end
+    table.insert(hl, {hl_icon, line, depth, depth+icon_len})
   end
 end
 
