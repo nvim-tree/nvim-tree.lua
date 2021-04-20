@@ -121,11 +121,11 @@ function M.unroll_dir(node)
     git.update_gitignore_map_sync()
     populate(node.entries, node.link_to or node.absolute_path, node)
 
-    if vim.g.nvim_tree_lsp_diagnostics == 1 then
-      diagnostics.update()
-    end
-
     renderer.draw(M.Tree, true)
+  end
+
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+    diagnostics.update()
   end
 end
 
