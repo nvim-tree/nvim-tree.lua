@@ -83,6 +83,11 @@ function M.find_node(nodes, fn)
   return nil, i
 end
 
+---Create a shallow copy of a portion of a list.
+---@param t table
+---@param first integer First index, inclusive
+---@param last integer Last index, inclusive
+---@return table
 function M.tbl_slice(t, first, last)
   local slice = {}
   for i = first, last or #t, 1 do
@@ -135,7 +140,7 @@ local function split_merge(t, first, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
----Perform a stable merge sort on a given list.
+---Perform a merge sort on a given list.
 ---@param t any[]
 ---@param comparator function|nil
 function M.merge_sort(t, comparator)
