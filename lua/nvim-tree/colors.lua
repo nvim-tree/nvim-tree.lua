@@ -71,6 +71,8 @@ local function get_links()
     LspDiagnosticsWarning = "LspDiagnosticsDefaultWarning",
     LspDiagnosticsInformation = "LspDiagnosticsDefaultInformation",
     LspDiagnosticsHint = "LspDiagnosticsDefaultHint",
+    StatusLine = "StatusLine",
+    StatusLineNC = "StatusLineNC",
   }
 end
 
