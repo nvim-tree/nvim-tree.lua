@@ -106,6 +106,16 @@ local function should_group(cwd, dirs, files, links)
   return false
 end
 
+local function node_comparator(a, b)
+  if a.entries and not b.entries then
+    return true
+  elseif not a.entries and b.entries then
+    return false
+  end
+
+  return a.name:lower() <= b.name:lower()
+end
+
 local function gen_ignore_check(cwd)
   if not cwd then cwd = luv.cwd() end
   local ignore_list = {}
@@ -231,12 +241,14 @@ function M.refresh_entries(entries, cwd, parent_node)
 
   local prev = nil
   local change_prev
+  local new_nodes_added = false
   for _, e in ipairs(all) do
     for _, name in ipairs(e.entries) do
       change_prev = true
       if not named_entries[name] then
         local n = e.fn(cwd, name)
         if e.check(n.link_to, n.absolute_path) then
+          new_nodes_added = true
           git.invalidate_gitignore_map(n.absolute_path)
           idx = 1
           if prev then
@@ -257,6 +269,10 @@ function M.refresh_entries(entries, cwd, parent_node)
 
   if next_node then
     table.insert(entries, 1, next_node)
+  end
+
+  if new_nodes_added then
+    utils.merge_sort(entries, node_comparator)
   end
 end
 
@@ -325,6 +341,8 @@ function M.populate(entries, cwd, parent_node)
   if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
     return
   end
+
+  utils.merge_sort(entries, node_comparator)
 
   git.update_status(entries, cwd, parent_node)
 end
