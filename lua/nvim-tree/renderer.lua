@@ -115,8 +115,8 @@ if vim.g.nvim_tree_git_hl == 1 then
     },
     [" A"] = { { hl = "none" } },
     ["RM"] = { { hl = "NvimTreeFileRenamed" } },
+    ["!!"] = { { hl = "NvimTreeGitIgnored" } },
     dirty = { { hl = "NvimTreeFileDirty" } },
-    ignored = { { hl = "NvimTreeGitIgnored" } },
   }
   get_git_hl = function(node)
     local git_status = node.git_status
@@ -164,8 +164,8 @@ if icon_state.show_git_icon then
     ["UU"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["D "] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
+    ["!!"] = { { icon = icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
     dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ignored = { { icon = icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
   }
 
   get_git_icons = function(node, line, depth, icon_len)
