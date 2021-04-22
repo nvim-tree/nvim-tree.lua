@@ -31,7 +31,10 @@ local function update_root_status(root)
     end
 
     roots[root][body] = head
-    gitignore_map[root][utils.path_remove_trailing(utils.path_join({root, body}))] = true
+
+    if head == "!!" then
+      gitignore_map[root][utils.path_remove_trailing(utils.path_join({root, body}))] = true
+    end
   end
 end
 
