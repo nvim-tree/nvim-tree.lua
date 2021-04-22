@@ -1,21 +1,22 @@
-local luv = vim.loop
 local utils = require'nvim-tree.utils'
-local config = require'nvim-tree.config'
 local M = {}
 
 local roots = {}
-local fstat_cache = {}
+
+---A map from git roots to a list of ignored paths
+local gitignore_map = {}
 
 local not_git = 'not a git repo'
 local is_win = vim.api.nvim_call_function("has", {"win32"}) == 1
 
 local function update_root_status(root)
   local untracked = ' -u'
-  if vim.fn.trim(vim.fn.system('git config --type=bool status.showUntrackedFiles')) == 'false' then
+  if vim.fn.trim(vim.fn.system('git -C \'' .. root .. '\' config --type=bool status.showUntrackedFiles')) == 'false' then
     untracked = ''
   end
-  local status = vim.fn.systemlist('cd "'..root..'" && git status --porcelain=v1'..untracked)
+  local status = vim.fn.systemlist('git -C \'' .. root .. '\' status --porcelain=v1 --ignored=matching'..untracked)
   roots[root] = {}
+  gitignore_map[root] = {}
 
   for _, v in pairs(status) do
     local head = v:sub(0, 2)
@@ -30,21 +31,11 @@ local function update_root_status(root)
     end
 
     roots[root][body] = head
-  end
-end
 
----Returns a list of all ignored files and directories in the given git directory.
----@param git_root string|nil
----@return table
-function M.get_gitignored(git_root)
-  local result = vim.fn.systemlist(
-    "git -C '" .. (git_root or "") .. "' ls-files --others --ignored --exclude-standard --directory"
-  )
-  if result[1] and result[1]:match("^fatal:") then
-    return {}
+    if head == "!!" then
+      gitignore_map[root][utils.path_remove_trailing(utils.path_join({root, body}))] = true
+    end
   end
-
-  return result
 end
 
 function M.reload_roots()
@@ -82,7 +73,6 @@ local function create_root(cwd)
   end
 
   update_root_status(git_root:sub(0, -2))
-  M.update_gitignore_map()
   return true
 end
 
@@ -124,13 +114,10 @@ function M.update_status(entries, cwd, parent_node)
   if not parent_node then parent_node = {} end
 
   local matching_cwd = utils.path_to_matching_str( utils.path_add_trailing(git_root) )
-  local num_ignored = 0
 
   for _, node in pairs(entries) do
-    if parent_node.git_status == "ignored" or M.should_gitignore(node.absolute_path) then
-      node.git_status = "ignored"
-      num_ignored = num_ignored + 1
-
+    if parent_node.git_status == "!!" then
+      node.git_status = "!!"
     else
       local relpath = node.absolute_path:gsub(matching_cwd, '')
       if node.entries ~= nil then
@@ -144,7 +131,7 @@ function M.update_status(entries, cwd, parent_node)
       elseif node.entries ~= nil then
         local matcher = '^'..utils.path_to_matching_str(relpath)
         for key, entry_status in pairs(git_status) do
-          if key:match(matcher) then
+          if entry_status ~= "!!" and key:match(matcher) then
             node.git_status = entry_status
             break
           end
@@ -154,14 +141,7 @@ function M.update_status(entries, cwd, parent_node)
       end
     end
   end
-
-  if num_ignored > 0 and num_ignored == #entries then
-    parent_node.git_status = "ignored"
-  end
 end
-
----A map from git roots to a list of ignored paths
-local gitignore_map = {}
 
 ---Check if the given path is ignored by git.
 ---@param path string Absolute path
@@ -173,73 +153,6 @@ function M.should_gitignore(path)
     end
   end
   return false
-end
-
----Updates the gitignore map if it's needed. Each entry in the map is only
----updated if changes have been made to the git root's `.gitignore` or
----`.git/info/exclude` files, or it's been invalidated by the
----`invalidate_gitignore_map` function.
-function M.update_gitignore_map_sync()
-  if not (config.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1) then
-    return
-  end
-
-  local ignore_files = { ".gitignore", utils.path_join({".git", "info", "exclude"}) }
-  for git_root, git_status in pairs(roots) do
-    if git_status ~= not_git then
-      -- The mtime for `.gitignore` and `.git/info/exclude` is cached such that
-      -- the list of ignored files is only recreated when one of the said files
-      -- are modified.
-      for _, s in ipairs(ignore_files) do
-        local path = utils.path_join({git_root, s})
-        local stat = luv.fs_stat(path)
-        if stat and stat.mtime then
-          if not (fstat_cache[path]
-              and fstat_cache[path].mtime == stat.mtime.sec) then
-
-            gitignore_map[git_root] = {
-              _valid = false
-            }
-            fstat_cache[path] = {
-              mtime = stat.mtime.sec
-            }
-          end
-        end
-      end
-    end
-  end
-
-  for git_root, paths in pairs(gitignore_map) do
-    if not paths._valid then
-      gitignore_map[git_root] = {
-        _valid = true
-      }
-      paths = gitignore_map[git_root]
-
-      for _, s in ipairs(M.get_gitignored(git_root)) do
-        if is_win then s = s:gsub("/", "\\") end
-        s = utils.path_remove_trailing(s)
-        paths[utils.path_join({git_root, s})] = true
-      end
-    end
-  end
-end
-
----Updates the gitignore map asynchronously if it's needed.
-function M.update_gitignore_map()
-  vim.schedule(function()
-    M.update_gitignore_map_sync()
-  end)
-end
-
----Force the ignore list of this path's git root to be recreated on the next
----call to `update_gitignore_map`.
----@param path string Absolute path
-function M.invalidate_gitignore_map(path)
-  local git_root = get_git_root(path)
-  if git_root and gitignore_map[git_root] then
-    gitignore_map[git_root]._valid = false
-  end
 end
 
 return M

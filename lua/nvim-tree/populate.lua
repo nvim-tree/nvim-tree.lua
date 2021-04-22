@@ -249,7 +249,6 @@ function M.refresh_entries(entries, cwd, parent_node)
         local n = e.fn(cwd, name)
         if e.check(n.link_to, n.absolute_path) then
           new_nodes_added = true
-          git.invalidate_gitignore_map(n.absolute_path)
           idx = 1
           if prev then
             idx = entries_idx[prev] + 1
