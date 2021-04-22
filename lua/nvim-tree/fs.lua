@@ -237,7 +237,7 @@ end
 function M.remove(node)
   if node.name == '..' then return end
 
-  print("Remove " ..node.name.. " ? y/n: ")
+  print("Remove " ..node.name.. " ? y/n")
   local ans = get_user_input()
   clear_prompt()
   if ans:match('^y') then
