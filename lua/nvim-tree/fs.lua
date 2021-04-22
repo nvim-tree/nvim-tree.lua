@@ -19,9 +19,14 @@ local function refresh_tree()
   vim.api.nvim_command(":NvimTreeRefresh")
 end
 
+local function get_user_input()
+  return vim.fn.nr2char(vim.fn.getchar())
+end
+
 local function create_file(file)
   if luv.fs_access(file, "r") ~= false then
-    local ans = vim.fn.input(file..' already exists, overwrite ? y/n: ')
+    print(file..' already exists. Overwrite? y/n')
+    local ans = get_user_input()
     clear_prompt()
     if ans ~= "y" then
       return
@@ -29,14 +34,13 @@ local function create_file(file)
   end
   luv.fs_open(file, "w", open_mode, vim.schedule_wrap(function(err, fd)
     if err then
-      api.nvim_err_writeln('Could not create file '..file)
+      api.nvim_err_writeln('Couldn\'t create file '..file)
     else
       -- FIXME: i don't know why but libuv keeps creating file with executable permissions
       -- this is why we need to chmod to default file permissions
       luv.fs_chmod(file, 420)
       luv.fs_close(fd)
       events._dispatch_file_created(file)
-      api.nvim_out_write('File '..file..' was properly created\n')
       refresh_tree()
     end
   end))
@@ -164,8 +168,10 @@ local function do_single_paste(source, dest, action_type, action_fn)
   local dest_stats = luv.fs_stat(dest)
   local should_process = true
   local should_rename = false
+
   if dest_stats then
-    local ans = vim.fn.input(dest..' already exists, overwrite ? y/n/r(ename): ')
+    print(dest..' already exists. Overwrite? y/n/r(ename)')
+    local ans = get_user_input()
     clear_prompt()
     should_process = ans:match('^y')
     should_rename = ans:match('^r')
@@ -206,12 +212,6 @@ local function do_paste(node, action_type, action_fn)
     msg = clip[1].absolute_path
   end
 
-  local ans = vim.fn.input(action_type..' '..msg..' to '..destination..'? y/n: ')
-  clear_prompt()
-  if not ans:match('^y') then
-    return api.nvim_out_write('Canceled.\n')
-  end
-
   for _, entry in ipairs(clip) do
     local dest = utils.path_join({destination, entry.name })
     do_single_paste(entry.absolute_path, dest, action_type, action_fn)
@@ -237,7 +237,8 @@ end
 function M.remove(node)
   if node.name == '..' then return end
 
-  local ans = vim.fn.input("Remove " ..node.name.. " ? y/n: ")
+  print("Remove " ..node.name.. " ? y/n")
+  local ans = get_user_input()
   clear_prompt()
   if ans:match('^y') then
     if node.entries ~= nil then
@@ -246,14 +247,12 @@ function M.remove(node)
         return api.nvim_err_writeln('Could not remove '..node.name)
       end
       events._dispatch_folder_removed(node.absolute_path)
-      api.nvim_out_write(node.name..' has been removed\n')
     else
       local success = luv.fs_unlink(node.absolute_path)
       if not success then
         return api.nvim_err_writeln('Could not remove '..node.name)
       end
       events._dispatch_file_removed(node.absolute_path)
-      api.nvim_out_write(node.name..' has been removed\n')
       clear_buffer(node.absolute_path)
     end
     refresh_tree()
