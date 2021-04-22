@@ -206,12 +206,6 @@ local function do_paste(node, action_type, action_fn)
     destination = vim.fn.fnamemodify(destination, ':p:h:h')
   end
 
-  local msg = #clip..' entries'
-
-  if #clip == 1 then
-    msg = clip[1].absolute_path
-  end
-
   for _, entry in ipairs(clip) do
     local dest = utils.path_join({destination, entry.name })
     do_single_paste(entry.absolute_path, dest, action_type, action_fn)
