@@ -145,14 +145,12 @@ if icon_state.show_git_icon then
     },
     ["A "] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" }
     },
     [" A"] = {
       { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
     ["AM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
       { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" }
     },
     ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitDirty" } },
