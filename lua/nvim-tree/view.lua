@@ -73,6 +73,10 @@ M.View = {
   }
 }
 
+local function get_width()
+  return vim.g.nvim_tree_width or M.View.width
+end
+
 ---Find a rogue NvimTree buffer that might have been spawned by i.e. a session.
 ---@return integer|nil
 local function find_rogue_buffer()
@@ -112,7 +116,6 @@ end
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
   M.View.side = vim.g.nvim_tree_side or M.View.side
-  M.View.width = vim.g.nvim_tree_width or M.View.width
 
   M.View.bufnr = a.nvim_create_buf(false, false)
 
@@ -192,7 +195,7 @@ function M.resize()
     return
   end
 
-  a.nvim_win_set_width(M.get_winnr(), M.View.width)
+  a.nvim_win_set_width(M.get_winnr(), get_width())
 end
 
 local move_tbl = {
@@ -210,7 +213,7 @@ function M.open()
   a.nvim_command("vsp")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
-  a.nvim_command("vertical resize "..M.View.width)
+  a.nvim_command("vertical resize "..get_width())
   local winnr = a.nvim_get_current_win()
   M.View.tabpages[a.nvim_get_current_tabpage()] = winnr
   for k, v in pairs(M.View.winopts) do
