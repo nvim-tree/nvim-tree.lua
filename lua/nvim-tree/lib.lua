@@ -233,6 +233,10 @@ function M.pick_window()
   if #selectable == 1 then return selectable[1] end
 
   local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+  if vim.g.nvim_tree_window_picker_chars then
+    chars = tostring(vim.g.nvim_tree_window_picker_chars)
+  end
+
   local i = 1
   local win_opts = {}
   local win_map = {}
@@ -244,12 +248,10 @@ function M.pick_window()
     local char = chars:sub(i, i)
     local _, statusline = pcall(api.nvim_win_get_option, id, "statusline")
     local _, winhl = pcall(api.nvim_win_get_option, id, "winhl")
-    if not statusline then statusline = "" end
-    if not winhl then winhl = "" end
 
     win_opts[id] = {
-      statusline = statusline,
-      winhl = winhl
+      statusline = statusline or "",
+      winhl = winhl or ""
     }
     win_map[char] = id
 
