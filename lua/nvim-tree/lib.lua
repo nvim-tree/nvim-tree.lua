@@ -232,7 +232,8 @@ function M.pick_window()
   if #selectable == 0 then return nil end
   if #selectable == 1 then return selectable[1] end
 
-  local id_counter = 1
+  local chars = "1234567890abcdefghijklmnopqrstuvwxyz"
+  local i = 1
   local win_opts = {}
   local win_map = {}
   local laststatus = vim.o.laststatus
@@ -240,6 +241,7 @@ function M.pick_window()
 
   -- Setup UI
   for _, id in ipairs(selectable) do
+    local char = chars:sub(i, i)
     local _, statusline = pcall(api.nvim_win_get_option, id, "statusline")
     local _, winhl = pcall(api.nvim_win_get_option, id, "winhl")
     if not statusline then statusline = "" end
@@ -249,12 +251,14 @@ function M.pick_window()
       statusline = statusline,
       winhl = winhl
     }
-    win_map[tostring(id_counter)] = id
+    win_map[char] = id
 
-    api.nvim_win_set_option(id, "statusline", "%=" .. id_counter .. "%=")
+    api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=")
     api.nvim_win_set_option(
       id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker")
-    id_counter = id_counter + 1
+
+    i = i + 1
+    if i > #chars then break end
   end
 
   api.nvim_command("redraw")
