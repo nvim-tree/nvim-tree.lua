@@ -232,7 +232,7 @@ function M.pick_window()
   if #selectable == 0 then return nil end
   if #selectable == 1 then return selectable[1] end
 
-  local chars = "1234567890abcdefghijklmnopqrstuvwxyz"
+  local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
   local i = 1
   local win_opts = {}
   local win_map = {}
@@ -263,7 +263,7 @@ function M.pick_window()
 
   api.nvim_command("redraw")
   print("Pick window: ")
-  local resp = utils.get_user_input_char()
+  local resp = (utils.get_user_input_char() or ""):upper()
   utils.clear_prompt()
 
   -- Restore window options
