@@ -11,23 +11,15 @@ local clipboard = {
   copy = {}
 }
 
-local function clear_prompt()
-  vim.api.nvim_command('normal :esc<CR>')
-end
-
 local function refresh_tree()
   vim.api.nvim_command(":NvimTreeRefresh")
-end
-
-local function get_user_input()
-  return vim.fn.nr2char(vim.fn.getchar())
 end
 
 local function create_file(file)
   if luv.fs_access(file, "r") ~= false then
     print(file..' already exists. Overwrite? y/n')
-    local ans = get_user_input()
-    clear_prompt()
+    local ans = utils.get_user_input_char()
+    utils.clear_prompt()
     if ans ~= "y" then
       return
     end
@@ -71,7 +63,7 @@ function M.create(node)
   end
 
   local ans = vim.fn.input('Create file '..add_into)
-  clear_prompt()
+  utils.clear_prompt()
   if not ans or #ans == 0 then return end
 
   if not ans:match(utils.path_separator) then
@@ -171,8 +163,8 @@ local function do_single_paste(source, dest, action_type, action_fn)
 
   if dest_stats then
     print(dest..' already exists. Overwrite? y/n/r(ename)')
-    local ans = get_user_input()
-    clear_prompt()
+    local ans = utils.get_user_input_char()
+    utils.clear_prompt()
     should_process = ans:match('^y')
     should_rename = ans:match('^r')
   end
@@ -232,8 +224,8 @@ function M.remove(node)
   if node.name == '..' then return end
 
   print("Remove " ..node.name.. " ? y/n")
-  local ans = get_user_input()
-  clear_prompt()
+  local ans = utils.get_user_input_char()
+  utils.clear_prompt()
   if ans:match('^y') then
     if node.entries ~= nil then
       local success = remove_dir(node.absolute_path)
@@ -261,7 +253,7 @@ function M.rename(with_sub)
     local namelen = node.name:len()
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * (-1) -1) or node.absolute_path
     local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
-    clear_prompt()
+    utils.clear_prompt()
     if not new_name or #new_name == 0 then return end
 
     local success = luv.fs_rename(node.absolute_path, new_name)

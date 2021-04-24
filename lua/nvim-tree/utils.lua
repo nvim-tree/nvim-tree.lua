@@ -65,6 +65,14 @@ end
 
 M.path_separator = path_separator
 
+function M.clear_prompt()
+  vim.api.nvim_command('normal :esc<CR>')
+end
+
+function M.get_user_input_char()
+  return vim.fn.nr2char(vim.fn.getchar())
+end
+
 -- get the node from the tree that matches the predicate
 -- @param nodes list of node
 -- @param fn    function(node): boolean

@@ -213,8 +213,72 @@ function M.set_index_and_redraw(fname)
   end
 end
 
+---Get user to pick a window. Selectable windows are all windows in the current
+---tabpage that aren't NvimTree.
+---@return integer|nil The selected window's id, or nil if the user picked an invalid window.
+function M.pick_window()
+  local tabpage = api.nvim_get_current_tabpage()
+  local win_ids = api.nvim_tabpage_list_wins(tabpage)
+  local tree_winid = view.View.tabpages[tabpage]
+  local selectable = {}
+
+  for _, id in ipairs(win_ids) do
+    if id ~= tree_winid then
+      table.insert(selectable, id)
+    end
+  end
+
+  -- If there are no selectable windows: return. If there's only 1, return it without picking.
+  if #selectable == 0 then return nil end
+  if #selectable == 1 then return selectable[1] end
+
+  local id_counter = 1
+  local win_opts = {}
+  local win_map = {}
+  local laststatus = vim.o.laststatus
+  vim.o.laststatus = 2
+
+  -- Setup UI
+  for _, id in ipairs(selectable) do
+    local _, statusline = pcall(api.nvim_win_get_option, id, "statusline")
+    local _, winhl = pcall(api.nvim_win_get_option, id, "winhl")
+    if not statusline then statusline = "" end
+    if not winhl then winhl = "" end
+
+    win_opts[id] = {
+      statusline = statusline,
+      winhl = winhl
+    }
+    win_map[tostring(id_counter)] = id
+
+    api.nvim_win_set_option(id, "statusline", "%=" .. id_counter .. "%=")
+    api.nvim_win_set_option(
+      id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker")
+    id_counter = id_counter + 1
+  end
+
+  api.nvim_command("redraw")
+  print("Pick window: ")
+  local resp = utils.get_user_input_char()
+  utils.clear_prompt()
+
+  -- Restore window options
+  for _, id in ipairs(selectable) do
+    for opt, value in pairs(win_opts[id]) do
+      api.nvim_win_set_option(id, opt, value)
+    end
+  end
+
+  vim.o.laststatus = laststatus
+
+  return win_map[resp]
+end
+
 function M.open_file(mode, filename)
-  local target_winnr = vim.fn.win_id2win(M.Tree.target_winid)
+  local target_winid = M.pick_window()
+  if not target_winid then return end
+  local target_winnr = vim.fn.win_id2win(target_winid)
+
   local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)
   local splitcmd = window_opts.split_command == 'splitright' and 'vsplit' or 'split'
   local ecmd = target_bufnr and string.format('%dwindo %s', target_winnr, mode == 'preview' and 'edit' or mode) or (mode == 'preview' and 'edit' or mode)
