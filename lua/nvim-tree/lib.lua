@@ -252,7 +252,7 @@ function M.open_file(mode, filename)
 
     local cmd
     if do_split then
-      cmd = string.format("%ssplit", vertical and "vertical " or "")
+      cmd = string.format("%ssplit ", vertical and "vertical " or "")
     else
       cmd = "edit "
     end
