@@ -214,50 +214,58 @@ function M.set_index_and_redraw(fname)
 end
 
 function M.open_file(mode, filename)
-  local target_winnr = vim.fn.win_id2win(M.Tree.target_winid)
-  local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)
-  local splitcmd = window_opts.split_command == 'splitright' and 'vsplit' or 'split'
-  local ecmd = target_bufnr and string.format('%dwindo %s', target_winnr, mode == 'preview' and 'edit' or mode) or (mode == 'preview' and 'edit' or mode)
+  local tabpage = api.nvim_get_current_tabpage()
+  local win_ids = api.nvim_tabpage_list_wins(tabpage)
+  local target_winid = M.Tree.target_winid
+  local do_split = mode == "split" or mode == "vsplit"
+  local vertical = mode == "vsplit" or window_opts.split_command == "splitright"
 
-  api.nvim_command('wincmd '..window_opts.open_command)
-
+  -- Check if filename is already open in a window
   local found = false
-  for _, win in ipairs(api.nvim_list_wins()) do
-    if filename == api.nvim_buf_get_name(api.nvim_win_get_buf(win)) then
+  for _, id in ipairs(win_ids) do
+    if filename == api.nvim_buf_get_name(api.nvim_win_get_buf(id)) then
+      if mode == "preview" then return end
       found = true
-      ecmd = function() view.focus(win) end
+      api.nvim_set_current_win(id)
     end
   end
 
-  if not found and (mode == 'edit' or mode == 'preview') then
-    if target_bufnr then
-      if not vim.o.hidden and api.nvim_buf_get_option(target_bufnr, 'modified') then
-        ecmd = string.format('%dwindo %s', target_winnr, splitcmd)
+  if not found then
+    if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
+      -- Create new window
+      api.nvim_command("belowright vsp")
+      target_winid = api.nvim_get_current_win()
+
+      -- No need to split, as we created a new window.
+      do_split = false
+    elseif not vim.o.hidden then
+      -- If hidden is not enabled, check if buffer in target window is
+      -- modified, and create new split if it is.
+      local target_bufid = api.nvim_win_get_buf(target_winid)
+      if api.nvim_buf_get_option(target_bufid, "modified") then
+        do_split = true
       end
-    else
-      ecmd = splitcmd
     end
+
+    local cmd = ""
+    if do_split then
+      if vertical then cmd = cmd .. "vertical " end
+      cmd = cmd .. "split "
+    else
+      cmd = cmd .. "edit "
+    end
+
+    cmd = cmd .. vim.fn.fnameescape(filename)
+    api.nvim_set_current_win(target_winid)
+    api.nvim_command(cmd)
   end
 
-  if type(ecmd) == 'string' then
-    api.nvim_command(string.format('%s %s', ecmd, vim.fn.fnameescape(filename)))
-  else
-    ecmd()
-  end
-
-  view.resize()
-
-  if mode == 'preview' then
-    if not found then M.set_target_win() end
+  if mode == "preview" then
     view.focus()
     return
   end
 
-  if found then
-    return
-  end
-
-  if vim.g.nvim_tree_quit_on_open == 1 and mode ~= 'preview' then
+  if vim.g.nvim_tree_quit_on_open == 1 then
     view.close()
   end
 
@@ -275,7 +283,14 @@ function M.change_dir(foldername)
 end
 
 function M.set_target_win()
-  M.Tree.target_winid = vim.fn.win_getid(vim.fn.bufwinnr(api.nvim_get_current_buf()))
+  local id = api.nvim_get_current_win()
+  local tree_id = view.View.tabpages[api.nvim_get_current_tabpage()]
+  if tree_id and id == tree_id then
+    M.Tree.target_winid = 0
+    return
+  end
+
+  M.Tree.target_winid = id
 end
 
 function M.open()
