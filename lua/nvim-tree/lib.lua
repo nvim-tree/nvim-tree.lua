@@ -234,7 +234,7 @@ function M.pick_window()
 
   local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
   if vim.g.nvim_tree_window_picker_chars then
-    chars = tostring(vim.g.nvim_tree_window_picker_chars)
+    chars = tostring(vim.g.nvim_tree_window_picker_chars):upper()
   end
 
   local i = 1
