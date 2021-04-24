@@ -280,7 +280,7 @@ end
 
 function M.open_file(mode, filename)
   local target_winid = M.pick_window()
-  if not target_winid then return end
+  if not target_winid then target_winid = M.Tree.target_winid end
   local target_winnr = vim.fn.win_id2win(target_winid)
 
   local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)
