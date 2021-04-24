@@ -218,7 +218,7 @@ function M.open_file(mode, filename)
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local target_winid = M.Tree.target_winid
   local do_split = mode == "split" or mode == "vsplit"
-  local vertical = mode == "vsplit" or window_opts.split_command == "splitright"
+  local vertical = mode == "vsplit" or (window_opts.split_command == "splitright" and mode ~= "split")
 
   -- Check if filename is already open in a window
   local found = false
