@@ -227,19 +227,22 @@ function M.open_file(mode, filename)
       if mode == "preview" then return end
       found = true
       api.nvim_set_current_win(id)
+      break
     end
   end
 
   if not found then
     if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
-      -- Create new window
+      -- Target is invalid, or window does not exist in current tabpage: create
+      -- new window
       api.nvim_command("belowright vsp")
       target_winid = api.nvim_get_current_win()
+      M.Tree.target_winid = target_winid
 
       -- No need to split, as we created a new window.
       do_split = false
     elseif not vim.o.hidden then
-      -- If hidden is not enabled, check if buffer in target window is
+      -- If `hidden` is not enabled, check if buffer in target window is
       -- modified, and create new split if it is.
       local target_bufid = api.nvim_win_get_buf(target_winid)
       if api.nvim_buf_get_option(target_bufid, "modified") then
@@ -247,17 +250,17 @@ function M.open_file(mode, filename)
       end
     end
 
-    local cmd = ""
+    local cmd
     if do_split then
-      if vertical then cmd = cmd .. "vertical " end
-      cmd = cmd .. "split "
+      cmd = string.format("%ssplit", vertical and "vertical " or "")
     else
-      cmd = cmd .. "edit "
+      cmd = "edit "
     end
 
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
     api.nvim_command(cmd)
+    view.resize()
   end
 
   if mode == "preview" then
