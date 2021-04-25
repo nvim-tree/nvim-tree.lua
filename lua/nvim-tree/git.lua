@@ -11,10 +11,10 @@ local is_win = vim.api.nvim_call_function("has", {"win32"}) == 1
 
 local function update_root_status(root)
   local untracked = ' -u'
-  if vim.fn.trim(vim.fn.system('git -C \'' .. root .. '\' config --type=bool status.showUntrackedFiles')) == 'false' then
+  if vim.fn.trim(vim.fn.system('git -C ' .. vim.fn.shellescape(root) .. ' config --type=bool status.showUntrackedFiles')) == 'false' then
     untracked = ''
   end
-  local status = vim.fn.systemlist('git -C \'' .. root .. '\' status --porcelain=v1 --ignored=matching'..untracked)
+  local status = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(root) .. ' status --porcelain=v1 --ignored=matching'..untracked)
   roots[root] = {}
   gitignore_map[root] = {}
 
