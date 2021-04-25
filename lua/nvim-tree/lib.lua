@@ -235,7 +235,7 @@ function M.open_file(mode, filename)
     if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
       -- Target is invalid, or window does not exist in current tabpage: create
       -- new window
-      api.nvim_command("belowright vsp")
+      api.nvim_command(window_opts.split_command .. " vsp")
       target_winid = api.nvim_get_current_win()
       M.Tree.target_winid = target_winid
 
