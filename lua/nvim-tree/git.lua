@@ -14,7 +14,7 @@ local function update_root_status(root)
   local untracked = ' -u'
 
   local cmd = "git -C " .. e_root .. " config --type=bool status.showUntrackedFiles"
-  if vim.fn.trim(vim.fn.system(cmd)) == 'false' then
+  if vim.trim(vim.fn.system(cmd)) == 'false' then
     untracked = ''
   end
 
