@@ -97,8 +97,14 @@ is installed and in your |runtimepath|
 
 |g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
 
-Can be `0` or `1`. When `1`, will highlight icons for opened files and directories
+Highlight icons and/or names for opened files and directories
 Default is 0
+
+Must be:
+    0: No highlight
+    1: Enable highligting for folders and file icons only.
+    2: Enable highligting for folders and file names only.
+    3: Enable highligting for folders and both file icons and names.
 
 |g:nvim_tree_icons|                                *g:nvim_tree_icons*
 
