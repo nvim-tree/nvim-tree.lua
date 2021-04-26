@@ -11,6 +11,8 @@ local namespace_id = api.nvim_create_namespace('NvimTreeHighlights')
 
 local icon_state = config.get_icon_state()
 
+local should_hl_opened_files = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0
+
 local get_folder_icon = function() return "" end
 local function get_trailing_length()
   return vim.g.nvim_tree_add_trailing and 1 or 0
@@ -315,13 +317,15 @@ local function update_draw_data(tree, depth, markers)
         table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
       end
 
-      if vim.fn.bufloaded(node.absolute_path) > 0 then
-        if vim.g.nvim_tree_highlight_opened_files == 1 then
-          table.insert(hl, {'NvimTreeOpenedFile', index, offset, offset+#icon })
-        elseif vim.g.nvim_tree_highlight_opened_files == 2 then
-          table.insert(hl, {'NvimTreeOpenedFile', index, offset+#icon+#git_icons, offset+#icon+#git_icons+#node.name })
-        elseif vim.g.nvim_tree_highlight_opened_files == 3 then
-          table.insert(hl, {'NvimTreeOpenedFile', index, offset, -1 })
+      if should_hl_opened_files then
+        if vim.fn.bufloaded(node.absolute_path) > 0 then
+          if vim.g.nvim_tree_highlight_opened_files == 1 then
+            table.insert(hl, {'NvimTreeOpenedFile', index, offset, offset+#icon })  -- highlight icon only
+          elseif vim.g.nvim_tree_highlight_opened_files == 2 then
+            table.insert(hl, {'NvimTreeOpenedFile', index, offset+#icon+#git_icons, offset+#icon+#git_icons+#node.name })  -- highlight name only
+          elseif vim.g.nvim_tree_highlight_opened_files == 3 then
+            table.insert(hl, {'NvimTreeOpenedFile', index, offset, -1 })  -- highlight whole line
+          end
         end
       end
 
