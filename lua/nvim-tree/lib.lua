@@ -215,7 +215,9 @@ end
 
 ---Get user to pick a window. Selectable windows are all windows in the current
 ---tabpage that aren't NvimTree.
----@return integer|nil The selected window's id, or nil if the user picked an invalid window.
+---@return integer|nil -- If a valid window was picked, return its id. If an
+--invalid window was picked, return nil. If there are no selectable windows,
+--return -1.
 function M.pick_window()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
@@ -229,7 +231,7 @@ function M.pick_window()
   end
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
-  if #selectable == 0 then return nil end
+  if #selectable == 0 then return -1 end
   if #selectable == 1 then return selectable[1] end
 
   local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -265,7 +267,8 @@ function M.pick_window()
 
   api.nvim_command("redraw")
   print("Pick window: ")
-  local resp = (utils.get_user_input_char() or ""):upper()
+  local _, resp = pcall(utils.get_user_input_char)
+  resp = (resp or ""):upper()
   utils.clear_prompt()
 
   -- Restore window options
@@ -282,7 +285,11 @@ end
 
 function M.open_file(mode, filename)
   local target_winid = M.pick_window()
-  if not target_winid then target_winid = M.Tree.target_winid end
+  if target_winid == -1 then
+    target_winid = M.Tree.target_winid
+  elseif target_winid == nil then
+    return
+  end
   local target_winnr = vim.fn.win_id2win(target_winid)
 
   local target_bufnr = target_winnr > 0 and vim.fn.winbufnr(M.Tree.target_winid)

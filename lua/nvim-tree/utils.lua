@@ -70,7 +70,11 @@ function M.clear_prompt()
 end
 
 function M.get_user_input_char()
-  return vim.fn.nr2char(vim.fn.getchar())
+  local c = vim.fn.getchar()
+  while type(c) ~= "number" do
+    c = vim.fn.getchar()
+  end
+  return vim.fn.nr2char(c)
 end
 
 -- get the node from the tree that matches the predicate
