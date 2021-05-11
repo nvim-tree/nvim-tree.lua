@@ -132,7 +132,7 @@ function M.setup()
       vim.g.nvim_tree_bindings or {}
     )
     for key, cb in pairs(M.View.bindings) do
-      a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true })
+      a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true, nowait = true })
     end
   end
 
