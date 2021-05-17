@@ -98,7 +98,9 @@ if vim.g.nvim_tree_git_hl == 1 then
     },
     ["AD"] = {
       { hl = "NvimTreeFileStaged" },
-      { hl = "NvimTreeFileDeleted" }
+    },
+    ["MD"] = {
+      { hl = "NvimTreeFileStaged" },
     },
     ["AM"] = {
       { hl = "NvimTreeFileStaged" },
@@ -143,7 +145,13 @@ if icon_state.show_git_icon then
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
       { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" }
     },
+    ["MD"] = {
+      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+    },
     ["A "] = {
+      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+    },
+    ["AD"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
     },
     [" A"] = {
