@@ -73,11 +73,11 @@ function M.window_options()
   if vim.g.nvim_tree_side == 'right' then
     opts.open_command = 'h'
     opts.preview_command = 'l'
-    opts.split_command = 'nosplitright'
+    opts.split_command = 'aboveleft'
   else
     opts.open_command = 'l'
     opts.preview_command = 'h'
-    opts.split_command = 'splitright'
+    opts.split_command = 'belowright'
   end
 
   return opts
