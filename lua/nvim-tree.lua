@@ -39,7 +39,7 @@ function M.open()
 end
 
 function M.tab_change()
-  if not view.win_open() then
+  if not view.win_open() and view.win_open({ any_tabpage = true }) then
     view.open()
   end
 end
