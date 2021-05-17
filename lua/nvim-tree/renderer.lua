@@ -17,7 +17,7 @@ local function get_trailing_length()
 end
 
 local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
-  table.insert(hl, {hl_group, line, depth+git_icon_len+get_trailing_length(), -1})
+  table.insert(hl, {hl_group, line, depth+git_icon_len, -1})
 end
 
 if icon_state.show_folder_icon then
