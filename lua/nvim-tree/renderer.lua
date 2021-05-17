@@ -357,6 +357,7 @@ function M.draw(tree, reload)
 end
 
 function M.render_hl(bufnr)
+  if not api.nvim_buf_is_loaded(bufnr) then return end
   api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
   for _, data in ipairs(hl) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
