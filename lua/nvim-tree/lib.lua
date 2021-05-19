@@ -382,7 +382,7 @@ function M.toggle_dotfiles()
 end
 
 function M.dir_up(node)
-  if not node then
+  if not node or node.name == ".." then
     return M.change_dir('..')
   else
     local newdir = vim.fn.fnamemodify(M.Tree.cwd, ':h')
