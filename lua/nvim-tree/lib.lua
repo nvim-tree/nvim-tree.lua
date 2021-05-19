@@ -213,10 +213,91 @@ function M.set_index_and_redraw(fname)
   end
 end
 
+---Get user to pick a window. Selectable windows are all windows in the current
+---tabpage that aren't NvimTree.
+---@return integer|nil -- If a valid window was picked, return its id. If an
+---       invalid window was picked / user canceled, return nil. If there are
+---       no selectable windows, return -1.
+function M.pick_window()
+  local tabpage = api.nvim_get_current_tabpage()
+  local win_ids = api.nvim_tabpage_list_wins(tabpage)
+  local tree_winid = view.View.tabpages[tabpage]
+
+  local selectable = vim.tbl_filter(function (id)
+    return id ~= tree_winid
+  end, win_ids)
+
+  -- If there are no selectable windows: return. If there's only 1, return it without picking.
+  if #selectable == 0 then return -1 end
+  if #selectable == 1 then return selectable[1] end
+
+  local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+  if vim.g.nvim_tree_window_picker_chars then
+    chars = tostring(vim.g.nvim_tree_window_picker_chars):upper()
+  end
+
+  local i = 1
+  local win_opts = {}
+  local win_map = {}
+  local laststatus = vim.o.laststatus
+  vim.o.laststatus = 2
+
+  -- Setup UI
+  for _, id in ipairs(selectable) do
+    local char = chars:sub(i, i)
+    local _, statusline = pcall(api.nvim_win_get_option, id, "statusline")
+    local _, winhl = pcall(api.nvim_win_get_option, id, "winhl")
+
+    win_opts[id] = {
+      statusline = statusline or "",
+      winhl = winhl or ""
+    }
+    win_map[char] = id
+
+    api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=")
+    api.nvim_win_set_option(
+      id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker"
+    )
+
+    i = i + 1
+    if i > #chars then break end
+  end
+
+  vim.cmd("redraw")
+  print("Pick window: ")
+  local _, resp = pcall(utils.get_user_input_char)
+  resp = (resp or ""):upper()
+  utils.clear_prompt()
+
+  -- Restore window options
+  for _, id in ipairs(selectable) do
+    for opt, value in pairs(win_opts[id]) do
+      api.nvim_win_set_option(id, opt, value)
+    end
+  end
+
+  vim.o.laststatus = laststatus
+
+  return win_map[resp]
+end
+
 function M.open_file(mode, filename)
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
-  local target_winid = M.Tree.target_winid
+
+  local target_winid
+  if vim.g.nvim_tree_disable_window_picker == 1 then
+    target_winid = M.Tree.target_winid
+  else
+    target_winid = M.pick_window()
+  end
+
+  if target_winid == -1 then
+    target_winid = M.Tree.target_winid
+  elseif target_winid == nil then
+    return
+  end
+
   local do_split = mode == "split" or mode == "vsplit"
   local vertical = mode ~= "split"
 
@@ -235,7 +316,7 @@ function M.open_file(mode, filename)
     if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
       -- Target is invalid, or window does not exist in current tabpage: create
       -- new window
-      api.nvim_command(window_opts.split_command .. " vsp")
+      vim.cmd(window_opts.split_command .. " vsp")
       target_winid = api.nvim_get_current_win()
       M.Tree.target_winid = target_winid
 
@@ -259,7 +340,7 @@ function M.open_file(mode, filename)
 
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
-    api.nvim_command(cmd)
+    vim.cmd(cmd)
     view.resize()
   end
 
@@ -280,7 +361,7 @@ function M.change_dir(foldername)
     return
   end
 
-  api.nvim_command('cd '..foldername)
+  vim.cmd('cd '..foldername)
   M.Tree.entries = {}
   M.init(false, true)
 end

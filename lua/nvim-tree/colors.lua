@@ -45,7 +45,9 @@ local function get_hl_groups()
     GitStaged = { fg = colors.green },
     GitMerge = { fg = colors.orange },
     GitRenamed = { fg = colors.purple },
-    GitNew = { fg = colors.yellow }
+    GitNew = { fg = colors.yellow },
+
+    WindowPicker = { gui = "bold", fg = "#ededed", bg = "#4493c8" }
   }
 end
 
@@ -84,7 +86,8 @@ function M.setup()
   for k, d in pairs(higlight_groups) do
     local gui = d.gui and ' gui='..d.gui or ''
     local fg = d.fg and ' guifg='..d.fg or ''
-    api.nvim_command('hi def NvimTree'..k..gui..fg)
+    local bg = d.bg and ' guibg='..d.bg or ''
+    api.nvim_command('hi def NvimTree'..k..gui..fg..bg)
   end
 
   local links = get_links()

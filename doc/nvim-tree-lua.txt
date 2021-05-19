@@ -127,6 +127,12 @@ You can set icons for:
       \   'empty_open':   "",
       \   'symlink':      "",
       \   'symlink_open': "",
+      \  },
+      \  'lsp': {
+      \    'hint': "",
+      \    'info': "",
+      \    'warning': "",
+      \    'error': "",
       \  }
       \ }
 
@@ -243,7 +249,17 @@ default table is
       ["README.md"] = true,
       ["readme.md"] = true,
    }
-<
+
+
+|g:nvim_tree_disable_window_picker|          *g:nvim_tree_disable_window_picker*
+
+Can be 0 or 1. When 1, will disable the window picker. Files will open in the
+window from which you last opened NvimTree.
+
+|g:nvim_tree_window_picker_chars|              *g:nvim_tree_window_picker_chars*
+
+A string of chars used as identifiers by the window picker.
+`"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"` by default.
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
