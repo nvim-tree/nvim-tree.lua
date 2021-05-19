@@ -315,9 +315,13 @@ local function update_draw_data(tree, depth, markers)
         table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
       end
 
-      if vim.g.nvim_tree_highlight_opened_files == 1 then
-        if vim.fn.bufloaded(node.absolute_path) > 0 then
+      if vim.fn.bufloaded(node.absolute_path) > 0 then
+        if vim.g.nvim_tree_highlight_opened_files == 1 then
           table.insert(hl, {'NvimTreeOpenedFile', index, offset, offset+#icon })
+        elseif vim.g.nvim_tree_highlight_opened_files == 2 then
+          table.insert(hl, {'NvimTreeOpenedFile', index, offset+#icon+#git_icons, offset+#icon+#git_icons+#node.name })
+        elseif vim.g.nvim_tree_highlight_opened_files == 3 then
+          table.insert(hl, {'NvimTreeOpenedFile', index, offset, -1 })
         end
       end
 
