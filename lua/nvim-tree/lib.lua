@@ -285,7 +285,13 @@ function M.open_file(mode, filename)
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
 
-  local target_winid = M.pick_window()
+  local target_winid
+  if vim.g.nvim_tree_disable_window_picker == 1 then
+    target_winid = M.Tree.target_winid
+  else
+    target_winid = M.pick_window()
+  end
+
   if target_winid == -1 then
     target_winid = M.Tree.target_winid
   elseif target_winid == nil then
