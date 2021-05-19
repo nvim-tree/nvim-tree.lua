@@ -47,7 +47,7 @@ local function get_hl_groups()
     GitRenamed = { fg = colors.purple },
     GitNew = { fg = colors.yellow },
 
-    WindowPicker = { gui = "bold", fg = "#ededed", bg = "#3d84b4" }
+    WindowPicker = { gui = "bold", fg = "#ededed", bg = "#4493c8" }
   }
 end
 
