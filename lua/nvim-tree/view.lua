@@ -132,7 +132,7 @@ function M.setup()
       vim.g.nvim_tree_bindings or {}
     )
     for key, cb in pairs(M.View.bindings) do
-      a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true })
+      a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true, nowait = true })
     end
   end
 
@@ -163,8 +163,17 @@ function M._prevent_buffer_override()
   end)
 end
 
-function M.win_open()
-  return M.get_winnr() ~= nil and a.nvim_win_is_valid(M.get_winnr())
+function M.win_open(opts)
+  if opts and opts.any_tabpage then
+    for _, v in pairs(M.View.tabpages) do
+      if  a.nvim_win_is_valid(v) then
+        return true
+      end
+    end
+    return false
+  else
+    return M.get_winnr() ~= nil and a.nvim_win_is_valid(M.get_winnr())
+  end
 end
 
 function M.set_cursor(opts)

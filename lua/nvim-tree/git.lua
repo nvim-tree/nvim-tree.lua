@@ -10,11 +10,17 @@ local not_git = 'not a git repo'
 local is_win = vim.api.nvim_call_function("has", {"win32"}) == 1
 
 local function update_root_status(root)
+  local e_root = vim.fn.shellescape(root)
   local untracked = ' -u'
-  if vim.fn.trim(vim.fn.system('git -C \'' .. root .. '\' config --type=bool status.showUntrackedFiles')) == 'false' then
+
+  local cmd = "git -C " .. e_root .. " config --type=bool status.showUntrackedFiles"
+  if vim.trim(vim.fn.system(cmd)) == 'false' then
     untracked = ''
   end
-  local status = vim.fn.systemlist('git -C \'' .. root .. '\' status --porcelain=v1 --ignored=matching'..untracked)
+
+  cmd = "git -C " .. e_root .. " status --porcelain=v1 --ignored=matching" .. untracked
+  local status = vim.fn.systemlist(cmd)
+
   roots[root] = {}
   gitignore_map[root] = {}
 
@@ -61,7 +67,8 @@ local function get_git_root(path)
 end
 
 local function create_root(cwd)
-  local git_root = vim.fn.system('cd "'..cwd..'" && git rev-parse --show-toplevel')
+  local cmd = "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel"
+  local git_root = vim.fn.system(cmd)
 
   if not git_root or #git_root == 0 or git_root:match('fatal') then
     roots[cwd] = not_git
