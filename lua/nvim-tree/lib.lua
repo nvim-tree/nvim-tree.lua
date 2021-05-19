@@ -282,6 +282,18 @@ function M.pick_window()
 end
 
 function M.open_file(mode, filename)
+  if mode == "tabnew" then
+    -- Switch window first to ensure new window doesn't inherit settings from
+    -- NvimTree
+    if M.Tree.target_winid > 0 and api.nvim_win_is_valid(M.Tree.target_winid) then
+      api.nvim_set_current_win(M.Tree.target_winid)
+    else
+      vim.cmd("wincmd p")
+    end
+    vim.cmd("tabe " .. vim.fn.fnameescape(filename))
+    return
+  end
+
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
 
