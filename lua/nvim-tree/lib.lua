@@ -148,7 +148,7 @@ local function refresh_nodes(node)
 end
 
 function M.refresh_tree()
-  if vim.v.exiting ~= nil then return end
+  if vim.v.exiting ~= vim.NIL then return end
 
   refresh_nodes(M.Tree)
 
