@@ -317,32 +317,27 @@ function M.print_clipboard()
   return api.nvim_out_write(table.concat(content, '\n')..'\n')
 end
 
-local function copy_to_clipboard(content)
+local function Copied(content)
   vim.fn.setreg('+', content);
   vim.fn.setreg('"', content);
   return api.nvim_out_write(string.format('Copy %s to system clipboard! \n', content))
 end
 
-local function path_is_dir(path)
-  local stats = luv.fs_stat(path)
-  return stats and stats.type == 'directory'
-end
-
 function M.copy_filename(node)
-  return copy_to_clipboard(node.name)
+  return Copied(node.name)
 end
 
 function M.copy_path(node)
   local absolute_path = node.absolute_path
   local relative_path = utils.path_relative(absolute_path, lib.Tree.cwd)
-  local content = path_is_dir(absolute_path) and utils.path_add_trailing(relative_path) or relative_path
-  return copy_to_clipboard(content)
+  local content = node.entries ~= nil and utils.path_add_trailing(relative_path) or relative_path
+  return Copied(content)
 end
 
 function M.copy_absolute_path(node)
   local absolute_path = node.absolute_path
-  local content = path_is_dir(absolute_path) and utils.path_add_trailing(absolute_path) or absolute_path
-  return copy_to_clipboard(content)
+  local content = node.entries ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
+  return Copied(content)
 end
 
 return M
