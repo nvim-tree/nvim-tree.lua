@@ -245,12 +245,12 @@ function M.pick_window()
   -- Setup UI
   for _, id in ipairs(selectable) do
     local char = chars:sub(i, i)
-    local _, statusline = pcall(api.nvim_win_get_option, id, "statusline")
-    local _, winhl = pcall(api.nvim_win_get_option, id, "winhl")
+    local ok_status, statusline = pcall(api.nvim_win_get_option, id, "statusline")
+    local ok_hl, winhl = pcall(api.nvim_win_get_option, id, "winhl")
 
     win_opts[id] = {
-      statusline = statusline or "",
-      winhl = winhl or ""
+      statusline = ok_status and statusline or "",
+      winhl = ok_hl and winhl or ""
     }
     win_map[char] = id
 
