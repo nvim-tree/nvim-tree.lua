@@ -104,6 +104,9 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `<C-r>` to rename a file and omit the filename on input
 - type `x` to add/remove file/directory to cut clipboard
 - type `c` to add/remove file/directory to copy clipboard
+- type `y` will copy name to system clipboard
+- type `Y` will copy relative path to system clipboard
+- type `gy` will copy absolute path to system clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
 - type `]c` to go to next git item
@@ -162,6 +165,9 @@ lua <<EOF
       ["x"]              = tree_cb("cut"),
       ["c"]              = tree_cb("copy"),
       ["p"]              = tree_cb("paste"),
+      ["y"]              = tree_cb("copy_name"),
+      ["Y"]              = tree_cb("copy_path"),
+      ["gy"]             = tree_cb("copy_absolute_path"),
       ["[c"]             = tree_cb("prev_git_item"),
       ["]c"]             = tree_cb("next_git_item"),
       ["-"]              = tree_cb("dir_up"),
