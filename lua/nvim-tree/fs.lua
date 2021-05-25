@@ -3,6 +3,7 @@ local luv = vim.loop
 local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants.O_TRUNC
 
 local utils = require'nvim-tree.utils'
+local view = require'nvim-tree.view'
 local lib = require'nvim-tree.lib'
 local events = require'nvim-tree.events'
 local M = {}
@@ -11,8 +12,12 @@ local clipboard = {
   copy = {}
 }
 
-local function refresh_tree()
-  vim.api.nvim_command(":NvimTreeRefresh")
+local function focus_file(file)
+  local _, i = utils.find_node(
+    lib.Tree.entries,
+    function(node) return node.absolute_path == file end
+  )
+  view.set_cursor({i+1, 1})
 end
 
 local function create_file(file)
@@ -33,7 +38,8 @@ local function create_file(file)
       luv.fs_chmod(file, 420)
       luv.fs_close(fd)
       events._dispatch_file_created(file)
-      refresh_tree()
+      lib.refresh_tree()
+      focus_file(file)
     end
   end))
 end
@@ -76,24 +82,30 @@ function M.create(node)
   local idx = 0
 
   local num_entries = get_num_entries(utils.path_split(ans))
+  local first_entry
   for path in utils.path_split(ans) do
+    if idx == 0 then
+      first_entry = add_into..relpath..path
+    end
     idx = idx + 1
     relpath = relpath..path
+    local abs_path = add_into..relpath
     if relpath:match('.*'..utils.path_separator..'$') then
-      local success = luv.fs_mkdir(add_into..relpath, 493)
+      local success = luv.fs_mkdir(abs_path, 493)
       if not success then
-        api.nvim_err_writeln('Could not create folder '..add_into..relpath)
+        api.nvim_err_writeln('Could not create folder '..abs_path)
         return
       end
       if idx == num_entries then
-        events._dispatch_folder_created(add_into..relpath)
-        api.nvim_out_write('Folder '..add_into..relpath..' was properly created\n')
-        refresh_tree()
+        events._dispatch_folder_created(abs_path)
+        api.nvim_out_write('Folder '..abs_path..' was properly created\n')
+        lib.refresh_tree()
       end
     else
-      create_file(add_into..relpath)
+      create_file(abs_path)
     end
   end
+  focus_file(first_entry:sub(0, #first_entry - 1))
 end
 
 local function clear_buffer(absolute_path)
@@ -204,7 +216,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  return refresh_tree()
+  return lib.refresh_tree()
 end
 
 local function add_to_clipboard(node, clip)
@@ -241,7 +253,7 @@ function M.remove(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    refresh_tree()
+    lib.refresh_tree()
   end
 end
 
@@ -271,7 +283,7 @@ function M.rename(with_sub)
       end
     end
     events._dispatch_node_renamed(abs_path, new_name)
-    refresh_tree()
+    lib.refresh_tree()
   end
 end
 
