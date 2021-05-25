@@ -224,7 +224,8 @@ function M.pick_window()
   local tree_winid = view.View.tabpages[tabpage]
 
   local selectable = vim.tbl_filter(function (id)
-    return id ~= tree_winid
+    local win_config = api.nvim_win_get_config(id)
+    return id ~= tree_winid and win_config.focusable
   end, win_ids)
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
