@@ -177,7 +177,7 @@ Default is {}
 |g:nvim_tree_quit_on_open|			*g:nvim_tree_quit_on_open*
 
 Can be `0` or `1`. When `1`, will close the tree when a file is opened.
-Applies to: `preview`, `edit`, `edit_vsplit`, `edit_split`, `edit_tab`.
+Applies to: `edit`, `vsplit`, `split`, `tabnew`.
 Default is 0
 
 |g:nvim_tree_disable_keybindings|          *g:nvim_tree_disable_keybindings*
