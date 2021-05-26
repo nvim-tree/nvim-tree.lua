@@ -34,6 +34,8 @@ function M.init(with_open, with_reload)
 
   if with_open then
     M.open()
+  elseif view.win_open() then
+    M.refresh_tree()
   end
 
   if with_reload then
