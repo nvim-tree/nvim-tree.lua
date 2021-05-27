@@ -267,6 +267,20 @@ window from which you last opened NvimTree.
 A string of chars used as identifiers by the window picker.
 `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"` by default.
 
+|g:nvim_tree_window_picker_exclude|          *g:nvim_tree_window_picker_exclude*
+
+Dictionary of buffer option names mapped to a list of option values that
+indicates to the window picker that the buffer's window should not be
+selectable. The default table is
+>
+    {
+      filetype = {
+        "packer",
+        "qf"
+      }
+    }
+<
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 

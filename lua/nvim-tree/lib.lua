@@ -224,8 +224,17 @@ function M.pick_window()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.View.tabpages[tabpage]
+  local exclude = config.window_picker_exclude()
 
   local selectable = vim.tbl_filter(function (id)
+    local bufid = api.nvim_win_get_buf(id)
+    for option, v in pairs(exclude) do
+      local ok, option_value = pcall(api.nvim_buf_get_option, bufid, option)
+      if ok and vim.tbl_contains(v, option_value) then
+        return false
+      end
+    end
+
     local win_config = api.nvim_win_get_config(id)
     return id ~= tree_winid and win_config.focusable
   end, win_ids)

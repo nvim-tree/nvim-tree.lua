@@ -83,4 +83,16 @@ function M.window_options()
   return opts
 end
 
+function M.window_picker_exclude()
+  if type(vim.g.nvim_tree_window_picker_exclude) == "table" then
+    return vim.g.nvim_tree_window_picker_exclude
+  end
+  return {
+    filetype = {
+      "packer",
+      "qf"
+    }
+  }
+end
+
 return M
