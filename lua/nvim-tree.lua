@@ -13,6 +13,7 @@ local M = {}
 
 function M.toggle()
   if view.win_open() then
+    vim.cmd "wincmd p"
     view.close()
   else
     if vim.g.nvim_tree_follow == 1 then
@@ -25,6 +26,7 @@ end
 
 function M.close()
   if view.win_open() then
+    vim.cmd "wincmd p"
     view.close()
     return true
   end
