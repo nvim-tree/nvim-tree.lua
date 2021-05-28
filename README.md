@@ -41,8 +41,8 @@ let g:nvim_tree_lsp_diagnostics = 1 "0 by default, will show lsp diagnostics in 
 let g:nvim_tree_disable_window_picker = 1 "0 by default, will disable the window picker.
 let g:nvim_tree_window_picker_exclude = {
     \   'filetype': [
-    \     'packer'
-    \     'qf',
+    \     'packer',
+    \     'qf'
     \   ],
     \   'buftype': [
     \     'terminal'
