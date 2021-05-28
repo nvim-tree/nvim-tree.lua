@@ -17,6 +17,8 @@ augroup NvimTree
     au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()
   endif
   au BufEnter * lua require'nvim-tree'.buf_enter()
+  au BufEnter NvimTree lua require'nvim-tree'.save_previous_buf()
+  au BufLeave NvimTree lua require'nvim-tree'.set_previous_buf()
   if get(g:, 'nvim_tree_auto_close') == 1
     au WinClosed * lua require'nvim-tree'.on_leave()
   endif

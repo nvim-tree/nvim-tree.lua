@@ -194,6 +194,20 @@ function M.reset_highlight()
   renderer.render_hl(view.View.bufnr)
 end
 
+local old_win = nil
+
+function M.save_previous_buf()
+  vim.cmd "wincmd p"
+  old_win = api.nvim_get_current_win()
+  vim.cmd "wincmd p"
+end
+
+function M.set_previous_buf()
+  if old_win then
+    api.nvim_set_current_win(old_win)
+  end
+end
+
 view.setup()
 colors.setup()
 vim.defer_fn(M.on_enter, 1)
