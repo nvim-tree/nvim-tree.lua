@@ -209,6 +209,16 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 ## Tips
 
 - You can edit the size of the tree during runtime with `:lua require'nvim-tree.view'.View.width = 50`
+- Open the node under the cursor with the OS default application (usually file explorer for folders):
+  ```lua
+  function NvimTreeOSOpen()
+    local lib = require "nvim-tree.lib"
+    local node = lib.get_node_at_cursor()
+    if node then
+      vim.fn.jobstart("open '" .. node.absolute_path .. "' &", {detach = true})
+    end
+  end
+  ```
 
 ## Screenshots
 
