@@ -123,8 +123,8 @@ You can set icons for:
       \   'staged':       "✓",
       \   'unmerged':     "",
       \   'renamed':      "➜",
-      \   'untracked':    "★"
-      \   'deleted':      ""
+      \   'untracked':    "★",
+      \   'deleted':      "",
       \  },
       \ 'folder': {
       \   'default':      "",
