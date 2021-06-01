@@ -46,7 +46,7 @@ local function file_new(cwd, name)
     name = name,
     absolute_path = absolute_path,
     executable = is_exec,
-    extension = vim.fn.fnamemodify(name, ':e') or "",
+    extension = string.match(name, ".?[^.]+%.(.*)") or "",
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
   }
