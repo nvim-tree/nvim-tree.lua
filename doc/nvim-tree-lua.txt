@@ -287,6 +287,12 @@ selectable. The default table is
     }
 <
 
+|g:nvim_tree_hijack_cursor|               *g:nvim_tree_hijack_cursor*
+
+Can be 0 or 1. 1 by default.
+When 1, moving cursor in the tree will position the cursor at the start 
+of the file on the current line.
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 

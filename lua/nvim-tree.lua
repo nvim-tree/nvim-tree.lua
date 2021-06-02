@@ -194,6 +194,15 @@ function M.reset_highlight()
   renderer.render_hl(view.View.bufnr)
 end
 
+function M.place_cursor_on_node()
+  local node = lib.get_node_at_cursor()
+  if not node then return end
+  local line = api.nvim_get_current_line()
+  local cursor = api.nvim_win_get_cursor(0)
+  local idx = vim.fn.stridx(line, node.name)
+  api.nvim_win_set_cursor(0, {cursor[1], idx})
+end
+
 view.setup()
 colors.setup()
 vim.defer_fn(M.on_enter, 1)

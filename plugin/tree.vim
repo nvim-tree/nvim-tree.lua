@@ -26,6 +26,9 @@ augroup NvimTree
     au TabEnter * lua require'nvim-tree'.tab_change()
   endif
   au SessionLoadPost * lua require'nvim-tree.view'._wipe_rogue_buffer()
+  if get(g:, 'nvim_tree_hijack_cursor', 1) == 1
+    au CursorMoved NvimTree lua require'nvim-tree'.place_cursor_on_node()
+  endif
 augroup end
 
 command! NvimTreeOpen lua require'nvim-tree'.open()
