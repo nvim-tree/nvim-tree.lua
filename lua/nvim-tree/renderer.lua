@@ -215,6 +215,16 @@ local get_padding = function(depth)
   return string.rep(' ', depth)
 end
 
+if icon_state.show_folder_icon and icon_state.show_folder_arrows then
+  get_padding = function(depth, _, _, node)
+    if node.entries then
+      local icon = icon_state.icons.folder_icons[node.open and 'arrow_open' or 'arrow_closed']
+      return string.rep(' ', depth - 2)..icon..' '
+    end
+    return string.rep(' ', depth)
+  end
+end
+
 if vim.g.nvim_tree_indent_markers == 1 then
   get_padding = function(depth, idx, tree, _, markers)
     local padding = ""
@@ -354,7 +364,9 @@ function M.draw(tree, reload)
     index = 0
     lines = {}
     hl = {}
-    update_draw_data(tree, 0, {})
+
+    local show_arrows = icon_state.show_folder_icon and icon_state.show_folder_arrows
+    update_draw_data(tree, show_arrows and 1 or 0, {})
   end
 
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
