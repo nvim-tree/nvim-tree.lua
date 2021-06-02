@@ -366,7 +366,7 @@ function M.draw(tree, reload)
     hl = {}
 
     local show_arrows = icon_state.show_folder_icon and icon_state.show_folder_arrows
-    update_draw_data(tree, show_arrows and 1 or 0, {})
+    update_draw_data(tree, show_arrows and 2 or 0, {})
   end
 
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
