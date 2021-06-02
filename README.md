@@ -56,10 +56,13 @@ let g:nvim_tree_show_icons = {
     \ 'git': 1,
     \ 'folders': 0,
     \ 'files': 0,
+    \ 'folder_arrows': 0,
     \ }
 "If 0, do not show the icons for one of 'git' 'folder' and 'files'
 "1 by default, notice that if 'files' is 1, it will only display
-"if nvim-web-devicons is installed and on your runtimepath
+"if nvim-web-devicons is installed and on your runtimepath.
+"if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
+"but this will not work when you set indent_markers (because of UI conflict)
 
 " default will show icon by default if no icon is provided
 " default shows no icon by default
@@ -76,6 +79,8 @@ let g:nvim_tree_icons = {
     \   'ignored': "◌"
     \   },
     \ 'folder': {
+    \   'arrow_open': "",
+    \   'arrow_closed': "",
     \   'default': "",
     \   'open': "",
     \   'empty': "",

@@ -87,13 +87,17 @@ can disable icons per type:
     let g:nvim_tree_show_icons = {
 	\ 'git': 1,
 	\ 'folders': 1,
-	\ 'files': 1
+	\ 'files': 1,
+  \ 'folder_arrows': 1,
 	\}
 
 Can be one of `1` and `0` for each key. By default the tree will try
 to render the icons. The `files` key can only work if `nvim-web-devicons`
 is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
+if folder is 1, you can also set `folder_arrows = 1` to show small arrows
+next to the folder icons but this will not work when you set 
+|g:nvim_tree_indent_markers| (because of UI conflict).
 
 |g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
 
@@ -127,6 +131,8 @@ You can set icons for:
       \   'deleted':      "",
       \  },
       \ 'folder': {
+      \   'arrow_open':   "",
+      \   'arrow_closed': "",
       \   'default':      "",
       \   'open':         "",
       \   'empty':        "",
