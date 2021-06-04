@@ -3,7 +3,7 @@ local uv = vim.loop
 local api = vim.api
 
 function M.path_to_matching_str(path)
-  return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
+  return vim.fn.fnameescape(path)
 end
 
 function M.echo_warning(msg)
