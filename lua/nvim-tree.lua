@@ -195,9 +195,6 @@ function M.reset_highlight()
 end
 
 function M.place_cursor_on_node()
-  -- to avoid crashing on startup
-  if not view.win_open() then return end
-
   local node = lib.get_node_at_cursor()
   if not node then return end
   local line = api.nvim_get_current_line()
