@@ -337,11 +337,11 @@ function M.populate(entries, cwd, parent_node)
     table.insert(entries, file)
   end
 
+  utils.merge_sort(entries, node_comparator)
+
   if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
     return
   end
-
-  utils.merge_sort(entries, node_comparator)
 
   git.update_status(entries, cwd, parent_node)
 end
