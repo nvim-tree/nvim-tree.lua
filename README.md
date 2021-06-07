@@ -40,6 +40,7 @@ let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contai
 let g:nvim_tree_lsp_diagnostics = 1 "0 by default, will show lsp diagnostics in the signcolumn. See :help nvim_tree_lsp_diagnostics
 let g:nvim_tree_disable_window_picker = 1 "0 by default, will disable the window picker.
 let g:nvim_tree_hijack_cursor = 0 "1 by default, when moving cursor in the tree, will position the cursor at the start of the file on the current line
+let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
 let g:nvim_tree_window_picker_exclude = {
     \   'filetype': [
     \     'packer',

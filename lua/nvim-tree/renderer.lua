@@ -22,6 +22,8 @@ local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
   table.insert(hl, {hl_group, line, depth+git_icon_len, -1})
 end
 
+local icon_padding = vim.g.nvim_tree_icon_padding or " "
+
 if icon_state.show_folder_icon then
   get_folder_icon = function(open, is_symlink, has_children)
     local n = ""
@@ -42,7 +44,7 @@ if icon_state.show_folder_icon then
         n = icon_state.icons.folder_icons.empty
       end
     end
-    return n.." "
+    return n..icon_padding
   end
   set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
     table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len+get_trailing_length()})
@@ -62,12 +64,12 @@ if icon_state.show_file_icon then
       if hl_group then
         table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
       end
-      return icon.." "
+      return icon..icon_padding
     elseif string.match(extension, "%.(.*)") then
       -- If there are more extensions to the file, try to grab the icon for them recursively
       return get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth)
     else
-      return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
+      return #icon_state.icons.default > 0 and icon_state.icons.default..icon_padding or ""
     end
   end
 
@@ -76,14 +78,14 @@ end
 local get_symlink_icon = function() return icon_state.icons.symlink end
 if icon_state.show_file_icon then
   get_symlink_icon = function()
-    return #icon_state.icons.symlink > 0 and icon_state.icons.symlink.." " or ""
+    return #icon_state.icons.symlink > 0 and icon_state.icons.symlink..icon_padding or ""
   end
 end
 
 local get_special_icon = function() return icon_state.icons.default end
 if icon_state.show_file_icon then
   get_special_icon = function()
-    return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
+    return #icon_state.icons.default > 0 and icon_state.icons.default..icon_padding or ""
   end
 end
 
@@ -204,7 +206,7 @@ if icon_state.show_git_icon then
     end
     for _, v in ipairs(icons) do
       table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
-      icon = icon..v.icon.." "
+      icon = icon..v.icon..icon_padding
     end
 
     return icon

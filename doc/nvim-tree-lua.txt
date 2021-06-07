@@ -293,6 +293,10 @@ Can be 0 or 1. 1 by default.
 When 1, moving cursor in the tree will position the cursor at the start 
 of the file on the current line.
 
+|g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*
+
+One space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
