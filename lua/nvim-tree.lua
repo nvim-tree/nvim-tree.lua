@@ -128,10 +128,11 @@ function M.on_enter()
   local disable_netrw = vim.g.nvim_tree_disable_netrw or 1
   local hijack_netrw = vim.g.nvim_tree_hijack_netrw or 1
   if is_dir then
-    api.nvim_command('lcd '..bufname)
+    lib.Tree.cwd = vim.fn.expand(bufname)
   end
+  local netrw_disabled = hijack_netrw == 1 or disable_netrw == 1
   local should_open = vim.g.nvim_tree_auto_open == 1
-    and ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '')
+    and ((is_dir and netrw_disabled) or bufname == '')
     and not vim.tbl_contains(ft_ignore, buftype)
   lib.init(should_open, should_open)
 end

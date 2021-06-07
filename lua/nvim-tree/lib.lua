@@ -25,7 +25,9 @@ M.Tree = {
 }
 
 function M.init(with_open, with_reload)
-  M.Tree.cwd = luv.cwd()
+  if not M.Tree.cwd then
+    M.Tree.cwd = luv.cwd()
+  end
   git.git_root(M.Tree.cwd)
   populate(M.Tree.entries, M.Tree.cwd)
 
@@ -411,6 +413,7 @@ function M.change_dir(foldername)
   end
 
   vim.cmd('lcd '..foldername)
+  M.Tree.cwd = foldername
   M.Tree.entries = {}
   M.init(false, true)
 end
