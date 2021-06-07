@@ -410,7 +410,7 @@ function M.change_dir(foldername)
     return
   end
 
-  vim.cmd('cd '..foldername)
+  vim.cmd('lcd '..foldername)
   M.Tree.entries = {}
   M.init(false, true)
 end

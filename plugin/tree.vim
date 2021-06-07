@@ -29,6 +29,9 @@ augroup NvimTree
   if get(g:, 'nvim_tree_hijack_cursor', 1) == 1
     au CursorMoved NvimTree lua require'nvim-tree'.place_cursor_on_node()
   endif
+  if get(g:, 'nvim_tree_update_cwd', 1) == 1
+    au DirChanged * lua require'nvim-tree.lib'.change_dir(vim.loop.cwd())
+  endif
 augroup end
 
 command! NvimTreeOpen lua require'nvim-tree'.open()

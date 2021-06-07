@@ -128,7 +128,7 @@ function M.on_enter()
   local disable_netrw = vim.g.nvim_tree_disable_netrw or 1
   local hijack_netrw = vim.g.nvim_tree_hijack_netrw or 1
   if is_dir then
-    api.nvim_command('cd '..bufname)
+    api.nvim_command('lcd '..bufname)
   end
   local should_open = vim.g.nvim_tree_auto_open == 1
     and ((is_dir and (hijack_netrw == 1 or disable_netrw == 1)) or bufname == '')
