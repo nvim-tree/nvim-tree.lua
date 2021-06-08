@@ -4,7 +4,9 @@ local luv = vim.loop
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
-local diagnostics = require'nvim-tree.diagnostics'
+if vim.g.nvim_tree_lsp_diagnostics == 1 then
+  local diagnostics = require'nvim-tree.diagnostics'
+end
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
