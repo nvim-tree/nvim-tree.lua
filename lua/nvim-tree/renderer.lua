@@ -104,6 +104,11 @@ if vim.g.nvim_tree_git_hl == 1 then
       { hl = "NvimTreeFileStaged" },
       { hl = "NvimTreeFileNew" }
     },
+    -- not sure about this one
+    ["AA"] = {
+      { hl = "NvimTreeFileMerge" },
+      { hl = "NvimTreeFileStaged" }
+    },
     ["AD"] = {
       { hl = "NvimTreeFileStaged" },
     },
@@ -168,6 +173,11 @@ if icon_state.show_git_icon then
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
     },
     [" A"] = {
+      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+    },
+    -- not sure about this one
+    ["AA"] = {
+      { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
       { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
     ["AM"] = {
