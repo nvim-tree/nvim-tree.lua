@@ -224,7 +224,16 @@ function M.open()
   a.nvim_command("vsp")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
-  a.nvim_command("vertical resize "..M.View.width)
+
+  local width
+  if (vim.g.nvim_tree_width_as_percent == true) then
+    local percentAsDecimal = M.View.width/100
+    width = math.floor( vim.o.columns * percentAsDecimal )
+  else
+    width = M.View.width
+  end
+  a.nvim_command("vertical resize "..width)
+
   local winnr = a.nvim_get_current_win()
   M.View.tabpages[a.nvim_get_current_tabpage()] = winnr
   for k, v in pairs(M.View.winopts) do
