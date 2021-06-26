@@ -386,14 +386,23 @@ function M.draw(tree, reload)
     hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
     local bindings = view.View.bindings
     local line_num = 1
+    local builtin
     for i, v in pairs(bindings) do
-      for w in v:gmatch("'[^']+'") do
-        v = w
+      if v:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
+        builtin = true
+        v = v:match("'[^']+'[^']*$")
+        v = v:match("'[^']+'")
+      else
+        builtin = false
+        v = '"' .. v .. '"'
       end
       local bind_string = string.format("%6s : %s",i,v)
       table.insert(lines,bind_string)
       local hl_len = math.max(6,#i)+2
       table.insert(hl,{'NvimTreeFolderName',line_num, 0, hl_len})
+      if not builtin then
+        table.insert(hl,{'NvimTreeFileRenamed',line_num,hl_len,-1})
+      end
       line_num = line_num + 1
     end
   end
