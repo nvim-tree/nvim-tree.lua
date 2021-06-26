@@ -381,6 +381,22 @@ function M.draw(tree, reload)
     update_draw_data(tree, show_arrows and 2 or 0, {})
   end
 
+  if view.is_help_ui() then
+    lines = {'HELP'}
+    hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
+    local bindings = view.View.bindings
+    local line_num = 1
+    for i, v in pairs(bindings) do
+      for w in v:gmatch("'[^']+'") do
+        v = w
+      end
+      local bind_string = string.format("%6s : %s",i,v)
+      table.insert(lines,bind_string)
+      local hl_len = math.max(6,#i)+2
+      table.insert(hl,{'NvimTreeFolderName',line_num, 0, hl_len})
+      line_num = line_num + 1
+    end
+  end
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
   api.nvim_buf_set_lines(view.View.bufnr, 0, -1, false, lines)
   M.render_hl(view.View.bufnr)
