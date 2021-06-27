@@ -85,6 +85,7 @@ local keypress_funcs = {
 }
 
 function M.on_keypress(mode)
+  if view.is_help_ui() and mode ~= 'toggle_help' then return end
   local node = lib.get_node_at_cursor()
   if not node then return end
 
