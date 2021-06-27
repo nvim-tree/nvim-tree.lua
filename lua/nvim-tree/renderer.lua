@@ -385,25 +385,32 @@ function M.draw(tree, reload)
     lines = {'HELP'}
     hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
     local bindings = view.View.bindings
-    local line_num = 1
-    local builtin
+    local processed = {}
     for i, v in pairs(bindings) do
       if v:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
-        builtin = true
         v = v:match("'[^']+'[^']*$")
         v = v:match("'[^']+'")
+        table.insert(processed,{i,v,true})
       else
-        builtin = false
         v = '"' .. v .. '"'
+        table.insert(processed,{i,v,false})
       end
+    end
+    table.sort(processed,function(a,b)
+      return (a[3]==b[3] and (a[2]<b[2] or (a[2]==b[2] and #a[1]<#b[1]))) or (a[3] and not b[3])
+    end)
+    local i, v, builtin
+    for num, val in pairs(processed) do
+      i = val[1]
+      v = val[2]
+      builtin = val[3]
       local bind_string = string.format("%6s : %s",i,v)
       table.insert(lines,bind_string)
       local hl_len = math.max(6,#i)+2
-      table.insert(hl,{'NvimTreeFolderName',line_num, 0, hl_len})
+      table.insert(hl,{'NvimTreeFolderName', num, 0, hl_len})
       if not builtin then
-        table.insert(hl,{'NvimTreeFileRenamed',line_num,hl_len,-1})
+        table.insert(hl,{'NvimTreeFileRenamed', num, hl_len, -1})
       end
-      line_num = line_num + 1
     end
   end
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
