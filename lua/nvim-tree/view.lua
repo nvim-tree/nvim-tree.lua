@@ -3,11 +3,7 @@ local a = vim.api
 local M = {}
 
 function M.nvim_tree_callback(callback_name)
-  info = {
-    name = callback_name,
-    callback = string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name),
-  }
-  return info.callback
+  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
 end
 
 M.View = {

@@ -197,7 +197,6 @@ function M.reset_highlight()
 end
 
 function M.place_cursor_on_node()
-  if view.is_help_ui then return end
   local node = lib.get_node_at_cursor()
   if not node or node.name == ".." then return end
   local line = api.nvim_get_current_line()
