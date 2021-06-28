@@ -68,6 +68,7 @@ local keypress_funcs = {
   parent_node = lib.parent_node,
   toggle_ignored = lib.toggle_ignored,
   toggle_dotfiles = lib.toggle_dotfiles,
+  toggle_help = lib.toggle_help,
   refresh = lib.refresh_tree,
   first_sibling = function(node) lib.sibling(node, -math.huge) end,
   last_sibling = function(node) lib.sibling(node, math.huge) end,
@@ -84,6 +85,7 @@ local keypress_funcs = {
 }
 
 function M.on_keypress(mode)
+  if view.is_help_ui() and mode ~= 'toggle_help' then return end
   local node = lib.get_node_at_cursor()
   if not node then return end
 

@@ -95,14 +95,20 @@ end
 function M.get_node_at_cursor()
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
-  if line == 1 and M.Tree.cwd ~= "/" then
-    return { name = ".." }
-  end
+  if view.is_help_ui() then
+    local help_lines, _ = renderer.draw_help()
+    local help_text = get_node_at_line(line+1)(help_lines)
+    return {name = help_text}
+  else
+    if line == 1 and M.Tree.cwd ~= "/" then
+      return { name = ".." }
+    end
 
-  if M.Tree.cwd == "/" then
-    line = line + 1
+    if M.Tree.cwd == "/" then
+      line = line + 1
+    end
+    return get_node_at_line(line)(M.Tree.entries)
   end
-  return get_node_at_line(line)(M.Tree.entries)
 end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
@@ -223,7 +229,7 @@ end
 function M.pick_window()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = view.View.tabpages[tabpage]
+  local tree_winid = view.get_winnr(tabpage)
   local exclude = config.window_picker_exclude()
 
   local selectable = vim.tbl_filter(function (id)
@@ -423,7 +429,7 @@ end
 
 function M.set_target_win()
   local id = api.nvim_get_current_win()
-  local tree_id = view.View.tabpages[api.nvim_get_current_tabpage()]
+  local tree_id = view.get_winnr()
   if tree_id and id == tree_id then
     M.Tree.target_winid = 0
     return
@@ -514,6 +520,11 @@ end
 
 function M.toggle_dotfiles()
   pops.show_dotfiles = not pops.show_dotfiles
+  return M.refresh_tree()
+end
+
+function M.toggle_help()
+  view.toggle_help()
   return M.refresh_tree()
 end
 

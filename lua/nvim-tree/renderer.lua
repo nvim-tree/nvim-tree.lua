@@ -366,6 +366,40 @@ end
 
 local M = {}
 
+function M.draw_help()
+    local help_lines = {'HELP'}
+    local help_hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
+    local bindings = view.View.bindings
+    local processed = {}
+    for i, v in pairs(bindings) do
+      if v:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
+        v = v:match("'[^']+'[^']*$")
+        v = v:match("'[^']+'")
+        table.insert(processed,{i,v,true})
+      else
+        v = '"' .. v .. '"'
+        table.insert(processed,{i,v,false})
+      end
+    end
+    table.sort(processed,function(a,b)
+      return (a[3]==b[3] and (a[2]<b[2] or (a[2]==b[2] and #a[1]<#b[1]))) or (a[3] and not b[3])
+    end)
+    local i, v, builtin
+    for num, val in pairs(processed) do
+      i = val[1]
+      v = val[2]
+      builtin = val[3]
+      local bind_string = string.format("%6s : %s",i,v)
+      table.insert(help_lines,bind_string)
+      local hl_len = math.max(6,#i)+2
+      table.insert(help_hl,{'NvimTreeFolderName', num, 0, hl_len})
+      if not builtin then
+        table.insert(help_hl,{'NvimTreeFileRenamed', num, hl_len, -1})
+      end
+    end
+    return help_lines, help_hl
+end
+
 function M.draw(tree, reload)
   if not api.nvim_buf_is_loaded(view.View.bufnr) then return end
   local cursor
@@ -381,6 +415,9 @@ function M.draw(tree, reload)
     update_draw_data(tree, show_arrows and 2 or 0, {})
   end
 
+  if view.is_help_ui() then
+    lines, hl = M.draw_help()
+  end
   api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
   api.nvim_buf_set_lines(view.View.bufnr, 0, -1, false, lines)
   M.render_hl(view.View.bufnr)

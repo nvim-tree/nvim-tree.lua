@@ -75,6 +75,7 @@ M.View = {
     ["]c"]             = M.nvim_tree_callback("next_git_item"),
     ["-"]              = M.nvim_tree_callback("dir_up"),
     ["q"]              = M.nvim_tree_callback("close"),
+    ["?"]              = M.nvim_tree_callback("toggle_help")
   }
 }
 
@@ -171,7 +172,7 @@ end
 function M.win_open(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
-      if  a.nvim_win_is_valid(v) then
+      if a.nvim_win_is_valid(v.winnr) then
         return true
       end
     end
@@ -226,7 +227,8 @@ function M.open()
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..M.View.width)
   local winnr = a.nvim_get_current_win()
-  M.View.tabpages[a.nvim_get_current_tabpage()] = winnr
+  local tabpage = a.nvim_get_current_tabpage()
+  M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
   for k, v in pairs(M.View.winopts) do
     vim.wo[winnr][k] = v
   end
@@ -249,8 +251,31 @@ function M.close()
   a.nvim_win_hide(M.get_winnr())
 end
 
-function M.get_winnr()
-  return M.View.tabpages[a.nvim_get_current_tabpage()]
+--- Returns the window number for nvim-tree within the tabpage specified
+---@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number
+function M.get_winnr(tabpage)
+  tabpage = tabpage or a.nvim_get_current_tabpage()
+  local tabinfo = M.View.tabpages[tabpage]
+  if tabinfo ~= nil then
+    return tabinfo.winnr
+  end
+end
+
+--- Checks if nvim-tree is displaying the help ui within the tabpage specified
+---@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number
+function M.is_help_ui(tabpage)
+  tabpage = tabpage or a.nvim_get_current_tabpage()
+  local tabinfo = M.View.tabpages[tabpage]
+  if tabinfo ~= nil then
+    return tabinfo.help
+  end
+end
+
+function M.toggle_help(tabpage)
+  tabpage = tabpage or a.nvim_get_current_tabpage()
+  M.View.tabpages[tabpage].help = not M.View.tabpages[tabpage].help
 end
 
 return M
