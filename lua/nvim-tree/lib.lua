@@ -242,7 +242,10 @@ function M.pick_window()
     end
 
     local win_config = api.nvim_win_get_config(id)
-    return id ~= tree_winid and win_config.focusable
+    return id ~= tree_winid
+      and win_config.focusable
+      and not win_config.external
+      and not win_config.relative
   end, win_ids)
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
