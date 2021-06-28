@@ -226,9 +226,9 @@ function M.open()
   a.nvim_command("wincmd "..move_to)
 
   local width
-  if (vim.g.nvim_tree_width_as_percent == true) then
-    local percentAsDecimal = M.View.width/100
-    width = math.floor( vim.o.columns * percentAsDecimal )
+  if vim.g.nvim_tree_width_as_percent == 1 then
+    local percent_as_decimal = M.View.width / 100
+    width = math.floor(vim.o.columns * percent_as_decimal)
   else
     width = M.View.width
   end

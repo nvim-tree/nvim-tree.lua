@@ -221,6 +221,12 @@ Can be 0 or 1. When 1, it will not resize the tree to it's original width
 when opening a new file.
 Default is 0
 
+|g:nvim_tree_width_as_percent|				*g:nvim_tree_width_as_percent*
+
+Can be `0` or `1`. When `1`, it will consider the tree width to be a percentage of
+the editor's and expect *g:nvim_tree_width* to be any value from *0-100*.
+Default is 0
+
 |g:nvim_tree_hijack_netrw|		             *g:nvim_tree_hijack_netrw*
 
 Can be 0 or 1. When 1, disable netrw buffers when nvim-tree start but keeps
