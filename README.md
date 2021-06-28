@@ -196,7 +196,7 @@ lua <<EOF
 EOF
 ```
 All mappings are set in `normal mode`.
-You can toggle the help UI by pressing `?`.
+You can toggle the help UI by pressing `g?`.
 
 ## Note
 

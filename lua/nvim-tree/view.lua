@@ -75,7 +75,7 @@ M.View = {
     ["]c"]             = M.nvim_tree_callback("next_git_item"),
     ["-"]              = M.nvim_tree_callback("dir_up"),
     ["q"]              = M.nvim_tree_callback("close"),
-    ["?"]              = M.nvim_tree_callback("toggle_help")
+    ["g?"]              = M.nvim_tree_callback("toggle_help")
   }
 }
 

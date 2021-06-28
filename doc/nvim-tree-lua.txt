@@ -308,7 +308,7 @@ INFORMATIONS				        *nvim-tree-info*
 
 |KeyBindings|				        *nvim-tree-keybindings*
 
-- type `?` to see the help UI with keybindings
+- type `g?` to see the help UI with keybindings
 - move around like in any vim buffer
 - '<CR>' on '..' will cd in the above directory
 - typing '<C-]>' will cd in the directory under the cursor
