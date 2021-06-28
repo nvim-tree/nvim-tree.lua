@@ -163,8 +163,19 @@ end
 
 function M.on_leave()
   vim.defer_fn(function()
-    if #api.nvim_list_wins() == 1 and view.win_open() then
+    if not view.win_open() then
+      return
+    end
+
+    local windows = api.nvim_list_wins()
+    local curtab = api.nvim_get_current_tabpage()
+    local wins_in_tabpage = vim.tbl_filter(function(w)
+      return api.nvim_win_get_tabpage(w) == curtab
+    end, windows)
+    if #windows == 1 then
       api.nvim_command(':silent qa!')
+    elseif #wins_in_tabpage == 1 then
+      api.nvim_command(':tabclose')
     end
   end, 50)
 end
