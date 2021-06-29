@@ -96,6 +96,7 @@ if vim.g.nvim_tree_git_hl == 1 then
   local git_hl = {
     ["M "] = { { hl = "NvimTreeFileStaged" } },
     [" M"] = { { hl = "NvimTreeFileDirty" } },
+    [" T"] = { { hl = "NvimTreeFileDirty" } },
     ["MM"] = {
       { hl = "NvimTreeFileStaged" },
       { hl = "NvimTreeFileDirty" }
@@ -159,6 +160,7 @@ if icon_state.show_git_icon then
   local git_icon_state = {
     ["M "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
     [" M"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    [" T"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     ["MM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
       { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" }
