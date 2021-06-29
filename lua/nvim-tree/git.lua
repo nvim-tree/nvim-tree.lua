@@ -148,6 +148,7 @@ function M.update_status(entries, cwd, parent_node)
       end
     end
   end
+  require'nvim-tree.lib'.redraw()
 end
 
 ---Check if the given path is ignored by git.

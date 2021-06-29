@@ -51,6 +51,10 @@ function M.init(with_open, with_reload)
   end
 end
 
+function M.redraw()
+  renderer.draw(M.Tree, true)
+end
+
 local function get_node_at_line(line)
   local index = 2
   local function iter(entries)

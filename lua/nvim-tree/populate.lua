@@ -343,7 +343,7 @@ function M.populate(entries, cwd, parent_node)
     return
   end
 
-  git.update_status(entries, cwd, parent_node)
+  vim.schedule(function() git.update_status(entries, cwd, parent_node) end)
 end
 
 return M
