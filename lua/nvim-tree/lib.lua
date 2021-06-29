@@ -462,7 +462,8 @@ function M.sibling(node, direction)
   local iter = get_line_from_node(node, true)
   local node_path = node.absolute_path
 
-  local line, parent = 0, nil
+  local line = 0
+  local parent, _
 
   -- Check if current node is already at root entries
   for index, entry in ipairs(M.Tree.entries) do

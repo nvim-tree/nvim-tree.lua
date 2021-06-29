@@ -26,7 +26,7 @@ local icon_padding = vim.g.nvim_tree_icon_padding or " "
 
 if icon_state.show_folder_icon then
   get_folder_icon = function(open, is_symlink, has_children)
-    local n = ""
+    local n
     if is_symlink and open then
       n = icon_state.icons.folder_icons.symlink_open
     elseif is_symlink then
