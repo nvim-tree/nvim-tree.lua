@@ -369,37 +369,37 @@ end
 local M = {}
 
 function M.draw_help()
-    local help_lines = {'HELP'}
-    local help_hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
-    local bindings = view.View.bindings
-    local processed = {}
-    for i, v in pairs(bindings) do
-      if v:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
-        v = v:match("'[^']+'[^']*$")
-        v = v:match("'[^']+'")
-        table.insert(processed,{i,v,true})
-      else
-        v = '"' .. v .. '"'
-        table.insert(processed,{i,v,false})
-      end
+  local help_lines = {'HELP'}
+  local help_hl = {{'NvimTreeRootFolder', 0, 0, string.len('HELP')}}
+  local bindings = view.View.bindings
+  local processed = {}
+  for i, v in pairs(bindings) do
+    if v:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
+      v = v:match("'[^']+'[^']*$")
+      v = v:match("'[^']+'")
+      table.insert(processed,{i,v,true})
+    else
+      v = '"' .. v .. '"'
+      table.insert(processed,{i,v,false})
     end
-    table.sort(processed,function(a,b)
-      return (a[3]==b[3] and (a[2]<b[2] or (a[2]==b[2] and #a[1]<#b[1]))) or (a[3] and not b[3])
-    end)
-    local i, v, builtin
-    for num, val in pairs(processed) do
-      i = val[1]
-      v = val[2]
-      builtin = val[3]
-      local bind_string = string.format("%6s : %s",i,v)
-      table.insert(help_lines,bind_string)
-      local hl_len = math.max(6,#i)+2
-      table.insert(help_hl,{'NvimTreeFolderName', num, 0, hl_len})
-      if not builtin then
-        table.insert(help_hl,{'NvimTreeFileRenamed', num, hl_len, -1})
-      end
+  end
+  table.sort(processed,function(a,b)
+    return (a[3]==b[3] and (a[2]<b[2] or (a[2]==b[2] and #a[1]<#b[1]))) or (a[3] and not b[3])
+  end)
+  local i, v, builtin
+  for num, val in pairs(processed) do
+    i = val[1]
+    v = val[2]
+    builtin = val[3]
+    local bind_string = string.format("%6s : %s",i,v)
+    table.insert(help_lines,bind_string)
+    local hl_len = math.max(6,#i)+2
+    table.insert(help_hl,{'NvimTreeFolderName', num, 0, hl_len})
+    if not builtin then
+      table.insert(help_hl,{'NvimTreeFileRenamed', num, hl_len, -1})
     end
-    return help_lines, help_hl
+  end
+  return help_lines, help_hl
 end
 
 function M.draw(tree, reload)
