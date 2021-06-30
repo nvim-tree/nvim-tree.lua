@@ -205,11 +205,10 @@ end
 local function get_width()
   if type(M.View.width) == "number" then
     return M.View.width
-  elseif type(M.View.width) == "string" and vim.endswith(M.View.width, "%") then
-    local width_as_number = tonumber(M.View.width:sub(0, -2))
-    local percent_as_decimal = width_as_number / 100
-    return math.floor(vim.o.columns * percent_as_decimal)
   end
+  local width_as_number = tonumber(M.View.width:sub(0, -2))
+  local percent_as_decimal = width_as_number / 100
+  return math.floor(vim.o.columns * percent_as_decimal)
 end
 
 function M.resize()
