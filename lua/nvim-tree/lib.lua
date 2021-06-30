@@ -167,7 +167,7 @@ function M.refresh_tree()
   local use_git = config.use_git()
   if use_git then git.reload_roots() end
   refresh_nodes(M.Tree)
-  if use_git then refresh_git(M.Tree) end
+  if use_git then vim.schedule(function() refresh_git(M.Tree) end) end
 
   if vim.g.nvim_tree_lsp_diagnostics == 1 then
     diagnostics.update()
