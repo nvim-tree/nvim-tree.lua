@@ -203,7 +203,7 @@ function M.focus(winnr, open_if_closed)
 end
 
 function M.resize()
-  if not a.nvim_win_is_valid(M.get_winnr()) then
+  if vim.g.nvim_tree_auto_resize == 0 or not a.nvim_win_is_valid(M.get_winnr()) then
     return
   end
 

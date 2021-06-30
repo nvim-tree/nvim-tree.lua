@@ -215,11 +215,11 @@ Can be 0 or 1. When 1, will open the tree when entering a new tab if the
 tree was previously open.
 Default is 0
 
-|g:nvim_tree_width_allow_resize|		     *g:nvim_tree_width_allow_resize*
+|g:nvim_tree_auto_resize|		             *g:nvim_tree_auto_resize*
 
-Can be 0 or 1. When 1, it will not resize the tree to it's original width
+Can be 0 or 1. When 1, it will resize the tree to it's saved width
 when opening a new file.
-Default is 0
+Default is 1
 
 |g:nvim_tree_hijack_netrw|		             *g:nvim_tree_hijack_netrw*
 
