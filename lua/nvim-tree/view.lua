@@ -203,14 +203,13 @@ function M.focus(winnr, open_if_closed)
 end
 
 local function get_width()
-  if type(M.View.width) == "string" then
-    if vim.endswith(M.View.width, "%") then
-      local width_as_number = tonumber(M.View.width:match('[^%d]*([%d%.]+)%%'))
-      local percent_as_decimal = width_as_number / 100
-      return math.floor(vim.o.columns * percent_as_decimal)
-    end
+  if type(M.View.width) == "number" then
+    return M.View.width
+  elseif type(M.View.width) == "string" and vim.endswith(M.View.width, "%") then
+    local width_as_number = tonumber(M.View.width:sub(0, -2))
+    local percent_as_decimal = width_as_number / 100
+    return math.floor(vim.o.columns * percent_as_decimal)
   end
-  return M.View.width
 end
 
 function M.resize()
