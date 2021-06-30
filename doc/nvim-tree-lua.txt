@@ -54,7 +54,10 @@ OPTIONS				                  *nvim-tree-options*
 
 |g:nvim_tree_width|				*g:nvim_tree_width*
 
-width of the window (default to 30)
+width of the window, can be *width_in_columns* or *'width_in_percent%'*
+>
+    let g:nvim_tree_width = 30 " indicates width of 30 columns
+    let g:nvim_tree_width = '30%' " indicates width of 30% of '&columns'
 
 |g:nvim_tree_side|				*g:nvim_tree_side*
 

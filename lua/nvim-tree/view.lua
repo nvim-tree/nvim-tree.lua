@@ -214,12 +214,21 @@ function M.focus(winnr, open_if_closed)
   a.nvim_set_current_win(wnr)
 end
 
+local function get_width()
+  if type(M.View.width) == "number" then
+    return M.View.width
+  end
+  local width_as_number = tonumber(M.View.width:sub(0, -2))
+  local percent_as_decimal = width_as_number / 100
+  return math.floor(vim.o.columns * percent_as_decimal)
+end
+
 function M.resize()
   if vim.g.nvim_tree_auto_resize == 0 or not a.nvim_win_is_valid(M.get_winnr()) then
     return
   end
 
-  a.nvim_win_set_width(M.get_winnr(), M.View.width)
+  a.nvim_win_set_width(M.get_winnr(), get_width())
 end
 
 local move_tbl = {
@@ -237,7 +246,7 @@ function M.open()
   a.nvim_command("vsp")
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
-  a.nvim_command("vertical resize "..M.View.width)
+  a.nvim_command("vertical resize "..get_width())
   local winnr = a.nvim_get_current_win()
   local tabpage = a.nvim_get_current_tabpage()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
