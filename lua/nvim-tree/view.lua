@@ -42,40 +42,37 @@ M.View = {
     bufhidden = 'hide';
   },
   bindings = {
-    ["<CR>"]           = M.nvim_tree_callback("edit"),
-    ["o"]              = M.nvim_tree_callback("edit"),
-    ["<2-LeftMouse>"]  = M.nvim_tree_callback("edit"),
-    ["<2-RightMouse>"] = M.nvim_tree_callback("cd"),
-    ["<C-]>"]          = M.nvim_tree_callback("cd"),
-    ["<C-v>"]          = M.nvim_tree_callback("vsplit"),
-    ["<C-x>"]          = M.nvim_tree_callback("split"),
-    ["<C-t>"]          = M.nvim_tree_callback("tabnew"),
-    ["<"]              = M.nvim_tree_callback("prev_sibling"),
-    [">"]              = M.nvim_tree_callback("next_sibling"),
-    ["P"]              = M.nvim_tree_callback("parent_node"),
-    ["<BS>"]           = M.nvim_tree_callback("close_node"),
-    ["<S-CR>"]         = M.nvim_tree_callback("close_node"),
-    ["<Tab>"]          = M.nvim_tree_callback("preview"),
-    ["K"]              = M.nvim_tree_callback("first_sibling"),
-    ["J"]              = M.nvim_tree_callback("last_sibling"),
-    ["I"]              = M.nvim_tree_callback("toggle_ignored"),
-    ["H"]              = M.nvim_tree_callback("toggle_dotfiles"),
-    ["R"]              = M.nvim_tree_callback("refresh"),
-    ["a"]              = M.nvim_tree_callback("create"),
-    ["d"]              = M.nvim_tree_callback("remove"),
-    ["r"]              = M.nvim_tree_callback("rename"),
-    ["<C-r>"]          = M.nvim_tree_callback("full_rename"),
-    ["x"]              = M.nvim_tree_callback("cut"),
-    ["c"]              = M.nvim_tree_callback("copy"),
-    ["p"]              = M.nvim_tree_callback("paste"),
-    ["y"]              = M.nvim_tree_callback("copy_name"),
-    ["Y"]              = M.nvim_tree_callback("copy_path"),
-    ["gy"]             = M.nvim_tree_callback("copy_absolute_path"),
-    ["[c"]             = M.nvim_tree_callback("prev_git_item"),
-    ["]c"]             = M.nvim_tree_callback("next_git_item"),
-    ["-"]              = M.nvim_tree_callback("dir_up"),
-    ["q"]              = M.nvim_tree_callback("close"),
-    ["g?"]              = M.nvim_tree_callback("toggle_help")
+    { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
+    { key = {"<2-RightMouse>", "<C-}>"},    cb = M.nvim_tree_callback("cd") },
+    { key = "<C-v>",                        cb = M.nvim_tree_callback("vsplit") },
+    { key = "<C-x>",                        cb = M.nvim_tree_callback("split") },
+    { key = "<C-t>",                        cb = M.nvim_tree_callback("tabnew") },
+    { key = "<",                            cb = M.nvim_tree_callback("prev_sibling") },
+    { key = ">",                            cb = M.nvim_tree_callback("next_sibling") },
+    { key = "P",                            cb = M.nvim_tree_callback("parent_node") },
+    { key = "<BS>",                         cb = M.nvim_tree_callback("close_node") },
+    { key = "<S-CR>",                       cb = M.nvim_tree_callback("close_node") },
+    { key = "<Tab>",                        cb = M.nvim_tree_callback("preview") },
+    { key = "K",                            cb = M.nvim_tree_callback("first_sibling") },
+    { key = "J",                            cb = M.nvim_tree_callback("last_sibling") },
+    { key = "I",                            cb = M.nvim_tree_callback("toggle_ignored") },
+    { key = "H",                            cb = M.nvim_tree_callback("toggle_dotfiles") },
+    { key = "R",                            cb = M.nvim_tree_callback("refresh") },
+    { key = "a",                            cb = M.nvim_tree_callback("create") },
+    { key = "d",                            cb = M.nvim_tree_callback("remove") },
+    { key = "r",                            cb = M.nvim_tree_callback("rename") },
+    { key = "<C->",                         cb = M.nvim_tree_callback("full_rename") },
+    { key = "x",                            cb = M.nvim_tree_callback("cut") },
+    { key = "c",                            cb = M.nvim_tree_callback("copy") },
+    { key = "p",                            cb = M.nvim_tree_callback("paste") },
+    { key = "y",                            cb = M.nvim_tree_callback("copy_name") },
+    { key = "Y",                            cb = M.nvim_tree_callback("copy_path") },
+    { key = "gy",                           cb = M.nvim_tree_callback("copy_absolute_path") },
+    { key = "[c",                           cb = M.nvim_tree_callback("prev_git_item") },
+    { key = "}c",                           cb = M.nvim_tree_callback("next_git_item") },
+    { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
+    { key = "q",                            cb = M.nvim_tree_callback("close") },
+    { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
   }
 }
 
@@ -131,18 +128,33 @@ function M.setup()
     vim.bo[M.View.bufnr][k] = v
   end
 
-  if vim.g.nvim_tree_disable_keybindings ~= 1 then
-    M.View.bindings = vim.tbl_extend(
-      'force',
-      M.View.bindings,
-      vim.g.nvim_tree_bindings or {}
-    )
-    for key, cb in pairs(M.View.bindings) do
-      a.nvim_buf_set_keymap(M.View.bufnr, 'n', key, cb, { noremap = true, silent = true, nowait = true })
-    end
+  vim.cmd "au! BufWinEnter * lua require'nvim-tree.view'._prevent_buffer_override()"
+  if vim.g.nvim_tree_disable_keybindings == 1 then
+    return
   end
 
-  vim.cmd "au! BufWinEnter * lua require'nvim-tree.view'._prevent_buffer_override()"
+  local user_mappings = vim.g.nvim_tree_bindings or {}
+  if vim.g.nvim_tree_disable_default_keybindings == 1 then
+    M.View.bindings = user_mappings
+  else
+    M.View.bindings = vim.tbl_extend('force', M.View.bindings, user_mappings)
+  end
+
+  for _, b in pairs(M.View.bindings) do
+    -- TODO: remove this in a few weeks
+    if type(b) == "string" then
+      local warn_str = "Wrong configuration for keymaps, refer to the new documentation. User keymaps setup aborted"
+      require'nvim-tree.utils'.echo_warning(warn_str)
+      break
+    end
+    if type(b.key) == "table" then
+      for _, key in pairs(b.key) do
+        a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, b.cb, { noremap = true, silent = true, nowait = true })
+      end
+    else
+      a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', b.key, b.cb, { noremap = true, silent = true, nowait = true })
+    end
+  end
 end
 
 local goto_tbl = {
