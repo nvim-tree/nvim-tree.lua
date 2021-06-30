@@ -290,7 +290,13 @@ function M.populate(entries, cwd, parent_node)
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
 
-    if not should_ignore(utils.path_join({cwd, name})) then
+    local abs = utils.path_join({cwd, name})
+    if not should_ignore(abs) then
+      if not t then
+        local stat = luv.fs_stat(abs)
+        t = stat and stat.type
+      end
+
       if t == 'directory' then
         table.insert(dirs, name)
       elseif t == 'file' then
