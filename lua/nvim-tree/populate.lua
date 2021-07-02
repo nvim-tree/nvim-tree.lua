@@ -45,7 +45,7 @@ local function file_new(cwd, name)
   local git_root = git.git_root(cwd)
   local filename_to_open = absolute_path
   
-  if vim.g.vim_tree_load_git_file_relatively ~= nil and git_root ~= nil then
+  if vim.g.nvim_tree_load_git_file_relatively ~= nil and git_root ~= nil then
     filename_to_open = utils.path_relative(absolute_path, git_root)
   end
   
