@@ -43,7 +43,7 @@ M.View = {
   },
   bindings = {
     { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
-    { key = {"<2-RightMouse>", "<C-}>"},    cb = M.nvim_tree_callback("cd") },
+    { key = {"<2-RightMouse>", "<C-]>"},    cb = M.nvim_tree_callback("cd") },
     { key = "<C-v>",                        cb = M.nvim_tree_callback("vsplit") },
     { key = "<C-x>",                        cb = M.nvim_tree_callback("split") },
     { key = "<C-t>",                        cb = M.nvim_tree_callback("tabnew") },
@@ -61,7 +61,7 @@ M.View = {
     { key = "a",                            cb = M.nvim_tree_callback("create") },
     { key = "d",                            cb = M.nvim_tree_callback("remove") },
     { key = "r",                            cb = M.nvim_tree_callback("rename") },
-    { key = "<C->",                         cb = M.nvim_tree_callback("full_rename") },
+    { key = "<C-r>",                        cb = M.nvim_tree_callback("full_rename") },
     { key = "x",                            cb = M.nvim_tree_callback("cut") },
     { key = "c",                            cb = M.nvim_tree_callback("copy") },
     { key = "p",                            cb = M.nvim_tree_callback("paste") },
@@ -69,7 +69,7 @@ M.View = {
     { key = "Y",                            cb = M.nvim_tree_callback("copy_path") },
     { key = "gy",                           cb = M.nvim_tree_callback("copy_absolute_path") },
     { key = "[c",                           cb = M.nvim_tree_callback("prev_git_item") },
-    { key = "}c",                           cb = M.nvim_tree_callback("next_git_item") },
+    { key = "]c",                           cb = M.nvim_tree_callback("next_git_item") },
     { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
     { key = "q",                            cb = M.nvim_tree_callback("close") },
     { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
