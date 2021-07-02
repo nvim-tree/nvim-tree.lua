@@ -137,7 +137,7 @@ function M.setup()
   if vim.g.nvim_tree_disable_default_keybindings == 1 then
     M.View.bindings = user_mappings
   else
-    M.View.bindings = vim.tbl_extend('force', M.View.bindings, user_mappings)
+    M.View.bindings = vim.fn.extend(M.View.bindings, user_mappings)
   end
 
   for _, b in pairs(M.View.bindings) do
