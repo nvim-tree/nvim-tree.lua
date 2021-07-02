@@ -2,7 +2,7 @@
 
 ## Notice
 
-This plugin requires [neovim nightly (>=0.5.0)](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+This plugin requires [neovim >=0.5.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 ## Install
 
