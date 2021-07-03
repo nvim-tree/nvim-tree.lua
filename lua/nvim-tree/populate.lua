@@ -42,11 +42,17 @@ end
 local function file_new(cwd, name)
   local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
-  local git_root = git.git_root(cwd)
   local filename_to_open = absolute_path
   
-  if vim.g.nvim_tree_load_git_file_relatively ~= nil and git_root ~= nil then
-    filename_to_open = utils.path_relative(absolute_path, git_root)
+  local root = function(d)
+    local git_root = git.git_root(d)
+    local cwd = luv.cwd()
+    
+    if git_root ~= nil then return git_root else return cwd end
+  end
+  
+  if vim.g.nvim_tree_load_git_file_relatively ~= nil then
+    filename_to_open = utils.path_relative(absolute_path, root(absolute_path))
   end
   
   return {
