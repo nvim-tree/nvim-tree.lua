@@ -80,7 +80,7 @@ local keypress_funcs = {
   close = function() M.close() end,
   preview = function(node)
     if node.entries ~= nil or node.name == '..' then return end
-    return lib.open_file('preview', node.absolute_path)
+    return lib.open_file('preview', node.relative_path)
   end,
 }
 
@@ -102,11 +102,11 @@ function M.on_keypress(mode)
   end
 
   if node.link_to and not node.entries then
-    lib.open_file(mode, node.link_to)
+    lib.open_file(mode, node.relative_path)
   elseif node.entries ~= nil then
     lib.unroll_dir(node)
   else
-    lib.open_file(mode, node.absolute_path)
+    lib.open_file(mode, node.relative_path)
   end
 end
 
