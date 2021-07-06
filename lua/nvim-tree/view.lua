@@ -249,23 +249,36 @@ local move_tbl = {
   top = 'K',
 }
 
+-- TODO: remove this once they fix https://github.com/neovim/neovim/issues/14670
+local function set_local(opt, value)
+  local cmd
+  if value == true then
+    cmd = string.format('setlocal %s', opt)
+  elseif value == false then
+    cmd = string.format('setlocal no%s', opt)
+  else
+    cmd = string.format('setlocal %s=%s', opt, value)
+  end
+  vim.cmd(cmd)
+end
+
 function M.open()
   if not is_buf_valid() then
     M.setup()
   end
 
   a.nvim_command("vsp")
+
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..get_width())
   local winnr = a.nvim_get_current_win()
   local tabpage = a.nvim_get_current_tabpage()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
-  for k, v in pairs(M.View.winopts) do
-    vim.wo[winnr][k] = v
-  end
-
   vim.cmd("buffer "..M.View.bufnr)
+  for k, v in pairs(M.View.winopts) do
+    set_local(k, v)
+  end
   vim.cmd ":wincmd ="
 end
 
