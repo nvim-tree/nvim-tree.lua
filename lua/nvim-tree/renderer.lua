@@ -376,13 +376,15 @@ function M.draw_help()
   for _, b in pairs(bindings) do
     local cb = b.cb
     local key = b.key
+    local name
     if cb:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
-      cb = cb:match("'[^']+'[^']*$")
-      cb = cb:match("'[^']+'")
-      table.insert(processed, {key, cb, true})
+      name = cb:match("'[^']+'[^']*$")
+      name = name:match("'[^']+'")
+      table.insert(processed, {key, name, true})
     else
-      cb = '"' .. cb .. '"'
-      table.insert(processed, {key, cb, false})
+      name = (b.name ~= nil) and b.name or cb
+      name = '"' .. name .. '"'
+      table.insert(processed, {key, name, false})
     end
   end
   table.sort(processed, function(a,b)

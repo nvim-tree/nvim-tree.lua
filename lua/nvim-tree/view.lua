@@ -142,7 +142,7 @@ function M.setup()
   if vim.g.nvim_tree_disable_default_keybindings == 1 then
     M.View.bindings = user_mappings
   else
-    ok, result = pcall(vim.fn.extend, M.View.bindings, user_mappings)
+    local ok, result = pcall(vim.fn.extend, M.View.bindings, user_mappings)
     if not ok then
       -- TODO: remove this in a few weeks
       warn_wrong_mapping()
