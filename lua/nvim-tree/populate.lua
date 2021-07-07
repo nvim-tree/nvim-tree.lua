@@ -65,7 +65,7 @@ local function link_new(cwd, name)
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
   -- if links to a file outside cwd, relative_path equals absolute_path
-  local relative_path = utils.path_relative(link_to, luv.cwd())
+  local relative_path = link_to ~= nil and utils.path_relative(link_to, luv.cwd()) or nil
   local stat = luv.fs_stat(absolute_path)
   local open, entries
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then
