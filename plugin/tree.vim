@@ -40,6 +40,7 @@ command! NvimTreeToggle lua require'nvim-tree'.toggle()
 command! NvimTreeRefresh lua require'nvim-tree'.refresh()
 command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
 command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
+command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
