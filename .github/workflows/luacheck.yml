@@ -1,6 +1,6 @@
 name: Linting and style checking
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   luacheck:
