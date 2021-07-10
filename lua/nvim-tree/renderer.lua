@@ -131,6 +131,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     ["UD"] = { { hl = "NvimTreeFileMerge" } },
     [" D"] = { { hl = "NvimTreeFileDeleted" } },
     ["DD"] = { { hl = "NvimTreeFileDeleted" } },
+    ["RD"] = { { hl = "NvimTreeFileDeleted" } },
     ["D "] = {
       { hl = "NvimTreeFileDeleted" },
       { hl = "NvimTreeFileStaged" }
@@ -205,6 +206,7 @@ if icon_state.show_git_icon then
     ["UD"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["D "] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
+    ["RD"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["DD"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["DU"] = {
       { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
