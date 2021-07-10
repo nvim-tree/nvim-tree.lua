@@ -15,9 +15,11 @@ function M.toggle()
   if view.win_open() then
     view.close()
   else
-    lib.open()
     if vim.g.nvim_tree_follow == 1 then
       M.find_file(true)
+    end
+    if not view.win_open() then
+      lib.open()
     end
   end
 end
