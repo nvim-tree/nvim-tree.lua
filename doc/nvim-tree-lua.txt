@@ -49,6 +49,11 @@ It will also open the leafs of the tree leading to the file in the buffer
 
 Print clipboard content for both cut and copy
 
+|:NvimTreeResize|			          *:NvimTreeResize*
+
+Resize the NvimTree window to the given size. Example: `:NvimTreeresize 50`
+resizes the window to the width of 50.
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 

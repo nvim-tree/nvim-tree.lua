@@ -158,6 +158,11 @@ function M.find_file(with_open)
   lib.set_index_and_redraw(filepath)
 end
 
+function M.resize(size)
+  view.View.width = size
+  view.resize()
+end
+
 function M.on_leave()
   vim.defer_fn(function()
     if not view.win_open() then
