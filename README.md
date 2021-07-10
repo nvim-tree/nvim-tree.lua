@@ -1,5 +1,7 @@
 # A File Explorer For Neovim Written In Lua
 
+[![Linting and style checking](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml)
+
 ## Notice
 
 This plugin requires [neovim >=0.5.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
