@@ -21,7 +21,7 @@ augroup NvimTree
     au WinClosed * lua require'nvim-tree'.on_leave()
   endif
   au ColorScheme * lua require'nvim-tree'.reset_highlight()
-  au User FugitiveChanged lua require'nvim-tree'.refresh()
+  au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
   if get(g:, 'nvim_tree_tab_open') == 1
     au TabEnter * lua require'nvim-tree'.tab_change()
   endif
