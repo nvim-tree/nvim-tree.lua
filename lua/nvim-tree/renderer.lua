@@ -105,6 +105,10 @@ if vim.g.nvim_tree_git_hl == 1 then
       { hl = "NvimTreeFileStaged" },
       { hl = "NvimTreeFileNew" }
     },
+    ["AU"] = {
+      { hl = "NvimTreeFileMerge" },
+      { hl = "NvimTreeFileStaged" },
+    },
     -- not sure about this one
     ["AA"] = {
       { hl = "NvimTreeFileMerge" },
@@ -126,6 +130,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     ["UU"] = { { hl = "NvimTreeFileMerge" } },
     ["UD"] = { { hl = "NvimTreeFileMerge" } },
     [" D"] = { { hl = "NvimTreeFileDeleted" } },
+    ["DD"] = { { hl = "NvimTreeFileDeleted" } },
     ["D "] = {
       { hl = "NvimTreeFileDeleted" },
       { hl = "NvimTreeFileStaged" }
@@ -182,6 +187,10 @@ if icon_state.show_git_icon then
       { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
       { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
+    ["AU"] = {
+      { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+    },
     ["AM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
       { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" }
@@ -196,6 +205,7 @@ if icon_state.show_git_icon then
     ["UD"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
     [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["D "] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
+    ["DD"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["DU"] = {
       { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
       { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
