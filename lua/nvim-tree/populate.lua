@@ -1,7 +1,6 @@
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
 local icon_config = config.get_icon_state()
-local use_git = config.use_git()
 
 local api = vim.api
 local luv = vim.loop
@@ -355,7 +354,7 @@ function M.populate(entries, cwd, parent_node)
     return
   end
 
-  if use_git then
+  if config.use_git() then
     vim.schedule(function() git.update_status(entries, cwd, parent_node) end)
   end
 end
