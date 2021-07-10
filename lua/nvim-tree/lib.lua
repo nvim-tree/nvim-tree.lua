@@ -28,7 +28,9 @@ function M.init(with_open, with_reload)
   if not M.Tree.cwd then
     M.Tree.cwd = luv.cwd()
   end
-  git.git_root(M.Tree.cwd)
+  if config.use_git() then
+    git.git_root(M.Tree.cwd)
+  end
   populate(M.Tree.entries, M.Tree.cwd)
 
   local stat = luv.fs_stat(M.Tree.cwd)
@@ -130,7 +132,9 @@ function M.unroll_dir(node)
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
-    git.git_root(node.absolute_path)
+    if config.use_git() then
+      git.git_root(node.absolute_path)
+    end
     populate(node.entries, node.link_to or node.absolute_path, node)
 
     renderer.draw(M.Tree, true)
