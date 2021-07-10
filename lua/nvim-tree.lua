@@ -39,9 +39,15 @@ function M.open()
 end
 
 function M.tab_change()
-  if not view.win_open() and view.win_open({ any_tabpage = true }) then
-    view.open()
-  end
+  vim.schedule(function()
+    if not view.win_open() and view.win_open({ any_tabpage = true }) then
+      local bufname = vim.api.nvim_buf_get_name(0)
+      if bufname:match("Neogit") ~= nil or bufname:match("--graph") ~= nil then
+        return
+      end
+      view.open()
+    end
+  end)
 end
 
 local function gen_go_to(mode)
