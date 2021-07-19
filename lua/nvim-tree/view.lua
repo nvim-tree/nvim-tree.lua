@@ -189,6 +189,7 @@ function M._prevent_buffer_override()
       vim.cmd("wincmd "..goto_tbl[M.View.side])
     end
     vim.cmd("buffer "..curbuf)
+    M.resize()
   end)
 end
 
