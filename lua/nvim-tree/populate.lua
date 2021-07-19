@@ -355,7 +355,7 @@ function M.populate(entries, cwd, parent_node)
   end
 
   if config.use_git() then
-    vim.schedule(function() git.update_status(entries, cwd, parent_node) end)
+    vim.schedule(function() git.update_status(entries, cwd, parent_node, true) end)
   end
 end
 

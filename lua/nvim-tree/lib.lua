@@ -147,7 +147,7 @@ end
 
 local function refresh_git(node)
   if not node then node = M.Tree end
-  git.update_status(node.entries, node.absolute_path or node.cwd, node)
+  git.update_status(node.entries, node.absolute_path or node.cwd, node, false)
   for _, entry in pairs(node.entries) do
     if entry.entries and #entry.entries > 0 then
       refresh_git(entry)
@@ -175,6 +175,7 @@ function M.refresh_tree()
     vim.schedule(function()
       git.reload_roots()
       refresh_git(M.Tree)
+      M.redraw()
     end)
   end
 

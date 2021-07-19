@@ -103,7 +103,7 @@ function M.git_root(path)
   return git_root
 end
 
-function M.update_status(entries, cwd, parent_node)
+function M.update_status(entries, cwd, parent_node, with_redraw)
   local git_root, git_status = get_git_root(cwd)
   if not git_root then
     if not create_root(cwd) then
@@ -148,7 +148,9 @@ function M.update_status(entries, cwd, parent_node)
       end
     end
   end
-  require'nvim-tree.lib'.redraw()
+  if with_redraw then
+    require'nvim-tree.lib'.redraw()
+  end
 end
 
 ---Check if the given path is ignored by git.
