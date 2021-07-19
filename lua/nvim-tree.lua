@@ -87,7 +87,7 @@ local keypress_funcs = {
   close = function() M.close() end,
   preview = function(node)
     if node.entries ~= nil or node.name == '..' then return end
-    return lib.open_file('preview', node.relative_path)
+    return lib.open_file('preview', node.absolute_path)
   end,
 }
 
@@ -109,11 +109,11 @@ function M.on_keypress(mode)
   end
 
   if node.link_to and not node.entries then
-    lib.open_file(mode, utils.path_relative(node.absolute_path, vim.fn.getcwd(-1, 0)))
+    lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
     lib.unroll_dir(node)
   else
-    lib.open_file(mode, utils.path_relative(node.absolute_path, vim.fn.getcwd(-1, 0)))
+    lib.open_file(mode, node.absolute_path)
   end
 end
 
@@ -155,13 +155,16 @@ end
 function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
-  if not is_file_readable(filepath) or vim.fn.isdirectory(filepath) == 1 then return end
 
   if with_open then
     M.open()
     view.focus()
+    if not is_file_readable(filepath) then return end
+    lib.set_index_and_redraw(filepath)
+    return
   end
 
+  if not is_file_readable(filepath) then return end
   lib.set_index_and_redraw(filepath)
 end
 
