@@ -312,7 +312,7 @@ One space by default, used for rendering the space between the icon and the file
 
 |g:nvim_tree_symlink_arrow|                *g:nvim_tree_symlink_arrow*
 
-Defaults to ' >> '. Used as a separator between symlinks' source and target.
+Defaults to ' ➛ '. Used as a separator between symlinks' source and target.
 
 |g:nvim_tree_update_cwd|
 
