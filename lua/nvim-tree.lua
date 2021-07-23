@@ -108,6 +108,18 @@ function M.on_keypress(mode)
     return
   end
 
+  if mode == "toggle_dir" then
+    if not node.entries then return end
+
+    if node.open then
+      lib.close_node(node)
+    elseif node.entries ~= nil then
+      lib.unroll_dir(node)
+    end
+
+    return
+  end
+
   if node.link_to and not node.entries then
     lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
