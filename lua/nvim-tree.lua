@@ -108,6 +108,7 @@ function M.on_keypress(mode)
     return
   end
 
+  -- open/close a directory (ignore files)
   if mode == "toggle_dir" then
     if not node.entries then return end
 
@@ -120,6 +121,18 @@ function M.on_keypress(mode)
     return
   end
 
+  -- open a file (ignore directories)
+  if mode == "edit_file" then
+    if node.link_to and not node.entries then
+      lib.open_file(mode, node.link_to)
+    elseif not node.entries then
+      lib.open_file(mode, node.absolute_path)
+    end
+
+    return
+  end
+
+  -- open a file, symlink, or directory
   if node.link_to and not node.entries then
     lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
