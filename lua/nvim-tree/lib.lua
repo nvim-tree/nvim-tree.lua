@@ -466,8 +466,10 @@ function M.open()
 
   view.open()
 
-  if M.Tree.loaded then
-    M.change_dir(vim.fn.getcwd())
+  local cwd = vim.fn.getcwd()
+  local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
+  if M.Tree.loaded or (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
+    M.change_dir(cwd)
   end
   renderer.draw(M.Tree, not M.Tree.loaded)
   M.Tree.loaded = true
