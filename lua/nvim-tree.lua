@@ -89,6 +89,36 @@ local keypress_funcs = {
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
   end,
+  system_open = function(node)
+    local system_command = ''
+    if vim.fn.has('win16') == 1 or vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
+      system_command = 'start "" '
+    elseif vim.fn.has('win32unix') == 1 then
+      system_command = 'cygstart '
+    elseif vim.fn.has('mac') == 1 or vim.fn.has('macunix') == 1 then
+      system_command = 'open '
+    elseif vim.fn.has('unix') == 1 then
+      system_command = 'xdg-open '
+    end
+
+    if system_command == "" then
+      vim.cmd('echohl ErrorMsg')
+      vim.cmd('echomsg "NvimTree system_open: cannot open file with system application. Unsupported platform."')
+      vim.cmd('echohl None')
+      return
+    end
+
+    local file_path = '"' .. vim.fn.substitute(node.absolute_path, '"', '\\\\"', 'g') .. '"'
+    local command_output = vim.fn.system(system_command .. file_path)
+
+    if vim.v.shell_error ~= 0 then
+      vim.cmd('echohl ErrorMsg')
+      vim.cmd(string.format('echomsg "NvimTree system_open: return code %d."', vim.v.shell_error))
+      command_output = vim.fn.substitute(command_output, '\n', '" | echomsg "', 'g')
+      vim.cmd('echomsg "' .. command_output .. '"')
+      vim.cmd('echohl None')
+    end
+  end,
 }
 
 function M.on_keypress(mode)
