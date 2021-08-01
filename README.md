@@ -21,7 +21,7 @@ Install with [packer](https://github.com/wbthomason/packer.nvim):
 ```lua
 use {
     'kyazdani42/nvim-tree.lua',
-    requires = {{'kyazdani42/nvim-web-devicons'}}
+    requires = 'kyazdani42/nvim-web-devicons'
 }
 ```
 
