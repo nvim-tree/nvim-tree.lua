@@ -35,11 +35,11 @@ M.View = {
     }, ',')
   },
   bufopts = {
-    swapfile = false,
-    buftype = 'nofile';
-    modifiable = false;
-    filetype = 'NvimTree';
-    bufhidden = 'hide';
+    { name = 'swapfile', val = false },
+    { name = 'buftype', val = 'nofile' },
+    { name = 'modifiable', val = false },
+    { name = 'filetype', val = 'NvimTree' },
+    { name = 'bufhidden', val = 'hide' }
   },
   bindings = {
     { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
@@ -129,8 +129,8 @@ function M.setup()
     a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
   end
 
-  for k, v in pairs(M.View.bufopts) do
-    vim.bo[M.View.bufnr][k] = v
+  for _, opt in ipairs(M.View.bufopts) do
+    vim.bo[M.View.bufnr][opt.name] = opt.val
   end
 
   vim.cmd "au! BufWinEnter * lua require'nvim-tree.view'._prevent_buffer_override()"
