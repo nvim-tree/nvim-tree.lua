@@ -144,6 +144,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
 - type `-` to navigate up to the parent directory of the current file/directory
+- type `s` to open a file with default system application or a folder with default file manager
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
 - `<C-v>` will open the file in a vertical split
@@ -219,6 +220,7 @@ lua <<EOF
       { key = "[c",                           cb = tree_cb("prev_git_item") },
       { key = "]c",                           cb = tree_cb("next_git_item") },
       { key = "-",                            cb = tree_cb("dir_up") },
+      { key = "s",                            cb = tree_cb("system_open") },
       { key = "q",                            cb = tree_cb("close") },
       { key = "g?",                           cb = tree_cb("toggle_help") },
     }
@@ -246,16 +248,6 @@ This plugin is very fast because it uses the `libuv` `scandir` and `scandir_next
 ## Tips
 
 - You can edit the size of the tree during runtime with `:lua require'nvim-tree.view'.View.width = 50`
-- Open the node under the cursor with the OS default application (usually file explorer for folders):
-  ```lua
-  function NvimTreeOSOpen()
-    local lib = require "nvim-tree.lib"
-    local node = lib.get_node_at_cursor()
-    if node then
-      vim.fn.jobstart("open '" .. node.absolute_path .. "' &", {detach = true})
-    end
-  end
-  ```
 
 ## Screenshots
 
