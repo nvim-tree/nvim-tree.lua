@@ -310,6 +310,10 @@ of the file on the current line.
 
 One space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
 
+|g:nvim_tree_symlink_arrow|                *g:nvim_tree_symlink_arrow*
+
+Defaults to ' ➛ '. Used as a separator between symlinks' source and target.
+
 |g:nvim_tree_update_cwd|
 
 Can be 0 or 1. 0 by default.

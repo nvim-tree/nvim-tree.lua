@@ -335,8 +335,9 @@ local function update_draw_data(tree, depth, markers)
     elseif node.link_to then
       local icon = get_symlink_icon()
       local link_hl = git_hl or 'NvimTreeSymlink'
+      local arrow = vim.g.nvim_tree_symlink_arrow or ' ➛ '
       table.insert(hl, { link_hl, index, offset, -1 })
-      table.insert(lines, padding..icon..node.name.." ➛ "..node.link_to)
+      table.insert(lines, padding..icon..node.name..arrow..node.link_to)
       index = index + 1
 
     else
