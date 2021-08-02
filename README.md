@@ -16,6 +16,15 @@ Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 ```
 
+Install with [packer](https://github.com/wbthomason/packer.nvim):
+
+```lua
+use {
+    'kyazdani42/nvim-tree.lua',
+    requires = 'kyazdani42/nvim-web-devicons'
+}
+```
+
 ## Setup
 
 ```vim
