@@ -319,7 +319,7 @@ WARNING: Behaves strangely with autochdir set.
 |g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
 
 Can be 0 or 1. 0 by default.
-will change cwd of nvim-tree to that of new buffer's when opening nvim-tree
+Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
