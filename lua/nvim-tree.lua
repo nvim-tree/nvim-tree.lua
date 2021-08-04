@@ -110,7 +110,7 @@ local keypress_funcs = {
       return
     end
 
-    local command_output = vim.fn.system(system_command .. '"' .. vim.fn.substitute(node.absolute_path, '"', '\\\\"', 'g') .. '"')
+    local command_output = vim.fn.system(system_command .. '"' .. vim.fn.substitute(node.absolute_path, '"', '\\\\"', 'g') .. '" &')
 
     if vim.v.shell_error ~= 0 then
       vim.cmd('echohl ErrorMsg')
