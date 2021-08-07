@@ -185,7 +185,13 @@ function M.refresh_entries(entries, cwd, parent_node)
     if not name then break end
     num_new_entries = num_new_entries + 1
 
-    if not should_ignore(utils.path_join({cwd, name})) then
+    local abs = utils.path_join({cwd, name})
+    if not should_ignore(abs) then
+      if not t then
+        local stat = luv.fs_stat(abs)
+        t = stat and stat.type
+      end
+
       if t == 'directory' then
         table.insert(dirs, name)
         new_entries[name] = true
