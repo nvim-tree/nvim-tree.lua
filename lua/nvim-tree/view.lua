@@ -264,7 +264,8 @@ local function set_local(opt, value)
   vim.cmd(cmd)
 end
 
-function M.open()
+function M.open(options)
+	options = options or { focus_tree = true }
   if not is_buf_valid() then
     M.setup()
   end
@@ -282,6 +283,9 @@ function M.open()
     set_local(k, v)
   end
   vim.cmd ":wincmd ="
+	if not options.focus_tree then
+		vim.cmd("wincmd p")
+	end
 end
 
 function M.close()
