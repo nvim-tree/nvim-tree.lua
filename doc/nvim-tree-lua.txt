@@ -320,6 +320,11 @@ Can be 0 or 1. 0 by default.
 Will update the tree cwd when changing nvim's directory (DirChanged event).
 WARNING: Behaves strangely with autochdir set.
 
+|g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
+
+Can be 0 or 1. 0 by default.
+Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
