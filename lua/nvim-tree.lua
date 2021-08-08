@@ -90,7 +90,7 @@ local keypress_funcs = {
     return lib.open_file('preview', node.absolute_path)
   end,
   system_open = function(node)
-    local system_command = ''
+    local system_command
     if vim.fn.has('win16') == 1 or vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
       system_command = 'start "" '
     elseif vim.fn.has('win32unix') == 1 then
