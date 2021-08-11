@@ -84,8 +84,7 @@ end
 
 function M.update()
   local buffer_severity
-  local source = vim.g.nvim_tree_lsp_diagnostics_source or 'nvim_lsp'
-  if source == 'coc' then
+  if vim.g.coc_service_initialized == 1 then
     buffer_severity = from_coc()
   else
     buffer_severity = from_nvim_lsp()
