@@ -72,9 +72,9 @@ local function from_coc()
     diagnostics[bufname] = severity_list
 	end
 
-  for bufname, severty_list in pairs(diagnostics) do
+  for bufname, severity_list in pairs(diagnostics) do
     if not buffer_severity[bufname] then
-      local severity = math.min(unpack(severty_list))
+      local severity = math.min(unpack(severity_list))
       buffer_severity[bufname] = severity
     end
   end
