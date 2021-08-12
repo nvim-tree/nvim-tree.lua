@@ -11,6 +11,13 @@ local api = vim.api
 
 local M = {}
 
+function M.focus()
+  if not view.win_open() then
+    lib.open()
+  end
+  view.focus();
+end
+
 function M.toggle()
   if view.win_open() then
     view.close()
