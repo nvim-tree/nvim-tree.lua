@@ -33,6 +33,10 @@ closes the tree
 
 open or close the tree
 
+|:NvimTreeFocus| 	                          *:NvimTreeFocus*
+
+open the tree if it is closed, and then focus on the tree
+
 |:NvimTreeRefresh|			          *:NvimTreeRefresh*
 
 refresh the tree
