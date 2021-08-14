@@ -17,6 +17,7 @@ local function get_lowest_severity(diagnostics)
   return severity
 end
 
+local severity_levels = { Error = 1, Warning = 2, Information = 3, Hint = 4 }
 local sign_names = {
   { "NvimTreeSignError", "NvimTreeLspDiagnosticsError" },
   { "NvimTreeSignWarning", "NvimTreeLspDiagnosticsWarning" },
@@ -38,7 +39,7 @@ local function add_sign(linenr, severity)
   table.insert(signs, vim.fn.sign_place(1, 'NvimTreeDiagnosticSigns', sign_name, buf, { lnum = linenr+1 }))
 end
 
-function M.update()
+local function from_nvim_lsp()
   local buffer_severity = {}
 
   for buf, diagnostics in pairs(get_diagnostics()) do
@@ -49,6 +50,44 @@ function M.update()
         buffer_severity[bufname] = severity
       end
     end
+  end
+
+  return buffer_severity
+end
+
+local function from_coc()
+  if vim.g.coc_service_initialized ~= 1 then
+    return {}
+  end
+
+  local buffer_severity = {}
+  local diagnostics = {}
+
+  for _, diagnostic in ipairs(vim.fn.CocAction("diagnosticList")) do
+    local bufname = diagnostic.file
+    local severity = severity_levels[diagnostic.severity]
+
+    local severity_list = diagnostics[bufname] or {}
+    table.insert(severity_list, severity)
+    diagnostics[bufname] = severity_list
+	end
+
+  for bufname, severity_list in pairs(diagnostics) do
+    if not buffer_severity[bufname] then
+      local severity = math.min(unpack(severity_list))
+      buffer_severity[bufname] = severity
+    end
+  end
+
+  return buffer_severity
+end
+
+function M.update()
+  local buffer_severity
+  if vim.g.coc_service_initialized == 1 then
+    buffer_severity = from_coc()
+  else
+    buffer_severity = from_nvim_lsp()
   end
 
   local nodes = require'nvim-tree.lib'.Tree.entries
