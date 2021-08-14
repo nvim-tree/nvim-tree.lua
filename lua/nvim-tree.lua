@@ -90,7 +90,7 @@ local keypress_funcs = {
     return lib.open_file('preview', node.absolute_path)
   end,
   system_open = function(node)
-    if vim.fn.exists("g:nvim_tree_system_open_command") == 0 then
+    if vim.g.nvim_tree_system_open_command == nil then
       if vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1 then
         vim.g.nvim_tree_system_open_command = 'cmd'
         vim.g.nvim_tree_system_open_command_args = {'/c', 'start', '""'}
