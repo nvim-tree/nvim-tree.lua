@@ -198,6 +198,20 @@ Can be `0` or `1`. When `1`, will close the tree when a file is opened.
 Applies to: `edit`, `vsplit`, `split`, `tabnew`.
 Default is 0
 
+|g:nvim_tree_system_open_command|      *g:nvim_tree_system_open_command*
+
+A string containing the command used to open a file/folder with default system
+application. If left unset it will be automatically filled with the right
+command, depending on the operating system. If your operating system isn't
+recognized or if you want to use another command you can edit it.
+Default: depends on the operating system
+
+|g:nvim_tree_system_open_command_args| *g:nvim_tree_system_open_command_args*
+
+An array of strings containing the arguments to be passed to the command
+specified in |g:nvim_tree_system_open_command|.
+Default: unset if not using Windows
+
 |g:nvim_tree_disable_keybindings|          *g:nvim_tree_disable_keybindings*
 
 Can be `0` or `1`. When `1`, will disable all keybindings by the plugin.

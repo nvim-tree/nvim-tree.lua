@@ -97,34 +97,47 @@ local keypress_funcs = {
     return lib.open_file('preview', node.absolute_path)
   end,
   system_open = function(node)
-    local system_command
-    if vim.fn.has('win16') == 1 or vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
-      system_command = 'start "" '
-    elseif vim.fn.has('win32unix') == 1 then
-      if vim.fn.stridx(vim.fn.system('uname'), 'CYGWIN') ~= -1 then
-        system_command = 'cygstart '
+    if vim.g.nvim_tree_system_open_command == nil then
+      if vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1 then
+        vim.g.nvim_tree_system_open_command = 'cmd'
+        vim.g.nvim_tree_system_open_command_args = {'/c', 'start', '""'}
+      elseif vim.fn.has('mac') == 1 or vim.fn.has('macunix') == 1 then
+        vim.g.nvim_tree_system_open_command = 'open'
+      elseif vim.fn.has('unix') == 1 then
+        vim.g.nvim_tree_system_open_command = 'xdg-open'
       else
-        system_command = 'start "" '
+        error('\nNvimTree system_open: cannot open file with system application. Unrecognized platform.\nPlease fill g:nvim_tree_system_open_command with the name of the system file launcher.')
+        return
       end
-    elseif vim.fn.has('mac') == 1 or vim.fn.has('macunix') == 1 then
-      system_command = 'open '
-    elseif vim.fn.has('unix') == 1 then
-      system_command = 'xdg-open '
-    else
-      vim.cmd('echohl ErrorMsg')
-      vim.cmd('echomsg "NvimTree system_open: cannot open file with system application. Unsupported platform."')
-      vim.cmd('echohl None')
+    end
+
+    local process = {}
+    process.args = vim.g.nvim_tree_system_open_command_args or {}
+    table.insert(process.args, node.link_to or node.absolute_path)
+    process.errors = '\n'
+    process.stderr = luv.new_pipe(false)
+    process.handle, process.pid = luv.spawn(vim.g.nvim_tree_system_open_command,
+      {args = process.args, stdio = {nil, nil, process.stderr}},
+      function(code)
+        process.stderr:read_stop()
+        process.stderr:close()
+        process.handle:close()
+        if code ~= 0 then
+          process.errors = process.errors .. string.format('NvimTree system_open: return code %d.', code)
+          error(process.errors)
+        end
+      end
+    )
+    if not process.handle then
+      error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. vim.g.nvim_tree_system_open_command .. "'.")
       return
     end
-
-    local command_output = vim.fn.system(system_command .. '"' .. vim.fn.substitute(node.absolute_path, '"', '\\\\"', 'g') .. '"')
-
-    if vim.v.shell_error ~= 0 then
-      vim.cmd('echohl ErrorMsg')
-      vim.cmd(string.format('echomsg "NvimTree system_open: return code %d."', vim.v.shell_error))
-      vim.cmd('echomsg "' .. vim.fn.substitute(command_output, '\n', '" | echomsg "', 'g') .. '"')
-      vim.cmd('echohl None')
-    end
+    luv.read_start(process.stderr,
+      function(err, data)
+        if err then return end
+        if data then process.errors = process.errors .. data end
+      end
+    )
   end,
 }
 

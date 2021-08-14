@@ -145,7 +145,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
 - type `-` to navigate up to the parent directory of the current file/directory
-- type `s` to open a file with default system application or a folder with default file manager
+- type `s` to open a file with default system application or a folder with default file manager (if you want to change the command used to do it see `:h g:nvim_tree_system_open_command` and `:h g:nvim_tree_system_open_command_args`)
 - if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
 - if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
 - `<C-v>` will open the file in a vertical split
