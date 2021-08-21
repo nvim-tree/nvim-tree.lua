@@ -464,9 +464,9 @@ end
 function M.open()
   M.set_target_win()
 
+  local cwd = vim.fn.getcwd()
   view.open()
 
-  local cwd = vim.fn.getcwd()
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
   if M.Tree.loaded or (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
     M.change_dir(cwd)
