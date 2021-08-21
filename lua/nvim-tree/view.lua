@@ -88,12 +88,6 @@ local function find_rogue_buffer()
   return nil
 end
 
----Check if the tree buffer is valid and loaded.
----@return boolean
-local function is_buf_valid()
-  return a.nvim_buf_is_valid(M.View.bufnr) and a.nvim_buf_is_loaded(M.View.bufnr)
-end
-
 ---Find pre-existing NvimTree buffer, delete its windows then wipe it.
 ---@private
 function M._wipe_rogue_buffer()
@@ -118,12 +112,16 @@ local function warn_wrong_mapping()
   require'nvim-tree.utils'.echo_warning(warn_str)
 end
 
+local HAS_LOADED = false
 -- set user options and create tree buffer (should never be wiped)
 function M.setup()
   M.View.side = vim.g.nvim_tree_side or M.View.side
   M.View.width = vim.g.nvim_tree_width or M.View.width
 
-  M.View.bufnr = a.nvim_create_buf(false, false)
+  if not HAS_LOADED then
+    M.View.bufnr = a.nvim_create_buf(false, false)
+    HAS_LOADED = true
+  end
 
   if not pcall(a.nvim_buf_set_name, M.View.bufnr, 'NvimTree') then
     M._wipe_rogue_buffer()
@@ -274,20 +272,31 @@ local function set_local(opt, value)
   vim.cmd(cmd)
 end
 
-function M.open(options)
-	options = options or { focus_tree = true }
-  if not is_buf_valid() then
-    M.setup()
-  end
-
-  a.nvim_command("vsp")
-
+function M.replace_window()
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   a.nvim_command("vertical resize "..get_width())
+end
+
+local function open_window()
+  a.nvim_command("vsp")
+  M.replace_window()
   local winnr = a.nvim_get_current_win()
   local tabpage = a.nvim_get_current_tabpage()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
+end
+
+function M.open(options)
+	options = options or { focus_tree = true }
+  if not HAS_LOADED then
+    M.setup()
+    HAS_LOADED = true
+  end
+
+  if not M.win_open() then
+    open_window()
+  end
+
   vim.cmd("buffer "..M.View.bufnr)
   for k, v in pairs(M.View.winopts) do
     set_local(k, v)

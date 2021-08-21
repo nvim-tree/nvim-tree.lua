@@ -175,6 +175,21 @@ function M.print_clipboard()
   fs.print_clipboard()
 end
 
+function M.hijack_current_window()
+  local View = require'nvim-tree.view'.View
+  if not View.bufnr then
+    View.bufnr = api.nvim_get_current_buf()
+  end
+  local current_tab = api.nvim_get_current_tabpage()
+  if not View.tabpages then
+    View.tabpages = {
+      [current_tab] = { winnr = api.nvim_get_current_win() }
+    }
+  else
+    View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
+  end
+end
+
 function M.on_enter()
   local bufnr = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(bufnr)
@@ -193,10 +208,10 @@ function M.on_enter()
   local should_open = vim.g.nvim_tree_auto_open == 1
     and ((is_dir and netrw_disabled) or bufname == '')
     and not vim.tbl_contains(ft_ignore, buftype)
-  lib.init(should_open, should_open)
   if bufname == '' or is_dir then
-    vim.cmd ":only"
+    M.hijack_current_window()
   end
+  lib.init(should_open, should_open)
 end
 
 local function is_file_readable(fname)
@@ -268,14 +283,14 @@ function M.open_on_directory()
     return
   end
 
-  if not view.win_open() then
-    view.open()
+  if view.win_open() and #api.nvim_list_wins() > 1 then
+    view.close()
   end
+  M.hijack_current_window()
   lib.change_dir(bufname)
   lib.set_index_and_redraw(bufname)
   view.focus()
-  vim.cmd ":only"
-  vim.cmd(":bd "..bufname)
+  view.replace_window()
 end
 
 function M.buf_enter()
