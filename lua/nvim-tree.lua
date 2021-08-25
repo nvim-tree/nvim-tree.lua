@@ -289,6 +289,15 @@ function M.place_cursor_on_node()
   api.nvim_win_set_cursor(0, {cursor[1], idx})
 end
 
+function M.setup(opts)
+  for opt, value in pairs(opts) do
+    if type(value) == 'boolean' then
+      value = value and 1 or 0
+    end
+    vim.g['nvim_tree_' .. opt] = value
+  end
+end
+
 view.setup()
 colors.setup()
 vim.defer_fn(M.on_enter, 1)
