@@ -289,6 +289,7 @@ function M.place_cursor_on_node()
   api.nvim_win_set_cursor(0, {cursor[1], idx})
 end
 
+-- https://github.com/kyazdani42/nvim-tree.lua/issues/557#issuecomment-896471524
 function M.setup(opts)
   for opt, value in pairs(opts) do
     if type(value) == 'boolean' then
