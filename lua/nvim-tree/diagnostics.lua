@@ -60,10 +60,15 @@ local function from_coc()
     return {}
   end
 
+  local diagnostic_list = vim.fn.CocAction("diagnosticList")
+  if type(diagnostic_list) ~='table' or vim.tbl_isempty(diagnostic_list) then
+    return {}
+  end
+
   local buffer_severity = {}
   local diagnostics = {}
 
-  for _, diagnostic in ipairs(vim.fn.CocAction("diagnosticList")) do
+  for _, diagnostic in ipairs(diagnostic_list) do
     local bufname = diagnostic.file
     local severity = severity_levels[diagnostic.severity]
 
