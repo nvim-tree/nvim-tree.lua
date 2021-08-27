@@ -297,9 +297,8 @@ function M.setup(opts)
     end
     vim.g['nvim_tree_' .. opt] = value
   end
-  local re = vim.regex("^nvim-tree.*")
   for k in pairs(package.loaded) do
-    if re:match_str(k) then
+    if k:match("^nvim%-tree%..*") or k:match("^nvim%-tree$") then
       package.loaded[k] = nil
     end
   end
