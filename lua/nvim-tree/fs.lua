@@ -260,7 +260,7 @@ function M.remove(node)
   local ans = utils.get_user_input_char()
   utils.clear_prompt()
   if ans:match('^y') then
-    if node.entries ~= nil then
+    if node.entries ~= nil and not node.link_to then
       local success = remove_dir(node.absolute_path)
       if not success then
         return api.nvim_err_writeln('Could not remove '..node.name)
