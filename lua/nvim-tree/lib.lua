@@ -174,8 +174,8 @@ end
 -- so only one happens every second at most
 local refreshing = false
 
-function M.refresh_tree()
-  if refreshing or vim.v.exiting ~= vim.NIL then return end
+function M.refresh_tree(disable_clock)
+  if (not disable_clock and refreshing) or vim.v.exiting ~= vim.NIL then return end
   refreshing = true
 
   refresh_nodes(M.Tree)
@@ -199,7 +199,9 @@ function M.refresh_tree()
     M.Tree.loaded = false
   end
 
-  vim.defer_fn(function() refreshing = false end, 1000)
+  if not disable_clock then
+    vim.defer_fn(function() refreshing = false end, 1000)
+  end
 end
 
 function M.set_index_and_redraw(fname)
