@@ -200,7 +200,7 @@ function M.refresh_tree(disable_clock)
   end
 
   if not disable_clock then
-    vim.defer_fn(function() refreshing = false end, 1000)
+    vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
   end
 end
 
