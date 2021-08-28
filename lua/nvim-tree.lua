@@ -222,6 +222,12 @@ local function is_file_readable(fname)
   return true
 end
 
+local function update_base_dir_with_filepath(filepath)
+  if not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
+    lib.change_dir(vim.fn.fnamemodify(filepath, ':p:h'))
+  end
+end
+
 function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
@@ -230,11 +236,13 @@ function M.find_file(with_open)
     M.open()
     view.focus()
     if not is_file_readable(filepath) then return end
+    update_base_dir_with_filepath(filepath)
     lib.set_index_and_redraw(filepath)
     return
   end
 
   if not is_file_readable(filepath) then return end
+  update_base_dir_with_filepath(filepath)
   lib.set_index_and_redraw(filepath)
 end
 
