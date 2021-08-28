@@ -131,9 +131,13 @@ function M.setup()
   for _, opt in ipairs(M.View.bufopts) do
     vim.bo[M.View.bufnr][opt.name] = opt.val
   end
-
-  vim.cmd "au! BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
-  vim.cmd "au! BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+  
+  vim.cmd "augroup NvimTreeView"
+  vim.cmd "au!"
+  vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+  vim.cmd "augroup END"
+  
   if vim.g.nvim_tree_disable_keybindings == 1 then
     return
   end
