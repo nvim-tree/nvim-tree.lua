@@ -210,7 +210,7 @@ function M.on_enter()
   local should_open = vim.g.nvim_tree_auto_open == 1
     and ((is_dir and netrw_disabled) or (bufname == "" and not buf_has_content))
     and not vim.tbl_contains(ft_ignore, buftype)
-  if bufname == '' or is_dir then
+  if should_open then
     M.hijack_current_window()
   end
   lib.init(should_open, should_open)
