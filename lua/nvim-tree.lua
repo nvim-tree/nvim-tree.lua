@@ -190,8 +190,10 @@ function M.on_enter()
     lib.Tree.cwd = vim.fn.expand(bufname)
   end
   local netrw_disabled = hijack_netrw == 1 or disable_netrw == 1
+  local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
+  local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
   local should_open = vim.g.nvim_tree_auto_open == 1
-    and ((is_dir and netrw_disabled) or bufname == '')
+    and ((is_dir and netrw_disabled) or (bufname == "" and not buf_has_content))
     and not vim.tbl_contains(ft_ignore, buftype)
   lib.init(should_open, should_open)
 end
