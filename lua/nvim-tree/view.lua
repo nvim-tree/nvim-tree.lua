@@ -184,7 +184,9 @@ function M._prevent_buffer_override()
       return
     end
 
-    vim.cmd("buffer "..M.View.bufnr)
+    if a.nvim_buf_is_loaded(M.View.bufnr) and a.nvim_buf_is_valid(M.View.bufnr) then
+      vim.cmd("buffer "..M.View.bufnr)
+    end
 
     local bufname = a.nvim_buf_get_name(curbuf)
     local isdir = vim.fn.isdirectory(bufname) == 1
