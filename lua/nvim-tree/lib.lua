@@ -25,6 +25,7 @@ M.Tree = {
 }
 
 function M.init(with_open, with_reload)
+  M.Tree.entries = {}
   if not M.Tree.cwd then
     M.Tree.cwd = luv.cwd()
   end
@@ -99,6 +100,10 @@ local function get_line_from_node(node, find_parent)
 end
 
 function M.get_node_at_cursor()
+  local winnr = view.get_winnr()
+  if not winnr then
+    return
+  end
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if view.is_help_ui() then
@@ -446,7 +451,6 @@ function M.change_dir(name)
 
   vim.cmd('lcd '..foldername)
   M.Tree.cwd = foldername
-  M.Tree.entries = {}
   M.init(false, true)
 end
 
