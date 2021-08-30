@@ -131,7 +131,7 @@ function M.setup()
   for _, opt in ipairs(M.View.bufopts) do
     vim.bo[M.View.bufnr][opt.name] = opt.val
   end
-  
+
   vim.cmd "augroup NvimTreeView"
   vim.cmd "au!"
   vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
@@ -294,6 +294,10 @@ end
 
 function M.open(options)
 	options = options or { focus_tree = true }
+  if not a.nvim_buf_is_valid(M.View.bufnr) then
+    HAS_LOADED = false
+  end
+
   if not HAS_LOADED then
     M.setup()
     HAS_LOADED = true
