@@ -223,6 +223,9 @@ local function is_file_readable(fname)
 end
 
 local function update_base_dir_with_filepath(filepath)
+  if vim.g.nvim_tree_follow_update_path ~= 1 then
+    return
+  end
   if not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
     lib.change_dir(vim.fn.fnamemodify(filepath, ':p:h'))
   end

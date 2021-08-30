@@ -172,6 +172,12 @@ Can be `0` or `1`. When `1`, will update the cursor to update to the correct
 location in the tree on |BufEnter|.
 Default is 0
 
+|g:nvim_tree_follow_update_path|				*g:nvim_tree_follow_update_path*
+
+Can be `0` or `1`. When `1`, will update the path of the current dir if the
+file is not inside the tree. Works only with |g:nvim_tree_follow| = 1.
+Default is 0
+
 |g:nvim_tree_auto_open|				*g:nvim_tree_auto_open*
 
 Can be `0` or `1`. When `1`, will open the tree when the package is loaded.
