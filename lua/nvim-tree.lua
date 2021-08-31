@@ -218,8 +218,7 @@ end
 
 local function is_file_readable(fname)
   local stat = luv.fs_stat(fname)
-  if not stat or not stat.type == 'file' or not luv.fs_access(fname, 'R') then return false end
-  return true
+  return stat and stat.type == "file" and luv.fs_access(fname, 'R')
 end
 
 local function update_base_dir_with_filepath(filepath)
@@ -238,13 +237,11 @@ function M.find_file(with_open)
   if with_open then
     M.open()
     view.focus()
-    if not is_file_readable(filepath) then return end
-    update_base_dir_with_filepath(filepath)
-    lib.set_index_and_redraw(filepath)
-    return
   end
 
-  if not is_file_readable(filepath) then return end
+  if not is_file_readable(filepath) then
+    return
+  end
   update_base_dir_with_filepath(filepath)
   lib.set_index_and_redraw(filepath)
 end

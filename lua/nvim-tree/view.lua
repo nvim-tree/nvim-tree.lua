@@ -137,7 +137,7 @@ function M.setup()
   vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
   vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
   vim.cmd "augroup END"
-  
+
   if vim.g.nvim_tree_disable_keybindings == 1 then
     return
   end
@@ -189,7 +189,9 @@ function M._prevent_buffer_override()
     end
 
     if a.nvim_buf_is_loaded(M.View.bufnr) and a.nvim_buf_is_valid(M.View.bufnr) then
-      vim.cmd("buffer "..M.View.bufnr)
+      -- pcall necessary to avoid erroring with `mark not set` although no mark are set
+      -- this avoid other issues
+      pcall(vim.api.nvim_win_set_buf, M.get_winnr(), M.View.bufnr)
     end
 
     local bufname = a.nvim_buf_get_name(curbuf)
