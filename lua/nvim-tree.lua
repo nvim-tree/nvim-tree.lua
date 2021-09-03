@@ -432,7 +432,8 @@ function M.setup(conf)
   setup_autocommands(opts)
   setup_vim_commands()
 
-  M.on_enter(opts)
+  -- scheduling to make sure current buffer has initialized before running buffer checks for auto open
+  vim.schedule(function() M.on_enter(opts) end)
 end
 
 local out_config = {
