@@ -322,13 +322,17 @@ end
 function M.close()
   if not M.win_open() then return end
   if #a.nvim_list_wins() == 1 then
-    local ans = vim.fn.input(
-      '[NvimTree] this is the last open window, are you sure you want to quit nvim ? y/n: '
+    local ok_bufs = vim.tbl_filter(
+      function(buf)
+        return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
+      end,
+      a.nvim_list_bufs()
     )
-    if ans == 'y' then
-      vim.cmd "q!"
+    if #ok_bufs > 0 then
+      vim.cmd "sbnext"
+    else
+      vim.cmd "new"
     end
-    return
   end
   a.nvim_win_hide(M.get_winnr())
 end
