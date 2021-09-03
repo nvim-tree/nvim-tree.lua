@@ -1,6 +1,5 @@
 local api = vim.api
 local luv = vim.loop
-local open_mode = luv.constants.O_CREAT + luv.constants.O_WRONLY + luv.constants.O_TRUNC
 
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
@@ -29,13 +28,10 @@ local function create_file(file)
       return
     end
   end
-  luv.fs_open(file, "w", open_mode, vim.schedule_wrap(function(err, fd)
+  luv.fs_open(file, "w", 420, vim.schedule_wrap(function(err, fd)
     if err then
       api.nvim_err_writeln('Couldn\'t create file '..file)
     else
-      -- FIXME: i don't know why but libuv keeps creating file with executable permissions
-      -- this is why we need to chmod to default file permissions
-      luv.fs_chmod(file, 420)
       luv.fs_close(fd)
       events._dispatch_file_created(file)
       lib.refresh_tree(true)
@@ -68,44 +64,34 @@ function M.create(node)
     add_into = node.absolute_path:sub(0, -(#node.name + 1))
   end
 
-  local ans = vim.fn.input('Create file '..add_into)
+  local ans = vim.fn.input('Create file ', add_into)
   utils.clear_prompt()
-  if not ans or #ans == 0 then return end
+  if not ans or #ans == 0 or luv.fs_access(ans, 'r') then return end
 
-  if not ans:match(utils.path_separator) then
-    return create_file(add_into..ans)
-  end
-
-  -- create a foler for each element until / and create a file when element is not ending with /
-  -- if element is ending with / and it's the last element, we need to manually refresh
-  local relpath = ''
+  -- create a folder for each path element if the folder does not exist
+  -- if the answer ends with a /, create a file for the last entry
+  local is_last_path_file = not ans:match(utils.path_separator..'$')
+  local path_to_create = ''
   local idx = 0
 
-  local num_entries = get_num_entries(utils.path_split(ans))
-  local first_entry
+  local num_entries = get_num_entries(utils.path_split(utils.path_remove_trailing(ans)))
   for path in utils.path_split(ans) do
-    if idx == 0 then
-      first_entry = add_into..relpath..path
-    end
     idx = idx + 1
-    relpath = relpath..path
-    local abs_path = add_into..relpath
-    if relpath:match('.*'..utils.path_separator..'$') then
-      local success = luv.fs_mkdir(abs_path, 493)
+    path_to_create = utils.path_join({path_to_create, path})
+    if is_last_path_file and idx == num_entries then
+      create_file(path_to_create)
+    elseif not luv.fs_access(path_to_create, "r") then
+      local success = luv.fs_mkdir(path_to_create, 493)
       if not success then
-        api.nvim_err_writeln('Could not create folder '..abs_path)
-        return
+        api.nvim_err_writeln('Could not create folder '..path_to_create)
+        break
       end
-      if idx == num_entries then
-        events._dispatch_folder_created(abs_path)
-        api.nvim_out_write('Folder '..abs_path..' was properly created\n')
-        lib.refresh_tree(true)
-      end
-    else
-      create_file(abs_path)
     end
   end
-  focus_file(first_entry:sub(0, #first_entry - 1))
+  api.nvim_out_write(ans..' was properly created\n')
+  events._dispatch_folder_created(ans)
+  lib.refresh_tree(true)
+  focus_file(ans)
 end
 
 local function clear_buffer(absolute_path)
@@ -117,15 +103,15 @@ local function clear_buffer(absolute_path)
 end
 
 local function rename_loaded_buffers(old_name, new_name)
-    for _, buf in pairs(api.nvim_list_bufs()) do
-      if api.nvim_buf_is_loaded(buf) then
-        if api.nvim_buf_get_name(buf) == old_name then
-          api.nvim_buf_set_name(buf, new_name)
-          -- to avoid the 'overwrite existing file' error message on write
-          vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
-        end
+  for _, buf in pairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_is_loaded(buf) then
+      if api.nvim_buf_get_name(buf) == old_name then
+        api.nvim_buf_set_name(buf, new_name)
+        -- to avoid the 'overwrite existing file' error message on write
+        vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
       end
     end
+  end
 end
 
 local function remove_dir(cwd)
