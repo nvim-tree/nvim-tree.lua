@@ -69,9 +69,9 @@ function.
       disable_netrw       = true,
       hijack_netrw        = true,
       open_on_setup       = false,
-      ignore_ft_on_setup = {},
+      ignore_ft_on_setup  = {},
       auto_close          = false,
-      tab_open            = false,
+      open_on_tab         = false,
       hijack_cursor       = false,
       update_cwd          = false,
       update_focused_file = {
@@ -113,7 +113,7 @@ Here is a list of the options available in the setup call:
   type: `boolean`
   default: `false`
 
-- |tab_open|: opens the tree automatically when switching tabpage or opening a new
+- |open_on_tab|: opens the tree automatically when switching tabpage or opening a new
   tabpage if the tree was previously open.
   type: `boolean`
   default: `false`

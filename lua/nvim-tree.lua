@@ -380,7 +380,7 @@ local function setup_autocommands(opts)
   if opts.auto_close then
     vim.cmd "au WinClosed * lua require'nvim-tree'.on_leave()"
   end
-  if opts.tab_open then
+  if opts.open_on_tab then
     vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
   end
   if opts.hijack_cursor then
@@ -400,8 +400,8 @@ local DEFAULT_OPTS = {
   disable_netrw       = true,
   hijack_netrw        = true,
   open_on_setup       = false,
+  open_on_tab         = false,
   auto_close          = false,
-  tab_open            = false,
   hijack_cursor       = false,
   update_cwd          = false,
   update_focused_file = {
