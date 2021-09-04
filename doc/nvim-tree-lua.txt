@@ -98,7 +98,7 @@ Here is a list of the options available in the setup call:
   type: `boolean`
   default: `true`
 
-- |open_on_setup|: will automatically the tree when running setup if current
+- |open_on_setup|: will automatically open the tree when running setup if current
   buffer is a directory, is empty or is unnamed.
   type: `boolean`
   default: `false`
