@@ -77,7 +77,12 @@ function M.create(node)
   local num_entries = get_num_entries(utils.path_split(utils.path_remove_trailing(ans)))
   for path in utils.path_split(ans) do
     idx = idx + 1
-    path_to_create = utils.path_join({path_to_create, path})
+    local p = utils.path_remove_trailing(path)
+    if #path_to_create == 0 and vim.fn.has('win32') == 1 then
+      path_to_create = utils.path_join({p, path_to_create})
+    else
+      path_to_create = utils.path_join({path_to_create, p})
+    end
     if is_last_path_file and idx == num_entries then
       create_file(path_to_create)
     elseif not luv.fs_access(path_to_create, "r") then
