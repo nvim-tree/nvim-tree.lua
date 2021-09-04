@@ -292,6 +292,7 @@ local function update_draw_data(tree, depth, markers)
     end
 
     local git_hl = get_git_hl(node)
+    local filename_start_at
 
     if node.entries then
       local has_children = #node.entries ~= 0 or node.has_children
@@ -310,10 +311,15 @@ local function update_draw_data(tree, depth, markers)
       if special[node.absolute_path] then
         folder_hl = "NvimTreeSpecialFolderName"
       end
+      filename_start_at = offset+#git_icon+#icon
       set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
       if git_hl then
         set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
       end
+      if node.marked then
+        table.insert(hl, { 'NvimTreeMarkedFile', index, filename_start_at, -1 })
+      end
+
       index = index + 1
       if node.open then
         table.insert(lines, padding..icon..git_icon..name..(vim.g.nvim_tree_add_trailing == 1 and '/' or ''))
@@ -325,7 +331,8 @@ local function update_draw_data(tree, depth, markers)
       local icon = get_symlink_icon()
       local link_hl = git_hl or 'NvimTreeSymlink'
       local arrow = vim.g.nvim_tree_symlink_arrow or ' ➛ '
-      table.insert(hl, { link_hl, index, offset, -1 })
+      filename_start_at = offset
+      table.insert(hl, { link_hl, index, filename_start_at, -1 })
       table.insert(lines, padding..icon..node.name..arrow..node.link_to)
       index = index + 1
 
@@ -342,10 +349,11 @@ local function update_draw_data(tree, depth, markers)
       end
       table.insert(lines, padding..icon..git_icons..node.name)
 
+      filename_start_at = offset+#git_icons+#icon
       if node.executable then
-        table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
+        table.insert(hl, {'NvimTreeExecFile', index, filename_start_at, -1 })
       elseif picture[node.extension] then
-        table.insert(hl, {'NvimTreeImageFile', index, offset+#icon+#git_icons, -1 })
+        table.insert(hl, {'NvimTreeImageFile', index, filename_start_at, -1 })
       end
 
       if should_hl_opened_files then
@@ -364,6 +372,9 @@ local function update_draw_data(tree, depth, markers)
         table.insert(hl, {git_hl, index, offset+#icon+#git_icons, -1 })
       end
       index = index + 1
+    end
+    if not node.entries and node.marked then
+      table.insert(hl, { 'NvimTreeMarkedFile', index-1, filename_start_at, -1 })
     end
   end
 end

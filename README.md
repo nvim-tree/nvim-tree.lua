@@ -263,6 +263,8 @@ local list = {
   { key = "s",                            cb = tree_cb("system_open") },
   { key = "q",                            cb = tree_cb("close") },
   { key = "g?",                           cb = tree_cb("toggle_help") },
+  { key = 'm',                            cb = ":lua require'nvim-tree.marks'.toggle_mark()<cr>" },
+  { key = 'M',                            cb = ":lua require'nvim-tree.marks'.disable_all()<cr>" },
 }
 ```
 
@@ -282,6 +284,7 @@ You can toggle the help UI by pressing `g?`.
 - Git integration (icons and file highlight)
 - Lsp diagnostics integration (signs)
 - Indent markers
+- Marks (for bulk actions, see `:help nvim-tree.marks`)
 - Mouse support
 - It's fast
 
