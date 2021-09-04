@@ -28,7 +28,7 @@ use {
 
 ## Setup
 
-Options are currently being migrating into the setup function, you need to run `require'nvim-tree'.setup()` in your personal configurations.
+Options are currently being migrated into the setup function, you need to run `require'nvim-tree'.setup()` in your personal configurations.
 Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
 Note that options under the `g:` command should be set **BEFORE** running the setup function.
 
