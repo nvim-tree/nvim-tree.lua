@@ -60,6 +60,7 @@ let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree 
 let g:nvim_tree_refresh_wait = 500 "1000 by default, control how often the tree can be refreshed, 1000 means the tree can be refresh once per 1000ms.
 let g:nvim_tree_window_picker_exclude = {
     \   'filetype': [
+    \     'notify',
     \     'packer',
     \     'qf'
     \   ],

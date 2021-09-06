@@ -98,6 +98,7 @@ function M.window_picker_exclude()
   end
   return {
     filetype = {
+      "notify",
       "packer",
       "qf"
     }
