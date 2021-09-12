@@ -85,13 +85,14 @@ local function get_line_from_node(node, find_parent)
   local line = 2
   local function iter(entries, recursive)
     for _, entry in ipairs(entries) do
-      if node_path:match('^'..entry.match_path..'$') ~= nil then
+      local n = M.get_last_group_node(entry)
+      if node_path:match('^'..n.match_path..'$') ~= nil then
         return line, entry
       end
 
       line = line + 1
-      if entry.open == true and recursive then
-        local _, child = iter(entry.entries, recursive)
+      if n.open == true and recursive then
+        local _, child = iter(n.entries, recursive)
         if child ~= nil then return line, child end
       end
     end
