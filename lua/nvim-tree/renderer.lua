@@ -455,9 +455,6 @@ function M.draw(tree, reload)
   if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.get_winnr(), cursor)
   end
-  if cursor then
-    api.nvim_win_set_option(view.get_winnr(), 'wrap', false)
-  end
 end
 
 function M.render_hl(bufnr)

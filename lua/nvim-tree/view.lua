@@ -24,6 +24,7 @@ M.View = {
     foldcolumn = '0',
     cursorcolumn = false,
     colorcolumn = '0',
+    wrap = false,
     winhl = table.concat({
       'EndOfBuffer:NvimTreeEndOfBuffer',
       'Normal:NvimTreeNormal',
