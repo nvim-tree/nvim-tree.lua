@@ -64,6 +64,13 @@ function M.create(node)
     add_into = node.absolute_path:sub(0, -(#node.name + 1))
   end
 
+  local create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder or 1
+  if create_in_closed_folder == 0 then
+    if node.open == false then
+      add_into = node.absolute_path:sub(0, -(#node.name + 1))
+    end
+  end
+
   local ans = vim.fn.input('Create file ', add_into)
   utils.clear_prompt()
   if not ans or #ans == 0 or luv.fs_access(ans, 'r') then return end
