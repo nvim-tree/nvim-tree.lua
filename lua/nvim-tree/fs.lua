@@ -60,15 +60,14 @@ function M.create(node)
   local add_into
   if node.entries ~= nil then
     add_into = utils.path_add_trailing(node.absolute_path)
+    local create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder or 1
+    if create_in_closed_folder == 0 then
+      if node.open == false then
+        add_into = node.absolute_path:sub(0, -(#node.name + 1))
+      end
+    end
   else
     add_into = node.absolute_path:sub(0, -(#node.name + 1))
-  end
-
-  local create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder or 1
-  if create_in_closed_folder == 0 then
-    if node.open == false then
-      add_into = node.absolute_path:sub(0, -(#node.name + 1))
-    end
   end
 
   local ans = vim.fn.input('Create file ', add_into)
