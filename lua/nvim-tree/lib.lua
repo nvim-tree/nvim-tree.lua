@@ -58,8 +58,14 @@ function M.redraw()
   renderer.draw(M.Tree, true)
 end
 
+local hide_root_folder = vim.g.nvim_tree_hide_root_folder;
 local function get_node_at_line(line)
   local index = 2
+
+	if hide_root_folder == 1 then
+		index = 1
+	end
+
   local function iter(entries)
     for _, node in ipairs(entries) do
       if index == line then
@@ -112,7 +118,7 @@ function M.get_node_at_cursor()
     local help_text = get_node_at_line(line+1)(help_lines)
     return {name = help_text}
   else
-    if line == 1 and M.Tree.cwd ~= "/" then
+    if line == 1 and M.Tree.cwd ~= "/" and hide_root_folder ~= 1 then
       return { name = ".." }
     end
 
@@ -207,7 +213,7 @@ end
 
 function M.set_index_and_redraw(fname)
   local i
-  if M.Tree.cwd == '/' then
+  if M.Tree.cwd == '/' and hide_root_folder ~= 1 then
     i = 0
   else
     i = 1

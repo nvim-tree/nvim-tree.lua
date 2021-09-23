@@ -150,8 +150,14 @@ function M.on_keypress(mode)
     return keypress_funcs[mode](node)
   end
 
+	local hide_root_folder = vim.g.nvim_tree_hide_root_folder or 0;
+
   if node.name == ".." then
-    return lib.change_dir("..")
+		if hide_root_folder == 1 then
+			return lib.unroll_dir(node);
+		else
+			return lib.change_dir("..")
+		end
   elseif mode == "cd" and node.entries ~= nil then
     return lib.change_dir(lib.get_last_group_node(node).absolute_path)
   elseif mode == "cd" then
@@ -204,7 +210,7 @@ function M.on_enter()
   if is_dir then
     lib.Tree.cwd = vim.fn.expand(bufname)
   end
-  local netrw_disabled = hijack_netrw == 1 or disable_netrw == 1
+	local netrw_disabled = hijack_netrw == 1 or disable_netrw == 1
   local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
   local should_open = vim.g.nvim_tree_auto_open == 1
