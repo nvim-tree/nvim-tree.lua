@@ -231,8 +231,10 @@ if icon_state.show_git_icon then
       icons = git_icon_state.dirty
     end
     for _, v in ipairs(icons) do
-      table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
-      icon = icon..v.icon..icon_padding
+      if #v.icon > 0 then
+        table.insert(hl, { v.hl, line, depth+icon_len+#icon, depth+icon_len+#icon+#v.icon })
+        icon = icon..v.icon..icon_padding
+      end
     end
 
     return icon
