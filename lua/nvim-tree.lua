@@ -374,7 +374,7 @@ local function setup_autocommands(opts)
     au SessionLoadPost * lua require'nvim-tree.view'._wipe_rogue_buffer()
   ]]
 
-  if vim.g.nvim_tree_lsp_diagnostics ~= 1 then
+  if vim.g.nvim_tree_lsp_diagnostics == 1 then
     vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
   end
   if opts.auto_close then
