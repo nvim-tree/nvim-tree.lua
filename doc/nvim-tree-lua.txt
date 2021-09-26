@@ -373,6 +373,12 @@ Defaults to ' ➛ '. Used as a separator between symlinks' source and target.
 Can be 0 or 1. 0 by default.
 Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 
+|g:nvim_tree_create_in_closed_folder|     *g:nvim_tree_create_in_closed_folder*
+
+Can be 0 or 1. 1 by default.
+Creating a file when the cursor is on a closed folder will set the
+path to be inside the closed folder when 1, and on the parent folder when 0.
+
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
