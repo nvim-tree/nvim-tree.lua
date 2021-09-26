@@ -84,10 +84,19 @@ function.
         cmd  = nil,
         args = {}
       },
+      view = {
+        width = 30,
+        side = 'left',
+        auto_resize = false,
+        mappings = {
+          custom_only = false,
+          list = {}
+        }
+      }
     }
 <
 
-As options are currently being migrated, configuration of global options in 
+As options are currently being migrated, configuration of global options in
 *nvim-tree-options* should be done BEFORE the setup call.
 
 Here is a list of the options available in the setup call:
@@ -136,15 +145,15 @@ Here is a list of the options available in the setup call:
     type: `boolean`
     default: `false`
 
-  - |update_focused_file.update_cwd|: update the root directory of the tree to the one 
-    of the folder containing the file if the file is not under the current root 
+  - |update_focused_file.update_cwd|: update the root directory of the tree to the one
+    of the folder containing the file if the file is not under the current root
     directory. Only relevant when |update_focused_file.enable| is `true`
     type: `boolean`
     default: `false`
 
   - |update_focused_file.ignore_list|: list of buffer names and filetypes that will not
-    update the root dir of the tree if the file isn't found under the current root 
-    directory. Only relevant when |update_focused_file.update_cwd| is `true` and 
+    update the root dir of the tree if the file isn't found under the current root
+    directory. Only relevant when |update_focused_file.update_cwd| is `true` and
     |update_focused_file.enable| is `true`.
     type: `{string}`
     default: `{}`
@@ -163,6 +172,33 @@ Here is a list of the options available in the setup call:
 - |lsp_diagnostics|: show lsp diagnostics in the signcolumn
     type: `boolean`
     default: false
+
+- |view|: window / buffer setup
+
+- |view.width|: width of the window, can be either a `%` string or
+  a number representing columns
+    type: `string | number`
+    default: `30`
+
+- |view.side|: side of the tree, can be one of 'left' | 'right' | 'bottom' | 'top'
+  Note that bottom/top are not working correctly yet.
+    type: `string`
+    default: 'left'
+
+- |view.auto_resize|: auto resize the tree after opening a file
+    type: `boolean`
+    default: false
+
+- |view.mappings|: configuration options for keymaps
+
+- |view.mappings.custom_only|: will use only the provided user mappings and not the default
+  otherwise, extends the default mappings with the provided user mappings
+    type: `boolean`
+    default: false
+
+- |view,mappings.list|: a list of keymaps that will extend or override the default keymaps
+    type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
+    default: {}
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
@@ -214,7 +250,7 @@ to render the icons. The `files` key can only work if `nvim-web-devicons`
 is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
 if folder is 1, you can also set `folder_arrows = 1` to show small arrows
-next to the folder icons but this will not work when you set 
+next to the folder icons but this will not work when you set
 |g:nvim_tree_indent_markers| (because of UI conflict).
 
 |g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
@@ -278,17 +314,6 @@ Can be `0` or `1`. When `1`, will close the tree when a file is opened.
 Applies to: `edit`, `vsplit`, `split`, `tabnew`.
 Default is 0
 
-|g:nvim_tree_disable_keybindings|          *g:nvim_tree_disable_keybindings*
-
-Can be `0` or `1`. When `1`, will disable all keybindings by the plugin.
-|g:nvim_tree_bindings| as well as default bindings will not take effect.
-Default is 0
-
-|g:nvim_tree_disable_default_keybindings|  *g:nvim_tree_disable_default_keybindings*
-
-Can be `0` or `1`. When `1`, will disable default keybindings and use only the one you defined.
-Default is 0
-
 |g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
 
 Can be `0` or `1`. When `1`, will display indent markers when folders are open
@@ -305,12 +330,6 @@ Default is 0
 In what format to show root folder. See `:help filename-modifiers` for
 available options.
 Default is `:~`
-
-|g:nvim_tree_auto_resize|		             *g:nvim_tree_auto_resize*
-
-Can be 0 or 1. When 1, it will resize the tree to it's saved width
-when opening a new file.
-Default is 1
 
 |g:nvim_tree_add_trailing|			         *g:nvim_tree_add_trailing*
 
@@ -382,7 +401,7 @@ path to be inside the closed folder when 1, and on the parent folder when 0.
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*
 
-|KeyBindings|				        *nvim-tree-keybindings*
+|Mappings|				         *nvim-tree-mappings*
 
 - type `g?` to see the help UI with keybindings
 - move around like in any vim buffer
@@ -421,61 +440,46 @@ INFORMATIONS				        *nvim-tree-info*
 - Double left click acts like '<CR>'
 - Double right click acts like '<C-]>'
 
-|g:nvim_tree_bindings|                             *g:nvim_tree_bindings*
-
-You can define your own keymaps with this syntax:
+Defaults to:
 >
   lua <<EOF
-      vim.g.nvim_tree_bindings = {
-        { key = {"<CR>", "o" }, cb = ":lua some_func()<cr>"}
-        { key = "<Tab>", mode = "v", cb = ":lua some_func()<cr>"}
-      }
-  EOF
+    local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+    local list = {
+      { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = tree_cb("edit") },
+      { key = {"<2-RightMouse>", "<C-]>"},    cb = tree_cb("cd") },
+      { key = "<C-v>",                        cb = tree_cb("vsplit") },
+      { key = "<C-x>",                        cb = tree_cb("split") },
+      { key = "<C-t>",                        cb = tree_cb("tabnew") },
+      { key = "<",                            cb = tree_cb("prev_sibling") },
+      { key = ">",                            cb = tree_cb("next_sibling") },
+      { key = "P",                            cb = tree_cb("parent_node") },
+      { key = "<BS>",                         cb = tree_cb("close_node") },
+      { key = "<S-CR>",                       cb = tree_cb("close_node") },
+      { key = "<Tab>",                        cb = tree_cb("preview") },
+      { key = "K",                            cb = tree_cb("first_sibling") },
+      { key = "J",                            cb = tree_cb("last_sibling") },
+      { key = "I",                            cb = tree_cb("toggle_ignored") },
+      { key = "H",                            cb = tree_cb("toggle_dotfiles") },
+      { key = "R",                            cb = tree_cb("refresh") },
+      { key = "a",                            cb = tree_cb("create") },
+      { key = "d",                            cb = tree_cb("remove") },
+      { key = "r",                            cb = tree_cb("rename") },
+      { key = "<C-r>",                        cb = tree_cb("full_rename") },
+      { key = "x",                            cb = tree_cb("cut") },
+      { key = "c",                            cb = tree_cb("copy") },
+      { key = "p",                            cb = tree_cb("paste") },
+      { key = "y",                            cb = tree_cb("copy_name") },
+      { key = "Y",                            cb = tree_cb("copy_path") },
+      { key = "gy",                           cb = tree_cb("copy_absolute_path") },
+      { key = "[c",                           cb = tree_cb("prev_git_item") },
+      { key = "]c",                           cb = tree_cb("next_git_item") },
+      { key = "-",                            cb = tree_cb("dir_up") },
+      { key = "s",                            cb = tree_cb("system_open") },
+      { key = "q",                            cb = tree_cb("close") },
+      { key = "g?",                           cb = tree_cb("toggle_help") },
+    }
 <
-`key` can be either a string or a table of strings
-`mode` is `n` by default if you don't specify it
-`cb` is the command that will be called when the keymap is triggered
 
-Default mappings:
->
-  lua <<EOF
-      local tree_cb = require'nvim-tree.config'.nvim_tree_callback
-      vim.g.nvim_tree_bindings = {
-        { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = tree_cb("edit") },
-        { key = {"<2-RightMouse>", "<C-]>"},    cb = tree_cb("cd") },
-        { key = "<C-v>",                        cb = tree_cb("vsplit") },
-        { key = "<C-x>",                        cb = tree_cb("split") },
-        { key = "<C-t>",                        cb = tree_cb("tabnew") },
-        { key = "<",                            cb = tree_cb("prev_sibling") },
-        { key = ">",                            cb = tree_cb("next_sibling") },
-        { key = "P",                            cb = tree_cb("parent_node") },
-        { key = "<BS>",                         cb = tree_cb("close_node") },
-        { key = "<S-CR>",                       cb = tree_cb("close_node") },
-        { key = "<Tab>",                        cb = tree_cb("preview") },
-        { key = "K",                            cb = tree_cb("first_sibling") },
-        { key = "J",                            cb = tree_cb("last_sibling") },
-        { key = "I",                            cb = tree_cb("toggle_ignored") },
-        { key = "H",                            cb = tree_cb("toggle_dotfiles") },
-        { key = "R",                            cb = tree_cb("refresh") },
-        { key = "a",                            cb = tree_cb("create") },
-        { key = "d",                            cb = tree_cb("remove") },
-        { key = "r",                            cb = tree_cb("rename") },
-        { key = "<C-r>",                        cb = tree_cb("full_rename") },
-        { key = "x",                            cb = tree_cb("cut") },
-        { key = "c",                            cb = tree_cb("copy") },
-        { key = "p",                            cb = tree_cb("paste") },
-        { key = "y",                            cb = tree_cb("copy_name") },
-        { key = "Y",                            cb = tree_cb("copy_path") },
-        { key = "gy",                           cb = tree_cb("copy_absolute_path") },
-        { key = "[c",                           cb = tree_cb("prev_git_item") },
-        { key = "]c",                           cb = tree_cb("next_git_item") },
-        { key = "-",                            cb = tree_cb("dir_up") },
-        { key = "s",                            cb = tree_cb("system_open") },
-        { key = "q",                            cb = tree_cb("close") },
-        { key = "g?",                           cb = tree_cb("toggle_help") },
-      }
-  EOF
-<
 |Features|					*nvim-tree-features*
 
 File icons with vim-devicons.

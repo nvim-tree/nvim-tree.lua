@@ -370,9 +370,6 @@ local function setup_autocommands(opts)
 
     au BufWritePost * lua require'nvim-tree'.refresh()
     au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
-
-    """ deletes the existing buffer when saved in a session to avoid conflicts
-    au SessionLoadPost * lua require'nvim-tree.view'._wipe_rogue_buffer()
   ]]
 
   if opts.lsp_diagnostics then
@@ -429,7 +426,7 @@ function M.setup(conf)
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
 
   require'nvim-tree.colors'.setup()
-  require'nvim-tree.view'.setup()
+  require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
 
   setup_autocommands(opts)
@@ -452,7 +449,11 @@ local function startup_check_new_setup()
     "nvim_tree_system_open_command_args",
     "nvim_tree_follow",
     "nvim_tree_follow_update_path",
-    "nvim_tree_lsp_diagnostics"
+    "nvim_tree_lsp_diagnostics",
+    "nvim_tree_auto_resize",
+    "nvim_tree_bindings",
+    "nvim_tree_disable_keybindings",
+    "nvim_tree_disable_default_keybindings",
   }
 
   local x = vim.tbl_filter(function(v)
