@@ -278,10 +278,6 @@ You can toggle the help UI by pressing `g?`.
 - Mouse support
 - It's fast
 
-## Tips
-
-- You can edit the size of the tree during runtime with `:lua require'nvim-tree.view'.View.width = 50`
-
 ## Screenshots
 
 ![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
