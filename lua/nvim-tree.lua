@@ -356,7 +356,7 @@ local function setup_vim_commands()
     command! NvimTreeFocus lua require'nvim-tree'.focus()
     command! NvimTreeRefresh lua require'nvim-tree'.refresh()
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
-    command! NvimTreeFindFile lua require'nvim-tree'.find_file()
+    command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
   ]]
 end
