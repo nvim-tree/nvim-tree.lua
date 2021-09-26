@@ -1,6 +1,7 @@
 local config = require'nvim-tree.config'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
+local _padding = require'nvim-tree.renderer.padding'
 
 local api = vim.api
 
@@ -241,40 +242,6 @@ if icon_state.show_git_icon then
   end
 end
 
-local get_padding = function(depth)
-  return string.rep(' ', depth)
-end
-
-if icon_state.show_folder_icon and icon_state.show_folder_arrows then
-  get_padding = function(depth, _, _, node)
-    if node.entries then
-      local icon = icon_state.icons.folder_icons[node.open and 'arrow_open' or 'arrow_closed']
-      return string.rep(' ', depth - 2)..icon..' '
-    end
-    return string.rep(' ', depth)
-  end
-end
-
-if vim.g.nvim_tree_indent_markers == 1 then
-  get_padding = function(depth, idx, tree, _, markers)
-    local padding = ""
-    if depth ~= 0 then
-      local rdepth = depth/2
-      markers[rdepth] = idx ~= #tree.entries
-      for i=1,rdepth do
-        if idx == #tree.entries and i == rdepth then
-          padding = padding..'└ '
-        elseif markers[i] then
-          padding = padding..'│ '
-        else
-          padding = padding..'  '
-        end
-      end
-    end
-    return padding
-  end
-end
-
 local picture = {
   jpg = true,
   jpeg = true,
@@ -303,7 +270,7 @@ local function update_draw_data(tree, depth, markers)
   end
 
   for idx, node in ipairs(tree.entries) do
-    local padding = get_padding(depth, idx, tree, node, markers)
+    local padding = _padding.get_padding(depth, idx, tree, node, markers)
     local offset = string.len(padding)
     if depth > 0 then
       table.insert(hl, { 'NvimTreeIndentMarker', index, 0, offset })
@@ -443,6 +410,8 @@ function M.draw(tree, reload)
     hl = {}
 
     local show_arrows = icon_state.show_folder_icon and icon_state.show_folder_arrows
+    _padding.reload_padding_function()
+    icon_state = config.get_icon_state()
     update_draw_data(tree, show_arrows and 2 or 0, {})
   end
 
