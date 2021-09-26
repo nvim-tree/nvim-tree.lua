@@ -88,6 +88,9 @@ local function from_coc()
 end
 
 function M.update()
+  if not M.enable then
+    return
+  end
   local buffer_severity
   if vim.g.coc_service_initialized == 1 then
     buffer_severity = from_coc()
@@ -114,6 +117,10 @@ function M.update()
       if node then add_sign(line, severity) end
     end
   end
+end
+
+function M.setup(opts)
+  M.enable = opts.lsp_diagnostics
 end
 
 return M

@@ -380,7 +380,7 @@ local function setup_autocommands(opts)
     au SessionLoadPost * lua require'nvim-tree.view'._wipe_rogue_buffer()
   ]]
 
-  if vim.g.nvim_tree_lsp_diagnostics == 1 then
+  if opts.lsp_diagnostics then
     vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
   end
   if opts.auto_close then
@@ -410,6 +410,7 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
+  lsp_diagnostics     = false,
   update_focused_file = {
     enable = false,
     update_cwd = false,
@@ -434,6 +435,7 @@ function M.setup(conf)
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup()
+  require'nvim-tree.diagnostics'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()
@@ -454,6 +456,7 @@ local out_config = {
   "nvim_tree_system_open_command_args",
   "nvim_tree_follow",
   "nvim_tree_follow_update_path",
+  "nvim_tree_lsp_diagnostics"
 }
 
 local x = vim.tbl_filter(function(v)
