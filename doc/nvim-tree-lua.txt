@@ -74,6 +74,7 @@ function.
       open_on_tab         = false,
       hijack_cursor       = false,
       update_cwd          = false,
+      lsp_diagnostics     = false,
       update_focused_file = {
         enable      = false,
         update_cwd  = false,
@@ -158,6 +159,10 @@ Here is a list of the options available in the setup call:
   - |system_open.args|: the command arguments as a list
     type: `{string}`
     default: `{}`
+
+- |lsp_diagnostics|: show lsp diagnostics in the signcolumn
+    type: `boolean`
+    default: false
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
@@ -316,12 +321,6 @@ Can be 0 or 1. When 1, appends a trailing slash to folder names.
 
 Can be 0 or 1. When 1, folders that contain only one folder are grouped
 together. 0 by default.
-
-|g:nvim_tree_lsp_diagnostics|                  *g:nvim_tree_lsp_diagnostics*
-
-Can be 0 or 1. When 1, will show nvim-lsp diagnostics in the signcolumn
-of the tree highlighted by diagnostic severity.
-Code will be executed on `LspDiagnosticsChanged`. 0 by default.
 
 |g:nvim_tree_special_files|                    *g:nvim_tree_special_files*
 

@@ -146,9 +146,7 @@ function M.unroll_dir(node)
     renderer.draw(M.Tree, true)
   end
 
-  if vim.g.nvim_tree_lsp_diagnostics == 1 then
-    diagnostics.update()
-  end
+  diagnostics.update()
 end
 
 local function refresh_git(node)
@@ -190,9 +188,7 @@ function M.refresh_tree(disable_clock)
     end)
   end
 
-  if vim.g.nvim_tree_lsp_diagnostics == 1 then
-    vim.schedule(diagnostics.update)
-  end
+  vim.schedule(diagnostics.update)
 
   if view.win_open() then
     renderer.draw(M.Tree, true)
