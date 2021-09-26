@@ -97,7 +97,7 @@ function.
 <
 
 As options are currently being migrated, configuration of global options in
-*nvim-tree-options* should be done BEFORE the setup call.
+|nvim-tree-options| should be done BEFORE the setup call.
 
 Here is a list of the options available in the setup call:
 - |disable_netrw|: completely disable netrw
