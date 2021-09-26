@@ -438,28 +438,32 @@ function M.setup(conf)
   vim.schedule(function() M.on_enter(opts) end)
 end
 
-local out_config = {
-  "nvim_tree_disable_netrw",
-  "nvim_tree_hijack_netrw",
-  "nvim_tree_auto_open",
-  "nvim_tree_auto_close",
-  "nvim_tree_tab_open",
-  "nvim_tree_update_cwd",
-  "nvim_tree_hijack_cursor",
-  "nvim_tree_system_open_command",
-  "nvim_tree_system_open_command_args",
-  "nvim_tree_follow",
-  "nvim_tree_follow_update_path",
-  "nvim_tree_lsp_diagnostics"
-}
+local function startup_check_new_setup()
+  local out_config = {
+    "nvim_tree_disable_netrw",
+    "nvim_tree_hijack_netrw",
+    "nvim_tree_auto_open",
+    "nvim_tree_auto_close",
+    "nvim_tree_tab_open",
+    "nvim_tree_update_cwd",
+    "nvim_tree_hijack_cursor",
+    "nvim_tree_system_open_command",
+    "nvim_tree_system_open_command_args",
+    "nvim_tree_follow",
+    "nvim_tree_follow_update_path",
+    "nvim_tree_lsp_diagnostics"
+  }
 
-local x = vim.tbl_filter(function(v)
-  return vim.fn.exists('g:'..v) ~= 0
-end, out_config)
+  local x = vim.tbl_filter(function(v)
+    return vim.fn.exists('g:'..v) ~= 0
+  end, out_config)
 
-if #x > 0 then
-  local msg = "following options are now set in the setup, please read the new documentation for the setup function: "
-  require'nvim-tree.utils'.echo_warning(msg..table.concat(x, " | "))
+  if #x > 0 then
+    local msg = "following options are now set in the setup, please read the new documentation for the setup function: "
+    require'nvim-tree.utils'.echo_warning(msg..table.concat(x, " | "))
+  end
 end
+
+vim.defer_fn(startup_check_new_setup, 1000)
 
 return M
