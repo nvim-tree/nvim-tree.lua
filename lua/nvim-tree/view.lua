@@ -9,8 +9,6 @@ end
 M.View = {
   bufnr = nil,
   tabpages = {},
-  width = 30,
-  side = 'left',
   winopts = {
     relativenumber = false,
     number = false,
@@ -42,7 +40,7 @@ M.View = {
     { name = 'filetype', val = 'NvimTree' },
     { name = 'bufhidden', val = 'hide' }
   },
-  bindings = {
+  mappings = {
     { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
     { key = {"<2-RightMouse>", "<C-]>"},    cb = M.nvim_tree_callback("cd") },
     { key = "<C-v>",                        cb = M.nvim_tree_callback("vsplit") },
@@ -78,91 +76,24 @@ M.View = {
   }
 }
 
----Find a rogue NvimTree buffer that might have been spawned by i.e. a session.
----@return integer|nil
-local function find_rogue_buffer()
-  for _, v in ipairs(a.nvim_list_bufs()) do
-    if vim.fn.bufname(v) == "NvimTree" then
-      return v
+local function wipe_rogue_buffer()
+  for _, bn in ipairs(a.nvim_list_bufs()) do
+    if vim.fn.bufname(bn) == "NvimTree" then
+      return pcall(a.nvim_buf_delete, bn, { force = true })
     end
   end
-  return nil
 end
 
----Find pre-existing NvimTree buffer, delete its windows then wipe it.
----@private
-function M._wipe_rogue_buffer()
-  local bn = find_rogue_buffer()
-  if bn then
-    local win_ids = vim.fn.win_findbuf(bn)
-    for _, id in ipairs(win_ids) do
-      if vim.fn.win_gettype(id) ~= "autocmd" then
-        a.nvim_win_close(id, true)
-      end
-    end
-
-    a.nvim_buf_set_name(bn, "")
-    vim.schedule(function ()
-      pcall(a.nvim_buf_delete, bn, {})
-    end)
-  end
-end
-
-local function warn_wrong_mapping()
-  local warn_str = "Wrong configuration for keymaps, refer to the new documentation. Keymaps setup aborted"
-  require'nvim-tree.utils'.echo_warning(warn_str)
-end
-
-local HAS_LOADED = false
--- set user options and create tree buffer (should never be wiped)
-function M.setup()
-  M.View.side = vim.g.nvim_tree_side or M.View.side
-  M.View.width = vim.g.nvim_tree_width or M.View.width
-
-  if not HAS_LOADED then
-    M.View.bufnr = a.nvim_create_buf(false, false)
-    HAS_LOADED = true
-  end
-
-  if not pcall(a.nvim_buf_set_name, M.View.bufnr, 'NvimTree') then
-    M._wipe_rogue_buffer()
-    a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
-  end
+local function create_buffer()
+  wipe_rogue_buffer()
+  M.View.bufnr = a.nvim_create_buf(false, false)
+  a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
 
   for _, opt in ipairs(M.View.bufopts) do
     vim.bo[M.View.bufnr][opt.name] = opt.val
   end
 
-  vim.cmd "augroup NvimTreeView"
-  vim.cmd "au!"
-  vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
-  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
-  vim.cmd "augroup END"
-
-  if vim.g.nvim_tree_disable_keybindings == 1 then
-    return
-  end
-
-  local user_mappings = vim.g.nvim_tree_bindings or {}
-  if vim.g.nvim_tree_disable_default_keybindings == 1 then
-    M.View.bindings = user_mappings
-  else
-    local ok, result = pcall(vim.fn.extend, M.View.bindings, user_mappings)
-    if not ok then
-      -- TODO: remove this in a few weeks
-      warn_wrong_mapping()
-      return
-    else
-      M.View.bindings = result
-    end
-  end
-
-  for _, b in pairs(M.View.bindings) do
-    -- TODO: remove this in a few weeks
-    if type(b) == "string" then
-      warn_wrong_mapping()
-      break
-    end
+  for _, b in pairs(M.View.mappings) do
     if type(b.key) == "table" then
       for _, key in pairs(b.key) do
         a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, b.cb, { noremap = true, silent = true, nowait = true })
@@ -173,7 +104,37 @@ function M.setup()
   end
 end
 
-local goto_tbl = {
+local DEFAULT_CONFIG = {
+  width = 30,
+  side = 'left',
+  auto_resize = false,
+  mappings = {
+    custom_only = false,
+    list = {}
+  }
+}
+
+function M.setup(opts)
+  local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
+  M.View.side = options.side
+  M.View.width = options.width
+  M.View.auto_resize = opts.auto_resize
+  if options.mappings.custom_only then
+    M.View.mappings = options.mappings.list
+  else
+    M.View.mappings = vim.fn.extend(M.View.mappings, options.mappings.list)
+  end
+
+  vim.cmd "augroup NvimTreeView"
+  vim.cmd "au!"
+  vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+  vim.cmd "augroup END"
+
+  create_buffer()
+end
+
+local move_cmd = {
   right = 'h',
   left = 'l',
   top = 'j',
@@ -204,7 +165,7 @@ function M._prevent_buffer_override()
     if #vim.api.nvim_list_wins() < 2 then
       vim.cmd("vsplit")
     else
-      vim.cmd("wincmd "..goto_tbl[M.View.side])
+      vim.cmd("wincmd "..move_cmd[M.View.side])
     end
     vim.cmd("buffer "..curbuf)
     M.resize()
@@ -254,7 +215,7 @@ local function get_width()
 end
 
 function M.resize()
-  if vim.g.nvim_tree_auto_resize == 0 or not a.nvim_win_is_valid(M.get_winnr()) then
+  if not M.View.auto_resize or not a.nvim_win_is_valid(M.get_winnr()) then
     return
   end
 
@@ -295,15 +256,13 @@ local function open_window()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
 end
 
-function M.open(options)
-	options = options or { focus_tree = true }
-  if not a.nvim_buf_is_valid(M.View.bufnr) then
-    HAS_LOADED = false
-  end
+local function is_buf_valid(bufnr)
+  return a.nvim_buf_is_valid(bufnr) and a.nvim_buf_is_loaded(bufnr)
+end
 
-  if not HAS_LOADED then
-    M.setup()
-    HAS_LOADED = true
+function M.open(options)
+  if not is_buf_valid(M.View.bufnr) then
+    create_buffer()
   end
 
   if not M.win_open() then
@@ -315,21 +274,27 @@ function M.open(options)
     set_local(k, v)
   end
   vim.cmd ":wincmd ="
-	if not options.focus_tree then
+
+	local opts = options or { focus_tree = true }
+	if not opts.focus_tree then
 		vim.cmd("wincmd p")
 	end
+end
+
+local function get_existing_buffers()
+  return vim.tbl_filter(
+    function(buf)
+      return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
+    end,
+    a.nvim_list_bufs()
+  )
 end
 
 function M.close()
   if not M.win_open() then return end
   if #a.nvim_list_wins() == 1 then
-    local ok_bufs = vim.tbl_filter(
-      function(buf)
-        return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
-      end,
-      a.nvim_list_bufs()
-    )
-    if #ok_bufs > 0 then
+    local existing_bufs = get_existing_buffers()
+    if #existing_bufs > 0 then
       vim.cmd "sbnext"
     else
       vim.cmd "new"
