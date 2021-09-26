@@ -309,6 +309,7 @@ function M.open_on_directory()
     view.close()
   end
   M.hijack_current_window()
+  vim.api.nvim_buf_delete(buf, { force = true })
   lib.change_dir(bufname)
   lib.set_index_and_redraw(bufname)
   view.focus()
