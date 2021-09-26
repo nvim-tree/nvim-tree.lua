@@ -57,10 +57,7 @@ function M.create(node)
     }
   end
 
-  local node_is_open = (
-    vim.g.nvim_tree_create_in_closed_folder == 0
-    and node.open or false
-  )
+  local node_is_open = vim.g.nvim_tree_create_in_closed_folder == 1 or node.open
 
   local add_into
   if node.entries ~= nil and node_is_open then
