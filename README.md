@@ -220,7 +220,6 @@ The `list` option in `view.mappings.list` is a table of
 local list = {
   { key = {"<CR>", "o" }, cb = ":lua some_func()<cr>", mode = "n"}
 }
-EOF
 ```
 
 These are the default bindings:
