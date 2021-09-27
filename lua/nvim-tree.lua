@@ -118,7 +118,7 @@ local keypress_funcs = {
         }
       elseif _config.is_macos then
         _config.system_open.cmd = 'open'
-      elseif _config.is_linux then
+      elseif _config.is_unix then
         _config.system_open.cmd = 'xdg-open'
       else
         require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
