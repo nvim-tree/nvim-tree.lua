@@ -145,6 +145,7 @@ local keypress_funcs = {
         end
       end
     )
+    table.remove(process.args)
     if not process.handle then
       error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
       return
