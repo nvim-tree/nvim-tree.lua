@@ -355,9 +355,9 @@ local M = {}
 function M.draw_help()
   local help_lines = {'HELP'}
   local help_hl = {{'NvimTreeRootFolder', 0, 0, #help_lines[1]}}
-  local bindings = view.View.bindings
+  local mappings = view.View.mappings
   local processed = {}
-  for _, b in pairs(bindings) do
+  for _, b in pairs(mappings) do
     local cb = b.cb
     local key = b.key
     local name
