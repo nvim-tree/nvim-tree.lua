@@ -259,10 +259,9 @@ local function update_draw_data(tree, depth, markers)
     ["readme.md"] = true,
   }
 
-<<<<<<< HEAD
+
   local hide_root_folder = view.View.hide_root_folder
-=======
->>>>>>> 4ab723a (refactor: move options into setup function)
+
   if tree.cwd and tree.cwd ~= '/' and not hide_root_folder then
     local root_name = utils.path_join({
       utils.path_remove_trailing(vim.fn.fnamemodify(tree.cwd, root_folder_modifier)),
