@@ -305,10 +305,14 @@ function M.open_on_directory()
     return
   end
 
+  local should_open = _config.open_on_setup
+
   if view.win_open() and #api.nvim_list_wins() > 1 then
     view.close()
   end
-  M.hijack_current_window()
+  if should_open then
+    M.hijack_current_window()
+  end
   vim.api.nvim_buf_delete(buf, { force = true })
   lib.change_dir(bufname)
   lib.set_index_and_redraw(bufname)
