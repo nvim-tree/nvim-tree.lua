@@ -49,7 +49,7 @@ require'nvim-tree'.setup {
   open_on_tab         = false,
   -- hijack the cursor in the tree to put it at the start of the filename
   hijack_cursor       = false,
-  -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually) 
+  -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
   update_cwd          = false,
   -- show lsp diagnostics in the signcolumn
   lsp_diagnostics     = false,
@@ -215,6 +215,7 @@ highlight NvimTreeFolderIcon guibg=blue
 ### Settings
 
 The `list` option in `view.mappings.list` is a table of
+
 ```lua
 -- key can be either a string or a table of string (lhs)
 -- cb is the callback that will be called
@@ -225,6 +226,7 @@ local list = {
 ```
 
 These are the default bindings:
+
 ```lua
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 -- default mappings
