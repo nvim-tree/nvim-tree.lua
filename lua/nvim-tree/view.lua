@@ -119,10 +119,7 @@ function M.setup(opts)
   local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
   M.View.side = options.side
   M.View.width = options.width
-	if options.hide_root_folder then
-		M.View.hide_root_folder = true
-	end
-  M.View.auto_resize = opts.auto_resize
+	M.View.auto_resize = opts.auto_resize
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else

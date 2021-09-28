@@ -53,6 +53,8 @@ require'nvim-tree'.setup {
   update_cwd          = false,
   -- show lsp diagnostics in the signcolumn
   lsp_diagnostics     = false,
+	-- Hide the root path of the current folder on top of the tree
+	hide_root_folder		= false,
   -- update the focused file on `BufEnter`, un-collapses the folders recursively until it finds the file
   update_focused_file = {
     -- enables the feature
@@ -98,7 +100,6 @@ let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent marke
 let g:nvim_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
-let g:nvim_tree_hide_root_folder = 1 "0 by default, will hide the current working directory on top of the tree"
 let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
 let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
 let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree

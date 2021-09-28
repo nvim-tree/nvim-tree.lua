@@ -410,7 +410,8 @@ local DEFAULT_OPTS = {
   hijack_cursor       = false,
   update_cwd          = false,
   lsp_diagnostics     = false,
-  update_focused_file = {
+  hide_root_folder		= false,
+	update_focused_file = {
     enable = false,
     update_cwd = false,
     ignore_list = {}
@@ -431,6 +432,10 @@ function M.setup(conf)
   _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+
+	if opts.hide_root_folder then
+		view.View.hide_root_folder = true
+	end
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup(opts.view or {})
