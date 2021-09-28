@@ -53,8 +53,8 @@ require'nvim-tree'.setup {
   update_cwd          = false,
   -- show lsp diagnostics in the signcolumn
   lsp_diagnostics     = false,
-	-- Hide the root path of the current folder on top of the tree
-	hide_root_folder		= false,
+  -- Hide the root path of the current folder on top of the tree
+  hide_root_folder    = false,
   -- update the focused file on `BufEnter`, un-collapses the folders recursively until it finds the file
   update_focused_file = {
     -- enables the feature
