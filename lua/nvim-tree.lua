@@ -167,10 +167,11 @@ function M.on_keypress(mode)
     return keypress_funcs[mode](node)
   end
 
-	local hide_root_folder = vim.g.nvim_tree_hide_root_folder or 0;
+	local hide_root_folder = view.View.hide_root_folder
+
 
   if node.name == ".." then
-		if hide_root_folder == 1 then
+		if hide_root_folder then
 			return lib.unroll_dir(node);
 		else
 			return lib.change_dir("..")
@@ -449,7 +450,8 @@ local function startup_check_new_setup()
     "nvim_tree_auto_open",
     "nvim_tree_auto_close",
     "nvim_tree_tab_open",
-    "nvim_tree_update_cwd",
+		"nvim_tree_hide_root_folder",
+		"nvim_tree_update_cwd",
     "nvim_tree_hijack_cursor",
     "nvim_tree_system_open_command",
     "nvim_tree_system_open_command_args",

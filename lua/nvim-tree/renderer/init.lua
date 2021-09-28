@@ -251,14 +251,18 @@ local picture = {
 
 local function update_draw_data(tree, depth, markers)
   local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ':~'
-  local special = vim.g.nvim_tree_special_files or {
+  local hide_root_folder = view.View.hide_root_folder
+	local special = vim.g.nvim_tree_special_files or {
     ["Cargo.toml"] = true,
     Makefile = true,
     ["README.md"] = true,
     ["readme.md"] = true,
   }
 
+<<<<<<< HEAD
   local hide_root_folder = view.View.hide_root_folder
+=======
+>>>>>>> 4ab723a (refactor: move options into setup function)
   if tree.cwd and tree.cwd ~= '/' and not hide_root_folder then
     local root_name = utils.path_join({
       utils.path_remove_trailing(vim.fn.fnamemodify(tree.cwd, root_folder_modifier)),

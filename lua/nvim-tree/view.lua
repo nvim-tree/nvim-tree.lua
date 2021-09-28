@@ -9,6 +9,7 @@ end
 M.View = {
   bufnr = nil,
   tabpages = {},
+	hide_root_folder = false,
   winopts = {
     relativenumber = false,
     number = false,
@@ -107,7 +108,7 @@ end
 local DEFAULT_CONFIG = {
   width = 30,
   side = 'left',
-  auto_resize = false,
+	auto_resize = false,
   mappings = {
     custom_only = false,
     list = {}
@@ -118,6 +119,9 @@ function M.setup(opts)
   local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
   M.View.side = options.side
   M.View.width = options.width
+	if options.hide_root_folder then
+		M.View.hide_root_folder = true
+	end
   M.View.auto_resize = opts.auto_resize
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
