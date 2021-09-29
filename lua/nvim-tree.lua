@@ -134,7 +134,7 @@ local keypress_funcs = {
     }
     table.insert(process.args, node.link_to or node.absolute_path)
     process.handle, process.pid = luv.spawn(process.cmd,
-      { args = process.args, stdio = { nil, nil, process.stderr }},
+      { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
       function(code)
         process.stderr:read_stop()
         process.stderr:close()
@@ -156,6 +156,7 @@ local keypress_funcs = {
         if data then process.errors = process.errors .. data end
       end
     )
+    luv.unref(process.handle)
   end,
 }
 
