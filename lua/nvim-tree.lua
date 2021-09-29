@@ -118,7 +118,7 @@ local keypress_funcs = {
         }
       elseif _config.is_macos then
         _config.system_open.cmd = 'open'
-      elseif _config.is_linux then
+      elseif _config.is_unix then
         _config.system_open.cmd = 'xdg-open'
       else
         require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
@@ -134,7 +134,7 @@ local keypress_funcs = {
     }
     table.insert(process.args, node.link_to or node.absolute_path)
     process.handle, process.pid = luv.spawn(process.cmd,
-      { args = process.args, stdio = { nil, nil, process.stderr }},
+      { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
       function(code)
         process.stderr:read_stop()
         process.stderr:close()
@@ -145,6 +145,7 @@ local keypress_funcs = {
         end
       end
     )
+    table.remove(process.args)
     if not process.handle then
       error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
       return
@@ -155,6 +156,7 @@ local keypress_funcs = {
         if data then process.errors = process.errors .. data end
       end
     )
+    luv.unref(process.handle)
   end,
 }
 
