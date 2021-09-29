@@ -159,6 +159,10 @@ end
 local should_ignore = gen_ignore_check()
 
 function M.refresh_entries(entries, cwd, parent_node)
+  if cwd == nil then
+    return
+  end
+
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
