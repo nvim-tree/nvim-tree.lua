@@ -354,7 +354,9 @@ local M = {}
 function M.draw_help()
   local help_lines = {'HELP'}
   local help_hl = {{'NvimTreeRootFolder', 0, 0, #help_lines[1]}}
-  local mappings = view.View.mappings
+  local mappings = vim.tbl_filter(function(v)
+    return v.cb ~= nil and v.cb ~= ""
+  end, view.View.mappings)
   local processed = {}
   for _, b in pairs(mappings) do
     local cb = b.cb

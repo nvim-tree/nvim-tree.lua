@@ -98,7 +98,7 @@ local function create_buffer()
       for _, key in pairs(b.key) do
         a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, b.cb, { noremap = true, silent = true, nowait = true })
       end
-    else
+    elseif b.cb then
       a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', b.key, b.cb, { noremap = true, silent = true, nowait = true })
     end
   end
