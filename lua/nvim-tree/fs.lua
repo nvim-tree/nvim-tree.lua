@@ -63,7 +63,7 @@ function M.create(node)
   if node.entries ~= nil and node_is_open then
     add_into = utils.path_add_trailing(node.absolute_path)
   else
-    add_into = node.absolute_path:sub(0, -(#node.name + 1))
+    add_into = node.absolute_path:sub(0, -(#(node.name or '') + 1))
   end
 
   local ans = vim.fn.input('Create file ', add_into)
