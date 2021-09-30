@@ -47,14 +47,16 @@ require'nvim-tree'.setup {
   auto_close          = false,
   -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
+  -- hijacks new directory buffers when they are opened.
+  update_to_buf_dir   = true,
   -- hijack the cursor in the tree to put it at the start of the filename
   hijack_cursor       = false,
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
   update_cwd          = false,
   -- show lsp diagnostics in the signcolumn
   lsp_diagnostics     = false,
-	-- Hide the root path of the current folder on top of the tree
-	hide_root_folder		= false,
+  -- Hide the root path of the current folder on top of the tree
+  hide_root_folder    = false,
   -- update the focused file on `BufEnter`, un-collapses the folders recursively until it finds the file
   update_focused_file = {
     -- enables the feature

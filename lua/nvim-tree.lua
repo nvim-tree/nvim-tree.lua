@@ -19,7 +19,8 @@ local _config = {
   },
   system_open         = {},
   ignore_ft_on_setup  = {},
-  open_on_setup       = {},
+  open_on_setup       = false,
+  update_to_buf_dir   = true,
 }
 
 local M = {}
@@ -118,7 +119,7 @@ local keypress_funcs = {
         }
       elseif _config.is_macos then
         _config.system_open.cmd = 'open'
-      elseif _config.is_linux then
+      elseif _config.is_unix then
         _config.system_open.cmd = 'xdg-open'
       else
         require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
@@ -134,7 +135,7 @@ local keypress_funcs = {
     }
     table.insert(process.args, node.link_to or node.absolute_path)
     process.handle, process.pid = luv.spawn(process.cmd,
-      { args = process.args, stdio = { nil, nil, process.stderr }},
+      { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
       function(code)
         process.stderr:read_stop()
         process.stderr:close()
@@ -145,6 +146,7 @@ local keypress_funcs = {
         end
       end
     )
+    table.remove(process.args)
     if not process.handle then
       error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
       return
@@ -155,6 +157,7 @@ local keypress_funcs = {
         if data then process.errors = process.errors .. data end
       end
     )
+    luv.unref(process.handle)
   end,
 }
 
@@ -306,6 +309,9 @@ function M.on_leave()
 end
 
 function M.open_on_directory()
+  if not (_config.update_to_buf_dir and (_config.open_on_setup or view.win_open())) then
+    return
+  end
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
   if vim.fn.isdirectory(bufname) ~= 1 or bufname == lib.Tree.cwd then
@@ -348,11 +354,12 @@ function M.place_cursor_on_node()
 end
 
 local function manage_netrw(disable_netrw, hijack_netrw)
+  if hijack_netrw then
+    vim.cmd "silent! autocmd! FileExplorer *"
+  end
   if disable_netrw then
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
-  elseif hijack_netrw then
-    vim.cmd "silent! autocmd! FileExplorer *"
   end
 end
 
@@ -406,6 +413,7 @@ local DEFAULT_OPTS = {
   hijack_netrw        = true,
   open_on_setup       = false,
   open_on_tab         = false,
+  update_to_buf_dir   = true,
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
@@ -432,6 +440,7 @@ function M.setup(conf)
   _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+  _config.update_to_buf_dir = opts.update_to_buf_dir
 
 	if opts.hide_root_folder then
 		view.View.hide_root_folder = true
