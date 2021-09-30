@@ -174,7 +174,9 @@ end
 local refreshing = false
 
 function M.refresh_tree(disable_clock)
-  if (not disable_clock and refreshing) or vim.v.exiting ~= vim.NIL then return end
+  if not M.Tree.cwd or (not disable_clock and refreshing) or vim.v.exiting ~= vim.NIL then
+    return
+  end
   refreshing = true
 
   refresh_nodes(M.Tree)
