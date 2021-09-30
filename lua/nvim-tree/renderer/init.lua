@@ -251,7 +251,6 @@ local picture = {
 
 local function update_draw_data(tree, depth, markers)
   local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ':~'
-  local hide_root_folder = view.View.hide_root_folder
 	local special = vim.g.nvim_tree_special_files or {
     ["Cargo.toml"] = true,
     Makefile = true,

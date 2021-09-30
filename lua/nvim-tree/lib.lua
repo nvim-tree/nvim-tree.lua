@@ -60,11 +60,11 @@ end
 
 local function get_node_at_line(line)
   local index = 2
-	
+
 	local hide_root_folder = view.View.hide_root_folder
 	if hide_root_folder then
 		index = 1
-	end 
+	end
 
   local function iter(entries)
     for _, node in ipairs(entries) do
