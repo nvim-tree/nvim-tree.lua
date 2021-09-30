@@ -70,6 +70,7 @@ function.
       hijack_netrw        = true,
       open_on_setup       = false,
       ignore_ft_on_setup  = {},
+      update_to_buf_dir   = true,
       auto_close          = false,
       open_on_tab         = false,
       hijack_cursor       = false,
@@ -127,6 +128,13 @@ Here is a list of the options available in the setup call:
   tabpage if the tree was previously open.
   type: `boolean`
   default: `false`
+
+- |update_to_buf_dir|: hijacks new directory buffers when they are opened (`:e dir`).
+  If |open_on_setup| is enabled, it will open the tree if the tree is closed.
+  Disable this option if you use vim-dirvish.
+  type: `boolean`
+  default: `true`
+
 
 - |hijack_cursor|: keeps the cursor on the first letter of the filename when
   moving in the tree.

@@ -20,6 +20,7 @@ local _config = {
   system_open         = {},
   ignore_ft_on_setup  = {},
   open_on_setup       = false,
+  update_to_buf_dir   = true,
 }
 
 local M = {}
@@ -301,7 +302,7 @@ function M.on_leave()
 end
 
 function M.open_on_directory()
-  if not (_config.open_on_setup or view.win_open()) then
+  if not (_config.update_to_buf_dir and (_config.open_on_setup or view.win_open())) then
     return
   end
   local buf = api.nvim_get_current_buf()
@@ -405,6 +406,7 @@ local DEFAULT_OPTS = {
   hijack_netrw        = true,
   open_on_setup       = false,
   open_on_tab         = false,
+  update_to_buf_dir   = true,
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
@@ -430,6 +432,7 @@ function M.setup(conf)
   _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+  _config.update_to_buf_dir = opts.update_to_buf_dir
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup(opts.view or {})
