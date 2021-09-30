@@ -554,7 +554,7 @@ end
 
 function M.toggle_help()
   view.toggle_help()
-  return M.refresh_tree()
+  return M.redraw()
 end
 
 function M.dir_up(node)
