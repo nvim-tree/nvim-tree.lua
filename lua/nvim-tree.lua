@@ -19,7 +19,7 @@ local _config = {
   },
   system_open         = {},
   ignore_ft_on_setup  = {},
-  open_on_setup       = {},
+  open_on_setup       = false,
 }
 
 local M = {}
@@ -301,6 +301,9 @@ function M.on_leave()
 end
 
 function M.open_on_directory()
+  if not (_config.open_on_setup or view.win_open()) then
+    return
+  end
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
   if vim.fn.isdirectory(bufname) ~= 1 or bufname == lib.Tree.cwd then
@@ -343,11 +346,12 @@ function M.place_cursor_on_node()
 end
 
 local function manage_netrw(disable_netrw, hijack_netrw)
+  if hijack_netrw then
+    vim.cmd "silent! autocmd! FileExplorer *"
+  end
   if disable_netrw then
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
-  elseif hijack_netrw then
-    vim.cmd "silent! autocmd! FileExplorer *"
   end
 end
 
