@@ -266,6 +266,10 @@ local list = {
 
 You can toggle the help UI by pressing `g?`.
 
+## Tips & reminders
+
+1. you can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
+
 ## Features
 
 - Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)
