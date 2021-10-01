@@ -300,7 +300,9 @@ function M.close()
       vim.cmd "new"
     end
   end
-  a.nvim_win_hide(M.get_winnr())
+  if #a.nvim_list_wins() > 1 then
+    a.nvim_win_hide(M.get_winnr())
+  end
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified

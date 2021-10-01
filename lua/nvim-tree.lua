@@ -311,15 +311,17 @@ function M.open_on_directory()
     return
   end
 
-  if view.win_open() and #api.nvim_list_wins() > 1 then
-    view.close()
-  end
-  M.hijack_current_window()
-  vim.api.nvim_buf_delete(buf, { force = true })
+  view.close()
+
   lib.change_dir(bufname)
-  lib.set_index_and_redraw(bufname)
+  M.hijack_current_window()
+
+  view.open()
   view.focus()
   view.replace_window()
+
+  lib.set_index_and_redraw(bufname)
+  vim.api.nvim_buf_delete(buf, { force = true })
 end
 
 function M.reset_highlight()
