@@ -3,6 +3,7 @@ local is_initialized = false
 if is_initialized then
   return
 end
+-- luacheck: ignore
 is_initialized = true
 
 local out_config = {
