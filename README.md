@@ -6,6 +6,8 @@
 
 This plugin requires [neovim >=0.5.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
+If you have issues since the recent setup migration, check out [this guide](https://github.com/kyazdani42/nvim-tree.lua/issues/674)
+
 ## Install
 
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
