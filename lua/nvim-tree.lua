@@ -380,7 +380,7 @@ local function setup_autocommands(opts)
     """ reset highlights when colorscheme is changed
     au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
-    au BufWritePost * lua require'nvim-tree'.refresh()
+    au BufWritePost * lua require'nvim-tree.lib'.refresh_tree(true)
     au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
   ]]
 
@@ -434,6 +434,13 @@ local DEFAULT_OPTS = {
       error = "",
     }
   },
+  git = {
+    enable = true,
+    show_highlights = false,
+    show_icons = true,
+    icon_placement = 'left',
+    ignore = true,
+  }
 }
 
 function M.setup(conf)
@@ -462,6 +469,7 @@ function M.setup(conf)
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
+  require'nvim-tree.git'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()

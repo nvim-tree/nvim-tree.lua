@@ -1,7 +1,3 @@
-local config = require'nvim-tree.config'
-local git = require'nvim-tree.git'
-local icon_config = config.get_icon_state()
-
 local api = vim.api
 local luv = vim.loop
 
@@ -133,10 +129,6 @@ local function gen_ignore_check(cwd)
     local basename = utils.path_basename(path)
 
     if not M.show_ignored then
-      if vim.g.nvim_tree_gitignore == 1 then
-        if git.should_gitignore(path) then return true end
-      end
-
       local relpath = utils.path_relative(path, cwd)
       if ignore_list[relpath] == true or ignore_list[basename] == true then
         return true
@@ -350,14 +342,6 @@ function M.populate(entries, cwd, parent_node)
   end
 
   utils.merge_sort(entries, node_comparator)
-
-  if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
-    return
-  end
-
-  if config.use_git() then
-    vim.schedule(function() git.update_status(entries, cwd, parent_node, true) end)
-  end
 end
 
 return M

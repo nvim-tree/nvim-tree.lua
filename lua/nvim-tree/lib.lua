@@ -3,12 +3,12 @@ local luv = vim.loop
 
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
-local git = require'nvim-tree.git'
 local diagnostics = require'nvim-tree.diagnostics'
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local events = require'nvim-tree.events'
+local git = require'nvim-tree.git'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
@@ -28,9 +28,6 @@ function M.init(with_open, with_reload)
   if not M.Tree.cwd then
     M.Tree.cwd = luv.cwd()
   end
-  if config.use_git() then
-    git.git_root(M.Tree.cwd)
-  end
   populate(M.Tree.entries, M.Tree.cwd)
 
   local stat = luv.fs_stat(M.Tree.cwd)
@@ -43,9 +40,11 @@ function M.init(with_open, with_reload)
   end
 
   if with_reload then
-    renderer.draw(M.Tree, true)
+    M.redraw()
     M.Tree.loaded = true
   end
+
+  git.run({ absolute_path = M.Tree.cwd, entries = M.Tree.entries })
 
   if not first_init_done then
     events._dispatch_ready()
@@ -137,25 +136,13 @@ function M.unroll_dir(node)
   if #node.entries > 0 then
     renderer.draw(M.Tree, true)
   else
-    if config.use_git() then
-      git.git_root(node.absolute_path)
-    end
     populate(node.entries, node.link_to or node.absolute_path, node)
 
     renderer.draw(M.Tree, true)
   end
 
+  git.run(node)
   diagnostics.update()
-end
-
-local function refresh_git(node)
-  if not node then node = M.Tree end
-  git.update_status(node.entries, node.absolute_path or node.cwd, node, false)
-  for _, entry in pairs(node.entries) do
-    if entry.entries and #entry.entries > 0 then
-      refresh_git(entry)
-    end
-  end
 end
 
 -- TODO update only entries where directory has changed
@@ -180,23 +167,14 @@ function M.refresh_tree(disable_clock)
 
   refresh_nodes(M.Tree)
 
-  local use_git = config.use_git()
-  if use_git then
-    vim.schedule(function()
-      git.reload_roots()
-      refresh_git(M.Tree)
-      M.redraw()
-    end)
-  end
-
-  vim.schedule(diagnostics.update)
-
   if view.win_open() then
     renderer.draw(M.Tree, true)
   else
     M.Tree.loaded = false
   end
 
+  git.reload()
+  diagnostics.update()
   vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
 end
 
@@ -217,6 +195,7 @@ function M.set_index_and_redraw(fname)
       end
 
       if fname:match(entry.match_path..utils.path_separator) ~= nil then
+        git.set_toplevel(entry.absolute_path)
         if #entry.entries == 0 then
           reload = true
           populate(entry.entries, entry.absolute_path, entry)
@@ -240,6 +219,7 @@ function M.set_index_and_redraw(fname)
     return
   end
   renderer.draw(M.Tree, reload)
+  git.reload()
   if index then
     view.set_cursor({index, 0})
   end
