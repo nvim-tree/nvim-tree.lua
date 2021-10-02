@@ -59,7 +59,7 @@ Resize the NvimTree window to the given size. Example: `:NvimTreeresize 50`
 resizes the window to the width of 50.
 
 ==============================================================================
-SETUP                                *nvim-tree-setup*
+SETUP                                *nvim-tree.setup*
 
 To configure the tree (and make it runnable), you should call the setup
 function.
@@ -70,7 +70,10 @@ function.
       hijack_netrw        = true,
       open_on_setup       = false,
       ignore_ft_on_setup  = {},
-      update_to_buf_dir   = true,
+      update_to_buf_dir   = {
+        enable = true,
+        auto_open = true,
+      },
       auto_close          = false,
       open_on_tab         = false,
       hijack_cursor       = false,
@@ -101,51 +104,65 @@ As options are currently being migrated, configuration of global options in
 |nvim-tree-options| should be done BEFORE the setup call.
 
 Here is a list of the options available in the setup call:
+
+*nvim-tree.disable_netrw*
 - |disable_netrw|: completely disable netrw
   type: `boolean`
   default: `true`
 
+*nvim-tree.hijack_netrw*
 - |hijack_netrw|: hijack netrw windows (overriden if |disable_netrw| is `true`)
   type: `boolean`
   default: `true`
 
+*nvim-tree.open_on_setup*
 - |open_on_setup|: will automatically open the tree when running setup if current
   buffer is a directory, is empty or is unnamed.
   type: `boolean`
   default: `false`
 
+*nvim-tree.ignore_ft_on_setup*
 - |ignore_ft_on_setup|: list of filetypes that will make |open_on_setup| not
   open. You can use this option if you don't want the tree to open in some
   scenarios (eg using vim startify).
   type: `{string}`
   default: `{}`
 
+*nvim-tree.auto_close*
 - |auto_close|: force closing neovim when the tree is the last window in the view.
   type: `boolean`
   default: `false`
 
+*nvim-tree.open_on_tab*
 - |open_on_tab|: opens the tree automatically when switching tabpage or opening a new
   tabpage if the tree was previously open.
   type: `boolean`
   default: `false`
 
+*nvim-tree.update_to_buf_dir*
 - |update_to_buf_dir|: hijacks new directory buffers when they are opened (`:e dir`).
-  If |open_on_setup| is enabled, it will open the tree if the tree is closed.
-  Disable this option if you use vim-dirvish.
-  type: `boolean`
-  default: `true`
 
+  - |update_to_buf_dir.enable|: enable the feature. Disable this option if you use vim-dirvish.
+    type: `boolean`
+    default: `true`
 
+  - |update_to_buf_dir.auto_open|: opens the tree if the tree was previously closed.
+    type: `boolean`
+    default: `true`
+
+*nvim-tree.hijack_cursor*
 - |hijack_cursor|: keeps the cursor on the first letter of the filename when
   moving in the tree.
   type: `boolean`
   default: `false`
 
+*nvim-tree.update_cwd*
 - |update_cwd|: changes the tree root directory on `DirChanged` and refreshes
   the tree.
   type: `boolean`
   default: `false`
 
+*nvim-tree.update_focused_file*
 - |update_focused_file|: update the focused file on `BufEnter`, un-collapses
   the folders recursively until it finds the file
 
@@ -166,6 +183,7 @@ Here is a list of the options available in the setup call:
     type: `{string}`
     default: `{}`
 
+*nvim-tree.system_open*
 - |system_open|: configuration options for the system open command
 
   - |system_open.cmd|: the command to run, leaving nil should work but
@@ -177,36 +195,38 @@ Here is a list of the options available in the setup call:
     type: `{string}`
     default: `{}`
 
+*nvim-tree.lsp_diagnostics*
 - |lsp_diagnostics|: show lsp diagnostics in the signcolumn
     type: `boolean`
     default: false
 
+*nvim-tree.view*
 - |view|: window / buffer setup
 
-- |view.width|: width of the window, can be either a `%` string or
-  a number representing columns
-    type: `string | number`
-    default: `30`
-
-- |view.side|: side of the tree, can be one of 'left' | 'right' | 'bottom' | 'top'
-  Note that bottom/top are not working correctly yet.
-    type: `string`
-    default: 'left'
-
-- |view.auto_resize|: auto resize the tree after opening a file
-    type: `boolean`
-    default: false
-
-- |view.mappings|: configuration options for keymaps
-
-- |view.mappings.custom_only|: will use only the provided user mappings and not the default
-  otherwise, extends the default mappings with the provided user mappings
-    type: `boolean`
-    default: false
-
-- |view,mappings.list|: a list of keymaps that will extend or override the default keymaps
-    type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
-    default: {}
+  - |view.width|: width of the window, can be either a `%` string or
+    a number representing columns
+      type: `string | number`
+      default: `30`
+  
+  - |view.side|: side of the tree, can be one of 'left' | 'right' | 'bottom' | 'top'
+    Note that bottom/top are not working correctly yet.
+      type: `string`
+      default: 'left'
+  
+  - |view.auto_resize|: auto resize the tree after opening a file
+      type: `boolean`
+      default: false
+  
+  - |view.mappings|: configuration options for keymaps
+  
+    - |view.mappings.custom_only|: will use only the provided user mappings and not the default
+      otherwise, extends the default mappings with the provided user mappings
+        type: `boolean`
+        default: false
+    
+    - |view,mappings.list|: a list of keymaps that will extend or override the default keymaps
+        type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
+        default: {}
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*

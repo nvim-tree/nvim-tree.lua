@@ -50,7 +50,12 @@ require'nvim-tree'.setup {
   -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
   -- hijacks new directory buffers when they are opened.
-  update_to_buf_dir   = true,
+  update_to_buf_dir   = {
+    -- enable the feature
+    enable = true,
+    -- allow to open the tree if it was previously closed
+    auto_open = true,
+  },
   -- hijack the cursor in the tree to put it at the start of the filename
   hijack_cursor       = false,
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually) 
