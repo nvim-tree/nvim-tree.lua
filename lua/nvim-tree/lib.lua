@@ -473,7 +473,7 @@ function M.open()
   view.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if M.Tree.loaded or (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
+  if M.Tree.loaded and (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
     M.change_dir(cwd)
   end
   renderer.draw(M.Tree, not M.Tree.loaded)
