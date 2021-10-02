@@ -6,6 +6,8 @@
 
 This plugin requires [neovim >=0.5.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
+If you have issues since the recent setup migration, check out [this guide](https://github.com/kyazdani42/nvim-tree.lua/issues/674)
+
 ## Install
 
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
@@ -48,7 +50,12 @@ require'nvim-tree'.setup {
   -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
   -- hijacks new directory buffers when they are opened.
-  update_to_buf_dir   = true,
+  update_to_buf_dir   = {
+    -- enable the feature
+    enable = true,
+    -- allow to open the tree if it was previously closed
+    auto_open = true,
+  },
   -- hijack the cursor in the tree to put it at the start of the filename
   hijack_cursor       = false,
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
@@ -269,6 +276,10 @@ local list = {
 ```
 
 You can toggle the help UI by pressing `g?`.
+
+## Tips & reminders
+
+1. you can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
 
 ## Features
 
