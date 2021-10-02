@@ -114,6 +114,29 @@ local DEFAULT_CONFIG = {
   }
 }
 
+local function merge_mappings(user_mappings)
+  if #user_mappings == 0 then
+    return M.View.mappings
+  end
+
+  local user_keys = {}
+  for _, map in pairs(user_mappings) do
+    if type(map.key) == "table" then
+      for _, key in pairs(map.key) do
+        table.insert(user_keys, key)
+      end
+    else
+       table.insert(user_keys, map.key)
+    end
+  end
+
+  local view_mappings = vim.tbl_filter(function(map)
+    return not vim.tbl_contains(user_keys, map.key)
+  end, M.View.mappings)
+
+  return vim.fn.extend(view_mappings, user_mappings)
+end
+
 function M.setup(opts)
   local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
   M.View.side = options.side
@@ -122,7 +145,7 @@ function M.setup(opts)
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else
-    M.View.mappings = vim.fn.extend(M.View.mappings, options.mappings.list)
+    M.View.mappings = merge_mappings(options.mappings.list)
   end
 
   vim.cmd "augroup NvimTreeView"
