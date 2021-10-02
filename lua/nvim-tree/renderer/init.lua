@@ -54,7 +54,7 @@ if icon_state.show_folder_icon then
   end
 end
 
-local get_file_icon = function() return icon_state.icons.default end
+local get_file_icon = function() return "" end
 if icon_state.show_file_icon then
   local web_devicons = require'nvim-web-devicons'
 
@@ -83,7 +83,7 @@ if icon_state.show_file_icon then
   end
 end
 
-local get_special_icon = function() return icon_state.icons.default end
+local get_special_icon = function() return "" end
 if icon_state.show_file_icon then
   get_special_icon = function()
     return #icon_state.icons.default > 0 and icon_state.icons.default..icon_padding or ""
