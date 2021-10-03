@@ -13,7 +13,6 @@ local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
 local first_init_done = false
-local window_opts = config.window_options()
 
 local M = {}
 
@@ -368,7 +367,9 @@ function M.open_file(mode, filename)
     if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
       -- Target is invalid, or window does not exist in current tabpage: create
       -- new window
-      vim.cmd(window_opts.split_command .. " vsp")
+      local window_opts = config.window_options()
+      local splitside = view.is_vertical() and "vsp" or "sp"
+      vim.cmd(window_opts.split_command .. " " .. splitside)
       target_winid = api.nvim_get_current_win()
       M.Tree.target_winid = target_winid
 

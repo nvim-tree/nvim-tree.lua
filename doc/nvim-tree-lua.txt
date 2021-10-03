@@ -90,6 +90,7 @@ function.
       },
       view = {
         width = 30,
+        height = 30,
         side = 'left',
         auto_resize = false,
         mappings = {
@@ -204,26 +205,31 @@ Here is a list of the options available in the setup call:
 - |view|: window / buffer setup
 
   - |view.width|: width of the window, can be either a `%` string or
-    a number representing columns
+    a number representing columns. Only works with |view.side| `left` or `right`
       type: `string | number`
       default: `30`
-  
+
+  - |view.height|: height of the window, can be either a `%` string or
+    a number representing rows. Only works with |view.side| `top` or `bottom`
+      type: `string | number`
+      default: `30`
+
   - |view.side|: side of the tree, can be one of 'left' | 'right' | 'bottom' | 'top'
     Note that bottom/top are not working correctly yet.
       type: `string`
       default: 'left'
-  
+
   - |view.auto_resize|: auto resize the tree after opening a file
       type: `boolean`
       default: false
-  
+
   - |view.mappings|: configuration options for keymaps
-  
+
     - |view.mappings.custom_only|: will use only the provided user mappings and not the default
       otherwise, extends the default mappings with the provided user mappings
         type: `boolean`
         default: false
-    
+
     - |view,mappings.list|: a list of keymaps that will extend or override the default keymaps
         type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
         default: {}

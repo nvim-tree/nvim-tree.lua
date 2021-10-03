@@ -270,6 +270,7 @@ end
 
 function M.resize(size)
   view.View.width = size
+  view.View.height = size
   view.resize()
 end
 

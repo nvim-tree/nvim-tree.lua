@@ -80,14 +80,23 @@ end
 
 function M.window_options()
   local opts = {}
-  if vim.g.nvim_tree_side == 'right' then
+  local side = require'nvim-tree.view'.View.side
+  if side == 'right' then
     opts.open_command = 'h'
     opts.preview_command = 'l'
     opts.split_command = 'aboveleft'
-  else
+  elseif side == "left" then
     opts.open_command = 'l'
     opts.preview_command = 'h'
     opts.split_command = 'belowright'
+  elseif side == "top" then
+    opts.open_command = 'j'
+    opts.preview_command = 'k'
+    opts.split_command = 'bot'
+  else
+    opts.open_command = 'k'
+    opts.preview_command = 'j'
+    opts.split_command = 'top'
   end
 
   return opts
