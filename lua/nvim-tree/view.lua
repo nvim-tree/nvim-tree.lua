@@ -195,6 +195,9 @@ function M._prevent_buffer_override()
     end
     vim.cmd("buffer "..curbuf)
     M.resize()
+    if vim.g.nvim_tree_quit_on_open == 1 then
+      M.close()
+    end
   end)
 end
 
