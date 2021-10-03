@@ -442,6 +442,22 @@ function M.open_file_in_tab(filename)
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
+function M.collapse_all()
+  local function iter(nodes)
+    for _, node in pairs(nodes) do
+      if node.open then
+        node.open = false
+      end
+      if node.entries then
+        iter(node.entries)
+      end
+    end
+  end
+
+  iter(M.Tree.entries)
+  M.redraw()
+end
+
 function M.change_dir(name)
   local changed_win = vim.v.event and vim.v.event.changed_window
   local foldername = name == '..' and vim.fn.fnamemodify(M.Tree.cwd, ':h') or name
