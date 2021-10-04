@@ -97,6 +97,7 @@ local keypress_funcs = {
   next_sibling = function(node) lib.sibling(node, 1) end,
   prev_git_item = go_to('prev_git_item'),
   next_git_item = go_to('next_git_item'),
+  open_popup_info = require'nvim-tree.file-popup'.show_file_info,
   dir_up = lib.dir_up,
   close = function() M.close() end,
   preview = function(node)

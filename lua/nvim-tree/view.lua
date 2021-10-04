@@ -75,7 +75,8 @@ M.View = {
     { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
     { key = "s",                            cb = M.nvim_tree_callback("system_open") },
     { key = "q",                            cb = M.nvim_tree_callback("close") },
-    { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
+    { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") },
+    { key = "<C-k>",                        cb = M.nvim_tree_callback("open_popup_info") },
   }
 }
 
