@@ -255,15 +255,15 @@ function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local bufnr = api.nvim_get_current_buf()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
+  if not is_file_readable(filepath) then
+    return
+  end
 
   if with_open then
     M.open()
     view.focus()
   end
 
-  if not is_file_readable(filepath) then
-    return
-  end
   update_base_dir_with_filepath(filepath, bufnr)
   lib.set_index_and_redraw(filepath)
 end
@@ -364,6 +364,14 @@ local function setup_vim_commands()
   ]]
 end
 
+function M.change_dir(name)
+  lib.change_dir(name)
+
+  if _config.update_focused_file.enable then
+    M.find_file(false)
+  end
+end
+
 local function setup_autocommands(opts)
   vim.cmd "augroup NvimTree"
   vim.cmd [[
@@ -387,7 +395,7 @@ local function setup_autocommands(opts)
     vim.cmd "au CursorMoved NvimTree lua require'nvim-tree'.place_cursor_on_node()"
   end
   if opts.update_cwd then
-    vim.cmd "au DirChanged * lua require'nvim-tree.lib'.change_dir(vim.loop.cwd())"
+    vim.cmd "au DirChanged * lua require'nvim-tree'.change_dir(vim.loop.cwd())"
   end
   if opts.update_focused_file.enable then
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
