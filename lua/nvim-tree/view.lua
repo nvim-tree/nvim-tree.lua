@@ -309,7 +309,7 @@ function M.open(options)
     open_window()
   end
 
-  vim.cmd("buffer "..M.View.bufnr)
+  pcall(vim.cmd, "buffer "..M.View.bufnr)
   for k, v in pairs(M.View.winopts) do
     set_local(k, v)
   end
