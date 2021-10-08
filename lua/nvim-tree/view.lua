@@ -30,7 +30,8 @@ M.View = {
       'VertSplit:NvimTreeVertSplit',
       'SignColumn:NvimTreeNormal',
       'StatusLine:NvimTreeStatusLine',
-      'StatusLineNC:NvimTreeStatuslineNC'
+      'StatusLineNC:NvimTreeStatuslineNC',
+      'NormalNC:NormalNC'
     }, ',')
   },
   bufopts = {
