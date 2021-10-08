@@ -79,7 +79,7 @@ local function get_links()
 end
 
 function M.setup()
-  if config.get_icon_state().show_file_icon then
+  if config.get_icon_state().show_file_icon and config.get_icon_state().has_devicons then
     require'nvim-web-devicons'.setup()
   end
   local higlight_groups = get_hl_groups()
