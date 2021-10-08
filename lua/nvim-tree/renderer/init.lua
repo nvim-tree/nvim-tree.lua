@@ -56,24 +56,29 @@ end
 
 local get_file_icon = function() return "" end
 if icon_state.show_file_icon then
-  local web_devicons = require'nvim-web-devicons'
+  if icon_state.has_devicons then
+    local web_devicons = require'nvim-web-devicons'
 
-  get_file_icon = function(fname, extension, line, depth)
-    local icon, hl_group = web_devicons.get_icon(fname, extension)
+    get_file_icon = function(fname, extension, line, depth)
+      local icon, hl_group = web_devicons.get_icon(fname, extension)
 
-    if icon and hl_group ~= "DevIconDefault" then
-      if hl_group then
-        table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
+      if icon and hl_group ~= "DevIconDefault" then
+        if hl_group then
+          table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
+        end
+        return icon..icon_padding
+      elseif string.match(extension, "%.(.*)") then
+        -- If there are more extensions to the file, try to grab the icon for them recursively
+        return get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth)
+      else
+        return #icon_state.icons.default > 0 and icon_state.icons.default..icon_padding or ""
       end
-      return icon..icon_padding
-    elseif string.match(extension, "%.(.*)") then
-      -- If there are more extensions to the file, try to grab the icon for them recursively
-      return get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth)
-    else
+    end
+  else
+    get_file_icon = function()
       return #icon_state.icons.default > 0 and icon_state.icons.default..icon_padding or ""
     end
   end
-
 end
 
 local get_symlink_icon = function() return icon_state.icons.symlink end
