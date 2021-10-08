@@ -90,8 +90,8 @@ local function get_line_from_node(node, find_parent)
       end
 
       line = line + 1
-      if n.open == true and recursive then
-        local _, child = iter(n.entries, recursive)
+      if entry.open == true and recursive then
+        local _, child = iter(entry.entries, recursive)
         if child ~= nil then return line, child end
       end
     end
