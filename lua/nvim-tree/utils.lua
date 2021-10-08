@@ -66,7 +66,7 @@ end
 M.path_separator = path_separator
 
 function M.clear_prompt()
-  vim.api.nvim_command('normal :esc<CR>')
+  vim.api.nvim_command('normal! :')
 end
 
 function M.get_user_input_char()
