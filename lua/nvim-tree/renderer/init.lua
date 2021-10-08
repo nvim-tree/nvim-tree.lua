@@ -291,6 +291,9 @@ local function update_draw_data(tree, depth, markers)
       end
       if not has_children then folder_hl = "NvimTreeEmptyFolderName" end
       if node.open then folder_hl = "NvimTreeOpenedFolderName" end
+      if special[node.absolute_path] then
+        folder_hl = "NvimTreeSpecialFolderName"
+      end
       set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
       if git_hl then
         set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
@@ -313,7 +316,7 @@ local function update_draw_data(tree, depth, markers)
     else
       local icon
       local git_icons
-      if special[node.name] then
+      if special[node.absolute_path] or special[node.name] then
         icon = get_special_icon()
         git_icons = get_git_icons(node, index, offset, 0)
         table.insert(hl, {'NvimTreeSpecialFile', index, offset+#git_icons, -1})
