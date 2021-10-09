@@ -57,6 +57,7 @@ local function get_links()
     EmptyFolderName = 'Directory',
     OpenedFolderName = 'Directory',
     Normal = 'Normal',
+    NormalNC = 'NormalNC',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',

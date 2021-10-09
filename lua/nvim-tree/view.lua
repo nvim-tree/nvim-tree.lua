@@ -31,7 +31,7 @@ M.View = {
       'StatusLine:NvimTreeStatusLine',
       'StatusLineNC:NvimTreeStatuslineNC',
       'SignColumn:NvimTreeSignColumn',
-      'NormalNC:NormalNC'
+      'NormalNC:NvimTreeNormalNC',
     }, ',')
   },
   bufopts = {
