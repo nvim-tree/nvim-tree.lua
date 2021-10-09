@@ -460,10 +460,9 @@ function M.collapse_all()
 end
 
 function M.change_dir(name)
-  local changed_win = vim.v.event and vim.v.event.changed_window
   local foldername = name == '..' and vim.fn.fnamemodify(M.Tree.cwd, ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == M.Tree.cwd
-  if changed_win or no_cwd_change then
+  if no_cwd_change then
     return
   end
 
