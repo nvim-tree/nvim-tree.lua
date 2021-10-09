@@ -102,9 +102,17 @@ function M.create(node)
 end
 
 local function clear_buffer(absolute_path)
-  for _, buf in pairs(api.nvim_list_bufs()) do
-    if vim.fn.bufloaded(buf) == 1 and api.nvim_buf_get_name(buf) == absolute_path then
-      api.nvim_command(':bd! '..buf)
+  local bufs = vim.fn.getbufinfo({bufloaded = 1, buflisted = 1})
+  for _, buf in pairs(bufs) do
+    if buf.name == absolute_path then
+      if buf.hidden == 0 and #bufs > 1 then
+        local winnr = api.nvim_get_current_win()
+        api.nvim_set_current_win(buf.windows[1])
+        vim.cmd(':bn')
+        api.nvim_set_current_win(winnr)
+      end
+      vim.api.nvim_buf_delete(buf.bufnr, {})
+      return
     end
   end
 end
