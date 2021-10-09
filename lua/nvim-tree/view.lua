@@ -28,7 +28,6 @@ M.View = {
       'Normal:NvimTreeNormal',
       'CursorLine:NvimTreeCursorLine',
       'VertSplit:NvimTreeVertSplit',
-      'SignColumn:NvimTreeNormal',
       'StatusLine:NvimTreeStatusLine',
       'StatusLineNC:NvimTreeStatuslineNC',
       'NormalNC:NormalNC'
