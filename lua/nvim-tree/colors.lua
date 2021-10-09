@@ -75,6 +75,7 @@ local function get_links()
     LspDiagnosticsHint = "LspDiagnosticsDefaultHint",
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
+    SignColumn = 'SignColumn',
   }
 end
 

@@ -30,6 +30,7 @@ M.View = {
       'VertSplit:NvimTreeVertSplit',
       'StatusLine:NvimTreeStatusLine',
       'StatusLineNC:NvimTreeStatuslineNC',
+      'SignColumn:NvimTreeSignColumn',
       'NormalNC:NormalNC'
     }, ',')
   },
