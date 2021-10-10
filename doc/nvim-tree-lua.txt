@@ -78,7 +78,15 @@ function.
       open_on_tab         = false,
       hijack_cursor       = false,
       update_cwd          = false,
-      lsp_diagnostics     = false,
+      diagnostics         = {
+        enable = false,
+        icons = {
+          hint = "",
+          info = "",
+          warning = "",
+          error = "",
+        }
+      },
       update_focused_file = {
         enable      = false,
         update_cwd  = false,
@@ -196,10 +204,23 @@ Here is a list of the options available in the setup call:
     type: `{string}`
     default: `{}`
 
-*nvim-tree.lsp_diagnostics*
-- |lsp_diagnostics|: show lsp diagnostics in the signcolumn
-    type: `boolean`
-    default: false
+*nvim-tree.diagnostics*
+- |diagnostics|: show lsp diagnostics in the signcolumn
+
+  - |diagnostics.enable|: enable/disable the feature
+      type: `boolean`
+      default: `false`
+
+  - |diagnostics.icons|: icons for diagnostic severity
+      type: `table`
+      default: `{ hint = "", info = "", warning = "", error = "" }`
+
+    `NOTE`: it will use the default diagnostic color groups to highlight the signs.
+    If you wish to customize, you can override these groups:
+    - `NvimTreeLspDiagnosticsError`
+    - `NvimTreeLspDiagnosticsWarning`
+    - `NvimTreeLspDiagnosticsInformation`
+    - `NvimTreeLspDiagnosticsHint`
 
 *nvim-tree.view*
 - |view|: window / buffer setup

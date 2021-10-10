@@ -1,8 +1,6 @@
 local a = vim.api
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
-local config = require'nvim-tree.config'
-local icon_state = config.get_icon_state()
 local get_diagnostics = vim.lsp.diagnostic.get_all
 
 local M = {}
@@ -24,11 +22,6 @@ local sign_names = {
   { "NvimTreeSignInformation", "NvimTreeLspDiagnosticsInformation" },
   { "NvimTreeSignHint", "NvimTreeLspDiagnosticsHint" },
 }
-
-vim.fn.sign_define(sign_names[1][1], { text=icon_state.icons.lsp.error, texthl=sign_names[1][2]})
-vim.fn.sign_define(sign_names[2][1], { text=icon_state.icons.lsp.warning, texthl=sign_names[2][2]})
-vim.fn.sign_define(sign_names[3][1], { text=icon_state.icons.lsp.info, texthl=sign_names[3][2]})
-vim.fn.sign_define(sign_names[4][1], { text=icon_state.icons.lsp.hint, texthl=sign_names[4][2]})
 
 local signs = {}
 
@@ -75,7 +68,7 @@ local function from_coc()
     local severity_list = diagnostics[bufname] or {}
     table.insert(severity_list, severity)
     diagnostics[bufname] = severity_list
-	end
+  end
 
   for bufname, severity_list in pairs(diagnostics) do
     if not buffer_severity[bufname] then
@@ -87,12 +80,16 @@ local function from_coc()
   return buffer_severity
 end
 
+local function is_using_coc()
+  return vim.g.coc_service_initialized == 1
+end
+
 function M.update()
   if not M.enable then
     return
   end
   local buffer_severity
-  if vim.g.coc_service_initialized == 1 then
+  if is_using_coc() then
     buffer_severity = from_coc()
   else
     buffer_severity = from_nvim_lsp()
@@ -119,8 +116,24 @@ function M.update()
   end
 end
 
+local has_06 = vim.fn.has('nvim-0.6') == 1
+local links = {
+  NvimTreeLspDiagnosticsError = has_06 and "DiagnosticError" or "LspDiagnosticsDefaultError",
+  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarning" or "LspDiagnosticsDefaultWarning",
+  NvimTreeLspDiagnosticsInformation = has_06 and "DiagnosticInfo" or "LspDiagnosticsDefaultInformation",
+  NvimTreeLspDiagnosticsHint = has_06 and "DiagnosticHint" or "LspDiagnosticsDefaultHint",
+}
+
 function M.setup(opts)
-  M.enable = opts.lsp_diagnostics
+  M.enable = opts.diagnostics.enable
+  vim.fn.sign_define(sign_names[1][1], { text = opts.diagnostics.icons.error,   texthl = sign_names[1][2] })
+  vim.fn.sign_define(sign_names[2][1], { text = opts.diagnostics.icons.warning, texthl = sign_names[2][2] })
+  vim.fn.sign_define(sign_names[3][1], { text = opts.diagnostics.icons.info,    texthl = sign_names[3][2] })
+  vim.fn.sign_define(sign_names[4][1], { text = opts.diagnostics.icons.hint,    texthl = sign_names[4][2] })
+
+  for lhs, rhs in pairs(links) do
+    vim.cmd("hi def link "..lhs.." "..rhs)
+  end
 end
 
 return M

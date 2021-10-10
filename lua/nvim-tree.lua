@@ -7,6 +7,7 @@ local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
+local utils = require'nvim-tree.utils'
 
 local _config = {
   is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
@@ -416,7 +417,6 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
-  lsp_diagnostics     = false,
   update_focused_file = {
     enable = false,
     update_cwd = false,
@@ -426,6 +426,15 @@ local DEFAULT_OPTS = {
   system_open = {
     cmd  = nil,
     args = {}
+  },
+  diagnostics = {
+    enable = false,
+    icons = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    }
   },
 }
 
@@ -439,13 +448,17 @@ function M.setup(conf)
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   if type(opts.update_to_buf_dir) == "boolean" then
-    require'nvim-tree.utils'.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
+    utils.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
       enable = opts.update_to_buf_dir,
       auto_open = opts.update_to_buf_dir,
     }
   else
     _config.update_to_buf_dir = opts.update_to_buf_dir
+  end
+
+  if opts.lsp_diagnostics ~= nil then
+    utils.echo_warning("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
   end
 
   require'nvim-tree.colors'.setup()

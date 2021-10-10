@@ -24,12 +24,6 @@ function M.get_icon_state()
       symlink = "",
       symlink_open = "",
     },
-    lsp = {
-      hint = "",
-      info = "",
-      warning = "",
-      error = "",
-    },
   }
 
   local user_icons = vim.g.nvim_tree_icons
