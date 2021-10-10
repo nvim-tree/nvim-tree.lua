@@ -57,7 +57,7 @@ local function get_links()
     EmptyFolderName = 'Directory',
     OpenedFolderName = 'Directory',
     Normal = 'Normal',
-    NormalNC = 'NormalNC',
+    NormalNC = 'Normal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
@@ -76,7 +76,7 @@ local function get_links()
     LspDiagnosticsHint = "LspDiagnosticsDefaultHint",
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
-    SignColumn = 'SignColumn',
+    SignColumn = 'Normal',
   }
 end
 
