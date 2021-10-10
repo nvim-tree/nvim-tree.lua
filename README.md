@@ -15,6 +15,7 @@ Install with [vim-plug](https://github.com/junegunn/vim-plug):
 ```vim
 " requires
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'tami5/sqlite.lua' " for git integration
 Plug 'kyazdani42/nvim-tree.lua'
 ```
 
@@ -23,7 +24,10 @@ Install with [packer](https://github.com/wbthomason/packer.nvim):
 ```lua
 use {
     'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
+    requires = {
+        'kyazdani42/nvim-web-devicons', -- optional, for file icon
+        'tami5/sqlite.lua', -- optional, for git integration
+    },
     config = function() require'nvim-tree'.setup {} end
 }
 ```

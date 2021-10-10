@@ -66,7 +66,7 @@ end
 local function check_sqlite()
   local has_sqlite = pcall(require, 'sqlite')
   if M.config.enable and not has_sqlite then
-    local info = "[NvimTree] Git integration requires sqlite.lua to be installed (see :help nvim-tree-git)"
+    local info = "Git integration requires sqlite.lua to be installed (see :help nvim-tree.git)"
     require'nvim-tree.utils'.echo_warning(info)
     M.config.enable = false
   end
