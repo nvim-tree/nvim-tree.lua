@@ -51,7 +51,7 @@ local function ignore_nodes(parent, statuses)
 end
 
 function M.update(db, parent, ignore)
-  local data = db:get_from_path(parent.absolute_path)
+  local data = db:list_statuses_under_uri(parent.absolute_path)
 
   local uri_to_status = data_to_record(data)
   if ignore then

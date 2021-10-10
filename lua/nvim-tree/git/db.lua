@@ -73,7 +73,7 @@ function Db:insert(path, status)
   end
 end
 
-function Db:get_from_path(cwd)
+function Db:list_statuses_under_uri(cwd)
   local query = "select * from statuses where path LIKE ?"
   local statuses = self.db:eval(query, cwd..'%')
   if type(statuses) == "table" then
