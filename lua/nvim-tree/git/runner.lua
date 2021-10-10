@@ -8,7 +8,7 @@ local function handle_line_to_db(db, line, base)
   local status = line:sub(1, 2)
   local path = line:sub(4, -2)
   if #status > 0 and #path > 0 then
-    db:insert(utils.path_join({base,path}), status)
+    db:insert(utils.path_remove_trailing(utils.path_join({base,path})), status)
   end
   return #line
 end
@@ -85,7 +85,7 @@ function Runner.new(opts)
     db = opts.db,
     toplevel = opts.toplevel,
     show_untracked = opts.show_untracked,
-    with_ignored = opts.ignored,
+    with_ignored = opts.with_ignored,
   }, Runner)
 end
 

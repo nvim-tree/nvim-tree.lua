@@ -540,12 +540,12 @@ end
 
 function M.toggle_ignored()
   pops.show_ignored = not pops.show_ignored
-  return M.refresh_tree()
+  return M.refresh_tree(true)
 end
 
 function M.toggle_dotfiles()
   pops.show_dotfiles = not pops.show_dotfiles
-  return M.refresh_tree()
+  return M.refresh_tree(true)
 end
 
 function M.toggle_help()

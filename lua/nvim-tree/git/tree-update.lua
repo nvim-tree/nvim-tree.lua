@@ -43,7 +43,7 @@ end
 local function ignore_nodes(parent, statuses)
   for idx, node in pairs(parent.entries) do
     if statuses[node.absolute_path] == '!!' then
-      parent.entries[idx] = nil
+      table.remove(parent.entries, idx)
     end
   end
 end
