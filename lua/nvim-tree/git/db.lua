@@ -6,11 +6,15 @@ local utils = require'nvim-tree.utils'
 local Db = {}
 Db.__index = Db
 
+local function rand()
+  return tostring(math.floor(math.random() * 100 % 20))
+end
+
 local function create_uri()
   local cache = vim.fn.stdpath "cache"
-  local path = utils.path_join({cache, "nvim-tree-sqlite-"..uv.random(2)})
+  local path = utils.path_join({cache, "nvim-tree-sqlite-"..rand()})
   while uv.fs_access(path, 'R') do
-    path = utils.path_join({cache, "nvim-tree-sqlite-"..uv.random(2)})
+    path = utils.path_join({cache, "nvim-tree-sqlite-"..rand()})
   end
   return path
 end
@@ -43,8 +47,10 @@ function Db.new()
 end
 
 function Db:cleanup()
-  self.db:close()
-  uv.fs_unlink(self.uri)
+  if self.db:isopen() then
+    self.db:close()
+  end
+  pcall(uv.fs_unlink, self.uri)
 end
 
 function Db:insert_cache()
