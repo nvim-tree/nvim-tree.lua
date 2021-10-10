@@ -57,7 +57,7 @@ local function get_links()
     EmptyFolderName = 'Directory',
     OpenedFolderName = 'Directory',
     Normal = 'Normal',
-    NormalNC = 'Normal',
+    NormalNC = 'NvimTreeNormal',
     EndOfBuffer = 'EndOfBuffer',
     CursorLine = 'CursorLine',
     VertSplit = 'VertSplit',
@@ -72,7 +72,7 @@ local function get_links()
     GitIgnored = 'Comment',
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
-    SignColumn = 'Normal',
+    SignColumn = 'NvimTreeNormal',
   }
 end
 
