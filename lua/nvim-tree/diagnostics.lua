@@ -134,6 +134,14 @@ function M.setup(opts)
   for lhs, rhs in pairs(links) do
     vim.cmd("hi def link "..lhs.." "..rhs)
   end
+
+  if M.enable then
+    if has_06 then
+      vim.cmd "au User DiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
+    else
+      vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
+    end
+  end
 end
 
 return M

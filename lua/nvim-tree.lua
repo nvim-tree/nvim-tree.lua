@@ -383,9 +383,6 @@ local function setup_autocommands(opts)
     au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
   ]]
 
-  if opts.lsp_diagnostics then
-    vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
-  end
   if opts.auto_close then
     vim.cmd "au WinClosed * lua require'nvim-tree'.on_leave()"
   end
