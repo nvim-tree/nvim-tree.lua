@@ -436,10 +436,12 @@ local DEFAULT_OPTS = {
   },
   git = {
     enable = true,
-    show_highlights = false,
-    show_icons = true,
-    icon_placement = 'left',
     ignore = true,
+    timeout = 5000,
+    -- TODO: for later use when refactoring the renderer
+    -- show_highlights = false,
+    -- show_icons = true,
+    -- icon_placement = 'left',
   }
 }
 

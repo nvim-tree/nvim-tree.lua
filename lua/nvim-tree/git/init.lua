@@ -27,16 +27,22 @@ function M.set_toplevel(path, toplevel)
   M.toplevels[toplevel] = utils.show_untracked(toplevel)
 end
 
+local function clear()
+  M.config.enable = false
+  require'nvim-tree.utils'.echo_warning("git integration has been disabled, timeout was exceeded")
+end
+
 function M.run_git_status(toplevel, node)
   local show_untracked = M.toplevels[toplevel]
   local runner = Runner.new {
     db = M.db,
     toplevel = toplevel,
     show_untracked = show_untracked,
-    with_ignored = M.config.ignore
+    with_ignored = M.config.ignore,
+    timeout = M.config.timeout
   }
 
-  runner:run(M.handle_update(node))
+  runner:run(M.handle_update(node), clear)
 end
 
 function M.run(node)
@@ -76,7 +82,8 @@ function M.reload()
       db = M.db,
       toplevel = toplevel,
       show_untracked = show_untracked,
-      with_ignored = M.config.ignore
+      with_ignored = M.config.ignore,
+      timeout = M.config.timeout
     }
     local tree = require'nvim-tree.lib'.Tree
     local node
@@ -88,7 +95,7 @@ function M.reload()
       end)
     end
     if node then
-      runner:run(M.handle_update(node))
+      runner:run(M.handle_update(node), clear)
     end
   end
 end
@@ -100,10 +107,12 @@ end
 function M.setup(opts)
   M.config = {}
   M.config.enable = opts.git.enable
-  M.config.show_highlights = opts.git.show_highlights
-  M.config.show_icons = opts.git.show_icons
-  M.config.icon_placement = opts.git.placement
   M.config.ignore = opts.git.ignore
+  M.config.timeout = opts.git.timeout
+  -- TODO: for later use when refactoring the renderer
+  -- M.config.show_highlights = opts.git.show_highlights
+  -- M.config.show_icons = opts.git.show_icons
+  -- M.config.icon_placement = opts.git.placement
   check_sqlite()
 
   if M.config.enable then

@@ -101,6 +101,10 @@ function.
         cmd  = nil,
         args = {}
       },
+      git = {
+        enable = true,
+        ignore = true,
+      },
       view = {
         width = 30,
         height = 30,
@@ -227,6 +231,34 @@ Here is a list of the options available in the setup call:
     - `NvimTreeLspDiagnosticsInformation`
     - `NvimTreeLspDiagnosticsHint`
 
+*nvim-tree.git*
+- |git|: git integration with icons and colors
+
+  - |git.enable|: enable / disable the feature
+    type: `boolean`
+    default: `true`
+
+  - |git.ignore|: ignore files based on `.gitignore`.
+    will add `ignored=matching` to the integration when `true`. Otherwise will
+    add `ignored=no` to the integration which can lead to better performance.
+
+  - |git.timeout|: kills the git process after some time if it takes too long
+    type: `number`
+    default: `5000` (ms)
+
+  You will still need to configure `g:nvim_tree_show_icons.git` or
+  `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
+  changed in the future versions.
+
+  The git integration is based on `tami5/sqlite.lua`, and is asynchronous in
+  order to avoid blocking the UI when parsing big amounts of statuses.
+  The database is opened on startup and destroyed when neovim exits.
+  Multiple instances of neovim will spawn multiple databases to avoid
+  collisions.
+
+  The configurable timeout will kill the current process and 
+  the git integration if its taking too long.
+
 *nvim-tree.view*
 - |view|: window / buffer setup
 
@@ -281,17 +313,8 @@ An array of strings that the tree won't load and display.
 useful to hide large data/cache folders.
 >
     example: let g:nvim_tree_ignore = [ '.git', 'node_modules' ]
+<
 
-|g:nvim_tree_gitignore|				*g:nvim_tree_gitignore*
-
-Determines whether to include in g:nvim_tree_ignore
-files ignored by git.
-
-Must be:
-    0: not ignored
-    1: ignored files from `git ls-files --others --ignored --exclude-standard --directory`
-
->
 |g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
 
 Dictionary, if your terminal or font doesn't support certain unicode

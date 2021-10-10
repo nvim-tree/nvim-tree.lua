@@ -58,12 +58,6 @@ function M.get_icon_state()
   }
 end
 
-function M.use_git()
-  return M.get_icon_state().show_git_icon
-    or vim.g.nvim_tree_git_hl == 1
-    or vim.g.nvim_tree_gitignore == 1
-end
-
 function M.nvim_tree_callback(callback_name)
   return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
 end

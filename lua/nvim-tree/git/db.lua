@@ -61,6 +61,10 @@ function Db:insert_cache()
   self.insertion_cache = {}
 end
 
+function Db:clear()
+  self.db:eval("DELETE FROM statuses")
+end
+
 function Db:insert(path, status)
   if #self.insertion_cache < 2000 then
     return table.insert(self.insertion_cache, { path = path, status = status })

@@ -59,9 +59,15 @@ function Runner:_populate_db()
   local handle
   local stdout = uv.new_pipe(false)
 
+  local now = uv.now()
+  local has_timedout = false
   handle = uv.spawn("git", self:_getopts(stdout), vim.schedule_wrap(function()
-    self.db:insert_cache()
-    self.and_then()
+    if not has_timedout then
+      self.db:insert_cache()
+      self.and_then()
+    else
+      self.db:clear()
+    end
     stdout:read_stop()
     stdout:close()
     handle:close()
@@ -69,13 +75,21 @@ function Runner:_populate_db()
 
   local _data = ''
   uv.read_start(stdout, vim.schedule_wrap(function(err, data)
-    if err then return end
+    if err or has_timedout then return end
+
+    if uv.now() - now > self.timeout then
+      has_timedout = true
+      self.after_clear()
+      return
+    end
+
     handle_incoming_data(self.db, _data, data, self.toplevel)
   end))
 end
 
-function Runner:run(and_then)
+function Runner:run(and_then, after_clear)
   self.and_then = and_then
+  self.after_clear = after_clear
   self:_populate_db()
 end
 
@@ -86,6 +100,7 @@ function Runner.new(opts)
     toplevel = opts.toplevel,
     show_untracked = opts.show_untracked,
     with_ignored = opts.with_ignored,
+    timeout = opts.timeout,
   }, Runner)
 end
 

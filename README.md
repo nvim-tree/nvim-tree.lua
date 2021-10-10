@@ -89,6 +89,17 @@ require'nvim-tree'.setup {
     args = {}
   },
 
+  -- git integration (:help nvim-tree.git)
+  git = {
+    -- enable the module
+    enable = true,
+    -- enable gitignore filtering on files
+    ignore = true,
+    -- kills the git integration after this if it takes too long to complete
+    timeout = 5000,
+  },
+
+  -- window/buffer configurations (:help nvim-tree.view)
   view = {
     -- width of the window, can be either a number (columns) or a string in `%`, for left or right side placement
     width = 30,
@@ -111,7 +122,6 @@ require'nvim-tree'.setup {
 
 ```vim
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
-let g:nvim_tree_gitignore = 1 "0 by default
 let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
 let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
 let g:nvim_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
