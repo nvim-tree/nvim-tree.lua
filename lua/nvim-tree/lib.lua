@@ -107,7 +107,7 @@ function M.get_node_at_cursor()
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if view.is_help_ui() then
-    local help_lines, _ = renderer.draw_help()
+    local help_lines = require'nvim-tree.renderer.help'.compute_lines()
     local help_text = get_node_at_line(line+1)(help_lines)
     return {name = help_text}
   else
