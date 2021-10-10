@@ -45,11 +45,6 @@ function M.get_icon_state()
         icons.folder_icons[key] = val
       end
     end
-    for key, val in pairs(user_icons.lsp or {}) do
-      if icons.lsp[key] then
-        icons.lsp[key] = val
-      end
-    end
   end
 
   local has_devicons = pcall(require, 'nvim-web-devicons')
