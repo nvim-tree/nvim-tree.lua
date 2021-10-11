@@ -15,6 +15,17 @@ function M.handle_update(node)
   end
 end
 
+function M.get_loaded_toplevel(path)
+  if not M.config.enable then
+    return
+  end
+  local toplevel = utils.get_toplevel(path)
+  if not toplevel or not M.toplevels[toplevel] then
+    return
+  end
+  return toplevel
+end
+
 function M.set_toplevel(path, toplevel)
   if not M.config.enable then
     return
@@ -45,12 +56,12 @@ function M.run_git_status(toplevel, node)
   runner:run(M.handle_update(node), clear)
 end
 
-function M.run(node)
+function M.run(node, toplevel)
   if not M.config.enable then
     return
   end
 
-  local toplevel = utils.get_toplevel(node.absolute_path)
+  toplevel = toplevel or utils.get_toplevel(node.absolute_path)
   if not toplevel then
     return
   end
@@ -66,7 +77,7 @@ end
 local function check_sqlite()
   local has_sqlite = pcall(require, 'sqlite')
   if M.config.enable and not has_sqlite then
-    local info = "Git integration requires sqlite.lua to be installed (see :help nvim-tree.git)"
+    local info = "Git integration requires `tami5/sqlite.lua` to be installed (see :help nvim-tree.git)"
     require'nvim-tree.utils'.echo_warning(info)
     M.config.enable = false
   end
@@ -91,7 +102,7 @@ function M.reload()
       node = { entries = tree.entries, absolute_path = tree.cwd }
     else
       node = require'nvim-tree.utils'.find_node(tree.entries, function(n)
-        return toplevel == n.absolute_path
+        return toplevel == n.absolute_path or vim.startswith(n.absolute_path, toplevel)
       end)
     end
     if node then

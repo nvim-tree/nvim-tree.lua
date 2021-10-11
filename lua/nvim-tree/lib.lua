@@ -19,7 +19,6 @@ local M = {}
 M.Tree = {
   entries = {},
   cwd = nil,
-  loaded = false,
   target_winid = nil,
 }
 
@@ -41,7 +40,6 @@ function M.init(with_open, with_reload)
 
   if with_reload then
     M.redraw()
-    M.Tree.loaded = true
   end
 
   git.run({ absolute_path = M.Tree.cwd, entries = M.Tree.entries })
@@ -133,15 +131,18 @@ end
 function M.unroll_dir(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
-  if #node.entries > 0 then
-    renderer.draw(M.Tree, true)
-  else
+  if #node.entries == 0 then
     populate(node.entries, node.link_to or node.absolute_path, node)
-
-    renderer.draw(M.Tree, true)
   end
 
-  git.run(node)
+  local toplevel = git.get_loaded_toplevel(node.absolute_path)
+  if toplevel then
+    git.run(node, toplevel)
+  else
+    M.redraw()
+    git.run(node)
+  end
+
   diagnostics.update()
 end
 
@@ -168,14 +169,16 @@ function M.refresh_tree(disable_clock)
   refresh_nodes(M.Tree)
 
   if view.win_open() then
-    renderer.draw(M.Tree, true)
-  else
-    M.Tree.loaded = false
+    M.redraw()
   end
 
   git.reload()
   diagnostics.update()
-  vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
+  if not disable_clock then
+    vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
+  else
+    refreshing = false
+  end
 end
 
 function M.set_index_and_redraw(fname)
@@ -185,7 +188,7 @@ function M.set_index_and_redraw(fname)
   else
     i = 1
   end
-  local reload = false
+  local tree_altered = false
 
   local function iter(entries)
     for _, entry in ipairs(entries) do
@@ -197,12 +200,12 @@ function M.set_index_and_redraw(fname)
       if fname:match(entry.match_path..utils.path_separator) ~= nil then
         git.set_toplevel(entry.absolute_path)
         if #entry.entries == 0 then
-          reload = true
           populate(entry.entries, entry.absolute_path, entry)
+          tree_altered = true
         end
         if entry.open == false then
-          reload = true
           entry.open = true
+          tree_altered = true
         end
         if iter(entry.entries) ~= nil then
           return i
@@ -215,11 +218,12 @@ function M.set_index_and_redraw(fname)
 
   local index = iter(M.Tree.entries)
   if not view.win_open() then
-    M.Tree.loaded = false
     return
   end
-  renderer.draw(M.Tree, reload)
-  git.reload()
+  if tree_altered then
+    M.redraw()
+    git.reload()
+  end
   if index then
     view.set_cursor({index, 0})
   end
@@ -383,8 +387,6 @@ function M.open_file(mode, filename)
   if vim.g.nvim_tree_quit_on_open == 1 then
     view.close()
   end
-
-  renderer.draw(M.Tree, true)
 end
 
 function M.open_file_in_tab(filename)
@@ -467,15 +469,13 @@ function M.open()
   view.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if M.Tree.loaded and (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
+  if respect_buf_cwd == 1 and cwd ~= M.Tree.cwd then
     M.change_dir(cwd)
   end
-  renderer.draw(M.Tree, not M.Tree.loaded)
-  M.Tree.loaded = true
 end
 
 function M.sibling(node, direction)
-  if not direction then return end
+  if node.name == '..' or not direction then return end
 
   local iter = get_line_from_node(node, true)
   local node_path = node.absolute_path
@@ -512,7 +512,6 @@ function M.sibling(node, direction)
 
   line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
   view.set_cursor({line, 0})
-  renderer.draw(M.Tree, true)
 end
 
 function M.close_node(node)
@@ -521,11 +520,14 @@ end
 
 function M.parent_node(node, should_close)
   if node.name == '..' then return end
+
   should_close = should_close or false
+  local altered_tree = false
 
   local iter = get_line_from_node(node, true)
   if node.open == true and should_close then
     node.open = false
+    altered_tree = true
   else
     local line, parent = iter(M.Tree.entries, true)
     if parent == nil then
@@ -533,9 +535,12 @@ function M.parent_node(node, should_close)
     elseif should_close then
       parent.open = false
     end
-    api.nvim_win_set_cursor(view.get_winnr(), {line, 0})
+    view.set_cursor({line, 0})
   end
-  renderer.draw(M.Tree, true)
+
+  if altered_tree then
+    M.redraw()
+  end
 end
 
 function M.toggle_ignored()
