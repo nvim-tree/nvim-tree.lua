@@ -227,7 +227,7 @@ function M.on_enter(opts)
     M.hijack_current_window()
   end
 
-  lib.init(should_open, should_open)
+  lib.init(should_open)
 end
 
 local function is_file_readable(fname)

@@ -22,7 +22,7 @@ M.Tree = {
   target_winid = nil,
 }
 
-function M.init(with_open, with_reload)
+function M.init(with_open)
   M.Tree.entries = {}
   if not M.Tree.cwd then
     M.Tree.cwd = luv.cwd()
@@ -38,10 +38,7 @@ function M.init(with_open, with_reload)
     M.refresh_tree()
   end
 
-  if with_reload then
-    M.redraw()
-  end
-
+  M.redraw()
   git.run({ absolute_path = M.Tree.cwd, entries = M.Tree.entries })
 
   if not first_init_done then
@@ -448,7 +445,7 @@ function M.change_dir(name)
 
   vim.cmd('lcd '..vim.fn.fnameescape(foldername))
   M.Tree.cwd = foldername
-  M.init(false, true)
+  M.init(false)
 end
 
 function M.set_target_win()
