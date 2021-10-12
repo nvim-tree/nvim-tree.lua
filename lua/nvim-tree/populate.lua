@@ -142,7 +142,7 @@ local function gen_ignore_check(cwd)
         return true
       end
 
-      local idx = path:match(".+()%.%w+$")
+      local idx = path:match(".+()%.[^.]+$")
       if idx then
         if ignore_list['*'..string.sub(path, idx)] == true then return true end
       end
