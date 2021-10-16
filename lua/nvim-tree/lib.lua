@@ -466,7 +466,7 @@ function M.change_dir(name)
     return
   end
 
-  vim.cmd('lcd '..foldername)
+  vim.cmd('lcd '..vim.fn.fnameescape(foldername))
   M.Tree.cwd = foldername
   M.init(false, true)
 end
