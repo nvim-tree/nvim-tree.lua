@@ -205,7 +205,7 @@ end
 
 function M.set_index_and_redraw(fname)
   local i
-  local hide_root_folder = view.View.hide_root_folder 
+  local hide_root_folder = view.View.hide_root_folder
   if M.Tree.cwd == '/' or hide_root_folder then
     i = 0
   else
