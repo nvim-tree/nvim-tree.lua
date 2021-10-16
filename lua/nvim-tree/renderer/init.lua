@@ -150,6 +150,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     },
     [" A"] = { { hl = "none" } },
     ["RM"] = { { hl = "NvimTreeFileRenamed" } },
+    [" R"] = { { hl = "NvimTreeFileRenamed" } },
     ["!!"] = { { hl = "NvimTreeGitIgnored" } },
     dirty = { { hl = "NvimTreeFileDirty" } },
   }
@@ -206,6 +207,7 @@ if icon_state.show_git_icon then
     },
     ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" } },
     ["R "] = { { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
+    [" R"] = { { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
     ["RM"] = {
       { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
       { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" },
