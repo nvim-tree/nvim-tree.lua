@@ -1,13 +1,12 @@
 local api = vim.api
 local luv = vim.loop
 
+local utils = require'nvim-tree.utils'
+
 local M = {
   show_ignored = false,
   show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
 }
-
-local utils = require'nvim-tree.utils'
-local path_to_matching_str = utils.path_to_matching_str
 
 local function dir_new(cwd, name)
   local absolute_path = utils.path_join({cwd, name})
@@ -26,8 +25,6 @@ local function dir_new(cwd, name)
     absolute_path = absolute_path,
     -- TODO: last modified could also involve atime and ctime
     last_modified = last_modified,
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
     open = false,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
@@ -43,8 +40,6 @@ local function file_new(cwd, name)
     absolute_path = absolute_path,
     executable = is_exec,
     extension = string.match(name, ".?[^.]+%.(.*)") or "",
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
   }
 end
 
@@ -78,8 +73,6 @@ local function link_new(cwd, name)
     open = open,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
   }
 end
 

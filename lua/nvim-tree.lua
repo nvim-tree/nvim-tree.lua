@@ -242,7 +242,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
 
   local ft = api.nvim_buf_get_option(bufnr, 'filetype') or ""
   for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if vim.fn.stridx(filepath, value) ~= -1 or vim.fn.stridx(ft, value) ~= -1 then
+    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
       return
     end
   end

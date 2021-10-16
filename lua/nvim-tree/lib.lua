@@ -79,7 +79,7 @@ local function get_line_from_node(node, find_parent)
   local function iter(entries, recursive)
     for _, entry in ipairs(entries) do
       local n = M.get_last_group_node(entry)
-      if node_path:match('^'..n.match_path..'$') ~= nil then
+      if node_path == n.absolute_path then
         return line, entry
       end
 
@@ -185,41 +185,50 @@ function M.set_index_and_redraw(fname)
   else
     i = 1
   end
-  local tree_altered = false
 
-  local function iter(entries)
-    for _, entry in ipairs(entries) do
+  local should_redraw = false
+
+  local new_git_toplevels = {}
+
+  local function iterate_nodes(nodes)
+    for _, node in ipairs(nodes) do
       i = i + 1
-      if entry.absolute_path == fname then
+      if node.absolute_path == fname then
         return i
       end
 
-      if fname:match(entry.match_path..utils.path_separator) ~= nil then
-        git.set_toplevel(entry.absolute_path)
-        if #entry.entries == 0 then
-          populate(entry.entries, entry.absolute_path, entry)
-          tree_altered = true
+      local path_matches = utils.str_find(fname, node.absolute_path)
+      if path_matches then
+        if #node.entries == 0 then
+          populate(node.entries, node.absolute_path, node)
+          local toplevel = require'nvim-tree.git.utils'.get_toplevel(node.absolute_path)
+          if git.toplevels[toplevel] then
+            git.apply_updates(node)
+          elseif toplevel and not vim.tbl_contains(new_git_toplevels, toplevel) then
+            table.insert(new_git_toplevels, toplevel)
+            git.run(node, toplevel)
+          end
+          should_redraw = true
         end
-        if entry.open == false then
-          entry.open = true
-          tree_altered = true
+        if node.open == false then
+          node.open = true
+          should_redraw = true
         end
-        if iter(entry.entries) ~= nil then
+        if iterate_nodes(node.entries) ~= nil then
           return i
         end
-      elseif entry.open == true then
-        iter(entry.entries)
+      elseif node.open == true then
+        iterate_nodes(node.entries)
       end
     end
   end
 
-  local index = iter(M.Tree.entries)
+  local index = iterate_nodes(M.Tree.entries)
   if not view.win_open() then
     return
   end
-  if tree_altered then
+  if should_redraw then
     M.redraw()
-    git.reload()
   end
   if index then
     view.set_cursor({index, 0})
@@ -482,7 +491,7 @@ function M.sibling(node, direction)
 
   -- Check if current node is already at root entries
   for index, entry in ipairs(M.Tree.entries) do
-    if node_path:match('^'..entry.match_path..'$') ~= nil then
+    if node_path == entry.absolute_path then
       line = index
     end
   end

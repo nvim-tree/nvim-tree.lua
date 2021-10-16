@@ -19,7 +19,7 @@ end
 -- @param cwd: {string} root cwd
 -- @returns {string} or {nil}
 local function handle_incoming_data(db, p_data, data, cwd)
-  if data and vim.fn.stridx(data, '\n') ~= -1 then
+  if data and utils.str_find(data, '\n') then
     local prev = p_data..data
     local i = 0
     for line in prev:gmatch('[^\n]*\n') do

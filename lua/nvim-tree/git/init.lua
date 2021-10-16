@@ -1,16 +1,21 @@
-local utils = require'nvim-tree.git.utils'
+local git_utils = require'nvim-tree.git.utils'
 local updater = require'nvim-tree.git.tree-update'
 local Runner = require'nvim-tree.git.runner'
+local utils = require'nvim-tree.utils'
 
 local M = {
   db = nil,
   toplevels = {},
 }
 
+function M.apply_updates(node)
+  local filter_ignored = M.config.ignore and not require'nvim-tree.populate'.show_ignored
+  updater.update(M.db, node, filter_ignored)
+end
+
 function M.handle_update(node)
   return function()
-    local filter_ignored = M.config.ignore and not require'nvim-tree.populate'.show_ignored
-    updater.update(M.db, node, filter_ignored)
+    M.apply_updates(node)
     require'nvim-tree.lib'.redraw()
   end
 end
@@ -19,7 +24,7 @@ function M.get_loaded_toplevel(path)
   if not M.config.enable then
     return
   end
-  local toplevel = utils.get_toplevel(path)
+  local toplevel = git_utils.get_toplevel(path)
   if not toplevel or not M.toplevels[toplevel] then
     return
   end
@@ -30,17 +35,17 @@ function M.set_toplevel(path, toplevel)
   if not M.config.enable then
     return
   end
-  toplevel = toplevel or utils.get_toplevel(path)
+  toplevel = toplevel or git_utils.get_toplevel(path)
   if not toplevel or M.toplevels[toplevel] ~= nil then
     return
   end
 
-  M.toplevels[toplevel] = utils.show_untracked(toplevel)
+  M.toplevels[toplevel] = git_utils.show_untracked(toplevel)
 end
 
 local function clear()
   M.config.enable = false
-  require'nvim-tree.utils'.echo_warning("git integration has been disabled, timeout was exceeded")
+  utils.echo_warning("git integration has been disabled, timeout was exceeded")
 end
 
 function M.run_git_status(toplevel, node)
@@ -61,7 +66,7 @@ function M.run(node, toplevel)
     return
   end
 
-  toplevel = toplevel or utils.get_toplevel(node.absolute_path)
+  toplevel = toplevel or git_utils.get_toplevel(node.absolute_path)
   if not toplevel then
     return
   end
@@ -78,7 +83,7 @@ local function check_sqlite()
   local has_sqlite = pcall(require, 'sqlite')
   if M.config.enable and not has_sqlite then
     local info = "Git integration requires `tami5/sqlite.lua` to be installed (see :help nvim-tree.git)"
-    require'nvim-tree.utils'.echo_warning(info)
+    utils.echo_warning(info)
     M.config.enable = false
   end
 end
@@ -98,10 +103,10 @@ function M.reload()
     }
     local tree = require'nvim-tree.lib'.Tree
     local node
-    if tree.cwd == toplevel then
+    if utils.str_find(tree.cwd, toplevel) then
       node = { entries = tree.entries, absolute_path = tree.cwd }
     else
-      node = require'nvim-tree.utils'.find_node(tree.entries, function(n)
+      node = utils.find_node(tree.entries, function(n)
         return toplevel == n.absolute_path or vim.startswith(n.absolute_path, toplevel)
       end)
     end
