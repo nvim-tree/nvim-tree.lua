@@ -9,6 +9,7 @@ end
 M.View = {
   bufnr = nil,
   tabpages = {},
+  hide_root_folder = false,
   winopts = {
     relativenumber = false,
     number = false,

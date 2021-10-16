@@ -162,8 +162,14 @@ function M.on_keypress(mode)
     return keypress_funcs[mode](node)
   end
 
+  local hide_root_folder = view.View.hide_root_folder
+
   if node.name == ".." then
-    return lib.change_dir("..")
+    if hide_root_folder or node.name ~= '..' then 
+      return lib.unroll_dir(node)
+    else
+      return lib.change_dir("..")
+    end
   elseif mode == "cd" and node.entries ~= nil then
     return lib.change_dir(lib.get_last_group_node(node).absolute_path)
   elseif mode == "cd" then
@@ -414,6 +420,7 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
+  hide_root_folder    = false,
   update_focused_file = {
     enable = false,
     update_cwd = false,
@@ -452,6 +459,10 @@ function M.setup(conf)
     }
   else
     _config.update_to_buf_dir = opts.update_to_buf_dir
+  end
+
+  if opts.hide_root_folder then
+    view.View.hide_root_folder = true
   end
 
   if opts.lsp_diagnostics ~= nil then

@@ -12,6 +12,7 @@ local out_config = {
   "nvim_tree_auto_open",
   "nvim_tree_auto_close",
   "nvim_tree_tab_open",
+  "nvim_tree_hide_root_folder",
   "nvim_tree_update_cwd",
   "nvim_tree_hijack_cursor",
   "nvim_tree_system_open_command",
