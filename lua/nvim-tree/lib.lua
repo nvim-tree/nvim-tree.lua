@@ -28,18 +28,16 @@ function M.init(with_open)
     M.Tree.cwd = luv.cwd()
   end
   populate(M.Tree.entries, M.Tree.cwd)
+  git.run({ absolute_path = M.Tree.cwd, entries = M.Tree.entries })
 
   local stat = luv.fs_stat(M.Tree.cwd)
   M.Tree.last_modified = stat.mtime.sec
 
   if with_open then
     M.open()
-  elseif view.win_open() then
-    M.refresh_tree()
   end
 
   M.redraw()
-  git.run({ absolute_path = M.Tree.cwd, entries = M.Tree.entries })
 
   if not first_init_done then
     events._dispatch_ready()
@@ -130,16 +128,10 @@ function M.unroll_dir(node)
   if node.has_children then node.has_children = false end
   if #node.entries == 0 then
     populate(node.entries, node.link_to or node.absolute_path, node)
-  end
-
-  local toplevel = git.get_loaded_toplevel(node.absolute_path)
-  if toplevel then
-    git.run(node, toplevel)
-  else
-    M.redraw()
     git.run(node)
   end
 
+  M.redraw()
   diagnostics.update()
 end
 
@@ -169,7 +161,10 @@ function M.refresh_tree(disable_clock)
     M.redraw()
   end
 
-  git.reload()
+  -- do not refresh git if neogit or fugitive are loaded and root dir is a project
+  if not git.toplevels[M.Tree.cwd] or not git.has_git_plugin() then
+    git.full_reload()
+  end
   diagnostics.update()
   if not disable_clock then
     vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
@@ -188,8 +183,6 @@ function M.set_index_and_redraw(fname)
 
   local should_redraw = false
 
-  local new_git_toplevels = {}
-
   local function iterate_nodes(nodes)
     for _, node in ipairs(nodes) do
       i = i + 1
@@ -197,17 +190,11 @@ function M.set_index_and_redraw(fname)
         return i
       end
 
-      local path_matches = utils.str_find(fname, node.absolute_path)
+      local path_matches = utils.str_find(fname, node.absolute_path..utils.path_separator)
       if path_matches then
         if #node.entries == 0 then
           populate(node.entries, node.absolute_path, node)
-          local toplevel = require'nvim-tree.git.utils'.get_toplevel(node.absolute_path)
-          if git.toplevels[toplevel] then
-            git.apply_updates(node)
-          elseif toplevel and not vim.tbl_contains(new_git_toplevels, toplevel) then
-            table.insert(new_git_toplevels, toplevel)
-            git.run(node, toplevel)
-          end
+          git.run(node)
           should_redraw = true
         end
         if node.open == false then

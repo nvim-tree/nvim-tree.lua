@@ -8,6 +8,11 @@ local M = {
   toplevels = {},
 }
 
+function M.has_git_plugin()
+  local has_neogit = pcall(require, 'neogit')
+  return vim.fn.exists('g:loaded_fugitive') == 1 or has_neogit
+end
+
 function M.apply_updates(node)
   local filter_ignored = M.config.ignore and not require'nvim-tree.populate'.show_ignored
   updater.update(M.db, node, filter_ignored)
@@ -50,23 +55,23 @@ end
 
 function M.run_git_status(toplevel, node)
   local show_untracked = M.toplevels[toplevel]
-  local runner = Runner.new {
+  Runner.new {
     db = M.db,
     toplevel = toplevel,
     show_untracked = show_untracked,
     with_ignored = M.config.ignore,
-    timeout = M.config.timeout
-  }
-
-  runner:run(M.handle_update(node), clear)
+    timeout = M.config.timeout,
+    on_end = M.handle_update(node),
+    after_clear = clear,
+  }:run()
 end
 
-function M.run(node, toplevel)
+function M.run(node)
   if not M.config.enable then
     return
   end
 
-  toplevel = toplevel or git_utils.get_toplevel(node.absolute_path)
+  local toplevel = git_utils.get_toplevel(node.absolute_path)
   if not toplevel then
     return
   end
@@ -75,7 +80,7 @@ function M.run(node, toplevel)
     M.set_toplevel(nil, toplevel)
     M.run_git_status(toplevel, node)
   else
-    M.handle_update(node)()
+    M.apply_updates(node)
   end
 end
 
@@ -88,30 +93,31 @@ local function check_sqlite()
   end
 end
 
-function M.reload()
+function M.full_reload()
   if not M.config.enable then
     return
   end
 
+  local tree = require'nvim-tree.lib'.Tree
   for toplevel, show_untracked in pairs(M.toplevels) do
-    local runner = Runner.new {
-      db = M.db,
-      toplevel = toplevel,
-      show_untracked = show_untracked,
-      with_ignored = M.config.ignore,
-      timeout = M.config.timeout
-    }
-    local tree = require'nvim-tree.lib'.Tree
     local node
     if utils.str_find(tree.cwd, toplevel) then
       node = { entries = tree.entries, absolute_path = tree.cwd }
     else
       node = utils.find_node(tree.entries, function(n)
-        return toplevel == n.absolute_path or vim.startswith(n.absolute_path, toplevel)
+        return utils.str_find(n.absolute_path, toplevel)
       end)
     end
     if node then
-      runner:run(M.handle_update(node), clear)
+      Runner.new {
+        db = M.db,
+        toplevel = toplevel,
+        show_untracked = show_untracked,
+        with_ignored = M.config.ignore,
+        timeout = M.config.timeout,
+        on_end = M.handle_update(node),
+        after_clear = clear,
+      }:run()
     end
   end
 end

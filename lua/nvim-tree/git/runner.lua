@@ -64,7 +64,7 @@ function Runner:_populate_db()
   handle = uv.spawn("git", self:_getopts(stdout), vim.schedule_wrap(function()
     if not has_timedout then
       self.db:insert_cache()
-      self.and_then()
+      self.on_end()
     else
       self.db:clear()
     end
@@ -87,9 +87,7 @@ function Runner:_populate_db()
   end))
 end
 
-function Runner:run(and_then, after_clear)
-  self.and_then = and_then
-  self.after_clear = after_clear
+function Runner:run()
   self:_populate_db()
 end
 
@@ -101,6 +99,8 @@ function Runner.new(opts)
     show_untracked = opts.show_untracked,
     with_ignored = opts.with_ignored,
     timeout = opts.timeout,
+    on_end = opts.on_end,
+    after_clear = opts.after_clear,
   }, Runner)
 end
 

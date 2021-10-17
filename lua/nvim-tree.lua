@@ -381,7 +381,7 @@ local function setup_autocommands(opts)
     au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
     au BufWritePost * lua require'nvim-tree.lib'.refresh_tree(true)
-    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
+    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.git'.full_reload()
   ]]
 
   if opts.auto_close then
