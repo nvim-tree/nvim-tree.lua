@@ -225,7 +225,6 @@ Here is a list of the options available in the setup call:
 *nvim-tree.view*
 - |view|: window / buffer setup
 
-  *nvim-tree.hide_root_folder*
   - |view.hide_root_folder|: hide the path of the current working 
     directory on top of the tree
       type: `boolean`
@@ -580,7 +579,6 @@ applied.
 
 NvimTreeSymlink
 NvimTreeFolderName
-NVimTreeHideRootFolder
 NvimTreeRootFolder
 NvimTreeFolderIcon
 NvimTreeEmptyFolderName

@@ -145,6 +145,8 @@ function M.setup(opts)
   M.View.side = options.side
   M.View.width = options.width
   M.View.height = options.height
+  M.View.hide_root_folder = options.hide_root_folder
+
   M.View.auto_resize = opts.auto_resize
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list

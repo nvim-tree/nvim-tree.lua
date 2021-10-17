@@ -165,7 +165,7 @@ function M.on_keypress(mode)
   local hide_root_folder = view.View.hide_root_folder
 
   if node.name == ".." then
-    if hide_root_folder or node.name ~= '..' then
+    if hide_root_folder then
       return lib.unroll_dir(node)
     else
       return lib.change_dir("..")
@@ -459,10 +459,6 @@ function M.setup(conf)
     }
   else
     _config.update_to_buf_dir = opts.update_to_buf_dir
-  end
-
-  if opts.hide_root_folder then
-    view.View.hide_root_folder = true
   end
 
   if opts.lsp_diagnostics ~= nil then
