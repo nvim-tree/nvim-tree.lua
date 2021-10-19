@@ -54,6 +54,7 @@ function M.create(node)
     node = {
       absolute_path = lib.Tree.cwd,
       entries = lib.Tree.entries,
+      open = true,
     }
   end
 
