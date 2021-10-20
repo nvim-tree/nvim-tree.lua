@@ -358,7 +358,7 @@ local function setup_vim_commands()
     command! NvimTreeClose lua require'nvim-tree'.close()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree'.refresh()
+    command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree(true)
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
@@ -399,6 +399,7 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
   end
+  vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
 
   vim.cmd "augroup end"
 end

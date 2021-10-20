@@ -302,7 +302,9 @@ local function is_buf_valid(bufnr)
 end
 
 function M.open(options)
+  local should_redraw = false
   if not is_buf_valid(M.View.bufnr) then
+    should_redraw = true
     create_buffer()
   end
 
@@ -320,6 +322,7 @@ function M.open(options)
 	if not opts.focus_tree then
 		vim.cmd("wincmd p")
 	end
+  return should_redraw
 end
 
 local function get_existing_buffers()
