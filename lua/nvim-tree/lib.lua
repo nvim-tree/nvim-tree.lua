@@ -324,6 +324,8 @@ function M.pick_window()
 
   vim.o.laststatus = laststatus
 
+  if win_map[resp] == nil then return -1 end
+
   return win_map[resp]
 end
 
