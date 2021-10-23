@@ -49,6 +49,11 @@ It will also open the leafs of the tree leading to the file in the buffer
 (if you opened a file with something else than the NvimTree, like `fzf` or
 `:split`)
 
+|:NvimTreeFindFileToggle|			  *:NvimTreeFindFileToggle*
+
+close the tree or change the cursor in the tree for the current bufname,
+similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|
+
 |:NvimTreeClipboard|			          *:NvimTreeClipboard*
 
 Print clipboard content for both cut and copy

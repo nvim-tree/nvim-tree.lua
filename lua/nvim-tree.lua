@@ -24,11 +24,11 @@ function M.focus()
   view.focus();
 end
 
-function M.toggle()
+function M.toggle(find_file)
   if view.win_open() then
     view.close()
   else
-    if _config.update_focused_file.enable then
+    if _config.update_focused_file.enable or find_file then
       M.find_file(true)
     end
     if not view.win_open() then
@@ -356,11 +356,12 @@ local function setup_vim_commands()
   vim.cmd [[
     command! NvimTreeOpen lua require'nvim-tree'.open()
     command! NvimTreeClose lua require'nvim-tree'.close()
-    command! NvimTreeToggle lua require'nvim-tree'.toggle()
+    command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
     command! NvimTreeRefresh lua require'nvim-tree'.refresh()
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
+    command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
   ]]
 end
