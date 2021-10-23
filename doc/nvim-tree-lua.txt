@@ -567,8 +567,9 @@ HIGHLIGHT GROUPS				        *nvim-tree-highlight*
 
 |nvim_tree_highlight|				        *nvim_tree_highlight*
 
-All the following highlight groups can be configured by hand. It is not
-advised to colorize the background of these groups.
+All the following highlight groups can be configured by hand. Aside from
+`NvimTreeWindowPicker`, it is not advised to colorize the background of these
+groups.
 
 Example (in your `init.vim`):
 >
@@ -618,6 +619,8 @@ NvimTreeGitMerge
 NvimTreeGitRenamed
 NvimTreeGitNew
 NvimTreeGitDeleted
+
+NvimTreeWindowPicker
 
 There are also links to normal bindings to style the tree itself.
 
