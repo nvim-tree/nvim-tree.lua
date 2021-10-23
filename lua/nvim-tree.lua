@@ -165,11 +165,7 @@ function M.on_keypress(mode)
   local hide_root_folder = view.View.hide_root_folder
 
   if node.name == ".." then
-    if hide_root_folder then
-      return lib.unroll_dir(node)
-    else
       return lib.change_dir("..")
-    end
   elseif mode == "cd" and node.entries ~= nil then
     return lib.change_dir(lib.get_last_group_node(node).absolute_path)
   elseif mode == "cd" then
