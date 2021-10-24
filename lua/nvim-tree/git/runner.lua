@@ -4,104 +4,96 @@ local utils = require'nvim-tree.utils'
 local Runner = {}
 Runner.__index = Runner
 
-local function handle_line_to_db(db, line, base)
+function Runner:_parse_status_output(line)
   local status = line:sub(1, 2)
-  local path = line:sub(4, -2)
+  -- removing `"` when git is returning special file status containing spaces
+  local path = line:sub(4, -2):gsub('^"', ''):gsub('"$', '')
   if #status > 0 and #path > 0 then
-    db:insert(utils.path_remove_trailing(utils.path_join({base,path})), status)
+    self.output[utils.path_remove_trailing(utils.path_join({self.project_root,path}))] = status
   end
   return #line
 end
 
--- @param db: sqlite database connection
--- @param _data: {string} leftover data (if any)
--- @param data: {string} incoming data
--- @param cwd: {string} root cwd
--- @returns {string} or {nil}
-local function handle_incoming_data(db, p_data, data, cwd)
-  if data and utils.str_find(data, '\n') then
-    local prev = p_data..data
-    local i = 0
+function Runner:_handle_incoming_data(prev_output, incoming)
+  if incoming and utils.str_find(incoming, '\n') then
+    local prev = prev_output..incoming
+    local i = 1
     for line in prev:gmatch('[^\n]*\n') do
-      i = i + handle_line_to_db(db, line, cwd)
+      i = i + self:_parse_status_output(line)
     end
 
     return prev:sub(i, -1)
   end
 
-  if data then
-    return p_data..data
+  if incoming then
+    return prev_output..incoming
   end
 
-  for line in p_data:gmatch('[^\n]*\n') do
-    handle_line_to_db(db, line, cwd)
+  for line in prev_output:gmatch('[^\n]*\n') do
+    self._parse_status_output(line)
   end
 
   return nil
 end
 
--- @private
 function Runner:_getopts(stdout_handle)
-  local untracked = self.show_untracked and '-u' or nil
-  local ignored = self.with_ignored and '--ignored=matching' or '--ignored=no'
+  local untracked = self.list_untracked and '-u' or nil
+  local ignored = self.list_ignored and '--ignored=matching' or '--ignored=no'
   return {
     args = {"status", "--porcelain=v1", ignored, untracked},
-    cwd = self.toplevel,
+    cwd = self.project_root,
     stdio = { nil, stdout_handle, nil },
   }
 end
 
--- @private
--- We need to parse incoming data incrementally and add it to a database
--- to avoid burning the lua memory, which can happen on very large repositories,
--- mostly when ignored and untracked options are set.
-function Runner:_populate_db()
-  local handle
+function Runner:_run_git_job()
+  local handle, pid
   local stdout = uv.new_pipe(false)
+  local timer = uv.new_timer()
 
-  local now = uv.now()
-  local has_timedout = false
-  handle = uv.spawn("git", self:_getopts(stdout), vim.schedule_wrap(function()
-    if not has_timedout then
-      self.db:insert_cache()
-      self.on_end()
-    else
-      self.db:clear()
+  local function on_finish(output)
+    if timer:is_closing() or stdout:is_closing() or handle:is_closing() then
+      return
     end
+    timer:stop()
+    timer:close()
     stdout:read_stop()
     stdout:close()
     handle:close()
-  end))
+    pcall(uv.kill, pid)
 
-  local _data = ''
-  uv.read_start(stdout, vim.schedule_wrap(function(err, data)
-    if err or has_timedout then return end
+    self.on_end(output or self.output)
+  end
 
-    if uv.now() - now > self.timeout then
-      has_timedout = true
-      self.after_clear()
-      return
-    end
+  handle, pid = uv.spawn(
+    "git",
+    self:_getopts(stdout),
+    vim.schedule_wrap(function() on_finish() end)
+  )
 
-    handle_incoming_data(self.db, _data, data, self.toplevel)
-  end))
+  timer:start(self.timeout, 0, vim.schedule_wrap(function() on_finish({}) end))
+
+  local output_leftover = ''
+  local function manage_output(err, data)
+    if err then return end
+    output_leftover = self:_handle_incoming_data(output_leftover, data)
+  end
+
+  uv.read_start(stdout, vim.schedule_wrap(manage_output))
 end
 
-function Runner:run()
-  self:_populate_db()
-end
-
-function Runner.new(opts)
-  opts.db:clean_paths(opts.toplevel)
-  return setmetatable({
-    db = opts.db,
-    toplevel = opts.toplevel,
-    show_untracked = opts.show_untracked,
-    with_ignored = opts.with_ignored,
-    timeout = opts.timeout,
+-- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
+function Runner.run(opts)
+  local self = setmetatable({
+    project_root = opts.project_root,
+    list_untracked = opts.list_untracked,
+    list_ignored = opts.list_ignored,
+    timeout = opts.timeout or 400,
+    output = {},
     on_end = opts.on_end,
-    after_clear = opts.after_clear,
   }, Runner)
+
+  self:_run_git_job()
 end
 
 return Runner

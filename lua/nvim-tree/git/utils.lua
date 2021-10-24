@@ -17,10 +17,38 @@ function M.get_toplevel(cwd)
   return toplevel:sub(0, -2)
 end
 
-function M.show_untracked(cwd)
+local untracked = {}
+
+function M.should_show_untracked(cwd)
+  if untracked[cwd] ~= nil then
+    return untracked[cwd]
+  end
+
   local cmd = "git -C "..cwd.." config --type=bool status.showUntrackedFiles"
   local has_untracked = vim.fn.system(cmd)
-  return vim.trim(has_untracked) ~= 'false'
+  untracked[cwd] = vim.trim(has_untracked) ~= 'false'
+  return untracked[cwd]
+end
+
+function M.file_status_to_dir_status(status, cwd)
+  local dirs = {}
+  for p, s in pairs(status) do
+    if s ~= '!!' then
+      local modified = vim.fn.fnamemodify(p, ':h')
+      dirs[modified] = 'dirty'
+    end
+  end
+
+  for dirname, _ in pairs(dirs) do
+    local modified = dirname
+    while modified ~= cwd and modified ~= '/' do
+      modified = vim.fn.fnamemodify(modified, ':h')
+      dirs[modified] = 'dirty'
+    end
+  end
+
+  return dirs
 end
 
 return M
+

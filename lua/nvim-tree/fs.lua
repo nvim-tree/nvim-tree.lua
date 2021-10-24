@@ -34,7 +34,7 @@ local function create_file(file)
     else
       luv.fs_close(fd)
       events._dispatch_file_created(file)
-      lib.refresh_tree(true)
+      lib.refresh_tree()
       focus_file(file)
     end
   end))
@@ -98,7 +98,7 @@ function M.create(node)
   end
   api.nvim_out_write(ans..' was properly created\n')
   events._dispatch_folder_created(ans)
-  lib.refresh_tree(true)
+  lib.refresh_tree()
   focus_file(ans)
 end
 
@@ -239,7 +239,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  return lib.refresh_tree(true)
+  return lib.refresh_tree()
 end
 
 local function add_to_clipboard(node, clip)
@@ -276,7 +276,7 @@ function M.remove(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    lib.refresh_tree(true)
+    lib.refresh_tree()
   end
 end
 
@@ -298,7 +298,7 @@ function M.rename(with_sub)
     api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
     rename_loaded_buffers(node.absolute_path, new_name)
     events._dispatch_node_renamed(abs_path, new_name)
-    lib.refresh_tree(true)
+    lib.refresh_tree()
   end
 end
 

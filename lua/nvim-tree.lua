@@ -179,10 +179,6 @@ function M.on_keypress(mode)
   end
 end
 
-function M.refresh()
-  lib.refresh_tree()
-end
-
 function M.print_clipboard()
   fs.print_clipboard()
 end
@@ -358,7 +354,7 @@ local function setup_vim_commands()
     command! NvimTreeClose lua require'nvim-tree'.close()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree(true)
+    command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree()
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
@@ -380,8 +376,8 @@ local function setup_autocommands(opts)
     """ reset highlights when colorscheme is changed
     au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
-    au BufWritePost * lua require'nvim-tree.lib'.refresh_tree(true)
-    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.git'.full_reload()
+    au BufWritePost * lua require'nvim-tree.lib'.refresh_tree()
+    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.lib'.reload_git()
   ]]
 
   if opts.auto_close then
@@ -438,11 +434,7 @@ local DEFAULT_OPTS = {
   git = {
     enable = true,
     ignore = true,
-    timeout = 5000,
-    -- TODO: for later use when refactoring the renderer
-    -- show_highlights = false,
-    -- show_icons = true,
-    -- icon_placement = 'left',
+    timeout = 400,
   }
 }
 

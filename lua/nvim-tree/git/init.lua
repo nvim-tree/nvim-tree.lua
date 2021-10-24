@@ -1,145 +1,86 @@
 local git_utils = require'nvim-tree.git.utils'
-local updater = require'nvim-tree.git.tree-update'
 local Runner = require'nvim-tree.git.runner'
-local utils = require'nvim-tree.utils'
 
 local M = {
-  db = nil,
-  toplevels = {},
+  config = nil,
+  projects = {},
+  cwd_to_project_root = {}
 }
 
-function M.has_git_plugin()
-  local has_neogit = pcall(require, 'neogit')
-  return vim.fn.exists('g:loaded_fugitive') == 1 or has_neogit
-end
+function M.reload(callback)
+  local num_projects = vim.tbl_count(M.projects)
+  if not M.config.enable or num_projects == 0 then
+    return callback({})
+  end
 
-function M.apply_updates(node)
-  local filter_ignored = M.config.ignore and not require'nvim-tree.populate'.show_ignored
-  updater.update(M.db, node, filter_ignored)
-end
-
-function M.handle_update(node)
-  return function()
-    M.apply_updates(node)
-    require'nvim-tree.lib'.redraw()
+  local done = 0
+  for project_root in pairs(M.projects) do
+    M.projects[project_root] = {}
+    Runner.run {
+      project_root = project_root,
+      list_untracked = git_utils.should_show_untracked(project_root),
+      list_ignored = M.config.ignore,
+      timeout = M.config.timeout,
+      on_end = function(git_status)
+        M.projects[project_root] = {
+          files = git_status,
+          dirs = git_utils.file_status_to_dir_status(git_status, project_root)
+        }
+        done = done + 1
+        if done == num_projects then
+          callback(M.projects)
+        end
+      end
+    }
   end
 end
 
-function M.get_loaded_toplevel(path)
+function M.get_project_root(cwd)
+  if M.cwd_to_project_root[cwd] then
+    return M.cwd_to_project_root[cwd]
+  end
+
+  if M.cwd_to_project_root[cwd] == false then
+    return nil
+  end
+
+  local project_root = git_utils.get_toplevel(cwd)
+  return project_root
+end
+
+function M.load_project_status(cwd, callback)
   if not M.config.enable then
-    return
-  end
-  local toplevel = git_utils.get_toplevel(path)
-  if not toplevel or not M.toplevels[toplevel] then
-    return
-  end
-  return toplevel
-end
-
-function M.set_toplevel(path, toplevel)
-  if not M.config.enable then
-    return
-  end
-  toplevel = toplevel or git_utils.get_toplevel(path)
-  if not toplevel or M.toplevels[toplevel] ~= nil then
-    return
+    return callback({})
   end
 
-  M.toplevels[toplevel] = git_utils.show_untracked(toplevel)
-end
+  local project_root = M.get_project_root(cwd)
+  if not project_root then
+    M.cwd_to_project_root[cwd] = false
+    return callback({})
+  end
 
-local function clear()
-  M.config.enable = false
-  utils.echo_warning("git integration has been disabled, timeout was exceeded")
-end
+  local status = M.projects[project_root]
+  if status then
+    return callback(status)
+  end
 
-function M.run_git_status(toplevel, node)
-  local show_untracked = M.toplevels[toplevel]
-  Runner.new {
-    db = M.db,
-    toplevel = toplevel,
-    show_untracked = show_untracked,
-    with_ignored = M.config.ignore,
+  Runner.run {
+    project_root = project_root,
+    list_untracked = git_utils.should_show_untracked(project_root),
+    list_ignored = M.config.ignore,
     timeout = M.config.timeout,
-    on_end = M.handle_update(node),
-    after_clear = clear,
-  }:run()
-end
-
-function M.run(node)
-  if not M.config.enable then
-    return
-  end
-
-  local toplevel = git_utils.get_toplevel(node.absolute_path)
-  if not toplevel then
-    return
-  end
-
-  if M.toplevels[toplevel] == nil then
-    M.set_toplevel(nil, toplevel)
-    M.run_git_status(toplevel, node)
-  else
-    M.apply_updates(node)
-  end
-end
-
-local function check_sqlite()
-  local has_sqlite = pcall(require, 'sqlite')
-  if M.config.enable and not has_sqlite then
-    local info = "Git integration requires `tami5/sqlite.lua` to be installed (see :help nvim-tree.git)"
-    utils.echo_warning(info)
-    M.config.enable = false
-  end
-end
-
-function M.full_reload()
-  if not M.config.enable then
-    return
-  end
-
-  local tree = require'nvim-tree.lib'.Tree
-  for toplevel, show_untracked in pairs(M.toplevels) do
-    local node
-    if utils.str_find(tree.cwd, toplevel) then
-      node = { entries = tree.entries, absolute_path = tree.cwd }
-    else
-      node = utils.find_node(tree.entries, function(n)
-        return utils.str_find(n.absolute_path, toplevel)
-      end)
+    on_end = function(git_status)
+      M.projects[project_root] = {
+        files = git_status,
+        dirs = git_utils.file_status_to_dir_status(git_status, project_root)
+      }
+      callback(M.projects[project_root])
     end
-    if node then
-      Runner.new {
-        db = M.db,
-        toplevel = toplevel,
-        show_untracked = show_untracked,
-        with_ignored = M.config.ignore,
-        timeout = M.config.timeout,
-        on_end = M.handle_update(node),
-        after_clear = clear,
-      }:run()
-    end
-  end
-end
-
-function M.cleanup()
-  M.db:cleanup()
+  }
 end
 
 function M.setup(opts)
-  M.config = {}
-  M.config.enable = opts.git.enable
-  M.config.ignore = opts.git.ignore
-  M.config.timeout = opts.git.timeout
-  -- TODO: for later use when refactoring the renderer
-  -- M.config.show_highlights = opts.git.show_highlights
-  -- M.config.show_icons = opts.git.show_icons
-  -- M.config.icon_placement = opts.git.placement
-  check_sqlite()
-
-  if M.config.enable then
-    M.db = require'nvim-tree.git.db'.new()
-  end
+  M.config = opts.git
 end
 
 return M
