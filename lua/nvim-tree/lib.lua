@@ -58,7 +58,7 @@ function M.redraw()
 end
 
 local function get_node_at_line(line)
-  local index = 2
+  local index = view.View.hide_root_folder and 1 or 2
   local function iter(entries)
     for _, node in ipairs(entries) do
       if index == line then
@@ -101,6 +101,7 @@ end
 
 function M.get_node_at_cursor()
   local winnr = view.get_winnr()
+  local hide_root_folder = view.View.hide_root_folder
   if not winnr then
     return
   end
@@ -111,7 +112,7 @@ function M.get_node_at_cursor()
     local help_text = get_node_at_line(line+1)(help_lines)
     return {name = help_text}
   else
-    if line == 1 and M.Tree.cwd ~= "/" then
+    if line == 1 and M.Tree.cwd ~= "/" and not hide_root_folder then
       return { name = ".." }
     end
 
@@ -202,7 +203,8 @@ end
 
 function M.set_index_and_redraw(fname)
   local i
-  if M.Tree.cwd == '/' then
+  local hide_root_folder = view.View.hide_root_folder
+  if M.Tree.cwd == '/' or hide_root_folder then
     i = 0
   else
     i = 1

@@ -415,6 +415,7 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
+  hide_root_folder    = false,
   update_focused_file = {
     enable = false,
     update_cwd = false,

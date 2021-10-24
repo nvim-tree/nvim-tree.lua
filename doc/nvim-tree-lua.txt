@@ -230,6 +230,11 @@ Here is a list of the options available in the setup call:
 *nvim-tree.view*
 - |view|: window / buffer setup
 
+  - |view.hide_root_folder|: hide the path of the current working 
+    directory on top of the tree
+      type: `boolean`
+      default: `false`
+
   - |view.width|: width of the window, can be either a `%` string or
     a number representing columns. Only works with |view.side| `left` or `right`
       type: `string | number`
