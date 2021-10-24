@@ -3,12 +3,12 @@ local luv = vim.loop
 
 local renderer = require'nvim-tree.renderer'
 local config = require'nvim-tree.config'
-local git = require'nvim-tree.git'
 local diagnostics = require'nvim-tree.diagnostics'
 local pops = require'nvim-tree.populate'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local events = require'nvim-tree.events'
+local git = require'nvim-tree.git'
 local populate = pops.populate
 local refresh_entries = pops.refresh_entries
 
@@ -19,33 +19,25 @@ local M = {}
 M.Tree = {
   entries = {},
   cwd = nil,
-  loaded = false,
   target_winid = nil,
 }
 
-function M.init(with_open, with_reload)
-  M.Tree.entries = {}
-  if not M.Tree.cwd then
-    M.Tree.cwd = luv.cwd()
-  end
-  if config.use_git() then
-    git.git_root(M.Tree.cwd)
-  end
-  populate(M.Tree.entries, M.Tree.cwd)
+local function load_children(cwd, children, parent)
+  git.load_project_status(cwd, function(git_statuses)
+    populate(children, cwd, parent, git_statuses)
+    M.redraw()
+  end)
+end
 
-  local stat = luv.fs_stat(M.Tree.cwd)
-  M.Tree.last_modified = stat.mtime.sec
+function M.init(with_open, foldername)
+  M.Tree.entries = {}
+  M.Tree.cwd = foldername or luv.cwd()
 
   if with_open then
     M.open()
-  elseif view.win_open() then
-    M.refresh_tree()
   end
 
-  if with_reload then
-    renderer.draw(M.Tree, true)
-    M.Tree.loaded = true
-  end
+  load_children(M.Tree.cwd, M.Tree.entries)
 
   if not first_init_done then
     events._dispatch_ready()
@@ -85,7 +77,7 @@ local function get_line_from_node(node, find_parent)
   local function iter(entries, recursive)
     for _, entry in ipairs(entries) do
       local n = M.get_last_group_node(entry)
-      if node_path:match('^'..n.match_path..'$') ~= nil then
+      if node_path == n.absolute_path then
         return line, entry
       end
 
@@ -135,70 +127,70 @@ end
 function M.unroll_dir(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
-  if #node.entries > 0 then
-    renderer.draw(M.Tree, true)
+  if #node.entries == 0 then
+    load_children(
+      node.link_to or node.absolute_path,
+      node.entries,
+      node
+    )
   else
-    if config.use_git() then
-      git.git_root(node.absolute_path)
-    end
-    populate(node.entries, node.link_to or node.absolute_path, node)
-
-    renderer.draw(M.Tree, true)
+    M.redraw()
   end
 
   diagnostics.update()
 end
 
-local function refresh_git(node)
-  if not node then node = M.Tree end
-  git.update_status(node.entries, node.absolute_path or node.cwd, node, false)
-  for _, entry in pairs(node.entries) do
-    if entry.entries and #entry.entries > 0 then
-      refresh_git(entry)
-    end
-  end
-end
-
--- TODO update only entries where directory has changed
-local function refresh_nodes(node)
-  refresh_entries(node.entries, node.absolute_path or node.cwd, node)
+local function refresh_nodes(node, projects)
+  local project_root = git.get_project_root(node.absolute_path or node.cwd)
+  refresh_entries(node.entries, node.absolute_path or node.cwd, node, projects[project_root] or {})
   for _, entry in ipairs(node.entries) do
     if entry.entries and entry.open then
-      refresh_nodes(entry)
+      refresh_nodes(entry, projects)
     end
   end
 end
 
--- this variable is used to bufferize the refresh actions
--- so only one happens every second at most
-local refreshing = false
-
-function M.refresh_tree(disable_clock)
-  if not M.Tree.cwd or (not disable_clock and refreshing) or vim.v.exiting ~= vim.NIL then
+function M.refresh_tree()
+  if not M.Tree.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
-  refreshing = true
 
-  refresh_nodes(M.Tree)
-
-  local use_git = config.use_git()
-  if use_git then
-    vim.schedule(function()
-      git.reload_roots()
-      refresh_git(M.Tree)
+  git.reload(function(projects)
+    refresh_nodes(M.Tree, projects)
+    if view.win_open() then
       M.redraw()
-    end)
+    end
+    diagnostics.update()
+  end)
+end
+
+local function reload_node_status(parent_node, projects)
+  local project_root = git.get_project_root(parent_node.absolute_path or parent_node.cwd)
+  local status = projects[project_root] or {}
+  for _, node in ipairs(parent_node.entries) do
+    if node.entries then
+      node.git_status = status.dirs and status.dirs[node.absolute_path]
+    else
+      node.git_status = status.files and status.files[node.absolute_path]
+    end
+    if node.entries and #node.entries > 0 then
+      reload_node_status(node, projects)
+    end
   end
+end
 
-  vim.schedule(diagnostics.update)
-
-  if view.win_open() then
-    renderer.draw(M.Tree, true)
-  else
-    M.Tree.loaded = false
+local running_reload = false
+function M.reload_git()
+  if not git.config.enable or running_reload then
+    return
   end
+  running_reload = true
 
-  vim.defer_fn(function() refreshing = false end, vim.g.nvim_tree_refresh_wait or 1000)
+  git.reload(function(projects)
+    running_reload = false
+    reload_node_status(M.Tree, projects)
+    M.redraw()
+  end)
 end
 
 function M.set_index_and_redraw(fname)
@@ -209,40 +201,46 @@ function M.set_index_and_redraw(fname)
   else
     i = 1
   end
-  local reload = false
 
-  local function iter(entries)
-    for _, entry in ipairs(entries) do
+  local tree_altered = false
+
+  local function iterate_nodes(nodes)
+    for _, node in ipairs(nodes) do
       i = i + 1
-      if entry.absolute_path == fname then
+      if node.absolute_path == fname then
         return i
       end
 
-      if fname:match(entry.match_path..utils.path_separator) ~= nil then
-        if #entry.entries == 0 then
-          reload = true
-          populate(entry.entries, entry.absolute_path, entry)
+      local path_matches = utils.str_find(fname, node.absolute_path..utils.path_separator)
+      if path_matches then
+        if #node.entries == 0 then
+          node.open = true
+          populate(node.entries, node.absolute_path, node, {})
+          git.load_project_status(node.absolute_path, function(status)
+            if status.dirs or status.files then
+              reload_node_status(node, git.projects)
+              M.redraw()
+            end
+          end)
         end
-        if entry.open == false then
-          reload = true
-          entry.open = true
+        if node.open == false then
+          node.open = true
+          tree_altered = true
         end
-        if iter(entry.entries) ~= nil then
+        if iterate_nodes(node.entries) ~= nil then
           return i
         end
-      elseif entry.open == true then
-        iter(entry.entries)
+      elseif node.open == true then
+        iterate_nodes(node.entries)
       end
     end
   end
 
-  local index = iter(M.Tree.entries)
-  if not view.win_open() then
-    M.Tree.loaded = false
-    return
+  local index = iterate_nodes(M.Tree.entries)
+  if tree_altered then
+    M.redraw()
   end
-  renderer.draw(M.Tree, reload)
-  if index then
+  if index and view.win_open() then
     view.set_cursor({index, 0})
   end
 end
@@ -405,8 +403,6 @@ function M.open_file(mode, filename)
   if vim.g.nvim_tree_quit_on_open == 1 then
     view.close()
   end
-
-  renderer.draw(M.Tree, true)
 end
 
 function M.open_file_in_tab(filename)
@@ -467,8 +463,7 @@ function M.change_dir(name)
   end
 
   vim.cmd('lcd '..vim.fn.fnameescape(foldername))
-  M.Tree.cwd = foldername
-  M.init(false, true)
+  M.init(false, foldername)
 end
 
 function M.set_target_win()
@@ -486,18 +481,19 @@ function M.open()
   M.set_target_win()
 
   local cwd = vim.fn.getcwd()
-  view.open()
+  local should_redraw = view.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if M.Tree.loaded and (respect_buf_cwd == 1 and cwd ~= M.Tree.cwd) then
+  if respect_buf_cwd == 1 and cwd ~= M.Tree.cwd then
     M.change_dir(cwd)
   end
-  renderer.draw(M.Tree, not M.Tree.loaded)
-  M.Tree.loaded = true
+  if should_redraw then
+    M.redraw()
+  end
 end
 
 function M.sibling(node, direction)
-  if not direction then return end
+  if node.name == '..' or not direction then return end
 
   local iter = get_line_from_node(node, true)
   local node_path = node.absolute_path
@@ -507,7 +503,7 @@ function M.sibling(node, direction)
 
   -- Check if current node is already at root entries
   for index, entry in ipairs(M.Tree.entries) do
-    if node_path:match('^'..entry.match_path..'$') ~= nil then
+    if node_path == entry.absolute_path then
       line = index
     end
   end
@@ -534,7 +530,6 @@ function M.sibling(node, direction)
 
   line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
   view.set_cursor({line, 0})
-  renderer.draw(M.Tree, true)
 end
 
 function M.close_node(node)
@@ -543,11 +538,14 @@ end
 
 function M.parent_node(node, should_close)
   if node.name == '..' then return end
+
   should_close = should_close or false
+  local altered_tree = false
 
   local iter = get_line_from_node(node, true)
   if node.open == true and should_close then
     node.open = false
+    altered_tree = true
   else
     local line, parent = iter(M.Tree.entries, true)
     if parent == nil then
@@ -555,9 +553,12 @@ function M.parent_node(node, should_close)
     elseif should_close then
       parent.open = false
     end
-    api.nvim_win_set_cursor(view.get_winnr(), {line, 0})
+    view.set_cursor({line, 0})
   end
-  renderer.draw(M.Tree, true)
+
+  if altered_tree then
+    M.redraw()
+  end
 end
 
 function M.toggle_ignored()

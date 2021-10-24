@@ -1,17 +1,13 @@
-local config = require'nvim-tree.config'
-local git = require'nvim-tree.git'
-
 local api = vim.api
 local luv = vim.loop
+
+local utils = require'nvim-tree.utils'
 
 local M = {
   ignore_list = {}
 }
 
-local utils = require'nvim-tree.utils'
-local path_to_matching_str = utils.path_to_matching_str
-
-local function dir_new(cwd, name)
+local function dir_new(cwd, name, status)
   local absolute_path = utils.path_join({cwd, name})
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
@@ -28,16 +24,15 @@ local function dir_new(cwd, name)
     absolute_path = absolute_path,
     -- TODO: last modified could also involve atime and ctime
     last_modified = last_modified,
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
     open = false,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
-    entries = {}
+    entries = {},
+    git_status = (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
   }
 end
 
-local function file_new(cwd, name)
+local function file_new(cwd, name, status)
   local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
   return {
@@ -45,8 +40,7 @@ local function file_new(cwd, name)
     absolute_path = absolute_path,
     executable = is_exec,
     extension = string.match(name, ".?[^.]+%.(.*)") or "",
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
+    git_status = status.files and status.files[absolute_path],
   }
 end
 
@@ -55,8 +49,7 @@ end
 -- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
-local function link_new(cwd, name)
-
+local function link_new(cwd, name, status)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
@@ -80,8 +73,7 @@ local function link_new(cwd, name)
     open = open,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
-    match_name = path_to_matching_str(name),
-    match_path = path_to_matching_str(absolute_path),
+    git_status = status.files and status.files[absolute_path],
   }
 end
 
@@ -130,11 +122,11 @@ local function should_ignore(path)
     return false
   end
 
-  if vim.g.nvim_tree_gitignore == 1 then
-    if git.should_gitignore(path) then
-      return true
-    end
-  end
+  -- if vim.g.nvim_tree_gitignore == 1 then
+  --   if git.should_gitignore(path) then
+  --     return true
+  --   end
+  -- end
 
   local relpath = utils.path_relative(path, vim.loop.cwd())
   if M.ignore_list[relpath] == true or M.ignore_list[basename] == true then
@@ -151,7 +143,11 @@ local function should_ignore(path)
   return false
 end
 
-function M.refresh_entries(entries, cwd, parent_node)
+local function should_ignore_git(path, status)
+  return not M.show_ignored and (status and status[path] == '!!')
+end
+
+function M.refresh_entries(entries, cwd, parent_node, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -162,6 +158,8 @@ function M.refresh_entries(entries, cwd, parent_node)
   local cached_entries = {}
   local entries_idx = {}
   for i, node in ipairs(entries) do
+    node.git_status = (status.files and status.files[node.absolute_path])
+      or (status.dirs and status.dirs[node.absolute_path])
     cached_entries[i] = node.name
     entries_idx[node.name] = i
     named_entries[node.name] = node
@@ -179,7 +177,7 @@ function M.refresh_entries(entries, cwd, parent_node)
     num_new_entries = num_new_entries + 1
 
     local abs = utils.path_join({cwd, name})
-    if not should_ignore(abs) then
+    if not should_ignore(abs) and not should_ignore_git(abs, status.files) then
       if not t then
         local stat = luv.fs_stat(abs)
         t = stat and stat.type
@@ -208,7 +206,7 @@ function M.refresh_entries(entries, cwd, parent_node)
       parent_node.group_next = nil
       named_entries[next_node.name] = next_node
     else
-      M.refresh_entries(entries, next_node.absolute_path, next_node)
+      M.refresh_entries(entries, next_node.absolute_path, next_node, status)
       return
     end
   end
@@ -245,7 +243,7 @@ function M.refresh_entries(entries, cwd, parent_node)
     for _, name in ipairs(e.entries) do
       change_prev = true
       if not named_entries[name] then
-        local n = e.fn(cwd, name)
+        local n = e.fn(cwd, name, status)
         if e.check(n.link_to, n.absolute_path) then
           new_nodes_added = true
           idx = 1
@@ -274,7 +272,7 @@ function M.refresh_entries(entries, cwd, parent_node)
   end
 end
 
-function M.populate(entries, cwd, parent_node)
+function M.populate(entries, cwd, parent_node, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -290,7 +288,7 @@ function M.populate(entries, cwd, parent_node)
     if not name then break end
 
     local abs = utils.path_join({cwd, name})
-    if not should_ignore(abs) then
+    if not should_ignore(abs) and not should_ignore_git(abs, status.files) then
       if not t then
         local stat = luv.fs_stat(abs)
         t = stat and stat.type
@@ -312,46 +310,37 @@ function M.populate(entries, cwd, parent_node)
   if parent_node and vim.g.nvim_tree_group_empty == 1 then
     if should_group(cwd, dirs, files, links) then
       local child_node
-      if dirs[1] then child_node = dir_new(cwd, dirs[1]) end
-      if links[1] then child_node = link_new(cwd, links[1]) end
+      if dirs[1] then child_node = dir_new(cwd, dirs[1], status) end
+      if links[1] then child_node = link_new(cwd, links[1], status) end
       if luv.fs_access(child_node.absolute_path, 'R') then
         parent_node.group_next = child_node
         child_node.git_status = parent_node.git_status
-        M.populate(entries, child_node.absolute_path, child_node)
+        M.populate(entries, child_node.absolute_path, child_node, status)
         return
       end
     end
   end
 
   for _, dirname in ipairs(dirs) do
-    local dir = dir_new(cwd, dirname)
+    local dir = dir_new(cwd, dirname, status)
     if luv.fs_access(dir.absolute_path, 'R') then
       table.insert(entries, dir)
     end
   end
 
   for _, linkname in ipairs(links) do
-    local link = link_new(cwd, linkname)
+    local link = link_new(cwd, linkname, status)
     if link.link_to ~= nil then
       table.insert(entries, link)
     end
   end
 
   for _, filename in ipairs(files) do
-    local file = file_new(cwd, filename)
+    local file = file_new(cwd, filename, status)
     table.insert(entries, file)
   end
 
   utils.merge_sort(entries, node_comparator)
-
-  local icon_config = config.get_icon_state()
-  if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
-    return
-  end
-
-  if config.use_git() then
-    vim.schedule(function() git.update_status(entries, cwd, parent_node, true) end)
-  end
 end
 
 function M.setup(opts)

@@ -24,7 +24,8 @@ local out_config = {
   "nvim_tree_disable_keybindings",
   "nvim_tree_disable_default_keybindings",
   "nvim_tree_hide_dotfiles",
-  "nvim_tree_ignore"
+  "nvim_tree_ignore",
+  "nvim_tree_gitignore"
 }
 
 local x = vim.tbl_filter(function(v)
