@@ -110,6 +110,10 @@ local DEFAULT_CONFIG = {
   height = 30,
   side = 'left',
   auto_resize = false,
+  winopts = {
+    number = false,
+    relativenumber = false,
+  },
   mappings = {
     custom_only = false,
     list = {}
@@ -145,6 +149,8 @@ function M.setup(opts)
   M.View.width = options.width
   M.View.height = options.height
   M.View.auto_resize = opts.auto_resize
+  M.View.winopts.number = opts.winopts.number
+  M.View.winopts.relativenumber = opts.winopts.relativenumber
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else
