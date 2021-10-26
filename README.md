@@ -107,7 +107,15 @@ require'nvim-tree'.setup {
       -- list of mappings to set on the tree manually
       list = {}
     }
-  }
+  },
+
+  -- trashing is currently a UNIX only feature
+  trash = {
+    -- the command used to trash files, "trash" is the default which needs trash-cli to be installed
+    cmd = "trash",
+    -- if false trashing won't require y/n confirmation
+    require_confirm = true
+  },
 }
 ```
 
@@ -209,6 +217,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `gy` will copy absolute path to system clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
+- type `D` to trash a file (configured in setup())
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
 - type `-` to navigate up to the parent directory of the current file/directory
@@ -260,6 +269,7 @@ local list = {
   { key = "R",                            cb = tree_cb("refresh") },
   { key = "a",                            cb = tree_cb("create") },
   { key = "d",                            cb = tree_cb("remove") },
+  { key = "D",                            cb = tree_cb("trash") },
   { key = "r",                            cb = tree_cb("rename") },
   { key = "<C-r>",                        cb = tree_cb("full_rename") },
   { key = "x",                            cb = tree_cb("cut") },

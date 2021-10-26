@@ -528,6 +528,7 @@ Defaults to:
       { key = "R",                            cb = tree_cb("refresh") },
       { key = "a",                            cb = tree_cb("create") },
       { key = "d",                            cb = tree_cb("remove") },
+      { key = "D",                            cb = tree_cb("trash") },
       { key = "r",                            cb = tree_cb("rename") },
       { key = "<C-r>",                        cb = tree_cb("full_rename") },
       { key = "x",                            cb = tree_cb("cut") },

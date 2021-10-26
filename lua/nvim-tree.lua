@@ -151,6 +151,36 @@ local keypress_funcs = {
     )
     luv.unref(process.handle)
   end,
+  trash = function(node)
+    if _config.is_unix then
+      if _config.trash.cmd == nil then _config.trash.cmd = 'trash' end
+      if _config.trash.require_confirm  == nil then _config.trash.require_confirm  = true end
+    else
+      print('trash is currently a UNIX only feature!')
+    end
+
+    local function get_user_input_char()
+      local c = vim.fn.getchar()
+      return vim.fn.nr2char(c)
+    end
+
+    if (node) then
+      local is_confirmed = true
+      if _config.trash.require_confirm then
+        is_confirmed = false
+        print("Trash "..node.name.." ? y/n")
+        if get_user_input_char():match('^y') then is_confirmed = true end
+      end
+    
+      if is_confirmed then
+        vim.fn.jobstart(_config.trash.cmd.." "..node.absolute_path, {
+          detach = true,
+          on_exit = function(_job_id, _data, _event) lib.refresh_tree() end,
+        })
+      end
+    end
+
+  end,
 }
 
 function M.on_keypress(mode)
@@ -446,6 +476,7 @@ function M.setup(conf)
   _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+  _config.trash = opts.trash or {}
   if type(opts.update_to_buf_dir) == "boolean" then
     utils.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
