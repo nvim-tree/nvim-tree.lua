@@ -475,6 +475,7 @@ function M.setup(conf)
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.populate'.setup(opts)
   require'nvim-tree.git'.setup(opts)
+  require'nvim-tree.renderer2'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()

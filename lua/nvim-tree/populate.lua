@@ -17,13 +17,12 @@ local function dir_new(cwd, name, status, parent_ignored)
   --- This is because i have some folders that i dont have permissions to read its metadata, so i have to check that stat returns a valid info
   local last_modified = 0
   if stat ~= nil then
-    last_modified = stat.mtime.sec
+    last_modified = stat.mtime.sec or stat.ctime.sec
   end
 
   return {
     name = name,
     absolute_path = absolute_path,
-    -- TODO: last modified could also involve atime and ctime
     last_modified = last_modified,
     open = false,
     has_children = has_children,
@@ -60,10 +59,13 @@ local function link_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
   local stat = luv.fs_stat(absolute_path)
-  local open, entries
+  local open, entries, has_children
+
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then
     open = false
     entries = {}
+    local handle = luv.fs_scandir(link_to)
+    has_children = handle and luv.fs_scandir_next(handle) ~= nil
   end
 
   local last_modified = 0
@@ -79,6 +81,7 @@ local function link_new(cwd, name, status, parent_ignored)
     open = open,
     entries = entries,
     git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
+    has_children = has_children,
   }
 end
 

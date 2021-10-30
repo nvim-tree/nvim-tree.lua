@@ -23,6 +23,8 @@ function M.get_icon_state()
       empty_open = "",
       symlink = "",
       symlink_open = "",
+      empty_symlink = "",
+      empty_symlink_open = "",
     },
   }
 
