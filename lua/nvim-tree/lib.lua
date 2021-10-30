@@ -124,7 +124,7 @@ function M.get_last_group_node(node)
   return next
 end
 
-function M.unroll_dir(node)
+function M.expand_or_collapse(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.entries == 0 then

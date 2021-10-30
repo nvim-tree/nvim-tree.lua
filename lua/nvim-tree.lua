@@ -173,7 +173,7 @@ function M.on_keypress(mode)
   if node.link_to and not node.entries then
     lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
-    lib.unroll_dir(node)
+    lib.expand_or_collapse(node)
   else
     lib.open_file(mode, node.absolute_path)
   end

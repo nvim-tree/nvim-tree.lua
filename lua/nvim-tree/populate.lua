@@ -141,7 +141,7 @@ local function should_ignore(path)
 end
 
 local function should_ignore_git(path, status)
-  return not M.show_ignored and (status and status[path] == '!!')
+  return M.config.filter_ignored and (status and status[path] == '!!')
 end
 
 function M.refresh_entries(entries, cwd, parent_node, status)
