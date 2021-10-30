@@ -22,9 +22,9 @@ M.Tree = {
   target_winid = nil,
 }
 
-local function load_children(cwd, children, parent)
+local function load_children(cwd, children)
   git.load_project_status(cwd, function(git_statuses)
-    populate(children, cwd, parent, git_statuses)
+    populate(children, cwd, git_statuses)
     M.redraw()
   end)
 end
@@ -117,8 +117,11 @@ end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 function M.get_last_group_node(node)
+  if vim.g.nvim_tree_group_empty ~= 1 then
+    return node
+  end
   local next = node
-  while next.group_next do
+  while next.entries and #next.entries == 1 and next.entries[1].entries do
     next = next.group_next
   end
   return next
@@ -128,11 +131,7 @@ function M.expand_or_collapse(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.entries == 0 then
-    load_children(
-      node.link_to or node.absolute_path,
-      node.entries,
-      node
-    )
+    load_children(node.link_to or node.absolute_path, node.entries)
   else
     M.redraw()
   end
@@ -142,7 +141,7 @@ end
 
 local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(node.absolute_path or node.cwd)
-  refresh_entries(node.entries, node.absolute_path or node.cwd, node, projects[project_root] or {})
+  refresh_entries(node.entries, node.absolute_path or node.cwd, projects[project_root] or {})
   for _, entry in ipairs(node.entries) do
     if entry.entries and entry.open then
       refresh_nodes(entry, projects)
@@ -217,7 +216,7 @@ function M.set_index_and_redraw(fname)
       if path_matches then
         if #node.entries == 0 then
           node.open = true
-          populate(node.entries, node.absolute_path, node, {})
+          populate(node.entries, node.absolute_path, {})
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
               reload_node_status(node, git.projects)

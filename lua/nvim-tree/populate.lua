@@ -26,7 +26,6 @@ local function dir_new(cwd, name, status, parent_ignored)
     -- TODO: last modified could also involve atime and ctime
     last_modified = last_modified,
     open = false,
-    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     entries = {},
     git_status = parent_ignored and '!!' or (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
@@ -78,29 +77,9 @@ local function link_new(cwd, name, status, parent_ignored)
     link_to = link_to,
     last_modified = last_modified,
     open = open,
-    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
     git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
   }
-end
-
--- Returns true if there is either exactly 1 dir, or exactly 1 symlink dir. Otherwise, false.
--- @param cwd Absolute path to the parent directory
--- @param dirs List of dir names
--- @param files List of file names
--- @param links List of symlink names
-local function should_group(cwd, dirs, files, links)
-  if #dirs == 1 and #files == 0 and #links == 0 then
-    return true
-  end
-
-  if #dirs == 0 and #files == 0 and #links == 1 then
-    local absolute_path = utils.path_join({ cwd, links[1] })
-    local link_to = luv.fs_realpath(absolute_path)
-    return (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory'
-  end
-
-  return false
 end
 
 local function node_comparator(a, b)
@@ -151,7 +130,7 @@ local function should_ignore_git(path, status)
   return M.config.filter_ignored and (status and status[path] == '!!')
 end
 
-function M.refresh_entries(entries, cwd, parent_node, status)
+function M.refresh_entries(entries, cwd, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -201,21 +180,6 @@ function M.refresh_entries(entries, cwd, parent_node, status)
     end
   end
 
-  -- Handle grouped dirs
-  local next_node = parent_node.group_next
-  if next_node then
-    next_node.open = parent_node.open
-    if num_new_entries ~= 1 or not new_entries[next_node.name] then
-      -- dir is no longer only containing a group dir, or group dir has been removed
-      -- either way: sever the group link on current dir
-      parent_node.group_next = nil
-      named_entries[next_node.name] = next_node
-    else
-      M.refresh_entries(entries, next_node.absolute_path, next_node, status)
-      return
-    end
-  end
-
   local idx = 1
   for _, name in ipairs(cached_entries) do
     local node = named_entries[name]
@@ -262,14 +226,10 @@ function M.refresh_entries(entries, cwd, parent_node, status)
           change_prev = false
         end
       end
-      if change_prev and not (next_node and next_node.name == name) then
+      if change_prev then
         prev = name
       end
     end
-  end
-
-  if next_node then
-    table.insert(entries, 1, next_node)
   end
 
   if new_nodes_added then
@@ -277,7 +237,7 @@ function M.refresh_entries(entries, cwd, parent_node, status)
   end
 end
 
-function M.populate(entries, cwd, parent_node, status)
+function M.populate(entries, cwd, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -305,22 +265,6 @@ function M.populate(entries, cwd, parent_node, status)
         table.insert(files, name)
       elseif t == 'link' then
         table.insert(links, name)
-      end
-    end
-  end
-
-  local parent_node_ignored = parent_node and parent_node.git_status == '!!'
-  -- Group empty dirs
-  if parent_node and vim.g.nvim_tree_group_empty == 1 then
-    if should_group(cwd, dirs, files, links) then
-      local child_node
-      if dirs[1] then child_node = dir_new(cwd, dirs[1], status, parent_node_ignored) end
-      if links[1] then child_node = link_new(cwd, links[1], status, parent_node_ignored) end
-      if luv.fs_access(child_node.absolute_path, 'R') then
-        parent_node.group_next = child_node
-        child_node.git_status = parent_node.git_status
-        M.populate(entries, child_node.absolute_path, child_node, status)
-        return
       end
     end
   end
