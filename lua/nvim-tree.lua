@@ -301,13 +301,14 @@ function M.open_on_directory()
   end
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
-  if vim.fn.isdirectory(bufname) ~= 1 or bufname == lib.Tree.cwd then
+  if vim.fn.isdirectory(bufname) ~= 1 then
     return
   end
 
   view.close()
-
-  lib.change_dir(bufname)
+  if bufname ~= lib.Tree.cwd  then
+    lib.change_dir(bufname)
+  end
   M.hijack_current_window()
 
   view.open()
