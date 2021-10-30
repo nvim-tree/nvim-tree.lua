@@ -561,12 +561,12 @@ function M.parent_node(node, should_close)
 end
 
 function M.toggle_ignored()
-  pops.show_ignored = not pops.show_ignored
+  pops.config.filter_ignored = not pops.config.filter_ignored
   return M.refresh_tree()
 end
 
 function M.toggle_dotfiles()
-  pops.show_dotfiles = not pops.show_dotfiles
+  pops.config.filter_dotfiles = not pops.config.filter_dotfiles
   return M.refresh_tree()
 end
 

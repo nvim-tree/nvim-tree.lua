@@ -436,6 +436,10 @@ local DEFAULT_OPTS = {
       error = "",
     }
   },
+  filters = {
+    dotfiles = false,
+    custom_filter = {}
+  }
 }
 
 function M.setup(conf)
@@ -464,6 +468,7 @@ function M.setup(conf)
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
+  require'nvim-tree.populate'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()
