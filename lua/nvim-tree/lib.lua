@@ -150,10 +150,12 @@ local function refresh_nodes(node, projects)
   end
 end
 
+local event_running = false
 function M.refresh_tree()
-  if not M.Tree.cwd or vim.v.exiting ~= vim.NIL then
+  if event_running or not M.Tree.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
+  event_running = true
 
   git.reload(function(projects)
     refresh_nodes(M.Tree, projects)
@@ -161,6 +163,7 @@ function M.refresh_tree()
       M.redraw()
     end
     diagnostics.update()
+    event_running = false
   end)
 end
 
@@ -179,17 +182,16 @@ local function reload_node_status(parent_node, projects)
   end
 end
 
-local running_reload = false
 function M.reload_git()
-  if not git.config.enable or running_reload then
+  if not git.config.enable or event_running then
     return
   end
-  running_reload = true
+  event_running = true
 
   git.reload(function(projects)
-    running_reload = false
     reload_node_status(M.Tree, projects)
     M.redraw()
+    event_running = false
   end)
 end
 

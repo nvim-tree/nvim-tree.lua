@@ -114,7 +114,7 @@ local keypress_funcs = {
       elseif _config.is_unix then
         _config.system_open.cmd = 'xdg-open'
       else
-        require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
+        require'nvim-tree.utils'.warn("Cannot open file with system application. Unrecognized platform.")
         return
       end
     end
@@ -454,7 +454,7 @@ function M.setup(conf)
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   if type(opts.update_to_buf_dir) == "boolean" then
-    utils.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
+    utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
       enable = opts.update_to_buf_dir,
       auto_open = opts.update_to_buf_dir,
@@ -464,7 +464,7 @@ function M.setup(conf)
   end
 
   if opts.lsp_diagnostics ~= nil then
-    utils.echo_warning("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
+    utils.warn("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
   end
 
   require'nvim-tree.colors'.setup()

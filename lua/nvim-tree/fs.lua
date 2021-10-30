@@ -113,6 +113,9 @@ local function clear_buffer(absolute_path)
         api.nvim_set_current_win(winnr)
       end
       vim.api.nvim_buf_delete(buf.bufnr, {})
+      if buf.windows[1] then
+        vim.api.nvim_win_close(buf.windows[1], true)
+      end
       return
     end
   end
@@ -289,7 +292,13 @@ function M.rename(with_sub)
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * (-1) -1) or node.absolute_path
     local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
     utils.clear_prompt()
-    if not new_name or #new_name == 0 then return end
+    if not new_name or #new_name == 0 then
+      return
+    end
+    if luv.fs_access(new_name, 'R') then
+      utils.warn("Cannot rename: file already exists")
+      return
+    end
 
     local success = luv.fs_rename(node.absolute_path, new_name)
     if not success then

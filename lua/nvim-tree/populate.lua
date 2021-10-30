@@ -97,6 +97,9 @@ local function should_group(cwd, dirs, files, links)
 end
 
 local function node_comparator(a, b)
+  if not (a and b) then
+    return true
+  end
   if a.entries and not b.entries then
     return true
   elseif not a.entries and b.entries then
@@ -121,12 +124,6 @@ local function should_ignore(path)
   if not M.config.filter_ignored then
     return false
   end
-
-  -- if vim.g.nvim_tree_gitignore == 1 then
-  --   if git.should_gitignore(path) then
-  --     return true
-  --   end
-  -- end
 
   local relpath = utils.path_relative(path, vim.loop.cwd())
   if M.ignore_list[relpath] == true or M.ignore_list[basename] == true then
