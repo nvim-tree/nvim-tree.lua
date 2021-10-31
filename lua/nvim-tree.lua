@@ -2,7 +2,6 @@ local luv = vim.loop
 local api = vim.api
 
 local lib = require'nvim-tree.lib'
-local populate = require'nvim-tree.populate'
 local config = require'nvim-tree.config'
 local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'

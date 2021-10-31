@@ -204,6 +204,10 @@ M.debounce = function(id, fn, frequency_in_ms, callback)
     fn_data.in_debounce_period = true
     local success, result = pcall(fn)
 
+    if not success then
+      print("Error calling nvim-tree.lib.refresh_tree():", result)
+    end
+
     -- Now schedule the next earliest execution.
     -- If there are no calls to run the same function between now
     -- and when this deferred executes, nothing will happen.
@@ -221,7 +225,7 @@ M.debounce = function(id, fn, frequency_in_ms, callback)
     end, frequency_in_ms)
 
     -- The callback function is outside the scope of the debounce period
-    if callback ~= nil then
+    if type(callback) == "function" then
         callback(success, result)
     end
 end
