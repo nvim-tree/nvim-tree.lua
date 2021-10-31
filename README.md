@@ -276,3 +276,4 @@ You can toggle the help UI by pressing `g?`.
 ![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
 ![alt text](.github/screenshot2.png?raw=true "akin909 tree")
 ![alt text](.github/screenshot3.png?raw=true "stsewd tree")
+![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
