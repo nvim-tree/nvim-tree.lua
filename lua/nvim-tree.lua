@@ -8,6 +8,7 @@ local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
+local trash = require'nvim-tree.trash'
 
 local _config = {
   is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
@@ -151,36 +152,7 @@ local keypress_funcs = {
     )
     luv.unref(process.handle)
   end,
-  trash = function(node)
-    if _config.is_unix then
-      if _config.trash.cmd == nil then _config.trash.cmd = 'trash' end
-      if _config.trash.require_confirm  == nil then _config.trash.require_confirm  = true end
-    else
-      print('trash is currently a UNIX only feature!')
-    end
-
-    local function get_user_input_char()
-      local c = vim.fn.getchar()
-      return vim.fn.nr2char(c)
-    end
-
-    if (node) then
-      local is_confirmed = true
-      if _config.trash.require_confirm then
-        is_confirmed = false
-        print("Trash "..node.name.." ? y/n")
-        if get_user_input_char():match('^y') then is_confirmed = true end
-      end
-    
-      if is_confirmed then
-        vim.fn.jobstart(_config.trash.cmd.." "..node.absolute_path, {
-          detach = true,
-          on_exit = function(_job_id, _data, _event) lib.refresh_tree() end,
-        })
-      end
-    end
-
-  end,
+  trash = function(node) trash.trash_node(node, _config) end,
 }
 
 function M.on_keypress(mode)
