@@ -60,6 +60,7 @@ M.View = {
     { key = "H",                            cb = M.nvim_tree_callback("toggle_dotfiles") },
     { key = "R",                            cb = M.nvim_tree_callback("refresh") },
     { key = "a",                            cb = M.nvim_tree_callback("create") },
+    { key = "b",                            cb = M.nvim_tree_callback("toggle_open_buffers_only") },
     { key = "d",                            cb = M.nvim_tree_callback("remove") },
     { key = "r",                            cb = M.nvim_tree_callback("rename") },
     { key = "<C-r>",                        cb = M.nvim_tree_callback("full_rename") },

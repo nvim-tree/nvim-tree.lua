@@ -2,6 +2,7 @@ local luv = vim.loop
 local api = vim.api
 
 local lib = require'nvim-tree.lib'
+local populate = require'nvim-tree.populate'
 local config = require'nvim-tree.config'
 local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
@@ -89,6 +90,7 @@ local keypress_funcs = {
   toggle_ignored = lib.toggle_ignored,
   toggle_dotfiles = lib.toggle_dotfiles,
   toggle_help = lib.toggle_help,
+  toggle_open_buffers_only = lib.toggle_open_buffers_only,
   refresh = lib.refresh_tree,
   first_sibling = function(node) lib.sibling(node, -math.huge) end,
   last_sibling = function(node) lib.sibling(node, math.huge) end,
@@ -269,6 +271,11 @@ function M.find_file(with_open)
   lib.set_index_and_redraw(filepath)
 end
 
+function M.show_open_buffers()
+  lib.toggle_open_buffers_only(true)
+  M.find_file(true)
+end
+
 function M.resize(size)
   view.View.width = size
   view.View.height = size
@@ -363,6 +370,7 @@ local function setup_vim_commands()
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
+    command! NvimTreeBuffers lua require'nvim-tree'.show_open_buffers()
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
   ]]
 end

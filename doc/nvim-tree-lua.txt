@@ -54,6 +54,10 @@ It will also open the leafs of the tree leading to the file in the buffer
 close the tree or change the cursor in the tree for the current bufname,
 similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|
 
+|:NvimTreeBuffers| 	                          *:NvimTreeBuffers*
+
+Show the tree in "opened buffers only" mode.
+
 |:NvimTreeClipboard|			          *:NvimTreeClipboard*
 
 Print clipboard content for both cut and copy
@@ -479,6 +483,7 @@ INFORMATIONS				        *nvim-tree-info*
 - typing 'P' will move cursor to the parent directory
 
 - type 'a' to add a file
+- type 'b' to toggle opened buffers only mode
 - type 'r' to rename a file
 - type `<C-r>` to rename a file and omit the filename on input
 - type 'x' to add/remove file/directory to cut clipboard
@@ -530,6 +535,7 @@ Defaults to:
       { key = "H",                            cb = tree_cb("toggle_dotfiles") },
       { key = "R",                            cb = tree_cb("refresh") },
       { key = "a",                            cb = tree_cb("create") },
+      { key = "b",                            cb = tree_cb("toggle_open_buffers_only") },
       { key = "d",                            cb = tree_cb("remove") },
       { key = "r",                            cb = tree_cb("rename") },
       { key = "<C-r>",                        cb = tree_cb("full_rename") },

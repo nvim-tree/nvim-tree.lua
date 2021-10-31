@@ -175,6 +175,8 @@ highlight NvimTreeFolderIcon guibg=blue
 - `<BS>` will close current opened directory or parent
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
   > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
+- type `b` to toggle opened buffers only mode
+  > This will filter the tree to show only the opened buffers and the folders which contain them. Press 'b' again to go back to showing all files and folders.
 - type `r` to rename a file
 - type `<C-r>` to rename a file and omit the filename on input
 - type `x` to add/remove file/directory to cut clipboard

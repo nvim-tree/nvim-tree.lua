@@ -165,4 +165,65 @@ function M.merge_sort(t, comparator)
   split_merge(t, 1, #t, comparator)
 end
 
+local tracked_functions = {}
+
+
+---Call fn, but not more than once every x milliseconds.
+---@param id string Identifier for the debounce group, such as the function name.
+---@param fn function Function to be executed.
+---@param frequency_in_ms number Miniumum amount of time between invocations of fn.
+---@param callback function Called with the result of executing fn as: callback(success, result)
+M.debounce = function(id, fn, frequency_in_ms, callback)
+    local fn_data = tracked_functions[id]
+    if fn_data == nil then
+        -- first call for this id
+        fn_data = {
+            id = id,
+            fn = nil,
+            frequency_in_ms = frequency_in_ms,
+            postponed_callback = nil,
+            in_debounce_period = true,
+        }
+        tracked_functions[id] = fn_data
+    else
+        if fn_data.in_debounce_period then
+            -- This id was called recently and can't be executed again yet.
+            -- Just keep track of the details for this request so it
+            -- can be executed at the end of the debounce period.
+            -- Last one in wins.
+            fn_data.fn = fn
+            fn_data.frequency_in_ms = frequency_in_ms
+            fn_data.postponed_callback = callback
+            return
+        end
+    end
+
+    -- Run the requested function normally.
+    -- Use a pcall to ensure the debounce period is still respected even if
+    -- this call throws an error.
+    fn_data.in_debounce_period = true
+    local success, result = pcall(fn)
+
+    -- Now schedule the next earliest execution.
+    -- If there are no calls to run the same function between now
+    -- and when this deferred executes, nothing will happen.
+    -- If there are several calls, only the last one in will run.
+    vim.defer_fn(function ()
+        local current_data = tracked_functions[id]
+        local _callback = current_data.postponed_callback
+        local _fn = current_data.fn
+        current_data.postponed_callback = nil
+        current_data.fn = nil
+        current_data.in_debounce_period = false
+        if _fn ~= nil then
+            M.debounce(id, _fn, current_data.frequency_in_ms, _callback)
+        end
+    end, frequency_in_ms)
+
+    -- The callback function is outside the scope of the debounce period
+    if callback ~= nil then
+        callback(success, result)
+    end
+end
+
 return M

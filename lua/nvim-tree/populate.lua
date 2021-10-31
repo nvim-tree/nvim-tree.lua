@@ -1,11 +1,14 @@
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
+local buffers = require'nvim-tree.buffers'
+local icon_config = config.get_icon_state()
 
 local api = vim.api
 local luv = vim.loop
 
 local M = {
-  ignore_list = {}
+  ignore_list = {},
+  show_open_buffers_only = false
 }
 
 local utils = require'nvim-tree.utils'
@@ -30,7 +33,7 @@ local function dir_new(cwd, name)
     last_modified = last_modified,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
-    open = false,
+    open = M.show_open_buffers_only,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     entries = {}
@@ -173,13 +176,23 @@ function M.refresh_entries(entries, cwd, parent_node)
   local new_entries = {}
   local num_new_entries = 0
 
+  local allowed_paths = {}
+  if M.show_open_buffers_only then
+    allowed_paths = buffers.get_open_buffer_paths()
+  end
+
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
     num_new_entries = num_new_entries + 1
 
     local abs = utils.path_join({cwd, name})
-    if not should_ignore(abs) then
+    local should_skip = should_ignore(abs)
+    if M.show_open_buffers_only then
+      should_skip = not allowed_paths[abs]
+    end
+
+    if not should_skip then
       if not t then
         local stat = luv.fs_stat(abs)
         t = stat and stat.type
@@ -281,6 +294,10 @@ function M.populate(entries, cwd, parent_node)
     return
   end
 
+  local open_buffer_paths = {}
+  if M.show_open_buffers_only then
+    open_buffer_paths = buffers.get_open_buffer_paths()
+  end
   local dirs = {}
   local links = {}
   local files = {}
@@ -290,7 +307,12 @@ function M.populate(entries, cwd, parent_node)
     if not name then break end
 
     local abs = utils.path_join({cwd, name})
-    if not should_ignore(abs) then
+    local should_skip = should_ignore(abs)
+    if M.show_open_buffers_only then
+      should_skip = not open_buffer_paths[abs]
+    end
+
+    if not should_skip then
       if not t then
         local stat = luv.fs_stat(abs)
         t = stat and stat.type
