@@ -110,6 +110,10 @@ function.
           custom_only = false,
           list = {}
         }
+      },
+      filters = {
+	dotfiles = false,
+	custom = {}
       }
     }
 <
@@ -261,9 +265,21 @@ Here is a list of the options available in the setup call:
         type: `boolean`
         default: false
 
-    - |view,mappings.list|: a list of keymaps that will extend or override the default keymaps
+    - |view.mappings.list|: a list of keymaps that will extend or override the default keymaps
         type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
         default: {}
+
+*nvim-tree.filters*
+|filters|: filtering options
+
+  - |filters.dotfiles|: do not show `dotfiles` (files starting with a `.`)
+      type: `boolean`
+      default: `false`
+
+  - |filters.custom|: custom list of string that will not be shown.
+      type: `{string}`
+      default: `{}`
+
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
@@ -279,13 +295,6 @@ width of the window, can be *width_in_columns* or *'width_in_percent%'*
 
 where the window will open (default to 'left')
 - 'left' or 'right'
-
-|g:nvim_tree_ignore|				*g:nvim_tree_ignore*
-
-An array of strings that the tree won't load and display.
-useful to hide large data/cache folders.
->
-    example: let g:nvim_tree_ignore = [ '.git', 'node_modules' ]
 
 |g:nvim_tree_gitignore|				*g:nvim_tree_gitignore*
 
@@ -382,12 +391,6 @@ Default is 0
 |g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
 
 Can be `0` or `1`. When `1`, will display indent markers when folders are open
-Default is 0
-
-|g:nvim_tree_hide_dotfiles|                    *g:nvim_tree_hide_dotfiles*
-
-Can be `0` or `1`. When `1`, will hide dotfiles, files or folders which start
-with the `.` character.
 Default is 0
 
 |g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*

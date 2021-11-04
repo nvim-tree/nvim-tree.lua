@@ -1,13 +1,11 @@
 local config = require'nvim-tree.config'
 local git = require'nvim-tree.git'
-local icon_config = config.get_icon_state()
 
 local api = vim.api
 local luv = vim.loop
 
 local M = {
-  show_ignored = false,
-  show_dotfiles = vim.g.nvim_tree_hide_dotfiles ~= 1,
+  ignore_list = {}
 }
 
 local utils = require'nvim-tree.utils'
@@ -116,47 +114,42 @@ local function node_comparator(a, b)
   return a.name:lower() <= b.name:lower()
 end
 
-local function gen_ignore_check(cwd)
-  if not cwd then cwd = luv.cwd() end
-  local ignore_list = {}
+---Check if the given path should be ignored.
+---@param path string Absolute path
+---@return boolean
+local function should_ignore(path)
+  local basename = utils.path_basename(path)
 
-  if vim.g.nvim_tree_ignore and #vim.g.nvim_tree_ignore > 0 then
-    for _, entry in pairs(vim.g.nvim_tree_ignore) do
-      ignore_list[entry] = true
+  if M.config.filter_dotfiles then
+    if basename:sub(1, 1) == '.' then
+      return true
     end
   end
 
-  ---Check if the given path should be ignored.
-  ---@param path string Absolute path
-  ---@return boolean
-  return function(path)
-    local basename = utils.path_basename(path)
-
-    if not M.show_ignored then
-      if vim.g.nvim_tree_gitignore == 1 then
-        if git.should_gitignore(path) then return true end
-      end
-
-      local relpath = utils.path_relative(path, cwd)
-      if ignore_list[relpath] == true or ignore_list[basename] == true then
-        return true
-      end
-
-      local idx = path:match(".+()%.[^.]+$")
-      if idx then
-        if ignore_list['*'..string.sub(path, idx)] == true then return true end
-      end
-    end
-
-    if not M.show_dotfiles then
-      if basename:sub(1, 1) == '.' then return true end
-    end
-
+  if not M.config.filter_ignored then
     return false
   end
-end
 
-local should_ignore = gen_ignore_check()
+  if vim.g.nvim_tree_gitignore == 1 then
+    if git.should_gitignore(path) then
+      return true
+    end
+  end
+
+  local relpath = utils.path_relative(path, vim.loop.cwd())
+  if M.ignore_list[relpath] == true or M.ignore_list[basename] == true then
+    return true
+  end
+
+  local idx = path:match(".+()%.[^.]+$")
+  if idx then
+    if M.ignore_list['*'..string.sub(path, idx)] == true then
+      return true
+    end
+  end
+
+  return false
+end
 
 function M.refresh_entries(entries, cwd, parent_node)
   local handle = luv.fs_scandir(cwd)
@@ -351,12 +344,27 @@ function M.populate(entries, cwd, parent_node)
 
   utils.merge_sort(entries, node_comparator)
 
+  local icon_config = config.get_icon_state()
   if (not icon_config.show_git_icon) and vim.g.nvim_tree_git_hl ~= 1 then
     return
   end
 
   if config.use_git() then
     vim.schedule(function() git.update_status(entries, cwd, parent_node, true) end)
+  end
+end
+
+function M.setup(opts)
+  M.config = {
+    filter_ignored = true,
+    filter_dotfiles = opts.filters.dotfiles,
+  }
+
+  local custom_filter = opts.filters.custom
+  if custom_filter and #custom_filter > 0 then
+    for _, entry in pairs(custom_filter) do
+      M.ignore_list[entry] = true
+    end
   end
 end
 

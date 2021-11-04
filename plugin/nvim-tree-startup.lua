@@ -23,6 +23,8 @@ local out_config = {
   "nvim_tree_bindings",
   "nvim_tree_disable_keybindings",
   "nvim_tree_disable_default_keybindings",
+  "nvim_tree_hide_dotfiles",
+  "nvim_tree_ignore"
 }
 
 local x = vim.tbl_filter(function(v)
@@ -30,6 +32,6 @@ local x = vim.tbl_filter(function(v)
 end, out_config)
 
 if #x > 0 then
-  local msg = "following options are now set in the setup (:help nvim-tree.setup): "
-  require'nvim-tree.utils'.echo_warning(msg..table.concat(x, " | "))
+  local msg = "Following options were moved to setup (:help nvim-tree.setup): "
+  require'nvim-tree.utils'.echo_warning(msg..table.concat(x, ", "))
 end
