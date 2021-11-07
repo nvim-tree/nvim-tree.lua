@@ -78,13 +78,14 @@ end
 
 function M.padding(idx, node, nodes, _depth, markers, with_arrows, with_markers, icons)
   local show_arrow = node.entries and with_arrows
+  local depth = with_arrows and _depth - 2 or _depth
   if not with_markers and not show_arrow then
-    return string.rep(' ', _depth)
+    return string.rep(' ', depth)
   end
 
-  local padding = ""
-  local depth = with_arrows and _depth - 2 or _depth
+  local padding = nil
   if with_markers and depth > 0 then
+    padding = ""
     local rdepth = depth/2
     markers[rdepth] = idx ~= #nodes
     for i=1,rdepth do
@@ -98,14 +99,16 @@ function M.padding(idx, node, nodes, _depth, markers, with_arrows, with_markers,
     end
   end
 
+  local icon = ""
   if show_arrow then
-    local icon = icons[node.open and 'arrow_open' or 'arrow_closed']
-    if padding then
-      padding = padding..icon..' '
-    else
-      padding = string.rep(' ', depth - 2)..icon..' '
-    end
+    icon = icons[node.open and 'arrow_open' or 'arrow_closed']..' '
   end
+  if padding then
+    padding = padding..icon
+  else
+    padding = string.rep(' ', depth)..icon
+  end
+
 
   return padding
 end
