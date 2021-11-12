@@ -114,7 +114,9 @@ local DEFAULT_CONFIG = {
   mappings = {
     custom_only = false,
     list = {}
-  }
+  },
+  number = false,
+  relativenumber = false
 }
 
 local function merge_mappings(user_mappings)
@@ -147,6 +149,8 @@ function M.setup(opts)
   M.View.height = options.height
   M.View.hide_root_folder = options.hide_root_folder
   M.View.auto_resize = opts.auto_resize
+  M.View.winopts.number = options.number
+  M.View.winopts.relativenumber = options.relativenumber
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else
