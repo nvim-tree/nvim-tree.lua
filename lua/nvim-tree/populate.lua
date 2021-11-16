@@ -39,12 +39,18 @@ end
 
 local function file_new(cwd, name)
   local absolute_path = utils.path_join({cwd, name})
-  local is_exec = luv.fs_access(absolute_path, 'X')
+  local ext = string.match(name, ".?[^.]+%.(.*)") or ""
+  local is_exec = false
+  if vim.fn.has('win32') == 1 then
+    is_exec = utils.is_windows_exe(ext)
+  else
+    is_exec = luv.fs_access(absolute_path, 'X')
+  end
   return {
     name = name,
     absolute_path = absolute_path,
     executable = is_exec,
-    extension = string.match(name, ".?[^.]+%.(.*)") or "",
+    extension = ext,
     match_name = path_to_matching_str(name),
     match_path = path_to_matching_str(absolute_path),
   }

@@ -165,4 +165,21 @@ function M.merge_sort(t, comparator)
   split_merge(t, 1, #t, comparator)
 end
 
+---Matching executable files in Windows.
+---@param ext string
+---@return boolean
+function M.is_windows_exe(ext)
+  if ext == "" then
+    return false
+  end
+  ext = '.' .. string.upper(ext)
+  local pathexts = vim.split(vim.env.PATHEXT, ';')
+  for _, exe_ext in ipairs(pathexts) do
+    if ext == exe_ext then
+      return true
+    end
+  end
+  return false
+end
+
 return M
