@@ -106,6 +106,7 @@ function.
         height = 30,
         side = 'left',
         auto_resize = false,
+	signcolumn = 'yes',
         mappings = {
           custom_only = false,
           list = {}
@@ -257,6 +258,11 @@ Here is a list of the options available in the setup call:
   - |view.auto_resize|: auto resize the tree after opening a file
       type: `boolean`
       default: false
+
+  - |view.signcolumn|: When and how to draw the signcolumn, which is before the
+    linenumber. when this option is 'no', |nvim-tree.diagnostics| might not work. see 'signcolumn'.
+      type: `string`
+      default: 'yes'
 
   - |view.mappings|: configuration options for keymaps
 
