@@ -37,7 +37,7 @@ Note that options under the `g:` command should be set **BEFORE** running the se
 ```lua
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
-require'nvim-tree'.setup {
+require'nvim-tree'.setup({
   disable_netrw       = true,
   hijack_netrw        = true,
   open_on_setup       = false,
@@ -83,7 +83,7 @@ require'nvim-tree'.setup {
       list = {}
     }
   }
-}
+})
 ```
 
 These additional options must be set **BEFORE** calling `require'nvim-tree'` or calling setup.
