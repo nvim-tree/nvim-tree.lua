@@ -35,6 +35,7 @@ function Renderer:get_padding(idx, node, nodes)
     nodes,
     self.depth,
     self.markers,
+    M.config.indent_level,
     M.config.show_folder_arrows,
     M.config.indent_markers,
     M.config.icons.folder_icons
@@ -111,9 +112,9 @@ function Renderer:load_line(idx, node, nodes)
   self.index = self.index + 1
 
   if node.open and #node.entries > 0 then
-    self.depth = self.depth + 2
+    self.depth = self.depth + M.config.indent_level
     self:load_lines(node.entries)
-    self.depth = self.depth - 2
+    self.depth = self.depth - M.config.indent_level
   end
 
 end
@@ -155,7 +156,7 @@ function Renderer.new(opts)
     index = 0,
     skip = 0,
     markers = {},
-    depth = M.config.show_folder_arrows and 2 or 0
+    depth = M.config.show_folder_arrows and M.config.indent_level or 0
   }, Renderer)
 
   if opts.help then
@@ -202,7 +203,7 @@ function M.draw(tree, reload)
   end
 end
 
-function M.setup()
+function M.setup(opts)
   local icon_config = config.get_icon_state()
   M.config = {
     icons = icon_config.icons,
@@ -214,6 +215,7 @@ function M.setup()
     highlight_opened_files = vim.g.nvim_tree_highlight_opened_files == 1,
     root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ':~',
     indent_markers = vim.g.nvim_tree_indent_markers == 1,
+    indent_level = opts.renderer.indent_level,
     special_files = vim.g.nvim_tree_special_files or {
       ["Cargo.toml"] = true,
       Makefile = true,

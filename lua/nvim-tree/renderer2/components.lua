@@ -76,17 +76,17 @@ function M.name(node, pictures, specials)
   return { display = node.name, highlight = highlight }
 end
 
-function M.padding(idx, node, nodes, _depth, markers, with_arrows, with_markers, icons)
+function M.padding(idx, node, nodes, _depth, markers, indent_level, with_arrows, with_markers, icons)
   local show_arrow = node.entries and with_arrows
-  local depth = with_arrows and _depth - 2 or _depth
+  local depth = with_arrows and _depth - indent_level or _depth
   if not with_markers and not show_arrow then
-    return string.rep(' ', depth)
+    return string.rep(' ', _depth)
   end
 
   local padding = nil
   if with_markers and depth > 0 then
     padding = ""
-    local rdepth = depth/2
+    local rdepth = depth/indent_level
     markers[rdepth] = idx ~= #nodes
     for i=1,rdepth do
       if idx == #nodes and i == rdepth then

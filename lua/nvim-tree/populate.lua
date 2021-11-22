@@ -133,7 +133,7 @@ local function should_ignore_git(path, status)
   return M.config.filter_ignored and (status and status[path] == '!!')
 end
 
-function M.refresh_entries(entries, cwd, status)
+function M.refresh_entries(entries, cwd, status, parent_node)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -240,7 +240,7 @@ function M.refresh_entries(entries, cwd, status)
   end
 end
 
-function M.populate(entries, cwd, status)
+function M.populate(entries, cwd, status, parent_node)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -271,6 +271,8 @@ function M.populate(entries, cwd, status)
       end
     end
   end
+
+  local parent_node_ignored = parent_node and parent_node.git_status == '!!'
 
   for _, dirname in ipairs(dirs) do
     local dir = dir_new(cwd, dirname, status, parent_node_ignored)
