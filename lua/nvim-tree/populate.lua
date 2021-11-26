@@ -37,9 +37,32 @@ local function dir_new(cwd, name)
   }
 end
 
+local function is_exec_windows(name)
+  -- all executable extensions are stored in the PATHEXT environment variable
+  -- Make them all lower case and remove the leading "."
+  local pathExt = vim.env.PATHEXT:lower():gsub('%.', '')
+  local executableExtensions = vim.split(pathExt, ';')
+  for _, extension in ipairs(executableExtensions) do
+    -- if file name ends with an extension in the above list,
+    -- it is considered executable
+    if name:lower():match('%.'..extension..'$') then
+      return true
+    end
+  end
+
+  return false
+end
+
 local function file_new(cwd, name)
   local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
+
+  -- In Windows fs_access returns always true for 'X', so we need
+  -- to deternmine the executable flag by extension
+  if vim.fn.has("win32") == 1 then
+    is_exec = is_exec_windows(name)
+  end
+
   return {
     name = name,
     absolute_path = absolute_path,
