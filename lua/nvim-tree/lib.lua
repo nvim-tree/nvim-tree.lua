@@ -554,6 +554,7 @@ function M.parent_node(node, should_close)
       line = 1
     elseif should_close then
       parent.open = false
+      altered_tree = true
     end
     view.set_cursor({line, 0})
   end
