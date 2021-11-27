@@ -302,11 +302,6 @@ function M.open_on_directory()
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
   if vim.fn.isdirectory(bufname) ~= 1 then
-    if bufname == "" then
-      vim.schedule(function()
-        vim.api.nvim_buf_delete(buf, { force = true })
-      end)
-    end
     return
   end
 
