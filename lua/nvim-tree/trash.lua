@@ -3,7 +3,6 @@ local M = {}
 local lib = require'nvim-tree.lib'
 local utils = require'nvim-tree.utils'
 local events = require'nvim-tree.events'
-local fs = require'nvim-tree.fs'
 local api = vim.api
 
 local function clear_buffer(absolute_path)
