@@ -7,7 +7,7 @@ local M = {
   ignore_list = {}
 }
 
-local function dir_new(cwd, name, status)
+local function dir_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
   local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
@@ -28,11 +28,11 @@ local function dir_new(cwd, name, status)
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     entries = {},
-    git_status = (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
+    git_status = parent_ignored and '!!' or (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
   }
 end
 
-local function file_new(cwd, name, status)
+local function file_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
   local is_exec = luv.fs_access(absolute_path, 'X')
   return {
@@ -40,7 +40,7 @@ local function file_new(cwd, name, status)
     absolute_path = absolute_path,
     executable = is_exec,
     extension = string.match(name, ".?[^.]+%.(.*)") or "",
-    git_status = status.files and status.files[absolute_path],
+    git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
   }
 end
 
@@ -49,7 +49,7 @@ end
 -- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
-local function link_new(cwd, name, status)
+local function link_new(cwd, name, status, parent_ignored)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
@@ -73,7 +73,7 @@ local function link_new(cwd, name, status)
     open = open,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     entries = entries,
-    git_status = status.files and status.files[absolute_path],
+    git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
   }
 end
 
@@ -155,7 +155,8 @@ function M.refresh_entries(entries, cwd, parent_node, status)
   local cached_entries = {}
   local entries_idx = {}
   for i, node in ipairs(entries) do
-    node.git_status = (status.files and status.files[node.absolute_path])
+    node.git_status = (parent_node and parent_node.git_status == '!!' and '!!')
+      or (status.files and status.files[node.absolute_path])
       or (status.dirs and status.dirs[node.absolute_path])
     cached_entries[i] = node.name
     entries_idx[node.name] = i
@@ -301,14 +302,13 @@ function M.populate(entries, cwd, parent_node, status)
     end
   end
 
-  -- Create Nodes --
-
+  local parent_node_ignored = parent_node and parent_node.git_status == '!!'
   -- Group empty dirs
   if parent_node and vim.g.nvim_tree_group_empty == 1 then
     if should_group(cwd, dirs, files, links) then
       local child_node
-      if dirs[1] then child_node = dir_new(cwd, dirs[1], status) end
-      if links[1] then child_node = link_new(cwd, links[1], status) end
+      if dirs[1] then child_node = dir_new(cwd, dirs[1], status, parent_node_ignored) end
+      if links[1] then child_node = link_new(cwd, links[1], status, parent_node_ignored) end
       if luv.fs_access(child_node.absolute_path, 'R') then
         parent_node.group_next = child_node
         child_node.git_status = parent_node.git_status
@@ -319,21 +319,21 @@ function M.populate(entries, cwd, parent_node, status)
   end
 
   for _, dirname in ipairs(dirs) do
-    local dir = dir_new(cwd, dirname, status)
+    local dir = dir_new(cwd, dirname, status, parent_node_ignored)
     if luv.fs_access(dir.absolute_path, 'R') then
       table.insert(entries, dir)
     end
   end
 
   for _, linkname in ipairs(links) do
-    local link = link_new(cwd, linkname, status)
+    local link = link_new(cwd, linkname, status, parent_node_ignored)
     if link.link_to ~= nil then
       table.insert(entries, link)
     end
   end
 
   for _, filename in ipairs(files) do
-    local file = file_new(cwd, filename, status)
+    local file = file_new(cwd, filename, status, parent_node_ignored)
     table.insert(entries, file)
   end
 
