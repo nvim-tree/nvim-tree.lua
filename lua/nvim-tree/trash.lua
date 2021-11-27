@@ -36,7 +36,7 @@ function M.trash_node(node, cfg)
   local function trash_path(on_exit)
     vim.fn.jobstart(cfg.trash.cmd.." "..node.absolute_path, {
       detach = true,
-      on_exit = on_exit(),
+      on_exit = on_exit,
     })
   end
 
