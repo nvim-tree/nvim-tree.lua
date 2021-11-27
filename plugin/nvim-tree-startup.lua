@@ -32,6 +32,6 @@ local x = vim.tbl_filter(function(v)
 end, out_config)
 
 if #x > 0 then
-  local msg = "Following options were moved to setup (:help nvim-tree.setup): "
+  local msg = "Following options were moved to setup, see git.io/JPhyt: "
   require'nvim-tree.utils'.echo_warning(msg..table.concat(x, ", "))
 end
