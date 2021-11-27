@@ -4,7 +4,8 @@ local luv = vim.loop
 local utils = require'nvim-tree.utils'
 
 local M = {
-  ignore_list = {}
+  ignore_list = {},
+  is_windows = vim.fn.has('win32') == 1
 }
 
 local function dir_new(cwd, name, status, parent_ignored)
@@ -36,7 +37,7 @@ local function file_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
   local is_exec = false
-  if vim.fn.has('win32') == 1 then
+  if M.is_windows then
     is_exec = utils.is_windows_exe(ext)
   else
     is_exec = luv.fs_access(absolute_path, 'X')
