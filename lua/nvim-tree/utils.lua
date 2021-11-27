@@ -179,10 +179,6 @@ for _, v in pairs(wexe) do
 end
 
 function M.is_windows_exe(ext)
-  if ext == "" then
-    return false
-  end
-
   return pathexts[ext:upper()]
 end
 
