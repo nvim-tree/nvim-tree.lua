@@ -137,7 +137,7 @@ function M.setup(opts)
 
   if M.enable then
     if has_06 then
-      vim.cmd "au User DiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
+      vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
     else
       vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
     end
