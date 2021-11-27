@@ -24,7 +24,8 @@ local out_config = {
   "nvim_tree_disable_keybindings",
   "nvim_tree_disable_default_keybindings",
   "nvim_tree_hide_dotfiles",
-  "nvim_tree_ignore"
+  "nvim_tree_ignore",
+  "nvim_tree_gitignore"
 }
 
 local x = vim.tbl_filter(function(v)
@@ -33,5 +34,5 @@ end, out_config)
 
 if #x > 0 then
   local msg = "Following options were moved to setup, see git.io/JPhyt: "
-  require'nvim-tree.utils'.echo_warning(msg..table.concat(x, ", "))
+  require'nvim-tree.utils'.warn(msg..table.concat(x, ", "))
 end

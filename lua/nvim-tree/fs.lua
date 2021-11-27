@@ -34,7 +34,7 @@ local function create_file(file)
     else
       luv.fs_close(fd)
       events._dispatch_file_created(file)
-      lib.refresh_tree(true)
+      lib.refresh_tree()
       focus_file(file)
     end
   end))
@@ -98,7 +98,7 @@ function M.create(node)
   end
   api.nvim_out_write(ans..' was properly created\n')
   events._dispatch_folder_created(ans)
-  lib.refresh_tree(true)
+  lib.refresh_tree()
   focus_file(ans)
 end
 
@@ -113,6 +113,9 @@ local function clear_buffer(absolute_path)
         api.nvim_set_current_win(winnr)
       end
       vim.api.nvim_buf_delete(buf.bufnr, {})
+      if buf.windows[1] then
+        vim.api.nvim_win_close(buf.windows[1], true)
+      end
       return
     end
   end
@@ -239,7 +242,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  return lib.refresh_tree(true)
+  return lib.refresh_tree()
 end
 
 local function add_to_clipboard(node, clip)
@@ -276,7 +279,7 @@ function M.remove(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    lib.refresh_tree(true)
+    lib.refresh_tree()
   end
 end
 
@@ -289,7 +292,13 @@ function M.rename(with_sub)
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * (-1) -1) or node.absolute_path
     local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
     utils.clear_prompt()
-    if not new_name or #new_name == 0 then return end
+    if not new_name or #new_name == 0 then
+      return
+    end
+    if luv.fs_access(new_name, 'R') then
+      utils.warn("Cannot rename: file already exists")
+      return
+    end
 
     local success = luv.fs_rename(node.absolute_path, new_name)
     if not success then
@@ -298,7 +307,7 @@ function M.rename(with_sub)
     api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
     rename_loaded_buffers(node.absolute_path, new_name)
     events._dispatch_node_renamed(abs_path, new_name)
-    lib.refresh_tree(true)
+    lib.refresh_tree()
   end
 end
 

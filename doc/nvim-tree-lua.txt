@@ -101,6 +101,10 @@ function.
         cmd  = nil,
         args = {}
       },
+      git = {
+        enable = true,
+        ignore = true,
+      },
       view = {
         width = 30,
         height = 30,
@@ -231,6 +235,31 @@ Here is a list of the options available in the setup call:
     - `NvimTreeLspDiagnosticsInformation`
     - `NvimTreeLspDiagnosticsHint`
 
+*nvim-tree.git*
+- |git|: git integration with icons and colors
+
+  - |git.enable|: enable / disable the feature
+    type: `boolean`
+    default: `true`
+
+  - |git.ignore|: ignore files based on `.gitignore`.
+    will add `ignored=matching` to the integration when `true`. Otherwise will
+    add `ignored=no` to the integration which can lead to better performance.
+
+  - |git.timeout|: kills the git process after some time if it takes too long
+    type: `number`
+    default: `400` (ms)
+
+  You will still need to configure `g:nvim_tree_show_icons.git` or
+  `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
+  changed in the future versions.
+
+  The configurable timeout will kill the current process and so disable the
+  git integration for the project that takes too long.
+  The git integration is blocking, so if your timeout is too long (like not in
+  milliseconds but a few seconds), it will not render anything until the git
+  process returned the data.
+
 *nvim-tree.view*
 - |view|: window / buffer setup
 
@@ -296,16 +325,6 @@ width of the window, can be *width_in_columns* or *'width_in_percent%'*
 where the window will open (default to 'left')
 - 'left' or 'right'
 
-|g:nvim_tree_gitignore|				*g:nvim_tree_gitignore*
-
-Determines whether to include in g:nvim_tree_ignore
-files ignored by git.
-
-Must be:
-    0: not ignored
-    1: ignored files from `git ls-files --others --ignored --exclude-standard --directory`
-
->
 |g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
 
 Dictionary, if your terminal or font doesn't support certain unicode
