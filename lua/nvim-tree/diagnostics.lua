@@ -119,7 +119,7 @@ end
 local has_06 = vim.fn.has('nvim-0.6') == 1
 local links = {
   NvimTreeLspDiagnosticsError = has_06 and "DiagnosticError" or "LspDiagnosticsDefaultError",
-  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarning" or "LspDiagnosticsDefaultWarning",
+  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarn" or "LspDiagnosticsDefaultWarning",
   NvimTreeLspDiagnosticsInformation = has_06 and "DiagnosticInfo" or "LspDiagnosticsDefaultInformation",
   NvimTreeLspDiagnosticsHint = has_06 and "DiagnosticHint" or "LspDiagnosticsDefaultHint",
 }
@@ -137,7 +137,7 @@ function M.setup(opts)
 
   if M.enable then
     if has_06 then
-      vim.cmd "au User DiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
+      vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
     else
       vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
     end

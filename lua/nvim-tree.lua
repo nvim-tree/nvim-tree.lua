@@ -114,7 +114,7 @@ local keypress_funcs = {
       elseif _config.is_unix then
         _config.system_open.cmd = 'xdg-open'
       else
-        require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
+        require'nvim-tree.utils'.warn("Cannot open file with system application. Unrecognized platform.")
         return
       end
     end
@@ -173,14 +173,10 @@ function M.on_keypress(mode)
   if node.link_to and not node.entries then
     lib.open_file(mode, node.link_to)
   elseif node.entries ~= nil then
-    lib.unroll_dir(node)
+    lib.expand_or_collapse(node)
   else
     lib.open_file(mode, node.absolute_path)
   end
-end
-
-function M.refresh()
-  lib.refresh_tree()
 end
 
 function M.print_clipboard()
@@ -227,7 +223,7 @@ function M.on_enter(opts)
     M.hijack_current_window()
   end
 
-  lib.init(should_open, should_open)
+  lib.init(should_open)
 end
 
 local function is_file_readable(fname)
@@ -242,7 +238,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
 
   local ft = api.nvim_buf_get_option(bufnr, 'filetype') or ""
   for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if vim.fn.stridx(filepath, value) ~= -1 or vim.fn.stridx(ft, value) ~= -1 then
+    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
       return
     end
   end
@@ -359,7 +355,7 @@ local function setup_vim_commands()
     command! NvimTreeClose lua require'nvim-tree'.close()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree'.refresh()
+    command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree()
     command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
@@ -381,8 +377,8 @@ local function setup_autocommands(opts)
     """ reset highlights when colorscheme is changed
     au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
-    au BufWritePost * lua require'nvim-tree'.refresh()
-    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
+    au BufWritePost * lua require'nvim-tree.lib'.refresh_tree()
+    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.lib'.reload_git()
   ]]
 
   if opts.auto_close then
@@ -400,6 +396,7 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
   end
+  vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
 
   vim.cmd "augroup end"
 end
@@ -439,6 +436,11 @@ local DEFAULT_OPTS = {
   filters = {
     dotfiles = false,
     custom_filter = {}
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 400,
   }
 }
 
@@ -452,7 +454,7 @@ function M.setup(conf)
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   if type(opts.update_to_buf_dir) == "boolean" then
-    utils.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
+    utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
       enable = opts.update_to_buf_dir,
       auto_open = opts.update_to_buf_dir,
@@ -462,13 +464,14 @@ function M.setup(conf)
   end
 
   if opts.lsp_diagnostics ~= nil then
-    utils.echo_warning("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
+    utils.warn("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
   end
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.populate'.setup(opts)
+  require'nvim-tree.git'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()
