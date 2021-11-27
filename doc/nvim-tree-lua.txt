@@ -58,6 +58,17 @@ similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|
 
 Show the tree in "opened buffers only" mode.
 
+|:NvimTreeEditNextFile| 	                  *:NvimTreeEditNextFile*
+
+Edits the next file visible in the tree, moving from top to bottom. If the
+tree is currently focused, this will switch to the previously used window.
+This is is particularly useful in conjuction with the "opened buffers only"
+mode.
+
+|:NvimTreeEditPrevFile| 	                  *:NvimTreeEditPrevFile*
+
+Same as NvimTreeEditNextFile, but in reverse.
+
 |:NvimTreeClipboard|			          *:NvimTreeClipboard*
 
 Print clipboard content for both cut and copy

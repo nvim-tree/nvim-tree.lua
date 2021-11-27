@@ -370,6 +370,8 @@ local function setup_vim_commands()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
     command! NvimTreeBuffers lua require'nvim-tree'.show_open_buffers()
+    command! NvimTreeEditNextFile lua require'nvim-tree.lib'.edit_next_file(1)
+    command! NvimTreeEditPrevFile lua require'nvim-tree.lib'.edit_next_file(-1)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
   ]]
 end
