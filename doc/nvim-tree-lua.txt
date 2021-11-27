@@ -114,7 +114,11 @@ function.
       filters = {
 	dotfiles = false,
 	custom = {}
-      }
+      },
+      trash = {
+	cmd = "trash",
+	require_confirm = true,
+      },
     }
 <
 
