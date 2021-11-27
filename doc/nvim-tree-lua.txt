@@ -116,8 +116,8 @@ function.
 	custom = {}
       },
       trash = {
-	cmd = "trash",
-	require_confirm = true,
+        cmd = "trash",
+        require_confirm = true,
       },
     }
 <
@@ -284,6 +284,16 @@ Here is a list of the options available in the setup call:
       type: `{string}`
       default: `{}`
 
+*nvim-tree.trash*
+|trash|: configuration options for trashing
+
+  - |trash.cmd|: the command used to trash items (must be installed on your system)
+      type: `string`
+      default: `"trash"`
+
+  - |trash.require_confirm|: show a prompt before trashing takes place.
+      type: `boolean`
+      default: `true`
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
