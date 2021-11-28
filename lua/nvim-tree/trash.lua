@@ -54,12 +54,12 @@ function M.trash_node(node, cfg)
   -- trashing
   if is_confirmed then
     if node.entries ~= nil and not node.link_to then
-      trash_path(function(_job_id, _data, _event)
+      trash_path(function(_, _, _)
         events._dispatch_folder_removed(node.absolute_path)
         lib.refresh_tree()
       end)
     else
-      trash_path(function(_job_id, _data, _event)
+      trash_path(function(_, _, _)
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
         lib.refresh_tree()
