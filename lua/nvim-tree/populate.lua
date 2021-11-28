@@ -36,7 +36,7 @@ end
 local function file_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
-  local is_exec = false
+  local is_exec
   if M.is_windows then
     is_exec = utils.is_windows_exe(ext)
   else
