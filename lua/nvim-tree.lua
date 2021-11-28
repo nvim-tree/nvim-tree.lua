@@ -8,6 +8,7 @@ local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
+local trash = require'nvim-tree.trash'
 
 local _config = {
   is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
@@ -151,6 +152,7 @@ local keypress_funcs = {
     )
     luv.unref(process.handle)
   end,
+  trash = function(node) trash.trash_node(node, _config) end,
 }
 
 function M.on_keypress(mode)
@@ -453,6 +455,7 @@ function M.setup(conf)
   _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+  _config.trash = opts.trash or {}
   if type(opts.update_to_buf_dir) == "boolean" then
     utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {

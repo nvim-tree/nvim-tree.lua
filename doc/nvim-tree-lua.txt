@@ -120,6 +120,10 @@ function.
       filters = {
         dotfiles = false,
         custom = {}
+      },
+      trash = {
+        cmd = "trash",
+        require_confirm = true,
       }
     }
 <
@@ -321,6 +325,16 @@ Here is a list of the options available in the setup call:
       type: `{string}`
       default: `{}`
 
+*nvim-tree.trash*
+|trash|: configuration options for trashing
+
+  - |trash.cmd|: the command used to trash items (must be installed on your system)
+      type: `string`
+      default: `"trash"`
+
+  - |trash.require_confirm|: show a prompt before trashing takes place.
+      type: `boolean`
+      default: `true`
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
@@ -562,6 +576,7 @@ Defaults to:
       { key = "R",                            cb = tree_cb("refresh") },
       { key = "a",                            cb = tree_cb("create") },
       { key = "d",                            cb = tree_cb("remove") },
+      { key = "D",                            cb = tree_cb("trash") },
       { key = "r",                            cb = tree_cb("rename") },
       { key = "<C-r>",                        cb = tree_cb("full_rename") },
       { key = "x",                            cb = tree_cb("cut") },

@@ -91,6 +91,10 @@ require'nvim-tree'.setup {
     },
     number = false,
     relativenumber = false
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true
   }
 }
 ```
@@ -192,6 +196,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `gy` will copy absolute path to system clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
+- type `D` to trash a file (configured in setup())
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
 - type `-` to navigate up to the parent directory of the current file/directory
@@ -243,6 +248,7 @@ local list = {
   { key = "R",                            cb = tree_cb("refresh") },
   { key = "a",                            cb = tree_cb("create") },
   { key = "d",                            cb = tree_cb("remove") },
+  { key = "D",                            cb = tree_cb("trash") },
   { key = "r",                            cb = tree_cb("rename") },
   { key = "<C-r>",                        cb = tree_cb("full_rename") },
   { key = "x",                            cb = tree_cb("cut") },

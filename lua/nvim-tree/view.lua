@@ -61,6 +61,7 @@ M.View = {
     { key = "R",                            cb = M.nvim_tree_callback("refresh") },
     { key = "a",                            cb = M.nvim_tree_callback("create") },
     { key = "d",                            cb = M.nvim_tree_callback("remove") },
+    { key = "D",                            cb = M.nvim_tree_callback("trash") },
     { key = "r",                            cb = M.nvim_tree_callback("rename") },
     { key = "<C-r>",                        cb = M.nvim_tree_callback("full_rename") },
     { key = "x",                            cb = M.nvim_tree_callback("cut") },
