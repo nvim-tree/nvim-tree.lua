@@ -59,7 +59,7 @@ function M.trash_node(node, cfg)
         lib.refresh_tree()
       end)
     else
-      trash_path(function(_, _, _)
+      trash_path(function()
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
         lib.refresh_tree()
