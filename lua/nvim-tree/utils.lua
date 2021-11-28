@@ -6,10 +6,14 @@ function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
 end
 
-function M.echo_warning(msg)
+function M.warn(msg)
   api.nvim_command('echohl WarningMsg')
   api.nvim_command("echom '[NvimTree] "..msg:gsub("'", "''").."'")
   api.nvim_command('echohl None')
+end
+
+function M.str_find(haystack, needle)
+  return vim.fn.stridx(haystack, needle) ~= -1
 end
 
 function M.read_file(path)
@@ -163,6 +167,20 @@ function M.merge_sort(t, comparator)
   end
 
   split_merge(t, 1, #t, comparator)
+end
+
+---Matching executable files in Windows.
+---@param ext string
+---@return boolean
+local PATHEXT = vim.env.PATHEXT or ''
+local wexe = vim.split(PATHEXT:gsub('%.', ''), ';')
+local pathexts = {}
+for _, v in pairs(wexe) do
+  pathexts[v] = true
+end
+
+function M.is_windows_exe(ext)
+  return pathexts[ext:upper()]
 end
 
 return M

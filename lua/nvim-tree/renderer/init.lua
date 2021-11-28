@@ -103,6 +103,7 @@ if vim.g.nvim_tree_git_hl == 1 then
   local git_hl = {
     ["M "] = { { hl = "NvimTreeFileStaged" } },
     [" M"] = { { hl = "NvimTreeFileDirty" } },
+    ["CM"] = { { hl = "NvimTreeFileDirty" } },
     ["C "] = { { hl = "NvimTreeFileStaged" } },
     [" C"] = { { hl = "NvimTreeFileDirty" } },
     [" T"] = { { hl = "NvimTreeFileDirty" } },
@@ -163,7 +164,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     local icons = git_hl[git_status]
 
     if icons == nil then
-      utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
+      utils.warn('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
       icons = git_hl.dirty
     end
 
@@ -179,6 +180,7 @@ if icon_state.show_git_icon then
     [" M"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     ["C "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
     [" C"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ["CM"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     [" T"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     ["MM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
@@ -239,7 +241,7 @@ if icon_state.show_git_icon then
     local icons = git_icon_state[git_status]
     if not icons then
       if vim.g.nvim_tree_git_hl ~= 1 then
-        utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
+        utils.warn('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
       end
       icons = git_icon_state.dirty
     end
