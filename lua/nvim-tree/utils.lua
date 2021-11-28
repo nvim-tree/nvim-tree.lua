@@ -172,7 +172,8 @@ end
 ---Matching executable files in Windows.
 ---@param ext string
 ---@return boolean
-local wexe = vim.split(vim.env.PATHEXT:gsub('%.', ''), ';')
+local PATHEXT = vim.env.PATHEXT or ''
+local wexe = vim.split(PATHEXT:gsub('%.', ''), ';')
 local pathexts = {}
 for _, v in pairs(wexe) do
   pathexts[v] = true
