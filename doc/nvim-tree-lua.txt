@@ -110,14 +110,16 @@ function.
         height = 30,
         side = 'left',
         auto_resize = false,
+        number = false,
+        relativenumber = false,
         mappings = {
           custom_only = false,
           list = {}
         }
       },
       filters = {
-	dotfiles = false,
-	custom = {}
+        dotfiles = false,
+        custom = {}
       }
     }
 <
@@ -284,6 +286,16 @@ Here is a list of the options available in the setup call:
       default: 'left'
 
   - |view.auto_resize|: auto resize the tree after opening a file
+      type: `boolean`
+      default: false
+
+  - |view.number|: print the line number in front of each line.
+      type: `boolean`
+      default: false
+
+  - |view.relativenumber|: show the line number relative to the line with the
+    cursor in front of each line. If the option `view.number` is also `true`,
+    the number on the cursor line will be the line number instead of `0`.
       type: `boolean`
       default: false
 
