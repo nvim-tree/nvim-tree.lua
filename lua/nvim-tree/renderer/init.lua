@@ -381,7 +381,10 @@ function M.draw(tree, reload)
     lines = {}
     hl = {}
 
-    local show_arrows = icon_state.show_folder_icon and icon_state.show_folder_arrows
+    local show_arrows =
+      vim.g.nvim_tree_indent_markers ~= 1
+      and icon_state.show_folder_icon
+      and icon_state.show_folder_arrows
     _padding.reload_padding_function()
     icon_state = config.get_icon_state()
     update_draw_data(tree, show_arrows and 2 or 0, {})
