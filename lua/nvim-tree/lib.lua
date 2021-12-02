@@ -589,4 +589,16 @@ function M.dir_up(node)
   end
 end
 
+function M.launch_telescope(node, func_name, opts)
+  local telescope_status_ok, _ = pcall(require, "telescope")
+  if not telescope_status_ok then
+    return
+  end
+  local is_folder = node.has_children and true
+  local basedir = is_folder and node.absolute_path or vim.fn.fnamemodify(node.absolute_path, ":h")
+  opts = opts or {}
+  opts.cwd = basedir
+  return require("telescope.builtin.files")[func_name](opts)
+end
+
 return M

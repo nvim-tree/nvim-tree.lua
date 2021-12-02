@@ -153,6 +153,8 @@ local keypress_funcs = {
     luv.unref(process.handle)
   end,
   trash = function(node) trash.trash_node(node, _config) end,
+  launch_find_files = function(node) lib.launch_telescope(node, "find_files") end,
+  launch_live_grep = function(node) lib.launch_telescope(node, "live_grep") end,
 }
 
 function M.on_keypress(mode)

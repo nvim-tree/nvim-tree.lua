@@ -590,6 +590,8 @@ Defaults to:
       { key = "-",                            cb = tree_cb("dir_up") },
       { key = "s",                            cb = tree_cb("system_open") },
       { key = "q",                            cb = tree_cb("close") },
+      { key = "<c-f>",                        cb = M.nvim_tree_callback("launch_find_files") },
+      { key = "<c-g>",                        cb = M.nvim_tree_callback("launch_live_grep") },
       { key = "g?",                           cb = tree_cb("toggle_help") },
     }
 <

@@ -75,6 +75,8 @@ M.View = {
     { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
     { key = "s",                            cb = M.nvim_tree_callback("system_open") },
     { key = "q",                            cb = M.nvim_tree_callback("close") },
+    { key = "<c-f>",                        cb = M.nvim_tree_callback("launch_find_files") },
+    { key = "<c-g>",                        cb = M.nvim_tree_callback("launch_live_grep") },
     { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
   }
 }
