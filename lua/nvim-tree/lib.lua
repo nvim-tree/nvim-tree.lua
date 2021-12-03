@@ -556,6 +556,7 @@ function M.parent_node(node, should_close)
       parent.open = false
       altered_tree = true
     end
+    line = math.max(unpack({line - 1, 1}))
     view.set_cursor({line, 0})
   end
 
