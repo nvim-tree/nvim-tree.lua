@@ -40,7 +40,7 @@ function Runner:_getopts(stdout_handle)
   local untracked = self.list_untracked and '-u' or nil
   local ignored = self.list_ignored and '--ignored=matching' or '--ignored=no'
   return {
-    args = {"status", "--porcelain=v1", ignored, untracked},
+    args = {"--no-optional-locks", "status", "--porcelain=v1", ignored, untracked},
     cwd = self.project_root,
     stdio = { nil, stdout_handle, nil },
   }
