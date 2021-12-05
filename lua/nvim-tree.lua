@@ -338,7 +338,10 @@ function M.place_cursor_on_node()
   local line = api.nvim_get_current_line()
   local cursor = api.nvim_win_get_cursor(0)
   local idx = vim.fn.stridx(line, node.name)
-  api.nvim_win_set_cursor(0, {cursor[1], idx})
+
+  if idx >= 0 then
+    api.nvim_win_set_cursor(0, {cursor[1], idx})
+  end
 end
 
 local function manage_netrw(disable_netrw, hijack_netrw)
