@@ -52,14 +52,17 @@ function Runner:_run_git_job()
   local timer = uv.new_timer()
 
   local function on_finish(output)
-    if timer:is_closing() or stdout:is_closing() or handle:is_closing() then
+    if timer:is_closing() or stdout:is_closing() or (handle and handle:is_closing()) then
       return
     end
     timer:stop()
     timer:close()
     stdout:read_stop()
     stdout:close()
-    handle:close()
+    if handle then
+      handle:close()
+    end
+
     pcall(uv.kill, pid)
 
     self.on_end(output or self.output)
