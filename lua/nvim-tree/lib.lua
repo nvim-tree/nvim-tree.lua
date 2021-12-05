@@ -345,8 +345,6 @@ function M.open_file(mode, filename)
 
   if target_winid == -1 then
     target_winid = M.Tree.target_winid
-  elseif target_winid == nil then
-    return
   end
 
   local do_split = mode == "split" or mode == "vsplit"
