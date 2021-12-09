@@ -83,6 +83,7 @@ function.
       open_on_tab         = false,
       hijack_cursor       = false,
       update_cwd          = false,
+      update_cwd_on_find  = false,
       diagnostics         = {
         enable = false,
         icons = {
@@ -187,6 +188,12 @@ Here is a list of the options available in the setup call:
 *nvim-tree.update_cwd*
 - |update_cwd|: changes the tree root directory on `DirChanged` and refreshes
   the tree.
+  type: `boolean`
+  default: `false`
+
+*nvim-tree.update_cwd_on_find*
+- |update_cwd_on_find|: changes the tree root directory on `NvimTreeFindFile` to the parent
+  directory of the found file and refreshes the tree.
   type: `boolean`
   default: `false`
 
