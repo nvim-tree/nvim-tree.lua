@@ -1,7 +1,7 @@
 local a = vim.api
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
-local get_diagnostics = vim.lsp.diagnostic.get_all
+local get_diagnostics = vim.diagnostic.get
 
 local M = {}
 
