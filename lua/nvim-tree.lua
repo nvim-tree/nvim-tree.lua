@@ -111,8 +111,7 @@ local keypress_funcs = {
       stderr = luv.new_pipe(false)
     }
 
-    io.write('Component: ')
-    local s = io.read()
+    local s = vim.fn.input("Component: ", "")
     print(s)
   end,
   system_open = function(node)
