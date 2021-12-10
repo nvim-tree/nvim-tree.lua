@@ -1,7 +1,6 @@
 local a = vim.api
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
-local get_diagnostics = vim.lsp.diagnostic.get_all
 
 local M = {}
 
@@ -35,12 +34,25 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  for buf, diagnostics in pairs(get_diagnostics()) do
-    if a.nvim_buf_is_valid(buf) then
-      local bufname = a.nvim_buf_get_name(buf)
-      if not buffer_severity[bufname] then
-        local severity = get_lowest_severity(diagnostics)
-        buffer_severity[bufname] = severity
+  if vim.diagnostic then
+    for _, diagnostic in ipairs(vim.diagnostic.get()) do
+      local buf = diagnostic.bufnr
+      if a.nvim_buf_is_valid(buf) then
+        local bufname = a.nvim_buf_get_name(buf)
+        local lowest_severity = buffer_severity[bufname]
+        if not lowest_severity or diagnostic.severity < lowest_severity then
+          buffer_severity[bufname] = diagnostic.severity
+        end
+      end
+    end
+  else
+    for buf, diagnostics in pairs(vim.lsp.diagnostic.get_all()) do
+      if a.nvim_buf_is_valid(buf) then
+        local bufname = a.nvim_buf_get_name(buf)
+        if not buffer_severity[bufname] then
+          local severity = get_lowest_severity(diagnostics)
+          buffer_severity[bufname] = severity
+        end
       end
     end
   end
