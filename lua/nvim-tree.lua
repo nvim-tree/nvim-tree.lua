@@ -103,6 +103,18 @@ local keypress_funcs = {
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
   end,
+  component = function(node)
+    local process = {
+      cmd = 'bash',
+      args = _config.system_open.args,
+      errors = '\n',
+      stderr = luv.new_pipe(false)
+    }
+
+    io.write('Component: ')
+    local s = io.read()
+    print(s)
+  end,
   system_open = function(node)
     if not _config.system_open.cmd then
       if _config.is_windows then

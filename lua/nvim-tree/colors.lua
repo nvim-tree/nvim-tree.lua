@@ -15,14 +15,14 @@ end
 
 local function get_colors()
   return {
-    red      = vim.g.terminal_color_1  or get_color_from_hl('Keyword', 'Red'),
-    green    = vim.g.terminal_color_2  or get_color_from_hl('Character', 'Green'),
-    yellow   = vim.g.terminal_color_3  or get_color_from_hl('PreProc', 'Yellow'),
-    blue     = vim.g.terminal_color_4  or get_color_from_hl('Include', 'Blue'),
-    purple   = vim.g.terminal_color_5  or get_color_from_hl('Define', 'Purple'),
-    cyan     = vim.g.terminal_color_6  or get_color_from_hl('Conditional', 'Cyan'),
-    dark_red = vim.g.terminal_color_9  or get_color_from_hl('Keyword', 'DarkRed'),
-    orange   = vim.g.terminal_color_11 or get_color_from_hl('Number', 'Orange'),
+    red      = '#fb4934',
+    green    = '#b8bb26',
+    yellow   = '#fabd2f',
+    blue     = '#83a598',
+    purple   = '#d3869b',
+    cyan     = '#8ec07c',
+    dark_red = '#cc241d',
+    orange   = '#fe8019',
   }
 end
 
@@ -30,9 +30,9 @@ local function get_hl_groups()
   local colors = get_colors()
 
   return {
-    IndentMarker = { fg = '#8094b4' },
+    IndentMarker = { fg = '#d65d0e' },
     Symlink = { gui = 'bold', fg = colors.cyan },
-    FolderIcon = { fg = '#8094b4' },
+    FolderIcon = { fg = '#d65d0e' },
     RootFolder = { fg = colors.purple },
 
     ExecFile = { gui = 'bold', fg = colors.green },
@@ -47,15 +47,15 @@ local function get_hl_groups()
     GitRenamed = { fg = colors.purple },
     GitNew = { fg = colors.yellow },
 
-    WindowPicker = { gui = "bold", fg = "#ededed", bg = "#4493c8" }
+    WindowPicker = { gui = "bold", fg = "#ebdbb2", bg = "#458588" },
   }
 end
 
 local function get_links()
   return {
-    FolderName = 'Directory',
-    EmptyFolderName = 'Directory',
-    OpenedFolderName = 'Directory',
+    FolderName = 'GruvboxAqua',
+    EmptyFolderName = 'GruvboxGray',
+    OpenedFolderName = 'GruvboxAqua',
     Normal = 'Normal',
     NormalNC = 'NvimTreeNormal',
     EndOfBuffer = 'EndOfBuffer',
@@ -69,7 +69,7 @@ local function get_links()
     FileStaged = 'NvimTreeGitStaged',
     FileDeleted = 'NvimTreeGitDeleted',
     Popup = 'Normal',
-    GitIgnored = 'Comment',
+    GitIgnored = 'GruvboxGray',
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
     SignColumn = 'NvimTreeNormal',
