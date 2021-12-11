@@ -34,7 +34,10 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
+  -- vim.lsp.diagnostic.get_all was deprecated in nvim 0.7 and replaced with vim.diagnostic.get
+  -- This conditional can be removed when the minimum required version of nvim is changed to 0.7.
   if vim.diagnostic then
+    -- nvim version >= 0.7
     for _, diagnostic in ipairs(vim.diagnostic.get()) do
       local buf = diagnostic.bufnr
       if a.nvim_buf_is_valid(buf) then
@@ -46,6 +49,7 @@ local function from_nvim_lsp()
       end
     end
   else
+    -- nvim version < 0.7
     for buf, diagnostics in pairs(vim.lsp.diagnostic.get_all()) do
       if a.nvim_buf_is_valid(buf) then
         local bufname = a.nvim_buf_get_name(buf)
