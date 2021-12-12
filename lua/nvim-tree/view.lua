@@ -117,7 +117,8 @@ local DEFAULT_CONFIG = {
     list = {}
   },
   number = false,
-  relativenumber = false
+  relativenumber = false,
+  signcolumn = 'yes'
 }
 
 local function merge_mappings(user_mappings)
@@ -152,6 +153,7 @@ function M.setup(opts)
   M.View.auto_resize = opts.auto_resize
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
+  M.View.winopts.signcolumn = options.signcolumn
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else
