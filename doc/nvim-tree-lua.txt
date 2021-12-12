@@ -304,7 +304,7 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: false
 
-  - |view.signcolumn|: show diagnostic sign column. Value  can be `"yes"`,
+  - |view.signcolumn|: show diagnostic sign column. Value can be `"yes"`,
     `"auto"`, `"no"`
       type: `string`
       default: `"yes"`
