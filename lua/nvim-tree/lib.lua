@@ -221,8 +221,8 @@ function M.set_index_and_redraw(fname)
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
               reload_node_status(node, git.projects)
-              M.redraw()
             end
+            M.redraw()
           end)
         end
         if node.open == false then
