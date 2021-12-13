@@ -7,7 +7,7 @@ function M.nvim_tree_callback(callback_name)
 end
 
 M.View = {
-  last_focus_winnr = nil,
+  last_focused_winnr = nil,
   bufnr = nil,
   tabpages = {},
   hide_root_folder = false,
@@ -310,7 +310,7 @@ local function is_buf_valid(bufnr)
 end
 
 function M.open(options)
-  M.View.last_focus_winnr = a.nvim_get_current_win()
+  M.View.last_focused_winnr = a.nvim_get_current_win()
   local should_redraw = false
   if not is_buf_valid(M.View.bufnr) then
     should_redraw = true
@@ -354,10 +354,10 @@ function M.close()
     end
   end
   if #a.nvim_list_wins() > 1 then
-    local tree_win_nr = M.get_winnr()
-    local current_win_nr = a.nvim_get_current_win()
-    a.nvim_win_hide(tree_win_nr)
-    if tree_win_nr == current_win_nr and M.View.last_focus_winnr then
+    local tree_winnr = M.get_winnr()
+    local current_winnr = a.nvim_get_current_win()
+    a.nvim_win_hide(tree_winnr)
+    if tree_winnr == current_winnr and M.View.last_focus_winnr then
       a.nvim_set_current_win(M.View.last_focus_winnr)
     end
   end
