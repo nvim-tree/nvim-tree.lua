@@ -6,6 +6,13 @@ function M.nvim_tree_callback(callback_name)
   return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
 end
 
+function M.nvim_tree_custom_node_callback(callback_name, callback_fn)
+  return {
+    name = callback_name,
+    fn = callback_fn,
+  }
+end
+
 M.View = {
   bufnr = nil,
   tabpages = {},
@@ -76,7 +83,8 @@ M.View = {
     { key = "s",                            cb = M.nvim_tree_callback("system_open") },
     { key = "q",                            cb = M.nvim_tree_callback("close") },
     { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
-  }
+  },
+  custom_keypress_funcs = {},
 }
 
 local function wipe_rogue_buffer()
@@ -134,6 +142,9 @@ local function merge_mappings(user_mappings)
       end
     else
        table.insert(user_keys, map.key)
+    end
+    if map.custom_node_cb then
+      M.View.custom_keypress_funcs[map.custom_node_cb.name] = map.custom_node_cb.fn
     end
   end
 

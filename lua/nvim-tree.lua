@@ -162,6 +162,8 @@ function M.on_keypress(mode)
 
   if keypress_funcs[mode] then
     return keypress_funcs[mode](node)
+  elseif view.View.custom_keypress_funcs[mode] then
+    return view.View.custom_keypress_funcs[mode](node)
   end
 
   if node.name == ".." then
