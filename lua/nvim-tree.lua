@@ -234,7 +234,7 @@ local function is_file_readable(fname)
 end
 
 local function update_base_dir_with_filepath(filepath, bufnr)
-  if not _config.update_focused_file.update_cwd and not _config.update_cwd_on_find then
+  if not _config.update_focused_file.update_cwd then
     return
   end
 
@@ -245,7 +245,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if _config.update_cwd_on_find or not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
+  if not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
     lib.change_dir(vim.fn.fnamemodify(filepath, ':p:h'))
   end
 end
@@ -418,7 +418,6 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
-  update_cwd_on_find  = false,
   hide_root_folder    = false,
   update_focused_file = {
     enable = false,
@@ -460,7 +459,6 @@ function M.setup(conf)
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.trash = opts.trash or {}
-  _config.update_cwd_on_find = opts.update_cwd_on_find
   if type(opts.update_to_buf_dir) == "boolean" then
     utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
