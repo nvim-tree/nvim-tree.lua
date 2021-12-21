@@ -1,17 +1,7 @@
 local a = vim.api
+local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
 local M = {}
-
-function M.nvim_tree_callback(callback_name)
-  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
-end
-
-function M.nvim_tree_custom_node_callback(callback_name, callback_fn)
-  return {
-    name = callback_name,
-    fn = callback_fn,
-  }
-end
 
 M.View = {
   bufnr = nil,
@@ -50,39 +40,39 @@ M.View = {
     { name = 'bufhidden', val = 'hide' }
   },
   mappings = {
-    { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
-    { key = {"<2-RightMouse>", "<C-]>"},    cb = M.nvim_tree_callback("cd") },
-    { key = "<C-v>",                        cb = M.nvim_tree_callback("vsplit") },
-    { key = "<C-x>",                        cb = M.nvim_tree_callback("split") },
-    { key = "<C-t>",                        cb = M.nvim_tree_callback("tabnew") },
-    { key = "<",                            cb = M.nvim_tree_callback("prev_sibling") },
-    { key = ">",                            cb = M.nvim_tree_callback("next_sibling") },
-    { key = "P",                            cb = M.nvim_tree_callback("parent_node") },
-    { key = "<BS>",                         cb = M.nvim_tree_callback("close_node") },
-    { key = "<S-CR>",                       cb = M.nvim_tree_callback("close_node") },
-    { key = "<Tab>",                        cb = M.nvim_tree_callback("preview") },
-    { key = "K",                            cb = M.nvim_tree_callback("first_sibling") },
-    { key = "J",                            cb = M.nvim_tree_callback("last_sibling") },
-    { key = "I",                            cb = M.nvim_tree_callback("toggle_ignored") },
-    { key = "H",                            cb = M.nvim_tree_callback("toggle_dotfiles") },
-    { key = "R",                            cb = M.nvim_tree_callback("refresh") },
-    { key = "a",                            cb = M.nvim_tree_callback("create") },
-    { key = "d",                            cb = M.nvim_tree_callback("remove") },
-    { key = "D",                            cb = M.nvim_tree_callback("trash") },
-    { key = "r",                            cb = M.nvim_tree_callback("rename") },
-    { key = "<C-r>",                        cb = M.nvim_tree_callback("full_rename") },
-    { key = "x",                            cb = M.nvim_tree_callback("cut") },
-    { key = "c",                            cb = M.nvim_tree_callback("copy") },
-    { key = "p",                            cb = M.nvim_tree_callback("paste") },
-    { key = "y",                            cb = M.nvim_tree_callback("copy_name") },
-    { key = "Y",                            cb = M.nvim_tree_callback("copy_path") },
-    { key = "gy",                           cb = M.nvim_tree_callback("copy_absolute_path") },
-    { key = "[c",                           cb = M.nvim_tree_callback("prev_git_item") },
-    { key = "]c",                           cb = M.nvim_tree_callback("next_git_item") },
-    { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
-    { key = "s",                            cb = M.nvim_tree_callback("system_open") },
-    { key = "q",                            cb = M.nvim_tree_callback("close") },
-    { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
+    { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = nvim_tree_callback("edit") },
+    { key = {"<2-RightMouse>", "<C-]>"},    cb = nvim_tree_callback("cd") },
+    { key = "<C-v>",                        cb = nvim_tree_callback("vsplit") },
+    { key = "<C-x>",                        cb = nvim_tree_callback("split") },
+    { key = "<C-t>",                        cb = nvim_tree_callback("tabnew") },
+    { key = "<",                            cb = nvim_tree_callback("prev_sibling") },
+    { key = ">",                            cb = nvim_tree_callback("next_sibling") },
+    { key = "P",                            cb = nvim_tree_callback("parent_node") },
+    { key = "<BS>",                         cb = nvim_tree_callback("close_node") },
+    { key = "<S-CR>",                       cb = nvim_tree_callback("close_node") },
+    { key = "<Tab>",                        cb = nvim_tree_callback("preview") },
+    { key = "K",                            cb = nvim_tree_callback("first_sibling") },
+    { key = "J",                            cb = nvim_tree_callback("last_sibling") },
+    { key = "I",                            cb = nvim_tree_callback("toggle_ignored") },
+    { key = "H",                            cb = nvim_tree_callback("toggle_dotfiles") },
+    { key = "R",                            cb = nvim_tree_callback("refresh") },
+    { key = "a",                            cb = nvim_tree_callback("create") },
+    { key = "d",                            cb = nvim_tree_callback("remove") },
+    { key = "D",                            cb = nvim_tree_callback("trash") },
+    { key = "r",                            cb = nvim_tree_callback("rename") },
+    { key = "<C-r>",                        cb = nvim_tree_callback("full_rename") },
+    { key = "x",                            cb = nvim_tree_callback("cut") },
+    { key = "c",                            cb = nvim_tree_callback("copy") },
+    { key = "p",                            cb = nvim_tree_callback("paste") },
+    { key = "y",                            cb = nvim_tree_callback("copy_name") },
+    { key = "Y",                            cb = nvim_tree_callback("copy_path") },
+    { key = "gy",                           cb = nvim_tree_callback("copy_absolute_path") },
+    { key = "[c",                           cb = nvim_tree_callback("prev_git_item") },
+    { key = "]c",                           cb = nvim_tree_callback("next_git_item") },
+    { key = "-",                            cb = nvim_tree_callback("dir_up") },
+    { key = "s",                            cb = nvim_tree_callback("system_open") },
+    { key = "q",                            cb = nvim_tree_callback("close") },
+    { key = "g?",                           cb = nvim_tree_callback("toggle_help") }
   },
   custom_keypress_funcs = {},
 }
