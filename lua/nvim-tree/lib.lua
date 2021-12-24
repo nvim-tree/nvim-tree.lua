@@ -455,12 +455,17 @@ function M.collapse_all()
   M.redraw()
 end
 
+local current_tab = api.nvim_get_current_tabpage()
+
 function M.change_dir(name)
   local foldername = name == '..' and vim.fn.fnamemodify(M.Tree.cwd, ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == M.Tree.cwd
-  if no_cwd_change then
+  local new_tab = api.nvim_get_current_tabpage()
+  local is_window = vim.v.event.scope == "window" and new_tab == current_tab
+  if no_cwd_change or is_window then
     return
   end
+  current_tab = new_tab
 
   vim.cmd('lcd '..vim.fn.fnameescape(foldername))
   M.init(false, foldername)
