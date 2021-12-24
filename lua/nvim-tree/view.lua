@@ -52,7 +52,6 @@ M.View = {
     { key = ">",                            cb = M.nvim_tree_callback("next_sibling") },
     { key = "P",                            cb = M.nvim_tree_callback("parent_node") },
     { key = "<BS>",                         cb = M.nvim_tree_callback("close_node") },
-    { key = "<S-CR>",                       cb = M.nvim_tree_callback("close_node") },
     { key = "<Tab>",                        cb = M.nvim_tree_callback("preview") },
     { key = "K",                            cb = M.nvim_tree_callback("first_sibling") },
     { key = "J",                            cb = M.nvim_tree_callback("last_sibling") },
