@@ -355,8 +355,12 @@ function M.close()
       vim.cmd "new"
     end
   end
-  if #a.nvim_list_wins() > 1 then
-    a.nvim_win_hide(M.get_winnr())
+  local tree_win = M.get_winnr()
+  for _, win in pairs(a.nvim_list_wins()) do
+    if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
+      a.nvim_win_hide(tree_win)
+      return
+    end
   end
 end
 
