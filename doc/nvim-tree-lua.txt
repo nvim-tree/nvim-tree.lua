@@ -232,7 +232,7 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
-  - diagnostics.show_on_dirs: if the node with diagnostic is not visible,
+  - |diagnostics.show_on_dirs|: if the node with diagnostic is not visible,
     then show diagnostic in the parent directory
       type: `boolean`
       default: `false`
