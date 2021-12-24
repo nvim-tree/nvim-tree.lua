@@ -431,6 +431,7 @@ local DEFAULT_OPTS = {
   },
   diagnostics = {
     enable = false,
+    show_on_dirs = false,
     icons = {
       hint = "",
       info = "",

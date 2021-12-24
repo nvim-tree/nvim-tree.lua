@@ -125,7 +125,11 @@ function M.update()
   for bufname, severity in pairs(buffer_severity) do
     if 0 < severity and severity < 5 then
       local node, line = utils.find_node(nodes, function(node)
-        return node.absolute_path == bufname
+        if M.show_on_dirs and not node.open then
+          return vim.startswith(bufname, node.absolute_path)
+        else
+          return node.absolute_path == bufname
+        end
       end)
       if node then add_sign(line, severity) end
     end
@@ -142,6 +146,7 @@ local links = {
 
 function M.setup(opts)
   M.enable = opts.diagnostics.enable
+  M.show_on_dirs = opts.diagnostics.show_on_dirs
   vim.fn.sign_define(sign_names[1][1], { text = opts.diagnostics.icons.error,   texthl = sign_names[1][2] })
   vim.fn.sign_define(sign_names[2][1], { text = opts.diagnostics.icons.warning, texthl = sign_names[2][2] })
   vim.fn.sign_define(sign_names[3][1], { text = opts.diagnostics.icons.info,    texthl = sign_names[3][2] })
