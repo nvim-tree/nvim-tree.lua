@@ -441,7 +441,8 @@ local DEFAULT_OPTS = {
   },
   filters = {
     dotfiles = false,
-    custom_filter = {}
+    custom_filter = {},
+    exclude = {}
   },
   git = {
     enable = true,
