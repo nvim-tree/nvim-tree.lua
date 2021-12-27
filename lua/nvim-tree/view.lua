@@ -53,7 +53,6 @@ M.View = {
     { key = ">",                            cb = M.nvim_tree_callback("next_sibling") },
     { key = "P",                            cb = M.nvim_tree_callback("parent_node") },
     { key = "<BS>",                         cb = M.nvim_tree_callback("close_node") },
-    { key = "<S-CR>",                       cb = M.nvim_tree_callback("close_node") },
     { key = "<Tab>",                        cb = M.nvim_tree_callback("preview") },
     { key = "K",                            cb = M.nvim_tree_callback("first_sibling") },
     { key = "J",                            cb = M.nvim_tree_callback("last_sibling") },
@@ -118,7 +117,8 @@ local DEFAULT_CONFIG = {
     list = {}
   },
   number = false,
-  relativenumber = false
+  relativenumber = false,
+  signcolumn = 'yes'
 }
 
 local function merge_mappings(user_mappings)
@@ -153,6 +153,7 @@ function M.setup(opts)
   M.View.auto_resize = opts.auto_resize
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
+  M.View.winopts.signcolumn = options.signcolumn
   if options.mappings.custom_only then
     M.View.mappings = options.mappings.list
   else
@@ -252,6 +253,8 @@ local function get_size()
   local size = M.View[width_or_height]
   if type(size) == "number" then
     return size
+  elseif type(size) == "function" then
+    return size()
   end
   local size_as_number = tonumber(size:sub(0, -2))
   local percent_as_decimal = size_as_number / 100
@@ -353,12 +356,15 @@ function M.close()
       vim.cmd "new"
     end
   end
-  if #a.nvim_list_wins() > 1 then
-    local tree_winnr = M.get_winnr()
-    local current_winnr = a.nvim_get_current_win()
-    a.nvim_win_hide(tree_winnr)
-    if tree_winnr == current_winnr and M.View.last_focus_winnr then
-      a.nvim_set_current_win(M.View.last_focus_winnr)
+  local tree_win = M.get_winnr()
+  local current_win = a.nvim_get_current_win()
+  for _, win in pairs(a.nvim_list_wins()) do
+    if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
+      a.nvim_win_hide(tree_win)
+      if tree_win == current_win and M.View.last_focus_winnr then
+        a.nvim_set_current_win(M.View.last_focus_winnr)
+      end
+      return
     end
   end
 end

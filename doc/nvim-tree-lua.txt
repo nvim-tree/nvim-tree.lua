@@ -85,6 +85,7 @@ function.
       update_cwd          = false,
       diagnostics         = {
         enable = false,
+        show_on_dirs = false,
         icons = {
           hint = "",
           info = "",
@@ -112,6 +113,7 @@ function.
         auto_resize = false,
         number = false,
         relativenumber = false,
+	signcolumn = "yes"
         mappings = {
           custom_only = false,
           list = {}
@@ -230,6 +232,11 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
+  - |diagnostics.show_on_dirs|: if the node with diagnostic is not visible,
+    then show diagnostic in the parent directory
+      type: `boolean`
+      default: `false`
+
   - |diagnostics.icons|: icons for diagnostic severity
       type: `table`
       default: `{ hint = "", info = "", warning = "", error = "" }`
@@ -302,6 +309,11 @@ Here is a list of the options available in the setup call:
     the number on the cursor line will be the line number instead of `0`.
       type: `boolean`
       default: false
+
+  - |view.signcolumn|: show diagnostic sign column. Value can be `"yes"`,
+    `"auto"`, `"no"`
+      type: `string`
+      default: `"yes"`
 
   - |view.mappings|: configuration options for keymaps
 
@@ -567,7 +579,6 @@ Defaults to:
       { key = ">",                            cb = tree_cb("next_sibling") },
       { key = "P",                            cb = tree_cb("parent_node") },
       { key = "<BS>",                         cb = tree_cb("close_node") },
-      { key = "<S-CR>",                       cb = tree_cb("close_node") },
       { key = "<Tab>",                        cb = tree_cb("preview") },
       { key = "K",                            cb = tree_cb("first_sibling") },
       { key = "J",                            cb = tree_cb("last_sibling") },
