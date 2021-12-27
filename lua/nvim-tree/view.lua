@@ -49,7 +49,6 @@ M.View = {
     { key = ">",                            cb = nvim_tree_callback("next_sibling") },
     { key = "P",                            cb = nvim_tree_callback("parent_node") },
     { key = "<BS>",                         cb = nvim_tree_callback("close_node") },
-    { key = "<S-CR>",                       cb = nvim_tree_callback("close_node") },
     { key = "<Tab>",                        cb = nvim_tree_callback("preview") },
     { key = "K",                            cb = nvim_tree_callback("first_sibling") },
     { key = "J",                            cb = nvim_tree_callback("last_sibling") },
@@ -356,8 +355,12 @@ function M.close()
       vim.cmd "new"
     end
   end
-  if #a.nvim_list_wins() > 1 then
-    a.nvim_win_hide(M.get_winnr())
+  local tree_win = M.get_winnr()
+  for _, win in pairs(a.nvim_list_wins()) do
+    if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
+      a.nvim_win_hide(tree_win)
+      return
+    end
   end
 end
 

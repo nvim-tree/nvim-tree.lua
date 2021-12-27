@@ -227,7 +227,7 @@ function M.on_enter(opts)
     M.hijack_current_window()
   end
 
-  lib.init(should_open)
+  lib.init(should_open, lib.Tree.cwd)
 end
 
 local function is_file_readable(fname)
@@ -433,6 +433,7 @@ local DEFAULT_OPTS = {
   },
   diagnostics = {
     enable = false,
+    show_on_dirs = false,
     icons = {
       hint = "",
       info = "",
