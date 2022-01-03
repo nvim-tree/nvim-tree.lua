@@ -58,19 +58,9 @@ function M.get_icon_state()
   }
 end
 
+-- TODO: remove this once the cb property is not supported in mappings
 function M.nvim_tree_callback(callback_name)
   return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
-end
-
-function M.nvim_tree_custom_node_callback(keys, callback_name, callback_fn)
-  return {
-    key = keys,
-    cb = M.nvim_tree_callback(callback_name),
-    custom_node_cb = {
-      name = callback_name,
-      fn = callback_fn,
-    }
-  }
 end
 
 function M.window_options()
