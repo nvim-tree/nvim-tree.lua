@@ -113,7 +113,7 @@ function.
         auto_resize = false,
         number = false,
         relativenumber = false,
-	signcolumn = "yes"
+	signcolumn = "yes",
         mappings = {
           custom_only = false,
           list = {}
