@@ -172,7 +172,8 @@ Here is a list of the options available in the setup call:
 *nvim-tree.update_to_buf_dir*
 - |update_to_buf_dir|: hijacks new directory buffers when they are opened (`:e dir`).
 
-  - |update_to_buf_dir.enable|: enable the feature. Disable this option if you use vim-dirvish.
+  - |update_to_buf_dir.enable|: enable the feature. Disable this option if you
+    use vim-dirvish or dirbuf.nvim.
     type: `boolean`
     default: `true`
 
