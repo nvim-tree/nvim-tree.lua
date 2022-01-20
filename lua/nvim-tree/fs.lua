@@ -11,6 +11,13 @@ local clipboard = {
   copy = {}
 }
 
+--- @param path string path to file or directory
+--- @return boolean
+local function exist(path)
+  local result, error = luv.fs_stat(path)
+  return error == nil
+end
+
 local function focus_file(file)
   local _, i = utils.find_node(
     lib.Tree.entries,
@@ -20,7 +27,7 @@ local function focus_file(file)
 end
 
 local function create_file(file)
-  if luv.fs_access(file, "r") ~= false then
+  if exist(file) then
     print(file..' already exists. Overwrite? y/n')
     local ans = utils.get_user_input_char()
     utils.clear_prompt()
@@ -69,7 +76,7 @@ function M.create(node)
 
   local ans = vim.fn.input('Create file ', add_into)
   utils.clear_prompt()
-  if not ans or #ans == 0 or luv.fs_access(ans, 'r') then return end
+  if not ans or #ans == 0 or exist(ans) then return end
 
   -- create a folder for each path element if the folder does not exist
   -- if the answer ends with a /, create a file for the last entry
@@ -88,7 +95,7 @@ function M.create(node)
     end
     if is_last_path_file and idx == num_entries then
       create_file(path_to_create)
-    elseif not luv.fs_access(path_to_create, "r") then
+    elseif not exist(path_to_create) then
       local success = luv.fs_mkdir(path_to_create, 493)
       if not success then
         api.nvim_err_writeln('Could not create folder '..path_to_create)
@@ -295,7 +302,7 @@ function M.rename(with_sub)
     if not new_name or #new_name == 0 then
       return
     end
-    if luv.fs_access(new_name, 'R') then
+    if exist(new_name) then
       utils.warn("Cannot rename: file already exists")
       return
     end
