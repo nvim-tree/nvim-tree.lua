@@ -85,6 +85,7 @@ function M.create(node)
   local idx = 0
 
   local num_entries = get_num_entries(utils.path_split(utils.path_remove_trailing(ans)))
+  local is_error = false
   for path in utils.path_split(ans) do
     idx = idx + 1
     local p = utils.path_remove_trailing(path)
@@ -99,11 +100,14 @@ function M.create(node)
       local success = luv.fs_mkdir(path_to_create, 493)
       if not success then
         api.nvim_err_writeln('Could not create folder '..path_to_create)
+        is_error = true
         break
       end
     end
   end
-  api.nvim_out_write(ans..' was properly created\n')
+  if not is_error then
+    api.nvim_out_write(ans..' was properly created\n')
+  end
   events._dispatch_folder_created(ans)
   lib.refresh_tree()
   focus_file(ans)
