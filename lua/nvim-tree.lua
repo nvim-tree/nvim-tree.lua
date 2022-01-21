@@ -8,13 +8,8 @@ local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
-local trash = require'nvim-tree.trash'
 
-local _config = {
-  is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
-  is_macos            = vim.fn.has('mac') == 1 or vim.fn.has('macunix') == 1,
-  is_unix             = vim.fn.has('unix') == 1,
-}
+local _config = {}
 
 local M = {}
 
@@ -79,12 +74,12 @@ local keypress_funcs = {
   remove = fs.remove,
   rename = fs.rename(false),
   full_rename = fs.rename(true),
-  copy = fs.copy,
-  copy_name = fs.copy_filename,
-  copy_path = fs.copy_path,
-  copy_absolute_path = fs.copy_absolute_path,
-  cut = fs.cut,
-  paste = fs.paste,
+  copy = require'nvim-tree.actions.copy-paste'.copy,
+  copy_name = require'nvim-tree.actions.copy-paste'.copy_filename,
+  copy_path = require'nvim-tree.actions.copy-paste'.copy_path,
+  copy_absolute_path = require'nvim-tree.actions.copy-paste'.copy_absolute_path,
+  cut = require'nvim-tree.actions.copy-paste'.cut,
+  paste = require'nvim-tree.actions.copy-paste'.paste,
   close_node = lib.close_node,
   parent_node = lib.parent_node,
   toggle_ignored = lib.toggle_ignored,
@@ -103,56 +98,8 @@ local keypress_funcs = {
     if node.entries ~= nil or node.name == '..' then return end
     return lib.open_file('preview', node.absolute_path)
   end,
-  system_open = function(node)
-    if not _config.system_open.cmd then
-      if _config.is_windows then
-        _config.system_open = {
-          cmd = "cmd",
-          args = {'/c', 'start', '""'}
-        }
-      elseif _config.is_macos then
-        _config.system_open.cmd = 'open'
-      elseif _config.is_unix then
-        _config.system_open.cmd = 'xdg-open'
-      else
-        require'nvim-tree.utils'.warn("Cannot open file with system application. Unrecognized platform.")
-        return
-      end
-    end
-
-    local process = {
-      cmd = _config.system_open.cmd,
-      args = _config.system_open.args,
-      errors = '\n',
-      stderr = luv.new_pipe(false)
-    }
-    table.insert(process.args, node.link_to or node.absolute_path)
-    process.handle, process.pid = luv.spawn(process.cmd,
-      { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
-      function(code)
-        process.stderr:read_stop()
-        process.stderr:close()
-        process.handle:close()
-        if code ~= 0 then
-          process.errors = process.errors .. string.format('NvimTree system_open: return code %d.', code)
-          error(process.errors)
-        end
-      end
-    )
-    table.remove(process.args)
-    if not process.handle then
-      error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
-      return
-    end
-    luv.read_start(process.stderr,
-      function(err, data)
-        if err then return end
-        if data then process.errors = process.errors .. data end
-      end
-    )
-    luv.unref(process.handle)
-  end,
-  trash = function(node) trash.trash_node(node, _config) end,
+  system_open = require'nvim-tree.actions.system-open'.fn,
+  trash = require'nvim-tree.actions.trash'.fn,
 }
 
 function M.on_keypress(action)
@@ -184,10 +131,6 @@ function M.on_keypress(action)
   else
     lib.open_file(action, node.absolute_path)
   end
-end
-
-function M.print_clipboard()
-  fs.print_clipboard()
 end
 
 function M.hijack_current_window()
@@ -366,7 +309,7 @@ local function setup_vim_commands()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
     command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree()
-    command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
+    command! NvimTreeClipboard lua require'nvim-tree.actions.copy-paste'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
@@ -462,10 +405,8 @@ function M.setup(conf)
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
   _config.update_focused_file = opts.update_focused_file
-  _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
-  _config.trash = opts.trash or {}
   if type(opts.update_to_buf_dir) == "boolean" then
     utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
@@ -481,6 +422,7 @@ function M.setup(conf)
   end
 
   require'nvim-tree.colors'.setup()
+  require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.populate'.setup(opts)

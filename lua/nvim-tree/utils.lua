@@ -1,5 +1,7 @@
-local M = {}
+local a = vim.api
 local uv = vim.loop
+
+local M = {}
 
 function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
@@ -160,8 +162,8 @@ end
 ---@param comparator function|nil
 function M.merge_sort(t, comparator)
   if not comparator then
-    comparator = function (a, b)
-      return a < b
+    comparator = function (left, right)
+      return left < right
     end
   end
 
@@ -180,6 +182,25 @@ end
 
 function M.is_windows_exe(ext)
   return pathexts[ext:upper()]
+end
+
+function M.rename_loaded_buffers(old_name, new_name)
+  for _, buf in pairs(a.nvim_list_bufs()) do
+    if a.nvim_buf_is_loaded(buf) then
+      if a.nvim_buf_get_name(buf) == old_name then
+        a.nvim_buf_set_name(buf, new_name)
+        -- to avoid the 'overwrite existing file' error message on write
+        vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
+      end
+    end
+  end
+end
+
+--- @param path string path to file or directory
+--- @return boolean
+function M.file_exists(path)
+  local _, error = vim.loop.fs_stat(path)
+  return error == nil
 end
 
 return M
