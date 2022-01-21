@@ -277,7 +277,7 @@ Here is a list of the options available in the setup call:
 *nvim-tree.view*
 - |view|: window / buffer setup
 
-  - |view.hide_root_folder|: hide the path of the current working 
+  - |view.hide_root_folder|: hide the path of the current working
     directory on top of the tree
       type: `boolean`
       default: `false`
@@ -485,6 +485,9 @@ default table is
       ["readme.md"] = true,
    }
 
+|g:nvim_tree_change_dir_global|                  *g:nvim_tree_change_dir_global*
+
+Can be 0 or 1. When 1, use :cd instead of :lcd when changing directories.
 
 |g:nvim_tree_disable_window_picker|          *g:nvim_tree_disable_window_picker*
 
