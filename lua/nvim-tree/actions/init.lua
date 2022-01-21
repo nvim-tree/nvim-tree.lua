@@ -8,7 +8,7 @@ local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 local M = {
   mappings = {
     { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
-    { key = {"O"},                          action = nvim_tree_callback("edit_no_picker") },
+    { key = {"O"},                          action = "edit_no_picker" },
     { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
     { key = "<C-v>",                        action = "vsplit" },
     { key = "<C-x>",                        action = "split"},
