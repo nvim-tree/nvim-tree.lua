@@ -173,7 +173,7 @@ function M.setup(opts)
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend('force', DEFAULT_MAPPING_CONFIG, user_map_config)
   if options.custom_only then
-    M.mappings = options.mappings.list
+    M.mappings = options.list
   else
     M.mappings = merge_mappings(options.list)
   end
