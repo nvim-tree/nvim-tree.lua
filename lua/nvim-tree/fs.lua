@@ -14,7 +14,7 @@ local clipboard = {
 --- @param path string path to file or directory
 --- @return boolean
 local function exist(path)
-  local result, error = luv.fs_stat(path)
+  local _, error = luv.fs_stat(path)
   return error == nil
 end
 
