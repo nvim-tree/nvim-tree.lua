@@ -1,15 +1,14 @@
 local M = {}
 local uv = vim.loop
-local api = vim.api
 
 function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
 end
 
 function M.warn(msg)
-  api.nvim_command('echohl WarningMsg')
-  api.nvim_command("echom '[NvimTree] "..msg:gsub("'", "''").."'")
-  api.nvim_command('echohl None')
+  vim.schedule(function()
+    vim.notify("[NvimTree] "..msg, vim.log.levels.WARN)
+  end)
 end
 
 function M.str_find(haystack, needle)
