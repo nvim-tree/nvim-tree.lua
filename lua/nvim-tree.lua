@@ -95,7 +95,12 @@ local keypress_funcs = {
   dir_up = lib.dir_up,
   close = function() M.close() end,
   preview = function(node)
-    if node.entries ~= nil or node.name == '..' then return end
+    if node.entries ~= nil then
+      if (node.name == '..') then
+        return
+      end
+      return lib.expand_or_collapse(node)
+    end
     return lib.open_file('preview', node.absolute_path)
   end,
   system_open = require'nvim-tree.actions.system-open'.fn,
