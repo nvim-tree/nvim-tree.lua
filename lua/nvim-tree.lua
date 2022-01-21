@@ -100,7 +100,7 @@ local keypress_funcs = {
       end
       return lib.expand_or_collapse(node)
     end
-    return lib.open_file('preview', node.absolute_path)
+    return require'nvim-tree.actions.open-file'.fn('preview', node.absolute_path)
   end,
   system_open = require'nvim-tree.actions.system-open'.fn,
   trash = require'nvim-tree.actions.trash'.fn,
@@ -129,11 +129,11 @@ function M.on_keypress(action)
   end
 
   if node.link_to and not node.entries then
-    lib.open_file(action, node.link_to)
+    require'nvim-tree.actions.open-file'.fn(action, node.link_to)
   elseif node.entries ~= nil then
     lib.expand_or_collapse(node)
   else
-    lib.open_file(action, node.absolute_path)
+    require'nvim-tree.actions.open-file'.fn(action, node.absolute_path)
   end
 end
 
