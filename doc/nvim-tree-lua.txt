@@ -256,9 +256,9 @@ Here is a list of the options available in the setup call:
     type: `boolean`
     default: `true`
 
-  - |git.ignore|: ignore files based on `.gitignore`.
-    will add `ignored=matching` to the integration when `true`. Otherwise will
-    add `ignored=no` to the integration which can lead to better performance.
+  - |git.ignore|: ignore files based on `.gitignore`
+    type: `boolean`
+    default: `true`
 
   - |git.timeout|: kills the git process after some time if it takes too long
     type: `number`

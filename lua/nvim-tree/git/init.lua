@@ -19,7 +19,7 @@ function M.reload(callback)
     Runner.run {
       project_root = project_root,
       list_untracked = git_utils.should_show_untracked(project_root),
-      list_ignored = M.config.ignore,
+      list_ignored = true,
       timeout = M.config.timeout,
       on_end = function(git_status)
         M.projects[project_root] = {
@@ -67,7 +67,7 @@ function M.load_project_status(cwd, callback)
   Runner.run {
     project_root = project_root,
     list_untracked = git_utils.should_show_untracked(project_root),
-    list_ignored = M.config.ignore,
+    list_ignored = true,
     timeout = M.config.timeout,
     on_end = function(git_status)
       M.projects[project_root] = {
