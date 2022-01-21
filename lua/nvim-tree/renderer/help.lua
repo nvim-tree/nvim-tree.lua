@@ -5,22 +5,23 @@ function M.compute_lines()
   local help_lines = {'HELP'}
   local help_hl = {{'NvimTreeRootFolder', 0, 0, #help_lines[1]}}
   local mappings = vim.tbl_filter(function(v)
-    return v.cb ~= nil and v.cb ~= ""
-  end, view.View.mappings)
+    return (v.cb ~= nil and v.cb ~= "") or (v.action ~= nil and v.action ~= "")
+  end, require'nvim-tree.actions'.mappings)
   local processed = {}
   for _, b in pairs(mappings) do
     local cb = b.cb
     local key = b.key
     local name
-    if cb:sub(1,35) == view.nvim_tree_callback('test'):sub(1,35) then
+    if cb and cb:sub(1,35) == require'nvim-tree.config'.nvim_tree_callback('test'):sub(1,35) then
       name = cb:match("'[^']+'[^']*$")
       name = name:match("'[^']+'")
-      table.insert(processed, {key, name, true})
+    elseif b.action then
+      name = b.action
     else
       name = (b.name ~= nil) and b.name or cb
       name = '"' .. name .. '"'
-      table.insert(processed, {key, name, false})
     end
+    table.insert(processed, {key, name, true})
   end
   table.sort(processed, function(a,b)
     return (a[3] == b[3]

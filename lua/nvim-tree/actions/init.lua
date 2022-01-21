@@ -77,7 +77,7 @@ local keypress_funcs = {
   prev_git_item = go_to('prev_git_item'),
   next_git_item = go_to('next_git_item'),
   dir_up = lib.dir_up,
-  close = function() M.close() end,
+  close = function() require'nvim-tree'.close() end,
   preview = function(node)
     if node.name == '..' then
       return
@@ -173,7 +173,7 @@ function M.setup(opts)
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend('force', DEFAULT_MAPPING_CONFIG, user_map_config)
   if options.custom_only then
-    M.mappings = options.mappings.list
+    M.mappings = options.list
   else
     M.mappings = merge_mappings(options.list)
   end
