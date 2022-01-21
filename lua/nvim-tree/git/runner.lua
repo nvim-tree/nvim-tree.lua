@@ -8,6 +8,9 @@ function Runner:_parse_status_output(line)
   local status = line:sub(1, 2)
   -- removing `"` when git is returning special file status containing spaces
   local path = line:sub(4, -2):gsub('^"', ''):gsub('"$', '')
+  if vim.fn.has('win32') then  -- Don't forget to replace slashes if on windows
+    path = path:gsub('/', '\\')
+  end
   if #status > 0 and #path > 0 then
     self.output[utils.path_remove_trailing(utils.path_join({self.project_root,path}))] = status
   end
