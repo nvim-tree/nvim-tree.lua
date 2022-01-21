@@ -97,7 +97,7 @@ if icon_state.show_file_icon then
 end
 
 local get_git_icons = function() return "" end
-local get_git_hl = function() return end
+local get_git_hl = function() end
 
 if vim.g.nvim_tree_git_hl == 1 then
   local git_hl = {
