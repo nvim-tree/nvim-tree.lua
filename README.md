@@ -243,7 +243,7 @@ These are the default bindings:
 -- default mappings
 local list = {
   { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
-  { key = {"O"},                          action = tree_cb("edit_no_picker") },
+  { key = {"O"},                          action = "edit_no_picker" },
   { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
   { key = "<C-v>",                        action = "vsplit" },
   { key = "<C-x>",                        action = "split" },
