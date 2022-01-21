@@ -18,6 +18,7 @@ function M.focus()
   view.focus();
 end
 
+---@deprecated
 function M.on_keypress(...)
   require'nvim-tree.actions'.on_keypress(...)
 end

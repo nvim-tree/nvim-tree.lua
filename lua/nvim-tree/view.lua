@@ -1,5 +1,4 @@
 local a = vim.api
-local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
 local M = {}
 
@@ -40,41 +39,6 @@ M.View = {
     { name = 'filetype', val = 'NvimTree' },
     { name = 'bufhidden', val = 'hide' }
   },
-  mappings = {
-    { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
-    { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
-    { key = "<C-v>",                        action = "vsplit" },
-    { key = "<C-x>",                        action = "split"},
-    { key = "<C-t>",                        action = "tabnew" },
-    { key = "<",                            action = "prev_sibling" },
-    { key = ">",                            action = "next_sibling" },
-    { key = "P",                            action = "parent_node" },
-    { key = "<BS>",                         action = "close_node"},
-    { key = "<Tab>",                        action = "preview" },
-    { key = "K",                            action = "first_sibling" },
-    { key = "J",                            action = "last_sibling" },
-    { key = "I",                            action = "toggle_ignored" },
-    { key = "H",                            action = "toggle_dotfiles" },
-    { key = "R",                            action = "refresh" },
-    { key = "a",                            action = "create" },
-    { key = "d",                            action = "remove" },
-    { key = "D",                            action = "trash"},
-    { key = "r",                            action = "rename" },
-    { key = "<C-r>",                        action = "full_rename" },
-    { key = "x",                            action = "cut" },
-    { key = "c",                            action = "copy"},
-    { key = "p",                            action = "paste" },
-    { key = "y",                            action = "copy_name" },
-    { key = "Y",                            action = "copy_path" },
-    { key = "gy",                           action = "copy_absolute_path" },
-    { key = "[c",                           action = "prev_git_item" },
-    { key = "]c",                           action = "next_git_item" },
-    { key = "-",                            action = "dir_up" },
-    { key = "s",                            action = "system_open" },
-    { key = "q",                            action = "close"},
-    { key = "g?",                           action = "toggle_help" }
-  },
-  custom_keypress_funcs = {},
 }
 
 local function wipe_rogue_buffer()
@@ -94,16 +58,7 @@ local function create_buffer()
     vim.bo[M.View.bufnr][opt.name] = opt.val
   end
 
-  for _, b in pairs(M.View.mappings) do
-    local mapping_rhs = b.cb or nvim_tree_callback(b.action)
-    if type(b.key) == "table" then
-      for _, key in pairs(b.key) do
-        a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, mapping_rhs, { noremap = true, silent = true, nowait = true })
-      end
-    elseif mapping_rhs then
-      a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', b.key, mapping_rhs, { noremap = true, silent = true, nowait = true })
-    end
-  end
+  require'nvim-tree.actions'.apply_mappings(M.View.bufnr)
 end
 
 local DEFAULT_CONFIG = {
@@ -111,40 +66,10 @@ local DEFAULT_CONFIG = {
   height = 30,
   side = 'left',
   auto_resize = false,
-  mappings = {
-    custom_only = false,
-    list = {}
-  },
   number = false,
   relativenumber = false,
   signcolumn = 'yes'
 }
-
-local function merge_mappings(user_mappings)
-  if #user_mappings == 0 then
-    return M.View.mappings
-  end
-
-  local user_keys = {}
-  for _, map in pairs(user_mappings) do
-    if type(map.key) == "table" then
-      for _, key in pairs(map.key) do
-        table.insert(user_keys, key)
-      end
-    else
-       table.insert(user_keys, map.key)
-    end
-    if map.action and type(map.action_cb) == "function" then
-      M.View.custom_keypress_funcs[map.action] = map.action_cb
-    end
-  end
-
-  local view_mappings = vim.tbl_filter(function(map)
-    return not vim.tbl_contains(user_keys, map.key)
-  end, M.View.mappings)
-
-  return vim.fn.extend(view_mappings, user_mappings)
-end
 
 function M.setup(opts)
   local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
@@ -156,11 +81,6 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
-  if options.mappings.custom_only then
-    M.View.mappings = options.mappings.list
-  else
-    M.View.mappings = merge_mappings(options.mappings.list)
-  end
 
   vim.cmd "augroup NvimTreeView"
   vim.cmd "au!"
