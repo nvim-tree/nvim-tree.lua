@@ -102,9 +102,4 @@ function M.fn(node)
   focus_file(ans)
 end
 
-
-function M.setup(opts)
-  print(opts)
-end
-
 return M
