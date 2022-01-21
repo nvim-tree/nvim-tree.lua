@@ -85,19 +85,24 @@ end
 -- get the node from the tree that matches the predicate
 -- @param nodes list of node
 -- @param fn    function(node): boolean
-function M.find_node(nodes, fn)
-  local i = 1
-  for _, node in ipairs(nodes) do
-    if fn(node) then return node, i end
-    if node.open and #node.entries > 0 then
-      local n, idx = M.find_node(node.entries, fn)
-      i = i + idx
-      if n then return n, i end
-    else
-      i = i + 1
+function M.find_node(_nodes, _fn)
+  local function iter(nodes, fn)
+    local i = 1
+    for _, node in ipairs(nodes) do
+      if fn(node) then return node, i end
+      if node.open and #node.entries > 0 then
+        local n, idx = iter(node.entries, fn)
+        i = i + idx
+        if n then return n, i end
+      else
+        i = i + 1
+      end
     end
+    return nil, i
   end
-  return nil, i
+  local node, i = iter(_nodes, _fn)
+  i = require'nvim-tree.view'.View.hide_root_folder and i - 1 or i
+  return node, i
 end
 
 ---Create a shallow copy of a portion of a list.
