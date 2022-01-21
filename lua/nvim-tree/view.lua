@@ -1,10 +1,7 @@
 local a = vim.api
+local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
 local M = {}
-
-function M.nvim_tree_callback(callback_name)
-  return string.format(":lua require'nvim-tree'.on_keypress('%s')<CR>", callback_name)
-end
 
 M.View = {
   last_focused_winnr = nil,
@@ -44,39 +41,40 @@ M.View = {
     { name = 'bufhidden', val = 'hide' }
   },
   mappings = {
-    { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = M.nvim_tree_callback("edit") },
-    { key = {"<2-RightMouse>", "<C-]>"},    cb = M.nvim_tree_callback("cd") },
-    { key = "<C-v>",                        cb = M.nvim_tree_callback("vsplit") },
-    { key = "<C-x>",                        cb = M.nvim_tree_callback("split") },
-    { key = "<C-t>",                        cb = M.nvim_tree_callback("tabnew") },
-    { key = "<",                            cb = M.nvim_tree_callback("prev_sibling") },
-    { key = ">",                            cb = M.nvim_tree_callback("next_sibling") },
-    { key = "P",                            cb = M.nvim_tree_callback("parent_node") },
-    { key = "<BS>",                         cb = M.nvim_tree_callback("close_node") },
-    { key = "<Tab>",                        cb = M.nvim_tree_callback("preview") },
-    { key = "K",                            cb = M.nvim_tree_callback("first_sibling") },
-    { key = "J",                            cb = M.nvim_tree_callback("last_sibling") },
-    { key = "I",                            cb = M.nvim_tree_callback("toggle_ignored") },
-    { key = "H",                            cb = M.nvim_tree_callback("toggle_dotfiles") },
-    { key = "R",                            cb = M.nvim_tree_callback("refresh") },
-    { key = "a",                            cb = M.nvim_tree_callback("create") },
-    { key = "d",                            cb = M.nvim_tree_callback("remove") },
-    { key = "D",                            cb = M.nvim_tree_callback("trash") },
-    { key = "r",                            cb = M.nvim_tree_callback("rename") },
-    { key = "<C-r>",                        cb = M.nvim_tree_callback("full_rename") },
-    { key = "x",                            cb = M.nvim_tree_callback("cut") },
-    { key = "c",                            cb = M.nvim_tree_callback("copy") },
-    { key = "p",                            cb = M.nvim_tree_callback("paste") },
-    { key = "y",                            cb = M.nvim_tree_callback("copy_name") },
-    { key = "Y",                            cb = M.nvim_tree_callback("copy_path") },
-    { key = "gy",                           cb = M.nvim_tree_callback("copy_absolute_path") },
-    { key = "[c",                           cb = M.nvim_tree_callback("prev_git_item") },
-    { key = "]c",                           cb = M.nvim_tree_callback("next_git_item") },
-    { key = "-",                            cb = M.nvim_tree_callback("dir_up") },
-    { key = "s",                            cb = M.nvim_tree_callback("system_open") },
-    { key = "q",                            cb = M.nvim_tree_callback("close") },
-    { key = "g?",                           cb = M.nvim_tree_callback("toggle_help") }
-  }
+    { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
+    { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
+    { key = "<C-v>",                        action = "vsplit" },
+    { key = "<C-x>",                        action = "split"},
+    { key = "<C-t>",                        action = "tabnew" },
+    { key = "<",                            action = "prev_sibling" },
+    { key = ">",                            action = "next_sibling" },
+    { key = "P",                            action = "parent_node" },
+    { key = "<BS>",                         action = "close_node"},
+    { key = "<Tab>",                        action = "preview" },
+    { key = "K",                            action = "first_sibling" },
+    { key = "J",                            action = "last_sibling" },
+    { key = "I",                            action = "toggle_ignored" },
+    { key = "H",                            action = "toggle_dotfiles" },
+    { key = "R",                            action = "refresh" },
+    { key = "a",                            action = "create" },
+    { key = "d",                            action = "remove" },
+    { key = "D",                            action = "trash"},
+    { key = "r",                            action = "rename" },
+    { key = "<C-r>",                        action = "full_rename" },
+    { key = "x",                            action = "cut" },
+    { key = "c",                            action = "copy"},
+    { key = "p",                            action = "paste" },
+    { key = "y",                            action = "copy_name" },
+    { key = "Y",                            action = "copy_path" },
+    { key = "gy",                           action = "copy_absolute_path" },
+    { key = "[c",                           action = "prev_git_item" },
+    { key = "]c",                           action = "next_git_item" },
+    { key = "-",                            action = "dir_up" },
+    { key = "s",                            action = "system_open" },
+    { key = "q",                            action = "close"},
+    { key = "g?",                           action = "toggle_help" }
+  },
+  custom_keypress_funcs = {},
 }
 
 local function wipe_rogue_buffer()
@@ -97,12 +95,13 @@ local function create_buffer()
   end
 
   for _, b in pairs(M.View.mappings) do
+    local mapping_rhs = b.cb or nvim_tree_callback(b.action)
     if type(b.key) == "table" then
       for _, key in pairs(b.key) do
-        a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, b.cb, { noremap = true, silent = true, nowait = true })
+        a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', key, mapping_rhs, { noremap = true, silent = true, nowait = true })
       end
-    elseif b.cb then
-      a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', b.key, b.cb, { noremap = true, silent = true, nowait = true })
+    elseif mapping_rhs then
+      a.nvim_buf_set_keymap(M.View.bufnr, b.mode or 'n', b.key, mapping_rhs, { noremap = true, silent = true, nowait = true })
     end
   end
 end
@@ -134,6 +133,9 @@ local function merge_mappings(user_mappings)
       end
     else
        table.insert(user_keys, map.key)
+    end
+    if map.action and type(map.action_cb) == "function" then
+      M.View.custom_keypress_funcs[map.action] = map.action_cb
     end
   end
 

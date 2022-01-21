@@ -155,29 +155,34 @@ local keypress_funcs = {
   trash = function(node) trash.trash_node(node, _config) end,
 }
 
-function M.on_keypress(mode)
-  if view.is_help_ui() and mode ~= 'toggle_help' then return end
+function M.on_keypress(action)
+  if view.is_help_ui() and action ~= 'toggle_help' then return end
   local node = lib.get_node_at_cursor()
   if not node then return end
 
-  if keypress_funcs[mode] then
-    return keypress_funcs[mode](node)
+  local custom_function = view.View.custom_keypress_funcs[action]
+  local default_function = keypress_funcs[action]
+
+  if type(custom_function) == 'function' then
+    return custom_function(node)
+  elseif default_function then
+    return default_function(node)
   end
 
   if node.name == ".." then
     return lib.change_dir("..")
-  elseif mode == "cd" and node.entries ~= nil then
+  elseif action == "cd" and node.entries ~= nil then
     return lib.change_dir(lib.get_last_group_node(node).absolute_path)
-  elseif mode == "cd" then
+  elseif action == "cd" then
     return
   end
 
   if node.link_to and not node.entries then
-    lib.open_file(mode, node.link_to)
+    lib.open_file(action, node.link_to)
   elseif node.entries ~= nil then
     lib.expand_or_collapse(node)
   else
-    lib.open_file(mode, node.absolute_path)
+    lib.open_file(action, node.absolute_path)
   end
 end
 
