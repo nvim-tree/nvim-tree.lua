@@ -70,7 +70,7 @@ local function go_to(mode)
 end
 
 local keypress_funcs = {
-  create = fs.create,
+  create = require'nvim-tree.actions.create-file'.fn,
   remove = fs.remove,
   rename = fs.rename(false),
   full_rename = fs.rename(true),
