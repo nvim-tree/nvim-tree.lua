@@ -338,6 +338,11 @@ Here is a list of the options available in the setup call:
       type: `{string}`
       default: `{}`
 
+  - |filters.exclude|: list of directories or files to exclude from filtering
+    (will always be shown)
+      type: `{string}`
+      default: `{}`
+
 *nvim-tree.trash*
 |trash|: configuration options for trashing
 

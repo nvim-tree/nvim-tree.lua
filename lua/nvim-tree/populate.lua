@@ -5,6 +5,7 @@ local utils = require'nvim-tree.utils'
 
 local M = {
   ignore_list = {},
+  exclude_list = {},
   is_windows = vim.fn.has('win32') == 1
 }
 
@@ -121,6 +122,12 @@ end
 ---@return boolean
 local function should_ignore(path)
   local basename = utils.path_basename(path)
+
+  for _, entry in ipairs(M.exclude_list) do
+    if path:match(entry) then
+      return false
+    end
+  end
 
   if M.config.filter_dotfiles then
     if basename:sub(1, 1) == '.' then
@@ -352,6 +359,8 @@ function M.setup(opts)
     filter_ignored = true,
     filter_dotfiles = opts.filters.dotfiles,
   }
+
+  M.exclude_list = opts.filters.exclude
 
   local custom_filter = opts.filters.custom
   if custom_filter and #custom_filter > 0 then
