@@ -5,7 +5,6 @@ local lib = require'nvim-tree.lib'
 local config = require'nvim-tree.config'
 local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
-local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
 
@@ -71,9 +70,9 @@ end
 
 local keypress_funcs = {
   create = require'nvim-tree.actions.create-file'.fn,
-  remove = fs.remove,
-  rename = fs.rename(false),
-  full_rename = fs.rename(true),
+  remove = require'nvim-tree.actions.remove-file'.fn,
+  rename = require'nvim-tree.actions.rename-file'.fn(false),
+  full_rename = require'nvim-tree.actions.rename-file'.fn(true),
   copy = require'nvim-tree.actions.copy-paste'.copy,
   copy_name = require'nvim-tree.actions.copy-paste'.copy_filename,
   copy_path = require'nvim-tree.actions.copy-paste'.copy_path,

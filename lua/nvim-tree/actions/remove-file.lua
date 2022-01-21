@@ -1,4 +1,4 @@
-local api = vim.api
+local a = vim.api
 local luv = vim.loop
 
 local utils = require'nvim-tree.utils'
@@ -12,10 +12,10 @@ local function clear_buffer(absolute_path)
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       if buf.hidden == 0 and #bufs > 1 then
-        local winnr = api.nvim_get_current_win()
-        api.nvim_set_current_win(buf.windows[1])
+        local winnr = a.nvim_get_current_win()
+        a.nvim_set_current_win(buf.windows[1])
         vim.cmd(':bn')
-        api.nvim_set_current_win(winnr)
+        a.nvim_set_current_win(winnr)
       end
       vim.api.nvim_buf_delete(buf.bufnr, {})
       if buf.windows[1] then
@@ -29,7 +29,7 @@ end
 local function remove_dir(cwd)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
-    return api.nvim_err_writeln(handle)
+    return a.nvim_err_writeln(handle)
   end
 
   while true do
@@ -51,7 +51,7 @@ local function remove_dir(cwd)
 end
 
 
-function M.remove(node)
+function M.fn(node)
   if node.name == '..' then return end
 
   print("Remove " ..node.name.. " ? y/n")
@@ -61,45 +61,17 @@ function M.remove(node)
     if node.entries ~= nil and not node.link_to then
       local success = remove_dir(node.absolute_path)
       if not success then
-        return api.nvim_err_writeln('Could not remove '..node.name)
+        return a.nvim_err_writeln('Could not remove '..node.name)
       end
       events._dispatch_folder_removed(node.absolute_path)
     else
       local success = luv.fs_unlink(node.absolute_path)
       if not success then
-        return api.nvim_err_writeln('Could not remove '..node.name)
+        return a.nvim_err_writeln('Could not remove '..node.name)
       end
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    lib.refresh_tree()
-  end
-end
-
-function M.rename(with_sub)
-  return function(node)
-    node = lib.get_last_group_node(node)
-    if node.name == '..' then return end
-
-    local namelen = node.name:len()
-    local abs_path = with_sub and node.absolute_path:sub(0, namelen * (-1) -1) or node.absolute_path
-    local new_name = vim.fn.input("Rename " ..node.name.. " to ", abs_path)
-    utils.clear_prompt()
-    if not new_name or #new_name == 0 then
-      return
-    end
-    if utils.file_exists(new_name) then
-      utils.warn("Cannot rename: file already exists")
-      return
-    end
-
-    local success = luv.fs_rename(node.absolute_path, new_name)
-    if not success then
-      return api.nvim_err_writeln('Could not rename '..node.absolute_path..' to '..new_name)
-    end
-    api.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
-    utils.rename_loaded_buffers(node.absolute_path, new_name)
-    events._dispatch_node_renamed(abs_path, new_name)
     lib.refresh_tree()
   end
 end
