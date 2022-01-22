@@ -1,15 +1,20 @@
-local M = {}
+local a = vim.api
 local uv = vim.loop
-local api = vim.api
+
+local M = {}
 
 function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
 end
 
-function M.echo_warning(msg)
-  api.nvim_command('echohl WarningMsg')
-  api.nvim_command("echom '[NvimTree] "..msg:gsub("'", "''").."'")
-  api.nvim_command('echohl None')
+function M.warn(msg)
+  vim.schedule(function()
+    vim.notify("[NvimTree] "..msg, vim.log.levels.WARN)
+  end)
+end
+
+function M.str_find(haystack, needle)
+  return vim.fn.stridx(haystack, needle) ~= -1
 end
 
 function M.read_file(path)
@@ -80,19 +85,24 @@ end
 -- get the node from the tree that matches the predicate
 -- @param nodes list of node
 -- @param fn    function(node): boolean
-function M.find_node(nodes, fn)
-  local i = 1
-  for _, node in ipairs(nodes) do
-    if fn(node) then return node, i end
-    if node.open and #node.entries > 0 then
-      local n, idx = M.find_node(node.entries, fn)
-      i = i + idx
-      if n then return n, i end
-    else
-      i = i + 1
+function M.find_node(_nodes, _fn)
+  local function iter(nodes, fn)
+    local i = 1
+    for _, node in ipairs(nodes) do
+      if fn(node) then return node, i end
+      if node.open and #node.entries > 0 then
+        local n, idx = iter(node.entries, fn)
+        i = i + idx
+        if n then return n, i end
+      else
+        i = i + 1
+      end
     end
+    return nil, i
   end
-  return nil, i
+  local node, i = iter(_nodes, _fn)
+  i = require'nvim-tree.view'.View.hide_root_folder and i - 1 or i
+  return node, i
 end
 
 ---Create a shallow copy of a portion of a list.
@@ -157,12 +167,45 @@ end
 ---@param comparator function|nil
 function M.merge_sort(t, comparator)
   if not comparator then
-    comparator = function (a, b)
-      return a < b
+    comparator = function (left, right)
+      return left < right
     end
   end
 
   split_merge(t, 1, #t, comparator)
+end
+
+---Matching executable files in Windows.
+---@param ext string
+---@return boolean
+local PATHEXT = vim.env.PATHEXT or ''
+local wexe = vim.split(PATHEXT:gsub('%.', ''), ';')
+local pathexts = {}
+for _, v in pairs(wexe) do
+  pathexts[v] = true
+end
+
+function M.is_windows_exe(ext)
+  return pathexts[ext:upper()]
+end
+
+function M.rename_loaded_buffers(old_name, new_name)
+  for _, buf in pairs(a.nvim_list_bufs()) do
+    if a.nvim_buf_is_loaded(buf) then
+      if a.nvim_buf_get_name(buf) == old_name then
+        a.nvim_buf_set_name(buf, new_name)
+        -- to avoid the 'overwrite existing file' error message on write
+        vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
+      end
+    end
+  end
+end
+
+--- @param path string path to file or directory
+--- @return boolean
+function M.file_exists(path)
+  local _, error = vim.loop.fs_stat(path)
+  return error == nil
 end
 
 return M

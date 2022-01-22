@@ -2,18 +2,12 @@ local luv = vim.loop
 local api = vim.api
 
 local lib = require'nvim-tree.lib'
-local config = require'nvim-tree.config'
 local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
-local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
 
-local _config = {
-  is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
-  is_macos            = vim.fn.has('mac') == 1 or vim.fn.has('macunix') == 1,
-  is_unix             = vim.fn.has('unix') == 1,
-}
+local _config = {}
 
 local M = {}
 
@@ -24,11 +18,16 @@ function M.focus()
   view.focus();
 end
 
-function M.toggle()
+---@deprecated
+function M.on_keypress(...)
+  require'nvim-tree.actions'.on_keypress(...)
+end
+
+function M.toggle(find_file)
   if view.win_open() then
     view.close()
   else
-    if _config.update_focused_file.enable then
+    if _config.update_focused_file.enable or find_file then
       M.find_file(true)
     end
     if not view.win_open() then
@@ -62,129 +61,6 @@ function M.tab_change()
       view.open({ focus_tree = false })
     end
   end)
-end
-
-local function go_to(mode)
-  local icon_state = config.get_icon_state()
-  local flags = mode == 'prev_git_item' and 'b' or ''
-  local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
-  return function()
-    return icon_state.show_git_icon and vim.fn.search(icons, flags)
-  end
-end
-
-local keypress_funcs = {
-  create = fs.create,
-  remove = fs.remove,
-  rename = fs.rename(false),
-  full_rename = fs.rename(true),
-  copy = fs.copy,
-  copy_name = fs.copy_filename,
-  copy_path = fs.copy_path,
-  copy_absolute_path = fs.copy_absolute_path,
-  cut = fs.cut,
-  paste = fs.paste,
-  close_node = lib.close_node,
-  parent_node = lib.parent_node,
-  toggle_ignored = lib.toggle_ignored,
-  toggle_dotfiles = lib.toggle_dotfiles,
-  toggle_help = lib.toggle_help,
-  refresh = lib.refresh_tree,
-  first_sibling = function(node) lib.sibling(node, -math.huge) end,
-  last_sibling = function(node) lib.sibling(node, math.huge) end,
-  prev_sibling = function(node) lib.sibling(node, -1) end,
-  next_sibling = function(node) lib.sibling(node, 1) end,
-  prev_git_item = go_to('prev_git_item'),
-  next_git_item = go_to('next_git_item'),
-  dir_up = lib.dir_up,
-  close = function() M.close() end,
-  preview = function(node)
-    if node.entries ~= nil or node.name == '..' then return end
-    return lib.open_file('preview', node.absolute_path)
-  end,
-  system_open = function(node)
-    if not _config.system_open.cmd then
-      if _config.is_windows then
-        _config.system_open = {
-          cmd = "cmd",
-          args = {'/c', 'start', '""'}
-        }
-      elseif _config.is_macos then
-        _config.system_open.cmd = 'open'
-      elseif _config.is_unix then
-        _config.system_open.cmd = 'xdg-open'
-      else
-        require'nvim-tree.utils'.echo_warning("Cannot open file with system application. Unrecognized platform.")
-        return
-      end
-    end
-
-    local process = {
-      cmd = _config.system_open.cmd,
-      args = _config.system_open.args,
-      errors = '\n',
-      stderr = luv.new_pipe(false)
-    }
-    table.insert(process.args, node.link_to or node.absolute_path)
-    process.handle, process.pid = luv.spawn(process.cmd,
-      { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
-      function(code)
-        process.stderr:read_stop()
-        process.stderr:close()
-        process.handle:close()
-        if code ~= 0 then
-          process.errors = process.errors .. string.format('NvimTree system_open: return code %d.', code)
-          error(process.errors)
-        end
-      end
-    )
-    table.remove(process.args)
-    if not process.handle then
-      error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
-      return
-    end
-    luv.read_start(process.stderr,
-      function(err, data)
-        if err then return end
-        if data then process.errors = process.errors .. data end
-      end
-    )
-    luv.unref(process.handle)
-  end,
-}
-
-function M.on_keypress(mode)
-  if view.is_help_ui() and mode ~= 'toggle_help' then return end
-  local node = lib.get_node_at_cursor()
-  if not node then return end
-
-  if keypress_funcs[mode] then
-    return keypress_funcs[mode](node)
-  end
-
-  if node.name == ".." then
-    return lib.change_dir("..")
-  elseif mode == "cd" and node.entries ~= nil then
-    return lib.change_dir(lib.get_last_group_node(node).absolute_path)
-  elseif mode == "cd" then
-    return
-  end
-
-  if node.link_to and not node.entries then
-    lib.open_file(mode, node.link_to)
-  elseif node.entries ~= nil then
-    lib.unroll_dir(node)
-  else
-    lib.open_file(mode, node.absolute_path)
-  end
-end
-
-function M.refresh()
-  lib.refresh_tree()
-end
-
-function M.print_clipboard()
-  fs.print_clipboard()
 end
 
 function M.hijack_current_window()
@@ -227,7 +103,7 @@ function M.on_enter(opts)
     M.hijack_current_window()
   end
 
-  lib.init(should_open, should_open)
+  lib.init(should_open, lib.Tree.cwd)
 end
 
 local function is_file_readable(fname)
@@ -242,7 +118,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
 
   local ft = api.nvim_buf_get_option(bufnr, 'filetype') or ""
   for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if vim.fn.stridx(filepath, value) ~= -1 or vim.fn.stridx(ft, value) ~= -1 then
+    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
       return
     end
   end
@@ -301,13 +177,14 @@ function M.open_on_directory()
   end
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
-  if vim.fn.isdirectory(bufname) ~= 1 or bufname == lib.Tree.cwd then
+  if vim.fn.isdirectory(bufname) ~= 1 then
     return
   end
 
   view.close()
-
-  lib.change_dir(bufname)
+  if bufname ~= lib.Tree.cwd  then
+    lib.change_dir(bufname)
+  end
   M.hijack_current_window()
 
   view.open()
@@ -339,7 +216,10 @@ function M.place_cursor_on_node()
   local line = api.nvim_get_current_line()
   local cursor = api.nvim_win_get_cursor(0)
   local idx = vim.fn.stridx(line, node.name)
-  api.nvim_win_set_cursor(0, {cursor[1], idx})
+
+  if idx >= 0 then
+    api.nvim_win_set_cursor(0, {cursor[1], idx})
+  end
 end
 
 local function manage_netrw(disable_netrw, hijack_netrw)
@@ -356,11 +236,12 @@ local function setup_vim_commands()
   vim.cmd [[
     command! NvimTreeOpen lua require'nvim-tree'.open()
     command! NvimTreeClose lua require'nvim-tree'.close()
-    command! NvimTreeToggle lua require'nvim-tree'.toggle()
+    command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree'.refresh()
-    command! NvimTreeClipboard lua require'nvim-tree'.print_clipboard()
+    command! NvimTreeRefresh lua require'nvim-tree.lib'.refresh_tree()
+    command! NvimTreeClipboard lua require'nvim-tree.actions.copy-paste'.print_clipboard()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
+    command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
   ]]
 end
@@ -379,8 +260,8 @@ local function setup_autocommands(opts)
     """ reset highlights when colorscheme is changed
     au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
-    au BufWritePost * lua require'nvim-tree'.refresh()
-    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree'.refresh()
+    au BufWritePost * lua require'nvim-tree.lib'.refresh_tree()
+    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.lib'.reload_git()
   ]]
 
   if opts.auto_close then
@@ -398,6 +279,7 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
   end
+  vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
 
   vim.cmd "augroup end"
 end
@@ -414,6 +296,7 @@ local DEFAULT_OPTS = {
   auto_close          = false,
   hijack_cursor       = false,
   update_cwd          = false,
+  hide_root_folder    = false,
   update_focused_file = {
     enable = false,
     update_cwd = false,
@@ -426,6 +309,7 @@ local DEFAULT_OPTS = {
   },
   diagnostics = {
     enable = false,
+    show_on_dirs = false,
     icons = {
       hint = "",
       info = "",
@@ -433,6 +317,16 @@ local DEFAULT_OPTS = {
       error = "",
     }
   },
+  filters = {
+    dotfiles = false,
+    custom_filter = {},
+    exclude = {}
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 400,
+  }
 }
 
 function M.setup(conf)
@@ -441,11 +335,10 @@ function M.setup(conf)
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
   _config.update_focused_file = opts.update_focused_file
-  _config.system_open = opts.system_open
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   if type(opts.update_to_buf_dir) == "boolean" then
-    utils.echo_warning("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
+    utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
     _config.update_to_buf_dir = {
       enable = opts.update_to_buf_dir,
       auto_open = opts.update_to_buf_dir,
@@ -455,12 +348,15 @@ function M.setup(conf)
   end
 
   if opts.lsp_diagnostics ~= nil then
-    utils.echo_warning("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
+    utils.warn("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
   end
 
   require'nvim-tree.colors'.setup()
+  require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
+  require'nvim-tree.populate'.setup(opts)
+  require'nvim-tree.git'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()

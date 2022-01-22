@@ -97,12 +97,15 @@ if icon_state.show_file_icon then
 end
 
 local get_git_icons = function() return "" end
-local get_git_hl = function() return end
+local get_git_hl = function() end
 
 if vim.g.nvim_tree_git_hl == 1 then
   local git_hl = {
     ["M "] = { { hl = "NvimTreeFileStaged" } },
     [" M"] = { { hl = "NvimTreeFileDirty" } },
+    ["CM"] = { { hl = "NvimTreeFileDirty" } },
+    ["C "] = { { hl = "NvimTreeFileStaged" } },
+    [" C"] = { { hl = "NvimTreeFileDirty" } },
     [" T"] = { { hl = "NvimTreeFileDirty" } },
     ["MM"] = {
       { hl = "NvimTreeFileStaged" },
@@ -161,7 +164,7 @@ if vim.g.nvim_tree_git_hl == 1 then
     local icons = git_hl[git_status]
 
     if icons == nil then
-      utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
+      utils.warn('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
       icons = git_hl.dirty
     end
 
@@ -175,6 +178,9 @@ if icon_state.show_git_icon then
   local git_icon_state = {
     ["M "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
     [" M"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ["C "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
+    [" C"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ["CM"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     [" T"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     ["MM"] = {
       { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
@@ -235,7 +241,7 @@ if icon_state.show_git_icon then
     local icons = git_icon_state[git_status]
     if not icons then
       if vim.g.nvim_tree_git_hl ~= 1 then
-        utils.echo_warning('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
+        utils.warn('Unrecognized git state "'..git_status..'". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.')
       end
       icons = git_icon_state.dirty
     end
@@ -266,7 +272,9 @@ local function update_draw_data(tree, depth, markers)
     ["readme.md"] = true,
   }
 
-  if tree.cwd and tree.cwd ~= '/' then
+  local hide_root_folder = view.View.hide_root_folder
+
+  if tree.cwd and tree.cwd ~= '/' and not hide_root_folder then
     local root_name = utils.path_join({
       utils.path_remove_trailing(vim.fn.fnamemodify(tree.cwd, root_folder_modifier)),
       ".."
@@ -288,7 +296,7 @@ local function update_draw_data(tree, depth, markers)
     if node.entries then
       local has_children = #node.entries ~= 0 or node.has_children
       local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
-      local git_icon = get_git_icons(node, index, offset, #icon+1) or ""
+      local git_icon = get_git_icons(node, index, offset, #icon) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       local folder_hl = "NvimTreeFolderName"
       local name = node.name
@@ -302,9 +310,9 @@ local function update_draw_data(tree, depth, markers)
       if special[node.absolute_path] then
         folder_hl = "NvimTreeSpecialFolderName"
       end
-      set_folder_hl(index, offset, #icon, #name+#git_icon, folder_hl)
+      set_folder_hl(index, offset, #icon+#git_icon, #name, folder_hl)
       if git_hl then
-        set_folder_hl(index, offset, #icon, #name+#git_icon, git_hl)
+        set_folder_hl(index, offset, #icon+#git_icon, #name, git_hl)
       end
       index = index + 1
       if node.open then
@@ -373,7 +381,10 @@ function M.draw(tree, reload)
     lines = {}
     hl = {}
 
-    local show_arrows = icon_state.show_folder_icon and icon_state.show_folder_arrows
+    local show_arrows =
+      vim.g.nvim_tree_indent_markers ~= 1
+      and icon_state.show_folder_icon
+      and icon_state.show_folder_arrows
     _padding.reload_padding_function()
     icon_state = config.get_icon_state()
     update_draw_data(tree, show_arrows and 2 or 0, {})

@@ -23,7 +23,9 @@ Install with [packer](https://github.com/wbthomason/packer.nvim):
 ```lua
 use {
     'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+    },
     config = function() require'nvim-tree'.setup {} end
 }
 ```
@@ -36,31 +38,20 @@ Note that options under the `g:` command should be set **BEFORE** running the se
 
 ```lua
 -- following options are the default
+-- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
-  -- disables netrw completely
   disable_netrw       = true,
-  -- hijack netrw window on startup
   hijack_netrw        = true,
-  -- open the tree when running this setup function
   open_on_setup       = false,
-  -- will not open on setup if the filetype is in this list
   ignore_ft_on_setup  = {},
-  -- closes neovim automatically when the tree is the last **WINDOW** in the view
   auto_close          = false,
-  -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
-  -- hijacks new directory buffers when they are opened.
+  hijack_cursor       = false,
+  update_cwd          = false,
   update_to_buf_dir   = {
-    -- enable the feature
     enable = true,
-    -- allow to open the tree if it was previously closed
     auto_open = true,
   },
-  -- hijack the cursor in the tree to put it at the start of the filename
-  hijack_cursor       = false,
-  -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
-  update_cwd          = false,
-  -- show lsp diagnostics in the signcolumn
   diagnostics = {
     enable = false,
     icons = {
@@ -70,56 +61,56 @@ require'nvim-tree'.setup {
       error = "",
     }
   },
-  -- update the focused file on `BufEnter`, un-collapses the folders recursively until it finds the file
   update_focused_file = {
-    -- enables the feature
     enable      = false,
-    -- update the root directory of the tree to the one of the folder containing the file if the file is not under the current root directory
-    -- only relevant when `update_focused_file.enable` is true
     update_cwd  = false,
-    -- list of buffer names / filetypes that will not update the cwd if the file isn't found under the current root directory
-    -- only relevant when `update_focused_file.update_cwd` is true and `update_focused_file.enable` is true
     ignore_list = {}
   },
-  -- configuration options for the system open command (`s` in the tree by default)
   system_open = {
-    -- the command to run this, leaving nil should work in most cases
     cmd  = nil,
-    -- the command arguments as a list
     args = {}
   },
-
+  filters = {
+    dotfiles = false,
+    custom = {}
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 500,
+  },
   view = {
-    -- width of the window, can be either a number (columns) or a string in `%`, for left or right side placement
     width = 30,
-    -- height of the window, can be either a number (columns) or a string in `%`, for top or bottom side placement
     height = 30,
-    -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
+    hide_root_folder = false,
     side = 'left',
-    -- if true the tree will resize itself after opening a file
     auto_resize = false,
     mappings = {
-      -- custom only false will merge the list with the default mappings
-      -- if true, it will only use your list to set the mappings
       custom_only = false,
-      -- list of mappings to set on the tree manually
       list = {}
-    }
+    },
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes"
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true
   }
 }
 ```
 
+These additional options must be set **BEFORE** calling `require'nvim-tree'` or calling setup.
+They are being migrated to the setup function bit by bit, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
 ```vim
-let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
-let g:nvim_tree_gitignore = 1 "0 by default
 let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
 let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
-let g:nvim_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
 let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
 let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
 let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
+let g:nvim_tree_change_dir_global = 1 "0 by default, use :cd when changing directories.
 let g:nvim_tree_disable_window_picker = 1 "0 by default, will disable the window picker.
 let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
 let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
@@ -181,7 +172,7 @@ let g:nvim_tree_icons = {
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
-" NvimTreeOpen, NvimTreeClose, NvimTreeFocus and NvimTreeResize are also available if you need them
+" NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
 
 set termguicolors " this variable must be enabled for colors to be applied properly
 
@@ -207,6 +198,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - type `gy` will copy absolute path to system clipboard
 - type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
 - type `d` to delete a file (will prompt for confirmation)
+- type `D` to trash a file (configured in setup())
 - type `]c` to go to next git item
 - type `[c` to go to prev git item
 - type `-` to navigate up to the parent directory of the current file/directory
@@ -217,7 +209,7 @@ highlight NvimTreeFolderIcon guibg=blue
 - `<C-x>` will open the file in a horizontal split
 - `<C-t>` will open the file in a new tab
 - `<Tab>` will open the file as a preview (keeps the cursor in the tree)
-- `I` will toggle visibility of folders hidden via |g:nvim_tree_ignore|
+- `I` will toggle visibility of hidden folders / files
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
 - `R` will refresh the tree
 - Double left click acts like `<CR>`
@@ -228,50 +220,61 @@ highlight NvimTreeFolderIcon guibg=blue
 The `list` option in `view.mappings.list` is a table of
 ```lua
 -- key can be either a string or a table of string (lhs)
--- cb is the callback that will be called
+-- action is the name of the action
+-- action_cb is the function that will be called, it receives the node as a parameter. Optional for default actions
 -- mode is normal by default
+
+local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+
+local function print_node_path(node) {
+  print(node.absolute_path)
+}
+
 local list = {
-  { key = {"<CR>", "o" }, cb = ":lua some_func()<cr>", mode = "n"}
+  { key = {"<CR>", "o" }, action = "edit", mode = "n"},
+  { key = "p", action = "print_path", action_cb = print_node_path },
+  { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
 }
 ```
 
 These are the default bindings:
 ```lua
-local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+
 -- default mappings
 local list = {
-  { key = {"<CR>", "o", "<2-LeftMouse>"}, cb = tree_cb("edit") },
-  { key = {"<2-RightMouse>", "<C-]>"},    cb = tree_cb("cd") },
-  { key = "<C-v>",                        cb = tree_cb("vsplit") },
-  { key = "<C-x>",                        cb = tree_cb("split") },
-  { key = "<C-t>",                        cb = tree_cb("tabnew") },
-  { key = "<",                            cb = tree_cb("prev_sibling") },
-  { key = ">",                            cb = tree_cb("next_sibling") },
-  { key = "P",                            cb = tree_cb("parent_node") },
-  { key = "<BS>",                         cb = tree_cb("close_node") },
-  { key = "<S-CR>",                       cb = tree_cb("close_node") },
-  { key = "<Tab>",                        cb = tree_cb("preview") },
-  { key = "K",                            cb = tree_cb("first_sibling") },
-  { key = "J",                            cb = tree_cb("last_sibling") },
-  { key = "I",                            cb = tree_cb("toggle_ignored") },
-  { key = "H",                            cb = tree_cb("toggle_dotfiles") },
-  { key = "R",                            cb = tree_cb("refresh") },
-  { key = "a",                            cb = tree_cb("create") },
-  { key = "d",                            cb = tree_cb("remove") },
-  { key = "r",                            cb = tree_cb("rename") },
-  { key = "<C-r>",                        cb = tree_cb("full_rename") },
-  { key = "x",                            cb = tree_cb("cut") },
-  { key = "c",                            cb = tree_cb("copy") },
-  { key = "p",                            cb = tree_cb("paste") },
-  { key = "y",                            cb = tree_cb("copy_name") },
-  { key = "Y",                            cb = tree_cb("copy_path") },
-  { key = "gy",                           cb = tree_cb("copy_absolute_path") },
-  { key = "[c",                           cb = tree_cb("prev_git_item") },
-  { key = "]c",                           cb = tree_cb("next_git_item") },
-  { key = "-",                            cb = tree_cb("dir_up") },
-  { key = "s",                            cb = tree_cb("system_open") },
-  { key = "q",                            cb = tree_cb("close") },
-  { key = "g?",                           cb = tree_cb("toggle_help") },
+  { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
+  { key = {"O"},                          action = "edit_no_picker" },
+  { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
+  { key = "<C-v>",                        action = "vsplit" },
+  { key = "<C-x>",                        action = "split" },
+  { key = "<C-t>",                        action = "tabnew" },
+  { key = "<",                            action = "prev_sibling" },
+  { key = ">",                            action = "next_sibling" },
+  { key = "P",                            action = "parent_node" },
+  { key = "<BS>",                         action = "close_node" },
+  { key = "<Tab>",                        action = "preview" },
+  { key = "K",                            action = "first_sibling" },
+  { key = "J",                            action = "last_sibling" },
+  { key = "I",                            action = "toggle_ignored" },
+  { key = "H",                            action = "toggle_dotfiles" },
+  { key = "R",                            action = "refresh" },
+  { key = "a",                            action = "create" },
+  { key = "d",                            action = "remove" },
+  { key = "D",                            action = "trash" },
+  { key = "r",                            action = "rename" },
+  { key = "<C-r>",                        action = "full_rename" },
+  { key = "x",                            action = "cut" },
+  { key = "c",                            action = "copy" },
+  { key = "p",                            action = "paste" },
+  { key = "y",                            action = "copy_name" },
+  { key = "Y",                            action = "copy_path" },
+  { key = "gy",                           action = "copy_absolute_path" },
+  { key = "[c",                           action = "prev_git_item" },
+  { key = "]c",                           action = "next_git_item" },
+  { key = "-",                            action = "dir_up" },
+  { key = "s",                            action = "system_open" },
+  { key = "q",                            action = "close" },
+  { key = "g?",                           action = "toggle_help" },
 }
 ```
 
@@ -299,3 +302,4 @@ You can toggle the help UI by pressing `g?`.
 ![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
 ![alt text](.github/screenshot2.png?raw=true "akin909 tree")
 ![alt text](.github/screenshot3.png?raw=true "stsewd tree")
+![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
