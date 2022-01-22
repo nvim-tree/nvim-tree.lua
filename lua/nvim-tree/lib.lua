@@ -324,7 +324,7 @@ function M.pick_window()
 
   vim.o.laststatus = laststatus
 
-  if win_map[resp] == nil then return -1 end
+  if win_map[resp] == nil and resp ~= vim.fn.nr2char(27) then return -1 end
 
   return win_map[resp]
 end
