@@ -370,6 +370,7 @@ function M.parent_node(node, should_close)
       parent.open = false
       altered_tree = true
     end
+    line = require'nvim-tree.view'.View.hide_root_folder and line - 1 or line
     view.set_cursor({line, 0})
   end
 
