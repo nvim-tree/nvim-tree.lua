@@ -375,6 +375,7 @@ function M.parent_node(node, should_close)
   end
 
   if altered_tree then
+    diagnostics.update()
     M.redraw()
   end
 end
