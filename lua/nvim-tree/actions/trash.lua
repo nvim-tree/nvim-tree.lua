@@ -28,7 +28,7 @@ local function clear_buffer(absolute_path)
   end
 end
 
-function M.trash_node(node)
+function M.fn(node)
   if node.name == '..' then return end
 
   -- configs
