@@ -63,31 +63,6 @@ local function get_node_at_line(line)
   return iter
 end
 
-local function get_line_from_node(node, find_parent)
-  local node_path = node.absolute_path
-
-  if find_parent then
-    node_path = node.absolute_path:match("(.*)"..utils.path_separator)
-  end
-
-  local line = 2
-  local function iter(entries, recursive)
-    for _, entry in ipairs(entries) do
-      local n = M.get_last_group_node(entry)
-      if node_path == n.absolute_path then
-        return line, entry
-      end
-
-      line = line + 1
-      if entry.open == true and recursive then
-        local _, child = iter(entry.entries, recursive)
-        if child ~= nil then return line, child end
-      end
-    end
-  end
-  return iter
-end
-
 function M.get_node_at_cursor()
   local winnr = view.get_winnr()
   local hide_root_folder = view.View.hide_root_folder
@@ -309,76 +284,8 @@ function M.open()
   end
 end
 
-function M.sibling(node, direction)
-  if node.name == '..' or not direction then return end
-
-  local iter = get_line_from_node(node, true)
-  local node_path = node.absolute_path
-
-  local line = 0
-  local parent, _
-
-  -- Check if current node is already at root entries
-  for index, entry in ipairs(M.Tree.entries) do
-    if node_path == entry.absolute_path then
-      line = index
-    end
-  end
-
-  if line > 0 then
-    parent = M.Tree
-  else
-    _, parent = iter(M.Tree.entries, true)
-    if parent ~= nil and #parent.entries > 1 then
-      line, _ = get_line_from_node(node)(parent.entries)
-    end
-
-    -- Ignore parent line count
-    line = line - 1
-  end
-
-  local index = line + direction
-  if index < 1 then
-    index = 1
-  elseif index > #parent.entries then
-    index = #parent.entries
-  end
-  local target_node = parent.entries[index]
-
-  line, _ = get_line_from_node(target_node)(M.Tree.entries, true)
-  view.set_cursor({line, 0})
-end
-
 function M.close_node(node)
   M.parent_node(node, true)
-end
-
-function M.parent_node(node, should_close)
-  if node.name == '..' then return end
-
-  should_close = should_close or false
-  local altered_tree = false
-
-  local iter = get_line_from_node(node, true)
-  if node.open == true and should_close then
-    node.open = false
-    altered_tree = true
-  else
-    local line, parent = iter(M.Tree.entries, true)
-    if parent == nil then
-      line = 1
-    elseif should_close then
-      parent.open = false
-      altered_tree = true
-    end
-    line = require'nvim-tree.view'.View.hide_root_folder and line - 1 or line
-    view.set_cursor({line, 0})
-  end
-
-  if altered_tree then
-    diagnostics.update()
-    M.redraw()
-  end
 end
 
 function M.toggle_ignored()
