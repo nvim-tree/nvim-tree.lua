@@ -283,8 +283,8 @@ function M.close()
   for _, win in pairs(a.nvim_list_wins()) do
     if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
       a.nvim_win_hide(tree_win)
-      if tree_win == current_win and M.View.last_focus_winnr then
-        a.nvim_set_current_win(M.View.last_focus_winnr)
+      if tree_win == current_win and M.View.last_focused_winnr then
+        a.nvim_set_current_win(M.View.last_focused_winnr)
       end
       return
     end
