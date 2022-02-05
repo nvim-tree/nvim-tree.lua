@@ -249,7 +249,7 @@ function M.open()
 end
 
 function M.close_node(node)
-  M.parent_node(node, true)
+  require'nvim-tree.actions.movements'.parent_node(node, true)
 end
 
 function M.toggle_ignored()
