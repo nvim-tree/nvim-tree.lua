@@ -185,7 +185,7 @@ function M.fn(mode, filename)
 
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
-    vim.cmd(cmd)
+    pcall(vim.cmd, cmd)
     view.resize()
   end
 
