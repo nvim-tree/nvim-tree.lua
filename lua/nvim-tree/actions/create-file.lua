@@ -47,7 +47,7 @@ local function get_containing_folder(node)
     return utils.path_add_trailing(node.absolute_path)
   end
   local node_name_size = #(node.name or '')
-  return node.absolute_path:sub(0, -node_name_size + 1)
+  return node.absolute_path:sub(0, - node_name_size - 1)
 end
 
 local function get_input(containing_folder)
