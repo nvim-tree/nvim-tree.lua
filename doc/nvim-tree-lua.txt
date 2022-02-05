@@ -682,30 +682,12 @@ NvimTreeExecFile
 NvimTreeOpenedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
-NvimTreeMarkdownFile
 NvimTreeIndentMarker
 
 LspDiagnosticsError
 LspDiagnosticsWarning
 LspDiagnosticsInformation
 LspDiagnosticsHint
-
-NvimTreeLicenseIcon
-NvimTreeYamlIcon
-NvimTreeTomlIcon
-NvimTreeGitignoreIcon
-NvimTreeJsonIcon
-
-NvimTreeLuaIcon
-NvimTreePythonIcon
-NvimTreeShellIcon
-NvimTreeJavascriptIcon
-NvimTreeCIcon
-NvimTreeReactIcon
-NvimTreeHtmlIcon
-NvimTreeRustIcon
-NvimTreeVimIcon
-NvimTreeTypescriptIcon
 
 NvimTreeGitDirty
 NvimTreeGitStaged
