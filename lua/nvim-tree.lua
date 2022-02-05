@@ -355,7 +355,7 @@ function M.setup(conf)
   require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.view'.setup(opts.view or {})
   require'nvim-tree.diagnostics'.setup(opts)
-  require'nvim-tree.populate'.setup(opts)
+  require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
 
   setup_autocommands(opts)

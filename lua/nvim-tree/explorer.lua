@@ -159,7 +159,7 @@ local function should_ignore_git(path, status)
     and (M.config.filter_git_ignored and status and status[path] == '!!')
 end
 
-function M.refresh_entries(entries, cwd, parent_node, status)
+function M.refresh(nodes, cwd, parent_node, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -169,7 +169,7 @@ function M.refresh_entries(entries, cwd, parent_node, status)
   local named_entries = {}
   local cached_entries = {}
   local entries_idx = {}
-  for i, node in ipairs(entries) do
+  for i, node in ipairs(nodes) do
     node.git_status = (parent_node and parent_node.git_status == '!!' and '!!')
       or (status.files and status.files[node.absolute_path])
       or (status.dirs and status.dirs[node.absolute_path])
@@ -219,7 +219,7 @@ function M.refresh_entries(entries, cwd, parent_node, status)
       parent_node.group_next = nil
       named_entries[next_node.name] = next_node
     else
-      M.refresh_entries(entries, next_node.absolute_path, next_node, status)
+      M.refresh(nodes, next_node.absolute_path, next_node, status)
       return
     end
   end
@@ -237,7 +237,7 @@ function M.refresh_entries(entries, cwd, parent_node, status)
     end
 
     if not new_entries[name] then
-      table.remove(entries, idx)
+      table.remove(nodes, idx)
     else
       idx = idx + 1
     end
@@ -263,7 +263,7 @@ function M.refresh_entries(entries, cwd, parent_node, status)
           if prev then
             idx = entries_idx[prev] + 1
           end
-          table.insert(entries, idx, n)
+          table.insert(nodes, idx, n)
           entries_idx[name] = idx
           cached_entries[idx] = name
         else
@@ -277,15 +277,15 @@ function M.refresh_entries(entries, cwd, parent_node, status)
   end
 
   if next_node then
-    table.insert(entries, 1, next_node)
+    table.insert(nodes, 1, next_node)
   end
 
   if new_nodes_added then
-    utils.merge_sort(entries, node_comparator)
+    utils.merge_sort(nodes, node_comparator)
   end
 end
 
-function M.populate(entries, cwd, parent_node, status)
+function M.explore(entries, cwd, parent_node, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -327,7 +327,7 @@ function M.populate(entries, cwd, parent_node, status)
       if luv.fs_access(child_node.absolute_path, 'R') then
         parent_node.group_next = child_node
         child_node.git_status = parent_node.git_status
-        M.populate(entries, child_node.absolute_path, child_node, status)
+        M.explore(entries, child_node.absolute_path, child_node, status)
         return
       end
     end

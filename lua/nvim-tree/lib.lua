@@ -3,13 +3,11 @@ local luv = vim.loop
 
 local renderer = require'nvim-tree.renderer'
 local diagnostics = require'nvim-tree.diagnostics'
-local pops = require'nvim-tree.populate'
+local explorer = require'nvim-tree.explorer'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local events = require'nvim-tree.events'
 local git = require'nvim-tree.git'
-local populate = pops.populate
-local refresh_entries = pops.refresh_entries
 
 local first_init_done = false
 
@@ -23,7 +21,7 @@ M.Tree = {
 
 local function load_children(cwd, children, parent)
   git.load_project_status(cwd, function(git_statuses)
-    populate(children, cwd, parent, git_statuses)
+    explorer.explore(children, cwd, parent, git_statuses)
     M.redraw()
   end)
 end
@@ -141,7 +139,7 @@ end
 
 local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(node.absolute_path or node.cwd)
-  refresh_entries(node.entries, node.absolute_path or node.cwd, node, projects[project_root] or {})
+  explorer.refresh(node.entries, node.absolute_path or node.cwd, node, projects[project_root] or {})
   for _, entry in ipairs(node.entries) do
     if entry.entries and entry.open then
       refresh_nodes(entry, projects)
@@ -219,7 +217,7 @@ function M.set_index_and_redraw(fname)
       if path_matches then
         if #node.entries == 0 then
           node.open = true
-          populate(node.entries, node.absolute_path, node, {})
+          explorer.explore(node.entries, node.absolute_path, node, {})
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
               reload_node_status(node, git.projects)
@@ -384,12 +382,12 @@ function M.parent_node(node, should_close)
 end
 
 function M.toggle_ignored()
-  pops.config.filter_ignored = not pops.config.filter_ignored
+  explorer.config.filter_ignored = not explorer.config.filter_ignored
   return M.refresh_tree()
 end
 
 function M.toggle_dotfiles()
-  pops.config.filter_dotfiles = not pops.config.filter_dotfiles
+  explorer.config.filter_dotfiles = not explorer.config.filter_dotfiles
   return M.refresh_tree()
 end
 
