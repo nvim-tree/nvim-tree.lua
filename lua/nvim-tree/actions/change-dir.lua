@@ -27,11 +27,7 @@ function M.fn(name)
 end
 
 function M.setup(options)
-  if options.actions.change_dir.global ~= nil then
-    M.options.global = options.actions.change_dir.global
-  else
-    M.options.global = vim.g.nvim_tree_change_dir_global == 1
-  end
+  M.options.global = options.actions.change_dir.global
 end
 
 return M

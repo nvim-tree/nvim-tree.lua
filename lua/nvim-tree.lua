@@ -330,7 +330,10 @@ local DEFAULT_OPTS = {
   },
   actions = {
     change_dir = {
-      global = false,
+      global = vim.g.nvim_tree_change_dir_global == 1,
+    },
+    open_file = {
+      quit_on_open = vim.g.nvim_tree_quit_on_open == 1,
     }
   }
 }
@@ -343,23 +346,11 @@ function M.setup(conf)
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
-  if type(opts.update_to_buf_dir) == "boolean" then
-    utils.warn("update_to_buf_dir is now a table, see :help nvim-tree.update_to_buf_dir")
-    _config.update_to_buf_dir = {
-      enable = opts.update_to_buf_dir,
-      auto_open = opts.update_to_buf_dir,
-    }
-  else
-    _config.update_to_buf_dir = opts.update_to_buf_dir
-  end
-
-  if opts.lsp_diagnostics ~= nil then
-    utils.warn("setup.lsp_diagnostics has been removed, see :help nvim-tree.diagnostics")
-  end
+  _config.update_to_buf_dir = opts.update_to_buf_dir
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.actions'.setup(opts)
-  require'nvim-tree.view'.setup(opts.view or {})
+  require'nvim-tree.view'.setup(opts or {})
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)

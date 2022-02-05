@@ -5,7 +5,9 @@ local lib = require'nvim-tree.lib'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 
-local M = {}
+local M = {
+  quit_on_open = false,
+}
 
 ---Get user to pick a window. Selectable windows are all windows in the current
 ---tabpage that aren't NvimTree.
@@ -88,8 +90,7 @@ local function pick_window()
 end
 
 local function open_file_in_tab(filename)
-  local close = vim.g.nvim_tree_quit_on_open == 1
-  if close then
+  if M.quit_on_open then
     view.close()
   else
     -- Switch window first to ensure new window doesn't inherit settings from
@@ -114,7 +115,7 @@ local function open_file_in_tab(filename)
     api.nvim_set_current_buf(alt_bufid)
   end
 
-  if not close then
+  if not M.quit_on_open then
     vim.cmd("wincmd p")
   end
 
@@ -194,9 +195,13 @@ function M.fn(mode, filename)
     return
   end
 
-  if vim.g.nvim_tree_quit_on_open == 1 then
+  if M.quit_on_open then
     view.close()
   end
+end
+
+function M.setup(opts)
+  M.quit_on_open = opts.actions.open_file.quit_on_open
 end
 
 return M

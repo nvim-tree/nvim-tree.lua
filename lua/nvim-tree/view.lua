@@ -72,19 +72,21 @@ local DEFAULT_CONFIG = {
 }
 
 function M.setup(opts)
-  local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts)
+  local options = vim.tbl_deep_extend('force', DEFAULT_CONFIG, opts.view or {})
   M.View.side = options.side
   M.View.width = options.width
   M.View.height = options.height
   M.View.hide_root_folder = options.hide_root_folder
-  M.View.auto_resize = opts.auto_resize
+  M.View.auto_resize = options.auto_resize
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
 
   vim.cmd "augroup NvimTreeView"
   vim.cmd "au!"
-  vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+  if not opts.actions.open_file.quit_on_open then
+    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+  end
   vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
   vim.cmd "augroup END"
 
@@ -127,9 +129,6 @@ function M._prevent_buffer_override()
     end
     vim.cmd("buffer "..curbuf)
     M.resize()
-    if vim.g.nvim_tree_quit_on_open == 1 then
-      M.close()
-    end
   end)
 end
 

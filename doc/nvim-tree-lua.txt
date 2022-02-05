@@ -130,7 +130,10 @@ function.
       actions = {
         change_dir = {
           global = false,
-        }
+        },
+        open_file = {
+	  quit_on_open = false,
+        },
       }
     }
 <
@@ -368,6 +371,11 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
+  - |actions.open_file.quit_on_open|: closes the explorer when opening a file.
+    It will also disable preventing a buffer overriding the tree.
+      type: `boolean`
+      default: `false`
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
@@ -457,13 +465,6 @@ You can set icons for:
 
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
-
-
-|g:nvim_tree_quit_on_open|			*g:nvim_tree_quit_on_open*
-
-Can be `0` or `1`. When `1`, will close the tree when a file is opened.
-Applies to: `edit`, `vsplit`, `split`, `tabnew`.
-Default is 0
 
 |g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
 

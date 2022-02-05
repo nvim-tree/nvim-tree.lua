@@ -100,6 +100,9 @@ require'nvim-tree'.setup {
   actions = {
     change_dir = {
       global = false,
+    },
+    open_file = {
+      quit_on_open = false,
     }
   }
 }
@@ -108,7 +111,6 @@ require'nvim-tree'.setup {
 These additional options must be set **BEFORE** calling `require'nvim-tree'` or calling setup.
 They are being migrated to the setup function bit by bit, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
 ```vim
-let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
 let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
