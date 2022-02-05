@@ -9,46 +9,48 @@ local M = {
   is_windows = vim.fn.has('win32') == 1
 }
 
+local function get_dir_git_status(parent_ignored, status, absolute_path)
+  if parent_ignored then
+    return '!!'
+  end
+  local dir_status = status.dirs and status.dirs[absolute_path]
+  local file_status = status.files and status.files[absolute_path]
+  return dir_status or file_status
+end
+
 local function dir_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
-  local stat = luv.fs_stat(absolute_path)
   local handle = luv.fs_scandir(absolute_path)
   local has_children = handle and luv.fs_scandir_next(handle) ~= nil
 
-  --- This is because i have some folders that i dont have permissions to read its metadata, so i have to check that stat returns a valid info
-  local last_modified = 0
-  if stat ~= nil then
-    last_modified = stat.mtime.sec
-  end
-
   return {
-    name = name,
     absolute_path = absolute_path,
-    -- TODO: last modified could also involve atime and ctime
-    last_modified = last_modified,
-    open = false,
-    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
+    git_status = get_dir_git_status(parent_ignored, status, absolute_path),
+    group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
+    name = name,
     nodes = {},
-    git_status = parent_ignored and '!!' or (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
+    open = false,
   }
+end
+
+local function is_executable(absolute_path, ext)
+  if M.is_windows then
+    return utils.is_windows_exe(ext)
+  end
+  return luv.fs_access(absolute_path, 'X')
 end
 
 local function file_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({cwd, name})
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
-  local is_exec
-  if M.is_windows then
-    is_exec = utils.is_windows_exe(ext)
-  else
-    is_exec = luv.fs_access(absolute_path, 'X')
-  end
+
   return {
-    name = name,
     absolute_path = absolute_path,
-    executable = is_exec,
+    executable = is_executable(absolute_path, ext),
     extension = ext,
     git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
+    name = name,
   }
 end
 
@@ -74,14 +76,14 @@ local function link_new(cwd, name, status, parent_ignored)
   end
 
   return {
-    name = name,
     absolute_path = absolute_path,
-    link_to = link_to,
-    last_modified = last_modified,
-    open = open,
-    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
-    nodes = nodes,
     git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
+    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
+    last_modified = last_modified,
+    link_to = link_to,
+    name = name,
+    nodes = nodes,
+    open = open,
   }
 end
 
