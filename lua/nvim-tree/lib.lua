@@ -150,7 +150,7 @@ local function refresh_nodes(node, projects)
 end
 
 local event_running = false
-function M.refresh_tree()
+function M.refresh_tree(callback)
   if event_running or not M.Tree.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
@@ -160,6 +160,9 @@ function M.refresh_tree()
     refresh_nodes(M.Tree, projects)
     if view.win_open() then
       M.redraw()
+      if callback then
+        callback()
+      end
     end
     diagnostics.update()
     event_running = false

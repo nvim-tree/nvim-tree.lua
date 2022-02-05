@@ -24,16 +24,13 @@ local function create_file(file)
       return
     end
   end
-  uv.fs_open(file, "w", 420, vim.schedule_wrap(function(err, fd)
-    if err then
-      a.nvim_err_writeln('Couldn\'t create file '..file)
-    else
-      uv.fs_close(fd)
-      events._dispatch_file_created(file)
-      lib.refresh_tree()
-      focus_file(file)
-    end
-  end))
+  local ok, fd = pcall(uv.fs_open, file, "w", 420)
+  if not ok then
+    a.nvim_err_writeln('Couldn\'t create file '..file)
+    return
+  end
+  uv.fs_close(fd)
+  events._dispatch_file_created(file)
 end
 
 local function get_num_entries(iter)
@@ -98,8 +95,9 @@ function M.fn(node)
     a.nvim_out_write(ans..' was properly created\n')
   end
   events._dispatch_folder_created(ans)
-  lib.refresh_tree()
-  focus_file(ans)
+  lib.refresh_tree(function()
+    focus_file(ans)
+  end)
 end
 
 return M
