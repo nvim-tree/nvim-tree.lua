@@ -71,28 +71,28 @@ function M.sibling(direction)
 
     -- Check if current node is already at root entries
     for index, entry in ipairs(lib().Tree.entries) do
-    if node_path == entry.absolute_path then
-      line = index
-    end
+      if node_path == entry.absolute_path then
+        line = index
+      end
     end
 
     if line > 0 then
-    parent = lib().Tree
-  else
-    _, parent = iter(lib().Tree.entries, true)
-    if parent ~= nil and #parent.entries > 1 then
-      line, _ = get_line_from_node(node)(parent.entries)
-    end
+      parent = lib().Tree
+    else
+      _, parent = iter(lib().Tree.entries, true)
+      if parent ~= nil and #parent.entries > 1 then
+        line, _ = get_line_from_node(node)(parent.entries)
+      end
 
-    -- Ignore parent line count
-    line = line - 1
+      -- Ignore parent line count
+      line = line - 1
     end
 
     local index = line + direction
     if index < 1 then
-    index = 1
-  elseif index > #parent.entries then
-    index = #parent.entries
+      index = 1
+    elseif index > #parent.entries then
+      index = #parent.entries
     end
     local target_node = parent.entries[index]
 
