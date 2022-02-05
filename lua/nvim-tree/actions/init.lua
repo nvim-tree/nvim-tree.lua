@@ -76,7 +76,7 @@ local keypress_funcs = {
   next_sibling = require'nvim-tree.actions.movements'.sibling(1),
   prev_git_item = go_to('prev_git_item'),
   next_git_item = go_to('next_git_item'),
-  dir_up = lib.dir_up,
+  dir_up = require'nvim-tree.actions.dir-up'.fn,
   close = function() require'nvim-tree'.close() end,
   preview = function(node)
     if node.name == '..' then
@@ -106,9 +106,9 @@ function M.on_keypress(action)
   end
 
   if node.name == ".." then
-    return lib.change_dir("..")
+    return require'nvim-tree.actions.change-dir'.fn("..")
   elseif action == "cd" and node.entries ~= nil then
-    return lib.change_dir(lib.get_last_group_node(node).absolute_path)
+    return require'nvim-tree.actions.change-dir'.fn(lib.get_last_group_node(node).absolute_path)
   elseif action == "cd" then
     return
   end

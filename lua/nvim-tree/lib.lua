@@ -222,42 +222,6 @@ function M.set_index_and_redraw(fname)
   end
 end
 
-function M.collapse_all()
-  local function iter(nodes)
-    for _, node in pairs(nodes) do
-      if node.open then
-        node.open = false
-      end
-      if node.entries then
-        iter(node.entries)
-      end
-    end
-  end
-
-  iter(M.Tree.entries)
-  M.redraw()
-end
-
-local current_tab = api.nvim_get_current_tabpage()
-
-function M.change_dir(name)
-  local foldername = name == '..' and vim.fn.fnamemodify(M.Tree.cwd, ':h') or name
-  local no_cwd_change = vim.fn.expand(foldername) == M.Tree.cwd
-  local new_tab = api.nvim_get_current_tabpage()
-  local is_window = vim.v.event.scope == "window" and new_tab == current_tab
-  if no_cwd_change or is_window then
-    return
-  end
-  current_tab = new_tab
-
-  if vim.g.nvim_tree_change_dir_global == 1 then
-    vim.cmd('cd '..vim.fn.fnameescape(foldername))
-  else
-    vim.cmd('lcd '..vim.fn.fnameescape(foldername))
-  end
-  M.init(false, foldername)
-end
-
 function M.set_target_win()
   local id = api.nvim_get_current_win()
   local tree_id = view.get_winnr()
@@ -277,7 +241,7 @@ function M.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
   if respect_buf_cwd == 1 and cwd ~= M.Tree.cwd then
-    M.change_dir(cwd)
+    require'nvim-tree.actions.change-dir'.fn(cwd)
   end
   if should_redraw then
     M.redraw()
@@ -303,14 +267,11 @@ function M.toggle_help()
   return M.redraw()
 end
 
-function M.dir_up(node)
-  if not node or node.name == ".." then
-    return M.change_dir('..')
-  else
-    local newdir = vim.fn.fnamemodify(M.Tree.cwd, ':h')
-    M.change_dir(newdir)
-    return M.set_index_and_redraw(node.absolute_path)
-  end
-end
+-- @deprecated: use nvim-tree.actions.collapse-all.fn
+M.collapse_all = require'nvim-tree.actions.collapse-all'.fn
+-- @deprecated: use nvim-tree.actions.dir-up.fn
+M.dir_up = require'nvim-tree.actions.dir-up'.fn
+-- @deprecated: use nvim-tree.actions.change-dir.fn
+M.change_dir = require'nvim-tree.actions.change-dir'.fn
 
 return M

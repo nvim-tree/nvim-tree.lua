@@ -6,6 +6,7 @@ local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
+local ChangeDir = require'nvim-tree.actions.change-dir'
 
 local _config = {}
 
@@ -124,7 +125,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
   end
 
   if not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
-    lib.change_dir(vim.fn.fnamemodify(filepath, ':p:h'))
+    ChangeDir.fn(vim.fn.fnamemodify(filepath, ':p:h'))
   end
 end
 
@@ -183,7 +184,7 @@ function M.open_on_directory()
 
   view.close()
   if bufname ~= lib.Tree.cwd  then
-    lib.change_dir(bufname)
+    ChangeDir.fn(bufname)
   end
   M.hijack_current_window()
 
@@ -247,7 +248,7 @@ local function setup_vim_commands()
 end
 
 function M.change_dir(name)
-  lib.change_dir(name)
+  ChangeDir.fn(name)
 
   if _config.update_focused_file.enable then
     M.find_file(false)
@@ -326,6 +327,11 @@ local DEFAULT_OPTS = {
     enable = true,
     ignore = true,
     timeout = 400,
+  },
+  actions = {
+    change_dir = {
+      global = false,
+    }
   }
 }
 

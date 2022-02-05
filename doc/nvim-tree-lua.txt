@@ -126,6 +126,11 @@ function.
       trash = {
         cmd = "trash",
         require_confirm = true,
+      },
+      actions = {
+        change_dir = {
+          global = false,
+        }
       }
     }
 <
@@ -354,6 +359,15 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `true`
 
+*nvim-tree.actions*
+|actions|: configuration for various actions
+
+  - |actions.change_dir.global|: use `:cd` instead of `:lcd` when changing
+    directories. Consider that this might cause issues with
+    the |update_cwd| options.
+      type: `boolean`
+      default: `false`
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
@@ -484,10 +498,6 @@ default table is
       ["README.md"] = true,
       ["readme.md"] = true,
    }
-
-|g:nvim_tree_change_dir_global|                  *g:nvim_tree_change_dir_global*
-
-Can be 0 or 1. When 1, use :cd instead of :lcd when changing directories.
 
 |g:nvim_tree_disable_window_picker|          *g:nvim_tree_disable_window_picker*
 
