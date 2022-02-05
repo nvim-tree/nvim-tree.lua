@@ -133,7 +133,7 @@ function M.refresh_tree(callback)
     refresh_nodes(M.Tree, projects)
     if view.win_open() then
       M.redraw()
-      if callback then
+      if callback and type(callback) == 'function' then
         callback()
       end
     end
