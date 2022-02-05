@@ -9,7 +9,7 @@ local M = {}
 
 local function focus_file(file)
   local _, i = utils.find_node(
-    lib.Tree.entries,
+    lib.Tree.nodes,
     function(node) return node.absolute_path == file end
   )
   require'nvim-tree.view'.set_cursor({i+1, 1})
@@ -33,7 +33,7 @@ local function create_file(file)
   events._dispatch_file_created(file)
 end
 
-local function get_num_entries(iter)
+local function get_num_nodes(iter)
   local i = 0
   for _ in iter do
     i = i + 1
@@ -43,7 +43,7 @@ end
 
 local function get_containing_folder(node)
   local is_open = vim.g.nvim_tree_create_in_closed_folder == 1 or node.open
-  if node.entries ~= nil and is_open then
+  if node.nodes ~= nil and is_open then
     return utils.path_add_trailing(node.absolute_path)
   end
   local node_name_size = #(node.name or '')
@@ -62,7 +62,7 @@ function M.fn(node)
   if node.name == '..' then
     node = {
       absolute_path = lib.Tree.cwd,
-      entries = lib.Tree.entries,
+      nodes = lib.Tree.nodes,
       open = true,
     }
   end
@@ -72,12 +72,12 @@ function M.fn(node)
   if not file then return end
 
   -- create a folder for each path element if the folder does not exist
-  -- if the answer ends with a /, create a file for the last entry
+  -- if the answer ends with a /, create a file for the last path element
   local is_last_path_file = not file:match(utils.path_separator..'$')
   local path_to_create = ''
   local idx = 0
 
-  local num_entries = get_num_entries(utils.path_split(utils.path_remove_trailing(file)))
+  local num_nodes = get_num_nodes(utils.path_split(utils.path_remove_trailing(file)))
   local is_error = false
   for path in utils.path_split(file) do
     idx = idx + 1
@@ -87,7 +87,7 @@ function M.fn(node)
     else
       path_to_create = utils.path_join({path_to_create, p})
     end
-    if is_last_path_file and idx == num_entries then
+    if is_last_path_file and idx == num_nodes then
       create_file(path_to_create)
     elseif not utils.file_exists(path_to_create) then
       local success = uv.fs_mkdir(path_to_create, 493)

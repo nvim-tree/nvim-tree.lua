@@ -68,8 +68,8 @@ end
 local function add_to_clipboard(node, clip)
   if node.name == '..' then return end
 
-  for idx, entry in ipairs(clip) do
-    if entry.absolute_path == node.absolute_path then
+  for idx, _node in ipairs(clip) do
+    if _node.absolute_path == node.absolute_path then
       table.remove(clip, idx)
       return a.nvim_out_write(node.absolute_path..' removed to clipboard.\n')
     end
@@ -102,9 +102,9 @@ local function do_paste(node, action_type, action_fn)
     destination = vim.fn.fnamemodify(destination, ':p:h:h')
   end
 
-  for _, entry in ipairs(clip) do
-    local dest = utils.path_join({destination, entry.name })
-    do_single_paste(entry.absolute_path, dest, action_type, action_fn)
+  for _, _node in ipairs(clip) do
+    local dest = utils.path_join({destination, _node.name })
+    do_single_paste(_node.absolute_path, dest, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
@@ -159,13 +159,13 @@ end
 function M.copy_path(node)
   local absolute_path = node.absolute_path
   local relative_path = utils.path_relative(absolute_path, lib.Tree.cwd)
-  local content = node.entries ~= nil and utils.path_add_trailing(relative_path) or relative_path
+  local content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
   return copy_to_clipboard(content)
 end
 
 function M.copy_absolute_path(node)
   local absolute_path = node.absolute_path
-  local content = node.entries ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
+  local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
   return copy_to_clipboard(content)
 end
 

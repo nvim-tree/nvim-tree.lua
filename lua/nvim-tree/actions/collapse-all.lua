@@ -6,13 +6,13 @@ function M.fn()
       if node.open then
         node.open = false
       end
-      if node.entries then
-        iter(node.entries)
+      if node.nodes then
+        iter(node.nodes)
       end
     end
   end
 
-  iter(require'nvim-tree.lib'.Tree.entries)
+  iter(require'nvim-tree.lib'.Tree.nodes)
   require'nvim-tree.lib'.redraw()
 end
 

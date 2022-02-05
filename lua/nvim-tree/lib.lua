@@ -14,7 +14,7 @@ local first_init_done = false
 local M = {}
 
 M.Tree = {
-  entries = {},
+  nodes = {},
   cwd = nil,
   target_winid = nil,
 }
@@ -27,14 +27,14 @@ local function load_children(cwd, children, parent)
 end
 
 function M.init(with_open, foldername)
-  M.Tree.entries = {}
+  M.Tree.nodes = {}
   M.Tree.cwd = foldername or luv.cwd()
 
   if with_open then
     M.open()
   end
 
-  load_children(M.Tree.cwd, M.Tree.entries)
+  load_children(M.Tree.cwd, M.Tree.nodes)
 
   if not first_init_done then
     events._dispatch_ready()
@@ -48,14 +48,14 @@ end
 
 local function get_node_at_line(line)
   local index = view.View.hide_root_folder and 1 or 2
-  local function iter(entries)
-    for _, node in ipairs(entries) do
+  local function iter(nodes)
+    for _, node in ipairs(nodes) do
       if index == line then
         return node
       end
       index = index + 1
       if node.open == true then
-        local child = iter(node.entries)
+        local child = iter(node.nodes)
         if child ~= nil then return child end
       end
     end
@@ -83,7 +83,7 @@ function M.get_node_at_cursor()
     if M.Tree.cwd == "/" then
       line = line + 1
     end
-    return get_node_at_line(line)(M.Tree.entries)
+    return get_node_at_line(line)(M.Tree.nodes)
   end
 end
 
@@ -99,10 +99,10 @@ end
 function M.expand_or_collapse(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
-  if #node.entries == 0 then
+  if #node.nodes == 0 then
     load_children(
       node.link_to or node.absolute_path,
-      node.entries,
+      node.nodes,
       node
     )
   else
@@ -114,10 +114,10 @@ end
 
 local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(node.absolute_path or node.cwd)
-  explorer.refresh(node.entries, node.absolute_path or node.cwd, node, projects[project_root] or {})
-  for _, entry in ipairs(node.entries) do
-    if entry.entries and entry.open then
-      refresh_nodes(entry, projects)
+  explorer.refresh(node.nodes, node.absolute_path or node.cwd, node, projects[project_root] or {})
+  for _, _node in ipairs(node.nodes) do
+    if _node.nodes and _node.open then
+      refresh_nodes(_node, projects)
     end
   end
 end
@@ -145,13 +145,13 @@ end
 local function reload_node_status(parent_node, projects)
   local project_root = git.get_project_root(parent_node.absolute_path or parent_node.cwd)
   local status = projects[project_root] or {}
-  for _, node in ipairs(parent_node.entries) do
-    if node.entries then
+  for _, node in ipairs(parent_node.nodes) do
+    if node.nodes then
       node.git_status = status.dirs and status.dirs[node.absolute_path]
     else
       node.git_status = status.files and status.files[node.absolute_path]
     end
-    if node.entries and #node.entries > 0 then
+    if node.nodes and #node.nodes > 0 then
       reload_node_status(node, projects)
     end
   end
@@ -190,9 +190,9 @@ function M.set_index_and_redraw(fname)
 
       local path_matches = utils.str_find(fname, node.absolute_path..utils.path_separator)
       if path_matches then
-        if #node.entries == 0 then
+        if #node.nodes == 0 then
           node.open = true
-          explorer.explore(node.entries, node.absolute_path, node, {})
+          explorer.explore(node.nodes, node.absolute_path, node, {})
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
               reload_node_status(node, git.projects)
@@ -204,16 +204,16 @@ function M.set_index_and_redraw(fname)
           node.open = true
           tree_altered = true
         end
-        if iterate_nodes(node.entries) ~= nil then
+        if iterate_nodes(node.nodes) ~= nil then
           return i
         end
       elseif node.open == true then
-        iterate_nodes(node.entries)
+        iterate_nodes(node.nodes)
       end
     end
   end
 
-  local index = iterate_nodes(M.Tree.entries)
+  local index = iterate_nodes(M.Tree.nodes)
   if tree_altered then
     M.redraw()
   end

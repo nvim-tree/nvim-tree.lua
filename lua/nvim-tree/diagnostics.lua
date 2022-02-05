@@ -111,7 +111,7 @@ function M.update()
     buffer_severity = from_nvim_lsp()
   end
 
-  local nodes = require'nvim-tree.lib'.Tree.entries
+  local nodes = require'nvim-tree.lib'.Tree.nodes
   if #signs then
     vim.fn.sign_unplacelist(vim.tbl_map(function(sign)
       return {

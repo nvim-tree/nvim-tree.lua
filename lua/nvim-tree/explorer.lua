@@ -29,7 +29,7 @@ local function dir_new(cwd, name, status, parent_ignored)
     open = false,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
-    entries = {},
+    nodes = {},
     git_status = parent_ignored and '!!' or (status.dirs and status.dirs[absolute_path]) or (status.files and status.files[absolute_path]),
   }
 end
@@ -62,10 +62,10 @@ local function link_new(cwd, name, status, parent_ignored)
   local absolute_path = utils.path_join({ cwd, name })
   local link_to = luv.fs_realpath(absolute_path)
   local stat = luv.fs_stat(absolute_path)
-  local open, entries
+  local open, nodes
   if (link_to ~= nil) and luv.fs_stat(link_to).type == 'directory' then
     open = false
-    entries = {}
+    nodes = {}
   end
 
   local last_modified = 0
@@ -80,7 +80,7 @@ local function link_new(cwd, name, status, parent_ignored)
     last_modified = last_modified,
     open = open,
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
-    entries = entries,
+    nodes = nodes,
     git_status = parent_ignored and '!!' or status.files and status.files[absolute_path],
   }
 end
@@ -108,9 +108,9 @@ local function node_comparator(a, b)
   if not (a and b) then
     return true
   end
-  if a.entries and not b.entries then
+  if a.nodes and not b.nodes then
     return true
-  elseif not a.entries and b.entries then
+  elseif not a.nodes and b.nodes then
     return false
   end
 
@@ -123,8 +123,8 @@ end
 local function should_ignore(path)
   local basename = utils.path_basename(path)
 
-  for _, entry in ipairs(M.exclude_list) do
-    if path:match(entry) then
+  for _, node in ipairs(M.exclude_list) do
+    if path:match(node) then
       return false
     end
   end
@@ -166,28 +166,28 @@ function M.refresh(nodes, cwd, parent_node, status)
     return
   end
 
-  local named_entries = {}
-  local cached_entries = {}
-  local entries_idx = {}
+  local named_nodes = {}
+  local cached_nodes = {}
+  local nodes_idx = {}
   for i, node in ipairs(nodes) do
     node.git_status = (parent_node and parent_node.git_status == '!!' and '!!')
       or (status.files and status.files[node.absolute_path])
       or (status.dirs and status.dirs[node.absolute_path])
-    cached_entries[i] = node.name
-    entries_idx[node.name] = i
-    named_entries[node.name] = node
+    cached_nodes[i] = node.name
+    nodes_idx[node.name] = i
+    named_nodes[node.name] = node
   end
 
   local dirs = {}
   local links = {}
   local files = {}
-  local new_entries = {}
-  local num_new_entries = 0
+  local new_nodes = {}
+  local num_new_nodes = 0
 
   while true do
     local name, t = luv.fs_scandir_next(handle)
     if not name then break end
-    num_new_entries = num_new_entries + 1
+    num_new_nodes = num_new_nodes + 1
 
     local abs = utils.path_join({cwd, name})
     if not should_ignore(abs) and not should_ignore_git(abs, status.files) then
@@ -198,13 +198,13 @@ function M.refresh(nodes, cwd, parent_node, status)
 
       if t == 'directory' then
         table.insert(dirs, name)
-        new_entries[name] = true
+        new_nodes[name] = true
       elseif t == 'file' then
         table.insert(files, name)
-        new_entries[name] = true
+        new_nodes[name] = true
       elseif t == 'link' then
         table.insert(links, name)
-        new_entries[name] = true
+        new_nodes[name] = true
       end
     end
   end
@@ -213,11 +213,11 @@ function M.refresh(nodes, cwd, parent_node, status)
   local next_node = parent_node.group_next
   if next_node then
     next_node.open = parent_node.open
-    if num_new_entries ~= 1 or not new_entries[next_node.name] then
+    if num_new_nodes ~= 1 or not new_nodes[next_node.name] then
       -- dir is no longer only containing a group dir, or group dir has been removed
       -- either way: sever the group link on current dir
       parent_node.group_next = nil
-      named_entries[next_node.name] = next_node
+      named_nodes[next_node.name] = next_node
     else
       M.refresh(nodes, next_node.absolute_path, next_node, status)
       return
@@ -225,18 +225,18 @@ function M.refresh(nodes, cwd, parent_node, status)
   end
 
   local idx = 1
-  for _, name in ipairs(cached_entries) do
-    local node = named_entries[name]
+  for _, name in ipairs(cached_nodes) do
+    local node = named_nodes[name]
     if node and node.link_to then
       -- If the link has been modified: remove it in case the link target has changed.
       local stat = luv.fs_stat(node.absolute_path)
       if stat and node.last_modified ~= stat.mtime.sec then
-        new_entries[name] = nil
-        named_entries[name] = nil
+        new_nodes[name] = nil
+        named_nodes[name] = nil
       end
     end
 
-    if not new_entries[name] then
+    if not new_nodes[name] then
       table.remove(nodes, idx)
     else
       idx = idx + 1
@@ -244,28 +244,28 @@ function M.refresh(nodes, cwd, parent_node, status)
   end
 
   local all = {
-    { entries = dirs, fn = dir_new, check = function(_, abs) return luv.fs_access(abs, 'R') end },
-    { entries = links, fn = link_new, check = function(name) return name ~= nil end },
-    { entries = files, fn = file_new, check = function() return true end }
+    { nodes = dirs, fn = dir_new, check = function(_, abs) return luv.fs_access(abs, 'R') end },
+    { nodes = links, fn = link_new, check = function(name) return name ~= nil end },
+    { nodes = files, fn = file_new, check = function() return true end }
   }
 
   local prev = nil
   local change_prev
   local new_nodes_added = false
   for _, e in ipairs(all) do
-    for _, name in ipairs(e.entries) do
+    for _, name in ipairs(e.nodes) do
       change_prev = true
-      if not named_entries[name] then
+      if not named_nodes[name] then
         local n = e.fn(cwd, name, status)
         if e.check(n.link_to, n.absolute_path) then
           new_nodes_added = true
           idx = 1
           if prev then
-            idx = entries_idx[prev] + 1
+            idx = nodes_idx[prev] + 1
           end
           table.insert(nodes, idx, n)
-          entries_idx[name] = idx
-          cached_entries[idx] = name
+          nodes_idx[name] = idx
+          cached_nodes[idx] = name
         else
           change_prev = false
         end
@@ -285,7 +285,7 @@ function M.refresh(nodes, cwd, parent_node, status)
   end
 end
 
-function M.explore(entries, cwd, parent_node, status)
+function M.explore(nodes, cwd, parent_node, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -327,7 +327,7 @@ function M.explore(entries, cwd, parent_node, status)
       if luv.fs_access(child_node.absolute_path, 'R') then
         parent_node.group_next = child_node
         child_node.git_status = parent_node.git_status
-        M.explore(entries, child_node.absolute_path, child_node, status)
+        M.explore(nodes, child_node.absolute_path, child_node, status)
         return
       end
     end
@@ -336,23 +336,23 @@ function M.explore(entries, cwd, parent_node, status)
   for _, dirname in ipairs(dirs) do
     local dir = dir_new(cwd, dirname, status, parent_node_ignored)
     if luv.fs_access(dir.absolute_path, 'R') then
-      table.insert(entries, dir)
+      table.insert(nodes, dir)
     end
   end
 
   for _, linkname in ipairs(links) do
     local link = link_new(cwd, linkname, status, parent_node_ignored)
     if link.link_to ~= nil then
-      table.insert(entries, link)
+      table.insert(nodes, link)
     end
   end
 
   for _, filename in ipairs(files) do
     local file = file_new(cwd, filename, status, parent_node_ignored)
-    table.insert(entries, file)
+    table.insert(nodes, file)
   end
 
-  utils.merge_sort(entries, node_comparator)
+  utils.merge_sort(nodes, node_comparator)
 end
 
 function M.setup(opts)
@@ -366,8 +366,8 @@ function M.setup(opts)
 
   local custom_filter = opts.filters.custom
   if custom_filter and #custom_filter > 0 then
-    for _, entry in pairs(custom_filter) do
-      M.ignore_list[entry] = true
+    for _, filter_name in pairs(custom_filter) do
+      M.ignore_list[filter_name] = true
     end
   end
 end

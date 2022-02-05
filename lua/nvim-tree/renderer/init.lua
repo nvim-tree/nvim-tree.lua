@@ -284,7 +284,7 @@ local function update_draw_data(tree, depth, markers)
     index = 1
   end
 
-  for idx, node in ipairs(tree.entries) do
+  for idx, node in ipairs(tree.nodes) do
     local padding = _padding.get_padding(depth, idx, tree, node, markers)
     local offset = string.len(padding)
     if depth > 0 then
@@ -293,8 +293,8 @@ local function update_draw_data(tree, depth, markers)
 
     local git_hl = get_git_hl(node)
 
-    if node.entries then
-      local has_children = #node.entries ~= 0 or node.has_children
+    if node.nodes then
+      local has_children = #node.nodes ~= 0 or node.has_children
       local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
       local git_icon = get_git_icons(node, index, offset, #icon) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)

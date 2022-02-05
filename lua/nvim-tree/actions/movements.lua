@@ -13,16 +13,16 @@ local function get_line_from_node(node, find_parent)
   end
 
   local line = 2
-  local function iter(entries, recursive)
-    for _, entry in ipairs(entries) do
-      local n = lib().get_last_group_node(entry)
+  local function iter(nodes, recursive)
+    for _, _node in ipairs(nodes) do
+      local n = lib().get_last_group_node(_node)
       if node_path == n.absolute_path then
-        return line, entry
+        return line, _node
       end
 
       line = line + 1
-      if entry.open == true and recursive then
-        local _, child = iter(entry.entries, recursive)
+      if _node.open == true and recursive then
+        local _, child = iter(_node.nodes, recursive)
         if child ~= nil then return line, child end
       end
     end
@@ -42,7 +42,7 @@ function M.parent_node(node, should_close)
     node.open = false
     altered_tree = true
   else
-    local line, parent = iter(lib().Tree.entries, true)
+    local line, parent = iter(lib().Tree.nodes, true)
     if parent == nil then
       line = 1
     elseif should_close then
@@ -69,9 +69,9 @@ function M.sibling(direction)
     local line = 0
     local parent, _
 
-    -- Check if current node is already at root entries
-    for index, entry in ipairs(lib().Tree.entries) do
-      if node_path == entry.absolute_path then
+    -- Check if current node is already at root nodes
+    for index, _node in ipairs(lib().Tree.nodes) do
+      if node_path == _node.absolute_path then
         line = index
       end
     end
@@ -79,9 +79,9 @@ function M.sibling(direction)
     if line > 0 then
       parent = lib().Tree
     else
-      _, parent = iter(lib().Tree.entries, true)
-      if parent ~= nil and #parent.entries > 1 then
-        line, _ = get_line_from_node(node)(parent.entries)
+      _, parent = iter(lib().Tree.nodes, true)
+      if parent ~= nil and #parent.nodes > 1 then
+        line, _ = get_line_from_node(node)(parent.nodes)
       end
 
       -- Ignore parent line count
@@ -91,12 +91,12 @@ function M.sibling(direction)
     local index = line + direction
     if index < 1 then
       index = 1
-    elseif index > #parent.entries then
-      index = #parent.entries
+    elseif index > #parent.nodes then
+      index = #parent.nodes
     end
-    local target_node = parent.entries[index]
+    local target_node = parent.nodes[index]
 
-    line, _ = get_line_from_node(target_node)(lib().Tree.entries, true)
+    line, _ = get_line_from_node(target_node)(lib().Tree.nodes, true)
     view.set_cursor({line, 0})
   end
 end

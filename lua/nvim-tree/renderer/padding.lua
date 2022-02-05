@@ -6,7 +6,7 @@ end
 
 local function get_padding_arrows(icon_state)
   return function(depth, _, _, node)
-    if node.entries then
+    if node.nodes then
       local icon = icon_state.icons.folder_icons[node.open and 'arrow_open' or 'arrow_closed']
       return string.rep(' ', depth - 2)..icon..' '
     end
@@ -18,9 +18,9 @@ local function get_padding_indent_markers(depth, idx, tree, _, markers)
   local padding = ""
   if depth ~= 0 then
     local rdepth = depth/2
-    markers[rdepth] = idx ~= #tree.entries
+    markers[rdepth] = idx ~= #tree.nodes
     for i=1,rdepth do
-      if idx == #tree.entries and i == rdepth then
+      if idx == #tree.nodes and i == rdepth then
         padding = padding..'└ '
       elseif markers[i] then
         padding = padding..'│ '

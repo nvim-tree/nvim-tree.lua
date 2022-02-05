@@ -90,8 +90,8 @@ function M.find_node(_nodes, _fn)
     local i = 1
     for _, node in ipairs(nodes) do
       if fn(node) then return node, i end
-      if node.open and #node.entries > 0 then
-        local n, idx = iter(node.entries, fn)
+      if node.open and #node.nodes > 0 then
+        local n, idx = iter(node.nodes, fn)
         i = i + idx
         if n then return n, i end
       else

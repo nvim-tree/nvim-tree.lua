@@ -82,7 +82,7 @@ local keypress_funcs = {
     if node.name == '..' then
       return
     end
-    if node.entries ~= nil then
+    if node.nodes ~= nil then
       return lib.expand_or_collapse(node)
     end
     return require'nvim-tree.actions.open-file'.fn('preview', node.absolute_path)
@@ -107,15 +107,15 @@ function M.on_keypress(action)
 
   if node.name == ".." then
     return require'nvim-tree.actions.change-dir'.fn("..")
-  elseif action == "cd" and node.entries ~= nil then
+  elseif action == "cd" and node.nodes ~= nil then
     return require'nvim-tree.actions.change-dir'.fn(lib.get_last_group_node(node).absolute_path)
   elseif action == "cd" then
     return
   end
 
-  if node.link_to and not node.entries then
+  if node.link_to and not node.nodes then
     require'nvim-tree.actions.open-file'.fn(action, node.link_to)
-  elseif node.entries ~= nil then
+  elseif node.nodes ~= nil then
     lib.expand_or_collapse(node)
   else
     require'nvim-tree.actions.open-file'.fn(action, node.absolute_path)
