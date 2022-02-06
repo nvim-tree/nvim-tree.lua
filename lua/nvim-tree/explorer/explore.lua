@@ -40,14 +40,14 @@ function M.explore(node, cwd, status)
     local child_node = node.nodes[1]
     if #(node.nodes) == 1 and child_node.nodes and uv.fs_access(child_node.absolute_path, 'R') then
       node.group_next = child_node
-      child_node.git_status = node.git_status
-      node.nodes = {}
-      M.explore(child_node, child_node.absolute_path, status)
-      return
+      local ns = M.explore(child_node, child_node.absolute_path, status)
+      node.nodes = ns or {}
+      return ns
     end
   end
 
   utils.merge_sort(node.nodes, eutils.node_comparator)
+  return node.nodes
 end
 
 return M
