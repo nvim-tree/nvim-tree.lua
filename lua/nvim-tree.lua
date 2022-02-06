@@ -184,7 +184,7 @@ function M.open_on_directory()
   end
 
   view.close()
-  if bufname ~= lib.Tree.cwd  then
+  if lib.Tree and bufname ~= lib.Tree.cwd  then
     ChangeDir.fn(bufname)
   end
   M.hijack_current_window()
