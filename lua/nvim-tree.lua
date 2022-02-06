@@ -65,7 +65,7 @@ local function remove_empty_buffer()
     if api.nvim_buf_is_valid(buf) and api.nvim_buf_is_loaded(buf) then
       local name = api.nvim_buf_get_name(buf)
       if name == "" then
-        return api.nvim_buf_delete(buf, {})
+        api.nvim_buf_delete(buf, {})
       end
     end
   end
@@ -84,7 +84,7 @@ function M.hijack_current_window()
   else
     View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
   end
-  vim.schedule(remove_empty_buffer)
+  vim.defer_fn(remove_empty_buffer, 50)
 end
 
 function M.on_enter(opts)
@@ -192,7 +192,7 @@ function M.open_on_directory()
   end
 
   view.close()
-  if lib.Tree and bufname ~= lib.Tree.cwd  then
+  if bufname ~= lib.Tree.cwd  then
     ChangeDir.fn(bufname)
   end
   M.hijack_current_window()
@@ -359,16 +359,15 @@ function M.setup(conf)
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.actions'.setup(opts)
-  require'nvim-tree.view'.setup(opts or {})
   require'nvim-tree.diagnostics'.setup(opts)
+  require'nvim-tree.view'.setup(opts or {})
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
 
   setup_autocommands(opts)
   setup_vim_commands()
 
-  -- scheduling to make sure current buffer has initialized before running buffer checks for auto open
-  vim.schedule(function() M.on_enter(opts) end)
+  M.on_enter(opts)
 end
 
 return M
