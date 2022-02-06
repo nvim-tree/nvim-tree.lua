@@ -87,8 +87,9 @@ function M.on_enter(opts)
 
   local stats = luv.fs_stat(bufname)
   local is_dir = stats and stats.type == 'directory'
+  local cwd
   if is_dir then
-    lib.Tree.cwd = vim.fn.expand(bufname)
+    cwd = vim.fn.expand(bufname)
   end
 
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
@@ -104,7 +105,7 @@ function M.on_enter(opts)
     M.hijack_current_window()
   end
 
-  lib.init(should_open, lib.Tree.cwd)
+  lib.init(should_open, cwd)
 end
 
 local function is_file_readable(fname)

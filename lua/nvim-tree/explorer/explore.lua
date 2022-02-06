@@ -7,7 +7,7 @@ local builders = require'nvim-tree.explorer.node-builders'
 
 local M = {}
 
-function M.explore(nodes, cwd, parent_node, status)
+function M.explore(node, cwd, status)
   local handle = luv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -39,42 +39,42 @@ function M.explore(nodes, cwd, parent_node, status)
     end
   end
 
-  local parent_node_ignored = parent_node and parent_node.git_status == '!!'
+  local node_ignored = node.git_status == '!!'
   -- Group empty dirs
-  if parent_node and vim.g.nvim_tree_group_empty == 1 then
+  if vim.g.nvim_tree_group_empty == 1 then
     if eutils.should_group(cwd, dirs, files, links) then
       local child_node
-      if dirs[1] then child_node = builders.folder(cwd, dirs[1], status, parent_node_ignored) end
-      if links[1] then child_node = builders.link(cwd, links[1], status, parent_node_ignored) end
+      if dirs[1] then child_node = builders.folder(cwd, dirs[1], status, node_ignored) end
+      if links[1] then child_node = builders.link(cwd, links[1], status, node_ignored) end
       if luv.fs_access(child_node.absolute_path, 'R') then
-        parent_node.group_next = child_node
-        child_node.git_status = parent_node.git_status
-        M.explore(nodes, child_node.absolute_path, child_node, status)
+        node.group_next = child_node
+        child_node.git_status = node.git_status
+        M.explore(child_node, child_node.absolute_path, status)
         return
       end
     end
   end
 
   for _, dirname in ipairs(dirs) do
-    local dir = builders.folder(cwd, dirname, status, parent_node_ignored)
+    local dir = builders.folder(cwd, dirname, status, node_ignored)
     if luv.fs_access(dir.absolute_path, 'R') then
-      table.insert(nodes, dir)
+      table.insert(node.nodes, dir)
     end
   end
 
   for _, linkname in ipairs(links) do
-    local link = builders.link(cwd, linkname, status, parent_node_ignored)
+    local link = builders.link(cwd, linkname, status, node_ignored)
     if link.link_to ~= nil then
-      table.insert(nodes, link)
+      table.insert(node.nodes, link)
     end
   end
 
   for _, filename in ipairs(files) do
-    local file = builders.file(cwd, filename, status, parent_node_ignored)
-    table.insert(nodes, file)
+    local file = builders.file(cwd, filename, status, node_ignored)
+    table.insert(node.nodes, file)
   end
 
-  utils.merge_sort(nodes, eutils.node_comparator)
+  utils.merge_sort(node.nodes, eutils.node_comparator)
 end
 
 return M

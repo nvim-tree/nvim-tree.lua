@@ -13,6 +13,9 @@ function M.fn(fname)
   local i
   local hide_root_folder = view.View.hide_root_folder
   local Explorer = get_explorer()
+  if not Explorer then
+    return
+  end
   if Explorer.cwd == '/' or hide_root_folder then
     i = 0
   else
@@ -32,7 +35,7 @@ function M.fn(fname)
       if path_matches then
         if #node.nodes == 0 then
           node.open = true
-          explorer_module.explore(node.nodes, node.absolute_path, node, {})
+          explorer_module.explore(node, node.absolute_path, {})
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
               require"nvim-tree.actions.reloaders".reload_node_status(node, git.projects)

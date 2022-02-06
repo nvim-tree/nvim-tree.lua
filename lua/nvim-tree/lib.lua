@@ -1,12 +1,10 @@
 local api = vim.api
-local luv = vim.loop
 
 local renderer = require'nvim-tree.renderer'
 local diagnostics = require'nvim-tree.diagnostics'
 local explorer = require'nvim-tree.explorer'
 local view = require'nvim-tree.view'
 local events = require'nvim-tree.events'
-local git = require'nvim-tree.git'
 
 local first_init_done = false
 
@@ -14,32 +12,19 @@ local M = {
   target_winid = nil,
 }
 
-M.Tree = {
-  nodes = {},
-  cwd = nil,
-}
-
-local function load_children(cwd, children, parent)
-  git.load_project_status(cwd, function(git_statuses)
-    explorer.explore(children, cwd, parent, git_statuses)
-    M.redraw()
-  end)
-end
-
 function M.init(with_open, foldername)
-  M.Tree.nodes = {}
-  M.Tree.cwd = foldername or luv.cwd()
+  M.Tree = explorer.Explorer.new(foldername)
+  M.Tree:init(function()
+    M.redraw()
+    if with_open then
+      M.open()
+    end
 
-  if with_open then
-    M.open()
-  end
-
-  load_children(M.Tree.cwd, M.Tree.nodes)
-
-  if not first_init_done then
-    events._dispatch_ready()
-    first_init_done = true
-  end
+    if not first_init_done then
+      events._dispatch_ready()
+      first_init_done = true
+    end
+  end)
 end
 
 function M.redraw()
@@ -100,11 +85,7 @@ function M.expand_or_collapse(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.nodes == 0 then
-    load_children(
-      node.link_to or node.absolute_path,
-      node.nodes,
-      node
-    )
+    M.Tree:expand(node)
   else
     M.redraw()
   end
@@ -143,12 +124,14 @@ function M.close_node(node)
 end
 
 function M.toggle_ignored()
-  explorer.config.filter_ignored = not explorer.config.filter_ignored
+  local config = require"nvim-tree.explorer.utils".config
+  config.filter_ignored = not config.filter_ignored
   return require'nvim-tree.actions.reloaders'.reload_explorer()
 end
 
 function M.toggle_dotfiles()
-  explorer.config.filter_dotfiles = not explorer.config.filter_dotfiles
+  local config = require"nvim-tree.explorer.utils".config
+  config.filter_dotfiles = not config.filter_dotfiles
   return require'nvim-tree.actions.reloaders'.reload_explorer()
 end
 
