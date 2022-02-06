@@ -112,64 +112,6 @@ function M.expand_or_collapse(node)
   diagnostics.update()
 end
 
-local function refresh_nodes(node, projects)
-  local project_root = git.get_project_root(node.absolute_path or node.cwd)
-  explorer.refresh(node.nodes, node.absolute_path or node.cwd, node, projects[project_root] or {})
-  for _, _node in ipairs(node.nodes) do
-    if _node.nodes and _node.open then
-      refresh_nodes(_node, projects)
-    end
-  end
-end
-
-local event_running = false
-function M.refresh_tree(callback)
-  if event_running or not M.Tree.cwd or vim.v.exiting ~= vim.NIL then
-    return
-  end
-  event_running = true
-
-  git.reload(function(projects)
-    refresh_nodes(M.Tree, projects)
-    if view.win_open() then
-      M.redraw()
-      if callback and type(callback) == 'function' then
-        callback()
-      end
-    end
-    diagnostics.update()
-    event_running = false
-  end)
-end
-
-local function reload_node_status(parent_node, projects)
-  local project_root = git.get_project_root(parent_node.absolute_path or parent_node.cwd)
-  local status = projects[project_root] or {}
-  for _, node in ipairs(parent_node.nodes) do
-    if node.nodes then
-      node.git_status = status.dirs and status.dirs[node.absolute_path]
-    else
-      node.git_status = status.files and status.files[node.absolute_path]
-    end
-    if node.nodes and #node.nodes > 0 then
-      reload_node_status(node, projects)
-    end
-  end
-end
-
-function M.reload_git()
-  if not git.config.enable or event_running then
-    return
-  end
-  event_running = true
-
-  git.reload(function(projects)
-    reload_node_status(M.Tree, projects)
-    M.redraw()
-    event_running = false
-  end)
-end
-
 function M.set_index_and_redraw(fname)
   local i
   local hide_root_folder = view.View.hide_root_folder
@@ -195,7 +137,7 @@ function M.set_index_and_redraw(fname)
           explorer.explore(node.nodes, node.absolute_path, node, {})
           git.load_project_status(node.absolute_path, function(status)
             if status.dirs or status.files then
-              reload_node_status(node, git.projects)
+              require"nvim-tree.actions.reloaders".reload_node_status(node, git.projects)
             end
             M.redraw()
           end)
@@ -254,12 +196,12 @@ end
 
 function M.toggle_ignored()
   explorer.config.filter_ignored = not explorer.config.filter_ignored
-  return M.refresh_tree()
+  return require'nvim-tree.actions.reloaders'.reload_explorer()
 end
 
 function M.toggle_dotfiles()
   explorer.config.filter_dotfiles = not explorer.config.filter_dotfiles
-  return M.refresh_tree()
+  return require'nvim-tree.actions.reloaders'.reload_explorer()
 end
 
 function M.toggle_help()
@@ -273,5 +215,8 @@ M.collapse_all = require'nvim-tree.actions.collapse-all'.fn
 M.dir_up = require'nvim-tree.actions.dir-up'.fn
 -- @deprecated: use nvim-tree.actions.change-dir.fn
 M.change_dir = require'nvim-tree.actions.change-dir'.fn
+-- @deprecated: use nvim-tree.actions.reloaders.reload_explorer
+M.refresh_tree = require'nvim-tree.actions.reloaders'.reload_explorer
+
 
 return M

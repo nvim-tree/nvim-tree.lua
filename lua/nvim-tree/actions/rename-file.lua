@@ -31,7 +31,7 @@ function M.fn(with_sub)
     a.nvim_out_write(node.absolute_path..' ➜ '..new_name..'\n')
     utils.rename_loaded_buffers(node.absolute_path, new_name)
     events._dispatch_node_renamed(abs_path, new_name)
-    lib.refresh_tree()
+    require'nvim-tree.actions.reloaders'.reload_explorer()
   end
 end
 

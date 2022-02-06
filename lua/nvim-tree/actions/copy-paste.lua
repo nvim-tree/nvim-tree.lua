@@ -108,7 +108,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  return lib.refresh_tree()
+  return require'nvim-tree.actions.reloaders'.reload_explorer()
 end
 
 local function do_cut(source, destination)

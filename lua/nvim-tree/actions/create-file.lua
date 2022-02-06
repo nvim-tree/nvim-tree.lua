@@ -102,7 +102,7 @@ function M.fn(node)
     a.nvim_out_write(file..' was properly created\n')
   end
   events._dispatch_folder_created(file)
-  lib.refresh_tree(function()
+  require'nvim-tree.actions.reloaders'.reload_explorer(function()
     focus_file(file)
   end)
 end

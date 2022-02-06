@@ -2,7 +2,6 @@ local a = vim.api
 local luv = vim.loop
 
 local utils = require'nvim-tree.utils'
-local lib = require'nvim-tree.lib'
 local events = require'nvim-tree.events'
 
 local M = {}
@@ -72,7 +71,7 @@ function M.fn(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    lib.refresh_tree()
+    require'nvim-tree.actions.reloaders'.reload_explorer()
   end
 end
 

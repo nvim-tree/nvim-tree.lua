@@ -8,7 +8,6 @@ local M = {
   }
 }
 
-local lib = require'nvim-tree.lib'
 local utils = require'nvim-tree.utils'
 local events = require'nvim-tree.events'
 
@@ -64,13 +63,13 @@ function M.fn(node)
     if node.nodes ~= nil and not node.link_to then
       trash_path(function()
         events._dispatch_folder_removed(node.absolute_path)
-        lib.refresh_tree()
+        require'nvim-tree.actions.reloaders'.reload_explorer()
       end)
     else
       trash_path(function()
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
-        lib.refresh_tree()
+        require'nvim-tree.actions.reloaders'.reload_explorer()
       end)
     end
 
