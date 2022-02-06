@@ -54,40 +54,31 @@ local function go_to(mode)
 end
 
 local keypress_funcs = {
-  create = require'nvim-tree.actions.create-file'.fn,
-  remove = require'nvim-tree.actions.remove-file'.fn,
-  rename = require'nvim-tree.actions.rename-file'.fn(false),
-  full_rename = require'nvim-tree.actions.rename-file'.fn(true),
-  copy = require'nvim-tree.actions.copy-paste'.copy,
+  close = view.close,
+  close_node = require'nvim-tree.actions.movements'.parent_node(true),
+  copy_absolute_path = require'nvim-tree.actions.copy-paste'.copy_absolute_path,
   copy_name = require'nvim-tree.actions.copy-paste'.copy_filename,
   copy_path = require'nvim-tree.actions.copy-paste'.copy_path,
-  copy_absolute_path = require'nvim-tree.actions.copy-paste'.copy_absolute_path,
+  copy = require'nvim-tree.actions.copy-paste'.copy,
+  create = require'nvim-tree.actions.create-file'.fn,
   cut = require'nvim-tree.actions.copy-paste'.cut,
+  dir_up = require'nvim-tree.actions.dir-up'.fn,
+  first_sibling = require'nvim-tree.actions.movements'.sibling(-math.huge),
+  full_rename = require'nvim-tree.actions.rename-file'.fn(true),
+  last_sibling = require'nvim-tree.actions.movements'.sibling(math.huge),
+  next_git_item = go_to('next_git_item'),
+  next_sibling = require'nvim-tree.actions.movements'.sibling(1),
+  parent_node = require'nvim-tree.actions.movements'.parent_node(false),
   paste = require'nvim-tree.actions.copy-paste'.paste,
-  close_node = lib.close_node,
-  parent_node = require'nvim-tree.actions.movements'.parent_node,
-  toggle_ignored = lib.toggle_ignored,
+  prev_git_item = go_to('prev_git_item'),
+  prev_sibling = require'nvim-tree.actions.movements'.sibling(-1),
+  refresh = require'nvim-tree.actions.reloaders'.reload_explorer,
+  remove = require'nvim-tree.actions.remove-file'.fn,
+  rename = require'nvim-tree.actions.rename-file'.fn(false),
+  system_open = require'nvim-tree.actions.system-open'.fn,
   toggle_dotfiles = lib.toggle_dotfiles,
   toggle_help = lib.toggle_help,
-  refresh = require'nvim-tree.actions.reloaders'.reload_explorer,
-  first_sibling = require'nvim-tree.actions.movements'.sibling(-math.huge),
-  last_sibling = require'nvim-tree.actions.movements'.sibling(math.huge),
-  prev_sibling = require'nvim-tree.actions.movements'.sibling(-1),
-  next_sibling = require'nvim-tree.actions.movements'.sibling(1),
-  prev_git_item = go_to('prev_git_item'),
-  next_git_item = go_to('next_git_item'),
-  dir_up = require'nvim-tree.actions.dir-up'.fn,
-  close = function() require'nvim-tree'.close() end,
-  preview = function(node)
-    if node.name == '..' then
-      return
-    end
-    if node.nodes ~= nil then
-      return lib.expand_or_collapse(node)
-    end
-    return require'nvim-tree.actions.open-file'.fn('preview', node.absolute_path)
-  end,
-  system_open = require'nvim-tree.actions.system-open'.fn,
+  toggle_ignored = lib.toggle_ignored,
   trash = require'nvim-tree.actions.trash'.fn,
 }
 
@@ -105,7 +96,12 @@ function M.on_keypress(action)
     return default_function(node)
   end
 
-  if node.name == ".." then
+  if action == "preview" then
+    if node.name == '..' then return end
+    if not node.nodes then
+      return require'nvim-tree.actions.open-file'.fn('preview', node.absolute_path)
+    end
+  elseif node.name == ".." then
     return require'nvim-tree.actions.change-dir'.fn("..")
   elseif action == "cd" and node.nodes ~= nil then
     return require'nvim-tree.actions.change-dir'.fn(lib.get_last_group_node(node).absolute_path)

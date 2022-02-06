@@ -20,9 +20,7 @@ function M.focus()
 end
 
 ---@deprecated
-function M.on_keypress(...)
-  require'nvim-tree.actions'.on_keypress(...)
-end
+M.on_keypress = require'nvim-tree.actions'.on_keypress
 
 function M.toggle(find_file)
   if view.win_open() then
@@ -34,13 +32,6 @@ function M.toggle(find_file)
     if not view.win_open() then
       lib.open()
     end
-  end
-end
-
-function M.close()
-  if view.win_open() then
-    view.close()
-    return true
   end
 end
 
@@ -64,6 +55,22 @@ function M.tab_change()
   end)
 end
 
+local function remove_empty_buffer()
+  if not view.win_open() or #api.nvim_list_wins() ~= 1 then
+    return
+  end
+
+  local bufs = vim.api.nvim_list_bufs()
+  for _, buf in ipairs(bufs) do
+    if api.nvim_buf_is_valid(buf) and api.nvim_buf_is_loaded(buf) then
+      local name = api.nvim_buf_get_name(buf)
+      if name == "" then
+        return api.nvim_buf_delete(buf, {})
+      end
+    end
+  end
+end
+
 function M.hijack_current_window()
   local View = require'nvim-tree.view'.View
   if not View.bufnr then
@@ -77,6 +84,7 @@ function M.hijack_current_window()
   else
     View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
   end
+  vim.schedule(remove_empty_buffer)
 end
 
 function M.on_enter(opts)
@@ -237,7 +245,7 @@ end
 local function setup_vim_commands()
   vim.cmd [[
     command! NvimTreeOpen lua require'nvim-tree'.open()
-    command! NvimTreeClose lua require'nvim-tree'.close()
+    command! NvimTreeClose lua require'nvim-tree.view'.close()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
     command! NvimTreeRefresh lua require'nvim-tree.actions.reloaders'.reload_explorer()

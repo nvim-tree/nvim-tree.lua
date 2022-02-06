@@ -31,31 +31,33 @@ local function get_line_from_node(node, find_parent)
 end
 
 
-function M.parent_node(node, should_close)
-  if node.name == '..' then return end
+function M.parent_node(should_close)
+  return function(node)
+    if node.name == '..' then return end
 
-  should_close = should_close or false
-  local altered_tree = false
+    should_close = should_close or false
+    local altered_tree = false
 
-  local iter = get_line_from_node(node, true)
-  if node.open == true and should_close then
-    node.open = false
-    altered_tree = true
-  else
-    local line, parent = iter(lib().Tree.nodes, true)
-    if parent == nil then
-      line = 1
-    elseif should_close then
-      parent.open = false
+    local iter = get_line_from_node(node, true)
+    if node.open == true and should_close then
+      node.open = false
       altered_tree = true
+    else
+      local line, parent = iter(lib().Tree.nodes, true)
+      if parent == nil then
+        line = 1
+      elseif should_close then
+        parent.open = false
+        altered_tree = true
+      end
+      line = view.View.hide_root_folder and line - 1 or line
+      view.set_cursor({line, 0})
     end
-    line = view.View.hide_root_folder and line - 1 or line
-    view.set_cursor({line, 0})
-  end
 
-  if altered_tree then
-    diagnostics.update()
-    lib().redraw()
+    if altered_tree then
+      diagnostics.update()
+      lib().redraw()
+    end
   end
 end
 

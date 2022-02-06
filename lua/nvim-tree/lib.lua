@@ -119,10 +119,6 @@ function M.open()
   end
 end
 
-function M.close_node(node)
-  require'nvim-tree.actions.movements'.parent_node(node, true)
-end
-
 function M.toggle_ignored()
   local config = require"nvim-tree.explorer.utils".config
   config.filter_ignored = not config.filter_ignored
