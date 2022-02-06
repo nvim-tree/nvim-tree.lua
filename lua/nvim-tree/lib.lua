@@ -106,7 +106,11 @@ end
 
 function M.open()
   M.set_target_win()
-
+  
+  if not first_init_done then
+      M.init(false)
+  end
+  
   local cwd = vim.fn.getcwd()
   local should_redraw = view.open()
 
