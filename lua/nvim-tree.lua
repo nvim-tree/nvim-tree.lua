@@ -84,7 +84,7 @@ function M.hijack_current_window()
   else
     View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
   end
-  vim.defer_fn(remove_empty_buffer, 50)
+  vim.defer_fn(remove_empty_buffer, 100)
 end
 
 function M.on_enter(opts)
