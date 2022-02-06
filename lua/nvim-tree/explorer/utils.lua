@@ -1,29 +1,9 @@
-local uv = vim.loop
 local utils = require'nvim-tree.utils'
 
 local M = {
   ignore_list = {},
   exclude_list = {},
 }
-
--- Returns true if there is either exactly 1 dir, or exactly 1 symlink dir. Otherwise, false.
--- @param cwd Absolute path to the parent directory
--- @param dirs List of dir names
--- @param files List of file names
--- @param links List of symlink names
-function M.should_group(cwd, dirs, files, links)
-  if #dirs == 1 and #files == 0 and #links == 0 then
-    return true
-  end
-
-  if #dirs == 0 and #files == 0 and #links == 1 then
-    local absolute_path = utils.path_join({ cwd, links[1] })
-    local link_to = uv.fs_realpath(absolute_path)
-    return (link_to ~= nil) and uv.fs_stat(link_to).type == 'directory'
-  end
-
-  return false
-end
 
 function M.node_comparator(a, b)
   if not (a and b) then

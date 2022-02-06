@@ -100,11 +100,13 @@ function M.reload(nodes, cwd, parent_node, status)
   local prev = nil
   local change_prev
   local new_nodes_added = false
+  local parent_ignored = parent_node.git_status == '!!'
   for _, e in ipairs(all) do
     for _, name in ipairs(e.nodes) do
       change_prev = true
       if not named_nodes[name] then
-        local n = e.fn(cwd, name, status)
+        local abs = utils.path_join({cwd, name})
+        local n = e.fn(abs, name, status, parent_ignored)
         if e.check(n.link_to, n.absolute_path) then
           new_nodes_added = true
           idx = 1

@@ -14,8 +14,7 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
   return dir_status or file_status
 end
 
-function M.folder(cwd, name, status, parent_ignored)
-  local absolute_path = utils.path_join({cwd, name})
+function M.folder(absolute_path, name, status, parent_ignored)
   local handle = uv.fs_scandir(absolute_path)
   local has_children = handle and uv.fs_scandir_next(handle) ~= nil
 
@@ -37,8 +36,7 @@ local function is_executable(absolute_path, ext)
   return uv.fs_access(absolute_path, 'X')
 end
 
-function M.file(cwd, name, status, parent_ignored)
-  local absolute_path = utils.path_join({cwd, name})
+function M.file(absolute_path, name, status, parent_ignored)
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
 
   return {
@@ -55,9 +53,8 @@ end
 -- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
-function M.link(cwd, name, status, parent_ignored)
+function M.link(absolute_path, name, status, parent_ignored)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
-  local absolute_path = utils.path_join({ cwd, name })
   local link_to = uv.fs_realpath(absolute_path)
   local stat = uv.fs_stat(absolute_path)
   local open, nodes
