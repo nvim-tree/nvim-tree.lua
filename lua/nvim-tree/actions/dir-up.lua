@@ -6,7 +6,7 @@ function M.fn(node)
   else
     local newdir = vim.fn.fnamemodify(require'nvim-tree.lib'.Tree.cwd, ':h')
     require'nvim-tree.actions.change-dir'.fn(newdir)
-    return require'nvim-tree.lib'.set_index_and_redraw(node.absolute_path)
+    return require"nvim-tree.actions.find-file".fn(node.absolute_path)
   end
 end
 

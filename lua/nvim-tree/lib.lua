@@ -4,7 +4,6 @@ local luv = vim.loop
 local renderer = require'nvim-tree.renderer'
 local diagnostics = require'nvim-tree.diagnostics'
 local explorer = require'nvim-tree.explorer'
-local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local events = require'nvim-tree.events'
 local git = require'nvim-tree.git'
@@ -112,58 +111,6 @@ function M.expand_or_collapse(node)
   diagnostics.update()
 end
 
-function M.set_index_and_redraw(fname)
-  local i
-  local hide_root_folder = view.View.hide_root_folder
-  if M.Tree.cwd == '/' or hide_root_folder then
-    i = 0
-  else
-    i = 1
-  end
-
-  local tree_altered = false
-
-  local function iterate_nodes(nodes)
-    for _, node in ipairs(nodes) do
-      i = i + 1
-      if node.absolute_path == fname then
-        return i
-      end
-
-      local path_matches = utils.str_find(fname, node.absolute_path..utils.path_separator)
-      if path_matches then
-        if #node.nodes == 0 then
-          node.open = true
-          explorer.explore(node.nodes, node.absolute_path, node, {})
-          git.load_project_status(node.absolute_path, function(status)
-            if status.dirs or status.files then
-              require"nvim-tree.actions.reloaders".reload_node_status(node, git.projects)
-            end
-            M.redraw()
-          end)
-        end
-        if node.open == false then
-          node.open = true
-          tree_altered = true
-        end
-        if iterate_nodes(node.nodes) ~= nil then
-          return i
-        end
-      elseif node.open == true then
-        iterate_nodes(node.nodes)
-      end
-    end
-  end
-
-  local index = iterate_nodes(M.Tree.nodes)
-  if tree_altered then
-    M.redraw()
-  end
-  if index and view.win_open() then
-    view.set_cursor({index, 0})
-  end
-end
-
 function M.set_target_win()
   local id = api.nvim_get_current_win()
   local tree_id = view.get_winnr()
@@ -217,6 +164,9 @@ M.dir_up = require'nvim-tree.actions.dir-up'.fn
 M.change_dir = require'nvim-tree.actions.change-dir'.fn
 -- @deprecated: use nvim-tree.actions.reloaders.reload_explorer
 M.refresh_tree = require'nvim-tree.actions.reloaders'.reload_explorer
-
+-- @deprecated: use nvim-tree.actions.reloaders.reload_git
+M.reload_git = require'nvim-tree.actions.reloaders'.reload_git
+-- @deprecated: use nvim-tree.actions.find-file.fn
+M.set_index_and_redraw = require'nvim-tree.actions.find-file'.fn
 
 return M

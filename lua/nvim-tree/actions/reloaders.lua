@@ -2,9 +2,12 @@ local git = require "nvim-tree.git"
 local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
 local explorer_module = require'nvim-tree.explorer'
-local get_explorer = function() return require "nvim-tree.lib".Tree end
 
 local M = {}
+
+local function get_explorer()
+  return require "nvim-tree.lib".Tree
+end
 
 local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(node.absolute_path or node.cwd)

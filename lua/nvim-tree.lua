@@ -143,7 +143,7 @@ function M.find_file(with_open)
   end
 
   update_base_dir_with_filepath(filepath, bufnr)
-  lib.set_index_and_redraw(filepath)
+  require"nvim-tree.actions.find-file".fn(filepath)
 end
 
 function M.resize(size)
@@ -192,7 +192,7 @@ function M.open_on_directory()
   view.focus()
   view.replace_window()
 
-  lib.set_index_and_redraw(bufname)
+  require"nvim-tree.actions.find-file".fn(bufname)
   vim.api.nvim_buf_delete(buf, { force = true })
 end
 
