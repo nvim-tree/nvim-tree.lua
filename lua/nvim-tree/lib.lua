@@ -10,12 +10,13 @@ local git = require'nvim-tree.git'
 
 local first_init_done = false
 
-local M = {}
+local M = {
+  target_winid = nil,
+}
 
 M.Tree = {
   nodes = {},
   cwd = nil,
-  target_winid = nil,
 }
 
 local function load_children(cwd, children, parent)
@@ -115,11 +116,11 @@ function M.set_target_win()
   local id = api.nvim_get_current_win()
   local tree_id = view.get_winnr()
   if tree_id and id == tree_id then
-    M.Tree.target_winid = 0
+    M.target_winid = 0
     return
   end
 
-  M.Tree.target_winid = id
+  M.target_winid = id
 end
 
 function M.open()

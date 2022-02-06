@@ -95,8 +95,8 @@ local function open_file_in_tab(filename)
   else
     -- Switch window first to ensure new window doesn't inherit settings from
     -- NvimTree
-    if lib.Tree.target_winid > 0 and api.nvim_win_is_valid(lib.Tree.target_winid) then
-      api.nvim_set_current_win(lib.Tree.target_winid)
+    if lib.target_winid > 0 and api.nvim_win_is_valid(lib.target_winid) then
+      api.nvim_set_current_win(lib.target_winid)
     else
       vim.cmd("wincmd p")
     end
@@ -133,13 +133,13 @@ function M.fn(mode, filename)
 
   local target_winid
   if vim.g.nvim_tree_disable_window_picker == 1 or mode == "edit_no_picker" then
-    target_winid = lib.Tree.target_winid
+    target_winid = lib.target_winid
   else
     target_winid = pick_window()
   end
 
   if target_winid == -1 then
-    target_winid = lib.Tree.target_winid
+    target_winid = lib.target_winid
   end
 
   local do_split = mode == "split" or mode == "vsplit"
@@ -164,7 +164,7 @@ function M.fn(mode, filename)
       local splitside = view.is_vertical() and "vsp" or "sp"
       vim.cmd(window_opts.split_command .. " " .. splitside)
       target_winid = api.nvim_get_current_win()
-      lib.Tree.target_winid = target_winid
+      lib.target_winid = target_winid
 
       -- No need to split, as we created a new window.
       do_split = false
