@@ -16,8 +16,8 @@ local function clear_buffer(absolute_path)
         vim.cmd(':bn')
         a.nvim_set_current_win(winnr)
       end
-      vim.api.nvim_buf_delete(buf.bufnr, {})
-      if buf.windows[1] then
+      vim.api.nvim_buf_delete(buf.bufnr, { force = true })
+      if buf.windows[1] and vim.api.nvim_win_is_valid(buf.bufnr) then
         vim.api.nvim_win_close(buf.windows[1], true)
       end
       return
