@@ -59,9 +59,10 @@ function M.reload(node, cwd, status)
     node.nodes
   )
 
-  if vim.g.nvim_tree_group_empty == 1 then
+  local is_root = node.cwd ~= nil
+  if vim.g.nvim_tree_group_empty == 1 and not is_root and #(node.nodes) == 1 then
     local child_node = node.nodes[1]
-    if #(node.nodes) == 1 and child_node.nodes and uv.fs_access(child_node.absolute_path, 'R') then
+    if child_node.nodes and uv.fs_access(child_node.absolute_path, 'R') then
       node.group_next = child_node
       local ns = M.reload(child_node, child_node.absolute_path, status)
       node.nodes = ns or {}
