@@ -2,21 +2,17 @@ local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
 local explorer_module = require"nvim-tree.explorer"
 local git = require"nvim-tree.git"
+local renderer = require"nvim-tree.renderer"
 
 local M = {}
-
-local function get_explorer()
-  return require"nvim-tree.lib".Tree
-end
 
 function M.fn(fname)
   local i
   local hide_root_folder = view.View.hide_root_folder
-  local Explorer = get_explorer()
-  if not Explorer then
+  if not TreeExplorer then
     return
   end
-  if Explorer.cwd == '/' or hide_root_folder then
+  if TreeExplorer.cwd == '/' or hide_root_folder then
     i = 0
   else
     i = 1
@@ -40,7 +36,7 @@ function M.fn(fname)
             if status.dirs or status.files then
               require"nvim-tree.actions.reloaders".reload_node_status(node, git.projects)
             end
-            require"nvim-tree.lib".redraw()
+            renderer.draw()
           end)
         end
         if node.open == false then
@@ -56,9 +52,9 @@ function M.fn(fname)
     end
   end
 
-  local index = iterate_nodes(Explorer.nodes)
+  local index = iterate_nodes(TreeExplorer.nodes)
   if tree_altered then
-    require"nvim-tree.lib".redraw()
+    renderer.draw()
   end
   if index and view.win_open() then
     view.set_cursor({index, 0})

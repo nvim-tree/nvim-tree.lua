@@ -1,3 +1,5 @@
+local renderer = require"nvim-tree.renderer"
+
 local M = {}
 
 function M.fn()
@@ -12,8 +14,8 @@ function M.fn()
     end
   end
 
-  iter(require'nvim-tree.lib'.Tree.nodes)
-  require'nvim-tree.lib'.redraw()
+  iter(TreeExplorer.nodes)
+  renderer.draw()
 end
 
 return M

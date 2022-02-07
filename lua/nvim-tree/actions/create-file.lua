@@ -9,7 +9,7 @@ local M = {}
 
 local function focus_file(file)
   local _, i = utils.find_node(
-    lib.Tree.nodes,
+    TreeExplorer.nodes,
     function(node) return node.absolute_path == file end
   )
   require'nvim-tree.view'.set_cursor({i+1, 1})
@@ -61,8 +61,8 @@ function M.fn(node)
   node = lib.get_last_group_node(node)
   if node.name == '..' then
     node = {
-      absolute_path = lib.Tree.cwd,
-      nodes = lib.Tree.nodes,
+      absolute_path = TreeExplorer.cwd,
+      nodes = TreeExplorer.nodes,
       open = true,
     }
   end

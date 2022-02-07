@@ -2,6 +2,7 @@ local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local diagnostics = require'nvim-tree.diagnostics'
 local config = require"nvim-tree.config"
+local renderer = require"nvim-tree.renderer"
 local lib = function() return require'nvim-tree.lib' end
 
 local M = {}
@@ -44,7 +45,7 @@ function M.parent_node(should_close)
       node.open = false
       altered_tree = true
     else
-      local line, parent = iter(lib().Tree.nodes, true)
+      local line, parent = iter(TreeExplorer.nodes, true)
       if parent == nil then
         line = 1
       elseif should_close then
@@ -57,7 +58,7 @@ function M.parent_node(should_close)
 
     if altered_tree then
       diagnostics.update()
-      lib().redraw()
+      renderer.draw()
     end
   end
 end
@@ -73,16 +74,16 @@ function M.sibling(direction)
     local parent, _
 
     -- Check if current node is already at root nodes
-    for index, _node in ipairs(lib().Tree.nodes) do
+    for index, _node in ipairs(TreeExplorer.nodes) do
       if node_path == _node.absolute_path then
         line = index
       end
     end
 
     if line > 0 then
-      parent = lib().Tree
+      parent = TreeExplorer
     else
-      _, parent = iter(lib().Tree.nodes, true)
+      _, parent = iter(TreeExplorer.nodes, true)
       if parent ~= nil and #parent.nodes > 1 then
         line, _ = get_line_from_node(node)(parent.nodes)
       end
@@ -99,7 +100,7 @@ function M.sibling(direction)
     end
     local target_node = parent.nodes[index]
 
-    line, _ = get_line_from_node(target_node)(lib().Tree.nodes, true)
+    line, _ = get_line_from_node(target_node)(TreeExplorer.nodes, true)
     view.set_cursor({line, 0})
   end
 end

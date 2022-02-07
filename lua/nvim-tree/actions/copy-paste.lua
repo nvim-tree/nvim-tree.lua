@@ -158,7 +158,7 @@ end
 
 function M.copy_path(node)
   local absolute_path = node.absolute_path
-  local relative_path = utils.path_relative(absolute_path, lib.Tree.cwd)
+  local relative_path = utils.path_relative(absolute_path, TreeExplorer.cwd)
   local content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
   return copy_to_clipboard(content)
 end

@@ -1,6 +1,7 @@
 local uv = vim.loop
 
 local git = require"nvim-tree.git"
+local renderer = require"nvim-tree.renderer"
 
 local M = {}
 
@@ -29,7 +30,7 @@ function Explorer:_load(cwd, node)
 end
 
 function Explorer:expand(node)
-  self.init_cb = require"nvim-tree.lib".redraw
+  self.init_cb = renderer.draw
   self:_load(node.link_to or node.absolute_path, node)
 end
 

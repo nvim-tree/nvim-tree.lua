@@ -1,13 +1,10 @@
 local git = require "nvim-tree.git"
 local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
+local renderer = require "nvim-tree.renderer"
 local explorer_module = require'nvim-tree.explorer'
 
 local M = {}
-
-local function get_explorer()
-  return require "nvim-tree.lib".Tree
-end
 
 local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(node.absolute_path or node.cwd)
@@ -36,16 +33,15 @@ end
 
 local event_running = false
 function M.reload_explorer(callback)
-  local Explorer = get_explorer()
-  if event_running or not Explorer.cwd or vim.v.exiting ~= vim.NIL then
+  if event_running or not TreeExplorer.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
   git.reload(function(projects)
-    refresh_nodes(Explorer, projects)
+    refresh_nodes(TreeExplorer, projects)
     if view.win_open() then
-      require"nvim-tree.lib".redraw()
+      renderer.draw()
       if callback and type(callback) == 'function' then
         callback()
       end
@@ -62,8 +58,8 @@ function M.reload_git()
   event_running = true
 
   git.reload(function(projects)
-    M.reload_node_status(get_explorer(), projects)
-    require"nvim-tree.lib".redraw()
+    M.reload_node_status(TreeExplorer, projects)
+    renderer.draw()
     event_running = false
   end)
 end

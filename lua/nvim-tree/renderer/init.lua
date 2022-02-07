@@ -370,25 +370,23 @@ end
 
 local M = {}
 
-function M.draw(tree, reload)
+function M.draw()
   if not api.nvim_buf_is_loaded(view.View.bufnr) then return end
   local cursor
   if view.win_open() then
     cursor = api.nvim_win_get_cursor(view.get_winnr())
   end
-  if reload then
-    index = 0
-    lines = {}
-    hl = {}
+  index = 0
+  lines = {}
+  hl = {}
 
-    local show_arrows =
-      vim.g.nvim_tree_indent_markers ~= 1
-      and icon_state.show_folder_icon
-      and icon_state.show_folder_arrows
-    _padding.reload_padding_function()
-    icon_state = config.get_icon_state()
-    update_draw_data(tree, show_arrows and 2 or 0, {})
-  end
+  local show_arrows =
+    vim.g.nvim_tree_indent_markers ~= 1
+    and icon_state.show_folder_icon
+    and icon_state.show_folder_arrows
+  _padding.reload_padding_function()
+  icon_state = config.get_icon_state()
+  update_draw_data(TreeExplorer, show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()

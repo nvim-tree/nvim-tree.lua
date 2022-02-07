@@ -131,7 +131,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if not vim.startswith(filepath, lib.Tree.cwd or vim.loop.cwd()) then
+  if not vim.startswith(filepath, TreeExplorer.cwd or vim.loop.cwd()) then
     ChangeDir.fn(vim.fn.fnamemodify(filepath, ':p:h'))
   end
 end
@@ -190,7 +190,7 @@ function M.open_on_directory()
   end
 
   view.close()
-  if bufname ~= lib.Tree.cwd  then
+  if bufname ~= TreeExplorer.cwd  then
     ChangeDir.fn(bufname)
   end
   M.hijack_current_window()

@@ -66,9 +66,9 @@ local keypress_funcs = {
   remove = require'nvim-tree.actions.remove-file'.fn,
   rename = require'nvim-tree.actions.rename-file'.fn(false),
   system_open = require'nvim-tree.actions.system-open'.fn,
-  toggle_dotfiles = require"nvim-tree.actions.toggle-ignore".dotfiles,
-  toggle_help = require"nvim-tree.actions.toggle-help".fn,
-  toggle_ignored = require"nvim-tree.actions.toggle-ignore".ignored,
+  toggle_dotfiles = require"nvim-tree.actions.toggles".dotfiles,
+  toggle_help = require"nvim-tree.actions.toggles".help,
+  toggle_ignored = require"nvim-tree.actions.toggles".ignored,
   trash = require'nvim-tree.actions.trash'.fn,
 }
 

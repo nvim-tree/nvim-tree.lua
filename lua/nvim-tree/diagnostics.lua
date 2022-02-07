@@ -111,7 +111,6 @@ function M.update()
     buffer_severity = from_nvim_lsp()
   end
 
-  local nodes = require'nvim-tree.lib'.Tree.nodes
   if #signs then
     vim.fn.sign_unplacelist(vim.tbl_map(function(sign)
       return {
@@ -124,7 +123,7 @@ function M.update()
   end
   for bufname, severity in pairs(buffer_severity) do
     if 0 < severity and severity < 5 then
-      local node, line = utils.find_node(nodes, function(node)
+      local node, line = utils.find_node(TreeExplorer.nodes, function(node)
         if M.show_on_dirs and not node.open then
           return vim.startswith(bufname, node.absolute_path)
         else

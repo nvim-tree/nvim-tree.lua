@@ -12,10 +12,12 @@ local M = {
   target_winid = nil,
 }
 
+TreeExplorer = nil
+
 function M.init(with_open, foldername)
-  M.Tree = explorer.Explorer.new(foldername)
-  M.Tree:init(function()
-    M.redraw()
+  TreeExplorer = explorer.Explorer.new(foldername)
+  TreeExplorer:init(function()
+    renderer.draw()
     if with_open then
       M.open()
     end
@@ -25,10 +27,6 @@ function M.init(with_open, foldername)
       first_init_done = true
     end
   end)
-end
-
-function M.redraw()
-  renderer.draw(M.Tree, true)
 end
 
 local function get_node_at_line(line)
@@ -61,14 +59,14 @@ function M.get_node_at_cursor()
     local help_text = get_node_at_line(line+1)(help_lines)
     return {name = help_text}
   else
-    if line == 1 and M.Tree.cwd ~= "/" and not hide_root_folder then
+    if line == 1 and TreeExplorer.cwd ~= "/" and not hide_root_folder then
       return { name = ".." }
     end
 
-    if M.Tree.cwd == "/" then
+    if TreeExplorer.cwd == "/" then
       line = line + 1
     end
-    return get_node_at_line(line)(M.Tree.nodes)
+    return get_node_at_line(line)(TreeExplorer.nodes)
   end
 end
 
@@ -85,9 +83,9 @@ function M.expand_or_collapse(node)
   node.open = not node.open
   if node.has_children then node.has_children = false end
   if #node.nodes == 0 then
-    M.Tree:expand(node)
+    TreeExplorer:expand(node)
   else
-    M.redraw()
+    renderer.draw()
   end
 
   diagnostics.update()
@@ -111,11 +109,11 @@ function M.open()
   local should_redraw = view.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if respect_buf_cwd == 1 and cwd ~= M.Tree.cwd then
+  if respect_buf_cwd == 1 and cwd ~= TreeExplorer.cwd then
     require'nvim-tree.actions.change-dir'.fn(cwd)
   end
   if should_redraw then
-    M.redraw()
+    renderer.draw()
   end
 end
 
