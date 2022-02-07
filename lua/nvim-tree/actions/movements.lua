@@ -1,6 +1,7 @@
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local diagnostics = require'nvim-tree.diagnostics'
+local config = require"nvim-tree.config"
 local lib = function() return require'nvim-tree.lib' end
 
 local M = {}
@@ -100,6 +101,15 @@ function M.sibling(direction)
 
     line, _ = get_line_from_node(target_node)(lib().Tree.nodes, true)
     view.set_cursor({line, 0})
+  end
+end
+
+function M.find_git_item(where)
+  local icon_state = config.get_icon_state()
+  local flags = where == 'next' and 'b' or ''
+  local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
+  return function()
+    return icon_state.show_git_icon and vim.fn.search(icons, flags)
   end
 end
 

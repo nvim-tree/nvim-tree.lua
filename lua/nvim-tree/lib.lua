@@ -119,23 +119,6 @@ function M.open()
   end
 end
 
-function M.toggle_ignored()
-  local config = require"nvim-tree.explorer.utils".config
-  config.filter_ignored = not config.filter_ignored
-  return require'nvim-tree.actions.reloaders'.reload_explorer()
-end
-
-function M.toggle_dotfiles()
-  local config = require"nvim-tree.explorer.utils".config
-  config.filter_dotfiles = not config.filter_dotfiles
-  return require'nvim-tree.actions.reloaders'.reload_explorer()
-end
-
-function M.toggle_help()
-  view.toggle_help()
-  return M.redraw()
-end
-
 -- @deprecated: use nvim-tree.actions.collapse-all.fn
 M.collapse_all = require'nvim-tree.actions.collapse-all'.fn
 -- @deprecated: use nvim-tree.actions.dir-up.fn

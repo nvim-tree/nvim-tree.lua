@@ -1,7 +1,6 @@
 local a = vim.api
 
 local lib = require'nvim-tree.lib'
-local config = require'nvim-tree.config'
 local view = require'nvim-tree.view'
 local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
@@ -44,15 +43,6 @@ local M = {
   custom_keypress_funcs = {},
 }
 
-local function go_to(mode)
-  local icon_state = config.get_icon_state()
-  local flags = mode == 'prev_git_item' and 'b' or ''
-  local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
-  return function()
-    return icon_state.show_git_icon and vim.fn.search(icons, flags)
-  end
-end
-
 local keypress_funcs = {
   close = view.close,
   close_node = require'nvim-tree.actions.movements'.parent_node(true),
@@ -66,19 +56,19 @@ local keypress_funcs = {
   first_sibling = require'nvim-tree.actions.movements'.sibling(-math.huge),
   full_rename = require'nvim-tree.actions.rename-file'.fn(true),
   last_sibling = require'nvim-tree.actions.movements'.sibling(math.huge),
-  next_git_item = go_to('next_git_item'),
+  next_git_item = require"nvim-tree.actions.movements".find_git_item('next'),
   next_sibling = require'nvim-tree.actions.movements'.sibling(1),
   parent_node = require'nvim-tree.actions.movements'.parent_node(false),
   paste = require'nvim-tree.actions.copy-paste'.paste,
-  prev_git_item = go_to('prev_git_item'),
+  prev_git_item = require"nvim-tree.actions.movements".find_git_item('prev'),
   prev_sibling = require'nvim-tree.actions.movements'.sibling(-1),
   refresh = require'nvim-tree.actions.reloaders'.reload_explorer,
   remove = require'nvim-tree.actions.remove-file'.fn,
   rename = require'nvim-tree.actions.rename-file'.fn(false),
   system_open = require'nvim-tree.actions.system-open'.fn,
-  toggle_dotfiles = lib.toggle_dotfiles,
-  toggle_help = lib.toggle_help,
-  toggle_ignored = lib.toggle_ignored,
+  toggle_dotfiles = require"nvim-tree.actions.toggle-ignore".dotfiles,
+  toggle_help = require"nvim-tree.actions.toggle-help".fn,
+  toggle_ignored = require"nvim-tree.actions.toggle-ignore".ignored,
   trash = require'nvim-tree.actions.trash'.fn,
 }
 
