@@ -19,6 +19,7 @@ M.View = {
     foldmethod = 'manual',
     foldcolumn = '0',
     cursorcolumn = false,
+    cursorlineopt = "line",
     colorcolumn = '0',
     wrap = false,
     winhl = table.concat({
