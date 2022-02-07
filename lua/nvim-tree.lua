@@ -87,7 +87,7 @@ function M.hijack_current_window()
   vim.defer_fn(remove_empty_buffer, 100)
 end
 
-function M.on_enter(opts)
+function M.on_enter(netrw_disabled)
   local bufnr = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(bufnr)
   local buftype = api.nvim_buf_get_option(bufnr, 'filetype')
@@ -99,8 +99,6 @@ function M.on_enter(opts)
   if is_dir then
     cwd = vim.fn.expand(bufname)
   end
-
-  local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
@@ -351,11 +349,13 @@ function M.setup(conf)
   local opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, conf or {})
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
+  local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.update_to_buf_dir = opts.update_to_buf_dir
+  _config.update_to_buf_dir.enable = _config.update_to_buf_dir.enable and netrw_disabled
 
   require'nvim-tree.colors'.setup()
   require'nvim-tree.actions'.setup(opts)
@@ -367,7 +367,7 @@ function M.setup(conf)
   setup_autocommands(opts)
   setup_vim_commands()
 
-  M.on_enter(opts)
+  M.on_enter(netrw_disabled)
 end
 
 return M

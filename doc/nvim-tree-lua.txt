@@ -181,7 +181,8 @@ Here is a list of the options available in the setup call:
 - |update_to_buf_dir|: hijacks new directory buffers when they are opened (`:e dir`).
 
   - |update_to_buf_dir.enable|: enable the feature. Disable this option if you
-    use vim-dirvish or dirbuf.nvim.
+    use vim-dirvish or dirbuf.nvim. If |hijack_netrw| and |disable_netrw| are
+    `false`, this feature will be disabled.
     type: `boolean`
     default: `true`
 
