@@ -37,27 +37,27 @@ function M.reload(node, cwd, status)
 
     local abs = utils.path_join({cwd, name})
     t = t or (uv.fs_stat(abs) or {}).type
-    if not nodes_by_path[abs] and not eutils.should_ignore(abs) and not eutils.should_ignore_git(abs, status.files) then
+    if not eutils.should_ignore(abs) and not eutils.should_ignore_git(abs, status.files) then
       child_names[abs] = true
-      if t == 'directory' and uv.fs_access(abs, 'R') then
-        table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
-      elseif t == 'file' then
-        table.insert(node.nodes, builders.file(abs, name, status, node_ignored))
-      elseif t == 'link' then
-        local link = builders.link(abs, name, status, node_ignored)
-        if link.link_to ~= nil then
-          table.insert(node.nodes, link)
+      if not nodes_by_path[abs] then
+        if t == 'directory' and uv.fs_access(abs, 'R') then
+          table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
+        elseif t == 'file' then
+          table.insert(node.nodes, builders.file(abs, name, status, node_ignored))
+        elseif t == 'link' then
+          local link = builders.link(abs, name, status, node_ignored)
+          if link.link_to ~= nil then
+            table.insert(node.nodes, link)
+          end
         end
       end
     end
   end
 
-  dump(child_names)
-  for i, n in ipairs(node.nodes) do
-    if not child_names[n.absolute_path] then
-      table.remove(node.nodes, i)
-    end
-  end
+  node.nodes = vim.tbl_filter(
+    function(n) return child_names[n.absolute_path] end,
+    node.nodes
+  )
 
   if vim.g.nvim_tree_group_empty == 1 then
     local child_node = node.nodes[1]
