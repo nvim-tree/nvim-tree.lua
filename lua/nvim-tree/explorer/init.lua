@@ -13,6 +13,7 @@ Explorer.__index = Explorer
 
 function Explorer.new(cwd)
   cwd = cwd or uv.cwd()
+  vim.cmd('cd '..cwd)
   return setmetatable({
     cwd = cwd,
     nodes = {}
