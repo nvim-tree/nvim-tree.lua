@@ -103,9 +103,10 @@ function M.on_enter(netrw_disabled)
   local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
 
-  local should_open = _config.open_on_setup
-    and ((is_dir and netrw_disabled) or (bufname == "" and not buf_has_content))
-    and not vim.tbl_contains(ft_ignore, buftype)
+  local buf_is_dir = is_dir and netrw_disabled
+  local buf_is_empty = bufname == "" and not buf_has_content
+  local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
+  local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
 
   if should_open then
     M.hijack_current_window()
@@ -372,9 +373,11 @@ function M.setup(conf)
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
   setup_vim_commands()
-  setup_autocommands(opts)
 
-  M.on_enter(netrw_disabled)
+  vim.schedule(function()
+    M.on_enter(netrw_disabled)
+    setup_autocommands(opts)
+  end)
 end
 
 return M
