@@ -111,6 +111,11 @@ function M.on_enter(netrw_disabled)
     M.hijack_current_window()
   end
 
+  -- INFO: could potentially conflict with rooter plugins
+  if cwd and should_open then
+    vim.cmd("noautocmd cd "..cwd)
+  end
+
   lib.init(should_open, cwd)
 end
 
