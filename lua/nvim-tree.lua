@@ -76,7 +76,14 @@ function M.hijack_current_window()
   if not View.bufnr then
     View.bufnr = api.nvim_get_current_buf()
   else
-    api.nvim_buf_delete(api.nvim_get_current_buf(), { force = true })
+    local bufs = api.nvim_list_bufs()
+    for _, buf in ipairs(bufs) do
+      local bufname = api.nvim_buf_get_name(buf)
+      local stat = luv.fs_stat(bufname)
+      if stat and stat.type == "directory" then
+        api.nvim_buf_delete(buf, { force = true })
+      end
+    end
   end
   local current_tab = api.nvim_get_current_tabpage()
   if not View.tabpages then
