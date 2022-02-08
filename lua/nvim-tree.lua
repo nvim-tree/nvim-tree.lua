@@ -264,13 +264,11 @@ end
 
 local function setup_autocommands(opts)
   vim.cmd "augroup NvimTree"
-  vim.cmd [[
-    """ reset highlights when colorscheme is changed
-    au ColorScheme * lua require'nvim-tree'.reset_highlight()
 
-    au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()
-    au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()
-  ]]
+  -- reset highlights when colorscheme is changed
+  vim.cmd "au ColorScheme * lua require'nvim-tree'.reset_highlight()"
+  vim.cmd "au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()"
+  vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
 
   if opts.auto_close then
     vim.cmd "au WinClosed * lua require'nvim-tree'.on_leave()"
@@ -287,7 +285,12 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
   end
+
   vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
+  if not opts.actions.open_file.quit_on_open then
+    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+  end
+  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
 
   vim.cmd "augroup end"
 end
@@ -360,12 +363,11 @@ function M.setup(conf)
   require'nvim-tree.colors'.setup()
   require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.diagnostics'.setup(opts)
-  require'nvim-tree.view'.setup(opts or {})
+  require'nvim-tree.view'.setup(opts)
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
-
-  setup_autocommands(opts)
   setup_vim_commands()
+  setup_autocommands(opts)
 
   M.on_enter(netrw_disabled)
 end

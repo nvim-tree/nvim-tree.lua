@@ -82,15 +82,6 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
-
-  vim.cmd "augroup NvimTreeView"
-  vim.cmd "au!"
-  if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
-  end
-  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
-  vim.cmd "augroup END"
-
   create_buffer()
 end
 
