@@ -75,6 +75,8 @@ function M.hijack_current_window()
   local View = require'nvim-tree.view'.View
   if not View.bufnr then
     View.bufnr = api.nvim_get_current_buf()
+  else
+    api.nvim_buf_delete(api.nvim_get_current_buf(), { force = true })
   end
   local current_tab = api.nvim_get_current_tabpage()
   if not View.tabpages then
@@ -84,7 +86,7 @@ function M.hijack_current_window()
   else
     View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
   end
-  vim.defer_fn(remove_empty_buffer, 100)
+  vim.defer_fn(remove_empty_buffer, 20)
 end
 
 function M.on_enter(netrw_disabled)
@@ -199,6 +201,7 @@ function M.open_on_directory()
   if bufname ~= TreeExplorer.cwd  then
     ChangeDir.fn(bufname)
   end
+
   M.hijack_current_window()
 
   view.open()
@@ -206,7 +209,6 @@ function M.open_on_directory()
   view.replace_window()
 
   require"nvim-tree.actions.find-file".fn(bufname)
-  vim.api.nvim_buf_delete(buf, { force = true })
 end
 
 function M.reset_highlight()
