@@ -2,6 +2,7 @@ local uv = vim.loop
 
 local git = require"nvim-tree.git"
 local renderer = require"nvim-tree.renderer"
+local utils = require"nvim-tree.utils"
 
 local M = {}
 
@@ -12,7 +13,7 @@ local Explorer = {}
 Explorer.__index = Explorer
 
 function Explorer.new(cwd)
-  cwd = cwd or uv.cwd()
+  cwd = utils.path_normalize(cwd or uv.cwd())
   return setmetatable({
     cwd = cwd,
     nodes = {}
