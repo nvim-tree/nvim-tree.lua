@@ -1,13 +1,13 @@
 *nvim-tree.lua* A file explorer written in lua
 
-Minimum version of neovim: 0.5.0
+Minimum version of neovim: 0.6.0
 
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
 ==============================================================================
 INTRODUCTION                                       *nvim-tree-introduction*
 
-This file explorer requires `neovim >= 0.5.0`
+This file explorer requires `neovim >= 0.6.0`
 
 ==============================================================================
 QUICK START                                        *nvim-tree-quickstart*
