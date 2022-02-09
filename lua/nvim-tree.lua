@@ -107,6 +107,8 @@ function M.on_enter(netrw_disabled)
   local cwd
   if is_dir then
     cwd = vim.fn.expand(bufname)
+    -- INFO: could potentially conflict with rooter plugins
+    vim.cmd("noautocmd cd "..cwd)
   end
 
   local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
@@ -116,17 +118,13 @@ function M.on_enter(netrw_disabled)
   local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
   local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
+  local should_hijack = _config.update_to_buf_dir.enable and _config.update_to_buf_dir.auto_open and is_dir and not should_be_preserved
 
-  if should_open then
+  if should_hijack or should_open then
     M.hijack_current_window()
   end
 
-  -- INFO: could potentially conflict with rooter plugins
-  if cwd and should_open then
-    vim.cmd("noautocmd cd "..cwd)
-  end
-
-  lib.init(should_open, cwd)
+  lib.init(should_open or should_hijack, cwd)
 end
 
 local function is_file_readable(fname)
@@ -375,7 +373,6 @@ function M.setup(conf)
   _config.update_to_buf_dir = opts.update_to_buf_dir
   _config.update_to_buf_dir.enable = _config.update_to_buf_dir.enable and netrw_disabled
 
-  require'nvim-tree.colors'.setup()
   require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.explorer'.setup(opts)
@@ -384,6 +381,7 @@ function M.setup(conf)
   setup_vim_commands()
 
   vim.schedule(function()
+    require'nvim-tree.colors'.setup()
     require'nvim-tree.view'.create_buffer()
     M.on_enter(netrw_disabled)
     setup_autocommands(opts)

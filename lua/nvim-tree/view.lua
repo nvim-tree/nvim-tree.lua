@@ -50,6 +50,7 @@ local function wipe_rogue_buffer()
   end
 end
 
+-- FIXME: setting options to buffer clears the startup screen
 function M.create_buffer()
   wipe_rogue_buffer()
   M.View.bufnr = a.nvim_create_buf(false, false)
