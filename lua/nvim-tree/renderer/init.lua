@@ -1,4 +1,3 @@
-local config = require'nvim-tree.config'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local _padding = require'nvim-tree.renderer.padding'
