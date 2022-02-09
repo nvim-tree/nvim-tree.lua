@@ -1,5 +1,5 @@
 local api = vim.api
-local config = require'nvim-tree.config'
+local icons = require'nvim-tree.renderer.icons'
 
 local M = {}
 
@@ -77,7 +77,7 @@ local function get_links()
 end
 
 function M.setup()
-  if config.get_icon_state().show_file_icon and config.get_icon_state().has_devicons then
+  if icons.get_config().show_file_icon and icons.get_config().has_devicons then
     require'nvim-web-devicons'.setup()
   end
   local higlight_groups = get_hl_groups()

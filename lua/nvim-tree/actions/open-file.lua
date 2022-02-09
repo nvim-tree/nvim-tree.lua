@@ -1,6 +1,5 @@
 local api = vim.api
 
-local config = require'nvim-tree.config'
 local lib = require'nvim-tree.lib'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
@@ -8,6 +7,33 @@ local view = require'nvim-tree.view'
 local M = {
   quit_on_open = false,
 }
+
+local function get_split_cmd()
+  local side = view.View.side
+  if side == 'right' then
+    return 'aboveleft'
+  end
+  if side == "left" then
+    return 'belowright'
+  end
+  if side == "top" then
+    return 'bot'
+  end
+  return 'top'
+end
+
+local function window_picker_exclude()
+  if type(vim.g.nvim_tree_window_picker_exclude) == "table" then
+    return vim.g.nvim_tree_window_picker_exclude
+  end
+  return {
+    filetype = {
+      "notify",
+      "packer",
+      "qf"
+    }
+  }
+end
 
 ---Get user to pick a window. Selectable windows are all windows in the current
 ---tabpage that aren't NvimTree.
@@ -18,7 +44,7 @@ local function pick_window()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)
-  local exclude = config.window_picker_exclude()
+  local exclude = window_picker_exclude()
 
   local selectable = vim.tbl_filter(function (id)
     local bufid = api.nvim_win_get_buf(id)
@@ -160,9 +186,9 @@ function M.fn(mode, filename)
     if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
       -- Target is invalid, or window does not exist in current tabpage: create
       -- new window
-      local window_opts = config.window_options()
+      local split_cmd = get_split_cmd()
       local splitside = view.is_vertical() and "vsp" or "sp"
-      vim.cmd(window_opts.split_command .. " " .. splitside)
+      vim.cmd(split_cmd .. " " .. splitside)
       target_winid = api.nvim_get_current_win()
       lib.target_winid = target_winid
 

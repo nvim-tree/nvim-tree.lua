@@ -33,7 +33,7 @@ local function get_padding_indent_markers(depth, idx, tree, _, markers)
 end
 
 function M.reload_padding_function()
-  local icon_state = require'nvim-tree.config'.get_icon_state()
+  local icon_state = require'nvim-tree.renderer.icons'.get_config()
 
   if icon_state.show_folder_icon and icon_state.show_folder_arrows then
     M.get_padding = get_padding_arrows(icon_state)

@@ -3,6 +3,7 @@ local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
 local _padding = require'nvim-tree.renderer.padding'
 local _help = require'nvim-tree.renderer.help'
+local _icons = require'nvim-tree.renderer.icons'
 
 local api = vim.api
 
@@ -11,7 +12,7 @@ local hl = {}
 local index = 0
 local namespace_id = api.nvim_create_namespace('NvimTreeHighlights')
 
-local icon_state = config.get_icon_state()
+local icon_state = _icons.get_config()
 
 local should_hl_opened_files = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0
 
@@ -382,12 +383,12 @@ function M.draw()
   lines = {}
   hl = {}
 
+  icon_state = _icons.get_config()
   local show_arrows =
     vim.g.nvim_tree_indent_markers ~= 1
     and icon_state.show_folder_icon
     and icon_state.show_folder_arrows
   _padding.reload_padding_function()
-  icon_state = config.get_icon_state()
   update_draw_data(TreeExplorer, show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then
