@@ -71,19 +71,20 @@ function.
 
 >
     require'nvim-tree'.setup {
-      disable_netrw       = true,
-      hijack_netrw        = true,
-      open_on_setup       = false,
-      ignore_ft_on_setup  = {},
-      update_to_buf_dir   = {
+      disable_netrw        = true,
+      hijack_netrw         = true,
+      open_on_setup        = false,
+      ignore_ft_on_setup   = {},
+      update_to_buf_dir    = {
         enable = true,
         auto_open = true,
       },
-      auto_close          = false,
-      open_on_tab         = false,
-      hijack_cursor       = false,
-      update_cwd          = false,
-      diagnostics         = {
+      auto_close           = false,
+      auto_reload_on_write = true,
+      open_on_tab          = false,
+      hijack_cursor        = false,
+      update_cwd           = false,
+      diagnostics          = {
         enable = false,
         show_on_dirs = false,
         icons = {
@@ -170,6 +171,11 @@ Here is a list of the options available in the setup call:
 - |auto_close|: force closing neovim when the tree is the last window in the view.
   type: `boolean`
   default: `false`
+
+*nvim-tree.auto_reload_on_write*
+- |auto_reload_on_write|: reloads the explorer every time a buffer is written to
+  type: `boolean`
+  default: `true`
 
 *nvim-tree.open_on_tab*
 - |open_on_tab|: opens the tree automatically when switching tabpage or opening a new

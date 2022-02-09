@@ -280,7 +280,9 @@ local function setup_autocommands(opts)
 
   -- reset highlights when colorscheme is changed
   vim.cmd "au ColorScheme * lua require'nvim-tree'.reset_highlight()"
-  vim.cmd "au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()"
+  if opts.auto_reload_on_write then
+    vim.cmd "au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()"
+  end
   vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
 
   if opts.auto_close then
@@ -309,19 +311,20 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = {
-  disable_netrw       = true,
-  hijack_netrw        = true,
-  open_on_setup       = false,
-  open_on_tab         = false,
-  update_to_buf_dir   = {
+  disable_netrw        = true,
+  hijack_netrw         = true,
+  open_on_setup        = false,
+  open_on_tab          = false,
+  update_to_buf_dir    = {
     enable = true,
     auto_open = true,
   },
-  auto_close          = false,
-  hijack_cursor       = false,
-  update_cwd          = false,
-  hide_root_folder    = false,
-  update_focused_file = {
+  auto_close           = false,
+  auto_reload_on_write = true,
+  hijack_cursor        = false,
+  update_cwd           = false,
+  hide_root_folder     = false,
+  update_focused_file  = {
     enable = false,
     update_cwd = false,
     ignore_list = {}
