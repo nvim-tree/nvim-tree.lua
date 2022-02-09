@@ -29,7 +29,7 @@ end
 
 local path_separator = package.config:sub(1,1)
 function M.path_join(paths)
-  return table.concat(paths, path_separator)
+  return table.concat(vim.tbl_map(M.path_remove_trailing, paths), path_separator)
 end
 
 function M.path_split(path)
