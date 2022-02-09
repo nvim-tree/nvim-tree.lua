@@ -35,83 +35,9 @@ use {
 Options are currently being migrated into the setup function, you need to run `require'nvim-tree'.setup()` in your personal configurations.
 Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
 Note that options under the `g:` command should be set **BEFORE** running the setup function.
-
-```lua
--- following options are the default
--- each of these are documented in `:help nvim-tree.OPTION_NAME`
-require'nvim-tree'.setup {
-  disable_netrw        = true,
-  hijack_netrw         = true,
-  open_on_setup        = false,
-  ignore_ft_on_setup   = {},
-  auto_close           = false,
-  auto_reload_on_write = true,
-  open_on_tab          = false,
-  hijack_cursor        = false,
-  update_cwd           = false,
-  update_to_buf_dir    = {
-    enable = true,
-    auto_open = true,
-  },
-  diagnostics = {
-    enable = false,
-    icons = {
-      hint = "",
-      info = "",
-      warning = "",
-      error = "",
-    }
-  },
-  update_focused_file = {
-    enable      = false,
-    update_cwd  = false,
-    ignore_list = {}
-  },
-  system_open = {
-    cmd  = nil,
-    args = {}
-  },
-  filters = {
-    dotfiles = false,
-    custom = {}
-  },
-  git = {
-    enable = true,
-    ignore = true,
-    timeout = 500,
-  },
-  view = {
-    width = 30,
-    height = 30,
-    hide_root_folder = false,
-    side = 'left',
-    auto_resize = false,
-    mappings = {
-      custom_only = false,
-      list = {}
-    },
-    number = false,
-    relativenumber = false,
-    signcolumn = "yes"
-  },
-  trash = {
-    cmd = "trash",
-    require_confirm = true
-  },
-  actions = {
-    change_dir = {
-      global = false,
-    },
-    open_file = {
-      quit_on_open = false,
-    }
-  }
-}
-```
-
-These additional options must be set **BEFORE** calling `require'nvim-tree'` or calling setup.
-They are being migrated to the setup function bit by bit, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
+These are being migrated to the setup function incrementally, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
 ```vim
+" vimrc
 let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
@@ -184,6 +110,81 @@ set termguicolors " this variable must be enabled for colors to be applied prope
 
 " a list of groups can be found at `:help nvim_tree_highlight`
 highlight NvimTreeFolderIcon guibg=blue
+```
+
+```lua
+-- init.lua
+
+-- following options are the default
+-- each of these are documented in `:help nvim-tree.OPTION_NAME`
+require'nvim-tree'.setup {
+  disable_netrw        = true,
+  hijack_netrw         = true,
+  open_on_setup        = false,
+  ignore_ft_on_setup   = {},
+  auto_close           = false,
+  auto_reload_on_write = true,
+  open_on_tab          = false,
+  hijack_cursor        = false,
+  update_cwd           = false,
+  update_to_buf_dir    = {
+    enable = true,
+    auto_open = true,
+  },
+  diagnostics = {
+    enable = false,
+    icons = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    }
+  },
+  update_focused_file = {
+    enable      = false,
+    update_cwd  = false,
+    ignore_list = {}
+  },
+  system_open = {
+    cmd  = nil,
+    args = {}
+  },
+  filters = {
+    dotfiles = false,
+    custom = {}
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 500,
+  },
+  view = {
+    width = 30,
+    height = 30,
+    hide_root_folder = false,
+    side = 'left',
+    auto_resize = false,
+    mappings = {
+      custom_only = false,
+      list = {}
+    },
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes"
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true
+  },
+  actions = {
+    change_dir = {
+      global = false,
+    },
+    open_file = {
+      quit_on_open = false,
+    }
+  }
+}
 ```
 
 ## KeyBindings
@@ -289,19 +290,8 @@ You can toggle the help UI by pressing `g?`.
 ## Tips & reminders
 
 1. you can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
+2. you can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
 
-## Features
-
-- Open file in current buffer or in split with FzF like bindings (`<CR>`, `<C-v>`, `<C-x>`, `<C-t>`)
-- File icons with nvim-web-devicons
-- Syntax highlighting ([exa](https://github.com/ogham/exa) like)
-- Change directory with `.`
-- Add / Rename / delete files
-- Git integration (icons and file highlight)
-- Lsp diagnostics integration (signs)
-- Indent markers
-- Mouse support
-- It's fast
 
 ## Screenshots
 
