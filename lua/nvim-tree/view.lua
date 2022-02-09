@@ -50,7 +50,7 @@ local function wipe_rogue_buffer()
   end
 end
 
-local function create_buffer()
+function M.create_buffer()
   wipe_rogue_buffer()
   M.View.bufnr = a.nvim_create_buf(false, false)
   a.nvim_buf_set_name(M.View.bufnr, 'NvimTree')
@@ -82,7 +82,6 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
-  create_buffer()
 end
 
 local move_cmd = {
@@ -222,7 +221,7 @@ local function open_window()
 end
 
 local function is_buf_valid(bufnr)
-  return a.nvim_buf_is_valid(bufnr) and a.nvim_buf_is_loaded(bufnr)
+  return bufnr and a.nvim_buf_is_valid(bufnr) and a.nvim_buf_is_loaded(bufnr)
 end
 
 function M.open(options)
@@ -230,7 +229,7 @@ function M.open(options)
   local should_redraw = false
   if not is_buf_valid(M.View.bufnr) then
     should_redraw = true
-    create_buffer()
+    M.create_buffer()
   end
 
   if not M.win_open() then

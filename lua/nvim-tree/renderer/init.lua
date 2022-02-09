@@ -371,7 +371,9 @@ end
 local M = {}
 
 function M.draw()
-  if not api.nvim_buf_is_loaded(view.View.bufnr) then return end
+  if not TreeExplorer or not api.nvim_buf_is_loaded(view.View.bufnr) then
+    return
+  end
   local cursor
   if view.win_open() then
     cursor = api.nvim_win_get_cursor(view.get_winnr())
