@@ -106,6 +106,12 @@ function M.open()
   M.set_target_win()
 
   local cwd = vim.fn.getcwd()
+  if view.View.bufnr == nil then
+    vim.schedule(function ()
+      M.open()
+    end)
+    return
+  end
   local should_redraw = view.open()
 
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
