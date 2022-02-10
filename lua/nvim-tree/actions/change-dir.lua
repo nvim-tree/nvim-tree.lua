@@ -1,5 +1,6 @@
 local a = vim.api
 local lib = function() return require'nvim-tree.lib' end
+local utils = require'nvim-tree.utils'
 
 local M = {
   current_tab = a.nvim_get_current_tabpage(),
@@ -9,7 +10,7 @@ local M = {
 }
 
 function M.fn(name)
-  local foldername = name == '..' and vim.fn.fnamemodify(TreeExplorer.cwd, ':h') or name
+  local foldername = name == '..' and vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.cwd), ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == TreeExplorer.cwd
   local new_tab = a.nvim_get_current_tabpage()
   local is_window = vim.v.event.scope == "window" and new_tab == M.current_tab
