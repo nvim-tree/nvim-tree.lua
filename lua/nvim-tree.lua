@@ -43,6 +43,45 @@ function M.open()
   end
 end
 
+local move_cmd = {
+  right = 'h',
+  left = 'l',
+  top = 'j',
+  bottom = 'k',
+}
+
+function M._prevent_buffer_override()
+  vim.schedule(function()
+    local curwin = api.nvim_get_current_win()
+    local curbuf = api.nvim_win_get_buf(curwin)
+
+    if curwin ~= view.get_winnr() or curbuf == view.View.bufnr then
+      return
+    end
+
+    if view.is_buf_valid(view.View.bufnr) then
+      -- pcall necessary to avoid erroring with `mark not set` although no mark are set
+      -- this avoid other issues
+      pcall(api.nvim_win_set_buf, view.get_winnr(), view.View.bufnr)
+    end
+
+    local bufname = api.nvim_buf_get_name(curbuf)
+    local isdir = vim.fn.isdirectory(bufname) == 1
+    if isdir or not bufname or bufname == "" then
+      return
+    end
+
+    if #vim.api.nvim_list_wins() < 2 then
+      local cmd = view.is_vertical() and "vsplit" or "split"
+      vim.cmd(cmd)
+    else
+      vim.cmd("wincmd "..move_cmd[view.View.side])
+    end
+    vim.cmd("buffer "..curbuf)
+    view.resize()
+  end)
+end
+
 function M.tab_change()
   vim.schedule(function()
     if not view.win_open() and view.win_open({ any_tabpage = true }) then
@@ -303,7 +342,7 @@ local function setup_autocommands(opts)
 
   vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
   if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree.view'._prevent_buffer_override()"
+    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree'._prevent_buffer_override()"
   end
   vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
 

@@ -85,45 +85,6 @@ function M.setup(opts)
   M.View.winopts.signcolumn = options.signcolumn
 end
 
-local move_cmd = {
-  right = 'h',
-  left = 'l',
-  top = 'j',
-  bottom = 'k',
-}
-
-function M._prevent_buffer_override()
-  vim.schedule(function()
-    local curwin = a.nvim_get_current_win()
-    local curbuf = a.nvim_win_get_buf(curwin)
-
-    if curwin ~= M.get_winnr() or curbuf == M.View.bufnr then
-      return
-    end
-
-    if a.nvim_buf_is_loaded(M.View.bufnr) and a.nvim_buf_is_valid(M.View.bufnr) then
-      -- pcall necessary to avoid erroring with `mark not set` although no mark are set
-      -- this avoid other issues
-      pcall(vim.api.nvim_win_set_buf, M.get_winnr(), M.View.bufnr)
-    end
-
-    local bufname = a.nvim_buf_get_name(curbuf)
-    local isdir = vim.fn.isdirectory(bufname) == 1
-    if isdir or not bufname or bufname == "" then
-      return
-    end
-
-    if #vim.api.nvim_list_wins() < 2 then
-      local cmd = M.is_vertical() and "vsplit" or "split"
-      vim.cmd(cmd)
-    else
-      vim.cmd("wincmd "..move_cmd[M.View.side])
-    end
-    vim.cmd("buffer "..curbuf)
-    M.resize()
-  end)
-end
-
 function M.win_open(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
@@ -221,14 +182,14 @@ local function open_window()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
 end
 
-local function is_buf_valid(bufnr)
+function M.is_buf_valid(bufnr)
   return bufnr and a.nvim_buf_is_valid(bufnr) and a.nvim_buf_is_loaded(bufnr)
 end
 
 function M.open(options)
   M.View.last_focused_winnr = a.nvim_get_current_win()
   local should_redraw = false
-  if not is_buf_valid(M.View.bufnr) then
+  if not M.is_buf_valid(M.View.bufnr) then
     should_redraw = true
     M.create_buffer()
   end
