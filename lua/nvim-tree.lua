@@ -13,9 +13,7 @@ local _config = {}
 local M = {}
 
 function M.focus()
-  if not view.win_open() then
-    lib.open()
-  end
+  M.open()
   view.focus();
 end
 
@@ -29,17 +27,13 @@ function M.toggle(find_file)
     if _config.update_focused_file.enable or find_file then
       M.find_file(true)
     end
-    if not view.win_open() then
-      lib.open()
-    end
+    M.open()
   end
 end
 
 function M.open()
   if not view.win_open() then
     lib.open()
-  else
-    lib.set_target_win()
   end
 end
 
