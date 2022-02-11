@@ -183,6 +183,8 @@ local function update_base_dir_with_filepath(filepath, bufnr)
 end
 
 function M.find_file(with_open)
+  if not with_open and not TreeExplorer then return end
+
   local bufname = vim.fn.bufname()
   local bufnr = api.nvim_get_current_buf()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
@@ -224,6 +226,7 @@ function M.on_leave()
   end, 50)
 end
 
+-- TODO: rewrite this to take into account setup by open
 function M.open_on_directory()
   local should_proceed = _config.update_to_buf_dir.auto_open or view.win_open()
   if not _config.update_to_buf_dir.enable or not should_proceed then

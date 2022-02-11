@@ -47,6 +47,7 @@ local function get_node_at_line(line)
 end
 
 function M.get_node_at_cursor()
+  if not TreeExplorer then return end
   local winnr = view.get_winnr()
   local hide_root_folder = view.View.hide_root_folder
   if not winnr then

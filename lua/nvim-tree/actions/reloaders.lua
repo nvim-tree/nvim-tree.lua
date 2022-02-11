@@ -33,7 +33,7 @@ end
 
 local event_running = false
 function M.reload_explorer(callback)
-  if event_running or not TreeExplorer.cwd or vim.v.exiting ~= vim.NIL then
+  if event_running or not TreeExplorer or not TreeExplorer.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
@@ -52,7 +52,7 @@ function M.reload_explorer(callback)
 end
 
 function M.reload_git()
-  if not git.config.enable or event_running then
+  if not TreeExplorer or not git.config.enable or event_running then
     return
   end
   event_running = true

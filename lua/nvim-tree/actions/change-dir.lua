@@ -10,6 +10,8 @@ local M = {
 }
 
 function M.fn(name)
+  if not TreeExplorer then return end
+
   local foldername = name == '..' and vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.cwd), ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == TreeExplorer.cwd
   local new_tab = a.nvim_get_current_tabpage()
