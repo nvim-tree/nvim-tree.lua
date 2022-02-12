@@ -371,11 +371,12 @@ end
 local M = {}
 
 function M.draw()
-  if not TreeExplorer or not view.View.bufnr or not api.nvim_buf_is_loaded(view.View.bufnr) then
+  local bufnr = view.get_bufnr()
+  if not TreeExplorer or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
     return
   end
   local cursor
-  if view.win_open() then
+  if view.is_visible() then
     cursor = api.nvim_win_get_cursor(view.get_winnr())
   end
   index = 0
@@ -393,10 +394,10 @@ function M.draw()
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()
   end
-  api.nvim_buf_set_option(view.View.bufnr, 'modifiable', true)
-  api.nvim_buf_set_lines(view.View.bufnr, 0, -1, false, lines)
-  M.render_hl(view.View.bufnr)
-  api.nvim_buf_set_option(view.View.bufnr, 'modifiable', false)
+  api.nvim_buf_set_option(bufnr, 'modifiable', true)
+  api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  M.render_hl(bufnr)
+  api.nvim_buf_set_option(bufnr, 'modifiable', false)
 
   if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.get_winnr(), cursor)

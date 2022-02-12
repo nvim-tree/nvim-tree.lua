@@ -56,7 +56,7 @@ function M.fn(fname)
   if tree_altered then
     renderer.draw()
   end
-  if index and view.win_open() then
+  if index and view.is_visible() then
     view.set_cursor({index, 0})
   end
 end

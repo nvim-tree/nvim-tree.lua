@@ -41,7 +41,7 @@ function M.reload_explorer(callback)
 
   git.reload(function(projects)
     refresh_nodes(TreeExplorer, projects)
-    if view.win_open() then
+    if view.is_visible() then
       renderer.draw()
       if callback and type(callback) == 'function' then
         callback()
