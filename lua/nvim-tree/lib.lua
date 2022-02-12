@@ -120,7 +120,11 @@ end
 function M.open(cwd)
   M.set_target_win()
   if not TreeExplorer or cwd then
-    M.init(true, cwd or vim.loop.cwd())
+    M.init(false, cwd or vim.loop.cwd())
+  end
+  if api.nvim_buf_get_name(api.nvim_get_current_buf()) == "" then
+    view.open_in_current_win()
+    renderer.draw()
   else
     open_view_and_draw()
   end
