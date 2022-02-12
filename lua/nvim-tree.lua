@@ -90,7 +90,10 @@ function M.on_enter(netrw_disabled)
     api.nvim_set_current_win(existing_tree_wins[1])
   end
 
-  lib.init(should_open or should_hijack or existing_tree_wins[1] ~= nil, cwd)
+  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+    lib.init(true, cwd)
+  end
+  M.initialized = true
 end
 
 local function is_file_readable(fname)
@@ -153,7 +156,7 @@ function M.on_leave()
 end
 
 function M.open_on_directory()
-  local should_proceed = TreeExplorer and (_config.hijack_directories.auto_open or view.is_visible())
+  local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
   if not should_proceed then
     return
   end
