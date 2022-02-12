@@ -99,7 +99,7 @@ end
 
 local function open_window()
   a.nvim_command("vsp")
-  M.replace_window()
+  M.reposition_window()
   local winnr = a.nvim_get_current_win()
   local tabpage = a.nvim_get_current_tabpage()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
@@ -182,7 +182,7 @@ function M.resize(size)
   end
 end
 
-function M.replace_window()
+function M.reposition_window()
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
   local resize_direction = M.is_vertical() and 'vertical ' or ''
@@ -198,7 +198,7 @@ function M.open_in_current_win()
   create_buffer(a.nvim_get_current_buf())
   set_current_win()
   set_window_options_and_buffer()
-  M.replace_window()
+  M.reposition_window()
   M.resize()
 end
 
