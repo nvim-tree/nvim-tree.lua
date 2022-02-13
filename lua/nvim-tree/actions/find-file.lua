@@ -47,6 +47,9 @@ function M.fn(fname)
         if iterate_nodes(node.nodes) ~= nil then
           return i
         end
+      -- mandatory to iterate i
+      elseif node.open then
+        iterate_nodes(node.nodes)
       end
     end
   end
