@@ -9,8 +9,6 @@ M.View = {
     relativenumber = false,
     number = false,
     list = false,
-    winfixwidth = true,
-    winfixheight = true,
     foldenable = false,
     spell = false,
     signcolumn = 'yes',
@@ -296,6 +294,7 @@ function M._prevent_buffer_override()
 
     M.open({ focus_tree = false })
     require"nvim-tree.renderer".draw()
+    require"nvim-tree".find_file(false)
   end)
 end
 
