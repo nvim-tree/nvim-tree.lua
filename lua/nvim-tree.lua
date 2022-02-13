@@ -263,8 +263,6 @@ local function setup_autocommands(opts)
     vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
   end
 
-  vim.cmd "au WinClosed,WinNew * lua vim.schedule(function() require'nvim-tree'.resize() end)"
-
   vim.cmd "augroup end"
 end
 

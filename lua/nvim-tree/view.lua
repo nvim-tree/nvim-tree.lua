@@ -10,6 +10,8 @@ M.View = {
     number = false,
     list = false,
     foldenable = false,
+    winfixwidth = true,
+    winfixheight = true,
     spell = false,
     signcolumn = 'yes',
     foldmethod = 'manual',
@@ -292,6 +294,10 @@ function M._prevent_buffer_override()
       return
     end
 
+    -- patch to avoid the overriding window to be fixed in size
+    -- might need a better patch
+    vim.cmd "setlocal nowinfixwidth"
+    vim.cmd "setlocal nowinfixheight"
     M.open({ focus_tree = false })
     require"nvim-tree.renderer".draw()
     require"nvim-tree".find_file(false)
