@@ -107,7 +107,7 @@ end
 
 function M.find_git_item(where)
   local icon_state = _icons.get_config()
-  local flags = where == 'next' and 'b' or ''
+  local flags = where == 'prev' and 'b' or ''
   local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
   return function()
     return icon_state.show_git_icon and vim.fn.search(icons, flags)
