@@ -6,6 +6,14 @@ local events = require'nvim-tree.events'
 
 local M = {}
 
+local function close_windows(windows)
+  for _, window in ipairs(windows) do
+    if a.nvim_win_is_valid(window) then
+      a.nvim_win_close(window, true)
+    end
+  end
+end
+
 local function clear_buffer(absolute_path)
   local bufs = vim.fn.getbufinfo({bufloaded = 1, buflisted = 1})
   for _, buf in pairs(bufs) do
@@ -16,10 +24,8 @@ local function clear_buffer(absolute_path)
         vim.cmd(':bn')
         a.nvim_set_current_win(winnr)
       end
-      vim.api.nvim_buf_delete(buf.bufnr, { force = true })
-      if buf.windows[1] and vim.api.nvim_win_is_valid(buf.bufnr) then
-        vim.api.nvim_win_close(buf.windows[1], true)
-      end
+      a.nvim_buf_delete(buf.bufnr, { force = true })
+      close_windows(buf.windows)
       return
     end
   end
