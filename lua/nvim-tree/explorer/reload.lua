@@ -15,6 +15,19 @@ local function key_by(nodes, key)
   return v
 end
 
+local function update_status(nodes_by_path, node_ignored, status)
+  return function(node)
+    if nodes_by_path[node.absolute_path] then
+      if node.nodes then
+        node.git_status = builders.get_dir_git_status(node_ignored, status, node.absolute_path)
+      else
+        node.git_status = builders.get_git_status(node_ignored, status, node.absolute_path)
+      end
+    end
+    return node
+  end
+end
+
 function M.reload(node, cwd, status)
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
@@ -54,10 +67,12 @@ function M.reload(node, cwd, status)
     end
   end
 
-  node.nodes = vim.tbl_filter(
-    function(n) return child_names[n.absolute_path] end,
-    node.nodes
-  )
+  node.nodes = vim.tbl_map(
+    update_status(nodes_by_path, node_ignored, status),
+    vim.tbl_filter(
+      function(n) return child_names[n.absolute_path] end,
+      node.nodes
+    ))
 
   local is_root = node.cwd ~= nil
   if vim.g.nvim_tree_group_empty == 1 and not is_root and #(node.nodes) == 1 then
