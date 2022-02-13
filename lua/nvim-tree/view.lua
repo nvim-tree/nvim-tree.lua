@@ -169,7 +169,7 @@ function M.resize(size)
     M.View.height = size
   end
 
-  if not a.nvim_win_is_valid(M.get_winnr()) then
+  if not M.is_visible() then
     return
   end
 
