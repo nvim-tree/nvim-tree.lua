@@ -103,7 +103,6 @@ local function open_window()
   local winnr = a.nvim_get_current_win()
   local tabpage = a.nvim_get_current_tabpage()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or {help = false}, {winnr = winnr})
-  vim.cmd ":wincmd ="
 end
 
 local function set_window_options_and_buffer()
@@ -180,6 +179,7 @@ function M.resize(size)
   else
     a.nvim_win_set_height(M.get_winnr(), get_size())
   end
+  vim.cmd ":wincmd ="
 end
 
 function M.reposition_window()
