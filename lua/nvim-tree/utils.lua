@@ -3,6 +3,8 @@ local uv = vim.loop
 
 local M = {}
 
+M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
+
 function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
 end
@@ -226,6 +228,15 @@ function M.path_normalize(path)
   local components = vim.split(vim.fn.expand(path), path_separator)
   local num_dots = #vim.tbl_filter(function(v) return v == ".." end, components)
   return M.path_join(M.take(#components - num_dots * 2, components))
+end
+
+--- @param path string
+--- @return string
+function M.canonical_path(path)
+  if M.is_windows and path:match '^%a:' then
+    return path:sub(1, 1):upper() .. path:sub(2)
+  end
+  return path
 end
 
 return M
