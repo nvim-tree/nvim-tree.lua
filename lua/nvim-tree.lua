@@ -39,15 +39,14 @@ function M.open(cwd)
 end
 
 function M.tab_change()
-  vim.schedule(function()
-    if not view.is_visible() and view.is_visible({ any_tabpage = true }) then
-      local bufname = vim.api.nvim_buf_get_name(0)
-      if bufname:match("Neogit") ~= nil or bufname:match("--graph") ~= nil then
-        return
-      end
-      view.open({ focus_tree = false })
+  if view.is_visible({ any_tabpage = true }) then
+    local bufname = vim.api.nvim_buf_get_name(0)
+    if bufname:match("Neogit") ~= nil or bufname:match("--graph") ~= nil then
+      return
     end
-  end)
+    view.open({ focus_tree = false })
+    require"nvim-tree.renderer".draw()
+  end
 end
 
 local function find_existing_windows()
