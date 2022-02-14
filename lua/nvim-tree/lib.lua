@@ -17,10 +17,10 @@ TreeExplorer = nil
 function M.init(with_open, foldername)
   TreeExplorer = explorer.Explorer.new(foldername)
   TreeExplorer:init(function()
-    renderer.draw()
     if with_open then
-      M.open()
+      view.open_in_current_win()
     end
+    renderer.draw()
 
     if not first_init_done then
       events._dispatch_ready()
@@ -103,24 +103,30 @@ function M.set_target_win()
   M.target_winid = id
 end
 
-function M.open()
-  M.set_target_win()
-
-  local cwd = vim.fn.getcwd()
-  if view.View.bufnr == nil then
-    vim.schedule(function ()
-      M.open()
-    end)
-    return
-  end
-  local should_redraw = view.open()
-
+local function handle_buf_cwd(cwd)
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
   if respect_buf_cwd == 1 and cwd ~= TreeExplorer.cwd then
     require'nvim-tree.actions.change-dir'.fn(cwd)
   end
-  if should_redraw then
+end
+
+local function open_view_and_draw()
+  local cwd = vim.fn.getcwd()
+  view.open()
+  handle_buf_cwd(cwd)
+  renderer.draw()
+end
+
+function M.open(cwd)
+  M.set_target_win()
+  if not TreeExplorer or cwd then
+    M.init(false, cwd or vim.loop.cwd())
+  end
+  if api.nvim_buf_get_name(api.nvim_get_current_buf()) == "" then
+    view.open_in_current_win()
     renderer.draw()
+  else
+    open_view_and_draw()
   end
 end
 

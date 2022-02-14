@@ -6,7 +6,7 @@ local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
-local ChangeDir = require'nvim-tree.actions.change-dir'
+local change_dir = require'nvim-tree.actions.change-dir'
 
 local _config = {}
 
@@ -21,64 +21,26 @@ end
 M.on_keypress = require'nvim-tree.actions'.on_keypress
 
 function M.toggle(find_file)
-  if view.win_open() then
+  if view.is_visible() then
     view.close()
   else
-    if _config.update_focused_file.enable or find_file then
-      M.find_file(true)
-    end
     M.open()
+    if TreeExplorer and (_config.update_focused_file.enable or find_file) then
+      M.find_file(false)
+    end
   end
 end
 
-function M.open()
-  if not view.win_open() then
-    lib.open()
+function M.open(cwd)
+  cwd = cwd ~= "" and cwd or nil
+  if not view.is_visible() then
+    lib.open(cwd)
   end
-end
-
-local move_cmd = {
-  right = 'h',
-  left = 'l',
-  top = 'j',
-  bottom = 'k',
-}
-
-function M._prevent_buffer_override()
-  vim.schedule(function()
-    local curwin = api.nvim_get_current_win()
-    local curbuf = api.nvim_win_get_buf(curwin)
-
-    if curwin ~= view.get_winnr() or curbuf == view.View.bufnr then
-      return
-    end
-
-    if view.is_buf_valid(view.View.bufnr) then
-      -- pcall necessary to avoid erroring with `mark not set` although no mark are set
-      -- this avoid other issues
-      pcall(api.nvim_win_set_buf, view.get_winnr(), view.View.bufnr)
-    end
-
-    local bufname = api.nvim_buf_get_name(curbuf)
-    local isdir = vim.fn.isdirectory(bufname) == 1
-    if isdir or not bufname or bufname == "" then
-      return
-    end
-
-    if #vim.api.nvim_list_wins() < 2 then
-      local cmd = view.is_vertical() and "vsplit" or "split"
-      vim.cmd(cmd)
-    else
-      vim.cmd("wincmd "..move_cmd[view.View.side])
-    end
-    vim.cmd("buffer "..curbuf)
-    view.resize()
-  end)
 end
 
 function M.tab_change()
   vim.schedule(function()
-    if not view.win_open() and view.win_open({ any_tabpage = true }) then
+    if not view.is_visible() and view.is_visible({ any_tabpage = true }) then
       local bufname = vim.api.nvim_buf_get_name(0)
       if bufname:match("Neogit") ~= nil or bufname:match("--graph") ~= nil then
         return
@@ -88,45 +50,14 @@ function M.tab_change()
   end)
 end
 
-local function remove_empty_buffer()
-  if not view.win_open() or #api.nvim_list_wins() ~= 1 then
-    return
-  end
-
-  local bufs = vim.api.nvim_list_bufs()
-  for _, buf in ipairs(bufs) do
-    if api.nvim_buf_is_valid(buf) and api.nvim_buf_is_loaded(buf) then
-      local name = api.nvim_buf_get_name(buf)
-      if name == "" then
-        api.nvim_buf_delete(buf, {})
-      end
-    end
-  end
-end
-
-function M.hijack_current_window()
-  local View = require'nvim-tree.view'.View
-  if not View.bufnr then
-    View.bufnr = api.nvim_get_current_buf()
-  else
-    local bufs = api.nvim_list_bufs()
-    for _, buf in ipairs(bufs) do
-      local bufname = api.nvim_buf_get_name(buf)
-      local stat = luv.fs_stat(bufname)
-      if stat and stat.type == "directory" then
-        api.nvim_buf_delete(buf, { force = true })
-      end
-    end
-  end
-  local current_tab = api.nvim_get_current_tabpage()
-  if not View.tabpages then
-    View.tabpages = {
-      [current_tab] = { winnr = api.nvim_get_current_win() }
-    }
-  else
-    View.tabpages[current_tab] = { winnr = api.nvim_get_current_win() }
-  end
-  vim.defer_fn(remove_empty_buffer, 20)
+local function find_existing_windows()
+  return vim.tbl_filter(
+    function(win)
+      local buf = api.nvim_win_get_buf(win)
+      return api.nvim_buf_get_name(buf):match("NvimTree") ~= nil
+    end,
+    api.nvim_list_wins()
+  )
 end
 
 function M.on_enter(netrw_disabled)
@@ -151,13 +82,18 @@ function M.on_enter(netrw_disabled)
   local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
   local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
-  local should_hijack = _config.update_to_buf_dir.enable and _config.update_to_buf_dir.auto_open and is_dir and not should_be_preserved
+  local should_hijack = _config.hijack_directories.enable and _config.hijack_directories.auto_open and is_dir and not should_be_preserved
 
-  if should_hijack or should_open then
-    M.hijack_current_window()
+  -- Session that left a NvimTree Buffer opened, reopen with it
+  local existing_tree_wins = find_existing_windows()
+  if existing_tree_wins[1] then
+    api.nvim_set_current_win(existing_tree_wins[1])
   end
 
-  lib.init(should_open or should_hijack, cwd)
+  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+    lib.init(true, cwd)
+  end
+  M.initialized = true
 end
 
 local function is_file_readable(fname)
@@ -166,10 +102,6 @@ local function is_file_readable(fname)
 end
 
 local function update_base_dir_with_filepath(filepath, bufnr)
-  if not _config.update_focused_file.update_cwd then
-    return
-  end
-
   local ft = api.nvim_buf_get_option(bufnr, 'filetype') or ""
   for _, value in pairs(_config.update_focused_file.ignore_list) do
     if utils.str_find(filepath, value) or utils.str_find(ft, value) then
@@ -177,8 +109,8 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if not vim.startswith(filepath, TreeExplorer.cwd or vim.loop.cwd()) then
-    ChangeDir.fn(vim.fn.fnamemodify(filepath, ':p:h'))
+  if not vim.startswith(filepath, TreeExplorer.cwd) then
+    change_dir.fn(vim.fn.fnamemodify(filepath, ':p:h'))
   end
 end
 
@@ -194,22 +126,19 @@ function M.find_file(with_open)
 
   if with_open then
     M.open()
-    view.focus()
   end
 
-  update_base_dir_with_filepath(filepath, bufnr)
+  if _config.update_focused_file.update_cwd then
+    update_base_dir_with_filepath(filepath, bufnr)
+  end
   require"nvim-tree.actions.find-file".fn(filepath)
 end
 
-function M.resize(size)
-  view.View.width = size
-  view.View.height = size
-  view.resize()
-end
+M.resize = view.resize
 
 function M.on_leave()
   vim.defer_fn(function()
-    if not view.win_open() then
+    if not view.is_visible() then
       return
     end
 
@@ -226,35 +155,24 @@ function M.on_leave()
   end, 50)
 end
 
--- TODO: rewrite this to take into account setup by open
 function M.open_on_directory()
-  local should_proceed = _config.update_to_buf_dir.auto_open or view.win_open()
-  if not _config.update_to_buf_dir.enable or not should_proceed then
+  local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
+  if not should_proceed then
     return
   end
+
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
   if vim.fn.isdirectory(bufname) ~= 1 then
     return
   end
 
-  view.close()
-  if bufname ~= TreeExplorer.cwd  then
-    ChangeDir.fn(bufname)
-  end
-
-  M.hijack_current_window()
-
-  view.open()
-  view.focus()
-  view.replace_window()
-
-  require"nvim-tree.actions.find-file".fn(bufname)
+  change_dir.force_dirchange(bufname, true)
 end
 
 function M.reset_highlight()
   colors.setup()
-  renderer.render_hl(view.View.bufnr)
+  renderer.render_hl(view.get_bufnr())
 end
 
 local prev_line
@@ -291,7 +209,7 @@ end
 
 local function setup_vim_commands()
   vim.cmd [[
-    command! NvimTreeOpen lua require'nvim-tree'.open()
+    command! -nargs=? -complete=dir NvimTreeOpen lua require'nvim-tree'.open("<args>")
     command! NvimTreeClose lua require'nvim-tree.view'.close()
     command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
     command! NvimTreeFocus lua require'nvim-tree'.focus()
@@ -304,7 +222,7 @@ local function setup_vim_commands()
 end
 
 function M.change_dir(name)
-  ChangeDir.fn(name)
+  change_dir.fn(name)
 
   if _config.update_focused_file.enable then
     M.find_file(false)
@@ -337,11 +255,13 @@ local function setup_autocommands(opts)
     vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
   end
 
-  vim.cmd "au BufUnload NvimTree lua require'nvim-tree.view'.View.tabpages = {}"
   if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWinEnter,BufWinLeave * lua require'nvim-tree'._prevent_buffer_override()"
+    vim.cmd "au BufWipeout NvimTree lua require'nvim-tree.view'._prevent_buffer_override()"
   end
-  vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+
+  if opts.hijack_directories.enable then
+    vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+  end
 
   vim.cmd "augroup end"
 end
@@ -351,7 +271,7 @@ local DEFAULT_OPTS = {
   hijack_netrw         = true,
   open_on_setup        = false,
   open_on_tab          = false,
-  update_to_buf_dir    = {
+  hijack_directories   = {
     enable = true,
     auto_open = true,
   },
@@ -400,30 +320,38 @@ local DEFAULT_OPTS = {
   }
 }
 
-function M.setup(conf)
-  local opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, conf or {})
+local function merge_options(conf)
+  if conf and conf.update_to_buf_dir then
+    conf.hijack_directories = conf.update_to_buf_dir
+    conf.update_to_buf_dir = nil
+  end
+  return vim.tbl_deep_extend('force', DEFAULT_OPTS, conf or {})
+end
 
-  manage_netrw(opts.disable_netrw, opts.hijack_netrw)
+function M.setup(conf)
+  local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
-  _config.update_to_buf_dir = opts.update_to_buf_dir
-  _config.update_to_buf_dir.enable = _config.update_to_buf_dir.enable and netrw_disabled
+  _config.hijack_directories = opts.hijack_directories
+  _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
+
+  manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
   require'nvim-tree.actions'.setup(opts)
+  require'nvim-tree.colors'.setup()
   require'nvim-tree.diagnostics'.setup(opts)
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
   require'nvim-tree.view'.setup(opts)
+
   setup_vim_commands()
+  setup_autocommands(opts)
 
   vim.schedule(function()
-    require'nvim-tree.colors'.setup()
-    require'nvim-tree.view'.create_buffer()
     M.on_enter(netrw_disabled)
-    setup_autocommands(opts)
   end)
 end
 

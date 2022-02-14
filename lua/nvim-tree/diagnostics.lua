@@ -25,7 +25,7 @@ local sign_names = {
 local signs = {}
 
 local function add_sign(linenr, severity)
-  local buf = view.View.bufnr
+  local buf = view.get_bufnr()
   if not a.nvim_buf_is_valid(buf) or not a.nvim_buf_is_loaded(buf) then return end
   local sign_name = sign_names[severity][1]
   table.insert(signs, vim.fn.sign_place(1, 'NvimTreeDiagnosticSigns', sign_name, buf, { lnum = linenr+1 }))
@@ -114,7 +114,7 @@ function M.update()
   if #signs then
     vim.fn.sign_unplacelist(vim.tbl_map(function(sign)
       return {
-        buffer = view.View.bufnr,
+        buffer = view.get_bufnr(),
         group = "NvimTreeDiagnosticSigns",
         id = sign
       }

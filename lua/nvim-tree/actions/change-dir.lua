@@ -1,5 +1,4 @@
 local a = vim.api
-local lib = function() return require'nvim-tree.lib' end
 local utils = require'nvim-tree.utils'
 
 local M = {
@@ -9,7 +8,7 @@ local M = {
   }
 }
 
-function M.fn(name)
+function M.fn(name, with_open)
   if not TreeExplorer then return end
 
   local foldername = name == '..' and vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.cwd), ':h') or name
@@ -20,13 +19,18 @@ function M.fn(name)
     return
   end
   M.current_tab = new_tab
+  M.force_dirchange(foldername, with_open)
+end
 
-  if M.options.global then
-    vim.cmd('cd '..vim.fn.fnameescape(foldername))
-  else
-    vim.cmd('lcd '..vim.fn.fnameescape(foldername))
+function M.force_dirchange(foldername, with_open)
+  if vim.tbl_isempty(vim.v.event) then
+    if M.options.global then
+      vim.cmd('cd '..vim.fn.fnameescape(foldername))
+    else
+      vim.cmd('lcd '..vim.fn.fnameescape(foldername))
+    end
   end
-  lib().init(false, foldername)
+  require'nvim-tree.lib'.init(with_open, foldername)
 end
 
 function M.setup(options)

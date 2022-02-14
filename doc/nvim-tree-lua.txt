@@ -23,7 +23,7 @@ COMMANDS                                           *nvim-tree-commands*
 
 |:NvimTreeOpen| 	                                  *:NvimTreeOpen*
 
-opens the tree
+opens the tree. Takes an optional path argument.
 
 |:NvimTreeClose| 	                          *:NvimTreeClose*
 
@@ -75,7 +75,7 @@ function.
       hijack_netrw         = true,
       open_on_setup        = false,
       ignore_ft_on_setup   = {},
-      update_to_buf_dir    = {
+      hijack_directories   = {
         enable = true,
         auto_open = true,
       },
@@ -183,16 +183,16 @@ Here is a list of the options available in the setup call:
   type: `boolean`
   default: `false`
 
-*nvim-tree.update_to_buf_dir*
-- |update_to_buf_dir|: hijacks new directory buffers when they are opened (`:e dir`).
+*nvim-tree.hijack_directories*
+- |hijack_directories|: hijacks new directory buffers when they are opened (`:e dir`).
 
-  - |update_to_buf_dir.enable|: enable the feature. Disable this option if you
+  - |hijack_directories.enable|: enable the feature. Disable this option if you
     use vim-dirvish or dirbuf.nvim. If |hijack_netrw| and |disable_netrw| are
     `false`, this feature will be disabled.
     type: `boolean`
     default: `true`
 
-  - |update_to_buf_dir.auto_open|: opens the tree if the tree was previously closed.
+  - |hijack_directories.auto_open|: opens the tree if the tree was previously closed.
     type: `boolean`
     default: `true`
 
