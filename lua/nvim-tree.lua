@@ -188,6 +188,7 @@ function M.find_file(with_open)
   local bufname = vim.fn.bufname()
   local bufnr = api.nvim_get_current_buf()
   local filepath = vim.fn.fnamemodify(bufname, ':p')
+  filepath = luv.fs_realpath(filepath)
   if not is_file_readable(filepath) then
     return
   end
