@@ -14,7 +14,7 @@ function M.fn(name, with_open)
   local foldername = name == '..' and vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.cwd), ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == TreeExplorer.cwd
   local new_tab = a.nvim_get_current_tabpage()
-  local is_window = vim.v.event.scope == "window" and new_tab == M.current_tab
+  local is_window = (vim.v.event.scope == "window" or vim.v.event.changed_window) and new_tab == M.current_tab
   if no_cwd_change or is_window then
     return
   end
