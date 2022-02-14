@@ -218,6 +218,8 @@ end
 function M.set_cursor(opts)
   if M.is_visible() then
     pcall(a.nvim_win_set_cursor, M.get_winnr(), opts)
+    -- patch until https://github.com/neovim/neovim/issues/17395 is fixed
+    require"nvim-tree.renderer".draw()
   end
 end
 
