@@ -24,12 +24,16 @@ function M.toggle(find_file, no_focus)
   if view.is_visible() then
     view.close()
   else
+    local previous_buf = api.nvim_get_current_buf()
     M.open()
     if TreeExplorer and (_config.update_focused_file.enable or find_file) then
-      M.find_file(false)
+      -- if we don't schedule, it will search for NvimTree
+      vim.schedule(function()
+        M.find_file(false, previous_buf)
+      end)
     end
     if no_focus then
-      vim.cmd "wincmd p"
+      vim.cmd "noautocmd wincmd p"
     end
   end
 end
@@ -116,11 +120,11 @@ local function update_base_dir_with_filepath(filepath, bufnr)
   end
 end
 
-function M.find_file(with_open)
+function M.find_file(with_open, bufnr)
   if not with_open and not TreeExplorer then return end
 
-  local bufname = vim.fn.bufname()
-  local bufnr = api.nvim_get_current_buf()
+  bufnr = bufnr or api.nvim_get_current_buf()
+  local bufname = api.nvim_buf_get_name(bufnr)
   local filepath = utils.canonical_path(vim.fn.fnamemodify(bufname, ':p'))
   if not is_file_readable(filepath) then
     return
