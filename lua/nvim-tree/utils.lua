@@ -3,6 +3,8 @@ local uv = vim.loop
 
 local M = {}
 
+M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
+
 function M.path_to_matching_str(path)
   return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
 end
@@ -206,6 +208,15 @@ end
 function M.file_exists(path)
   local _, error = vim.loop.fs_stat(path)
   return error == nil
+end
+
+--- @param path string
+--- @return string
+function M.canonical_path(path)
+  if M.is_windows and path:match '^%a:' then
+    return path:sub(1, 1):upper() .. path:sub(2)
+  end
+  return path
 end
 
 return M
