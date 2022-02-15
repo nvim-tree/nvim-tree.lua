@@ -2,7 +2,6 @@ local uv = vim.loop
 
 local git = require"nvim-tree.git"
 local renderer = require"nvim-tree.renderer"
-local utils = require"nvim-tree.utils"
 
 local M = {}
 
