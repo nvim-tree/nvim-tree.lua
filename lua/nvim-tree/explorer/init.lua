@@ -13,7 +13,7 @@ local Explorer = {}
 Explorer.__index = Explorer
 
 function Explorer.new(cwd)
-  cwd = utils.path_normalize(cwd or uv.cwd())
+  cwd = uv.fs_realpath(cwd or uv.cwd())
   return setmetatable({
     cwd = cwd,
     nodes = {}
