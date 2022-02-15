@@ -20,13 +20,16 @@ end
 ---@deprecated
 M.on_keypress = require'nvim-tree.actions'.on_keypress
 
-function M.toggle(find_file)
+function M.toggle(find_file, no_focus)
   if view.is_visible() then
     view.close()
   else
     M.open()
     if TreeExplorer and (_config.update_focused_file.enable or find_file) then
       M.find_file(false)
+    end
+    if no_focus then
+      vim.cmd "wincmd p"
     end
   end
 end
