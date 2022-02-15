@@ -208,24 +208,4 @@ function M.file_exists(path)
   return error == nil
 end
 
---- @param num number elements to take
---- @param list table elements
---- @return table
-function M.take(num, list)
-  local t = {}
-  for i, c in ipairs(list) do
-    if i > num then break end
-    table.insert(t, c)
-  end
-  return t
-end
-
---- @param path string
---- @return string
-function M.path_normalize(path)
-  local components = vim.split(vim.fn.expand(path), path_separator)
-  local num_dots = #vim.tbl_filter(function(v) return v == ".." end, components)
-  return M.path_join(M.take(#components - num_dots * 2, components))
-end
-
 return M
