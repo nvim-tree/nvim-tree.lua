@@ -101,7 +101,7 @@ local function is_using_coc()
 end
 
 function M.update()
-  if not M.enable then
+  if not M.enable or not TreeExplorer then
     return
   end
   local buffer_severity
