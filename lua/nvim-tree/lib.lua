@@ -126,7 +126,8 @@ function M.open(cwd)
   if not TreeExplorer or cwd then
     M.init(false, cwd or vim.loop.cwd())
   end
-  if api.nvim_buf_get_name(api.nvim_get_current_buf()) == "" then
+  local bufnr = api.nvim_get_current_buf()
+  if api.nvim_buf_get_name(bufnr) == "" and api.nvim_buf_get_option(bufnr, "ft") == "" then
     view.open_in_current_win()
     renderer.draw()
   else
