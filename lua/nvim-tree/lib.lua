@@ -18,7 +18,11 @@ function M.init(with_open, foldername)
   TreeExplorer = explorer.Explorer.new(foldername)
   TreeExplorer:init(function()
     if with_open then
-      view.open_in_current_win()
+      if M.hijack_unnamed_buffer_when_opening then
+        view.open_in_current_win()
+      else
+        view.open()
+      end
     end
     renderer.draw()
 
@@ -142,5 +146,9 @@ M.refresh_tree = require'nvim-tree.actions.reloaders'.reload_explorer
 M.reload_git = require'nvim-tree.actions.reloaders'.reload_git
 -- @deprecated: use nvim-tree.actions.find-file.fn
 M.set_index_and_redraw = require'nvim-tree.actions.find-file'.fn
+
+function M.setup(opts)
+  M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
+end
 
 return M

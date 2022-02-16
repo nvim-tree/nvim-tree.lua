@@ -65,42 +65,6 @@ local function find_existing_windows()
   )
 end
 
-function M.on_enter(netrw_disabled)
-  local bufnr = api.nvim_get_current_buf()
-  local bufname = api.nvim_buf_get_name(bufnr)
-  local buftype = api.nvim_buf_get_option(bufnr, 'filetype')
-  local ft_ignore = _config.ignore_ft_on_setup
-
-  local stats = luv.fs_stat(bufname)
-  local is_dir = stats and stats.type == 'directory'
-  local cwd
-  if is_dir then
-    cwd = vim.fn.expand(bufname)
-    -- INFO: could potentially conflict with rooter plugins
-    vim.cmd("noautocmd cd "..cwd)
-  end
-
-  local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
-  local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
-
-  local buf_is_dir = is_dir and netrw_disabled
-  local buf_is_empty = bufname == "" and not buf_has_content
-  local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
-  local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
-  local should_hijack = _config.hijack_directories.enable and _config.hijack_directories.auto_open and is_dir and not should_be_preserved
-
-  -- Session that left a NvimTree Buffer opened, reopen with it
-  local existing_tree_wins = find_existing_windows()
-  if existing_tree_wins[1] then
-    api.nvim_set_current_win(existing_tree_wins[1])
-  end
-
-  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    lib.init(true, cwd)
-  end
-  M.initialized = true
-end
-
 local function is_file_readable(fname)
   local stat = luv.fs_stat(fname)
   return stat and stat.type == "file" and luv.fs_access(fname, 'R')
@@ -205,6 +169,42 @@ function M.place_cursor_on_node()
   end
 end
 
+function M.on_enter(netrw_disabled)
+  local bufnr = api.nvim_get_current_buf()
+  local bufname = api.nvim_buf_get_name(bufnr)
+  local buftype = api.nvim_buf_get_option(bufnr, 'filetype')
+  local ft_ignore = _config.ignore_ft_on_setup
+
+  local stats = luv.fs_stat(bufname)
+  local is_dir = stats and stats.type == 'directory'
+  local cwd
+  if is_dir then
+    cwd = vim.fn.expand(bufname)
+    -- INFO: could potentially conflict with rooter plugins
+    vim.cmd("noautocmd cd "..cwd)
+  end
+
+  local lines = not is_dir and api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
+  local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
+
+  local buf_is_dir = is_dir and netrw_disabled
+  local buf_is_empty = bufname == "" and not buf_has_content
+  local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
+  local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
+  local should_hijack = _config.hijack_directories.enable and _config.hijack_directories.auto_open and is_dir and not should_be_preserved
+
+  -- Session that left a NvimTree Buffer opened, reopen with it
+  local existing_tree_wins = find_existing_windows()
+  if existing_tree_wins[1] then
+    api.nvim_set_current_win(existing_tree_wins[1])
+  end
+
+  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+    lib.init(true, cwd)
+  end
+  M.initialized = true
+end
+
 local function manage_netrw(disable_netrw, hijack_netrw)
   if hijack_netrw then
     vim.cmd "silent! autocmd! FileExplorer *"
@@ -288,6 +288,7 @@ local DEFAULT_OPTS = {
   hijack_cursor        = false,
   update_cwd           = false,
   hide_root_folder     = false,
+  hijack_unnamed_buffer_when_opening = true,
   update_focused_file  = {
     enable = false,
     update_cwd = false,
@@ -354,6 +355,7 @@ function M.setup(conf)
   require'nvim-tree.explorer'.setup(opts)
   require'nvim-tree.git'.setup(opts)
   require'nvim-tree.view'.setup(opts)
+  require'nvim-tree.lib'.setup(opts)
 
   setup_vim_commands()
   setup_autocommands(opts)

@@ -84,6 +84,7 @@ function.
       open_on_tab          = false,
       hijack_cursor        = false,
       update_cwd           = false,
+      hijack_unnamed_buffer_when_opening = true,
       diagnostics          = {
         enable = false,
         show_on_dirs = false,
@@ -182,6 +183,12 @@ Here is a list of the options available in the setup call:
   tabpage if the tree was previously open.
   type: `boolean`
   default: `false`
+
+*nvim-tree.hijack_unnamed_buffer_when_opening*
+- |hijack_unnamed_buffer_when_opening|: opens in place of the unnamed
+  buffer if it's empty.
+  type: `boolean`
+  default: `true`
 
 *nvim-tree.hijack_directories*
 - |hijack_directories|: hijacks new directory buffers when they are opened (`:e dir`).
