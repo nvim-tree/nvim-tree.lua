@@ -118,7 +118,7 @@ highlight NvimTreeFolderIcon guibg=blue
 -- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
-  disable_netrw        = true,
+  disable_netrw        = false,
   hijack_netrw         = true,
   open_on_setup        = false,
   ignore_ft_on_setup   = {},

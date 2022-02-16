@@ -273,7 +273,7 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = {
-  disable_netrw        = true,
+  disable_netrw        = false,
   hijack_netrw         = true,
   open_on_setup        = false,
   open_on_tab          = false,

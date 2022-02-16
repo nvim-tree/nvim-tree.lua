@@ -71,7 +71,7 @@ function.
 
 >
     require'nvim-tree'.setup {
-      disable_netrw        = true,
+      disable_netrw        = false,
       hijack_netrw         = true,
       open_on_setup        = false,
       ignore_ft_on_setup   = {},
@@ -147,7 +147,7 @@ Here is a list of the options available in the setup call:
 *nvim-tree.disable_netrw*
 - |disable_netrw|: completely disable netrw
   type: `boolean`
-  default: `true`
+  default: `false`
 
 *nvim-tree.hijack_netrw*
 - |hijack_netrw|: hijack netrw windows (overriden if |disable_netrw| is `true`)
