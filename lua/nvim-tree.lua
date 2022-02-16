@@ -37,7 +37,9 @@ end
 
 function M.open(cwd)
   cwd = cwd ~= "" and cwd or nil
-  if not view.is_visible() then
+  if view.is_visible() then
+    view.focus()
+  else
     lib.open(cwd)
   end
 end
