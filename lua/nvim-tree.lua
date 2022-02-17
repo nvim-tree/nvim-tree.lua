@@ -240,6 +240,7 @@ end
 
 local function setup_autocommands(opts)
   vim.cmd "augroup NvimTree"
+  vim.cmd "autocmd!"
 
   -- reset highlights when colorscheme is changed
   vim.cmd "au ColorScheme * lua require'nvim-tree'.reset_highlight()"
