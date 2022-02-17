@@ -127,7 +127,9 @@ function M.open(cwd)
     M.init(false, cwd or vim.loop.cwd())
   end
   local bufnr = api.nvim_get_current_buf()
-  if api.nvim_buf_get_name(bufnr) == "" and api.nvim_buf_get_option(bufnr, "ft") == "" then
+  if M.hijack_unnamed_buffer_when_opening
+    and api.nvim_buf_get_name(bufnr) == ""
+    and api.nvim_buf_get_option(bufnr, "ft") == "" then
     view.open_in_current_win()
     renderer.draw()
   else
