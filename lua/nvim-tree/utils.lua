@@ -1,3 +1,5 @@
+local has_notify, notify = pcall(require, 'notify')
+
 local a = vim.api
 local uv = vim.loop
 
@@ -11,7 +13,11 @@ end
 
 function M.warn(msg)
   vim.schedule(function()
-    vim.notify("[NvimTree] "..msg, vim.log.levels.WARN)
+    if has_notify then
+      notify(msg, vim.log.levels.WARN, { title = "NvimTree" })
+    else
+      vim.notify("[NvimTree] "..msg, vim.log.levels.WARN)
+    end
   end)
 end
 
