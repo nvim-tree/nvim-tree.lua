@@ -15,8 +15,11 @@ local function get_index_offset()
   end
 end
 
+local running = {}
+
 function M.fn(fname)
-  if not TreeExplorer then return end
+  if running[fname] or not TreeExplorer then return end
+  running[fname] = true
 
   local i = get_index_offset()
   local tree_altered = false
@@ -61,6 +64,7 @@ function M.fn(fname)
   if index and view.is_visible() then
     view.set_cursor({index, 0})
   end
+  running[fname] = false
 end
 
 return M
