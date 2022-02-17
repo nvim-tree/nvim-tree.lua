@@ -208,6 +208,7 @@ end
 local function manage_netrw(disable_netrw, hijack_netrw)
   if hijack_netrw then
     vim.cmd "silent! autocmd! FileExplorer *"
+    vim.cmd "autocmd VimEnter * ++once silent! autocmd! FileExplorer *"
   end
   if disable_netrw then
     vim.g.loaded_netrw = 1
