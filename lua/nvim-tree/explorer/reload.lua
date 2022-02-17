@@ -36,8 +36,8 @@ function M.reload(node, cwd, status)
   end
 
   if node.group_next then
+    node.nodes = {node.group_next}
     node.group_next = nil
-    node.nodes = {}
   end
 
   local child_names = {}
