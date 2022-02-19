@@ -179,7 +179,10 @@ function M.resize(size)
   else
     a.nvim_win_set_height(M.get_winnr(), get_size())
   end
-  vim.cmd ":wincmd ="
+
+	if vim.g.nvim_tree_preserve_window_proportions ~= 1 then
+		vim.cmd(":wincmd =")
+	end
 end
 
 function M.reposition_window()

@@ -537,6 +537,10 @@ selectable. The default table is
       }
     }
 <
+|g:nvim_tree_preserve_window_proportions|     *g:nvim_tree_preserve_window_proportions*
+
+Can be 0 or 1. When 1, will preserve window proportions when opening a file. 
+Otherwise, the height and width of windows other than nvim-tree will be equalized.
 
 |g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*
 
