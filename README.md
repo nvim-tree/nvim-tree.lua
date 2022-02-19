@@ -222,6 +222,7 @@ require'nvim-tree'.setup {
 - `R` will refresh the tree
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
+- `W` will collapse the whole tree
 
 ### Settings
 
