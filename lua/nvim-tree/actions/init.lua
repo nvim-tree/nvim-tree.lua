@@ -127,24 +127,46 @@ local function merge_mappings(user_mappings)
   end
 
   local user_keys = {}
+  local removed_keys = {}
   for _, map in pairs(user_mappings) do
     if type(map.key) == "table" then
       for _, key in pairs(map.key) do
         table.insert(user_keys, key)
+        if not map.action then
+          table.insert(removed_keys, key)
+        end
       end
     else
-       table.insert(user_keys, map.key)
+      table.insert(user_keys, map.key)
+      if not map.action then
+        table.insert(removed_keys, map.key)
+      end
     end
     if map.action and type(map.action_cb) == "function" then
       M.custom_keypress_funcs[map.action] = map.action_cb
     end
   end
 
-  local mappings = vim.tbl_filter(function(map)
-    return not vim.tbl_contains(user_keys, map.key)
+  local default_map = vim.tbl_filter(function(map)
+    if type(map.key) == "table" then
+      local filtered_keys = {}
+      for _, key in pairs(map.key) do
+        if not vim.tbl_contains(user_keys, key) and not vim.tbl_contains(removed_keys, key) then
+          table.insert(filtered_keys, key)
+        end
+      end
+      map.key = filtered_keys
+      return not vim.tbl_isempty(map.key)
+    else
+      return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
+    end
   end, M.mappings)
 
-  return vim.fn.extend(mappings, user_mappings)
+  local user_map = vim.tbl_filter(function(map)
+    return map.action
+  end, user_mappings)
+
+  return vim.fn.extend(default_map, user_map)
 end
 
 local function copy_mappings(user_mappings)
