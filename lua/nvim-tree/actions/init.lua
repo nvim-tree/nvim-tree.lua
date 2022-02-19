@@ -147,6 +147,20 @@ local function merge_mappings(user_mappings)
   return vim.fn.extend(mappings, user_mappings)
 end
 
+local function copy_mappings(user_mappings)
+  if #user_mappings == 0 then
+    return M.mappings
+  end
+
+  for _, map in pairs(user_mappings) do
+    if map.action and type(map.action_cb) == "function" then
+      M.custom_keypress_funcs[map.action] = map.action_cb
+    end
+  end
+
+  return user_mappings
+end
+
 local DEFAULT_MAPPING_CONFIG = {
   custom_only = false,
   list = {}
@@ -161,7 +175,7 @@ function M.setup(opts)
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend('force', DEFAULT_MAPPING_CONFIG, user_map_config)
   if options.custom_only then
-    M.mappings = options.list
+    M.mappings = copy_mappings(options.list)
   else
     M.mappings = merge_mappings(options.list)
   end
