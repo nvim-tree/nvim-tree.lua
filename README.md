@@ -127,7 +127,7 @@ require'nvim-tree'.setup {
   open_on_tab          = false,
   hijack_cursor        = false,
   update_cwd           = false,
-  hijack_unnamed_buffer_when_opening = true,
+  hijack_unnamed_buffer_when_opening = false,
   hijack_directories   = {
     enable = true,
     auto_open = true,
