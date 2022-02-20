@@ -2,6 +2,7 @@ local a = vim.api
 
 local lib = require'nvim-tree.lib'
 local view = require'nvim-tree.view'
+local util = require'nvim-tree.utils'
 local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
 local M = {
@@ -130,25 +131,71 @@ local function merge_mappings(user_mappings)
     return M.mappings
   end
 
+  local function is_empty(s)
+    return s == ''
+  end
+
   local user_keys = {}
+  local removed_keys = {}
+  -- remove default mappings if action is a empty string
   for _, map in pairs(user_mappings) do
     if type(map.key) == "table" then
       for _, key in pairs(map.key) do
         table.insert(user_keys, key)
+        if is_empty(map.action) then
+          table.insert(removed_keys, key)
+        end
       end
     else
-       table.insert(user_keys, map.key)
+      table.insert(user_keys, map.key)
+      if is_empty(map.action) then
+        table.insert(removed_keys, map.key)
+      end
     end
+
+    if map.action and type(map.action_cb) == "function" then
+      if not is_empty(map.action) then
+        M.custom_keypress_funcs[map.action] = map.action_cb
+      else
+        util.warn("action can't be empty if action_cb provided")
+    end
+    end
+  end
+
+  local default_map = vim.tbl_filter(function(map)
+    if type(map.key) == "table" then
+      local filtered_keys = {}
+      for _, key in pairs(map.key) do
+        if not vim.tbl_contains(user_keys, key) and not vim.tbl_contains(removed_keys, key) then
+          table.insert(filtered_keys, key)
+        end
+      end
+      map.key = filtered_keys
+      return not vim.tbl_isempty(map.key)
+    else
+      return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
+    end
+  end, M.mappings)
+
+  local user_map = vim.tbl_filter(function(map)
+    return not is_empty(map.action)
+  end, user_mappings)
+
+  return vim.fn.extend(default_map, user_map)
+end
+
+local function copy_mappings(user_mappings)
+  if #user_mappings == 0 then
+    return M.mappings
+  end
+
+  for _, map in pairs(user_mappings) do
     if map.action and type(map.action_cb) == "function" then
       M.custom_keypress_funcs[map.action] = map.action_cb
     end
   end
 
-  local mappings = vim.tbl_filter(function(map)
-    return not vim.tbl_contains(user_keys, map.key)
-  end, M.mappings)
-
-  return vim.fn.extend(mappings, user_mappings)
+  return user_mappings
 end
 
 local DEFAULT_MAPPING_CONFIG = {
@@ -165,7 +212,7 @@ function M.setup(opts)
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend('force', DEFAULT_MAPPING_CONFIG, user_map_config)
   if options.custom_only then
-    M.mappings = options.list
+    M.mappings = copy_mappings(options.list)
   else
     M.mappings = merge_mappings(options.list)
   end

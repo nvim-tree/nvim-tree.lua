@@ -84,7 +84,7 @@ function.
       open_on_tab          = false,
       hijack_cursor        = false,
       update_cwd           = false,
-      hijack_unnamed_buffer_when_opening = true,
+      hijack_unnamed_buffer_when_opening = false,
       diagnostics          = {
         enable = false,
         show_on_dirs = false,
@@ -188,7 +188,7 @@ Here is a list of the options available in the setup call:
 - |hijack_unnamed_buffer_when_opening|: opens in place of the unnamed
   buffer if it's empty.
   type: `boolean`
-  default: `true`
+  default: `false`
 
 *nvim-tree.hijack_directories*
 - |hijack_directories|: hijacks new directory buffers when they are opened (`:e dir`).
@@ -641,7 +641,7 @@ Defaults to:
 The `list` option in `view.mappings.list` is a table of
 
 - key can be either a string or a table of string (lhs)
-- action is the name of the action
+- action is the name of the action, set to `""` to remove default action
 - action_cb is the function that will be called, it receives the node as a parameter. Optional for default actions
 - mode is normal by default
 >
@@ -656,6 +656,7 @@ The `list` option in `view.mappings.list` is a table of
       { key = {"<CR>", "o" }, action = "edit", mode = "n"},
       { key = "p", action = "print_path", action_cb = print_node_path },
       { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
+      { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
     }
 
 

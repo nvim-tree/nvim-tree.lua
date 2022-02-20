@@ -127,7 +127,7 @@ require'nvim-tree'.setup {
   open_on_tab          = false,
   hijack_cursor        = false,
   update_cwd           = false,
-  hijack_unnamed_buffer_when_opening = true,
+  hijack_unnamed_buffer_when_opening = false,
   hijack_directories   = {
     enable = true,
     auto_open = true,
@@ -229,7 +229,7 @@ require'nvim-tree'.setup {
 The `list` option in `view.mappings.list` is a table of
 ```lua
 -- key can be either a string or a table of string (lhs)
--- action is the name of the action
+-- action is the name of the action, set to `""` to remove default action
 -- action_cb is the function that will be called, it receives the node as a parameter. Optional for default actions
 -- mode is normal by default
 
@@ -243,6 +243,7 @@ local list = {
   { key = {"<CR>", "o" }, action = "edit", mode = "n"},
   { key = "p", action = "print_path", action_cb = print_node_path },
   { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
+  { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
 }
 ```
 
@@ -293,6 +294,7 @@ You can toggle the help UI by pressing `g?`.
 
 1. you can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
 2. you can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
+3. `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree.toggle(false, false)`).
 
 
 ## Screenshots

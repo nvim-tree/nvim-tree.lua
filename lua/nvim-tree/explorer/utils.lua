@@ -1,3 +1,5 @@
+local uv = vim.loop
+
 local utils = require'nvim-tree.utils'
 
 local M = {
@@ -58,6 +60,12 @@ end
 function M.should_ignore_git(path, status)
   return M.config.filter_ignored
     and (M.config.filter_git_ignored and status and status[path] == '!!')
+end
+
+function M.has_one_child_folder(node)
+  return #node.nodes == 1
+    and node.nodes[1].nodes
+    and uv.fs_access(node.nodes[1].absolute_path, 'R')
 end
 
 function M.setup(opts)

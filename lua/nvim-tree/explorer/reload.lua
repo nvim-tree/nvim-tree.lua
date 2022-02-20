@@ -28,7 +28,8 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
-function M.reload(node, cwd, status)
+function M.reload(node, status)
+  local cwd = node.cwd or node.link_to or node.absolute_path
   local handle = uv.fs_scandir(cwd)
   if type(handle) == 'string' then
     api.nvim_err_writeln(handle)
@@ -75,14 +76,12 @@ function M.reload(node, cwd, status)
     ))
 
   local is_root = node.cwd ~= nil
-  if vim.g.nvim_tree_group_empty == 1 and not is_root and #(node.nodes) == 1 then
-    local child_node = node.nodes[1]
-    if child_node.nodes and uv.fs_access(child_node.absolute_path, 'R') then
-      node.group_next = child_node
-      local ns = M.reload(child_node, child_node.absolute_path, status)
-      node.nodes = ns or {}
-      return ns
-    end
+  local child_folder_only = eutils.has_one_child_folder(node) and node.nodes[1]
+  if vim.g.nvim_tree_group_empty == 1 and not is_root and child_folder_only then
+    node.group_next = child_folder_only
+    local ns = M.reload(child_folder_only, status)
+    node.nodes = ns or {}
+    return ns
   end
 
   utils.merge_sort(node.nodes, eutils.node_comparator)
