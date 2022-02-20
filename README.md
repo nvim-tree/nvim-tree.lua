@@ -222,6 +222,7 @@ require'nvim-tree'.setup {
 - `R` will refresh the tree
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
+- `S` will prompt the user to enter a path and then expands the tree to match the path
 
 ### Settings
 
@@ -284,6 +285,7 @@ local list = {
   { key = "s",                            action = "system_open" },
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
+  { key = "S",                            action = "search_node" }
 }
 ```
 
