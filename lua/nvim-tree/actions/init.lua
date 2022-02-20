@@ -2,6 +2,7 @@ local a = vim.api
 
 local lib = require'nvim-tree.lib'
 local view = require'nvim-tree.view'
+local util = require'nvim-tree.utils'
 local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 
 local M = {
@@ -126,24 +127,34 @@ local function merge_mappings(user_mappings)
     return M.mappings
   end
 
+  local function is_empty(s)
+    return s == ''
+  end
+
   local user_keys = {}
   local removed_keys = {}
+  -- remove default mappings if action is a empty string
   for _, map in pairs(user_mappings) do
     if type(map.key) == "table" then
       for _, key in pairs(map.key) do
         table.insert(user_keys, key)
-        if not map.action then
+        if is_empty(map.action) then
           table.insert(removed_keys, key)
         end
       end
     else
       table.insert(user_keys, map.key)
-      if not map.action then
+      if is_empty(map.action) then
         table.insert(removed_keys, map.key)
       end
     end
+
     if map.action and type(map.action_cb) == "function" then
-      M.custom_keypress_funcs[map.action] = map.action_cb
+      if not is_empty(map.action) then
+        M.custom_keypress_funcs[map.action] = map.action_cb
+      else
+        util.warn("action can't be empty if action_cb provided")
+    end
     end
   end
 
@@ -163,7 +174,7 @@ local function merge_mappings(user_mappings)
   end, M.mappings)
 
   local user_map = vim.tbl_filter(function(map)
-    return map.action
+    return not is_empty(map.action)
   end, user_mappings)
 
   return vim.fn.extend(default_map, user_map)
