@@ -7,9 +7,9 @@ local explorer_module = require'nvim-tree.explorer'
 local M = {}
 
 local function refresh_nodes(node, projects)
-  local cwd = node.absolute_path or node.cwd
+  local cwd = node.cwd or node.link_to or node.absolute_path
   local project_root = git.get_project_root(cwd)
-  explorer_module.reload(node, cwd, projects[project_root] or {})
+  explorer_module.reload(node, projects[project_root] or {})
   for _, _node in ipairs(node.nodes) do
     if _node.nodes and _node.open then
       refresh_nodes(_node, projects)

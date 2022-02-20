@@ -41,7 +41,7 @@ function M.fn(fname)
         if #node.nodes == 0 then
           local git_finished = false
           git.load_project_status(node.absolute_path, function(status)
-            explorer_module.explore(node, node.absolute_path, status)
+            explorer_module.explore(node, status)
             git_finished = true
           end)
           while not vim.wait(10, function() return git_finished end, 10) do end
