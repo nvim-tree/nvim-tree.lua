@@ -228,7 +228,7 @@ require'nvim-tree'.setup {
 The `list` option in `view.mappings.list` is a table of
 ```lua
 -- key can be either a string or a table of string (lhs)
--- action is the name of the action
+-- action is the name of the action, set to `""` to remove default action
 -- action_cb is the function that will be called, it receives the node as a parameter. Optional for default actions
 -- mode is normal by default
 
@@ -242,6 +242,7 @@ local list = {
   { key = {"<CR>", "o" }, action = "edit", mode = "n"},
   { key = "p", action = "print_path", action_cb = print_node_path },
   { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
+  { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
 }
 ```
 
