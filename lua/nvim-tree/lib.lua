@@ -18,14 +18,8 @@ function M.init(with_open, foldername)
   TreeExplorer = explorer.Explorer.new(foldername)
   TreeExplorer:init(function()
     if with_open then
-      if M.hijack_unnamed_buffer_when_opening then
-        view.open_in_current_win()
-      else
-        view.open()
-      end
+      M.open()
     end
-    renderer.draw()
-
     if not first_init_done then
       events._dispatch_ready()
       first_init_done = true
@@ -121,16 +115,29 @@ local function open_view_and_draw()
   renderer.draw()
 end
 
+local function should_hijack_current_buf()
+  local bufnr = api.nvim_get_current_buf()
+  local bufname = api.nvim_buf_get_name(bufnr)
+  local bufmodified = api.nvim_buf_get_option(bufnr, "modified")
+  local ft = api.nvim_buf_get_option(bufnr, "ft")
+
+  local should_hijack_unnamed = M.hijack_unnamed_buffer_when_opening
+    and bufname == ""
+    and not bufmodified
+    and ft == ""
+  local should_hijack_dir = bufname ~= ""
+    and vim.fn.isdirectory(bufname)
+    and M.hijack_directories.enable
+
+  return should_hijack_dir or should_hijack_unnamed
+end
+
 function M.open(cwd)
   M.set_target_win()
   if not TreeExplorer or cwd then
     M.init(false, cwd or vim.loop.cwd())
   end
-  local bufnr = api.nvim_get_current_buf()
-  if M.hijack_unnamed_buffer_when_opening
-    and api.nvim_buf_get_name(bufnr) == ""
-    and not api.nvim_buf_get_option(bufnr, "modified")
-    and api.nvim_buf_get_option(bufnr, "ft") == "" then
+  if should_hijack_current_buf() then
     view.open_in_current_win()
     renderer.draw()
   else
@@ -153,6 +160,7 @@ M.set_index_and_redraw = require'nvim-tree.actions.find-file'.fn
 
 function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
+  M.hijack_directories = opts.hijack_directories
 end
 
 return M
