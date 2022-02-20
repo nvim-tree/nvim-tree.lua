@@ -31,6 +31,7 @@ function M.force_dirchange(foldername, with_open)
     end
   end
   require'nvim-tree.lib'.init(with_open, foldername)
+  require"nvim-tree.renderer".draw()
 end
 
 function M.setup(options)
