@@ -15,16 +15,19 @@ local M = {
 TreeExplorer = nil
 
 function M.init(with_open, foldername)
+  local init_done = false
   TreeExplorer = explorer.Explorer.new(foldername)
   TreeExplorer:init(function()
     if with_open then
       M.open()
     end
+    init_done = true
     if not first_init_done then
       events._dispatch_ready()
       first_init_done = true
     end
   end)
+  while not vim.wait(10, function() return init_done end, 10) do end
 end
 
 local function get_node_at_line(line)
