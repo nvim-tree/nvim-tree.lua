@@ -14,13 +14,10 @@ local M = {
 
 TreeExplorer = nil
 
-function M.init(with_open, foldername)
+function M.init(foldername)
   local init_done = false
   TreeExplorer = explorer.Explorer.new(foldername)
   TreeExplorer:init(function()
-    if with_open then
-      M.open()
-    end
     init_done = true
     if not first_init_done then
       events._dispatch_ready()
@@ -138,7 +135,7 @@ end
 function M.open(cwd)
   M.set_target_win()
   if not TreeExplorer or cwd then
-    return M.init(true, cwd or vim.loop.cwd())
+    M.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
     view.open_in_current_win()
