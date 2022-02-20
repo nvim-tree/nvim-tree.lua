@@ -49,7 +49,6 @@ let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the
 let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
 let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 let g:nvim_tree_create_in_closed_folder = 0 "1 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
-let g:nvim_tree_preserve_window_proportions = 0 "0 by default, will equalize the height and width of windows other than nvim-tree upon opening a file."
 let g:nvim_tree_window_picker_exclude = {
     \   'filetype': [
     \     'notify',
@@ -166,6 +165,7 @@ require'nvim-tree'.setup {
     hide_root_folder = false,
     side = 'left',
     auto_resize = false,
+    preserve_window_proportions = false,
     mappings = {
       custom_only = false,
       list = {}
