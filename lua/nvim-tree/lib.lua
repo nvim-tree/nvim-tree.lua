@@ -126,7 +126,7 @@ local function should_hijack_current_buf()
     and not bufmodified
     and ft == ""
   local should_hijack_dir = bufname ~= ""
-    and vim.fn.isdirectory(bufname)
+    and vim.fn.isdirectory(bufname) == 1
     and M.hijack_directories.enable
 
   return should_hijack_dir or should_hijack_unnamed
@@ -135,7 +135,7 @@ end
 function M.open(cwd)
   M.set_target_win()
   if not TreeExplorer or cwd then
-    M.init(false, cwd or vim.loop.cwd())
+    return M.init(true, cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
     view.open_in_current_win()
