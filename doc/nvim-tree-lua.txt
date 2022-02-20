@@ -84,7 +84,7 @@ function.
       open_on_tab          = false,
       hijack_cursor        = false,
       update_cwd           = false,
-      hijack_unnamed_buffer_when_opening = true,
+      hijack_unnamed_buffer_when_opening = false,
       diagnostics          = {
         enable = false,
         show_on_dirs = false,
@@ -188,7 +188,7 @@ Here is a list of the options available in the setup call:
 - |hijack_unnamed_buffer_when_opening|: opens in place of the unnamed
   buffer if it's empty.
   type: `boolean`
-  default: `true`
+  default: `false`
 
 *nvim-tree.hijack_directories*
 - |hijack_directories|: hijacks new directory buffers when they are opened (`:e dir`).
