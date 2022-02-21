@@ -24,8 +24,6 @@ function M.fn()
             renderer.draw()
           end
           search_node(node.nodes)
-        else
-          -- TODO open file
         end
       end
     end
