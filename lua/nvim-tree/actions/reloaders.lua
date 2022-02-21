@@ -33,23 +33,19 @@ function M.reload_node_status(parent_node, projects)
 end
 
 local event_running = false
-function M.reload_explorer(callback)
+function M.reload_explorer()
   if event_running or not TreeExplorer or not TreeExplorer.cwd or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
-  git.reload(function(projects)
-    refresh_nodes(TreeExplorer, projects)
-    if view.is_visible() then
-      renderer.draw()
-      if callback and type(callback) == 'function' then
-        callback()
-      end
-    end
-    diagnostics.update()
-    event_running = false
-  end)
+  local projects = git.reload()
+  refresh_nodes(TreeExplorer, projects)
+  if view.is_visible() then
+    renderer.draw()
+  end
+  diagnostics.update()
+  event_running = false
 end
 
 function M.reload_git()
@@ -58,11 +54,10 @@ function M.reload_git()
   end
   event_running = true
 
-  git.reload(function(projects)
-    M.reload_node_status(TreeExplorer, projects)
-    renderer.draw()
-    event_running = false
-  end)
+  local projects = git.reload()
+  M.reload_node_status(TreeExplorer, projects)
+  renderer.draw()
+  event_running = false
 end
 
 return M

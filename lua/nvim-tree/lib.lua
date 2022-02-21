@@ -15,16 +15,11 @@ local M = {
 TreeExplorer = nil
 
 function M.init(foldername)
-  local init_done = false
   TreeExplorer = explorer.Explorer.new(foldername)
-  TreeExplorer:init(function()
-    init_done = true
-    if not first_init_done then
-      events._dispatch_ready()
-      first_init_done = true
-    end
-  end)
-  while not vim.wait(10, function() return init_done end, 10) do end
+  if not first_init_done then
+    events._dispatch_ready()
+    first_init_done = true
+  end
 end
 
 local function get_node_at_line(line)
@@ -80,13 +75,15 @@ end
 
 function M.expand_or_collapse(node)
   node.open = not node.open
-  if node.has_children then node.has_children = false end
-  if #node.nodes == 0 then
-    TreeExplorer:expand(node)
-  else
-    renderer.draw()
+  if node.has_children then
+    node.has_children = false
   end
 
+  if #node.nodes == 0 then
+    TreeExplorer:expand(node)
+  end
+
+  renderer.draw()
   diagnostics.update()
 end
 

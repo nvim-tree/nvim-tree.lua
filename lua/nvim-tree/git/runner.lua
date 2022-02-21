@@ -55,7 +55,8 @@ function Runner:_run_git_job()
   local stdout = uv.new_pipe(false)
   local timer = uv.new_timer()
 
-  local function on_finish(output)
+  local function on_finish()
+    self._done = true
     if timer:is_closing() or stdout:is_closing() or (handle and handle:is_closing()) then
       return
     end
@@ -68,8 +69,6 @@ function Runner:_run_git_job()
     end
 
     pcall(uv.kill, pid)
-
-    self.on_end(output or self.output)
   end
 
   handle, pid = uv.spawn(
@@ -78,7 +77,7 @@ function Runner:_run_git_job()
     vim.schedule_wrap(function() on_finish() end)
   )
 
-  timer:start(self.timeout, 0, vim.schedule_wrap(function() on_finish({}) end))
+  timer:start(self.timeout, 0, vim.schedule_wrap(function() on_finish() end))
 
   local output_leftover = ''
   local function manage_output(err, data)
@@ -89,6 +88,10 @@ function Runner:_run_git_job()
   uv.read_start(stdout, vim.schedule_wrap(manage_output))
 end
 
+function Runner:_wait()
+  while not vim.wait(30, function() return self._done end, 30) do end
+end
+
 -- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
 function Runner.run(opts)
   local self = setmetatable({
@@ -97,10 +100,12 @@ function Runner.run(opts)
     list_ignored = opts.list_ignored,
     timeout = opts.timeout or 400,
     output = {},
-    on_end = opts.on_end,
+    _done = false
   }, Runner)
 
   self:_run_git_job()
+  self:_wait()
+  return self.output
 end
 
 return Runner
