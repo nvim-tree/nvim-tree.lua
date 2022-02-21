@@ -287,6 +287,8 @@ local function setup_autocommands(opts)
 
   if not opts.actions.open_file.quit_on_open then
     vim.cmd "au BufWipeout NvimTree lua require'nvim-tree.view'._prevent_buffer_override()"
+  else
+    vim.cmd "au BufWipeout NvimTree lua require'nvim-tree.view'.abandon_current_window()"
   end
 
   if opts.hijack_directories.enable then
