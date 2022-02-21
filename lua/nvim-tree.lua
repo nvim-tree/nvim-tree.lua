@@ -44,6 +44,25 @@ function M.open(cwd)
   end
 end
 
+function M.open_replacing_current_buffer()
+  if view.is_visible() then
+    return
+  end
+
+  local buf = api.nvim_get_current_buf()
+  local bufname = api.nvim_buf_get_name(buf)
+  if bufname == "" or vim.loop.fs_stat(bufname) == nil then
+    return
+  end
+
+  local cwd = vim.fn.fnamemodify(bufname, ':p:h')
+  if not TreeExplorer or cwd ~= TreeExplorer.cwd then
+    lib.init(cwd)
+  end
+  view.open_in_current_win({ hijack_current_buf = false, resize = false })
+  require"nvim-tree.renderer".draw()
+end
+
 function M.tab_change()
   if view.is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)

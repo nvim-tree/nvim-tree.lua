@@ -154,6 +154,12 @@ function M.fn(mode, filename)
     return
   end
 
+  if mode == "edit_in_place" then
+    vim.cmd("edit " .. vim.fn.fnameescape(filename))
+    require"nvim-tree.view".abandon_current_window()
+    return
+  end
+
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
 

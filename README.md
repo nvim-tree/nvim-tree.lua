@@ -253,6 +253,7 @@ These are the default bindings:
 -- default mappings
 local list = {
   { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
+  { key = "<C-e>",                        action = "edit_in_place" },
   { key = {"O"},                          action = "edit_no_picker" },
   { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
   { key = "<C-v>",                        action = "vsplit" },
@@ -293,9 +294,10 @@ You can toggle the help UI by pressing `g?`.
 
 ## Tips & reminders
 
-1. you can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
-2. you can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
+1. You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
+2. You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
 3. `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree.toggle(false, false)`).
+4. You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
 
 
 ## Screenshots

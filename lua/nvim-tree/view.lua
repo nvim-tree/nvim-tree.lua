@@ -194,12 +194,20 @@ local function set_current_win()
   M.View.tabpages[current_tab] = { winnr = a.nvim_get_current_win() }
 end
 
-function M.open_in_current_win()
-  create_buffer(a.nvim_get_current_buf())
+function M.open_in_current_win(opts)
+  opts = opts or { hijack_current_buf = true, resize = true }
+  create_buffer(opts.hijack_current_buf and a.nvim_get_current_buf())
   set_current_win()
   set_window_options_and_buffer()
-  M.reposition_window()
-  M.resize()
+  if opts.resize then
+    M.reposition_window()
+    M.resize()
+  end
+end
+
+function M.abandon_current_window()
+  local tab = a.nvim_get_current_tabpage()
+  M.View.tabpages[tab] = { winnr = nil }
 end
 
 function M.is_visible(opts)

@@ -8,7 +8,8 @@ local nvim_tree_callback = require'nvim-tree.config'.nvim_tree_callback
 local M = {
   mappings = {
     { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
-    { key = {"O"},                          action = "edit_no_picker" },
+    { key = "<C-e>",                        action = "edit_in_place" },
+    { key = "O",                            action = "edit_no_picker" },
     { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
     { key = "<C-v>",                        action = "vsplit" },
     { key = "<C-x>",                        action = "split"},
@@ -96,9 +97,10 @@ function M.on_keypress(action)
     end
   elseif node.name == ".." then
     return require'nvim-tree.actions.change-dir'.fn("..")
-  elseif action == "cd" and node.nodes ~= nil then
-    return require'nvim-tree.actions.change-dir'.fn(lib.get_last_group_node(node).absolute_path)
   elseif action == "cd" then
+    if node.nodes ~= nil then
+      require'nvim-tree.actions.change-dir'.fn(lib.get_last_group_node(node).absolute_path)
+    end
     return
   end
 
