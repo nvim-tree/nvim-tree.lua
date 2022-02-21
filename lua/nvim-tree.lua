@@ -130,8 +130,10 @@ M.resize = view.resize
 local function should_abort_auto_close()
   local buf = api.nvim_get_current_buf()
   local buftype = api.nvim_buf_get_option(buf, 'ft')
-  local modified = api.nvim_buf_get_option(buf, 'modified')
-  return modified or buftype:match('Telescope') ~= nil
+  local modified = vim.tbl_filter(function(b)
+    return api.nvim_buf_get_option(b, 'modified')
+  end, api.nvim_list_bufs())
+  return #modified > 0 or buftype:match('Telescope') ~= nil
 end
 
 function M.auto_close()
