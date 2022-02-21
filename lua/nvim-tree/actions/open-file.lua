@@ -6,6 +6,17 @@ local view = require'nvim-tree.view'
 
 local M = {
   quit_on_open = false,
+  window_picker = {
+    enable = true,
+    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+    exclude = {
+      filetype = {
+        "notify",
+        "packer",
+        "qf"
+      }
+    }
+  }
 }
 
 local function get_split_cmd()
@@ -22,19 +33,6 @@ local function get_split_cmd()
   return 'top'
 end
 
-local function window_picker_exclude()
-  if type(vim.g.nvim_tree_window_picker_exclude) == "table" then
-    return vim.g.nvim_tree_window_picker_exclude
-  end
-  return {
-    filetype = {
-      "notify",
-      "packer",
-      "qf"
-    }
-  }
-end
-
 ---Get user to pick a window. Selectable windows are all windows in the current
 ---tabpage that aren't NvimTree.
 ---@return integer|nil -- If a valid window was picked, return its id. If an
@@ -44,11 +42,10 @@ local function pick_window()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)
-  local exclude = window_picker_exclude()
 
   local selectable = vim.tbl_filter(function (id)
     local bufid = api.nvim_win_get_buf(id)
-    for option, v in pairs(exclude) do
+    for option, v in pairs(M.window_picker.exclude) do
       local ok, option_value = pcall(api.nvim_buf_get_option, bufid, option)
       if ok and vim.tbl_contains(v, option_value) then
         return false
@@ -65,11 +62,6 @@ local function pick_window()
   if #selectable == 0 then return -1 end
   if #selectable == 1 then return selectable[1] end
 
-  local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-  if vim.g.nvim_tree_window_picker_chars then
-    chars = tostring(vim.g.nvim_tree_window_picker_chars):upper()
-  end
-
   local i = 1
   local win_opts = {}
   local win_map = {}
@@ -78,7 +70,7 @@ local function pick_window()
 
   -- Setup UI
   for _, id in ipairs(selectable) do
-    local char = chars:sub(i, i)
+    local char = M.window_picker.chars:sub(i, i)
     local ok_status, statusline = pcall(api.nvim_win_get_option, id, "statusline")
     local ok_hl, winhl = pcall(api.nvim_win_get_option, id, "winhl")
 
@@ -94,7 +86,7 @@ local function pick_window()
     )
 
     i = i + 1
-    if i > #chars then break end
+    if i > #M.window_picker.chars then break end
   end
 
   vim.cmd("redraw")
@@ -164,7 +156,7 @@ function M.fn(mode, filename)
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
 
   local target_winid
-  if vim.g.nvim_tree_disable_window_picker == 1 or mode == "edit_no_picker" then
+  if not M.window_picker.enable or mode == "edit_no_picker" then
     target_winid = lib.target_winid
   else
     target_winid = pick_window()
@@ -234,6 +226,10 @@ end
 
 function M.setup(opts)
   M.quit_on_open = opts.actions.open_file.quit_on_open
+  if opts.actions.open_file.window_picker.chars then
+    opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
+  end
+  M.window_picker = vim.tbl_extend('force', M.window_picker, opts.actions.open_file.window_picker)
 end
 
 return M

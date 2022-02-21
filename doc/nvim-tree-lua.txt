@@ -135,6 +135,17 @@ function.
         },
         open_file = {
 	  quit_on_open = false,
+	  window_picker = {
+	    enable = true,
+	    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+	    exclude = {
+	      filetype = {
+		"notify",
+		"packer",
+		"qf"
+	      }
+	    }
+	  }
         },
       }
     }
@@ -390,6 +401,25 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
+  - |actions.open_file.window_picker|: window picker configuration
+
+    - |actions.open_file.window_picker.enable|: Enable the feature. If the
+      feature is not enabled, files will open in window from which you
+      last opened the tree.
+	type: `boolean`
+	default: `true`
+
+    - |actions.open_file.window_picker.chars|: A string of chars used as 
+      identifiers by the window picker.
+	type: `string`
+	default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
+
+    - |actions.open_file.window_picker.exclude|: Table of buffer option names
+      mapped to a list of option values taht indicates to the picker that the
+      buffer's window should not be selectable.
+	type: `table`
+	default: `{ filetype = { "packer", "qf", "notify" } }`
+
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
@@ -513,29 +543,6 @@ default table is
       ["README.md"] = true,
       ["readme.md"] = true,
    }
-
-|g:nvim_tree_disable_window_picker|          *g:nvim_tree_disable_window_picker*
-
-Can be 0 or 1. When 1, will disable the window picker. Files will open in the
-window from which you last opened NvimTree.
-
-|g:nvim_tree_window_picker_chars|              *g:nvim_tree_window_picker_chars*
-
-A string of chars used as identifiers by the window picker.
-`"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"` by default.
-
-|g:nvim_tree_window_picker_exclude|          *g:nvim_tree_window_picker_exclude*
-
-Dictionary of buffer option names mapped to a list of option values that
-indicates to the window picker that the buffer's window should not be
-selectable. The default table is
->
-    {
-      filetype = {
-        "packer",
-        "qf"
-      }
-    }
 <
 
 |g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*

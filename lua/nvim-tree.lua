@@ -349,6 +349,11 @@ local DEFAULT_OPTS = {
     },
     open_file = {
       quit_on_open = vim.g.nvim_tree_quit_on_open == 1,
+      window_picker = {
+        enable = vim.g.nvim_tree_disable_window_picker ~= 1,
+        chars = vim.g.nvim_tree_window_picker_chars,
+        exclude = vim.g.nvim_tree_window_picker_exclude,
+      }
     }
   }
 }
