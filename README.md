@@ -285,6 +285,7 @@ local list = {
   { key = "s",                            action = "system_open" },
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
+  { key = "W",                            action = "collapse_all" }
 }
 ```
 
