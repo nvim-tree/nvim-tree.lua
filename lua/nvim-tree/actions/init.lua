@@ -40,6 +40,7 @@ local M = {
     { key = "s",                            action = "system_open" },
     { key = "q",                            action = "close"},
     { key = "g?",                           action = "toggle_help" },
+    { key = 'W',                            action = "collapse_all" },
     { key = "S",                            action = "search_node" }
   },
   custom_keypress_funcs = {},
@@ -48,6 +49,7 @@ local M = {
 local keypress_funcs = {
   close = view.close,
   close_node = require'nvim-tree.actions.movements'.parent_node(true),
+  collapse_all = require'nvim-tree.actions.collapse-all'.fn,
   copy_absolute_path = require'nvim-tree.actions.copy-paste'.copy_absolute_path,
   copy_name = require'nvim-tree.actions.copy-paste'.copy_filename,
   copy_path = require'nvim-tree.actions.copy-paste'.copy_path,

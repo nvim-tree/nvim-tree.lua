@@ -26,7 +26,7 @@ function M.toggle(find_file, no_focus)
   else
     local previous_buf = api.nvim_get_current_buf()
     M.open()
-    if TreeExplorer and (_config.update_focused_file.enable or find_file) then
+    if _config.update_focused_file.enable or find_file then
       M.find_file(false, previous_buf)
     end
     if no_focus then
@@ -200,7 +200,8 @@ function M.on_enter(netrw_disabled)
   end
 
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    lib.init(true, cwd)
+    lib.init(cwd)
+    lib.open()
   end
   M.initialized = true
 end
