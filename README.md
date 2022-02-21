@@ -192,7 +192,7 @@ require'nvim-tree'.setup {
 
 ### Default actions
 
-- `<CR>` or `o` on `..` will cd in the above directory
+- `<CR>` or `o` on the root folder will cd in the above directory
 - `<C-]>` will cd in the directory under the cursor
 - `<BS>` will close current opened directory or parent
 - type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
