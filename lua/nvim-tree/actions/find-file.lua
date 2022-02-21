@@ -1,7 +1,5 @@
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
-local explorer_module = require"nvim-tree.explorer"
-local git = require"nvim-tree.git"
 local renderer = require"nvim-tree.renderer"
 
 local M = {}
@@ -36,15 +34,7 @@ function M.fn(fname)
         if not node.open then
           node.open = true
           tree_altered = true
-        end
-
-        if #node.nodes == 0 then
-          local git_finished = false
-          git.load_project_status(node.absolute_path, function(status)
-            explorer_module.explore(node, status)
-            git_finished = true
-          end)
-          while not vim.wait(10, function() return git_finished end, 10) do end
+          TreeExplorer:expand(node)
         end
 
         if iterate_nodes(node.nodes) ~= nil then

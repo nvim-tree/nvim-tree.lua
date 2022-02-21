@@ -7,32 +7,26 @@ local M = {
   cwd_to_project_root = {}
 }
 
-function M.reload(callback)
-  local num_projects = vim.tbl_count(M.projects)
-  if not M.config.enable or num_projects == 0 then
-    return callback({})
+function M.reload()
+  if not M.config.enable then
+    return {}
   end
 
-  local done = 0
   for project_root in pairs(M.projects) do
     M.projects[project_root] = {}
-    Runner.run {
+    local git_status = Runner.run {
       project_root = project_root,
       list_untracked = git_utils.should_show_untracked(project_root),
       list_ignored = true,
       timeout = M.config.timeout,
-      on_end = function(git_status)
-        M.projects[project_root] = {
-          files = git_status,
-          dirs = git_utils.file_status_to_dir_status(git_status, project_root)
-        }
-        done = done + 1
-        if done == num_projects then
-          callback(M.projects)
-        end
-      end
+    }
+    M.projects[project_root] = {
+      files = git_status,
+      dirs = git_utils.file_status_to_dir_status(git_status, project_root)
     }
   end
+
+  return M.projects
 end
 
 function M.get_project_root(cwd)
@@ -48,35 +42,33 @@ function M.get_project_root(cwd)
   return project_root
 end
 
-function M.load_project_status(cwd, callback)
+function M.load_project_status(cwd)
   if not M.config.enable then
-    return callback({})
+    return {}
   end
 
   local project_root = M.get_project_root(cwd)
   if not project_root then
     M.cwd_to_project_root[cwd] = false
-    return callback({})
+    return {}
   end
 
   local status = M.projects[project_root]
   if status then
-    return callback(status)
+    return status
   end
 
-  Runner.run {
+  local git_status = Runner.run {
     project_root = project_root,
     list_untracked = git_utils.should_show_untracked(project_root),
     list_ignored = true,
-    timeout = M.config.timeout,
-    on_end = function(git_status)
-      M.projects[project_root] = {
-        files = git_status,
-        dirs = git_utils.file_status_to_dir_status(git_status, project_root)
-      }
-      callback(M.projects[project_root])
-    end
+    timeout = M.config.timeout
   }
+  M.projects[project_root] = {
+    files = git_status,
+    dirs = git_utils.file_status_to_dir_status(git_status, project_root)
+  }
+  return M.projects[project_root]
 end
 
 function M.setup(opts)
