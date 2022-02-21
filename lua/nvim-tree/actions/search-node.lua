@@ -1,6 +1,4 @@
 local utils = require'nvim-tree.utils'
-local git = require"nvim-tree.git"
-local renderer = require'nvim-tree.renderer'
 
 local M = {}
 
@@ -28,7 +26,7 @@ function M.fn()
     end
   end
 
-  node = search_node(TreeExplorer.nodes)
+  search_node(TreeExplorer.nodes)
 end
 
 return M
