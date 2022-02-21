@@ -2,8 +2,7 @@ local utils = require'nvim-tree.utils'
 local git = require"nvim-tree.git"
 local renderer = require'nvim-tree.renderer'
 
-local M = {
-}
+local M = {}
 
 function M.fn()
   if not TreeExplorer then return end
