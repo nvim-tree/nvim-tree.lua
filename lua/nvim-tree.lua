@@ -127,7 +127,17 @@ end
 
 M.resize = view.resize
 
-function M.on_leave()
+local function should_abort_auto_close()
+  local buf = api.nvim_get_current_buf()
+  local buftype = api.nvim_buf_get_option(buf, 'ft')
+  return buftype:match('Telescope') ~= nil
+end
+
+function M.auto_close()
+  if should_abort_auto_close() then
+    return
+  end
+
   vim.defer_fn(function()
     if not view.is_visible() then
       return
@@ -270,7 +280,7 @@ local function setup_autocommands(opts)
   vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
 
   if opts.auto_close then
-    vim.cmd "au WinClosed * lua require'nvim-tree'.on_leave()"
+    vim.cmd "au WinClosed * lua require'nvim-tree'.auto_close()"
   end
   if opts.open_on_tab then
     vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
