@@ -599,6 +599,8 @@ INFORMATIONS				        *nvim-tree-info*
 - Double left click acts like '<CR>'
 - Double right click acts like '<C-]>'
 
+- 'W' will collapse the whole tree
+
 Defaults to:
 >
   lua <<EOF
@@ -636,6 +638,7 @@ Defaults to:
       { key = "s",                            action = "system_open" },
       { key = "q",                            action = "close" },
       { key = "g?",                           action = "toggle_help" },
+      { key = 'W',                            action = "collapse_all" }
     }
 <
 The `list` option in `view.mappings.list` is a table of
