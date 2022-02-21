@@ -10,7 +10,10 @@ function M.fn()
   local input_path = vim.fn.input("Search node: ", "", "file")
   utils.clear_prompt()
 
-  local absolute_input_path = TreeExplorer.cwd .. utils.path_separator .. input_path
+  local absolute_input_path = utils.path_join({
+    TreeExplorer.cwd,
+    input_path
+  })
 
   local function search_node(nodes)
     for _, node in ipairs(nodes) do
