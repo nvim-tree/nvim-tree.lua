@@ -147,8 +147,8 @@ function M.fn(mode, filename)
   end
 
   if mode == "edit_in_place" then
-    vim.cmd("edit " .. vim.fn.fnameescape(filename))
     require"nvim-tree.view".abandon_current_window()
+    vim.cmd("edit " .. vim.fn.fnameescape(filename))
     return
   end
 

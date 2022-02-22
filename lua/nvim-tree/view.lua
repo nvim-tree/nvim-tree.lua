@@ -210,6 +210,7 @@ end
 
 function M.abandon_current_window()
   local tab = a.nvim_get_current_tabpage()
+  BUFNR = nil
   M.View.tabpages[tab] = { winnr = nil }
 end
 
