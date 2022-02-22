@@ -358,6 +358,7 @@ local DEFAULT_OPTS = {
   },
   actions = {
     change_dir = {
+      enable = true,
       global = vim.g.nvim_tree_change_dir_global == 1,
     },
     open_file = {
