@@ -15,8 +15,6 @@ function M.fn()
     input_path
   })
 
-  print(absolute_input_path)
-
   local tree_altered = false
 
   local function search_node(nodes)
