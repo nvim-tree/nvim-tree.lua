@@ -34,6 +34,9 @@ function M.fn(fname)
         if not node.open then
           node.open = true
           tree_altered = true
+        end
+
+        if #node.nodes == 0 then
           TreeExplorer:expand(node)
         end
 
