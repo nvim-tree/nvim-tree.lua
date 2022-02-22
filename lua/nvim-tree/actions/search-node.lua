@@ -54,16 +54,17 @@ function M.fn()
   end
 
   local index = search_node(TreeExplorer.nodes)
+  
+  if tree_altered then
+    renderer.draw()
+  end
+  
   if index > 0 and view.is_visible() then
     if TreeExplorer.cwd ~= '/' and not view.View.hide_root_folder then
       index = index + 1
     end
 
     view.set_cursor({index, 0})
-  end
-
-  if tree_altered then
-    renderer.draw()
   end
 end
 
