@@ -18,7 +18,6 @@ function M.fn()
   print(absolute_input_path)
 
   local tree_altered = false
-  local something_found = false
 
   local function search_node(nodes)
     -- first search for absolute match
@@ -51,7 +50,7 @@ function M.fn()
       end
     end
 
-    return 0 
+    return 0
   end
 
   local index = search_node(TreeExplorer.nodes)
@@ -69,4 +68,3 @@ function M.fn()
 end
 
 return M
-
