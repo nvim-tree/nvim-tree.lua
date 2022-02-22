@@ -113,6 +113,7 @@ function.
         height = 30,
         side = 'left',
         auto_resize = false,
+        preserve_window_proportions = false,
         number = false,
         relativenumber = false,
 	signcolumn = "yes",
@@ -332,17 +333,23 @@ Here is a list of the options available in the setup call:
 
   - |view.auto_resize|: auto resize the tree after opening a file
       type: `boolean`
-      default: false
+      default: `false`
+
+  - |view.preserve_window_proportions|: preserve window proportions when
+    opening a file. If `false`, the height and width of windows other than
+    nvim-tree will be equalized.
+      type: `boolean`
+      default: `false`
 
   - |view.number|: print the line number in front of each line.
       type: `boolean`
-      default: false
+      default: `false`
 
   - |view.relativenumber|: show the line number relative to the line with the
     cursor in front of each line. If the option `view.number` is also `true`,
     the number on the cursor line will be the line number instead of `0`.
       type: `boolean`
-      default: false
+      default: `false`
 
   - |view.signcolumn|: show diagnostic sign column. Value can be `"yes"`,
     `"auto"`, `"no"`
@@ -354,11 +361,11 @@ Here is a list of the options available in the setup call:
     - |view.mappings.custom_only|: will use only the provided user mappings and not the default
       otherwise, extends the default mappings with the provided user mappings
         type: `boolean`
-        default: false
+        default: `false`
 
     - |view.mappings.list|: a list of keymaps that will extend or override the default keymaps
         type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
-        default: {}
+        default: `{}`
 
 *nvim-tree.filters*
 |filters|: filtering options

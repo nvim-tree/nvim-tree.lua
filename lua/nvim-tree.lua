@@ -368,7 +368,7 @@ local DEFAULT_OPTS = {
         exclude = vim.g.nvim_tree_window_picker_exclude,
       }
     }
-  }
+  },
 }
 
 local function merge_options(conf)

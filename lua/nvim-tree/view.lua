@@ -179,7 +179,10 @@ function M.resize(size)
   else
     a.nvim_win_set_height(M.get_winnr(), get_size())
   end
-  vim.cmd ":wincmd ="
+
+	if not M.View.preserve_window_proportions then
+		vim.cmd(":wincmd =")
+	end
 end
 
 function M.reposition_window()
@@ -321,6 +324,7 @@ local DEFAULT_CONFIG = {
   height = 30,
   side = 'left',
   auto_resize = false,
+  preserve_window_proportions = false,
   number = false,
   relativenumber = false,
   signcolumn = 'yes'
@@ -333,6 +337,7 @@ function M.setup(opts)
   M.View.height = options.height
   M.View.hide_root_folder = options.hide_root_folder
   M.View.auto_resize = options.auto_resize
+  M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
