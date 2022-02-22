@@ -774,16 +774,19 @@ You can easily implement a toggle using this too:
     end
 <
 - Use the `edit_in_place` action to edit files. It's bound to `<C-e>` by
-default, vinegar uses `-`. You can override this with:
+default, vinegar uses `<CR>`. You can override this with:
 >
     require"nvim-tree".setup {
       view = {
         mappings = {
-          { key = "-", action = "edit_in_place" }
+          { key = "<CR>", action = "edit_in_place" }
         }
       } 
     }
 <
+Going up a dir is bound to `-` by default in nvim-tree which is identical to
+vinegar, no change is needed here.
+
 You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
 A good functionnality to enable is |nvim-tree.hijack_directories|.
 
