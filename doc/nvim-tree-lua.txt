@@ -779,7 +779,9 @@ default, vinegar uses `<CR>`. You can override this with:
     require"nvim-tree".setup {
       view = {
         mappings = {
-          { key = "<CR>", action = "edit_in_place" }
+	  list = {
+	    { key = "<CR>", action = "edit_in_place" }
+	  }
         }
       } 
     }
