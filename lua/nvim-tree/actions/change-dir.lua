@@ -5,6 +5,7 @@ local M = {
   current_tab = a.nvim_get_current_tabpage(),
   options = {
     global = false,
+    change_cwd = true,
   }
 }
 
@@ -23,7 +24,7 @@ function M.fn(name, with_open)
 end
 
 function M.force_dirchange(foldername, with_open)
-  if vim.tbl_isempty(vim.v.event) then
+  if M.options.change_cwd and vim.tbl_isempty(vim.v.event) then
     if M.options.global then
       vim.cmd('cd '..vim.fn.fnameescape(foldername))
     else
@@ -39,6 +40,7 @@ function M.force_dirchange(foldername, with_open)
 end
 
 function M.setup(options)
+  M.options.change_cwd = options.actions.change_dir.enable
   M.options.global = options.actions.change_dir.global
 end
 

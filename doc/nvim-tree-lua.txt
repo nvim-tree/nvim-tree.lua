@@ -132,6 +132,7 @@ function.
       },
       actions = {
         change_dir = {
+          enable = true,
           global = false,
         },
         open_file = {
@@ -396,6 +397,11 @@ Here is a list of the options available in the setup call:
 
 *nvim-tree.actions*
 |actions|: configuration for various actions
+
+  - |actions.change_dir.enable|: change the working directory when changing
+    directories in the tree.
+      type: `boolean`
+      default: `true`
 
   - |actions.change_dir.global|: use `:cd` instead of `:lcd` when changing
     directories. Consider that this might cause issues with
