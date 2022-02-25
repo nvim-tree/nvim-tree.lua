@@ -7,6 +7,7 @@ local M = {}
 function M.fn()
   if not TreeExplorer then return end
 
+  -- ask user for path
   local input_path = vim.fn.input("Search node: ", "", "file")
   utils.clear_prompt()
 
@@ -15,49 +16,74 @@ function M.fn()
     input_path
   })
 
-  local tree_altered = false
-
-  local function search_node(nodes)
-    -- first search for absolute match
-    local index_absolute_match = 0
+  -- goes through the nodes and open nodes and adds the index
+  local function count_visible_nodes(nodes)
+    local visible_nodes = 0
     for _, node in ipairs(nodes) do
-      index_absolute_match = index_absolute_match + 1
+      visible_nodes = visible_nodes + 1
 
-      if absolute_input_path == node.absolute_path then
-        return index_absolute_match
+      if node.open and node.nodes then
+        visible_nodes = visible_nodes + count_visible_nodes(node.nodes)
       end
     end
 
-    -- if no absolute match in current directory, then search for partial match
-    local index_partial_match = 0
-    for _, node in ipairs(nodes) do
-      index_partial_match = index_partial_match + 1
+    return visible_nodes
+  end
 
+  local tree_altered = false
+  local found_something = false
+
+  -- goes through all the nodes and searches the path
+  local function search_node(nodes)
+    local index = 0
+
+    for _, node in ipairs(nodes) do
+      index = index + 1
+
+      -- if paths are equal -> node found
+      if absolute_input_path == node.absolute_path then
+        found_something = true
+        return index
+      end
+
+      -- if node is directory -> go through directory
       if node.nodes then
-        local matches = utils.str_find(absolute_input_path, node.absolute_path)
+        -- check if node matches with path
+        -- append "/" to name, so files do not match with directory-paths
+        -- e.g. user searches for "/foo/bar.txt", than directory "/foo/bar" should not match with filename
+        local matches = utils.str_find(absolute_input_path, node.absolute_path .. '/')
 
         if matches then
+          found_something = true
+
+          -- if node is not open -> open it
           if not node.open then
             node.open = true
             TreeExplorer:expand(node)
             tree_altered = true
           end
 
-          return index_partial_match + search_node(node.nodes)
+          return index + search_node(node.nodes)
         end
+      end
+
+      if node.open then
+        index = index + count_visible_nodes(node.nodes)
       end
     end
 
-    return 0
+    return index;
   end
 
+  -- do search
   local index = search_node(TreeExplorer.nodes)
 
   if tree_altered then
     renderer.draw()
   end
 
-  if index > 0 and view.is_visible() then
+  -- add 1 to index if root folder is visible
+  if found_something and view.is_visible() then
     if TreeExplorer.cwd ~= '/' and not view.View.hide_root_folder then
       index = index + 1
     end
