@@ -223,6 +223,7 @@ require'nvim-tree'.setup {
 - Double right click acts like `<C-]>`
 - `W` will collapse the whole tree
 - `S` will prompt the user to enter a path and then expands the tree to match the path
+- `b` will prompt the user to enter a shel command which is the run inside the focused node (where the cursor is)
 
 ### Settings
 
@@ -287,7 +288,8 @@ local list = {
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
-  { key = "S",                            action = "search_node" }
+  { key = "S",                            action = "search_node" },
+  { key = "b",                            action = "run_shell_command" }
 }
 ```
 
