@@ -106,11 +106,42 @@ function M.sibling(direction)
 end
 
 function M.find_git_item(where)
-  local icon_state = _icons.get_config()
-  local flags = where == 'prev' and 'b' or ''
-  local icons = table.concat(vim.tbl_values(icon_state.icons.git_icons), '\\|')
   return function()
-    return icon_state.show_git_icon and vim.fn.search(icons, flags)
+    local node_cur = lib().get_node_at_cursor()
+    local nodes_by_line = lib().get_nodes_by_line(TreeExplorer.nodes, view.View.hide_root_folder and 1 or 2)
+
+    local cur, first, prev, nex
+    for line, node in pairs(nodes_by_line) do
+      if not first and node.git_status then
+        first = line
+      end
+
+      if node == node_cur then
+        cur = line
+      elseif node.git_status then
+        if not cur then
+          prev = line
+        end
+        if cur and not nex then
+          nex = line
+          break
+        end
+      end
+    end
+
+    if where == 'prev' then
+      if prev then
+        view.set_cursor({prev, 0})
+      end
+    else
+      if cur then
+        if nex then
+          view.set_cursor({nex, 0})
+        end
+      elseif first then
+        view.set_cursor({first, 0})
+      end
+    end
   end
 end
 
