@@ -26,7 +26,6 @@ local out_config = {
 }
 
 local function migrate_window_picker(opts)
-  require'amc'.log("migrate_window_picker")
   if vim.g.nvim_tree_disable_window_picker then
     if opts.actions.open_file.window_picker.enable then
       opts.actions.open_file.window_picker.enable = vim.g.nvim_tree_disable_window_picker ~= 1
