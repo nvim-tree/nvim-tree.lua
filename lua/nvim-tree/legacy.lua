@@ -26,6 +26,7 @@ local out_config = {
 }
 
 local function migrate_window_picker(opts)
+  require'amc'.log("migrate_window_picker")
   if vim.g.nvim_tree_disable_window_picker then
     if opts.actions.open_file.window_picker.enable then
       opts.actions.open_file.window_picker.enable = vim.g.nvim_tree_disable_window_picker ~= 1
@@ -51,14 +52,13 @@ function M.migrate_legacy_options(opts)
   end, out_config)
 
   if #x > 0 then
-    for _, opt in ipairs(x) do
-      if opt == 'nvim_tree_disable_window_picker' or opt == 'nvim_tree_window_picker_chars' or opt == 'nvim_tree_window_picker_exclude' then
-        migrate_window_picker(opts)
-      end
+    local legacy_opts = table.concat(x, ", ")
+    if string.find(legacy_opts, "window_picker") then
+      migrate_window_picker(opts)
     end
 
     local msg = "Following options were moved to setup, see git.io/JPhyt: "
-    require'nvim-tree.utils'.warn(msg..table.concat(x, ", "))
+    require'nvim-tree.utils'.warn(msg..legacy_opts)
   end
 end
 
