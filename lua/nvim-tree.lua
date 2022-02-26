@@ -7,6 +7,7 @@ local renderer = require'nvim-tree.renderer'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
 local change_dir = require'nvim-tree.actions.change-dir'
+local legacy = require'nvim-tree.legacy'
 
 local _config = {}
 
@@ -383,6 +384,8 @@ end
 function M.setup(conf)
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
+
+  legacy.migrate_legacy_options(opts)
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
