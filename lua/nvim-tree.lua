@@ -349,7 +349,7 @@ local DEFAULT_OPTS = {
   },
   filters = {
     dotfiles = false,
-    custom_filter = {},
+    custom = {},
     exclude = {}
   },
   git = {
@@ -365,9 +365,7 @@ local DEFAULT_OPTS = {
     open_file = {
       quit_on_open = vim.g.nvim_tree_quit_on_open == 1,
       window_picker = {
-        enable = vim.g.nvim_tree_disable_window_picker ~= 1,
-        chars = vim.g.nvim_tree_window_picker_chars,
-        exclude = vim.g.nvim_tree_window_picker_exclude,
+        enable = true,
       }
     }
   },
@@ -385,7 +383,7 @@ function M.setup(conf)
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
-  legacy.migrate_legacy_options(opts)
+  legacy.migrate_legacy_options(opts, DEFAULT_OPTS)
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
