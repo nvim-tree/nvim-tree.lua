@@ -436,18 +436,6 @@ Here is a list of the options available in the setup call:
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
 
-|g:nvim_tree_width|				*g:nvim_tree_width*
-
-width of the window, can be *width_in_columns* or *'width_in_percent%'*
->
-    let g:nvim_tree_width = 30 " indicates width of 30 columns
-    let g:nvim_tree_width = '30%' " indicates width of 30% of '&columns'
-
-|g:nvim_tree_side|				*g:nvim_tree_side*
-
-where the window will open (default to 'left')
-- 'left' or 'right'
-
 |g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
 
 Dictionary, if your terminal or font doesn't support certain unicode
