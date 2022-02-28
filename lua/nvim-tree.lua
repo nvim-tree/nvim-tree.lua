@@ -380,10 +380,10 @@ local function merge_options(conf)
 end
 
 function M.setup(conf)
+  legacy.migrate_legacy_options(conf)
+
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
-
-  legacy.migrate_legacy_options(opts, DEFAULT_OPTS)
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
