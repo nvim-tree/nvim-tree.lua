@@ -22,21 +22,23 @@ function M.init(foldername)
   end
 end
 
-local function get_node_at_line(line)
-  local index = view.View.hide_root_folder and 1 or 2
+function M.get_nodes_by_line(nodes_all, line_start)
+  local nodes_by_line = {}
+  local line = line_start
   local function iter(nodes)
     for _, node in ipairs(nodes) do
-      if index == line then
-        return node
-      end
-      index = index + 1
+      nodes_by_line[line] = node
+      line = line + 1
       if node.open == true then
         local child = iter(node.nodes)
-        if child ~= nil then return child end
+        if child ~= nil then
+          return child
+        end
       end
     end
   end
-  return iter
+  iter(nodes_all)
+  return nodes_by_line
 end
 
 function M.get_node_at_cursor()
@@ -50,7 +52,7 @@ function M.get_node_at_cursor()
   local line = cursor[1]
   if view.is_help_ui() then
     local help_lines = require'nvim-tree.renderer.help'.compute_lines()
-    local help_text = get_node_at_line(line+1)(help_lines)
+    local help_text = M.get_nodes_by_line(help_lines, 1)[line]
     return {name = help_text}
   else
     if line == 1 and TreeExplorer.cwd ~= "/" and not hide_root_folder then
@@ -60,7 +62,7 @@ function M.get_node_at_cursor()
     if TreeExplorer.cwd == "/" then
       line = line + 1
     end
-    return get_node_at_line(line)(TreeExplorer.nodes)
+    return M.get_nodes_by_line(TreeExplorer.nodes, view.View.hide_root_folder and 1 or 2)[line]
   end
 end
 
