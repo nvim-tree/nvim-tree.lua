@@ -75,7 +75,7 @@ local migrations = {
     end
   end,
 
-  nvim_tree_lsp_diagnostics = function(o)
+  nvim_tree_lsp_diagnostics = function(_)
     -- option no longer exists
   end,
 
