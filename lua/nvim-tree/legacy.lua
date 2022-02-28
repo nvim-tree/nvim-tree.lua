@@ -4,6 +4,7 @@ local M = {}
 
 -- TODO update git.io/JPhyt when adding a migration
 
+-- migrate the g: to o if the user has not specified that when calling setup
 local migrations = {
   nvim_tree_disable_netrw = function(o)
     if o.disable_netrw == nil then
@@ -75,8 +76,14 @@ local migrations = {
     end
   end,
 
-  nvim_tree_lsp_diagnostics = function(_)
-    -- option no longer exists
+  nvim_tree_lsp_diagnostics = function(o)
+    utils.table_create_missing(o, "diagnostics")
+    if o.diagnostics.enable == nil then
+      o.diagnostics.enable = vim.g.nvim_tree_lsp_diagnostics ~= 0
+      if o.diagnostics.show_on_dirs == nil then
+        o.diagnostics.show_on_dirs = vim.g.nvim_tree_lsp_diagnostics ~= 0
+      end
+    end
   end,
 
   nvim_tree_auto_resize = function(o)
