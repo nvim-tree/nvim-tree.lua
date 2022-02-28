@@ -141,11 +141,8 @@ function.
 	    enable = true,
 	    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
 	    exclude = {
-	      filetype = {
-		"notify",
-		"packer",
-		"qf"
-	      }
+	      filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },
+	      buftype  = { "nofile", "terminal", "help", },
 	    }
 	  }
         },
@@ -428,10 +425,13 @@ Here is a list of the options available in the setup call:
 	default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
 
     - |actions.open_file.window_picker.exclude|: Table of buffer option names
-      mapped to a list of option values taht indicates to the picker that the
+      mapped to a list of option values that indicates to the picker that the
       buffer's window should not be selectable.
 	type: `table`
-	default: `{ filetype = { "packer", "qf", "notify" } }`
+	default: `{`
+			`filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
+			`buftype  = { "nofile", "terminal", "help", }`
+		`}`
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
