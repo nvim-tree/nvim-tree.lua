@@ -10,11 +10,8 @@ local M = {
     enable = true,
     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
     exclude = {
-      filetype = {
-        "notify",
-        "packer",
-        "qf"
-      }
+      filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },
+      buftype  = { "nofile", "terminal", "help", },
     }
   }
 }
