@@ -324,7 +324,6 @@ local DEFAULT_CONFIG = {
   width = 30,
   height = 30,
   side = 'left',
-  auto_resize = false,
   preserve_window_proportions = false,
   number = false,
   relativenumber = false,
@@ -337,7 +336,6 @@ function M.setup(opts)
   M.View.width = options.width
   M.View.height = options.height
   M.View.hide_root_folder = options.hide_root_folder
-  M.View.auto_resize = options.auto_resize
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber

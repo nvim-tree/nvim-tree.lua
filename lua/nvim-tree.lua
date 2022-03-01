@@ -380,6 +380,7 @@ local DEFAULT_OPTS = {
     },
     open_file = {
       quit_on_open = vim.g.nvim_tree_quit_on_open == 1,
+      resize_window = false,
       window_picker = {
         enable = true,
       }

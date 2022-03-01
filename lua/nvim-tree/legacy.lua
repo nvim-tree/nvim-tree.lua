@@ -87,9 +87,9 @@ local migrations = {
   end,
 
   nvim_tree_auto_resize = function(o)
-    utils.table_create_missing(o, "view")
-    if o.view.auto_resize == nil then
-      o.view.auto_resize = vim.g.nvim_tree_auto_resize ~= 0
+    utils.table_create_missing(o, "actions.open_file")
+    if o.actions.open_file.resize_window == nil then
+      o.actions.open_file.resize_window = vim.g.nvim_tree_auto_resize ~= 0
     end
   end,
 

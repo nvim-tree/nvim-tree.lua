@@ -151,7 +151,6 @@ require'nvim-tree'.setup {
     height = 30,
     hide_root_folder = false,
     side = 'left',
-    auto_resize = false,
     preserve_window_proportions = false,
     mappings = {
       custom_only = false,
@@ -172,6 +171,7 @@ require'nvim-tree'.setup {
     },
     open_file = {
       quit_on_open = false,
+      resize_window = false,
       window_picker = {
         enable = true,
         chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",

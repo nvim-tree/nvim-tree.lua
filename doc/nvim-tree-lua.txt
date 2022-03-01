@@ -113,7 +113,6 @@ function.
         width = 30,
         height = 30,
         side = 'left',
-        auto_resize = false,
         preserve_window_proportions = false,
         number = false,
         relativenumber = false,
@@ -138,6 +137,7 @@ function.
         },
         open_file = {
 	  quit_on_open = false,
+	  resize_window = false,
 	  window_picker = {
 	    enable = true,
 	    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
@@ -336,10 +336,6 @@ Here is a list of the options available in the setup call:
       type: `string`
       default: 'left'
 
-  - |view.auto_resize|: auto resize the tree after opening a file
-      type: `boolean`
-      default: `false`
-
   - |view.preserve_window_proportions|: preserve window proportions when
     opening a file. If `false`, the height and width of windows other than
     nvim-tree will be equalized.
@@ -415,6 +411,10 @@ Here is a list of the options available in the setup call:
 
   - |actions.open_file.quit_on_open|: closes the explorer when opening a file.
     It will also disable preventing a buffer overriding the tree.
+      type: `boolean`
+      default: `false`
+
+  - |actions.open_file.resize_window|: resizes the tree when opening a file
       type: `boolean`
       default: `false`
 
