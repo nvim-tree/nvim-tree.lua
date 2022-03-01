@@ -223,7 +223,6 @@ function M.on_enter(netrw_disabled)
   local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
 
-  -- evaluate open_on_setup configs
   local should_open = false
   local should_focus_other_window = false
   if _config.open_on_setup and not should_be_preserved then
