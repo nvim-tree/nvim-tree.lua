@@ -67,7 +67,7 @@ function M.fn()
       end
     end
 
-    return index;
+    return index
   end
 
   local index = search_node(TreeExplorer.nodes)
