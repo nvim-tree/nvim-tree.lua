@@ -223,7 +223,18 @@ function M.on_enter(netrw_disabled)
   local buf_is_dir = is_dir and netrw_disabled
   local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
-  local should_open = _config.open_on_setup and not should_be_preserved and (buf_is_dir or buf_is_empty)
+
+  local should_open = false
+  local should_focus_other_window = false
+  if _config.open_on_setup and not should_be_preserved then
+    if buf_is_dir or buf_is_empty then
+      should_open = true
+    elseif _config.ignore_buffer_on_setup then
+      should_open = true
+      should_focus_other_window = true
+    end
+  end
+
   local should_hijack = _config.hijack_directories.enable and _config.hijack_directories.auto_open and is_dir and not should_be_preserved
 
   -- Session that left a NvimTree Buffer opened, reopen with it
@@ -235,6 +246,10 @@ function M.on_enter(netrw_disabled)
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
     lib.init(cwd)
     lib.open()
+
+    if should_focus_other_window then
+      vim.cmd("noautocmd wincmd p")
+    end
   end
   M.initialized = true
 end
@@ -316,6 +331,7 @@ local DEFAULT_OPTS = {
   disable_netrw        = false,
   hijack_netrw         = true,
   open_on_setup        = false,
+  ignore_buffer_on_setup = false,
   open_on_tab          = false,
   hijack_directories   = {
     enable = true,
@@ -387,6 +403,7 @@ function M.setup(conf)
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
+  _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled

@@ -74,6 +74,7 @@ function.
       disable_netrw        = false,
       hijack_netrw         = true,
       open_on_setup        = false,
+      ignore_buffer_on_setup = false,
       ignore_ft_on_setup   = {},
       hijack_directories   = {
         enable = true,
@@ -168,6 +169,12 @@ Here is a list of the options available in the setup call:
 *nvim-tree.open_on_setup*
 - |open_on_setup|: will automatically open the tree when running setup if current
   buffer is a directory, is empty or is unnamed.
+  type: `boolean`
+  default: `false`
+
+*nvim-tree.ignore_buffer_on_setup*
+- |ignore_buffer_on_setup|: will ignore the buffer, when deciding to open the tree
+  on setup
   type: `boolean`
   default: `false`
 
