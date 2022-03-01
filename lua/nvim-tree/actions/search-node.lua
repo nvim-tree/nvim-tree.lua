@@ -43,8 +43,6 @@ function M.fn()
       end
 
       if node.nodes then
-        -- check if node matches with path
-        -- append "/" to name, so files do not match with directory-paths
         -- e.g. user searches for "/foo/bar.txt", than directory "/foo/bar" should not match with filename
         local matches = utils.str_find(absolute_input_path, node.absolute_path .. '/')
 
