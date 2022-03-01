@@ -328,21 +328,21 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = {
-  disable_netrw        = false,
-  hijack_netrw         = true,
-  open_on_setup        = false,
+  auto_close = false,
+  auto_reload_on_write = true,
+  disable_netrw = false,
+  hide_root_folder = false,
+  hijack_cursor = false,
+  hijack_netrw = true,
+  hijack_unnamed_buffer_when_opening = false,
   ignore_buffer_on_setup = false,
-  open_on_tab          = false,
-  hijack_directories   = {
+  open_on_setup = false,
+  open_on_tab = false,
+  update_cwd = false,
+  hijack_directories = {
     enable = true,
     auto_open = true,
   },
-  auto_close           = false,
-  auto_reload_on_write = true,
-  hijack_cursor        = false,
-  update_cwd           = false,
-  hide_root_folder     = false,
-  hijack_unnamed_buffer_when_opening = false,
   update_focused_file  = {
     enable = false,
     update_cwd = false,
@@ -376,10 +376,10 @@ local DEFAULT_OPTS = {
   actions = {
     change_dir = {
       enable = true,
-      global = vim.g.nvim_tree_change_dir_global == 1,
+      global = false,
     },
     open_file = {
-      quit_on_open = vim.g.nvim_tree_quit_on_open == 1,
+      quit_on_open = false,
       resize_window = false,
       window_picker = {
         enable = true,

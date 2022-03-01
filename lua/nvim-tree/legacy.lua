@@ -161,6 +161,20 @@ local migrations = {
       o.actions.open_file.window_picker.exclude = vim.g.nvim_tree_window_picker_exclude
     end
   end,
+
+  nvim_tree_quit_on_open = function(o)
+    utils.table_create_missing(o, "actions.open_file")
+    if o.actions.open_file.quit_on_open == nil then
+      o.actions.open_file.quit_on_open = vim.g.nvim_tree_quit_on_open == 1
+    end
+  end,
+
+  nvim_tree_change_dir_global = function(o)
+    utils.table_create_missing(o, "actions.change_dir")
+    if o.actions.change_dir.global == nil then
+      o.actions.change_dir.global = vim.g.nvim_tree_change_dir_global == 1
+    end
+  end,
 }
 
 function M.migrate_legacy_options(opts)
