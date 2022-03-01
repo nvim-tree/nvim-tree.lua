@@ -7,7 +7,6 @@ local M = {}
 function M.fn()
   if not TreeExplorer then return end
 
-  -- ask user for path
   local input_path = vim.fn.input("Search node: ", "", "file")
   utils.clear_prompt()
 
@@ -16,7 +15,6 @@ function M.fn()
     input_path
   })
 
-  -- goes through the nodes and open nodes and adds the index
   local function count_visible_nodes(nodes)
     local visible_nodes = 0
     for _, node in ipairs(nodes) do
@@ -33,20 +31,17 @@ function M.fn()
   local tree_altered = false
   local found_something = false
 
-  -- goes through all the nodes and searches the path
   local function search_node(nodes)
     local index = 0
 
     for _, node in ipairs(nodes) do
       index = index + 1
 
-      -- if paths are equal -> node found
       if absolute_input_path == node.absolute_path then
         found_something = true
         return index
       end
 
-      -- if node is directory -> go through directory
       if node.nodes then
         -- check if node matches with path
         -- append "/" to name, so files do not match with directory-paths
@@ -75,14 +70,12 @@ function M.fn()
     return index;
   end
 
-  -- do search
   local index = search_node(TreeExplorer.nodes)
 
   if tree_altered then
     renderer.draw()
   end
 
-  -- add 1 to index if root folder is visible
   if found_something and view.is_visible() then
     if TreeExplorer.cwd ~= '/' and not view.View.hide_root_folder then
       index = index + 1
