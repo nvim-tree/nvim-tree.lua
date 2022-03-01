@@ -14,7 +14,7 @@ local M = {}
 
 function M.focus()
   M.open()
-  view.focus();
+  view.focus()
 end
 
 ---@deprecated
