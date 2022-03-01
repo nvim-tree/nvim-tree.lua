@@ -305,7 +305,7 @@ local function setup_autocommands(opts)
     vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
   end
   if opts.hijack_cursor then
-    vim.cmd "au CursorMoved NvimTree lua require'nvim-tree'.place_cursor_on_node()"
+    vim.cmd "au CursorMoved NvimTree_* lua require'nvim-tree'.place_cursor_on_node()"
   end
   if opts.update_cwd then
     vim.cmd "au DirChanged * lua require'nvim-tree'.change_dir(vim.loop.cwd())"
@@ -315,9 +315,9 @@ local function setup_autocommands(opts)
   end
 
   if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWipeout NvimTree lua require'nvim-tree.view'._prevent_buffer_override()"
+    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'._prevent_buffer_override()"
   else
-    vim.cmd "au BufWipeout NvimTree lua require'nvim-tree.view'.abandon_current_window()"
+    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'.abandon_current_window()"
   end
 
   if opts.hijack_directories.enable then

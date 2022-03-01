@@ -33,7 +33,7 @@ M.View = {
   },
 }
 
-local BUFNR = nil
+local BUFNR_PER_TAB = {}
 local LAST_FOCUSED_WIN = nil
 local BUFFER_OPTIONS = {
   swapfile = false,
@@ -44,24 +44,34 @@ local BUFFER_OPTIONS = {
   buflisted = false,
 }
 
+local function matches_bufnr(bufnr)
+  for _, b in pairs(BUFNR_PER_TAB) do
+    if b == bufnr then
+      return true
+    end
+  end
+  return false
+end
+
 local function wipe_rogue_buffer()
   for _, bufnr in ipairs(a.nvim_list_bufs()) do
-    if bufnr ~= BUFNR and a.nvim_buf_get_name(bufnr):match("NvimTree") ~= nil then
+    if not matches_bufnr(bufnr) and a.nvim_buf_get_name(bufnr):match("NvimTree") ~= nil then
       return pcall(a.nvim_buf_delete, bufnr, { force = true })
     end
   end
 end
 
 local function create_buffer(bufnr)
-  BUFNR = bufnr or a.nvim_create_buf(false, false)
+  local tab = a.nvim_get_current_tabpage()
+  BUFNR_PER_TAB[tab] = bufnr or a.nvim_create_buf(false, false)
   wipe_rogue_buffer()
-  a.nvim_buf_set_name(BUFNR, 'NvimTree')
+  a.nvim_buf_set_name(M.get_bufnr(), 'NvimTree_'..tab)
 
   for option, value in pairs(BUFFER_OPTIONS) do
-    vim.bo[BUFNR][option] = value
+    vim.bo[M.get_bufnr()][option] = value
   end
 
-  require'nvim-tree.actions'.apply_mappings(BUFNR)
+  require'nvim-tree.actions'.apply_mappings(M.get_bufnr())
 end
 
 local function get_size()
@@ -106,7 +116,7 @@ local function open_window()
 end
 
 local function set_window_options_and_buffer()
-  pcall(vim.cmd, "buffer "..BUFNR)
+  pcall(vim.cmd, "buffer "..M.get_bufnr())
   for k, v in pairs(M.View.winopts) do
     set_local(k, v)
   end
@@ -210,7 +220,7 @@ end
 
 function M.abandon_current_window()
   local tab = a.nvim_get_current_tabpage()
-  BUFNR = nil
+  BUFNR_PER_TAB[tab] = nil
   M.View.tabpages[tab] = { winnr = nil }
 end
 
@@ -267,7 +277,7 @@ end
 --- Returns the current nvim tree bufnr
 ---@return number
 function M.get_bufnr()
-  return BUFNR
+  return BUFNR_PER_TAB[a.nvim_get_current_tabpage()]
 end
 
 --- Checks if nvim-tree is displaying the help ui within the tabpage specified

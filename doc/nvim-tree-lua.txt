@@ -60,7 +60,7 @@ Print clipboard content for both cut and copy
 
 |:NvimTreeResize|			          *:NvimTreeResize*
 
-Resize the NvimTree window to the given size. Example: `:NvimTreeresize 50`
+Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
 resizes the window to the width of 50.
 
 ==============================================================================
