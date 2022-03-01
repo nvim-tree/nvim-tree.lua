@@ -226,6 +226,7 @@ end
 
 function M.setup(opts)
   M.quit_on_open = opts.actions.open_file.quit_on_open
+  M.resize_window = opts.actions.open_file.resize_window
   if opts.actions.open_file.window_picker.chars then
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end
