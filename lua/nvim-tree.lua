@@ -226,12 +226,12 @@ function M.on_enter(netrw_disabled)
   local should_open = false
   local should_focus_other_window = false
   if _config.open_on_setup and not should_be_preserved then
-      if buf_is_dir or buf_is_empty then
-        should_open = true
-      elseif _config.ignore_buffer_on_setup then
-        should_open = true
-        should_focus_other_window = true
-      end
+    if buf_is_dir or buf_is_empty then
+      should_open = true
+    elseif _config.ignore_buffer_on_setup then
+      should_open = true
+      should_focus_other_window = true
+    end
   end
 
   local should_hijack = _config.hijack_directories.enable and _config.hijack_directories.auto_open and is_dir and not should_be_preserved
