@@ -55,7 +55,7 @@ function M.show_file_info()
 
   vim.cmd [[
     augroup NvimTreeRemoveFilePopup
-      au CursorMoved * lua require'nvim-tree.file-popup'.close_popup()
+      au CursorMoved * lua require'nvim-tree.actions.file-popup'.close_popup()
     augroup END
   ]]
 end
