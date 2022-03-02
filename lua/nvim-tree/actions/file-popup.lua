@@ -20,7 +20,7 @@ local function get_formatted_lines(cwd)
   }
 end
 
-local winnr
+local winnr = nil
 
 local function setup_window(lines)
   local max_width = vim.fn.max(vim.tbl_map(function(n) return #n end, lines))
@@ -40,11 +40,17 @@ local function setup_window(lines)
 end
 
 function M.close_popup()
-  a.nvim_win_close(winnr, { force = true })
-  vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
+  if winnr ~= nil then
+    a.nvim_win_close(winnr, { force = true })
+    vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
+
+    winnr = nil
+  end
 end
 
 function M.show_file_info()
+  M.close_popup()
+
   local node = require'nvim-tree.lib'.get_node_at_cursor()
   if not node or not node.absolute_path then
     return
