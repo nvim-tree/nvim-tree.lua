@@ -338,6 +338,7 @@ local DEFAULT_OPTS = {
   ignore_buffer_on_setup = false,
   open_on_setup = false,
   open_on_tab = false,
+  sort_by = "name",
   update_cwd = false,
   hijack_directories = {
     enable = true,

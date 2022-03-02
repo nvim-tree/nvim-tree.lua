@@ -5,6 +5,16 @@ local M = {
   is_windows = vim.fn.has('win32') == 1
 }
 
+local function get_last_modified(absolute_path)
+  local stat = uv.fs_stat(absolute_path)
+
+  local last_modified = 0
+  if stat ~= nil then
+    last_modified = stat.mtime.sec
+  end
+  return last_modified
+end
+
 function M.get_dir_git_status(parent_ignored, status, absolute_path)
   if parent_ignored then
     return '!!'
@@ -30,6 +40,7 @@ function M.folder(absolute_path, name, status, parent_ignored)
     name = name,
     nodes = {},
     open = false,
+    last_modified = get_last_modified(absolute_path),
   }
 end
 
@@ -49,6 +60,7 @@ function M.file(absolute_path, name, status, parent_ignored)
     extension = ext,
     git_status = M.get_git_status(parent_ignored, status, absolute_path),
     name = name,
+    last_modified = get_last_modified(absolute_path),
   }
 end
 
@@ -60,23 +72,17 @@ end
 function M.link(absolute_path, name, status, parent_ignored)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local link_to = uv.fs_realpath(absolute_path)
-  local stat = uv.fs_stat(absolute_path)
   local open, nodes
   if (link_to ~= nil) and uv.fs_stat(link_to).type == 'directory' then
     open = false
     nodes = {}
   end
 
-  local last_modified = 0
-  if stat ~= nil then
-    last_modified = stat.mtime.sec
-  end
-
   return {
     absolute_path = absolute_path,
     git_status = M.get_git_status(parent_ignored, status, absolute_path),
     group_next = nil,   -- If node is grouped, this points to the next child dir/link node
-    last_modified = last_modified,
+    last_modified = get_last_modified(absolute_path),
     link_to = link_to,
     name = name,
     nodes = nodes,
