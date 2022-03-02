@@ -8,6 +8,10 @@ function Runner:_parse_status_output(line)
   local status = line:sub(1, 2)
   -- removing `"` when git is returning special file status containing spaces
   local path = line:sub(4, -2):gsub('^"', ''):gsub('"$', '')
+  -- replacing slashes if on windows
+  if vim.fn.has('win32') == 1 then
+    path = path:gsub('/', '\\')
+  end
   if #status > 0 and #path > 0 then
     self.output[utils.path_remove_trailing(utils.path_join({self.project_root,path}))] = status
   end
@@ -38,9 +42,9 @@ end
 
 function Runner:_getopts(stdout_handle)
   local untracked = self.list_untracked and '-u' or nil
-  local ignored = self.list_ignored and '--ignored=matching' or '--ignored=no'
+  local ignored = (self.list_untracked and self.list_ignored) and '--ignored=matching' or '--ignored=no'
   return {
-    args = {"status", "--porcelain=v1", ignored, untracked},
+    args = {"--no-optional-locks", "status", "--porcelain=v1", ignored, untracked},
     cwd = self.project_root,
     stdio = { nil, stdout_handle, nil },
   }
@@ -51,18 +55,20 @@ function Runner:_run_git_job()
   local stdout = uv.new_pipe(false)
   local timer = uv.new_timer()
 
-  local function on_finish(output)
-    if timer:is_closing() or stdout:is_closing() or handle:is_closing() then
+  local function on_finish()
+    self._done = true
+    if timer:is_closing() or stdout:is_closing() or (handle and handle:is_closing()) then
       return
     end
     timer:stop()
     timer:close()
     stdout:read_stop()
     stdout:close()
-    handle:close()
-    pcall(uv.kill, pid)
+    if handle then
+      handle:close()
+    end
 
-    self.on_end(output or self.output)
+    pcall(uv.kill, pid)
   end
 
   handle, pid = uv.spawn(
@@ -71,7 +77,7 @@ function Runner:_run_git_job()
     vim.schedule_wrap(function() on_finish() end)
   )
 
-  timer:start(self.timeout, 0, vim.schedule_wrap(function() on_finish({}) end))
+  timer:start(self.timeout, 0, vim.schedule_wrap(function() on_finish() end))
 
   local output_leftover = ''
   local function manage_output(err, data)
@@ -82,6 +88,10 @@ function Runner:_run_git_job()
   uv.read_start(stdout, vim.schedule_wrap(manage_output))
 end
 
+function Runner:_wait()
+  while not vim.wait(30, function() return self._done end, 30) do end
+end
+
 -- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
 function Runner.run(opts)
   local self = setmetatable({
@@ -90,10 +100,12 @@ function Runner.run(opts)
     list_ignored = opts.list_ignored,
     timeout = opts.timeout or 400,
     output = {},
-    on_end = opts.on_end,
+    _done = false
   }, Runner)
 
   self:_run_git_job()
+  self:_wait()
+  return self.output
 end
 
 return Runner

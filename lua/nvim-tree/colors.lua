@@ -1,5 +1,5 @@
 local api = vim.api
-local config = require'nvim-tree.config'
+local icons = require'nvim-tree.renderer.icons'
 
 local M = {}
 
@@ -7,7 +7,7 @@ local function get_color_from_hl(hl_name, fallback)
   local id = vim.api.nvim_get_hl_id_by_name(hl_name)
   if not id then return fallback end
 
-  local foreground = vim.fn.synIDattr(id, "fg")
+  local foreground = vim.fn.synIDattr(vim.fn.synIDtrans(id), "fg")
   if not foreground or foreground == "" then return fallback end
 
   return foreground
@@ -77,7 +77,7 @@ local function get_links()
 end
 
 function M.setup()
-  if config.get_icon_state().show_file_icon and config.get_icon_state().has_devicons then
+  if icons.get_config().show_file_icon and icons.get_config().has_devicons then
     require'nvim-web-devicons'.setup()
   end
   local higlight_groups = get_hl_groups()

@@ -35,15 +35,15 @@ function M.file_status_to_dir_status(status, cwd)
   for p, s in pairs(status) do
     if s ~= '!!' then
       local modified = vim.fn.fnamemodify(p, ':h')
-      dirs[modified] = 'dirty'
+      dirs[modified] = s
     end
   end
 
-  for dirname, _ in pairs(dirs) do
+  for dirname, s in pairs(dirs) do
     local modified = dirname
     while modified ~= cwd and modified ~= '/' do
       modified = vim.fn.fnamemodify(modified, ':h')
-      dirs[modified] = 'dirty'
+      dirs[modified] = s
     end
   end
 
