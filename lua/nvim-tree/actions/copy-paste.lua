@@ -147,8 +147,8 @@ function M.print_clipboard()
 end
 
 local function copy_to_clipboard(content)
-  vim.fn.setreg('+', content);
-  vim.fn.setreg('"', content);
+  vim.fn.setreg('+', content)
+  vim.fn.setreg('"', content)
   return a.nvim_out_write(string.format('Copied %s to system clipboard! \n', content))
 end
 

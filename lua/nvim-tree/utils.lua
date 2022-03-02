@@ -225,4 +225,24 @@ function M.canonical_path(path)
   return path
 end
 
+-- Create empty sub-tables if not present
+-- @param tbl to create empty inside of
+-- @param sub dot separated string of sub-tables
+-- @return deepest sub-table
+function M.table_create_missing(tbl, sub)
+  if tbl == nil then
+    return nil
+  end
+
+  local t = tbl
+  for s in string.gmatch(sub, "([^%.]+)%.*") do
+    if t[s] == nil then
+      t[s] = {}
+    end
+    t = t[s]
+  end
+
+  return t
+end
+
 return M

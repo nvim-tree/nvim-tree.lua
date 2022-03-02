@@ -6,6 +6,7 @@ local view = require'nvim-tree.view'
 
 local M = {
   quit_on_open = false,
+  resize_window = false,
   window_picker = {
     enable = true,
     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
@@ -208,7 +209,9 @@ function M.fn(mode, filename)
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
     pcall(vim.cmd, cmd)
-    view.resize()
+    if M.resize_window then
+      view.resize()
+    end
   end
 
   if mode == "preview" then
@@ -223,6 +226,7 @@ end
 
 function M.setup(opts)
   M.quit_on_open = opts.actions.open_file.quit_on_open
+  M.resize_window = opts.actions.open_file.resize_window
   if opts.actions.open_file.window_picker.chars then
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end

@@ -60,7 +60,7 @@ Print clipboard content for both cut and copy
 
 |:NvimTreeResize|			          *:NvimTreeResize*
 
-Resize the NvimTree window to the given size. Example: `:NvimTreeresize 50`
+Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
 resizes the window to the width of 50.
 
 ==============================================================================
@@ -74,6 +74,7 @@ function.
       disable_netrw        = false,
       hijack_netrw         = true,
       open_on_setup        = false,
+      ignore_buffer_on_setup = false,
       ignore_ft_on_setup   = {},
       hijack_directories   = {
         enable = true,
@@ -112,7 +113,6 @@ function.
         width = 30,
         height = 30,
         side = 'left',
-        auto_resize = false,
         preserve_window_proportions = false,
         number = false,
         relativenumber = false,
@@ -137,6 +137,7 @@ function.
         },
         open_file = {
 	  quit_on_open = false,
+	  resize_window = false,
 	  window_picker = {
 	    enable = true,
 	    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
@@ -168,6 +169,12 @@ Here is a list of the options available in the setup call:
 *nvim-tree.open_on_setup*
 - |open_on_setup|: will automatically open the tree when running setup if current
   buffer is a directory, is empty or is unnamed.
+  type: `boolean`
+  default: `false`
+
+*nvim-tree.ignore_buffer_on_setup*
+- |ignore_buffer_on_setup|: will ignore the buffer, when deciding to open the tree
+  on setup
   type: `boolean`
   default: `false`
 
@@ -329,10 +336,6 @@ Here is a list of the options available in the setup call:
       type: `string`
       default: 'left'
 
-  - |view.auto_resize|: auto resize the tree after opening a file
-      type: `boolean`
-      default: `false`
-
   - |view.preserve_window_proportions|: preserve window proportions when
     opening a file. If `false`, the height and width of windows other than
     nvim-tree will be equalized.
@@ -408,6 +411,10 @@ Here is a list of the options available in the setup call:
 
   - |actions.open_file.quit_on_open|: closes the explorer when opening a file.
     It will also disable preventing a buffer overriding the tree.
+      type: `boolean`
+      default: `false`
+
+  - |actions.open_file.resize_window|: resizes the tree when opening a file
       type: `boolean`
       default: `false`
 
@@ -601,7 +608,7 @@ INFORMATIONS				        *nvim-tree-info*
 - <C-x> will open the file in a horizontal split
 - <C-t> will open the file in a new tab
 - <Tab> will open the file as a preview (keeps the cursor in the tree)
-- `I` will toggle visibility of folders hidden via |g:nvim_tree_ignore|
+- `I` will toggle visibility of folders hidden via |git.ignore| option
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
 - `R` will refresh the tree
 - Double left click acts like <CR>
