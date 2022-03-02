@@ -5,14 +5,18 @@ local M = {}
 
 local function get_formatted_lines(cwd)
   local stats = uv.fs_stat(cwd)
+  local fpath = ' fullpath: ' .. cwd
+  local created_at = ' created:  ' .. os.date("%x %X", stats.birthtime.sec)
+  local modified_at = ' modified: ' .. os.date("%x %X", stats.mtime.sec)
+  local accessed_at = ' accessed: ' .. os.date("%x %X", stats.atime.sec)
+  local size = ' size:     ' .. stats.size .. ' bytes'
 
   return {
-    ' fullpath: ' .. cwd,
-    ' created:  ' .. os.date("%x %X", stats.birthtime.sec),
-    ' modified: ' .. os.date("%x %X", stats.mtime.sec),
-    ' accessed: ' .. os.date("%x %X", stats.atime.sec),
-    ' size:     ' .. stats.size .. ' bytes',
-    ' mode:     ' .. string.format('%o', stats.mode),
+    fpath,
+    size,
+    accessed_at,
+    modified_at,
+    created_at,
   }
 end
 
