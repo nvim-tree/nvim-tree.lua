@@ -286,7 +286,8 @@ local list = {
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
   { key = "S",                            action = "search_node" },
-  { key = "b",                            action = "run_shell_command" }
+  { key = "b",                            action = "run_directory_command" },
+  { key = "B",                            action = "run_file_command" }
 }
 ```
 
