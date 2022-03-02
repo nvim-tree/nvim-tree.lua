@@ -62,6 +62,7 @@ function M.open_replacing_current_buffer()
   end
   view.open_in_current_win({ hijack_current_buf = false, resize = false })
   require"nvim-tree.renderer".draw()
+  require"nvim-tree.actions.find-file".fn(bufname)
 end
 
 function M.tab_change()
