@@ -29,7 +29,7 @@ local function setup_window(lines)
     row = 1,
     relative = "cursor",
     width = max_width + 1,
-    height = 5,
+    height = #lines,
     border = 'shadow',
     noautocmd = true,
     style = 'minimal'
