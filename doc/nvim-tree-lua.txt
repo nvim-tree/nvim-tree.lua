@@ -615,8 +615,7 @@ INFORMATIONS				        *nvim-tree-info*
 - Double right click acts like <C-]>
 - `W` will collapse the whole tree
 - `S` will prompt the user to enter a path and then expands the tree to match the path
-- `b` will enter vim command mode with the directory the cursor is in
-- `B` will enter vim command mode with the file the cursor is on
+- `b` will enter vim command mode with the file the cursor is on
 
 Defaults to:
 >
@@ -658,8 +657,7 @@ Defaults to:
       { key = "g?",                           action = "toggle_help" },
       { key = 'W',                            action = "collapse_all" },
       { key = "S",                            action = "search_node" },
-      { key = "b",                            action = "run_directory_command" },
-      { key = "B",                            action = "run_file_command" }
+      { key = "b",                            action = "run_file_command" }
     }
 <
 The `list` option in `view.mappings.list` is a table of
