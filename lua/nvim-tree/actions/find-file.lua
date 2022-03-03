@@ -29,7 +29,7 @@ function M.fn(fname)
         return i
       end
 
-      local path_matches = node.nodes and utils.str_find(fname, node.absolute_path..utils.path_separator)
+      local path_matches = node.nodes and vim.startswith(fname, node.absolute_path..utils.path_separator)
       if path_matches then
         if not node.open then
           node.open = true
