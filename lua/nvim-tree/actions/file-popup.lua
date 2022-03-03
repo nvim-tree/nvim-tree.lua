@@ -48,13 +48,8 @@ function M.close_popup()
   end
 end
 
-function M.show_file_info()
+function M.show_file_info(node)
   M.close_popup()
-
-  local node = require'nvim-tree.lib'.get_node_at_cursor()
-  if not node or not node.absolute_path then
-    return
-  end
 
   local lines = get_formatted_lines(node.absolute_path)
   setup_window(lines)
