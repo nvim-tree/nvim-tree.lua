@@ -83,6 +83,7 @@ function.
       auto_close           = false,
       auto_reload_on_write = true,
       open_on_tab          = false,
+      sort_by              = "name",
       hijack_cursor        = false,
       update_cwd           = false,
       hijack_unnamed_buffer_when_opening = false,
@@ -200,6 +201,12 @@ Here is a list of the options available in the setup call:
   tabpage if the tree was previously open.
   type: `boolean`
   default: `false`
+
+*nvim-tree.sort_by*
+- |sort_by|: changes how files within the same directory are sorted. can be
+  one of 'name' | 'modification_time'
+  type: `string`
+  default: `"name"`
 
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 - |hijack_unnamed_buffer_when_opening|: opens in place of the unnamed
