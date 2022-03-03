@@ -83,6 +83,9 @@ local keypress_funcs = {
 }
 
 function M.on_keypress(action)
+  if view.is_help_ui() and action == 'close' then
+    action = 'toggle_help';
+  end
   if view.is_help_ui() and action ~= 'toggle_help' then return end
   local node = lib.get_node_at_cursor()
   if not node then return end
