@@ -42,7 +42,8 @@ local M = {
     { key = "q",                            action = "close"},
     { key = "g?",                           action = "toggle_help" },
     { key = 'W',                            action = "collapse_all" },
-    { key = "S",                            action = "search_node" }
+    { key = "S",                            action = "search_node" },
+    { key = ".",                            action = "run_file_command" }
   },
   custom_keypress_funcs = {},
 }
@@ -70,6 +71,7 @@ local keypress_funcs = {
   refresh = require'nvim-tree.actions.reloaders'.reload_explorer,
   remove = require'nvim-tree.actions.remove-file'.fn,
   rename = require'nvim-tree.actions.rename-file'.fn(false),
+  run_file_command = require'nvim-tree.actions.run-command'.run_file_command,
   search_node = require'nvim-tree.actions.search-node'.fn,
   system_open = require'nvim-tree.actions.system-open'.fn,
   toggle_dotfiles = require"nvim-tree.actions.toggles".dotfiles,
