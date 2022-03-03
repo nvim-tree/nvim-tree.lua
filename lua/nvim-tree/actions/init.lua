@@ -43,7 +43,7 @@ local M = {
     { key = "g?",                           action = "toggle_help" },
     { key = 'W',                            action = "collapse_all" },
     { key = "S",                            action = "search_node" },
-    { key = "b",                            action = "run_file_command" }
+    { key = ".",                            action = "run_file_command" }
   },
   custom_keypress_funcs = {},
 }
