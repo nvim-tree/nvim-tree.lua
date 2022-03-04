@@ -31,7 +31,18 @@ function M.node_comparator_modification_time(a, b)
     return false
   end
 
-  return b.last_modified <= a.last_modified
+  local last_modified_a = 0
+  local last_modified_b = 0
+
+  if a.fs_stat ~= nil then
+    last_modified_a = a.fs_stat.mtime.sec
+  end
+
+  if b.fs_stat ~= nil then
+    last_modified_b = b.fs_stat.mtime.sec
+  end
+
+  return last_modified_a <= last_modified_b
 end
 
 ---Check if the given path should be ignored.
