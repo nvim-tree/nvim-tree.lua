@@ -1,3 +1,4 @@
+local utils = require'nvim-tree.utils'
 local a = vim.api
 local uv = vim.loop
 
@@ -9,7 +10,7 @@ local function get_formatted_lines(cwd)
   local created_at = ' created:  ' .. os.date("%x %X", stats.birthtime.sec)
   local modified_at = ' modified: ' .. os.date("%x %X", stats.mtime.sec)
   local accessed_at = ' accessed: ' .. os.date("%x %X", stats.atime.sec)
-  local size = ' size:     ' .. stats.size .. ' bytes'
+  local size = ' size:     ' .. utils.format_bytes(stats.size)
 
   return {
     fpath,
