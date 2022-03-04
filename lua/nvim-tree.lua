@@ -128,6 +128,8 @@ function M.find_file(with_open, bufnr)
 end
 
 M.resize = view.resize
+M.increase_size = view.increase_size
+M.decrease_size = view.decrease_size
 
 local function should_abort_auto_close()
   local buf = api.nvim_get_current_buf()
@@ -277,6 +279,8 @@ local function setup_vim_commands()
     command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
     command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
     command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize(<args>)
+    command! -nargs=1 NvimTreeIncreaseSize lua require'nvim-tree'.increase_size(<args>)
+    command! -nargs=1 NvimTreeDecreaseSize lua require'nvim-tree'.decrease_size(<args>)
   ]]
 end
 

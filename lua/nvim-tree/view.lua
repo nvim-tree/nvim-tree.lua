@@ -195,6 +195,18 @@ function M.resize(size)
 	end
 end
 
+function M.increase_size(value)
+  if value then
+    M.resize(M.View.width + value)
+  end
+end
+
+function M.decrease_size(value)
+  if value then
+    M.resize(M.View.width - value)
+  end
+end
+
 function M.reposition_window()
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd "..move_to)
