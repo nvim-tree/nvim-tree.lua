@@ -168,10 +168,10 @@ function M.open(options)
   set_window_options_and_buffer()
   M.resize()
 
-	local opts = options or { focus_tree = true }
-	if not opts.focus_tree then
-		vim.cmd("wincmd p")
-	end
+  local opts = options or { focus_tree = true }
+  if not opts.focus_tree then
+    vim.cmd("wincmd p")
+  end
 end
 
 function M.resize(size)
@@ -190,9 +190,9 @@ function M.resize(size)
     a.nvim_win_set_height(M.get_winnr(), get_size())
   end
 
-	if not M.View.preserve_window_proportions then
-		vim.cmd(":wincmd =")
-	end
+  if not M.View.preserve_window_proportions then
+    vim.cmd(":wincmd =")
+  end
 end
 
 function M.reposition_window()
