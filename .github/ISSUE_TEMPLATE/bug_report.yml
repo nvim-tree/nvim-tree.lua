@@ -57,20 +57,6 @@ body:
       description: "Observed behavior (may optionally include images, videos or a screencast)."
   - type: textarea
     attributes:
-      label: "Lua Render Test 1"
-      render: Lua
-      value: |
-local function cd_dot_cb(node)
-	tree.change_dir(vim.fn.getcwd(-1))
-	if node.name ~= ".." then
-		lib.set_index_and_redraw(node.absolute_path)
-	end
-end
-require'nvim-tree'.setup {
-  update_cwd = true,
-}
-  - type: textarea
-    attributes:
       label: "Lua Render Test 2"
       render: Lua
       value: |
