@@ -104,7 +104,7 @@ body:
         vim.g.nvim_tree_create_in_closed_folder = 0
         vim.g.nvim_tree_special_files = { ["Cargo.toml"] = true, Makefile = true, ["README.md"] = true, ["readme.md"] = true, }
         vim.g.nvim_tree_show_icons = { git = 1, folders = 1, files = 1, folder_arrows = 1 }
-        require'nvim-tree'.setup {
+        require'nvim-tree'.setup {        
           auto_close = false,
           auto_reload_on_write = true,
           disable_netrw = false,
@@ -164,7 +164,7 @@ body:
               }
             }
           },
-        }
+        }        
         end
     validations:
       required: true
