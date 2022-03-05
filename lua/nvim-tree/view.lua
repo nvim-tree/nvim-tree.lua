@@ -1,4 +1,5 @@
 local a = vim.api
+local utils = require'nvim-tree.utils'
 
 local M = {}
 
@@ -175,6 +176,24 @@ function M.open(options)
 end
 
 function M.resize(size)
+  if type(size) == "string" then
+    size = utils.trim_string(size)
+    local first_char = size:sub(1, 1)
+    size = tonumber(size)
+
+    if first_char == "+" or first_char == "-" then
+      size = M.View.width + size
+    end
+  end
+
+  if type(size) ~= "number" then
+    return
+  end
+
+  if size <= 0 then
+    return
+  end
+
   if size then
     M.View.width = size
     M.View.height = size
@@ -193,18 +212,6 @@ function M.resize(size)
 	if not M.View.preserve_window_proportions then
 		vim.cmd(":wincmd =")
 	end
-end
-
-function M.increase_size(value)
-  if value then
-    M.resize(M.View.width + value)
-  end
-end
-
-function M.decrease_size(value)
-  if value then
-    M.resize(M.View.width - value)
-  end
 end
 
 function M.reposition_window()
