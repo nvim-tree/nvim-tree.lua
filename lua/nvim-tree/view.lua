@@ -1,5 +1,4 @@
 local a = vim.api
-local utils = require'nvim-tree.utils'
 
 local M = {}
 
@@ -177,7 +176,7 @@ end
 
 function M.resize(size)
   if type(size) == "string" then
-    size = utils.trim_string(size)
+    size = vim.trim(size)
     local first_char = size:sub(1, 1)
     size = tonumber(size)
 

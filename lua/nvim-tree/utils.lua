@@ -245,10 +245,4 @@ function M.table_create_missing(tbl, sub)
   return t
 end
 
--- @param value string
--- @return string
-function M.trim_string(value)
-  return (string.gsub(value, "^%s*(.-)%s*$", "%1"))
-end
-
 return M
