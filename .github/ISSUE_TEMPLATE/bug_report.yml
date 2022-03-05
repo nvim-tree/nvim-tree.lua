@@ -32,7 +32,7 @@ body:
   - type: input
     attributes:
       label: "nvim-tree version"
-      description: "cd <your-package-directory>/nvim-tree.lua ; git log --format='%h' -n 1"
+      description: "`cd <your-package-directory>/nvim-tree.lua ; git log --format='%h' -n 1`"
       placeholder: |
         nvim-tree branch, commit or tag number
     validations:
@@ -55,40 +55,6 @@ body:
     attributes:
       label: "Actual behavior"
       description: "Observed behavior (may optionally include images, videos or a screencast)."
-  - type: textarea
-    id: logs
-    attributes:
-      label: "shell Render Test 1"
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-  - type: textarea
-    id: logs2
-    attributes:
-      label: "shell Render Test 2"
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-      value: |
-        lcd () {
-          local PID=$(coredumpctl -1 | grep present | awk '{ print $5 }')
-          if [ -n "${PID}" ]
-          then
-            coredumpctl gdb "${PID}"
-          fi
-        }
-  - type: textarea
-    attributes:
-      label: "Lua Render Test 3"
-      render: lua
-      value: |
-        local function cd_dot_cb(node)
-                tree.change_dir(vim.fn.getcwd(-1))
-                if node.name ~= ".." then
-                        lib.set_index_and_redraw(node.absolute_path)
-                end
-        end
-        require'nvim-tree'.setup {
-          update_cwd = true,
-        }
   - type: textarea
     attributes:
       label: "Minimal config"
