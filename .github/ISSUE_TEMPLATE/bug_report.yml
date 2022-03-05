@@ -19,7 +19,7 @@ body:
       render: markdown
       placeholder: |
         NVIM v0.6.1
-        Build type: Release
+        Build type&#58 Release
         LuaJIT 2.1.0-beta3
     validations:
       required: true
@@ -55,6 +55,34 @@ body:
     attributes:
       label: "Actual behavior"
       description: "Observed behavior (may optionally include images, videos or a screencast)."
+  - type: textarea
+    attributes:
+      label: "Lua Render Test 1"
+      render: Lua
+      value: |
+local function cd_dot_cb(node)
+	tree.change_dir(vim.fn.getcwd(-1))
+	if node.name ~= ".." then
+		lib.set_index_and_redraw(node.absolute_path)
+	end
+end
+require'nvim-tree'.setup {
+  update_cwd = true,
+}
+  - type: textarea
+    attributes:
+      label: "Lua Render Test 2"
+      render: Lua
+      value: |
+        local function cd_dot_cb(node)
+                tree.change_dir(vim.fn.getcwd(-1))
+                if node.name ~= ".." then
+                        lib.set_index_and_redraw(node.absolute_path)
+                end
+        end
+        require'nvim-tree'.setup {
+          update_cwd = true,
+        }
   - type: textarea
     attributes:
       label: "Minimal config"
