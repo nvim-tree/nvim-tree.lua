@@ -32,9 +32,9 @@ body:
   - type: input
     attributes:
       label: "nvim-tree version"
+      description: "cd <your-package-directory>/nvim-tree.lua ; git log --format='%h' -n 1"
       placeholder: |
         nvim-tree branch, commit or tag number
-        cd <your-package-directory>/nvim-tree.lua ; git log --format="%h" -n 1
     validations:
       required: true
   - type: textarea
