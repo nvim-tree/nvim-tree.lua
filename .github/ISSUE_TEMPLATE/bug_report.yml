@@ -58,7 +58,7 @@ body:
   - type: textarea
     attributes:
       label: "Minimal config"
-      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save this as `/tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
+      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save this as `/tmp/nvt-min.lua` and run using `nvim -nu /tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
       render: Lua
       value: |
         vim.cmd [[set runtimepath=$VIMRUNTIME]]
@@ -66,23 +66,23 @@ body:
         local package_root = '/tmp/nvt-min/site/pack'
         local install_path = package_root .. '/packer/start/packer.nvim'
         local function load_plugins()
-        require('packer').startup {
-          {
-            'wbthomason/packer.nvim',
-            'kyazdani42/nvim-tree.lua',
-            'kyazdani42/nvim-web-devicons',
-            -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
-          },
-          config = {
-            package_root = package_root,
-            compile_path = install_path .. '/plugin/packer_compiled.lua',
-            display = { non_interactive = true },
-          },
-        }
+          require('packer').startup {
+            {
+              'wbthomason/packer.nvim',
+              'kyazdani42/nvim-tree.lua',
+              'kyazdani42/nvim-web-devicons',
+              -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
+            },
+            config = {
+              package_root = package_root,
+              compile_path = install_path .. '/plugin/packer_compiled.lua',
+              display = { non_interactive = true },
+            },
+          }
         end
         if vim.fn.isdirectory(install_path) == 0 then
-        print("Installing nvim-tree and dependencies.")
-        vim.fn.system { 'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path }
+          print("Installing nvim-tree and dependencies.")
+          vim.fn.system { 'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path }
         end
         load_plugins()
         require('packer').sync()
