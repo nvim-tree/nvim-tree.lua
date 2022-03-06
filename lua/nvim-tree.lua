@@ -393,6 +393,7 @@ local DEFAULT_OPTS = {
     enable = false,
     types = {
       all = false,
+      config = false,
       git = false,
     },
   }
@@ -422,6 +423,10 @@ function M.setup(conf)
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
   require'nvim-tree.log'.setup(opts)
+
+  log.line("config", "default config + user")
+  log.raw("config", "%s\n", vim.inspect(opts))
+
   require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.colors'.setup()
   require'nvim-tree.diagnostics'.setup(opts)

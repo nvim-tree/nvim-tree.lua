@@ -4,7 +4,7 @@ local M = {
 }
 
 --- Write to log file
---- @param typ as per config log.types
+--- @param typ as per log.types config
 --- @param fmt for string.format
 --- @param ... arguments for string.format
 function M.raw(typ, fmt, ...)
