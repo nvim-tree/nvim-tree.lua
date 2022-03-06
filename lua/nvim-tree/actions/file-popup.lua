@@ -1,15 +1,15 @@
+local utils = require'nvim-tree.utils'
 local a = vim.api
-local uv = vim.loop
 
 local M = {}
 
-local function get_formatted_lines(cwd)
-  local stats = uv.fs_stat(cwd)
-  local fpath = ' fullpath: ' .. cwd
+local function get_formatted_lines(node)
+  local stats = node.fs_stat
+  local fpath = ' fullpath: ' .. node.absolute_path
   local created_at = ' created:  ' .. os.date("%x %X", stats.birthtime.sec)
   local modified_at = ' modified: ' .. os.date("%x %X", stats.mtime.sec)
   local accessed_at = ' accessed: ' .. os.date("%x %X", stats.atime.sec)
-  local size = ' size:     ' .. stats.size .. ' bytes'
+  local size = ' size:     ' .. utils.format_bytes(stats.size)
 
   return {
     fpath,
@@ -51,7 +51,7 @@ end
 function M.show_file_info(node)
   M.close_popup()
 
-  local lines = get_formatted_lines(node.absolute_path)
+  local lines = get_formatted_lines(node)
   setup_window(lines)
 
   vim.cmd [[
