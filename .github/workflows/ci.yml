@@ -1,6 +1,12 @@
-name: Linting and style checking
+name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - master
 
 jobs:
   luacheck:
@@ -17,3 +23,12 @@ jobs:
           sudo luarocks install luacheck
       - name: Run luacheck
         run: luacheck .
+  stylua:
+    name: stylua
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: JohnnyMorganz/stylua-action@1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --color always --check lua/

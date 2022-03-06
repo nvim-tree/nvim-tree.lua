@@ -1,11 +1,11 @@
 local uv = vim.loop
 
-local git = require"nvim-tree.git"
+local git = require "nvim-tree.git"
 
 local M = {}
 
-M.explore = require"nvim-tree.explorer.explore".explore
-M.reload = require"nvim-tree.explorer.reload".reload
+M.explore = require("nvim-tree.explorer.explore").explore
+M.reload = require("nvim-tree.explorer.reload").reload
 
 local Explorer = {}
 Explorer.__index = Explorer
@@ -14,7 +14,7 @@ function Explorer.new(cwd)
   cwd = uv.fs_realpath(cwd or uv.cwd())
   local explorer = setmetatable({
     cwd = cwd,
-    nodes = {}
+    nodes = {},
   }, Explorer)
   explorer:_load(explorer)
   return explorer
@@ -31,8 +31,8 @@ function Explorer:expand(node)
 end
 
 function M.setup(opts)
-  require"nvim-tree.explorer.filters".setup(opts)
-  require"nvim-tree.explorer.sorters".setup(opts)
+  require("nvim-tree.explorer.filters").setup(opts)
+  require("nvim-tree.explorer.sorters").setup(opts)
 end
 
 M.Explorer = Explorer

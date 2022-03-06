@@ -2,7 +2,7 @@ local git = require "nvim-tree.git"
 local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
-local explorer_module = require'nvim-tree.explorer'
+local explorer_module = require "nvim-tree.explorer"
 
 local M = {}
 

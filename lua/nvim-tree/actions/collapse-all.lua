@@ -1,4 +1,4 @@
-local renderer = require"nvim-tree.renderer"
+local renderer = require "nvim-tree.renderer"
 
 local M = {}
 

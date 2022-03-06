@@ -12,7 +12,7 @@ function M.get_config()
       renamed = "➜",
       untracked = "★",
       deleted = "",
-      ignored = "◌"
+      ignored = "◌",
     },
     folder_icons = {
       arrow_closed = "",
@@ -47,14 +47,14 @@ function M.get_config()
     end
   end
 
-  local has_devicons = pcall(require, 'nvim-web-devicons')
+  local has_devicons = pcall(require, "nvim-web-devicons")
   return {
     show_file_icon = show_icons.files == 1,
     show_folder_icon = show_icons.folders == 1,
     show_git_icon = show_icons.git == 1,
     show_folder_arrows = show_icons.folder_arrows == 1,
     has_devicons = has_devicons,
-    icons = icons
+    icons = icons,
   }
 end
 
