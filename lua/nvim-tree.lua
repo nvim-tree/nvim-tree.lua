@@ -2,6 +2,7 @@ local luv = vim.loop
 local api = vim.api
 
 local lib = require'nvim-tree.lib'
+local log = require'nvim-tree.log'
 local colors = require'nvim-tree.colors'
 local renderer = require'nvim-tree.renderer'
 local view = require'nvim-tree.view'
@@ -388,6 +389,13 @@ local DEFAULT_OPTS = {
       }
     }
   },
+  log = {
+    enable = false,
+    types = {
+      all = false,
+      git = false,
+    },
+  }
 }
 
 local function merge_options(conf)
@@ -413,6 +421,7 @@ function M.setup(conf)
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
+  require'nvim-tree.log'.setup(opts)
   require'nvim-tree.actions'.setup(opts)
   require'nvim-tree.colors'.setup()
   require'nvim-tree.diagnostics'.setup(opts)
