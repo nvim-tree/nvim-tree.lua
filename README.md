@@ -156,7 +156,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     icons = {
       webdev_colors = true,
       git_placement = "before",
-    }
+    },
   },
   hijack_directories = {
     enable = true,
@@ -216,6 +216,10 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     cmd = "trash",
     require_confirm = true,
   },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
+  },
   log = {
     enable = false,
     truncate = false,
@@ -269,6 +273,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
 - `C-k` will toggle a popup with file infos about the file under the cursor
+- `f` will allow you to filter nodes dynamically based on regex matching.
 
 ### Settings
 
@@ -330,6 +335,8 @@ local list = {
   { key = "]c",                           action = "next_git_item" },
   { key = "-",                            action = "dir_up" },
   { key = "s",                            action = "system_open" },
+  { key = "f",                            action = "live_filter" },
+  { key = "F",                            action = "clear_live_filter" },
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },

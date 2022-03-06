@@ -44,6 +44,12 @@ function Builder:configure_picture_map(picture_map)
   return self
 end
 
+function Builder:configure_filter(filter, prefix)
+  self.filter_prefix = prefix
+  self.filter = filter
+  return self
+end
+
 function Builder:configure_opened_file_highlighting(level)
   if level == 1 then
     self.open_file_highlight = "icon"
@@ -221,8 +227,8 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
   end
 end
 
-function Builder:_build_line(tree, node, idx)
-  local padding = pad.get_padding(self.depth, idx, tree, node, self.markers)
+function Builder:_build_line(node, idx, num_children)
+  local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
 
   if self.depth > 0 then
     self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
@@ -256,9 +262,28 @@ function Builder:_build_line(tree, node, idx)
   end
 end
 
+function Builder:_get_nodes_number(nodes)
+  if not self.filter then
+    return #nodes
+  end
+
+  local i = 0
+  for _, n in pairs(nodes) do
+    if not n.hidden then
+      i = i + 1
+    end
+  end
+  return i
+end
+
 function Builder:build(tree)
-  for idx, node in ipairs(tree.nodes) do
-    self:_build_line(tree, node, idx)
+  local num_children = self:_get_nodes_number(tree.nodes)
+  local idx = 1
+  for _, node in ipairs(tree.nodes) do
+    if not node.hidden then
+      self:_build_line(node, idx, num_children)
+      idx = idx + 1
+    end
   end
 
   return self
@@ -275,6 +300,15 @@ function Builder:build_header(show_header)
     self:_insert_line(root_name)
     self:_insert_highlight("NvimTreeRootFolder", 0, string.len(root_name))
     self.index = 1
+  end
+
+  if self.filter then
+    local filter_line = self.filter_prefix .. "/" .. self.filter .. "/"
+    self:_insert_line(filter_line)
+    local prefix_length = string.len(self.filter_prefix)
+    self:_insert_highlight("NvimTreeLiveFilterPrefix", 0, prefix_length)
+    self:_insert_highlight("NvimTreeLiveFilterValue", prefix_length, string.len(filter_line))
+    self.index = self.index + 1
   end
 
   return self

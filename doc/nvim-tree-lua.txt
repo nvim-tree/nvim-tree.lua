@@ -124,7 +124,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         icons = {
           webdev_colors = true,
           git_placement = "before",
-        }
+        },
       },
       hijack_directories = {
         enable = true,
@@ -183,6 +183,10 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       trash = {
         cmd = "trash",
         require_confirm = true,
+      },
+      live_filter = {
+        prefix = "[FILTER]: ",
+        always_show_folders = true,
       },
       log = {
         enable = false,
@@ -519,6 +523,20 @@ Configuration for various actions.
     '+' (system), otherwise, it will be stored in '1' and '"'.
       Type: `boolean`, Default: `true`
 
+*nvim-tree.live_filter*
+Configurations for the live_filtering feature.
+The live filter allows you to filter the tree nodes dynamically, based on
+regex matching (see |vim.regex|).
+This feature is bound to the `f` key by default.
+The filter can be cleared with the `F` key by default.
+
+    *nvim-tree.live_filter.prefix*
+    Prefix of the filter displayed in the buffer.
+      Type: `string`, Default: `"[FILTER]: "`
+
+    *nvim-tree.live_filter.always_show_folders*
+    Wether to filter folders or not.
+      Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
 Configuration for diagnostic logging.
@@ -764,6 +782,8 @@ Defaults to:
       { key = "]c",                           action = "next_git_item" },
       { key = "-",                            action = "dir_up" },
       { key = "s",                            action = "system_open" },
+      { key = "f",                            action = "live_filter" },
+      { key = "F",                            action = "clear_live_filter" },
       { key = "q",                            action = "close" },
       { key = "g?",                           action = "toggle_help" },
       { key = 'W',                            action = "collapse_all" },
@@ -773,6 +793,7 @@ Defaults to:
       { key = "U",                            action = "toggle_custom" },
     }
 <
+
 The `list` option in `view.mappings.list` is a table of
 
 - key can be either a string or a table of string (lhs)
@@ -878,6 +899,11 @@ NvimTreeFileMerge
 NvimTreeFileRenamed
 NvimTreeFileNew
 NvimTreeFileDeleted
+
+There are 2 highlight groups for the live filter feature
+
+NvimTreeLiveFilterPrefix
+NvimTreeLiveFilterValue
 
 ==============================================================================
 vinegar style                                         *nvim-tree-vinegar*

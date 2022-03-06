@@ -40,6 +40,8 @@ local M = {
     { key = "]c", action = "next_git_item" },
     { key = "-", action = "dir_up" },
     { key = "s", action = "system_open" },
+    { key = "f", action = "live_filter" },
+    { key = "F", action = "clear_live_filter" },
     { key = "q", action = "close" },
     { key = "g?", action = "toggle_help" },
     { key = "W", action = "collapse_all" },
@@ -65,6 +67,8 @@ local keypress_funcs = {
   first_sibling = require("nvim-tree.actions.movements").sibling(-math.huge),
   full_rename = require("nvim-tree.actions.rename-file").fn(true),
   last_sibling = require("nvim-tree.actions.movements").sibling(math.huge),
+  live_filter = require("nvim-tree.live-filter").start_filtering,
+  clear_live_filter = require("nvim-tree.live-filter").clear_filter,
   next_git_item = require("nvim-tree.actions.movements").find_git_item "next",
   next_sibling = require("nvim-tree.actions.movements").sibling(1),
   parent_node = require("nvim-tree.actions.movements").parent_node(false),
@@ -92,6 +96,11 @@ function M.on_keypress(action)
   if view.is_help_ui() and action ~= "toggle_help" then
     return
   end
+
+  if action == "live_filter" or action == "clear_live_filter" then
+    return keypress_funcs[action]()
+  end
+
   local node = lib.get_node_at_cursor()
   if not node then
     return

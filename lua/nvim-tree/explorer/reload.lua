@@ -6,6 +6,7 @@ local builders = require "nvim-tree.explorer.node-builders"
 local common = require "nvim-tree.explorer.common"
 local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
+local live_filter = require "nvim-tree.live-filter"
 
 local M = {}
 
@@ -77,6 +78,7 @@ function M.reload(node, status)
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
+  live_filter.apply_filter(node)
   return node.nodes
 end
 

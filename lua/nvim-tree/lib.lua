@@ -13,23 +13,25 @@ function M.get_node_at_cursor()
   if not core.get_explorer() then
     return
   end
+
   local winnr = view.get_winnr()
   if not winnr then
     return
   end
+
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if view.is_help_ui() then
     local help_lines = require("nvim-tree.renderer.help").compute_lines()
     local help_text = utils.get_nodes_by_line(help_lines, 1)[line]
     return { name = help_text }
-  else
-    if line == 1 and core.get_explorer().cwd ~= "/" and view.is_root_folder_visible() then
-      return { name = ".." }
-    end
-
-    return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
   end
+
+  if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
+    return { name = ".." }
+  end
+
+  return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
 end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.

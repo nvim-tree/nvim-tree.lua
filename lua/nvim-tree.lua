@@ -438,6 +438,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     cmd = "trash",
     require_confirm = true,
   },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
+  },
   log = {
     enable = false,
     truncate = false,
@@ -538,6 +542,7 @@ function M.setup(conf)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
+  require("nvim-tree.live-filter").setup(opts)
 
   setup_vim_commands()
   setup_autocommands(opts)
