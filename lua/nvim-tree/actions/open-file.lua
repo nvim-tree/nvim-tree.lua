@@ -1,8 +1,8 @@
 local api = vim.api
 
-local lib = require'nvim-tree.lib'
-local utils = require'nvim-tree.utils'
-local view = require'nvim-tree.view'
+local lib = require "nvim-tree.lib"
+local utils = require "nvim-tree.utils"
+local view = require "nvim-tree.view"
 
 local M = {
   quit_on_open = false,
@@ -11,24 +11,24 @@ local M = {
     enable = true,
     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
     exclude = {
-      filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },
-      buftype  = { "nofile", "terminal", "help", },
-    }
-  }
+      filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
+      buftype = { "nofile", "terminal", "help" },
+    },
+  },
 }
 
 local function get_split_cmd()
   local side = view.View.side
-  if side == 'right' then
-    return 'aboveleft'
+  if side == "right" then
+    return "aboveleft"
   end
   if side == "left" then
-    return 'belowright'
+    return "belowright"
   end
   if side == "top" then
-    return 'bot'
+    return "bot"
   end
-  return 'top'
+  return "top"
 end
 
 ---Get user to pick a window. Selectable windows are all windows in the current
@@ -41,7 +41,7 @@ local function pick_window()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)
 
-  local selectable = vim.tbl_filter(function (id)
+  local selectable = vim.tbl_filter(function(id)
     local bufid = api.nvim_win_get_buf(id)
     for option, v in pairs(M.window_picker.exclude) do
       local ok, option_value = pcall(api.nvim_buf_get_option, bufid, option)
@@ -51,14 +51,16 @@ local function pick_window()
     end
 
     local win_config = api.nvim_win_get_config(id)
-    return id ~= tree_winid
-      and win_config.focusable
-      and not win_config.external
+    return id ~= tree_winid and win_config.focusable and not win_config.external
   end, win_ids)
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
-  if #selectable == 0 then return -1 end
-  if #selectable == 1 then return selectable[1] end
+  if #selectable == 0 then
+    return -1
+  end
+  if #selectable == 1 then
+    return selectable[1]
+  end
 
   local i = 1
   local win_opts = {}
@@ -74,21 +76,21 @@ local function pick_window()
 
     win_opts[id] = {
       statusline = ok_status and statusline or "",
-      winhl = ok_hl and winhl or ""
+      winhl = ok_hl and winhl or "",
     }
     win_map[char] = id
 
     api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=")
-    api.nvim_win_set_option(
-      id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker"
-    )
+    api.nvim_win_set_option(id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker")
 
     i = i + 1
-    if i > #M.window_picker.chars then break end
+    if i > #M.window_picker.chars then
+      break
+    end
   end
 
-  vim.cmd("redraw")
-  print("Pick window: ")
+  vim.cmd "redraw"
+  print "Pick window: "
   local _, resp = pcall(utils.get_user_input_char)
   resp = (resp or ""):upper()
   utils.clear_prompt()
@@ -114,7 +116,7 @@ local function open_file_in_tab(filename)
     if lib.target_winid > 0 and api.nvim_win_is_valid(lib.target_winid) then
       api.nvim_set_current_win(lib.target_winid)
     else
-      vim.cmd("wincmd p")
+      vim.cmd "wincmd p"
     end
   end
 
@@ -126,13 +128,13 @@ local function open_file_in_tab(filename)
 
   vim.cmd("edit " .. vim.fn.fnameescape(filename))
 
-  local alt_bufid = vim.fn.bufnr("#")
+  local alt_bufid = vim.fn.bufnr "#"
   if alt_bufid ~= -1 then
     api.nvim_set_current_buf(alt_bufid)
   end
 
   if not M.quit_on_open then
-    vim.cmd("wincmd p")
+    vim.cmd "wincmd p"
   end
 
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
@@ -145,7 +147,7 @@ function M.fn(mode, filename)
   end
 
   if mode == "edit_in_place" then
-    require"nvim-tree.view".abandon_current_window()
+    require("nvim-tree.view").abandon_current_window()
     vim.cmd("edit " .. vim.fn.fnameescape(filename))
     return
   end
@@ -171,7 +173,9 @@ function M.fn(mode, filename)
   local found = false
   for _, id in ipairs(win_ids) do
     if filename == api.nvim_buf_get_name(api.nvim_win_get_buf(id)) then
-      if mode == "preview" then return end
+      if mode == "preview" then
+        return
+      end
       found = true
       api.nvim_set_current_win(id)
       break
@@ -230,7 +234,7 @@ function M.setup(opts)
   if opts.actions.open_file.window_picker.chars then
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end
-  M.window_picker = vim.tbl_extend('force', M.window_picker, opts.actions.open_file.window_picker)
+  M.window_picker = vim.tbl_extend("force", M.window_picker, opts.actions.open_file.window_picker)
 end
 
 return M

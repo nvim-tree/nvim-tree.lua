@@ -26,7 +26,7 @@ local function merge(t, first, mid, last, comparator)
   local j = 1
   local k = first
 
-  while (i <= n1 and j <= n2) do
+  while i <= n1 and j <= n2 do
     if comparator(ls[i], rs[j]) then
       t[k] = ls[i]
       i = i + 1
@@ -51,7 +51,9 @@ local function merge(t, first, mid, last, comparator)
 end
 
 local function split_merge(t, first, last, comparator)
-  if (last - first) < 1 then return end
+  if (last - first) < 1 then
+    return
+  end
 
   local mid = math.floor((first + last) / 2)
 
@@ -65,7 +67,7 @@ end
 ---@param comparator function|nil
 function M.merge_sort(t, comparator)
   if not comparator then
-    comparator = function (left, right)
+    comparator = function(left, right)
       return left < right
     end
   end

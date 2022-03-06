@@ -1,11 +1,11 @@
 local api = vim.api
 local uv = vim.loop
 
-local utils = require'nvim-tree.utils'
-local builders = require'nvim-tree.explorer.node-builders'
-local common = require'nvim-tree.explorer.common'
-local sorters = require"nvim-tree.explorer.sorters"
-local filters = require"nvim-tree.explorer.filters"
+local utils = require "nvim-tree.utils"
+local builders = require "nvim-tree.explorer.node-builders"
+local common = require "nvim-tree.explorer.common"
+local sorters = require "nvim-tree.explorer.sorters"
+local filters = require "nvim-tree.explorer.filters"
 
 local M = {}
 
@@ -14,19 +14,21 @@ local function get_type_from(type_, cwd)
 end
 
 local function populate_children(handle, cwd, node, status)
-  local node_ignored = node.git_status == '!!'
+  local node_ignored = node.git_status == "!!"
   while true do
     local name, t = uv.fs_scandir_next(handle)
-    if not name then break end
+    if not name then
+      break
+    end
 
-    local abs = utils.path_join({cwd, name})
+    local abs = utils.path_join { cwd, name }
     t = get_type_from(t, abs)
     if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
-      if t == 'directory' and uv.fs_access(abs, 'R') then
+      if t == "directory" and uv.fs_access(abs, "R") then
         table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
-      elseif t == 'file' then
+      elseif t == "file" then
         table.insert(node.nodes, builders.file(abs, name, status, node_ignored))
-      elseif t == 'link' then
+      elseif t == "link" then
         local link = builders.link(abs, name, status, node_ignored)
         if link.link_to ~= nil then
           table.insert(node.nodes, link)
@@ -38,7 +40,7 @@ end
 
 local function get_dir_handle(cwd)
   local handle = uv.fs_scandir(cwd)
-  if type(handle) == 'string' then
+  if type(handle) == "string" then
     api.nvim_err_writeln(handle)
     return
   end
@@ -48,7 +50,9 @@ end
 function M.explore(node, status)
   local cwd = node.cwd or node.link_to or node.absolute_path
   local handle = get_dir_handle(cwd)
-  if not handle then return end
+  if not handle then
+    return
+  end
 
   populate_children(handle, cwd, node, status)
 

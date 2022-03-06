@@ -1,8 +1,10 @@
-local utils = require'nvim-tree.utils'
-local view = require'nvim-tree.view'
-local diagnostics = require'nvim-tree.diagnostics'
-local renderer = require"nvim-tree.renderer"
-local lib = function() return require'nvim-tree.lib' end
+local utils = require "nvim-tree.utils"
+local view = require "nvim-tree.view"
+local diagnostics = require "nvim-tree.diagnostics"
+local renderer = require "nvim-tree.renderer"
+local lib = function()
+  return require "nvim-tree.lib"
+end
 
 local M = {}
 
@@ -10,7 +12,7 @@ local function get_line_from_node(node, find_parent)
   local node_path = node.absolute_path
 
   if find_parent then
-    node_path = node.absolute_path:match("(.*)"..utils.path_separator)
+    node_path = node.absolute_path:match("(.*)" .. utils.path_separator)
   end
 
   local line = 2
@@ -24,17 +26,20 @@ local function get_line_from_node(node, find_parent)
       line = line + 1
       if _node.open == true and recursive then
         local _, child = iter(_node.nodes, recursive)
-        if child ~= nil then return line, child end
+        if child ~= nil then
+          return line, child
+        end
       end
     end
   end
   return iter
 end
 
-
 function M.parent_node(should_close)
   return function(node)
-    if node.name == '..' then return end
+    if node.name == ".." then
+      return
+    end
 
     should_close = should_close or false
     local altered_tree = false
@@ -52,7 +57,7 @@ function M.parent_node(should_close)
         altered_tree = true
       end
       line = view.View.hide_root_folder and line - 1 or line
-      view.set_cursor({line, 0})
+      view.set_cursor { line, 0 }
     end
 
     if altered_tree then
@@ -64,7 +69,9 @@ end
 
 function M.sibling(direction)
   return function(node)
-    if node.name == '..' or not direction then return end
+    if node.name == ".." or not direction then
+      return
+    end
 
     local iter = get_line_from_node(node, true)
     local node_path = node.absolute_path
@@ -100,7 +107,7 @@ function M.sibling(direction)
     local target_node = parent.nodes[index]
 
     line, _ = get_line_from_node(target_node)(TreeExplorer.nodes, true)
-    view.set_cursor({line, 0})
+    view.set_cursor { line, 0 }
   end
 end
 
@@ -128,17 +135,17 @@ function M.find_git_item(where)
       end
     end
 
-    if where == 'prev' then
+    if where == "prev" then
       if prev then
-        view.set_cursor({prev, 0})
+        view.set_cursor { prev, 0 }
       end
     else
       if cur then
         if nex then
-          view.set_cursor({nex, 0})
+          view.set_cursor { nex, 0 }
         end
       elseif first then
-        view.set_cursor({first, 0})
+        view.set_cursor { first, 0 }
       end
     end
   end

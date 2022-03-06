@@ -1,10 +1,10 @@
 local api = vim.api
 
-local renderer = require'nvim-tree.renderer'
-local diagnostics = require'nvim-tree.diagnostics'
-local explorer = require'nvim-tree.explorer'
-local view = require'nvim-tree.view'
-local events = require'nvim-tree.events'
+local renderer = require "nvim-tree.renderer"
+local diagnostics = require "nvim-tree.diagnostics"
+local explorer = require "nvim-tree.explorer"
+local view = require "nvim-tree.view"
+local events = require "nvim-tree.events"
 
 local first_init_done = false
 
@@ -42,7 +42,9 @@ function M.get_nodes_by_line(nodes_all, line_start)
 end
 
 function M.get_node_at_cursor()
-  if not TreeExplorer then return end
+  if not TreeExplorer then
+    return
+  end
   local winnr = view.get_winnr()
   local hide_root_folder = view.View.hide_root_folder
   if not winnr then
@@ -51,9 +53,9 @@ function M.get_node_at_cursor()
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if view.is_help_ui() then
-    local help_lines = require'nvim-tree.renderer.help'.compute_lines()
+    local help_lines = require("nvim-tree.renderer.help").compute_lines()
     local help_text = M.get_nodes_by_line(help_lines, 1)[line]
-    return {name = help_text}
+    return { name = help_text }
   else
     if line == 1 and TreeExplorer.cwd ~= "/" and not hide_root_folder then
       return { name = ".." }
@@ -103,7 +105,7 @@ end
 local function handle_buf_cwd(cwd)
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
   if respect_buf_cwd == 1 and cwd ~= TreeExplorer.cwd then
-    require'nvim-tree.actions.change-dir'.fn(cwd)
+    require("nvim-tree.actions.change-dir").fn(cwd)
   end
 end
 
@@ -120,13 +122,8 @@ local function should_hijack_current_buf()
   local bufmodified = api.nvim_buf_get_option(bufnr, "modified")
   local ft = api.nvim_buf_get_option(bufnr, "ft")
 
-  local should_hijack_unnamed = M.hijack_unnamed_buffer_when_opening
-    and bufname == ""
-    and not bufmodified
-    and ft == ""
-  local should_hijack_dir = bufname ~= ""
-    and vim.fn.isdirectory(bufname) == 1
-    and M.hijack_directories.enable
+  local should_hijack_unnamed = M.hijack_unnamed_buffer_when_opening and bufname == "" and not bufmodified and ft == ""
+  local should_hijack_dir = bufname ~= "" and vim.fn.isdirectory(bufname) == 1 and M.hijack_directories.enable
 
   return should_hijack_dir or should_hijack_unnamed
 end
@@ -145,17 +142,17 @@ function M.open(cwd)
 end
 
 -- @deprecated: use nvim-tree.actions.collapse-all.fn
-M.collapse_all = require'nvim-tree.actions.collapse-all'.fn
+M.collapse_all = require("nvim-tree.actions.collapse-all").fn
 -- @deprecated: use nvim-tree.actions.dir-up.fn
-M.dir_up = require'nvim-tree.actions.dir-up'.fn
+M.dir_up = require("nvim-tree.actions.dir-up").fn
 -- @deprecated: use nvim-tree.actions.change-dir.fn
-M.change_dir = require'nvim-tree.actions.change-dir'.fn
+M.change_dir = require("nvim-tree.actions.change-dir").fn
 -- @deprecated: use nvim-tree.actions.reloaders.reload_explorer
-M.refresh_tree = require'nvim-tree.actions.reloaders'.reload_explorer
+M.refresh_tree = require("nvim-tree.actions.reloaders").reload_explorer
 -- @deprecated: use nvim-tree.actions.reloaders.reload_git
-M.reload_git = require'nvim-tree.actions.reloaders'.reload_git
+M.reload_git = require("nvim-tree.actions.reloaders").reload_git
 -- @deprecated: use nvim-tree.actions.find-file.fn
-M.set_index_and_redraw = require'nvim-tree.actions.find-file'.fn
+M.set_index_and_redraw = require("nvim-tree.actions.find-file").fn
 
 function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening

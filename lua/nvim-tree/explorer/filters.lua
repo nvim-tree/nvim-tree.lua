@@ -1,4 +1,4 @@
-local utils = require'nvim-tree.utils'
+local utils = require "nvim-tree.utils"
 
 local M = {
   ignore_list = {},
@@ -25,7 +25,7 @@ function M.should_ignore(path)
   end
 
   if M.config.filter_dotfiles then
-    if basename:sub(1, 1) == '.' then
+    if basename:sub(1, 1) == "." then
       return true
     end
   end
@@ -39,9 +39,9 @@ function M.should_ignore(path)
     return true
   end
 
-  local idx = path:match(".+()%.[^.]+$")
+  local idx = path:match ".+()%.[^.]+$"
   if idx then
-    if M.ignore_list['*'..string.sub(path, idx)] == true then
+    if M.ignore_list["*" .. string.sub(path, idx)] == true then
       return true
     end
   end
@@ -51,7 +51,7 @@ end
 
 function M.should_ignore_git(path, status)
   return M.config.filter_ignored
-    and (M.config.filter_git_ignored and status and status[path] == '!!')
+    and (M.config.filter_git_ignored and status and status[path] == "!!")
     and not is_excluded(path)
 end
 

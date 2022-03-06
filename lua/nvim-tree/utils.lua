@@ -1,14 +1,14 @@
-local has_notify, notify = pcall(require, 'notify')
+local has_notify, notify = pcall(require, "notify")
 
 local a = vim.api
 local uv = vim.loop
 
 local M = {}
 
-M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
+M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
 function M.path_to_matching_str(path)
-  return path:gsub('(%-)', '(%%-)'):gsub('(%.)', '(%%.)'):gsub('(%_)', '(%%_)')
+  return path:gsub("(%-)", "(%%-)"):gsub("(%.)", "(%%.)"):gsub("(%_)", "(%%_)")
 end
 
 function M.warn(msg)
@@ -16,7 +16,7 @@ function M.warn(msg)
     if has_notify then
       notify(msg, vim.log.levels.WARN, { title = "NvimTree" })
     else
-      vim.notify("[NvimTree] "..msg, vim.log.levels.WARN)
+      vim.notify("[NvimTree] " .. msg, vim.log.levels.WARN)
     end
   end)
 end
@@ -27,21 +27,25 @@ end
 
 function M.read_file(path)
   local fd = uv.fs_open(path, "r", 438)
-  if not fd then return '' end
+  if not fd then
+    return ""
+  end
   local stat = uv.fs_fstat(fd)
-  if not stat then return '' end
+  if not stat then
+    return ""
+  end
   local data = uv.fs_read(fd, stat.size, 0)
   uv.fs_close(fd)
-  return data or ''
+  return data or ""
 end
 
-local path_separator = package.config:sub(1,1)
+local path_separator = package.config:sub(1, 1)
 function M.path_join(paths)
   return table.concat(vim.tbl_map(M.path_remove_trailing, paths), path_separator)
 end
 
 function M.path_split(path)
-  return path:gmatch('[^'..path_separator..']+'..path_separator..'?')
+  return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
 end
 
 ---Get the basename of the given path.
@@ -50,7 +54,9 @@ end
 function M.path_basename(path)
   path = M.path_remove_trailing(path)
   local i = path:match("^.*()" .. path_separator)
-  if not i then return path end
+  if not i then
+    return path
+  end
   return path:sub(i + 1, #path)
 end
 
@@ -68,18 +74,18 @@ function M.path_add_trailing(path)
     return path
   end
 
-  return path..path_separator
+  return path .. path_separator
 end
 
 function M.path_remove_trailing(path)
-  local p, _ = path:gsub(path_separator..'$', '')
+  local p, _ = path:gsub(path_separator .. "$", "")
   return p
 end
 
 M.path_separator = path_separator
 
 function M.clear_prompt()
-  vim.api.nvim_command('normal! :')
+  vim.api.nvim_command "normal! :"
 end
 
 function M.get_user_input_char()
@@ -97,11 +103,15 @@ function M.find_node(_nodes, _fn)
   local function iter(nodes, fn)
     local i = 1
     for _, node in ipairs(nodes) do
-      if fn(node) then return node, i end
+      if fn(node) then
+        return node, i
+      end
       if node.open and #node.nodes > 0 then
         local n, idx = iter(node.nodes, fn)
         i = i + idx
-        if n then return n, i end
+        if n then
+          return n, i
+        end
       else
         i = i + 1
       end
@@ -109,15 +119,15 @@ function M.find_node(_nodes, _fn)
     return nil, i
   end
   local node, i = iter(_nodes, _fn)
-  i = require'nvim-tree.view'.View.hide_root_folder and i - 1 or i
+  i = require("nvim-tree.view").View.hide_root_folder and i - 1 or i
   return node, i
 end
 
 ---Matching executable files in Windows.
 ---@param ext string
 ---@return boolean
-local PATHEXT = vim.env.PATHEXT or ''
-local wexe = vim.split(PATHEXT:gsub('%.', ''), ';')
+local PATHEXT = vim.env.PATHEXT or ""
+local wexe = vim.split(PATHEXT:gsub("%.", ""), ";")
 local pathexts = {}
 for _, v in pairs(wexe) do
   pathexts[v] = true
@@ -133,7 +143,9 @@ function M.rename_loaded_buffers(old_name, new_name)
       if a.nvim_buf_get_name(buf) == old_name then
         a.nvim_buf_set_name(buf, new_name)
         -- to avoid the 'overwrite existing file' error message on write
-        vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
+        vim.api.nvim_buf_call(buf, function()
+          vim.cmd "silent! w!"
+        end)
       end
     end
   end
@@ -149,7 +161,7 @@ end
 --- @param path string
 --- @return string
 function M.canonical_path(path)
-  if M.is_windows and path:match '^%a:' then
+  if M.is_windows and path:match "^%a:" then
     return path:sub(1, 1):upper() .. path:sub(2)
   end
   return path
@@ -176,7 +188,7 @@ function M.table_create_missing(tbl, sub)
 end
 
 function M.format_bytes(bytes)
-  local units = {'B', 'K', 'M', 'G', 'T'}
+  local units = { "B", "K", "M", "G", "T" }
 
   bytes = math.max(bytes, 0)
   local pow = math.floor((bytes and math.log(bytes) or 0) / math.log(1024))
@@ -187,7 +199,7 @@ function M.format_bytes(bytes)
 
   pow = pow + 1
 
-  return (units[pow] == nil) and (bytes .. 'B') or (value .. units[pow])
+  return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
 end
 
 return M
