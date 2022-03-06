@@ -175,6 +175,24 @@ function M.open(options)
 end
 
 function M.resize(size)
+  if type(size) == "string" then
+    size = vim.trim(size)
+    local first_char = size:sub(1, 1)
+    size = tonumber(size)
+
+    if first_char == "+" or first_char == "-" then
+      size = M.View.width + size
+    end
+  end
+
+  if type(size) ~= "number" then
+    return
+  end
+
+  if size <= 0 then
+    return
+  end
+
   if size then
     M.View.width = size
     M.View.height = size
