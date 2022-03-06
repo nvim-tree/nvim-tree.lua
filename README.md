@@ -1,6 +1,6 @@
 # A File Explorer For Neovim Written In Lua
 
-[![Linting and style checking](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml)
+[![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
 
 ## Notice
 
