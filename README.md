@@ -227,7 +227,7 @@ require'nvim-tree'.setup {
 - `W` will collapse the whole tree
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
-- `C-k` will show file infos about the file under the cursor
+- `C-k` will toggle a popup with file infos about the file under the cursor
 
 ### Settings
 
@@ -293,7 +293,7 @@ local list = {
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
   { key = "S",                            action = "search_node" },
-  { key = "<C-k>",                        action = "show_file_info" },
+  { key = "<C-k>",                        action = "toggle_file_info" },
   { key = ".",                            action = "run_file_command" }
 }
 ```

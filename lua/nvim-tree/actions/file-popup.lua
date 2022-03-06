@@ -20,11 +20,13 @@ local function get_formatted_lines(node)
   }
 end
 
-local winnr = nil
+local current_popup = nil
 
-local function setup_window(lines)
+local function setup_window(node)
+  local lines = get_formatted_lines(node)
+
   local max_width = vim.fn.max(vim.tbl_map(function(n) return #n end, lines))
-  winnr = a.nvim_open_win(0, false, {
+  local winnr = a.nvim_open_win(0, false, {
     col = 1,
     row = 1,
     relative = "cursor",
@@ -34,25 +36,36 @@ local function setup_window(lines)
     noautocmd = true,
     style = 'minimal'
   })
+  current_popup = {
+    winnr = winnr,
+    file_path = node.absolute_path
+  }
   local bufnr = a.nvim_create_buf(false, true)
   a.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   a.nvim_win_set_buf(winnr, bufnr)
 end
 
 function M.close_popup()
-  if winnr ~= nil then
-    a.nvim_win_close(winnr, { force = true })
+  if current_popup ~= nil then
+    a.nvim_win_close(current_popup.winnr, { force = true })
     vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
 
-    winnr = nil
+    current_popup = nil
   end
 end
 
-function M.show_file_info(node)
-  M.close_popup()
+function M.toggle_file_info(node)
+  if current_popup ~= nil then
+    local is_same_node = current_popup.file_path == node.absolute_path
 
-  local lines = get_formatted_lines(node)
-  setup_window(lines)
+    M.close_popup()
+
+    if is_same_node then
+      return
+    end
+  end
+
+  setup_window(node)
 
   vim.cmd [[
     augroup NvimTreeRemoveFilePopup
