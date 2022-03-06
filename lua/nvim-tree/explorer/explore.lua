@@ -2,8 +2,10 @@ local api = vim.api
 local uv = vim.loop
 
 local utils = require'nvim-tree.utils'
-local eutils = require'nvim-tree.explorer.utils'
 local builders = require'nvim-tree.explorer.node-builders'
+local common = require'nvim-tree.explorer.common'
+local sorters = require"nvim-tree.explorer.sorters"
+local filters = require"nvim-tree.explorer.filters"
 
 local M = {}
 
@@ -19,7 +21,7 @@ local function populate_children(handle, cwd, node, status)
 
     local abs = utils.path_join({cwd, name})
     t = get_type_from(t, abs)
-    if not eutils.should_ignore(abs) and not eutils.should_ignore_git(abs, status.files) then
+    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
       if t == 'directory' and uv.fs_access(abs, 'R') then
         table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
       elseif t == 'file' then
@@ -51,7 +53,7 @@ function M.explore(node, status)
   populate_children(handle, cwd, node, status)
 
   local is_root = node.cwd ~= nil
-  local child_folder_only = eutils.has_one_child_folder(node) and node.nodes[1]
+  local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
   if vim.g.nvim_tree_group_empty == 1 and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = M.explore(child_folder_only, status)
@@ -59,7 +61,7 @@ function M.explore(node, status)
     return ns
   end
 
-  utils.merge_sort(node.nodes, eutils.node_comparator)
+  sorters.merge_sort(node.nodes, sorters.node_comparator)
   return node.nodes
 end
 
