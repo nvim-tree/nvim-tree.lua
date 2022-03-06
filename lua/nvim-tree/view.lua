@@ -186,11 +186,7 @@ function M.resize(size)
     end
   end
 
-  if type(size) ~= "number" then
-    return
-  end
-
-  if size <= 0 then
+  if type(size) == "number" and size <= 0 then
     return
   end
 
