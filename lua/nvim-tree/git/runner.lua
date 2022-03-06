@@ -91,7 +91,7 @@ function Runner:_run_git_job()
     vim.schedule_wrap(function(rc) on_finish(rc) end)
   )
 
-  timer:start(self.timeout, 0, vim.schedule_wrap(function(rc)
+  timer:start(self.timeout, 0, vim.schedule_wrap(function()
     on_finish(-1)
   end))
 
@@ -102,7 +102,7 @@ function Runner:_run_git_job()
     output_leftover = self:_handle_incoming_data(output_leftover, data)
   end
 
-  local function manage_stderr(rc, data)
+  local function manage_stderr(_, data)
     self:_log_raw_output(data)
   end
 
