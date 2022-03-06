@@ -62,9 +62,10 @@ local function wipe_rogue_buffer()
 end
 
 local function create_buffer(bufnr)
+  wipe_rogue_buffer()
+
   local tab = a.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = bufnr or a.nvim_create_buf(false, false)
-  wipe_rogue_buffer()
   a.nvim_buf_set_name(M.get_bufnr(), 'NvimTree_'..tab)
 
   for option, value in pairs(BUFFER_OPTIONS) do
