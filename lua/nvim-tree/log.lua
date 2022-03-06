@@ -3,7 +3,7 @@ local M = {
   path = nil,
 }
 
---- Write to log
+--- Write to log file
 --- @param typ as per config log.types
 --- @param fmt for string.format
 --- @param ... arguments for string.format
@@ -19,7 +19,8 @@ function M.raw(typ, fmt, ...)
   io.close(file)
 end
 
--- Write to log with time and typ prefixed and a trailing newline
+-- Write to log file
+-- time and typ are prefixed and a trailing newline is added
 function M.line(typ, fmt, ...)
   if not M.path or not M.config.types[typ] and not M.config.types.all then
     return
