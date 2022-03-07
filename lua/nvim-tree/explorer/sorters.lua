@@ -109,7 +109,7 @@ function M.node_comparator_modification_time(a, b)
     last_modified_b = b.fs_stat.mtime.sec
   end
 
-  return last_modified_a <= last_modified_b
+  return last_modified_b <= last_modified_a
 end
 
 function M.setup(opts)
