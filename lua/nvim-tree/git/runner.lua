@@ -47,7 +47,7 @@ function Runner:_getopts(stdout_handle, stderr_handle)
   return {
     args = { "--no-optional-locks", "status", "--porcelain=v1", ignored, untracked },
     cwd = self.project_root,
-    stdio = { nil, stdout_handle, stderr_handle, },
+    stdio = { nil, stdout_handle, stderr_handle },
   }
 end
 
@@ -119,9 +119,11 @@ function Runner:_run_git_job()
 end
 
 function Runner:_wait()
-  while not vim.wait(30, function()
+  local function is_done()
     return self.rc ~= nil
-  end, 30) do end
+  end
+  while not vim.wait(30, is_done) do
+  end
 end
 
 -- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
@@ -138,9 +140,9 @@ function Runner.run(opts)
   self:_run_git_job()
   self:_wait()
 
-  if (self.rc == -1) then
+  if self.rc == -1 then
     log.line("git", "job timed out")
-  elseif (self.rc ~= 0) then
+  elseif self.rc ~= 0 then
     log.line("git", "job failed with return code %d", self.rc)
   else
     log.line("git", "job success")

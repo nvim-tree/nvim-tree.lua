@@ -398,7 +398,7 @@ local DEFAULT_OPTS = {
       config = false,
       git = false,
     },
-  }
+  },
 }
 
 local function merge_options(conf)

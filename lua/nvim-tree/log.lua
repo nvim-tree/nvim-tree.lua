@@ -26,15 +26,15 @@ function M.line(typ, fmt, ...)
     return
   end
 
-  M.raw(typ, string.format("[%s] [%s] %s\n", os.date("%H:%M:%S"), typ, fmt), ...)
+  M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%H:%M:%S", typ, fmt), ...)
 end
 
 function M.setup(opts)
   M.config = opts.log
   if M.config and M.config.enable and M.config.types then
-	  M.path = string.format("%s/nvim-tree-%s-%s.log", vim.env.HOME, os.date("%H:%M:%S"), vim.env.USER)
+    M.path = string.format("%s/nvim-tree-%s-%s.log", vim.fn.stdpath "cache", os.date "%H:%M:%S", vim.env.USER)
+    print("nvim-tree.lua logging to " .. M.path)
   end
 end
 
 return M
-
