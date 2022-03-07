@@ -2,6 +2,7 @@ local luv = vim.loop
 local api = vim.api
 
 local lib = require "nvim-tree.lib"
+local log = require "nvim-tree.log"
 local colors = require "nvim-tree.colors"
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
@@ -390,6 +391,14 @@ local DEFAULT_OPTS = {
       },
     },
   },
+  log = {
+    enable = false,
+    types = {
+      all = false,
+      config = false,
+      git = false,
+    },
+  },
 }
 
 local function merge_options(conf)
@@ -414,6 +423,11 @@ function M.setup(conf)
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
+
+  require("nvim-tree.log").setup(opts)
+
+  log.line("config", "default config + user")
+  log.raw("config", "%s\n", vim.inspect(opts))
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.colors").setup()

@@ -1,4 +1,5 @@
 local uv = vim.loop
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
 local Runner = {}
@@ -40,30 +41,39 @@ function Runner:_handle_incoming_data(prev_output, incoming)
   return nil
 end
 
-function Runner:_getopts(stdout_handle)
+function Runner:_getopts(stdout_handle, stderr_handle)
   local untracked = self.list_untracked and "-u" or nil
   local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
   return {
     args = { "--no-optional-locks", "status", "--porcelain=v1", ignored, untracked },
     cwd = self.project_root,
-    stdio = { nil, stdout_handle, nil },
+    stdio = { nil, stdout_handle, stderr_handle },
   }
+end
+
+function Runner:_log_raw_output(output)
+  if output and type(output) == "string" then
+    log.raw("git", "%s", output)
+  end
 end
 
 function Runner:_run_git_job()
   local handle, pid
   local stdout = uv.new_pipe(false)
+  local stderr = uv.new_pipe(false)
   local timer = uv.new_timer()
 
-  local function on_finish()
-    self._done = true
-    if timer:is_closing() or stdout:is_closing() or (handle and handle:is_closing()) then
+  local function on_finish(rc)
+    self.rc = rc or 0
+    if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
       return
     end
     timer:stop()
     timer:close()
     stdout:read_stop()
+    stderr:read_stop()
     stdout:close()
+    stderr:close()
     if handle then
       handle:close()
     end
@@ -71,11 +81,15 @@ function Runner:_run_git_job()
     pcall(uv.kill, pid)
   end
 
+  local opts = self:_getopts(stdout, stderr)
+  log.line("git", "running job with timeout %dms", self.timeout)
+  log.line("git", "git %s", table.concat(opts.args, " "))
+
   handle, pid = uv.spawn(
     "git",
-    self:_getopts(stdout),
-    vim.schedule_wrap(function()
-      on_finish()
+    opts,
+    vim.schedule_wrap(function(rc)
+      on_finish(rc)
     end)
   )
 
@@ -83,25 +97,32 @@ function Runner:_run_git_job()
     self.timeout,
     0,
     vim.schedule_wrap(function()
-      on_finish()
+      on_finish(-1)
     end)
   )
 
   local output_leftover = ""
-  local function manage_output(err, data)
+  local function manage_stdout(err, data)
     if err then
       return
     end
+    self:_log_raw_output(data)
     output_leftover = self:_handle_incoming_data(output_leftover, data)
   end
 
-  uv.read_start(stdout, vim.schedule_wrap(manage_output))
+  local function manage_stderr(_, data)
+    self:_log_raw_output(data)
+  end
+
+  uv.read_start(stdout, vim.schedule_wrap(manage_stdout))
+  uv.read_start(stderr, vim.schedule_wrap(manage_stderr))
 end
 
 function Runner:_wait()
-  while not vim.wait(30, function()
-    return self._done
-  end, 30) do
+  local function is_done()
+    return self.rc ~= nil
+  end
+  while not vim.wait(30, is_done) do
   end
 end
 
@@ -113,11 +134,20 @@ function Runner.run(opts)
     list_ignored = opts.list_ignored,
     timeout = opts.timeout or 400,
     output = {},
-    _done = false,
+    rc = nil, -- -1 indicates timeout
   }, Runner)
 
   self:_run_git_job()
   self:_wait()
+
+  if self.rc == -1 then
+    log.line("git", "job timed out")
+  elseif self.rc ~= 0 then
+    log.line("git", "job failed with return code %d", self.rc)
+  else
+    log.line("git", "job success")
+  end
+
   return self.output
 end
 

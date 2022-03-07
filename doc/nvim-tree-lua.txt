@@ -152,7 +152,15 @@ function.
 	    }
 	  }
         },
-      }
+      },
+      log = {
+	enable = false,
+	types = {
+	  all = false,
+	  config = false,
+	  git = false,
+	},
+      },
     }
 <
 
@@ -450,6 +458,28 @@ Here is a list of the options available in the setup call:
 			`filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
 			`buftype  = { "nofile", "terminal", "help", }`
 		`}`
+
+*nvim-tree.log*
+|log|: configuration for diagnostic logging
+
+  - |log.enable|: enable logging to a file `nvim-tree-HH:MM:SS-username.log`
+    in $XDG_CACHE_HOME/nvim
+      type: `boolean`
+      default: `false`
+
+  - |log.types|: specify which information to log
+
+    - |log.types.all|: everything
+        type: `boolean`
+        default: `false`
+
+    - |log.types.config|: options and mappings, at startup
+        type: `boolean`
+        default: `false`
+
+    - |log.types.git|: git processing
+        type: `boolean`
+        default: `false`
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*

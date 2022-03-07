@@ -1,6 +1,7 @@
 local a = vim.api
 
 local lib = require "nvim-tree.lib"
+local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local util = require "nvim-tree.utils"
 local nvim_tree_callback = require("nvim-tree.config").nvim_tree_callback
@@ -231,6 +232,9 @@ function M.setup(opts)
   else
     M.mappings = merge_mappings(options.list)
   end
+
+  log.line("config", "active mappings")
+  log.raw("config", "%s\n", vim.inspect(M.mappings))
 end
 
 return M
