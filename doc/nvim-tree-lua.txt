@@ -463,7 +463,7 @@ Here is a list of the options available in the setup call:
 |log|: configuration for diagnostic logging
 
   - |log.enable|: enable logging to a file `nvim-tree-HH:MM:SS-username.log`
-    in your home directory.
+    in $XDG_CACHE_HOME/nvim
       type: `boolean`
       default: `false`
 

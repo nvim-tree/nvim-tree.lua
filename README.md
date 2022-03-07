@@ -317,7 +317,7 @@ You can toggle the help UI by pressing `g?`.
 
 ## Diagnostic Logging
 
-You may enable diagnostic logging and a file `nvim-tree-HH:MM:SS-username.log` will be created in your home directory, containing logs from that nvim session. See `:help nvim-tree.log`.
+You may enable diagnostic logging and a file `nvim-tree-HH:MM:SS-username.log` will be created in `$XDG_CACHE_HOME/nvim`, usually `~/.cache/nvim`, containing logs from that nvim session. See `:help nvim-tree.log`.
 
 The files may become large and numerous, so it is advised to turn on logging to diagnose an issue or while reporting a bug, then turn it off.
 
