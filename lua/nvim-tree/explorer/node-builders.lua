@@ -1,23 +1,13 @@
 local uv = vim.loop
-local utils = require'nvim-tree.utils'
+local utils = require "nvim-tree.utils"
 
 local M = {
-  is_windows = vim.fn.has('win32') == 1
+  is_windows = vim.fn.has "win32" == 1,
 }
-
-local function get_last_modified(absolute_path)
-  local stat = uv.fs_stat(absolute_path)
-
-  local last_modified = 0
-  if stat ~= nil then
-    last_modified = stat.mtime.sec
-  end
-  return last_modified
-end
 
 function M.get_dir_git_status(parent_ignored, status, absolute_path)
   if parent_ignored then
-    return '!!'
+    return "!!"
   end
   local dir_status = status.dirs and status.dirs[absolute_path]
   local file_status = status.files and status.files[absolute_path]
@@ -25,7 +15,7 @@ function M.get_dir_git_status(parent_ignored, status, absolute_path)
 end
 
 function M.get_git_status(parent_ignored, status, absolute_path)
-  return parent_ignored and '!!' or status.files and status.files[absolute_path]
+  return parent_ignored and "!!" or status.files and status.files[absolute_path]
 end
 
 function M.folder(absolute_path, name, status, parent_ignored)
@@ -40,7 +30,7 @@ function M.folder(absolute_path, name, status, parent_ignored)
     name = name,
     nodes = {},
     open = false,
-    last_modified = get_last_modified(absolute_path),
+    fs_stat = uv.fs_stat(absolute_path),
   }
 end
 
@@ -48,7 +38,7 @@ local function is_executable(absolute_path, ext)
   if M.is_windows then
     return utils.is_windows_exe(ext)
   end
-  return uv.fs_access(absolute_path, 'X')
+  return uv.fs_access(absolute_path, "X")
 end
 
 function M.file(absolute_path, name, status, parent_ignored)
@@ -60,7 +50,7 @@ function M.file(absolute_path, name, status, parent_ignored)
     extension = ext,
     git_status = M.get_git_status(parent_ignored, status, absolute_path),
     name = name,
-    last_modified = get_last_modified(absolute_path),
+    fs_stat = uv.fs_stat(absolute_path),
   }
 end
 
@@ -73,7 +63,7 @@ function M.link(absolute_path, name, status, parent_ignored)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local link_to = uv.fs_realpath(absolute_path)
   local open, nodes
-  if (link_to ~= nil) and uv.fs_stat(link_to).type == 'directory' then
+  if (link_to ~= nil) and uv.fs_stat(link_to).type == "directory" then
     open = false
     nodes = {}
   end
@@ -81,12 +71,12 @@ function M.link(absolute_path, name, status, parent_ignored)
   return {
     absolute_path = absolute_path,
     git_status = M.get_git_status(parent_ignored, status, absolute_path),
-    group_next = nil,   -- If node is grouped, this points to the next child dir/link node
-    last_modified = get_last_modified(absolute_path),
+    group_next = nil, -- If node is grouped, this points to the next child dir/link node
     link_to = link_to,
     name = name,
     nodes = nodes,
     open = open,
+    fs_stat = uv.fs_stat(absolute_path),
   }
 end
 

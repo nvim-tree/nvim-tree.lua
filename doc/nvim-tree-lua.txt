@@ -61,7 +61,11 @@ Print clipboard content for both cut and copy
 |:NvimTreeResize|			          *:NvimTreeResize*
 
 Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
-resizes the window to the width of 50.
+resizes the window to the width of 50. If the size starts with "+" or "-" it
+adds or removes the given value to the current window width.
+Example `:NvimTreeResize -20` removes the value 20 from the current width. And
+`:NvimTreeResize +20` adds the value 20 to the current width.
+
 
 ==============================================================================
 SETUP                                *nvim-tree.setup*
@@ -653,7 +657,7 @@ INFORMATIONS				        *nvim-tree-info*
 - `W` will collapse the whole tree
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
-- `C-k` will show file infos about the file under the cursor
+- `C-k` will toggle a popup with file infos about the file under the cursor
 
 Defaults to:
 >
@@ -696,7 +700,7 @@ Defaults to:
       { key = 'W',                            action = "collapse_all" },
       { key = "S",                            action = "search_node" },
       { key = ".",                            action = "run_file_command" },
-      { key = "<C-k>",                        action = "show_file_info" }
+      { key = "<C-k>",                        action = "toggle_file_info" }
     }
 <
 The `list` option in `view.mappings.list` is a table of

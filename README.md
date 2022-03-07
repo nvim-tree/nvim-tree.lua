@@ -1,6 +1,6 @@
 # A File Explorer For Neovim Written In Lua
 
-[![Linting and style checking](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/luacheck.yml)
+[![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
 
 ## Notice
 
@@ -90,7 +90,12 @@ let g:nvim_tree_icons = {
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
-" NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
+" More available functions:
+" NvimTreeOpen
+" NvimTreeClose
+" NvimTreeFocus
+" NvimTreeFindFileToggle
+" NvimTreeResize
 
 set termguicolors " this variable must be enabled for colors to be applied properly
 
@@ -230,7 +235,7 @@ require'nvim-tree'.setup {
 - `W` will collapse the whole tree
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
-- `C-k` will show file infos about the file under the cursor
+- `C-k` will toggle a popup with file infos about the file under the cursor
 
 ### Settings
 
@@ -296,7 +301,7 @@ local list = {
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
   { key = "S",                            action = "search_node" },
-  { key = "<C-k>",                        action = "show_file_info" },
+  { key = "<C-k>",                        action = "toggle_file_info" },
   { key = ".",                            action = "run_file_command" }
 }
 ```

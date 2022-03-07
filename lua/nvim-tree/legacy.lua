@@ -1,4 +1,4 @@
-local utils = require'nvim-tree.utils'
+local utils = require "nvim-tree.utils"
 
 local M = {}
 
@@ -181,16 +181,15 @@ function M.migrate_legacy_options(opts)
   local msg = nil
 
   for g, m in pairs(migrations) do
-    if vim.fn.exists('g:'..g) ~= 0 then
+    if vim.fn.exists("g:" .. g) ~= 0 then
       m(opts)
       msg = (msg and msg .. ", " or "Following options were moved to setup, see git.io/JPhyt: ") .. g
     end
   end
 
   if msg then
-    require'nvim-tree.utils'.warn(msg)
+    require("nvim-tree.utils").warn(msg)
   end
 end
 
 return M
-

@@ -1,0 +1,171 @@
+name: Bug report
+description: Report a problem with nvim-tree
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before reporting: search [existing issues](https://github.com/kyazdani42/nvim-tree.lua/issues) and make sure that nvim-tree is updated to the latest version.
+  - type: textarea
+    attributes:
+      label: "Description"
+      description: "A short description of the problem you are reporting."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Neovim version"
+      description: "Output of `nvim --version`"
+      render: markdown
+      placeholder: |
+        NVIM v0.6.1
+        Build type&#58 Release
+        LuaJIT 2.1.0-beta3
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Operating system and version"
+      placeholder: "Linux 5.16.11-arch1-1, macOS 11.5, Windows 10"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "nvim-tree version"
+      description: "`cd <your-package-directory>/nvim-tree.lua ; git log --format='%h' -n 1`"
+      placeholder: |
+        nvim-tree branch, commit or tag number
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Steps to reproduce"
+      description: "Steps to reproduce using the minimal config provided below."
+      placeholder: |
+        1. `nvim -nu /tmp/nvt-min.lua`
+        2. `:NvimTreeOpen`
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Expected behavior"
+      description: "A description of the behavior you expected:"
+  - type: textarea
+    attributes:
+      label: "Actual behavior"
+      description: "Observed behavior (may optionally include images, videos or a screencast)."
+  - type: textarea
+    attributes:
+      label: "Minimal config"
+      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save this as `/tmp/nvt-min.lua` and run using `nvim -nu /tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
+      render: Lua
+      value: |
+        vim.cmd [[set runtimepath=$VIMRUNTIME]]
+        vim.cmd [[set packpath=/tmp/nvt-min/site]]
+        local package_root = '/tmp/nvt-min/site/pack'
+        local install_path = package_root .. '/packer/start/packer.nvim'
+        local function load_plugins()
+          require('packer').startup {
+            {
+              'wbthomason/packer.nvim',
+              'kyazdani42/nvim-tree.lua',
+              'kyazdani42/nvim-web-devicons',
+              -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
+            },
+            config = {
+              package_root = package_root,
+              compile_path = install_path .. '/plugin/packer_compiled.lua',
+              display = { non_interactive = true },
+            },
+          }
+        end
+        if vim.fn.isdirectory(install_path) == 0 then
+          print("Installing nvim-tree and dependencies.")
+          vim.fn.system { 'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path }
+        end
+        load_plugins()
+        require('packer').sync()
+        vim.cmd [[autocmd User PackerComplete ++once echo "Ready!" | lua setup()]]
+        vim.opt.termguicolors = true
+        vim.opt.cursorline = true
+
+        -- MODIFY NVIM-TREE SETTINGS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
+        _G.setup = function()
+        vim.g.nvim_tree_indent_markers = 0
+        vim.g.nvim_tree_git_hl = 0
+        vim.g.nvim_tree_highlight_opened_files = 0
+        vim.g.nvim_tree_root_folder_modifier = ':~'
+        vim.g.nvim_tree_add_trailing = 0
+        vim.g.nvim_tree_group_empty = 0
+        vim.g.nvim_tree_icon_padding = ' '
+        vim.g.nvim_tree_symlink_arrow = ' ➛ '
+        vim.g.nvim_tree_respect_buf_cwd = 0
+        vim.g.nvim_tree_create_in_closed_folder = 0
+        vim.g.nvim_tree_special_files = { ["Cargo.toml"] = true, Makefile = true, ["README.md"] = true, ["readme.md"] = true, }
+        vim.g.nvim_tree_show_icons = { git = 1, folders = 1, files = 1, folder_arrows = 1 }
+        require'nvim-tree'.setup {
+          auto_close = false,
+          auto_reload_on_write = true,
+          disable_netrw = false,
+          hide_root_folder = false,
+          hijack_cursor = false,
+          hijack_netrw = true,
+          hijack_unnamed_buffer_when_opening = false,
+          ignore_buffer_on_setup = false,
+          open_on_setup = false,
+          open_on_tab = false,
+          sort_by = "name",
+          update_cwd = false,
+          hijack_directories = {
+            enable = true,
+            auto_open = true,
+          },
+          update_focused_file  = {
+            enable = false,
+            update_cwd = false,
+            ignore_list = {}
+          },
+          ignore_ft_on_setup = {},
+          system_open = {
+            cmd  = nil,
+            args = {}
+          },
+          diagnostics = {
+            enable = false,
+            show_on_dirs = false,
+            icons = {
+              hint = "",
+              info = "",
+              warning = "",
+              error = "",
+            }
+          },
+          filters = {
+            dotfiles = false,
+            custom = {},
+            exclude = {}
+          },
+          git = {
+            enable = true,
+            ignore = true,
+            timeout = 400,
+          },
+          actions = {
+            change_dir = {
+              enable = true,
+              global = false,
+            },
+            open_file = {
+              quit_on_open = false,
+              resize_window = false,
+              window_picker = {
+                enable = true,
+              }
+            }
+          },
+        }
+        end
+    validations:
+      required: true
+ 

@@ -1,10 +1,10 @@
-local git_utils = require'nvim-tree.git.utils'
-local Runner = require'nvim-tree.git.runner'
+local git_utils = require "nvim-tree.git.utils"
+local Runner = require "nvim-tree.git.runner"
 
 local M = {
   config = nil,
   projects = {},
-  cwd_to_project_root = {}
+  cwd_to_project_root = {},
 }
 
 function M.reload()
@@ -22,7 +22,7 @@ function M.reload()
     }
     M.projects[project_root] = {
       files = git_status,
-      dirs = git_utils.file_status_to_dir_status(git_status, project_root)
+      dirs = git_utils.file_status_to_dir_status(git_status, project_root),
     }
   end
 
@@ -62,11 +62,11 @@ function M.load_project_status(cwd)
     project_root = project_root,
     list_untracked = git_utils.should_show_untracked(project_root),
     list_ignored = true,
-    timeout = M.config.timeout
+    timeout = M.config.timeout,
   }
   M.projects[project_root] = {
     files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, project_root)
+    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
   }
   return M.projects[project_root]
 end
