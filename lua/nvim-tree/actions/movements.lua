@@ -56,7 +56,9 @@ function M.parent_node(should_close)
         parent.open = false
         altered_tree = true
       end
-      line = view.View.hide_root_folder and line - 1 or line
+      if not view.is_root_folder_visible(TreeExplorer) then
+        line = line - 1
+      end
       view.set_cursor { line, 0 }
     end
 
