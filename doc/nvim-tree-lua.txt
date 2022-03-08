@@ -66,6 +66,15 @@ adds or removes the given value to the current window width.
 Example `:NvimTreeResize -20` removes the value 20 from the current width. And
 `:NvimTreeResize +20` adds the value 20 to the current width.
 
+|:NvimTreeCollapse|			          *:NvimTreeCollapse*
+
+Collapses the nvim-tree recursively.
+
+|:NvimTreeCollapseKeepBuffers|		          *:NvimTreeCollapseKeepBuffers*
+
+Collapses the nvim-tree recursively, but keep the directories open, which are 
+used in an open buffer.
+
 
 ==============================================================================
 SETUP                                *nvim-tree.setup*
