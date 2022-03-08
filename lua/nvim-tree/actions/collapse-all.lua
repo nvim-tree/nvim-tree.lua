@@ -1,12 +1,29 @@
 local renderer = require "nvim-tree.renderer"
+local utils = require "nvim-tree.utils"
 
 local M = {}
 
-function M.fn()
+function M.fn(keep_buffers)
+  local buffer_paths = {}
+  for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+    table.insert(buffer_paths, vim.api.nvim_buf_get_name(buffer))
+  end
+
   local function iter(nodes)
     for _, node in pairs(nodes) do
       if node.open then
-        node.open = false
+        local new_open = false
+
+        if keep_buffers == true then
+          for _, buffer_path in ipairs(buffer_paths) do
+            local matches = utils.str_find(buffer_path, node.absolute_path)
+            if matches then
+              new_open = true
+            end
+          end
+        end
+
+        node.open = new_open
       end
       if node.nodes then
         iter(node.nodes)
