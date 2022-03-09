@@ -4,15 +4,6 @@ local renderer = require "nvim-tree.renderer"
 
 local M = {}
 
-local function get_index_offset()
-  local hide_root_folder = view.View.hide_root_folder
-  if TreeExplorer.cwd == "/" or hide_root_folder then
-    return 0
-  else
-    return 1
-  end
-end
-
 local running = {}
 
 function M.fn(fname)
@@ -21,7 +12,7 @@ function M.fn(fname)
   end
   running[fname] = true
 
-  local i = get_index_offset()
+  local i = view.is_root_folder_visible(TreeExplorer) and 1 or 0
   local tree_altered = false
 
   local function iterate_nodes(nodes)
