@@ -57,6 +57,9 @@ function M.close_popup()
 end
 
 function M.toggle_file_info(node)
+  if node.name == ".." then
+    return
+  end
   if current_popup ~= nil then
     local is_same_node = current_popup.file_path == node.absolute_path
 
