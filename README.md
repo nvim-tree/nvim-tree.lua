@@ -96,6 +96,8 @@ nnoremap <leader>n :NvimTreeFindFile<CR>
 " NvimTreeFocus
 " NvimTreeFindFileToggle
 " NvimTreeResize
+" NvimTreeCollapse
+" NvimTreeCollapseKeepBuffers
 
 set termguicolors " this variable must be enabled for colors to be applied properly
 
