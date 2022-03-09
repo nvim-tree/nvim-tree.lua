@@ -12,40 +12,40 @@ local function build_icons_table()
     ["CM"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     [" T"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
     ["MM"] = {
-    { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-    { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
     },
     ["MD"] = {
-    { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
     },
     ["A "] = {
-    { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
     },
     ["AD"] = {
-    { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
     },
     [" A"] = {
-    { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
     -- not sure about this one
     ["AA"] = {
-    { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-    { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
     ["AU"] = {
-    { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-    { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
     },
     ["AM"] = {
-    { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-    { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
     },
     ["??"] = { { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" } },
     ["R "] = { { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
     [" R"] = { { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
     ["RM"] = {
-    { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
-    { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" },
+      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" },
     },
     ["UU"] = { { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
     ["UD"] = { { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
@@ -55,22 +55,24 @@ local function build_icons_table()
     ["RD"] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["DD"] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
     ["DU"] = {
-    { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
-    { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
+      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
     },
     ["!!"] = { { icon = M.icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
     dirty = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
   }
 end
 
-local function empty() return "" end
+local function empty()
+  return ""
+end
 local function nil_() end
 
 local function warn_status(git_status)
   utils.warn(
     'Unrecognized git state "'
-    .. git_status
-    .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'
+      .. git_status
+      .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'
   )
 end
 
@@ -110,7 +112,7 @@ local git_hl = {
   [" T"] = "NvimTreeFileDirty",
   ["MM"] = "NvimTreeFileDirty",
   ["AM"] = "NvimTreeFileDirty",
-  dirty  = "NvimTreeFileDirty",
+  dirty = "NvimTreeFileDirty",
   ["A "] = "NvimTreeFileNew",
   ["??"] = "NvimTreeFileNew",
   ["AU"] = "NvimTreeFileMerge",

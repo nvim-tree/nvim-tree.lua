@@ -105,7 +105,6 @@ if icon_state.show_file_icon then
   end
 end
 
-
 local picture = {
   jpg = true,
   jpeg = true,
