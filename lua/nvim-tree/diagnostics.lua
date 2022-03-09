@@ -1,6 +1,7 @@
 local a = vim.api
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
+local core = require "nvim-tree.core"
 
 local M = {}
 
@@ -103,7 +104,7 @@ local function is_using_coc()
 end
 
 function M.update()
-  if not M.enable or not TreeExplorer or not view.is_buf_valid(view.get_bufnr()) then
+  if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
     return
   end
   local buffer_severity
@@ -125,7 +126,7 @@ function M.update()
   end
   for bufname, severity in pairs(buffer_severity) do
     if 0 < severity and severity < 5 then
-      local node, line = utils.find_node(TreeExplorer.nodes, function(node)
+      local node, line = utils.find_node(core.get_explorer().nodes, function(node)
         if M.show_on_dirs and not node.open then
           return vim.startswith(bufname, node.absolute_path)
         else

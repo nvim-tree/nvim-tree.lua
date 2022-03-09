@@ -4,6 +4,7 @@ local _padding = require "nvim-tree.renderer.padding"
 local _help = require "nvim-tree.renderer.help"
 local _icons = require "nvim-tree.renderer.icons"
 local git = require "nvim-tree.renderer.git"
+local core = require "nvim-tree.core"
 
 local api = vim.api
 
@@ -223,7 +224,7 @@ local function compute_header()
   if view.is_root_folder_visible() then
     local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
     local root_name = utils.path_join {
-      utils.path_remove_trailing(vim.fn.fnamemodify(TreeExplorer.cwd, root_folder_modifier)),
+      utils.path_remove_trailing(vim.fn.fnamemodify(core.get_cwd(), root_folder_modifier)),
       "..",
     }
     table.insert(lines, root_name)
@@ -234,7 +235,7 @@ end
 
 function M.draw()
   local bufnr = view.get_bufnr()
-  if not TreeExplorer or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
+  if not core.get_explorer() or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
     return
   end
   local cursor
@@ -252,7 +253,7 @@ function M.draw()
   _padding.reload_padding_function()
   git.reload()
   compute_header()
-  update_draw_data(TreeExplorer, show_arrows and 2 or 0, {})
+  update_draw_data(core.get_explorer(), show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()

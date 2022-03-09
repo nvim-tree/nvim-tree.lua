@@ -3,6 +3,7 @@ local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
+local core = require "nvim-tree.core"
 
 local M = {}
 
@@ -34,13 +35,13 @@ end
 
 local event_running = false
 function M.reload_explorer()
-  if event_running or not TreeExplorer or not TreeExplorer.cwd or vim.v.exiting ~= vim.NIL then
+  if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
   local projects = git.reload()
-  refresh_nodes(TreeExplorer, projects)
+  refresh_nodes(core.get_explorer(), projects)
   if view.is_visible() then
     renderer.draw()
   end
@@ -49,13 +50,13 @@ function M.reload_explorer()
 end
 
 function M.reload_git()
-  if not TreeExplorer or not git.config.enable or event_running then
+  if not core.get_explorer() or not git.config.enable or event_running then
     return
   end
   event_running = true
 
   local projects = git.reload()
-  M.reload_node_status(TreeExplorer, projects)
+  M.reload_node_status(core.get_explorer(), projects)
   renderer.draw()
   event_running = false
 end

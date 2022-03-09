@@ -9,6 +9,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
+local core = require "nvim-tree.core"
 
 local _config = {}
 
@@ -58,8 +59,8 @@ function M.open_replacing_current_buffer()
   end
 
   local cwd = vim.fn.fnamemodify(bufname, ":p:h")
-  if not TreeExplorer or cwd ~= TreeExplorer.cwd then
-    lib.init(cwd)
+  if not core.get_explorer() or cwd ~= core.get_cwd() then
+    core.init(cwd)
   end
   view.open_in_current_win { hijack_current_buf = false, resize = false }
   require("nvim-tree.renderer").draw()
@@ -97,13 +98,13 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if not vim.startswith(filepath, TreeExplorer.cwd) then
+  if not vim.startswith(filepath, core.get_explorer().cwd) then
     change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
   end
 end
 
 function M.find_file(with_open, bufnr)
-  if not with_open and not TreeExplorer then
+  if not with_open and not core.get_explorer() then
     return
   end
 
@@ -248,8 +249,7 @@ function M.on_enter(netrw_disabled)
   end
 
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    lib.init(cwd)
-    lib.open()
+    lib.open(cwd)
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"

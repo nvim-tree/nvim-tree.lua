@@ -1,11 +1,12 @@
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
+local core = require "nvim-tree.core"
 
 local M = {}
 
 function M.fn()
-  if not TreeExplorer then
+  if not core.get_explorer() then
     return
   end
 
@@ -13,7 +14,7 @@ function M.fn()
   utils.clear_prompt()
 
   local absolute_input_path = utils.path_join {
-    TreeExplorer.cwd,
+    core.get_cwd(),
     input_path,
   }
 
@@ -54,7 +55,7 @@ function M.fn()
           -- if node is not open -> open it
           if not node.open then
             node.open = true
-            TreeExplorer:expand(node)
+            core.get_explorer():expand(node)
             tree_altered = true
           end
 
@@ -70,7 +71,7 @@ function M.fn()
     return index
   end
 
-  local index = search_node(TreeExplorer.nodes)
+  local index = search_node(core.get_explorer().nodes)
 
   if tree_altered then
     renderer.draw()

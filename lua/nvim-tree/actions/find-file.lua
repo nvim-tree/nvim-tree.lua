@@ -1,13 +1,14 @@
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
+local core = require "nvim-tree.core"
 
 local M = {}
 
 local running = {}
 
 function M.fn(fname)
-  if running[fname] or not TreeExplorer then
+  if running[fname] or not core.get_explorer() then
     return
   end
   running[fname] = true
@@ -30,7 +31,7 @@ function M.fn(fname)
         end
 
         if #node.nodes == 0 then
-          TreeExplorer:expand(node)
+          core.get_explorer():expand(node)
         end
 
         if iterate_nodes(node.nodes) ~= nil then
@@ -43,7 +44,7 @@ function M.fn(fname)
     end
   end
 
-  local index = iterate_nodes(TreeExplorer.nodes)
+  local index = iterate_nodes(core.get_explorer().nodes)
   if tree_altered then
     renderer.draw()
   end

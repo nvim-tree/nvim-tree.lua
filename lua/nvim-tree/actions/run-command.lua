@@ -1,4 +1,5 @@
 local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 
 local M = {}
 
@@ -7,7 +8,7 @@ local M = {}
 ---(the topmost node in the nvim-tree window)
 local function get_node_path(node)
   if node.name == ".." then
-    return utils.path_remove_trailing(TreeExplorer.cwd)
+    return utils.path_remove_trailing(core.get_cwd())
   else
     return node.absolute_path
   end

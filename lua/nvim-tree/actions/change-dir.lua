@@ -1,5 +1,7 @@
 local a = vim.api
+
 local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 
 local M = {
   current_tab = a.nvim_get_current_tabpage(),
@@ -10,12 +12,12 @@ local M = {
 }
 
 function M.fn(name, with_open)
-  if not TreeExplorer then
+  if not core.get_explorer() then
     return
   end
 
-  local foldername = name == ".." and vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.cwd), ":h") or name
-  local no_cwd_change = vim.fn.expand(foldername) == TreeExplorer.cwd
+  local foldername = name == ".." and vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h") or name
+  local no_cwd_change = vim.fn.expand(foldername) == core.get_cwd()
   local new_tab = a.nvim_get_current_tabpage()
   local is_window = (vim.v.event.scope == "window" or vim.v.event.changed_window) and new_tab == M.current_tab
   if no_cwd_change or is_window then
@@ -33,7 +35,7 @@ function M.force_dirchange(foldername, with_open)
       vim.cmd("lcd " .. vim.fn.fnameescape(foldername))
     end
   end
-  require("nvim-tree.lib").init(foldername)
+  require("nvim-tree.core").init(foldername)
   if with_open then
     require("nvim-tree.lib").open()
   else

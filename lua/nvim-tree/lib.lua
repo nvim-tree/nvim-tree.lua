@@ -2,25 +2,12 @@ local api = vim.api
 
 local renderer = require "nvim-tree.renderer"
 local diagnostics = require "nvim-tree.diagnostics"
-local explorer = require "nvim-tree.explorer"
 local view = require "nvim-tree.view"
-local events = require "nvim-tree.events"
-
-local first_init_done = false
+local core = require "nvim-tree.core"
 
 local M = {
   target_winid = nil,
 }
-
-TreeExplorer = nil
-
-function M.init(foldername)
-  TreeExplorer = explorer.Explorer.new(foldername)
-  if not first_init_done then
-    events._dispatch_ready()
-    first_init_done = true
-  end
-end
 
 function M.get_nodes_by_line(nodes_all, line_start)
   local nodes_by_line = {}
@@ -42,7 +29,7 @@ function M.get_nodes_by_line(nodes_all, line_start)
 end
 
 function M.get_node_at_cursor()
-  if not TreeExplorer then
+  if not core.get_explorer() then
     return
   end
   local winnr = view.get_winnr()
@@ -57,14 +44,14 @@ function M.get_node_at_cursor()
     local help_text = M.get_nodes_by_line(help_lines, 1)[line]
     return { name = help_text }
   else
-    if line == 1 and TreeExplorer.cwd ~= "/" and not hide_root_folder then
+    if line == 1 and core.get_explorer().cwd ~= "/" and not hide_root_folder then
       return { name = ".." }
     end
 
-    if TreeExplorer.cwd == "/" then
+    if core.get_explorer().cwd == "/" then
       line = line + 1
     end
-    return M.get_nodes_by_line(TreeExplorer.nodes, view.View.hide_root_folder and 1 or 2)[line]
+    return M.get_nodes_by_line(core.get_explorer().nodes, view.View.hide_root_folder and 1 or 2)[line]
   end
 end
 
@@ -84,7 +71,7 @@ function M.expand_or_collapse(node)
   end
 
   if #node.nodes == 0 then
-    TreeExplorer:expand(node)
+    core.get_explorer():expand(node)
   end
 
   renderer.draw()
@@ -104,7 +91,7 @@ end
 
 local function handle_buf_cwd(cwd)
   local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if respect_buf_cwd == 1 and cwd ~= TreeExplorer.cwd then
+  if respect_buf_cwd == 1 and cwd ~= core.get_explorer().cwd then
     require("nvim-tree.actions.change-dir").fn(cwd)
   end
 end
@@ -130,8 +117,8 @@ end
 
 function M.open(cwd)
   M.set_target_win()
-  if not TreeExplorer or cwd then
-    M.init(cwd or vim.loop.cwd())
+  if not core.get_explorer() or cwd then
+    core.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
     view.open_in_current_win()

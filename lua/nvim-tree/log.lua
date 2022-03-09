@@ -4,9 +4,9 @@ local M = {
 }
 
 --- Write to log file
---- @param typ as per log.types config
---- @param fmt for string.format
---- @param ... arguments for string.format
+--- @param typ string as per log.types config
+--- @param fmt string for string.format
+--- @param ... any arguments for string.format
 function M.raw(typ, fmt, ...)
   if not M.path or not M.config.types[typ] and not M.config.types.all then
     return

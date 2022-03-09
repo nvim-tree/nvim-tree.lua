@@ -4,11 +4,12 @@ local uv = vim.loop
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
+local core = require "nvim-tree.core"
 
 local M = {}
 
 local function focus_file(file)
-  local _, i = utils.find_node(TreeExplorer.nodes, function(node)
+  local _, i = utils.find_node(core.get_explorer().nodes, function(node)
     return node.absolute_path == file
   end)
   require("nvim-tree.view").set_cursor { i + 1, 1 }
@@ -62,8 +63,8 @@ function M.fn(node)
   node = lib.get_last_group_node(node)
   if node.name == ".." then
     node = {
-      absolute_path = TreeExplorer.cwd,
-      nodes = TreeExplorer.nodes,
+      absolute_path = core.get_cwd(),
+      nodes = core.get_explorer().nodes,
       open = true,
     }
   end
