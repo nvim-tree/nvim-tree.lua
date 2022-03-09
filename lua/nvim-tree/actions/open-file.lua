@@ -204,7 +204,7 @@ function M.fn(mode, filename)
     end
 
     local cmd
-    if do_split then
+    if do_split or #api.nvim_list_wins() == 1 then
       cmd = string.format("%ssplit ", vertical and "vertical " or "")
     else
       cmd = "edit "
@@ -213,9 +213,10 @@ function M.fn(mode, filename)
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
     pcall(vim.cmd, cmd)
-    if M.resize_window then
-      view.resize()
-    end
+  end
+
+  if M.resize_window then
+    view.resize()
   end
 
   if mode == "preview" then
