@@ -56,7 +56,7 @@ function M.parent_node(should_close)
         parent.open = false
         altered_tree = true
       end
-      if not view.is_root_folder_visible(TreeExplorer) then
+      if not view.is_root_folder_visible() then
         line = line - 1
       end
       view.set_cursor { line, 0 }
@@ -109,7 +109,7 @@ function M.sibling(direction)
     local target_node = parent.nodes[index]
 
     line, _ = get_line_from_node(target_node)(TreeExplorer.nodes, true)
-    if not view.is_root_folder_visible(TreeExplorer) then
+    if not view.is_root_folder_visible() then
       line = line - 1
     end
     view.set_cursor { line, 0 }

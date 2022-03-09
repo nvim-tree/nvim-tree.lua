@@ -77,7 +77,7 @@ function M.fn()
   end
 
   if found_something and view.is_visible() then
-    if view.is_root_folder_visible(TreeExplorer) then
+    if view.is_root_folder_visible() then
       index = index + 1
     end
 

@@ -12,7 +12,7 @@ function M.fn(fname)
   end
   running[fname] = true
 
-  local i = view.is_root_folder_visible(TreeExplorer) and 1 or 0
+  local i = view.is_root_folder_visible() and 1 or 0
   local tree_altered = false
 
   local function iterate_nodes(nodes)

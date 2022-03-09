@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local _padding = require "nvim-tree.renderer.padding"
 local _help = require "nvim-tree.renderer.help"
 local _icons = require "nvim-tree.renderer.icons"
+local git = require "nvim-tree.renderer.git"
 
 local api = vim.api
 
@@ -104,179 +105,6 @@ if icon_state.show_file_icon then
   end
 end
 
-local get_git_icons = function()
-  return ""
-end
-local get_git_hl = function() end
-
-if vim.g.nvim_tree_git_hl == 1 then
-  local git_hl = {
-    ["M "] = { { hl = "NvimTreeFileStaged" } },
-    [" M"] = { { hl = "NvimTreeFileDirty" } },
-    ["CM"] = { { hl = "NvimTreeFileDirty" } },
-    ["C "] = { { hl = "NvimTreeFileStaged" } },
-    [" C"] = { { hl = "NvimTreeFileDirty" } },
-    [" T"] = { { hl = "NvimTreeFileDirty" } },
-    ["MM"] = {
-      { hl = "NvimTreeFileStaged" },
-      { hl = "NvimTreeFileDirty" },
-    },
-    ["A "] = {
-      { hl = "NvimTreeFileStaged" },
-      { hl = "NvimTreeFileNew" },
-    },
-    ["AU"] = {
-      { hl = "NvimTreeFileMerge" },
-      { hl = "NvimTreeFileStaged" },
-    },
-    -- not sure about this one
-    ["AA"] = {
-      { hl = "NvimTreeFileMerge" },
-      { hl = "NvimTreeFileStaged" },
-    },
-    ["AD"] = {
-      { hl = "NvimTreeFileStaged" },
-    },
-    ["MD"] = {
-      { hl = "NvimTreeFileStaged" },
-    },
-    ["AM"] = {
-      { hl = "NvimTreeFileStaged" },
-      { hl = "NvimTreeFileNew" },
-      { hl = "NvimTreeFileDirty" },
-    },
-    ["??"] = { { hl = "NvimTreeFileNew" } },
-    ["R "] = { { hl = "NvimTreeFileRenamed" } },
-    ["UU"] = { { hl = "NvimTreeFileMerge" } },
-    ["UD"] = { { hl = "NvimTreeFileMerge" } },
-    ["UA"] = { { hl = "NvimTreeFileMerge" } },
-    [" D"] = { { hl = "NvimTreeFileDeleted" } },
-    ["DD"] = { { hl = "NvimTreeFileDeleted" } },
-    ["RD"] = { { hl = "NvimTreeFileDeleted" } },
-    ["D "] = {
-      { hl = "NvimTreeFileDeleted" },
-      { hl = "NvimTreeFileStaged" },
-    },
-    ["DU"] = {
-      { hl = "NvimTreeFileDeleted" },
-      { hl = "NvimTreeFileMerge" },
-    },
-    [" A"] = { { hl = "none" } },
-    ["RM"] = { { hl = "NvimTreeFileRenamed" } },
-    [" R"] = { { hl = "NvimTreeFileRenamed" } },
-    ["!!"] = { { hl = "NvimTreeGitIgnored" } },
-    dirty = { { hl = "NvimTreeFileDirty" } },
-  }
-  get_git_hl = function(node)
-    local git_status = node.git_status
-    if not git_status then
-      return
-    end
-
-    local icons = git_hl[git_status]
-
-    if icons == nil then
-      utils.warn(
-        'Unrecognized git state "'
-          .. git_status
-          .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'
-      )
-      icons = git_hl.dirty
-    end
-
-    -- TODO: how would we determine hl color when multiple git status are active ?
-    return icons[1].hl
-    -- return icons[#icons].hl
-  end
-end
-
-if icon_state.show_git_icon then
-  local git_icon_state = {
-    ["M "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
-    [" M"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ["C "] = { { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
-    [" C"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ["CM"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    [" T"] = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ["MM"] = {
-      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
-    },
-    ["MD"] = {
-      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-    },
-    ["A "] = {
-      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-    },
-    ["AD"] = {
-      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-    },
-    [" A"] = {
-      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
-    },
-    -- not sure about this one
-    ["AA"] = {
-      { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
-    },
-    ["AU"] = {
-      { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
-    },
-    ["AM"] = {
-      { icon = icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
-    },
-    ["??"] = { { icon = icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" } },
-    ["R "] = { { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
-    [" R"] = { { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
-    ["RM"] = {
-      { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
-      { icon = icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" },
-    },
-    ["UU"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UD"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UA"] = { { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    [" D"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["D "] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["RD"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["DD"] = { { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["DU"] = {
-      { icon = icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
-      { icon = icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-    },
-    ["!!"] = { { icon = icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
-    dirty = { { icon = icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-  }
-
-  get_git_icons = function(node, line, depth, icon_len)
-    local git_status = node.git_status
-    if not git_status then
-      return ""
-    end
-
-    local icon = ""
-    local icons = git_icon_state[git_status]
-    if not icons then
-      if vim.g.nvim_tree_git_hl ~= 1 then
-        utils.warn(
-          'Unrecognized git state "'
-            .. git_status
-            .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'
-        )
-      end
-      icons = git_icon_state.dirty
-    end
-    for _, v in ipairs(icons) do
-      if #v.icon > 0 then
-        table.insert(hl, { v.hl, line, depth + icon_len + #icon, depth + icon_len + #icon + #v.icon })
-        icon = icon .. v.icon .. icon_padding
-      end
-    end
-
-    return icon
-  end
-end
 
 local picture = {
   jpg = true,
@@ -285,25 +113,18 @@ local picture = {
   gif = true,
 }
 
-local function update_draw_data(tree, depth, markers)
-  local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
-  local special = vim.g.nvim_tree_special_files
+local function get_special_files_map()
+  return vim.g.nvim_tree_special_files
     or {
       ["Cargo.toml"] = true,
       Makefile = true,
       ["README.md"] = true,
       ["readme.md"] = true,
     }
+end
 
-  if view.is_root_folder_visible(tree) then
-    local root_name = utils.path_join {
-      utils.path_remove_trailing(vim.fn.fnamemodify(tree.cwd, root_folder_modifier)),
-      "..",
-    }
-    table.insert(lines, root_name)
-    table.insert(hl, { "NvimTreeRootFolder", index, 0, string.len(root_name) })
-    index = 1
-  end
+local function update_draw_data(tree, depth, markers)
+  local special = get_special_files_map()
 
   for idx, node in ipairs(tree.nodes) do
     local padding = _padding.get_padding(depth, idx, tree, node, markers)
@@ -312,12 +133,12 @@ local function update_draw_data(tree, depth, markers)
       table.insert(hl, { "NvimTreeIndentMarker", index, 0, offset })
     end
 
-    local git_hl = get_git_hl(node)
+    local git_hl = git.get_highlight(node)
 
     if node.nodes then
       local has_children = #node.nodes ~= 0 or node.has_children
       local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
-      local git_icon = get_git_icons(node, index, offset, #icon) or ""
+      local git_icon = git.get_icons(node, index, offset, #icon, hl) or ""
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       local folder_hl = "NvimTreeFolderName"
       local name = node.name
@@ -358,11 +179,11 @@ local function update_draw_data(tree, depth, markers)
       local git_icons
       if special[node.absolute_path] or special[node.name] then
         icon = get_special_icon()
-        git_icons = get_git_icons(node, index, offset, 0)
+        git_icons = git.get_icons(node, index, offset, 0, hl)
         table.insert(hl, { "NvimTreeSpecialFile", index, offset + #git_icons, -1 })
       else
         icon = get_file_icon(node.name, node.extension, index, offset)
-        git_icons = get_git_icons(node, index, offset, #icon)
+        git_icons = git.get_icons(node, index, offset, #icon, hl)
       end
       table.insert(lines, padding .. icon .. git_icons .. node.name)
 
@@ -399,6 +220,19 @@ end
 
 local M = {}
 
+local function compute_header()
+  if view.is_root_folder_visible() then
+    local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
+    local root_name = utils.path_join {
+      utils.path_remove_trailing(vim.fn.fnamemodify(TreeExplorer.cwd, root_folder_modifier)),
+      "..",
+    }
+    table.insert(lines, root_name)
+    table.insert(hl, { "NvimTreeRootFolder", index, 0, string.len(root_name) })
+    index = 1
+  end
+end
+
 function M.draw()
   local bufnr = view.get_bufnr()
   if not TreeExplorer or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
@@ -417,6 +251,8 @@ function M.draw()
     and icon_state.show_folder_icon
     and icon_state.show_folder_arrows
   _padding.reload_padding_function()
+  git.reload()
+  compute_header()
   update_draw_data(TreeExplorer, show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then

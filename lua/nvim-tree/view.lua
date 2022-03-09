@@ -342,8 +342,8 @@ function M._prevent_buffer_override()
   end)
 end
 
-function M.is_root_folder_visible(tree)
-  return tree.cwd and tree.cwd ~= "/" and not M.View.hide_root_folder
+function M.is_root_folder_visible()
+  return TreeExplorer.cwd ~= "/" and not M.View.hide_root_folder
 end
 
 local DEFAULT_CONFIG = {
