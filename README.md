@@ -108,7 +108,13 @@ highlight NvimTreeFolderIcon guibg=blue
 ```lua
 -- init.lua
 
--- following options are the default
+-- empty setup using defaults: add your own options
+require'nvim-tree'.setup {
+}
+
+-- OR
+
+-- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup {
 [//]: <> (BEGIN_DEFAULT_OPTS)
