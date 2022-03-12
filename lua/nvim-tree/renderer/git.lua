@@ -4,62 +4,64 @@ local utils = require "nvim-tree.utils"
 local M = {}
 
 local function build_icons_table()
+  local i = M.icon_state.icons.git_icons
   return {
-    ["M "] = { { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
-    [" M"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ["C "] = { { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" } },
-    [" C"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    ["CM"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
-    [" T"] = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ["M "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
+    [" M"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
+    ["C "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
+    [" C"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
+    ["CM"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
+    [" T"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
+    ["T "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
     ["MM"] = {
-      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = i.staged, hl = "NvimTreeGitStaged" },
+      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
     },
     ["MD"] = {
-      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = i.staged, hl = "NvimTreeGitStaged" },
     },
     ["A "] = {
-      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = i.staged, hl = "NvimTreeGitStaged" },
     },
     ["AD"] = {
-      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
+      { icon = i.staged, hl = "NvimTreeGitStaged" },
     },
     [" A"] = {
-      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = i.untracked, hl = "NvimTreeGitNew" },
     },
     -- not sure about this one
     ["AA"] = {
-      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = i.untracked, hl = "NvimTreeGitNew" },
     },
     ["AU"] = {
-      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" },
+      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = i.untracked, hl = "NvimTreeGitNew" },
     },
     ["AM"] = {
-      { icon = M.icon_state.icons.git_icons.staged, hl = "NvimTreeGitStaged" },
-      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = i.staged, hl = "NvimTreeGitStaged" },
+      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
     },
-    ["??"] = { { icon = M.icon_state.icons.git_icons.untracked, hl = "NvimTreeGitNew" } },
-    ["R "] = { { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
-    [" R"] = { { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" } },
+    ["??"] = { { icon = i.untracked, hl = "NvimTreeGitNew" } },
+    ["R "] = { { icon = i.renamed, hl = "NvimTreeGitRenamed" } },
+    [" R"] = { { icon = i.renamed, hl = "NvimTreeGitRenamed" } },
     ["RM"] = {
-      { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" },
-      { icon = M.icon_state.icons.git_icons.renamed, hl = "NvimTreeGitRenamed" },
+      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
+      { icon = i.renamed, hl = "NvimTreeGitRenamed" },
     },
-    ["UU"] = { { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UD"] = { { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UA"] = { { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" } },
-    [" D"] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["D "] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["RD"] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
-    ["DD"] = { { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" } },
+    ["UU"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
+    ["UD"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
+    ["UA"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
+    [" D"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
+    ["D "] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
+    ["RD"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
+    ["DD"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
     ["DU"] = {
-      { icon = M.icon_state.icons.git_icons.deleted, hl = "NvimTreeGitDeleted" },
-      { icon = M.icon_state.icons.git_icons.unmerged, hl = "NvimTreeGitMerge" },
+      { icon = i.deleted, hl = "NvimTreeGitDeleted" },
+      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
     },
-    ["!!"] = { { icon = M.icon_state.icons.git_icons.ignored, hl = "NvimTreeGitIgnored" } },
-    dirty = { { icon = M.icon_state.icons.git_icons.unstaged, hl = "NvimTreeGitDirty" } },
+    ["!!"] = { { icon = i.ignored, hl = "NvimTreeGitIgnored" } },
+    dirty = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
   }
 end
 
@@ -106,6 +108,7 @@ local git_hl = {
   ["AA"] = "NvimTreeFileStaged",
   ["AD"] = "NvimTreeFileStaged",
   ["MD"] = "NvimTreeFileStaged",
+  ["T "] = "NvimTreeFileStaged",
   [" M"] = "NvimTreeFileDirty",
   ["CM"] = "NvimTreeFileDirty",
   [" C"] = "NvimTreeFileDirty",
