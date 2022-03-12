@@ -356,7 +356,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     signcolumn = "yes",
     mappings = {
       custom_only = false,
-      list = {},
+      list = {
+        -- user mappings go here
+      },
     },
   },
   hijack_directories = {

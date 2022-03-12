@@ -140,7 +140,9 @@ require'nvim-tree'.setup {
     signcolumn = "yes",
     mappings = {
       custom_only = false,
-      list = {},
+      list = {
+        -- user mappings go here
+      },
     },
   },
   hijack_directories = {
