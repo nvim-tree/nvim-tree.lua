@@ -419,6 +419,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   log = {
     enable = false,
+    truncate = false,
     types = {
       all = false,
       config = false,

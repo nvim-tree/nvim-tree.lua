@@ -203,6 +203,7 @@ require'nvim-tree'.setup {
   },
   log = {
     enable = false,
+    truncate = false,
     types = {
       all = false,
       config = false,
