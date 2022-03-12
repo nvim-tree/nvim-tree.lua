@@ -164,6 +164,7 @@ function.
       },
       log = {
 	enable = false,
+	truncate = false,
 	types = {
 	  all = false,
 	  config = false,
@@ -473,6 +474,10 @@ Here is a list of the options available in the setup call:
 
   - |log.enable|: enable logging to a file `nvim-tree-HH:MM:SS-username.log`
     in $XDG_CACHE_HOME/nvim
+      type: `boolean`
+      default: `false`
+
+  - |log.truncate|: remove existing log file at startup
       type: `boolean`
       default: `false`
 
