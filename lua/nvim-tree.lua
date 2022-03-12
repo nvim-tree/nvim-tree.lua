@@ -354,6 +354,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {},
+    },
   },
   hijack_directories = {
     enable = true,

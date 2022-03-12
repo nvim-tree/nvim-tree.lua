@@ -132,6 +132,10 @@ require'nvim-tree'.setup {
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {},
+    },
   },
   hijack_directories = {
     enable = true,
