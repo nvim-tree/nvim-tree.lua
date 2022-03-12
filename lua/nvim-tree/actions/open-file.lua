@@ -4,18 +4,7 @@ local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 
-local M = {
-  quit_on_open = false,
-  resize_window = false,
-  window_picker = {
-    enable = true,
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-    exclude = {
-      filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
-      buftype = { "nofile", "terminal", "help" },
-    },
-  },
-}
+local M = {}
 
 local function get_split_cmd()
   local side = view.View.side
@@ -235,7 +224,7 @@ function M.setup(opts)
   if opts.actions.open_file.window_picker.chars then
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end
-  M.window_picker = vim.tbl_extend("force", M.window_picker, opts.actions.open_file.window_picker)
+  M.window_picker = opts.actions.open_file.window_picker
 end
 
 return M
