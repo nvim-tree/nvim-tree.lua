@@ -348,18 +348,8 @@ function M.is_root_folder_visible()
   return core.get_cwd() ~= "/" and not M.View.hide_root_folder
 end
 
-local DEFAULT_CONFIG = {
-  width = 30,
-  height = 30,
-  side = "left",
-  preserve_window_proportions = false,
-  number = false,
-  relativenumber = false,
-  signcolumn = "yes",
-}
-
 function M.setup(opts)
-  local options = vim.tbl_deep_extend("force", DEFAULT_CONFIG, opts.view or {})
+  local options = opts.view or {}
   M.View.side = options.side
   M.View.width = options.width
   M.View.height = options.height

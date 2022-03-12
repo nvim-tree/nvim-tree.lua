@@ -346,6 +346,15 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  view = {
+    width = 30,
+    height = 30,
+    side = "left",
+    preserve_window_proportions = false,
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes",
+  },
   hijack_directories = {
     enable = true,
     auto_open = true,
