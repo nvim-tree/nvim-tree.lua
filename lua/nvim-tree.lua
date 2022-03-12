@@ -395,6 +395,7 @@ local DEFAULT_OPTS = {
   },
   log = {
     enable = false,
+    truncate = false,
     types = {
       all = false,
       config = false,
