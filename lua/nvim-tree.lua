@@ -402,6 +402,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       },
     },
   },
+  trash = {
+    cmd = "trash",
+    require_confirm = true,
+  },
   log = {
     enable = false,
     types = {
