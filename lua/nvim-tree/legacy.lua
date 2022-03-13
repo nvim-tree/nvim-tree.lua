@@ -180,6 +180,7 @@ local migrations = {
 function M.migrate_legacy_options(opts)
   local msg = nil
 
+  -- g: options
   for g, m in pairs(migrations) do
     if vim.fn.exists("g:" .. g) ~= 0 then
       m(opts)
@@ -189,6 +190,19 @@ function M.migrate_legacy_options(opts)
 
   if msg then
     require("nvim-tree.utils").warn(msg)
+  end
+
+  -- regular opts
+  if opts.view then
+    if opts.view.mappings then
+      if opts.view.mappings.list then
+        for _, m in pairs(opts.view.mappings.list) do
+          if m.action == "toggle_ignored" then
+            m.action = "toggle_git_ignored"
+          end
+        end
+      end
+    end
   end
 end
 

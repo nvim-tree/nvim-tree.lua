@@ -30,7 +30,7 @@ function M.should_ignore(path)
     end
   end
 
-  if not M.config.filter_ignored then
+  if not M.config.filter_custom then
     return false
   end
 
@@ -50,14 +50,14 @@ function M.should_ignore(path)
 end
 
 function M.should_ignore_git(path, status)
-  return M.config.filter_ignored
+  return M.config.filter_git_ignored
     and (M.config.filter_git_ignored and status and status[path] == "!!")
     and not is_excluded(path)
 end
 
 function M.setup(opts)
   M.config = {
-    filter_ignored = true,
+    filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
     filter_git_ignored = opts.git.ignore,
   }

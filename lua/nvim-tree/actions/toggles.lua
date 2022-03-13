@@ -5,8 +5,13 @@ local reloaders = require "nvim-tree.actions.reloaders"
 
 local M = {}
 
-function M.ignored()
-  filters.config.filter_ignored = not filters.config.filter_ignored
+function M.custom()
+  filters.config.filter_custom = not filters.config.filter_custom
+  return reloaders.reload_explorer()
+end
+
+function M.git_ignored()
+  filters.config.filter_git_ignored = not filters.config.filter_git_ignored
   return reloaders.reload_explorer()
 end
 

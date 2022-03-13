@@ -282,7 +282,7 @@ local list = {
   { key = "<Tab>",                        action = "preview" },
   { key = "K",                            action = "first_sibling" },
   { key = "J",                            action = "last_sibling" },
-  { key = "I",                            action = "toggle_ignored" },
+  { key = "I",                            action = "toggle_git_ignored" },
   { key = "H",                            action = "toggle_dotfiles" },
   { key = "R",                            action = "refresh" },
   { key = "a",                            action = "create" },
