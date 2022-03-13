@@ -663,9 +663,9 @@ INFORMATIONS				        *nvim-tree-info*
 - <C-x> will open the file in a horizontal split
 - <C-t> will open the file in a new tab
 - <Tab> will open the file as a preview (keeps the cursor in the tree)
-- `I` will toggle visibility of folders hidden via |git.ignore| option
+- `I` will toggle visibility of files/folders hidden via |git.ignore| option
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
-- U will toggle visibility of files/folders matching |filters.custom| option
+- U will toggle visibility of files/folders hidden via |filters.custom| option
 - `R` will refresh the tree
 - Double left click acts like <CR>
 - Double right click acts like <C-]>
