@@ -399,6 +399,7 @@ local DEFAULT_OPTS = {
     types = {
       all = false,
       config = false,
+      copy_paste = false,
       git = false,
     },
   },
