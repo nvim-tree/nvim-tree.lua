@@ -491,6 +491,10 @@ Here is a list of the options available in the setup call:
         type: `boolean`
         default: `false`
 
+    - |log.types.copy_paste|: file copy and paste actions
+        type: `boolean`
+        default: `false`
+
     - |log.types.git|: git processing
         type: `boolean`
         default: `false`
