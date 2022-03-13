@@ -31,16 +31,13 @@ local function do_copy(source, destination)
   end
 
   if source_stats.type == "file" then
-
     success, errmsg = uv.fs_copyfile(source, destination)
     if not success then
       log.line("copy_paste", "do_copy fs_copyfile failed '%s'", errmsg)
       return false, errmsg
     end
     return true
-
   elseif source_stats.type == "directory" then
-
     handle, errmsg = uv.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
@@ -69,7 +66,6 @@ local function do_copy(source, destination)
       end
     end
   else
-
     errmsg = string.format("'%s' illegal file type '%s'", source, source_stats.type)
     log.line("copy_paste", "do_copy %s", errmsg)
     return false, errmsg
