@@ -14,13 +14,16 @@ local clipboard = {
 }
 
 local function do_copy(source, destination)
-  log.line("copy_paste", "do_copy %s '%s' -> '%s'", source_stats.type, source, destination)
+  local source_stats, handle
+  local success, errmsg
 
-  local source_stats, errmsg = uv.fs_stat(source)
+  source_stats, errmsg = uv.fs_stat(source)
   if not source_stats then
     log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, errmsg)
     return false, errmsg
   end
+
+  log.line("copy_paste", "do_copy %s '%s' -> '%s'", source_stats.type, source, destination)
 
   if source == destination then
     log.line("copy_paste", "do_copy source and destination are the same, exiting early")
@@ -29,16 +32,16 @@ local function do_copy(source, destination)
 
   if source_stats.type == "file" then
 
-    local success, errmsg = uv.fs_copyfile(source, destination)
+    success, errmsg = uv.fs_copyfile(source, destination)
     if not success then
       log.line("copy_paste", "do_copy fs_copyfile failed '%s'", errmsg)
       return false, errmsg
     end
-    return true 
+    return true
 
   elseif source_stats.type == "directory" then
 
-    local handle, errmsg = uv.fs_scandir(source)
+    handle, errmsg = uv.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
     elseif not handle then
@@ -46,7 +49,7 @@ local function do_copy(source, destination)
       return false, errmsg
     end
 
-    local success, errmsg = uv.fs_mkdir(destination, source_stats.mode)
+    success, errmsg = uv.fs_mkdir(destination, source_stats.mode)
     if not success then
       log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, errmsg)
       return false, errmsg
@@ -60,14 +63,14 @@ local function do_copy(source, destination)
 
       local new_name = utils.path_join { source, name }
       local new_destination = utils.path_join { destination, name }
-      local success, errmsg = do_copy(new_name, new_destination)
+      success, errmsg = do_copy(new_name, new_destination)
       if not success then
         return false, errmsg
       end
     end
   else
 
-    local errmsg = string.format("'%s' illegal file type '%s'", source, source_stats.type)
+    errmsg = string.format("'%s' illegal file type '%s'", source, source_stats.type)
     log.line("copy_paste", "do_copy %s", errmsg)
     return false, errmsg
   end
@@ -76,9 +79,12 @@ local function do_copy(source, destination)
 end
 
 local function do_single_paste(source, dest, action_type, action_fn)
+  local dest_stats
+  local success, errmsg, errcode
+
   log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
 
-  local dest_stats, errmsg, errcode = uv.fs_stat(dest)
+  dest_stats, errmsg, errcode = uv.fs_stat(dest)
   if not dest_stats and errcode ~= "ENOENT" then
     a.nvim_err_writeln("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
     return false, errmsg
@@ -101,7 +107,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 
   if should_process then
-    local success, errmsg = action_fn(source, dest)
+    success, errmsg = action_fn(source, dest)
     if not success then
       a.nvim_err_writeln("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
       return false, errmsg
