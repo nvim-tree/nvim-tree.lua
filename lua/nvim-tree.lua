@@ -334,7 +334,7 @@ local function setup_autocommands(opts)
   vim.cmd "augroup end"
 end
 
-local DEFAULT_OPTS = {
+local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
@@ -347,6 +347,21 @@ local DEFAULT_OPTS = {
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  view = {
+    width = 30,
+    height = 30,
+    side = "left",
+    preserve_window_proportions = false,
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {
+        -- user mappings go here
+      },
+    },
+  },
   hijack_directories = {
     enable = true,
     auto_open = true,
@@ -391,8 +406,17 @@ local DEFAULT_OPTS = {
       resize_window = false,
       window_picker = {
         enable = true,
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+        exclude = {
+          filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
+          buftype = { "nofile", "terminal", "help" },
+        },
       },
     },
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true,
   },
   log = {
     enable = false,
@@ -403,7 +427,7 @@ local DEFAULT_OPTS = {
       git = false,
     },
   },
-}
+} -- END_DEFAULT_OPTS
 
 local function merge_options(conf)
   if conf and conf.update_to_buf_dir then

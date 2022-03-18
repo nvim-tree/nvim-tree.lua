@@ -63,108 +63,36 @@ body:
       value: |
         vim.cmd [[set runtimepath=$VIMRUNTIME]]
         vim.cmd [[set packpath=/tmp/nvt-min/site]]
-        local package_root = '/tmp/nvt-min/site/pack'
-        local install_path = package_root .. '/packer/start/packer.nvim'
+        local package_root = "/tmp/nvt-min/site/pack"
+        local install_path = package_root .. "/packer/start/packer.nvim"
         local function load_plugins()
-          require('packer').startup {
+          require("packer").startup {
             {
-              'wbthomason/packer.nvim',
-              'kyazdani42/nvim-tree.lua',
-              'kyazdani42/nvim-web-devicons',
+              "wbthomason/packer.nvim",
+              "kyazdani42/nvim-tree.lua",
+              "kyazdani42/nvim-web-devicons",
               -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
             },
             config = {
               package_root = package_root,
-              compile_path = install_path .. '/plugin/packer_compiled.lua',
+              compile_path = install_path .. "/plugin/packer_compiled.lua",
               display = { non_interactive = true },
             },
           }
         end
         if vim.fn.isdirectory(install_path) == 0 then
-          print("Installing nvim-tree and dependencies.")
-          vim.fn.system { 'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path }
+          print "Installing nvim-tree and dependencies."
+          vim.fn.system { "git", "clone", "--depth=1", "https://github.com/wbthomason/packer.nvim", install_path }
         end
         load_plugins()
-        require('packer').sync()
+        require("packer").sync()
         vim.cmd [[autocmd User PackerComplete ++once echo "Ready!" | lua setup()]]
         vim.opt.termguicolors = true
         vim.opt.cursorline = true
-
+        
         -- MODIFY NVIM-TREE SETTINGS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
         _G.setup = function()
-        vim.g.nvim_tree_indent_markers = 0
-        vim.g.nvim_tree_git_hl = 0
-        vim.g.nvim_tree_highlight_opened_files = 0
-        vim.g.nvim_tree_root_folder_modifier = ':~'
-        vim.g.nvim_tree_add_trailing = 0
-        vim.g.nvim_tree_group_empty = 0
-        vim.g.nvim_tree_icon_padding = ' '
-        vim.g.nvim_tree_symlink_arrow = ' ➛ '
-        vim.g.nvim_tree_respect_buf_cwd = 0
-        vim.g.nvim_tree_create_in_closed_folder = 0
-        vim.g.nvim_tree_special_files = { ["Cargo.toml"] = true, Makefile = true, ["README.md"] = true, ["readme.md"] = true, }
-        vim.g.nvim_tree_show_icons = { git = 1, folders = 1, files = 1, folder_arrows = 1 }
-        require'nvim-tree'.setup {
-          auto_close = false,
-          auto_reload_on_write = true,
-          disable_netrw = false,
-          hide_root_folder = false,
-          hijack_cursor = false,
-          hijack_netrw = true,
-          hijack_unnamed_buffer_when_opening = false,
-          ignore_buffer_on_setup = false,
-          open_on_setup = false,
-          open_on_tab = false,
-          sort_by = "name",
-          update_cwd = false,
-          hijack_directories = {
-            enable = true,
-            auto_open = true,
-          },
-          update_focused_file  = {
-            enable = false,
-            update_cwd = false,
-            ignore_list = {}
-          },
-          ignore_ft_on_setup = {},
-          system_open = {
-            cmd  = nil,
-            args = {}
-          },
-          diagnostics = {
-            enable = false,
-            show_on_dirs = false,
-            icons = {
-              hint = "",
-              info = "",
-              warning = "",
-              error = "",
-            }
-          },
-          filters = {
-            dotfiles = false,
-            custom = {},
-            exclude = {}
-          },
-          git = {
-            enable = true,
-            ignore = true,
-            timeout = 400,
-          },
-          actions = {
-            change_dir = {
-              enable = true,
-              global = false,
-            },
-            open_file = {
-              quit_on_open = false,
-              resize_window = false,
-              window_picker = {
-                enable = true,
-              }
-            }
-          },
-        }
+          require("nvim-tree").setup {}
         end
     validations:
       required: true
