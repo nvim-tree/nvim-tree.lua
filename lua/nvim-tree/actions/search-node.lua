@@ -42,6 +42,13 @@ function M.fn()
 
       if absolute_input_path == node.absolute_path then
         found_something = true
+
+        if node.nodes and not node.open then
+          node.open = true
+          core.get_explorer():expand(node)
+          tree_altered = true
+        end
+
         return index
       end
 
