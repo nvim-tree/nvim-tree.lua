@@ -24,7 +24,7 @@ local function get_trailing_length()
   return vim.g.nvim_tree_add_trailing and 1 or 0
 end
 
-local set_folder_hl = function(line, depth, git_icon_len, _, hl_group)
+local set_folder_hl = function(line, depth, git_icon_len, _, hl_group, _)
   table.insert(hl, { hl_group, line, depth + git_icon_len, -1 })
 end
 
@@ -52,10 +52,10 @@ if icon_state.show_folder_icon then
     end
     return n .. icon_padding
   end
-  set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
-    table.insert(hl, { hl_group, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
-    local hl_icon = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0 and hl_group or "NvimTreeFolderIcon"
+  set_folder_hl = function(line, depth, icon_len, name_len, hl_icongroup, hl_fnamegroup)
+    local hl_icon = should_hl_opened_files and hl_icongroup or "NvimTreeFolderIcon"
     table.insert(hl, { hl_icon, line, depth, depth + icon_len })
+    table.insert(hl, { hl_fnamegroup, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
   end
 end
 
@@ -156,9 +156,9 @@ local function update_draw_data(tree, depth, markers)
       if special[node.absolute_path] then
         folder_hl = "NvimTreeSpecialFolderName"
       end
-      set_folder_hl(index, offset, #icon + #git_icon, #name, folder_hl)
+      set_folder_hl(index, offset, #icon + #git_icon, #name, "NvimTreeFolderIcon", folder_hl)
       if git_hl then
-        set_folder_hl(index, offset, #icon + #git_icon, #name, git_hl)
+        set_folder_hl(index, offset, #icon + #git_icon, #name, git_hl, git_hl)
       end
       index = index + 1
       if node.open then
