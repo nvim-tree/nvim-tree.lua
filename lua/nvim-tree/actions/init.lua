@@ -22,7 +22,7 @@ local M = {
     { key = "<Tab>", action = "preview" },
     { key = "K", action = "first_sibling" },
     { key = "J", action = "last_sibling" },
-    { key = "I", action = "toggle_ignored" },
+    { key = "I", action = "toggle_git_ignored" },
     { key = "H", action = "toggle_dotfiles" },
     { key = "R", action = "refresh" },
     { key = "a", action = "create" },
@@ -46,6 +46,7 @@ local M = {
     { key = "S", action = "search_node" },
     { key = ".", action = "run_file_command" },
     { key = "<C-k>", action = "toggle_file_info" },
+    { key = "U", action = "toggle_custom" },
   },
   custom_keypress_funcs = {},
 }
@@ -79,7 +80,8 @@ local keypress_funcs = {
   system_open = require("nvim-tree.actions.system-open").fn,
   toggle_dotfiles = require("nvim-tree.actions.toggles").dotfiles,
   toggle_help = require("nvim-tree.actions.toggles").help,
-  toggle_ignored = require("nvim-tree.actions.toggles").ignored,
+  toggle_custom = require("nvim-tree.actions.toggles").custom,
+  toggle_git_ignored = require("nvim-tree.actions.toggles").git_ignored,
   trash = require("nvim-tree.actions.trash").fn,
 }
 

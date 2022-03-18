@@ -667,8 +667,9 @@ INFORMATIONS				        *nvim-tree-info*
 - <C-x> will open the file in a horizontal split
 - <C-t> will open the file in a new tab
 - <Tab> will open the file as a preview (keeps the cursor in the tree)
-- `I` will toggle visibility of folders hidden via |git.ignore| option
+- `I` will toggle visibility of files/folders hidden via |git.ignore| option
 - `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
+- U will toggle visibility of files/folders hidden via |filters.custom| option
 - `R` will refresh the tree
 - Double left click acts like <CR>
 - Double right click acts like <C-]>
@@ -695,7 +696,7 @@ Defaults to:
       { key = "<Tab>",                        action = "preview" },
       { key = "K",                            action = "first_sibling" },
       { key = "J",                            action = "last_sibling" },
-      { key = "I",                            action = "toggle_ignored" },
+      { key = "I",                            action = "toggle_git_ignored" },
       { key = "H",                            action = "toggle_dotfiles" },
       { key = "R",                            action = "refresh" },
       { key = "a",                            action = "create" },
@@ -719,6 +720,7 @@ Defaults to:
       { key = "S",                            action = "search_node" },
       { key = ".",                            action = "run_file_command" },
       { key = "<C-k>",                        action = "toggle_file_info" }
+      { key = "U",                            action = "toggle_custom" },
     }
 <
 The `list` option in `view.mappings.list` is a table of
