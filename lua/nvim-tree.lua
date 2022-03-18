@@ -438,7 +438,7 @@ local function merge_options(conf)
 end
 
 function M.setup(conf)
-  legacy.migrate_legacy_options(conf)
+  legacy.migrate_legacy_options(conf or {})
 
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
