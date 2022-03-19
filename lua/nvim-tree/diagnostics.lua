@@ -103,15 +103,9 @@ local function is_using_coc()
   return vim.g.coc_service_initialized == 1
 end
 
-function M.update()
-  if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
+function M.clear()
+  if not M.enable or not view.is_buf_valid(view.get_bufnr()) then
     return
-  end
-  local buffer_severity
-  if is_using_coc() then
-    buffer_severity = from_coc()
-  else
-    buffer_severity = from_nvim_lsp()
   end
 
   if #signs then
@@ -124,6 +118,20 @@ function M.update()
     end, signs))
     signs = {}
   end
+end
+
+function M.update()
+  if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
+    return
+  end
+  local buffer_severity
+  if is_using_coc() then
+    buffer_severity = from_coc()
+  else
+    buffer_severity = from_nvim_lsp()
+  end
+
+  M.clear()
   for bufname, severity in pairs(buffer_severity) do
     if 0 < severity and severity < 5 then
       local node, line = utils.find_node(core.get_explorer().nodes, function(node)
