@@ -116,8 +116,7 @@ require'nvim-tree'.setup {
 
 -- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
-require'nvim-tree'.setup {
-[//]: <> (BEGIN_DEFAULT_OPTS)
+require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
@@ -210,8 +209,7 @@ require'nvim-tree'.setup {
       git = false,
     },
   },
-[//]: <> (END_DEFAULT_OPTS)
-}
+} -- END_DEFAULT_OPTS
 ```
 
 ## KeyBindings
