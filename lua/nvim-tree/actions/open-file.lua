@@ -1,3 +1,4 @@
+-- Copyright 2019 Yazdani Kiyan under MIT License
 local api = vim.api
 
 local lib = require "nvim-tree.lib"
