@@ -1,95 +1,75 @@
+local api = vim.api
+local uv = vim.loop
 local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
-local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
+local find_file = require("nvim-tree.actions.find-file").fn
 
 local M = {}
+
+local function search(dir, input_path)
+  local path, name, stat, handle, _
+
+  if not dir then
+    return
+  end
+
+  handle, _ = uv.fs_scandir(dir)
+  if not handle then
+    return
+  end
+
+  name, _ = uv.fs_scandir_next(handle)
+  while name do
+    path = dir .. "/" .. name
+
+    stat, _ = uv.fs_stat(path)
+    if not stat then
+      break
+    end
+
+    if string.find(path, "/" .. input_path .. "$") then
+      return path
+    end
+
+    if stat.type == "directory" then
+      path = search(path, input_path)
+      if path then
+        return path
+      end
+    end
+
+    name, _ = uv.fs_scandir_next(handle)
+  end
+end
 
 function M.fn()
   if not core.get_explorer() then
     return
   end
 
-  local input_path = vim.fn.input("Search node: ", "", "file")
+  -- temporarily set &path
+  local bufnr = api.nvim_get_current_buf()
+  local path_existed, path_opt = pcall(api.nvim_buf_get_option, bufnr, "path")
+  api.nvim_buf_set_option(bufnr, "path", core.get_cwd() .. "/**")
+
+  -- completes files/dirs under cwd
+  local input_path = vim.fn.input("Search: ", "", "file_in_path")
   utils.clear_prompt()
 
-  local absolute_input_path = utils.path_join {
-    core.get_cwd(),
-    input_path,
-  }
-
-  local function count_visible_nodes(nodes)
-    local visible_nodes = 0
-    for _, node in ipairs(nodes) do
-      visible_nodes = visible_nodes + 1
-
-      if node.open and node.nodes then
-        visible_nodes = visible_nodes + count_visible_nodes(node.nodes)
-      end
-    end
-
-    return visible_nodes
+  -- reset &path
+  if path_existed then
+    api.nvim_buf_set_option(bufnr, "path", path_opt)
+  else
+    api.nvim_buf_set_option(bufnr, "path", nil)
   end
 
-  local tree_altered = false
-  local found_something = false
+  -- strip trailing slash
+  input_path = string.gsub(input_path, "/$", "")
 
-  local function search_node(nodes)
-    local index = 0
-
-    for _, node in ipairs(nodes) do
-      index = index + 1
-
-      if absolute_input_path == node.absolute_path then
-        found_something = true
-
-        if node.nodes and not node.open then
-          node.open = true
-          core.get_explorer():expand(node)
-          tree_altered = true
-        end
-
-        return index
-      end
-
-      if node.nodes then
-        -- e.g. user searches for "/foo/bar.txt", than directory "/foo/bar" should not match with filename
-        local matches = utils.str_find(absolute_input_path, node.absolute_path .. "/")
-
-        if matches then
-          found_something = true
-
-          -- if node is not open -> open it
-          if not node.open then
-            node.open = true
-            core.get_explorer():expand(node)
-            tree_altered = true
-          end
-
-          return index + search_node(node.nodes)
-        end
-      end
-
-      if node.open then
-        index = index + count_visible_nodes(node.nodes)
-      end
-    end
-
-    return index
-  end
-
-  local index = search_node(core.get_explorer().nodes)
-
-  if tree_altered then
-    renderer.draw()
-  end
-
-  if found_something and view.is_visible() then
-    if view.is_root_folder_visible() then
-      index = index + 1
-    end
-
-    view.set_cursor { index, 0 }
+  -- search under cwd
+  local found = search(core.get_cwd(), input_path)
+  if found then
+    find_file(found)
   end
 end
 
