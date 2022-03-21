@@ -19,7 +19,7 @@ function M.fn(with_sub)
 
     local input_opts = { prompt = "Rename to", default = abs_path }
 
-    vim.ui.input(input_opts, function (new_file_path)
+    vim.ui.input(input_opts, function(new_file_path)
       if not new_file_path then
         return
       end
