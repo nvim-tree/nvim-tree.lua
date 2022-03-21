@@ -137,15 +137,23 @@ function M.is_windows_exe(ext)
   return pathexts[ext:upper()]
 end
 
-function M.rename_loaded_buffers(old_name, new_name)
+function M.rename_loaded_buffers(old_path, new_path)
   for _, buf in pairs(a.nvim_list_bufs()) do
     if a.nvim_buf_is_loaded(buf) then
-      if a.nvim_buf_get_name(buf) == old_name then
-        a.nvim_buf_set_name(buf, new_name)
-        -- to avoid the 'overwrite existing file' error message on write
-        vim.api.nvim_buf_call(buf, function()
-          vim.cmd "silent! w!"
-        end)
+      local buf_name = a.nvim_buf_get_name(buf)
+      local exact_match = buf_name == old_path
+      local child_match = (
+          buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
+        )
+      if exact_match or child_match then
+        a.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
+        -- to avoid the 'overwrite existing file' error message on write for
+        -- normal files
+        if a.nvim_buf_get_option(buf, "buftype") == "" then
+          a.nvim_buf_call(buf, function()
+            vim.cmd "silent! write!"
+          end)
+        end
       end
     end
   end
