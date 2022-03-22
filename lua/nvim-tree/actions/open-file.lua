@@ -58,6 +58,19 @@ local function pick_window()
   local laststatus = vim.o.laststatus
   vim.o.laststatus = 2
 
+  if laststatus == 3 then
+    local ok_status, statusline = pcall(api.nvim_win_get_option, tree_winid, "statusline")
+    local ok_hl, winhl = pcall(api.nvim_win_get_option, tree_winid, "winhl")
+
+    win_opts[tree_winid] = {
+      statusline = ok_status and statusline or "",
+      winhl = ok_hl and winhl or "",
+    }
+
+    api.nvim_win_set_option(tree_winid, "statusline", " ")
+    api.nvim_win_set_option(tree_winid, "winhl", "StatusLine:NvimTreeWindowPicker")
+  end
+
   -- Setup UI
   for _, id in ipairs(selectable) do
     local char = M.window_picker.chars:sub(i, i)
@@ -89,6 +102,12 @@ local function pick_window()
   for _, id in ipairs(selectable) do
     for opt, value in pairs(win_opts[id]) do
       api.nvim_win_set_option(id, opt, value)
+    end
+  end
+
+  if laststatus == 3 then
+    for opt, value in pairs(win_opts[tree_winid]) do
+      api.nvim_win_set_option(tree_winid, opt, value)
     end
   end
 
