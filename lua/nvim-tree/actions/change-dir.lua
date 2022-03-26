@@ -1,5 +1,6 @@
 local a = vim.api
 
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 
@@ -28,6 +29,8 @@ function M.fn(name, with_open)
 end
 
 function M.force_dirchange(foldername, with_open)
+  local ps = log.profile_start("change dir %s", foldername)
+
   if M.options.change_cwd and vim.tbl_isempty(vim.v.event) then
     if M.options.global then
       vim.cmd("cd " .. vim.fn.fnameescape(foldername))
@@ -41,6 +44,8 @@ function M.force_dirchange(foldername, with_open)
   else
     require("nvim-tree.renderer").draw()
   end
+
+  log.profile_end(ps, "change dir %s", foldername)
 end
 
 function M.setup(options)

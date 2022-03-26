@@ -424,7 +424,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     types = {
       all = false,
       config = false,
+      copy_paste = false,
       git = false,
+      profile = false,
     },
   },
 } -- END_DEFAULT_OPTS

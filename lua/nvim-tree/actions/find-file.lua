@@ -1,3 +1,4 @@
+local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
@@ -12,6 +13,8 @@ function M.fn(fname)
     return
   end
   running[fname] = true
+
+  local ps = log.profile_start("find file %s", fname)
 
   local i = view.is_root_folder_visible() and 1 or 0
   local tree_altered = false
@@ -52,6 +55,8 @@ function M.fn(fname)
     view.set_cursor { index, 0 }
   end
   running[fname] = false
+
+  log.profile_end(ps, "find file %s", fname)
 end
 
 return M
