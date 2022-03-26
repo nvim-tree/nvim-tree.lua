@@ -240,7 +240,7 @@ function M.draw()
     return
   end
 
-  local ps = log.profile_start("draw")
+  local ps = log.profile_start "draw"
 
   local cursor
   if view.is_visible() then
