@@ -99,15 +99,15 @@ end
 -- get the node from the tree that matches the predicate
 -- @param nodes list of node
 -- @param fn    function(node): boolean
-function M.find_node(_nodes, _fn)
-  local function iter(nodes, fn)
+function M.find_node(nodes, fn)
+  local function iter(nodes_, fn_)
     local i = 1
-    for _, node in ipairs(nodes) do
-      if fn(node) then
+    for _, node in ipairs(nodes_) do
+      if fn_(node) then
         return node, i
       end
       if node.open and #node.nodes > 0 then
-        local n, idx = iter(node.nodes, fn)
+        local n, idx = iter(node.nodes, fn_)
         i = i + idx
         if n then
           return n, i
@@ -118,7 +118,7 @@ function M.find_node(_nodes, _fn)
     end
     return nil, i
   end
-  local node, i = iter(_nodes, _fn)
+  local node, i = iter(nodes, fn)
   i = require("nvim-tree.view").View.hide_root_folder and i - 1 or i
   return node, i
 end
