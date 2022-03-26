@@ -9,7 +9,7 @@ local M = {}
 local running = {}
 
 ---Find a path in the tree, expand it and focus it
----@param fname string canonical path
+---@param fname string full path
 function M.fn(fname)
   if running[fname] or not core.get_explorer() then
     return
