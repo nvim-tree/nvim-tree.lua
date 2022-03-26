@@ -330,6 +330,7 @@ You can toggle the help UI by pressing `g?`.
 2. You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
 3. `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree.toggle(false, false)`).
 4. You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
+5. If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 
 ## Diagnostic Logging
 
