@@ -51,7 +51,7 @@ function M.get_node_at_cursor()
     if core.get_explorer().cwd == "/" then
       line = line + 1
     end
-    return M.get_nodes_by_line(core.get_explorer().nodes, view.View.hide_root_folder and 1 or 2)[line]
+    return M.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
   end
 end
 

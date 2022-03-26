@@ -24,7 +24,7 @@ function M.fn(fname)
     return
   end
 
-  local i = view.is_root_folder_visible() and 1 or 0
+  local i = core.get_nodes_starting_line() - 1
   local tree_altered = false
 
   local function iterate_nodes(nodes)

@@ -1,7 +1,5 @@
 local a = vim.api
 
-local core = require "nvim-tree.core"
-
 local M = {}
 
 M.View = {
@@ -344,8 +342,8 @@ function M._prevent_buffer_override()
   end)
 end
 
-function M.is_root_folder_visible()
-  return core.get_cwd() ~= "/" and not M.View.hide_root_folder
+function M.is_root_folder_visible(cwd)
+  return cwd ~= "/" and not M.View.hide_root_folder
 end
 
 function M.setup(opts)

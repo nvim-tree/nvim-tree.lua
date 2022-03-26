@@ -222,7 +222,7 @@ end
 local M = {}
 
 local function compute_header()
-  if view.is_root_folder_visible() then
+  if view.is_root_folder_visible(core.get_cwd()) then
     local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
     local root_name = utils.path_join {
       utils.path_remove_trailing(vim.fn.fnamemodify(core.get_cwd(), root_folder_modifier)),

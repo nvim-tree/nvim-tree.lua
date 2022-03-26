@@ -38,7 +38,7 @@ function M.force_dirchange(foldername, with_open)
       vim.cmd("lcd " .. vim.fn.fnameescape(foldername))
     end
   end
-  require("nvim-tree.core").init(foldername)
+  core.init(foldername)
   if with_open then
     require("nvim-tree.lib").open()
   else
