@@ -1,3 +1,4 @@
+local log = require "nvim-tree.log"
 local uv = vim.loop
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
@@ -16,6 +17,7 @@ function M.fn(fname)
   end
   running[fname] = true
 
+  local ps = log.profile_start("find file %s", fname)
   -- always match against the real path
   local fname_real = uv.fs_realpath(fname)
   if not fname_real then
@@ -68,6 +70,8 @@ function M.fn(fname)
     view.set_cursor { index, 0 }
   end
   running[fname] = false
+
+  log.profile_end(ps, "find file %s", fname)
 end
 
 return M

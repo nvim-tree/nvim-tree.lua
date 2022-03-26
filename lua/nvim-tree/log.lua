@@ -19,14 +19,26 @@ function M.raw(typ, fmt, ...)
   io.close(file)
 end
 
+--- Write to log file via M.line
+--- START is prefixed
+--- @return reltime to pass to profile_end
+function M.profile_start(fmt, ...)
+  M.line("profile", "START " .. (fmt or "???"), ...)
+  return vim.fn.reltime()
+end
+
+--- Write to log file via M.line
+--- END is prefixed and duration in seconds is suffixed
+--- @param start reltime returned from profile_start
+function M.profile_end(start, fmt, ...)
+  local dur = vim.fn.reltimestr(vim.fn.reltime(start, vim.fn.reltime()))
+  M.line("profile", "END   " .. (fmt or "???") .. "  " .. dur .. "s", ...)
+end
+
 -- Write to log file via M.raw
 -- time and typ are prefixed and a trailing newline is added
 function M.line(typ, fmt, ...)
-  if not M.path or not M.config.types[typ] and not M.config.types.all then
-    return
-  end
-
-  M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y:%m:%d %H:%M:%S", typ, fmt), ...)
+  M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, fmt), ...)
 end
 
 function M.setup(opts)

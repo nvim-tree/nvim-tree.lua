@@ -173,7 +173,9 @@ function.
         types = {
           all = false,
           config = false,
+          copy_paste = false,
           git = false,
+          profile = false,
         },
       },
     } -- END_DEFAULT_OPTS
@@ -489,6 +491,10 @@ Here is a list of the options available in the setup call:
   - |log.types|: specify which information to log
 
     - |log.types.all|: everything
+        type: `boolean`
+        default: `false`
+
+    - |log.types.profile|: timing of some operations
         type: `boolean`
         default: `false`
 
