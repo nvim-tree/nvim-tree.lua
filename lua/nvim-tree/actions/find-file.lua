@@ -8,6 +8,8 @@ local M = {}
 
 local running = {}
 
+---Find a path in the tree, expand it and focus it
+---@param fname string canonical path
 function M.fn(fname)
   if running[fname] or not core.get_explorer() then
     return
@@ -27,22 +29,17 @@ function M.fn(fname)
     for _, node in ipairs(nodes) do
       i = i + 1
 
-      local stat, _ = uv.fs_stat(node.absolute_path)
-      if not stat then
-        break
-      end
-      local real_path, _ = uv.fs_realpath(node.absolute_path)
-      if not real_path then
+      if not node.absolute_path or not uv.fs_stat(node.absolute_path) then
         break
       end
 
-      -- match against node absolute and real, for the case of symlinks, which will differ
-      if node.absolute_path == fname_real or real_path == fname_real then
+      -- match against node absolute and link, as symlinks themselves will differ
+      if node.absolute_path == fname_real or node.link_to == fname_real then
         return i
       end
       local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
-      local real_match = vim.startswith(fname_real, real_path .. utils.path_separator)
-      local path_matches = node.nodes and abs_match or real_match
+      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
+      local path_matches = node.nodes and (abs_match or link_match)
       if path_matches then
         if not node.open then
           node.open = true
