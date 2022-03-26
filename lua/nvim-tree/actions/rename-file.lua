@@ -16,24 +16,28 @@ function M.fn(with_sub)
 
     local namelen = node.name:len()
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * -1 - 1) or node.absolute_path
-    local new_name = vim.fn.input("Rename " .. node.name .. " to ", abs_path)
-    utils.clear_prompt()
-    if not new_name or #new_name == 0 then
-      return
-    end
-    if utils.file_exists(new_name) then
-      utils.warn "Cannot rename: file already exists"
-      return
-    end
 
-    local success = uv.fs_rename(node.absolute_path, new_name)
-    if not success then
-      return a.nvim_err_writeln("Could not rename " .. node.absolute_path .. " to " .. new_name)
-    end
-    a.nvim_out_write(node.absolute_path .. " ➜ " .. new_name .. "\n")
-    utils.rename_loaded_buffers(node.absolute_path, new_name)
-    events._dispatch_node_renamed(abs_path, new_name)
-    require("nvim-tree.actions.reloaders").reload_explorer()
+    local input_opts = { prompt = "Rename to", default = abs_path }
+
+    vim.ui.input(input_opts, function(new_file_path)
+      if not new_file_path then
+        return
+      end
+
+      if utils.file_exists(new_file_path) then
+        utils.warn "Cannot rename: file already exists"
+        return
+      end
+
+      local success = uv.fs_rename(node.absolute_path, new_file_path)
+      if not success then
+        return a.nvim_err_writeln("Could not rename " .. node.absolute_path .. " to " .. new_file_path)
+      end
+      a.nvim_out_write(node.absolute_path .. " ➜ " .. new_file_path .. "\n")
+      utils.rename_loaded_buffers(node.absolute_path, new_file_path)
+      events._dispatch_node_renamed(abs_path, new_file_path)
+      require("nvim-tree.actions.reloaders").reload_explorer()
+    end)
   end
 end
 

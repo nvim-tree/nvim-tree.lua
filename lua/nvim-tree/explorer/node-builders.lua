@@ -62,8 +62,10 @@ end
 function M.link(absolute_path, name, status, parent_ignored)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local link_to = uv.fs_realpath(absolute_path)
-  local open, nodes
+  local open, nodes, has_children
   if (link_to ~= nil) and uv.fs_stat(link_to).type == "directory" then
+    local handle = uv.fs_scandir(link_to)
+    has_children = handle and uv.fs_scandir_next(handle) ~= nil
     open = false
     nodes = {}
   end
@@ -77,6 +79,7 @@ function M.link(absolute_path, name, status, parent_ignored)
     nodes = nodes,
     open = open,
     fs_stat = uv.fs_stat(absolute_path),
+    has_children = has_children,
   }
 end
 
