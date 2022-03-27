@@ -131,38 +131,6 @@ end
 
 M.resize = view.resize
 
-local function should_abort_auto_close()
-  local buf = api.nvim_get_current_buf()
-  local buftype = api.nvim_buf_get_option(buf, "ft")
-  local modified = vim.tbl_filter(function(b)
-    return api.nvim_buf_get_option(b, "modified")
-  end, api.nvim_list_bufs())
-  return #modified > 0 or buftype:match "Telescope" ~= nil
-end
-
-function M.auto_close()
-  if should_abort_auto_close() then
-    return
-  end
-
-  vim.defer_fn(function()
-    if not view.is_visible() then
-      return
-    end
-
-    local windows = api.nvim_list_wins()
-    local curtab = api.nvim_get_current_tabpage()
-    local wins_in_tabpage = vim.tbl_filter(function(w)
-      return api.nvim_win_get_tabpage(w) == curtab
-    end, windows)
-    if #windows == 1 then
-      api.nvim_command ":silent qa!"
-    elseif #wins_in_tabpage == 1 then
-      api.nvim_command ":tabclose"
-    end
-  end, 50)
-end
-
 function M.open_on_directory()
   local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
   if not should_proceed then
@@ -305,9 +273,6 @@ local function setup_autocommands(opts)
   end
   vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
 
-  if opts.auto_close then
-    vim.cmd "au WinClosed * lua require'nvim-tree'.auto_close()"
-  end
   if opts.open_on_tab then
     vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
   end
@@ -335,7 +300,6 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
-  auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
   hide_root_folder = false,
@@ -444,6 +408,10 @@ function M.setup(conf)
 
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
+
+  if opts.auto_close then
+    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
+  end
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup

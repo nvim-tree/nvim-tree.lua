@@ -8,7 +8,7 @@ local M = {
 --- Write to log file
 --- @param typ string as per log.types config
 --- @param fmt string for string.format
---- @param ... any arguments for string.format
+--- @vararg any arguments for string.format
 function M.raw(typ, fmt, ...)
   if not M.path or not M.config.types[typ] and not M.config.types.all then
     return
@@ -23,7 +23,7 @@ end
 
 --- Write to log file via M.line
 --- START is prefixed
---- @return nanos to pass to profile_end
+--- @return number nanos to pass to profile_end
 function M.profile_start(fmt, ...)
   if not M.path or not M.config.types.profile and not M.config.types.all then
     return
@@ -34,7 +34,7 @@ end
 
 --- Write to log file via M.line
 --- END is prefixed and duration in seconds is suffixed
---- @param start nanos returned from profile_start
+--- @param start number nanos returned from profile_start
 function M.profile_end(start, fmt, ...)
   if not M.path or not M.config.types.profile and not M.config.types.all then
     return

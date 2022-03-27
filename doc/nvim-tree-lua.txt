@@ -84,7 +84,6 @@ function.
 
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
-      auto_close = false,
       auto_reload_on_write = true,
       disable_netrw = false,
       hide_root_folder = false,
@@ -214,11 +213,6 @@ Here is a list of the options available in the setup call:
   scenarios (eg using vim startify).
   type: `{string}`
   default: `{}`
-
-*nvim-tree.auto_close*
-- |auto_close|: force closing neovim when the tree is the last window in the view.
-  type: `boolean`
-  default: `false`
 
 *nvim-tree.auto_reload_on_write*
 - |auto_reload_on_write|: reloads the explorer every time a buffer is written to
