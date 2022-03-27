@@ -479,8 +479,7 @@ Here is a list of the options available in the setup call:
 *nvim-tree.log*
 |log|: configuration for diagnostic logging
 
-  - |log.enable|: enable logging to a file `nvim-tree-HH:MM:SS-username.log`
-    in $XDG_CACHE_HOME/nvim
+  - |log.enable|: enable logging to a file `$XDG_CACHE_HOME/nvim/nvim-tree.log`
       type: `boolean`
       default: `false`
 
