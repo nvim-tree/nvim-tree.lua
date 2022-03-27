@@ -355,7 +355,7 @@ log = {
 
 Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
-### Tips
+*Performance Tips:*
 
 * If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config.
 
