@@ -35,8 +35,14 @@ function M.should_ignore(path)
   end
 
   local relpath = utils.path_relative(path, vim.loop.cwd())
-  if M.ignore_list[relpath] == true or M.ignore_list[basename] == true then
-    return true
+  for pat, _ in pairs(M.ignore_list) do
+    if pat == relpath or pat == basename then
+      return true
+    end
+    pat = "^" .. pat .. "$"
+    if relpath:match(pat) or basename:match(pat) then
+      return true
+    end
   end
 
   local idx = path:match ".+()%.[^.]+$"

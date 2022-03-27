@@ -411,7 +411,7 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
-  - |filters.custom|: custom list of string that will not be shown.
+  - |filters.custom|: custom list of file/directory name regex that will not be shown.
       type: `{string}`
       default: `{}`
 
