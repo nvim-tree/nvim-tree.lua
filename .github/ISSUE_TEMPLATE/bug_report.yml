@@ -15,7 +15,7 @@ body:
   - type: textarea
     attributes:
       label: "Neovim version"
-      description: "Output of `nvim --version`"
+      description: "Output of `nvim --version`. Please see nvim-tree.lua [minimum required version](https://github.com/kyazdani42/nvim-tree.lua#notice)."
       render: markdown
       placeholder: |
         NVIM v0.6.1
