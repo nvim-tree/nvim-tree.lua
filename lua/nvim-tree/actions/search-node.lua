@@ -2,6 +2,7 @@ local api = vim.api
 local uv = vim.loop
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local filters = require "nvim-tree.explorer.filters"
 local find_file = require("nvim-tree.actions.find-file").fn
 
 local M = {}
@@ -27,14 +28,16 @@ local function search(dir, input_path)
       break
     end
 
-    if string.find(path, "/" .. input_path .. "$") then
-      return path
-    end
-
-    if stat.type == "directory" then
-      path = search(path, input_path)
-      if path then
+    if not filters.should_ignore(path) then
+      if string.find(path, "/" .. input_path .. "$") then
         return path
+      end
+
+      if stat.type == "directory" then
+        path = search(path, input_path)
+        if path then
+          return path
+        end
       end
     end
 
