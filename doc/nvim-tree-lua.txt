@@ -555,8 +555,8 @@ You can set icons for:
 - Symlinks. If an icon is not provided, the `default` icon is used.
 >
   let g:nvim_tree_icons = {
-      \ 'default':        '',
-      \ 'symlink':        '',
+      \ 'default':        "",
+      \ 'symlink':        "",
       \ 'git': {
       \   'unstaged':     "✗",
       \   'staged':       "✓",
