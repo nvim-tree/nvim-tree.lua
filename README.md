@@ -327,7 +327,7 @@ You can toggle the help UI by pressing `g?`.
 
 1. You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
 2. You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
-3. `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree.toggle(false, false)`).
+3. `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
 4. You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
 5. If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 6. You can automatically close the tab/vim when nvim-tree is the last window in the tab. WARNING: other plugins or automation may interfere with this:
