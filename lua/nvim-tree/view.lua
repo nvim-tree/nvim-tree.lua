@@ -212,8 +212,7 @@ end
 function M.reposition_window()
   local move_to = move_tbl[M.View.side]
   a.nvim_command("wincmd " .. move_to)
-  local resize_direction = M.is_vertical() and "vertical " or ""
-  a.nvim_command(resize_direction .. "resize " .. get_size())
+  M.resize()
 end
 
 local function set_current_win()
