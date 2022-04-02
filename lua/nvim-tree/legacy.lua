@@ -24,12 +24,6 @@ local migrations = {
     end
   end,
 
-  nvim_tree_auto_close = function(o)
-    if o.auto_close == nil then
-      o.auto_close = vim.g.nvim_tree_auto_close ~= 0
-    end
-  end,
-
   nvim_tree_tab_open = function(o)
     if o.open_on_tab == nil then
       o.open_on_tab = vim.g.nvim_tree_tab_open ~= 0
