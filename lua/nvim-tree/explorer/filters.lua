@@ -36,11 +36,7 @@ function M.should_ignore(path)
 
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
-    if pat == relpath or pat == basename then
-      return true
-    end
-    pat = "^" .. pat .. "$"
-    if relpath:match(pat) or basename:match(pat) then
+    if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
       return true
     end
   end
