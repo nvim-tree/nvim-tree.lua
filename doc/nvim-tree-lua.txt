@@ -405,7 +405,8 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
-  - |filters.custom|: custom list of string that will not be shown.
+  - |filters.custom|: custom list of vim regex for file/directory names that will not be shown.
+    Backslashes must be escaped e.g. "^\\.git". See |string-match|.
       type: `{string}`
       default: `{}`
 
