@@ -792,6 +792,7 @@ NvimTreeSymlink
 NvimTreeFolderName
 NvimTreeRootFolder
 NvimTreeFolderIcon
+NvimTreeFileIcon
 NvimTreeEmptyFolderName
 NvimTreeOpenedFolderName
 NvimTreeExecFile
