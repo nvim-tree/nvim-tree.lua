@@ -126,6 +126,7 @@ function M.open(cwd)
   else
     open_view_and_draw()
   end
+  view.restore_tab_state()
 end
 
 -- @deprecated: use nvim-tree.actions.collapse-all.fn
