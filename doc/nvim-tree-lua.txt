@@ -92,6 +92,7 @@ function.
       hijack_unnamed_buffer_when_opening = false,
       ignore_buffer_on_setup = false,
       open_on_setup = false,
+      open_on_setup_file = false,
       open_on_tab = false,
       sort_by = "name",
       update_cwd = false,
@@ -196,8 +197,16 @@ Here is a list of the options available in the setup call:
   default: `true`
 
 *nvim-tree.open_on_setup*
-- |open_on_setup|: will automatically open the tree when running setup if current
-  buffer is a directory, is empty or is unnamed.
+- |open_on_setup|: will automatically open the tree when running setup if
+  startup buffer is a directory, is empty or is unnamed. nvim-tree window will
+  be focused.
+  type: `boolean`
+  default: `false`
+
+*nvim-tree.open_on_setup_file*
+- |open_on_setup_file|: will automatically open the tree when running setup if
+  startup buffer is a file. File window will be focused. File will be found if
+  |update_focused_file.enable| is set.
   type: `boolean`
   default: `false`
 
