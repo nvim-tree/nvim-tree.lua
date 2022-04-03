@@ -103,6 +103,14 @@ function.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
+        indent_markers = {
+          enable = true,
+          icons = {
+            corner = "└ ",
+            edge = "│ ",
+            none = "  ",
+          },
+        },
         mappings = {
           custom_only = false,
           list = {
@@ -387,6 +395,16 @@ Here is a list of the options available in the setup call:
       type: `string`
       default: `"yes"`
 
+  - |view.indent_markers|: configuration options for tree indent markers
+
+    - |view.indent_markers.enable|: display indent markers when folders are open
+        type: `boolean`
+        default: `false`
+
+    - |view.indent_markers.icons|: icons shown before the file/directory
+        type: `table`
+	default: `{ corner = "└ ", edge = "│ ", none = "  ", }`
+
   - |view.mappings|: configuration options for keymaps
 
     - |view.mappings.custom_only|: will use only the provided user mappings and not the default
@@ -581,11 +599,6 @@ You can set icons for:
 
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
-
-|g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
-
-Can be `0` or `1`. When `1`, will display indent markers when folders are open
-Default is 0
 
 |g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
 

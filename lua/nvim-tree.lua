@@ -319,6 +319,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
     mappings = {
       custom_only = false,
       list = {
@@ -434,6 +442,7 @@ function M.setup(conf)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
+  require("nvim-tree.renderer").setup(opts)
 
   setup_vim_commands()
   setup_autocommands(opts)
