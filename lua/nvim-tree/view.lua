@@ -33,6 +33,16 @@ M.View = {
   },
 }
 
+-- The initial state of a tab
+local tabinitial = {
+  -- True if help is displayed
+  help = false,
+  -- The position of the cursor { line, column }
+  cursor = { 0, 0 },
+  -- The NvimTree window number
+  winnr = nil,
+}
+
 local BUFNR_PER_TAB = {}
 local LAST_FOCUSED_WIN = nil
 local BUFFER_OPTIONS = {
@@ -108,12 +118,16 @@ local function set_local(opt, value)
   vim.cmd(cmd)
 end
 
+-- setup_tabpage sets up the initial state of a tab
+local function setup_tabpage(tabpage)
+  local winnr = a.nvim_get_current_win()
+  M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
+end
+
 local function open_window()
   a.nvim_command "vsp"
   M.reposition_window()
-  local winnr = a.nvim_get_current_win()
-  local tabpage = a.nvim_get_current_tabpage()
-  M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or { help = false }, { winnr = winnr })
+  setup_tabpage(a.nvim_get_current_tabpage())
 end
 
 local function set_window_options_and_buffer()
@@ -139,10 +153,17 @@ local function switch_buf_if_last_buf()
   end
 end
 
+-- save_tab_state saves any state that should be preserved across redraws.
+local function save_tab_state()
+  local tabpage = a.nvim_get_current_tabpage()
+  M.View.tabpages[tabpage].cursor = a.nvim_win_get_cursor(M.get_winnr())
+end
+
 function M.close()
   if not M.is_visible() then
     return
   end
+  save_tab_state()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr()
   local current_win = a.nvim_get_current_win()
@@ -217,12 +238,13 @@ end
 
 local function set_current_win()
   local current_tab = a.nvim_get_current_tabpage()
-  M.View.tabpages[current_tab] = { winnr = a.nvim_get_current_win() }
+  M.View.tabpages[current_tab].winnr = a.nvim_get_current_win()
 end
 
 function M.open_in_current_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
   create_buffer(opts.hijack_current_buf and a.nvim_get_current_buf())
+  setup_tabpage(a.nvim_get_current_tabpage())
   set_current_win()
   set_window_options_and_buffer()
   if opts.resize then
@@ -234,7 +256,7 @@ end
 function M.abandon_current_window()
   local tab = a.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = nil
-  M.View.tabpages[tab] = { winnr = nil }
+  M.View.tabpages[tab].winnr = nil
 end
 
 function M.is_visible(opts)
@@ -274,6 +296,12 @@ end
 
 function M.is_vertical()
   return M.View.side == "left" or M.View.side == "right"
+end
+
+--- Restores the state of a NvimTree window if it was initialized before.
+function M.restore_tab_state()
+  local tabpage = a.nvim_get_current_tabpage()
+  M.set_cursor(M.View.tabpages[tabpage].cursor)
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
