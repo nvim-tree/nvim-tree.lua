@@ -181,6 +181,7 @@ function M.on_enter(netrw_disabled)
 
   local stats = luv.fs_stat(bufname)
   local is_dir = stats and stats.type == "directory"
+  local is_file = stats and stats.type == "file"
   local cwd
   if is_dir then
     cwd = vim.fn.expand(bufname)
@@ -197,9 +198,14 @@ function M.on_enter(netrw_disabled)
 
   local should_open = false
   local should_focus_other_window = false
-  if _config.open_on_setup and not should_be_preserved then
+  local should_find = false
+  if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
     if buf_is_dir or buf_is_empty then
       should_open = true
+    elseif is_file and _config.open_on_setup_file then
+      should_open = true
+      should_focus_other_window = true
+      should_find = _config.update_focused_file.enable
     elseif _config.ignore_buffer_on_setup then
       should_open = true
       should_focus_other_window = true
@@ -222,6 +228,9 @@ function M.on_enter(netrw_disabled)
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
+      if should_find then
+        M.find_file(false)
+      end
     end
   end
   M.initialized = true
@@ -308,6 +317,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_unnamed_buffer_when_opening = false,
   ignore_buffer_on_setup = false,
   open_on_setup = false,
+  open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
@@ -415,6 +425,7 @@ function M.setup(conf)
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
+  _config.open_on_setup_file = opts.open_on_setup_file
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
