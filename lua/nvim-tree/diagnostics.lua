@@ -134,14 +134,16 @@ function M.update()
   require("nvim-tree.log").line("diagnostics", "update")
   M.clear()
   for bufname, severity in pairs(buffer_severity) do
-    require("nvim-tree.log").line("diagnostics", " bufname '%s' severity %d", bufname, severity)
+    local bufpath = utils.canonical_path(bufname)
+    require("nvim-tree.log").line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
     if 0 < severity and severity < 5 then
       local node, line = utils.find_node(core.get_explorer().nodes, function(node)
-        require("nvim-tree.log").line("diagnostics", "  checking node '%s'", node.absolute_path)
+        local nodepath = utils.canonical_path(node.absolute_path)
+        require("nvim-tree.log").line("diagnostics", "  checking nodepath '%s'", nodepath)
         if M.show_on_dirs and not node.open then
-          return vim.startswith(bufname, node.absolute_path)
+          return vim.startswith(bufpath, nodepath)
         else
-          return node.absolute_path == bufname
+          return nodepath == bufpath
         end
       end)
       if node then
