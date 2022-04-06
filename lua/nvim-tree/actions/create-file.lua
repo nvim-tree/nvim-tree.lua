@@ -69,6 +69,8 @@ function M.fn(node)
       return
     end
 
+    utils.clear_prompt()
+
     if utils.file_exists(new_file_path) then
       utils.warn "Cannot create: file already exists"
       return
