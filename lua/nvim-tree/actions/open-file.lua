@@ -68,7 +68,6 @@ local function pick_window()
     }
 
     api.nvim_win_set_option(tree_winid, "statusline", " ")
-    api.nvim_win_set_option(tree_winid, "winhl", "StatusLine:NvimTreeWindowPicker")
   end
 
   -- Setup UI
@@ -102,12 +101,6 @@ local function pick_window()
   for _, id in ipairs(selectable) do
     for opt, value in pairs(win_opts[id]) do
       api.nvim_win_set_option(id, opt, value)
-    end
-  end
-
-  if laststatus == 3 then
-    for opt, value in pairs(win_opts[tree_winid]) do
-      api.nvim_win_set_option(tree_winid, opt, value)
     end
   end
 
