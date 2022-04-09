@@ -21,9 +21,14 @@ local function populate_children(handle, cwd, node, status)
       break
     end
 
+    local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
     local abs = utils.path_join { cwd, name }
     t = get_type_from(t, abs)
-    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
+    if
+      not filters.should_ignore(abs)
+      and not filters.should_ignore_git(abs, status.files)
+      and not nodes_by_path[abs]
+    then
       if t == "directory" and uv.fs_access(abs, "R") then
         table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
       elseif t == "file" then
