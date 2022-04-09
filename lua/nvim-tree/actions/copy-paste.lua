@@ -212,13 +212,13 @@ function M.print_clipboard()
 end
 
 local function copy_to_clipboard(content)
-  if M.use_sys_clipboard then
+  if M.use_sys_clipboard == true then
     vim.fn.setreg("+", content)
     vim.fn.setreg('"', content)
     return a.nvim_out_write(string.format("Copied %s to system clipboard! \n", content))
   else
     vim.fn.setreg('"', content)
-    vim.fn.setreg('1', content)
+    vim.fn.setreg("1", content)
     return a.nvim_out_write(string.format("Copied %s to neovim clipboard \n", content))
   end
 end
@@ -242,7 +242,8 @@ end
 
 function M.setup(opts)
   M.use_sys_clipboard = opts.actions.use_sys_clipboard
-  if M.use_sys_clipboard == nil then M.use_sys_clipboard = true end
+  if M.use_sys_clipboard == nil then
+    M.use_sys_clipboard = true
+  end
 end
-
 return M
