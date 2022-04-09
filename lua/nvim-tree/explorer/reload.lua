@@ -9,14 +9,6 @@ local sorters = require "nvim-tree.explorer.sorters"
 
 local M = {}
 
-local function key_by(nodes, key)
-  local v = {}
-  for _, node in ipairs(nodes) do
-    v[node[key]] = node
-  end
-  return v
-end
-
 local function update_status(nodes_by_path, node_ignored, status)
   return function(node)
     if nodes_by_path[node.absolute_path] then
@@ -46,7 +38,7 @@ function M.reload(node, status)
   local child_names = {}
 
   local node_ignored = node.git_status == "!!"
-  local nodes_by_path = key_by(node.nodes, "absolute_path")
+  local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
     local name, t = uv.fs_scandir_next(handle)
     if not name then
