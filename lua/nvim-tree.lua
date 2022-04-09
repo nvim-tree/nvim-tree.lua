@@ -329,18 +329,20 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {
+        -- user mappings go here
+      },
+    },
+  },
+  renderer = {
     indent_markers = {
       enable = false,
       icons = {
         corner = "└ ",
         edge = "│ ",
         none = "  ",
-      },
-    },
-    mappings = {
-      custom_only = false,
-      list = {
-        -- user mappings go here
       },
     },
   },

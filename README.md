@@ -58,7 +58,7 @@ let g:nvim_tree_show_icons = {
 "1 by default, notice that if 'files' is 1, it will only display
 "if nvim-web-devicons is installed and on your runtimepath.
 "if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
-"but this will not work when you set view.indent_markers.enable (because of UI conflict)
+"but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
 
 " default will show icon by default if no icon is provided
 " default shows no icon by default
@@ -136,18 +136,20 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
-    indent_markers = {
-      enable = true,
-      icons = {
-        corner = "└ ",
-        edge = "│ ",
-        none = "  ",
-      },
-    },
     mappings = {
       custom_only = false,
       list = {
         -- user mappings go here
+      },
+    },
+  },
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
       },
     },
   },

@@ -291,7 +291,7 @@ end
 
 function M.setup(opts)
   M.config = {
-    indent_markers = opts.view.indent_markers,
+    indent_markers = opts.renderer.indent_markers,
   }
 
   require("nvim-tree.renderer.padding").setup(opts)
