@@ -210,4 +210,12 @@ function M.format_bytes(bytes)
   return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
 end
 
+function M.key_by(tbl, key)
+  local keyed = {}
+  for _, val in ipairs(tbl) do
+    keyed[val[key]] = val
+  end
+  return keyed
+end
+
 return M

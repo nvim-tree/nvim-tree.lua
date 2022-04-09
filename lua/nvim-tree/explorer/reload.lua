@@ -46,7 +46,7 @@ function M.reload(node, status)
   local child_names = {}
 
   local node_ignored = node.git_status == "!!"
-  local nodes_by_path = key_by(node.nodes, "absolute_path")
+  local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
     local name, t = uv.fs_scandir_next(handle)
     if not name then
