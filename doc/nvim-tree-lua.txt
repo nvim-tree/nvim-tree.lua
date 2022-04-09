@@ -481,12 +481,11 @@ Here is a list of the options available in the setup call:
 			`buftype  = { "nofile", "terminal", "help", }`
 		`}`
     
-    - actions.use_system_clipboard: A boolean value that toggle the use of system clipboard 
+    - |actions.use_system_clipboard|: A boolean value that toggle the use of system clipboard 
       when copy/paste function are invoked.
-      If is enabled all copy text are stored in registers '+', when disabled
-      in registers '1' and '"'.
-	type: boolean
-	default: true
+      When enabled, copied text will be stored in registers '+' (system), otherwise, it will be stored in '1' and '"'.
+	type: `boolean`
+	default: `true`
 	
 
 *nvim-tree.log*
