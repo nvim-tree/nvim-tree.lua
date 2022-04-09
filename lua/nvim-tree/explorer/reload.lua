@@ -9,14 +9,6 @@ local sorters = require "nvim-tree.explorer.sorters"
 
 local M = {}
 
-local function key_by(nodes, key)
-  local v = {}
-  for _, node in ipairs(nodes) do
-    v[node[key]] = node
-  end
-  return v
-end
-
 local function update_status(nodes_by_path, node_ignored, status)
   return function(node)
     if nodes_by_path[node.absolute_path] then
