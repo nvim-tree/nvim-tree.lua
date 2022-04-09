@@ -242,8 +242,6 @@ end
 
 function M.setup(opts)
   M.use_sys_clipboard = opts.actions.use_sys_clipboard
-  if M.use_sys_clipboard == nil then
-    M.use_sys_clipboard = true
-  end
 end
+
 return M

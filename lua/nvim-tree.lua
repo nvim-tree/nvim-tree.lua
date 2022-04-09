@@ -1,3 +1,4 @@
+print "Hello, branch!"
 local luv = vim.loop
 local api = vim.api
 
@@ -371,6 +372,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     timeout = 400,
   },
   actions = {
+    use_system_clipboard = true,
     change_dir = {
       enable = true,
       global = false,
