@@ -169,6 +169,13 @@ local migrations = {
       o.actions.change_dir.global = vim.g.nvim_tree_change_dir_global == 1
     end
   end,
+
+  nvim_tree_indent_markers = function(o)
+    utils.table_create_missing(o, "renderer.indent_markers")
+    if o.renderer.indent_markers.enable == nil then
+      o.renderer.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
+    end
+  end,
 }
 
 function M.migrate_legacy_options(opts)

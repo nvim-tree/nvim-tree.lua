@@ -111,6 +111,16 @@ function.
           },
         },
       },
+      renderer = {
+        indent_markers = {
+          enable = false,
+          icons = {
+            corner = "└ ",
+            edge = "│ ",
+            none = "  ",
+          },
+        },
+      },
       hijack_directories = {
         enable = true,
         auto_open = true,
@@ -146,6 +156,7 @@ function.
         timeout = 400,
       },
       actions = {
+        use_system_clipboard = true,
         change_dir = {
           enable = true,
           global = false,
@@ -407,6 +418,19 @@ Here is a list of the options available in the setup call:
         type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
         default: `{}`
 
+*nvim-tree.renderer*
+- |renderer|: UI rendering setup
+
+  - |renderer.indent_markers|: configuration options for tree indent markers
+
+    - |renderer.indent_markers.enable|: display indent markers when folders are open
+        type: `boolean`
+        default: `false`
+
+    - |renderer.indent_markers.icons|: icons shown before the file/directory
+        type: `table`
+	default: `{ corner = "└ ", edge = "│ ", none = "  ", }`
+
 *nvim-tree.filters*
 |filters|: filtering options
 
@@ -479,6 +503,13 @@ Here is a list of the options available in the setup call:
 			`filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
 			`buftype  = { "nofile", "terminal", "help", }`
 		`}`
+    
+    - |actions.use_system_clipboard|: A boolean value that toggle the use of system clipboard 
+      when copy/paste function are invoked.
+      When enabled, copied text will be stored in registers '+' (system), otherwise, it will be stored in '1' and '"'.
+	type: `boolean`
+	default: `true`
+	
 
 *nvim-tree.log*
 |log|: configuration for diagnostic logging
@@ -535,7 +566,7 @@ is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
 if folder is 1, you can also set `folder_arrows = 1` to show small arrows
 next to the folder icons but this will not work when you set
-|g:nvim_tree_indent_markers| (because of UI conflict).
+|renderer.indent_markers.enable| (because of UI conflict).
 
 |g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
 
@@ -590,11 +621,6 @@ You can set icons for:
 
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
-
-|g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
-
-Can be `0` or `1`. When `1`, will display indent markers when folders are open
-Default is 0
 
 |g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
 
