@@ -171,9 +171,9 @@ local migrations = {
   end,
 
   nvim_tree_indent_markers = function(o)
-    utils.table_create_missing(o, "view.indent_markers")
-    if o.view.indent_markers.enable == nil then
-      o.view.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
+    utils.table_create_missing(o, "renderer.indent_markers")
+    if o.renderer.indent_markers.enable == nil then
+      o.renderer.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
     end
   end,
 }
