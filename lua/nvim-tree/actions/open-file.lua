@@ -196,8 +196,8 @@ function M.fn(mode, filename)
 
   -- Check if file is already loaded in a buffer
   local buf_loaded = false
-  for _, bufId in ipairs(api.nvim_list_bufs()) do
-    if api.nvim_buf_is_loaded(bufId) and filename == api.nvim_buf_get_name(bufId) then
+  for _, buf_id in ipairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_is_loaded(buf_id) and filename == api.nvim_buf_get_name(buf_id) then
       buf_loaded = true
       break
     end
