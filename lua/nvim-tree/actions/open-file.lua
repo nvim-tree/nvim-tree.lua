@@ -194,6 +194,15 @@ function M.fn(mode, filename)
   local do_split = mode == "split" or mode == "vsplit"
   local vertical = mode ~= "split"
 
+  -- Check if file is already loaded in a buffer
+  local buf_loaded = false
+  for _, buf_id in ipairs(api.nvim_list_bufs()) do
+    if api.nvim_buf_is_loaded(buf_id) and filename == api.nvim_buf_get_name(buf_id) then
+      buf_loaded = true
+      break
+    end
+  end
+
   -- Check if filename is already open in a window
   local found = false
   for _, id in ipairs(win_ids) do
@@ -245,6 +254,16 @@ function M.fn(mode, filename)
   end
 
   if mode == "preview" then
+    if not buf_loaded then
+      vim.bo.bufhidden = "delete"
+      vim.cmd [[
+      augroup RemoveBufHidden
+          autocmd!
+          autocmd TextChanged <buffer> setlocal bufhidden= | autocmd! RemoveBufHidden
+          autocmd TextChangedI <buffer> setlocal bufhidden= | autocmd! RemoveBufHidden
+      augroup end
+    ]]
+    end
     view.focus()
     return
   end
