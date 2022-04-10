@@ -256,7 +256,7 @@ function M.draw()
   hl = {}
 
   icon_state = _icons.get_config()
-  local show_arrows = vim.g.nvim_tree_indent_markers ~= 1
+  local show_arrows = not M.config.indent_markers.enable
     and icon_state.show_folder_icon
     and icon_state.show_folder_arrows
   _padding.reload_padding_function()
@@ -287,6 +287,14 @@ function M.render_hl(bufnr)
   for _, data in ipairs(hl) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
   end
+end
+
+function M.setup(opts)
+  M.config = {
+    indent_markers = opts.renderer.indent_markers,
+  }
+
+  require("nvim-tree.renderer.padding").setup(opts)
 end
 
 return M
