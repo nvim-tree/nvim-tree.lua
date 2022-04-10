@@ -336,6 +336,16 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       },
     },
   },
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
+  },
   hijack_directories = {
     enable = true,
     auto_open = true,
@@ -446,6 +456,7 @@ function M.setup(conf)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
+  require("nvim-tree.renderer").setup(opts)
 
   setup_vim_commands()
   setup_autocommands(opts)
