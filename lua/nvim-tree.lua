@@ -435,6 +435,8 @@ function M.setup(conf)
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
+  _config.open_hook = opts.open_hook
+  _config.close_hook = opts.close_hook
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
