@@ -62,7 +62,7 @@ function M.fn(node)
 
   local containing_folder = get_containing_folder(node)
 
-  local input_opts = { prompt = "Create file", default = containing_folder }
+  local input_opts = { prompt = "Create file ", default = containing_folder }
 
   vim.ui.input(input_opts, function(new_file_path)
     if not new_file_path or new_file_path == containing_folder then
