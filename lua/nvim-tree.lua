@@ -10,6 +10,7 @@ local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
+local events = require "nvim-tree.events"
 
 local _config = {}
 
@@ -26,11 +27,12 @@ M.on_keypress = require("nvim-tree.actions").on_keypress
 function M.toggle(find_file, no_focus)
   if view.is_visible() then
     view.close()
+    events._dispatch_on_tree_close()
     _config.close_hook()
   else
     local previous_buf = api.nvim_get_current_buf()
     M.open()
-    _config.open_hook()
+    events._dispatch_on_tree_open()
     if _config.update_focused_file.enable or find_file then
       M.find_file(false, previous_buf)
     end
@@ -417,8 +419,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       profile = false,
     },
   },
-  open_hook = function () end,
-  close_hook = function () end,
+  hooks = {
+      open_hooks = nil,
+      close_hooks = nil,
+  }
 } -- END_DEFAULT_OPTS
 
 local function merge_options(conf)
@@ -427,6 +431,14 @@ local function merge_options(conf)
     conf.update_to_buf_dir = nil
   end
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
+end
+
+local function register_hooks(register, hooks)
+    if hooks then
+        for _, value in pairs(hooks) do
+            register(hooks)
+        end
+    end
 end
 
 function M.setup(conf)
@@ -446,8 +458,9 @@ function M.setup(conf)
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
-  _config.open_hook = opts.open_hook
-  _config.close_hook = opts.close_hook
+
+  _config.open_hook = register_hooks(events.on_tree_open, opts.hooks.open_hooks)
+  _config.close_hook = register_hooks(events.on_tree_close, opts.hooks.close_hooks)
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
