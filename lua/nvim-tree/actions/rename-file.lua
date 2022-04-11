@@ -17,7 +17,7 @@ function M.fn(with_sub)
     local namelen = node.name:len()
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * -1 - 1) or node.absolute_path
 
-    local input_opts = { prompt = "Rename to", default = abs_path }
+    local input_opts = { prompt = "Rename to ", default = abs_path }
 
     vim.ui.input(input_opts, function(new_file_path)
       if not new_file_path then
@@ -33,6 +33,7 @@ function M.fn(with_sub)
       if not success then
         return a.nvim_err_writeln("Could not rename " .. node.absolute_path .. " to " .. new_file_path)
       end
+      utils.clear_prompt()
       a.nvim_out_write(node.absolute_path .. " ➜ " .. new_file_path .. "\n")
       utils.rename_loaded_buffers(node.absolute_path, new_file_path)
       events._dispatch_node_renamed(abs_path, new_file_path)

@@ -33,7 +33,6 @@ function M.get_node_at_cursor()
     return
   end
   local winnr = view.get_winnr()
-  local hide_root_folder = view.View.hide_root_folder
   if not winnr then
     return
   end
@@ -44,13 +43,10 @@ function M.get_node_at_cursor()
     local help_text = M.get_nodes_by_line(help_lines, 1)[line]
     return { name = help_text }
   else
-    if line == 1 and core.get_explorer().cwd ~= "/" and not hide_root_folder then
+    if line == 1 and core.get_explorer().cwd ~= "/" and view.is_root_folder_visible() then
       return { name = ".." }
     end
 
-    if core.get_explorer().cwd == "/" then
-      line = line + 1
-    end
     return M.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
   end
 end
