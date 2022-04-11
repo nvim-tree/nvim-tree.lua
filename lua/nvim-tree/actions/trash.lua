@@ -47,7 +47,7 @@ function M.fn(node)
 
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
-    vim.fn.jobstart(M.config.trash.cmd .. " " .. node.absolute_path, {
+    vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
       detach = true,
       on_exit = on_exit,
     })
