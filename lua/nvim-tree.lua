@@ -435,8 +435,8 @@ end
 
 local function register_hooks(register, hooks)
     if hooks then
-        for _, value in pairs(hooks) do
-            register(hooks)
+        for _, hook in pairs(hooks) do
+            register(hook)
         end
     end
 end
