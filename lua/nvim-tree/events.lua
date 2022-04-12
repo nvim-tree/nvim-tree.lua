@@ -64,12 +64,12 @@ end
 
 --@private
 function M._dispatch_on_tree_open()
-  dispatch(Event.TreeOpen, nil )
+  dispatch(Event.TreeOpen, nil)
 end
 
 --@private
 function M._dispatch_on_tree_close()
-  dispatch(Event.TreeClose, nil )
+  dispatch(Event.TreeClose, nil)
 end
 
 --Registers a handler for the Ready event.
@@ -125,7 +125,5 @@ end
 function M.on_tree_close(handler)
   register_handler(Event.TreeClose, handler)
 end
-
-
 
 return M
