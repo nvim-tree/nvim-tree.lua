@@ -45,7 +45,6 @@ function M.open(cwd)
     view.focus()
   else
     lib.open(cwd)
-    _config.open_hook()
   end
 end
 
