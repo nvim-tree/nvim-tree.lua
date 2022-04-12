@@ -212,7 +212,7 @@ function M.print_clipboard()
 end
 
 local function copy_to_clipboard(content)
-  if M.use_sys_clipboard == true then
+  if M.use_system_clipboard == true then
     vim.fn.setreg("+", content)
     vim.fn.setreg('"', content)
     return a.nvim_out_write(string.format("Copied %s to system clipboard! \n", content))
@@ -241,7 +241,7 @@ function M.copy_absolute_path(node)
 end
 
 function M.setup(opts)
-  M.use_sys_clipboard = opts.actions.use_sys_clipboard
+  M.use_system_clipboard = opts.actions.use_system_clipboard
 end
 
 return M
