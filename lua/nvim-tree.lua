@@ -10,7 +10,6 @@ local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
-local events = require "nvim-tree.events"
 
 local _config = {}
 
@@ -27,12 +26,9 @@ M.on_keypress = require("nvim-tree.actions").on_keypress
 function M.toggle(find_file, no_focus)
   if view.is_visible() then
     view.close()
-    events._dispatch_on_tree_close()
-    _config.close_hook()
   else
     local previous_buf = api.nvim_get_current_buf()
     M.open()
-    events._dispatch_on_tree_open()
     if _config.update_focused_file.enable or find_file then
       M.find_file(false, previous_buf)
     end
