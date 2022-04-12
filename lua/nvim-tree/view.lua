@@ -178,7 +178,7 @@ function M.close()
       return
     end
   end
-  events._dispatch_on_tree_open()
+  events._dispatch_on_tree_close()
 end
 
 function M.open(options)
@@ -196,7 +196,7 @@ function M.open(options)
   if not opts.focus_tree then
     vim.cmd "wincmd p"
   end
-  events._dispatch_on_tree_close()
+  events._dispatch_on_tree_open()
 end
 
 function M.resize(size)
