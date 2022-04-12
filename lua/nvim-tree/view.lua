@@ -175,10 +175,10 @@ function M.close()
       if tree_win == current_win and LAST_FOCUSED_WIN then
         a.nvim_set_current_win(LAST_FOCUSED_WIN)
       end
+      events._dispatch_on_tree_close()
       return
     end
   end
-  events._dispatch_on_tree_close()
 end
 
 function M.open(options)
