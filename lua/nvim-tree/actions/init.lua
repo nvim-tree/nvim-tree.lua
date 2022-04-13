@@ -8,6 +8,7 @@ local nvim_tree_callback = require("nvim-tree.config").nvim_tree_callback
 
 local M = {
   mappings = {
+    { key = {"m"}, action = "open_popup_menu"},
     { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
     { key = "<C-e>", action = "edit_in_place" },
     { key = "O", action = "edit_no_picker" },
@@ -52,6 +53,7 @@ local M = {
 }
 
 local keypress_funcs = {
+  open_popup_menu = require("nvim-tree.popup-menu").open_menu,
   close = view.close,
   close_node = require("nvim-tree.actions.movements").parent_node(true),
   collapse_all = require("nvim-tree.actions.collapse-all").fn,
