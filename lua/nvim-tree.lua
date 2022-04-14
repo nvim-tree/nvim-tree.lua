@@ -10,7 +10,6 @@ local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
-
 local _config = {}
 
 local M = {}
@@ -321,6 +320,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  menu = {
+    actions = {
+      ['hello'] = 'pool'
+    }
+  },
   view = {
     width = 30,
     height = 30,
@@ -445,7 +449,7 @@ function M.setup(conf)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
-
+  require("nvim-tree.popup-menu").setup(opts)
   setup_vim_commands()
   setup_autocommands(opts)
 

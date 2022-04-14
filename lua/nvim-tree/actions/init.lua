@@ -8,7 +8,7 @@ local nvim_tree_callback = require("nvim-tree.config").nvim_tree_callback
 
 local M = {
   mappings = {
-    { key = {"m"}, action = "open_popup_menu"},
+    { key = {"M"}, action = "open_popup_menu"},
     { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
     { key = "<C-e>", action = "edit_in_place" },
     { key = "O", action = "edit_no_picker" },
@@ -52,8 +52,8 @@ local M = {
   custom_keypress_funcs = {},
 }
 
-local keypress_funcs = {
-  open_popup_menu = require("nvim-tree.popup-menu").open_menu,
+M.keypress_funcs = {
+  open_popup_menu = require("nvim-tree.popup-menu").open_window,
   close = view.close,
   close_node = require("nvim-tree.actions.movements").parent_node(true),
   collapse_all = require("nvim-tree.actions.collapse-all").fn,
@@ -100,7 +100,7 @@ function M.on_keypress(action)
   end
 
   local custom_function = M.custom_keypress_funcs[action]
-  local default_function = keypress_funcs[action]
+  local default_function = M.keypress_funcs[action]
 
   if type(custom_function) == "function" then
     return custom_function(node)
