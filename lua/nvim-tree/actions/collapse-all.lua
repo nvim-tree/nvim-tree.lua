@@ -5,6 +5,10 @@ local core = require "nvim-tree.core"
 local M = {}
 
 function M.fn(keep_buffers)
+  if not core.get_explorer() then
+    return
+  end
+
   local buffer_paths = {}
   for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
     table.insert(buffer_paths, vim.api.nvim_buf_get_name(buffer))

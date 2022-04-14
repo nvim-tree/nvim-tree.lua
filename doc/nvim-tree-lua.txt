@@ -92,6 +92,7 @@ function.
       hijack_unnamed_buffer_when_opening = false,
       ignore_buffer_on_setup = false,
       open_on_setup = false,
+      open_on_setup_file = false,
       open_on_tab = false,
       sort_by = "name",
       update_cwd = false,
@@ -107,6 +108,16 @@ function.
           custom_only = false,
           list = {
             -- user mappings go here
+          },
+        },
+      },
+      renderer = {
+        indent_markers = {
+          enable = false,
+          icons = {
+            corner = "└ ",
+            edge = "│ ",
+            none = "  ",
           },
         },
       },
@@ -145,6 +156,7 @@ function.
         timeout = 400,
       },
       actions = {
+        use_system_clipboard = true,
         change_dir = {
           enable = true,
           global = false,
@@ -196,8 +208,16 @@ Here is a list of the options available in the setup call:
   default: `true`
 
 *nvim-tree.open_on_setup*
-- |open_on_setup|: will automatically open the tree when running setup if current
-  buffer is a directory, is empty or is unnamed.
+- |open_on_setup|: will automatically open the tree when running setup if
+  startup buffer is a directory, is empty or is unnamed. nvim-tree window will
+  be focused.
+  type: `boolean`
+  default: `false`
+
+*nvim-tree.open_on_setup_file*
+- |open_on_setup_file|: will automatically open the tree when running setup if
+  startup buffer is a file. File window will be focused. File will be found if
+  |update_focused_file.enable| is set.
   type: `boolean`
   default: `false`
 
@@ -398,6 +418,19 @@ Here is a list of the options available in the setup call:
         type: list of `{ key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }`
         default: `{}`
 
+*nvim-tree.renderer*
+- |renderer|: UI rendering setup
+
+  - |renderer.indent_markers|: configuration options for tree indent markers
+
+    - |renderer.indent_markers.enable|: display indent markers when folders are open
+        type: `boolean`
+        default: `false`
+
+    - |renderer.indent_markers.icons|: icons shown before the file/directory
+        type: `table`
+	default: `{ corner = "└ ", edge = "│ ", none = "  ", }`
+
 *nvim-tree.filters*
 |filters|: filtering options
 
@@ -405,7 +438,8 @@ Here is a list of the options available in the setup call:
       type: `boolean`
       default: `false`
 
-  - |filters.custom|: custom list of string that will not be shown.
+  - |filters.custom|: custom list of vim regex for file/directory names that will not be shown.
+    Backslashes must be escaped e.g. "^\\.git". See |string-match|.
       type: `{string}`
       default: `{}`
 
@@ -469,6 +503,13 @@ Here is a list of the options available in the setup call:
 			`filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
 			`buftype  = { "nofile", "terminal", "help", }`
 		`}`
+    
+    - |actions.use_system_clipboard|: A boolean value that toggle the use of system clipboard 
+      when copy/paste function are invoked.
+      When enabled, copied text will be stored in registers '+' (system), otherwise, it will be stored in '1' and '"'.
+	type: `boolean`
+	default: `true`
+	
 
 *nvim-tree.log*
 |log|: configuration for diagnostic logging
@@ -525,7 +566,7 @@ is installed and in your |runtimepath|
 (https://github.com/kyazdani42/nvim-web-devicons)
 if folder is 1, you can also set `folder_arrows = 1` to show small arrows
 next to the folder icons but this will not work when you set
-|g:nvim_tree_indent_markers| (because of UI conflict).
+|renderer.indent_markers.enable| (because of UI conflict).
 
 |g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
 
@@ -580,11 +621,6 @@ You can set icons for:
 
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
-
-|g:nvim_tree_indent_markers|                   *g:nvim_tree_indent_markers*
-
-Can be `0` or `1`. When `1`, will display indent markers when folders are open
-Default is 0
 
 |g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
 
@@ -791,6 +827,7 @@ NvimTreeSymlink
 NvimTreeFolderName
 NvimTreeRootFolder
 NvimTreeFolderIcon
+NvimTreeFileIcon
 NvimTreeEmptyFolderName
 NvimTreeOpenedFolderName
 NvimTreeExecFile

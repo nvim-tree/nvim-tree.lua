@@ -83,8 +83,13 @@ if icon_state.show_file_icon then
       end
     end
   else
-    get_file_icon = function()
-      return #icon_state.icons.default > 0 and icon_state.icons.default .. icon_padding or ""
+    get_file_icon = function(_, _, line, depth)
+      local hl_group = "NvimTreeFileIcon"
+      local icon = icon_state.icons.default
+      if #icon > 0 then
+        table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
+      end
+      return #icon > 0 and icon .. icon_padding or ""
     end
   end
 end
@@ -251,7 +256,7 @@ function M.draw()
   hl = {}
 
   icon_state = _icons.get_config()
-  local show_arrows = vim.g.nvim_tree_indent_markers ~= 1
+  local show_arrows = not M.config.indent_markers.enable
     and icon_state.show_folder_icon
     and icon_state.show_folder_arrows
   _padding.reload_padding_function()
@@ -282,6 +287,14 @@ function M.render_hl(bufnr)
   for _, data in ipairs(hl) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
   end
+end
+
+function M.setup(opts)
+  M.config = {
+    indent_markers = opts.renderer.indent_markers,
+  }
+
+  require("nvim-tree.renderer.padding").setup(opts)
 end
 
 return M
