@@ -322,7 +322,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   update_cwd = false,
   menu = {
     actions = {
-      ['hello'] = 'pool'
+      ['Copy File Path'] = 'copy_path',
+      ['Copy File Name'] = 'copy_name'
     }
   },
   view = {
