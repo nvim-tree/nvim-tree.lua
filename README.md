@@ -129,6 +129,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  menu = {
+    actions = {}
+  },
   view = {
     width = 30,
     height = 30,
