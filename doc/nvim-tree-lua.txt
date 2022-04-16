@@ -72,7 +72,7 @@ Collapses the nvim-tree recursively.
 
 |:NvimTreeCollapseKeepBuffers|		          *:NvimTreeCollapseKeepBuffers*
 
-Collapses the nvim-tree recursively, but keep the directories open, which are 
+Collapses the nvim-tree recursively, but keep the directories open, which are
 used in an open buffer.
 
 
@@ -490,7 +490,7 @@ Here is a list of the options available in the setup call:
 	type: `boolean`
 	default: `true`
 
-    - |actions.open_file.window_picker.chars|: A string of chars used as 
+    - |actions.open_file.window_picker.chars|: A string of chars used as
       identifiers by the window picker.
 	type: `string`
 	default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
@@ -503,13 +503,13 @@ Here is a list of the options available in the setup call:
 			`filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
 			`buftype  = { "nofile", "terminal", "help", }`
 		`}`
-    
-    - |actions.use_system_clipboard|: A boolean value that toggle the use of system clipboard 
+
+    - |actions.use_system_clipboard|: A boolean value that toggle the use of system clipboard
       when copy/paste function are invoked.
       When enabled, copied text will be stored in registers '+' (system), otherwise, it will be stored in '1' and '"'.
 	type: `boolean`
 	default: `true`
-	
+
 
 *nvim-tree.log*
 |log|: configuration for diagnostic logging
@@ -899,7 +899,7 @@ default, vinegar uses `<CR>`. You can override this with:
 	    { key = "<CR>", action = "edit_in_place" }
 	  }
         }
-      } 
+      }
     }
 <
 Going up a dir is bound to `-` by default in nvim-tree which is identical to
