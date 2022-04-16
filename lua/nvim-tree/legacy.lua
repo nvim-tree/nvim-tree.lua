@@ -24,12 +24,6 @@ local migrations = {
     end
   end,
 
-  nvim_tree_auto_close = function(o)
-    if o.auto_close == nil then
-      o.auto_close = vim.g.nvim_tree_auto_close ~= 0
-    end
-  end,
-
   nvim_tree_tab_open = function(o)
     if o.open_on_tab == nil then
       o.open_on_tab = vim.g.nvim_tree_tab_open ~= 0
@@ -173,6 +167,13 @@ local migrations = {
     utils.table_create_missing(o, "actions.change_dir")
     if o.actions.change_dir.global == nil then
       o.actions.change_dir.global = vim.g.nvim_tree_change_dir_global == 1
+    end
+  end,
+
+  nvim_tree_indent_markers = function(o)
+    utils.table_create_missing(o, "renderer.indent_markers")
+    if o.renderer.indent_markers.enable == nil then
+      o.renderer.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
     end
   end,
 }

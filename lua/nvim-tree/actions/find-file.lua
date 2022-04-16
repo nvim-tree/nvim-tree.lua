@@ -1,3 +1,5 @@
+local log = require "nvim-tree.log"
+local uv = vim.loop
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
@@ -7,23 +9,39 @@ local M = {}
 
 local running = {}
 
+---Find a path in the tree, expand it and focus it
+---@param fname string full path
 function M.fn(fname)
   if running[fname] or not core.get_explorer() then
     return
   end
   running[fname] = true
 
-  local i = view.is_root_folder_visible() and 1 or 0
+  local ps = log.profile_start("find file %s", fname)
+  -- always match against the real path
+  local fname_real = uv.fs_realpath(fname)
+  if not fname_real then
+    return
+  end
+
+  local i = core.get_nodes_starting_line() - 1
   local tree_altered = false
 
   local function iterate_nodes(nodes)
     for _, node in ipairs(nodes) do
       i = i + 1
-      if node.absolute_path == fname then
-        return i
+
+      if not node.absolute_path or not uv.fs_stat(node.absolute_path) then
+        break
       end
 
-      local path_matches = node.nodes and vim.startswith(fname, node.absolute_path .. utils.path_separator)
+      -- match against node absolute and link, as symlinks themselves will differ
+      if node.absolute_path == fname_real or node.link_to == fname_real then
+        return i
+      end
+      local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
+      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
+      local path_matches = node.nodes and (abs_match or link_match)
       if path_matches then
         if not node.open then
           node.open = true
@@ -52,6 +70,8 @@ function M.fn(fname)
     view.set_cursor { index, 0 }
   end
   running[fname] = false
+
+  log.profile_end(ps, "find file %s", fname)
 end
 
 return M

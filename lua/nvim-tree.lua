@@ -131,38 +131,6 @@ end
 
 M.resize = view.resize
 
-local function should_abort_auto_close()
-  local buf = api.nvim_get_current_buf()
-  local buftype = api.nvim_buf_get_option(buf, "ft")
-  local modified = vim.tbl_filter(function(b)
-    return api.nvim_buf_get_option(b, "modified")
-  end, api.nvim_list_bufs())
-  return #modified > 0 or buftype:match "Telescope" ~= nil
-end
-
-function M.auto_close()
-  if should_abort_auto_close() then
-    return
-  end
-
-  vim.defer_fn(function()
-    if not view.is_visible() then
-      return
-    end
-
-    local windows = api.nvim_list_wins()
-    local curtab = api.nvim_get_current_tabpage()
-    local wins_in_tabpage = vim.tbl_filter(function(w)
-      return api.nvim_win_get_tabpage(w) == curtab
-    end, windows)
-    if #windows == 1 then
-      api.nvim_command ":silent qa!"
-    elseif #wins_in_tabpage == 1 then
-      api.nvim_command ":tabclose"
-    end
-  end, 50)
-end
-
 function M.open_on_directory()
   local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
   if not should_proceed then
@@ -213,6 +181,7 @@ function M.on_enter(netrw_disabled)
 
   local stats = luv.fs_stat(bufname)
   local is_dir = stats and stats.type == "directory"
+  local is_file = stats and stats.type == "file"
   local cwd
   if is_dir then
     cwd = vim.fn.expand(bufname)
@@ -229,9 +198,14 @@ function M.on_enter(netrw_disabled)
 
   local should_open = false
   local should_focus_other_window = false
-  if _config.open_on_setup and not should_be_preserved then
+  local should_find = false
+  if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
     if buf_is_dir or buf_is_empty then
       should_open = true
+    elseif is_file and _config.open_on_setup_file then
+      should_open = true
+      should_focus_other_window = true
+      should_find = _config.update_focused_file.enable
     elseif _config.ignore_buffer_on_setup then
       should_open = true
       should_focus_other_window = true
@@ -254,6 +228,9 @@ function M.on_enter(netrw_disabled)
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
+      if should_find then
+        M.find_file(false)
+      end
     end
   end
   M.initialized = true
@@ -305,9 +282,6 @@ local function setup_autocommands(opts)
   end
   vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
 
-  if opts.auto_close then
-    vim.cmd "au WinClosed * lua require'nvim-tree'.auto_close()"
-  end
   if opts.open_on_tab then
     vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
   end
@@ -335,7 +309,6 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
-  auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
   hide_root_folder = false,
@@ -344,6 +317,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_unnamed_buffer_when_opening = false,
   ignore_buffer_on_setup = false,
   open_on_setup = false,
+  open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
@@ -359,6 +333,16 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       custom_only = false,
       list = {
         -- user mappings go here
+      },
+    },
+  },
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
       },
     },
   },
@@ -397,6 +381,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     timeout = 400,
   },
   actions = {
+    use_system_clipboard = true,
     change_dir = {
       enable = true,
       global = false,
@@ -424,7 +409,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     types = {
       all = false,
       config = false,
+      copy_paste = false,
       git = false,
+      profile = false,
     },
   },
 } -- END_DEFAULT_OPTS
@@ -443,8 +430,13 @@ function M.setup(conf)
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
+  if opts.auto_close then
+    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
+  end
+
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
+  _config.open_on_setup_file = opts.open_on_setup_file
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
@@ -464,6 +456,7 @@ function M.setup(conf)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
+  require("nvim-tree.renderer").setup(opts)
 
   setup_vim_commands()
   setup_autocommands(opts)

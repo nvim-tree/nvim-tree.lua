@@ -143,8 +143,8 @@ function M.rename_loaded_buffers(old_path, new_path)
       local buf_name = a.nvim_buf_get_name(buf)
       local exact_match = buf_name == old_path
       local child_match = (
-          buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
-        )
+        buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
+      )
       if exact_match or child_match then
         a.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
         -- to avoid the 'overwrite existing file' error message on write for
@@ -208,6 +208,14 @@ function M.format_bytes(bytes)
   pow = pow + 1
 
   return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
+end
+
+function M.key_by(tbl, key)
+  local keyed = {}
+  for _, val in ipairs(tbl) do
+    keyed[val[key]] = val
+  end
+  return keyed
 end
 
 return M

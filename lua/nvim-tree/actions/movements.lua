@@ -17,7 +17,7 @@ local function get_line_from_node(node, find_parent)
     node_path = node.absolute_path:match("(.*)" .. utils.path_separator)
   end
 
-  local line = 2
+  local line = core.get_nodes_starting_line()
   local function iter(nodes, recursive)
     for _, _node in ipairs(nodes) do
       local n = lib().get_last_group_node(_node)
@@ -58,7 +58,7 @@ function M.parent_node(should_close)
         parent.open = false
         altered_tree = true
       end
-      if not view.is_root_folder_visible() then
+      if not view.is_root_folder_visible(core.get_cwd()) then
         line = line - 1
       end
       view.set_cursor { line, 0 }
@@ -111,7 +111,7 @@ function M.sibling(direction)
     local target_node = parent.nodes[index]
 
     line, _ = get_line_from_node(target_node)(core.get_explorer().nodes, true)
-    if not view.is_root_folder_visible() then
+    if not view.is_root_folder_visible(core.get_cwd()) then
       line = line - 1
     end
     view.set_cursor { line, 0 }
@@ -121,7 +121,7 @@ end
 function M.find_git_item(where)
   return function()
     local node_cur = lib().get_node_at_cursor()
-    local nodes_by_line = lib().get_nodes_by_line(core.get_explorer().nodes, view.View.hide_root_folder and 1 or 2)
+    local nodes_by_line = lib().get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
 
     local cur, first, prev, nex = nil, nil, nil, nil
     for line, node in pairs(nodes_by_line) do

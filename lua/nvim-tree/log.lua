@@ -1,3 +1,5 @@
+local uv = vim.loop
+
 local M = {
   config = nil,
   path = nil,
@@ -6,7 +8,7 @@ local M = {
 --- Write to log file
 --- @param typ string as per log.types config
 --- @param fmt string for string.format
---- @param ... any arguments for string.format
+--- @vararg any arguments for string.format
 function M.raw(typ, fmt, ...)
   if not M.path or not M.config.types[typ] and not M.config.types.all then
     return
@@ -19,14 +21,32 @@ function M.raw(typ, fmt, ...)
   io.close(file)
 end
 
+--- Write to log file via M.line
+--- START is prefixed
+--- @return number nanos to pass to profile_end
+function M.profile_start(fmt, ...)
+  if not M.path or not M.config.types.profile and not M.config.types.all then
+    return
+  end
+  M.line("profile", "START " .. (fmt or "???"), ...)
+  return uv.hrtime()
+end
+
+--- Write to log file via M.line
+--- END is prefixed and duration in seconds is suffixed
+--- @param start number nanos returned from profile_start
+function M.profile_end(start, fmt, ...)
+  if not M.path or not M.config.types.profile and not M.config.types.all then
+    return
+  end
+  local millis = start and math.modf((uv.hrtime() - start) / 1000000) or -1
+  M.line("profile", "END   " .. (fmt or "???") .. "  " .. millis .. "ms", ...)
+end
+
 -- Write to log file via M.raw
 -- time and typ are prefixed and a trailing newline is added
 function M.line(typ, fmt, ...)
-  if not M.path or not M.config.types[typ] and not M.config.types.all then
-    return
-  end
-
-  M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y:%m:%d %H:%M:%S", typ, fmt), ...)
+  M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, fmt), ...)
 end
 
 function M.setup(opts)
