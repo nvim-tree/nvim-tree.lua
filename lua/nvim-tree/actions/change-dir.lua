@@ -8,6 +8,7 @@ local M = {
   current_tab = a.nvim_get_current_tabpage(),
   options = {
     global = false,
+    restrict = true,
     change_cwd = true,
   },
 }
@@ -19,6 +20,7 @@ function M.fn(name, with_open)
 
   local foldername = name == ".." and vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h") or name
   local no_cwd_change = vim.fn.expand(foldername) == core.get_cwd()
+    or not M.options.global and M.options.restrict and foldername < vim.fn.getcwd(-1, -1)
   local new_tab = a.nvim_get_current_tabpage()
   local is_window = (vim.v.event.scope == "window" or vim.v.event.changed_window) and new_tab == M.current_tab
   if no_cwd_change or is_window then
