@@ -125,7 +125,7 @@ function M.update()
   if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
     return
   end
-  local ps = log.profile_start("diagnostics update")
+  local ps = log.profile_start "diagnostics update"
   log.line("diagnostics", "update")
 
   local buffer_severity
