@@ -410,6 +410,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       all = false,
       config = false,
       copy_paste = false,
+      diagnostics = false,
       git = false,
       profile = false,
     },
