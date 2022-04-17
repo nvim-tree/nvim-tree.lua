@@ -3,6 +3,7 @@ local a = vim.api
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {
   current_tab = a.nvim_get_current_tabpage(),
@@ -44,6 +45,7 @@ function M.force_dirchange(foldername, with_open)
   else
     require("nvim-tree.renderer").draw()
   end
+  diagnostics.update()
 
   log.profile_end(ps, "change dir %s", foldername)
 end
