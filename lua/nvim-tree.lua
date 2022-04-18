@@ -421,6 +421,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
 } -- END_DEFAULT_OPTS
 
+-- nil or no defaults
+local NO_VALIDATE_OPTS = {
+  "system_open.cmd",
+  "view.mappings.list",
+}
+
 local function merge_options(conf)
   if conf and conf.update_to_buf_dir then
     conf.hijack_directories = conf.update_to_buf_dir
@@ -429,7 +435,41 @@ local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
 end
 
+local function validate_options(conf)
+  local msg = ""
+
+  local function walk_options(user, def, prefix)
+    for k, v in pairs(user) do
+      for _, no in ipairs(NO_VALIDATE_OPTS) do
+        if no == prefix .. k then
+          return
+        end
+      end
+
+      if def[k] == nil then
+        msg = string.format("%s\nunknown option: %s%s", msg, prefix, k)
+        return
+      elseif type(v) ~= type(def[k]) then
+        msg = string.format("%s\ninvalid option: %s%s  expected: %s  actual: %s", msg, prefix, k, type(def[k]), type(v))
+        return
+      end
+
+      if type(v) == "table" then
+        walk_options(v, def[k], prefix .. k .. ".")
+      end
+    end
+  end
+
+  walk_options(conf, DEFAULT_OPTS, "")
+
+  if #msg > 0 then
+    utils.warn(msg)
+  end
+end
+
 function M.setup(conf)
+  validate_options(conf)
+
   legacy.migrate_legacy_options(conf or {})
 
   local opts = merge_options(conf)
