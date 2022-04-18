@@ -21,11 +21,11 @@ local function get_padding_indent_markers(depth, idx, tree, _, markers)
     markers[rdepth] = idx ~= #tree.nodes
     for i = 1, rdepth do
       if idx == #tree.nodes and i == rdepth then
-        padding = padding .. "└ "
+        padding = padding .. M.config.indent_markers.icons.corner
       elseif markers[i] then
-        padding = padding .. "│ "
+        padding = padding .. M.config.indent_markers.icons.edge
       else
-        padding = padding .. "  "
+        padding = padding .. M.config.indent_markers.icons.none
       end
     end
   end
@@ -39,9 +39,15 @@ function M.reload_padding_function()
     M.get_padding = get_padding_arrows(icon_state)
   end
 
-  if vim.g.nvim_tree_indent_markers == 1 then
+  if M.config.indent_markers.enable then
     M.get_padding = get_padding_indent_markers
   end
+end
+
+function M.setup(opts)
+  M.config = {
+    indent_markers = opts.renderer.indent_markers,
+  }
 end
 
 return M

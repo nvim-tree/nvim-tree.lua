@@ -341,6 +341,19 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       },
     },
   },
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
+    icons = {
+      webdev_colors = true,
+    },
+  },
   hijack_directories = {
     enable = true,
     auto_open = true,
@@ -376,6 +389,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     timeout = 400,
   },
   actions = {
+    use_system_clipboard = true,
     change_dir = {
       enable = true,
       global = false,
@@ -404,6 +418,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       all = false,
       config = false,
       copy_paste = false,
+      diagnostics = false,
       git = false,
       profile = false,
     },
@@ -451,6 +466,7 @@ function M.setup(conf)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.popup-menu").setup(opts)
+  require("nvim-tree.renderer").setup(opts)
   setup_vim_commands()
   setup_autocommands(opts)
 
