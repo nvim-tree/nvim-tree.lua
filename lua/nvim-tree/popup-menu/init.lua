@@ -5,12 +5,12 @@ local M = {}
 -- TODO: we need to test/fix this when we are using multiple tabs
 --       as pointed at:
 --       https://github.com/kyazdani42/nvim-tree.lua/pull/1162/files/be376a7cbf7164a4a19535834d9019bc97559d4d#r850952305
-local function get_node()
+--[[local function get_node()
   local get_node_at_cursor = require("nvim-tree.lib").get_node_at_cursor
 
   local current_node = get_node_at_cursor()
   return current_node
-end
+end]]
 
 local current_popup = nil
 
@@ -68,7 +68,7 @@ local function setup_window(actions)
   current_popup = {
     winnr = winnr,
     bufnr = bufnr,
-    current_node = get_node(),
+    current_node = require"nvim-tree.lib".get_node_at_cursor(),
   }
 
   -- this take care of closing the menu if for some reason lose focus
