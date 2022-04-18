@@ -2,6 +2,8 @@ local a = vim.api
 
 local M = {}
 
+local events = require "nvim-tree.events"
+
 M.View = {
   tabpages = {},
   hide_root_folder = false,
@@ -173,6 +175,7 @@ function M.close()
       if tree_win == current_win and LAST_FOCUSED_WIN then
         a.nvim_set_current_win(LAST_FOCUSED_WIN)
       end
+      events._dispatch_on_tree_close()
       return
     end
   end
@@ -193,6 +196,7 @@ function M.open(options)
   if not opts.focus_tree then
     vim.cmd "wincmd p"
   end
+  events._dispatch_on_tree_open()
 end
 
 function M.resize(size)

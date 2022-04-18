@@ -5,6 +5,8 @@ local global_handlers = {}
 local Event = {
   Ready = "Ready",
   NodeRenamed = "NodeRenamed",
+  TreeOpen = "TreeOpen",
+  TreeClose = "TreeClose",
   FileCreated = "FileCreated",
   FileRemoved = "FileRemoved",
   FolderCreated = "FolderCreated",
@@ -60,6 +62,16 @@ function M._dispatch_folder_removed(folder_name)
   dispatch(Event.FolderRemoved, { folder_name = folder_name })
 end
 
+--@private
+function M._dispatch_on_tree_open()
+  dispatch(Event.TreeOpen, nil)
+end
+
+--@private
+function M._dispatch_on_tree_close()
+  dispatch(Event.TreeClose, nil)
+end
+
 --Registers a handler for the Ready event.
 --@param handler (function) Handler with the signature `function()`
 function M.on_nvim_tree_ready(handler)
@@ -100,6 +112,18 @@ end
 --  - folder_name (string) Absolute path to the removed folder.
 function M.on_folder_removed(handler)
   register_handler(Event.FolderRemoved, handler)
+end
+
+--Registers a handler for the TreeOpen event.
+--@param handler (function) Handler with the signature function(payload)
+function M.on_tree_open(handler)
+  register_handler(Event.TreeOpen, handler)
+end
+
+--Registers a handler for the TreeClose event.
+--@param handler (function) Handler with the signature function(payload)
+function M.on_tree_close(handler)
+  register_handler(Event.TreeClose, handler)
 end
 
 return M
