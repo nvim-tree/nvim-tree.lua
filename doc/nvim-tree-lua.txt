@@ -120,6 +120,9 @@ function.
             none = "  ",
           },
         },
+        icons = {
+          webdev_colors = true,
+        },
       },
       hijack_directories = {
         enable = true,
@@ -432,6 +435,12 @@ Here is a list of the options available in the setup call:
     - |renderer.indent_markers.icons|: icons shown before the file/directory
         type: `table`
 	default: `{ corner = "└ ", edge = "│ ", none = "  ", }`
+
+  - |renderer.icons|: configuration options for icons
+
+    - |renderer.icons.webdev_colors|: use the webdev icon colors, otherwise `NvimTreeFileIcon`.
+        type: `boolean`
+        default: `true`
 
 *nvim-tree.filters*
 |filters|: filtering options

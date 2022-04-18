@@ -9,12 +9,15 @@ local core = require "nvim-tree.core"
 
 local api = vim.api
 
+local M = {}
+
 local lines = {}
 local hl = {}
 local index = 0
 local namespace_id = api.nvim_create_namespace "NvimTreeHighlights"
 
 local icon_state = _icons.get_config()
+local web_devicons = icon_state.has_devicons and require "nvim-web-devicons" or nil
 
 local should_hl_opened_files = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0
 
@@ -63,34 +66,39 @@ end
 local get_file_icon = function()
   return ""
 end
-if icon_state.show_file_icon then
-  if icon_state.has_devicons then
-    local web_devicons = require "nvim-web-devicons"
 
-    get_file_icon = function(fname, extension, line, depth)
-      local icon, hl_group = web_devicons.get_icon(fname, extension)
+local get_file_icon_default = function(_, _, line, depth)
+  local hl_group = "NvimTreeFileIcon"
+  local icon = icon_state.icons.default
+  if #icon > 0 then
+    table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
+  end
+  return #icon > 0 and icon .. icon_padding or ""
+end
 
-      if icon and hl_group ~= "DevIconDefault" then
-        if hl_group then
-          table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
-        end
-        return icon .. icon_padding
-      elseif string.match(extension, "%.(.*)") then
-        -- If there are more extensions to the file, try to grab the icon for them recursively
-        return get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth)
-      else
-        return #icon_state.icons.default > 0 and icon_state.icons.default .. icon_padding or ""
-      end
+local get_file_icon_webdev = function(fname, extension, line, depth)
+  local icon, hl_group = web_devicons.get_icon(fname, extension)
+  if not M.config.icons.webdev_colors then
+    hl_group = "NvimTreeFileIcon"
+  end
+  if icon and hl_group ~= "DevIconDefault" then
+    if hl_group then
+      table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
     end
+    return icon .. icon_padding
+  elseif string.match(extension, "%.(.*)") then
+    -- If there are more extensions to the file, try to grab the icon for them recursively
+    return get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth)
   else
-    get_file_icon = function(_, _, line, depth)
-      local hl_group = "NvimTreeFileIcon"
-      local icon = icon_state.icons.default
-      if #icon > 0 then
-        table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
-      end
-      return #icon > 0 and icon .. icon_padding or ""
-    end
+    return get_file_icon_default(fname, extension, line, depth)
+  end
+end
+
+if icon_state.show_file_icon then
+  if web_devicons then
+    get_file_icon = get_file_icon_webdev
+  else
+    get_file_icon = get_file_icon_default
   end
 end
 
@@ -224,8 +232,6 @@ local function update_draw_data(tree, depth, markers)
   end
 end
 
-local M = {}
-
 local function compute_header()
   if view.is_root_folder_visible(core.get_cwd()) then
     local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
@@ -292,6 +298,7 @@ end
 function M.setup(opts)
   M.config = {
     indent_markers = opts.renderer.indent_markers,
+    icons = opts.renderer.icons,
   }
 
   require("nvim-tree.renderer.padding").setup(opts)

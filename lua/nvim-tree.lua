@@ -345,6 +345,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         none = "  ",
       },
     },
+    icons = {
+      webdev_colors = true,
+    },
   },
   hijack_directories = {
     enable = true,

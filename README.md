@@ -151,6 +151,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
         none = "  ",
       },
     },
+    icons = {
+      webdev_colors = true,
+    },
   },
   hijack_directories = {
     enable = true,
