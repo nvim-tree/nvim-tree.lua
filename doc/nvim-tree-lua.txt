@@ -343,16 +343,17 @@ Here is a list of the options available in the setup call:
 - |git|: git integration with icons and colors
 
   - |git.enable|: enable / disable the feature
-    type: `boolean`
-    default: `true`
+      type: `boolean`
+      default: `true`
 
   - |git.ignore|: ignore files based on `.gitignore`
-    type: `boolean`
-    default: `true`
+    Toggle via the `toggle_git_ignored` action, default mapping `I`.
+      type: `boolean`
+      default: `true`
 
   - |git.timeout|: kills the git process after some time if it takes too long
-    type: `number`
-    default: `400` (ms)
+      type: `number`
+      default: `400` (ms)
 
   You will still need to configure `g:nvim_tree_show_icons.git` or
   `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
@@ -435,17 +436,19 @@ Here is a list of the options available in the setup call:
 *nvim-tree.filters*
 |filters|: filtering options
 
-  - |filters.dotfiles|: do not show `dotfiles` (files starting with a `.`)
+  - |filters.dotfiles|: do not show dotfiles: files starting with a `.`
+    Toggle via the `toggle_dotfiles` action, default mapping `H`.
       type: `boolean`
       default: `false`
 
   - |filters.custom|: custom list of vim regex for file/directory names that will not be shown.
     Backslashes must be escaped e.g. "^\\.git". See |string-match|.
+    Toggle via the `toggle_custom` action, default mapping `U`.
       type: `{string}`
       default: `{}`
 
-  - |filters.exclude|: list of directories or files to exclude from filtering
-    (will always be shown)
+  - |filters.exclude|: list of directories or files to exclude from filtering: always show them.
+    Overrides `git.ignore`, `filters.dotfiles` and `filters.custom`.
       type: `{string}`
       default: `{}`
 
