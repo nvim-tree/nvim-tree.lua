@@ -158,12 +158,11 @@ function M.update()
   log.profile_end(ps, "diagnostics update")
 end
 
-local has_06 = vim.fn.has "nvim-0.6" == 1
 local links = {
-  NvimTreeLspDiagnosticsError = has_06 and "DiagnosticError" or "LspDiagnosticsDefaultError",
-  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarn" or "LspDiagnosticsDefaultWarning",
-  NvimTreeLspDiagnosticsInformation = has_06 and "DiagnosticInfo" or "LspDiagnosticsDefaultInformation",
-  NvimTreeLspDiagnosticsHint = has_06 and "DiagnosticHint" or "LspDiagnosticsDefaultHint",
+  NvimTreeLspDiagnosticsError = "DiagnosticError",
+  NvimTreeLspDiagnosticsWarning = "DiagnosticWarn",
+  NvimTreeLspDiagnosticsInformation = "DiagnosticInfo",
+  NvimTreeLspDiagnosticsHint = "DiagnosticHint",
 }
 
 function M.setup(opts)
@@ -179,13 +178,8 @@ function M.setup(opts)
   end
 
   if M.enable then
-    if has_06 then
-      log.line("diagnostics", "setup has_06")
-      vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
-    else
-      log.line("diagnostics", "setup not has_06")
-      vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
-    end
+    log.line("diagnostics", "setup")
+    vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
   end
 end
 
