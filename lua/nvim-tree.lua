@@ -434,6 +434,9 @@ local function validate_options(conf)
   local msg = ""
 
   local function walk_options(user, def, prefix)
+    if type(user) ~= "table" then
+      return
+    end
     for k, v in pairs(user) do
       for _, no in ipairs(NO_VALIDATE_OPTS) do
         if no == prefix .. k then
