@@ -208,7 +208,7 @@ local function update_draw_data(tree, depth, markers)
       end
 
       if should_hl_opened_files then
-        if api.nvim_buf_is_loaded(node.absolute_path) then
+        if vim.fn.bufloaded(node.absolute_path) > 0 then
           if vim.g.nvim_tree_highlight_opened_files == 1 then
             table.insert(hl, { "NvimTreeOpenedFile", index, offset, offset + #icon }) -- highlight icon only
           elseif vim.g.nvim_tree_highlight_opened_files == 2 then
