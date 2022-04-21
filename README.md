@@ -348,6 +348,10 @@ You can toggle the help UI by pressing `g?`.
 ```vim
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 ```
+7. They're no default binding to toggle the NvimTree, you can either type `:NvimTreeToggle` or add your own keybinds with something like
+```lua
+vim.api.nvim_set_keymap('n','<c-l>',':NvimTreeToggle<cr>',{ noremap=true})
+```
 
 ## Diagnostic Logging
 
