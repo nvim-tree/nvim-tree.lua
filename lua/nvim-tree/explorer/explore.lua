@@ -30,11 +30,11 @@ local function populate_children(handle, cwd, node, status)
       and not nodes_by_path[abs]
     then
       if t == "directory" and uv.fs_access(abs, "R") then
-        table.insert(node.nodes, builders.folder(abs, name, status, node_ignored))
+        table.insert(node.nodes, builders.folder(node, abs, name, status, node_ignored))
       elseif t == "file" then
-        table.insert(node.nodes, builders.file(abs, name, status, node_ignored))
+        table.insert(node.nodes, builders.file(node, abs, name, status, node_ignored))
       elseif t == "link" then
-        local link = builders.link(abs, name, status, node_ignored)
+        local link = builders.link(node, abs, name, status, node_ignored)
         if link.link_to ~= nil then
           table.insert(node.nodes, link)
         end

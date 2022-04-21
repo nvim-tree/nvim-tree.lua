@@ -39,32 +39,19 @@ end
 
 function M.parent_node(should_close)
   return function(node)
-    if node.name == ".." then
-      return
+    local parent = node.parent
+
+    if not parent or parent.cwd then
+      return view.set_cursor { 1, 0 }
     end
 
-    should_close = should_close or false
-    local altered_tree = false
+    local _, line = utils.find_node(core.get_explorer().nodes, function(n)
+      return n.absolute_path == parent.absolute_path
+    end)
 
-    local iter = get_line_from_node(node, true)
-    if node.open == true and should_close then
-      node.open = false
-      altered_tree = true
-    else
-      local line, parent = iter(core.get_explorer().nodes, true)
-      if parent == nil then
-        line = 1
-      elseif should_close then
-        parent.open = false
-        altered_tree = true
-      end
-      if not view.is_root_folder_visible(core.get_cwd()) then
-        line = line - 1
-      end
-      view.set_cursor { line, 0 }
-    end
-
-    if altered_tree then
+    view.set_cursor { line + 1, 0 }
+    if should_close then
+      parent.open = false
       diagnostics.update()
       renderer.draw()
     end
