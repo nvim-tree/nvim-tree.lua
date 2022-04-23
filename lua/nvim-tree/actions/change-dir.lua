@@ -7,10 +7,6 @@ local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {
   current_tab = a.nvim_get_current_tabpage(),
-  options = {
-    global = false,
-    change_cwd = true,
-  },
 }
 
 function M.fn(name, with_open)
@@ -20,6 +16,7 @@ function M.fn(name, with_open)
 
   local foldername = name == ".." and vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h") or name
   local no_cwd_change = vim.fn.expand(foldername) == core.get_cwd()
+    or M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   local new_tab = a.nvim_get_current_tabpage()
   local is_window = (vim.v.event.scope == "window" or vim.v.event.changed_window) and new_tab == M.current_tab
   if no_cwd_change or is_window then
@@ -32,7 +29,7 @@ end
 function M.force_dirchange(foldername, with_open)
   local ps = log.profile_start("change dir %s", foldername)
 
-  if M.options.change_cwd and vim.tbl_isempty(vim.v.event) then
+  if M.options.enable and vim.tbl_isempty(vim.v.event) then
     if M.options.global then
       vim.cmd("cd " .. vim.fn.fnameescape(foldername))
     else
@@ -51,8 +48,7 @@ function M.force_dirchange(foldername, with_open)
 end
 
 function M.setup(options)
-  M.options.change_cwd = options.actions.change_dir.enable
-  M.options.global = options.actions.change_dir.global
+  M.options = options.actions.change_dir
 end
 
 return M
