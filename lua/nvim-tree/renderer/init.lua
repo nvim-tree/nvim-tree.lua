@@ -1,10 +1,10 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
-local _padding = require "nvim-tree.renderer.padding"
+local _padding = require "nvim-tree.renderer.components.padding"
 local _help = require "nvim-tree.renderer.help"
-local _icons = require "nvim-tree.renderer.icons"
-local git = require "nvim-tree.renderer.git"
+local _icons = require "nvim-tree.renderer.icon-config"
+local git = require "nvim-tree.renderer.components.git"
 local core = require "nvim-tree.core"
 
 local api = vim.api
@@ -301,7 +301,7 @@ function M.setup(opts)
     icons = opts.renderer.icons,
   }
 
-  require("nvim-tree.renderer.padding").setup(opts)
+  _padding.setup(opts)
 end
 
 return M
