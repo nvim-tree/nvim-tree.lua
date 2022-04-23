@@ -2,6 +2,7 @@ local a = vim.api
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
+local log = require "nvim-tree.log"
 
 local M = {}
 
@@ -124,6 +125,9 @@ function M.update()
   if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
     return
   end
+  local ps = log.profile_start "diagnostics update"
+  log.line("diagnostics", "update")
+
   local buffer_severity
   if is_using_coc() then
     buffer_severity = from_coc()
@@ -133,27 +137,32 @@ function M.update()
 
   M.clear()
   for bufname, severity in pairs(buffer_severity) do
+    local bufpath = utils.canonical_path(bufname)
+    log.line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
     if 0 < severity and severity < 5 then
       local node, line = utils.find_node(core.get_explorer().nodes, function(node)
+        local nodepath = utils.canonical_path(node.absolute_path)
+        log.line("diagnostics", "  checking nodepath '%s'", nodepath)
         if M.show_on_dirs and not node.open then
-          return vim.startswith(bufname, node.absolute_path)
+          return vim.startswith(bufpath, nodepath)
         else
-          return node.absolute_path == bufname
+          return nodepath == bufpath
         end
       end)
       if node then
+        log.line("diagnostics", " matched node '%s'", node.absolute_path)
         add_sign(line, severity)
       end
     end
   end
+  log.profile_end(ps, "diagnostics update")
 end
 
-local has_06 = vim.fn.has "nvim-0.6" == 1
 local links = {
-  NvimTreeLspDiagnosticsError = has_06 and "DiagnosticError" or "LspDiagnosticsDefaultError",
-  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarn" or "LspDiagnosticsDefaultWarning",
-  NvimTreeLspDiagnosticsInformation = has_06 and "DiagnosticInfo" or "LspDiagnosticsDefaultInformation",
-  NvimTreeLspDiagnosticsHint = has_06 and "DiagnosticHint" or "LspDiagnosticsDefaultHint",
+  NvimTreeLspDiagnosticsError = "DiagnosticError",
+  NvimTreeLspDiagnosticsWarning = "DiagnosticWarn",
+  NvimTreeLspDiagnosticsInformation = "DiagnosticInfo",
+  NvimTreeLspDiagnosticsHint = "DiagnosticHint",
 }
 
 function M.setup(opts)
@@ -169,11 +178,8 @@ function M.setup(opts)
   end
 
   if M.enable then
-    if has_06 then
-      vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
-    else
-      vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
-    end
+    log.line("diagnostics", "setup")
+    vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
   end
 end
 

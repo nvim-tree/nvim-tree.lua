@@ -17,7 +17,7 @@ function M.fn(with_sub)
     local namelen = node.name:len()
     local abs_path = with_sub and node.absolute_path:sub(0, namelen * -1 - 1) or node.absolute_path
 
-    local input_opts = { prompt = "Rename to ", default = abs_path }
+    local input_opts = { prompt = "Rename to ", default = abs_path, completion = "file" }
 
     vim.ui.input(input_opts, function(new_file_path)
       if not new_file_path then

@@ -122,6 +122,7 @@ function M.open(cwd)
   else
     open_view_and_draw()
   end
+  diagnostics.update()
   view.restore_tab_state()
 end
 
