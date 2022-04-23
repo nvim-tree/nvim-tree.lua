@@ -105,6 +105,22 @@ local function get_special_files_map()
     }
 end
 
+local function highlight_opened_files(node, offset, icon, git_icons)
+  local from = offset
+  local to = offset
+
+  if vim.g.nvim_tree_highlight_opened_files == 1 then -- highlight icon only
+    to = from + #icon
+  elseif vim.g.nvim_tree_highlight_opened_files == 2 then -- highlight name only
+    from = offset + #icon + #git_icons
+    to = from + #node.name
+  elseif vim.g.nvim_tree_highlight_opened_files == 3 then -- highlight whole line
+    to = -1
+  end
+
+  table.insert(hl, { "NvimTreeOpenedFile", index, from, to })
+end
+
 local function build_file(node, padding, offset, git_hl, special)
   local icon
   local git_icons
@@ -124,21 +140,9 @@ local function build_file(node, padding, offset, git_hl, special)
     table.insert(hl, { "NvimTreeImageFile", index, offset + #icon + #git_icons, -1 })
   end
 
-  if should_hl_opened_files then
-    if vim.fn.bufloaded(node.absolute_path) > 0 then
-      if vim.g.nvim_tree_highlight_opened_files == 1 then
-        table.insert(hl, { "NvimTreeOpenedFile", index, offset, offset + #icon }) -- highlight icon only
-      elseif vim.g.nvim_tree_highlight_opened_files == 2 then
-        table.insert(hl, {
-          "NvimTreeOpenedFile",
-          index,
-          offset + #icon + #git_icons,
-          offset + #icon + #git_icons + #node.name,
-        }) -- highlight name only
-      elseif vim.g.nvim_tree_highlight_opened_files == 3 then
-        table.insert(hl, { "NvimTreeOpenedFile", index, offset, -1 }) -- highlight whole line
-      end
-    end
+  local should_highlight_opened_files = should_hl_opened_files and vim.fn.bufloaded(node.absolute_path) > 0
+  if should_highlight_opened_files then
+    highlight_opened_files(node, offset, icon, git_icons)
   end
 
   if git_hl then
