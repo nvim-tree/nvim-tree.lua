@@ -360,7 +360,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   ignore_ft_on_setup = {},
   system_open = {
-    cmd = nil,
+    cmd = "",
     args = {},
   },
   diagnostics = {
@@ -420,12 +420,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
 } -- END_DEFAULT_OPTS
 
--- nil or no defaults
-local NO_VALIDATE_OPTS = {
-  "system_open.cmd",
-  "view.mappings.list",
-}
-
 local function merge_options(conf)
   if conf and conf.update_to_buf_dir then
     conf.hijack_directories = conf.update_to_buf_dir
@@ -435,51 +429,48 @@ local function merge_options(conf)
 end
 
 local function validate_options(conf)
-  local msg = ""
+  local msg
 
-  local function walk_options(user, def, prefix)
-    if type(user) ~= "table" then
+  local function validate(user, def, prefix)
+    if type(user) ~= "table" or type(def) ~= "table" or not next(def) then
       return
     end
+
     for k, v in pairs(user) do
-      for _, no in ipairs(NO_VALIDATE_OPTS) do
-        if no == prefix .. k then
-          return
-        end
-      end
-
+      local invalid
       if def[k] == nil then
-        msg = string.format("%s\nunknown option: %s%s", msg, prefix, k)
-        return
+        invalid = string.format("unknown option: %s%s", prefix, k)
       elseif type(v) ~= type(def[k]) then
-        msg = string.format("%s\ninvalid option: %s%s  expected: %s  actual: %s", msg, prefix, k, type(def[k]), type(v))
-        return
+        invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
       end
 
-      if type(v) == "table" then
-        walk_options(v, def[k], prefix .. k .. ".")
+      if invalid then
+        if msg then
+          msg = string.format("%s | %s", msg, invalid)
+        else
+          msg = string.format("%s", invalid)
+        end
+        user[k] = nil
+      else
+        validate(v, def[k], prefix .. k .. ".")
       end
     end
   end
 
-  walk_options(conf, DEFAULT_OPTS, "")
+  validate(conf, DEFAULT_OPTS, "")
 
-  if #msg > 0 then
+  if msg then
     utils.warn(msg)
   end
 end
 
 function M.setup(conf)
-  validate_options(conf)
-
   legacy.migrate_legacy_options(conf or {})
+
+  validate_options(conf)
 
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
-
-  if opts.auto_close then
-    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
-  end
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
