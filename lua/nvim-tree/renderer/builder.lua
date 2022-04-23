@@ -67,29 +67,33 @@ function Builder:_insert_line(line)
   table.insert(self.lines, line)
 end
 
-function Builder:_build_folder(node, padding, git_hl)
-  local offset = string.len(padding)
-
-  local has_children = #node.nodes ~= 0 or node.has_children
-  local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
-  local git_icon = git.get_icons(node, self.index, offset, #icon, self.highlights) or ""
-  -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
-  local folder_hl = "NvimTreeFolderName"
+local function get_folder_name(node)
   local name = node.name
   local next = node.group_next
   while next do
     name = name .. "/" .. next.name
     next = next.group_next
   end
-  if not has_children then
-    folder_hl = "NvimTreeEmptyFolderName"
-  end
-  if node.open then
-    folder_hl = "NvimTreeOpenedFolderName"
-  end
+  return name
+end
+
+function Builder:_build_folder(node, padding, git_hl)
+  local offset = string.len(padding)
+
+  local name = get_folder_name(node)
+  local has_children = #node.nodes ~= 0 or node.has_children
+  local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
+  local git_icon = git.get_icons(node, self.index, offset, #icon, self.highlights) or ""
+
+  local folder_hl = "NvimTreeFolderName"
   if self.special_map[node.absolute_path] then
     folder_hl = "NvimTreeSpecialFolderName"
+  elseif node.open then
+    folder_hl = "NvimTreeOpenedFolderName"
+  elseif not has_children then
+    folder_hl = "NvimTreeEmptyFolderName"
   end
+
   icons.set_folder_hl(
     self.index,
     offset,
