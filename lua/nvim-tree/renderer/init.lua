@@ -188,7 +188,41 @@ local function build_file(node, padding, offset, git_hl, special)
   index = index + 1
 end
 
-local function update_draw_data(tree, depth, markers)
+local function build_folder(node, padding, offset, depth, git_hl, special, markers)
+  local has_children = #node.nodes ~= 0 or node.has_children
+  local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
+  local git_icon = git.get_icons(node, index, offset, #icon, hl) or ""
+  -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
+  local folder_hl = "NvimTreeFolderName"
+  local name = node.name
+  local next = node.group_next
+  while next do
+    name = name .. "/" .. next.name
+    next = next.group_next
+  end
+  if not has_children then
+    folder_hl = "NvimTreeEmptyFolderName"
+  end
+  if node.open then
+    folder_hl = "NvimTreeOpenedFolderName"
+  end
+  if special[node.absolute_path] then
+    folder_hl = "NvimTreeSpecialFolderName"
+  end
+  set_folder_hl(index, offset, #icon + #git_icon, #name, "NvimTreeFolderIcon", folder_hl)
+  if git_hl then
+    set_folder_hl(index, offset, #icon + #git_icon, #name, git_hl, git_hl)
+  end
+  index = index + 1
+  if node.open then
+    table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
+    M._update_draw_data(node, depth + 2, markers)
+  else
+    table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
+  end
+end
+
+function M._update_draw_data(tree, depth, markers)
   local special = get_special_files_map()
 
   for idx, node in ipairs(tree.nodes) do
@@ -201,37 +235,7 @@ local function update_draw_data(tree, depth, markers)
     local git_hl = git.get_highlight(node)
 
     if node.nodes then
-      local has_children = #node.nodes ~= 0 or node.has_children
-      local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
-      local git_icon = git.get_icons(node, index, offset, #icon, hl) or ""
-      -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
-      local folder_hl = "NvimTreeFolderName"
-      local name = node.name
-      local next = node.group_next
-      while next do
-        name = name .. "/" .. next.name
-        next = next.group_next
-      end
-      if not has_children then
-        folder_hl = "NvimTreeEmptyFolderName"
-      end
-      if node.open then
-        folder_hl = "NvimTreeOpenedFolderName"
-      end
-      if special[node.absolute_path] then
-        folder_hl = "NvimTreeSpecialFolderName"
-      end
-      set_folder_hl(index, offset, #icon + #git_icon, #name, "NvimTreeFolderIcon", folder_hl)
-      if git_hl then
-        set_folder_hl(index, offset, #icon + #git_icon, #name, git_hl, git_hl)
-      end
-      index = index + 1
-      if node.open then
-        table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
-        update_draw_data(node, depth + 2, markers)
-      else
-        table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
-      end
+      build_folder(node, padding, offset, depth, git_hl, special, markers)
     elseif node.link_to then
       build_symlink(node, padding, offset, git_hl)
     else
@@ -276,7 +280,7 @@ function M.draw()
   _padding.reload_padding_function()
   git.reload()
   compute_header()
-  update_draw_data(core.get_explorer(), show_arrows and 2 or 0, {})
+  M._update_draw_data(core.get_explorer(), show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()
