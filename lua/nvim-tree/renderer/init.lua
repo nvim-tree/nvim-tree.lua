@@ -35,7 +35,6 @@ local function build_symlink(node, padding, offset, git_hl)
   local arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
   table.insert(hl, { link_hl, index, offset, -1 })
   table.insert(lines, padding .. icon .. node.name .. arrow .. node.link_to)
-  index = index + 1
 end
 
 -- ## FILES
@@ -121,17 +120,20 @@ local function highlight_opened_files(node, offset, icon, git_icons)
   table.insert(hl, { "NvimTreeOpenedFile", index, from, to })
 end
 
-local function build_file(node, padding, offset, git_hl, special)
-  local icon
-  local git_icons
+local function build_file_icons(node, offset, special)
   if special[node.absolute_path] or special[node.name] then
-    icon = get_special_icon()
-    git_icons = git.get_icons(node, index, offset, 0, hl)
+    local git_icons = git.get_icons(node, index, offset, 0, hl)
     table.insert(hl, { "NvimTreeSpecialFile", index, offset + #git_icons, -1 })
+    return get_special_icon(), git_icons
   else
-    icon = get_file_icon(node.name, node.extension, index, offset)
-    git_icons = git.get_icons(node, index, offset, #icon, hl)
+    local icon = get_file_icon(node.name, node.extension, index, offset)
+    return icon, git.get_icons(node, index, offset, #icon, hl)
   end
+end
+
+local function build_file(node, padding, offset, git_hl, special)
+  local icon, git_icons = build_file_icons(node, offset, special)
+
   table.insert(lines, padding .. icon .. git_icons .. node.name)
 
   if node.executable then
@@ -148,7 +150,6 @@ local function build_file(node, padding, offset, git_hl, special)
   if git_hl then
     table.insert(hl, { git_hl, index, offset + #icon + #git_icons, -1 })
   end
-  index = index + 1
 end
 
 -- ## FOLDERS
@@ -194,7 +195,7 @@ if icon_state.show_folder_icon then
   end
 end
 
-local function build_folder(node, padding, offset, depth, git_hl, special, markers)
+local function build_folder(node, padding, offset, git_hl, special)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = get_folder_icon(node.open, node.link_to ~= nil, has_children)
   local git_icon = git.get_icons(node, index, offset, #icon, hl) or ""
@@ -219,10 +220,8 @@ local function build_folder(node, padding, offset, depth, git_hl, special, marke
   if git_hl then
     set_folder_hl(index, offset, #icon + #git_icon, #name, git_hl, git_hl)
   end
-  index = index + 1
   if node.open then
     table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
-    M._update_draw_data(node, depth + 2, markers)
   else
     table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
   end
@@ -241,11 +240,16 @@ function M._update_draw_data(tree, depth, markers)
     local git_hl = git.get_highlight(node)
 
     if node.nodes then
-      build_folder(node, padding, offset, depth, git_hl, special, markers)
+      build_folder(node, padding, offset, git_hl, special)
     elseif node.link_to then
       build_symlink(node, padding, offset, git_hl)
     else
       build_file(node, padding, offset, git_hl, special)
+    end
+    index = index + 1
+
+    if node.open then
+      M._update_draw_data(node, depth + 2, markers)
     end
   end
 end
