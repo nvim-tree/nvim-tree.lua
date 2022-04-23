@@ -99,7 +99,7 @@ local function config_folder_icon()
     M.get_folder_icon = get_folder_icon
     M.set_folder_hl = set_folder_hl
   else
-    M.get_file_icon = empty
+    M.get_folder_icon = empty
     M.set_folder_hl = set_folder_hl_default
   end
 end
