@@ -6,25 +6,7 @@ local icons = require "nvim-tree.renderer.components.icons"
 
 -- TODO(refactor): the builder abstraction is not perfect yet. We shouldn't leak data in components.
 -- Components should return only and icon / highlight group pair at most.
--- The picture and special map definitions should be abstracted away, or even reconsidered.
 -- The code was mostly moved from renderer/init.lua and rearranged, so it's still under construction.
-
-local picture = {
-  jpg = true,
-  jpeg = true,
-  png = true,
-  gif = true,
-}
-
-local function get_special_files_map()
-  return vim.g.nvim_tree_special_files
-    or {
-      ["Cargo.toml"] = true,
-      Makefile = true,
-      ["README.md"] = true,
-      ["readme.md"] = true,
-    }
-end
 
 local Builder = {}
 Builder.__index = Builder
@@ -42,6 +24,26 @@ end
 
 function Builder:configure_initial_depth(show_arrows)
   self.depth = show_arrows and 2 or 0
+  return self
+end
+
+function Builder:configure_root_modifier(root_folder_modifier)
+  self.root_folder_modifier = root_folder_modifier or ":~"
+  return self
+end
+
+function Builder:configure_trailing_slash(with_trailing)
+  self.trailing_slash = with_trailing and "/" or ""
+  return self
+end
+
+function Builder:configure_special_map(special_map)
+  self.special_map = special_map
+  return self
+end
+
+function Builder:configure_picture_map(picture_map)
+  self.picture_map = picture_map
   return self
 end
 
@@ -66,7 +68,6 @@ function Builder:_insert_line(line)
 end
 
 function Builder:_build_folder(node, padding, git_hl)
-  local special = get_special_files_map()
   local offset = string.len(padding)
 
   local has_children = #node.nodes ~= 0 or node.has_children
@@ -86,7 +87,7 @@ function Builder:_build_folder(node, padding, git_hl)
   if node.open then
     folder_hl = "NvimTreeOpenedFolderName"
   end
-  if special[node.absolute_path] then
+  if self.special_map[node.absolute_path] then
     folder_hl = "NvimTreeSpecialFolderName"
   end
   icons.set_folder_hl(
@@ -111,7 +112,7 @@ function Builder:_build_folder(node, padding, git_hl)
       self.open_file_highlight
     )
   end
-  self:_insert_line(padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
+  self:_insert_line(padding .. icon .. git_icon .. name .. self.trailing_slash)
 end
 
 -- TODO: missing git icon for symlinks
@@ -126,8 +127,8 @@ function Builder:_build_symlink(node, padding, git_highlight)
   self:_insert_line(line)
 end
 
-function Builder:_build_file_icons(node, offset, special)
-  if special[node.absolute_path] or special[node.name] then
+function Builder:_build_file_icons(node, offset)
+  if self.special_map[node.absolute_path] or self.special_map[node.name] then
     local git_icons = git.get_icons(node, self.index, offset, 0, self.highlights)
     self:_insert_highlight("NvimTreeSpecialFile", offset + #git_icons)
     return icons.i.special, git_icons
@@ -156,15 +157,14 @@ end
 function Builder:_build_file(node, padding, git_highlight)
   local offset = string.len(padding)
 
-  local special = get_special_files_map()
-  local icon, git_icons = self:_build_file_icons(node, offset, special)
+  local icon, git_icons = self:_build_file_icons(node, offset)
 
   self:_insert_line(padding .. icon .. git_icons .. node.name)
   local col_start = offset + #icon + #git_icons
 
   if node.executable then
     self:_insert_highlight("NvimTreeExecFile", col_start)
-  elseif picture[node.extension] then
+  elseif self.picture_map[node.extension] then
     self:_insert_highlight("NvimTreeImageFile", col_start)
   end
 
@@ -210,15 +210,14 @@ function Builder:build(tree)
   return self
 end
 
-local function format_root_name(root_cwd)
-  local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ":~"
-  local base_root = utils.path_remove_trailing(vim.fn.fnamemodify(root_cwd, root_folder_modifier))
+local function format_root_name(root_cwd, modifier)
+  local base_root = utils.path_remove_trailing(vim.fn.fnamemodify(root_cwd, modifier))
   return utils.path_join { base_root, ".." }
 end
 
 function Builder:build_header(show_header)
   if show_header then
-    local root_name = format_root_name(self.root_cwd)
+    local root_name = format_root_name(self.root_cwd, self.root_folder_modifier)
     self:_insert_line(root_name)
     self:_insert_highlight("NvimTreeRootFolder", 0, string.len(root_name))
     self.index = 1

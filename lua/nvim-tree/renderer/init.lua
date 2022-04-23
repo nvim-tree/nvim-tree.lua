@@ -36,6 +36,23 @@ local function should_show_arrows()
     and icon_component.configs.show_folder_arrows
 end
 
+local picture_map = {
+  jpg = true,
+  jpeg = true,
+  png = true,
+  gif = true,
+}
+
+local function get_special_files_map()
+  return vim.g.nvim_tree_special_files
+    or {
+      ["Cargo.toml"] = true,
+      Makefile = true,
+      ["README.md"] = true,
+      ["readme.md"] = true,
+    }
+end
+
 function M.draw()
   local bufnr = view.get_bufnr()
   if not core.get_explorer() or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
@@ -55,6 +72,10 @@ function M.draw()
   else
     lines, hl = Builder.new(core.get_cwd())
       :configure_initial_depth(should_show_arrows())
+      :configure_root_modifier(vim.g.nvim_tree_root_folder_modifier)
+      :configure_trailing_slash(vim.g.nvim_tree_add_trailing == 1)
+      :configure_special_map(get_special_files_map())
+      :configure_picture_map(picture_map)
       :configure_opened_file_highlighting(vim.g.nvim_tree_highlight_opened_files)
       :build_header(view.is_root_folder_visible(core.get_cwd()))
       :build(core.get_explorer())
