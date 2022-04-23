@@ -151,6 +151,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
         none = "  ",
       },
     },
+    icons = {
+      webdev_colors = true,
+    },
   },
   hijack_directories = {
     enable = true,
@@ -217,6 +220,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
       all = false,
       config = false,
       copy_paste = false,
+      diagnostics = false,
       git = false,
       profile = false,
     },
@@ -348,9 +352,7 @@ autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tab
 
 ## Diagnostic Logging
 
-You may enable diagnostic logging and a file `nvim-tree.log` will be created in `$XDG_CACHE_HOME/nvim`, usually `~/.cache/nvim`, containing logs from that nvim session. See `:help nvim-tree.log`.
-
-The files may become large and numerous, so it is advised to turn on logging to diagnose an issue or while reporting a bug, then turn it off.
+You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See `:help nvim-tree.log`.
 
 ## Performance Issues
 
