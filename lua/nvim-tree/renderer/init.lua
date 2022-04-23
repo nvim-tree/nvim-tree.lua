@@ -21,47 +21,24 @@ local web_devicons = icon_state.has_devicons and require "nvim-web-devicons" or 
 
 local should_hl_opened_files = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0
 
-local get_folder_icon = function()
-  return ""
-end
-local function get_trailing_length()
-  return vim.g.nvim_tree_add_trailing and 1 or 0
-end
-
-local set_folder_hl = function(line, depth, git_icon_len, _, hl_group, _)
-  table.insert(hl, { hl_group, line, depth + git_icon_len, -1 })
-end
-
 local icon_padding = vim.g.nvim_tree_icon_padding or " "
 
-if icon_state.show_folder_icon then
-  get_folder_icon = function(open, is_symlink, has_children)
-    local n
-    if is_symlink and open then
-      n = icon_state.icons.folder_icons.symlink_open
-    elseif is_symlink then
-      n = icon_state.icons.folder_icons.symlink
-    elseif open then
-      if has_children then
-        n = icon_state.icons.folder_icons.open
-      else
-        n = icon_state.icons.folder_icons.empty_open
-      end
-    else
-      if has_children then
-        n = icon_state.icons.folder_icons.default
-      else
-        n = icon_state.icons.folder_icons.empty
-      end
-    end
-    return n .. icon_padding
-  end
-  set_folder_hl = function(line, depth, icon_len, name_len, hl_icongroup, hl_fnamegroup)
-    local hl_icon = should_hl_opened_files and hl_icongroup or "NvimTreeFolderIcon"
-    table.insert(hl, { hl_icon, line, depth, depth + icon_len })
-    table.insert(hl, { hl_fnamegroup, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
-  end
+-- ## SYMLINK
+
+local get_symlink_icon = function()
+  return #icon_state.icons.symlink > 0 and icon_state.icons.symlink .. icon_padding or ""
 end
+
+local function build_symlink(node, padding, offset, git_hl)
+  local icon = get_symlink_icon()
+  local link_hl = git_hl or "NvimTreeSymlink"
+  local arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
+  table.insert(hl, { link_hl, index, offset, -1 })
+  table.insert(lines, padding .. icon .. node.name .. arrow .. node.link_to)
+  index = index + 1
+end
+
+-- ## FILES
 
 local get_file_icon = function()
   return ""
@@ -102,15 +79,6 @@ if icon_state.show_file_icon then
   end
 end
 
-local get_symlink_icon = function()
-  return icon_state.icons.symlink
-end
-if icon_state.show_file_icon then
-  get_symlink_icon = function()
-    return #icon_state.icons.symlink > 0 and icon_state.icons.symlink .. icon_padding or ""
-  end
-end
-
 local get_special_icon = function()
   return ""
 end
@@ -135,15 +103,6 @@ local function get_special_files_map()
       ["README.md"] = true,
       ["readme.md"] = true,
     }
-end
-
-local function build_symlink(node, padding, offset, git_hl)
-  local icon = get_symlink_icon()
-  local link_hl = git_hl or "NvimTreeSymlink"
-  local arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
-  table.insert(hl, { link_hl, index, offset, -1 })
-  table.insert(lines, padding .. icon .. node.name .. arrow .. node.link_to)
-  index = index + 1
 end
 
 local function build_file(node, padding, offset, git_hl, special)
@@ -186,6 +145,49 @@ local function build_file(node, padding, offset, git_hl, special)
     table.insert(hl, { git_hl, index, offset + #icon + #git_icons, -1 })
   end
   index = index + 1
+end
+
+-- ## FOLDERS
+
+local function get_trailing_length()
+  return vim.g.nvim_tree_add_trailing and 1 or 0
+end
+
+local get_folder_icon = function()
+  return ""
+end
+
+local set_folder_hl = function(line, depth, git_icon_len, _, hl_group, _)
+  table.insert(hl, { hl_group, line, depth + git_icon_len, -1 })
+end
+
+if icon_state.show_folder_icon then
+  get_folder_icon = function(open, is_symlink, has_children)
+    local n
+    if is_symlink and open then
+      n = icon_state.icons.folder_icons.symlink_open
+    elseif is_symlink then
+      n = icon_state.icons.folder_icons.symlink
+    elseif open then
+      if has_children then
+        n = icon_state.icons.folder_icons.open
+      else
+        n = icon_state.icons.folder_icons.empty_open
+      end
+    else
+      if has_children then
+        n = icon_state.icons.folder_icons.default
+      else
+        n = icon_state.icons.folder_icons.empty
+      end
+    end
+    return n .. icon_padding
+  end
+  set_folder_hl = function(line, depth, icon_len, name_len, hl_icongroup, hl_fnamegroup)
+    local hl_icon = should_hl_opened_files and hl_icongroup or "NvimTreeFolderIcon"
+    table.insert(hl, { hl_icon, line, depth, depth + icon_len })
+    table.insert(hl, { hl_fnamegroup, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
+  end
 end
 
 local function build_folder(node, padding, offset, depth, git_hl, special, markers)
@@ -257,6 +259,13 @@ local function compute_header()
   end
 end
 
+local function _draw(bufnr)
+  api.nvim_buf_set_option(bufnr, "modifiable", true)
+  api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  M.render_hl(bufnr)
+  api.nvim_buf_set_option(bufnr, "modifiable", false)
+end
+
 function M.draw()
   local bufnr = view.get_bufnr()
   if not core.get_explorer() or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
@@ -285,10 +294,8 @@ function M.draw()
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()
   end
-  api.nvim_buf_set_option(bufnr, "modifiable", true)
-  api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-  M.render_hl(bufnr)
-  api.nvim_buf_set_option(bufnr, "modifiable", false)
+
+  _draw(bufnr)
 
   if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.get_winnr(), cursor)
