@@ -16,8 +16,9 @@ local hl = {}
 local index = 0
 local namespace_id = api.nvim_create_namespace "NvimTreeHighlights"
 
-local icon_state = _icons.get_config()
-local web_devicons = icon_state.has_devicons and require "nvim-web-devicons" or nil
+M.icon_state = _icons.get_config()
+
+local web_devicons = M.icon_state.has_devicons and require "nvim-web-devicons" or nil
 
 local should_hl_opened_files = (vim.g.nvim_tree_highlight_opened_files or 0) ~= 0
 
@@ -26,7 +27,7 @@ local icon_padding = vim.g.nvim_tree_icon_padding or " "
 -- ## SYMLINK
 
 local get_symlink_icon = function()
-  return #icon_state.icons.symlink > 0 and icon_state.icons.symlink .. icon_padding or ""
+  return #M.icon_state.icons.symlink > 0 and M.icon_state.icons.symlink .. icon_padding or ""
 end
 
 local function build_symlink(node, padding, offset, git_hl)
@@ -45,7 +46,7 @@ end
 
 local get_file_icon_default = function(_, _, line, depth)
   local hl_group = "NvimTreeFileIcon"
-  local icon = icon_state.icons.default
+  local icon = M.icon_state.icons.default
   if #icon > 0 then
     table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
   end
@@ -70,7 +71,7 @@ local get_file_icon_webdev = function(fname, extension, line, depth)
   end
 end
 
-if icon_state.show_file_icon then
+if M.icon_state.show_file_icon then
   if web_devicons then
     get_file_icon = get_file_icon_webdev
   else
@@ -81,9 +82,9 @@ end
 local get_special_icon = function()
   return ""
 end
-if icon_state.show_file_icon then
+if M.icon_state.show_file_icon then
   get_special_icon = function()
-    return #icon_state.icons.default > 0 and icon_state.icons.default .. icon_padding or ""
+    return #M.icon_state.icons.default > 0 and M.icon_state.icons.default .. icon_padding or ""
   end
 end
 
@@ -166,24 +167,24 @@ local set_folder_hl = function(line, depth, git_icon_len, _, hl_group, _)
   table.insert(hl, { hl_group, line, depth + git_icon_len, -1 })
 end
 
-if icon_state.show_folder_icon then
+if M.icon_state.show_folder_icon then
   get_folder_icon = function(open, is_symlink, has_children)
     local n
     if is_symlink and open then
-      n = icon_state.icons.folder_icons.symlink_open
+      n = M.icon_state.icons.folder_icons.symlink_open
     elseif is_symlink then
-      n = icon_state.icons.folder_icons.symlink
+      n = M.icon_state.icons.folder_icons.symlink
     elseif open then
       if has_children then
-        n = icon_state.icons.folder_icons.open
+        n = M.icon_state.icons.folder_icons.open
       else
-        n = icon_state.icons.folder_icons.empty_open
+        n = M.icon_state.icons.folder_icons.empty_open
       end
     else
       if has_children then
-        n = icon_state.icons.folder_icons.default
+        n = M.icon_state.icons.folder_icons.default
       else
-        n = icon_state.icons.folder_icons.empty
+        n = M.icon_state.icons.folder_icons.empty
       end
     end
     return n .. icon_padding
@@ -227,7 +228,7 @@ local function build_folder(node, padding, offset, git_hl, special)
   end
 end
 
-function M._update_draw_data(tree, depth, markers)
+local function compute_lines_and_highlights(tree, depth, markers)
   local special = get_special_files_map()
 
   for idx, node in ipairs(tree.nodes) do
@@ -249,7 +250,7 @@ function M._update_draw_data(tree, depth, markers)
     index = index + 1
 
     if node.open then
-      M._update_draw_data(node, depth + 2, markers)
+      compute_lines_and_highlights(node, depth + 2, markers)
     end
   end
 end
@@ -274,6 +275,12 @@ local function _draw(bufnr)
   api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
 
+local function should_show_arrows()
+  return not M.config.indent_markers.enable
+    and M.icon_state.show_folder_icon
+    and M.icon_state.show_folder_arrows
+end
+
 function M.draw()
   local bufnr = view.get_bufnr()
   if not core.get_explorer() or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
@@ -290,17 +297,16 @@ function M.draw()
   lines = {}
   hl = {}
 
-  icon_state = _icons.get_config()
-  local show_arrows = not M.config.indent_markers.enable
-    and icon_state.show_folder_icon
-    and icon_state.show_folder_arrows
+  M.icon_state = _icons.get_config()
   _padding.reload_padding_function()
   git.reload()
-  compute_header()
-  M._update_draw_data(core.get_explorer(), show_arrows and 2 or 0, {})
 
   if view.is_help_ui() then
     lines, hl = _help.compute_lines()
+  else
+    local start_depth = should_show_arrows() and 2 or 0
+    compute_header()
+    compute_lines_and_highlights(core.get_explorer(), start_depth, {})
   end
 
   _draw(bufnr)
