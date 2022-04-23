@@ -276,9 +276,7 @@ local function _draw(bufnr)
 end
 
 local function should_show_arrows()
-  return not M.config.indent_markers.enable
-    and M.icon_state.show_folder_icon
-    and M.icon_state.show_folder_arrows
+  return not M.config.indent_markers.enable and M.icon_state.show_folder_icon and M.icon_state.show_folder_arrows
 end
 
 function M.draw()
