@@ -146,6 +146,48 @@ local function build_symlink(node, padding, offset, git_hl)
   index = index + 1
 end
 
+local function build_file(node, padding, offset, git_hl, special)
+  local icon
+  local git_icons
+  if special[node.absolute_path] or special[node.name] then
+    icon = get_special_icon()
+    git_icons = git.get_icons(node, index, offset, 0, hl)
+    table.insert(hl, { "NvimTreeSpecialFile", index, offset + #git_icons, -1 })
+  else
+    icon = get_file_icon(node.name, node.extension, index, offset)
+    git_icons = git.get_icons(node, index, offset, #icon, hl)
+  end
+  table.insert(lines, padding .. icon .. git_icons .. node.name)
+
+  if node.executable then
+    table.insert(hl, { "NvimTreeExecFile", index, offset + #icon + #git_icons, -1 })
+  elseif picture[node.extension] then
+    table.insert(hl, { "NvimTreeImageFile", index, offset + #icon + #git_icons, -1 })
+  end
+
+  if should_hl_opened_files then
+    if vim.fn.bufloaded(node.absolute_path) > 0 then
+      if vim.g.nvim_tree_highlight_opened_files == 1 then
+        table.insert(hl, { "NvimTreeOpenedFile", index, offset, offset + #icon }) -- highlight icon only
+      elseif vim.g.nvim_tree_highlight_opened_files == 2 then
+        table.insert(hl, {
+          "NvimTreeOpenedFile",
+          index,
+          offset + #icon + #git_icons,
+          offset + #icon + #git_icons + #node.name,
+        }) -- highlight name only
+      elseif vim.g.nvim_tree_highlight_opened_files == 3 then
+        table.insert(hl, { "NvimTreeOpenedFile", index, offset, -1 }) -- highlight whole line
+      end
+    end
+  end
+
+  if git_hl then
+    table.insert(hl, { git_hl, index, offset + #icon + #git_icons, -1 })
+  end
+  index = index + 1
+end
+
 local function update_draw_data(tree, depth, markers)
   local special = get_special_files_map()
 
@@ -193,45 +235,7 @@ local function update_draw_data(tree, depth, markers)
     elseif node.link_to then
       build_symlink(node, padding, offset, git_hl)
     else
-      local icon
-      local git_icons
-      if special[node.absolute_path] or special[node.name] then
-        icon = get_special_icon()
-        git_icons = git.get_icons(node, index, offset, 0, hl)
-        table.insert(hl, { "NvimTreeSpecialFile", index, offset + #git_icons, -1 })
-      else
-        icon = get_file_icon(node.name, node.extension, index, offset)
-        git_icons = git.get_icons(node, index, offset, #icon, hl)
-      end
-      table.insert(lines, padding .. icon .. git_icons .. node.name)
-
-      if node.executable then
-        table.insert(hl, { "NvimTreeExecFile", index, offset + #icon + #git_icons, -1 })
-      elseif picture[node.extension] then
-        table.insert(hl, { "NvimTreeImageFile", index, offset + #icon + #git_icons, -1 })
-      end
-
-      if should_hl_opened_files then
-        if vim.fn.bufloaded(node.absolute_path) > 0 then
-          if vim.g.nvim_tree_highlight_opened_files == 1 then
-            table.insert(hl, { "NvimTreeOpenedFile", index, offset, offset + #icon }) -- highlight icon only
-          elseif vim.g.nvim_tree_highlight_opened_files == 2 then
-            table.insert(hl, {
-              "NvimTreeOpenedFile",
-              index,
-              offset + #icon + #git_icons,
-              offset + #icon + #git_icons + #node.name,
-            }) -- highlight name only
-          elseif vim.g.nvim_tree_highlight_opened_files == 3 then
-            table.insert(hl, { "NvimTreeOpenedFile", index, offset, -1 }) -- highlight whole line
-          end
-        end
-      end
-
-      if git_hl then
-        table.insert(hl, { git_hl, index, offset + #icon + #git_icons, -1 })
-      end
-      index = index + 1
+      build_file(node, padding, offset, git_hl, special)
     end
   end
 end
