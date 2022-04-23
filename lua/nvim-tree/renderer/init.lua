@@ -137,6 +137,15 @@ local function get_special_files_map()
     }
 end
 
+local function build_symlink(node, padding, offset, git_hl)
+  local icon = get_symlink_icon()
+  local link_hl = git_hl or "NvimTreeSymlink"
+  local arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
+  table.insert(hl, { link_hl, index, offset, -1 })
+  table.insert(lines, padding .. icon .. node.name .. arrow .. node.link_to)
+  index = index + 1
+end
+
 local function update_draw_data(tree, depth, markers)
   local special = get_special_files_map()
 
@@ -182,12 +191,7 @@ local function update_draw_data(tree, depth, markers)
         table.insert(lines, padding .. icon .. git_icon .. name .. (vim.g.nvim_tree_add_trailing == 1 and "/" or ""))
       end
     elseif node.link_to then
-      local icon = get_symlink_icon()
-      local link_hl = git_hl or "NvimTreeSymlink"
-      local arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
-      table.insert(hl, { link_hl, index, offset, -1 })
-      table.insert(lines, padding .. icon .. node.name .. arrow .. node.link_to)
-      index = index + 1
+      build_symlink(node, padding, offset, git_hl)
     else
       local icon
       local git_icons
