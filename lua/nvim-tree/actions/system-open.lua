@@ -9,7 +9,7 @@ local M = {
 }
 
 function M.fn(node)
-  if not M.config.system_open.cmd then
+  if #M.config.system_open.cmd == 0 then
     require("nvim-tree.utils").warn "Cannot open file with system application. Unrecognized platform."
     return
   end
@@ -53,7 +53,7 @@ end
 function M.setup(opts)
   M.config.system_open = opts or {}
 
-  if not M.config.system_open.cmd then
+  if #M.config.system_open.cmd == 0 then
     if M.config.is_windows then
       M.config.system_open = {
         cmd = "cmd",
