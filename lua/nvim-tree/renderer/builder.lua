@@ -182,33 +182,37 @@ function Builder:_build_file(node, padding, git_highlight)
   end
 end
 
+function Builder:_build_line(tree, node, idx)
+  local padding = pad.get_padding(self.depth, idx, tree, node, self.markers)
+
+  if self.depth > 0 then
+    self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
+  end
+
+  local git_highlight = git.get_highlight(node)
+
+  local is_folder = node.nodes ~= nil
+  local is_symlink = node.link_to ~= nil
+
+  if is_folder then
+    self:_build_folder(node, padding, git_highlight)
+  elseif is_symlink then
+    self:_build_symlink(node, padding, git_highlight)
+  else
+    self:_build_file(node, padding, git_highlight)
+  end
+  self.index = self.index + 1
+
+  if node.open then
+    self.depth = self.depth + 2
+    self:build(node)
+    self.depth = self.depth - 2
+  end
+end
+
 function Builder:build(tree)
   for idx, node in ipairs(tree.nodes) do
-    local padding = pad.get_padding(self.depth, idx, tree, node, self.markers)
-
-    if self.depth > 0 then
-      self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
-    end
-
-    local git_highlight = git.get_highlight(node)
-
-    local is_folder = node.nodes ~= nil
-    local is_symlink = node.link_to ~= nil
-
-    if is_folder then
-      self:_build_folder(node, padding, git_highlight)
-    elseif is_symlink then
-      self:_build_symlink(node, padding, git_highlight)
-    else
-      self:_build_file(node, padding, git_highlight)
-    end
-    self.index = self.index + 1
-
-    if node.open then
-      self.depth = self.depth + 2
-      self:build(node)
-      self.depth = self.depth - 2
-    end
+    self:_build_line(tree, node, idx)
   end
 
   return self
