@@ -1,5 +1,5 @@
 local api = vim.api
-local icons = require "nvim-tree.renderer.icons"
+local icons = require "nvim-tree.renderer.icon-config"
 
 local M = {}
 

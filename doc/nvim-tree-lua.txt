@@ -163,6 +163,7 @@ function.
         change_dir = {
           enable = true,
           global = false,
+          restrict_above_cwd = false,
         },
         open_file = {
           quit_on_open = false,
@@ -483,6 +484,11 @@ Here is a list of the options available in the setup call:
   - |actions.change_dir.global|: use `:cd` instead of `:lcd` when changing
     directories. Consider that this might cause issues with
     the |update_cwd| options.
+      type: `boolean`
+      default: `false`
+
+  - |actions.change_dir.restrict_above_cwd|: restrict changing to a directory
+    above the global current working directory.
       type: `boolean`
       default: `false`
 

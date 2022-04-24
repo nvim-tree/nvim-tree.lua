@@ -1,4 +1,4 @@
-local _icons = require "nvim-tree.renderer.icons"
+local _icons = require "nvim-tree.renderer.icon-config"
 local utils = require "nvim-tree.utils"
 
 local M = {}

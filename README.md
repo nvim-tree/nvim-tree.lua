@@ -194,6 +194,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     change_dir = {
       enable = true,
       global = false,
+      restrict_above_cwd = false,
     },
     open_file = {
       quit_on_open = false,
