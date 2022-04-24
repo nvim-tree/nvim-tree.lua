@@ -5,7 +5,7 @@ local M = {}
 -- TODO update git.io/JPhyt when adding a migration
 
 -- migrate the g: to o if the user has not specified that when calling setup
-local g_migrations = {
+local migrations = {
   nvim_tree_disable_netrw = function(o)
     if o.disable_netrw == nil then
       o.disable_netrw = vim.g.nvim_tree_disable_netrw ~= 0
@@ -178,7 +178,22 @@ local g_migrations = {
   end,
 }
 
-local function refactored(opts)
+function M.migrate_legacy_options(opts)
+  local msg = nil
+
+  -- g: options
+  for g, m in pairs(migrations) do
+    if vim.fn.exists("g:" .. g) ~= 0 then
+      m(opts)
+      msg = (msg and msg .. ", " or "Following options were moved to setup, see git.io/JPhyt: ") .. g
+    end
+  end
+
+  if msg then
+    require("nvim-tree.utils").warn(msg)
+  end
+
+  -- regular opts
   if opts.view then
     if opts.view.mappings then
       if opts.view.mappings.list then
@@ -190,33 +205,6 @@ local function refactored(opts)
       end
     end
   end
-end
-
-local function removed(opts)
-  if opts.auto_close then
-    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
-    opts.auto_close = nil
-  end
-end
-
-function M.migrate_legacy_options(opts)
-  -- g: options
-  local msg
-  for g, m in pairs(g_migrations) do
-    if vim.fn.exists("g:" .. g) ~= 0 then
-      m(opts)
-      msg = (msg and msg .. ", " or "Following options were moved to setup, see git.io/JPhyt: ") .. g
-    end
-  end
-  if msg then
-    utils.warn(msg)
-  end
-
-  -- silently move
-  refactored(opts)
-
-  -- warn and delete
-  removed(opts)
 end
 
 return M

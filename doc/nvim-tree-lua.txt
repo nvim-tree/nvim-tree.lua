@@ -86,6 +86,7 @@ function.
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
       disable_netrw = false,
+      hide_root_folder = false,
       hijack_cursor = false,
       hijack_netrw = true,
       hijack_unnamed_buffer_when_opening = false,
@@ -98,7 +99,6 @@ function.
       view = {
         width = 30,
         height = 30,
-        hide_root_folder = false,
         side = "left",
         preserve_window_proportions = false,
         number = false,
@@ -135,7 +135,7 @@ function.
       },
       ignore_ft_on_setup = {},
       system_open = {
-        cmd = "",
+        cmd = nil,
         args = {},
       },
       diagnostics = {
@@ -311,10 +311,10 @@ Here is a list of the options available in the setup call:
 *nvim-tree.system_open*
 - |system_open|: configuration options for the system open command
 
-  - |system_open.cmd|: the command to run, leaving empty should work but
+  - |system_open.cmd|: the command to run, leaving nil should work but
     useful if you want to override the default command with another one.
     type: `string`
-    default: `""`
+    default: `nil`
 
   - |system_open.args|: the command arguments as a list
     type: `{string}`
