@@ -9,7 +9,9 @@ local Builder = require "nvim-tree.renderer.builder"
 
 local api = vim.api
 
-local M = {}
+local M = {
+  last_highlights = {}
+}
 
 local namespace_id = api.nvim_create_namespace "NvimTreeHighlights"
 
@@ -25,7 +27,7 @@ function M.render_hl(bufnr, hl)
     return
   end
   api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
-  for _, data in ipairs(hl) do
+  for _, data in ipairs(hl or M.last_highlights) do
     api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
   end
 end
@@ -83,6 +85,7 @@ function M.draw()
   end
 
   _draw(bufnr, lines, hl)
+  M.last_highlights = hl
 
   if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.get_winnr(), cursor)
