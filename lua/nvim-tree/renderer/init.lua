@@ -10,7 +10,7 @@ local Builder = require "nvim-tree.renderer.builder"
 local api = vim.api
 
 local M = {
-  last_highlights = {}
+  last_highlights = {},
 }
 
 local namespace_id = api.nvim_create_namespace "NvimTreeHighlights"
