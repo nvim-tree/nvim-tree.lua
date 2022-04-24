@@ -963,7 +963,7 @@ on_nvim_tree_ready({handler})
                 Registers a handler for when NvimTree has been initialized.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function()`.
 
                                      *nvim-tree.events.on_node_renamed()*
@@ -972,55 +972,66 @@ on_node_renamed({handler})
                 • Note: A node can either be a file or a directory.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function(payload)`.
+                payload: ~
+                  {old_name}     `{string}` Absolute path to the old node location.
+                  {new_name}     `{string}` Absolute path to the new node location.
 
                                      *nvim-tree.events.on_file_created()*
 on_file_created({handler})
                 Registers a handler for when a file is created.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function(payload)`.
+                payload: ~
+                  {fname}        `{string}` Absolute path to the created file
 
                                      *nvim-tree.events.on_file_removed()*
 on_file_removed({handler})
                 Registers a handler for when a file is removed.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function(payload)`.
+                payload: ~
+                  {fname}        `{string}` Absolute path to the removed file.
 
                                    *nvim-tree.events.on_folder_created()*
 on_folder_created({handler})
                 Registers a handler for when a folder is created.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function(payload)`.
+                payload: ~
+                  {folder_name}  `{string}` Absolute path to the created folder.
 
                                    *nvim-tree.events.on_folder_removed()*
 on_folder_removed({handler})
                 Registers a handler for when a folder is removed.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
+                  {handler}      `{function}` Handler function, with the
                                  signature `function(payload)`.
+                payload: ~
+                  {folder_name}  `{string}` Absolute path to the removed folder.
 
                                    *nvim-tree.events.on_tree_open()*
 on_tree_open({handler})
                 Registers a handler for when NvimTree is opened.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
-                                 signature `function(payload)`.
+                  {handler}      `{function}` Handler function, with the
+                                 signature `function()`.
 
                                    *nvim-tree.events.on_tree_close()*
 on_tree_close({handler})
                 Registers a handler for when NvimTree is closed.
 
                 Parameters: ~
-                    {handler}    (function) Handler function, with the
-                                 signature `function(payload)`.
+                  {handler}      `{function}` Handler function, with the
+                                 signature `function()`.
 
  vim:tw=78:ts=8:noet:ft=help:norl:
