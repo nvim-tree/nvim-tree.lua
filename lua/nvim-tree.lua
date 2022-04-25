@@ -433,15 +433,18 @@ local function validate_options(conf)
   local msg
 
   local function validate(user, def, prefix)
-    if type(user) ~= "table" or type(def) ~= "table" or not next(def) then
+    -- only compare tables with contents that are not integer indexed
+    if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
       return
     end
 
     for k, v in pairs(user) do
       local invalid
       if def[k] == nil then
+        -- option does not exist
         invalid = string.format("unknown option: %s%s", prefix, k)
-      elseif type(v) ~= type(def[k]) then
+      elseif type(v) ~= type(def[k]) and type(v) ~= "function" then
+        -- option is of the wrong type and is not a function
         invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
       end
 
