@@ -2,7 +2,7 @@ local utils = require "nvim-tree.utils"
 
 local M = {}
 
--- TODO update git.io/JPhyt when adding a migration
+-- TODO update bit.ly/3vIpEOJ when adding a migration
 
 -- migrate the g: to o if the user has not specified that when calling setup
 local g_migrations = {
@@ -205,7 +205,7 @@ function M.migrate_legacy_options(opts)
   for g, m in pairs(g_migrations) do
     if vim.fn.exists("g:" .. g) ~= 0 then
       m(opts)
-      msg = (msg and msg .. ", " or "Following options were moved to setup, see git.io/JPhyt: ") .. g
+      msg = (msg and msg .. ", " or "Following options were moved to setup, see bit.ly/3vIpEOJ: ") .. g
     end
   end
   if msg then
