@@ -60,6 +60,11 @@ function Builder:configure_git_icons_padding(padding)
   return self
 end
 
+function Builder:configure_git_icons_placement(where)
+  self.git_icons_placement = where or "before"
+  return self
+end
+
 function Builder:_insert_highlight(group, start, end_)
   table.insert(self.highlights, { group, self.index, start, end_ or -1 })
 end
@@ -99,11 +104,19 @@ function Builder:_build_folder(node, padding, git_hl)
   local name = get_folder_name(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
-  local git_icon = self:_unwrap_git_data(git.get_icons(node), offset + #icon)
 
-  local line = padding .. icon .. git_icon .. name .. self.trailing_slash
-
-  self:_insert_line(line)
+  local line, fname_starts_at
+  if self.git_icons_placement == "before" then
+    local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icon)
+    fname_starts_at = offset + #icon + #git_icons
+    line = padding .. icon .. git_icons .. name .. self.trailing_slash
+    self:_insert_line(line)
+  else
+    fname_starts_at = offset + #icon
+    line = padding .. icon .. name .. self.trailing_slash .. " "
+    local git_icons = self:_unwrap_git_data(git.get_icons(node), #line)
+    self:_insert_line(line .. git_icons)
+  end
 
   if #icon > 0 then
     self:_insert_highlight("NvimTreeFolderIcon", offset, offset + #icon)
@@ -118,10 +131,10 @@ function Builder:_build_folder(node, padding, git_hl)
     foldername_hl = "NvimTreeEmptyFolderName"
   end
 
-  self:_insert_highlight(foldername_hl, offset + #icon + #git_icon, #line)
+  self:_insert_highlight(foldername_hl, fname_starts_at, #line)
 
   if git_hl then
-    self:_insert_highlight(git_hl, offset + #icon + #git_icon, #line)
+    self:_insert_highlight(git_hl, fname_starts_at, #line)
   end
 end
 
@@ -137,17 +150,16 @@ function Builder:_build_symlink(node, padding, git_highlight)
   self:_insert_line(line)
 end
 
-function Builder:_build_file_icons(node, offset)
+function Builder:_build_file_icon(node, offset)
   if self.special_map[node.absolute_path] or self.special_map[node.name] then
-    local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icons.i.special)
-    self:_insert_highlight("NvimTreeSpecialFile", offset + #git_icons)
-    return icons.i.special, git_icons
+    self:_insert_highlight("NvimTreeSpecialFile", offset, offset + #node.name)
+    return icons.i.special
   else
     local icon, hl_group = icons.get_file_icon(node.name, node.extension)
     if hl_group then
       self:_insert_highlight(hl_group, offset, offset + #icon)
     end
-    return icon, self:_unwrap_git_data(git.get_icons(node), offset + #icon)
+    return icon
   end
 end
 
@@ -161,7 +173,7 @@ function Builder:_highlight_opened_files(node, offset, icon, git_icons)
     from = offset + #icon + #git_icons
     to = from + #node.name
   elseif self.open_file_highlight == "all" then
-    to = -1
+    to = from + #node.name
   end
 
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
@@ -170,15 +182,24 @@ end
 function Builder:_build_file(node, padding, git_highlight)
   local offset = string.len(padding)
 
-  local icon, git_icons = self:_build_file_icons(node, offset)
+  local icon = self:_build_file_icon(node, offset)
 
-  self:_insert_line(padding .. icon .. git_icons .. node.name)
-  local col_start = offset + #icon + #git_icons
+  local is_after = self.git_icons_placement == "after"
+  local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icon + (is_after and #node.name + 1 or 0))
+
+  if is_after then
+    self:_insert_line(padding .. icon .. node.name .. " " .. git_icons)
+  else
+    self:_insert_line(padding .. icon .. git_icons .. node.name)
+  end
+
+  local col_start = offset + #icon + (is_after and 0 or #git_icons)
+  local col_end = col_start + #node.name
 
   if node.executable then
-    self:_insert_highlight("NvimTreeExecFile", col_start)
+    self:_insert_highlight("NvimTreeExecFile", col_start, col_end)
   elseif self.picture_map[node.extension] then
-    self:_insert_highlight("NvimTreeImageFile", col_start)
+    self:_insert_highlight("NvimTreeImageFile", col_start, col_end)
   end
 
   local should_highlight_opened_files = self.open_file_highlight and vim.fn.bufloaded(node.absolute_path) > 0
@@ -187,7 +208,7 @@ function Builder:_build_file(node, padding, git_highlight)
   end
 
   if git_highlight then
-    self:_insert_highlight(git_highlight, col_start)
+    self:_insert_highlight(git_highlight, col_start, col_end)
   end
 end
 

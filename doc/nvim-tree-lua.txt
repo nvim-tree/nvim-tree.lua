@@ -123,7 +123,8 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
         icons = {
           webdev_colors = true,
-        },
+          git_placement = "before"
+        }
       },
       hijack_directories = {
         enable = true,
