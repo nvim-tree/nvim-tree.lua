@@ -6,6 +6,7 @@ local events = require "nvim-tree.events"
 
 M.View = {
   tabpages = {},
+  cursors = {},
   hide_root_folder = false,
   winopts = {
     relativenumber = false,
@@ -158,7 +159,7 @@ end
 -- save_tab_state saves any state that should be preserved across redraws.
 local function save_tab_state()
   local tabpage = a.nvim_get_current_tabpage()
-  M.View.tabpages[tabpage].cursor = a.nvim_win_get_cursor(M.get_winnr())
+  M.View.cursors[tabpage] = a.nvim_win_get_cursor(M.get_winnr())
 end
 
 function M.close()
@@ -305,7 +306,7 @@ end
 --- Restores the state of a NvimTree window if it was initialized before.
 function M.restore_tab_state()
   local tabpage = a.nvim_get_current_tabpage()
-  M.set_cursor(M.View.tabpages[tabpage].cursor)
+  M.set_cursor(M.View.cursors[tabpage])
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
