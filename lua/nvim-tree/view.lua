@@ -200,6 +200,10 @@ function M.open(options)
 end
 
 function M.resize(size)
+  if not size or size == "" then
+    local width_or_height = M.is_vertical() and "width" or "height"
+    size = M.View.defaults[width_or_height]
+  end
   if type(size) == "string" then
     size = vim.trim(size)
     local first_char = size:sub(1, 1)
@@ -385,6 +389,7 @@ end
 
 function M.setup(opts)
   local options = opts.view or {}
+  M.View.defaults = options
   M.View.side = options.side
   M.View.width = options.width
   M.View.height = options.height
