@@ -311,7 +311,6 @@ end
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
   disable_netrw = false,
-  hide_root_folder = false,
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
@@ -324,6 +323,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   view = {
     width = 30,
     height = 30,
+    hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
     number = false,
@@ -360,7 +360,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   ignore_ft_on_setup = {},
   system_open = {
-    cmd = nil,
+    cmd = "",
     args = {},
   },
   diagnostics = {
@@ -429,15 +429,52 @@ local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
 end
 
+local function validate_options(conf)
+  local msg
+
+  local function validate(user, def, prefix)
+    -- only compare tables with contents that are not integer indexed
+    if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
+      return
+    end
+
+    for k, v in pairs(user) do
+      local invalid
+      if def[k] == nil then
+        -- option does not exist
+        invalid = string.format("unknown option: %s%s", prefix, k)
+      elseif type(v) ~= type(def[k]) and type(v) ~= "function" then
+        -- option is of the wrong type and is not a function
+        invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+      end
+
+      if invalid then
+        if msg then
+          msg = string.format("%s | %s", msg, invalid)
+        else
+          msg = string.format("%s", invalid)
+        end
+        user[k] = nil
+      else
+        validate(v, def[k], prefix .. k .. ".")
+      end
+    end
+  end
+
+  validate(conf, DEFAULT_OPTS, "")
+
+  if msg then
+    utils.warn(msg)
+  end
+end
+
 function M.setup(conf)
   legacy.migrate_legacy_options(conf or {})
 
+  validate_options(conf)
+
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
-
-  if opts.auto_close then
-    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
-  end
 
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
