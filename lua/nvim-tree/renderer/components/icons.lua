@@ -47,30 +47,28 @@ local function set_folder_hl(line, depth, icon_len, name_len, hl_icongroup, hl_f
   table.insert(hl, { hl_fnamegroup, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
 end
 
-local function get_file_icon_default(_, _, line, depth, hl)
+local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
   local icon = M.icons.default
   if #icon > 0 then
-    table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
+    return icon .. M.padding, hl_group
+  else
+    return ""
   end
-  return #icon > 0 and icon .. M.padding or ""
 end
 
-local function get_file_icon_webdev(fname, extension, line, depth, hl)
+local function get_file_icon_webdev(fname, extension)
   local icon, hl_group = M.devicons.get_icon(fname, extension)
   if not M.webdev_colors then
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
-    if hl_group then
-      table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
-    end
-    return icon .. M.padding
+    return icon .. M.padding, hl_group
   elseif string.match(extension, "%.(.*)") then
     -- If there are more extensions to the file, try to grab the icon for them recursively
-    return M.get_file_icon(fname, string.match(extension, "%.(.*)"), line, depth, hl)
+    return get_file_icon_webdev(fname, string.match(extension, "%.(.*)"))
   else
-    return get_file_icon_default(fname, extension, line, depth, hl)
+    return get_file_icon_default()
   end
 end
 

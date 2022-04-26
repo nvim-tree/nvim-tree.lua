@@ -137,7 +137,10 @@ function Builder:_build_file_icons(node, offset)
     self:_insert_highlight("NvimTreeSpecialFile", offset + #git_icons)
     return icons.i.special, git_icons
   else
-    local icon = icons.get_file_icon(node.name, node.extension, self.index, offset, self.highlights)
+    local icon, hl_group = icons.get_file_icon(node.name, node.extension)
+    if hl_group then
+      self:_insert_highlight(hl_group, offset, offset + #icon)
+    end
     return icon, git.get_icons(node, self.index, offset, #icon, self.highlights)
   end
 end
