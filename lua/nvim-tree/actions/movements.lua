@@ -98,9 +98,6 @@ function M.sibling(direction)
     local target_node = parent.nodes[index]
 
     line, _ = get_line_from_node(target_node)(core.get_explorer().nodes, true)
-    if not view.is_root_folder_visible(core.get_cwd()) then
-      line = line - 1
-    end
     view.set_cursor { line, 0 }
   end
 end
