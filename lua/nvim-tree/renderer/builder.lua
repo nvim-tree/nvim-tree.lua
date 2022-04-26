@@ -6,7 +6,7 @@ local icons = require "nvim-tree.renderer.components.icons"
 
 -- TODO(refactor): the builder abstraction is not perfect yet. We shouldn't leak data in components.
 -- Components should return only and icon / highlight group pair at most.
--- The code was mostly moved from renderer/init.lua and rearranged, so it's still under construction.
+-- Only missing git refactoring
 
 local Builder = {}
 Builder.__index = Builder
@@ -84,39 +84,28 @@ function Builder:_build_folder(node, padding, git_hl)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
   local git_icon = git.get_icons(node, self.index, offset, #icon, self.highlights) or ""
+  local line = padding .. icon .. git_icon .. name .. self.trailing_slash
 
-  local folder_hl = "NvimTreeFolderName"
+  self:_insert_line(line)
+
+  if #icon > 0 then
+    self:_insert_highlight("NvimTreeFolderIcon", offset, offset + #icon)
+  end
+
+  local foldername_hl = "NvimTreeFolderName"
   if self.special_map[node.absolute_path] then
-    folder_hl = "NvimTreeSpecialFolderName"
+    foldername_hl = "NvimTreeSpecialFolderName"
   elseif node.open then
-    folder_hl = "NvimTreeOpenedFolderName"
+    foldername_hl = "NvimTreeOpenedFolderName"
   elseif not has_children then
-    folder_hl = "NvimTreeEmptyFolderName"
+    foldername_hl = "NvimTreeEmptyFolderName"
   end
 
-  icons.set_folder_hl(
-    self.index,
-    offset,
-    #icon + #git_icon,
-    #name,
-    "NvimTreeFolderIcon",
-    folder_hl,
-    self.highlights,
-    self.open_file_highlight
-  )
+  self:_insert_highlight(foldername_hl, offset + #icon + #git_icon, #line)
+
   if git_hl then
-    icons.set_folder_hl(
-      self.index,
-      offset,
-      #icon + #git_icon,
-      #name,
-      git_hl,
-      git_hl,
-      self.highlights,
-      self.open_file_highlight
-    )
+    self:_insert_highlight(git_hl, offset + #icon + #git_icon, #line)
   end
-  self:_insert_line(padding .. icon .. git_icon .. name .. self.trailing_slash)
 end
 
 -- TODO: missing git icon for symlinks

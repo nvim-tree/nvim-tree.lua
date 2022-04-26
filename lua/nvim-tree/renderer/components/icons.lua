@@ -11,14 +11,6 @@ local function empty()
   return ""
 end
 
-local function get_trailing_length()
-  return vim.g.nvim_tree_add_trailing and 1 or 0
-end
-
-local function set_folder_hl_default(line, depth, git_icon_len, _, hl_group, _, hl)
-  table.insert(hl, { hl_group, line, depth + git_icon_len, -1 })
-end
-
 local function get_folder_icon(open, is_symlink, has_children)
   local n
   if is_symlink and open then
@@ -39,12 +31,6 @@ local function get_folder_icon(open, is_symlink, has_children)
     end
   end
   return n .. M.padding
-end
-
-local function set_folder_hl(line, depth, icon_len, name_len, hl_icongroup, hl_fnamegroup, hl, should_hl_opened_files)
-  local hl_icon = should_hl_opened_files and hl_icongroup or "NvimTreeFolderIcon"
-  table.insert(hl, { hl_icon, line, depth, depth + icon_len })
-  table.insert(hl, { hl_fnamegroup, line, depth + icon_len, depth + icon_len + name_len + get_trailing_length() })
 end
 
 local function get_file_icon_default()
@@ -95,10 +81,8 @@ end
 local function config_folder_icon()
   if M.configs.show_folder_icon then
     M.get_folder_icon = get_folder_icon
-    M.set_folder_hl = set_folder_hl
   else
     M.get_folder_icon = empty
-    M.set_folder_hl = set_folder_hl_default
   end
 end
 
