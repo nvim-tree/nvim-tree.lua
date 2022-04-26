@@ -4,10 +4,6 @@ local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
--- TODO(refactor): the builder abstraction is not perfect yet. We shouldn't leak data in components.
--- Components should return only and icon / highlight group pair at most.
--- Only missing git refactoring
-
 local Builder = {}
 Builder.__index = Builder
 
@@ -59,6 +55,11 @@ function Builder:configure_opened_file_highlighting(level)
   return self
 end
 
+function Builder:configure_git_icons_padding(padding)
+  self.git_icon_padding = padding or " "
+  return self
+end
+
 function Builder:_insert_highlight(group, start, end_)
   table.insert(self.highlights, { group, self.index, start, end_ or -1 })
 end
@@ -77,13 +78,29 @@ local function get_folder_name(node)
   return name
 end
 
+function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
+  if not git_icons_and_hl_groups then
+    return ""
+  end
+
+  local icon = ""
+  for _, v in ipairs(git_icons_and_hl_groups) do
+    if #v.icon > 0 then
+      self:_insert_highlight(v.hl, offset + #icon, offset + #icon + #v.icon)
+      icon = icon .. v.icon .. self.git_icon_padding
+    end
+  end
+  return icon
+end
+
 function Builder:_build_folder(node, padding, git_hl)
   local offset = string.len(padding)
 
   local name = get_folder_name(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
-  local git_icon = git.get_icons(node, self.index, offset, #icon, self.highlights) or ""
+  local git_icon = self:_unwrap_git_data(git.get_icons(node), offset + #icon)
+
   local line = padding .. icon .. git_icon .. name .. self.trailing_slash
 
   self:_insert_line(line)
@@ -122,7 +139,7 @@ end
 
 function Builder:_build_file_icons(node, offset)
   if self.special_map[node.absolute_path] or self.special_map[node.name] then
-    local git_icons = git.get_icons(node, self.index, offset, 0, self.highlights)
+    local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icons.i.special)
     self:_insert_highlight("NvimTreeSpecialFile", offset + #git_icons)
     return icons.i.special, git_icons
   else
@@ -130,7 +147,7 @@ function Builder:_build_file_icons(node, offset)
     if hl_group then
       self:_insert_highlight(hl_group, offset, offset + #icon)
     end
-    return icon, git.get_icons(node, self.index, offset, #icon, self.highlights)
+    return icon, self:_unwrap_git_data(git.get_icons(node), offset + #icon)
   end
 end
 

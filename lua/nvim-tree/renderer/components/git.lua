@@ -65,9 +65,6 @@ local function build_icons_table()
   }
 end
 
-local function empty()
-  return ""
-end
 local function nil_() end
 
 local function warn_status(git_status)
@@ -78,28 +75,21 @@ local function warn_status(git_status)
   )
 end
 
-local function get_icons_(node, line, depth, icon_len, hl)
+local function get_icons_(node)
   local git_status = node.git_status
   if not git_status then
-    return ""
+    return nil
   end
 
-  local icon = ""
   local icons = M.git_icons[git_status]
   if not icons then
     if vim.g.nvim_tree_git_hl ~= 1 then
       warn_status(git_status)
     end
-    return ""
-  end
-  for _, v in ipairs(icons) do
-    if #v.icon > 0 then
-      table.insert(hl, { v.hl, line, depth + icon_len + #icon, depth + icon_len + #icon + #v.icon })
-      icon = icon .. v.icon .. M.icon_padding
-    end
+    return nil
   end
 
-  return icon
+  return icons
 end
 
 local git_hl = {
@@ -143,26 +133,20 @@ local function get_highlight_(node)
   return git_hl[git_status]
 end
 
-function M.get_icons()
-  return empty()
-end
+M.get_icons = nil_
+M.get_highlight = nil_
 
-function M.get_highlight()
-  return nil_()
-end
-
-M.icon_padding = vim.g.nvim_tree_icon_padding or " "
 M.icon_state = _icons.get_config()
 M.git_icons = build_icons_table()
 
 function M.reload()
   M.icon_state = _icons.get_config()
-  M.icon_padding = vim.g.nvim_tree_icon_padding or " "
   M.git_icons = build_icons_table()
+
   if M.icon_state.show_git_icon then
     M.get_icons = get_icons_
   else
-    M.get_icons = empty
+    M.get_icons = nil_
   end
   if vim.g.nvim_tree_git_hl == 1 then
     M.get_highlight = get_highlight_
