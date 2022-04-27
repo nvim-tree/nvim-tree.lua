@@ -236,6 +236,10 @@ function M.on_enter(netrw_disabled)
   M.initialized = true
 end
 
+function M.get_config()
+  return M.config
+end
+
 local function manage_netrw(disable_netrw, hijack_netrw)
   if hijack_netrw then
     vim.cmd "silent! autocmd! FileExplorer *"
@@ -492,6 +496,7 @@ function M.setup(conf)
 
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
+  M.config = opts
   require("nvim-tree.log").setup(opts)
 
   log.line("config", "default config + user")
