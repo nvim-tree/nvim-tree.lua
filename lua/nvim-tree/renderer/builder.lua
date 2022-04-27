@@ -152,7 +152,7 @@ end
 
 function Builder:_build_file_icon(node, offset)
   if self.special_map[node.absolute_path] or self.special_map[node.name] then
-    self:_insert_highlight("NvimTreeSpecialFile", offset, offset + #node.name)
+    self:_insert_highlight("NvimTreeSpecialFile", offset, offset + #icons.i.special + #node.name)
     return icons.i.special
   else
     local icon, hl_group = icons.get_file_icon(node.name, node.extension)
@@ -163,17 +163,17 @@ function Builder:_build_file_icon(node, offset)
   end
 end
 
-function Builder:_highlight_opened_files(node, offset, icon, git_icons)
+function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_length)
   local from = offset
   local to = offset
 
   if self.open_file_highlight == "icon" then
-    to = from + #icon
+    to = from + icon_length
   elseif self.open_file_highlight == "name" then
-    from = offset + #icon + #git_icons
+    from = offset + icon_length + git_icons_length
     to = from + #node.name
   elseif self.open_file_highlight == "all" then
-    to = from + #node.name
+    to = from + icon_length + git_icons_length + #node.name
   end
 
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
@@ -185,7 +185,8 @@ function Builder:_build_file(node, padding, git_highlight)
   local icon = self:_build_file_icon(node, offset)
 
   local is_after = self.git_icons_placement == "after"
-  local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icon + (is_after and #node.name + 1 or 0))
+  local git_icons_starts_at = offset + #icon + (is_after and #node.name + 1 or 0)
+  local git_icons = self:_unwrap_git_data(git.get_icons(node), git_icons_starts_at)
 
   if is_after then
     self:_insert_line(padding .. icon .. node.name .. " " .. git_icons)
@@ -193,7 +194,8 @@ function Builder:_build_file(node, padding, git_highlight)
     self:_insert_line(padding .. icon .. git_icons .. node.name)
   end
 
-  local col_start = offset + #icon + (is_after and 0 or #git_icons)
+  local git_icons_length = is_after and 0 or #git_icons
+  local col_start = offset + #icon + git_icons_length
   local col_end = col_start + #node.name
 
   if node.executable then
@@ -204,7 +206,7 @@ function Builder:_build_file(node, padding, git_highlight)
 
   local should_highlight_opened_files = self.open_file_highlight and vim.fn.bufloaded(node.absolute_path) > 0
   if should_highlight_opened_files then
-    self:_highlight_opened_files(node, offset, icon, git_icons)
+    self:_highlight_opened_files(node, offset, #icon, git_icons_length)
   end
 
   if git_highlight then
