@@ -429,6 +429,11 @@ local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
 end
 
+local FIELD_OVERRIDE_TYPECHECK = {
+  width = { string = true, ["function"] = true, number = true },
+  height = { string = true, ["function"] = true, number = true },
+}
+
 local function validate_options(conf)
   local msg
 
@@ -440,10 +445,11 @@ local function validate_options(conf)
 
     for k, v in pairs(user) do
       local invalid
+      local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
       if def[k] == nil then
         -- option does not exist
         invalid = string.format("unknown option: %s%s", prefix, k)
-      elseif type(v) ~= type(def[k]) and type(v) ~= "function" then
+      elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
         -- option is of the wrong type and is not a function
         invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
       end
