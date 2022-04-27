@@ -10,6 +10,7 @@ local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
+local reloaders = require "nvim-tree.actions.reloaders"
 
 local _config = {}
 
@@ -276,40 +277,53 @@ function M.change_dir(name)
 end
 
 local function setup_autocommands(opts)
-  vim.cmd "augroup NvimTree"
-  vim.cmd "autocmd!"
+  local augroup_id = vim.api.nvim_create_augroup("NvimTree", {})
+  local function create_nvim_tree_autocmd(name, custom_opts)
+    local default_opts = { group = augroup_id }
+    vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
+  end
 
   -- reset highlights when colorscheme is changed
-  vim.cmd "au ColorScheme * lua require'nvim-tree'.reset_highlight()"
+  create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
+
   if opts.auto_reload_on_write then
-    vim.cmd "au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()"
+    create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
-  vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
+  create_nvim_tree_autocmd("User", {
+    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
+    callback = reloaders.reload_git,
+  })
 
   if opts.open_on_tab then
-    vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
+    create_nvim_tree_autocmd("TabEnter", { callback = M.tab_change })
   end
   if opts.hijack_cursor then
-    vim.cmd "au CursorMoved NvimTree_* lua require'nvim-tree'.place_cursor_on_node()"
+    create_nvim_tree_autocmd("CursorMoved", { pattern = "NvimTree_*", callback = M.place_cursor_on_node })
   end
   if opts.update_cwd then
-    vim.cmd "au DirChanged * lua require'nvim-tree'.change_dir(vim.loop.cwd())"
+    create_nvim_tree_autocmd("DirChanged", {
+      callback = function()
+        M.change_dir(vim.loop.cwd)
+      end,
+    })
   end
   if opts.update_focused_file.enable then
-    vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
+    create_nvim_tree_autocmd("BufEnter", {
+      callback = function()
+        M.find_file(false)
+      end,
+    })
   end
 
   if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'._prevent_buffer_override()"
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
   else
-    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'.abandon_current_window()"
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
   end
 
   if opts.hijack_directories.enable then
-    vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
-
-  vim.cmd "augroup end"
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
