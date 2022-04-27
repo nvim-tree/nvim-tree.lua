@@ -11,6 +11,8 @@ local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
 local reloaders = require "nvim-tree.actions.reloaders"
+local copy_paste = require "nvim-tree.actions.copy-paste"
+local collapse_all = require "nvim-tree.actions.collapse-all"
 
 local _config = {}
 
@@ -253,19 +255,29 @@ local function manage_netrw(disable_netrw, hijack_netrw)
 end
 
 local function setup_vim_commands()
-  vim.cmd [[
-    command! -nargs=? -complete=dir NvimTreeOpen lua require'nvim-tree'.open("<args>")
-    command! NvimTreeClose lua require'nvim-tree.view'.close()
-    command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
-    command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree.actions.reloaders'.reload_explorer()
-    command! NvimTreeClipboard lua require'nvim-tree.actions.copy-paste'.print_clipboard()
-    command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
-    command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
-    command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize("<args>")
-    command! NvimTreeCollapse lua require'nvim-tree.actions.collapse-all'.fn()
-    command! NvimTreeCollapseKeepBuffers lua require'nvim-tree.actions.collapse-all'.fn(true)
-  ]]
+  vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
+    M.open(res.args)
+  end, { nargs = "?", complete = "dir" })
+  vim.api.nvim_create_user_command("NvimTreeClose", view.close, {})
+  vim.api.nvim_create_user_command("NvimTreeToggle", function()
+    M.toggle(false)
+  end, {})
+  vim.api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
+  vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
+  vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
+  vim.api.nvim_create_user_command("NvimTreeFindFile", function()
+    M.find_file(true)
+  end, {})
+  vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function()
+    M.toggle(true)
+  end, {})
+  vim.api.nvim_create_user_command("NvimTreeResize", function(res)
+    M.resize(res.args)
+  end, { nargs = 1 })
+  vim.api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, {})
+  vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
+    collapse_all.fn(true)
+  end, {})
 end
 
 function M.change_dir(name)
