@@ -61,7 +61,9 @@ function Builder:configure_git_icons_padding(padding)
 end
 
 function Builder:configure_git_icons_placement(where)
-  self.git_icons_placement = where or "before"
+  where = where or "before"
+  self.is_git_before = where == "before"
+  self.is_git_after = not self.is_git_before
   return self
 end
 
@@ -98,25 +100,18 @@ function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
   return icon
 end
 
-function Builder:_build_folder(node, padding, git_hl)
+function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local offset = string.len(padding)
 
   local name = get_folder_name(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
 
-  local line, fname_starts_at
-  if self.git_icons_placement == "before" then
-    local git_icons = self:_unwrap_git_data(git.get_icons(node), offset + #icon)
-    fname_starts_at = offset + #icon + #git_icons
-    line = padding .. icon .. git_icons .. name .. self.trailing_slash
-    self:_insert_line(line)
-  else
-    fname_starts_at = offset + #icon
-    line = padding .. icon .. name .. self.trailing_slash .. " "
-    local git_icons = self:_unwrap_git_data(git.get_icons(node), #line)
-    self:_insert_line(line .. git_icons)
-  end
+  local foldername = name .. self.trailing_slash
+  local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
+  local fname_starts_at = offset + #icon + (self.is_git_before and #git_icons or 0)
+  local line = self:_format_line(padding .. icon, foldername, git_icons)
+  self:_insert_line(line)
 
   if #icon > 0 then
     self:_insert_highlight("NvimTreeFolderIcon", offset, offset + #icon)
@@ -131,22 +126,37 @@ function Builder:_build_folder(node, padding, git_hl)
     foldername_hl = "NvimTreeEmptyFolderName"
   end
 
-  self:_insert_highlight(foldername_hl, fname_starts_at, #line)
+  self:_insert_highlight(foldername_hl, fname_starts_at, fname_starts_at + #foldername)
 
   if git_hl then
-    self:_insert_highlight(git_hl, fname_starts_at, #line)
+    self:_insert_highlight(git_hl, fname_starts_at, fname_starts_at + #foldername)
   end
 end
 
--- TODO: missing git icon for symlinks
-function Builder:_build_symlink(node, padding, git_highlight)
+function Builder:_format_line(before, after, git_icons)
+  return string.format(
+    "%s%s%s %s",
+    before,
+    self.is_git_after and "" or git_icons,
+    after,
+    self.is_git_after and git_icons or ""
+  )
+end
+
+function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
+  local offset = string.len(padding)
+
   local icon = icons.i.symlink
   local arrow = icons.i.symlink_arrow
+  local symlink_formatted = node.name .. arrow .. node.link_to
 
   local link_highlight = git_highlight or "NvimTreeSymlink"
 
-  local line = padding .. icon .. node.name .. arrow .. node.link_to
-  self:_insert_highlight(link_highlight, string.len(padding), string.len(line))
+  local git_icons_starts_at = offset + #icon + (self.is_git_after and #symlink_formatted + 1 or 0)
+  local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
+  local line = self:_format_line(padding .. icon, symlink_formatted, git_icons)
+
+  self:_insert_highlight(link_highlight, offset + (self.is_git_after and 0 or #git_icons), string.len(line))
   self:_insert_line(line)
 end
 
@@ -179,22 +189,17 @@ function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_le
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
 end
 
-function Builder:_build_file(node, padding, git_highlight)
+function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
   local offset = string.len(padding)
 
   local icon = self:_build_file_icon(node, offset)
 
-  local is_after = self.git_icons_placement == "after"
-  local git_icons_starts_at = offset + #icon + (is_after and #node.name + 1 or 0)
-  local git_icons = self:_unwrap_git_data(git.get_icons(node), git_icons_starts_at)
+  local git_icons_starts_at = offset + #icon + (self.is_git_after and #node.name + 1 or 0)
+  local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
 
-  if is_after then
-    self:_insert_line(padding .. icon .. node.name .. " " .. git_icons)
-  else
-    self:_insert_line(padding .. icon .. git_icons .. node.name)
-  end
+  self:_insert_line(self:_format_line(padding .. icon, node.name, git_icons))
 
-  local git_icons_length = is_after and 0 or #git_icons
+  local git_icons_length = self.is_git_after and 0 or #git_icons
   local col_start = offset + #icon + git_icons_length
   local col_end = col_start + #node.name
 
@@ -222,16 +227,17 @@ function Builder:_build_line(tree, node, idx)
   end
 
   local git_highlight = git.get_highlight(node)
+  local git_icons_tbl = git.get_icons(node)
 
   local is_folder = node.nodes ~= nil
   local is_symlink = node.link_to ~= nil
 
   if is_folder then
-    self:_build_folder(node, padding, git_highlight)
+    self:_build_folder(node, padding, git_highlight, git_icons_tbl)
   elseif is_symlink then
-    self:_build_symlink(node, padding, git_highlight)
+    self:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   else
-    self:_build_file(node, padding, git_highlight)
+    self:_build_file(node, padding, git_highlight, git_icons_tbl)
   end
   self.index = self.index + 1
 
