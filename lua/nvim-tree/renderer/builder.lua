@@ -161,16 +161,11 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
 end
 
 function Builder:_build_file_icon(node, offset)
-  if self.special_map[node.absolute_path] or self.special_map[node.name] then
-    self:_insert_highlight("NvimTreeSpecialFile", offset, offset + #icons.i.special + #node.name)
-    return icons.i.special
-  else
-    local icon, hl_group = icons.get_file_icon(node.name, node.extension)
-    if hl_group then
-      self:_insert_highlight(hl_group, offset, offset + #icon)
-    end
-    return icon
+  local icon, hl_group = icons.get_file_icon(node.name, node.extension)
+  if hl_group then
+    self:_insert_highlight(hl_group, offset, offset + #icon)
   end
+  return icon, false
 end
 
 function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_length)
@@ -203,7 +198,9 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
   local col_start = offset + #icon + git_icons_length
   local col_end = col_start + #node.name
 
-  if node.executable then
+  if self.special_map[node.absolute_path] or self.special_map[node.name] then
+    self:_insert_highlight("NvimTreeSpecialFile", col_start, col_end)
+  elseif node.executable then
     self:_insert_highlight("NvimTreeExecFile", col_start, col_end)
   elseif self.picture_map[node.extension] then
     self:_insert_highlight("NvimTreeImageFile", col_start, col_end)
