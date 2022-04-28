@@ -75,7 +75,7 @@ function M.merge_sort(t, comparator)
   split_merge(t, 1, #t, comparator)
 end
 
-function M.node_comparator_name(a, b)
+local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   if not (a and b) then
     return true
   end
@@ -85,7 +85,19 @@ function M.node_comparator_name(a, b)
     return false
   end
 
-  return a.name:lower() <= b.name:lower()
+  if ignorecase then
+    return a.name:lower() <= b.name:lower()
+  else
+    return a.name <= b.name
+  end
+end
+
+function M.node_comparator_name_case_sensisive(a, b)
+  return node_comparator_name_ignorecase_or_not(a, b, false)
+end
+
+function M.node_comparator_name_ignorecase(a, b)
+  return node_comparator_name_ignorecase_or_not(a, b, true)
 end
 
 function M.node_comparator_modification_time(a, b)
@@ -116,8 +128,10 @@ function M.setup(opts)
   M.sort_by = opts.sort_by
   if M.sort_by == "modification_time" then
     M.node_comparator = M.node_comparator_modification_time
+  elseif M.sort_by == "case_sensitive" then
+    M.node_comparator = M.node_comparator_name_case_sensisive
   else
-    M.node_comparator = M.node_comparator_name
+    M.node_comparator = M.node_comparator_name_ignorecase
   end
 end
 
