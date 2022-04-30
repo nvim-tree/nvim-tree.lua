@@ -1,10 +1,12 @@
+local core = require "nvim-tree.core"
+local diagnostics = require "nvim-tree.diagnostics"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
+
 local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
 local help = require "nvim-tree.renderer.help"
 local git = require "nvim-tree.renderer.components.git"
-local core = require "nvim-tree.core"
 local Builder = require "nvim-tree.renderer.builder"
 
 local api = vim.api
@@ -90,6 +92,12 @@ function M.draw()
 
   if cursor and #lines >= cursor[1] then
     api.nvim_win_set_cursor(view.get_winnr(), cursor)
+  end
+
+  if view.is_help_ui() then
+    diagnostics.clear()
+  else
+    diagnostics.update()
   end
 
   log.profile_end(ps, "draw")

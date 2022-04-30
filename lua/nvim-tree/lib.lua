@@ -1,7 +1,6 @@
 local api = vim.api
 
 local renderer = require "nvim-tree.renderer"
-local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 
@@ -71,7 +70,6 @@ function M.expand_or_collapse(node)
   end
 
   renderer.draw()
-  diagnostics.update()
 end
 
 function M.set_target_win()
@@ -122,7 +120,6 @@ function M.open(cwd)
   else
     open_view_and_draw()
   end
-  diagnostics.update()
   view.restore_tab_state()
 end
 

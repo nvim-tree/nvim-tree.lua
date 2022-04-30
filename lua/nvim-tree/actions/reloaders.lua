@@ -1,5 +1,4 @@
 local git = require "nvim-tree.git"
-local diagnostics = require "nvim-tree.diagnostics"
 local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
@@ -45,7 +44,6 @@ function M.reload_explorer()
   if view.is_visible() then
     renderer.draw()
   end
-  diagnostics.update()
   event_running = false
 end
 

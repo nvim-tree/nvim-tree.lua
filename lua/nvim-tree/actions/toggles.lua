@@ -2,7 +2,6 @@ local view = require "nvim-tree.view"
 local filters = require "nvim-tree.explorer.filters"
 local renderer = require "nvim-tree.renderer"
 local reloaders = require "nvim-tree.actions.reloaders"
-local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {}
 
@@ -24,11 +23,6 @@ end
 function M.help()
   view.toggle_help()
   renderer.draw()
-  if view.is_help_ui() then
-    diagnostics.clear()
-  else
-    diagnostics.update()
-  end
 end
 
 return M
