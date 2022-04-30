@@ -875,7 +875,7 @@ There are also links to normal bindings to style the tree itself.
 Normal
 EndOfBuffer
 CursorLine
-VertSplit
+WinSeparator
 CursorColumn
 
 There are also links for file highlight with git properties
