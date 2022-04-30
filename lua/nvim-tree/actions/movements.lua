@@ -3,10 +3,7 @@ local view = require "nvim-tree.view"
 local diagnostics = require "nvim-tree.diagnostics"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
-
-local lib = function()
-  return require "nvim-tree.lib"
-end
+local lib = require "nvim-tree.lib"
 
 local M = {}
 
@@ -20,7 +17,7 @@ local function get_line_from_node(node, find_parent)
   local line = core.get_nodes_starting_line()
   local function iter(nodes, recursive)
     for _, _node in ipairs(nodes) do
-      local n = lib().get_last_group_node(_node)
+      local n = lib.get_last_group_node(_node)
       if node_path == n.absolute_path then
         return line, _node
       end
@@ -104,8 +101,8 @@ end
 
 function M.find_git_item(where)
   return function()
-    local node_cur = lib().get_node_at_cursor()
-    local nodes_by_line = lib().get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+    local node_cur = lib.get_node_at_cursor()
+    local nodes_by_line = lib.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
 
     local cur, first, prev, nex = nil, nil, nil, nil
     for line, node in pairs(nodes_by_line) do
