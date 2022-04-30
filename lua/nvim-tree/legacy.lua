@@ -201,6 +201,16 @@ local function refactored(opts)
     end
     opts.update_to_buf_dir = nil
   end
+
+  if opts.view then
+    if opts.view.auto_resize ~= nil then
+      utils.table_create_missing(opts, "actions.open_file")
+      if opts.actions.open_file.resize_window == nil then
+        opts.actions.open_file.resize_window = opts.view.auto_resize
+      end
+      opts.view.auto_resize = nil
+    end
+  end
 end
 
 local function removed(opts)
