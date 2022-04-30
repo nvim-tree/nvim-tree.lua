@@ -190,6 +190,17 @@ local function refactored(opts)
       end
     end
   end
+
+  if opts.update_to_buf_dir then
+    utils.table_create_missing(opts, "hijack_directories")
+    if opts.hijack_directories.enable == nil then
+      opts.hijack_directories.enable = opts.update_to_buf_dir.enable
+    end
+    if opts.hijack_directories.auto_open == nil then
+      opts.hijack_directories.auto_open = opts.update_to_buf_dir.auto_open
+    end
+    opts.update_to_buf_dir = nil
+  end
 end
 
 local function removed(opts)
