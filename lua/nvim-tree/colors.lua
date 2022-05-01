@@ -64,7 +64,7 @@ local function get_links()
     NormalNC = "NvimTreeNormal",
     EndOfBuffer = "EndOfBuffer",
     CursorLine = "CursorLine",
-    WinSeparator = "WinSeparator",
+    VertSplit = "VertSplit",
     CursorColumn = "CursorColumn",
     FileDirty = "NvimTreeGitDirty",
     FileNew = "NvimTreeGitNew",
