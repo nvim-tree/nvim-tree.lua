@@ -872,11 +872,12 @@ NvimTreeWindowPicker
 
 There are also links to normal bindings to style the tree itself.
 
-Normal
-EndOfBuffer
-CursorLine
-VertSplit
-CursorColumn
+NvimTreeNormal
+NvimTreeEndOfBuffer
+NvimTreeCursorLine
+NvimTreeVertSplit (deprecated, use NvimTreeWinSeparator)
+NvimTreeWinSeparator
+NvimTreeCursorColumn
 
 There are also links for file highlight with git properties
 These all link to there Git equivalent
