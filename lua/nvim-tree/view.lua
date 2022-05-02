@@ -27,7 +27,8 @@ M.View = {
       "EndOfBuffer:NvimTreeEndOfBuffer",
       "Normal:NvimTreeNormal",
       "CursorLine:NvimTreeCursorLine",
-      "VertSplit:NvimTreeVertSplit",
+      -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
+      pcall(vim.cmd, "silent hi WinSeparator") and "WinSeparator:NvimTreeWinSeparator" or "VertSplit:NvimTreeWinSeparator",
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
       "SignColumn:NvimTreeSignColumn",
