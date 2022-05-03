@@ -42,7 +42,7 @@ body:
       label: "Minimal config"
       description: "Minimal(!) configuration necessary to reproduce the issue.
 
-        (Right click) save [nvt-min.lua](https://raw.githubusercontent.com/alex-courtis/nvim-tree.lua/master/.github/ISSUE_TEMPLATE/nvt-min.lua) to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`
+        (Right click) save [nvt-min.lua](https://raw.githubusercontent.com/kyazdani42/nvim-tree.lua/master/.github/ISSUE_TEMPLATE/nvt-min.lua) to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`
 
         If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines.
 
