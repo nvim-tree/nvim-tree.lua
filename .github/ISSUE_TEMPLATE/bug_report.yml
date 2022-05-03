@@ -58,7 +58,7 @@ body:
   - type: textarea
     attributes:
       label: "Minimal config"
-      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save [nvt-min.lua]() to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
+      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save [nvt-min.lua](.github/ISSUE_TEMPLATE/nvt-min.lua) to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
       render: Lua
     validations:
       required: true
