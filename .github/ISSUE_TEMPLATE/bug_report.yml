@@ -20,6 +20,7 @@ body:
         NVIM v0.6.1
         Build type&#58 Release
         LuaJIT 2.1.0-beta3
+      render: text
     validations:
       required: true
   - type: input
