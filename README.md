@@ -154,7 +154,8 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     },
     icons = {
       webdev_colors = true,
-    },
+      git_placement = "before",
+    }
   },
   hijack_directories = {
     enable = true,

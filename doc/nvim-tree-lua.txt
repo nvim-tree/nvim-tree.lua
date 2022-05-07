@@ -123,7 +123,8 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
         icons = {
           webdev_colors = true,
-        },
+          git_placement = "before",
+        }
       },
       hijack_directories = {
         enable = true,
@@ -443,6 +444,11 @@ Here is a list of the options available in the setup call:
     - |renderer.icons.webdev_colors|: use the webdev icon colors, otherwise `NvimTreeFileIcon`.
         type: `boolean`
         default: `true`
+
+    - |renderer.icons.git_placement|: place where the git icons will be rendered.
+	After or before the `filename` (after the file/folders icons).
+	type: `after` or `before`
+	default: `before`
 
 *nvim-tree.filters*
 |filters|: filtering options

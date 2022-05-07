@@ -70,14 +70,6 @@ local function config_file_icon()
   end
 end
 
-local function config_special_icon()
-  if M.configs.show_file_icon then
-    M.i.special = #M.icons.default > 0 and M.icons.default .. M.padding or ""
-  else
-    M.i.special = ""
-  end
-end
-
 local function config_folder_icon()
   if M.configs.show_folder_icon then
     M.get_folder_icon = get_folder_icon
@@ -94,7 +86,6 @@ function M.reset_config(webdev_colors)
   M.webdev_colors = webdev_colors
 
   config_symlinks()
-  config_special_icon()
   config_file_icon()
   config_folder_icon()
 end
