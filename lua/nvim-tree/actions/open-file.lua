@@ -247,6 +247,7 @@ function M.fn(mode, filename)
     cmd = cmd .. vim.fn.fnameescape(filename)
     api.nvim_set_current_win(target_winid)
     pcall(vim.cmd, cmd)
+    lib.set_target_win()
   end
 
   if M.resize_window then
