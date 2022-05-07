@@ -179,16 +179,34 @@ local g_migrations = {
 }
 
 local function refactored(opts)
-  if opts.view then
-    if opts.view.mappings then
-      if opts.view.mappings.list then
-        for _, m in pairs(opts.view.mappings.list) do
-          if m.action == "toggle_ignored" then
-            m.action = "toggle_git_ignored"
-          end
-        end
+  -- mapping actions
+  if opts.view and opts.view.mappings and opts.view.mappings.list then
+    for _, m in pairs(opts.view.mappings.list) do
+      if m.action == "toggle_ignored" then
+        m.action = "toggle_git_ignored"
       end
     end
+  end
+
+  -- update_to_buf_dir -> hijack_directories
+  if opts.update_to_buf_dir ~= nil then
+    utils.table_create_missing(opts, "hijack_directories")
+    if opts.hijack_directories.enable == nil then
+      opts.hijack_directories.enable = opts.update_to_buf_dir.enable
+    end
+    if opts.hijack_directories.auto_open == nil then
+      opts.hijack_directories.auto_open = opts.update_to_buf_dir.auto_open
+    end
+    opts.update_to_buf_dir = nil
+  end
+
+  -- view.auto_resize -> actions.open_file.resize_window
+  if opts.view and opts.view.auto_resize ~= nil then
+    utils.table_create_missing(opts, "actions.open_file")
+    if opts.actions.open_file.resize_window == nil then
+      opts.actions.open_file.resize_window = opts.view.auto_resize
+    end
+    opts.view.auto_resize = nil
   end
 end
 
