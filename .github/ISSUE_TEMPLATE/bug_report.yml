@@ -16,11 +16,11 @@ body:
     attributes:
       label: "Neovim version"
       description: "Output of `nvim --version`. Please see nvim-tree.lua [minimum required version](https://github.com/kyazdani42/nvim-tree.lua#notice)."
-      render: markdown
       placeholder: |
         NVIM v0.6.1
         Build type&#58 Release
         LuaJIT 2.1.0-beta3
+      render: text
     validations:
       required: true
   - type: input
@@ -39,11 +39,24 @@ body:
       required: true
   - type: textarea
     attributes:
+      label: "Minimal config"
+      description: "Minimal(!) configuration necessary to reproduce the issue.
+
+        (Right click) save [nvt-min.lua](https://raw.githubusercontent.com/kyazdani42/nvim-tree.lua/master/.github/ISSUE_TEMPLATE/nvt-min.lua) to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`
+
+        If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines.
+
+        Paste the contents of your `/tmp/nvt-min.lua` here."
+      render: lua
+    validations:
+      required: true
+  - type: textarea
+    attributes:
       label: "Steps to reproduce"
       description: "Steps to reproduce using the minimal config provided below."
       placeholder: |
-        1. `nvim -nu /tmp/nvt-min.lua`
-        2. `:NvimTreeOpen`
+        1. nvim -nu /tmp/nvt-min.lua
+        2. :NvimTreeOpen
         3. ...
     validations:
       required: true
@@ -55,45 +68,4 @@ body:
     attributes:
       label: "Actual behavior"
       description: "Observed behavior (may optionally include images, videos or a screencast)."
-  - type: textarea
-    attributes:
-      label: "Minimal config"
-      description: "Minimal(!) configuration necessary to reproduce the issue, using the latest version. Save this as `/tmp/nvt-min.lua` and run using `nvim -nu /tmp/nvt-min.lua`. If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines."
-      render: Lua
-      value: |
-        vim.cmd [[set runtimepath=$VIMRUNTIME]]
-        vim.cmd [[set packpath=/tmp/nvt-min/site]]
-        local package_root = "/tmp/nvt-min/site/pack"
-        local install_path = package_root .. "/packer/start/packer.nvim"
-        local function load_plugins()
-          require("packer").startup {
-            {
-              "wbthomason/packer.nvim",
-              "kyazdani42/nvim-tree.lua",
-              "kyazdani42/nvim-web-devicons",
-              -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
-            },
-            config = {
-              package_root = package_root,
-              compile_path = install_path .. "/plugin/packer_compiled.lua",
-              display = { non_interactive = true },
-            },
-          }
-        end
-        if vim.fn.isdirectory(install_path) == 0 then
-          print "Installing nvim-tree and dependencies."
-          vim.fn.system { "git", "clone", "--depth=1", "https://github.com/wbthomason/packer.nvim", install_path }
-        end
-        load_plugins()
-        require("packer").sync()
-        vim.cmd [[autocmd User PackerComplete ++once echo "Ready!" | lua setup()]]
-        vim.opt.termguicolors = true
-        vim.opt.cursorline = true
-        
-        -- MODIFY NVIM-TREE SETTINGS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
-        _G.setup = function()
-          require("nvim-tree").setup {}
-        end
-    validations:
-      required: true
  
