@@ -177,7 +177,7 @@ function M.fn(mode, filename)
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
 
   local target_winid
-  if not M.window_picker.enable or mode == "edit_no_picker" then
+  if not M.window_picker.enable or mode == "edit_no_picker" or mode == "vsplit" then
     target_winid = lib.target_winid
   else
     local pick_window_id = pick_window()
