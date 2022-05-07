@@ -1,7 +1,6 @@
 local renderer = require "nvim-tree.renderer"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
-local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {}
 
@@ -39,7 +38,6 @@ function M.fn(keep_buffers)
 
   iter(core.get_explorer().nodes)
   renderer.draw()
-  diagnostics.update()
 end
 
 return M
