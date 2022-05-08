@@ -315,7 +315,7 @@ local function setup_autocommands(opts)
   if opts.update_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
-        M.change_dir(vim.loop.cwd)
+        M.change_dir(vim.loop.cwd())
       end,
     })
   end

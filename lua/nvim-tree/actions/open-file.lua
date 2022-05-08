@@ -261,7 +261,9 @@ function M.fn(mode, filename)
       vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
         group = vim.api.nvim_create_augroup("RemoveBufHidden", {}),
         buffer = vim.api.nvim_get_current_buf(),
-        command = "setlocal bufhidden=",
+        callback = function()
+          vim.bo.bufhidden = ""
+        end,
         once = true,
       })
     end
