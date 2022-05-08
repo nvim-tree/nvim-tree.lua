@@ -502,7 +502,7 @@ local function validate_options(conf)
 end
 
 function M.setup(conf)
-  if vim.fn.has "nvim-0.7" == 1 then
+  if vim.fn.has "nvim-0.7" == 0 then
     utils.warn "nvim-tree.lua requires Neovim 0.7 or higher"
   end
 
