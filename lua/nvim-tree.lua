@@ -73,7 +73,7 @@ end
 
 function M.tab_change()
   if view.is_visible { any_tabpage = true } then
-    local bufname = vim.api.nvim_buf_get_name(0)
+    local bufname = api.nvim_buf_get_name(0)
     if bufname:match "Neogit" ~= nil or bufname:match "--graph" ~= nil then
       return
     end
@@ -156,7 +156,7 @@ end
 
 local prev_line
 function M.place_cursor_on_node()
-  local l = vim.api.nvim_win_get_cursor(0)[1]
+  local l = api.nvim_win_get_cursor(0)[1]
   if l == prev_line then
     return
   end
@@ -255,27 +255,27 @@ local function manage_netrw(disable_netrw, hijack_netrw)
 end
 
 local function setup_vim_commands()
-  vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
+  api.nvim_create_user_command("NvimTreeOpen", function(res)
     M.open(res.args)
   end, { nargs = "?", complete = "dir" })
-  vim.api.nvim_create_user_command("NvimTreeClose", view.close, {})
-  vim.api.nvim_create_user_command("NvimTreeToggle", function()
+  api.nvim_create_user_command("NvimTreeClose", view.close, {})
+  api.nvim_create_user_command("NvimTreeToggle", function()
     M.toggle(false)
   end, {})
-  vim.api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
-  vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
-  vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
-  vim.api.nvim_create_user_command("NvimTreeFindFile", function()
+  api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
+  api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
+  api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
+  api.nvim_create_user_command("NvimTreeFindFile", function()
     M.find_file(true)
   end, {})
-  vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function()
+  api.nvim_create_user_command("NvimTreeFindFileToggle", function()
     M.toggle(true)
   end, {})
-  vim.api.nvim_create_user_command("NvimTreeResize", function(res)
+  api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
   end, { nargs = 1 })
-  vim.api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, {})
-  vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
+  api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, {})
+  api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
   end, {})
 end
@@ -289,10 +289,10 @@ function M.change_dir(name)
 end
 
 local function setup_autocommands(opts)
-  local augroup_id = vim.api.nvim_create_augroup("NvimTree", {})
+  local augroup_id = api.nvim_create_augroup("NvimTree", {})
   local function create_nvim_tree_autocmd(name, custom_opts)
     local default_opts = { group = augroup_id }
-    vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
+    api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
   -- reset highlights when colorscheme is changed

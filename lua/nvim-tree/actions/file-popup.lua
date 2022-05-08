@@ -72,8 +72,8 @@ function M.toggle_file_info(node)
 
   setup_window(node)
 
-  vim.api.nvim_create_autocmd("CursorMoved", {
-    group = vim.api.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
+  a.nvim_create_autocmd("CursorMoved", {
+    group = a.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
     callback = M.close_popup,
   })
 end

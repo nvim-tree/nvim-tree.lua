@@ -258,9 +258,9 @@ function M.fn(mode, filename)
     if not buf_loaded then
       vim.bo.bufhidden = "delete"
 
-      vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
-        group = vim.api.nvim_create_augroup("RemoveBufHidden", {}),
-        buffer = vim.api.nvim_get_current_buf(),
+      api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+        group = api.nvim_create_augroup("RemoveBufHidden", {}),
+        buffer = api.nvim_get_current_buf(),
         callback = function()
           vim.bo.bufhidden = ""
         end,
