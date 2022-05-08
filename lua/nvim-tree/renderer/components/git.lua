@@ -2,7 +2,7 @@ local _icons = require "nvim-tree.renderer.icon-config"
 local utils = require "nvim-tree.utils"
 
 local M = {
-  SIGN_GROUP = "NvimTreeGitSigns"
+  SIGN_GROUP = "NvimTreeGitSigns",
 }
 
 local function build_icons_table()
@@ -128,13 +128,13 @@ local git_hl = {
 
 function M.setup_signs()
   local i = M.icon_state.icons.git_icons
-  vim.fn.sign_define("NvimTreeGitDirty",     { text = i.unstaged,  texthl = "NvimTreeGitDirty" })
-  vim.fn.sign_define("NvimTreeGitStaged",    { text = i.staged,    texthl = "NvimTreeGitStaged" })
-  vim.fn.sign_define("NvimTreeGitMerge",     { text = i.unmerged,  texthl = "NvimTreeGitMerge" })
-  vim.fn.sign_define("NvimTreeGitRenamed",   { text = i.renamed,   texthl = "NvimTreeGitRenamed" })
-  vim.fn.sign_define("NvimTreeGitNew",       { text = i.untracked, texthl = "NvimTreeGitNew" })
-  vim.fn.sign_define("NvimTreeGitDeleted",   { text = i.deleted,   texthl = "NvimTreeGitDeleted" })
-  vim.fn.sign_define("NvimTreeGitIgnored",   { text = i.ignored,   texthl = "NvimTreeGitIgnored" })
+  vim.fn.sign_define("NvimTreeGitDirty", { text = i.unstaged, texthl = "NvimTreeGitDirty" })
+  vim.fn.sign_define("NvimTreeGitStaged", { text = i.staged, texthl = "NvimTreeGitStaged" })
+  vim.fn.sign_define("NvimTreeGitMerge", { text = i.unmerged, texthl = "NvimTreeGitMerge" })
+  vim.fn.sign_define("NvimTreeGitRenamed", { text = i.renamed, texthl = "NvimTreeGitRenamed" })
+  vim.fn.sign_define("NvimTreeGitNew", { text = i.untracked, texthl = "NvimTreeGitNew" })
+  vim.fn.sign_define("NvimTreeGitDeleted", { text = i.deleted, texthl = "NvimTreeGitDeleted" })
+  vim.fn.sign_define("NvimTreeGitIgnored", { text = i.ignored, texthl = "NvimTreeGitIgnored" })
 end
 
 local function get_highlight_(node)
