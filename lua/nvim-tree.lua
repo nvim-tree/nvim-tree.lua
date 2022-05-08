@@ -504,6 +504,7 @@ end
 function M.setup(conf)
   if vim.fn.has "nvim-0.7" == 0 then
     utils.warn "nvim-tree.lua requires Neovim 0.7 or higher"
+    return
   end
 
   legacy.migrate_legacy_options(conf or {})
