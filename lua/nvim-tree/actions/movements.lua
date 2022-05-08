@@ -35,6 +35,11 @@ end
 
 function M.parent_node(should_close)
   return function(node)
+    if node.open then
+      node.open = false
+      return renderer.draw()
+    end
+
     local parent = node.parent
 
     if not parent or parent.cwd then
