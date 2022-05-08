@@ -35,7 +35,7 @@ end
 
 function M.parent_node(should_close)
   return function(node)
-    if node.open then
+    if should_close and node.open then
       node.open = false
       return renderer.draw()
     end
