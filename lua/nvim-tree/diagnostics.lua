@@ -6,6 +6,8 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
+local GROUP = "NvimTreeDiagnosticSigns"
+
 local function get_lowest_severity(diagnostics)
   local severity = math.huge
   for _, v in ipairs(diagnostics) do
@@ -24,15 +26,13 @@ local sign_names = {
   { "NvimTreeSignHint", "NvimTreeLspDiagnosticsHint" },
 }
 
-local signs = {}
-
 local function add_sign(linenr, severity)
   local buf = view.get_bufnr()
   if not a.nvim_buf_is_valid(buf) or not a.nvim_buf_is_loaded(buf) then
     return
   end
   local sign_name = sign_names[severity][1]
-  table.insert(signs, vim.fn.sign_place(1, "NvimTreeDiagnosticSigns", sign_name, buf, { lnum = linenr }))
+  vim.fn.sign_place(1, GROUP, sign_name, buf, { lnum = linenr })
 end
 
 local function from_nvim_lsp()
@@ -109,16 +109,7 @@ function M.clear()
     return
   end
 
-  if #signs then
-    vim.fn.sign_unplacelist(vim.tbl_map(function(sign)
-      return {
-        buffer = view.get_bufnr(),
-        group = "NvimTreeDiagnosticSigns",
-        id = sign,
-      }
-    end, signs))
-    signs = {}
-  end
+  vim.fn.sign_unplace(GROUP)
 end
 
 function M.update()
@@ -179,6 +170,7 @@ function M.setup(opts)
   if M.enable then
     log.line("diagnostics", "setup")
     vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
+    vim.cmd "au User CocDiagnosticChange lua require'nvim-tree.diagnostics'.update()"
   end
 end
 
