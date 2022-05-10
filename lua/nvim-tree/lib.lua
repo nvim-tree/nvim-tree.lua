@@ -3,29 +3,11 @@ local api = vim.api
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
+local utils = require "nvim-tree.utils"
 
 local M = {
   target_winid = nil,
 }
-
-function M.get_nodes_by_line(nodes_all, line_start)
-  local nodes_by_line = {}
-  local line = line_start
-  local function iter(nodes)
-    for _, node in ipairs(nodes) do
-      nodes_by_line[line] = node
-      line = line + 1
-      if node.open == true then
-        local child = iter(node.nodes)
-        if child ~= nil then
-          return child
-        end
-      end
-    end
-  end
-  iter(nodes_all)
-  return nodes_by_line
-end
 
 function M.get_node_at_cursor()
   if not core.get_explorer() then
@@ -39,14 +21,14 @@ function M.get_node_at_cursor()
   local line = cursor[1]
   if view.is_help_ui() then
     local help_lines = require("nvim-tree.renderer.help").compute_lines()
-    local help_text = M.get_nodes_by_line(help_lines, 1)[line]
+    local help_text = utils.get_nodes_by_line(help_lines, 1)[line]
     return { name = help_text }
   else
     if line == 1 and core.get_explorer().cwd ~= "/" and view.is_root_folder_visible() then
       return { name = ".." }
     end
 
-    return M.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
+    return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
   end
 end
 

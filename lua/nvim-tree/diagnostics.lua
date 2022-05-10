@@ -32,7 +32,7 @@ local function add_sign(linenr, severity)
     return
   end
   local sign_name = sign_names[severity][1]
-  vim.fn.sign_place(1, GROUP, sign_name, buf, { lnum = linenr + 1 })
+  vim.fn.sign_place(1, GROUP, sign_name, buf, { lnum = linenr })
 end
 
 local function from_nvim_lsp()
@@ -131,18 +131,17 @@ function M.update()
     local bufpath = utils.canonical_path(bufname)
     log.line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
     if 0 < severity and severity < 5 then
-      local node, line = utils.find_node(core.get_explorer().nodes, function(node)
+      local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+      for line, node in pairs(nodes_by_line) do
         local nodepath = utils.canonical_path(node.absolute_path)
-        log.line("diagnostics", "  checking nodepath '%s'", nodepath)
-        if M.show_on_dirs and not node.open then
-          return vim.startswith(bufpath, nodepath)
-        else
-          return nodepath == bufpath
+        log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
+        if M.show_on_dirs and vim.startswith(bufpath, nodepath) then
+          log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
+          add_sign(line, severity)
+        elseif nodepath == bufpath then
+          log.line("diagnostics", " matched file node '%s'", node.absolute_path)
+          add_sign(line, severity)
         end
-      end)
-      if node then
-        log.line("diagnostics", " matched node '%s'", node.absolute_path)
-        add_sign(line, severity)
       end
     end
   end

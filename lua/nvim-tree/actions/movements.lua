@@ -105,7 +105,7 @@ end
 function M.find_git_item(where)
   return function()
     local node_cur = lib.get_node_at_cursor()
-    local nodes_by_line = lib.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+    local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
 
     local cur, first, prev, nex = nil, nil, nil, nil
     for line, node in pairs(nodes_by_line) do
