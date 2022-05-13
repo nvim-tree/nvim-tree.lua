@@ -174,7 +174,7 @@ function M.setup(opts)
       callback = M.update,
     })
     a.nvim_create_autocmd("User", {
-      pattern = "CocDiagnosticChanged",
+      pattern = "CocDiagnosticChange",
       callback = M.update,
     })
   end
