@@ -94,10 +94,11 @@ function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
   end
 
   local icon = ""
-  for _, v in ipairs(git_icons_and_hl_groups) do
+  for i, v in ipairs(git_icons_and_hl_groups) do
     if #v.icon > 0 then
       self:_insert_highlight(v.hl, offset + #icon, offset + #icon + #v.icon)
-      icon = icon .. v.icon .. self.git_icon_padding
+      local remove_padding = self.is_git_after and i == #git_icons_and_hl_groups
+      icon = icon .. v.icon .. (remove_padding and "" or self.git_icon_padding)
     end
   end
   return icon
