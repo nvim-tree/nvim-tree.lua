@@ -244,7 +244,7 @@ if the tree was previously open.
 
 *nvim-tree.sort_by*
 Changes how files within the same directory are sorted.
-Can be one of 'name', 'case_sensitive' or 'modification_time'.
+Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension'.
   Type: `string`, Default: `"name"`
 
 *nvim-tree.hijack_unnamed_buffer_when_opening*
