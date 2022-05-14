@@ -5,19 +5,6 @@ local M = {
   is_windows = vim.fn.has "win32" == 1,
 }
 
-function M.get_dir_git_status(parent_ignored, status, absolute_path)
-  if parent_ignored then
-    return "!!"
-  end
-  local dir_status = status.dirs and status.dirs[absolute_path]
-  local file_status = status.files and status.files[absolute_path]
-  return dir_status or file_status
-end
-
-function M.get_git_status(parent_ignored, status, absolute_path)
-  return parent_ignored and "!!" or status.files and status.files[absolute_path]
-end
-
 function M.folder(parent, absolute_path, name, status, parent_ignored)
   local handle = uv.fs_scandir(absolute_path)
   local has_children = handle and uv.fs_scandir_next(handle) ~= nil
@@ -25,7 +12,6 @@ function M.folder(parent, absolute_path, name, status, parent_ignored)
   return {
     absolute_path = absolute_path,
     fs_stat = uv.fs_stat(absolute_path),
-    git_status = M.get_dir_git_status(parent_ignored, status, absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     name = name,
@@ -50,7 +36,6 @@ function M.file(parent, absolute_path, name, status, parent_ignored)
     executable = is_executable(absolute_path, ext),
     extension = ext,
     fs_stat = uv.fs_stat(absolute_path),
-    git_status = M.get_git_status(parent_ignored, status, absolute_path),
     name = name,
     parent = parent,
   }
@@ -75,7 +60,6 @@ function M.link(parent, absolute_path, name, status, parent_ignored)
   return {
     absolute_path = absolute_path,
     fs_stat = uv.fs_stat(absolute_path),
-    git_status = M.get_git_status(parent_ignored, status, absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     link_to = link_to,

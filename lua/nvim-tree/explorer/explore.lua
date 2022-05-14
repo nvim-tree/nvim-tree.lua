@@ -29,15 +29,20 @@ local function populate_children(handle, cwd, node, status)
       and not filters.should_ignore_git(abs, status.files)
       and not nodes_by_path[abs]
     then
+      local child = nil
       if t == "directory" and uv.fs_access(abs, "R") then
-        table.insert(node.nodes, builders.folder(node, abs, name, status, node_ignored))
+        child = builders.folder(node, abs, name, status, node_ignored)
       elseif t == "file" then
-        table.insert(node.nodes, builders.file(node, abs, name, status, node_ignored))
+        child = builders.file(node, abs, name, status, node_ignored)
       elseif t == "link" then
         local link = builders.link(node, abs, name, status, node_ignored)
         if link.link_to ~= nil then
-          table.insert(node.nodes, link)
+          child = link
         end
+      end
+      if child then
+        table.insert(node.nodes, child)
+        common.update_git_status(child, node_ignored, status)
       end
     end
   end
