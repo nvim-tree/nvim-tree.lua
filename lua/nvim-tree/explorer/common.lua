@@ -20,7 +20,6 @@ function M.has_one_child_folder(node)
 end
 
 function M.update_git_status(node, parent_ignored, status)
-
   -- status of the node's absolute path
   if node.nodes then
     node.git_status = get_dir_git_status(parent_ignored, status, node.absolute_path)
@@ -39,4 +38,3 @@ function M.update_git_status(node, parent_ignored, status)
 end
 
 return M
-
