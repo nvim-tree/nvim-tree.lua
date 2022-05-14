@@ -94,7 +94,7 @@ function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
   for _, v in ipairs(git_icons_and_hl_groups) do
     if #v.icon > 0 then
       self:_insert_highlight(v.hl, offset + #icon, offset + #icon + #v.icon)
-      icon = icon .. v.icon .. self.git_icon_padding
+      icon = icon .. v.icon
     end
   end
   return icon
@@ -135,11 +135,11 @@ end
 
 function Builder:_format_line(before, after, git_icons)
   return string.format(
-    "%s%s%s %s",
+    "%s%s%s%s",
     before,
-    self.is_git_after and "" or git_icons,
+    #git_icons > 0 and not self.is_git_after and git_icons .. self.git_icon_padding or "",
     after,
-    self.is_git_after and git_icons or ""
+    #git_icons > 0 and self.is_git_after and self.git_icon_padding .. git_icons or ""
   )
 end
 
