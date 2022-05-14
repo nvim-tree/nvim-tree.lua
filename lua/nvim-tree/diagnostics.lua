@@ -32,7 +32,7 @@ local function add_sign(linenr, severity)
     return
   end
   local sign_name = sign_names[severity][1]
-  vim.fn.sign_place(1, GROUP, sign_name, buf, { lnum = linenr })
+  vim.fn.sign_place(0, GROUP, sign_name, buf, { lnum = linenr, priority = 2 })
 end
 
 local function from_nvim_lsp()

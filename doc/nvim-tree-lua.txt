@@ -432,7 +432,10 @@ UI rendering setup
 	*nvim-tree.renderer.icons.git_placement*
 	Place where the git icons will be rendered.
 	After or before the `filename` (after the file/folders icons).
-	  Type: `after` or `before`, Default: `before`
+	When placed in the signcolumn, the value of signcolumn should be `yes`
+	for the nvim-tree window.
+	Note that the diagnostic signs will take precedence over the git signs.
+	  Type: `after`, `before` or `signcolumn`, Default: `before`
 
 *nvim-tree.filters*
 Filtering options.
