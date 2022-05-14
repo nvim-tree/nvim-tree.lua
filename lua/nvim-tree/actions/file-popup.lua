@@ -72,11 +72,10 @@ function M.toggle_file_info(node)
 
   setup_window(node)
 
-  vim.cmd [[
-    augroup NvimTreeRemoveFilePopup
-      au CursorMoved * lua require'nvim-tree.actions.file-popup'.close_popup()
-    augroup END
-  ]]
+  a.nvim_create_autocmd("CursorMoved", {
+    group = a.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
+    callback = M.close_popup,
+  })
 end
 
 return M

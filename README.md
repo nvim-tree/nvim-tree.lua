@@ -4,7 +4,7 @@
 
 ## Notice
 
-This plugin requires [neovim >=0.6.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+This plugin requires [neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 If you have issues since the recent setup migration, check out [this guide](https://github.com/kyazdani42/nvim-tree.lua/issues/674)
 

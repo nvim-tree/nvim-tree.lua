@@ -257,13 +257,15 @@ function M.fn(mode, filename)
   if mode == "preview" then
     if not buf_loaded then
       vim.bo.bufhidden = "delete"
-      vim.cmd [[
-      augroup RemoveBufHidden
-          autocmd!
-          autocmd TextChanged <buffer> setlocal bufhidden= | autocmd! RemoveBufHidden
-          autocmd TextChangedI <buffer> setlocal bufhidden= | autocmd! RemoveBufHidden
-      augroup end
-    ]]
+
+      api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+        group = api.nvim_create_augroup("RemoveBufHidden", {}),
+        buffer = api.nvim_get_current_buf(),
+        callback = function()
+          vim.bo.bufhidden = ""
+        end,
+        once = true,
+      })
     end
     view.focus()
     return

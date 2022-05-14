@@ -10,6 +10,9 @@ local utils = require "nvim-tree.utils"
 local change_dir = require "nvim-tree.actions.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
+local reloaders = require "nvim-tree.actions.reloaders"
+local copy_paste = require "nvim-tree.actions.copy-paste"
+local collapse_all = require "nvim-tree.actions.collapse-all"
 
 local _config = {}
 
@@ -70,7 +73,7 @@ end
 
 function M.tab_change()
   if view.is_visible { any_tabpage = true } then
-    local bufname = vim.api.nvim_buf_get_name(0)
+    local bufname = api.nvim_buf_get_name(0)
     if bufname:match "Neogit" ~= nil or bufname:match "--graph" ~= nil then
       return
     end
@@ -153,7 +156,7 @@ end
 
 local prev_line
 function M.place_cursor_on_node()
-  local l = vim.api.nvim_win_get_cursor(0)[1]
+  local l = api.nvim_win_get_cursor(0)[1]
   if l == prev_line then
     return
   end
@@ -252,19 +255,29 @@ local function manage_netrw(disable_netrw, hijack_netrw)
 end
 
 local function setup_vim_commands()
-  vim.cmd [[
-    command! -nargs=? -complete=dir NvimTreeOpen lua require'nvim-tree'.open("<args>")
-    command! NvimTreeClose lua require'nvim-tree.view'.close()
-    command! NvimTreeToggle lua require'nvim-tree'.toggle(false)
-    command! NvimTreeFocus lua require'nvim-tree'.focus()
-    command! NvimTreeRefresh lua require'nvim-tree.actions.reloaders'.reload_explorer()
-    command! NvimTreeClipboard lua require'nvim-tree.actions.copy-paste'.print_clipboard()
-    command! NvimTreeFindFile lua require'nvim-tree'.find_file(true)
-    command! NvimTreeFindFileToggle lua require'nvim-tree'.toggle(true)
-    command! -nargs=1 NvimTreeResize lua require'nvim-tree'.resize("<args>")
-    command! NvimTreeCollapse lua require'nvim-tree.actions.collapse-all'.fn()
-    command! NvimTreeCollapseKeepBuffers lua require'nvim-tree.actions.collapse-all'.fn(true)
-  ]]
+  api.nvim_create_user_command("NvimTreeOpen", function(res)
+    M.open(res.args)
+  end, { nargs = "?", complete = "dir" })
+  api.nvim_create_user_command("NvimTreeClose", view.close, {})
+  api.nvim_create_user_command("NvimTreeToggle", function()
+    M.toggle(false)
+  end, {})
+  api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
+  api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
+  api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
+  api.nvim_create_user_command("NvimTreeFindFile", function()
+    M.find_file(true)
+  end, {})
+  api.nvim_create_user_command("NvimTreeFindFileToggle", function()
+    M.toggle(true)
+  end, {})
+  api.nvim_create_user_command("NvimTreeResize", function(res)
+    M.resize(res.args)
+  end, { nargs = 1 })
+  api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, {})
+  api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
+    collapse_all.fn(true)
+  end, {})
 end
 
 function M.change_dir(name)
@@ -276,40 +289,53 @@ function M.change_dir(name)
 end
 
 local function setup_autocommands(opts)
-  vim.cmd "augroup NvimTree"
-  vim.cmd "autocmd!"
+  local augroup_id = api.nvim_create_augroup("NvimTree", {})
+  local function create_nvim_tree_autocmd(name, custom_opts)
+    local default_opts = { group = augroup_id }
+    api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
+  end
 
   -- reset highlights when colorscheme is changed
-  vim.cmd "au ColorScheme * lua require'nvim-tree'.reset_highlight()"
+  create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
+
   if opts.auto_reload_on_write then
-    vim.cmd "au BufWritePost * lua require'nvim-tree.actions.reloaders'.reload_explorer()"
+    create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
-  vim.cmd "au User FugitiveChanged,NeogitStatusRefreshed lua require'nvim-tree.actions.reloaders'.reload_git()"
+  create_nvim_tree_autocmd("User", {
+    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
+    callback = reloaders.reload_git,
+  })
 
   if opts.open_on_tab then
-    vim.cmd "au TabEnter * lua require'nvim-tree'.tab_change()"
+    create_nvim_tree_autocmd("TabEnter", { callback = M.tab_change })
   end
   if opts.hijack_cursor then
-    vim.cmd "au CursorMoved NvimTree_* lua require'nvim-tree'.place_cursor_on_node()"
+    create_nvim_tree_autocmd("CursorMoved", { pattern = "NvimTree_*", callback = M.place_cursor_on_node })
   end
   if opts.update_cwd then
-    vim.cmd "au DirChanged * lua require'nvim-tree'.change_dir(vim.loop.cwd())"
+    create_nvim_tree_autocmd("DirChanged", {
+      callback = function()
+        M.change_dir(vim.loop.cwd())
+      end,
+    })
   end
   if opts.update_focused_file.enable then
-    vim.cmd "au BufEnter * lua require'nvim-tree'.find_file(false)"
+    create_nvim_tree_autocmd("BufEnter", {
+      callback = function()
+        M.find_file(false)
+      end,
+    })
   end
 
   if not opts.actions.open_file.quit_on_open then
-    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'._prevent_buffer_override()"
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
   else
-    vim.cmd "au BufWipeout NvimTree_* lua require'nvim-tree.view'.abandon_current_window()"
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
   end
 
   if opts.hijack_directories.enable then
-    vim.cmd "au BufEnter,BufNewFile * lua require'nvim-tree'.open_on_directory()"
+    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
-
-  vim.cmd "augroup end"
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -476,6 +502,11 @@ local function validate_options(conf)
 end
 
 function M.setup(conf)
+  if vim.fn.has "nvim-0.7" == 0 then
+    utils.warn "nvim-tree.lua requires Neovim 0.7 or higher"
+    return
+  end
+
   legacy.migrate_legacy_options(conf or {})
 
   validate_options(conf)

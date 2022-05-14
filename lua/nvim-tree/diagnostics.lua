@@ -169,8 +169,13 @@ function M.setup(opts)
 
   if M.enable then
     log.line("diagnostics", "setup")
-    vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
-    vim.cmd "au User CocDiagnosticChange lua require'nvim-tree.diagnostics'.update()"
+    a.nvim_create_autocmd("DiagnosticChanged", {
+      callback = M.update,
+    })
+    a.nvim_create_autocmd("User", {
+      pattern = "CocDiagnosticChange",
+      callback = M.update,
+    })
   end
 end
 
