@@ -96,6 +96,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       open_on_tab = false,
       sort_by = "name",
       update_cwd = false,
+      reload_on_bufenter = false,
       view = {
         width = 30,
         height = 30,
@@ -124,7 +125,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         icons = {
           webdev_colors = true,
           git_placement = "before",
-        }
+        },
       },
       hijack_directories = {
         enable = true,
@@ -260,7 +261,7 @@ Changes the tree root directory on `DirChanged` and refreshes the tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.reload_on_bufenter
-Automatically reloads the tree on `BufEnter`.
+Automatically reloads the tree on `BufEnter` nvim-tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_directories*
