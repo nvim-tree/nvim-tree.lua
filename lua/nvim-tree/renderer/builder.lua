@@ -138,8 +138,9 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
 end
 
 function Builder:_format_line(before, after, git_icons)
+  git_icons = self.is_git_after and git_icons and " " .. git_icons or git_icons
   return string.format(
-    "%s%s%s %s",
+    "%s%s%s%s",
     before,
     self.is_git_after and "" or git_icons,
     after,
