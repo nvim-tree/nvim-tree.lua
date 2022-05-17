@@ -336,6 +336,10 @@ local function setup_autocommands(opts)
   if opts.hijack_directories.enable then
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
+
+  if opts.reload_on_bufenter then
+    create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -350,6 +354,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  reload_on_bufenter = false,
   view = {
     width = 30,
     height = 30,
