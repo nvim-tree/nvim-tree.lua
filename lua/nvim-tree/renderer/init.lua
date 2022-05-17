@@ -8,6 +8,7 @@ local icon_component = require "nvim-tree.renderer.components.icons"
 local help = require "nvim-tree.renderer.help"
 local git = require "nvim-tree.renderer.components.git"
 local Builder = require "nvim-tree.renderer.builder"
+local live_filter = require "nvim-tree.live-filter"
 
 local api = vim.api
 
@@ -87,6 +88,7 @@ function M.draw()
       :configure_opened_file_highlighting(vim.g.nvim_tree_highlight_opened_files)
       :configure_git_icons_padding(vim.g.nvim_tree_icon_padding)
       :configure_git_icons_placement(M.config.icons.git_placement)
+      :configure_filter(live_filter.filter, live_filter.prefix)
       :build_header(view.is_root_folder_visible(core.get_cwd()))
       :build(core.get_explorer())
       :unwrap()
