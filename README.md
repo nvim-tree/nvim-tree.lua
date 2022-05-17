@@ -376,7 +376,7 @@ Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
 *Performance Tips:*
 
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config.
+* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/kyazdani42/nvim-tree.lua/issues/549#issuecomment-1127394585).
 
 * Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
 
