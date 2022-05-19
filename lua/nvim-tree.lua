@@ -26,12 +26,12 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions").on_keypress
 
-function M.toggle(find_file, no_focus)
+function M.toggle(find_file, no_focus, cwd)
   if view.is_visible() then
     view.close()
   else
     local previous_buf = api.nvim_get_current_buf()
-    M.open()
+    M.open(cwd)
     if _config.update_focused_file.enable or find_file then
       M.find_file(false, previous_buf)
     end
@@ -259,18 +259,18 @@ local function setup_vim_commands()
     M.open(res.args)
   end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeClose", view.close, {})
-  api.nvim_create_user_command("NvimTreeToggle", function()
-    M.toggle(false)
-  end, {})
+  api.nvim_create_user_command("NvimTreeToggle", function(res)
+    M.toggle(false, false, res.args)
+  end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
   api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
   api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
   api.nvim_create_user_command("NvimTreeFindFile", function()
     M.find_file(true)
   end, {})
-  api.nvim_create_user_command("NvimTreeFindFileToggle", function()
-    M.toggle(true)
-  end, {})
+  api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
+    M.toggle(true, false, res.args)
+  end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
   end, { nargs = 1 })
