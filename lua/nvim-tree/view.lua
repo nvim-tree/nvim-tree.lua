@@ -254,7 +254,7 @@ end
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
-      if a.nvim_win_is_valid(v.winnr) then
+      if v.winnr and a.nvim_win_is_valid(v.winnr) then
         return true
       end
     end
