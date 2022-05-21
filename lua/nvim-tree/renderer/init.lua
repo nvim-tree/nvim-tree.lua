@@ -51,16 +51,6 @@ local picture_map = {
   gif = true,
 }
 
-local function get_special_files_map()
-  return vim.g.nvim_tree_special_files
-    or {
-      ["Cargo.toml"] = true,
-      Makefile = true,
-      ["README.md"] = true,
-      ["readme.md"] = true,
-    }
-end
-
 function M.draw()
   local bufnr = view.get_bufnr()
   if not core.get_explorer() or not bufnr or not api.nvim_buf_is_loaded(bufnr) then
@@ -81,11 +71,11 @@ function M.draw()
   else
     lines, hl, signs = Builder.new(core.get_cwd())
       :configure_initial_depth(should_show_arrows())
-      :configure_root_modifier(vim.g.nvim_tree_root_folder_modifier)
-      :configure_trailing_slash(vim.g.nvim_tree_add_trailing == 1)
-      :configure_special_map(get_special_files_map())
+      :configure_root_modifier(M.config.root_folder_modifier)
+      :configure_trailing_slash(M.config.add_trailing)
+      :configure_special_files(M.config.special_files)
       :configure_picture_map(picture_map)
-      :configure_opened_file_highlighting(vim.g.nvim_tree_highlight_opened_files)
+      :configure_opened_file_highlighting(M.config.highlight_opened_files)
       :configure_git_icons_padding(vim.g.nvim_tree_icon_padding)
       :configure_git_icons_placement(M.config.icons.git_placement)
       :configure_filter(live_filter.filter, live_filter.prefix)
@@ -112,10 +102,7 @@ function M.draw()
 end
 
 function M.setup(opts)
-  M.config = {
-    indent_markers = opts.renderer.indent_markers,
-    icons = opts.renderer.icons,
-  }
+  M.config = opts.renderer
 
   _padding.setup(opts)
   git.setup_signs()

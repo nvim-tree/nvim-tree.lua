@@ -176,6 +176,45 @@ local g_migrations = {
       o.renderer.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
     end
   end,
+
+  nvim_tree_add_trailing = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.add_trailing == nil then
+      o.renderer.add_trailing = vim.g.nvim_tree_add_trailing == 1
+    end
+  end,
+
+  nvim_tree_highlight_opened_files = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.highlight_opened_files == nil then
+      if vim.g.nvim_tree_highlight_opened_files == 1 then
+        o.renderer.highlight_opened_files = "icon"
+      elseif vim.g.nvim_tree_highlight_opened_files == 2 then
+        o.renderer.highlight_opened_files = "name"
+      elseif vim.g.nvim_tree_highlight_opened_files == 3 then
+        o.renderer.highlight_opened_files = "all"
+      end
+    end
+  end,
+
+  nvim_tree_root_folder_modifier = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.root_folder_modifier == nil then
+      o.renderer.root_folder_modifier = vim.g.nvim_tree_root_folder_modifier
+    end
+  end,
+
+  nvim_tree_special_files = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.special_files == nil and type(vim.g.nvim_tree_special_files) == "table" then
+      o.renderer.special_files = {}
+      for k, v in pairs(vim.g.nvim_tree_special_files) do
+        if v ~= 0 then
+          table.insert(o.renderer.special_files, k)
+        end
+      end
+    end
+  end,
 }
 
 local function refactored(opts)

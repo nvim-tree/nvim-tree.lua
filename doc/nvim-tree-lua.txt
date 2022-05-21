@@ -114,6 +114,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
       },
       renderer = {
+        add_trailing = false,
+        highlight_opened_files = "none",
+        root_folder_modifier = ":~",
         indent_markers = {
           enable = false,
           icons = {
@@ -126,6 +129,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           webdev_colors = true,
           git_placement = "before",
         },
+        special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md", },
       },
       hijack_directories = {
         enable = true,
@@ -420,6 +424,20 @@ Window / buffer setup.
 *nvim-tree.renderer*
 UI rendering setup
 
+    *nvim-tree.renderer.add_trailing*
+    Appends a trailing slash to folder names.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_opened_files*
+    Highlight icons and/or names for opened files.
+    Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+      Type: `string`, Default: `"none"`
+
+    *nvim-tree.renderer.root_folder_modifier*
+    In what format to show root folder. See `:help filename-modifiers` for
+    available options.
+      Type: `string`, Default: `":~"`
+
     *nvim-tree.renderer.indent_markers*
     Configuration options for tree indent markers.
 
@@ -445,6 +463,10 @@ UI rendering setup
 	for the nvim-tree window.
 	Note that the diagnostic signs will take precedence over the git signs.
 	  Type: `after`, `before` or `signcolumn`, Default: `before`
+
+    *nvim-tree.renderer.special_files*
+    A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
+      Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
 
 *nvim-tree.filters*
 Filtering options.
@@ -601,17 +623,6 @@ if folder is 1, you can also set `folder_arrows = 1` to show small arrows
 next to the folder icons but this will not work when you set
 |renderer.indent_markers.enable| (because of UI conflict).
 
-|g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
-
-Highlight icons and/or names for opened files and directories
-Default is 0
-
-Must be:
-    0: No highlight
-    1: Enable highligting for folders and file icons only.
-    2: Enable highligting for folders and file names only.
-    3: Enable highligting for folders and both file icons and names.
-
 |g:nvim_tree_icons|                                *g:nvim_tree_icons*
 
 You can set icons for:
@@ -655,35 +666,10 @@ You can set icons for:
 You can enable file highlight for git attributes by setting this property.
 This can be used with or without the icons.
 
-|g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
-
-In what format to show root folder. See `:help filename-modifiers` for
-available options.
-Default is `:~`
-
-|g:nvim_tree_add_trailing|			         *g:nvim_tree_add_trailing*
-
-Can be 0 or 1. When 1, appends a trailing slash to folder names.
-0 by default.
-
 |g:nvim_tree_group_empty|                      *g:nvim_tree_group_empty*
 
 Can be 0 or 1. When 1, folders that contain only one folder are grouped
 together. 0 by default.
-
-|g:nvim_tree_special_files|                    *g:nvim_tree_special_files*
-
-A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
-default table is
-
->
-    {
-      ["Cargo.toml"] = true,
-      Makefile = true,
-      ["README.md"] = true,
-      ["readme.md"] = true,
-   }
-<
 
 |g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*
 

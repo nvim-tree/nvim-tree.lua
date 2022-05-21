@@ -372,6 +372,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   renderer = {
+    add_trailing = false,
+    highlight_opened_files = "none",
+    root_folder_modifier = ":~",
     indent_markers = {
       enable = false,
       icons = {
@@ -384,6 +387,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       webdev_colors = true,
       git_placement = "before",
     },
+    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md", },
   },
   hijack_directories = {
     enable = true,
