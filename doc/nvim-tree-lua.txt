@@ -31,7 +31,7 @@ closes the tree
 
 |:NvimTreeToggle| 	                          *:NvimTreeToggle*
 
-open or close the tree
+open or close the tree. Takes an optional path argument.
 
 |:NvimTreeFocus| 	                          *:NvimTreeFocus*
 
@@ -52,7 +52,8 @@ It will also open the leafs of the tree leading to the file in the buffer
 |:NvimTreeFindFileToggle|			  *:NvimTreeFindFileToggle*
 
 close the tree or change the cursor in the tree for the current bufname,
-similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|
+similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
+optional path argument.
 
 |:NvimTreeClipboard|			          *:NvimTreeClipboard*
 
@@ -233,7 +234,7 @@ Will ignore the buffer, when deciding to open the tree on setup.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_ft_on_setup*
-List of filetypes that will make `open_on_setup` not open. 
+List of filetypes that will make `open_on_setup` not open.
 You can use this option if you don't want the tree to open
 in some scenarios (eg using vim startify).
   Type: {string}, Default: {}
@@ -411,7 +412,7 @@ Window / buffer setup.
       	Will use only the provided user mappings and not the default otherwise,
       	extends the default mappings with the provided user mappings.
       	  Type: `boolean`, Default: `false`
-  
+
 	*nvim-tree.view.mappings.list*
 	A list of keymaps that will extend or override the default keymaps.
 	  Type: list of { key: table of strings or string, mode: string (vim-mode), cb: callback function as a string }
