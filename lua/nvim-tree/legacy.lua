@@ -222,6 +222,13 @@ local g_migrations = {
       o.renderer.icons.padding = vim.g.nvim_tree_icon_padding
     end
   end,
+
+  nvim_tree_symlink_arrow = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.symlink_arrow == nil then
+      o.renderer.icons.symlink_arrow = vim.g.nvim_tree_symlink_arrow
+    end
+  end,
 }
 
 local function refactored(opts)

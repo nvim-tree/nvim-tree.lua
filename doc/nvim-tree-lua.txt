@@ -129,8 +129,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           webdev_colors = true,
           git_placement = "before",
           padding = " ",
+          symlink_arrow = " ➛ ",
         },
-        special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md", },
+        special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
       },
       hijack_directories = {
         enable = true,
@@ -470,6 +471,10 @@ UI rendering setup
 	Use with caution, it could break rendering if you set an empty string depending on your font.
           Type: `string`, Default: `" "`
 
+	*nvim-tree.renderer.icons.symlink_arrow*
+	Used as a separator between symlinks' source and target.
+          Type: `string`, Default: `" ➛ "`
+
     *nvim-tree.renderer.special_files*
     A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
       Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
@@ -676,10 +681,6 @@ This can be used with or without the icons.
 
 Can be 0 or 1. When 1, folders that contain only one folder are grouped
 together. 0 by default.
-
-|g:nvim_tree_symlink_arrow|                *g:nvim_tree_symlink_arrow*
-
-Defaults to ' ➛ '. Used as a separator between symlinks' source and target.
 
 |g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
 

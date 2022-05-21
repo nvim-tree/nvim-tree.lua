@@ -387,8 +387,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       webdev_colors = true,
       git_placement = "before",
       padding = " ",
+      symlink_arrow = " ➛ ",
     },
-    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md", },
+    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
   },
   hijack_directories = {
     enable = true,

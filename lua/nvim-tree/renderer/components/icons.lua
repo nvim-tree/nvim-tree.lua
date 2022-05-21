@@ -2,9 +2,9 @@ local icon_config = require "nvim-tree.renderer.icon-config"
 
 local M = { i = {} }
 
-local function config_symlinks()
+local function config_symlinks(config)
   M.i.symlink = #M.icons.symlink > 0 and M.icons.symlink .. M.padding or ""
-  M.i.symlink_arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
+  M.i.symlink_arrow = config.symlink_arrow
 end
 
 local function empty()
@@ -85,7 +85,7 @@ function M.reset_config(config)
   M.padding = config.padding
   M.webdev_colors = config.webdev_colors
 
-  config_symlinks()
+  config_symlinks(config)
   config_file_icon()
   config_folder_icon()
 end
