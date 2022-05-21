@@ -108,36 +108,24 @@ local move_tbl = {
   top = "K",
 }
 
--- TODO: remove this once they fix https://github.com/neovim/neovim/issues/14670
-local function set_local(opt, value)
-  local cmd
-  if value == true then
-    cmd = string.format("setlocal %s", opt)
-  elseif value == false then
-    cmd = string.format("setlocal no%s", opt)
-  else
-    cmd = string.format("setlocal %s=%s", opt, value)
-  end
-  vim.cmd(cmd)
-end
-
 -- setup_tabpage sets up the initial state of a tab
 local function setup_tabpage(tabpage)
   local winnr = a.nvim_get_current_win()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
 end
 
+local function set_window_options_and_buffer()
+  pcall(vim.cmd, "buffer " .. M.get_bufnr())
+  for k, v in pairs(M.View.winopts) do
+    vim.opt_local[k] = v
+  end
+end
+
 local function open_window()
   a.nvim_command "vsp"
   M.reposition_window()
   setup_tabpage(a.nvim_get_current_tabpage())
-end
-
-local function set_window_options_and_buffer()
-  pcall(vim.cmd, "buffer " .. M.get_bufnr())
-  for k, v in pairs(M.View.winopts) do
-    set_local(k, v)
-  end
+  set_window_options_and_buffer()
 end
 
 local function get_existing_buffers()
@@ -190,7 +178,6 @@ function M.open(options)
 
   create_buffer()
   open_window()
-  set_window_options_and_buffer()
   M.resize()
 
   local opts = options or { focus_tree = true }
