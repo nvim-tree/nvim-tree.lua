@@ -215,6 +215,13 @@ local g_migrations = {
       end
     end
   end,
+
+  nvim_tree_icon_padding = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.padding == nil then
+      o.renderer.icons.padding = vim.g.nvim_tree_icon_padding
+    end
+  end,
 }
 
 local function refactored(opts)

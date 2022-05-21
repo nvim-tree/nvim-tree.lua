@@ -78,12 +78,12 @@ local function config_folder_icon()
   end
 end
 
-function M.reset_config(webdev_colors)
+function M.reset_config(config)
   M.configs = icon_config.get_config()
   M.icons = M.configs.icons
-  M.padding = vim.g.nvim_tree_icon_padding or " "
   M.devicons = M.configs.has_devicons and require "nvim-web-devicons" or nil
-  M.webdev_colors = webdev_colors
+  M.padding = config.padding
+  M.webdev_colors = config.webdev_colors
 
   config_symlinks()
   config_file_icon()

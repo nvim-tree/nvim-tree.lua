@@ -128,6 +128,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         icons = {
           webdev_colors = true,
           git_placement = "before",
+          padding = " ",
         },
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md", },
       },
@@ -464,6 +465,11 @@ UI rendering setup
 	Note that the diagnostic signs will take precedence over the git signs.
 	  Type: `after`, `before` or `signcolumn`, Default: `before`
 
+	*nvim-tree.renderer.icons.padding*
+	Inserted between icon and filename.
+	Use with caution, it could break rendering if you set an empty string depending on your font.
+          Type: `string`, Default: `" "`
+
     *nvim-tree.renderer.special_files*
     A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
       Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
@@ -670,10 +676,6 @@ This can be used with or without the icons.
 
 Can be 0 or 1. When 1, folders that contain only one folder are grouped
 together. 0 by default.
-
-|g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*
-
-One space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
 
 |g:nvim_tree_symlink_arrow|                *g:nvim_tree_symlink_arrow*
 

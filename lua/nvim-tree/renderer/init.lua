@@ -61,7 +61,7 @@ function M.draw()
 
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   _padding.reload_padding_function()
-  icon_component.reset_config(M.config.icons.webdev_colors)
+  icon_component.reset_config(M.config.icons)
   git.reload()
 
   local lines, hl
@@ -76,7 +76,7 @@ function M.draw()
       :configure_special_files(M.config.special_files)
       :configure_picture_map(picture_map)
       :configure_opened_file_highlighting(M.config.highlight_opened_files)
-      :configure_git_icons_padding(vim.g.nvim_tree_icon_padding)
+      :configure_git_icons_padding(M.config.icons.padding)
       :configure_git_icons_placement(M.config.icons.git_placement)
       :configure_filter(live_filter.filter, live_filter.prefix)
       :build_header(view.is_root_folder_visible(core.get_cwd()))
