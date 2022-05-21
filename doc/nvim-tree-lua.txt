@@ -170,7 +170,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
         open_file = {
           quit_on_open = false,
-          resize_window = false,
+          resize_window = true,
           window_picker = {
             enable = true,
             chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
@@ -499,7 +499,7 @@ Configuration for various actions.
 
     *nvim-tree.actions.open_file.resize_window*
     Resizes the tree when opening a file.
-      Type: `boolean`, Default: `false`
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.actions.open_file.window_picker*
     Window picker configuration.
