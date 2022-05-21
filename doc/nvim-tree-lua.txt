@@ -52,7 +52,7 @@ It will also open the leafs of the tree leading to the file in the buffer
 |:NvimTreeFindFileToggle|			  *:NvimTreeFindFileToggle*
 
 close the tree or change the cursor in the tree for the current bufname,
-similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile. Takes an
+similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
 optional path argument.
 
 |:NvimTreeClipboard|			          *:NvimTreeClipboard*
