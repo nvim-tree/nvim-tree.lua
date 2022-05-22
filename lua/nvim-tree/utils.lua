@@ -103,24 +103,52 @@ function M.find_node(nodes, fn)
   local function iter(nodes_, fn_)
     local i = 1
     for _, node in ipairs(nodes_) do
-      if fn_(node) then
-        return node, i
-      end
-      if node.open and #node.nodes > 0 then
-        local n, idx = iter(node.nodes, fn_)
-        i = i + idx
-        if n then
-          return n, i
+      if not node.hidden then
+        if fn_(node) then
+          return node, i
         end
-      else
-        i = i + 1
+        if node.open and #node.nodes > 0 then
+          local n, idx = iter(node.nodes, fn_)
+          i = i + idx
+          if n then
+            return n, i
+          end
+        else
+          i = i + 1
+        end
       end
     end
     return nil, i
   end
   local node, i = iter(nodes, fn)
-  i = require("nvim-tree.view").View.hide_root_folder and i - 1 or i
+  i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
+  i = require("nvim-tree.live-filter").filter and i + 1 or i
   return node, i
+end
+
+-- return visible nodes indexed by line
+-- @param nodes_all list of node
+-- @param line_start first index
+---@return table
+function M.get_nodes_by_line(nodes_all, line_start)
+  local nodes_by_line = {}
+  local line = line_start
+  local function iter(nodes)
+    for _, node in ipairs(nodes) do
+      if not node.hidden then
+        nodes_by_line[line] = node
+        line = line + 1
+        if node.open == true then
+          local child = iter(node.nodes)
+          if child ~= nil then
+            return child
+          end
+        end
+      end
+    end
+  end
+  iter(nodes_all)
+  return nodes_by_line
 end
 
 ---Matching executable files in Windows.

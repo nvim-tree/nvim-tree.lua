@@ -4,7 +4,7 @@
 
 ## Notice
 
-This plugin requires [neovim >=0.6.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+This plugin requires [neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 If you have issues since the recent setup migration, check out [this guide](https://github.com/kyazdani42/nvim-tree.lua/issues/674)
 
@@ -25,7 +25,8 @@ use {
     'kyazdani42/nvim-tree.lua',
     requires = {
       'kyazdani42/nvim-web-devicons', -- optional, for file icon
-    }
+    },
+    tag = 'nightly' -- optional, updated every week. (see issue #1193)
 }
 ```
 
@@ -35,6 +36,7 @@ Options are currently being migrated into the setup function, you need to run `r
 Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
 Note that options under the `g:` command should be set **BEFORE** running the setup function.
 These are being migrated to the setup function incrementally, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
+
 ```vim
 " vimrc
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
@@ -62,8 +64,8 @@ let g:nvim_tree_show_icons = {
 " default will show icon by default if no icon is provided
 " default shows no icon by default
 let g:nvim_tree_icons = {
-    \ 'default': "",
-    \ 'symlink': "",
+    \ 'default': "",
+    \ 'symlink': "",
     \ 'git': {
     \   'unstaged': "✗",
     \   'staged': "✓",
@@ -114,10 +116,10 @@ require'nvim-tree'.setup {
 
 -- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
+-- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
 require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
   disable_netrw = false,
-  hide_root_folder = false,
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
@@ -130,9 +132,11 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   menu = {
     actions = {}
   },
+  reload_on_bufenter = false,
   view = {
     width = 30,
     height = 30,
+    hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
     number = false,
@@ -156,6 +160,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     },
     icons = {
       webdev_colors = true,
+      git_placement = "before",
     },
   },
   hijack_directories = {
@@ -169,7 +174,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   },
   ignore_ft_on_setup = {},
   system_open = {
-    cmd = nil,
+    cmd = "",
     args = {},
   },
   diagnostics = {
@@ -197,10 +202,11 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     change_dir = {
       enable = true,
       global = false,
+      restrict_above_cwd = false,
     },
     open_file = {
       quit_on_open = false,
-      resize_window = false,
+      resize_window = true,
       window_picker = {
         enable = true,
         chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
@@ -214,6 +220,10 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   trash = {
     cmd = "trash",
     require_confirm = true,
+  },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
   },
   log = {
     enable = false,
@@ -230,7 +240,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 } -- END_DEFAULT_OPTS
 ```
 
-## KeyBindings
+## Key Bindings
 
 ### Default actions
 
@@ -268,10 +278,12 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
 - `C-k` will toggle a popup with file infos about the file under the cursor
+- `f` will allow you to filter nodes dynamically based on regex matching.
 
 ### Settings
 
 The `list` option in `view.mappings.list` is a table of
+
 ```lua
 -- key can be either a string or a table of string (lhs)
 -- action is the name of the action, set to `""` to remove default action
@@ -293,6 +305,7 @@ local list = {
 ```
 
 These are the default bindings:
+
 ```lua
 
 -- default mappings
@@ -329,6 +342,8 @@ local list = {
   { key = "]c",                           action = "next_git_item" },
   { key = "-",                            action = "dir_up" },
   { key = "s",                            action = "system_open" },
+  { key = "f",                            action = "live_filter" },
+  { key = "F",                            action = "clear_live_filter" },
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
@@ -348,15 +363,14 @@ You can toggle the help UI by pressing `g?`.
 4. You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
 5. If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 6. You can automatically close the tab/vim when nvim-tree is the last window in the tab. WARNING: other plugins or automation may interfere with this:
+
 ```vim
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 ```
 
 ## Diagnostic Logging
 
-You may enable diagnostic logging and a file `nvim-tree.log` will be created in `$XDG_CACHE_HOME/nvim`, usually `~/.cache/nvim`, containing logs from that nvim session. See `:help nvim-tree.log`.
-
-The files may become large and numerous, so it is advised to turn on logging to diagnose an issue or while reporting a bug, then turn it off.
+You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See `:help nvim-tree.log`.
 
 ## Performance Issues
 
@@ -375,15 +389,15 @@ log = {
 
 Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
-*Performance Tips:*
+_Performance Tips:_
 
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config.
+- If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/kyazdani42/nvim-tree.lua/issues/549#issuecomment-1127394585).
 
-* Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
+- Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
 
-* Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
+- Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
 
-* Try temporarily disabling git integration by setting `git.enable = false` in your setup.
+- Try temporarily disabling git integration by setting `git.enable = false` in your setup.
 
 ## Screenshots
 

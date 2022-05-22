@@ -1,71 +1,49 @@
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
-local diagnostics = require "nvim-tree.diagnostics"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
-
-local lib = function()
-  return require "nvim-tree.lib"
-end
+local lib = require "nvim-tree.lib"
 
 local M = {}
 
-local function get_line_from_node(node, find_parent)
+local function get_index_of(node, nodes)
   local node_path = node.absolute_path
+  local line = 1
 
-  if find_parent then
-    node_path = node.absolute_path:match("(.*)" .. utils.path_separator)
-  end
-
-  local line = core.get_nodes_starting_line()
-  local function iter(nodes, recursive)
-    for _, _node in ipairs(nodes) do
-      local n = lib().get_last_group_node(_node)
+  for _, _node in ipairs(nodes) do
+    if not _node.hidden then
+      local n = lib.get_last_group_node(_node)
       if node_path == n.absolute_path then
-        return line, _node
+        return line
       end
 
       line = line + 1
-      if _node.open == true and recursive then
-        local _, child = iter(_node.nodes, recursive)
-        if child ~= nil then
-          return line, child
-        end
-      end
     end
   end
-  return iter
 end
 
 function M.parent_node(should_close)
+  should_close = should_close or false
+
   return function(node)
-    if node.name == ".." then
-      return
-    end
-
-    should_close = should_close or false
-    local altered_tree = false
-
-    local iter = get_line_from_node(node, true)
-    if node.open == true and should_close then
+    if should_close and node.open then
       node.open = false
-      altered_tree = true
-    else
-      local line, parent = iter(core.get_explorer().nodes, true)
-      if parent == nil then
-        line = 1
-      elseif should_close then
-        parent.open = false
-        altered_tree = true
-      end
-      if not view.is_root_folder_visible(core.get_cwd()) then
-        line = line - 1
-      end
-      view.set_cursor { line, 0 }
+      return renderer.draw()
     end
 
-    if altered_tree then
-      diagnostics.update()
+    local parent = node.parent
+
+    if not parent or parent.cwd then
+      return view.set_cursor { 1, 0 }
+    end
+
+    local _, line = utils.find_node(core.get_explorer().nodes, function(n)
+      return n.absolute_path == parent.absolute_path
+    end)
+
+    view.set_cursor { line + 1, 0 }
+    if should_close then
+      parent.open = false
       renderer.draw()
     end
   end
@@ -77,51 +55,33 @@ function M.sibling(direction)
       return
     end
 
-    local iter = get_line_from_node(node, true)
-    local node_path = node.absolute_path
+    local parent = node.parent or core.get_explorer()
+    local parent_nodes = vim.tbl_filter(function(n)
+      return not n.hidden
+    end, parent.nodes)
 
-    local line = 0
-    local parent, _
+    local node_index = get_index_of(node, parent_nodes)
 
-    -- Check if current node is already at root nodes
-    for index, _node in ipairs(core.get_explorer().nodes) do
-      if node_path == _node.absolute_path then
-        line = index
-      end
+    local target_idx = node_index + direction
+    if target_idx < 1 then
+      target_idx = 1
+    elseif target_idx > #parent_nodes then
+      target_idx = #parent_nodes
     end
 
-    if line > 0 then
-      parent = core.get_explorer()
-    else
-      _, parent = iter(core.get_explorer().nodes, true)
-      if parent ~= nil and #parent.nodes > 1 then
-        line, _ = get_line_from_node(node)(parent.nodes)
-      end
+    local target_node = parent_nodes[target_idx]
+    local _, line = utils.find_node(core.get_explorer().nodes, function(n)
+      return n.absolute_path == target_node.absolute_path
+    end)
 
-      -- Ignore parent line count
-      line = line - 1
-    end
-
-    local index = line + direction
-    if index < 1 then
-      index = 1
-    elseif index > #parent.nodes then
-      index = #parent.nodes
-    end
-    local target_node = parent.nodes[index]
-
-    line, _ = get_line_from_node(target_node)(core.get_explorer().nodes, true)
-    if not view.is_root_folder_visible(core.get_cwd()) then
-      line = line - 1
-    end
-    view.set_cursor { line, 0 }
+    view.set_cursor { line + 1, 0 }
   end
 end
 
 function M.find_git_item(where)
   return function()
-    local node_cur = lib().get_node_at_cursor()
-    local nodes_by_line = lib().get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+    local node_cur = lib.get_node_at_cursor()
+    local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
 
     local cur, first, prev, nex = nil, nil, nil, nil
     for line, node in pairs(nodes_by_line) do

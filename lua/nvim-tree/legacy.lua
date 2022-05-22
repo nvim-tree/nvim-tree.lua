@@ -2,10 +2,10 @@ local utils = require "nvim-tree.utils"
 
 local M = {}
 
--- TODO update git.io/JPhyt when adding a migration
+-- TODO update bit.ly/3vIpEOJ when adding a migration
 
 -- migrate the g: to o if the user has not specified that when calling setup
-local migrations = {
+local g_migrations = {
   nvim_tree_disable_netrw = function(o)
     if o.disable_netrw == nil then
       o.disable_netrw = vim.g.nvim_tree_disable_netrw ~= 0
@@ -178,33 +178,63 @@ local migrations = {
   end,
 }
 
-function M.migrate_legacy_options(opts)
-  local msg = nil
-
-  -- g: options
-  for g, m in pairs(migrations) do
-    if vim.fn.exists("g:" .. g) ~= 0 then
-      m(opts)
-      msg = (msg and msg .. ", " or "Following options were moved to setup, see git.io/JPhyt: ") .. g
-    end
-  end
-
-  if msg then
-    require("nvim-tree.utils").warn(msg)
-  end
-
-  -- regular opts
-  if opts.view then
-    if opts.view.mappings then
-      if opts.view.mappings.list then
-        for _, m in pairs(opts.view.mappings.list) do
-          if m.action == "toggle_ignored" then
-            m.action = "toggle_git_ignored"
-          end
-        end
+local function refactored(opts)
+  -- mapping actions
+  if opts.view and opts.view.mappings and opts.view.mappings.list then
+    for _, m in pairs(opts.view.mappings.list) do
+      if m.action == "toggle_ignored" then
+        m.action = "toggle_git_ignored"
       end
     end
   end
+
+  -- update_to_buf_dir -> hijack_directories
+  if opts.update_to_buf_dir ~= nil then
+    utils.table_create_missing(opts, "hijack_directories")
+    if opts.hijack_directories.enable == nil then
+      opts.hijack_directories.enable = opts.update_to_buf_dir.enable
+    end
+    if opts.hijack_directories.auto_open == nil then
+      opts.hijack_directories.auto_open = opts.update_to_buf_dir.auto_open
+    end
+    opts.update_to_buf_dir = nil
+  end
+
+  -- view.auto_resize -> actions.open_file.resize_window
+  if opts.view and opts.view.auto_resize ~= nil then
+    utils.table_create_missing(opts, "actions.open_file")
+    if opts.actions.open_file.resize_window == nil then
+      opts.actions.open_file.resize_window = opts.view.auto_resize
+    end
+    opts.view.auto_resize = nil
+  end
+end
+
+local function removed(opts)
+  if opts.auto_close then
+    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
+    opts.auto_close = nil
+  end
+end
+
+function M.migrate_legacy_options(opts)
+  -- g: options
+  local msg
+  for g, m in pairs(g_migrations) do
+    if vim.fn.exists("g:" .. g) ~= 0 then
+      m(opts)
+      msg = (msg and msg .. ", " or "Following options were moved to setup, see bit.ly/3vIpEOJ: ") .. g
+    end
+  end
+  if msg then
+    utils.warn(msg)
+  end
+
+  -- silently move
+  refactored(opts)
+
+  -- warn and delete
+  removed(opts)
 end
 
 return M

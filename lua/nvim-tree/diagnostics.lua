@@ -6,6 +6,8 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
+local GROUP = "NvimTreeDiagnosticSigns"
+
 local function get_lowest_severity(diagnostics)
   local severity = math.huge
   for _, v in ipairs(diagnostics) do
@@ -24,15 +26,13 @@ local sign_names = {
   { "NvimTreeSignHint", "NvimTreeLspDiagnosticsHint" },
 }
 
-local signs = {}
-
 local function add_sign(linenr, severity)
   local buf = view.get_bufnr()
   if not a.nvim_buf_is_valid(buf) or not a.nvim_buf_is_loaded(buf) then
     return
   end
   local sign_name = sign_names[severity][1]
-  table.insert(signs, vim.fn.sign_place(1, "NvimTreeDiagnosticSigns", sign_name, buf, { lnum = linenr + 1 }))
+  vim.fn.sign_place(0, GROUP, sign_name, buf, { lnum = linenr, priority = 2 })
 end
 
 local function from_nvim_lsp()
@@ -109,16 +109,7 @@ function M.clear()
     return
   end
 
-  if #signs then
-    vim.fn.sign_unplacelist(vim.tbl_map(function(sign)
-      return {
-        buffer = view.get_bufnr(),
-        group = "NvimTreeDiagnosticSigns",
-        id = sign,
-      }
-    end, signs))
-    signs = {}
-  end
+  vim.fn.sign_unplace(GROUP)
 end
 
 function M.update()
@@ -140,30 +131,28 @@ function M.update()
     local bufpath = utils.canonical_path(bufname)
     log.line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
     if 0 < severity and severity < 5 then
-      local node, line = utils.find_node(core.get_explorer().nodes, function(node)
+      local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+      for line, node in pairs(nodes_by_line) do
         local nodepath = utils.canonical_path(node.absolute_path)
-        log.line("diagnostics", "  checking nodepath '%s'", nodepath)
-        if M.show_on_dirs and not node.open then
-          return vim.startswith(bufpath, nodepath)
-        else
-          return nodepath == bufpath
+        log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
+        if M.show_on_dirs and vim.startswith(bufpath, nodepath) then
+          log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
+          add_sign(line, severity)
+        elseif nodepath == bufpath then
+          log.line("diagnostics", " matched file node '%s'", node.absolute_path)
+          add_sign(line, severity)
         end
-      end)
-      if node then
-        log.line("diagnostics", " matched node '%s'", node.absolute_path)
-        add_sign(line, severity)
       end
     end
   end
   log.profile_end(ps, "diagnostics update")
 end
 
-local has_06 = vim.fn.has "nvim-0.6" == 1
 local links = {
-  NvimTreeLspDiagnosticsError = has_06 and "DiagnosticError" or "LspDiagnosticsDefaultError",
-  NvimTreeLspDiagnosticsWarning = has_06 and "DiagnosticWarn" or "LspDiagnosticsDefaultWarning",
-  NvimTreeLspDiagnosticsInformation = has_06 and "DiagnosticInfo" or "LspDiagnosticsDefaultInformation",
-  NvimTreeLspDiagnosticsHint = has_06 and "DiagnosticHint" or "LspDiagnosticsDefaultHint",
+  NvimTreeLspDiagnosticsError = "DiagnosticError",
+  NvimTreeLspDiagnosticsWarning = "DiagnosticWarn",
+  NvimTreeLspDiagnosticsInformation = "DiagnosticInfo",
+  NvimTreeLspDiagnosticsHint = "DiagnosticHint",
 }
 
 function M.setup(opts)
@@ -179,13 +168,14 @@ function M.setup(opts)
   end
 
   if M.enable then
-    if has_06 then
-      log.line("diagnostics", "setup has_06")
-      vim.cmd "au DiagnosticChanged * lua require'nvim-tree.diagnostics'.update()"
-    else
-      log.line("diagnostics", "setup not has_06")
-      vim.cmd "au User LspDiagnosticsChanged lua require'nvim-tree.diagnostics'.update()"
-    end
+    log.line("diagnostics", "setup")
+    a.nvim_create_autocmd("DiagnosticChanged", {
+      callback = M.update,
+    })
+    a.nvim_create_autocmd("User", {
+      pattern = "CocDiagnosticChange",
+      callback = M.update,
+    })
   end
 end
 

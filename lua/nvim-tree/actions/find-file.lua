@@ -29,35 +29,37 @@ function M.fn(fname)
 
   local function iterate_nodes(nodes)
     for _, node in ipairs(nodes) do
-      i = i + 1
+      if not node.hidden then
+        i = i + 1
 
-      if not node.absolute_path or not uv.fs_stat(node.absolute_path) then
-        break
-      end
-
-      -- match against node absolute and link, as symlinks themselves will differ
-      if node.absolute_path == fname_real or node.link_to == fname_real then
-        return i
-      end
-      local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
-      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
-      local path_matches = node.nodes and (abs_match or link_match)
-      if path_matches then
-        if not node.open then
-          node.open = true
-          tree_altered = true
+        if not node.absolute_path or not uv.fs_stat(node.absolute_path) then
+          break
         end
 
-        if #node.nodes == 0 then
-          core.get_explorer():expand(node)
-        end
-
-        if iterate_nodes(node.nodes) ~= nil then
+        -- match against node absolute and link, as symlinks themselves will differ
+        if node.absolute_path == fname_real or node.link_to == fname_real then
           return i
         end
-        -- mandatory to iterate i
-      elseif node.open then
-        iterate_nodes(node.nodes)
+        local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
+        local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
+        local path_matches = node.nodes and (abs_match or link_match)
+        if path_matches then
+          if not node.open then
+            node.open = true
+            tree_altered = true
+          end
+
+          if #node.nodes == 0 then
+            core.get_explorer():expand(node)
+          end
+
+          if iterate_nodes(node.nodes) ~= nil then
+            return i
+          end
+          -- mandatory to iterate i
+        elseif node.open then
+          iterate_nodes(node.nodes)
+        end
       end
     end
   end

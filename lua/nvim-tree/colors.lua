@@ -1,5 +1,5 @@
 local api = vim.api
-local icons = require "nvim-tree.renderer.icons"
+local icons = require "nvim-tree.renderer.icon-config"
 
 local M = {}
 
@@ -52,6 +52,8 @@ local function get_hl_groups()
     GitNew = { fg = colors.yellow },
 
     WindowPicker = { gui = "bold", fg = "#ededed", bg = "#4493c8" },
+    LiveFilterPrefix = { gui = "bold", fg = colors.purple },
+    LiveFilterValue = { gui = "bold", fg = "#fff" },
   }
 end
 
@@ -65,6 +67,7 @@ local function get_links()
     EndOfBuffer = "EndOfBuffer",
     CursorLine = "CursorLine",
     VertSplit = "VertSplit",
+    WinSeparator = "NvimTreeVertSplit",
     CursorColumn = "CursorColumn",
     FileDirty = "NvimTreeGitDirty",
     FileNew = "NvimTreeGitNew",

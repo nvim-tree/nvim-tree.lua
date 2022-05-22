@@ -14,13 +14,13 @@ local function get_padding_arrows(icon_state)
   end
 end
 
-local function get_padding_indent_markers(depth, idx, tree, _, markers)
+local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
   local padding = ""
   if depth ~= 0 then
     local rdepth = depth / 2
-    markers[rdepth] = idx ~= #tree.nodes
+    markers[rdepth] = idx ~= nodes_number
     for i = 1, rdepth do
-      if idx == #tree.nodes and i == rdepth then
+      if idx == nodes_number and i == rdepth then
         padding = padding .. M.config.indent_markers.icons.corner
       elseif markers[i] then
         padding = padding .. M.config.indent_markers.icons.edge
@@ -33,7 +33,7 @@ local function get_padding_indent_markers(depth, idx, tree, _, markers)
 end
 
 function M.reload_padding_function()
-  local icon_state = require("nvim-tree.renderer.icons").get_config()
+  local icon_state = require("nvim-tree.renderer.icon-config").get_config()
 
   if icon_state.show_folder_icon and icon_state.show_folder_arrows then
     M.get_padding = get_padding_arrows(icon_state)

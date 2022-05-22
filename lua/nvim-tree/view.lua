@@ -6,6 +6,7 @@ local events = require "nvim-tree.events"
 
 M.View = {
   tabpages = {},
+  cursors = {},
   hide_root_folder = false,
   winopts = {
     relativenumber = false,
@@ -26,7 +27,8 @@ M.View = {
       "EndOfBuffer:NvimTreeEndOfBuffer",
       "Normal:NvimTreeNormal",
       "CursorLine:NvimTreeCursorLine",
-      "VertSplit:NvimTreeVertSplit",
+      -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
+      pcall(vim.cmd, "silent hi WinSeparator") and "WinSeparator:NvimTreeWinSeparator" or "VertSplit:NvimTreeWinSeparator",
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
       "SignColumn:NvimTreeSignColumn",
@@ -46,7 +48,6 @@ local tabinitial = {
 }
 
 local BUFNR_PER_TAB = {}
-local LAST_FOCUSED_WIN = nil
 local BUFFER_OPTIONS = {
   swapfile = false,
   buftype = "nofile",
@@ -107,36 +108,24 @@ local move_tbl = {
   top = "K",
 }
 
--- TODO: remove this once they fix https://github.com/neovim/neovim/issues/14670
-local function set_local(opt, value)
-  local cmd
-  if value == true then
-    cmd = string.format("setlocal %s", opt)
-  elseif value == false then
-    cmd = string.format("setlocal no%s", opt)
-  else
-    cmd = string.format("setlocal %s=%s", opt, value)
-  end
-  vim.cmd(cmd)
-end
-
 -- setup_tabpage sets up the initial state of a tab
 local function setup_tabpage(tabpage)
   local winnr = a.nvim_get_current_win()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
 end
 
+local function set_window_options_and_buffer()
+  pcall(vim.cmd, "buffer " .. M.get_bufnr())
+  for k, v in pairs(M.View.winopts) do
+    vim.opt_local[k] = v
+  end
+end
+
 local function open_window()
   a.nvim_command "vsp"
   M.reposition_window()
   setup_tabpage(a.nvim_get_current_tabpage())
-end
-
-local function set_window_options_and_buffer()
-  pcall(vim.cmd, "buffer " .. M.get_bufnr())
-  for k, v in pairs(M.View.winopts) do
-    set_local(k, v)
-  end
+  set_window_options_and_buffer()
 end
 
 local function get_existing_buffers()
@@ -158,7 +147,7 @@ end
 -- save_tab_state saves any state that should be preserved across redraws.
 local function save_tab_state()
   local tabpage = a.nvim_get_current_tabpage()
-  M.View.tabpages[tabpage].cursor = a.nvim_win_get_cursor(M.get_winnr())
+  M.View.cursors[tabpage] = a.nvim_win_get_cursor(M.get_winnr())
 end
 
 function M.close()
@@ -172,8 +161,9 @@ function M.close()
   for _, win in pairs(a.nvim_list_wins()) do
     if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
       a.nvim_win_close(tree_win, true)
-      if tree_win == current_win and LAST_FOCUSED_WIN then
-        a.nvim_set_current_win(LAST_FOCUSED_WIN)
+      local prev_win = vim.fn.winnr "#" -- this tab only
+      if tree_win == current_win and prev_win > 0 then
+        a.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
       events._dispatch_on_tree_close()
       return
@@ -186,10 +176,8 @@ function M.open(options)
     return
   end
 
-  LAST_FOCUSED_WIN = a.nvim_get_current_win()
   create_buffer()
   open_window()
-  set_window_options_and_buffer()
   M.resize()
 
   local opts = options or { focus_tree = true }
@@ -266,7 +254,7 @@ end
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
-      if a.nvim_win_is_valid(v.winnr) then
+      if v.winnr and a.nvim_win_is_valid(v.winnr) then
         return true
       end
     end
@@ -305,7 +293,7 @@ end
 --- Restores the state of a NvimTree window if it was initialized before.
 function M.restore_tab_state()
   local tabpage = a.nvim_get_current_tabpage()
-  M.set_cursor(M.View.tabpages[tabpage].cursor)
+  M.set_cursor(M.View.cursors[tabpage])
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
@@ -357,7 +345,12 @@ function M._prevent_buffer_override()
     local curbuf = a.nvim_win_get_buf(curwin)
     local bufname = a.nvim_buf_get_name(curbuf)
     if not bufname:match "NvimTree" then
-      M.View.tabpages = {}
+      for i, tabpage in ipairs(M.View.tabpages) do
+        if tabpage.winnr == view_winnr then
+          M.View.tabpages[i] = nil
+          break
+        end
+      end
     end
     if curwin ~= view_winnr or bufname == "" or curbuf == view_bufnr then
       return
