@@ -234,10 +234,10 @@ local g_migrations = {
     utils.table_create_missing(o, "renderer.icons")
     if o.renderer.icons.show == nil and type(vim.g.nvim_tree_show_icons) == "table" then
       o.renderer.icons.show = {}
-      o.renderer.icons.show.file = vim.g.nvim_tree_show_icons.files ~= 0
-      o.renderer.icons.show.folder = vim.g.nvim_tree_show_icons.folders ~= 0
-      o.renderer.icons.show.folder_arrow = vim.g.nvim_tree_show_icons.folder_arrows ~= 0
-      o.renderer.icons.show.git = vim.g.nvim_tree_show_icons.git ~= 0
+      o.renderer.icons.show.file = vim.g.nvim_tree_show_icons.files == 1
+      o.renderer.icons.show.folder = vim.g.nvim_tree_show_icons.folders == 1
+      o.renderer.icons.show.folder_arrow = vim.g.nvim_tree_show_icons.folder_arrows == 1
+      o.renderer.icons.show.git = vim.g.nvim_tree_show_icons.git == 1
     end
   end,
 
@@ -264,13 +264,13 @@ local g_migrations = {
 
   nvim_tree_respect_buf_cwd = function(o)
     if o.respect_buf_cwd == nil then
-      o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd ~= 0
+      o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd == 1
     end
   end,
 
   nvim_tree_create_in_closed_folder = function(o)
     if o.create_in_closed_folder == nil then
-      o.create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder ~= 0
+      o.create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder == 1
     end
   end,
 }
