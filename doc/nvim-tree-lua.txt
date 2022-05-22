@@ -116,6 +116,8 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       },
       renderer = {
         add_trailing = false,
+        group_empty = false,
+        highlight_git = false,
         highlight_opened_files = "none",
         root_folder_modifier = ":~",
         indent_markers = {
@@ -159,7 +161,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
               deleted = "",
               ignored = "◌",
             },
-          }
+          },
         },
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
       },
@@ -460,6 +462,10 @@ UI rendering setup
     Appends a trailing slash to folder names.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.renderer.group_empty*
+    Compact folders that only contain a single folder into one node in the file tree.
+      Type: `boolean`, Default: `false`
+
     *nvim-tree.renderer.highlight_git*
     Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
     This can be used with or without the icons.
@@ -706,11 +712,6 @@ Configuration for diagnostic logging.
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
-
-|g:nvim_tree_group_empty|                      *g:nvim_tree_group_empty*
-
-Can be 0 or 1. When 1, folders that contain only one folder are grouped
-together. 0 by default.
 
 |g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
 

@@ -31,8 +31,10 @@ function Explorer:expand(node)
 end
 
 function M.setup(opts)
+  require("nvim-tree.explorer.explore").setup(opts)
   require("nvim-tree.explorer.filters").setup(opts)
   require("nvim-tree.explorer.sorters").setup(opts)
+  require("nvim-tree.explorer.reload").setup(opts)
 end
 
 M.Explorer = Explorer

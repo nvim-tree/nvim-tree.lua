@@ -69,7 +69,7 @@ function M.explore(node, status)
 
   local is_root = node.cwd ~= nil
   local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
-  if vim.g.nvim_tree_group_empty == 1 and not is_root and child_folder_only then
+  if M.config.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = M.explore(child_folder_only, status)
     node.nodes = ns or {}
@@ -79,6 +79,10 @@ function M.explore(node, status)
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
   return node.nodes
+end
+
+function M.setup(opts)
+  M.config = opts.renderer
 end
 
 return M

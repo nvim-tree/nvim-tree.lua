@@ -254,6 +254,13 @@ local g_migrations = {
       o.renderer.highlight_git = vim.g.nvim_tree_git_hl == 1
     end
   end,
+
+  nvim_tree_group_empty = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.group_empty == nil then
+      o.renderer.group_empty = vim.g.nvim_tree_group_empty == 1
+    end
+  end,
 }
 
 local function refactored(opts)
