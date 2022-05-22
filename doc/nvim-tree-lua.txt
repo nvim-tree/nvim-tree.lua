@@ -131,6 +131,35 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           git_placement = "before",
           padding = " ",
           symlink_arrow = " ➛ ",
+          show = {
+            file = true,
+            folder = true,
+            folder_arrow = true,
+            git = true,
+          },
+          symbols = {
+            default = "",
+            symlink = "",
+            folder = {
+              arrow_closed = "",
+              arrow_open = "",
+              default = "",
+              open = "",
+              empty = "",
+              empty_open = "",
+              symlink = "",
+              symlink_open = "",
+            },
+            git = {
+              unstaged = "✗",
+              staged = "✓",
+              unmerged = "",
+              renamed = "➜",
+              untracked = "★",
+              deleted = "",
+              ignored = "◌",
+            },
+          }
         },
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
       },
@@ -352,7 +381,7 @@ Git integration with icons and colors.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.ignore*
-    Ignore files based on `.gitignore`.
+    Ignore files based on `.gitignore`. Requires |git.enable| `= true`
     Toggle via the `toggle_git_ignored` action, default mapping `I`.
       Type: `boolean`, Default: `true`
 
@@ -360,7 +389,7 @@ Git integration with icons and colors.
     Kills the git process after some time if it takes too long.
       Type: `number`, Default: `400` (ms)
 
-  You will still need to configure `g:nvim_tree_show_icons.git` or
+  You will still need to set |renderer.icons.show.git| `= true` or
   `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
   changed in the future versions.
 
@@ -475,6 +504,65 @@ UI rendering setup
 	*nvim-tree.renderer.icons.symlink_arrow*
 	Used as a separator between symlinks' source and target.
           Type: `string`, Default: `" ➛ "`
+
+        *nvim-tree.renderer.icons.show*
+        Configuration options for showing icon types.
+
+            *nvim-tree.renderer.icons.show.file*
+            Show an icon before the file name. `nvim-web-devicons` will be used if available.
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.folder*
+            Show an icon before the folder name.
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.folder_arrow*
+            Show a small arrow before the folder icon.
+            Requires |renderer.icons.show.folder| `= true` and |renderer.indent_markers.enable| `= false` 
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.git*
+            Show a git status icon, see |renderer.icons.git_placement|
+            Requires |git.enable| `= true`
+              Type: `boolean`, Default: `true`
+
+        *nvim-tree.renderer.icons.symbols*
+        Configuration options for icon symbols.
+
+            *nvim-tree.renderer.icons.symbols.default*
+            Symbol for files. Will be overridden by `nvim-web-devicons` if available.
+              Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.symbols.symlink*
+            Symbol for symlinks to files.
+              Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.symbols.folder*
+            Symbol for directories.
+              Type: `table`, Default:
+                `{`
+                  `arrow_closed = "",`
+                  `arrow_open = "",`
+                  `default = "",`
+                  `open = "",`
+                  `empty = "",`
+                  `empty_open = "",`
+                  `symlink = "",`
+                  `symlink_open = "",`
+                `}`
+
+            *nvim-tree.renderer.icons.symbols.git*
+            Symbol for git status.
+              Type: `table`, Default:
+                `{`
+                  `unstaged = "✗",`
+                  `staged = "✓",`
+                  `unmerged = "",`
+                  `renamed = "➜",`
+                  `untracked = "★",`
+                  `deleted = "",`
+                  `ignored = "◌",`
+                `}`
 
     *nvim-tree.renderer.special_files*
     A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
@@ -613,65 +701,6 @@ Configuration for diagnostic logging.
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
-
-|g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
-
-Dictionary, if your terminal or font doesn't support certain unicode
-character, the tree UI might be messed up. The following configuration
-can disable icons per type:
->
-    let g:nvim_tree_show_icons = {
-	\ 'git': 1,
-	\ 'folders': 1,
-	\ 'files': 1,
-  \ 'folder_arrows': 1,
-	\}
-
-Can be one of `1` and `0` for each key. By default the tree will try
-to render the icons. The `files` key can only work if `nvim-web-devicons`
-is installed and in your |runtimepath|
-(https://github.com/kyazdani42/nvim-web-devicons)
-if folder is 1, you can also set `folder_arrows = 1` to show small arrows
-next to the folder icons but this will not work when you set
-|renderer.indent_markers.enable| (because of UI conflict).
-
-|g:nvim_tree_icons|                                *g:nvim_tree_icons*
-
-You can set icons for:
-
-- The git status.
-- The default icon that shows when no icon is found for a file
-  or if you are not using icons.
-- Symlinks. If an icon is not provided, the `default` icon is used.
->
-  let g:nvim_tree_icons = {
-      \ 'default':        "",
-      \ 'symlink':        "",
-      \ 'git': {
-      \   'unstaged':     "✗",
-      \   'staged':       "✓",
-      \   'unmerged':     "",
-      \   'renamed':      "➜",
-      \   'untracked':    "★",
-      \   'deleted':      "",
-      \  },
-      \ 'folder': {
-      \   'arrow_open':   "",
-      \   'arrow_closed': "",
-      \   'default':      "",
-      \   'open':         "",
-      \   'empty':        "",
-      \   'empty_open':   "",
-      \   'symlink':      "",
-      \   'symlink_open': "",
-      \  },
-      \  'lsp': {
-      \    'hint': "",
-      \    'info': "",
-      \    'warning': "",
-      \    'error': "",
-      \  }
-      \ }
 
 |g:nvim_tree_git_hl|                                *g:nvim_tree_git_hl*
 

@@ -388,6 +388,35 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       git_placement = "before",
       padding = " ",
       symlink_arrow = " ➛ ",
+      show = {
+        file = true,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+      },
+      symbols = {
+        default = "",
+        symlink = "",
+        folder = {
+          arrow_closed = "",
+          arrow_open = "",
+          default = "",
+          open = "",
+          empty = "",
+          empty_open = "",
+          symlink = "",
+          symlink_open = "",
+        },
+        git = {
+          unstaged = "✗",
+          staged = "✓",
+          unmerged = "",
+          renamed = "➜",
+          untracked = "★",
+          deleted = "",
+          ignored = "◌",
+        },
+      },
     },
     special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
   },
@@ -554,6 +583,9 @@ function M.setup(conf)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
+  if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
+    require("nvim-web-devicons").setup()
+  end
 
   setup_vim_commands()
   setup_autocommands(opts)

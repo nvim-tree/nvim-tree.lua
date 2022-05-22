@@ -229,6 +229,24 @@ local g_migrations = {
       o.renderer.icons.symlink_arrow = vim.g.nvim_tree_symlink_arrow
     end
   end,
+
+  nvim_tree_show_icons = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.show == nil and type(vim.g.nvim_tree_show_icons) == "table" then
+      o.renderer.icons.show = {}
+      o.renderer.icons.show.file = vim.g.nvim_tree_show_icons.files ~= 0
+      o.renderer.icons.show.folder = vim.g.nvim_tree_show_icons.folders ~= 0
+      o.renderer.icons.show.folder_arrow = vim.g.nvim_tree_show_icons.folder_arrows ~= 0
+      o.renderer.icons.show.git = vim.g.nvim_tree_show_icons.git ~= 0
+    end
+  end,
+
+  nvim_tree_icons = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.symbols == nil and type(vim.g.nvim_tree_icons) == "table" then
+      o.renderer.icons.symbols = vim.g.nvim_tree_icons
+    end
+  end,
 }
 
 local function refactored(opts)

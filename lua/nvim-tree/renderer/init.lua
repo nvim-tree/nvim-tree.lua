@@ -39,9 +39,7 @@ function M.render_hl(bufnr, hl)
 end
 
 local function should_show_arrows()
-  return not M.config.indent_markers.enable
-    and icon_component.configs.show_folder_icon
-    and icon_component.configs.show_folder_arrows
+  return not M.config.indent_markers.enable and M.config.icons.show.folder and M.config.icons.show.folder_arrow
 end
 
 local picture_map = {
@@ -61,8 +59,7 @@ function M.draw()
 
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
   _padding.reload_padding_function()
-  icon_component.reset_config(M.config.icons)
-  git.reload()
+  icon_component.reset_config()
 
   local lines, hl
   local signs = {}
@@ -105,7 +102,8 @@ function M.setup(opts)
   M.config = opts.renderer
 
   _padding.setup(opts)
-  git.setup_signs()
+  git.setup(opts)
+  icon_component.setup(opts)
 end
 
 return M
