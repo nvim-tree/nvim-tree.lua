@@ -247,6 +247,13 @@ local g_migrations = {
       o.renderer.icons.symbols = vim.g.nvim_tree_icons
     end
   end,
+
+  nvim_tree_git_hl = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.highlight_git == nil then
+      o.renderer.highlight_git = vim.g.nvim_tree_git_hl == 1
+    end
+  end,
 }
 
 local function refactored(opts)

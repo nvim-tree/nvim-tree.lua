@@ -373,6 +373,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   renderer = {
     add_trailing = false,
+    highlight_git = false,
     highlight_opened_files = "none",
     root_folder_modifier = ":~",
     indent_markers = {

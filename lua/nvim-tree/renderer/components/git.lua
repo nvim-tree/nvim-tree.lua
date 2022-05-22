@@ -83,7 +83,7 @@ local function get_icons_(node)
 
   local icons = M.git_icons[git_status]
   if not icons then
-    if vim.g.nvim_tree_git_hl ~= 1 then
+    if not M.config.highlight_git then
       warn_status(git_status)
     end
     return nil
@@ -144,6 +144,8 @@ local function get_highlight_(node)
 end
 
 function M.setup(opts)
+  M.config = opts.renderer
+
   M.git_icons = build_icons_table(opts.renderer.icons.symbols.git)
 
   M.setup_signs(opts.renderer.icons.symbols.git)
@@ -154,7 +156,7 @@ function M.setup(opts)
     M.get_icons = nil_
   end
 
-  if vim.g.nvim_tree_git_hl == 1 then
+  if opts.renderer.highlight_git then
     M.get_highlight = get_highlight_
   else
     M.get_highlight = nil_

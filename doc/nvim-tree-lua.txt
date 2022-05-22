@@ -390,8 +390,8 @@ Git integration with icons and colors.
       Type: `number`, Default: `400` (ms)
 
   You will still need to set |renderer.icons.show.git| `= true` or
-  `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
-  changed in the future versions.
+  |renderer.highlight_git| `= true` to be able to see things in the
+  tree. This will be changed in the future versions.
 
   The configurable timeout will kill the current process and so disable the
   git integration for the project that takes too long.
@@ -458,6 +458,11 @@ UI rendering setup
 
     *nvim-tree.renderer.add_trailing*
     Appends a trailing slash to folder names.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_git*
+    Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
+    This can be used with or without the icons.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_opened_files*
@@ -701,11 +706,6 @@ Configuration for diagnostic logging.
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
-
-|g:nvim_tree_git_hl|                                *g:nvim_tree_git_hl*
-
-You can enable file highlight for git attributes by setting this property.
-This can be used with or without the icons.
 
 |g:nvim_tree_group_empty|                      *g:nvim_tree_group_empty*
 
