@@ -32,14 +32,11 @@ use {
 
 ## Setup
 
-Options are currently being migrated into the setup function, you need to run `require'nvim-tree'.setup()` in your personal configurations.
 Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
-Note that options under the `g:` command should be set **BEFORE** running the setup function.
-These are being migrated to the setup function incrementally, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
+Legacy `g:` options have been migrated to the setup function. See [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) for information on migrating your configuration.
+
 ```vim
 " vimrc
-let g:nvim_tree_create_in_closed_folder = 1 "0 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
-
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
@@ -72,6 +69,7 @@ require'nvim-tree'.setup {
 -- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
 require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
+  create_in_closed_folder = false,
   disable_netrw = false,
   hijack_cursor = false,
   hijack_netrw = true,

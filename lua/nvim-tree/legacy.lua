@@ -267,6 +267,12 @@ local g_migrations = {
       o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd ~= 0
     end
   end,
+
+  nvim_tree_create_in_closed_folder = function(o)
+    if o.create_in_closed_folder == nil then
+      o.create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder ~= 0
+    end
+  end,
 }
 
 local function refactored(opts)
