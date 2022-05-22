@@ -131,33 +131,7 @@ end
 local function open_file_in_tab(filename)
   if M.quit_on_open then
     view.close()
-  else
-    -- Switch window first to ensure new window doesn't inherit settings from
-    -- NvimTree
-    if lib.target_winid > 0 and api.nvim_win_is_valid(lib.target_winid) then
-      api.nvim_set_current_win(lib.target_winid)
-    else
-      vim.cmd "wincmd p"
-    end
   end
-
-  -- This sequence of commands are here to ensure a number of things: the new
-  -- buffer must be opened in the current tabpage first so that focus can be
-  -- brought back to the tree if it wasn't quit_on_open. It also ensures that
-  -- when we open the new tabpage with the file, its window doesn't inherit
-  -- settings from NvimTree, as it was already loaded.
-
-  vim.cmd("edit " .. vim.fn.fnameescape(filename))
-
-  local alt_bufid = vim.fn.bufnr "#"
-  if alt_bufid ~= -1 then
-    api.nvim_set_current_buf(alt_bufid)
-  end
-
-  if not M.quit_on_open then
-    vim.cmd "wincmd p"
-  end
-
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
