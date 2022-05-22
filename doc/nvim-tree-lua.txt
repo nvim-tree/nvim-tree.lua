@@ -98,6 +98,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       sort_by = "name",
       update_cwd = false,
       reload_on_bufenter = false,
+      respect_buf_cwd = false,
       view = {
         width = 30,
         height = 30,
@@ -304,6 +305,10 @@ Changes the tree root directory on `DirChanged` and refreshes the tree.
 
 *nvim-tree.reload_on_bufenter*
 Automatically reloads the tree on `BufEnter` nvim-tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.respect_buf_cwd*
+Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_directories*
@@ -712,11 +717,6 @@ Configuration for diagnostic logging.
 
 ==============================================================================
 OPTIONS				                  *nvim-tree-options*
-
-|g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
-
-Can be 0 or 1. 0 by default.
-Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 
 |g:nvim_tree_create_in_closed_folder|     *g:nvim_tree_create_in_closed_folder*
 

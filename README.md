@@ -38,7 +38,6 @@ Note that options under the `g:` command should be set **BEFORE** running the se
 These are being migrated to the setup function incrementally, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
 ```vim
 " vimrc
-let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 let g:nvim_tree_create_in_closed_folder = 1 "0 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
 
 nnoremap <C-n> :NvimTreeToggle<CR>
@@ -84,6 +83,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   sort_by = "name",
   update_cwd = false,
   reload_on_bufenter = false,
+  respect_buf_cwd = false,
   view = {
     width = 30,
     height = 30,

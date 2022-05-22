@@ -355,6 +355,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   sort_by = "name",
   update_cwd = false,
   reload_on_bufenter = false,
+  respect_buf_cwd = false,
   view = {
     width = 30,
     height = 30,

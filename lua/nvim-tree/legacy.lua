@@ -261,6 +261,12 @@ local g_migrations = {
       o.renderer.group_empty = vim.g.nvim_tree_group_empty == 1
     end
   end,
+
+  nvim_tree_respect_buf_cwd = function(o)
+    if o.respect_buf_cwd == nil then
+      o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd ~= 0
+    end
+  end,
 }
 
 local function refactored(opts)
