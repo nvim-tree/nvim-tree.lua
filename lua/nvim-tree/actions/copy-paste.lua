@@ -241,7 +241,8 @@ function M.copy_absolute_path(node)
 end
 
 function M.setup(opts)
-  M.use_system_clipboard = opts.actions.use_system_clipboard
+  M.use_sys_clipboard = opts.actions.use_sys_clipboard
+  if M.use_sys_clipboard == nil then M.use_sys_clipboard = true end
 end
 
 return M

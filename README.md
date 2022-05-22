@@ -36,6 +36,7 @@ Options are currently being migrated into the setup function, you need to run `r
 Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
 Note that options under the `g:` command should be set **BEFORE** running the setup function.
 These are being migrated to the setup function incrementally, check [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) if you encounter any problems related to configs not working after update.
+
 ```vim
 " vimrc
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
@@ -128,6 +129,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   update_cwd = false,
+  menu = {
+    actions = {}
+  },
   reload_on_bufenter = false,
   view = {
     width = 30,
@@ -279,6 +283,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 ### Settings
 
 The `list` option in `view.mappings.list` is a table of
+
 ```lua
 -- key can be either a string or a table of string (lhs)
 -- action is the name of the action, set to `""` to remove default action
@@ -300,6 +305,7 @@ local list = {
 ```
 
 These are the default bindings:
+
 ```lua
 
 -- default mappings
@@ -357,6 +363,7 @@ You can toggle the help UI by pressing `g?`.
 4. You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
 5. If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 6. You can automatically close the tab/vim when nvim-tree is the last window in the tab. WARNING: other plugins or automation may interfere with this:
+
 ```vim
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 ```
@@ -382,15 +389,15 @@ log = {
 
 Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
-*Performance Tips:*
+_Performance Tips:_
 
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/kyazdani42/nvim-tree.lua/issues/549#issuecomment-1127394585).
+- If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/kyazdani42/nvim-tree.lua/issues/549#issuecomment-1127394585).
 
-* Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
+- Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
 
-* Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
+- Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
 
-* Try temporarily disabling git integration by setting `git.enable = false` in your setup.
+- Try temporarily disabling git integration by setting `git.enable = false` in your setup.
 
 ## Screenshots
 

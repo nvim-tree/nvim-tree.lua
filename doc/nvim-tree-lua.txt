@@ -97,6 +97,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       open_on_tab = false,
       sort_by = "name",
       update_cwd = false,
+      menu = {
+        actions = {}
+      },
       reload_on_bufenter = false,
       view = {
         width = 30,
