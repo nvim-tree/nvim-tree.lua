@@ -122,7 +122,7 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   end
 
   local foldername_hl = "NvimTreeFolderName"
-  if self.special_files[node.absolute_path] then
+  if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
     foldername_hl = "NvimTreeSpecialFolderName"
   elseif node.open then
     foldername_hl = "NvimTreeOpenedFolderName"
