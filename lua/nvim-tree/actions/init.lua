@@ -193,14 +193,16 @@ local function merge_mappings(user_mappings)
     if type(map.key) == "table" then
       local filtered_keys = {}
       for _, key in pairs(map.key) do
-        if not vim.tbl_contains(user_keys, key:lower()) and not vim.tbl_contains(removed_keys, key:lower()) then
+        local lhs = string.find(key:lower(), "^<.*>$") and key:lower() or key
+        if not vim.tbl_contains(user_keys, lhs) and not vim.tbl_contains(removed_keys, lhs) then
           table.insert(filtered_keys, key)
         end
       end
       map.key = filtered_keys
       return not vim.tbl_isempty(map.key)
     else
-      return not vim.tbl_contains(user_keys, map.key:lower()) and not vim.tbl_contains(removed_keys, map.key:lower())
+      local lhs = string.find(map.key:lower(), "^<.*>$") and map.key:lower() or key
+      return not vim.tbl_contains(user_keys, lhs) and not vim.tbl_contains(removed_keys, lhs)
     end
   end, M.mappings)
 
