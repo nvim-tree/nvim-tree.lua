@@ -125,7 +125,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
         folder_arrow = true,
         git = true,
       },
-      symbols = {
+      glyphs = {
         default = "",
         symlink = "",
         folder = {
@@ -147,7 +147,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
           deleted = "",
           ignored = "◌",
         },
-      }
+      },
     },
     special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
   },

@@ -394,7 +394,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder_arrow = true,
         git = true,
       },
-      symbols = {
+      glyphs = {
         default = "",
         symlink = "",
         folder = {

@@ -243,8 +243,8 @@ local g_migrations = {
 
   nvim_tree_icons = function(o)
     utils.table_create_missing(o, "renderer.icons")
-    if o.renderer.icons.symbols == nil and type(vim.g.nvim_tree_icons) == "table" then
-      o.renderer.icons.symbols = vim.g.nvim_tree_icons
+    if o.renderer.icons.glyphs == nil and type(vim.g.nvim_tree_icons) == "table" then
+      o.renderer.icons.glyphs = vim.g.nvim_tree_icons
     end
   end,
 }

@@ -144,9 +144,9 @@ local function get_highlight_(node)
 end
 
 function M.setup(opts)
-  M.git_icons = build_icons_table(opts.renderer.icons.symbols.git)
+  M.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
 
-  M.setup_signs(opts.renderer.icons.symbols.git)
+  M.setup_signs(opts.renderer.icons.glyphs.git)
 
   if opts.renderer.icons.show.git then
     M.get_icons = get_icons_
