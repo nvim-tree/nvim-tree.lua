@@ -7,7 +7,7 @@ end
 local function get_padding_arrows()
   return function(depth, _, _, node)
     if node.nodes then
-      local icon = M.config.icons.symbols.folder[node.open and "arrow_open" or "arrow_closed"]
+      local icon = M.config.icons.glyphs.folder[node.open and "arrow_open" or "arrow_closed"]
       return string.rep(" ", depth - 2) .. icon .. " "
     end
     return string.rep(" ", depth)

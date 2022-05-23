@@ -141,7 +141,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
             folder_arrow = true,
             git = true,
           },
-          symbols = {
+          glyphs = {
             default = "",
             symlink = "",
             folder = {
@@ -545,19 +545,19 @@ UI rendering setup
             Requires |git.enable| `= true`
               Type: `boolean`, Default: `true`
 
-        *nvim-tree.renderer.icons.symbols*
-        Configuration options for icon symbols.
+        *nvim-tree.renderer.icons.glyphs*
+        Configuration options for icon glyphs.
 
-            *nvim-tree.renderer.icons.symbols.default*
-            Symbol for files. Will be overridden by `nvim-web-devicons` if available.
+            *nvim-tree.renderer.icons.glyphs.default*
+            Glyph for files. Will be overridden by `nvim-web-devicons` if available.
               Type: `string`, Default: `""`
 
-            *nvim-tree.renderer.icons.symbols.symlink*
-            Symbol for symlinks to files.
+            *nvim-tree.renderer.icons.glyphs.symlink*
+            Glyph for symlinks to files.
               Type: `string`, Default: `""`
 
-            *nvim-tree.renderer.icons.symbols.folder*
-            Symbol for directories.
+            *nvim-tree.renderer.icons.glyphs.folder*
+            Glyphs for directories.
               Type: `table`, Default:
                 `{`
                   `arrow_closed = "",`
@@ -570,8 +570,8 @@ UI rendering setup
                   `symlink_open = "",`
                 `}`
 
-            *nvim-tree.renderer.icons.symbols.git*
-            Symbol for git status.
+            *nvim-tree.renderer.icons.glyphs.git*
+            Glyphs for git status.
               Type: `table`, Default:
                 `{`
                   `unstaged = "✗",`

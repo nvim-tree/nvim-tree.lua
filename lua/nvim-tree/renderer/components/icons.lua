@@ -1,7 +1,7 @@
 local M = { i = {} }
 
 local function config_symlinks()
-  M.i.symlink = #M.config.symbols.symlink > 0 and M.config.symbols.symlink .. M.config.padding or ""
+  M.i.symlink = #M.config.glyphs.symlink > 0 and M.config.glyphs.symlink .. M.config.padding or ""
   M.i.symlink_arrow = M.config.symlink_arrow
 end
 
@@ -12,20 +12,20 @@ end
 local function get_folder_icon(open, is_symlink, has_children)
   local n
   if is_symlink and open then
-    n = M.config.symbols.folder.symlink_open
+    n = M.config.glyphs.folder.symlink_open
   elseif is_symlink then
-    n = M.config.symbols.folder.symlink
+    n = M.config.glyphs.folder.symlink
   elseif open then
     if has_children then
-      n = M.config.symbols.folder.open
+      n = M.config.glyphs.folder.open
     else
-      n = M.config.symbols.folder.empty_open
+      n = M.config.glyphs.folder.empty_open
     end
   else
     if has_children then
-      n = M.config.symbols.folder.default
+      n = M.config.glyphs.folder.default
     else
-      n = M.config.symbols.folder.empty
+      n = M.config.glyphs.folder.empty
     end
   end
   return n .. M.config.padding
@@ -33,7 +33,7 @@ end
 
 local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
-  local icon = M.config.symbols.default
+  local icon = M.config.glyphs.default
   if #icon > 0 then
     return icon .. M.config.padding, hl_group
   else
