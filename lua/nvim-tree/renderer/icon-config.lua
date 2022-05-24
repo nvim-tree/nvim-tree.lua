@@ -2,7 +2,7 @@ local M = {}
 
 function M.get_config()
   local show_icons = vim.g.nvim_tree_show_icons or { git = 1, folders = 1, files = 1, folder_arrows = 1 }
-  local icons = {
+  local default_icons = {
     default = "",
     symlink = "",
     git_icons = {
@@ -27,27 +27,10 @@ function M.get_config()
   }
 
   local user_icons = vim.g.nvim_tree_icons
-  if user_icons then
-    if user_icons.default then
-      icons.default = user_icons.default
-      icons.symlink = user_icons.default
-    end
-    if user_icons.symlink then
-      icons.symlink = user_icons.symlink
-    end
-    for key, val in pairs(user_icons.git or {}) do
-      if icons.git_icons[key] then
-        icons.git_icons[key] = val
-      end
-    end
-    for key, val in pairs(user_icons.folder or {}) do
-      if icons.folder_icons[key] then
-        icons.folder_icons[key] = val
-      end
-    end
-  end
+  local icons = vim.tbl_deep_extend("keep", user_icons, default_icons)
 
   local has_devicons = pcall(require, "nvim-web-devicons")
+
   return {
     show_file_icon = show_icons.files == 1,
     show_folder_icon = show_icons.folders == 1,
