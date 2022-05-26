@@ -1,5 +1,7 @@
 local M = {}
 
+local has_cygpath = vim.fn.executable "cygpath" == 1
+
 function M.get_toplevel(cwd)
   local cmd = "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel"
   local toplevel = vim.fn.system(cmd)
@@ -10,6 +12,10 @@ function M.get_toplevel(cwd)
 
   -- git always returns path with forward slashes
   if vim.fn.has "win32" == 1 then
+    -- msys2 git support
+    if has_cygpath then
+      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
+    end
     toplevel = toplevel:gsub("/", "\\")
   end
 
