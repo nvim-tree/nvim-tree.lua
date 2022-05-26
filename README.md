@@ -261,6 +261,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 - Double left click acts like `<CR>`
 - Double right click acts like `<C-]>`
 - `W` will collapse the whole tree
+- `E` will expand the whole tree. Be aware this might hang neovim for a while if running on a big folder (such as home dir or root dir).
 - `S` will prompt the user to enter a path and then expands the tree to match the path
 - `.` will enter vim command mode with the file the cursor is on
 - `C-k` will toggle a popup with file infos about the file under the cursor
@@ -331,6 +332,7 @@ local list = {
   { key = "q",                            action = "close" },
   { key = "g?",                           action = "toggle_help" },
   { key = "W",                            action = "collapse_all" },
+  { key = "E",                            action = "expand_all" },
   { key = "S",                            action = "search_node" },
   { key = "<C-k>",                        action = "toggle_file_info" },
   { key = ".",                            action = "run_file_command" }
