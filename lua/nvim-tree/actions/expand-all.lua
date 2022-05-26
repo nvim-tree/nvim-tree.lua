@@ -11,6 +11,10 @@ local function expand(node)
 end
 
 local function iterate(_node)
+  if _node.parent and _node.nodes and not _node.open then
+    expand(_node)
+  end
+
   for _, node in pairs(_node.nodes) do
     if node.nodes and not node.open then
       expand(node)
@@ -22,8 +26,9 @@ local function iterate(_node)
   end
 end
 
-function M.fn()
-  iterate(core.get_explorer())
+function M.fn(base_node)
+  local node = base_node.nodes and base_node or core.get_explorer()
+  iterate(node)
   renderer.draw()
 end
 
