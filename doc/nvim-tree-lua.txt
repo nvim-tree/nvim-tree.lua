@@ -208,6 +208,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           global = false,
           restrict_above_cwd = false,
         },
+        expand_all = {
+          max_folder_discovery = 300,
+        },
         open_file = {
           quit_on_open = false,
           resize_window = true,
@@ -632,6 +635,11 @@ Configuration for various actions.
     *nvim-tree.actions.change_dir.restrict_above_cwd*
     Restrict changing to a directory above the global current working directory.
       Type: `boolean`, Default: `false`
+
+    *nvim-tree.actions.expand_all.max_folder_discovery*
+    Limit the number of folders being explored when expanding every folders.
+    Avoids hanging neovim when running this action on very large folders.
+      Type: `number`, Default: `300`
 
     *nvim-tree.actions.open_file.quit_on_open*
     Closes the explorer when opening a file.
