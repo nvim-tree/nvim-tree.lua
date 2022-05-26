@@ -5,6 +5,7 @@ local M = {}
 local events = require "nvim-tree.events"
 
 M.View = {
+  adaptive_size = false,
   tabpages = {},
   cursors = {},
   hide_root_folder = false,
@@ -185,6 +186,24 @@ function M.open(options)
     vim.cmd "wincmd p"
   end
   events._dispatch_on_tree_open()
+end
+
+local function grow()
+  local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
+  local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
+  local max_length = M.View.initial_width
+  for _, l in pairs(lines) do
+    if max_length < #l then
+      max_length = #l
+    end
+  end
+  M.resize(max_length)
+end
+
+function M.grow_from_content()
+  if M.View.adaptive_size and M.View.side == "left" or M.View.side == "right" then
+    grow()
+  end
 end
 
 function M.resize(size)
@@ -373,8 +392,10 @@ end
 
 function M.setup(opts)
   local options = opts.view or {}
+  M.View.adaptive_size = options.adaptive_size
   M.View.side = options.side
   M.View.width = options.width
+  M.View.initial_width = get_size()
   M.View.height = options.height
   M.View.hide_root_folder = options.hide_root_folder
   M.View.preserve_window_proportions = options.preserve_window_proportions
