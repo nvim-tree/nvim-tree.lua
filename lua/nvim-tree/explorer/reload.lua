@@ -48,11 +48,11 @@ function M.reload(node, status)
       child_names[abs] = true
       if not nodes_by_path[abs] then
         if t == "directory" and uv.fs_access(abs, "R") then
-          table.insert(node.nodes, builders.folder(node, abs, name, status, node_ignored))
+          table.insert(node.nodes, builders.folder(node, abs, name))
         elseif t == "file" then
-          table.insert(node.nodes, builders.file(node, abs, name, status, node_ignored))
+          table.insert(node.nodes, builders.file(node, abs, name))
         elseif t == "link" then
-          local link = builders.link(node, abs, name, status, node_ignored)
+          local link = builders.link(node, abs, name)
           if link.link_to ~= nil then
             table.insert(node.nodes, link)
           end
