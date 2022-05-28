@@ -32,11 +32,11 @@ local function populate_children(handle, cwd, node, status)
     then
       local child = nil
       if t == "directory" and uv.fs_access(abs, "R") then
-        child = builders.folder(node, abs, name, status, node_ignored)
+        child = builders.folder(node, abs, name)
       elseif t == "file" then
-        child = builders.file(node, abs, name, status, node_ignored)
+        child = builders.file(node, abs, name)
       elseif t == "link" then
-        local link = builders.link(node, abs, name, status, node_ignored)
+        local link = builders.link(node, abs, name)
         if link.link_to ~= nil then
           child = link
         end
