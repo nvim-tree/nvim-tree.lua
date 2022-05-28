@@ -34,8 +34,8 @@ function Builder:configure_trailing_slash(with_trailing)
   return self
 end
 
-function Builder:configure_special_map(special_map)
-  self.special_map = special_map
+function Builder:configure_special_files(special_files)
+  self.special_files = special_files
   return self
 end
 
@@ -50,14 +50,8 @@ function Builder:configure_filter(filter, prefix)
   return self
 end
 
-function Builder:configure_opened_file_highlighting(level)
-  if level == 1 then
-    self.open_file_highlight = "icon"
-  elseif level == 2 then
-    self.open_file_highlight = "name"
-  elseif level == 3 then
-    self.open_file_highlight = "all"
-  end
+function Builder:configure_opened_file_highlighting(highlight_opened_files)
+  self.highlight_opened_files = highlight_opened_files
 
   return self
 end
@@ -128,7 +122,7 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   end
 
   local foldername_hl = "NvimTreeFolderName"
-  if self.special_map[node.absolute_path] then
+  if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
     foldername_hl = "NvimTreeSpecialFolderName"
   elseif node.open then
     foldername_hl = "NvimTreeOpenedFolderName"
@@ -183,12 +177,12 @@ function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_le
   local from = offset
   local to = offset
 
-  if self.open_file_highlight == "icon" then
+  if self.highlight_opened_files == "icon" then
     to = from + icon_length
-  elseif self.open_file_highlight == "name" then
+  elseif self.highlight_opened_files == "name" then
     from = offset + icon_length + git_icons_length
     to = from + #node.name
-  elseif self.open_file_highlight == "all" then
+  elseif self.highlight_opened_files == "all" then
     to = from + icon_length + git_icons_length + #node.name
   end
 
@@ -209,7 +203,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
   local col_start = offset + #icon + git_icons_length
   local col_end = col_start + #node.name
 
-  if self.special_map[node.absolute_path] or self.special_map[node.name] then
+  if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
     self:_insert_highlight("NvimTreeSpecialFile", col_start, col_end)
   elseif node.executable then
     self:_insert_highlight("NvimTreeExecFile", col_start, col_end)
@@ -217,7 +211,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
     self:_insert_highlight("NvimTreeImageFile", col_start, col_end)
   end
 
-  local should_highlight_opened_files = self.open_file_highlight and vim.fn.bufloaded(node.absolute_path) > 0
+  local should_highlight_opened_files = self.highlight_opened_files and vim.fn.bufloaded(node.absolute_path) > 0
   if should_highlight_opened_files then
     self:_highlight_opened_files(node, offset, #icon, git_icons_length)
   end

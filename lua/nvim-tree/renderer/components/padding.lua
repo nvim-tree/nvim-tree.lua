@@ -4,10 +4,10 @@ function M.get_padding(depth)
   return string.rep(" ", depth)
 end
 
-local function get_padding_arrows(icon_state)
+local function get_padding_arrows()
   return function(depth, _, _, node)
     if node.nodes then
-      local icon = icon_state.icons.folder_icons[node.open and "arrow_open" or "arrow_closed"]
+      local icon = M.config.icons.glyphs.folder[node.open and "arrow_open" or "arrow_closed"]
       return string.rep(" ", depth - 2) .. icon .. " "
     end
     return string.rep(" ", depth)
@@ -33,10 +33,8 @@ local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
 end
 
 function M.reload_padding_function()
-  local icon_state = require("nvim-tree.renderer.icon-config").get_config()
-
-  if icon_state.show_folder_icon and icon_state.show_folder_arrows then
-    M.get_padding = get_padding_arrows(icon_state)
+  if M.config.icons.show.folder and M.config.icons.show.folder_arrow then
+    M.get_padding = get_padding_arrows()
   end
 
   if M.config.indent_markers.enable then
@@ -45,9 +43,7 @@ function M.reload_padding_function()
 end
 
 function M.setup(opts)
-  M.config = {
-    indent_markers = opts.renderer.indent_markers,
-  }
+  M.config = opts.renderer
 end
 
 return M

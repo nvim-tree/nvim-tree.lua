@@ -176,6 +176,103 @@ local g_migrations = {
       o.renderer.indent_markers.enable = vim.g.nvim_tree_indent_markers == 1
     end
   end,
+
+  nvim_tree_add_trailing = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.add_trailing == nil then
+      o.renderer.add_trailing = vim.g.nvim_tree_add_trailing == 1
+    end
+  end,
+
+  nvim_tree_highlight_opened_files = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.highlight_opened_files == nil then
+      if vim.g.nvim_tree_highlight_opened_files == 1 then
+        o.renderer.highlight_opened_files = "icon"
+      elseif vim.g.nvim_tree_highlight_opened_files == 2 then
+        o.renderer.highlight_opened_files = "name"
+      elseif vim.g.nvim_tree_highlight_opened_files == 3 then
+        o.renderer.highlight_opened_files = "all"
+      end
+    end
+  end,
+
+  nvim_tree_root_folder_modifier = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.root_folder_modifier == nil then
+      o.renderer.root_folder_modifier = vim.g.nvim_tree_root_folder_modifier
+    end
+  end,
+
+  nvim_tree_special_files = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.special_files == nil and type(vim.g.nvim_tree_special_files) == "table" then
+      o.renderer.special_files = {}
+      for k, v in pairs(vim.g.nvim_tree_special_files) do
+        if v ~= 0 then
+          table.insert(o.renderer.special_files, k)
+        end
+      end
+    end
+  end,
+
+  nvim_tree_icon_padding = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.padding == nil then
+      o.renderer.icons.padding = vim.g.nvim_tree_icon_padding
+    end
+  end,
+
+  nvim_tree_symlink_arrow = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.symlink_arrow == nil then
+      o.renderer.icons.symlink_arrow = vim.g.nvim_tree_symlink_arrow
+    end
+  end,
+
+  nvim_tree_show_icons = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.show == nil and type(vim.g.nvim_tree_show_icons) == "table" then
+      o.renderer.icons.show = {}
+      o.renderer.icons.show.file = vim.g.nvim_tree_show_icons.files == 1
+      o.renderer.icons.show.folder = vim.g.nvim_tree_show_icons.folders == 1
+      o.renderer.icons.show.folder_arrow = vim.g.nvim_tree_show_icons.folder_arrows == 1
+      o.renderer.icons.show.git = vim.g.nvim_tree_show_icons.git == 1
+    end
+  end,
+
+  nvim_tree_icons = function(o)
+    utils.table_create_missing(o, "renderer.icons")
+    if o.renderer.icons.glyphs == nil and type(vim.g.nvim_tree_icons) == "table" then
+      o.renderer.icons.glyphs = vim.g.nvim_tree_icons
+    end
+  end,
+
+  nvim_tree_git_hl = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.highlight_git == nil then
+      o.renderer.highlight_git = vim.g.nvim_tree_git_hl == 1
+    end
+  end,
+
+  nvim_tree_group_empty = function(o)
+    utils.table_create_missing(o, "renderer")
+    if o.renderer.group_empty == nil then
+      o.renderer.group_empty = vim.g.nvim_tree_group_empty == 1
+    end
+  end,
+
+  nvim_tree_respect_buf_cwd = function(o)
+    if o.respect_buf_cwd == nil then
+      o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd == 1
+    end
+  end,
+
+  nvim_tree_create_in_closed_folder = function(o)
+    if o.create_in_closed_folder == nil then
+      o.create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder == 1
+    end
+  end,
 }
 
 local function refactored(opts)

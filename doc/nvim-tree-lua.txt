@@ -87,6 +87,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
+      create_in_closed_folder = false,
       disable_netrw = false,
       hijack_cursor = false,
       hijack_netrw = true,
@@ -98,6 +99,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       sort_by = "name",
       update_cwd = false,
       reload_on_bufenter = false,
+      respect_buf_cwd = false,
       view = {
         width = 30,
         height = 30,
@@ -115,6 +117,11 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
       },
       renderer = {
+        add_trailing = false,
+        group_empty = false,
+        highlight_git = false,
+        highlight_opened_files = "none",
+        root_folder_modifier = ":~",
         indent_markers = {
           enable = false,
           icons = {
@@ -126,7 +133,39 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         icons = {
           webdev_colors = true,
           git_placement = "before",
+          padding = " ",
+          symlink_arrow = " ➛ ",
+          show = {
+            file = true,
+            folder = true,
+            folder_arrow = true,
+            git = true,
+          },
+          glyphs = {
+            default = "",
+            symlink = "",
+            folder = {
+              arrow_closed = "",
+              arrow_open = "",
+              default = "",
+              open = "",
+              empty = "",
+              empty_open = "",
+              symlink = "",
+              symlink_open = "",
+            },
+            git = {
+              unstaged = "✗",
+              staged = "✓",
+              unmerged = "",
+              renamed = "➜",
+              untracked = "★",
+              deleted = "",
+              ignored = "◌",
+            },
+          },
         },
+        special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
       },
       hijack_directories = {
         enable = true,
@@ -205,9 +244,6 @@ Values may be functions. Warning: this may result in unexpected behaviour.
     } -- END_DEFAULT_OPTS
 <
 
-As options are currently being migrated, configuration of global options in
-|nvim-tree-options| should be done BEFORE the setup call.
-
 Here is a list of the options available in the setup call:
 
 *nvim-tree.disable_netrw*
@@ -243,6 +279,11 @@ in some scenarios (eg using vim startify).
 Reloads the explorer every time a buffer is written to.
   Type: `boolean`, Default: `true`
 
+*nvim-tree.create_in_closed_folder*
+Creating a file when the cursor is on a closed folder will set the
+path to be inside the closed folder, otherwise the parent folder.
+  Type: `boolean`, Default: `false`
+
 *nvim-tree.open_on_tab*
 Opens the tree automatically when switching tabpage or opening a new tabpage
 if the tree was previously open.
@@ -267,6 +308,10 @@ Changes the tree root directory on `DirChanged` and refreshes the tree.
 
 *nvim-tree.reload_on_bufenter*
 Automatically reloads the tree on `BufEnter` nvim-tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.respect_buf_cwd*
+Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_directories*
@@ -346,7 +391,7 @@ Git integration with icons and colors.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.ignore*
-    Ignore files based on `.gitignore`.
+    Ignore files based on `.gitignore`. Requires |git.enable| `= true`
     Toggle via the `toggle_git_ignored` action, default mapping `I`.
       Type: `boolean`, Default: `true`
 
@@ -354,9 +399,9 @@ Git integration with icons and colors.
     Kills the git process after some time if it takes too long.
       Type: `number`, Default: `400` (ms)
 
-  You will still need to configure `g:nvim_tree_show_icons.git` or
-  `g:nvim_tree_git_hl` to be able to see things in the tree. This will be
-  changed in the future versions.
+  You will still need to set |renderer.icons.show.git| `= true` or
+  |renderer.highlight_git| `= true` to be able to see things in the
+  tree. This will be changed in the future versions.
 
   The configurable timeout will kill the current process and so disable the
   git integration for the project that takes too long.
@@ -421,6 +466,29 @@ Window / buffer setup.
 *nvim-tree.renderer*
 UI rendering setup
 
+    *nvim-tree.renderer.add_trailing*
+    Appends a trailing slash to folder names.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.group_empty*
+    Compact folders that only contain a single folder into one node in the file tree.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_git*
+    Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
+    This can be used with or without the icons.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_opened_files*
+    Highlight icons and/or names for opened files.
+    Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+      Type: `string`, Default: `"none"`
+
+    *nvim-tree.renderer.root_folder_modifier*
+    In what format to show root folder. See `:help filename-modifiers` for
+    available options.
+      Type: `string`, Default: `":~"`
+
     *nvim-tree.renderer.indent_markers*
     Configuration options for tree indent markers.
 
@@ -446,6 +514,78 @@ UI rendering setup
 	for the nvim-tree window.
 	Note that the diagnostic signs will take precedence over the git signs.
 	  Type: `after`, `before` or `signcolumn`, Default: `before`
+
+	*nvim-tree.renderer.icons.padding*
+	Inserted between icon and filename.
+	Use with caution, it could break rendering if you set an empty string depending on your font.
+          Type: `string`, Default: `" "`
+
+	*nvim-tree.renderer.icons.symlink_arrow*
+	Used as a separator between symlinks' source and target.
+          Type: `string`, Default: `" ➛ "`
+
+        *nvim-tree.renderer.icons.show*
+        Configuration options for showing icon types.
+
+            *nvim-tree.renderer.icons.show.file*
+            Show an icon before the file name. `nvim-web-devicons` will be used if available.
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.folder*
+            Show an icon before the folder name.
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.folder_arrow*
+            Show a small arrow before the folder icon.
+            Requires |renderer.icons.show.folder| `= true` and |renderer.indent_markers.enable| `= false` 
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.git*
+            Show a git status icon, see |renderer.icons.git_placement|
+            Requires |git.enable| `= true`
+              Type: `boolean`, Default: `true`
+
+        *nvim-tree.renderer.icons.glyphs*
+        Configuration options for icon glyphs.
+
+            *nvim-tree.renderer.icons.glyphs.default*
+            Glyph for files. Will be overridden by `nvim-web-devicons` if available.
+              Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.glyphs.symlink*
+            Glyph for symlinks to files.
+              Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.glyphs.folder*
+            Glyphs for directories.
+              Type: `table`, Default:
+                `{`
+                  `arrow_closed = "",`
+                  `arrow_open = "",`
+                  `default = "",`
+                  `open = "",`
+                  `empty = "",`
+                  `empty_open = "",`
+                  `symlink = "",`
+                  `symlink_open = "",`
+                `}`
+
+            *nvim-tree.renderer.icons.glyphs.git*
+            Glyphs for git status.
+              Type: `table`, Default:
+                `{`
+                  `unstaged = "✗",`
+                  `staged = "✓",`
+                  `unmerged = "",`
+                  `renamed = "➜",`
+                  `untracked = "★",`
+                  `deleted = "",`
+                  `ignored = "◌",`
+                `}`
+
+    *nvim-tree.renderer.special_files*
+    A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
+      Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
 
 *nvim-tree.filters*
 Filtering options.
@@ -577,133 +717,6 @@ Configuration for diagnostic logging.
 	*nvim-tree.log.types.git*
 	Git processing.
           Type: `boolean`, Default: `false`
-
-==============================================================================
-OPTIONS				                  *nvim-tree-options*
-
-|g:nvim_tree_show_icons|			        *g:nvim_tree_show_icons*
-
-Dictionary, if your terminal or font doesn't support certain unicode
-character, the tree UI might be messed up. The following configuration
-can disable icons per type:
->
-    let g:nvim_tree_show_icons = {
-	\ 'git': 1,
-	\ 'folders': 1,
-	\ 'files': 1,
-  \ 'folder_arrows': 1,
-	\}
-
-Can be one of `1` and `0` for each key. By default the tree will try
-to render the icons. The `files` key can only work if `nvim-web-devicons`
-is installed and in your |runtimepath|
-(https://github.com/kyazdani42/nvim-web-devicons)
-if folder is 1, you can also set `folder_arrows = 1` to show small arrows
-next to the folder icons but this will not work when you set
-|renderer.indent_markers.enable| (because of UI conflict).
-
-|g:nvim_tree_highlight_opened_files|			        *g:nvim_tree_highlight_opened_files*
-
-Highlight icons and/or names for opened files and directories
-Default is 0
-
-Must be:
-    0: No highlight
-    1: Enable highligting for folders and file icons only.
-    2: Enable highligting for folders and file names only.
-    3: Enable highligting for folders and both file icons and names.
-
-|g:nvim_tree_icons|                                *g:nvim_tree_icons*
-
-You can set icons for:
-
-- The git status.
-- The default icon that shows when no icon is found for a file
-  or if you are not using icons.
-- Symlinks. If an icon is not provided, the `default` icon is used.
->
-  let g:nvim_tree_icons = {
-      \ 'default':        "",
-      \ 'symlink':        "",
-      \ 'git': {
-      \   'unstaged':     "✗",
-      \   'staged':       "✓",
-      \   'unmerged':     "",
-      \   'renamed':      "➜",
-      \   'untracked':    "★",
-      \   'deleted':      "",
-      \  },
-      \ 'folder': {
-      \   'arrow_open':   "",
-      \   'arrow_closed': "",
-      \   'default':      "",
-      \   'open':         "",
-      \   'empty':        "",
-      \   'empty_open':   "",
-      \   'symlink':      "",
-      \   'symlink_open': "",
-      \  },
-      \  'lsp': {
-      \    'hint': "",
-      \    'info': "",
-      \    'warning': "",
-      \    'error': "",
-      \  }
-      \ }
-
-|g:nvim_tree_git_hl|                                *g:nvim_tree_git_hl*
-
-You can enable file highlight for git attributes by setting this property.
-This can be used with or without the icons.
-
-|g:nvim_tree_root_folder_modifier|		     *g:nvim_tree_root_folder_modifier*
-
-In what format to show root folder. See `:help filename-modifiers` for
-available options.
-Default is `:~`
-
-|g:nvim_tree_add_trailing|			         *g:nvim_tree_add_trailing*
-
-Can be 0 or 1. When 1, appends a trailing slash to folder names.
-0 by default.
-
-|g:nvim_tree_group_empty|                      *g:nvim_tree_group_empty*
-
-Can be 0 or 1. When 1, folders that contain only one folder are grouped
-together. 0 by default.
-
-|g:nvim_tree_special_files|                    *g:nvim_tree_special_files*
-
-A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
-default table is
-
->
-    {
-      ["Cargo.toml"] = true,
-      Makefile = true,
-      ["README.md"] = true,
-      ["readme.md"] = true,
-   }
-<
-
-|g:nvim_tree_icon_padding|                *g:nvim_tree_icon_padding*
-
-One space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
-
-|g:nvim_tree_symlink_arrow|                *g:nvim_tree_symlink_arrow*
-
-Defaults to ' ➛ '. Used as a separator between symlinks' source and target.
-
-|g:nvim_tree_respect_buf_cwd|             *g:nvim_tree_respect_buf_cwd*
-
-Can be 0 or 1. 0 by default.
-Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
-
-|g:nvim_tree_create_in_closed_folder|     *g:nvim_tree_create_in_closed_folder*
-
-Can be 0 or 1. 0 by default.
-Creating a file when the cursor is on a closed folder will set the
-path to be inside the closed folder when 1, and on the parent folder when 0.
 
 ==============================================================================
 INFORMATIONS				        *nvim-tree-info*

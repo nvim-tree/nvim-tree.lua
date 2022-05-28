@@ -1,12 +1,10 @@
-local _icons = require "nvim-tree.renderer.icon-config"
 local utils = require "nvim-tree.utils"
 
 local M = {
   SIGN_GROUP = "NvimTreeGitSigns",
 }
 
-local function build_icons_table()
-  local i = M.icon_state.icons.git_icons
+local function build_icons_table(i)
   return {
     ["M "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
     [" M"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
@@ -85,7 +83,7 @@ local function get_icons_(node)
 
   local icons = M.git_icons[git_status]
   if not icons then
-    if vim.g.nvim_tree_git_hl ~= 1 then
+    if not M.config.highlight_git then
       warn_status(git_status)
     end
     return nil
@@ -126,8 +124,7 @@ local git_hl = {
   [" A"] = "none",
 }
 
-function M.setup_signs()
-  local i = M.icon_state.icons.git_icons
+function M.setup_signs(i)
   vim.fn.sign_define("NvimTreeGitDirty", { text = i.unstaged, texthl = "NvimTreeGitDirty" })
   vim.fn.sign_define("NvimTreeGitStaged", { text = i.staged, texthl = "NvimTreeGitStaged" })
   vim.fn.sign_define("NvimTreeGitMerge", { text = i.unmerged, texthl = "NvimTreeGitMerge" })
@@ -146,22 +143,20 @@ local function get_highlight_(node)
   return git_hl[git_status]
 end
 
-M.get_icons = nil_
-M.get_highlight = nil_
+function M.setup(opts)
+  M.config = opts.renderer
 
-M.icon_state = _icons.get_config()
-M.git_icons = build_icons_table()
+  M.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
 
-function M.reload()
-  M.icon_state = _icons.get_config()
-  M.git_icons = build_icons_table()
+  M.setup_signs(opts.renderer.icons.glyphs.git)
 
-  if M.icon_state.show_git_icon then
+  if opts.renderer.icons.show.git then
     M.get_icons = get_icons_
   else
     M.get_icons = nil_
   end
-  if vim.g.nvim_tree_git_hl == 1 then
+
+  if opts.renderer.highlight_git then
     M.get_highlight = get_highlight_
   else
     M.get_highlight = nil_

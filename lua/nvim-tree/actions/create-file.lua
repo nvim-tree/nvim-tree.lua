@@ -42,7 +42,7 @@ local function get_num_nodes(iter)
 end
 
 local function get_containing_folder(node)
-  local is_open = vim.g.nvim_tree_create_in_closed_folder == 1 or node.open
+  local is_open = M.config.create_in_closed_folder or node.open
   if node.nodes ~= nil and is_open then
     return utils.path_add_trailing(node.absolute_path)
   end
@@ -110,6 +110,10 @@ function M.fn(node)
     require("nvim-tree.actions.reloaders").reload_explorer()
     focus_file(new_file_path)
   end)
+end
+
+function M.setup(opts)
+  M.config = opts
 end
 
 return M

@@ -236,6 +236,7 @@ function M.setup(opts)
   require("nvim-tree.actions.open-file").setup(opts)
   require("nvim-tree.actions.change-dir").setup(opts)
   require("nvim-tree.actions.copy-paste").setup(opts)
+  require("nvim-tree.actions.create-file").setup(opts)
 
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend("force", DEFAULT_MAPPING_CONFIG, user_map_config)

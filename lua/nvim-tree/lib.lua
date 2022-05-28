@@ -68,8 +68,7 @@ function M.set_target_win()
 end
 
 local function handle_buf_cwd(cwd)
-  local respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd or 0
-  if respect_buf_cwd == 1 and cwd ~= core.get_explorer().cwd then
+  if M.respect_buf_cwd and cwd ~= core.get_explorer().cwd then
     require("nvim-tree.actions.change-dir").fn(cwd)
   end
 end
@@ -123,6 +122,7 @@ M.set_index_and_redraw = require("nvim-tree.actions.find-file").fn
 function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
   M.hijack_directories = opts.hijack_directories
+  M.respect_buf_cwd = opts.respect_buf_cwd
 end
 
 return M

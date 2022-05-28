@@ -1,10 +1,8 @@
-local icon_config = require "nvim-tree.renderer.icon-config"
-
 local M = { i = {} }
 
 local function config_symlinks()
-  M.i.symlink = #M.icons.symlink > 0 and M.icons.symlink .. M.padding or ""
-  M.i.symlink_arrow = vim.g.nvim_tree_symlink_arrow or " ➛ "
+  M.i.symlink = #M.config.glyphs.symlink > 0 and M.config.glyphs.symlink .. M.config.padding or ""
+  M.i.symlink_arrow = M.config.symlink_arrow
 end
 
 local function empty()
@@ -14,30 +12,30 @@ end
 local function get_folder_icon(open, is_symlink, has_children)
   local n
   if is_symlink and open then
-    n = M.icons.folder_icons.symlink_open
+    n = M.config.glyphs.folder.symlink_open
   elseif is_symlink then
-    n = M.icons.folder_icons.symlink
+    n = M.config.glyphs.folder.symlink
   elseif open then
     if has_children then
-      n = M.icons.folder_icons.open
+      n = M.config.glyphs.folder.open
     else
-      n = M.icons.folder_icons.empty_open
+      n = M.config.glyphs.folder.empty_open
     end
   else
     if has_children then
-      n = M.icons.folder_icons.default
+      n = M.config.glyphs.folder.default
     else
-      n = M.icons.folder_icons.empty
+      n = M.config.glyphs.folder.empty
     end
   end
-  return n .. M.padding
+  return n .. M.config.padding
 end
 
 local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
-  local icon = M.icons.default
+  local icon = M.config.glyphs.default
   if #icon > 0 then
-    return icon .. M.padding, hl_group
+    return icon .. M.config.padding, hl_group
   else
     return ""
   end
@@ -45,11 +43,11 @@ end
 
 local function get_file_icon_webdev(fname, extension)
   local icon, hl_group = M.devicons.get_icon(fname, extension)
-  if not M.webdev_colors then
+  if not M.config.webdev_colors then
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
-    return icon .. M.padding, hl_group
+    return icon .. M.config.padding, hl_group
   elseif string.match(extension, "%.(.*)") then
     -- If there are more extensions to the file, try to grab the icon for them recursively
     return get_file_icon_webdev(fname, string.match(extension, "%.(.*)"))
@@ -59,7 +57,7 @@ local function get_file_icon_webdev(fname, extension)
 end
 
 local function config_file_icon()
-  if M.configs.show_file_icon then
+  if M.config.show.file then
     if M.devicons then
       M.get_file_icon = get_file_icon_webdev
     else
@@ -71,23 +69,23 @@ local function config_file_icon()
 end
 
 local function config_folder_icon()
-  if M.configs.show_folder_icon then
+  if M.config.show.folder then
     M.get_folder_icon = get_folder_icon
   else
     M.get_folder_icon = empty
   end
 end
 
-function M.reset_config(webdev_colors)
-  M.configs = icon_config.get_config()
-  M.icons = M.configs.icons
-  M.padding = vim.g.nvim_tree_icon_padding or " "
-  M.devicons = M.configs.has_devicons and require "nvim-web-devicons" or nil
-  M.webdev_colors = webdev_colors
-
+function M.reset_config()
   config_symlinks()
   config_file_icon()
   config_folder_icon()
+end
+
+function M.setup(opts)
+  M.config = opts.renderer.icons
+
+  M.devicons = pcall(require, "nvim-web-devicons") and require "nvim-web-devicons"
 end
 
 return M
