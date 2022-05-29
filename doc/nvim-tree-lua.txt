@@ -462,7 +462,7 @@ Window / buffer setup.
         A list of keymaps that will extend or override the default keymaps,
         see |nvim-tree-mappings|.
           Type: `table`
-          Default: `{}`
+          Default: see |nvim-tree-default-mappings|
 
 *nvim-tree.renderer*
 UI rendering setup
