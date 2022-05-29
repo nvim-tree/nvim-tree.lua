@@ -45,6 +45,7 @@ local M = {
     { key = "q", action = "close" },
     { key = "g?", action = "toggle_help" },
     { key = "W", action = "collapse_all" },
+    { key = "E", action = "expand_all" },
     { key = "S", action = "search_node" },
     { key = ".", action = "run_file_command" },
     { key = "<C-k>", action = "toggle_file_info" },
@@ -57,6 +58,7 @@ local keypress_funcs = {
   close = view.close,
   close_node = require("nvim-tree.actions.movements").parent_node(true),
   collapse_all = require("nvim-tree.actions.collapse-all").fn,
+  expand_all = require("nvim-tree.actions.expand-all").fn,
   copy_absolute_path = require("nvim-tree.actions.copy-paste").copy_absolute_path,
   copy_name = require("nvim-tree.actions.copy-paste").copy_filename,
   copy_path = require("nvim-tree.actions.copy-paste").copy_path,
@@ -237,6 +239,7 @@ function M.setup(opts)
   require("nvim-tree.actions.change-dir").setup(opts)
   require("nvim-tree.actions.copy-paste").setup(opts)
   require("nvim-tree.actions.create-file").setup(opts)
+  require("nvim-tree.actions.expand-all").setup(opts)
 
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend("force", DEFAULT_MAPPING_CONFIG, user_map_config)
