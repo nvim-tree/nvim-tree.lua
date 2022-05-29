@@ -251,6 +251,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           profile = false,
         },
       },
+      experimental_watchers = false,
     } -- END_DEFAULT_OPTS
 <
 
@@ -322,6 +323,12 @@ Automatically reloads the tree on `BufEnter` nvim-tree.
 
 *nvim-tree.respect_buf_cwd*
 Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.experimental_watchers*
+Will use watchers (libuv fs_event) to watch the tree.
+All the manual filesystem sync and git sync will be disabled.
+This will be in effect for a few weeks and will become the default.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_directories*

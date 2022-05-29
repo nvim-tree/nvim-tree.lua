@@ -51,7 +51,7 @@ function M.fn(node)
 end
 
 function M.setup(opts)
-  M.config.system_open = opts or {}
+  M.config.system_open = opts.system_open or {}
 
   if #M.config.system_open.cmd == 0 then
     if M.config.is_windows then

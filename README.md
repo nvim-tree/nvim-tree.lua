@@ -233,6 +233,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
       profile = false,
     },
   },
+  experimental_watchers = false,
 } -- END_DEFAULT_OPTS
 ```
 

@@ -1,6 +1,7 @@
 local uv = vim.loop
 
 local git = require "nvim-tree.git"
+local watch = require "nvim-tree.explorer.watch"
 
 local M = {}
 
@@ -15,6 +16,8 @@ function Explorer.new(cwd)
   local explorer = setmetatable({
     absolute_path = cwd,
     nodes = {},
+    watcher = watch.create_watcher(cwd),
+    open = true,
   }, Explorer)
   explorer:_load(explorer)
   return explorer
@@ -28,6 +31,20 @@ end
 
 function Explorer:expand(node)
   self:_load(node)
+end
+
+function Explorer:_clear_watchers()
+  local function iterate(node)
+    if node.watcher then
+      node.watcher:stop()
+      for _, node_ in pairs(node.nodes) do
+        if node_.watcher then
+          iterate(node_)
+        end
+      end
+    end
+  end
+  iterate(self)
 end
 
 function M.setup(opts)

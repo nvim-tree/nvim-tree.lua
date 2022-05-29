@@ -256,7 +256,7 @@ local function manage_netrw(disable_netrw, hijack_netrw)
   end
 end
 
-local function setup_vim_commands()
+local function setup_vim_commands(opts)
   api.nvim_create_user_command("NvimTreeOpen", function(res)
     M.open(res.args)
   end, { nargs = "?", complete = "dir" })
@@ -265,7 +265,9 @@ local function setup_vim_commands()
     M.toggle(false, false, res.args)
   end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
-  api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
+  if not opts.experimental_watchers then
+    api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
+  end
   api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
   api.nvim_create_user_command("NvimTreeFindFile", function()
     M.find_file(true)
@@ -300,13 +302,16 @@ local function setup_autocommands(opts)
   -- reset highlights when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
 
-  if opts.auto_reload_on_write then
+  if opts.auto_reload_on_write and not opts.experimental_watchers then
     create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
-  create_nvim_tree_autocmd("User", {
-    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
-    callback = reloaders.reload_git,
-  })
+
+  if not opts.experimental_watchers then
+    create_nvim_tree_autocmd("User", {
+      pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
+      callback = reloaders.reload_git,
+    })
+  end
 
   if opts.open_on_tab then
     create_nvim_tree_autocmd("TabEnter", { callback = M.tab_change })
@@ -339,7 +344,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
 
-  if opts.reload_on_bufenter then
+  if opts.reload_on_bufenter and not opts.experimental_watchers then
     create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
   end
 end
@@ -507,6 +512,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       profile = false,
     },
   },
+  experimental_watchers = false,
 } -- END_DEFAULT_OPTS
 
 local function merge_options(conf)
@@ -601,12 +607,13 @@ function M.setup(conf)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
+  require("nvim-tree.watcher").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end
 
-  setup_vim_commands()
+  setup_vim_commands(opts)
   setup_autocommands(opts)
 
   vim.schedule(function()

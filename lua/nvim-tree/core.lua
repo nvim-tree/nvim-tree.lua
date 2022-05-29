@@ -9,6 +9,9 @@ TreeExplorer = nil
 local first_init_done = false
 
 function M.init(foldername)
+  if TreeExplorer then
+    TreeExplorer:_clear_watchers()
+  end
   TreeExplorer = explorer.Explorer.new(foldername)
   if not first_init_done then
     events._dispatch_ready()
