@@ -70,7 +70,6 @@ require'nvim-tree'.setup {
 require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
   create_in_closed_folder = false,
-  remove_file_close_window = true,
   disable_netrw = false,
   hijack_cursor = false,
   hijack_netrw = true,
@@ -202,6 +201,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
           buftype = { "nofile", "terminal", "help" },
         },
       },
+    },
+    remove_file = {
+      close_window = true,
     },
   },
   trash = {

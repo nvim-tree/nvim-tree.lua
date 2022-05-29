@@ -88,7 +88,6 @@ Values may be functions. Warning: this may result in unexpected behaviour.
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
       create_in_closed_folder = false,
-      remove_file_close_window = true,
       disable_netrw = false,
       hijack_cursor = false,
       hijack_netrw = true,
@@ -221,6 +220,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
             },
           },
         },
+        remove_file = {
+          close_window = true,
+        },
       },
       trash = {
         cmd = "trash",
@@ -284,10 +286,6 @@ Reloads the explorer every time a buffer is written to.
 Creating a file when the cursor is on a closed folder will set the
 path to be inside the closed folder, otherwise the parent folder.
   Type: `boolean`, Default: `false`
-
-*nvim-tree.remove_file_close_window*
-Close any window displaying a file when removing the file from the tree.
-  Type: `boolean`, Default: `true`
 
 *nvim-tree.open_on_tab*
 Opens the tree automatically when switching tabpage or opening a new tabpage
@@ -668,6 +666,10 @@ Configuration for various actions.
           `filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
           `buftype  = { "nofile", "terminal", "help", }`
         `}`
+
+    *nvim-tree.actions.remove_file.close_window*
+    Close any window displaying a file when removing the file from the tree.
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.actions.use_system_clipboard*
     A boolean value that toggle the use of system clipboard when copy/paste

@@ -25,8 +25,8 @@ local function clear_buffer(absolute_path)
         a.nvim_set_current_win(winnr)
       end
       a.nvim_buf_delete(buf.bufnr, { force = true })
-      if M.config.remove_file_close_window then
-          close_windows(buf.windows)
+      if M.close_window then
+        close_windows(buf.windows)
       end
       return
     end
@@ -91,7 +91,7 @@ function M.fn(node)
 end
 
 function M.setup(opts)
-  M.config = opts
+  M.close_window = opts.actions.remove_file.close_window
 end
 
 return M
