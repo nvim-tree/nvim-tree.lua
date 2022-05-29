@@ -223,6 +223,9 @@ Values may be functions. Warning: this may result in unexpected behaviour.
             },
           },
         },
+        remove_file = {
+          close_window = true,
+        },
       },
       trash = {
         cmd = "trash",
@@ -671,6 +674,10 @@ Configuration for various actions.
           `filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame", },`
           `buftype  = { "nofile", "terminal", "help", }`
         `}`
+
+    *nvim-tree.actions.remove_file.close_window*
+    Close any window displaying a file when removing the file from the tree.
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.actions.use_system_clipboard*
     A boolean value that toggle the use of system clipboard when copy/paste
