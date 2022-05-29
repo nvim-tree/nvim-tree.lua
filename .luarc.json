@@ -1,12 +1,14 @@
 {
 	"$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+	"runtime.version" : "Lua 5.1",
 	"diagnostics": {
 		"globals": {
 			"vim": true
 		},
 		"disable": {
 			"lowercase-global": true,
-			"missing-parameter": true
+			"missing-parameter": true,
+			"trailing-space": true
 		}
 	}
 }

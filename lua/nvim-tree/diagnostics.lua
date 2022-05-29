@@ -92,7 +92,7 @@ local function from_coc()
 
   for bufname, severity_list in pairs(diagnostics) do
     if not buffer_severity[bufname] then
-      local severity = math.min(table.unpack(severity_list))
+      local severity = math.min(unpack(severity_list))
       buffer_severity[bufname] = severity
     end
   end
