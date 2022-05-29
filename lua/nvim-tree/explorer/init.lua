@@ -13,7 +13,7 @@ Explorer.__index = Explorer
 function Explorer.new(cwd)
   cwd = uv.fs_realpath(cwd or uv.cwd())
   local explorer = setmetatable({
-    cwd = cwd,
+    absolute_path = cwd,
     nodes = {},
   }, Explorer)
   explorer:_load(explorer)
@@ -21,7 +21,7 @@ function Explorer.new(cwd)
 end
 
 function Explorer:_load(node)
-  local cwd = node.cwd or node.link_to or node.absolute_path
+  local cwd = node.link_to or node.absolute_path
   local git_statuses = git.load_project_status(cwd)
   M.explore(node, git_statuses)
 end

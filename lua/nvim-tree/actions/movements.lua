@@ -33,7 +33,7 @@ function M.parent_node(should_close)
 
     local parent = node.parent
 
-    if not parent or parent.cwd then
+    if not parent or not parent.parent then
       return view.set_cursor { 1, 0 }
     end
 

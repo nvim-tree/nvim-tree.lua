@@ -102,7 +102,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if not vim.startswith(filepath, core.get_explorer().cwd) then
+  if not vim.startswith(filepath, core.get_cwd()) then
     change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
   end
 end

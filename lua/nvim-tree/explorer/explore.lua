@@ -59,7 +59,7 @@ local function get_dir_handle(cwd)
 end
 
 function M.explore(node, status)
-  local cwd = node.cwd or node.link_to or node.absolute_path
+  local cwd = node.link_to or node.absolute_path
   local handle = get_dir_handle(cwd)
   if not handle then
     return
@@ -67,7 +67,7 @@ function M.explore(node, status)
 
   populate_children(handle, cwd, node, status)
 
-  local is_root = node.cwd ~= nil
+  local is_root = not node.parent
   local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
