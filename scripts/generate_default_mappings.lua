@@ -1,3 +1,6 @@
+-- luacheck:ignore 113
+---@diagnostic disable: undefined-global
+
 -- write DEFAULT_MAPPINGS in various formats
 
 local max_key_help = 0
@@ -7,7 +10,7 @@ local outs_help = {}
 local outs_lua = {}
 
 for _, m in pairs(M.mappings) do
-  local out = {}
+  local out
   if type(m.key) == "table" then
     local first = true
     local keys_lua = "key = {"
@@ -33,7 +36,7 @@ for _, m in pairs(M.mappings) do
 
     -- lua
     out = {}
-    out.key = string.format('%s },', keys_lua)
+    out.key = string.format("%s },", keys_lua)
     table.insert(outs_lua, out)
   else
     -- help
@@ -59,12 +62,12 @@ end
 -- help
 local file = io.open("/tmp/DEFAULT_MAPPINGS.help", "w")
 io.output(file)
-io.write("\n")
+io.write "\n"
 local fmt = string.format("%%-%d.%ds  %%-%d.%ds  %%s\n", max_key_help, max_key_help, max_action_help, max_action_help)
 for _, m in pairs(outs_help) do
   io.write(string.format(fmt, m.key, m.action, m.desc))
 end
-io.write("\n")
+io.write "\n"
 io.close(file)
 
 -- lua
@@ -79,8 +82,8 @@ io.close(file)
 -- md
 file = io.open("/tmp/DEFAULT_MAPPINGS.md", "w")
 io.output(file)
-io.write("| Default Keys | Action | Description |\n")
-io.write("| - | - | - |\n")
+io.write "| Default Keys | Action | Description |\n"
+io.write "| - | - | - |\n"
 for _, m in pairs(M.mappings) do
   local keys = ""
   if type(m.key) == "table" then
@@ -93,4 +96,3 @@ for _, m in pairs(M.mappings) do
   io.write(string.format("| %s | %s | %s |\n", keys, m.action, m.desc:gsub("|", "`")))
 end
 io.close(file)
-

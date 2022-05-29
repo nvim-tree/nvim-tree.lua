@@ -27,8 +27,8 @@ begin="BEGIN_DEFAULT_MAPPINGS"
 end="END_DEFAULT_MAPPINGS"
 
 # generate various DEFAULT_MAPPINGS
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/actions/init.lua > /tmp/DEFAULT_MAPPINGS.lua
-lua <(cat /tmp/DEFAULT_MAPPINGS.lua scripts/generate_default_mappings.lua)
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/actions/init.lua > /tmp/DEFAULT_MAPPINGS.M.lua
+lua <(cat /tmp/DEFAULT_MAPPINGS.M.lua scripts/generate_default_mappings.lua)
 
 # README.md
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_MAPPINGS.lua
