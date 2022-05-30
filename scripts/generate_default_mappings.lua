@@ -65,7 +65,11 @@ io.output(file)
 io.write "\n"
 local fmt = string.format("%%-%d.%ds  %%-%d.%ds  %%s\n", max_key_help, max_key_help, max_action_help, max_action_help)
 for _, m in pairs(outs_help) do
-  io.write(string.format(fmt, m.key, m.action, m.desc))
+  if m.action == "" then
+    io.write(string.format("%s\n", m.key))
+  else
+    io.write(string.format(fmt, m.key, m.action, m.desc))
+  end
 end
 io.write "\n"
 io.close(file)

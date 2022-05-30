@@ -543,7 +543,7 @@ UI rendering setup
 
             *nvim-tree.renderer.icons.show.folder_arrow*
             Show a small arrow before the folder icon.
-            Requires |renderer.icons.show.folder| `= true` and |renderer.indent_markers.enable| `= false` 
+            Requires |renderer.icons.show.folder| `= true` and |renderer.indent_markers.enable| `= false`
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.git*
@@ -762,12 +762,12 @@ The `list` option in `view.mappings.list` is a table of
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
 
 `<CR>`            edit                open a file or folder; root will cd to the above directory
-`o`                                   
-`<2-LeftMouse>`                       
+`o`
+`<2-LeftMouse>`
 `<C-e>`           edit_in_place       edit the file in place, effectively replacing the tree explorer
 `O`               edit_no_picker      same as (edit) with no window picker
 `<C-]>`           cd                  cd in the directory under the cursor
-`<2-RightMouse>`                      
+`<2-RightMouse>`
 `<C-v>`           vsplit              open the file in a vertical split
 `<C-x>`           split               open the file in a horizontal split
 `<C-t>`           tabnew              open the file in a new tab
