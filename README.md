@@ -232,48 +232,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 } -- END_DEFAULT_OPTS
 ```
 
-## Key Bindings
-
-### Default actions
-
-- `<CR>` or `o` on the root folder will cd in the above directory
-- `<C-]>` will cd in the directory under the cursor
-- `<BS>` will close current opened directory or parent
-- type `a` to add a file. Adding a directory requires leaving a leading `/` at the end of the path.
-  > you can add multiple directories by doing foo/bar/baz/f and it will add foo bar and baz directories and f as a file
-- type `r` to rename a file
-- type `<C-r>` to rename a file and omit the filename on input
-- type `x` to add/remove file/directory to cut clipboard
-- type `c` to add/remove file/directory to copy clipboard
-- type `y` will copy name to system clipboard
-- type `Y` will copy relative path to system clipboard
-- type `gy` will copy absolute path to system clipboard
-- type `p` to paste from clipboard. Cut clipboard has precedence over copy (will prompt for confirmation)
-- type `d` to delete a file (will prompt for confirmation)
-- type `D` to trash a file (configured in setup())
-- type `]c` to go to next git item
-- type `[c` to go to prev git item
-- type `-` to navigate up to the parent directory of the current file/directory
-- type `s` to open a file with default system application or a folder with default file manager (if you want to change the command used to do it see `:h nvim-tree.setup` under `system_open`)
-- if the file is a directory, `<CR>` will open the directory otherwise it will open the file in the buffer near the tree
-- if the file is a symlink, `<CR>` will follow the symlink (if the target is a file)
-- `<C-v>` will open the file in a vertical split
-- `<C-x>` will open the file in a horizontal split
-- `<C-t>` will open the file in a new tab
-- `<Tab>` will open the file as a preview (keeps the cursor in the tree)
-- `I` will toggle visibility of hidden folders / files
-- `H` will toggle visibility of dotfiles (files/folders starting with a `.`)
-- `R` will refresh the tree
-- Double left click acts like `<CR>`
-- Double right click acts like `<C-]>`
-- `W` will collapse the whole tree
-- `E` will expand the whole tree. Be aware this might hang neovim for a while if running on a big folder (see `:help nvim-tree.actions.expand_all.max_folder_discovery`).
-- `S` will prompt the user to enter a path and then expands the tree to match the path
-- `.` will enter vim command mode with the file the cursor is on
-- `C-k` will toggle a popup with file infos about the file under the cursor
-- `f` will allow you to filter nodes dynamically based on regex matching.
-
-### Settings
+## Mappings
 
 The `list` option in `view.mappings.list` is a table of
 ```lua
@@ -296,56 +255,101 @@ local list = {
 }
 ```
 
-These are the default bindings:
+### Defaults
+
+<!-- BEGIN_DEFAULT_MAPPINGS_TABLE -->
+| Default Keys | Action | Description |
+| - | - | - |
+| \<CR> <br /> o <br /> \<2-LeftMouse> | edit | open a file or folder; root will cd to the above directory |
+| \<C-e> | edit_in_place | edit the file in place, effectively replacing the tree explorer |
+| O | edit_no_picker | same as (edit) with no window picker |
+| \<C-]> <br /> \<2-RightMouse> | cd | cd in the directory under the cursor |
+| \<C-v> | vsplit | open the file in a vertical split |
+| \<C-x> | split | open the file in a horizontal split |
+| \<C-t> | tabnew | open the file in a new tab |
+| \< | prev_sibling | navigate to the previous sibling of current file/directory |
+| > | next_sibling | navigate to the next sibling of current file/directory |
+| P | parent_node | move cursor to the parent directory |
+| \<BS> | close_node | close current opened directory or parent |
+| \<Tab> | preview | open the file as a preview (keeps the cursor in the tree) |
+| K | first_sibling | navigate to the first sibling of current file/directory |
+| J | last_sibling | navigate to the last sibling of current file/directory |
+| I | toggle_git_ignored | toggle visibility of files/folders hidden via `git.ignore` option |
+| H | toggle_dotfiles | toggle visibility of dotfiles via `filters.dotfiles` option |
+| U | toggle_custom | toggle visibility of files/folders hidden via `filters.custom` option |
+| R | refresh | refresh the tree |
+| a | create | add a file; leaving a trailing `/` will add a directory |
+| d | remove | delete a file (will prompt for confirmation) |
+| D | trash | trash a file via `trash` option |
+| r | rename | rename a file |
+| \<C-r> | full_rename | rename a file and omit the filename on input |
+| x | cut | add/remove file/directory to cut clipboard |
+| c | copy | add/remove file/directory to copy clipboard |
+| p | paste | paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation |
+| y | copy_name | copy name to system clipboard |
+| Y | copy_path | copy relative path to system clipboard |
+| gy | copy_absolute_path | copy absolute path to system clipboard |
+| [c | prev_git_item | go to next git item |
+| ]c | next_git_item | go to prev git item |
+| - | dir_up | navigate up to the parent directory of the current file/directory |
+| s | system_open | open a file with default system application or a folder with default file manager, using `system_open` option |
+| f | live_filter | live filter nodes dynamically based on regex matching. |
+| F | clear_live_filter | clear live filter |
+| q | close | close tree window |
+| W | collapse_all | collapse the whole tree |
+| E | expand_all | expand the whole tree, stopping after expanding `actions.expand_all.max_folder_discovery` folders; this might hang neovim for a while if running on a big folder |
+| S | search_node | prompt the user to enter a path and then expands the tree to match the path |
+| . | run_file_command | enter vim command mode with the file the cursor is on |
+| \<C-k> | toggle_file_info | toggle a popup with file infos about the file under the cursor |
+| g? | toggle_help | toggle help |
+<!-- END_DEFAULT_MAPPINGS_TABLE -->
+
 ```lua
-
--- default mappings
-local list = {
-  { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
-  { key = "<C-e>",                        action = "edit_in_place" },
-  { key = {"O"},                          action = "edit_no_picker" },
-  { key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
-  { key = "<C-v>",                        action = "vsplit" },
-  { key = "<C-x>",                        action = "split" },
-  { key = "<C-t>",                        action = "tabnew" },
-  { key = "<",                            action = "prev_sibling" },
-  { key = ">",                            action = "next_sibling" },
-  { key = "P",                            action = "parent_node" },
-  { key = "<BS>",                         action = "close_node" },
-  { key = "<Tab>",                        action = "preview" },
-  { key = "K",                            action = "first_sibling" },
-  { key = "J",                            action = "last_sibling" },
-  { key = "I",                            action = "toggle_git_ignored" },
-  { key = "H",                            action = "toggle_dotfiles" },
-  { key = "R",                            action = "refresh" },
-  { key = "a",                            action = "create" },
-  { key = "d",                            action = "remove" },
-  { key = "D",                            action = "trash" },
-  { key = "r",                            action = "rename" },
-  { key = "<C-r>",                        action = "full_rename" },
-  { key = "x",                            action = "cut" },
-  { key = "c",                            action = "copy" },
-  { key = "p",                            action = "paste" },
-  { key = "y",                            action = "copy_name" },
-  { key = "Y",                            action = "copy_path" },
-  { key = "gy",                           action = "copy_absolute_path" },
-  { key = "[c",                           action = "prev_git_item" },
-  { key = "]c",                           action = "next_git_item" },
-  { key = "-",                            action = "dir_up" },
-  { key = "s",                            action = "system_open" },
-  { key = "f",                            action = "live_filter" },
-  { key = "F",                            action = "clear_live_filter" },
-  { key = "q",                            action = "close" },
-  { key = "g?",                           action = "toggle_help" },
-  { key = "W",                            action = "collapse_all" },
-  { key = "E",                            action = "expand_all" },
-  { key = "S",                            action = "search_node" },
-  { key = "<C-k>",                        action = "toggle_file_info" },
-  { key = ".",                            action = "run_file_command" }
-}
+  view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
+    { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" }
+    { key = "<C-e>",                          action = "edit_in_place" }
+    { key = "O",                              action = "edit_no_picker" }
+    { key = { "<C-]>", "<2-RightMouse>" },    action = "cd" }
+    { key = "<C-v>",                          action = "vsplit" }
+    { key = "<C-x>",                          action = "split" }
+    { key = "<C-t>",                          action = "tabnew" }
+    { key = "<",                              action = "prev_sibling" }
+    { key = ">",                              action = "next_sibling" }
+    { key = "P",                              action = "parent_node" }
+    { key = "<BS>",                           action = "close_node" }
+    { key = "<Tab>",                          action = "preview" }
+    { key = "K",                              action = "first_sibling" }
+    { key = "J",                              action = "last_sibling" }
+    { key = "I",                              action = "toggle_git_ignored" }
+    { key = "H",                              action = "toggle_dotfiles" }
+    { key = "U",                              action = "toggle_custom" }
+    { key = "R",                              action = "refresh" }
+    { key = "a",                              action = "create" }
+    { key = "d",                              action = "remove" }
+    { key = "D",                              action = "trash" }
+    { key = "r",                              action = "rename" }
+    { key = "<C-r>",                          action = "full_rename" }
+    { key = "x",                              action = "cut" }
+    { key = "c",                              action = "copy" }
+    { key = "p",                              action = "paste" }
+    { key = "y",                              action = "copy_name" }
+    { key = "Y",                              action = "copy_path" }
+    { key = "gy",                             action = "copy_absolute_path" }
+    { key = "[c",                             action = "prev_git_item" }
+    { key = "]c",                             action = "next_git_item" }
+    { key = "-",                              action = "dir_up" }
+    { key = "s",                              action = "system_open" }
+    { key = "f",                              action = "live_filter" }
+    { key = "F",                              action = "clear_live_filter" }
+    { key = "q",                              action = "close" }
+    { key = "W",                              action = "collapse_all" }
+    { key = "E",                              action = "expand_all" }
+    { key = "S",                              action = "search_node" }
+    { key = ".",                              action = "run_file_command" }
+    { key = "<C-k>",                          action = "toggle_file_info" }
+    { key = "g?",                             action = "toggle_help" }
+  } -- END_DEFAULT_MAPPINGS
 ```
-
-You can toggle the help UI by pressing `g?`.
 
 ## Tips & reminders
 
