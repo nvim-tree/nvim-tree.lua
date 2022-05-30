@@ -19,6 +19,7 @@ local function update_parent_statuses(node, project, root)
 end
 
 function M.create_watcher(absolute_path)
+  log.line("watcher", "node start    '%s'", absolute_path)
   Watcher.new {
     absolute_path = absolute_path,
     on_event = function(path)
@@ -26,7 +27,7 @@ function M.create_watcher(absolute_path)
       if not n then
         return
       end
-      log.line("watcher", "node '%s'", path)
+      log.line("watcher", "node event '%s'", path)
 
       local node = utils.get_parent_of_group(n)
       local project_root, project = reload_and_get_git_project(path)

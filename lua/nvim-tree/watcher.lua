@@ -1,5 +1,6 @@
 local uv = vim.loop
 
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
 local M = {}
@@ -10,6 +11,7 @@ function Watcher.new(opts)
   if not M.enabled then
     return nil
   end
+  log.line("watcher", "Watcher:new   '%s'", opts.absolute_path)
 
   local ok, fs_event = pcall(uv.new_fs_event)
   if not ok then
@@ -26,6 +28,7 @@ function Watcher.new(opts)
 end
 
 function Watcher:start(opts)
+  log.line("watcher", "Watcher:start '%s'", self._path)
   local ok = pcall(
     uv.fs_event_start,
     self._w,
@@ -44,6 +47,7 @@ function Watcher:start(opts)
 end
 
 function Watcher:stop()
+  log.line("watcher", "Watcher:stop  '%s'", self._path)
   if self._w then
     uv.fs_event_stop(self._w)
   end
