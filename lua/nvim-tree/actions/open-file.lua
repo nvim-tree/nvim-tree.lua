@@ -177,7 +177,7 @@ local function set_current_win_no_autocmd(winid)
   vim.cmd 'set ei=""'
 end
 
-local function when_not_found(filename, mode, win_ids)
+local function open_in_new_window(filename, mode, win_ids)
   local target_winid = get_target_winid(mode)
   local do_split = mode == "split" or mode == "vsplit"
   local vertical = mode ~= "split"
@@ -251,6 +251,7 @@ function M.fn(mode, filename)
 
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
+  local buf_loaded = is_already_loaded(filename)
 
   local found = is_already_open(filename, win_ids)
   if found and mode == "preview" then
@@ -258,7 +259,7 @@ function M.fn(mode, filename)
   end
 
   if not found then
-    when_not_found(filename, mode, win_ids)
+    open_in_new_window(filename, mode, win_ids)
   end
 
   if M.resize_window then
@@ -266,7 +267,6 @@ function M.fn(mode, filename)
   end
 
   if mode == "preview" then
-    local buf_loaded = is_already_loaded(filename)
     return on_preview(buf_loaded)
   end
 
