@@ -1,3 +1,4 @@
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local git_utils = require "nvim-tree.git.utils"
 local Runner = require "nvim-tree.git.runner"
@@ -116,6 +117,7 @@ function M.load_project_status(cwd)
     watcher = Watcher.new {
       absolute_path = utils.path_join { project_root, ".git" },
       on_event = function()
+        log.line("watcher", "git")
         utils.debounce(200, function()
           M.reload_tree_at(project_root)
           require("nvim-tree.renderer").draw()

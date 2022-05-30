@@ -1,3 +1,4 @@
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local git = require "nvim-tree.git"
 local Watcher = require("nvim-tree.watcher").Watcher
@@ -25,6 +26,7 @@ function M.create_watcher(absolute_path)
       if not n then
         return
       end
+      log.line("watcher", "node '%s'", path)
 
       local node = utils.get_parent_of_group(n)
       local project_root, project = reload_and_get_git_project(path)

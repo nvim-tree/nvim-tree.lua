@@ -510,6 +510,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       diagnostics = false,
       git = false,
       profile = false,
+      watcher = false,
     },
   },
   experimental_watchers = false,
