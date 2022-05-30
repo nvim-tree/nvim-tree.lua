@@ -16,7 +16,9 @@ local collapse_all = require "nvim-tree.actions.collapse-all"
 
 local _config = {}
 
-local M = {}
+local M = {
+  setup_called = false,
+}
 
 function M.focus()
   M.open()
@@ -560,6 +562,12 @@ function M.setup(conf)
     utils.warn "nvim-tree.lua requires Neovim 0.7 or higher"
     return
   end
+
+  if M.setup_called then
+    utils.warn "nvim-tree.lua setup called multiple times"
+    return
+  end
+  M.setup_called = true
 
   legacy.migrate_legacy_options(conf or {})
 
