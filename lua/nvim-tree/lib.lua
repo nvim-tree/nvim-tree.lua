@@ -68,7 +68,7 @@ function M.set_target_win()
 end
 
 local function handle_buf_cwd(cwd)
-  if M.respect_buf_cwd and cwd ~= core.get_explorer().cwd then
+  if M.respect_buf_cwd and cwd ~= core.get_cwd() then
     require("nvim-tree.actions.change-dir").fn(cwd)
   end
 end

@@ -195,6 +195,11 @@ local M = {
       desc = "collapse the whole tree",
     },
     {
+      key = "E",
+      action = "expand_all",
+      desc = "expand the whole tree, stopping after expanding |actions.expand_all.max_folder_discovery| folders; this might hang neovim for a while if running on a big folder",
+    },
+    {
       key = "S",
       action = "search_node",
       desc = "prompt the user to enter a path and then expands the tree to match the path",
@@ -223,6 +228,7 @@ local keypress_funcs = {
   close = view.close,
   close_node = require("nvim-tree.actions.movements").parent_node(true),
   collapse_all = require("nvim-tree.actions.collapse-all").fn,
+  expand_all = require("nvim-tree.actions.expand-all").fn,
   copy_absolute_path = require("nvim-tree.actions.copy-paste").copy_absolute_path,
   copy_name = require("nvim-tree.actions.copy-paste").copy_filename,
   copy_path = require("nvim-tree.actions.copy-paste").copy_path,
@@ -401,8 +407,10 @@ function M.setup(opts)
   require("nvim-tree.actions.trash").setup(opts.trash)
   require("nvim-tree.actions.open-file").setup(opts)
   require("nvim-tree.actions.change-dir").setup(opts)
+  require("nvim-tree.actions.remove-file").setup(opts)
   require("nvim-tree.actions.copy-paste").setup(opts)
   require("nvim-tree.actions.create-file").setup(opts)
+  require("nvim-tree.actions.expand-all").setup(opts)
 
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend("force", DEFAULT_MAPPING_CONFIG, user_map_config)

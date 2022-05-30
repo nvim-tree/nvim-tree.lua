@@ -20,7 +20,7 @@ local function update_status(nodes_by_path, node_ignored, status)
 end
 
 function M.reload(node, status)
-  local cwd = node.cwd or node.link_to or node.absolute_path
+  local cwd = node.link_to or node.absolute_path
   local handle = uv.fs_scandir(cwd)
   if type(handle) == "string" then
     api.nvim_err_writeln(handle)
@@ -68,7 +68,7 @@ function M.reload(node, status)
     end, node.nodes)
   )
 
-  local is_root = node.cwd ~= nil
+  local is_root = not node.parent
   local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only

@@ -102,7 +102,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
     end
   end
 
-  if not vim.startswith(filepath, core.get_explorer().cwd) then
+  if not vim.startswith(filepath, core.get_cwd()) then
     change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
   end
 end
@@ -465,6 +465,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       global = false,
       restrict_above_cwd = false,
     },
+    expand_all = {
+      max_folder_discovery = 300,
+    },
     open_file = {
       quit_on_open = false,
       resize_window = true,
@@ -476,6 +479,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
           buftype = { "nofile", "terminal", "help" },
         },
       },
+    },
+    remove_file = {
+      close_window = true,
     },
   },
   trash = {

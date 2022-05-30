@@ -36,7 +36,7 @@ local function remove_overlay()
 end
 
 local function matches(node)
-  local path = node.cwd or node.absolute_path
+  local path = node.absolute_path
   local name = vim.fn.fnamemodify(path, ":t")
   return vim.regex(M.filter):match_str(name) ~= nil
 end

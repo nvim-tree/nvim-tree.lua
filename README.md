@@ -190,6 +190,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
       global = false,
       restrict_above_cwd = false,
     },
+    expand_all = {
+      max_folder_discovery = 300,
+    },
     open_file = {
       quit_on_open = false,
       resize_window = true,
@@ -201,6 +204,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
           buftype = { "nofile", "terminal", "help" },
         },
       },
+    },
+    remove_file = {
+      close_window = true,
     },
   },
   trash = {
@@ -291,6 +297,7 @@ local list = {
 | F | clear_live_filter | clear live filter |
 | q | close | close tree window |
 | W | collapse_all | collapse the whole tree |
+| E | expand_all | expand the whole tree, stopping after expanding `actions.expand_all.max_folder_discovery` folders; this might hang neovim for a while if running on a big folder |
 | S | search_node | prompt the user to enter a path and then expands the tree to match the path |
 | . | run_file_command | enter vim command mode with the file the cursor is on |
 | \<C-k> | toggle_file_info | toggle a popup with file infos about the file under the cursor |
@@ -336,6 +343,7 @@ local list = {
     { key = "F",                              action = "clear_live_filter" }
     { key = "q",                              action = "close" }
     { key = "W",                              action = "collapse_all" }
+    { key = "E",                              action = "expand_all" }
     { key = "S",                              action = "search_node" }
     { key = ".",                              action = "run_file_command" }
     { key = "<C-k>",                          action = "toggle_file_info" }
