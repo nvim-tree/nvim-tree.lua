@@ -18,7 +18,15 @@ local function update_parent_statuses(node, project, root)
   end
 end
 
+local function is_git(path)
+  return path:match "%.git$" ~= nil or path:match(utils.path_add_trailing ".git") ~= nil
+end
+
 function M.create_watcher(absolute_path)
+  if is_git(absolute_path) then
+    return nil
+  end
+
   log.line("watcher", "node start    '%s'", absolute_path)
   Watcher.new {
     absolute_path = absolute_path,
