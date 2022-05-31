@@ -95,6 +95,8 @@ function M.draw()
     diagnostics.update()
   end
 
+  view.grow_from_content()
+
   log.profile_end(ps, "draw")
 end
 
