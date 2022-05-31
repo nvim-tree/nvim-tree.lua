@@ -201,7 +201,8 @@ local function grow()
 end
 
 function M.grow_from_content()
-  if M.View.adaptive_size and M.View.side == "left" or M.View.side == "right" then
+  local is_left_or_right = M.View.side == "left" or M.View.side == "right"
+  if M.View.adaptive_size and is_left_or_right then
     grow()
   end
 end
