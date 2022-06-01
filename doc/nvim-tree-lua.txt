@@ -105,6 +105,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
       respect_buf_cwd = false,
       view = {
         adaptive_size = false,
+        centralize_selection = false,
         width = 30,
         height = 30,
         hide_root_folder = false,
@@ -452,6 +453,11 @@ Window / buffer setup.
     *nvim-tree.view.adaptive_size*
     Resize the window on each draw based on the longest line.
     Only works when |nvim-tree.view.side| is `left` or `right`.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.view.centralize_selection*
+    When entering nvim-tree, reposition the view so that the current node is
+    initially centralized, see |zz|.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.hide_root_folder*

@@ -347,6 +347,18 @@ local function setup_autocommands(opts)
   if opts.reload_on_bufenter and not has_watchers then
     create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
   end
+
+  if opts.view.centralize_selection then
+    create_nvim_tree_autocmd("BufEnter", {
+      pattern = "NvimTree_*",
+      callback = function()
+        vim.schedule(function()
+          local keys = api.nvim_replace_termcodes("zz", true, false, true)
+          api.nvim_feedkeys(keys, "n", true)
+        end)
+      end,
+    })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -366,6 +378,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   respect_buf_cwd = false,
   view = {
     adaptive_size = false,
+    centralize_selection = false,
     width = 30,
     height = 30,
     hide_root_folder = false,
