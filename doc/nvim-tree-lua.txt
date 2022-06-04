@@ -83,6 +83,9 @@ SETUP                                                *nvim-tree.setup*
 To configure the tree (and make it runnable), you should call the setup
 function.
 
+Setup may only be run once; subsequent calls will result in a warning. Do not
+invoke from, say, a packer config function and then call it again later.
+
 Values may be functions. Warning: this may result in unexpected behaviour.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
