@@ -7,39 +7,48 @@ local M = {}
 local Watcher = {}
 Watcher.__index = Watcher
 
+-- TODO check for a Watcher with the same opts.absolute_path and return that
 function Watcher.new(opts)
   if not M.enabled then
     return nil
   end
   log.line("watcher", "Watcher:new   '%s'", opts.absolute_path)
 
-  local ok, fs_event = pcall(uv.new_fs_event)
-  if not ok then
-    utils.warn(string.format("Could not initialize a watcher for path %s", opts.absolute_path))
+  local stat, _ = uv.fs_stat(opts.absolute_path)
+  if not stat or stat.type ~= "directory" then
     return nil
   end
 
   local watcher = setmetatable({
-    _path = opts.absolute_path,
-    _w = fs_event,
+    _opts = opts,
   }, Watcher)
 
-  return watcher:start(opts)
+  return watcher:start()
 end
 
-function Watcher:start(opts)
-  log.line("watcher", "Watcher:start '%s'", self._path)
-  local ok = pcall(
-    uv.fs_event_start,
-    self._w,
-    self._path,
-    {},
-    vim.schedule_wrap(function()
-      opts.on_event(self._path)
-    end)
-  )
-  if not ok then
-    utils.warn(string.format("Could not start the watcher for path %s", self._path))
+function Watcher:start()
+  log.line("watcher", "Watcher:start '%s'", self._opts.absolute_path)
+
+  local rc, name
+
+  self._p, _, name = uv.new_fs_poll()
+  if not self._p then
+    utils.warn(string.format("Could not initialize an fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
+    return nil
+  end
+
+  local poll_cb = vim.schedule_wrap(function(err, _, _)
+    if err then
+      log.line("watcher", "poll_cb for %s fail : %s", self._opts.absolute_path, err)
+    else
+      self._opts.on_event(self._opts.absolute_path)
+    end
+  end)
+
+  -- TODO option for interval ms
+  rc, _, name = uv.fs_poll_start(self._p, self._opts.absolute_path, 1, poll_cb)
+  if rc ~= 0 then
+    utils.warn(string.format("Could not start the fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
     return nil
   end
 
@@ -47,9 +56,13 @@ function Watcher:start(opts)
 end
 
 function Watcher:stop()
-  log.line("watcher", "Watcher:stop  '%s'", self._path)
-  if self._w then
-    uv.fs_event_stop(self._w)
+  log.line("watcher", "Watcher:stop  '%s'", self._opts.absolute_path)
+  if self._p then
+    local rc, _, name = uv.fs_poll_stop(self._p)
+    if rc ~= 0 then
+      utils.warn(string.format("Could not stop the fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
+    end
+    self._p = nil
   end
 end
 
