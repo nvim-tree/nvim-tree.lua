@@ -179,6 +179,9 @@ end
 
 local function open_in_new_window(filename, mode, win_ids)
   local target_winid = get_target_winid(mode)
+  if not target_winid then
+    return
+  end
   local do_split = mode == "split" or mode == "vsplit"
   local vertical = mode ~= "split"
 
