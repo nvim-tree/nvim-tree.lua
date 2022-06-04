@@ -396,8 +396,8 @@ function M.setup(opts)
   M.View.adaptive_size = options.adaptive_size
   M.View.side = options.side
   M.View.width = options.width
-  M.View.initial_width = get_size()
   M.View.height = options.height
+  M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
