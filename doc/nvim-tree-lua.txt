@@ -326,7 +326,7 @@ Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.experimental_watchers*
-Will use watchers (libuv fs_event) to watch the tree.
+Will use watchers (libuv fs_poll) to watch the tree.
 All the manual filesystem sync and git sync will be disabled.
 This will be in effect for a few weeks and will become the default.
   Type: `boolean`, Default: `false`
