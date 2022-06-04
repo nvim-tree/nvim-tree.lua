@@ -29,11 +29,13 @@ end
 function Watcher:start()
   log.line("watcher", "Watcher:start '%s'", self._opts.absolute_path)
 
-  local rc, name
+  local rc, _, name
 
   self._p, _, name = uv.new_fs_poll()
   if not self._p then
-    utils.warn(string.format("Could not initialize an fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
+    utils.warn(
+      string.format("Could not initialize an fs_poll watcher for path %s : %s", self._opts.absolute_path, name)
+    )
     return nil
   end
 
