@@ -4,21 +4,34 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
 local M = {}
-local Watcher = {}
+local Watcher = {
+  _watchers = {},
+}
 Watcher.__index = Watcher
 
--- TODO check for a Watcher with the same opts.absolute_path and return that
 function Watcher.new(opts)
   if not M.enabled then
     return nil
   end
-  log.line("watcher", "Watcher:new   '%s'", opts.absolute_path)
+
+  for _, existing in ipairs(Watcher._watchers) do
+    if existing._opts.absolute_path == opts.absolute_path then
+      log.line("watcher", "Watcher:new using existing '%s'", opts.absolute_path)
+      return existing
+    end
+  end
+
+  log.line("watcher", "Watcher:new '%s'", opts.absolute_path)
 
   local watcher = setmetatable({
     _opts = opts,
   }, Watcher)
 
-  return watcher:start()
+  watcher = watcher:start()
+
+  table.insert(Watcher._watchers, watcher)
+
+  return watcher
 end
 
 function Watcher:start()

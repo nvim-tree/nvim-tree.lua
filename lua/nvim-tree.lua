@@ -265,6 +265,7 @@ local function setup_vim_commands(opts)
     M.toggle(false, false, res.args)
   end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
+  -- TODO we still want this one, for external file changes, and git reload does not hurt
   if not opts.git.watcher.enable then
     api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
   end

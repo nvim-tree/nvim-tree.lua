@@ -27,7 +27,7 @@ function M.create_watcher(absolute_path)
     return nil
   end
 
-  log.line("watcher", "node start    '%s'", absolute_path)
+  log.line("watcher", "node start '%s'", absolute_path)
   Watcher.new {
     absolute_path = absolute_path,
     on_event = function(path)
