@@ -14,11 +14,6 @@ function Watcher.new(opts)
   end
   log.line("watcher", "Watcher:new   '%s'", opts.absolute_path)
 
-  local stat, _ = uv.fs_stat(opts.absolute_path)
-  if not stat or stat.type ~= "directory" then
-    return nil
-  end
-
   local watcher = setmetatable({
     _opts = opts,
   }, Watcher)
@@ -33,13 +28,14 @@ function Watcher:start()
 
   self._p, _, name = uv.new_fs_poll()
   if not self._p then
+    self._p = nil
     utils.warn(
       string.format("Could not initialize an fs_poll watcher for path %s : %s", self._opts.absolute_path, name)
     )
     return nil
   end
 
-  local poll_cb = vim.schedule_wrap(function(err, _, _)
+  local poll_cb = vim.schedule_wrap(function(err)
     if err then
       log.line("watcher", "poll_cb for %s fail : %s", self._opts.absolute_path, err)
     else
@@ -47,8 +43,7 @@ function Watcher:start()
     end
   end)
 
-  -- TODO option for interval ms
-  rc, _, name = uv.fs_poll_start(self._p, self._opts.absolute_path, 1, poll_cb)
+  rc, _, name = uv.fs_poll_start(self._p, self._opts.absolute_path, M.interval, poll_cb)
   if rc ~= 0 then
     utils.warn(string.format("Could not start the fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
     return nil
@@ -74,7 +69,8 @@ function Watcher:restart()
 end
 
 function M.setup(opts)
-  M.enabled = opts.experimental_watchers
+  M.enabled = opts.git.watcher.enable
+  M.interval = opts.git.watcher.interval
 end
 
 M.Watcher = Watcher

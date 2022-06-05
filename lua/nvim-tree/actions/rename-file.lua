@@ -45,7 +45,7 @@ function M.fn(with_sub)
 end
 
 function M.setup(opts)
-  M.enable_reload = not opts.experimental_watchers
+  M.enable_reload = not opts.git.watcher.enable
 end
 
 return M

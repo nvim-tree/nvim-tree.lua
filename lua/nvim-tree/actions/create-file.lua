@@ -119,7 +119,7 @@ end
 
 function M.setup(opts)
   M.create_in_closed_folder = opts.create_in_closed_folder
-  M.enable_reload = not opts.experimental_watchers
+  M.enable_reload = not opts.git.watcher.enable
 end
 
 return M

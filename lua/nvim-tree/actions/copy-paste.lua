@@ -244,7 +244,7 @@ end
 
 function M.setup(opts)
   M.use_system_clipboard = opts.actions.use_system_clipboard
-  M.enable_reload = not opts.experimental_watchers
+  M.enable_reload = not opts.git.watcher.enable
 end
 
 return M

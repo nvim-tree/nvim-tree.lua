@@ -186,6 +186,10 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     enable = true,
     ignore = true,
     timeout = 400,
+    watcher = {
+      enable = false,
+      interval = 100,
+    },
   },
   actions = {
     use_system_clipboard = true,
@@ -231,9 +235,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
       diagnostics = false,
       git = false,
       profile = false,
+      watcher = false,
     },
   },
-  experimental_watchers = false,
 } -- END_DEFAULT_OPTS
 ```
 

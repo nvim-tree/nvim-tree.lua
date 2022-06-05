@@ -93,7 +93,7 @@ function M.fn(node)
 end
 
 function M.setup(opts)
-  M.enable_reload = not opts.experimental_watchers
+  M.enable_reload = not opts.git.watcher.enable
   M.close_window = opts.actions.remove_file.close_window
 end
 
