@@ -42,7 +42,7 @@ local function get_num_nodes(iter)
 end
 
 local function get_containing_folder(node)
-  local is_open = M.config.create_in_closed_folder or node.open
+  local is_open = M.create_in_closed_folder or node.open
   if node.nodes ~= nil and is_open then
     return utils.path_add_trailing(node.absolute_path)
   end
@@ -107,13 +107,19 @@ function M.fn(node)
       a.nvim_out_write(new_file_path .. " was properly created\n")
     end
     events._dispatch_folder_created(new_file_path)
-    require("nvim-tree.actions.reloaders").reload_explorer()
-    focus_file(new_file_path)
+    if M.enable_reload then
+      require("nvim-tree.actions.reloaders").reload_explorer()
+    end
+    -- INFO: defer needed when reload is automatic (watchers)
+    vim.defer_fn(function()
+      focus_file(new_file_path)
+    end, 50)
   end)
 end
 
 function M.setup(opts)
-  M.config = opts
+  M.create_in_closed_folder = opts.create_in_closed_folder
+  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

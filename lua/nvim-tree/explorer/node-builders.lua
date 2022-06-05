@@ -1,5 +1,6 @@
 local uv = vim.loop
 local utils = require "nvim-tree.utils"
+local watch = require "nvim-tree.explorer.watch"
 
 local M = {
   is_windows = vim.fn.has "win32" == 1,
@@ -18,6 +19,7 @@ function M.folder(parent, absolute_path, name)
     nodes = {},
     open = false,
     parent = parent,
+    watcher = watch.create_watcher(absolute_path),
   }
 end
 
@@ -49,12 +51,13 @@ end
 function M.link(parent, absolute_path, name)
   --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
   local link_to = uv.fs_realpath(absolute_path)
-  local open, nodes, has_children
+  local open, nodes, has_children, watcher
   if (link_to ~= nil) and uv.fs_stat(link_to).type == "directory" then
     local handle = uv.fs_scandir(link_to)
     has_children = handle and uv.fs_scandir_next(handle) ~= nil
     open = false
     nodes = {}
+    watcher = watch.create_watcher(link_to)
   end
 
   return {
@@ -67,6 +70,7 @@ function M.link(parent, absolute_path, name)
     nodes = nodes,
     open = open,
     parent = parent,
+    watcher = watcher,
   }
 end
 

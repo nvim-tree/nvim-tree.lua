@@ -86,11 +86,14 @@ function M.fn(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
     end
-    require("nvim-tree.actions.reloaders").reload_explorer()
+    if M.enable_reload then
+      require("nvim-tree.actions.reloaders").reload_explorer()
+    end
   end
 end
 
 function M.setup(opts)
+  M.enable_reload = not opts.filesystem_watchers.enable
   M.close_window = opts.actions.remove_file.close_window
 end
 

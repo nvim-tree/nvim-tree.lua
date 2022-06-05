@@ -96,7 +96,8 @@ function M.get_user_input_char()
   return vim.fn.nr2char(c)
 end
 
--- get the node from the tree that matches the predicate
+-- get the node and index of the node from the tree that matches the predicate.
+-- The explored nodes are those displayed on the view.
 -- @param nodes list of node
 -- @param fn    function(node): boolean
 function M.find_node(nodes, fn)
@@ -124,6 +125,46 @@ function M.find_node(nodes, fn)
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
   i = require("nvim-tree.live-filter").filter and i + 1 or i
   return node, i
+end
+
+-- get the node in the tree state depending on the absolute path of the node
+-- (grouped or hidden too)
+function M.get_node_from_path(path)
+  local explorer = require("nvim-tree.core").get_explorer()
+  if explorer.absolute_path == path then
+    return explorer
+  end
+
+  local function iterate(nodes)
+    for _, node in pairs(nodes) do
+      if node.absolute_path == path or node.link_to == path then
+        return node
+      end
+      if node.nodes then
+        local res = iterate(node.nodes)
+        if res then
+          return res
+        end
+      end
+      if node.group_next then
+        local res = iterate { node.group_next }
+        if res then
+          return res
+        end
+      end
+    end
+  end
+
+  return iterate(explorer.nodes)
+end
+
+-- get the highest parent of grouped nodes
+function M.get_parent_of_group(node_)
+  local node = node_
+  while node.parent and node.parent.group_next do
+    node = node.parent
+  end
+  return node
 end
 
 -- return visible nodes indexed by line

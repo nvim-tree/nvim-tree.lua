@@ -37,8 +37,8 @@ function M.reload(node, status)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local name, t = uv.fs_scandir_next(handle)
-    if not name then
+    local ok, name, t = pcall(uv.fs_scandir_next, handle)
+    if not ok or not name then
       break
     end
 
@@ -48,12 +48,17 @@ function M.reload(node, status)
       child_names[abs] = true
       if not nodes_by_path[abs] then
         if t == "directory" and uv.fs_access(abs, "R") then
-          table.insert(node.nodes, builders.folder(node, abs, name))
+          local folder = builders.folder(node, abs, name)
+          nodes_by_path[abs] = folder
+          table.insert(node.nodes, folder)
         elseif t == "file" then
-          table.insert(node.nodes, builders.file(node, abs, name))
+          local file = builders.file(node, abs, name)
+          nodes_by_path[abs] = file
+          table.insert(node.nodes, file)
         elseif t == "link" then
           local link = builders.link(node, abs, name)
           if link.link_to ~= nil then
+            nodes_by_path[abs] = link
             table.insert(node.nodes, link)
           end
         end

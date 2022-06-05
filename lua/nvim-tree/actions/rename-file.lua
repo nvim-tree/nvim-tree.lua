@@ -37,9 +37,15 @@ function M.fn(with_sub)
       a.nvim_out_write(node.absolute_path .. " ➜ " .. new_file_path .. "\n")
       utils.rename_loaded_buffers(node.absolute_path, new_file_path)
       events._dispatch_node_renamed(abs_path, new_file_path)
-      require("nvim-tree.actions.reloaders").reload_explorer()
+      if M.enable_reload then
+        require("nvim-tree.actions.reloaders").reload_explorer()
+      end
     end)
   end
+end
+
+function M.setup(opts)
+  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

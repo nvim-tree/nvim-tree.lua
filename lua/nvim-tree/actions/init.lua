@@ -403,13 +403,14 @@ local DEFAULT_MAPPING_CONFIG = {
 }
 
 function M.setup(opts)
-  require("nvim-tree.actions.system-open").setup(opts.system_open)
-  require("nvim-tree.actions.trash").setup(opts.trash)
+  require("nvim-tree.actions.system-open").setup(opts)
+  require("nvim-tree.actions.trash").setup(opts)
   require("nvim-tree.actions.open-file").setup(opts)
   require("nvim-tree.actions.change-dir").setup(opts)
+  require("nvim-tree.actions.create-file").setup(opts)
+  require("nvim-tree.actions.rename-file").setup(opts)
   require("nvim-tree.actions.remove-file").setup(opts)
   require("nvim-tree.actions.copy-paste").setup(opts)
-  require("nvim-tree.actions.create-file").setup(opts)
   require("nvim-tree.actions.expand-all").setup(opts)
 
   local user_map_config = (opts.view or {}).mappings or {}

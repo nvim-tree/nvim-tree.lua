@@ -200,6 +200,10 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         custom = {},
         exclude = {},
       },
+      filesystem_watchers = {
+        enable = false,
+        interval = 100,
+      },
       git = {
         enable = true,
         ignore = true,
@@ -249,6 +253,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           diagnostics = false,
           git = false,
           profile = false,
+          watcher = false,
         },
       },
     } -- END_DEFAULT_OPTS
@@ -418,6 +423,26 @@ Git integration with icons and colors.
   The git integration is blocking, so if your timeout is too long (like not in
   milliseconds but a few seconds), it will not render anything until the git
   process returned the data.
+
+
+*nvim-tree.filesystem_watchers*
+Will use file system watcher (libuv fs_poll) to watch the filesystem for
+changes.
+Using this will disable BufEnter / BufWritePost events in nvim-tree which
+were used to update the whole tree. With this feature, the tree will be
+updated only for the appropriate folder change, resulting in better
+performance.
+This will be experimental for a few weeks and will become the default.
+
+    *nvim-tree.filesystem_watchers.enable*
+    Enable / disable the feature.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.filesystem_watchers.interval*
+    Milliseconds between polls for each directory.
+    Increase to at least 1000ms if changes are not visible. See
+    https://github.com/luvit/luv/blob/master/docs.md#uvfs_poll_startfs_poll-path-interval-callback
+      Type: `number`, Default: `100` (ms)
 
 *nvim-tree.view*
 Window / buffer setup.
