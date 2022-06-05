@@ -300,11 +300,11 @@ local function setup_autocommands(opts)
   -- reset highlights when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
 
-  if opts.auto_reload_on_write and not opts.git.watcher.enable then
+  if opts.auto_reload_on_write and (not opts.git.watcher.enable or not opts.git.enable) then
     create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
 
-  if not opts.git.watcher.enable then
+  if not opts.git.watcher.enable or not opts.git.enable then
     create_nvim_tree_autocmd("User", {
       pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
       callback = reloaders.reload_git,
@@ -342,7 +342,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
 
-  if opts.reload_on_bufenter and not opts.git.watcher.enable then
+  if opts.reload_on_bufenter and (not opts.git.watcher.enable or not opts.git.enable) then
     create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
   end
 end
@@ -609,7 +609,6 @@ function M.setup(conf)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
-  require("nvim-tree.watcher").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()

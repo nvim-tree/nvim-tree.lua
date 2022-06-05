@@ -10,10 +10,6 @@ local Watcher = {
 Watcher.__index = Watcher
 
 function Watcher.new(opts)
-  if not M.enabled then
-    return nil
-  end
-
   for _, existing in ipairs(Watcher._watchers) do
     if existing._opts.absolute_path == opts.absolute_path then
       log.line("watcher", "Watcher:new using existing '%s'", opts.absolute_path)
@@ -56,7 +52,7 @@ function Watcher:start()
     end
   end)
 
-  rc, _, name = uv.fs_poll_start(self._p, self._opts.absolute_path, M.interval, poll_cb)
+  rc, _, name = uv.fs_poll_start(self._p, self._opts.absolute_path, self._opts.interval, poll_cb)
   if rc ~= 0 then
     utils.warn(string.format("Could not start the fs_poll watcher for path %s : %s", self._opts.absolute_path, name))
     return nil
@@ -79,11 +75,6 @@ end
 function Watcher:restart()
   self:stop()
   return self:start()
-end
-
-function M.setup(opts)
-  M.enabled = opts.git.watcher.enable
-  M.interval = opts.git.watcher.interval
 end
 
 M.Watcher = Watcher

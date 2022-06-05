@@ -111,12 +111,13 @@ function M.load_project_status(cwd)
     list_ignored = true,
     timeout = M.config.timeout,
   }
-  log.line("watcher", "git start")
-  M.projects[project_root] = {
-    files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
+
+  local watcher = nil
+  if M.config.watcher.enable then
+    log.line("watcher", "git start")
     watcher = Watcher.new {
       absolute_path = utils.path_join { project_root, ".git" },
+      interval = M.config.watcher.interval,
       on_event = function()
         log.line("watcher", "git event")
         utils.debounce(200, function()
@@ -124,7 +125,13 @@ function M.load_project_status(cwd)
           require("nvim-tree.renderer").draw()
         end)
       end,
-    },
+    }
+  end
+
+  M.projects[project_root] = {
+    files = git_status,
+    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
+    watcher = watcher,
   }
   return M.projects[project_root]
 end

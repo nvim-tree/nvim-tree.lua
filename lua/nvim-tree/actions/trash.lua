@@ -89,7 +89,7 @@ end
 
 function M.setup(opts)
   M.config.trash = opts.trash or {}
-  M.enable_reload = not opts.git.watcher.enable
+  M.enable_reload = not opts.git.watcher.enable or not opts.git.enable
 end
 
 return M

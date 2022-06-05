@@ -23,6 +23,9 @@ local function is_git(path)
 end
 
 function M.create_watcher(absolute_path)
+  if not M.enabled then
+    return nil
+  end
   if is_git(absolute_path) then
     return nil
   end
@@ -30,6 +33,7 @@ function M.create_watcher(absolute_path)
   log.line("watcher", "node start '%s'", absolute_path)
   Watcher.new {
     absolute_path = absolute_path,
+    interval = M.interval,
     on_event = function(path)
       local n = utils.get_node_from_path(absolute_path)
       if not n then
@@ -45,6 +49,11 @@ function M.create_watcher(absolute_path)
       require("nvim-tree.renderer").draw()
     end,
   }
+end
+
+function M.setup(opts)
+  M.enabled = opts.git.watcher.enable and opts.git.enable
+  M.interval = opts.git.watcher.interval
 end
 
 return M
