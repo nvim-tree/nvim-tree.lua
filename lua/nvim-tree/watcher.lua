@@ -72,11 +72,6 @@ function Watcher:stop()
   end
 end
 
-function Watcher:restart()
-  self:stop()
-  return self:start()
-end
-
 M.Watcher = Watcher
 
 return M

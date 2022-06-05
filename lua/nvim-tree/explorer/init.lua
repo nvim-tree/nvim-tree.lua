@@ -33,18 +33,22 @@ function Explorer:expand(node)
   self:_load(node)
 end
 
-function Explorer:_clear_watchers()
+function Explorer.clear_watchers_for(root_node)
   local function iterate(node)
     if node.watcher then
       node.watcher:stop()
-      for _, node_ in pairs(node.nodes) do
-        if node_.watcher then
-          iterate(node_)
+      for _, child in pairs(node.nodes) do
+        if child.watcher then
+          iterate(child)
         end
       end
     end
   end
-  iterate(self)
+  iterate(root_node)
+end
+
+function Explorer:_clear_watchers()
+  Explorer.clear_watchers_for(self)
 end
 
 function M.setup(opts)
