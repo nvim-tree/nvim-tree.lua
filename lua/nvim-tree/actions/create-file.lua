@@ -119,7 +119,7 @@ end
 
 function M.setup(opts)
   M.create_in_closed_folder = opts.create_in_closed_folder
-  M.enable_reload = not opts.git.watcher.enable or not opts.git.enable
+  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

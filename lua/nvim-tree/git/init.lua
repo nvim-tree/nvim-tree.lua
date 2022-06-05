@@ -120,10 +120,8 @@ function M.load_project_status(cwd)
       interval = M.config.watcher.interval,
       on_event = function()
         log.line("watcher", "git event")
-        utils.debounce(200, function()
-          M.reload_tree_at(project_root)
-          require("nvim-tree.renderer").draw()
-        end)
+        M.reload_tree_at(project_root)
+        require("nvim-tree.renderer").draw()
       end,
     }
   end
@@ -138,6 +136,7 @@ end
 
 function M.setup(opts)
   M.config = opts.git
+  M.config.watcher = opts.filesystem_watchers
 end
 
 return M

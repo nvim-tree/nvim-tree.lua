@@ -52,8 +52,8 @@ function M.create_watcher(absolute_path)
 end
 
 function M.setup(opts)
-  M.enabled = opts.git.watcher.enable and opts.git.enable
-  M.interval = opts.git.watcher.interval
+  M.enabled = opts.filesystem_watchers.enable
+  M.interval = opts.filesystem_watchers.interval
 end
 
 return M

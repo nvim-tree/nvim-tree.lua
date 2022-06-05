@@ -287,21 +287,4 @@ function M.key_by(tbl, key)
   return keyed
 end
 
-local TIMER = nil
-function M.debounce(timeout, fn)
-  if TIMER then
-    TIMER:close()
-  end
-  TIMER = uv.new_timer()
-  TIMER:start(
-    timeout,
-    0,
-    vim.schedule_wrap(function()
-      TIMER:close()
-      TIMER = nil
-      fn()
-    end)
-  )
-end
-
 return M

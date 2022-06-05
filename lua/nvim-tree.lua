@@ -300,11 +300,13 @@ local function setup_autocommands(opts)
   -- reset highlights when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
 
-  if opts.auto_reload_on_write and (not opts.git.watcher.enable or not opts.git.enable) then
+  local has_watchers = opts.filesystem_watchers.enable
+
+  if opts.auto_reload_on_write and not has_watchers then
     create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
 
-  if not opts.git.watcher.enable or not opts.git.enable then
+  if not has_watchers and opts.git.enable then
     create_nvim_tree_autocmd("User", {
       pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
       callback = reloaders.reload_git,
@@ -342,7 +344,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
 
-  if opts.reload_on_bufenter and (not opts.git.watcher.enable or not opts.git.enable) then
+  if opts.reload_on_bufenter and not has_watchers then
     create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
   end
 end
@@ -459,14 +461,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     custom = {},
     exclude = {},
   },
+  filesystem_watchers = {
+    enable = false,
+    interval = 100,
+  },
   git = {
     enable = true,
     ignore = true,
     timeout = 400,
-    watcher = {
-      enable = false,
-      interval = 100,
-    },
   },
   actions = {
     use_system_clipboard = true,
