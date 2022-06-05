@@ -22,6 +22,8 @@ local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
     for i = 1, rdepth do
       if idx == nodes_number and i == rdepth then
         padding = padding .. M.config.indent_markers.icons.corner
+      elseif markers[i] and i == rdepth then
+        padding = padding .. M.config.indent_markers.icons.item
       elseif markers[i] then
         padding = padding .. M.config.indent_markers.icons.edge
       else

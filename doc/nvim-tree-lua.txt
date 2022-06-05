@@ -131,6 +131,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
           icons = {
             corner = "└ ",
             edge = "│ ",
+            item = "│ ",
             none = "  ",
           },
         },
@@ -539,7 +540,7 @@ UI rendering setup
 
     *nvim-tree.renderer.indent_markers.icons*
     Icons shown before the file/directory.
-      Type: `table`, Default: `{ corner = "└ ", edge = "│ ", none = "  ", }`
+      Type: `table`, Default: `{ corner = "└ ", edge = "│ ", item = "│ ", none = "  ", }`
 
     *nvim-tree.renderer.icons*
     Configuration options for icons.

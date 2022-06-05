@@ -392,6 +392,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       icons = {
         corner = "└ ",
         edge = "│ ",
+        item = "│ ",
         none = "  ",
       },
     },
