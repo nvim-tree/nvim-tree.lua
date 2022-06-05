@@ -256,7 +256,7 @@ local function manage_netrw(disable_netrw, hijack_netrw)
   end
 end
 
-local function setup_vim_commands(opts)
+local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeOpen", function(res)
     M.open(res.args)
   end, { nargs = "?", complete = "dir" })
@@ -614,7 +614,7 @@ function M.setup(conf)
     require("nvim-web-devicons").setup()
   end
 
-  setup_vim_commands(opts)
+  setup_vim_commands()
   setup_autocommands(opts)
 
   vim.schedule(function()
