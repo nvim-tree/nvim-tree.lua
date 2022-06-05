@@ -424,7 +424,9 @@ Git integration with icons and colors.
           Type: `boolean`, Default: `false`
 
         *nvim-tree.git.watcher.interval*
-        Interval between polls for each directory.
+        Milliseconds between polls for each directory.
+        Increase to at least 1000ms if changes are not visible. See
+        https://github.com/luvit/luv/blob/master/docs.md#uvfs_poll_startfs_poll-path-interval-callback
           Type: `number`, Default: `100` (ms)
 
   You will still need to set |renderer.icons.show.git| `= true` or
