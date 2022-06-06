@@ -124,6 +124,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         add_trailing = false,
         group_empty = false,
         highlight_git = false,
+        full_name = false,
         highlight_opened_files = "none",
         root_folder_modifier = ":~",
         indent_markers = {
@@ -514,6 +515,10 @@ UI rendering setup
 
     *nvim-tree.renderer.group_empty*
     Compact folders that only contain a single folder into one node in the file tree.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.full_name*
+    Display node whose name length is wider than the width of nvim-tree window in floating window.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_git*
