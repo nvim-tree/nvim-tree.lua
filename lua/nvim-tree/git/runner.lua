@@ -53,8 +53,7 @@ end
 
 function Runner:_log_raw_output(output)
   if output and type(output) == "string" then
-    -- TODO put this back after watcher feature completed
-    -- log.raw("git", "%s", output)
+    log.raw("git", "%s", output)
     log.line("git", "done")
   end
 end
