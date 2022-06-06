@@ -237,7 +237,7 @@ Values may be functions. Warning: this may result in unexpected behaviour.
         },
       },
       trash = {
-        cmd = "trash",
+        cmd = "gio trash",
         require_confirm = true,
       },
       live_filter = {
@@ -652,7 +652,8 @@ Configuration options for trashing.
 
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
-      Type: `string`, Default: `"trash"`
+    The default is shipped with glib2 which is a common linux package.
+      Type: `string`, Default: `"gio trash"`
 
     *nvim-tree.trash.require_confirm*
     Show a prompt before trashing takes place.
