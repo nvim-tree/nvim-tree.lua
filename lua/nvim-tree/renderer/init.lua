@@ -5,6 +5,7 @@ local view = require "nvim-tree.view"
 
 local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
+local full_name = require "nvim-tree.renderer.components.full-name"
 local help = require "nvim-tree.renderer.help"
 local git = require "nvim-tree.renderer.components.git"
 local Builder = require "nvim-tree.renderer.builder"
@@ -104,6 +105,7 @@ function M.setup(opts)
   M.config = opts.renderer
 
   _padding.setup(opts)
+  full_name.setup(opts)
   git.setup(opts)
   icon_component.setup(opts)
 end
