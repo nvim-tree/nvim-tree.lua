@@ -385,6 +385,10 @@ function M._prevent_buffer_override()
     require("nvim-tree.renderer").draw()
     a.nvim_win_close(curwin, { force = true })
     require("nvim-tree.actions.open-file").fn("edit", bufname)
+
+    if require("nvim-tree").get_config().actions.open_file.quit_on_open then
+      M.abandon_current_window()
+    end
   end)
 end
 
