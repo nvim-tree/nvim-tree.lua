@@ -6,6 +6,7 @@ local events = require "nvim-tree.events"
 
 M.View = {
   adaptive_size = false,
+  centralize_selection = false,
   tabpages = {},
   cursors = {},
   hide_root_folder = false,
@@ -394,6 +395,7 @@ end
 function M.setup(opts)
   local options = opts.view or {}
   M.View.adaptive_size = options.adaptive_size
+  M.View.centralize_selection = options.centralize_selection
   M.View.side = options.side
   M.View.width = options.width
   M.View.height = options.height
