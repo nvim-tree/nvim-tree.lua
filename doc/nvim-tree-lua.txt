@@ -1,90 +1,125 @@
 *nvim-tree.lua* A file explorer written in lua
 
-Minimum version of neovim: 0.6.0
-
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
 ==============================================================================
-INTRODUCTION                                         *nvim-tree-introduction*
+CONTENTS                                                          *nvim-tree
 
-This file explorer requires `neovim >= 0.6.0`
-
-==============================================================================
-QUICK START                                          *nvim-tree-quickstart*
-
-open the tree with :NvimTreeToggle
->
-  nnoremap <C-n> :NvimTreeToggle<CR>
-  lua require 'nvim-tree'.toggle()
-<
+  1. Introduction                             nvim-tree-introduction
+  2. Quickstart                               nvim-tree-quickstart
+  3. Commands                                 nvim-tree-commands
+  4. Setup/Configuration                      nvim-tree-setup
+  5. Mappings                                 nvim-tree-mappings
+  6. Highlight Groups                         nvim-tree-highlight
+  7. Events                                   nvim-tree-events
 
 ==============================================================================
-COMMANDS                                             *nvim-tree-commands*
+ 1. INTRODUCTION                                     nvim-tree-introduction
+
+<add shortish description here>
+
+Features:
+    File icons with vim-devicons.
+
+    Uses other type of icons so a good font support is recommended.
+    If the tree renders weird glyphs, install the correct fonts.
+
+    Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
+    ugly colors otherwise.
+
+    Git integration tells when a file is:
+    - ✗  unstaged or folder is dirty
+    - ✓  staged
+    - ★  new file
+    - ✓ ✗ partially staged
+    - ✓ ★ new file staged
+    - ✓ ★ ✗ new file staged and has unstaged modifications
+    - ═  merging
+    - ➜  renamed
+
+    Mouse support defined in |KeyBindings|
+
+Requirements:
+    This file explorer requires `neovim >= 0.7.0`
+
+==============================================================================
+ 2. QUICK START                                         *nvim-tree-quickstart*
+
+Configure: TODO: REPHRASE
+
+    require('nvim-tree').setup()
+    vim.keymap.add('n', <C-n>', require('nvim-tree').toggle)
+
+open the tree with :NvimTreeToggle or <C-n>
+
+==============================================================================
+ 3. COMMANDS                                             *nvim-tree-commands*
 
 |:NvimTreeOpen|
 
-opens the tree. Takes an optional path argument.
+    opens the tree. Takes an optional path argument.
 
 |:NvimTreeClose|
 
-closes the tree
+    closes the tree
 
 |:NvimTreeToggle|
 
-open or close the tree. Takes an optional path argument.
+    open or close the tree. Takes an optional path argument.
 
 |:NvimTreeFocus|
 
-open the tree if it is closed, and then focus on the tree
+    open the tree if it is closed, and then focus on the tree
 
 |:NvimTreeRefresh|
 
-refresh the tree
+    refresh the tree
 
 |:NvimTreeFindFile|
 
-The command will change the cursor in the tree for the current bufname.
+    The command will change the cursor in the tree for the current bufname.
 
-It will also open the leafs of the tree leading to the file in the buffer
-(if you opened a file with something else than the NvimTree, like `fzf` or
-`:split`)
+    It will also open the leafs of the tree leading to the file in the buffer
+    (if you opened a file with something else than the NvimTree, like `fzf` or
+    `:split`)
 
 |:NvimTreeFindFileToggle|
 
-close the tree or change the cursor in the tree for the current bufname,
-similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
-optional path argument.
+    close the tree or change the cursor in the tree for the current bufname,
+    similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
+    optional path argument.
 
 |:NvimTreeClipboard|
 
-Print clipboard content for both cut and copy
+    Print clipboard content for both cut and copy
 
 |:NvimTreeResize|
 
-Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
-resizes the window to the width of 50. If the size starts with "+" or "-" it
-adds or removes the given value to the current window width.
-Example `:NvimTreeResize -20` removes the value 20 from the current width. And
-`:NvimTreeResize +20` adds the value 20 to the current width.
+    Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
+    resizes the window to the width of 50. If the size starts with "+" or "-" it
+    adds or removes the given value to the current window width.
+    Example `:NvimTreeResize -20` removes the value 20 from the current width. And
+    `:NvimTreeResize +20` adds the value 20 to the current width.
 
 |:NvimTreeCollapse|
 
-Collapses the nvim-tree recursively.
+    Collapses the nvim-tree recursively.
 
 |:NvimTreeCollapseKeepBuffers|
 
-Collapses the nvim-tree recursively, but keep the directories open, which are
-used in an open buffer.
+    Collapses the nvim-tree recursively, but keep the directories open, which are
+    used in an open buffer.
 
 
 ==============================================================================
-SETUP                                                *nvim-tree.setup*
+ 4. SETUP                                                   *nvim-tree-setup*
 
-To configure the tree (and make it runnable), you should call the setup
-function.
+You must run setup() function to initialise nvim-tree.
 
-Setup may only be run once; subsequent calls will result in a warning. Do not
-invoke from, say, a packer config function and then call it again later.
+setup() function takes one optional argument: configuration table. If omitted
+nvim-tree will be initialised with default configuration.
+
+Setup may only be run once; subsequent calls will result in a warning.
 
 Values may be functions. Warning: this may result in unexpected behaviour.
 >
@@ -782,9 +817,7 @@ Configuration for diagnostic logging.
       Type: `boolean`, Default: `false`
 
 ==============================================================================
-INFORMATIONS                                         *nvim-tree-info*
-
-MAPPINGS                                             *nvim-tree-mappings*
+ 5. MAPPINGS                                             *nvim-tree-mappings*
 
 The `list` option in `view.mappings.list` is a table of
 
@@ -900,30 +933,8 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "g?",                             action = "toggle_help" }
   } -- END_DEFAULT_MAPPINGS
 <
-FEATURES                                             *nvim-tree-features*
-
-File icons with vim-devicons.
-
-Uses other type of icons so a good font support is recommended.
-If the tree renders weird glyphs, install the correct fonts.
-
-Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
-ugly colors otherwise.
-
-Git integration tells when a file is:
-- ✗  unstaged or folder is dirty
-- ✓  staged
-- ★  new file
-- ✓ ✗ partially staged
-- ✓ ★ new file staged
-- ✓ ★ ✗ new file staged and has unstaged modifications
-- ═  merging
-- ➜  renamed
-
-Mouse support defined in |KeyBindings|
-
 ==============================================================================
-HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
+ 6. HIGHLIGHT GROUPS                                    *nvim-tree-highlight*
 
 All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
@@ -1028,7 +1039,7 @@ You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
 A good functionnality to enable is |nvim-tree.hijack_directories|.
 
 ==============================================================================
-EVENTS                                               *nvim-tree-events*
+ 7. EVENTS                                                 *nvim-tree-events*
 
 |nvim_tree_events|
 
