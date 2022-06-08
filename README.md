@@ -40,6 +40,7 @@ Setup may only be run once; subsequent calls will result in a warning. Do not in
 
 ```vim
 " vimrc
+lua require'nvim-tree'.setup {}
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
