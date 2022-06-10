@@ -36,7 +36,7 @@ Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if u
 
 Legacy `g:` options have been migrated to the setup function. See [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) for information on migrating your configuration.
 
-Setup may only be run once; subsequent calls will result in a warning. Do not invoke from, say, a packer config function and then call it again later.
+Setup may only be run once; subsequent calls will result in a warning. Do not invoke from, say, a packer config function and then call it again later. You can suppress the warning using the `suppress_setup_recall_warning` option.
 
 ```vim
 " vimrc
@@ -77,6 +77,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
+  suppress_setup_recall_warning = false,
   ignore_buffer_on_setup = false,
   open_on_setup = false,
   open_on_setup_file = false,

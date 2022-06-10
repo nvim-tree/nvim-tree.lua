@@ -368,6 +368,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
+  suppress_setup_recall_warning = false,
   ignore_buffer_on_setup = false,
   open_on_setup = false,
   open_on_setup_file = false,
@@ -589,17 +590,18 @@ function M.setup(conf)
     return
   end
 
-  if M.setup_called then
-    utils.warn "nvim-tree.lua setup called multiple times"
-    return
-  end
-  M.setup_called = true
-
   legacy.migrate_legacy_options(conf or {})
 
   validate_options(conf)
 
   local opts = merge_options(conf)
+
+  if not opts.suppress_setup_recall_warning and M.setup_called then
+    utils.warn "nvim-tree.lua setup called multiple times"
+    return
+  end
+  M.setup_called = true
+
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   _config.update_focused_file = opts.update_focused_file
