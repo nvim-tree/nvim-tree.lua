@@ -45,7 +45,7 @@ Each option is documented in `:help nvim-tree.OPTION_NAME` (nested options can b
 
 ## Mappings
 
-nvim-tree comes with number of mappings; for default mappings please see (TODO: link to defaults in doc), for way of configuring mappings see (TODO: link to mapping conf in doc).
+nvim-tree comes with number of mappings; for default mappings please see `:help nvim-tree-default-mappings`, for way of configuring mappings see `:help nvim-tree-mappings`.
 
 ## Tips & tricks
 

@@ -3,18 +3,20 @@
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
 ==============================================================================
-CONTENTS                                                          *nvim-tree
+CONTENTS                                                           *nvim-tree*
 
   1. Introduction                             nvim-tree-introduction
   2. Quickstart                               nvim-tree-quickstart
   3. Commands                                 nvim-tree-commands
   4. Setup/Configuration                      nvim-tree-setup
+  4.1 Vinegar Style                           nvim-tree-vinegar
   5. Mappings                                 nvim-tree-mappings
   6. Highlight Groups                         nvim-tree-highlight
   7. Events                                   nvim-tree-events
+  7.1 Available Events                        nvim-tree.events
 
 ==============================================================================
- 1. INTRODUCTION                                     nvim-tree-introduction
+ 1. INTRODUCTION                                      *nvim-tree-introduction*
 
 <add shortish description here>
 
@@ -53,7 +55,7 @@ Configure: TODO: REPHRASE
 open the tree with :NvimTreeToggle or <C-n>
 
 ==============================================================================
- 3. COMMANDS                                             *nvim-tree-commands*
+ 3. COMMANDS                                              *nvim-tree-commands*
 
 |:NvimTreeOpen|
 
@@ -112,7 +114,7 @@ open the tree with :NvimTreeToggle or <C-n>
 
 
 ==============================================================================
- 4. SETUP                                                   *nvim-tree-setup*
+ 4. SETUP                                                    *nvim-tree-setup*
 
 You must run setup() function to initialise nvim-tree.
 
@@ -817,7 +819,47 @@ Configuration for diagnostic logging.
       Type: `boolean`, Default: `false`
 
 ==============================================================================
- 5. MAPPINGS                                             *nvim-tree-mappings*
+ 4.1 VINEGAR STYLE                                         *nvim-tree-vinegar*
+
+|nvim_tree_vinegar|                                    *nvim_tree_vinegar*
+
+nvim-tree can behave like vinegar. To allow this, you will need to configure
+it in a specific way:
+
+- Use `require"nvim-tree".open_replacing_current_buffer()` instead of the
+default open command.
+You can easily implement a toggle using this too:
+>
+    local function toggle_replace()
+      local view = require"nvim-tree.view"
+      if view.is_visible() then
+        view.close()
+      else
+        require"nvim-tree".open_replacing_current_buffer()
+      end
+    end
+<
+- Use the `edit_in_place` action to edit files. It's bound to `<C-e>` by
+default, vinegar uses `<CR>`. You can override this with:
+>
+    require"nvim-tree".setup {
+      view = {
+        mappings = {
+          list = {
+            { key = "<CR>", action = "edit_in_place" }
+          }
+        }
+      }
+    }
+<
+Going up a dir is bound to `-` by default in nvim-tree which is identical to
+vinegar, no change is needed here.
+
+You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
+A good functionnality to enable is |nvim-tree.hijack_directories|.
+
+==============================================================================
+ 5. MAPPINGS                                              *nvim-tree-mappings*
 
 The `list` option in `view.mappings.list` is a table of
 
@@ -934,7 +976,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
   } -- END_DEFAULT_MAPPINGS
 <
 ==============================================================================
- 6. HIGHLIGHT GROUPS                                    *nvim-tree-highlight*
+ 6. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
 
 All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
@@ -999,47 +1041,7 @@ NvimTreeLiveFilterPrefix
 NvimTreeLiveFilterValue
 
 ==============================================================================
-VINEGAR STYLE                                        *nvim-tree-vinegar*
-
-|nvim_tree_vinegar|                                    *nvim_tree_vinegar*
-
-nvim-tree can behave like vinegar. To allow this, you will need to configure
-it in a specific way:
-
-- Use `require"nvim-tree".open_replacing_current_buffer()` instead of the
-default open command.
-You can easily implement a toggle using this too:
->
-    local function toggle_replace()
-      local view = require"nvim-tree.view"
-      if view.is_visible() then
-        view.close()
-      else
-        require"nvim-tree".open_replacing_current_buffer()
-      end
-    end
-<
-- Use the `edit_in_place` action to edit files. It's bound to `<C-e>` by
-default, vinegar uses `<CR>`. You can override this with:
->
-    require"nvim-tree".setup {
-      view = {
-        mappings = {
-          list = {
-            { key = "<CR>", action = "edit_in_place" }
-          }
-        }
-      }
-    }
-<
-Going up a dir is bound to `-` by default in nvim-tree which is identical to
-vinegar, no change is needed here.
-
-You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
-A good functionnality to enable is |nvim-tree.hijack_directories|.
-
-==============================================================================
- 7. EVENTS                                                 *nvim-tree-events*
+ 7. EVENTS                                                  *nvim-tree-events*
 
 |nvim_tree_events|
 
@@ -1067,7 +1069,7 @@ For example, registering a handler for when a node is renamed is done like this:
     end)
 
 ==============================================================================
-Lua module: nvim-tree.events                         *nvim-tree.events*
+ 7.1 Lua module: nvim-tree.events                           *nvim-tree.events*
 
                                      *nvim-tree.events.on_nvim_tree_ready()*
 on_nvim_tree_ready({handler})
