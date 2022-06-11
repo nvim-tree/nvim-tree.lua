@@ -165,7 +165,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  if not M.enable_reload then
+  if M.enable_reload then
     return require("nvim-tree.actions.reloaders").reload_explorer()
   end
 end
