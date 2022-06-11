@@ -82,6 +82,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
+  root_dirs = { "/usr/include" },
   update_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
@@ -163,6 +164,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   update_focused_file = {
     enable = false,
     update_cwd = false,
+    update_root = false,
     ignore_list = {},
   },
   ignore_ft_on_setup = {},

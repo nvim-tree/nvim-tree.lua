@@ -18,11 +18,39 @@ local _config = {}
 
 local M = {
   setup_called = false,
+  init_root = "",
+  cwd = "",
 }
 
 function M.focus()
   M.open()
   view.focus()
+end
+
+function M.change_root(filepath)
+  -- test if current file is in M.cwd
+  if M.cwd ~= nil and M.cwd ~= "" then
+    if utils.path_relative(filepath, M.cwd) ~= filepath then
+      return
+    end
+  end
+  -- otherwise test M.init_root
+  if utils.path_relative(filepath, M.init_root) ~= filepath then
+    M.cwd = M.init_root
+    lib.open(M.cwd)
+    return
+  end
+  -- otherwise root_dirs
+  for _, dir in pairs(_config.root_dirs) do
+    dir = vim.fn.fnamemodify(dir, ":p")
+    if utils.path_relative(filepath, dir) ~= filepath then
+      M.cwd = dir
+      lib.open(M.cwd)
+      return
+    end
+  end
+  M.cwd = vim.fn.fnamemodify(filepath, ":p:h")
+  lib.open(M.cwd)
 end
 
 ---@deprecated
@@ -109,7 +137,7 @@ local function update_base_dir_with_filepath(filepath, bufnr)
   end
 end
 
-function M.find_file(with_open, bufnr)
+function M.find_file(with_open, bufnr, bang)
   if not with_open and not core.get_explorer() then
     return
   end
@@ -125,10 +153,15 @@ function M.find_file(with_open, bufnr)
     M.open()
   end
 
+  -- if we don't schedule, it will search for NvimTree
   vim.schedule(function()
-    -- if we don't schedule, it will search for NvimTree
-    if _config.update_focused_file.update_cwd then
+    -- bang forces it to run M.change_root
+    if bang then
+      M.change_root(filepath)
+    elseif _config.update_focused_file.update_cwd then
       update_base_dir_with_filepath(filepath, bufnr)
+    elseif _config.update_focused_file.update_root then
+      M.change_root(filepath)
     end
     require("nvim-tree.actions.find-file").fn(filepath)
   end)
@@ -267,9 +300,9 @@ local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
   api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
   api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
-  api.nvim_create_user_command("NvimTreeFindFile", function()
-    M.find_file(true)
-  end, {})
+  api.nvim_create_user_command("NvimTreeFindFile", function(res)
+    M.find_file(true, nil, res.bang)
+  end, { bang = true })
   api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     M.toggle(true, false, res.args)
   end, { nargs = "?", complete = "dir" })
@@ -373,6 +406,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
+  root_dirs = { "/usr/include" },
   update_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
@@ -454,6 +488,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   update_focused_file = {
     enable = false,
     update_cwd = false,
+    update_root = false,
     ignore_list = {},
   },
   ignore_ft_on_setup = {},
@@ -594,6 +629,7 @@ function M.setup(conf)
     return
   end
   M.setup_called = true
+  M.init_root = vim.fn.getcwd()
 
   legacy.migrate_legacy_options(conf or {})
 
@@ -602,6 +638,7 @@ function M.setup(conf)
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
+  _config.root_dirs = opts.root_dirs
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.open_on_setup_file = opts.open_on_setup_file
