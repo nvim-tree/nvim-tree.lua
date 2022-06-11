@@ -4,13 +4,9 @@
 
 <add more info here + feature list>
 
-## Notice
+## Install
 
 This plugin requires [neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim).
-
-Legacy `g:` options have been migrated to the setup function. See [this issue](https://github.com/kyazdani42/nvim-tree.lua/issues/674) for information on migrating your configuration.
-
-## Install
 
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
 
@@ -25,7 +21,7 @@ or with [packer](https://github.com/wbthomason/packer.nvim):
 use {
     'kyazdani42/nvim-tree.lua',
     requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+      'kyazdani42/nvim-web-devicons', -- optional, for file icons
     },
     tag = 'nightly' -- optional, updated every week. (see issue #1193)
 }
@@ -49,123 +45,7 @@ Each option is documented in `:help nvim-tree.OPTION_NAME` (nested options can b
 
 ## Mappings
 
-The `list` option in `view.mappings.list` is a table of
-
-```lua
--- key can be either a string or a table of string (lhs)
--- action is the name of the action, set to `""` to remove default action
--- action_cb is the function that will be called, it receives the node as a parameter. Optional for default actions
--- mode is normal by default
-
-local tree_cb = require'nvim-tree.config'.nvim_tree_callback
-
-local function print_node_path(node) {
-  print(node.absolute_path)
-}
-
-local list = {
-  { key = {"<CR>", "o" }, action = "edit", mode = "n"},
-  { key = "p", action = "print_path", action_cb = print_node_path },
-  { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
-  { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
-}
-```
-
-### Defaults
-
-<!-- BEGIN_DEFAULT_MAPPINGS_TABLE -->
-| Default Keys | Action | Description |
-| - | - | - |
-| \<CR> <br /> o <br /> \<2-LeftMouse> | edit | open a file or folder; root will cd to the above directory |
-| \<C-e> | edit_in_place | edit the file in place, effectively replacing the tree explorer |
-| O | edit_no_picker | same as (edit) with no window picker |
-| \<C-]> <br /> \<2-RightMouse> | cd | cd in the directory under the cursor |
-| \<C-v> | vsplit | open the file in a vertical split |
-| \<C-x> | split | open the file in a horizontal split |
-| \<C-t> | tabnew | open the file in a new tab |
-| \< | prev_sibling | navigate to the previous sibling of current file/directory |
-| > | next_sibling | navigate to the next sibling of current file/directory |
-| P | parent_node | move cursor to the parent directory |
-| \<BS> | close_node | close current opened directory or parent |
-| \<Tab> | preview | open the file as a preview (keeps the cursor in the tree) |
-| K | first_sibling | navigate to the first sibling of current file/directory |
-| J | last_sibling | navigate to the last sibling of current file/directory |
-| I | toggle_git_ignored | toggle visibility of files/folders hidden via `git.ignore` option |
-| H | toggle_dotfiles | toggle visibility of dotfiles via `filters.dotfiles` option |
-| U | toggle_custom | toggle visibility of files/folders hidden via `filters.custom` option |
-| R | refresh | refresh the tree |
-| a | create | add a file; leaving a trailing `/` will add a directory |
-| d | remove | delete a file (will prompt for confirmation) |
-| D | trash | trash a file via `trash` option |
-| r | rename | rename a file |
-| \<C-r> | full_rename | rename a file and omit the filename on input |
-| x | cut | add/remove file/directory to cut clipboard |
-| c | copy | add/remove file/directory to copy clipboard |
-| p | paste | paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation |
-| y | copy_name | copy name to system clipboard |
-| Y | copy_path | copy relative path to system clipboard |
-| gy | copy_absolute_path | copy absolute path to system clipboard |
-| [c | prev_git_item | go to next git item |
-| ]c | next_git_item | go to prev git item |
-| - | dir_up | navigate up to the parent directory of the current file/directory |
-| s | system_open | open a file with default system application or a folder with default file manager, using `system_open` option |
-| f | live_filter | live filter nodes dynamically based on regex matching. |
-| F | clear_live_filter | clear live filter |
-| q | close | close tree window |
-| W | collapse_all | collapse the whole tree |
-| E | expand_all | expand the whole tree, stopping after expanding `actions.expand_all.max_folder_discovery` folders; this might hang neovim for a while if running on a big folder |
-| S | search_node | prompt the user to enter a path and then expands the tree to match the path |
-| . | run_file_command | enter vim command mode with the file the cursor is on |
-| \<C-k> | toggle_file_info | toggle a popup with file infos about the file under the cursor |
-| g? | toggle_help | toggle help |
-<!-- END_DEFAULT_MAPPINGS_TABLE -->
-
-```lua
-  view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
-    { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" }
-    { key = "<C-e>",                          action = "edit_in_place" }
-    { key = "O",                              action = "edit_no_picker" }
-    { key = { "<C-]>", "<2-RightMouse>" },    action = "cd" }
-    { key = "<C-v>",                          action = "vsplit" }
-    { key = "<C-x>",                          action = "split" }
-    { key = "<C-t>",                          action = "tabnew" }
-    { key = "<",                              action = "prev_sibling" }
-    { key = ">",                              action = "next_sibling" }
-    { key = "P",                              action = "parent_node" }
-    { key = "<BS>",                           action = "close_node" }
-    { key = "<Tab>",                          action = "preview" }
-    { key = "K",                              action = "first_sibling" }
-    { key = "J",                              action = "last_sibling" }
-    { key = "I",                              action = "toggle_git_ignored" }
-    { key = "H",                              action = "toggle_dotfiles" }
-    { key = "U",                              action = "toggle_custom" }
-    { key = "R",                              action = "refresh" }
-    { key = "a",                              action = "create" }
-    { key = "d",                              action = "remove" }
-    { key = "D",                              action = "trash" }
-    { key = "r",                              action = "rename" }
-    { key = "<C-r>",                          action = "full_rename" }
-    { key = "x",                              action = "cut" }
-    { key = "c",                              action = "copy" }
-    { key = "p",                              action = "paste" }
-    { key = "y",                              action = "copy_name" }
-    { key = "Y",                              action = "copy_path" }
-    { key = "gy",                             action = "copy_absolute_path" }
-    { key = "[c",                             action = "prev_git_item" }
-    { key = "]c",                             action = "next_git_item" }
-    { key = "-",                              action = "dir_up" }
-    { key = "s",                              action = "system_open" }
-    { key = "f",                              action = "live_filter" }
-    { key = "F",                              action = "clear_live_filter" }
-    { key = "q",                              action = "close" }
-    { key = "W",                              action = "collapse_all" }
-    { key = "E",                              action = "expand_all" }
-    { key = "S",                              action = "search_node" }
-    { key = ".",                              action = "run_file_command" }
-    { key = "<C-k>",                          action = "toggle_file_info" }
-    { key = "g?",                             action = "toggle_help" }
-  } -- END_DEFAULT_MAPPINGS
-```
+nvim-tree comes with number of mappings; for default mappings please see (TODO: link to defaults in doc), for way of configuring mappings see (TODO: link to mapping conf in doc).
 
 ## Tips & tricks
 
@@ -176,7 +56,9 @@ local list = {
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 * You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: other plugins or automation may interfere with this.
 
-## Diagnostic Logging
+## Troubleshooting
+
+### Diagnostic Logging
 
 You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See `:help nvim-tree.log`.
 
@@ -207,19 +89,7 @@ Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
 * Try temporarily disabling git integration by setting `git.enable = false` in your setup.
 
-## Help Wanted
-
-Developers with the following environments:
-
-* Apple macOS
-* Windows
-  * WSL
-  * msys
-  * powershell
-
-Help triaging, diagnosing and fixing issues specific to those environments is needed, as the nvim-tree developers do not have access to or expertise in these environments.
-
-## Contributing
+### Contributing
 
 PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 
