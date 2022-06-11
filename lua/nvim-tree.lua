@@ -596,8 +596,10 @@ function M.setup(conf)
 
   local opts = merge_options(conf)
 
-  if not opts.suppress_setup_recall_warning and M.setup_called then
-    utils.warn "nvim-tree.lua setup called multiple times"
+  if M.setup_called then
+    if not opts.suppress_setup_recall_warning then
+      utils.warn "nvim-tree.lua setup called multiple times"
+    end
     return
   end
   M.setup_called = true
