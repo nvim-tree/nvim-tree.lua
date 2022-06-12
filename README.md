@@ -60,7 +60,22 @@ require("nvim-tree").setup({
 ```
 
 For complete list of available configuration options see `:help nvim-tree.setup`.
-Each option is documented in `:help nvim-tree.OPTION_NAME` (nested options can be accessed by appending `.`, for example, `:help nvim-tree.view.mappings`).
+
+Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example, `:help nvim-tree.view.mappings`.
+
+## Commands
+
+See `:help nvim-tree-commands`.
+
+Basic commands:
+
+`:NvimTreeToggle` Open or close the tree. Takes an optional path argument.
+
+`:NvimTreeFocus` Open the tree if it is closed, and then focus on the tree.
+
+`:NvimTreeFindFile` Move the cursor in the tree for the current buffer, opening folders if needed.
+
+`:NvimTreeCollapse` Collapses the nvim-tree recursively.
 
 ## Mappings
 
