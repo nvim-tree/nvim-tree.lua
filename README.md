@@ -29,7 +29,7 @@ use {
 
 ## Setup
 
-Setup should be run in a lua file or in a lua heredoc (`:help lua-heredoc`) if using in a vim file.
+Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https://neovim.io/doc/user/lua.html) if using in a vim file.
 
 Setup may only be run once; subsequent calls will result in a warning.
 
@@ -59,13 +59,13 @@ require("nvim-tree").setup({
 })
 ```
 
-For complete list of available configuration options see `:help nvim-tree.setup`.
+For complete list of available configuration options see [:help nvim-tree.setup](doc/nvim-tree-lua.txt)
 
-Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example, `:help nvim-tree.view.mappings`.
+Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example [:help nvim-tree.view.mappings](doc/nvim-tree-lua.txt)
 
 ## Commands
 
-See `:help nvim-tree-commands`.
+See [:help nvim-tree-commands](doc/nvim-tree-lua.txt)
 
 Basic commands:
 
@@ -79,7 +79,7 @@ Basic commands:
 
 ## Mappings
 
-nvim-tree comes with number of mappings; for default mappings please see `:help nvim-tree-default-mappings`, for way of configuring mappings see `:help nvim-tree-mappings`.
+nvim-tree comes with number of mappings; for default mappings please see [:help nvim-tree-default-mappings](doc/nvim-tree-lua.txt), for way of configuring mappings see [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
 `g?` toggles help, showing all the mappings and their actions.
 
@@ -88,7 +88,7 @@ nvim-tree comes with number of mappings; for default mappings please see `:help 
 * You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
 * You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
 * `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
-* You can allow nvim-tree to behave like vinegar (see `:help nvim-tree-vinegar`).
+* You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 * You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: other plugins or automation may interfere with this.
 
@@ -96,7 +96,7 @@ nvim-tree comes with number of mappings; for default mappings please see `:help 
 
 ### Diagnostic Logging
 
-You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See `:help nvim-tree.log`.
+You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See [:help nvim-tree.log](doc/nvim-tree-lua.txt)
 
 ## Performance Issues
 
