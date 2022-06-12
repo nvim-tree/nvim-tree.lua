@@ -21,10 +21,9 @@ CONTENTS                                                           *nvim-tree*
 <add shortish description here>
 
 Features:
-    File icons with vim-devicons.
-
-    Uses other type of icons so a good font support is recommended.
-    If the tree renders weird glyphs, install the correct fonts.
+    File icons with kyazdani42/nvim-web-devicons. Requires a patched font.
+     should look like an open folder.
+    See https://github.com/kyazdani42/nvim-web-devicons
 
     Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
     ugly colors otherwise.
