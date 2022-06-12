@@ -125,9 +125,23 @@ Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
 * Try temporarily disabling git integration by setting `git.enable = false` in your setup.
 
-### Contributing
+## Contributing
 
 PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### Help Wanted
+
+Developers with the following environments:
+
+* Apple macOS
+* Windows
+  * WSL
+  * msys
+  * powershell
+
+Help triaging, diagnosing and fixing issues specific to those environments is needed, as the nvim-tree developers do not have access to or expertise in these environments.
+
+Let us know you're interested by commenting on issues and raising PRs.
 
 ## Screenshots
 
