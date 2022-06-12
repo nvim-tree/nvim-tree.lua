@@ -82,7 +82,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
-  root_dirs = { "/usr/include" },
+  root_dirs = {},
   update_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
