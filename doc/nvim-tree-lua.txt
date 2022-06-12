@@ -1,4 +1,4 @@
-*nvim-tree.lua* A file explorer written in lua
+*nvim-tree* *nvim-tree.lua* A file explorer written in lua
 
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
