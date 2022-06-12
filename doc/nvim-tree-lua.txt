@@ -46,13 +46,34 @@ Requirements:
 ==============================================================================
  2. QUICK START                                         *nvim-tree-quickstart*
 
-Configure: TODO: REPHRASE
+Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
-    require('nvim-tree').setup()
-    vim.keymap.add('n', <C-n>', require('nvim-tree').toggle)
+Setup may only be run once; subsequent calls will result in a warning.
+>
+    -- examples for your init.lua
 
-open the tree with :NvimTreeToggle or <C-n>
+    -- empty setup using defaults
+    require("nvim-tree").setup()
 
+    -- OR setup with some options
+    require("nvim-tree").setup({
+      sort_by = "case_sensitive",
+      view = {
+        adaptive_size = true,
+        mappings = {
+          list = {
+            { key = "u", action = "dir_up" },
+          },
+        },
+      },
+      renderer = {
+        group_empty = true,
+      },
+      filters = {
+        dotfiles = true,
+      },
+    })
+<
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
