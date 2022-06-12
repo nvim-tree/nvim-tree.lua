@@ -81,6 +81,8 @@ Basic commands:
 
 nvim-tree comes with number of mappings; for default mappings please see `:help nvim-tree-default-mappings`, for way of configuring mappings see `:help nvim-tree-mappings`.
 
+`g?` toggles help, showing all the mappings and their actions.
+
 ## Tips & tricks
 
 * You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
