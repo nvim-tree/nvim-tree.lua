@@ -272,6 +272,11 @@ function M.abandon_current_window()
   M.View.tabpages[tab].winnr = nil
 end
 
+function M.quit_on_open()
+  M._prevent_buffer_override()
+  M.abandon_current_window()
+end
+
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
@@ -385,10 +390,6 @@ function M._prevent_buffer_override()
     require("nvim-tree.renderer").draw()
     a.nvim_win_close(curwin, { force = true })
     require("nvim-tree.actions.open-file").fn("edit", bufname)
-
-    if require("nvim-tree").get_config().actions.open_file.quit_on_open then
-      M.abandon_current_window()
-    end
   end)
 end
 
