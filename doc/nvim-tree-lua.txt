@@ -360,6 +360,7 @@ until it finds the file.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.update_focused_file.update_cwd*
+    (deprecated, use `update_focused_file.update_root`)
     Update the root directory of the tree to the one of the folder containing
     the file if the file is not under the current root directory.
     Only relevant when `update_focused_file.enable` is `true`
@@ -367,10 +368,9 @@ until it finds the file.
 
     *nvim-tree.update_focused_file.update_root*
     Update the root directory of the tree if the file is not under current
-    root directory. It prefers initial working directory and `root_dirs`, and
-    otherwise falls back to the folder containing the file.
-    Only relevant when `update_focused_file.enable` is `true` and
-    `update_focused_file.update_cwd` is `false`
+    root directory. It prefers vim's cwd, or the initial working directory
+    and `root_dirs`. Otherwise it falls back to the folder containing the file.
+    Only relevant when `update_focused_file.enable` is `true`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.update_focused_file.ignore_list*

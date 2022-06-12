@@ -19,7 +19,6 @@ local _config = {}
 local M = {
   setup_called = false,
   init_root = "",
-  cwd = "",
 }
 
 function M.focus()
@@ -27,30 +26,45 @@ function M.focus()
   view.focus()
 end
 
-function M.change_root(filepath)
-  -- test if current file is in M.cwd
-  if M.cwd ~= nil and M.cwd ~= "" then
-    if utils.path_relative(filepath, M.cwd) ~= filepath then
+function M.change_root(filepath, bufnr)
+  -- skip if current file is in ignore_list
+  local ft = api.nvim_buf_get_option(bufnr, "filetype") or ""
+  for _, value in pairs(_config.update_focused_file.ignore_list) do
+    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
       return
     end
   end
+
+  local cwd = core.get_cwd()
+  local vim_cwd = vim.fn.getcwd()
+
+  -- test if in vim_cwd
+  if utils.path_relative(filepath, vim_cwd) ~= filepath then
+    if vim_cwd ~= cwd then
+      lib.open(vim_cwd)
+    end
+    return
+  end
+  -- test if in cwd
+  if utils.path_relative(filepath, cwd) ~= filepath then
+    return
+  end
+
   -- otherwise test M.init_root
   if utils.path_relative(filepath, M.init_root) ~= filepath then
-    M.cwd = M.init_root
-    lib.open(M.cwd)
+    lib.open(M.init_root)
     return
   end
   -- otherwise root_dirs
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
     if utils.path_relative(filepath, dir) ~= filepath then
-      M.cwd = dir
-      lib.open(M.cwd)
+      lib.open(dir)
       return
     end
   end
-  M.cwd = vim.fn.fnamemodify(filepath, ":p:h")
-  lib.open(M.cwd)
+  -- finally fall back to the folder containing the file
+  lib.open(vim.fn.fnamemodify(filepath, ":p:h"))
 end
 
 ---@deprecated
@@ -124,19 +138,6 @@ local function is_file_readable(fname)
   return stat and stat.type == "file" and luv.fs_access(fname, "R")
 end
 
-local function update_base_dir_with_filepath(filepath, bufnr)
-  local ft = api.nvim_buf_get_option(bufnr, "filetype") or ""
-  for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
-      return
-    end
-  end
-
-  if not vim.startswith(filepath, core.get_cwd()) then
-    change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
-  end
-end
-
 function M.find_file(with_open, bufnr, bang)
   if not with_open and not core.get_explorer() then
     return
@@ -155,13 +156,8 @@ function M.find_file(with_open, bufnr, bang)
 
   -- if we don't schedule, it will search for NvimTree
   vim.schedule(function()
-    -- bang forces it to run M.change_root
-    if bang then
-      M.change_root(filepath)
-    elseif _config.update_focused_file.update_cwd then
-      update_base_dir_with_filepath(filepath, bufnr)
-    elseif _config.update_focused_file.update_root then
-      M.change_root(filepath)
+    if bang or _config.update_focused_file.update_cwd or _config.update_focused_file.update_root then
+      M.change_root(filepath, bufnr)
     end
     require("nvim-tree.actions.find-file").fn(filepath)
   end)
