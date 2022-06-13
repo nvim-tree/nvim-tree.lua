@@ -51,7 +51,7 @@ function M.change_root(filepath, bufnr)
   end
 
   -- otherwise test M.init_root
-  if utils.path_relative(filepath, M.init_root) ~= filepath then
+  if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
     lib.open(M.init_root)
     return
   end
@@ -403,6 +403,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   sort_by = "name",
   root_dirs = {},
+  prefer_startup_root = false,
   update_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
@@ -635,6 +636,7 @@ function M.setup(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   _config.root_dirs = opts.root_dirs
+  _config.prefer_startup_root = opts.prefer_startup_root
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.open_on_setup_file = opts.open_on_setup_file
