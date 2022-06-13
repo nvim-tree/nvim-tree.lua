@@ -2,7 +2,19 @@
 
 [![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
 
-<add more info here + feature list>
+## Features
+
+<details><summary>Screenshot</summary><br>
+![nvim-tree.lua example](doc/nvim-tree.example.png)
+</details>
+
+* Automatic updates
+* File type icons
+* Git integration
+* Diagnostics integration: LSP and COC
+* (Live) filtering
+* Cut, copy, paste, rename, delete, create
+* Highly customisable
 
 ## Install
 
@@ -19,11 +31,11 @@ or with [packer](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
-    'kyazdani42/nvim-tree.lua',
-    requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icons
-    },
-    tag = 'nightly' -- optional, updated every week. (see issue #1193)
+  'kyazdani42/nvim-tree.lua',
+  requires = {
+    'kyazdani42/nvim-web-devicons', -- optional, for file icons
+  },
+  tag = 'nightly' -- optional, updated every week. (see issue #1193)
 }
 ```
 
