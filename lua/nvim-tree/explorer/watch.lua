@@ -3,13 +3,10 @@ local utils = require "nvim-tree.utils"
 local git = require "nvim-tree.git"
 local Watcher = require("nvim-tree.watcher").Watcher
 
-local M = {}
-
-local function reload_and_get_git_project(path)
-  local project_root = git.get_project_root(path)
-  git.reload_project(project_root)
-  return project_root, git.get_project(project_root) or {}
-end
+local M = {
+  running_project = {},
+  pending_project = {},
+}
 
 local function update_parent_statuses(node, project, root)
   while project and node and node.absolute_path ~= root do
@@ -35,18 +32,38 @@ function M.create_watcher(absolute_path)
     absolute_path = absolute_path,
     interval = M.interval,
     on_event = function(path)
+      log.line("watcher", "node event '%s'", path)
       local n = utils.get_node_from_path(absolute_path)
       if not n then
         return
       end
-      log.line("watcher", "node event '%s'", path)
 
+      local project_root = git.get_project_root(path)
+
+      if M.running_project[project_root] then
+        log.line("watcher", "node pending '%s'", path)
+        M.pending_project[project_root] = true
+        return
+      end
+      M.running_project[project_root] = true
+
+      git.reload_project(project_root)
+
+      if M.pending_project[project_root] then
+        log.line("watcher", "node rerunning '%s'", path)
+        git.reload_project(project_root)
+      end
+      M.pending_project[project_root] = nil
+      M.running_project[project_root] = nil
+
+      local project = git.get_project(project_root) or {}
       local node = utils.get_parent_of_group(n)
-      local project_root, project = reload_and_get_git_project(path)
       require("nvim-tree.explorer.reload").reload(node, project)
       update_parent_statuses(node, project, project_root)
 
       require("nvim-tree.renderer").draw()
+
+      log.line("watcher", "node done '%s'", path)
     end,
   }
 end

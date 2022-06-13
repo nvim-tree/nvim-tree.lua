@@ -119,9 +119,10 @@ function M.load_project_status(cwd)
       absolute_path = utils.path_join { project_root, ".git" },
       interval = M.config.watcher.interval,
       on_event = function()
-        log.line("watcher", "git event")
-        M.reload_tree_at(project_root)
-        require("nvim-tree.renderer").draw()
+        -- TODO extract common functionaly from watch create_watcher to guard together
+        -- log.line("watcher", "git event")
+        -- M.reload_tree_at(project_root)
+        -- require("nvim-tree.renderer").draw()
       end,
     }
   end
