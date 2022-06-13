@@ -2,19 +2,23 @@
 
 [![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
 
-## Features
+<img align="left" width="124" height="332" src=".github/example.png?raw=true">
 
-<details><summary>Screenshot</summary><br>
-![nvim-tree.lua example](doc/nvim-tree.example.png)
-</details>
+   Automatic updates
 
-* Automatic updates
-* File type icons
-* Git integration
-* Diagnostics integration: LSP and COC
-* (Live) filtering
-* Cut, copy, paste, rename, delete, create
-* Highly customisable
+   File type icons
+
+   Git integration
+
+   Diagnostics integration: LSP and COC
+
+   (Live) filtering
+
+   Cut, copy, paste, rename, delete, create
+   
+   Highly customisable
+
+<br clear="left"/>
 
 ## Install
 
