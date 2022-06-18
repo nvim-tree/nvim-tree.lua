@@ -1042,23 +1042,25 @@ Example (in your `init.vim`):
 You should have 'termguicolors' enabled, otherwise, colors will not be
 applied.
 
+Default linked group follows name.
+
 NvimTreeSymlink
-NvimTreeFolderName
+NvimTreeFolderName          (Directory)
 NvimTreeRootFolder
 NvimTreeFolderIcon
 NvimTreeFileIcon
-NvimTreeEmptyFolderName
-NvimTreeOpenedFolderName
+NvimTreeEmptyFolderName     (Directory)
+NvimTreeOpenedFolderName    (Directory)
 NvimTreeExecFile
 NvimTreeOpenedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeIndentMarker
 
-LspDiagnosticsError
-LspDiagnosticsWarning
-LspDiagnosticsInformation
-LspDiagnosticsHint
+NvimTreeLspDiagnosticsError         (DiagnosticError)
+NvimTreeLspDiagnosticsWarning       (DiagnosticWarn)
+NvimTreeLspDiagnosticsInformation   (DiagnosticInfo)
+NvimTreeLspDiagnosticsHint          (DiagnosticHint)
 
 NvimTreeGitDirty
 NvimTreeGitStaged
@@ -1066,27 +1068,29 @@ NvimTreeGitMerge
 NvimTreeGitRenamed
 NvimTreeGitNew
 NvimTreeGitDeleted
+NvimTreeGitIgnored      (Comment)
 
 NvimTreeWindowPicker
 
 There are also links to normal bindings to style the tree itself.
 
 NvimTreeNormal
-NvimTreeEndOfBuffer
-NvimTreeCursorLine
-NvimTreeVertSplit (deprecated, use NvimTreeWinSeparator)
-NvimTreeWinSeparator
-NvimTreeCursorColumn
+NvimTreeEndOfBuffer     (NonText)
+NvimTreeCursorLine      (CursorLine)
+NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
+NvimTreeWinSeparator    (VertSplit)
+NvimTreeCursorColumn    (CursorColumn)
 
-There are also links for file highlight with git properties
-These all link to there Git equivalent
+There are also links for file highlight with git properties, linked to their
+Git equivalent:
 
-NvimTreeFileDirty
-NvimTreeFileStaged
-NvimTreeFileMerge
-NvimTreeFileRenamed
-NvimTreeFileNew
-NvimTreeFileDeleted
+NvimTreeFileDirty       (NvimTreeGitDirty)
+NvimTreeFileStaged      (NvimTreeGitStaged)
+NvimTreeFileMerge       (NvimTreeGitMerge)
+NvimTreeFileRenamed     (NvimTreeGitRenamed)
+NvimTreeFileNew         (NvimTreeGitNew)
+NvimTreeFileDeleted     (NvimTreeGitDeleted)
+NvimTreeFileIgnored     (NvimTreeGitIgnored)
 
 There are 2 highlight groups for the live filter feature
 

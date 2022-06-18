@@ -120,7 +120,7 @@ local git_hl = {
   ["R "] = "NvimTreeFileRenamed",
   ["RM"] = "NvimTreeFileRenamed",
   [" R"] = "NvimTreeFileRenamed",
-  ["!!"] = "NvimTreeGitIgnored",
+  ["!!"] = "NvimTreeFileIgnored",
   [" A"] = "none",
 }
 
