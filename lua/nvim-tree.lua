@@ -18,11 +18,53 @@ local _config = {}
 
 local M = {
   setup_called = false,
+  init_root = "",
 }
 
 function M.focus()
   M.open()
   view.focus()
+end
+
+function M.change_root(filepath, bufnr)
+  -- skip if current file is in ignore_list
+  local ft = api.nvim_buf_get_option(bufnr, "filetype") or ""
+  for _, value in pairs(_config.update_focused_file.ignore_list) do
+    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
+      return
+    end
+  end
+
+  local cwd = core.get_cwd()
+  local vim_cwd = vim.fn.getcwd()
+
+  -- test if in vim_cwd
+  if utils.path_relative(filepath, vim_cwd) ~= filepath then
+    if vim_cwd ~= cwd then
+      lib.open(vim_cwd)
+    end
+    return
+  end
+  -- test if in cwd
+  if utils.path_relative(filepath, cwd) ~= filepath then
+    return
+  end
+
+  -- otherwise test M.init_root
+  if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
+    lib.open(M.init_root)
+    return
+  end
+  -- otherwise root_dirs
+  for _, dir in pairs(_config.root_dirs) do
+    dir = vim.fn.fnamemodify(dir, ":p")
+    if utils.path_relative(filepath, dir) ~= filepath then
+      lib.open(dir)
+      return
+    end
+  end
+  -- finally fall back to the folder containing the file
+  lib.open(vim.fn.fnamemodify(filepath, ":p:h"))
 end
 
 ---@deprecated
@@ -96,20 +138,7 @@ local function is_file_readable(fname)
   return stat and stat.type == "file" and luv.fs_access(fname, "R")
 end
 
-local function update_base_dir_with_filepath(filepath, bufnr)
-  local ft = api.nvim_buf_get_option(bufnr, "filetype") or ""
-  for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
-      return
-    end
-  end
-
-  if not vim.startswith(filepath, core.get_cwd()) then
-    change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
-  end
-end
-
-function M.find_file(with_open, bufnr)
+function M.find_file(with_open, bufnr, bang)
   if not with_open and not core.get_explorer() then
     return
   end
@@ -125,10 +154,10 @@ function M.find_file(with_open, bufnr)
     M.open()
   end
 
+  -- if we don't schedule, it will search for NvimTree
   vim.schedule(function()
-    -- if we don't schedule, it will search for NvimTree
-    if _config.update_focused_file.update_cwd then
-      update_base_dir_with_filepath(filepath, bufnr)
+    if bang or _config.update_focused_file.update_cwd or _config.update_focused_file.update_root then
+      M.change_root(filepath, bufnr)
     end
     require("nvim-tree.actions.find-file").fn(filepath)
   end)
@@ -267,9 +296,9 @@ local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
   api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
   api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
-  api.nvim_create_user_command("NvimTreeFindFile", function()
-    M.find_file(true)
-  end, {})
+  api.nvim_create_user_command("NvimTreeFindFile", function(res)
+    M.find_file(true, nil, res.bang)
+  end, { bang = true })
   api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     M.toggle(true, false, res.args)
   end, { nargs = "?", complete = "dir" })
@@ -373,6 +402,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_setup_file = false,
   open_on_tab = false,
   sort_by = "name",
+  root_dirs = {},
+  prefer_startup_root = false,
   update_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
@@ -454,6 +485,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   update_focused_file = {
     enable = false,
     update_cwd = false,
+    update_root = false,
     ignore_list = {},
   },
   ignore_ft_on_setup = {},
@@ -594,6 +626,7 @@ function M.setup(conf)
     return
   end
   M.setup_called = true
+  M.init_root = vim.fn.getcwd()
 
   legacy.migrate_legacy_options(conf or {})
 
@@ -602,6 +635,8 @@ function M.setup(conf)
   local opts = merge_options(conf)
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
+  _config.root_dirs = opts.root_dirs
+  _config.prefer_startup_root = opts.prefer_startup_root
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.open_on_setup_file = opts.open_on_setup_file

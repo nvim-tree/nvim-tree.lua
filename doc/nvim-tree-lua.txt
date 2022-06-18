@@ -165,6 +165,8 @@ Setup may only be run once; subsequent calls will result in a warning.
       open_on_setup_file = false,
       open_on_tab = false,
       sort_by = "name",
+      root_dirs = {},
+      prefer_startup_root = false,
       update_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
@@ -246,6 +248,7 @@ Setup may only be run once; subsequent calls will result in a warning.
       update_focused_file = {
         enable = false,
         update_cwd = false,
+        update_root = false,
         ignore_list = {},
       },
       ignore_ft_on_setup = {},
@@ -385,6 +388,16 @@ Opens in place of the unnamed buffer if it's empty.
 Keeps the cursor on the first letter of the filename when moving in the tree.
   Type: `boolean`, Default: `false`
 
+*nvim-tree.root_dirs*
+Preferred root directories.
+Only relevant when `update_focused_file.update_root` is `true`
+  Type: `{string}`, Default: `{}`
+
+*nvim-tree.prefer_startup_root*
+Prefer startup root directory when updating root directory of the tree.
+Only relevant when `update_focused_file.update_root` is `true`
+  Type: `boolean`, Default: `false`
+
 *nvim-tree.update_cwd*
 Changes the tree root directory on `DirChanged` and refreshes the tree.
   Type: `boolean`, Default: `false`
@@ -419,8 +432,16 @@ until it finds the file.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.update_focused_file.update_cwd*
+    (deprecated, use `update_focused_file.update_root`)
     Update the root directory of the tree to the one of the folder containing
     the file if the file is not under the current root directory.
+    Only relevant when `update_focused_file.enable` is `true`
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.update_focused_file.update_root*
+    Update the root directory of the tree if the file is not under current
+    root directory. It prefers vim's cwd and `root_dirs`.
+    Otherwise it falls back to the folder containing the file.
     Only relevant when `update_focused_file.enable` is `true`
       Type: `boolean`, Default: `false`
 
