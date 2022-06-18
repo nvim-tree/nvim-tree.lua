@@ -366,7 +366,7 @@ local function setup_autocommands(opts)
   if not opts.actions.open_file.quit_on_open then
     create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
   else
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.quit_on_open })
   end
 
   if opts.hijack_directories.enable then
