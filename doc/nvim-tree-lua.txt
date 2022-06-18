@@ -1,4 +1,4 @@
-*nvim-tree* *nvim-tree.lua* A file explorer written in lua
+*nvim-tree* *nvim-tree.lua* A File Explorer For Neovim Written In Lua
 
 Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
 
@@ -18,17 +18,28 @@ CONTENTS                                                           *nvim-tree*
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
 
-<add shortish description here>
+Features
 
-Features:
-    File icons with kyazdani42/nvim-web-devicons. Requires a patched font.
-     should look like an open folder.
+    - Automatic updates
+    - File type icons
+    - Git integration
+    - Diagnostics integration: LSP and COC
+    - (Live) filtering
+    - Cut, copy, paste, rename, delete, create
+    - Highly customisable
+
+File Icons
+
     See https://github.com/kyazdani42/nvim-web-devicons
+    Requires a patched font.
+     should look like an open folder.
 
     Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
     ugly colors otherwise.
 
-    Git integration tells when a file is:
+Git Integration
+
+    Indicates when a file is:
     - ✗  unstaged or folder is dirty
     - ✓  staged
     - ★  new file
@@ -38,9 +49,8 @@ Features:
     - ═  merging
     - ➜  renamed
 
-    Mouse support defined in |KeyBindings|
+Requirements
 
-Requirements:
     This file explorer requires `neovim >= 0.7.0`
 
 ==============================================================================
@@ -901,6 +911,8 @@ The `list` option in `view.mappings.list` is a table of
     { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
   }
 <
+Mouse support defined in |KeyBindings|
+
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
 
 `<CR>`            edit                open a file or folder; root will cd to the above directory
