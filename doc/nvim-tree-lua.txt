@@ -1069,6 +1069,7 @@ NvimTreeFileMerge       (NvimTreeGitMerge)
 NvimTreeFileRenamed     (NvimTreeGitRenamed)
 NvimTreeFileNew         (NvimTreeGitNew)
 NvimTreeFileDeleted     (NvimTreeGitDeleted)
+NvimTreeFileIgnored     (NvimTreeGitIgnored)
 
 There are 2 highlight groups for the live filter feature
 
