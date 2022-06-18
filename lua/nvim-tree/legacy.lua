@@ -308,10 +308,18 @@ local function refactored(opts)
 
   -- view.update_focused_file.update_cwd -> update_root
   if opts.view and opts.update_focused_file and opts.update_focused_file.update_cwd ~= nil then
-    if not opts.update_focused_file.update_root == nil then
+    if opts.update_focused_file.update_root == nil then
       opts.update_focused_file.update_root = opts.update_focused_file.update_cwd
     end
     opts.update_focused_file.update_cwd = nil
+  end
+
+  -- view.update_focused_file.update_cwd -> update_root
+  if opts.update_cwd ~= nil then
+    if opts.sync_root_with_cwd == nil then
+      opts.sync_root_with_cwd = opts.update_cwd
+    end
+    opts.update_cwd = nil
   end
 end
 

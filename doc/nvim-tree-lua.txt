@@ -167,7 +167,7 @@ Setup may only be run once; subsequent calls will result in a warning.
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
-      update_cwd = false,
+      sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
       view = {
@@ -397,7 +397,7 @@ Prefer startup root directory when updating root directory of the tree.
 Only relevant when `update_focused_file.update_root` is `true`
   Type: `boolean`, Default: `false`
 
-*nvim-tree.update_cwd*
+*nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
 Changes the tree root directory on `DirChanged` and refreshes the tree.
   Type: `boolean`, Default: `false`
 
@@ -759,7 +759,7 @@ Configuration for various actions.
 
     *nvim-tree.actions.change_dir.global*
     Use `:cd` instead of `:lcd` when changing directories.
-    Consider that this might cause issues with the `update_cwd` options.
+    Consider that this might cause issues with the |nvim-tree.sync_root_with_cwd| option.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.actions.change_dir.restrict_above_cwd*
