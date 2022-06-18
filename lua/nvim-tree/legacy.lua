@@ -305,6 +305,14 @@ local function refactored(opts)
     end
     opts.view.auto_resize = nil
   end
+
+  -- view.update_focused_file.update_cwd -> update_root
+  if opts.view and opts.update_focused_file and opts.update_focused_file.update_cwd ~= nil then
+    if not opts.update_focused_file.update_root == nil then
+      opts.update_focused_file.update_root = opts.update_focused_file.update_cwd
+    end
+    opts.update_focused_file.update_cwd = nil
+  end
 end
 
 local function removed(opts)
