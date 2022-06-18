@@ -39,7 +39,7 @@ File Icons
 
 Git Integration
 
-    Indicates when a file is:
+    Icon indicates when a file is:
     - ✗  unstaged or folder is dirty
     - ✓  staged
     - ★  new file
@@ -152,8 +152,6 @@ setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
 
 Setup may only be run once; subsequent calls will result in a warning.
-
-Values may be functions. Warning: this may result in unexpected behaviour.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
@@ -532,14 +530,16 @@ Window / buffer setup.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.width*
-    Width of the window, can be either a `%` string or a number representing columns.
+    Width of the window, can be a `%` string, a number representing columns or
+    a function.
     Only works with `side` is `left` or `right`.
-      Type: `string | number`, Default: `30`
+      Type: `string | number | function`, Default: `30`
 
     *nvim-tree.view.height*
-    Height of the window, can be either a `%` string or a number representing rows.
+    Height of the window, can be `%` string or a number representing rows or a
+    function.
     Only works with  `side` is `top` or `bottom`
-      Type: `string | number`, Default: `30`
+      Type: `string | number | function`, Default: `30`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`, `"bottom"`, `"top"`.
