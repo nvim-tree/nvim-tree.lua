@@ -95,18 +95,22 @@ function M.open(cwd)
   end
 end
 
-function M.open_replacing_current_buffer()
+function M.open_replacing_current_buffer(cwd)
   if view.is_visible() then
     return
   end
 
   local buf = api.nvim_get_current_buf()
   local bufname = api.nvim_buf_get_name(buf)
-  if bufname == "" or vim.loop.fs_stat(bufname) == nil then
-    return
+
+  if cwd == "" or cwd == nil then
+    if bufname ~= "" and vim.loop.fs_stat(bufname) ~= nil then
+      cwd = vim.fn.fnamemodify(bufname, ":p:h")
+    else
+      return
+    end
   end
 
-  local cwd = vim.fn.fnamemodify(bufname, ":p:h")
   if not core.get_explorer() or cwd ~= core.get_cwd() then
     core.init(cwd)
   end
