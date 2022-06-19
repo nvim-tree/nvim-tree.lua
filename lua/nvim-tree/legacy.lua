@@ -285,42 +285,14 @@ local function refactored(opts)
     end
   end
 
-  -- update_to_buf_dir -> hijack_directories
-  if opts.update_to_buf_dir ~= nil then
-    utils.table_create_missing(opts, "hijack_directories")
-    if opts.hijack_directories.enable == nil then
-      opts.hijack_directories.enable = opts.update_to_buf_dir.enable
-    end
-    if opts.hijack_directories.auto_open == nil then
-      opts.hijack_directories.auto_open = opts.update_to_buf_dir.auto_open
-    end
-    opts.update_to_buf_dir = nil
-  end
+  utils.move_missing_val(opts, "update_to_buf_dir", "enable", opts, "hijack_directories", "enable")
+  utils.move_missing_val(opts, "update_to_buf_dir", "auto_open", opts, "hijack_directories", "auto_open")
 
-  -- view.auto_resize -> actions.open_file.resize_window
-  if opts.view and opts.view.auto_resize ~= nil then
-    utils.table_create_missing(opts, "actions.open_file")
-    if opts.actions.open_file.resize_window == nil then
-      opts.actions.open_file.resize_window = opts.view.auto_resize
-    end
-    opts.view.auto_resize = nil
-  end
+  utils.move_missing_val(opts, "view", "auto_resize", opts, "actions.open_file", "resize_window")
 
-  -- view.update_focused_file.update_cwd -> update_root
-  if opts.view and opts.update_focused_file and opts.update_focused_file.update_cwd ~= nil then
-    if opts.update_focused_file.update_root == nil then
-      opts.update_focused_file.update_root = opts.update_focused_file.update_cwd
-    end
-    opts.update_focused_file.update_cwd = nil
-  end
+  utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root")
 
-  -- view.update_focused_file.update_cwd -> update_root
-  if opts.update_cwd ~= nil then
-    if opts.sync_root_with_cwd == nil then
-      opts.sync_root_with_cwd = opts.update_cwd
-    end
-    opts.update_cwd = nil
-  end
+  utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd")
 end
 
 local function removed(opts)

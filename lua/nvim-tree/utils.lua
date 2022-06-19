@@ -246,15 +246,15 @@ end
 
 -- Create empty sub-tables if not present
 -- @param tbl to create empty inside of
--- @param sub dot separated string of sub-tables
+-- @param path dot separated string of sub-tables
 -- @return deepest sub-table
-function M.table_create_missing(tbl, sub)
+function M.table_create_missing(tbl, path)
   if tbl == nil then
     return nil
   end
 
   local t = tbl
-  for s in string.gmatch(sub, "([^%.]+)%.*") do
+  for s in string.gmatch(path, "([^%.]+)%.*") do
     if t[s] == nil then
       t[s] = {}
     end
@@ -262,6 +262,42 @@ function M.table_create_missing(tbl, sub)
   end
 
   return t
+end
+
+-- Move a value from src to dst if value is nil on dst
+-- @param src to copy from
+-- @param src_path optional dot separated string of sub-tables
+-- @param src_pos value pos
+-- @param dst to copy to
+-- @param dst_path optional dot separated string of sub-tables, created when missing
+-- @param dst_pos value pos
+function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
+  if not src or not src_pos or src_pos == "" or not dst or not dst_pos or dst_pos == "" then
+    return
+  end
+
+  -- find
+  for pos in string.gmatch(src_path, "([^%.]+)%.*") do
+    if src[pos] and type(src[pos]) == "table" then
+      src = src[pos]
+    else
+      src = nil
+      break
+    end
+  end
+  local src_val = src and src[src_pos]
+  if src_val == nil then
+    return
+  end
+
+  -- copy
+  dst = M.table_create_missing(dst, dst_path)
+  if dst[dst_pos] == nil then
+    dst[dst_pos] = src_val
+  end
+
+  -- remove
+  src[src_pos] = nil
 end
 
 function M.format_bytes(bytes)
