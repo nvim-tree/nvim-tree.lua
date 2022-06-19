@@ -130,22 +130,24 @@ local function open_window()
   set_window_options_and_buffer()
 end
 
+local function is_buf_displayed(buf)
+  return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
+end
+
 local function get_alt_or_next_buf()
-  local alt_bufnr = vim.fn.bufnr "#"
+  local alt_buf = vim.fn.bufnr "#"
+  if is_buf_displayed(alt_buf) then
+    return alt_buf
+  end
 
-  local alt_buf = nil
   local next_buf = nil
-
   for _, buf in ipairs(a.nvim_list_bufs()) do
-    if a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1 then
+    if is_buf_displayed(buf) then
       next_buf = next_buf or buf
-      if buf == alt_bufnr then
-        alt_buf = buf
-      end
     end
   end
 
-  return alt_buf or next_buf
+  return next_buf
 end
 
 local function switch_buf_if_last_buf()
