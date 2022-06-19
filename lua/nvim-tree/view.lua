@@ -140,14 +140,11 @@ local function get_alt_or_next_buf()
     return alt_buf
   end
 
-  local next_buf = nil
   for _, buf in ipairs(a.nvim_list_bufs()) do
     if is_buf_displayed(buf) then
-      next_buf = next_buf or buf
+      return buf
     end
   end
-
-  return next_buf
 end
 
 local function switch_buf_if_last_buf()
