@@ -130,16 +130,31 @@ local function open_window()
   set_window_options_and_buffer()
 end
 
-local function get_existing_buffers()
-  return vim.tbl_filter(function(buf)
-    return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
-  end, a.nvim_list_bufs())
+local function is_buf_displayed(buf)
+  return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
+end
+
+local function get_alt_or_next_buf()
+  local alt_buf = vim.fn.bufnr "#"
+  if is_buf_displayed(alt_buf) then
+    return alt_buf
+  end
+
+  local next_buf = nil
+  for _, buf in ipairs(a.nvim_list_bufs()) do
+    if is_buf_displayed(buf) then
+      next_buf = next_buf or buf
+    end
+  end
+
+  return next_buf
 end
 
 local function switch_buf_if_last_buf()
   if #a.nvim_list_wins() == 1 then
-    if #get_existing_buffers() > 0 then
-      vim.cmd "sbnext"
+    local buf = get_alt_or_next_buf()
+    if buf then
+      vim.cmd("sb" .. buf)
     else
       vim.cmd "new"
     end
