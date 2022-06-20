@@ -100,7 +100,7 @@ local function pick_window()
 
   vim.cmd "redraw"
   if vim.opt.cmdheight._value ~= 0 then
-      print "Pick window: "
+    print "Pick window: "
   end
   local _, resp = pcall(utils.get_user_input_char)
   resp = (resp or ""):upper()
