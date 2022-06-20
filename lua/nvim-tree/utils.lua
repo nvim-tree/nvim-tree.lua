@@ -276,7 +276,6 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
     return
   end
 
-  -- find
   for pos in string.gmatch(src_path, "([^%.]+)%.*") do
     if src[pos] and type(src[pos]) == "table" then
       src = src[pos]
@@ -290,13 +289,11 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
     return
   end
 
-  -- copy
   dst = M.table_create_missing(dst, dst_path)
   if dst[dst_pos] == nil then
     dst[dst_pos] = src_val
   end
 
-  -- remove
   src[src_pos] = nil
 end
 
