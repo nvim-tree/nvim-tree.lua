@@ -15,11 +15,11 @@ cargo install stylua
 ## Adding new actions
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
-Once you did, you should run the `scripts/update-default-opts.sh` which will update the default documentation in the README and the help file.
+Once you did, you should run the `scripts/update-help.sh`.
 
 ## Documentation
 
 When adding new options, you should declare the defaults in the main `nvim-tree.lua` file.
-Once you did, you should run the `scripts/update-default-opts.sh` which will update the default documentation in the README and the help file.
+Once you did, you should run the `scripts/update-help.sh`.
 
 Documentation for options should also be added, see how this is done after `nvim-tree.disable_netrw` in the `nvim-tree-lua.txt` file.
