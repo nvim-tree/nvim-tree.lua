@@ -95,7 +95,7 @@ function M.open(cwd)
   end
 end
 
-function M.open_replacing_current_buffer()
+function M.open_replacing_current_buffer(cwd)
   if view.is_visible() then
     return
   end
@@ -106,7 +106,10 @@ function M.open_replacing_current_buffer()
     return
   end
 
-  local cwd = vim.fn.fnamemodify(bufname, ":p:h")
+  if cwd == "" or cwd == nil then
+    cwd = vim.fn.fnamemodify(bufname, ":p:h")
+  end
+
   if not core.get_explorer() or cwd ~= core.get_cwd() then
     core.init(cwd)
   end
@@ -366,7 +369,7 @@ local function setup_autocommands(opts)
   if not opts.actions.open_file.quit_on_open then
     create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
   else
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.quit_on_open })
   end
 
   if opts.hijack_directories.enable then

@@ -19,6 +19,10 @@
    Highly customisable
 
 <br clear="left"/>
+<br />
+
+[Join us on matrix](https://matrix.to/#/#nvim-tree:matrix.org)
+
 
 ## Install
 

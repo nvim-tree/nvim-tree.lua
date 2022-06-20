@@ -74,6 +74,7 @@ local function get_links()
     FileMerge = "NvimTreeGitMerge",
     FileStaged = "NvimTreeGitStaged",
     FileDeleted = "NvimTreeGitDeleted",
+    FileIgnored = "NvimTreeGitIgnored",
     Popup = "Normal",
     GitIgnored = "Comment",
     StatusLine = "StatusLine",
