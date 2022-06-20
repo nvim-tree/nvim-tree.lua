@@ -589,10 +589,7 @@ local function validate_options(conf)
     for k, v in pairs(user) do
       local invalid
       local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
-      if type(v) == "table" and not next(v) then
-        -- clear empty tables
-        user[k] = nil
-      elseif def[k] == nil then
+      if def[k] == nil then
         -- option does not exist
         invalid = string.format("unknown option: %s%s", prefix, k)
       elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then

@@ -287,6 +287,7 @@ local function refactored(opts)
 
   utils.move_missing_val(opts, "update_to_buf_dir", "enable", opts, "hijack_directories", "enable")
   utils.move_missing_val(opts, "update_to_buf_dir", "auto_open", opts, "hijack_directories", "auto_open")
+  opts.update_to_buf_dir = nil
 
   utils.move_missing_val(opts, "view", "auto_resize", opts, "actions.open_file", "resize_window")
 
