@@ -266,13 +266,22 @@ end
 
 -- Move a value from src to dst if value is nil on dst
 -- @param src to copy from
--- @param src_path optional dot separated string of sub-tables
+-- @param src_path dot separated string of sub-tables
 -- @param src_pos value pos
 -- @param dst to copy to
--- @param dst_path optional dot separated string of sub-tables, created when missing
+-- @param dst_path dot separated string of sub-tables, created when missing
 -- @param dst_pos value pos
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
-  if not src or not src_pos or src_pos == "" or not dst or not dst_pos or dst_pos == "" then
+  if
+    not pcall(vim.validate, {
+      src = { src, "table" },
+      src_path = { src_path, "string" },
+      src_pos = { src_pos, "string" },
+      dst = { dst, "table" },
+      dst_path = { dst_path, "string" },
+      dst_pos = { dst_pos, "string" },
+    })
+  then
     return
   end
 
