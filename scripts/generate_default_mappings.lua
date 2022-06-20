@@ -82,23 +82,3 @@ for _, m in pairs(outs_lua) do
   io.write(string.format(fmt, m.key, m.action))
 end
 io.close(file)
-
--- md
-file = io.open("/tmp/DEFAULT_MAPPINGS.md", "w")
-io.output(file)
-io.write "| Default Keys | Action | Description |\n"
-io.write "| - | - | - |\n"
-for _, m in pairs(M.mappings) do
-  local keys = ""
-  if type(m.key) == "table" then
-    local first = true
-    for _, sub_key in pairs(m.key) do
-      keys = keys .. (first and "" or " <br /> ") .. sub_key:gsub("<", "\\<")
-      first = false
-    end
-  else
-    keys = m.key:gsub("<", "\\<")
-  end
-  io.write(string.format("| %s | %s | %s |\n", keys, m.action, m.desc:gsub("|", "`")))
-end
-io.close(file)
