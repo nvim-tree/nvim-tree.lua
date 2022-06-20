@@ -285,14 +285,8 @@ local function refactored(opts)
     end
   end
 
-  utils.move_missing_val(opts, "update_to_buf_dir", "enable", opts, "hijack_directories", "enable")
-  utils.move_missing_val(opts, "update_to_buf_dir", "auto_open", opts, "hijack_directories", "auto_open")
-  opts.update_to_buf_dir = nil
-
-  utils.move_missing_val(opts, "view", "auto_resize", opts, "actions.open_file", "resize_window")
-
+  -- 2022/06/20
   utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root")
-
   utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd")
 end
 
