@@ -272,17 +272,16 @@ end
 -- @param dst_path dot separated string of sub-tables, created when missing
 -- @param dst_pos value pos
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
-  if
-    not pcall(vim.validate, {
-      src = { src, "table" },
-      src_path = { src_path, "string" },
-      src_pos = { src_pos, "string" },
-      dst = { dst, "table" },
-      dst_path = { dst_path, "string" },
-      dst_pos = { dst_pos, "string" },
-    })
-  then
-    return
+  local ok, err = pcall(vim.validate, {
+    src = { src, "table" },
+    src_path = { src_path, "string" },
+    src_pos = { src_pos, "string" },
+    dst = { dst, "table" },
+    dst_path = { dst_path, "string" },
+    dst_pos = { dst_pos, "string" },
+  })
+  if not ok then
+    M.warn("move_missing_val: " .. (err or "invalid arguments"))
   end
 
   for pos in string.gmatch(src_path, "([^%.]+)%.*") do
