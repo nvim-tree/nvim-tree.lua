@@ -878,7 +878,7 @@ Configuration for diagnostic logging.
           Type: `boolean`, Default: `false`
 
         *nvim-tree.log.types.watcher*
-        *nvim-tree.filesystem_watchers* processing, verbose.
+        |nvim-tree.filesystem_watchers| processing, verbose.
           Type: `boolean`, Default: `false`
 
 ==============================================================================
