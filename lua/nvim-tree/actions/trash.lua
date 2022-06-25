@@ -77,7 +77,7 @@ function M.fn(node)
     if node.nodes ~= nil and not node.link_to then
       trash_path(function(_, rc)
         if rc ~= 0 then
-          utils.warn("trash failed: " .. err_msg)
+          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
           return
         end
         events._dispatch_folder_removed(node.absolute_path)
@@ -88,7 +88,7 @@ function M.fn(node)
     else
       trash_path(function(_, rc)
         if rc ~= 0 then
-          utils.warn("trash failed: " .. err_msg)
+          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
           return
         end
         events._dispatch_file_removed(node.absolute_path)
