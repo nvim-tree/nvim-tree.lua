@@ -41,7 +41,7 @@ function M.change_root(filepath, bufnr)
   -- test if in vim_cwd
   if utils.path_relative(filepath, vim_cwd) ~= filepath then
     if vim_cwd ~= cwd then
-      lib.open(vim_cwd)
+      change_dir.fn(vim_cwd)
     end
     return
   end
@@ -52,19 +52,19 @@ function M.change_root(filepath, bufnr)
 
   -- otherwise test M.init_root
   if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
-    lib.open(M.init_root)
+    change_dir.fn(M.init_root)
     return
   end
   -- otherwise root_dirs
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
     if utils.path_relative(filepath, dir) ~= filepath then
-      lib.open(dir)
+      change_dir.fn(dir)
       return
     end
   end
   -- finally fall back to the folder containing the file
-  lib.open(vim.fn.fnamemodify(filepath, ":p:h"))
+  change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
 end
 
 ---@deprecated

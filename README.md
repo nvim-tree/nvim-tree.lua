@@ -110,7 +110,7 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 * `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
 * You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
-* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: other plugins or automation may interfere with this.
+* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/kyazdani42/nvim-tree.lua/issues/1368>. Use with great caution.
 
 ## Troubleshooting
 
