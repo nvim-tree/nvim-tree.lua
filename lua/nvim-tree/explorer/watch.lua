@@ -3,7 +3,9 @@ local utils = require "nvim-tree.utils"
 local git = require "nvim-tree.git"
 local Watcher = require("nvim-tree.watcher").Watcher
 
-local M = {}
+local M = {
+  refreshing_paths = {},
+}
 
 local function reload_and_get_git_project(path)
   local project_root = git.get_project_root(path)
@@ -22,6 +24,29 @@ local function is_git(path)
   return path:match "%.git$" ~= nil or path:match(utils.path_add_trailing ".git") ~= nil
 end
 
+local function refresh_path(path)
+  local n = utils.get_node_from_path(path)
+  if not n then
+    return
+  end
+  log.line("watcher", "node event '%s'", path)
+
+  if M.refreshing_paths[path] then
+    log.line("watcher", "node event already running")
+    return
+  end
+  M.refreshing_paths[path] = true
+
+  local node = utils.get_parent_of_group(n)
+  local project_root, project = reload_and_get_git_project(path)
+  require("nvim-tree.explorer.reload").reload(node, project)
+  update_parent_statuses(node, project, project_root)
+
+  require("nvim-tree.renderer").draw()
+
+  M.refreshing_paths[path] = nil
+end
+
 function M.create_watcher(absolute_path)
   if not M.enabled then
     return nil
@@ -35,18 +60,9 @@ function M.create_watcher(absolute_path)
     absolute_path = absolute_path,
     interval = M.interval,
     on_event = function(path)
-      local n = utils.get_node_from_path(absolute_path)
-      if not n then
-        return
-      end
-      log.line("watcher", "node event '%s'", path)
-
-      local node = utils.get_parent_of_group(n)
-      local project_root, project = reload_and_get_git_project(path)
-      require("nvim-tree.explorer.reload").reload(node, project)
-      update_parent_statuses(node, project, project_root)
-
-      require("nvim-tree.renderer").draw()
+      utils.debounce("explorer:watcher:" .. path, M.debounce, function()
+        refresh_path(path)
+      end)
     end,
   }
 end
@@ -54,6 +70,7 @@ end
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.interval = opts.filesystem_watchers.interval
+  M.debounce = opts.filesystem_watchers.debounce
 end
 
 return M

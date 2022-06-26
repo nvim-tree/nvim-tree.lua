@@ -3,7 +3,9 @@ local has_notify, notify = pcall(require, "notify")
 local a = vim.api
 local uv = vim.loop
 
-local M = {}
+local M = {
+  debouncers = {},
+}
 
 M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
@@ -326,6 +328,27 @@ function M.key_by(tbl, key)
     keyed[val[key]] = val
   end
   return keyed
+end
+
+---Execute fn timeout ms after the last invocation with context
+---@param context string identifies the callback to debounce
+---@param timeout number ms to wait
+---@param fn function callback to execute on completion
+function M.debounce(context, timeout, fn)
+  if M.debouncers[context] then
+    M.debouncers[context]:close()
+  end
+
+  M.debouncers[context] = uv.new_timer()
+  M.debouncers[context]:start(
+    timeout,
+    0,
+    vim.schedule_wrap(function()
+      M.debouncers[context]:close()
+      M.debouncers[context] = nil
+      fn()
+    end)
+  )
 end
 
 return M

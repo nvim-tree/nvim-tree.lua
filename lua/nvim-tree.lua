@@ -513,6 +513,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   filesystem_watchers = {
     enable = false,
     interval = 100,
+    debounce = 50,
   },
   git = {
     enable = true,
