@@ -9,7 +9,7 @@ local max_action_help = 0
 local outs_help = {}
 local outs_lua = {}
 
-for _, m in pairs(M.mappings) do
+for _, m in pairs(DEFAULT_MAPPINGS) do
   local out
   if type(m.key) == "table" then
     local first = true

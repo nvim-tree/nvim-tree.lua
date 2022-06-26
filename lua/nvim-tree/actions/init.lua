@@ -6,7 +6,8 @@ local view = require "nvim-tree.view"
 local util = require "nvim-tree.utils"
 local nvim_tree_callback = require("nvim-tree.config").nvim_tree_callback
 
-local DEFAULT_MAPPINGS = { -- BEGIN_DEFAULT_MAPPINGS
+-- BEGIN_DEFAULT_MAPPINGS
+local DEFAULT_MAPPINGS = {
   {
     key = { "<CR>", "o", "<2-LeftMouse>" },
     action = "edit",
@@ -217,7 +218,8 @@ local DEFAULT_MAPPINGS = { -- BEGIN_DEFAULT_MAPPINGS
     action = "toggle_help",
     desc = "toggle help",
   },
-} -- END_DEFAULT_MAPPINGS
+}
+-- END_DEFAULT_MAPPINGS
 
 local M = {
   mappings = {},
