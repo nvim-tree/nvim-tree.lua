@@ -167,7 +167,7 @@ Setup may only be run once; subsequent calls will result in a warning.
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
-      update_cwd = false,
+      sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
       view = {
@@ -247,7 +247,6 @@ Setup may only be run once; subsequent calls will result in a warning.
       },
       update_focused_file = {
         enable = false,
-        update_cwd = false,
         update_root = false,
         ignore_list = {},
       },
@@ -398,7 +397,7 @@ Prefer startup root directory when updating root directory of the tree.
 Only relevant when `update_focused_file.update_root` is `true`
   Type: `boolean`, Default: `false`
 
-*nvim-tree.update_cwd*
+*nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
 Changes the tree root directory on `DirChanged` and refreshes the tree.
   Type: `boolean`, Default: `false`
 
@@ -410,7 +409,7 @@ Automatically reloads the tree on `BufEnter` nvim-tree.
 Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
   Type: `boolean`, Default: `false`
 
-*nvim-tree.hijack_directories*
+*nvim-tree.hijack_directories*  (previously `update_to_buf_dir`)
 hijacks new directory buffers when they are opened (`:e dir`).
 
     *nvim-tree.hijack_directories.enable*
@@ -431,14 +430,7 @@ until it finds the file.
     Enable this feature.
       Type: `boolean`, Default: `false`
 
-    *nvim-tree.update_focused_file.update_cwd*
-    (deprecated, use `update_focused_file.update_root`)
-    Update the root directory of the tree to the one of the folder containing
-    the file if the file is not under the current root directory.
-    Only relevant when `update_focused_file.enable` is `true`
-      Type: `boolean`, Default: `false`
-
-    *nvim-tree.update_focused_file.update_root*
+    *nvim-tree.update_focused_file.update_root*  (previously `update_focused_file.update_cwd`)
     Update the root directory of the tree if the file is not under current
     root directory. It prefers vim's cwd and `root_dirs`.
     Otherwise it falls back to the folder containing the file.
@@ -448,7 +440,7 @@ until it finds the file.
     *nvim-tree.update_focused_file.ignore_list*
     List of buffer names and filetypes that will not update the root dir
     of the tree if the file isn't found under the current root directory.
-    Only relevant when `update_focused_file.update_cwd` and
+    Only relevant when `update_focused_file.update_root` and
     `update_focused_file.enable` are `true`.
       Type: {string}, Default: `{}`
 
@@ -768,7 +760,7 @@ Configuration for various actions.
 
         *nvim-tree.actions.change_dir.global*
         Use `:cd` instead of `:lcd` when changing directories.
-        Consider that this might cause issues with the `update_cwd` options.
+        Consider that this might cause issues with the |nvim-tree.sync_root_with_cwd| option.
           Type: `boolean`, Default: `false`
 
         *nvim-tree.actions.change_dir.restrict_above_cwd*
@@ -788,7 +780,7 @@ Configuration for various actions.
         It will also disable preventing a buffer overriding the tree.
           Type: `boolean`, Default: `false`
 
-        *nvim-tree.actions.open_file.resize_window*
+        *nvim-tree.actions.open_file.resize_window*  (previously `view.auto_resize`)
         Resizes the tree when opening a file.
           Type: `boolean`, Default: `true`
 

@@ -159,7 +159,7 @@ function M.find_file(with_open, bufnr, bang)
 
   -- if we don't schedule, it will search for NvimTree
   vim.schedule(function()
-    if bang or _config.update_focused_file.update_cwd or _config.update_focused_file.update_root then
+    if bang or _config.update_focused_file.update_root then
       M.change_root(filepath, bufnr)
     end
     require("nvim-tree.actions.find-file").fn(filepath)
@@ -351,7 +351,7 @@ local function setup_autocommands(opts)
   if opts.hijack_cursor then
     create_nvim_tree_autocmd("CursorMoved", { pattern = "NvimTree_*", callback = M.place_cursor_on_node })
   end
-  if opts.update_cwd then
+  if opts.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
         M.change_dir(vim.loop.cwd())
@@ -407,7 +407,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   sort_by = "name",
   root_dirs = {},
   prefer_startup_root = false,
-  update_cwd = false,
+  sync_root_with_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
   view = {
@@ -487,7 +487,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   update_focused_file = {
     enable = false,
-    update_cwd = false,
     update_root = false,
     ignore_list = {},
   },
