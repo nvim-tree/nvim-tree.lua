@@ -3,14 +3,14 @@ local uv = vim.loop
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
-local M = {}
-local Watcher = {
+local M = {
   _watchers = {},
 }
+local Watcher = {}
 Watcher.__index = Watcher
 
 function Watcher.new(opts)
-  for _, existing in ipairs(Watcher._watchers) do
+  for _, existing in ipairs(M._watchers) do
     if existing._opts.absolute_path == opts.absolute_path then
       log.line("watcher", "Watcher:new using existing '%s'", opts.absolute_path)
       return existing
@@ -25,7 +25,7 @@ function Watcher.new(opts)
 
   watcher = watcher:start()
 
-  table.insert(Watcher._watchers, watcher)
+  table.insert(M._watchers, watcher)
 
   return watcher
 end
@@ -73,5 +73,12 @@ function Watcher:stop()
 end
 
 M.Watcher = Watcher
+
+function M.purge_watchers()
+  for _, watcher in pairs(M._watchers) do
+    watcher:stop()
+  end
+  M._watchers = {}
+end
 
 return M

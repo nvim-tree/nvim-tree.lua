@@ -13,6 +13,7 @@ local core = require "nvim-tree.core"
 local reloaders = require "nvim-tree.actions.reloaders"
 local copy_paste = require "nvim-tree.actions.copy-paste"
 local collapse_all = require "nvim-tree.actions.collapse-all"
+local git = require "nvim-tree.git"
 
 local _config = {}
 
@@ -323,7 +324,7 @@ function M.change_dir(name)
 end
 
 local function setup_autocommands(opts)
-  local augroup_id = api.nvim_create_augroup("NvimTree", {})
+  local augroup_id = api.nvim_create_augroup("NvimTree", { clear = true })
   local function create_nvim_tree_autocmd(name, custom_opts)
     local default_opts = { group = augroup_id }
     api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
@@ -389,6 +390,16 @@ local function setup_autocommands(opts)
           api.nvim_feedkeys(keys, "n", true)
         end)
       end,
+    })
+  end
+
+  if opts.diagnostics.enable then
+    create_nvim_tree_autocmd("DiagnosticChanged", {
+      callback = require("nvim-tree.diagnostics").update,
+    })
+    create_nvim_tree_autocmd("User", {
+      pattern = "CocDiagnosticChange",
+      callback = require("nvim-tree.diagnostics").update,
     })
   end
 end
@@ -623,11 +634,6 @@ function M.setup(conf)
     return
   end
 
-  if M.setup_called then
-    utils.warn "nvim-tree.lua setup called multiple times"
-    return
-  end
-  M.setup_called = true
   M.init_root = vim.fn.getcwd()
 
   legacy.migrate_legacy_options(conf or {})
@@ -668,8 +674,24 @@ function M.setup(conf)
     require("nvim-web-devicons").setup()
   end
 
-  setup_vim_commands()
   setup_autocommands(opts)
+  require("nvim-tree.watcher").purge_watchers()
+
+  if not M.setup_called then
+    setup_vim_commands()
+  end
+
+  if M.setup_called and view.is_visible() then
+    view.close()
+    view.abandon_current_window()
+  end
+
+  if M.setup_called and core.get_explorer() ~= nil then
+    git.purge_state()
+    TreeExplorer = nil
+  end
+
+  M.setup_called = true
 
   vim.schedule(function()
     M.on_enter(netrw_disabled)
