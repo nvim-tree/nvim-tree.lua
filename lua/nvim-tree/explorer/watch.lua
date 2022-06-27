@@ -23,11 +23,11 @@ local function is_git(path)
 end
 
 local function refresh_path(path)
+  log.line("watcher", "node event executing '%s'", path)
   local n = utils.get_node_from_path(path)
   if not n then
     return
   end
-  log.line("watcher", "node event '%s'", path)
 
   local node = utils.get_parent_of_group(n)
   local project_root, project = reload_and_get_git_project(path)
@@ -50,6 +50,7 @@ function M.create_watcher(absolute_path)
     absolute_path = absolute_path,
     interval = M.interval,
     on_event = function(path)
+      log.line("watcher", "node event scheduled '%s'", path)
       utils.debounce("explorer:watch:" .. path, M.debounce, function()
         refresh_path(path)
       end)

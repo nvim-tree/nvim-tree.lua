@@ -336,7 +336,7 @@ end
 ---@param callback function to execute on completion
 function M.debounce(context, timeout, callback)
   if M.debouncers[context] then
-    M.debouncers[context]:close()
+    pcall(uv.close, M.debouncers[context])
   end
 
   M.debouncers[context] = uv.new_timer()
