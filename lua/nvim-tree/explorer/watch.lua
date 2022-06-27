@@ -7,7 +7,7 @@ local M = {}
 
 local function reload_and_get_git_project(path)
   local project_root = git.get_project_root(path)
-  git.reload_project(project_root)
+  git.reload_project(project_root, path)
   return project_root, git.get_project(project_root) or {}
 end
 

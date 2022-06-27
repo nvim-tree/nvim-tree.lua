@@ -45,7 +45,7 @@ function Runner:_getopts(stdout_handle, stderr_handle)
   local untracked = self.list_untracked and "-u" or nil
   local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
   return {
-    args = { "--no-optional-locks", "status", "--porcelain=v1", ignored, untracked },
+    args = { "--no-optional-locks", "status", "--porcelain=v1", ignored, untracked, self.path },
     cwd = self.project_root,
     stdio = { nil, stdout_handle, stderr_handle },
   }
@@ -129,10 +129,11 @@ end
 
 -- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
 function Runner.run(opts)
-  local ps = log.profile_start("git job %s", opts.project_root)
+  local ps = log.profile_start("git job %s %s", opts.project_root, opts.path)
 
   local self = setmetatable({
     project_root = opts.project_root,
+    path = opts.path,
     list_untracked = opts.list_untracked,
     list_ignored = opts.list_ignored,
     timeout = opts.timeout or 400,
@@ -143,7 +144,7 @@ function Runner.run(opts)
   self:_run_git_job()
   self:_wait()
 
-  log.profile_end(ps, "git job %s", opts.project_root)
+  log.profile_end(ps, "git job %s %s", opts.project_root, opts.path)
 
   if self.rc == -1 then
     log.line("git", "job timed out")

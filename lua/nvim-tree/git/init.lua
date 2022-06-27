@@ -22,25 +22,36 @@ function M.reload()
   return M.projects
 end
 
-function M.reload_project(project_root)
+function M.reload_project(project_root, path)
   local project = M.projects[project_root]
   if not project or not M.config.enable then
     return
   end
 
-  local watcher = M.projects[project_root].watcher
-  M.projects[project_root] = {}
+  if path and not path:match("^" .. project_root) then
+    path = nil
+  end
+
   local git_status = Runner.run {
     project_root = project_root,
+    path = path,
     list_untracked = git_utils.should_show_untracked(project_root),
     list_ignored = true,
     timeout = M.config.timeout,
   }
-  M.projects[project_root] = {
-    files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
-    watcher = watcher,
-  }
+
+  if path then
+    for p in pairs(project.files) do
+      if p:match("^" .. path) then
+        project.files[p] = nil
+      end
+    end
+    project.files = vim.tbl_deep_extend("force", project.files, git_status)
+  else
+    project.files = git_status
+  end
+
+  project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
 end
 
 function M.get_project(project_root)
