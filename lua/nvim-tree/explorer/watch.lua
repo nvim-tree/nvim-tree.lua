@@ -51,7 +51,7 @@ function M.create_watcher(absolute_path)
     interval = M.interval,
     on_event = function(path)
       log.line("watcher", "node event scheduled '%s'", path)
-      utils.debounce("explorer:watch:" .. path, M.debounce, function()
+      utils.debounce("explorer:watch:" .. path, M.debounce_delay, function()
         refresh_path(path)
       end)
     end,
@@ -61,7 +61,7 @@ end
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.interval = opts.filesystem_watchers.interval
-  M.debounce = opts.filesystem_watchers.debounce
+  M.debounce_delay = opts.filesystem_watchers.debounce_delay
 end
 
 return M
