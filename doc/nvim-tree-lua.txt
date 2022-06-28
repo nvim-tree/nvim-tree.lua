@@ -58,8 +58,6 @@ Requirements
 
 Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
-Setup may only be run once; subsequent calls will result in a warning.
->
     -- examples for your init.lua
 
     -- empty setup using defaults
@@ -151,7 +149,7 @@ You must run setup() function to initialise nvim-tree.
 setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
 
-Setup may only be run once; subsequent calls will result in a warning.
+Subsequent calls to setup will replace the previous configuration.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,

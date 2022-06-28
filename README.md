@@ -51,8 +51,6 @@ use {
 
 Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https://neovim.io/doc/user/lua.html) if using in a vim file.
 
-Setup may only be run once; subsequent calls will result in a warning.
-
 ```lua
 -- examples for your init.lua
 
