@@ -48,7 +48,7 @@ function Watcher:start()
     if err then
       log.line("watcher", "poll_cb for %s fail : %s", self._opts.absolute_path, err)
     else
-      self._opts.on_event(self._opts.absolute_path)
+      self._opts.on_event(self._opts)
     end
   end)
 

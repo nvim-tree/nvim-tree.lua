@@ -5,13 +5,13 @@ local Runner = require "nvim-tree.git.runner"
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {
-  config = nil,
+  config = {},
   projects = {},
   cwd_to_project_root = {},
 }
 
 function M.reload()
-  if not M.config.enable then
+  if not M.config.git.enable then
     return {}
   end
 
@@ -24,7 +24,7 @@ end
 
 function M.reload_project(project_root, path)
   local project = M.projects[project_root]
-  if not project or not M.config.enable then
+  if not project or not M.config.git.enable then
     return
   end
 
@@ -37,7 +37,7 @@ function M.reload_project(project_root, path)
     path = path,
     list_untracked = git_utils.should_show_untracked(project_root),
     list_ignored = true,
-    timeout = M.config.timeout,
+    timeout = M.config.git.timeout,
   }
 
   if path then
@@ -71,7 +71,8 @@ function M.get_project_root(cwd)
   return project_root
 end
 
-function M.reload_tree_at(project_root)
+local function reload_tree_at(project_root)
+  log.line("watcher", "git event executing '%s'", project_root)
   local root_node = utils.get_node_from_path(project_root)
   if not root_node then
     return
@@ -98,10 +99,12 @@ function M.reload_tree_at(project_root)
   end
 
   iterate(root_node)
+
+  require("nvim-tree.renderer").draw()
 end
 
 function M.load_project_status(cwd)
-  if not M.config.enable then
+  if not M.config.git.enable then
     return {}
   end
 
@@ -120,19 +123,25 @@ function M.load_project_status(cwd)
     project_root = project_root,
     list_untracked = git_utils.should_show_untracked(project_root),
     list_ignored = true,
-    timeout = M.config.timeout,
+    timeout = M.config.git.timeout,
   }
 
   local watcher = nil
-  if M.config.watcher.enable then
+  if M.config.filesystem_watchers.enable then
     log.line("watcher", "git start")
     watcher = Watcher.new {
       absolute_path = utils.path_join { project_root, ".git" },
-      interval = M.config.watcher.interval,
-      on_event = function()
+      project_root = project_root,
+      interval = M.config.filesystem_watchers.interval,
+      on_event = function(opts)
+        log.line("watcher", "git event scheduled '%s'", opts.project_root)
+        utils.debounce("git:watcher:" .. opts.project_root, M.config.filesystem_watchers.debounce_delay, function()
+          reload_tree_at(opts.project_root)
+        end)
+      end,
+      on_event0 = function()
         log.line("watcher", "git event")
         M.reload_tree_at(project_root)
-        require("nvim-tree.renderer").draw()
       end,
     }
   end
@@ -151,8 +160,8 @@ function M.purge_state()
 end
 
 function M.setup(opts)
-  M.config = opts.git
-  M.config.watcher = opts.filesystem_watchers
+  M.config.git = opts.git
+  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M

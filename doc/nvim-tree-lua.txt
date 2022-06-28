@@ -273,6 +273,7 @@ Setup may only be run once; subsequent calls will result in a warning.
       filesystem_watchers = {
         enable = false,
         interval = 100,
+        debounce_delay = 50,
       },
       git = {
         enable = true,
@@ -523,6 +524,10 @@ This will be experimental for a few weeks and will become the default.
     Increase to at least 1000ms if changes are not visible. See
     https://github.com/luvit/luv/blob/master/docs.md#uvfs_poll_startfs_poll-path-interval-callback
       Type: `number`, Default: `100` (ms)
+
+    *nvim-tree.filesystem_watchers.debounce_delay*
+    Idle milliseconds between filesystem change and action.
+      Type: `number`, Default: `50` (ms)
 
 *nvim-tree.view*
 Window / buffer setup.
