@@ -45,11 +45,17 @@ function M.fn(node)
     return
   end
 
+  local err_msg = ""
+  local function on_stderr(_, data)
+    err_msg = err_msg .. (data and table.concat(data, " "))
+  end
+
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
     vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
       detach = true,
       on_exit = on_exit,
+      on_stderr = on_stderr,
     })
   end
 
@@ -69,14 +75,22 @@ function M.fn(node)
   -- trashing
   if is_confirmed then
     if node.nodes ~= nil and not node.link_to then
-      trash_path(function()
+      trash_path(function(_, rc)
+        if rc ~= 0 then
+          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+          return
+        end
         events._dispatch_folder_removed(node.absolute_path)
         if M.enable_reload then
           require("nvim-tree.actions.reloaders").reload_explorer()
         end
       end)
     else
-      trash_path(function()
+      trash_path(function(_, rc)
+        if rc ~= 0 then
+          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+          return
+        end
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
         if M.enable_reload then
