@@ -64,6 +64,7 @@ function M.setup(opts)
     filter_git_ignored = opts.git.ignore,
   }
 
+  M.ignore_list = {}
   M.exclude_list = opts.filters.exclude
 
   local custom_filter = opts.filters.custom

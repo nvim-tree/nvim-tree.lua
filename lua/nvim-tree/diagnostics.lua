@@ -8,16 +8,6 @@ local M = {}
 
 local GROUP = "NvimTreeDiagnosticSigns"
 
-local function get_lowest_severity(diagnostics)
-  local severity = math.huge
-  for _, v in ipairs(diagnostics) do
-    if v.severity < severity then
-      severity = v.severity
-    end
-  end
-  return severity
-end
-
 local severity_levels = { Error = 1, Warning = 2, Information = 3, Hint = 4 }
 local sign_names = {
   { "NvimTreeSignError", "NvimTreeLspDiagnosticsError" },
@@ -38,29 +28,13 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  -- vim.lsp.diagnostic.get_all was deprecated in nvim 0.7 and replaced with vim.diagnostic.get
-  -- This conditional can be removed when the minimum required version of nvim is changed to 0.7.
-  if vim.diagnostic then
-    -- nvim version >= 0.7
-    for _, diagnostic in ipairs(vim.diagnostic.get()) do
-      local buf = diagnostic.bufnr
-      if a.nvim_buf_is_valid(buf) then
-        local bufname = a.nvim_buf_get_name(buf)
-        local lowest_severity = buffer_severity[bufname]
-        if not lowest_severity or diagnostic.severity < lowest_severity then
-          buffer_severity[bufname] = diagnostic.severity
-        end
-      end
-    end
-  else
-    -- nvim version < 0.7
-    for buf, diagnostics in pairs(vim.lsp.diagnostic.get_all()) do
-      if a.nvim_buf_is_valid(buf) then
-        local bufname = a.nvim_buf_get_name(buf)
-        if not buffer_severity[bufname] then
-          local severity = get_lowest_severity(diagnostics)
-          buffer_severity[bufname] = severity
-        end
+  for _, diagnostic in ipairs(vim.diagnostic.get()) do
+    local buf = diagnostic.bufnr
+    if a.nvim_buf_is_valid(buf) then
+      local bufname = a.nvim_buf_get_name(buf)
+      local lowest_severity = buffer_severity[bufname]
+      if not lowest_severity or diagnostic.severity < lowest_severity then
+        buffer_severity[bufname] = diagnostic.severity
       end
     end
   end
@@ -157,6 +131,11 @@ local links = {
 
 function M.setup(opts)
   M.enable = opts.diagnostics.enable
+
+  if M.enable then
+    log.line("diagnostics", "setup")
+  end
+
   M.show_on_dirs = opts.diagnostics.show_on_dirs
   vim.fn.sign_define(sign_names[1][1], { text = opts.diagnostics.icons.error, texthl = sign_names[1][2] })
   vim.fn.sign_define(sign_names[2][1], { text = opts.diagnostics.icons.warning, texthl = sign_names[2][2] })
@@ -165,17 +144,6 @@ function M.setup(opts)
 
   for lhs, rhs in pairs(links) do
     vim.cmd("hi def link " .. lhs .. " " .. rhs)
-  end
-
-  if M.enable then
-    log.line("diagnostics", "setup")
-    a.nvim_create_autocmd("DiagnosticChanged", {
-      callback = M.update,
-    })
-    a.nvim_create_autocmd("User", {
-      pattern = "CocDiagnosticChange",
-      callback = M.update,
-    })
   end
 end
 
