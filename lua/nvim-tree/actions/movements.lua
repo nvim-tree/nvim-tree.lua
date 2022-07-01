@@ -33,6 +33,12 @@ function M.parent_node(should_close)
 
     local parent = node.parent
 
+    if renderer.config.group_empty and parent then
+      while parent.parent and parent.parent.group_next do
+        parent = parent.parent
+      end
+    end
+
     if not parent or not parent.parent then
       return view.set_cursor { 1, 0 }
     end
