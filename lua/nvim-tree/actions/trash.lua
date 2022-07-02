@@ -45,6 +45,12 @@ function M.fn(node)
     return
   end
 
+  local binary = M.config.trash.cmd:gsub(" .*$", "")
+  if vim.fn.executable(binary) == 0 then
+    utils.warn(binary .. " is not executable.")
+    return
+  end
+
   local err_msg = ""
   local function on_stderr(_, data)
     err_msg = err_msg .. (data and table.concat(data, " "))
