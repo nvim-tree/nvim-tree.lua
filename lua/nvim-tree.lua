@@ -540,6 +540,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     expand_all = {
       max_folder_discovery = 300,
+      exclude = {},
     },
     open_file = {
       quit_on_open = false,

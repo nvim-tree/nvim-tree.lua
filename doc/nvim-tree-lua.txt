@@ -287,6 +287,7 @@ Subsequent calls to setup will replace the previous configuration.
         },
         expand_all = {
           max_folder_discovery = 300,
+          exclude = {},
         },
         open_file = {
           quit_on_open = false,
@@ -770,10 +771,18 @@ Configuration for various actions.
         Restrict changing to a directory above the global current working directory.
           Type: `boolean`, Default: `false`
 
-    *nvim-tree.actions.expand_all.max_folder_discovery*
-    Limit the number of folders being explored when expanding every folders.
-    Avoids hanging neovim when running this action on very large folders.
-      Type: `number`, Default: `300`
+    *nvim-tree.actions.expand_all*
+    Configuration for expand_all behaviour.
+
+        *nvim-tree.actions.expand_all.max_folder_discovery*
+        Limit the number of folders being explored when expanding every folders.
+        Avoids hanging neovim when running this action on very large folders.
+          Type: `number`, Default: `300`
+
+        *nvim-tree.actions.expand_all.exclude*
+        A list of directories that should not be expanded automatically.
+        E.g `{ ".git", "target", "build" }` etc.
+          Type: `table`, Default: `{}`
 
     *nvim-tree.actions.open_file*
     Configuration options for opening a file from nvim-tree.
