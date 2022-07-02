@@ -4,6 +4,15 @@ local utils = require "nvim-tree.utils"
 
 local M = {}
 
+local function to_lookup_table(list)
+  local table = {}
+  for _, element in ipairs(list) do
+    table[element] = true
+  end
+
+  return table
+end
+
 local function expand(node)
   node.open = true
   if #node.nodes == 0 then
@@ -25,7 +34,7 @@ local function gen_iterator()
     end
 
     for _, node in pairs(parent.nodes) do
-      if node.nodes and not node.open then
+      if node.nodes and not node.open and not M.EXCLUDE[node.name] then
         expansion_count = expansion_count + 1
         expand(node)
       end
@@ -51,6 +60,7 @@ end
 
 function M.setup(opts)
   M.MAX_FOLDER_DISCOVERY = opts.actions.expand_all.max_folder_discovery
+  M.EXCLUDE = to_lookup_table(opts.actions.expand_all.exclude)
 end
 
 return M
