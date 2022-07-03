@@ -400,7 +400,7 @@ function M._prevent_buffer_override()
     vim.cmd "setlocal nowinfixheight"
     M.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
-    a.nvim_win_close(curwin, { force = true })
+    pcall(a.nvim_win_close, curwin, { force = true })
     require("nvim-tree.actions.open-file").fn("edit", bufname)
   end)
 end
