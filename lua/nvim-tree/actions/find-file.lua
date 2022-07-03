@@ -4,6 +4,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
+local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
@@ -24,53 +25,31 @@ function M.fn(fname)
     return
   end
 
-  local i = core.get_nodes_starting_line() - 1
-  local tree_altered = false
+  local line = core.get_nodes_starting_line()
 
-  local function iterate_nodes(nodes)
-    for _, node in ipairs(nodes) do
-      if not node.hidden then
-        i = i + 1
+  local found = Iterator.builder(core.get_explorer().nodes)
+    :matcher(function(node)
+      return node.absolute_path == fname_real or node.link_to == fname_real
+    end)
+    :applier(function(node)
+      line = line + 1
+      local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
+      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
 
-        if not node.absolute_path or not uv.fs_stat(node.absolute_path) then
-          break
-        end
-
-        -- match against node absolute and link, as symlinks themselves will differ
-        if node.absolute_path == fname_real or node.link_to == fname_real then
-          return i
-        end
-        local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
-        local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
-        local path_matches = node.nodes and (abs_match or link_match)
-        if path_matches then
-          if not node.open then
-            node.open = true
-            tree_altered = true
-          end
-
-          if #node.nodes == 0 then
-            core.get_explorer():expand(node)
-          end
-
-          if iterate_nodes(node.nodes) ~= nil then
-            return i
-          end
-          -- mandatory to iterate i
-        elseif node.open then
-          iterate_nodes(node.nodes)
+      if abs_match or link_match then
+        node.open = true
+        if #node.nodes == 0 then
+          core.get_explorer():expand(node)
         end
       end
-    end
+    end)
+    :iterate()
+
+  if found and view.is_visible() then
+    renderer.draw()
+    view.set_cursor { line, 0 }
   end
 
-  local index = iterate_nodes(core.get_explorer().nodes)
-  if tree_altered then
-    renderer.draw()
-  end
-  if index and view.is_visible() then
-    view.set_cursor { index, 0 }
-  end
   running[fname] = false
 
   log.profile_end(ps, "find file %s", fname)

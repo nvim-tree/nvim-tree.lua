@@ -1,6 +1,7 @@
 local a = vim.api
 
 local view = require "nvim-tree.view"
+local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {
   filter = nil,
@@ -11,15 +12,13 @@ local function redraw()
 end
 
 local function reset_filter(node_)
-  local function iterate(n)
-    n.hidden = false
-    if n.nodes then
-      for _, node in pairs(n.nodes) do
-        iterate(node)
-      end
-    end
-  end
-  iterate(node_ or TreeExplorer)
+  node_ = node_ or TreeExplorer
+  Iterator.builder(node_.nodes)
+    :hidden()
+    :applier(function(node)
+      node.hidden = false
+    end)
+    :iterate()
 end
 
 local overlay_bufnr = nil
@@ -47,6 +46,8 @@ function M.apply_filter(node_)
     return
   end
 
+  -- TODO(kiyan): this iterator cannot yet be refactored with the Iterator module
+  -- since the node mapper is based on its children
   local function iterate(node)
     local filtered_nodes = 0
     local nodes = node.group_next and { node.group_next } or node.nodes
