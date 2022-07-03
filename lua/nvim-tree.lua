@@ -529,6 +529,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   git = {
     enable = true,
     ignore = true,
+    show_on_dirs = true,
     timeout = 400,
   },
   actions = {
