@@ -984,7 +984,9 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `y`               copy_name           copy name to system clipboard
 `Y`               copy_path           copy relative path to system clipboard
 `gy`              copy_absolute_path  copy absolute path to system clipboard
+`[e`              prev_diag_item      go to next diagnostic item
 `[c`              prev_git_item       go to next git item
+`]e`              next_diag_item      go to prev diagnostic item
 `]c`              next_git_item       go to prev git item
 `-`               dir_up              navigate up to the parent directory of the current file/directory
 `s`               system_open         open a file with default system application or a folder with default file manager, using |system_open| option
@@ -1029,7 +1031,9 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "y",                              action = "copy_name" }
     { key = "Y",                              action = "copy_path" }
     { key = "gy",                             action = "copy_absolute_path" }
+    { key = "[e",                             action = "prev_diag_item" }
     { key = "[c",                             action = "prev_git_item" }
+    { key = "]e",                             action = "next_diag_item" }
     { key = "]c",                             action = "next_git_item" }
     { key = "-",                              action = "dir_up" }
     { key = "s",                              action = "system_open" }

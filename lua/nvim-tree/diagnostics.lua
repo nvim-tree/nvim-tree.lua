@@ -101,19 +101,26 @@ function M.update()
   end
 
   M.clear()
+
+  local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+  for _, node in pairs(nodes_by_line) do
+    node.diag_status = nil
+  end
+
   for bufname, severity in pairs(buffer_severity) do
     local bufpath = utils.canonical_path(bufname)
     log.line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
     if 0 < severity and severity < 5 then
-      local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
       for line, node in pairs(nodes_by_line) do
         local nodepath = utils.canonical_path(node.absolute_path)
         log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
         if M.show_on_dirs and vim.startswith(bufpath, nodepath) then
           log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
+          node.diag_status = severity
           add_sign(line, severity)
         elseif nodepath == bufpath then
           log.line("diagnostics", " matched file node '%s'", node.absolute_path)
+          node.diag_status = severity
           add_sign(line, severity)
         end
       end
