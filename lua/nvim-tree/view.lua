@@ -285,7 +285,6 @@ function M.abandon_current_window()
 end
 
 function M.quit_on_open()
-  M._prevent_buffer_override()
   M.abandon_current_window()
 end
 
