@@ -6,9 +6,15 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
   if parent_ignored then
     return "!!"
   end
-  local dir_status = status.dirs and status.dirs[absolute_path]
+
   local file_status = status.files and status.files[absolute_path]
-  return dir_status or file_status
+  if file_status then
+    return file_status
+  end
+
+  if M.config.git.show_on_dirs then
+    return status.dirs and status.dirs[absolute_path]
+  end
 end
 
 local function get_git_status(parent_ignored, status, absolute_path)
@@ -35,6 +41,12 @@ function M.update_git_status(node, parent_ignored, status)
       node.git_status = get_git_status(parent_ignored, status, node.link_to)
     end
   end
+end
+
+function M.setup(opts)
+  M.config = {
+    git = opts.git,
+  }
 end
 
 return M

@@ -52,6 +52,7 @@ function Explorer:_clear_watchers()
 end
 
 function M.setup(opts)
+  require("nvim-tree.explorer.common").setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
   require("nvim-tree.explorer.filters").setup(opts)
   require("nvim-tree.explorer.sorters").setup(opts)

@@ -276,6 +276,7 @@ Subsequent calls to setup will replace the previous configuration.
       git = {
         enable = true,
         ignore = true,
+        show_on_dirs = true,
         timeout = 400,
       },
       actions = {
@@ -464,8 +465,7 @@ Show LSP and COC diagnostics in the signcolumn
       Type: `boolean`, Default: `false`
 
     *nvim-tree.diagnostics.show_on_dirs*
-    If the node with diagnostic is not visible, then show diagnostic in the
-    parent directory.
+    Show diagnostic icons on parent directories.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.diagnostics.icons*
@@ -489,6 +489,10 @@ Git integration with icons and colors.
     *nvim-tree.git.ignore*
     Ignore files based on `.gitignore`. Requires |git.enable| `= true`
     Toggle via the `toggle_git_ignored` action, default mapping `I`.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.git.show_on_dirs*
+    Show status icons of children when directory itself has no status icon.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.timeout*
