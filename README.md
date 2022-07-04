@@ -81,6 +81,26 @@ For complete list of available configuration options see [:help nvim-tree.setup]
 
 Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example [:help nvim-tree.view.mappings](doc/nvim-tree-lua.txt)
 
+Using the icons requires a [patched font](https://www.nerdfonts.com/). If you
+don't have one installed, you're probably seeing undesirable "?" box glyphs.
+To disable the display of icons altogether, you can use the following minimal
+configuration:
+
+```lua
+require("nvim-tree").setup({
+  renderer = {
+    icons = {
+      show = {
+        file = false,
+        folder = false,
+        folder_arrow = false,
+        git = false,
+      }
+    }
+  }
+})
+```
+
 ## Commands
 
 See [:help nvim-tree-commands](doc/nvim-tree-lua.txt)
