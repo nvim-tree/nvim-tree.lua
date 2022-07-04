@@ -160,7 +160,7 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   local arrow = icons.i.symlink_arrow
   local symlink_formatted = node.name
   if self.symlink_destination then
-     symlink_formatted = symlink_formatted.. arrow .. node.link_to
+    symlink_formatted = symlink_formatted.. arrow .. node.link_to
   end
 
   local link_highlight = git_highlight or "NvimTreeSymlink"
