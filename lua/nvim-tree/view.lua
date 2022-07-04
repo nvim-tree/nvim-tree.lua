@@ -284,10 +284,6 @@ function M.abandon_current_window()
   M.View.tabpages[tab].winnr = nil
 end
 
-function M.quit_on_open()
-  M.abandon_current_window()
-end
-
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
