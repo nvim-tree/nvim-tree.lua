@@ -8,35 +8,63 @@ local M = {
   current_tab = a.nvim_get_current_tabpage(),
 }
 
-function M.fn(name, with_open)
+local function clean_input_cwd(name)
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h")
+  if name == ".." and root_parent_cwd then
+    return vim.fn.expand(root_parent_cwd)
+  else
+    return vim.fn.expand(name)
+  end
+end
+
+local function is_window_event(new_tabpage)
+  local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window
+  return is_event_scope_window and new_tabpage == M.current_tab
+end
+
+local function prevent_cwd_change(foldername)
+  local is_same_cwd = foldername == core.get_cwd()
+  local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  return is_same_cwd or is_restricted_above
+end
+
+function M.fn(input_cwd, with_open)
   if not core.get_explorer() then
     return
   end
 
-  local foldername = name == ".." and vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h") or name
-  local no_cwd_change = vim.fn.expand(foldername) == core.get_cwd()
-    or M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
-  local new_tab = a.nvim_get_current_tabpage()
-  local is_window = (vim.v.event.scope == "window" or vim.v.event.changed_window) and new_tab == M.current_tab
-  if no_cwd_change or is_window then
+  local new_tabpage = a.nvim_get_current_tabpage()
+  if is_window_event(new_tabpage) then
     return
   end
-  M.current_tab = new_tab
+
+  local foldername = clean_input_cwd(input_cwd)
+  if prevent_cwd_change(foldername) then
+    return
+  end
+
+  M.current_tab = new_tabpage
   M.force_dirchange(foldername, with_open)
 end
 
-function M.force_dirchange(foldername, with_open)
+local function cd(global, path)
+  vim.cmd(global and "cd" or "lcd", vim.fn.fnameescape(path))
+end
+
+local function should_change_dir()
+  return M.options.enable and vim.tbl_isempty(vim.v.event)
+end
+
+function M.force_dirchange(foldername, should_open_view)
   local ps = log.profile_start("change dir %s", foldername)
 
-  if M.options.enable and vim.tbl_isempty(vim.v.event) then
-    if M.options.global then
-      vim.cmd("cd " .. vim.fn.fnameescape(foldername))
-    else
-      vim.cmd("lcd " .. vim.fn.fnameescape(foldername))
-    end
+  if should_change_dir() then
+    cd(M.options.global, foldername)
   end
+
   core.init(foldername)
-  if with_open then
+
+  if should_open_view then
     require("nvim-tree.lib").open()
   else
     require("nvim-tree.renderer").draw()

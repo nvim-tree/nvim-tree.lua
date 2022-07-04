@@ -3,6 +3,8 @@ local has_notify, notify = pcall(require, "notify")
 local a = vim.api
 local uv = vim.loop
 
+local Iterator = require "nvim-tree.iterators.node-iterator"
+
 local M = {
   debouncers = {},
 }
@@ -103,27 +105,12 @@ end
 -- @param nodes list of node
 -- @param fn    function(node): boolean
 function M.find_node(nodes, fn)
-  local function iter(nodes_, fn_)
-    local i = 1
-    for _, node in ipairs(nodes_) do
-      if not node.hidden then
-        if fn_(node) then
-          return node, i
-        end
-        if node.open and #node.nodes > 0 then
-          local n, idx = iter(node.nodes, fn_)
-          i = i + idx
-          if n then
-            return n, i
-          end
-        else
-          i = i + 1
-        end
-      end
-    end
-    return nil, i
-  end
-  local node, i = iter(nodes, fn)
+  local node, i = Iterator.builder(nodes)
+    :matcher(fn)
+    :recursor(function(node)
+      return node.open and #node.nodes > 0 and node.nodes
+    end)
+    :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
   i = require("nvim-tree.live-filter").filter and i + 1 or i
   return node, i
@@ -137,27 +124,20 @@ function M.get_node_from_path(path)
     return explorer
   end
 
-  local function iterate(nodes)
-    for _, node in pairs(nodes) do
-      if node.absolute_path == path or node.link_to == path then
-        return node
-      end
+  return Iterator.builder(explorer.nodes)
+    :hidden()
+    :matcher(function(node)
+      return node.absolute_path == path or node.link_to == path
+    end)
+    :recursor(function(node)
       if node.nodes then
-        local res = iterate(node.nodes)
-        if res then
-          return res
-        end
+        return node.nodes
       end
       if node.group_next then
-        local res = iterate { node.group_next }
-        if res then
-          return res
-        end
+        return { node.group_next }
       end
-    end
-  end
-
-  return iterate(explorer.nodes)
+    end)
+    :iterate()
 end
 
 -- get the highest parent of grouped nodes
@@ -176,21 +156,17 @@ end
 function M.get_nodes_by_line(nodes_all, line_start)
   local nodes_by_line = {}
   local line = line_start
-  local function iter(nodes)
-    for _, node in ipairs(nodes) do
-      if not node.hidden then
-        nodes_by_line[line] = node
-        line = line + 1
-        if node.open == true then
-          local child = iter(node.nodes)
-          if child ~= nil then
-            return child
-          end
-        end
-      end
-    end
-  end
-  iter(nodes_all)
+
+  Iterator.builder(nodes_all)
+    :applier(function(node)
+      nodes_by_line[line] = node
+      line = line + 1
+    end)
+    :recursor(function(node)
+      return node.open == true and node.nodes
+    end)
+    :iterate()
+
   return nodes_by_line
 end
 

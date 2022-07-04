@@ -6,9 +6,13 @@
 			"vim"
 		],
 		"disable": [
+			"cast-local-type",
 			"lowercase-global",
 			"missing-parameter",
-			"trailing-space"
+			"missing-return",
+			"missing-return-value",
+			"need-check-nil",
+			"param-type-mismatch"
 		]
 	}
 }

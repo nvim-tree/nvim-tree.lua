@@ -370,7 +370,7 @@ local function setup_autocommands(opts)
   if not opts.actions.open_file.quit_on_open then
     create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
   else
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.quit_on_open })
+    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
   end
 
   if opts.hijack_directories.enable then
@@ -530,6 +530,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   git = {
     enable = true,
     ignore = true,
+    show_on_dirs = true,
     timeout = 400,
   },
   actions = {
@@ -541,6 +542,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     expand_all = {
       max_folder_discovery = 300,
+      exclude = {},
     },
     open_file = {
       quit_on_open = false,

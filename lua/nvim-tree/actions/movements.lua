@@ -33,6 +33,12 @@ function M.parent_node(should_close)
 
     local parent = node.parent
 
+    if renderer.config.group_empty and parent then
+      while parent.parent and parent.parent.group_next do
+        parent = parent.parent
+      end
+    end
+
     if not parent or not parent.parent then
       return view.set_cursor { 1, 0 }
     end
@@ -78,20 +84,27 @@ function M.sibling(direction)
   end
 end
 
-function M.find_git_item(where)
+function M.find_item(where, what)
   return function()
     local node_cur = lib.get_node_at_cursor()
     local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
 
     local cur, first, prev, nex = nil, nil, nil, nil
     for line, node in pairs(nodes_by_line) do
-      if not first and node.git_status then
+      local valid = false
+      if what == "git" then
+        valid = node.git_status ~= nil
+      elseif what == "diag" then
+        valid = node.diag_status ~= nil
+      end
+
+      if not first and valid then
         first = line
       end
 
       if node == node_cur then
         cur = line
-      elseif node.git_status then
+      elseif valid then
         if not cur then
           prev = line
         end
