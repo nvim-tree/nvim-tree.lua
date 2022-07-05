@@ -52,9 +52,9 @@ function NodeIterator:iterate()
           i = i + idx
           if n then
             return n, i
-          else
-            i = i + 1
           end
+        else
+          i = i + 1
         end
       end
     end
