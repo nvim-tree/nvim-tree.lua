@@ -70,6 +70,11 @@ function Builder:configure_git_icons_placement(where)
   return self
 end
 
+function Builder:configure_symlink_destination(show)
+  self.symlink_destination = show
+  return self
+end
+
 function Builder:_insert_highlight(group, start, end_)
   table.insert(self.highlights, { group, self.index, start, end_ or -1 })
 end
@@ -153,7 +158,10 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
 
   local icon = icons.i.symlink
   local arrow = icons.i.symlink_arrow
-  local symlink_formatted = node.name .. arrow .. node.link_to
+  local symlink_formatted = node.name
+  if self.symlink_destination then
+    symlink_formatted = symlink_formatted .. arrow .. node.link_to
+  end
 
   local link_highlight = git_highlight or "NvimTreeSymlink"
 

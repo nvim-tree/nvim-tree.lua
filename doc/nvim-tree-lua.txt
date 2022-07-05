@@ -238,6 +238,7 @@ Subsequent calls to setup will replace the previous configuration.
           },
         },
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
+        symlink_destination = true,
       },
       hijack_directories = {
         enable = true,
@@ -724,6 +725,10 @@ UI rendering setup
     *nvim-tree.renderer.special_files*
     A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
       Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
+
+    *nvim-tree.renderer.symlink_destination*
+    Whether to show the destination of the symlink.
+      Type: `boolean`, Default: `true`
 
 *nvim-tree.filters*
 Filtering options.
