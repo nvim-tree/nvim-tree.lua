@@ -11,6 +11,7 @@ local Event = {
   FileRemoved = "FileRemoved",
   FolderCreated = "FolderCreated",
   FolderRemoved = "FolderRemoved",
+  Resize = "Resize",
 }
 
 local function get_handlers(event_name)
@@ -72,6 +73,11 @@ function M._dispatch_on_tree_close()
   dispatch(Event.TreeClose, nil)
 end
 
+--@private
+function M._dispatch_on_tree_resize(size)
+  dispatch(Event.Resize, size)
+end
+
 --Registers a handler for the Ready event.
 --@param handler (function) Handler with the signature `function()`
 function M.on_nvim_tree_ready(handler)
@@ -124,6 +130,12 @@ end
 --@param handler (function) Handler with the signature function(payload)
 function M.on_tree_close(handler)
   register_handler(Event.TreeClose, handler)
+end
+
+--Registers a handler for the Resize event.
+--@param handler (function) Handler with the signature function(size)
+function M.on_tree_resize(handler)
+  register_handler(Event.Resize, handler)
 end
 
 return M

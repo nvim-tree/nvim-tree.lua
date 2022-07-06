@@ -1233,4 +1233,12 @@ on_tree_close({handler})
                   {handler}      `{function}` Handler function, with the
                                  signature `function()`.
 
+                                   *nvim-tree.events.on_tree_resize()*
+on_tree_resize({handler})
+                Registers a handler for when NvimTree is resized.
+
+                Parameters: ~
+                  {handler}      `{function}` Handler function, with the
+                                 signature `function(size)`.
+
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:

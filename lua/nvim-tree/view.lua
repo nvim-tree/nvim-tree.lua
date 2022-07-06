@@ -244,11 +244,14 @@ function M.resize(size)
     return
   end
 
+  local new_size = get_size()
   if M.is_vertical() then
-    a.nvim_win_set_width(M.get_winnr(), get_size())
+    a.nvim_win_set_width(M.get_winnr(), new_size)
   else
-    a.nvim_win_set_height(M.get_winnr(), get_size())
+    a.nvim_win_set_height(M.get_winnr(), new_size)
   end
+
+  events._dispatch_on_tree_resize(new_size)
 
   if not M.View.preserve_window_proportions then
     vim.cmd ":wincmd ="
