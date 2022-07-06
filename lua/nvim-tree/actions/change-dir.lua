@@ -48,7 +48,7 @@ function M.fn(input_cwd, with_open)
 end
 
 local function cd(global, path)
-  vim.cmd((global and "cd" or "lcd") .. vim.fn.fnameescape(path))
+  vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
 
 local function should_change_dir()
