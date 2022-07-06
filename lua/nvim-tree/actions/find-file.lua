@@ -43,6 +43,9 @@ function M.fn(fname)
         end
       end
     end)
+    :recursor(function(node)
+      return node.open and node.nodes
+    end)
     :iterate()
 
   if found and view.is_visible() then
