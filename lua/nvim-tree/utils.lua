@@ -130,11 +130,11 @@ function M.get_node_from_path(path)
       return node.absolute_path == path or node.link_to == path
     end)
     :recursor(function(node)
-      if node.nodes then
-        return node.nodes
-      end
       if node.group_next then
         return { node.group_next }
+      end
+      if node.nodes then
+        return node.nodes
       end
     end)
     :iterate()
