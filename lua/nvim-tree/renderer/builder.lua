@@ -10,18 +10,13 @@ Builder.__index = Builder
 function Builder.new(root_cwd)
   return setmetatable({
     index = 0,
-    depth = nil,
+    depth = 0,
     highlights = {},
     lines = {},
     markers = {},
     signs = {},
     root_cwd = root_cwd,
   }, Builder)
-end
-
-function Builder:configure_initial_depth(show_arrows)
-  self.depth = show_arrows and 2 or 0
-  return self
 end
 
 function Builder:configure_root_modifier(root_folder_modifier)
