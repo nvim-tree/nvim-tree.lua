@@ -30,11 +30,15 @@ Features
 
 File Icons
 
-    See https://github.com/kyazdani42/nvim-web-devicons
-    Requires a patched font.
+    https://github.com/kyazdani42/nvim-web-devicons is optional and used to display file icons. It requires a patched font: https://www.nerdfonts.com
+
      should look like an open folder.
 
-    Syntax highlighting uses g:terminal_color_ from colorschemes, fallbacks to
+    To disable the display of icons see |renderer.icons.show|
+
+Colours
+
+    Syntax highlighting uses g:terminal_color_ from colorschemes, falls back to
     ugly colors otherwise.
 
 Git Integration
