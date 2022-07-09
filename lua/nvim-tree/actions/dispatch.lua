@@ -3,7 +3,7 @@ local lib = require "nvim-tree.lib"
 
 local M = {}
 
-local keypress_funcs = {
+local Actions = {
   close = view.close,
   close_node = require("nvim-tree.actions.movements").parent_node(true),
   collapse_all = require("nvim-tree.actions.collapse-all").fn,
@@ -18,8 +18,6 @@ local keypress_funcs = {
   first_sibling = require("nvim-tree.actions.movements").sibling(-math.huge),
   full_rename = require("nvim-tree.actions.rename-file").fn(true),
   last_sibling = require("nvim-tree.actions.movements").sibling(math.huge),
-  live_filter = require("nvim-tree.live-filter").start_filtering,
-  clear_live_filter = require("nvim-tree.live-filter").clear_filter,
   next_diag_item = require("nvim-tree.actions.movements").find_item("next", "diag"),
   next_git_item = require("nvim-tree.actions.movements").find_item("next", "git"),
   next_sibling = require("nvim-tree.actions.movements").sibling(1),
@@ -36,60 +34,80 @@ local keypress_funcs = {
   toggle_file_info = require("nvim-tree.actions.file-popup").toggle_file_info,
   system_open = require("nvim-tree.actions.system-open").fn,
   toggle_dotfiles = require("nvim-tree.actions.toggles").dotfiles,
-  toggle_help = require("nvim-tree.actions.toggles").help,
   toggle_custom = require("nvim-tree.actions.toggles").custom,
   toggle_git_ignored = require("nvim-tree.actions.toggles").git_ignored,
   trash = require("nvim-tree.actions.trash").fn,
 }
 
-function M.dispatch(action)
-  if view.is_help_ui() and action == "close" then
-    action = "toggle_help"
+local function handle_action_on_help_ui(action)
+  if action == "close" or action == "toggle_help" then
+    require("nvim-tree.actions.toggles").help()
   end
-  if view.is_help_ui() and action ~= "toggle_help" then
-    return
-  end
+end
 
-  if action == "live_filter" or action == "clear_live_filter" then
-    return keypress_funcs[action]()
+local function handle_filter_actions(action)
+  if action == "live_filter" then
+    require("nvim-tree.live-filter").start_filtering()
+  elseif action == "clear_live_filter" then
+    require("nvim-tree.live-filter").clear_filter()
   end
+end
 
+local function change_dir_action(node)
+  if node.name == ".." then
+    require("nvim-tree.actions.change-dir").fn ".."
+  elseif node.nodes ~= nil then
+    require("nvim-tree.actions.change-dir").fn(lib.get_last_group_node(node).absolute_path)
+  end
+end
+
+local function open_file(action, node)
+  local path = node.absolute_path
+  if node.link_to and not node.nodes then
+    path = node.link_to
+  end
+  require("nvim-tree.actions.open-file").fn(action, path)
+end
+
+local function handle_tree_actions(action)
   local node = lib.get_node_at_cursor()
   if not node then
     return
   end
 
   local custom_function = M.custom_keypress_funcs[action]
-  local default_function = keypress_funcs[action]
+  local defined_action = Actions[action]
 
   if type(custom_function) == "function" then
     return custom_function(node)
-  elseif default_function then
-    return default_function(node)
+  elseif defined_action then
+    return defined_action(node)
   end
 
-  if action == "preview" then
-    if node.name == ".." then
-      return
-    end
-    if not node.nodes then
-      return require("nvim-tree.actions.open-file").fn("preview", node.absolute_path)
-    end
-  elseif node.name == ".." then
-    return require("nvim-tree.actions.change-dir").fn ".."
-  elseif action == "cd" then
-    if node.nodes ~= nil then
-      require("nvim-tree.actions.change-dir").fn(lib.get_last_group_node(node).absolute_path)
-    end
+  local is_parent = node.name == ".."
+
+  if action == "preview" and is_parent then
     return
   end
 
-  if node.link_to and not node.nodes then
-    require("nvim-tree.actions.open-file").fn(action, node.link_to)
-  elseif node.nodes ~= nil then
+  if action == "cd" or is_parent then
+    return change_dir_action(node)
+  end
+
+  if node.nodes then
     lib.expand_or_collapse(node)
   else
-    require("nvim-tree.actions.open-file").fn(action, node.absolute_path)
+    open_file(action, node)
+  end
+end
+
+function M.dispatch(action)
+  if view.is_help_ui() then
+    handle_action_on_help_ui(action)
+  elseif action:match "live" ~= nil then
+    handle_filter_actions(action)
+  else
+    handle_tree_actions(action)
   end
 end
 
