@@ -69,7 +69,7 @@ function M.change_root(filepath, bufnr)
 end
 
 ---@deprecated
-M.on_keypress = require("nvim-tree.actions").on_keypress
+M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
 function M.toggle(find_file, no_focus, cwd)
   if view.is_visible() then
