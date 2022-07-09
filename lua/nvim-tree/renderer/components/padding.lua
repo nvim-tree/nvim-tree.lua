@@ -35,7 +35,7 @@ local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
 end
 
 function M.reload_padding_function()
-  if M.config.icons.show.folder and M.config.icons.show.folder_arrow then
+  if M.config.icons.show.folder_arrow then
     M.get_padding = get_padding_arrows()
   end
 

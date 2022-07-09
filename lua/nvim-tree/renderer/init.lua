@@ -41,7 +41,7 @@ function M.render_hl(bufnr, hl)
 end
 
 local function should_show_arrows()
-  return not M.config.indent_markers.enable and M.config.icons.show.folder and M.config.icons.show.folder_arrow
+  return not M.config.indent_markers.enable and M.config.icons.show.folder_arrow
 end
 
 local picture_map = {
