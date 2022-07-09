@@ -227,7 +227,7 @@ end
 function Builder:_build_line(node, idx, num_children)
   local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
 
-  if self.depth > 0 then
+  if string.len(padding) > 0 then
     self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
   end
 
