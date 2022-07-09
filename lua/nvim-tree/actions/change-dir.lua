@@ -55,9 +55,15 @@ local function should_change_dir()
   return M.options.enable and vim.tbl_isempty(vim.v.event)
 end
 
-function M.force_dirchange(foldername, should_open_view)
-  local ps = log.profile_start("change dir %s", foldername)
+local function add_profiling_to(f)
+  return function(foldername, should_open_view)
+    local ps = log.profile_start("change dir %s", foldername)
+    f(foldername, should_open_view)
+    log.profile_end(ps, "change dir %s", foldername)
+  end
+end
 
+M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
   if should_change_dir() then
     cd(M.options.global, foldername)
   end
@@ -69,9 +75,7 @@ function M.force_dirchange(foldername, should_open_view)
   else
     require("nvim-tree.renderer").draw()
   end
-
-  log.profile_end(ps, "change dir %s", foldername)
-end
+end)
 
 function M.setup(options)
   M.options = options.actions.change_dir
