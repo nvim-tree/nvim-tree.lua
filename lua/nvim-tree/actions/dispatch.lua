@@ -102,7 +102,7 @@ local function handle_tree_actions(action)
 end
 
 function M.dispatch(action)
-  if view.is_help_ui() then
+  if view.is_help_ui() or action == "toggle_help" then
     handle_action_on_help_ui(action)
   elseif action:match "live" ~= nil then
     handle_filter_actions(action)
