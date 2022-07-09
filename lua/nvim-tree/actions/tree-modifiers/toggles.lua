@@ -1,7 +1,7 @@
 local view = require "nvim-tree.view"
 local filters = require "nvim-tree.explorer.filters"
 local renderer = require "nvim-tree.renderer"
-local reloaders = require "nvim-tree.actions.reloaders"
+local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 
 local M = {}
 

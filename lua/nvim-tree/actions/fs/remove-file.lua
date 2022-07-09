@@ -87,7 +87,7 @@ function M.fn(node)
       clear_buffer(node.absolute_path)
     end
     if M.enable_reload then
-      require("nvim-tree.actions.reloaders").reload_explorer()
+      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
   end
 end
