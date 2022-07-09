@@ -109,6 +109,7 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 * You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 * You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/kyazdani42/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
+* Hide the `.git` folder: `filters = { custom = { "^.git$" } }`. See [:help nvim-tree.filters.custom](doc/nvim-tree-lua.txt).
 
 ## Troubleshooting
 
