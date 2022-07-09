@@ -80,7 +80,7 @@ require("nvim-tree").setup({
 })
 ```
 
-For complete list of available configuration options see [:help nvim-tree.setup](doc/nvim-tree-lua.txt)
+For complete list of available configuration options see [:help nvim-tree-setup](doc/nvim-tree-lua.txt)
 
 Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example [:help nvim-tree.view.mappings](doc/nvim-tree-lua.txt)
 
