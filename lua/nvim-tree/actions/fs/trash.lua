@@ -88,7 +88,7 @@ function M.fn(node)
         end
         events._dispatch_folder_removed(node.absolute_path)
         if M.enable_reload then
-          require("nvim-tree.actions.reloaders").reload_explorer()
+          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
         end
       end)
     else
@@ -100,7 +100,7 @@ function M.fn(node)
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
         if M.enable_reload then
-          require("nvim-tree.actions.reloaders").reload_explorer()
+          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
         end
       end)
     end

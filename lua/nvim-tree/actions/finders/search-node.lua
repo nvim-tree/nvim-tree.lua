@@ -1,9 +1,10 @@
 local api = vim.api
 local uv = vim.loop
+
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local filters = require "nvim-tree.explorer.filters"
-local find_file = require("nvim-tree.actions.find-file").fn
+local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
 

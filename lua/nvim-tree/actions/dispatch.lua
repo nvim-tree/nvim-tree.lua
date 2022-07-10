@@ -5,43 +5,51 @@ local M = {}
 
 local Actions = {
   close = view.close,
-  close_node = require("nvim-tree.actions.movements").parent_node(true),
-  collapse_all = require("nvim-tree.actions.collapse-all").fn,
-  expand_all = require("nvim-tree.actions.expand-all").fn,
-  copy_absolute_path = require("nvim-tree.actions.copy-paste").copy_absolute_path,
-  copy_name = require("nvim-tree.actions.copy-paste").copy_filename,
-  copy_path = require("nvim-tree.actions.copy-paste").copy_path,
-  copy = require("nvim-tree.actions.copy-paste").copy,
-  create = require("nvim-tree.actions.create-file").fn,
-  cut = require("nvim-tree.actions.copy-paste").cut,
-  dir_up = require("nvim-tree.actions.dir-up").fn,
-  first_sibling = require("nvim-tree.actions.movements").sibling(-math.huge),
-  full_rename = require("nvim-tree.actions.rename-file").fn(true),
-  last_sibling = require("nvim-tree.actions.movements").sibling(math.huge),
-  next_diag_item = require("nvim-tree.actions.movements").find_item("next", "diag"),
-  next_git_item = require("nvim-tree.actions.movements").find_item("next", "git"),
-  next_sibling = require("nvim-tree.actions.movements").sibling(1),
-  parent_node = require("nvim-tree.actions.movements").parent_node(false),
-  paste = require("nvim-tree.actions.copy-paste").paste,
-  prev_diag_item = require("nvim-tree.actions.movements").find_item("prev", "diag"),
-  prev_git_item = require("nvim-tree.actions.movements").find_item("prev", "git"),
-  prev_sibling = require("nvim-tree.actions.movements").sibling(-1),
-  refresh = require("nvim-tree.actions.reloaders").reload_explorer,
-  remove = require("nvim-tree.actions.remove-file").fn,
-  rename = require("nvim-tree.actions.rename-file").fn(false),
-  run_file_command = require("nvim-tree.actions.run-command").run_file_command,
-  search_node = require("nvim-tree.actions.search-node").fn,
-  toggle_file_info = require("nvim-tree.actions.file-popup").toggle_file_info,
-  system_open = require("nvim-tree.actions.system-open").fn,
-  toggle_dotfiles = require("nvim-tree.actions.toggles").dotfiles,
-  toggle_custom = require("nvim-tree.actions.toggles").custom,
-  toggle_git_ignored = require("nvim-tree.actions.toggles").git_ignored,
-  trash = require("nvim-tree.actions.trash").fn,
+
+  -- Tree modifiers
+  collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn,
+  expand_all = require("nvim-tree.actions.tree-modifiers.expand-all").fn,
+  toggle_dotfiles = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles,
+  toggle_custom = require("nvim-tree.actions.tree-modifiers.toggles").custom,
+  toggle_git_ignored = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored,
+
+  -- Filesystem operations
+  copy_absolute_path = require("nvim-tree.actions.fs.copy-paste").copy_absolute_path,
+  copy_name = require("nvim-tree.actions.fs.copy-paste").copy_filename,
+  copy_path = require("nvim-tree.actions.fs.copy-paste").copy_path,
+  copy = require("nvim-tree.actions.fs.copy-paste").copy,
+  create = require("nvim-tree.actions.fs.create-file").fn,
+  cut = require("nvim-tree.actions.fs.copy-paste").cut,
+  full_rename = require("nvim-tree.actions.fs.rename-file").fn(true),
+  paste = require("nvim-tree.actions.fs.copy-paste").paste,
+  trash = require("nvim-tree.actions.fs.trash").fn,
+  remove = require("nvim-tree.actions.fs.remove-file").fn,
+  rename = require("nvim-tree.actions.fs.rename-file").fn(false),
+
+  -- Movements in tree
+  close_node = require("nvim-tree.actions.moves.movements").parent_node(true),
+  first_sibling = require("nvim-tree.actions.moves.movements").sibling(-math.huge),
+  last_sibling = require("nvim-tree.actions.moves.movements").sibling(math.huge),
+  next_diag_item = require("nvim-tree.actions.moves.movements").find_item("next", "diag"),
+  next_git_item = require("nvim-tree.actions.moves.movements").find_item("next", "git"),
+  next_sibling = require("nvim-tree.actions.moves.movements").sibling(1),
+  parent_node = require("nvim-tree.actions.moves.movements").parent_node(false),
+  prev_diag_item = require("nvim-tree.actions.moves.movements").find_item("prev", "diag"),
+  prev_git_item = require("nvim-tree.actions.moves.movements").find_item("prev", "git"),
+  prev_sibling = require("nvim-tree.actions.moves.movements").sibling(-1),
+
+  -- Other types
+  refresh = require("nvim-tree.actions.reloaders.reloaders").reload_explorer,
+  dir_up = require("nvim-tree.actions.root.dir-up").fn,
+  search_node = require("nvim-tree.actions.finders.search-node").fn,
+  run_file_command = require("nvim-tree.actions.node.run-command").run_file_command,
+  toggle_file_info = require("nvim-tree.actions.node.file-popup").toggle_file_info,
+  system_open = require("nvim-tree.actions.node.system-open").fn,
 }
 
 local function handle_action_on_help_ui(action)
   if action == "close" or action == "toggle_help" then
-    require("nvim-tree.actions.toggles").help()
+    require("nvim-tree.actions.tree-modifiers.toggles").help()
   end
 end
 
@@ -55,9 +63,9 @@ end
 
 local function change_dir_action(node)
   if node.name == ".." then
-    require("nvim-tree.actions.change-dir").fn ".."
+    require("nvim-tree.actions.root.change-dir").fn ".."
   elseif node.nodes ~= nil then
-    require("nvim-tree.actions.change-dir").fn(lib.get_last_group_node(node).absolute_path)
+    require("nvim-tree.actions.root.change-dir").fn(lib.get_last_group_node(node).absolute_path)
   end
 end
 
@@ -66,7 +74,7 @@ local function open_file(action, node)
   if node.link_to and not node.nodes then
     path = node.link_to
   end
-  require("nvim-tree.actions.open-file").fn(action, path)
+  require("nvim-tree.actions.node.open-file").fn(action, path)
 end
 
 local function handle_tree_actions(action)

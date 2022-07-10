@@ -108,7 +108,7 @@ function M.fn(node)
     end
     events._dispatch_folder_created(new_file_path)
     if M.enable_reload then
-      require("nvim-tree.actions.reloaders").reload_explorer()
+      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
     -- INFO: defer needed when reload is automatic (watchers)
     vim.defer_fn(function()
