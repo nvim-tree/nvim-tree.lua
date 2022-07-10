@@ -306,23 +306,39 @@ function M.key_by(tbl, key)
   return keyed
 end
 
----Execute callback timeout ms after the lastest invocation with context. Waiting invocations for that context will be discarded. Caller should this ensure that callback performs the same or functionally equivalent actions.
+---Execute callback timeout ms after the lastest invocation with context.
+---Waiting invocations for that context will be discarded.
+---Invocation will be rescheduled while a callback is being executed.
+---Caller must ensure that callback performs the same or functionally equivalent actions.
+---
 ---@param context string identifies the callback to debounce
 ---@param timeout number ms to wait
 ---@param callback function to execute on completion
 function M.debounce(context, timeout, callback)
-  if M.debouncers[context] then
-    pcall(uv.close, M.debouncers[context])
+  M.debouncers[context] = M.debouncers[context] or {}
+  local debouncer = M.debouncers[context]
+
+  if debouncer.timer then
+    if debouncer.timer:is_active() then
+      debouncer.timer:stop()
+    end
+    if not debouncer.timer:is_closing() then
+      debouncer.timer:close()
+    end
   end
 
-  M.debouncers[context] = uv.new_timer()
-  M.debouncers[context]:start(
+  debouncer.timer = uv.new_timer()
+  debouncer.timer:start(
     timeout,
     0,
     vim.schedule_wrap(function()
-      M.debouncers[context]:close()
-      M.debouncers[context] = nil
-      callback()
+      if debouncer.executing then
+        M.debounce(context, timeout, callback)
+      else
+        debouncer.executing = true
+        callback()
+        debouncer.executing = false
+      end
     end)
   )
 end
