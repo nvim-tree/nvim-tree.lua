@@ -40,10 +40,6 @@ function M.render_hl(bufnr, hl)
   end
 end
 
-local function should_show_arrows()
-  return not M.config.indent_markers.enable and M.config.icons.show.folder and M.config.icons.show.folder_arrow
-end
-
 local picture_map = {
   jpg = true,
   jpeg = true,
@@ -60,7 +56,6 @@ function M.draw()
   local ps = log.profile_start "draw"
 
   local cursor = api.nvim_win_get_cursor(view.get_winnr())
-  _padding.reload_padding_function()
   icon_component.reset_config()
 
   local lines, hl
@@ -69,7 +64,6 @@ function M.draw()
     lines, hl = help.compute_lines()
   else
     lines, hl, signs = Builder.new(core.get_cwd())
-      :configure_initial_depth(should_show_arrows())
       :configure_root_modifier(M.config.root_folder_modifier)
       :configure_trailing_slash(M.config.add_trailing)
       :configure_special_files(M.config.special_files)

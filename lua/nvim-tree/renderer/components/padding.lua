@@ -1,21 +1,8 @@
 local M = {}
 
-function M.get_padding(depth)
-  return string.rep(" ", depth)
-end
-
-local function get_padding_arrows()
-  return function(depth, _, _, node)
-    if node.nodes then
-      local icon = M.config.icons.glyphs.folder[node.open and "arrow_open" or "arrow_closed"]
-      return string.rep(" ", depth - 2) .. icon .. " "
-    end
-    return string.rep(" ", depth)
-  end
-end
-
-local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
+local function get_padding_indent_markers(depth, idx, nodes_number, markers)
   local padding = ""
+
   if depth ~= 0 then
     local rdepth = depth / 2
     markers[rdepth] = idx ~= nodes_number
@@ -34,14 +21,30 @@ local function get_padding_indent_markers(depth, idx, nodes_number, _, markers)
   return padding
 end
 
-function M.reload_padding_function()
-  if M.config.icons.show.folder and M.config.icons.show.folder_arrow then
-    M.get_padding = get_padding_arrows()
+local function get_padding_arrows(node, indent)
+  if node.nodes then
+    return M.config.icons.glyphs.folder[node.open and "arrow_open" or "arrow_closed"] .. " "
+  elseif indent then
+    return "  "
+  else
+    return ""
   end
+end
+
+function M.get_padding(depth, idx, nodes_number, node, markers)
+  local padding = ""
 
   if M.config.indent_markers.enable then
-    M.get_padding = get_padding_indent_markers
+    padding = padding .. get_padding_indent_markers(depth, idx, nodes_number, markers)
+  else
+    padding = padding .. string.rep(" ", depth)
   end
+
+  if M.config.icons.show.folder_arrow then
+    padding = padding .. get_padding_arrows(node, not M.config.indent_markers.enable)
+  end
+
+  return padding
 end
 
 function M.setup(opts)

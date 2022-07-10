@@ -679,8 +679,8 @@ UI rendering setup
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.folder_arrow*
-            Show a small arrow before the folder icon.
-            Requires |renderer.icons.show.folder| `= true` and |renderer.indent_markers.enable| `= false`
+            Show a small arrow before the folder node. Arrow will be a part of the
+            node when using |renderer.indent_markers|.
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.git*

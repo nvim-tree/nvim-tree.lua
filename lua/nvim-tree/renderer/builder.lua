@@ -10,18 +10,13 @@ Builder.__index = Builder
 function Builder.new(root_cwd)
   return setmetatable({
     index = 0,
-    depth = nil,
+    depth = 0,
     highlights = {},
     lines = {},
     markers = {},
     signs = {},
     root_cwd = root_cwd,
   }, Builder)
-end
-
-function Builder:configure_initial_depth(show_arrows)
-  self.depth = show_arrows and 2 or 0
-  return self
 end
 
 function Builder:configure_root_modifier(root_folder_modifier)
@@ -232,7 +227,7 @@ end
 function Builder:_build_line(node, idx, num_children)
   local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
 
-  if self.depth > 0 then
+  if string.len(padding) > 0 then
     self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
   end
 
