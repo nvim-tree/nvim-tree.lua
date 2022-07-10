@@ -199,6 +199,7 @@ function M.rename_loaded_buffers(old_path, new_path)
         if a.nvim_buf_get_option(buf, "buftype") == "" then
           a.nvim_buf_call(buf, function()
             vim.cmd "silent! write!"
+            vim.cmd "edit"
           end)
         end
       end
