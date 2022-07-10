@@ -5,28 +5,33 @@ local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
+local function buf_match()
+  local buffer_paths = vim.tbl_map(function(buffer)
+    return vim.api.nvim_buf_get_name(buffer)
+  end, vim.api.nvim_list_bufs())
+
+  return function(path)
+    for _, buffer_path in ipairs(buffer_paths) do
+      local matches = utils.str_find(buffer_path, path)
+      if matches then
+        return true
+      end
+    end
+    return false
+  end
+end
+
 function M.fn(keep_buffers)
   if not core.get_explorer() then
     return
   end
 
-  local buffer_paths = vim.tbl_map(function(buffer)
-    return vim.api.nvim_buf_get_name(buffer)
-  end, vim.api.nvim_list_bufs())
+  local matches = buf_match()
 
   Iterator.builder(core.get_explorer().nodes)
     :hidden()
     :applier(function(node)
-      node.open = false
-      if keep_buffers == true then
-        for _, buffer_path in ipairs(buffer_paths) do
-          local matches = utils.str_find(buffer_path, node.absolute_path)
-          if matches then
-            node.open = true
-            return
-          end
-        end
-      end
+      node.open = keep_buffers == true and matches(node.absolute_path)
     end)
     :recursor(function(n)
       return n.nodes
