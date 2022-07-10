@@ -2,6 +2,7 @@ local has_notify, notify = pcall(require, "notify")
 
 local a = vim.api
 local uv = vim.loop
+local log = require "nvim-tree.log"
 
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
@@ -306,6 +307,17 @@ function M.key_by(tbl, key)
   return keyed
 end
 
+local function timer_stop_close(timer)
+  if timer then
+    if timer:is_active() then
+      timer:stop()
+    end
+    if not timer:is_closing() then
+      timer:close()
+    end
+  end
+end
+
 ---Execute callback timeout ms after the lastest invocation with context.
 ---Waiting invocations for that context will be discarded.
 ---Invocation will be rescheduled while a callback is being executed.
@@ -318,20 +330,16 @@ function M.debounce(context, timeout, callback)
   M.debouncers[context] = M.debouncers[context] or {}
   local debouncer = M.debouncers[context]
 
-  if debouncer.timer then
-    if debouncer.timer:is_active() then
-      debouncer.timer:stop()
-    end
-    if not debouncer.timer:is_closing() then
-      debouncer.timer:close()
-    end
-  end
+  timer_stop_close(debouncer.timer)
 
-  debouncer.timer = uv.new_timer()
-  debouncer.timer:start(
+  local timer = uv.new_timer()
+  timer:start(
     timeout,
     0,
     vim.schedule_wrap(function()
+      -- timers must be closed to release their memory
+      timer_stop_close(timer)
+
       if debouncer.executing then
         M.debounce(context, timeout, callback)
       else
@@ -341,6 +349,8 @@ function M.debounce(context, timeout, callback)
       end
     end)
   )
+
+  debouncer.timer = timer
 end
 
 return M
