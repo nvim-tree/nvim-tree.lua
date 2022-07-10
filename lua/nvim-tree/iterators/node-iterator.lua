@@ -38,27 +38,25 @@ function NodeIterator:recursor(f)
 end
 
 function NodeIterator:iterate()
+  local iteration_count = 0
   local function iter(nodes)
-    local i = 1
     for _, node in ipairs(nodes) do
       if self._filter_hidden(node) then
+        iteration_count = iteration_count + 1
         if self._match(node) then
-          return node, i
+          return node, iteration_count
         end
-        self._apply_fn_on_node(node)
+        self._apply_fn_on_node(node, iteration_count)
         local children = self._recurse_with(node)
         if children then
-          local n, idx = iter(children)
-          i = i + idx
+          local n = iter(children)
           if n then
-            return n, i
+            return n, iteration_count
           end
-        else
-          i = i + 1
         end
       end
     end
-    return nil, i
+    return nil, 0
   end
 
   return iter(self.nodes)
