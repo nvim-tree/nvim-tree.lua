@@ -112,6 +112,11 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
 
   local foldername = name .. self.trailing_slash
+  if node.link_to and self.symlink_destination then
+    local arrow = icons.i.symlink_arrow
+    foldername = foldername .. arrow .. node.link_to
+  end
+
   local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
   local fname_starts_at = offset + #icon + (self.is_git_after and 0 or #git_icons)
   local line = self:_format_line(padding .. icon, foldername, git_icons)
