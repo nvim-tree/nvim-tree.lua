@@ -27,16 +27,16 @@ local Actions = {
   rename = require("nvim-tree.actions.fs.rename-file").fn(false),
 
   -- Movements in tree
-  close_node = require("nvim-tree.actions.moves.movements").parent_node(true),
-  first_sibling = require("nvim-tree.actions.moves.movements").sibling(-math.huge),
-  last_sibling = require("nvim-tree.actions.moves.movements").sibling(math.huge),
-  next_diag_item = require("nvim-tree.actions.moves.movements").find_item("next", "diag"),
-  next_git_item = require("nvim-tree.actions.moves.movements").find_item("next", "git"),
-  next_sibling = require("nvim-tree.actions.moves.movements").sibling(1),
-  parent_node = require("nvim-tree.actions.moves.movements").parent_node(false),
-  prev_diag_item = require("nvim-tree.actions.moves.movements").find_item("prev", "diag"),
-  prev_git_item = require("nvim-tree.actions.moves.movements").find_item("prev", "git"),
-  prev_sibling = require("nvim-tree.actions.moves.movements").sibling(-1),
+  close_node = require("nvim-tree.actions.moves.parent").fn(true),
+  first_sibling = require("nvim-tree.actions.moves.sibling").fn(-math.huge),
+  last_sibling = require("nvim-tree.actions.moves.sibling").fn(math.huge),
+  next_diag_item = require("nvim-tree.actions.moves.item").fn("next", "diag"),
+  next_git_item = require("nvim-tree.actions.moves.item").fn("next", "git"),
+  next_sibling = require("nvim-tree.actions.moves.sibling").fn(1),
+  parent_node = require("nvim-tree.actions.moves.parent").fn(false),
+  prev_diag_item = require("nvim-tree.actions.moves.item").fn("prev", "diag"),
+  prev_git_item = require("nvim-tree.actions.moves.item").fn("prev", "git"),
+  prev_sibling = require("nvim-tree.actions.moves.sibling").fn(-1),
 
   -- Other types
   refresh = require("nvim-tree.actions.reloaders.reloaders").reload_explorer,
