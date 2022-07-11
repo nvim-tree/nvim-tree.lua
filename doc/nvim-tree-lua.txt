@@ -14,6 +14,7 @@ CONTENTS                                                           *nvim-tree*
   6. Highlight Groups                         |nvim-tree-highlight|
   7. Events                                   |nvim-tree-events|
   7.1 Available Events                        |nvim-tree.events|
+  8. Bookmarks                                |nvim-tree-bookmarks|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -220,6 +221,7 @@ Subsequent calls to setup will replace the previous configuration.
           glyphs = {
             default = "",
             symlink = "",
+            bookmark = "",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -1012,6 +1014,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `.`               run_file_command    enter vim command mode with the file the cursor is on
 `<C-k>`           toggle_file_info    toggle a popup with file infos about the file under the cursor
 `g?`              toggle_help         toggle help
+`m`               toggle_mark         Toggle node in bookmarks
 
 >
   view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
@@ -1059,6 +1062,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = ".",                              action = "run_file_command" }
     { key = "<C-k>",                          action = "toggle_file_info" }
     { key = "g?",                             action = "toggle_help" }
+    { key = "m",                              action = "toggle_mark" }
   } -- END_DEFAULT_MAPPINGS
 <
 ==============================================================================
@@ -1129,6 +1133,11 @@ There are 2 highlight groups for the live filter feature
 
 NvimTreeLiveFilterPrefix
 NvimTreeLiveFilterValue
+
+Color of the bookmark icon
+
+NvimTreeBookmark
+
 
 ==============================================================================
  7. EVENTS                                                  *nvim-tree-events*
@@ -1244,5 +1253,15 @@ on_tree_resize({handler})
                 Parameters: ~
                   {handler}      `{function}` Handler function, with the
                                  signature `function(size)`.
+
+==============================================================================
+ 8. BOOKMARKS                                      *nvim-tree-bookmarks*
+
+You can toggle marks on files/folders with
+`require("nvim-tree.marks").toggle_mark(node)` which is bound to `m` by
+default.
+
+To get the list of marked paths, you can call
+`require("nvim-tree.marks").get_marks()`. This will return `{string}`.
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:

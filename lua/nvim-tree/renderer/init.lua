@@ -10,6 +10,7 @@ local help = require "nvim-tree.renderer.help"
 local git = require "nvim-tree.renderer.components.git"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
+local marks = require "nvim-tree.marks"
 
 local api = vim.api
 
@@ -88,8 +89,10 @@ function M.draw()
 
   if view.is_help_ui() then
     diagnostics.clear()
+    marks.clear()
   else
     diagnostics.update()
+    marks.draw()
   end
 
   view.grow_from_content()

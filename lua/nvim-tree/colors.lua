@@ -53,6 +53,8 @@ local function get_hl_groups()
     WindowPicker = { gui = "bold", fg = "#ededed", bg = "#4493c8" },
     LiveFilterPrefix = { gui = "bold", fg = colors.purple },
     LiveFilterValue = { gui = "bold", fg = "#fff" },
+
+    Bookmark = { fg = colors.green },
   }
 end
 
