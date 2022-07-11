@@ -220,17 +220,6 @@ local function open_in_new_window(filename, mode, win_ids)
   lib.set_target_win()
 end
 
-local function is_already_open(filename, win_ids)
-  for _, id in ipairs(win_ids) do
-    if filename == api.nvim_buf_get_name(api.nvim_win_get_buf(id)) then
-      api.nvim_set_current_win(id)
-      return true
-    end
-  end
-
-  return false
-end
-
 local function is_already_loaded(filename)
   for _, buf_id in ipairs(api.nvim_list_bufs()) do
     if api.nvim_buf_is_loaded(buf_id) and filename == api.nvim_buf_get_name(buf_id) then
@@ -258,7 +247,7 @@ function M.fn(mode, filename)
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local buf_loaded = is_already_loaded(filename)
 
-  local found = is_already_open(filename, win_ids)
+  local found = utils.is_in_displayed_buffer(filename)
   if found and mode == "preview" then
     return
   end

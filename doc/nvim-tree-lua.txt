@@ -1264,4 +1264,16 @@ default.
 To get the list of marked paths, you can call
 `require("nvim-tree.marks").get_marks()`. This will return `{node}`.
 
+*nvim-tree.bookmarks.navigation*
+
+Navigation for marks is not bound by default in nvim-tree because we don't
+want to focus the tree view each time we wish to switch to another mark.
+
+This requires binding bookmark navigation yourself.
+
+-- in your lua configuration
+vim.keymap.set("n", "<leader>mn", require("nvim-tree.marks.navigation").next)
+vim.keymap.set("n", "<leader>mp", require("nvim-tree.marks.navigation").prev)
+vim.keymap.set("n", "<leader>ms", require("nvim-tree.marks.navigation").select)
+
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
