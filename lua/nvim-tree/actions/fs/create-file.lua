@@ -8,13 +8,6 @@ local core = require "nvim-tree.core"
 
 local M = {}
 
-local function focus_file(file)
-  local _, i = utils.find_node(core.get_explorer().nodes, function(node)
-    return node.absolute_path == file
-  end)
-  require("nvim-tree.view").set_cursor { i + 1, 1 }
-end
-
 local function create_file(file)
   if utils.file_exists(file) then
     print(file .. " already exists. Overwrite? y/n")
@@ -112,7 +105,7 @@ function M.fn(node)
     end
     -- INFO: defer needed when reload is automatic (watchers)
     vim.defer_fn(function()
-      focus_file(new_file_path)
+      utils.focus_file(new_file_path)
     end, 150)
   end)
 end

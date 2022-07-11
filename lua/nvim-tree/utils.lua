@@ -328,4 +328,11 @@ function M.debounce(context, timeout, callback)
   )
 end
 
+function M.focus_file(path)
+  local _, i = M.find_node(require("nvim-tree.core").get_explorer().nodes, function(node)
+    return node.absolute_path == path
+  end)
+  require("nvim-tree.view").set_cursor { i + 1, 1 }
+end
+
 return M
