@@ -113,7 +113,7 @@ function M.fn(node)
     -- INFO: defer needed when reload is automatic (watchers)
     vim.defer_fn(function()
       focus_file(new_file_path)
-    end, 50)
+    end, 150)
   end)
 end
 
