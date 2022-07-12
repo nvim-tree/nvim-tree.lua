@@ -7,7 +7,7 @@ local NvimTreeMarks = {}
 local M = {}
 
 local function add_mark(node)
-  NvimTreeMarks[node.absolute_path] = true
+  NvimTreeMarks[node.absolute_path] = node
   M.draw()
 end
 
@@ -30,8 +30,8 @@ end
 
 function M.get_marks()
   local list = {}
-  for k in pairs(NvimTreeMarks) do
-    table.insert(list, k)
+  for _, node in pairs(NvimTreeMarks) do
+    table.insert(list, node)
   end
   return list
 end
@@ -51,13 +51,14 @@ function M.draw()
   M.clear()
 
   local buf = view.get_bufnr()
+  local add = core.get_nodes_starting_line() - 1
   Iterator.builder(core.get_explorer().nodes)
     :recursor(function(node)
       return node.open and node.nodes
     end)
     :applier(function(node, idx)
       if M.get_mark(node) then
-        vim.fn.sign_place(0, GROUP, SIGN_NAME, buf, { lnum = idx + 1, priority = 3 })
+        vim.fn.sign_place(0, GROUP, SIGN_NAME, buf, { lnum = idx + add, priority = 3 })
       end
     end)
     :iterate()

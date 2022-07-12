@@ -1262,6 +1262,6 @@ You can toggle marks on files/folders with
 default.
 
 To get the list of marked paths, you can call
-`require("nvim-tree.marks").get_marks()`. This will return `{string}`.
+`require("nvim-tree.marks").get_marks()`. This will return `{node}`.
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
