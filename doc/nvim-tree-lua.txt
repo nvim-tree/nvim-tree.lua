@@ -1015,6 +1015,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `<C-k>`           toggle_file_info    toggle a popup with file infos about the file under the cursor
 `g?`              toggle_help         toggle help
 `m`               toggle_mark         Toggle node in bookmarks
+`bmv`             bulk_move           Move all bookmarked nodes into specified location
 
 >
   view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
@@ -1063,6 +1064,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "<C-k>",                          action = "toggle_file_info" }
     { key = "g?",                             action = "toggle_help" }
     { key = "m",                              action = "toggle_mark" }
+    { key = "bmv",                            action = "bulk_move" }
   } -- END_DEFAULT_MAPPINGS
 <
 ==============================================================================
