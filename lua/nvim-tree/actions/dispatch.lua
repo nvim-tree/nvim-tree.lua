@@ -113,7 +113,7 @@ end
 function M.dispatch(action)
   if view.is_help_ui() or action == "toggle_help" then
     handle_action_on_help_ui(action)
-  elseif action:match "live" ~= nil then
+  elseif action == "live_filter" or action == "clear_live_filter" then
     handle_filter_actions(action)
   else
     handle_tree_actions(action)
