@@ -2,8 +2,16 @@ local M = {}
 
 local function check_siblings_for_folder(node, with_arrows)
   if with_arrows then
+    local has_files = false
+    local has_folders = false
     for _, n in pairs(node.parent.nodes) do
-      if n.nodes then
+      if n.nodes and node.absolute_path ~= n.absolute_path then
+        has_folders = true
+      end
+      if not n.nodes then
+        has_files = true
+      end
+      if has_files and has_folders then
         return true
       end
     end
