@@ -449,10 +449,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     indent_markers = {
       enable = false,
       icons = {
-        corner = "└ ",
-        edge = "│ ",
-        item = "│ ",
-        none = "  ",
+        corner = "└",
+        edge = "│",
+        item = "│",
+        none = " ",
       },
     },
     icons = {

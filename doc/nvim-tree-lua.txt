@@ -201,10 +201,10 @@ Subsequent calls to setup will replace the previous configuration.
         indent_markers = {
           enable = false,
           icons = {
-            corner = "└ ",
-            edge = "│ ",
-            item = "│ ",
-            none = "  ",
+            corner = "└",
+            edge = "│",
+            item = "│",
+            none = " ",
           },
         },
         icons = {
@@ -644,7 +644,7 @@ UI rendering setup
 
         *nvim-tree.renderer.indent_markers.icons*
         Icons shown before the file/directory.
-          Type: `table`, Default: `{ corner = "└ ", edge = "│ ", item = "│ ", none = "  ", }`
+          Type: `table`, Default: `{ corner = "└", edge = "│", item = "│", none = " ", }`
 
     *nvim-tree.renderer.icons*
     Configuration options for icons.
