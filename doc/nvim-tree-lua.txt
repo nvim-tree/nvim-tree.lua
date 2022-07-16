@@ -888,6 +888,10 @@ Configuration for diagnostic logging.
         File copy and paste actions.
           Type: `boolean`, Default: `false`
 
+        *nvim-tree.log.types.dev*
+        Used for local development only. Not useful for users.
+          Type: `boolean`, Default: `false`
+
         *nvim-tree.log.types.diagnostics*
         LSP and COC processing, verbose.
           Type: `boolean`, Default: `false`

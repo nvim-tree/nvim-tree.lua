@@ -309,13 +309,11 @@ function M.key_by(tbl, key)
 end
 
 local function timer_stop_close(timer)
-  if timer then
-    if timer:is_active() then
-      timer:stop()
-    end
-    if not timer:is_closing() then
-      timer:close()
-    end
+  if timer:is_active() then
+    timer:stop()
+  end
+  if not timer:is_closing() then
+    timer:close()
   end
 end
 
@@ -331,27 +329,37 @@ function M.debounce(context, timeout, callback)
   M.debouncers[context] = M.debouncers[context] or {}
   local debouncer = M.debouncers[context]
 
-  timer_stop_close(debouncer.timer)
+  -- cancel active timer
+  if debouncer.timer then
+    timer_stop_close(debouncer.timer)
+  end
 
+  -- start the one and only timer
   local timer = uv.new_timer()
-  timer:start(
-    timeout,
-    0,
-    vim.schedule_wrap(function()
-      -- timers must be closed to release their memory
-      timer_stop_close(timer)
+  debouncer.timer = timer
+  timer:start(timeout, 0, function()
 
-      if debouncer.executing then
-        M.debounce(context, timeout, callback)
-      else
-        debouncer.executing = true
-        callback()
-        debouncer.executing = false
+    -- timers must be closed to release their memory
+    timer_stop_close(timer)
+
+    -- reschedule whilst callback is running
+    if debouncer.executing then
+      M.debounce(context, timeout, callback)
+      return
+    end
+
+    -- call back at a safe time
+    debouncer.executing = true
+    vim.schedule(function()
+      callback()
+      debouncer.executing = false
+
+      -- no other timer in progress, clear
+      if debouncer.timer == timer then
+        M.debouncers[context] = nil
       end
     end)
-  )
-
-  debouncer.timer = timer
+  end)
 end
 
 function M.focus_file(path)
