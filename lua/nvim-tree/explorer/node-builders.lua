@@ -23,7 +23,7 @@ function M.folder(parent, absolute_path, name)
   }
 end
 
-local function is_executable(absolute_path, ext)
+function M.is_executable(absolute_path, ext)
   if M.is_windows then
     return utils.is_windows_exe(ext)
   end
@@ -35,7 +35,7 @@ function M.file(parent, absolute_path, name)
 
   return {
     absolute_path = absolute_path,
-    executable = is_executable(absolute_path, ext),
+    executable = M.is_executable(absolute_path, ext),
     extension = ext,
     fs_stat = uv.fs_stat(absolute_path),
     name = name,
