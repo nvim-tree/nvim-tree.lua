@@ -12,6 +12,8 @@ luarocks install luacheck
 cargo install stylua
 ```
 
+You can setup the git hooks by running `scripts/setup-hooks.sh`.
+
 ## Adding new actions
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
