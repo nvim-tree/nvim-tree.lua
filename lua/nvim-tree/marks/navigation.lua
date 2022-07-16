@@ -54,7 +54,7 @@ local function get(where, node)
 end
 
 local function open_or_focus(node)
-  if node and not node.nodes and not utils.is_in_displayed_buffer(node.absolute_path) then
+  if node and not node.nodes and not utils.get_win_buf_from_path(node.absolute_path) then
     open_file.fn("edit", node.absolute_path)
   elseif node then
     utils.focus_file(node.absolute_path)

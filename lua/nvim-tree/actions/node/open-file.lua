@@ -247,13 +247,15 @@ function M.fn(mode, filename)
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local buf_loaded = is_already_loaded(filename)
 
-  local found = utils.is_in_displayed_buffer(filename)
-  if found and mode == "preview" then
+  local found_win = utils.get_win_buf_from_path(filename)
+  if found_win and mode == "preview" then
     return
   end
 
-  if not found then
+  if not found_win then
     open_in_new_window(filename, mode, win_ids)
+  else
+    api.nvim_set_current_win(found_win)
   end
 
   if M.resize_window then
