@@ -200,6 +200,7 @@ function M.rename_loaded_buffers(old_path, new_path)
         if a.nvim_buf_get_option(buf, "buftype") == "" then
           a.nvim_buf_call(buf, function()
             vim.cmd "silent! write!"
+            vim.cmd "edit"
           end)
         end
       end
@@ -351,6 +352,13 @@ function M.debounce(context, timeout, callback)
   )
 
   debouncer.timer = timer
+end
+
+function M.focus_file(path)
+  local _, i = M.find_node(require("nvim-tree.core").get_explorer().nodes, function(node)
+    return node.absolute_path == path
+  end)
+  require("nvim-tree.view").set_cursor { i + 1, 1 }
 end
 
 return M

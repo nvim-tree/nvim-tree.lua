@@ -7,12 +7,12 @@ local colors = require "nvim-tree.colors"
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
-local change_dir = require "nvim-tree.actions.change-dir"
+local change_dir = require "nvim-tree.actions.root.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
-local reloaders = require "nvim-tree.actions.reloaders"
-local copy_paste = require "nvim-tree.actions.copy-paste"
-local collapse_all = require "nvim-tree.actions.collapse-all"
+local reloaders = require "nvim-tree.actions.reloaders.reloaders"
+local copy_paste = require "nvim-tree.actions.fs.copy-paste"
+local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 
 local _config = {}
@@ -116,7 +116,7 @@ function M.open_replacing_current_buffer(cwd)
   end
   view.open_in_current_win { hijack_current_buf = false, resize = false }
   require("nvim-tree.renderer").draw()
-  require("nvim-tree.actions.find-file").fn(bufname)
+  require("nvim-tree.actions.finders.find-file").fn(bufname)
 end
 
 function M.tab_change()
@@ -163,7 +163,7 @@ function M.find_file(with_open, bufnr, bang)
     if bang or _config.update_focused_file.update_root then
       M.change_root(filepath, bufnr)
     end
-    require("nvim-tree.actions.find-file").fn(filepath)
+    require("nvim-tree.actions.finders.find-file").fn(filepath)
   end)
 end
 
@@ -293,26 +293,26 @@ local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeOpen", function(res)
     M.open(res.args)
   end, { nargs = "?", complete = "dir" })
-  api.nvim_create_user_command("NvimTreeClose", view.close, {})
+  api.nvim_create_user_command("NvimTreeClose", view.close, { bar = true })
   api.nvim_create_user_command("NvimTreeToggle", function(res)
     M.toggle(false, false, res.args)
   end, { nargs = "?", complete = "dir" })
-  api.nvim_create_user_command("NvimTreeFocus", M.focus, {})
-  api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, {})
-  api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, {})
+  api.nvim_create_user_command("NvimTreeFocus", M.focus, { bar = true })
+  api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
+  api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, { bar = true })
   api.nvim_create_user_command("NvimTreeFindFile", function(res)
     M.find_file(true, nil, res.bang)
-  end, { bang = true })
+  end, { bang = true, bar = true })
   api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     M.toggle(true, false, res.args)
   end, { nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
-  end, { nargs = 1 })
-  api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, {})
+  end, { nargs = 1, bar = true })
+  api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, { bar = true })
   api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
-  end, {})
+  end, { bar = true })
 end
 
 function M.change_dir(name)
@@ -449,10 +449,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     indent_markers = {
       enable = false,
       icons = {
-        corner = "└ ",
-        edge = "│ ",
-        item = "│ ",
-        none = "  ",
+        corner = "└",
+        edge = "│",
+        item = "│",
+        none = " ",
       },
     },
     icons = {
@@ -469,6 +469,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       glyphs = {
         default = "",
         symlink = "",
+        bookmark = "",
         folder = {
           arrow_closed = "",
           arrow_open = "",
@@ -674,6 +675,7 @@ function M.setup(conf)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
+  require("nvim-tree.marks").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end

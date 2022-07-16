@@ -27,7 +27,7 @@
 
 [neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
 
-[nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/)
+[nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/).
 
 ## Install
 
@@ -113,7 +113,7 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
 * You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/kyazdani42/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
 * Hide the `.git` folder: `filters = { custom = { "^.git$" } }`. See [:help nvim-tree.filters.custom](doc/nvim-tree-lua.txt).
-* To disable the display of icons see [:help nvim-tree.renderer.icons.show](https://neovim.io/doc/user/lua.html)
+* To disable the display of icons see [:help nvim-tree.renderer.icons.show](doc/nvim-tree-lua.txt).
 
 ## Troubleshooting
 

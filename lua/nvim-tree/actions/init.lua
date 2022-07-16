@@ -3,7 +3,6 @@ local a = vim.api
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local util = require "nvim-tree.utils"
-local nvim_tree_callback = require("nvim-tree.config").nvim_tree_callback
 
 -- BEGIN_DEFAULT_MAPPINGS
 local DEFAULT_MAPPINGS = {
@@ -227,6 +226,11 @@ local DEFAULT_MAPPINGS = {
     action = "toggle_help",
     desc = "toggle help",
   },
+  {
+    key = "m",
+    action = "toggle_mark",
+    desc = "Toggle node in bookmarks",
+  },
 }
 -- END_DEFAULT_MAPPINGS
 
@@ -235,15 +239,32 @@ local M = {
   custom_keypress_funcs = {},
 }
 
+local function set_map_for(bufnr)
+  local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
+  return function(mode, rhs)
+    return function(lhs)
+      vim.keymap.set(mode or "n", lhs, rhs, opts)
+    end
+  end
+end
+
+local function run_dispatch(action)
+  return function()
+    require("nvim-tree.actions.dispatch").dispatch(action)
+  end
+end
+
 function M.apply_mappings(bufnr)
+  local setter_for = set_map_for(bufnr)
   for _, b in pairs(M.mappings) do
-    local mapping_rhs = b.cb or nvim_tree_callback(b.action)
-    if type(b.key) == "table" then
-      for _, key in pairs(b.key) do
-        a.nvim_buf_set_keymap(bufnr, b.mode or "n", key, mapping_rhs, { noremap = true, silent = true, nowait = true })
+    local rhs = b.cb or run_dispatch(b.action)
+    if rhs then
+      local setter = setter_for(b.mode, rhs)
+
+      local keys = type(b.key) == "table" and b.key or { b.key }
+      for _, key in pairs(keys) do
+        setter(key)
       end
-    elseif mapping_rhs then
-      a.nvim_buf_set_keymap(bufnr, b.mode or "n", b.key, mapping_rhs, { noremap = true, silent = true, nowait = true })
     end
   end
 end
@@ -325,13 +346,11 @@ local function cleanup_existing_mappings()
   if bufnr == nil or not a.nvim_buf_is_valid(bufnr) then
     return
   end
+
   for _, b in pairs(M.mappings) do
-    if type(b.key) == "table" then
-      for _, key in pairs(b.key) do
-        a.nvim_buf_del_keymap(bufnr, b.mode or "n", key)
-      end
-    else
-      a.nvim_buf_del_keymap(bufnr, b.mode or "n", b.key)
+    local keys = type(b.key) == "table" and b.key or { b.key }
+    for _, key in pairs(keys) do
+      vim.keymap.del(b.mode or "n", key, { buffer = bufnr })
     end
   end
 end
@@ -342,15 +361,15 @@ local DEFAULT_MAPPING_CONFIG = {
 }
 
 function M.setup(opts)
-  require("nvim-tree.actions.system-open").setup(opts)
-  require("nvim-tree.actions.trash").setup(opts)
-  require("nvim-tree.actions.open-file").setup(opts)
-  require("nvim-tree.actions.change-dir").setup(opts)
-  require("nvim-tree.actions.create-file").setup(opts)
-  require("nvim-tree.actions.rename-file").setup(opts)
-  require("nvim-tree.actions.remove-file").setup(opts)
-  require("nvim-tree.actions.copy-paste").setup(opts)
-  require("nvim-tree.actions.expand-all").setup(opts)
+  require("nvim-tree.actions.fs.trash").setup(opts)
+  require("nvim-tree.actions.node.system-open").setup(opts)
+  require("nvim-tree.actions.node.open-file").setup(opts)
+  require("nvim-tree.actions.root.change-dir").setup(opts)
+  require("nvim-tree.actions.fs.create-file").setup(opts)
+  require("nvim-tree.actions.fs.rename-file").setup(opts)
+  require("nvim-tree.actions.fs.remove-file").setup(opts)
+  require("nvim-tree.actions.fs.copy-paste").setup(opts)
+  require("nvim-tree.actions.tree-modifiers.expand-all").setup(opts)
 
   cleanup_existing_mappings()
   M.mappings = vim.deepcopy(DEFAULT_MAPPINGS)

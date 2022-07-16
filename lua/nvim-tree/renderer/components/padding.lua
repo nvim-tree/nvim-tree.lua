@@ -1,20 +1,52 @@
 local M = {}
 
-local function get_padding_indent_markers(depth, idx, nodes_number, markers)
-  local padding = ""
+local function check_siblings_for_folder(node, with_arrows)
+  if with_arrows then
+    local has_files = false
+    local has_folders = false
+    for _, n in pairs(node.parent.nodes) do
+      if n.nodes and node.absolute_path ~= n.absolute_path then
+        has_folders = true
+      end
+      if not n.nodes then
+        has_files = true
+      end
+      if has_files and has_folders then
+        return true
+      end
+    end
+  end
+  return false
+end
 
-  if depth ~= 0 then
+local function get_padding_indent_markers(depth, idx, nodes_number, markers, with_arrows, node)
+  local base_padding = with_arrows and (not node.nodes or depth > 0) and "  " or ""
+  local padding = base_padding
+
+  if depth > 0 then
+    local has_folder_sibling = check_siblings_for_folder(node, with_arrows)
     local rdepth = depth / 2
     markers[rdepth] = idx ~= nodes_number
     for i = 1, rdepth do
+      local glyph
       if idx == nodes_number and i == rdepth then
-        padding = padding .. M.config.indent_markers.icons.corner
+        glyph = M.config.indent_markers.icons.corner
       elseif markers[i] and i == rdepth then
-        padding = padding .. M.config.indent_markers.icons.item
+        glyph = M.config.indent_markers.icons.item
       elseif markers[i] then
-        padding = padding .. M.config.indent_markers.icons.edge
+        glyph = M.config.indent_markers.icons.edge
       else
-        padding = padding .. M.config.indent_markers.icons.none
+        glyph = M.config.indent_markers.icons.none
+      end
+
+      if not with_arrows or i == 1 then
+        padding = padding .. glyph .. " "
+      elseif idx == nodes_number and i == rdepth and has_folder_sibling then
+        padding = padding .. base_padding .. glyph .. "── "
+      elseif rdepth == i and not node.nodes and has_folder_sibling then
+        padding = padding .. base_padding .. glyph .. " " .. base_padding
+      else
+        padding = padding .. base_padding .. glyph .. " "
       end
     end
   end
@@ -34,14 +66,17 @@ end
 function M.get_padding(depth, idx, nodes_number, node, markers)
   local padding = ""
 
-  if M.config.indent_markers.enable then
-    padding = padding .. get_padding_indent_markers(depth, idx, nodes_number, markers)
+  local show_arrows = M.config.icons.show.folder_arrow
+  local show_markers = M.config.indent_markers.enable
+
+  if show_markers then
+    padding = padding .. get_padding_indent_markers(depth, idx, nodes_number, markers, show_arrows, node)
   else
     padding = padding .. string.rep(" ", depth)
   end
 
-  if M.config.icons.show.folder_arrow then
-    padding = padding .. get_padding_arrows(node, not M.config.indent_markers.enable)
+  if show_arrows then
+    padding = padding .. get_padding_arrows(node, not show_markers)
   end
 
   return padding
