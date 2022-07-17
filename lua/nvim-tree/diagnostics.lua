@@ -91,7 +91,6 @@ function M.update()
     return
   end
   utils.debounce("diagnostics", M.debounce_delay, function()
-
     local ps = log.profile_start "diagnostics update"
     log.line("diagnostics", "update")
 
