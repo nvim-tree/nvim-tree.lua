@@ -68,11 +68,18 @@ function M.get_project_root(cwd)
     return nil
   end
 
-  local project_root = git_utils.get_toplevel(cwd)
-  return project_root
+  if M.config.git.enable then
+    return git_utils.get_toplevel(cwd)
+  end
+
+  return nil
 end
 
 local function reload_tree_at(project_root)
+  if M.config.git.enable then
+    return nil
+  end
+
   log.line("watcher", "git event executing '%s'", project_root)
   local root_node = utils.get_node_from_path(project_root)
   if not root_node then
