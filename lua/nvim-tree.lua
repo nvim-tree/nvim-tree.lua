@@ -395,11 +395,17 @@ local function setup_autocommands(opts)
 
   if opts.diagnostics.enable then
     create_nvim_tree_autocmd("DiagnosticChanged", {
-      callback = require("nvim-tree.diagnostics").update,
+      callback = function()
+        log.line("diagnostics", "DiagnosticChanged")
+        require("nvim-tree.diagnostics").update()
+      end,
     })
     create_nvim_tree_autocmd("User", {
       pattern = "CocDiagnosticChange",
-      callback = require("nvim-tree.diagnostics").update,
+      callback = function()
+        log.line("diagnostics", "CocDiagnosticChange")
+        require("nvim-tree.diagnostics").update()
+      end,
     })
   end
 end

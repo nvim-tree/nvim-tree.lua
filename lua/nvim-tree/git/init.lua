@@ -138,10 +138,6 @@ function M.load_project_status(cwd)
           reload_tree_at(opts.project_root)
         end)
       end,
-      on_event0 = function()
-        log.line("watcher", "git event")
-        M.reload_tree_at(project_root)
-      end,
     }
   end
 

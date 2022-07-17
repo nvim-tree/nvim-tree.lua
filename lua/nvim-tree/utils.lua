@@ -2,7 +2,6 @@ local has_notify, notify = pcall(require, "notify")
 
 local a = vim.api
 local uv = vim.loop
-local log = require "nvim-tree.log"
 
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
@@ -326,23 +325,22 @@ end
 ---@param timeout number ms to wait
 ---@param callback function to execute on completion
 function M.debounce(context, timeout, callback)
+  -- all execution here is done in a synchronous context; no thread safety required
+
   M.debouncers[context] = M.debouncers[context] or {}
   local debouncer = M.debouncers[context]
 
-  -- cancel active timer
+  -- cancel waiting or executing timer
   if debouncer.timer then
     timer_stop_close(debouncer.timer)
   end
 
-  -- start the one and only timer
   local timer = uv.new_timer()
   debouncer.timer = timer
   timer:start(timeout, 0, function()
-
-    -- timers must be closed to release their memory
     timer_stop_close(timer)
 
-    -- reschedule whilst callback is running
+    -- reschedule when callback is running
     if debouncer.executing then
       M.debounce(context, timeout, callback)
       return
@@ -354,7 +352,7 @@ function M.debounce(context, timeout, callback)
       callback()
       debouncer.executing = false
 
-      -- no other timer in progress, clear
+      -- no other timer waiting
       if debouncer.timer == timer then
         M.debouncers[context] = nil
       end
