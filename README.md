@@ -98,6 +98,10 @@ Basic commands:
 
 `:NvimTreeCollapse` Collapses the nvim-tree recursively.
 
+## Api
+
+nvim-tree exposes a public api; see [:help nvim-tree-api](doc/nvim-tree-lua.txt). This is a stable non breaking api.
+
 ## Mappings
 
 nvim-tree comes with number of mappings; for default mappings please see [:help nvim-tree-default-mappings](doc/nvim-tree-lua.txt), for way of configuring mappings see [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
