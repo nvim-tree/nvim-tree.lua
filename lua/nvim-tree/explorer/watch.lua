@@ -52,7 +52,6 @@ function M.create_watcher(absolute_path)
     on_event = function(opts)
       log.line("watcher", "node event scheduled '%s'", opts.absolute_path)
       utils.debounce("explorer:watch:" .. opts.absolute_path, M.debounce_delay, function()
-        log.line("watcher", "node refreshing '%s'", absolute_path)
         refresh_path(opts.absolute_path)
       end)
     end,
