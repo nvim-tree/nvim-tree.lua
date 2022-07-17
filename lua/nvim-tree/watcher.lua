@@ -78,6 +78,12 @@ function Watcher:stop()
     end
     self._e = nil
   end
+  for i, w in ipairs(M._watchers) do
+    if w == self then
+      table.remove(M._watchers, i)
+      break
+    end
+  end
 end
 
 M.Watcher = Watcher
