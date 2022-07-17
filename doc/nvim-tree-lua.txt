@@ -263,6 +263,7 @@ Subsequent calls to setup will replace the previous configuration.
       diagnostics = {
         enable = false,
         show_on_dirs = false,
+        debounce_delay = 50,
         icons = {
           hint = "",
           info = "",
@@ -328,6 +329,7 @@ Subsequent calls to setup will replace the previous configuration.
           all = false,
           config = false,
           copy_paste = false,
+          dev = false,
           diagnostics = false,
           git = false,
           profile = false,
@@ -470,6 +472,10 @@ Show LSP and COC diagnostics in the signcolumn
     *nvim-tree.diagnostics.enable*
     Enable/disable the feature.
       Type: `boolean`, Default: `false`
+
+    *nvim-tree.diagnostics.debounce_delay*
+    Idle milliseconds between diagnostic event and update.
+      Type: `number`, Default: `50` (ms)
 
     *nvim-tree.diagnostics.show_on_dirs*
     Show diagnostic icons on parent directories.
@@ -886,6 +892,10 @@ Configuration for diagnostic logging.
 
         *nvim-tree.log.types.copy_paste*
         File copy and paste actions.
+          Type: `boolean`, Default: `false`
+
+        *nvim-tree.log.types.dev*
+        Used for local development only. Not useful for users.
           Type: `boolean`, Default: `false`
 
         *nvim-tree.log.types.diagnostics*

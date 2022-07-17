@@ -29,8 +29,8 @@ function M.reload_project(project_root, path)
     return
   end
 
-  if path and not path:match("^" .. project_root) then
-    path = nil
+  if path and path:find(project_root, 1, true) ~= 1 then
+    return
   end
 
   local git_status = Runner.run {
@@ -43,7 +43,7 @@ function M.reload_project(project_root, path)
 
   if path then
     for p in pairs(project.files) do
-      if p:match("^" .. path) then
+      if p:find(path, 1, true) == 1 then
         project.files[p] = nil
       end
     end
@@ -137,10 +137,6 @@ function M.load_project_status(cwd)
         utils.debounce("git:watcher:" .. opts.project_root, M.config.filesystem_watchers.debounce_delay, function()
           reload_tree_at(opts.project_root)
         end)
-      end,
-      on_event0 = function()
-        log.line("watcher", "git event")
-        M.reload_tree_at(project_root)
       end,
     }
   end

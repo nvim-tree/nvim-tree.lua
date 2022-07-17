@@ -10,7 +10,7 @@ local first_init_done = false
 
 function M.init(foldername)
   if TreeExplorer then
-    TreeExplorer:_clear_watchers()
+    TreeExplorer:destroy()
   end
   TreeExplorer = explorer.Explorer.new(foldername)
   if not first_init_done then

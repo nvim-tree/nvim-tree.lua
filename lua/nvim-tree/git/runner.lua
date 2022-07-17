@@ -147,11 +147,11 @@ function Runner.run(opts)
   log.profile_end(ps, "git job %s %s", opts.project_root, opts.path)
 
   if self.rc == -1 then
-    log.line("git", "job timed out")
+    log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
   elseif self.rc ~= 0 then
-    log.line("git", "job failed with return code %d", self.rc)
+    log.line("git", "job fail rc %d %s %s", self.rc, opts.project_root, opts.path)
   else
-    log.line("git", "job success")
+    log.line("git", "job success    %s %s", opts.project_root, opts.path)
   end
 
   return self.output
