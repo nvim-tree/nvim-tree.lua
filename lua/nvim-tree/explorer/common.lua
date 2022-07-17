@@ -43,6 +43,16 @@ function M.update_git_status(node, parent_ignored, status)
   end
 end
 
+function M.node_destroy(node)
+  if not node then
+    return
+  end
+
+  if node.watcher then
+    node.watcher:destroy()
+  end
+end
+
 function M.setup(opts)
   M.config = {
     git = opts.git,

@@ -69,8 +69,8 @@ function Watcher:start()
   return self
 end
 
-function Watcher:stop()
-  log.line("watcher", "Watcher:stop  '%s'", self._opts.absolute_path)
+function Watcher:destroy()
+  log.line("watcher", "Watcher:destroy '%s'", self._opts.absolute_path)
   if self._e then
     local rc, _, name = self._e:stop()
     if rc ~= 0 then
@@ -90,7 +90,7 @@ M.Watcher = Watcher
 
 function M.purge_watchers()
   for _, watcher in pairs(M._watchers) do
-    watcher:stop()
+    watcher:destroy()
   end
   M._watchers = {}
 end
