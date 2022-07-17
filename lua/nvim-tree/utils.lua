@@ -367,4 +367,14 @@ function M.focus_file(path)
   require("nvim-tree.view").set_cursor { i + 1, 1 }
 end
 
+function M.get_win_buf_from_path(path)
+  for _, w in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local b = vim.api.nvim_win_get_buf(w)
+    if vim.api.nvim_buf_get_name(b) == path then
+      return w, b
+    end
+  end
+  return nil, nil
+end
+
 return M
