@@ -46,7 +46,7 @@ function M.create_watcher(absolute_path)
   end
 
   log.line("watcher", "node start '%s'", absolute_path)
-  Watcher.new {
+  return Watcher.new {
     absolute_path = absolute_path,
     interval = M.interval,
     on_event = function(opts)

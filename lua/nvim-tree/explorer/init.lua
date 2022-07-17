@@ -2,6 +2,7 @@ local uv = vim.loop
 
 local git = require "nvim-tree.git"
 local watch = require "nvim-tree.explorer.watch"
+local common = require "nvim-tree.explorer.common"
 
 local M = {}
 
@@ -33,22 +34,16 @@ function Explorer:expand(node)
   self:_load(node)
 end
 
-function Explorer.clear_watchers_for(root_node)
+function Explorer:destroy()
   local function iterate(node)
-    if node.watcher then
-      node.watcher:stop()
+    common.node_destroy(node)
+    if node.nodes then
       for _, child in pairs(node.nodes) do
-        if child.watcher then
-          iterate(child)
-        end
+        iterate(child)
       end
     end
   end
-  iterate(root_node)
-end
-
-function Explorer:_clear_watchers()
-  Explorer.clear_watchers_for(self)
+  iterate(self)
 end
 
 function M.setup(opts)

@@ -69,7 +69,12 @@ function M.reload(node, status)
   node.nodes = vim.tbl_map(
     update_status(nodes_by_path, node_ignored, status),
     vim.tbl_filter(function(n)
-      return child_names[n.absolute_path]
+      if child_names[n.absolute_path] then
+        return child_names[n.absolute_path]
+      else
+        common.node_destroy(n)
+        return nil
+      end
     end, node.nodes)
   )
 
