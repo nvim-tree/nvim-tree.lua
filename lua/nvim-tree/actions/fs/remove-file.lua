@@ -68,7 +68,7 @@ function M.fn(node)
     return
   end
 
-  vim.ui.select({ "y", "n" }, { prompt = "Remove " .. node.name .. " ?" }, function(choice)
+  vim.ui.select({ "y", "n" }, { kind = "confirmation", prompt = "Remove " .. node.name .. " ?" }, function(choice)
     if choice == "y" then
       if node.nodes ~= nil and not node.link_to then
         local success = remove_dir(node.absolute_path)
