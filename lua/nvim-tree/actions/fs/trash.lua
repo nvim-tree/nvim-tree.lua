@@ -65,21 +65,7 @@ function M.fn(node)
     })
   end
 
-  local is_confirmed = true
-
-  -- confirmation prompt
-  if M.config.trash.require_confirm then
-    is_confirmed = false
-    print("Trash " .. node.name .. " ? y/n")
-    local ans = utils.get_user_input_char()
-    if ans:match "^y" then
-      is_confirmed = true
-    end
-    utils.clear_prompt()
-  end
-
-  -- trashing
-  if is_confirmed then
+  local function do_trash()
     if node.nodes ~= nil and not node.link_to then
       trash_path(function(_, rc)
         if rc ~= 0 then
@@ -104,6 +90,16 @@ function M.fn(node)
         end
       end)
     end
+  end
+
+  if M.config.trash.require_confirm then
+    vim.ui.select({ "y", "n" }, { prompt = "Trash " .. node.name .. " ?" }, function(choice)
+      if choice == "y" then
+        do_trash()
+      end
+    end)
+  else
+    do_trash()
   end
 end
 
