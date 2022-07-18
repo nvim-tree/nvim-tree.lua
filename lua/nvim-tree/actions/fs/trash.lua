@@ -41,13 +41,13 @@ function M.fn(node)
       M.config.trash.require_confirm = true
     end
   else
-    utils.warn "Trash is currently a UNIX only feature!"
+    utils.notify.warn "Trash is currently a UNIX only feature!"
     return
   end
 
   local binary = M.config.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
-    utils.warn(binary .. " is not executable.")
+    utils.notify.warn(binary .. " is not executable.")
     return
   end
 
@@ -83,7 +83,7 @@ function M.fn(node)
     if node.nodes ~= nil and not node.link_to then
       trash_path(function(_, rc)
         if rc ~= 0 then
-          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+          utils.notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
           return
         end
         events._dispatch_folder_removed(node.absolute_path)
@@ -94,7 +94,7 @@ function M.fn(node)
     else
       trash_path(function(_, rc)
         if rc ~= 0 then
-          utils.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+          utils.notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
           return
         end
         events._dispatch_file_removed(node.absolute_path)

@@ -305,7 +305,7 @@ local function merge_mappings(user_mappings)
       if not is_empty(map.action) then
         M.custom_keypress_funcs[map.action] = map.action_cb
       else
-        util.warn "action can't be empty if action_cb provided"
+        util.notify.warn "action can't be empty if action_cb provided"
       end
     end
   end

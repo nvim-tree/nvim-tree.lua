@@ -15,15 +15,22 @@ function M.path_to_matching_str(path)
   return path:gsub("(%-)", "(%%-)"):gsub("(%.)", "(%%.)"):gsub("(%_)", "(%%_)")
 end
 
-function M.warn(msg)
-  vim.schedule(function()
-    if has_notify then
-      notify(msg, vim.log.levels.WARN, { title = "NvimTree" })
-    else
-      vim.notify("[NvimTree] " .. msg, vim.log.levels.WARN)
-    end
-  end)
+local function notify_level(level)
+  return function(msg)
+    vim.schedule(function()
+      if has_notify then
+        notify(msg, level, { title = "NvimTree" })
+      else
+        vim.notify("[NvimTree] " .. msg, level)
+      end
+    end)
+  end
 end
+
+M.notify = {}
+M.notify.warn = notify_level(vim.log.levels.WARN)
+M.notify.error = notify_level(vim.log.levels.ERROR)
+M.notify.info = notify_level(vim.log.levels.INFO)
 
 function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1
@@ -260,7 +267,7 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos)
     dst_pos = { dst_pos, "string" },
   })
   if not ok then
-    M.warn("move_missing_val: " .. (err or "invalid arguments"))
+    M.notify.warn("move_missing_val: " .. (err or "invalid arguments"))
   end
 
   for pos in string.gmatch(src_path, "([^%.]+)%.*") do

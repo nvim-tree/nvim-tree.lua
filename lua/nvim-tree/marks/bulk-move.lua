@@ -7,7 +7,7 @@ local M = {}
 
 function M.bulk_move()
   if #Marks.get_marks() == 0 then
-    utils.warn "no bookmark to perform bulk move on, aborting."
+    utils.notify.warn "no bookmark to perform bulk move on, aborting."
     return
   end
 
@@ -16,7 +16,7 @@ function M.bulk_move()
       return
     end
     if vim.fn.filewritable(location) ~= 2 then
-      utils.warn(location .. " is not writable, cannot move.")
+      utils.notify.warn(location .. " is not writable, cannot move.")
       return
     end
 

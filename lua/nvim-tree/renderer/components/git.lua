@@ -68,7 +68,7 @@ end
 local function nil_() end
 
 local function warn_status(git_status)
-  utils.warn(
+  utils.notify.warn(
     'Unrecognized git state "'
       .. git_status
       .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'

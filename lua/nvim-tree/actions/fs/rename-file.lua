@@ -13,13 +13,13 @@ end
 
 function M.rename(node, to)
   if utils.file_exists(to) then
-    utils.warn(err_fmt(node.absolute_path, to, "file already exists"))
+    utils.notify.warn(err_fmt(node.absolute_path, to, "file already exists"))
     return
   end
 
   local success, err = uv.fs_rename(node.absolute_path, to)
   if not success then
-    return utils.warn(err_fmt(node.absolute_path, to, err))
+    return utils.notify.warn(err_fmt(node.absolute_path, to, err))
   end
   utils.clear_prompt()
   a.nvim_out_write(node.absolute_path .. " ➜ " .. to .. "\n")

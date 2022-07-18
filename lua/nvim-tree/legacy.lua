@@ -292,7 +292,7 @@ end
 
 local function removed(opts)
   if opts.auto_close then
-    utils.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
+    utils.notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
     opts.auto_close = nil
   end
 end
@@ -307,7 +307,7 @@ function M.migrate_legacy_options(opts)
     end
   end
   if msg then
-    utils.warn(msg)
+    utils.notify.warn(msg)
   end
 
   -- silently move

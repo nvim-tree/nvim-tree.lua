@@ -10,7 +10,7 @@ local M = {
 
 function M.fn(node)
   if #M.config.system_open.cmd == 0 then
-    require("nvim-tree.utils").warn "Cannot open file with system application. Unrecognized platform."
+    require("nvim-tree.utils").notify.warn "Cannot open file with system application. Unrecognized platform."
     return
   end
 

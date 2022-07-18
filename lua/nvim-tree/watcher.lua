@@ -45,7 +45,7 @@ function Watcher:start()
   self._e, _, name = uv.new_fs_event()
   if not self._e then
     self._e = nil
-    utils.warn(
+    utils.notify.warn(
       string.format("Could not initialize an fs_event watcher for path %s : %s", self._opts.absolute_path, name)
     )
     return nil
@@ -62,7 +62,9 @@ function Watcher:start()
 
   rc, _, name = self._e:start(self._opts.absolute_path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
-    utils.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._opts.absolute_path, name))
+    utils.notify.warn(
+      string.format("Could not start the fs_event watcher for path %s : %s", self._opts.absolute_path, name)
+    )
     return nil
   end
 
@@ -74,7 +76,9 @@ function Watcher:destroy()
   if self._e then
     local rc, _, name = self._e:stop()
     if rc ~= 0 then
-      utils.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._opts.absolute_path, name))
+      utils.notify.warn(
+        string.format("Could not stop the fs_event watcher for path %s : %s", self._opts.absolute_path, name)
+      )
     end
     self._e = nil
   end
