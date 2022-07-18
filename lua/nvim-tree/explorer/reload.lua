@@ -62,7 +62,6 @@ function M.reload(node, status)
             table.insert(node.nodes, link)
           end
         end
-
       end
       local n = nodes_by_path[abs]
       n.executable = builders.is_executable(abs, n.extension)
