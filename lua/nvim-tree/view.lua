@@ -76,7 +76,7 @@ end
 local function wipe_rogue_buffer()
   for _, bufnr in ipairs(a.nvim_list_bufs()) do
     if not matches_bufnr(bufnr) and a.nvim_buf_get_name(bufnr):match "NvimTree" ~= nil then
-      return pcall(a.nvim_buf_delete, bufnr, { force = true })
+      pcall(a.nvim_buf_delete, bufnr, { force = true })
     end
   end
 end

@@ -148,6 +148,9 @@ function M.find_file(with_open, bufnr, bang)
   end
 
   bufnr = bufnr or api.nvim_get_current_buf()
+  if not api.nvim_buf_is_valid(bufnr) then
+    return
+  end
   local bufname = api.nvim_buf_get_name(bufnr)
   local filepath = utils.canonical_path(vim.fn.fnamemodify(bufname, ":p"))
   if not is_file_readable(filepath) then
