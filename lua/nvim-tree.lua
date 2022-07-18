@@ -637,7 +637,7 @@ local function validate_options(conf)
   validate(conf, DEFAULT_OPTS, "")
 
   if msg then
-    utils.warn(msg)
+    utils.warn(msg .. " | see :help nvim-tree-setup for available configuration options")
   end
 end
 
