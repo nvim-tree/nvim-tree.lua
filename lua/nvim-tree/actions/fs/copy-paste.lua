@@ -85,28 +85,28 @@ local function do_single_paste(source, dest, action_type, action_fn)
     return false, errmsg
   end
 
-  local should_process = true
-  local should_rename = false
-
-  if dest_stats then
-    print(dest .. " already exists. Overwrite? y/n/r(ename)")
-    local ans = utils.get_user_input_char()
-    utils.clear_prompt()
-    should_process = ans:match "^y"
-    should_rename = ans:match "^r"
-  end
-
-  if should_rename then
-    local new_dest = vim.fn.input("New name: ", dest)
-    return do_single_paste(source, new_dest, action_type, action_fn)
-  end
-
-  if should_process then
+  local function on_process()
     success, errmsg = action_fn(source, dest)
     if not success then
       utils.notify.error("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
       return false, errmsg
     end
+  end
+
+  if dest_stats then
+    vim.ui.select({ "y", "n", "rename" }, { prompt = dest .. " already exists. Overwrite?" }, function(choice)
+      if choice == "y" then
+        on_process()
+      elseif choice == "rename" then
+        vim.ui.input({ prompt = "New name: ", default = dest, completion = "dir" }, function(new_dest)
+          if new_dest then
+            do_single_paste(source, new_dest, action_type, action_fn)
+          end
+        end)
+      end
+    end)
+  else
+    on_process()
   end
 end
 
