@@ -21,11 +21,11 @@ local function create_file(file)
   if utils.file_exists(file) then
     vim.ui.select({ "y", "n" }, { prompt = file .. " already exists. Overwrite?" }, function(choice)
       if choice == "y" then
-        create_and_notify()
+        create_and_notify(file)
       end
     end)
   else
-    create_and_notify()
+    create_and_notify(file)
   end
 end
 
