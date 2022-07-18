@@ -1,4 +1,3 @@
-local api = vim.api
 local uv = vim.loop
 
 local utils = require "nvim-tree.utils"
@@ -23,7 +22,7 @@ function M.reload(node, status)
   local cwd = node.link_to or node.absolute_path
   local handle = uv.fs_scandir(cwd)
   if type(handle) == "string" then
-    api.nvim_err_writeln(handle)
+    utils.notify.error(handle)
     return
   end
 

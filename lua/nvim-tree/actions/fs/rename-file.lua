@@ -1,4 +1,3 @@
-local a = vim.api
 local uv = vim.loop
 
 local lib = require "nvim-tree.lib"
@@ -21,8 +20,7 @@ function M.rename(node, to)
   if not success then
     return utils.notify.warn(err_fmt(node.absolute_path, to, err))
   end
-  utils.clear_prompt()
-  a.nvim_out_write(node.absolute_path .. " ➜ " .. to .. "\n")
+  utils.notify.info(node.absolute_path .. " ➜ " .. to .. "\n")
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end

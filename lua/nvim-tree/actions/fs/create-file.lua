@@ -1,4 +1,3 @@
-local a = vim.api
 local uv = vim.loop
 
 local utils = require "nvim-tree.utils"
@@ -19,7 +18,7 @@ local function create_file(file)
   end
   local ok, fd = pcall(uv.fs_open, file, "w", 420)
   if not ok then
-    a.nvim_err_writeln("Couldn't create file " .. file)
+    utils.notify.error("Couldn't create file " .. file)
     return
   end
   uv.fs_close(fd)
@@ -90,14 +89,14 @@ function M.fn(node)
       elseif not utils.file_exists(path_to_create) then
         local success = uv.fs_mkdir(path_to_create, 493)
         if not success then
-          a.nvim_err_writeln("Could not create folder " .. path_to_create)
+          utils.notify.error("Could not create folder " .. path_to_create)
           is_error = true
           break
         end
       end
     end
     if not is_error then
-      a.nvim_out_write(new_file_path .. " was properly created\n")
+      utils.notify.info(new_file_path .. " was properly created\n")
     end
     events._dispatch_folder_created(new_file_path)
     if M.enable_reload then

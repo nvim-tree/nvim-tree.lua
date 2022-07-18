@@ -31,6 +31,7 @@ M.notify = {}
 M.notify.warn = notify_level(vim.log.levels.WARN)
 M.notify.error = notify_level(vim.log.levels.ERROR)
 M.notify.info = notify_level(vim.log.levels.INFO)
+M.notify.debug = notify_level(vim.log.levels.DEBUG)
 
 function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1

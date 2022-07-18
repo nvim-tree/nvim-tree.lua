@@ -1,4 +1,3 @@
-local api = vim.api
 local uv = vim.loop
 
 local utils = require "nvim-tree.utils"
@@ -52,7 +51,7 @@ end
 local function get_dir_handle(cwd)
   local handle = uv.fs_scandir(cwd)
   if type(handle) == "string" then
-    api.nvim_err_writeln(handle)
+    utils.notify.error(handle)
     return
   end
   return handle
