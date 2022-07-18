@@ -112,7 +112,7 @@ local function pick_window()
   end
   local _, resp = pcall(get_user_input_char)
   resp = (resp or ""):upper()
-  if vim.op.cmdheight._value ~= 0 then
+  if vim.opt.cmdheight._value ~= 0 then
     vim.api.nvim_command "normal! :"
   end
 
