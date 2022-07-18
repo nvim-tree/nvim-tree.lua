@@ -278,7 +278,6 @@ Subsequent calls to setup will replace the previous configuration.
       },
       filesystem_watchers = {
         enable = false,
-        interval = 100,
         debounce_delay = 50,
       },
       git = {
@@ -523,7 +522,7 @@ Git integration with icons and colors.
   process returned the data.
 
 *nvim-tree.filesystem_watchers*
-Will use file system watcher (libuv fs_poll) to watch the filesystem for
+Will use file system watcher (libuv fs_event) to watch the filesystem for
 changes.
 Using this will disable BufEnter / BufWritePost events in nvim-tree which
 were used to update the whole tree. With this feature, the tree will be
@@ -534,12 +533,6 @@ This will be experimental for a few weeks and will become the default.
     *nvim-tree.filesystem_watchers.enable*
     Enable / disable the feature.
       Type: `boolean`, Default: `false`
-
-    *nvim-tree.filesystem_watchers.interval*
-    Milliseconds between polls for each directory.
-    Increase to at least 1000ms if changes are not visible. See
-    https://github.com/luvit/luv/blob/master/docs.md#uvfs_poll_startfs_poll-path-interval-callback
-      Type: `number`, Default: `100` (ms)
 
     *nvim-tree.filesystem_watchers.debounce_delay*
     Idle milliseconds between filesystem change and action.

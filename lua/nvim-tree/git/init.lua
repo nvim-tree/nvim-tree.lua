@@ -131,7 +131,6 @@ function M.load_project_status(cwd)
     watcher = Watcher.new {
       absolute_path = utils.path_join { project_root, ".git" },
       project_root = project_root,
-      interval = M.config.filesystem_watchers.interval,
       on_event = function(opts)
         log.line("watcher", "git event scheduled '%s'", opts.project_root)
         utils.debounce("git:watcher:" .. opts.project_root, M.config.filesystem_watchers.debounce_delay, function()
