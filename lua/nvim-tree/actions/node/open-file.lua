@@ -21,6 +21,14 @@ local function get_split_cmd()
   return "top"
 end
 
+local function get_user_input_char()
+  local c = vim.fn.getchar()
+  while type(c) ~= "number" do
+    c = vim.fn.getchar()
+  end
+  return vim.fn.nr2char(c)
+end
+
 ---Get user to pick a window. Selectable windows are all windows in the current
 ---tabpage that aren't NvimTree.
 ---@return integer|nil -- If a valid window was picked, return its id. If an
@@ -102,9 +110,11 @@ local function pick_window()
   if vim.opt.cmdheight._value ~= 0 then
     print "Pick window: "
   end
-  local _, resp = pcall(utils.get_user_input_char)
+  local _, resp = pcall(get_user_input_char)
   resp = (resp or ""):upper()
-  utils.clear_prompt()
+  if vim.op.cmdheight._value ~= 0 then
+    vim.api.nvim_command "normal! :"
+  end
 
   -- Restore window options
   for _, id in ipairs(selectable) do

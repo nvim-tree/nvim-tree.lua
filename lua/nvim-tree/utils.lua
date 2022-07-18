@@ -96,18 +96,6 @@ end
 
 M.path_separator = path_separator
 
-function M.clear_prompt()
-  vim.api.nvim_command "normal! :"
-end
-
-function M.get_user_input_char()
-  local c = vim.fn.getchar()
-  while type(c) ~= "number" do
-    c = vim.fn.getchar()
-  end
-  return vim.fn.nr2char(c)
-end
-
 -- get the node and index of the node from the tree that matches the predicate.
 -- The explored nodes are those displayed on the view.
 -- @param nodes list of node

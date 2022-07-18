@@ -7,15 +7,7 @@ local core = require "nvim-tree.core"
 
 local M = {}
 
-local function create_file(file)
-  if utils.file_exists(file) then
-    print(file .. " already exists. Overwrite? y/n")
-    local ans = utils.get_user_input_char()
-    utils.clear_prompt()
-    if ans ~= "y" then
-      return
-    end
-  end
+local function create_and_notify(file)
   local ok, fd = pcall(uv.fs_open, file, "w", 420)
   if not ok then
     utils.notify.error("Couldn't create file " .. file)
@@ -23,6 +15,18 @@ local function create_file(file)
   end
   uv.fs_close(fd)
   events._dispatch_file_created(file)
+end
+
+local function create_file(file)
+  if utils.file_exists(file) then
+    vim.ui.select({ "y", "n" }, { prompt = file .. " already exists. Overwrite?" }, function(choice)
+      if choice == "y" then
+        create_and_notify()
+      end
+    end)
+  else
+    create_and_notify()
+  end
 end
 
 local function get_num_nodes(iter)
@@ -60,8 +64,6 @@ function M.fn(node)
     if not new_file_path or new_file_path == containing_folder then
       return
     end
-
-    utils.clear_prompt()
 
     if utils.file_exists(new_file_path) then
       utils.notify.warn "Cannot create: file already exists"
