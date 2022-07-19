@@ -64,7 +64,9 @@ function M.reload(node, status)
         end
       end
       local n = nodes_by_path[abs]
-      n.executable = builders.is_executable(abs, n.extension)
+      if n then
+        n.executable = builders.is_executable(abs, n.extension)
+      end
     end
   end
 
