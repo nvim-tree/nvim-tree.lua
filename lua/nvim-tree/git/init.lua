@@ -76,7 +76,7 @@ function M.get_project_root(cwd)
 end
 
 local function reload_tree_at(project_root)
-  if M.config.git.enable then
+  if not M.config.git.enable then
     return nil
   end
 
