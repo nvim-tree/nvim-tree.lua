@@ -373,4 +373,10 @@ function M.get_win_buf_from_path(path)
   return nil, nil
 end
 
+function M.clear_prompt()
+  if vim.opt.cmdheight._value ~= 0 then
+    vim.cmd "normal! :"
+  end
+end
+
 return M

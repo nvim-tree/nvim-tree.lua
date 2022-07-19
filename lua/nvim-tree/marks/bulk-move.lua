@@ -12,6 +12,7 @@ function M.bulk_move()
   end
 
   vim.ui.input({ prompt = "Move to: ", default = Core.get_cwd(), completion = "dir" }, function(location)
+    utils.clear_prompt()
     if not location or location == "" then
       return
     end

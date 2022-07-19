@@ -93,7 +93,8 @@ function M.fn(node)
   end
 
   if M.config.trash.require_confirm then
-    vim.ui.select({ "y", "n" }, { kind = "confirmation", prompt = "Trash " .. node.name .. " ?" }, function(choice)
+    vim.ui.input({ prompt = "Trash " .. node.name .. " ? y/n: " }, function(choice)
+      utils.clear_prompt()
       if choice == "y" then
         do_trash()
       end

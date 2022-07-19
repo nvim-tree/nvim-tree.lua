@@ -19,15 +19,12 @@ end
 
 local function create_file(file)
   if utils.file_exists(file) then
-    vim.ui.select(
-      { "y", "n" },
-      { kind = "confirmation", prompt = file .. " already exists. Overwrite?" },
-      function(choice)
-        if choice == "y" then
-          create_and_notify(file)
-        end
+    vim.ui.input({ prompt = file .. " already exists. Overwrite? y/n: " }, function(choice)
+      utils.clear_prompt()
+      if choice == "y" then
+        create_and_notify(file)
       end
-    )
+    end)
   else
     create_and_notify(file)
   end
@@ -65,6 +62,7 @@ function M.fn(node)
   local input_opts = { prompt = "Create file ", default = containing_folder, completion = "file" }
 
   vim.ui.input(input_opts, function(new_file_path)
+    utils.clear_prompt()
     if not new_file_path or new_file_path == containing_folder then
       return
     end
