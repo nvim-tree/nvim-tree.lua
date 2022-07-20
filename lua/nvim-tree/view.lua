@@ -211,8 +211,9 @@ local function grow()
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   local max_length = M.View.initial_width
   for _, l in pairs(lines) do
-    if max_length < #l then
-      max_length = #l
+    local count = vim.fn.strchars(l) + 3 -- plus some padding
+    if max_length < count then
+      max_length = count
     end
   end
   M.resize(max_length)
