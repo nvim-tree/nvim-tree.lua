@@ -182,9 +182,14 @@ local DEFAULT_MAPPINGS = {
     desc = "open a file with default system application or a folder with default file manager, using |system_open| option",
   },
   {
-    key = "f",
+    key = "ff",
     action = "live_filter",
     desc = "live filter nodes dynamically based on regex matching.",
+  },
+  {
+    key = "fb",
+    action = "live_filter_buffer",
+    desc = "only show nodes in loaded buffers.",
   },
   {
     key = "F",

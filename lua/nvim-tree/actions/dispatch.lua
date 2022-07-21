@@ -57,7 +57,9 @@ end
 
 local function handle_filter_actions(action)
   if action == "live_filter" then
-    require("nvim-tree.live-filter").start_filtering()
+    require("nvim-tree.live-filter").start_filtering "Input"
+  elseif action == "live_filter_buffer" then
+    require("nvim-tree.live-filter").start_filtering "Buffer"
   elseif action == "clear_live_filter" then
     require("nvim-tree.live-filter").clear_filter()
   end
@@ -114,7 +116,7 @@ end
 function M.dispatch(action)
   if view.is_help_ui() or action == "toggle_help" then
     handle_action_on_help_ui(action)
-  elseif action == "live_filter" or action == "clear_live_filter" then
+  elseif action == "live_filter" or action == "clear_live_filter" or action == "live_filter_buffer" then
     handle_filter_actions(action)
   else
     handle_tree_actions(action)

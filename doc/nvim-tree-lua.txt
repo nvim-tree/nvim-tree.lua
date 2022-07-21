@@ -850,8 +850,9 @@ Configuration for various actions.
 *nvim-tree.live_filter*
 Configurations for the live_filtering feature.
 The live filter allows you to filter the tree nodes dynamically, based on
-regex matching (see |vim.regex|).
-This feature is bound to the `f` key by default.
+regex matching (see |vim.regex|) or loaded buffers.
+This feature is bound to the `ff` key by default for the input filter, and
+bound to `fb` for the buffer filter.
 The filter can be cleared with the `F` key by default.
 
     *nvim-tree.live_filter.prefix*
@@ -860,6 +861,8 @@ The filter can be cleared with the `F` key by default.
 
     *nvim-tree.live_filter.always_show_folders*
     Wether to filter folders or not.
+    Note that when this is set to false, the buffer filtering might not work
+    perfectly. This will be fixed in the future.
       Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
@@ -1013,7 +1016,8 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `]c`              next_git_item       go to prev git item
 `-`               dir_up              navigate up to the parent directory of the current file/directory
 `s`               system_open         open a file with default system application or a folder with default file manager, using |system_open| option
-`f`               live_filter         live filter nodes dynamically based on regex matching.
+`ff`              live_filter         live filter nodes dynamically based on regex matching.
+`fb`              live_filter_buffer  live filter nodes in loaded buffers.
 `F`               clear_live_filter   clear live filter
 `q`               close               close tree window
 `W`               collapse_all        collapse the whole tree
@@ -1062,7 +1066,8 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "]c",                             action = "next_git_item" }
     { key = "-",                              action = "dir_up" }
     { key = "s",                              action = "system_open" }
-    { key = "f",                              action = "live_filter" }
+    { key = "ff",                             action = "live_filter" }
+    { key = "fb",                             action = "live_filter_buffer" }
     { key = "F",                              action = "clear_live_filter" }
     { key = "q",                              action = "close" }
     { key = "W",                              action = "collapse_all" }

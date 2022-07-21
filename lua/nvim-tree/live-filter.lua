@@ -2,9 +2,13 @@ local a = vim.api
 
 local view = require "nvim-tree.view"
 local Iterator = require "nvim-tree.iterators.node-iterator"
+local core = function()
+  return require "nvim-tree.core"
+end
 
 local M = {
   filter = nil,
+  filter_type = nil,
 }
 
 local function redraw()
@@ -34,10 +38,30 @@ local function remove_overlay()
   end
 end
 
-local function matches(node)
-  local path = node.absolute_path
-  local name = vim.fn.fnamemodify(path, ":t")
-  return vim.regex(M.filter):match_str(name) ~= nil
+local function load_matcher()
+  if M.filter_type == "Input" then
+    return function(node)
+      local path = node.absolute_path
+      local name = vim.fn.fnamemodify(path, ":t")
+      return vim.regex(M.filter):match_str(name) ~= nil
+    end
+  elseif M.filter_type == "Buffer" then
+    local buffers = vim.tbl_map(
+      function(buf)
+        return vim.api.nvim_buf_get_name(buf)
+      end,
+      vim.tbl_filter(function(buf)
+        return vim.api.nvim_buf_is_loaded(buf)
+      end, vim.api.nvim_list_bufs())
+    )
+    return function(node)
+      return vim.tbl_contains(buffers, node.absolute_path)
+    end
+  else
+    return function()
+      return true
+    end
+  end
 end
 
 function M.apply_filter(node_)
@@ -45,6 +69,8 @@ function M.apply_filter(node_)
     reset_filter(node_)
     return
   end
+
+  local matches = load_matcher()
 
   -- TODO(kiyan): this iterator cannot yet be refactored with the Iterator module
   -- since the node mapper is based on its children
@@ -108,19 +134,37 @@ local function create_overlay()
   a.nvim_win_set_cursor(overlay_winnr, { 1, #M.filter + 1 })
 end
 
-function M.start_filtering()
-  M.filter = M.filter or ""
+function M.start_filtering(filter_type)
+  M.filter_type = filter_type or "Input"
+  M.filter = M.filter_type == "Input" and (M.filter or "") or "Buffer"
 
-  redraw()
-  local row = require("nvim-tree.core").get_nodes_starting_line() - 1
-  local col = #M.prefix > 0 and #M.prefix - 1 or 1
-  view.set_cursor { row, col }
-  -- needs scheduling to let the cursor move before initializing the window
-  vim.schedule(create_overlay)
+  if M.filter_type == "Input" then
+    redraw()
+    local row = core().get_nodes_starting_line() - 1
+    local col = #M.prefix > 0 and #M.prefix - 1 or 1
+    view.set_cursor { row, col }
+    -- needs scheduling to let the cursor move before initializing the window
+    vim.schedule(create_overlay)
+  elseif M.filter_type == "Buffer" then
+    M.apply_filter(core().get_explorer())
+    redraw()
+    M.BUFFER_AU_ID = vim.api.nvim_create_autocmd({ "BufNewFile", "BufDelete" }, {
+      group = vim.api.nvim_create_augroup("NvimTreeLiveFilterBuffer", { clear = true }),
+      callback = function()
+        M.apply_filter(core().get_explorer())
+        redraw()
+      end,
+    })
+  end
 end
 
 function M.clear_filter()
+  if M.BUFFER_AU_ID ~= nil then
+    vim.api.nvim_del_autocmd(M.BUFFER_AU_ID)
+    M.BUFFER_AU_ID = nil
+  end
   M.filter = nil
+  M.filter_type = nil
   reset_filter()
   redraw()
 end
