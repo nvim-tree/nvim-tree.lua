@@ -77,7 +77,7 @@ io.close(file)
 -- lua
 file = io.open("/tmp/DEFAULT_MAPPINGS.lua", "w")
 io.output(file)
-fmt = string.format("    { %%-%d.%ds %%s }\n", max_key_lua, max_key_lua)
+fmt = string.format("    { %%-%d.%ds %%s },\n", max_key_lua, max_key_lua)
 for _, m in pairs(outs_lua) do
   io.write(string.format(fmt, m.key, m.action))
 end
