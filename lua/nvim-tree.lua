@@ -122,8 +122,11 @@ end
 function M.tab_change()
   if view.is_visible { any_tabpage = true } then
     local bufname = api.nvim_buf_get_name(0)
-    if bufname:match "Neogit" ~= nil or bufname:match "--graph" ~= nil then
-      return
+    local ft = api.nvim_buf_get_option(0, "ft")
+    for _, filter in ipairs(M.config.ignore_buf_on_tab_change) do
+      if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
+        return
+      end
     end
     view.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
@@ -350,7 +353,7 @@ local function setup_autocommands(opts)
   end
 
   if opts.open_on_tab then
-    create_nvim_tree_autocmd("TabEnter", { callback = M.tab_change })
+    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_change) })
   end
   if opts.hijack_cursor then
     create_nvim_tree_autocmd("CursorMoved", { pattern = "NvimTree_*", callback = M.place_cursor_on_node })
@@ -424,6 +427,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_setup = false,
   open_on_setup_file = false,
   open_on_tab = false,
+  ignore_buf_on_tab_change = {},
   sort_by = "name",
   root_dirs = {},
   prefer_startup_root = false,
@@ -665,6 +669,7 @@ function M.setup(conf)
   _config.open_on_setup_file = opts.open_on_setup_file
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
+  _config.ignore_buf_on_tab_change = opts.ignore_buf_on_tab_change
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
 

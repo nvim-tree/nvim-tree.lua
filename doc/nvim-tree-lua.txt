@@ -167,6 +167,7 @@ Subsequent calls to setup will replace the previous configuration.
       open_on_setup = false,
       open_on_setup_file = false,
       open_on_tab = false,
+      ignore_buf_on_tab_change = {},
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
@@ -364,9 +365,13 @@ Will ignore the buffer, when deciding to open the tree on setup.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_ft_on_setup*
-List of filetypes that will make `open_on_setup` not open.
+List of filetypes that will prevent `open_on_setup` to open.
 You can use this option if you don't want the tree to open
 in some scenarios (eg using vim startify).
+  Type: {string}, Default: `{}`
+
+*nvim-tree.ignore_buf_on_tab_change*
+List of filetypes or buffer names that will prevent `open_on_tab` to open.
   Type: {string}, Default: `{}`
 
 *nvim-tree.auto_reload_on_write*
