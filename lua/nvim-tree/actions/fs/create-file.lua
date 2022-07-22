@@ -100,7 +100,7 @@ function M.fn(node)
       end
     end
     if not is_error then
-      utils.notify.info(new_file_path .. " was properly created\n")
+      utils.notify.info(new_file_path .. " was properly created")
     end
     events._dispatch_folder_created(new_file_path)
     if M.enable_reload then
