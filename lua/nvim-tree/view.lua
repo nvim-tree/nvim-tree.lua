@@ -42,6 +42,13 @@ M.View = {
       "NormalNC:NvimTreeNormalNC",
     }, ","),
   },
+  floatopts = {
+    enable = false,
+    relative = "editor",
+    row = 1,
+    col = 1,
+    border = "rounded",
+  },
 }
 
 -- The initial state of a tab
@@ -129,8 +136,19 @@ local function set_window_options_and_buffer()
 end
 
 local function open_window()
-  a.nvim_command "vsp"
-  M.reposition_window()
+  if M.View.floatopts.enable then
+    vim.api.nvim_open_win(0, true, {
+      relative = M.View.floatopts.relative,
+      row = M.View.floatopts.row,
+      col = M.View.floatopts.col,
+      width = M.View.width,
+      height = M.View.height,
+      border = M.View.floatopts.border,
+    })
+  else
+    a.nvim_command "vsp"
+    M.reposition_window()
+  end
   setup_tabpage(a.nvim_get_current_tabpage())
   set_window_options_and_buffer()
 end
@@ -426,6 +444,7 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
+  M.View.floatopts = options.float
 end
 
 return M

@@ -451,6 +451,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         -- user mappings go here
       },
     },
+    float = {
+      enable = false,
+      relative = "editor",
+      row = 1,
+      col = 1,
+      border = "rounded",
+    },
   },
   renderer = {
     add_trailing = false,
