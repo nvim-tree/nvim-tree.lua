@@ -191,6 +191,13 @@ Subsequent calls to setup will replace the previous configuration.
             -- user mappings go here
           },
         },
+        float = {
+          enable = false,
+          relative = "editor",
+          row = 1,
+          col = 1,
+          border = "rounded",
+        },
       },
       renderer = {
         add_trailing = false,
