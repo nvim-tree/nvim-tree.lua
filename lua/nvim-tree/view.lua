@@ -42,8 +42,8 @@ M.View = {
       "NormalNC:NvimTreeNormalNC",
     }, ","),
   },
+  floatenable = false,
   floatopts = {
-    enable = false,
     relative = "editor",
     row = 1,
     col = 1,
@@ -136,15 +136,8 @@ local function set_window_options_and_buffer()
 end
 
 local function open_window()
-  if M.View.floatopts.enable then
-    vim.api.nvim_open_win(0, true, {
-      relative = M.View.floatopts.relative,
-      row = M.View.floatopts.row,
-      col = M.View.floatopts.col,
-      width = M.View.width,
-      height = M.View.height,
-      border = M.View.floatopts.border,
-    })
+  if M.View.floatenable then
+    vim.api.nvim_open_win(0, true, M.View.floatopts)
   else
     a.nvim_command "vsp"
     M.reposition_window()
@@ -444,7 +437,11 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
+  M.View.floatenable = options.float.enable
   M.View.floatopts = options.float
+  M.View.floatopts.width = options.width
+  M.View.floatopts.height = options.height
+  M.View.floatopts.enable = nil
 end
 
 return M
