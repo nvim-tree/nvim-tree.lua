@@ -137,7 +137,7 @@ end
 
 local function open_window()
   if M.View.floatenable then
-    vim.api.nvim_open_win(0, true, M.View.floatopts)
+    a.nvim_open_win(0, true, M.View.floatopts)
   else
     a.nvim_command "vsp"
     M.reposition_window()
