@@ -20,7 +20,7 @@ function M.rename(node, to)
   if not success then
     return utils.notify.warn(err_fmt(node.absolute_path, to, err))
   end
-  utils.notify.info(node.absolute_path .. " ➜ " .. to .. "\n")
+  utils.notify.info(node.absolute_path .. " ➜ " .. to)
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end

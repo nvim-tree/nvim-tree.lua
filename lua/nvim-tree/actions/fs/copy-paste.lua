@@ -120,11 +120,11 @@ local function add_to_clipboard(node, clip)
   for idx, _node in ipairs(clip) do
     if _node.absolute_path == node.absolute_path then
       table.remove(clip, idx)
-      return utils.notify.info(node.absolute_path .. " removed to clipboard.\n")
+      return utils.notify.info(node.absolute_path .. " removed to clipboard.")
     end
   end
   table.insert(clip, node)
-  utils.notify.info(node.absolute_path .. " added to clipboard.\n")
+  utils.notify.info(node.absolute_path .. " added to clipboard.")
 end
 
 function M.copy(node)
@@ -218,11 +218,11 @@ local function copy_to_clipboard(content)
   if M.use_system_clipboard == true then
     vim.fn.setreg("+", content)
     vim.fn.setreg('"', content)
-    return utils.notify.info(string.format("Copied %s to system clipboard! \n", content))
+    return utils.notify.info(string.format("Copied %s to system clipboard!", content))
   else
     vim.fn.setreg('"', content)
     vim.fn.setreg("1", content)
-    return utils.notify.info(string.format("Copied %s to neovim clipboard \n", content))
+    return utils.notify.info(string.format("Copied %s to neovim clipboard!", content))
   end
 end
 
