@@ -1,3 +1,5 @@
+local uv = vim.loop
+
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local git_utils = require "nvim-tree.git.utils"
@@ -60,6 +62,10 @@ function M.get_project(project_root)
 end
 
 function M.get_project_root(cwd)
+  if not M.config.git.enable then
+    return nil
+  end
+
   if M.cwd_to_project_root[cwd] then
     return M.cwd_to_project_root[cwd]
   end
@@ -68,11 +74,13 @@ function M.get_project_root(cwd)
     return nil
   end
 
-  if M.config.git.enable then
-    return git_utils.get_toplevel(cwd)
+  local stat, _ = uv.fs_stat(cwd)
+  if not stat or stat.type ~= "directory" then
+    return nil
   end
 
-  return nil
+  M.cwd_to_project_root[cwd] = git_utils.get_toplevel(cwd)
+  return M.cwd_to_project_root[cwd]
 end
 
 local function reload_tree_at(project_root)
