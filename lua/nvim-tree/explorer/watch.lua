@@ -45,21 +45,23 @@ function M.create_watcher(absolute_path)
     return nil
   end
 
-  log.line("watcher", "node start '%s'", absolute_path)
-  return Watcher.new {
-    absolute_path = absolute_path,
-    on_event = function(opts)
-      log.line("watcher", "node event scheduled '%s'", opts.absolute_path)
-      utils.debounce("explorer:watch:" .. opts.absolute_path, M.debounce_delay, function()
-        refresh_path(opts.absolute_path)
-      end)
-    end,
-  }
+  local function callback(watcher)
+    log.line("watcher", "node event scheduled %s", watcher.context)
+    utils.debounce(watcher.context, M.debounce_delay, function()
+      refresh_path(watcher._path)
+    end)
+  end
+
+  M.uid = M.uid + 1
+  return Watcher:new(absolute_path, callback, {
+    context = "explorer:watch:" .. absolute_path .. ":" .. M.uid,
+  })
 end
 
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
+  M.uid = 0
 end
 
 return M
