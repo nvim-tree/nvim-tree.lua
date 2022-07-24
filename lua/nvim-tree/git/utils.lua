@@ -3,7 +3,13 @@ local log = require "nvim-tree.log"
 
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
+local toplevels = {}
+
 function M.get_toplevel(cwd)
+  if toplevels[cwd] ~= nil then
+    return toplevels[cwd]
+  end
+
   local cmd = "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel"
 
   local ps = log.profile_start("git toplevel %s", cwd)
@@ -28,7 +34,8 @@ function M.get_toplevel(cwd)
   end
 
   -- remove newline
-  return toplevel:sub(0, -2)
+  toplevels[cwd] = toplevel:sub(0, -2)
+  return toplevels[cwd]
 end
 
 local untracked = {}
