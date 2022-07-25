@@ -193,6 +193,7 @@ Subsequent calls to setup will replace the previous configuration.
         },
         float = {
           enable = false,
+          -- options passed to nvim_open_win()
           relative = "editor",
           row = 1,
           col = 1,

@@ -453,6 +453,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     float = {
       enable = false,
+      -- options passed to nvim_open_win()
       relative = "editor",
       row = 1,
       col = 1,
