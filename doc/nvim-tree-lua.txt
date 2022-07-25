@@ -10,11 +10,11 @@ CONTENTS                                                           *nvim-tree*
   3. Commands                                 |nvim-tree-commands|
   4. Setup/Configuration                      |nvim-tree-setup|
   4.1 Vinegar Style                           |nvim-tree-vinegar|
-  5. Mappings                                 |nvim-tree-mappings|
-  6. Highlight Groups                         |nvim-tree-highlight|
-  7. Events                                   |nvim-tree-events|
-  7.1 Available Events                        |nvim-tree.events|
-  8. Bookmarks                                |nvim-tree-bookmarks|
+  5. Api                                      |nvim-tree-api|
+  6. Mappings                                 |nvim-tree-mappings|
+  7. Highlight Groups                         |nvim-tree-highlight|
+  8. Events                                   |nvim-tree-events|
+  9. Bookmarks                                |nvim-tree-bookmarks|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -949,7 +949,99 @@ You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
 A good functionnality to enable is |nvim-tree.hijack_directories|.
 
 ==============================================================================
- 5. MAPPINGS                                              *nvim-tree-mappings*
+ 5. API                                                   *nvim-tree-api*
+
+Nvim-tree's public API can be used to access features.
+>
+    local nt_api = require("nvim-tree.api")
+
+    nt_api.tree.toggle()
+<
+This module exposes stable functionalities, it is advised to use this in order
+to avoid breaking configurations due to internal breaking changes.
+
+The api is separated in multiple modules, which can be accessed with
+`require("nvim-tree.api").moduleName.functionality`.
+
+Functions that needs a tree node parameter are exposed with an abstraction
+that injects the node from the cursor position in the tree when calling 
+the function. It will use the node you pass as an argument in priority if it
+exists.
+
+- api.tree:                                             *nvim-tree.api.tree*
+    - open `(path?: string)`
+    - close
+    - toggle `(find_file?: bool, no_focus?: bool, path?: string)`
+    - focus
+    - reload
+    - change_root `(path: string)`
+    - change_root_to_parent
+    - get_node_under_cursor
+    - find_file `(filename: string)`
+    - search_node
+    - collapse_all `(keep_buffers?: bool)`
+    - expand_all
+    - toggle_gitignore_filter
+    - toggle_custom_filter
+    - toggle_hidden_filter
+    - toggle_help
+
+- api.fs:                                               *nvim-tree.api.fs*
+    - create
+    - remove
+    - trash
+    - rename
+    - rename_sub
+    - copy
+    - cut
+    - paste
+    - print_clipboard
+    - copy.absolute_path
+    - copy.filename
+    - copy.relative_path
+
+- api.node:                                             *nvim-tree.api.node*
+    - open.edit
+    - open.vertical
+    - open.horizontal
+    - open.tab
+    - open.preview
+    - show_info_popup
+    - run.cmd
+    - run.system
+    - navigate.sibling.next
+    - navigate.sibling.prev
+    - navigate.sibling.first
+    - navigate.sibling.last
+    - navigate.parent
+    - navigate.parent_close
+    - navigate.git.next
+    - navigate.git.prev
+    - navigate.diagnostics.next
+    - navigate.diagnostics.prev
+
+- api.git:                                              *nvim-tree.api.git*
+    - reload
+
+- api.events:                                           *nvim-tree.api.events*
+    - subscribe `(eventType: Event, callback: function(...args))`
+    - Event (enum type, please see |nvim_tree_events_kind|)
+
+- api.live_filter:                                      *nvim-tree.api.live_filter*
+    - start
+    - clear
+
+- api.marks:                                            *nvim-tree.api.marks*
+    - get
+    - list
+    - toggle
+    - bulk.move
+    - navigate.next
+    - navigate.prev
+    - navigate.select
+
+==============================================================================
+ 6. MAPPINGS                                              *nvim-tree-mappings*
 
 The `list` option in `view.mappings.list` is a table of
 
@@ -1076,7 +1168,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
   } -- END_DEFAULT_MAPPINGS
 <
 ==============================================================================
- 6. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
+ 7. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
 
 All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
@@ -1150,7 +1242,7 @@ NvimTreeBookmark
 
 
 ==============================================================================
- 7. EVENTS                                                  *nvim-tree-events*
+ 8. EVENTS                                                  *nvim-tree-events*
 
 |nvim_tree_events|
 
@@ -1158,121 +1250,77 @@ nvim-tree will dispatch events whenever an action is made. These events can be
 subscribed to through handler functions. This allows for even further
 customization of nvim-tree.
 
-A handler for an event is just a function which receives one argument -
-the payload of the event. The payload is different for each event type. Refer
+A handler for an event is just a function which receives one argument, the 
+payload of the event. The payload is different for each event type. Refer
 to |nvim_tree_registering_handlers| for more information.
-<
 
 |nvim_tree_registering_handlers|
 
-Handlers are registered by calling the `on_*` functions available in the
-`require('nvim-tree.events')` module. See |nvim-tree.events|.
+Handlers are registered by calling the `events.subscribe` function available in the
+`require("nvim-tree.api")` module.
 
+For example, registering a handler for when a node is renamed is done like this:
+>
+    local api = require('nvim-tree.api')
 
-For example, registering a handler for when a node is renamed is done like this: >
-
-    local events = require('nvim-tree.events')
-
-    events.on_node_renamed(function(data)
+    api.events.subscribe(Event.NodeRenamed, function(data)
         print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
+<
 
-==============================================================================
- 7.1 Lua module: nvim-tree.events                           *nvim-tree.events*
+|nvim_tree_events_kind|
 
-                                     *nvim-tree.events.on_nvim_tree_ready()*
-on_nvim_tree_ready({handler})
-                Registers a handler for when NvimTree has been initialized.
+You can access the event enum with:
+>
+    local Event = require('nvim-tree.api').events.Event
+<
+Here is the list of available variant of this enum:
 
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function()`.
+- Event.Ready 
+                When NvimTree has been initialized
+                • Note: Handler takes no parameter.
 
-                                     *nvim-tree.events.on_node_renamed()*
-on_node_renamed({handler})
-                Registers a handler for when a node is renamed.
+- Event.TreeOpen
+                • Note: Handler takes no parameter.
+
+- Event.TreeClose
+                • Note: Handler takes no parameter.
+
+- Event.Resize - When NvimTree is resized.
+                handler parameters: ~
+                    size:        `number` size of the view in columns.
+
+- Event.NodeRenamed
                 • Note: A node can either be a file or a directory.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(payload)`.
-                payload: ~
+                handler parameters: ~
                   {old_name}     `{string}` Absolute path to the old node location.
                   {new_name}     `{string}` Absolute path to the new node location.
 
-                                     *nvim-tree.events.on_file_created()*
-on_file_created({handler})
-                Registers a handler for when a file is created.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(payload)`.
-                payload: ~
+- Event.FileCreated
+                handler parameters: ~
                   {fname}        `{string}` Absolute path to the created file
 
-                                     *nvim-tree.events.on_file_removed()*
-on_file_removed({handler})
-                Registers a handler for when a file is removed.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(payload)`.
-                payload: ~
+- Event.FileRemoved
+                handler parameters: ~
                   {fname}        `{string}` Absolute path to the removed file.
 
-                                   *nvim-tree.events.on_folder_created()*
-on_folder_created({handler})
-                Registers a handler for when a folder is created.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(payload)`.
-                payload: ~
+- Event.FolderCreated
+                handler parameters: ~
                   {folder_name}  `{string}` Absolute path to the created folder.
 
-                                   *nvim-tree.events.on_folder_removed()*
-on_folder_removed({handler})
-                Registers a handler for when a folder is removed.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(payload)`.
-                payload: ~
+- Event.FolderRemoved
+                handler parameters: ~
                   {folder_name}  `{string}` Absolute path to the removed folder.
 
-                                   *nvim-tree.events.on_tree_open()*
-on_tree_open({handler})
-                Registers a handler for when NvimTree is opened.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function()`.
-
-                                   *nvim-tree.events.on_tree_close()*
-on_tree_close({handler})
-                Registers a handler for when NvimTree is closed.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function()`.
-
-                                   *nvim-tree.events.on_tree_resize()*
-on_tree_resize({handler})
-                Registers a handler for when NvimTree is resized.
-
-                Parameters: ~
-                  {handler}      `{function}` Handler function, with the
-                                 signature `function(size)`.
-
 ==============================================================================
- 8. BOOKMARKS                                      *nvim-tree-bookmarks*
+ 9. BOOKMARKS                                      *nvim-tree-bookmarks*
 
 You can toggle marks on files/folders with
-`require("nvim-tree.marks").toggle_mark(node)` which is bound to `m` by
+`require("nvim-tree.api").marks.toggle(node)` which is bound to `m` by
 default.
 
 To get the list of marked paths, you can call
-`require("nvim-tree.marks").get_marks()`. This will return `{node}`.
+`require("nvim-tree.api").marks.list()`. This will return `{node}`.
 
 *nvim-tree.bookmarks.navigation*
 
@@ -1282,8 +1330,8 @@ want to focus the tree view each time we wish to switch to another mark.
 This requires binding bookmark navigation yourself.
 
 -- in your lua configuration
-vim.keymap.set("n", "<leader>mn", require("nvim-tree.marks.navigation").next)
-vim.keymap.set("n", "<leader>mp", require("nvim-tree.marks.navigation").prev)
-vim.keymap.set("n", "<leader>ms", require("nvim-tree.marks.navigation").select)
+vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
+vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
+vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
