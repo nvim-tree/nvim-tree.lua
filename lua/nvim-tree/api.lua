@@ -21,6 +21,13 @@ Api.tree.close = require("nvim-tree.view").close
 Api.tree.focus = require("nvim-tree").focus
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
 Api.tree.change_root = require("nvim-tree").change_dir
+Api.tree.change_root_to_node = inject_node(function(node)
+  if node.name == ".." then
+    require("nvim-tree.actions.root.change-dir").fn ".."
+  elseif node.nodes ~= nil then
+    require("nvim-tree.actions.root.change-dir").fn(require("nvim-tree.lib").get_last_group_node(node).absolute_path)
+  end
+end)
 Api.tree.change_root_to_parent = inject_node(require("nvim-tree.actions.root.dir-up").fn)
 Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
 Api.tree.find_file = require("nvim-tree.actions.finders.find-file").fn
@@ -74,6 +81,8 @@ local function open_preview(node)
 end
 
 Api.node.open.edit = inject_node(open_or_expand_or_dir_up "edit")
+Api.node.open.replace_tree_buffer = inject_node(open_or_expand_or_dir_up "edit_in_place")
+Api.node.open.no_window_picker = inject_node(open_or_expand_or_dir_up "edit_no_picker")
 Api.node.open.vertical = inject_node(open_or_expand_or_dir_up "vsplit")
 Api.node.open.horizontal = inject_node(open_or_expand_or_dir_up "split")
 Api.node.open.tab = inject_node(open_or_expand_or_dir_up "tabnew")

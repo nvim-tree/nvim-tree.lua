@@ -975,6 +975,7 @@ exists.
     - focus
     - reload
     - change_root `(path: string)`
+    - change_root_to_node
     - change_root_to_parent
     - get_node_under_cursor
     - find_file `(filename: string)`
@@ -1002,6 +1003,8 @@ exists.
 
 - api.node:                                             *nvim-tree.api.node*
     - open.edit
+    - open.replace_tree_buffer
+    - open.no_window_picker
     - open.vertical
     - open.horizontal
     - open.tab
