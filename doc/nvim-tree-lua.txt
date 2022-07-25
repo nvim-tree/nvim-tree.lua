@@ -992,10 +992,10 @@ exists.
     - trash
     - rename
     - rename_sub
-    - copy
     - cut
     - paste
     - print_clipboard
+    - copy.name
     - copy.absolute_path
     - copy.filename
     - copy.relative_path
