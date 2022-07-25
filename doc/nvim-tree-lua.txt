@@ -995,7 +995,7 @@ exists.
     - cut
     - paste
     - print_clipboard
-    - copy.name
+    - copy.node
     - copy.absolute_path
     - copy.filename
     - copy.relative_path
