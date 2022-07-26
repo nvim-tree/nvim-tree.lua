@@ -192,6 +192,7 @@ Subsequent calls to setup will replace the previous configuration.
           },
         },
         float = {
+          -- enabling enforces `actions.open_file.quit_on_open`
           enable = false,
           -- options passed to nvim_open_win()
           relative = "editor",

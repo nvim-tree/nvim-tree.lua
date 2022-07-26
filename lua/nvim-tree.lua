@@ -452,6 +452,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       },
     },
     float = {
+      -- enabling enforces `actions.open_file.quit_on_open`
       enable = false,
       -- options passed to nvim_open_win()
       relative = "editor",
