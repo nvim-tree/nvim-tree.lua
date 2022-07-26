@@ -415,7 +415,7 @@ local function setup_autocommands(opts)
     })
   end
 
-  if opts.auto_exit_if_last_window then
+  if opts.quit_if_last_window then
   vim.api.nvim_create_autocmd("BufEnter", {
 	group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
 	callback = function()
@@ -431,7 +431,7 @@ end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
-  auto_exit_if_last_window = false,
+  quit_if_last_window = false,
   create_in_closed_folder = false,
   disable_netrw = false,
   hijack_cursor = false,
