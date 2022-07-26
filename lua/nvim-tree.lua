@@ -457,6 +457,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       relative = "editor",
       row = 1,
       col = 1,
+      anchor = "NW",
       border = "rounded",
     },
   },

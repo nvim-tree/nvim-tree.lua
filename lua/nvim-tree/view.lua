@@ -47,6 +47,7 @@ M.View = {
     relative = "editor",
     row = 1,
     col = 1,
+    anchor = "NW",
     border = "rounded",
   },
 }

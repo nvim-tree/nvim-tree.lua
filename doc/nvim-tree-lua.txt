@@ -197,6 +197,7 @@ Subsequent calls to setup will replace the previous configuration.
           relative = "editor",
           row = 1,
           col = 1,
+          anchor = "NW",
           border = "rounded",
         },
       },
