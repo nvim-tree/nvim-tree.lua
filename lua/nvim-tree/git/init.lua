@@ -143,16 +143,17 @@ function M.load_project_status(cwd)
   local watcher = nil
   if M.config.filesystem_watchers.enable then
     log.line("watcher", "git start")
-    watcher = Watcher.new {
-      absolute_path = utils.path_join { project_root, ".git" },
+
+    local callback = function(w)
+      log.line("watcher", "git event scheduled '%s'", w.project_root)
+      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+        reload_tree_at(w.project_root)
+      end)
+    end
+
+    watcher = Watcher:new(utils.path_join { project_root, ".git" }, callback, {
       project_root = project_root,
-      on_event = function(opts)
-        log.line("watcher", "git event scheduled '%s'", opts.project_root)
-        utils.debounce("git:watcher:" .. opts.project_root, M.config.filesystem_watchers.debounce_delay, function()
-          reload_tree_at(opts.project_root)
-        end)
-      end,
-    }
+    })
   end
 
   M.projects[project_root] = {
