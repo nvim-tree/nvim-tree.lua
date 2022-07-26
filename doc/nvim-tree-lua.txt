@@ -278,7 +278,7 @@ Subsequent calls to setup will replace the previous configuration.
         exclude = {},
       },
       filesystem_watchers = {
-        enable = false,
+        enable = true,
         debounce_delay = 50,
       },
       git = {
@@ -533,11 +533,10 @@ Using this will disable BufEnter / BufWritePost events in nvim-tree which
 were used to update the whole tree. With this feature, the tree will be
 updated only for the appropriate folder change, resulting in better
 performance.
-This will be experimental for a few weeks and will become the default.
 
     *nvim-tree.filesystem_watchers.enable*
     Enable / disable the feature.
-      Type: `boolean`, Default: `false`
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.filesystem_watchers.debounce_delay*
     Idle milliseconds between filesystem change and action.

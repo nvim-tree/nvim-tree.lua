@@ -538,7 +538,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     exclude = {},
   },
   filesystem_watchers = {
-    enable = false,
+    enable = true,
     debounce_delay = 50,
   },
   git = {
