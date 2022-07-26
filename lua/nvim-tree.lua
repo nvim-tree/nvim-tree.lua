@@ -7,6 +7,7 @@ local colors = require "nvim-tree.colors"
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
+local actions = require "nvim-tree.actions"
 local change_dir = require "nvim-tree.actions.root.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
@@ -319,6 +320,7 @@ local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
   end, { bar = true })
+  api.nvim_create_user_command("NvimTreeCreateOnAttach", actions.create_on_attach, {})
 end
 
 function M.change_dir(name)
