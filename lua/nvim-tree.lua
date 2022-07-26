@@ -434,6 +434,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   sync_root_with_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
+  on_attach = "disable", -- function(bufnr). If nil, will use the deprecated mapping strategy
+  remove_keymaps = false, -- boolean (disable totally or not) or list of key (lhs)
   view = {
     adaptive_size = false,
     centralize_selection = false,
@@ -445,6 +447,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    -- @deprecated
     mappings = {
       custom_only = false,
       list = {
@@ -605,6 +608,8 @@ end
 local FIELD_OVERRIDE_TYPECHECK = {
   width = { string = true, ["function"] = true, number = true },
   height = { string = true, ["function"] = true, number = true },
+  remove_keymaps = { boolean = true, table = true },
+  on_attach = { ["function"] = true, string = true },
 }
 
 local function validate_options(conf)
@@ -682,6 +687,7 @@ function M.setup(conf)
   log.raw("config", "%s\n", vim.inspect(opts))
 
   require("nvim-tree.actions").setup(opts)
+  require("nvim-tree.keymap").setup(opts)
   require("nvim-tree.colors").setup()
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)

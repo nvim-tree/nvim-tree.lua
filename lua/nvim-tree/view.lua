@@ -92,7 +92,12 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
-  require("nvim-tree.actions").apply_mappings(M.get_bufnr())
+  if type(M.on_attach) == "function" then
+    require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
+    M.on_attach(M.get_bufnr())
+  else
+    require("nvim-tree.actions").apply_mappings(M.get_bufnr())
+  end
 end
 
 local function get_size()
@@ -426,6 +431,7 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
+  M.on_attach = opts.on_attach
 end
 
 return M
