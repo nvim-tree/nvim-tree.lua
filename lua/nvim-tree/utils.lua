@@ -169,15 +169,17 @@ end
 ---Matching executable files in Windows.
 ---@param ext string
 ---@return boolean
-local PATHEXT = vim.env.PATHEXT or ""
-local wexe = vim.split(PATHEXT:gsub("%.", ""), ";")
-local pathexts = {}
-for _, v in pairs(wexe) do
-  pathexts[v] = true
-end
-
 function M.is_windows_exe(ext)
-  return pathexts[ext:upper()]
+  if not M.pathexts then
+    local PATHEXT = vim.env.PATHEXT or ""
+    local wexe = vim.split(PATHEXT:gsub("%.", ""), ";")
+    M.pathexts = {}
+    for _, v in pairs(wexe) do
+      M.pathexts[v] = true
+    end
+  end
+
+  return M.pathexts[ext:upper()]
 end
 
 function M.rename_loaded_buffers(old_path, new_path)
@@ -376,6 +378,25 @@ end
 function M.clear_prompt()
   if vim.opt.cmdheight._value ~= 0 then
     vim.cmd "normal! :"
+  end
+end
+
+-- return a new table with values from array
+function M.array_shallow_clone(array)
+  local to = {}
+  for _, v in ipairs(array) do
+    table.insert(to, v)
+  end
+  return to
+end
+
+-- remove item from array if it exists
+function M.array_remove(array, item)
+  for i, v in ipairs(array) do
+    if v == item then
+      table.remove(array, i)
+      break
+    end
   end
 end
 
