@@ -201,6 +201,7 @@ Subsequent calls to setup will replace the previous configuration.
         root_folder_modifier = ":~",
         indent_markers = {
           enable = false,
+          inline_arrows = true,
           icons = {
             corner = "└",
             edge = "│",
@@ -669,6 +670,11 @@ UI rendering setup
         *nvim-tree.renderer.indent_markers.enable*
         Display indent markers when folders are open
           Type: `boolean`, Default: `false`
+
+        *nvim-tree.renderer.indent_markers.inline_arrows*
+        Display folder arrows in the same column as indent marker
+        when using |renderer.icons.show.folder_arrow|
+          Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.indent_markers.icons*
         Icons shown before the file/directory.

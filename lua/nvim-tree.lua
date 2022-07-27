@@ -464,6 +464,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     root_folder_modifier = ":~",
     indent_markers = {
       enable = false,
+      inline_arrows = true,
       icons = {
         corner = "└",
         edge = "│",
