@@ -48,8 +48,8 @@ local function get_containing_folder(node)
 end
 
 function M.fn(node)
-  node = lib.get_last_group_node(node)
-  if node.name == ".." then
+  node = node and lib.get_last_group_node(node)
+  if not node or node.name == ".." then
     node = {
       absolute_path = core.get_cwd(),
       nodes = core.get_explorer().nodes,
