@@ -21,7 +21,7 @@ end
 
 local function get_padding_indent_markers(depth, idx, nodes_number, markers, with_arrows, inline_arrows, node)
   local base_padding = with_arrows and (not node.nodes or depth > 0) and "  " or ""
-  local padding = inline_arrows and base_padding or ""
+  local padding = (inline_arrows or depth == 0) and base_padding or ""
 
   if depth > 0 then
     local has_folder_sibling = check_siblings_for_folder(node, with_arrows)
