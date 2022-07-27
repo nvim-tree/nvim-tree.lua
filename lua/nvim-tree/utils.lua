@@ -314,7 +314,7 @@ local function timer_stop_close(timer)
   end
 end
 
----Execute callback timeout ms after the lastest invocation with context.
+---Execute callback timeout ms after the latest invocation with context.
 ---Waiting invocations for that context will be discarded.
 ---Invocation will be rescheduled while a callback is being executed.
 ---Caller must ensure that callback performs the same or functionally equivalent actions.

@@ -2,7 +2,7 @@
 
 # run after changing nvim-tree.lua DEFAULT_OPTS or nvim-tree/actions/init.lua M.mappings
 # scrapes and updates nvim-tree-lua.txt
-# run from repositry root: scripts/update-default-opts.sh
+# run from repository root: scripts/update-default-opts.sh
 
 
 begin="BEGIN_DEFAULT_OPTS"

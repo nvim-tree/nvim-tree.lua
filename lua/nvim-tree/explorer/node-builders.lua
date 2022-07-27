@@ -49,7 +49,7 @@ end
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
 function M.link(parent, absolute_path, name)
-  --- I dont know if this is needed, because in my understanding, there isnt hard links in windows, but just to be sure i changed it.
+  --- I dont know if this is needed, because in my understanding, there isn't hard links in windows, but just to be sure i changed it.
   local link_to = uv.fs_realpath(absolute_path)
   local open, nodes, has_children, watcher
   if (link_to ~= nil) and uv.fs_stat(link_to).type == "directory" then

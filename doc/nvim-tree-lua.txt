@@ -346,7 +346,7 @@ Completely disable netrw
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_netrw*
-Hijack netrw windows (overriden if |disable_netrw| is `true`)
+Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
 
 *nvim-tree.open_on_setup*
@@ -883,7 +883,7 @@ The filter can be cleared with the `F` key by default.
       Type: `string`, Default: `"[FILTER]: "`
 
     *nvim-tree.live_filter.always_show_folders*
-    Wether to filter folders or not.
+    Whether to filter folders or not.
       Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
@@ -970,7 +970,7 @@ Going up a dir is bound to `-` by default in nvim-tree which is identical to
 vinegar, no change is needed here.
 
 You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
-A good functionnality to enable is |nvim-tree.hijack_directories|.
+A good functionality to enable is |nvim-tree.hijack_directories|.
 
 ==============================================================================
  5. API                                                   *nvim-tree-api*
