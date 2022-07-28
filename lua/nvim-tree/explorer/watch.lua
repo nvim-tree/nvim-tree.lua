@@ -22,6 +22,23 @@ local function is_git(path)
   return path:match "%.git$" ~= nil or path:match(utils.path_add_trailing ".git") ~= nil
 end
 
+local IGNORED_PATHS = {
+  -- disable watchers on kernel filesystems
+  -- which have a lot of unwanted events
+  "/sys",
+  "/proc",
+  "/dev",
+}
+
+local function is_folder_ignored(path)
+  for _, folder in ipairs(IGNORED_PATHS) do
+    if vim.startswith(path, folder) then
+      return true
+    end
+  end
+  return false
+end
+
 local function refresh_path(path)
   log.line("watcher", "node event executing '%s'", path)
   local n = utils.get_node_from_path(path)
@@ -41,7 +58,7 @@ function M.create_watcher(absolute_path)
   if not M.enabled then
     return nil
   end
-  if is_git(absolute_path) then
+  if is_git(absolute_path) or is_folder_ignored(absolute_path) then
     return nil
   end
 
