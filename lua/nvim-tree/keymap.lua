@@ -280,7 +280,7 @@ local function get_keymaps(keys_to_disable)
 end
 
 function M.setup(opts)
-  M.keymaps = get_keymaps(opts)
+  M.keymaps = get_keymaps(opts.remove_keymaps)
 end
 
 return M
