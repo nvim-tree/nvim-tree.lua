@@ -305,6 +305,14 @@ function M.key_by(tbl, key)
   return keyed
 end
 
+function M.bool_record(tbl, key)
+  local keyed = {}
+  for _, val in ipairs(tbl) do
+    keyed[val[key]] = true
+  end
+  return keyed
+end
+
 local function timer_stop_close(timer)
   if timer:is_active() then
     timer:stop()
