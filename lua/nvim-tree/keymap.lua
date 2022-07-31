@@ -245,35 +245,39 @@ function M.set_keymaps(bufnr)
   end
 end
 
+local function filter_default_mappings(keys_to_disable)
+  local new_map = {}
+  for _, m in pairs(DEFAULT_KEYMAPS) do
+    local keys = type(m.key) == "table" and m.key or { m.key }
+    local reminding_keys = {}
+    for _, key in pairs(keys) do
+      local found = false
+      for _, key_to_disable in pairs(keys_to_disable) do
+        if key_to_disable == key then
+          found = true
+          break
+        end
+      end
+      if not found then
+        table.insert(reminding_keys, key)
+      end
+    end
+    if #reminding_keys > 0 then
+      local map = vim.deepcopy(m)
+      map.key = reminding_keys
+      table.insert(new_map, map)
+    end
+  end
+  return new_map
+end
+
 local function get_keymaps(keys_to_disable)
   if keys_to_disable == true then
     return {}
   end
 
   if type(keys_to_disable) == "table" and #keys_to_disable > 0 then
-    local new_map = {}
-    for _, m in pairs(DEFAULT_KEYMAPS) do
-      local keys = type(m.key) == "table" and m.key or { m.key }
-      local reminding_keys = {}
-      for _, key in pairs(keys) do
-        local found = false
-        for _, key_to_disable in pairs(keys_to_disable) do
-          if key_to_disable == key then
-            found = true
-            break
-          end
-        end
-        if not found then
-          table.insert(reminding_keys, key)
-        end
-      end
-      if #reminding_keys > 0 then
-        local map = vim.deepcopy(m)
-        map.key = reminding_keys
-        table.insert(new_map, map)
-      end
-    end
-    return new_map
+    return filter_default_mappings(keys_to_disable)
   end
 
   return DEFAULT_KEYMAPS
