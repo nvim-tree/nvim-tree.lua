@@ -395,75 +395,71 @@ function M.setup(opts)
   log.raw("config", "%s\n", vim.inspect(M.mappings))
 end
 
-local LEGACY_TO_ON_ATTACH = {
-  edit = { inject = true, fn = "Api.node.open.edit" },
-  edit_in_place = { inject = true, fn = "Api.node.open.replace_tree_buffer" },
-  edit_no_picker = { inject = true, fn = "Api.node.open.no_window_picker" },
-  cd = { inject = true, fn = "Api.tree.change_root_to_node" },
-  vsplit = { inject = true, fn = "Api.node.open.vertical" },
-  split = { inject = true, fn = "Api.node.open.horizontal" },
-  tabnew = { inject = true, fn = "Api.node.open.tab" },
-  prev_sibling = { inject = true, fn = "Api.node.navigate.sibling.prev" },
-  next_sibling = { inject = true, fn = "Api.node.navigate.sibling.next" },
-  parent_node = { inject = true, fn = "Api.node.navigate.parent" },
-  close_node = { inject = true, fn = "Api.node.navigate.parent_close" },
-  preview = { inject = true, fn = "Api.node.open.preview" },
-  first_sibling = { inject = true, fn = "Api.node.navigate.sibling.first" },
-  last_sibling = { inject = true, fn = "Api.node.navigate.sibling.last" },
-  toggle_git_ignored = { inject = false, fn = "Api.tree.toggle_gitignore_filter" },
-  toggle_dotfiles = { inject = false, fn = "Api.tree.toggle_hidden_filter" },
-  toggle_custom = { inject = false, fn = "Api.tree.toggle_custom_filter" },
-  refresh = { inject = true, fn = "Api.tree.reload" },
-  create = { inject = true, fn = "Api.fs.create" },
-  remove = { inject = true, fn = "Api.fs.remove" },
-  trash = { inject = true, fn = "Api.fs.trash" },
-  rename = { inject = true, fn = "Api.fs.rename" },
-  full_rename = { inject = true, fn = "Api.fs.rename_sub" },
-  cut = { inject = true, fn = "Api.fs.cut" },
-  copy = { inject = true, fn = "Api.fs.copy.node" },
-  paste = { inject = true, fn = "Api.fs.paste" },
-  copy_name = { inject = true, fn = "Api.fs.copy.filename" },
-  copy_path = { inject = true, fn = "Api.fs.copy.relative_path" },
-  copy_absolute_path = { inject = true, fn = "Api.fs.copy.absolute_path" },
-  prev_diag_item = { inject = true, fn = "Api.node.navigate.diagnostics.next" },
-  prev_git_item = { inject = true, fn = "Api.node.navigate.git.next" },
-  next_diag_item = { inject = true, fn = "Api.node.navigate.diagnostics.prev" },
-  next_git_item = { inject = true, fn = "Api.node.navigate.git.prev" },
-  dir_up = { inject = true, fn = "Api.tree.change_root_to_parent" },
-  system_open = { inject = true, fn = "Api.node.run.system" },
-  live_filter = { inject = false, fn = "Api.live_filter.start" },
-  clear_live_filter = { inject = false, fn = "Api.live_filter.clear" },
-  close = { inject = true, fn = "Api.tree.close" },
-  collapse_all = { inject = false, fn = "Api.tree.collapse_all" },
-  expand_all = { inject = true, fn = "Api.tree.expand_all" },
-  search_node = { inject = false, fn = "Api.tree.search_node" },
-  run_file_command = { inject = true, fn = "Api.node.run.cmd" },
-  toggle_file_info = { inject = true, fn = "Api.node.show_info_popup" },
-  toggle_help = { inject = false, fn = "Api.tree.toggle_help" },
-  toggle_mark = { inject = true, fn = "Api.marks.toggle" },
-  bulk_move = { inject = false, fn = "Api.marks.bulk.move" },
+local ACTION_TO_API = {
+  edit = "Api.node.open.edit",
+  edit_in_place = "Api.node.open.replace_tree_buffer",
+  edit_no_picker = "Api.node.open.no_window_picker",
+  cd = "Api.tree.change_root_to_node",
+  vsplit = "Api.node.open.vertical",
+  split = "Api.node.open.horizontal",
+  tabnew = "Api.node.open.tab",
+  prev_sibling = "Api.node.navigate.sibling.prev",
+  next_sibling = "Api.node.navigate.sibling.next",
+  parent_node = "Api.node.navigate.parent",
+  close_node = "Api.node.navigate.parent_close",
+  preview = "Api.node.open.preview",
+  first_sibling = "Api.node.navigate.sibling.first",
+  last_sibling = "Api.node.navigate.sibling.last",
+  toggle_git_ignored = "Api.tree.toggle_gitignore_filter",
+  toggle_dotfiles = "Api.tree.toggle_hidden_filter",
+  toggle_custom = "Api.tree.toggle_custom_filter",
+  refresh = "Api.tree.reload",
+  create = "Api.fs.create",
+  remove = "Api.fs.remove",
+  trash = "Api.fs.trash",
+  rename = "Api.fs.rename",
+  full_rename = "Api.fs.rename_sub",
+  cut = "Api.fs.cut",
+  copy = "Api.fs.copy.node",
+  paste = "Api.fs.paste",
+  copy_name = "Api.fs.copy.filename",
+  copy_path = "Api.fs.copy.relative_path",
+  copy_absolute_path = "Api.fs.copy.absolute_path",
+  prev_diag_item = "Api.node.navigate.diagnostics.next",
+  prev_git_item = "Api.node.navigate.git.next",
+  next_diag_item = "Api.node.navigate.diagnostics.prev",
+  next_git_item = "Api.node.navigate.git.prev",
+  dir_up = "Api.tree.change_root_to_parent",
+  system_open = "Api.node.run.system",
+  live_filter = "Api.live_filter.start",
+  clear_live_filter = "Api.live_filter.clear",
+  close = "Api.tree.close",
+  collapse_all = "Api.tree.collapse_all",
+  expand_all = "Api.tree.expand_all",
+  search_node = "Api.tree.search_node",
+  run_file_command = "Api.node.run.cmd",
+  toggle_file_info = "Api.node.show_info_popup",
+  toggle_help = "Api.tree.toggle_help",
+  toggle_mark = "Api.marks.toggle",
+  bulk_move = "Api.marks.bulk.move",
 }
 
-function M.create_on_attach()
+function M.mappings_to_on_attach()
   local keymaps = {}
   local max_key = 0
+  local max_fn = 0
 
   for _, m in ipairs(M.mappings) do
-    if LEGACY_TO_ON_ATTACH[m.action] then
-      if type(m.key) == "table" then
-        for _, k in ipairs(m.key) do
-          table.insert(keymaps, {
-            key = k,
-            action = LEGACY_TO_ON_ATTACH[m.action],
-          })
-          max_key = math.max(#k, max_key)
-        end
-      else
+    if ACTION_TO_API[m.action] then
+      local keys = type(m.key) == "table" and m.key or { m.key }
+      for _, k in ipairs(keys) do
+        local fn = ACTION_TO_API[m.action]
         table.insert(keymaps, {
-          key = m.key,
-          action = LEGACY_TO_ON_ATTACH[m.action],
+          key = k,
+          fn = fn,
         })
-        max_key = math.max(#m.key, max_key)
+        max_key = math.max(#k, max_key)
+        max_fn = math.max(#fn, max_fn)
       end
     end
   end
@@ -472,28 +468,14 @@ function M.create_on_attach()
 local Api = require("nvim-tree.api")
 
 local function on_attach(bufnr)
-  local function map(key, fn)
-    vim.keymap.set("n", key, function()
-      fn()
-    end, { buffer = bufnr, noremap = true })
-  end
-
-  local function map_inject_node(key, fn)
-    vim.keymap.set("n", key, function(node)
-      fn(node)
-    end, { buffer = bufnr, noremap = true })
-  end
+  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true, }
 
 ]]
 
-  local fmt_inject = string.format("%%s  map_inject_node(%%-%d.%ds %%s)\n", max_key + 3, max_key + 3)
-  local fmt_no_inject = string.format("%%s  map            (%%-%d.%ds %%s)\n", max_key + 3, max_key + 3)
+  local fmt =
+    string.format("%%s  vim.keymap.set('n', %%-%d.%ds %%-%d.%ds, opts)\n", max_key + 3, max_key + 3, max_fn, max_fn)
   for _, m in ipairs(keymaps) do
-    if m.action.inject then
-      out = string.format(fmt_inject, out, "'" .. m.key .. "',", m.action.fn)
-    else
-      out = string.format(fmt_no_inject, out, "'" .. m.key .. "',", m.action.fn)
-    end
+    out = string.format(fmt, out, "'" .. m.key .. "',", m.fn)
   end
   out = out .. [[
 end
