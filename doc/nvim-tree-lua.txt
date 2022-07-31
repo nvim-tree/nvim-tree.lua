@@ -650,30 +650,17 @@ Window / buffer setup.
         Display nvim-tree window as float (enforces |nvim-tree.actions.open_file.quit_on_open| if set).
           Type: `boolean`, Default: `false`
 
-        *nvim-tree.view.float.relative*
-        Relative placement of floating window.
-        See `:help nvim_open_win` for more details.
-          Type: `string`, Default: `"editor"`
-
-        *nvim-tree.view.float.row*
-        Floating window row offset.
-        See `:help nvim_open_win` for more details.
-          Type: `number`, Default: `1`
-
-        *nvim-tree.view.float.col*
-        Floating window column offset.
-        See `:help nvim_open_win` for more details.
-          Type: `number`, Default: `1`
-
-        *nvim-tree.view.float.anchor*
-        Decides which corner of the float to place at (row, col).
-        See `:help nvim_open_win` for more details.
-          Type: `string`, Default: `"NW"`
-
-        *nvim-tree.view.float.border*
-        Style of window border.
-        See `:help nvim_open_win` for more details.
-          Type: `string | table`, Default: `"rounded"`
+        *nvim-tree.view.float.open_win_config*
+        Floating window config. See |nvim_open_win| for more details.
+          Type: `table`, Default:
+            `{`
+              `relative = "editor",`
+              `border = "rounded",`
+              `width = 30,`
+              `height = 30,`
+              `row = 1,`
+              `col = 1,`
+            `}`
 
 *nvim-tree.renderer*
 UI rendering setup

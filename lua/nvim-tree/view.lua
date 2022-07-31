@@ -42,14 +42,6 @@ M.View = {
       "NormalNC:NvimTreeNormalNC",
     }, ","),
   },
-  floatenable = false,
-  floatopts = {
-    relative = "editor",
-    row = 1,
-    col = 1,
-    anchor = "NW",
-    border = "rounded",
-  },
 }
 
 -- The initial state of a tab
@@ -142,8 +134,8 @@ local function set_window_options_and_buffer()
 end
 
 local function open_window()
-  if M.View.floatenable then
-    a.nvim_open_win(0, true, M.View.floatopts)
+  if M.View.float.enable then
+    a.nvim_open_win(0, true, M.View.float.open_win_config)
   else
     a.nvim_command "vsp"
     M.reposition_window()
@@ -443,11 +435,7 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
-  M.View.floatenable = options.float.enable
-  M.View.floatopts = options.float
-  M.View.floatopts.width = options.width
-  M.View.floatopts.height = options.height
-  M.View.floatopts.enable = nil
+  M.View.float = options.float
   M.on_attach = opts.on_attach
 end
 
