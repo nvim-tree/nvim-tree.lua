@@ -395,6 +395,7 @@ function M.setup(opts)
   log.raw("config", "%s\n", vim.inspect(M.mappings))
 end
 
+-- TODO move to legacy
 local ACTION_TO_API = {
   edit = "Api.node.open.edit",
   edit_in_place = "Api.node.open.replace_tree_buffer",
@@ -467,13 +468,11 @@ function M.mappings_to_on_attach()
   local out = [[
 local Api = require("nvim-tree.api")
 
-local function on_attach(bufnr)
-  local opts = { buffer = bufnr, noremap = true, silent = true, nowait = true, }
-
+local function on_attach(bufnr, mode, opts)
 ]]
 
   local fmt =
-    string.format("%%s  vim.keymap.set('n', %%-%d.%ds %%-%d.%ds, opts)\n", max_key + 3, max_key + 3, max_fn, max_fn)
+    string.format("%%s  vim.keymap.set(mode, %%-%d.%ds %%-%d.%ds, opts)\n", max_key + 3, max_key + 3, max_fn, max_fn)
   for _, m in ipairs(keymaps) do
     out = string.format(fmt, out, "'" .. m.key .. "',", m.fn)
   end

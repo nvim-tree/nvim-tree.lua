@@ -94,7 +94,9 @@ local function create_buffer(bufnr)
 
   if type(M.on_attach) == "function" then
     require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
-    M.on_attach(M.get_bufnr())
+    -- TODO sync mode and opts with set_keymaps
+    local opts = { noremap = true, silent = true, nowait = true, buffer = M.get_bufnr() }
+    M.on_attach(M.get_bufnr(), "n", opts)
   else
     require("nvim-tree.actions").apply_mappings(M.get_bufnr())
   end
