@@ -2,7 +2,8 @@ local Api = require "nvim-tree.api"
 
 local M = {}
 
-M.DEFAULT_KEYMAPS = {
+-- BEGIN_DEFAULT_KEYMAPS
+local DEFAULT_KEYMAPS = {
   {
     key = { "<CR>", "o", "<2-LeftMouse>" },
     callback = Api.node.open.edit,
@@ -372,6 +373,7 @@ M.DEFAULT_KEYMAPS = {
     },
   },
 }
+-- END_DEFAULT_KEYMAPS
 
 function M.set_keymaps(bufnr)
   local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
@@ -385,7 +387,7 @@ end
 
 local function filter_default_mappings(keys_to_disable)
   local new_map = {}
-  for _, m in pairs(M.DEFAULT_KEYMAPS) do
+  for _, m in pairs(DEFAULT_KEYMAPS) do
     local keys = type(m.key) == "table" and m.key or { m.key }
     local reminding_keys = {}
     for _, key in pairs(keys) do
@@ -418,11 +420,13 @@ local function get_keymaps(keys_to_disable)
     return filter_default_mappings(keys_to_disable)
   end
 
-  return M.DEFAULT_KEYMAPS
+  return DEFAULT_KEYMAPS
 end
 
 function M.setup(opts)
   M.keymaps = get_keymaps(opts.remove_keymaps)
 end
+
+M.DEFAULT_KEYMAPS = DEFAULT_KEYMAPS
 
 return M

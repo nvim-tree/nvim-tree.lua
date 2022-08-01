@@ -31,3 +31,10 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_MAPPINGS.lua
            }; /${end}/p; d }" doc/nvim-tree-lua.txt
 sed -i -e "/^DEFAULT MAPPINGS/,/^>$/{ /^DEFAULT MAPPINGS/{p; r /tmp/DEFAULT_MAPPINGS.help
            }; /^>$/p; d }" doc/nvim-tree-lua.txt
+
+# generate various DEFAULT_KEYMAPS
+begin="BEGIN_DEFAULT_KEYMAPS"
+end="END_DEFAULT_KEYMAPS"
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; s/callback = \(.*\),/callback = '\1',/g; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_KEYMAPS.M.lua
+cat /tmp/DEFAULT_KEYMAPS.M.lua scripts/generate_default_keymaps.lua | lua
+
