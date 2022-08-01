@@ -1,27 +1,62 @@
+local log = require "nvim-tree.log"
+
 local M = {}
+
+local function shorten_lhs(lhs)
+  lhs = lhs:gsub("LeftMouse", "LM")
+  lhs = lhs:gsub("RightMouse", "RM")
+  lhs = lhs:gsub("MiddleMouse", "MM")
+  lhs = lhs:gsub("ScrollWheelDown", "SWD")
+  lhs = lhs:gsub("ScrollWheelUp", "SWU")
+  lhs = lhs:gsub("ScrollWheelLeft", "SWL")
+  lhs = lhs:gsub("ScrollWheelRight", "SWR")
+  return lhs
+end
 
 function M.compute_lines()
   local help_lines = { "HELP" }
   local help_hl = { { "NvimTreeRootFolder", 0, 0, #help_lines[1] } }
-  local mappings = vim.tbl_filter(function(v)
-    return (v.cb ~= nil and v.cb ~= "") or (v.action ~= nil and v.action ~= "")
-  end, require("nvim-tree.actions").mappings)
+
+  local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "n")
+
+  log.line("dev", "%s", vim.inspect(buf_keymaps))
+
   local processed = {}
-  for _, b in pairs(mappings) do
-    local cb = b.cb
-    local key = b.key
-    local name
-    if cb and cb:sub(1, 35) == require("nvim-tree.config").nvim_tree_callback("test"):sub(1, 35) then
-      name = cb:match "'[^']+'[^']*$"
-      name = name:match "'[^']+'"
-    elseif b.action then
-      name = b.action
-    else
-      name = (b.name ~= nil) and b.name or cb
-      name = '"' .. name .. '"'
+  for _, bkm in ipairs(buf_keymaps) do
+    local default_keymap = nil
+    for _, dkm in ipairs(require("nvim-tree.keymap").DEFAULT_KEYMAPS) do
+      if bkm.callback == dkm.callback then
+        default_keymap = dkm
+      end
     end
-    table.insert(processed, { key, name, true })
+    local lhs = shorten_lhs(bkm.lhs)
+    if default_keymap then
+      table.insert(processed, { lhs, default_keymap.desc.short })
+    else
+      table.insert(processed, { lhs, "<user>" })
+    end
   end
+
+  -- local mappings = vim.tbl_filter(function(v)
+  --   return (v.cb ~= nil and v.cb ~= "") or (v.action ~= nil and v.action ~= "")
+  -- end, require("nvim-tree.actions").mappings)
+  -- local processed = {}
+  -- for _, b in pairs(mappings) do
+  --   local cb = b.cb
+  --   local key = b.key
+  --   local name
+  --   if cb and cb:sub(1, 35) == require("nvim-tree.config").nvim_tree_callback("test"):sub(1, 35) then
+  --     name = cb:match "'[^']+'[^']*$"
+  --     name = name:match "'[^']+'"
+  --   elseif b.action then
+  --     name = b.action
+  --   else
+  --     name = (b.name ~= nil) and b.name or cb
+  --     name = '"' .. name .. '"'
+  --   end
+  --   table.insert(processed, { key, name, true })
+  -- end
+
   table.sort(processed, function(a, b)
     return (a[3] == b[3] and (a[2] < b[2] or (a[2] == b[2] and #a[1] < #b[1]))) or (a[3] and not b[3])
   end)
