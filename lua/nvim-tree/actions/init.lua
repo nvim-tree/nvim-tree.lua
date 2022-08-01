@@ -362,6 +362,25 @@ local function cleanup_existing_mappings()
   end
 end
 
+local function filter_mappings(mappings, keys)
+  if type(keys) == "boolean" and keys then
+    return {}
+  elseif type(keys) == "table" then
+    return vim.tbl_filter(function(m)
+      if type(m.key) == "table" then
+        m.key = vim.tbl_filter(function(k)
+          return not vim.tbl_contains(keys, k)
+        end, m.key)
+        return #m.key > 0
+      else
+        return not vim.tbl_contains(keys, m.key)
+      end
+    end, vim.deepcopy(mappings))
+  else
+    return vim.deepcopy(mappings)
+  end
+end
+
 local DEFAULT_MAPPING_CONFIG = {
   custom_only = false,
   list = {},
@@ -379,7 +398,8 @@ function M.setup(opts)
   require("nvim-tree.actions.tree-modifiers.expand-all").setup(opts)
 
   cleanup_existing_mappings()
-  M.mappings = vim.deepcopy(DEFAULT_MAPPINGS)
+
+  M.mappings = filter_mappings(DEFAULT_MAPPINGS, opts.remove_keymaps)
 
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend("force", DEFAULT_MAPPING_CONFIG, user_map_config)
