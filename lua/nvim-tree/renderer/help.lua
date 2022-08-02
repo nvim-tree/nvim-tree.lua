@@ -1,83 +1,96 @@
-local log = require "nvim-tree.log"
-
 local M = {}
 
-local function shorten_lhs(lhs)
-  lhs = lhs:gsub("LeftMouse", "LM")
-  lhs = lhs:gsub("RightMouse", "RM")
-  lhs = lhs:gsub("MiddleMouse", "MM")
-  lhs = lhs:gsub("ScrollWheelDown", "SWD")
-  lhs = lhs:gsub("ScrollWheelUp", "SWU")
-  lhs = lhs:gsub("ScrollWheelLeft", "SWL")
-  lhs = lhs:gsub("ScrollWheelRight", "SWR")
+local function tidy_lhs(lhs)
+  -- nvim_buf_get_keymap replaces leading "<" with "<lt>" e.g. "<lt>CTRL-v>"
+  lhs = lhs:gsub("^<lt>", "<")
+
+  -- shorten ctrls
+  if lhs:lower():match "^<ctrl%-" then
+    lhs = lhs:lower():gsub("^<ctrl%-", "<C%-")
+  end
+
+  -- uppercase ctrls
+  if lhs:match "^<C%-" then
+    lhs = lhs:upper()
+  end
+
   return lhs
+end
+
+local function shorten_lhs(lhs)
+  return lhs
+    :gsub("LeftMouse>$", "LM>")
+    :gsub("RightMouse>$", "RM>")
+    :gsub("MiddleMouse>$", "MM>")
+    :gsub("ScrollWheelDown>$", "SD>")
+    :gsub("ScrollWheelUp>$", "SU>")
+    :gsub("ScrollWheelLeft>$", "SL>")
+    :gsub("ScrollWheelRight>$", "SR>")
+end
+
+-- sort lhs roughly as per :help index
+local PAT_MOUSE = "^<.*Mouse"
+local PAT_CTRL = "^<C\\-"
+local PAT_SPECIAL = "^<.+"
+local function sort_lhs(a, b)
+  -- mouse last
+  if a:match(PAT_MOUSE) and not b:match(PAT_MOUSE) then
+    return false
+  elseif not a:match(PAT_MOUSE) and b:match(PAT_MOUSE) then
+    return true
+  end
+
+  -- ctrl first
+  if a:match(PAT_CTRL) and not b:match(PAT_CTRL) then
+    return true
+  elseif not a:match(PAT_CTRL) and b:match(PAT_CTRL) then
+    return false
+  end
+
+  -- special next
+  if a:match(PAT_SPECIAL) and not b:match(PAT_SPECIAL) then
+    return true
+  elseif not a:match(PAT_SPECIAL) and b:match(PAT_SPECIAL) then
+    return false
+  end
+
+  -- non-alpha next
+  if a:match "^%a" and not b:match "^%a" then
+    return false
+  elseif not a:match "^%a" and b:match "^%a" then
+    return true
+  end
+
+  return a < b
 end
 
 function M.compute_lines()
   local help_lines = { "HELP" }
   local help_hl = { { "NvimTreeRootFolder", 0, 0, #help_lines[1] } }
 
-  local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "n")
+  local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "")
 
-  log.line("dev", "%s", vim.inspect(buf_keymaps))
-
-  local processed = {}
-  for _, bkm in ipairs(buf_keymaps) do
-    local default_keymap = nil
-    for _, dkm in ipairs(require("nvim-tree.keymap").DEFAULT_KEYMAPS) do
-      if bkm.callback == dkm.callback then
-        default_keymap = dkm
-      end
-    end
-    local lhs = shorten_lhs(bkm.lhs)
-    if default_keymap then
-      table.insert(processed, { lhs, default_keymap.desc.short })
-    else
-      table.insert(processed, { lhs, "<user>" })
-    end
-  end
-
-  -- local mappings = vim.tbl_filter(function(v)
-  --   return (v.cb ~= nil and v.cb ~= "") or (v.action ~= nil and v.action ~= "")
-  -- end, require("nvim-tree.actions").mappings)
-  -- local processed = {}
-  -- for _, b in pairs(mappings) do
-  --   local cb = b.cb
-  --   local key = b.key
-  --   local name
-  --   if cb and cb:sub(1, 35) == require("nvim-tree.config").nvim_tree_callback("test"):sub(1, 35) then
-  --     name = cb:match "'[^']+'[^']*$"
-  --     name = name:match "'[^']+'"
-  --   elseif b.action then
-  --     name = b.action
-  --   else
-  --     name = (b.name ~= nil) and b.name or cb
-  --     name = '"' .. name .. '"'
-  --   end
-  --   table.insert(processed, { key, name, true })
-  -- end
+  local processed = vim.tbl_map(function(bkm)
+    return { lhs = tidy_lhs(bkm.lhs), desc = bkm.desc }
+  end, buf_keymaps)
 
   table.sort(processed, function(a, b)
-    return (a[3] == b[3] and (a[2] < b[2] or (a[2] == b[2] and #a[1] < #b[1]))) or (a[3] and not b[3])
+    return sort_lhs(a.lhs, b.lhs)
   end)
 
+  for _, p in pairs(processed) do
+    p.lhs = shorten_lhs(p.lhs)
+  end
+
   local num = 0
-  for _, val in pairs(processed) do
-    local keys = type(val[1]) == "string" and { val[1] } or val[1]
-    local map_name = val[2]
-    local builtin = val[3]
-    for _, key in pairs(keys) do
-      num = num + 1
-      local bind_string = string.format("%6s : %s", key, map_name)
-      table.insert(help_lines, bind_string)
+  for _, p in pairs(processed) do
+    num = num + 1
+    local bind_string = string.format("%-6.6s %s", shorten_lhs(p.lhs), p.desc)
+    table.insert(help_lines, bind_string)
 
-      local hl_len = math.max(6, string.len(key)) + 2
-      table.insert(help_hl, { "NvimTreeFolderName", num, 0, hl_len })
+    table.insert(help_hl, { "NvimTreeFolderName", num, 0, 6 })
 
-      if not builtin then
-        table.insert(help_hl, { "NvimTreeFileRenamed", num, hl_len, -1 })
-      end
-    end
+    table.insert(help_hl, { "NvimTreeFileRenamed", num, 6, -1 })
   end
   return help_lines, help_hl
 end

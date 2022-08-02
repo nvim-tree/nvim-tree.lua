@@ -248,8 +248,9 @@ local M = {
 
 local function set_map_for(bufnr)
   local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
-  return function(mode, rhs)
+  return function(mode, rhs, desc)
     return function(lhs)
+      opts.desc = desc
       vim.keymap.set(mode or "n", lhs, rhs, opts)
     end
   end
@@ -266,7 +267,7 @@ function M.apply_mappings(bufnr)
   for _, b in pairs(M.mappings) do
     local rhs = b.cb or run_dispatch(b.action)
     if rhs then
-      local setter = setter_for(b.mode, rhs)
+      local setter = setter_for(b.mode, rhs, b.action)
 
       local keys = type(b.key) == "table" and b.key or { b.key }
       for _, key in pairs(keys) do

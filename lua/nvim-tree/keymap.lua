@@ -8,7 +8,7 @@ local DEFAULT_KEYMAPS = {
     key = { "<CR>", "o", "<2-LeftMouse>" },
     callback = Api.node.open.edit,
     desc = {
-      long = "open a file or folder; root will cd to the above directory",
+      long = "Open a file or directory; root will cd to the above directory.",
       short = "Open",
     },
   },
@@ -16,7 +16,7 @@ local DEFAULT_KEYMAPS = {
     key = "<C-e>",
     callback = Api.node.open.replace_tree_buffer,
     desc = {
-      long = "edit the file in place, effectively replacing the tree explorer",
+      long = "Open file in place, effectively replacing the tree explorer.",
       short = "Open: In Place",
     },
   },
@@ -24,7 +24,7 @@ local DEFAULT_KEYMAPS = {
     key = "O",
     callback = Api.node.open.no_window_picker,
     desc = {
-      long = "same as (edit) with no window picker",
+      long = "Open file with no window picker.",
       short = "Open: No Window Picker",
     },
   },
@@ -32,15 +32,16 @@ local DEFAULT_KEYMAPS = {
     key = { "<C-]>", "<2-RightMouse>" },
     callback = Api.tree.change_root_to_node,
     desc = {
-      long = "cd in the directory under the cursor",
-      short = "cd",
+      long = "cd in the directory under the cursor.",
+      short = "CD",
     },
   },
   {
-    key = "<C-v>",
+    -- key = "<C-v>",
+    key = "<ctrL-v>",
     callback = Api.node.open.vertical,
     desc = {
-      long = "open the file in a vertical split",
+      long = "Open file in a vertical split.",
       short = "Open: Vertical Split",
     },
   },
@@ -48,7 +49,7 @@ local DEFAULT_KEYMAPS = {
     key = "<C-x>",
     callback = Api.node.open.horizontal,
     desc = {
-      long = "open the file in a horizontal split",
+      long = "Open file in a horizontal split.",
       short = "Open: Horizontal Split",
     },
   },
@@ -56,7 +57,7 @@ local DEFAULT_KEYMAPS = {
     key = "<C-t>",
     callback = Api.node.open.tab,
     desc = {
-      long = "open the file in a new tab",
+      long = "Open file in a new tab.",
       short = "Open: New Tab",
     },
   },
@@ -64,7 +65,7 @@ local DEFAULT_KEYMAPS = {
     key = "<",
     callback = Api.node.navigate.sibling.prev,
     desc = {
-      long = "navigate to the previous sibling of current file/directory",
+      long = "Navigate to the previous sibling.",
       short = "Previous Sibling",
     },
   },
@@ -72,7 +73,7 @@ local DEFAULT_KEYMAPS = {
     key = ">",
     callback = Api.node.navigate.sibling.next,
     desc = {
-      long = "navigate to the next sibling of current file/directory",
+      long = "Navigate to the next sibling",
       short = "Next Sibling",
     },
   },
@@ -80,7 +81,7 @@ local DEFAULT_KEYMAPS = {
     key = "P",
     callback = Api.node.navigate.parent,
     desc = {
-      long = "move cursor to the parent directory",
+      long = "Move cursor to the parent directory.",
       short = "Parent Directory",
     },
   },
@@ -88,15 +89,15 @@ local DEFAULT_KEYMAPS = {
     key = "<BS>",
     callback = Api.node.navigate.parent_close,
     desc = {
-      long = "close current opened directory or parent",
-      short = "Close Folder",
+      long = "Close current opened directory or parent.",
+      short = "Close Directory",
     },
   },
   {
     key = "<Tab>",
     callback = Api.node.open.preview,
     desc = {
-      long = "open the file as a preview (keeps the cursor in the tree)",
+      long = "Open file as a preview (keeps the cursor in the tree).",
       short = "Open Preview",
     },
   },
@@ -104,7 +105,7 @@ local DEFAULT_KEYMAPS = {
     key = "K",
     callback = Api.node.navigate.sibling.first,
     desc = {
-      long = "navigate to the first sibling of current file/directory",
+      long = "Navigate to the first sibling.",
       short = "First Sibling",
     },
   },
@@ -112,7 +113,7 @@ local DEFAULT_KEYMAPS = {
     key = "J",
     callback = Api.node.navigate.sibling.last,
     desc = {
-      long = "navigate to the last sibling of current file/directory",
+      long = "Navigate to the last sibling.",
       short = "Last Sibling",
     },
   },
@@ -120,7 +121,7 @@ local DEFAULT_KEYMAPS = {
     key = "I",
     callback = Api.tree.toggle_gitignore_filter,
     desc = {
-      long = "toggle visibility of files/folders hidden via |git.ignore| option",
+      long = "Toggle visibility of files/directories hidden via |git.ignore| option.",
       short = "Toggle Git Ignore",
     },
   },
@@ -128,7 +129,7 @@ local DEFAULT_KEYMAPS = {
     key = "H",
     callback = Api.tree.toggle_hidden_filter,
     desc = {
-      long = "toggle visibility of dotfiles via |filters.dotfiles| option",
+      long = "Toggle visibility of dotfiles via |filters.dotfiles| option.",
       short = "Toggle Dotfiles",
     },
   },
@@ -136,7 +137,7 @@ local DEFAULT_KEYMAPS = {
     key = "U",
     callback = Api.tree.toggle_custom_filter,
     desc = {
-      long = "toggle visibility of files/folders hidden via |filters.custom| option",
+      long = "Toggle visibility of files/directories hidden via |filters.custom| option.",
       short = "Toggle Hidden",
     },
   },
@@ -144,7 +145,7 @@ local DEFAULT_KEYMAPS = {
     key = "R",
     callback = Api.tree.reload,
     desc = {
-      long = "refresh the tree",
+      long = "Refresh the tree.",
       short = "Refresh",
     },
   },
@@ -152,7 +153,7 @@ local DEFAULT_KEYMAPS = {
     key = "a",
     callback = Api.fs.create,
     desc = {
-      long = "add a file; leaving a trailing `/` will add a directory",
+      long = "Create a file; leaving a trailing `/` will add a directory.",
       short = "Create",
     },
   },
@@ -160,7 +161,7 @@ local DEFAULT_KEYMAPS = {
     key = "d",
     callback = Api.fs.remove,
     desc = {
-      long = "delete a file (will prompt for confirmation)",
+      long = "Delete a file, prompting for confirmation.",
       short = "Delete",
     },
   },
@@ -168,7 +169,7 @@ local DEFAULT_KEYMAPS = {
     key = "D",
     callback = Api.fs.trash,
     desc = {
-      long = "trash a file via |trash| option",
+      long = "Trash a file via |trash| option.",
       short = "Trash",
     },
   },
@@ -176,7 +177,7 @@ local DEFAULT_KEYMAPS = {
     key = "r",
     callback = Api.fs.rename,
     desc = {
-      long = "rename a file",
+      long = "Rename a file or directory.",
       short = "Rename",
     },
   },
@@ -280,7 +281,7 @@ local DEFAULT_KEYMAPS = {
     key = "s",
     callback = Api.node.run.system,
     desc = {
-      long = "open a file with default system application or a folder with default file manager, using |system_open| option",
+      long = "Open a file with default system application or a directory with default file manager, using |system_open| option.",
       short = "Run System",
     },
   },
@@ -288,7 +289,7 @@ local DEFAULT_KEYMAPS = {
     key = "f",
     callback = Api.live_filter.start,
     desc = {
-      long = "live filter nodes dynamically based on regex matching.",
+      long = "Live filter nodes dynamically based on regex matching.",
       short = "Filter",
     },
   },
@@ -296,7 +297,7 @@ local DEFAULT_KEYMAPS = {
     key = "F",
     callback = Api.live_filter.clear,
     desc = {
-      long = "clear live filter",
+      long = "Clear live filter.",
       short = "Clean Filter",
     },
   },
@@ -304,7 +305,7 @@ local DEFAULT_KEYMAPS = {
     key = "q",
     callback = Api.tree.close,
     desc = {
-      long = "close tree window",
+      long = "Close tree window.",
       short = "Close",
     },
   },
@@ -312,7 +313,7 @@ local DEFAULT_KEYMAPS = {
     key = "W",
     callback = Api.tree.collapse_all,
     desc = {
-      long = "collapse the whole tree",
+      long = "Collapse the whole tree.",
       short = "Collapse",
     },
   },
@@ -320,7 +321,7 @@ local DEFAULT_KEYMAPS = {
     key = "E",
     callback = Api.tree.expand_all,
     desc = {
-      long = "expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| folders; this might hang neovim for a while if running on a big folder",
+      long = "Expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| directories; this might hang neovim for a while if running on a big directory.",
       short = "Expand All",
     },
   },
@@ -328,7 +329,7 @@ local DEFAULT_KEYMAPS = {
     key = "S",
     callback = Api.tree.search_node,
     desc = {
-      long = "prompt the user to enter a path and then expands the tree to match the path",
+      long = "Prompt the user to enter a path and then expands the tree to match the path.",
       short = "Search",
     },
   },
@@ -336,7 +337,7 @@ local DEFAULT_KEYMAPS = {
     key = ".",
     callback = Api.node.run.cmd,
     desc = {
-      long = "enter vim command mode with the file the cursor is on",
+      long = "Enter vim command mode with the file the cursor is on.",
       short = "Run Command",
     },
   },
@@ -344,7 +345,7 @@ local DEFAULT_KEYMAPS = {
     key = "<C-k>",
     callback = Api.node.show_info_popup,
     desc = {
-      long = "toggle a popup with file infos about the file under the cursor",
+      long = "Toggle a popup with file info about the file under the cursor.",
       short = "Info",
     },
   },
@@ -352,7 +353,7 @@ local DEFAULT_KEYMAPS = {
     key = "g?",
     callback = Api.tree.toggle_help,
     desc = {
-      long = "toggle help",
+      long = "Toggle help.",
       short = "Help",
     },
   },
@@ -360,7 +361,7 @@ local DEFAULT_KEYMAPS = {
     key = "m",
     callback = Api.marks.toggle,
     desc = {
-      long = "Toggle node in bookmarks",
+      long = "Toggle node in bookmarks.",
       short = "Toggle Bookmark",
     },
   },
@@ -380,6 +381,7 @@ function M.set_keymaps(bufnr)
   for _, km in ipairs(M.keymaps) do
     local keys = type(km.key) == "table" and km.key or { km.key }
     for _, key in ipairs(keys) do
+      opts.desc = km.desc.short
       vim.keymap.set("n", key, km.callback, opts)
     end
   end
