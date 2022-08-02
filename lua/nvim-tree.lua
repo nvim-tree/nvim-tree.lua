@@ -447,7 +447,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
-    -- @deprecated
     mappings = {
       custom_only = false,
       list = {
