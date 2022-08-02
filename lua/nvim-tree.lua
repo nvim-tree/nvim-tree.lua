@@ -416,7 +416,7 @@ local function setup_autocommands(opts)
   end
 
   if opts.view.float.enable then
-    create_nvim_tree_autocmd("BufLeave", { pattern = "NvimTree_*", callback = view.close })
+    create_nvim_tree_autocmd("WinLeave", { pattern = "NvimTree_*", callback = view.close })
   end
 end
 
