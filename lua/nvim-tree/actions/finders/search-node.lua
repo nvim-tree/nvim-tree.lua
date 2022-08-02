@@ -7,14 +7,14 @@ local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
 
-local function search(search_dir, search_input_path)
+local function search(search_dir, input_path)
   local realpaths = {}
 
   if not search_dir then
     return
   end
 
-  local function iter(dir, input_path)
+  local function iter(dir)
     local realpath, path, name, stat, handle, _
 
     handle, _ = uv.fs_scandir(dir)
@@ -54,7 +54,7 @@ local function search(search_dir, search_input_path)
     end
   end
 
-  return iter(search_dir, search_input_path)
+  return iter(search_dir)
 end
 
 function M.fn()
