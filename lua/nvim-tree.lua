@@ -414,6 +414,10 @@ local function setup_autocommands(opts)
       end,
     })
   end
+
+  if opts.view.float.enable then
+    create_nvim_tree_autocmd("BufLeave", { pattern = "NvimTree_*", callback = view.close })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -463,7 +467,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         height = 30,
         row = 1,
         col = 1,
-      }
+      },
     },
   },
   renderer = {
