@@ -174,6 +174,8 @@ Subsequent calls to setup will replace the previous configuration.
       sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
+      on_attach = "disable", -- function(bufnr). If nil, will use the deprecated mapping strategy
+      remove_keymaps = false, -- boolean (disable totally or not) or list of key (lhs)
       view = {
         adaptive_size = false,
         centralize_selection = false,
@@ -185,6 +187,7 @@ Subsequent calls to setup will replace the previous configuration.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
+        -- @deprecated
         mappings = {
           custom_only = false,
           list = {
@@ -192,14 +195,15 @@ Subsequent calls to setup will replace the previous configuration.
           },
         },
         float = {
-          -- enabling enforces `actions.open_file.quit_on_open`
           enable = false,
-          -- options passed to nvim_open_win()
-          relative = "editor",
-          row = 1,
-          col = 1,
-          anchor = "NW",
-          border = "rounded",
+          open_win_config = {
+            relative = "editor",
+            border = "rounded",
+            width = 30,
+            height = 30,
+            row = 1,
+            col = 1,
+          },
         },
       },
       renderer = {
