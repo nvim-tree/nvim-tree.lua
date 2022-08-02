@@ -185,15 +185,15 @@ local DEFAULT_KEYMAPS = {
     key = "<C-r>",
     callback = Api.fs.rename_sub,
     desc = {
-      long = "rename a file and omit the filename on input",
-      short = "Rename - Omit Filename",
+      long = "Rename a file or directory and omit the filename on input.",
+      short = "Rename: Omit Filename",
     },
   },
   {
     key = "x",
     callback = Api.fs.cut,
     desc = {
-      long = "add/remove file/directory to cut clipboard",
+      long = "Cut file or directory to cut clipboard.",
       short = "Cut",
     },
   },
@@ -201,7 +201,7 @@ local DEFAULT_KEYMAPS = {
     key = "c",
     callback = Api.fs.copy.node,
     desc = {
-      long = "add/remove file/directory to copy clipboard",
+      long = "Copy file or directory to copy clipboard.",
       short = "Copy",
     },
   },
@@ -209,7 +209,7 @@ local DEFAULT_KEYMAPS = {
     key = "p",
     callback = Api.fs.paste,
     desc = {
-      long = "paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation",
+      long = "Paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation.",
       short = "Paste",
     },
   },
@@ -217,15 +217,15 @@ local DEFAULT_KEYMAPS = {
     key = "y",
     callback = Api.fs.copy.filename,
     desc = {
-      long = "copy name to system clipboard",
-      short = "Copy File Name",
+      long = "Copy name to system clipboard.",
+      short = "Copy Name",
     },
   },
   {
     key = "Y",
     callback = Api.fs.copy.relative_path,
     desc = {
-      long = "copy relative path to system clipboard",
+      long = "Copy relative path to system clipboard.",
       short = "Copy Relative Path",
     },
   },
@@ -233,7 +233,7 @@ local DEFAULT_KEYMAPS = {
     key = "gy",
     callback = Api.fs.copy.absolute_path,
     desc = {
-      long = "copy absolute path to system clipboard",
+      long = "Copy absolute path to system clipboard.",
       short = "Copy Absolute Path",
     },
   },
@@ -241,7 +241,7 @@ local DEFAULT_KEYMAPS = {
     key = "[e",
     callback = Api.node.navigate.diagnostics.next,
     desc = {
-      long = "go to next diagnostic item",
+      long = "Go to next diagnostic item.",
       short = "Next Diagnostic",
     },
   },
@@ -249,7 +249,7 @@ local DEFAULT_KEYMAPS = {
     key = "[c",
     callback = Api.node.navigate.git.next,
     desc = {
-      long = "go to next git item",
+      long = "Go to next git item.",
       short = "Next Git",
     },
   },
@@ -257,7 +257,7 @@ local DEFAULT_KEYMAPS = {
     key = "]e",
     callback = Api.node.navigate.diagnostics.prev,
     desc = {
-      long = "go to prev diagnostic item",
+      long = "Go to prev diagnostic item.",
       short = "Prev Diagnostic",
     },
   },
@@ -265,7 +265,7 @@ local DEFAULT_KEYMAPS = {
     key = "]c",
     callback = Api.node.navigate.git.prev,
     desc = {
-      long = "go to prev git item",
+      long = "Go to prev git item.",
       short = "Prev Git",
     },
   },
@@ -273,7 +273,7 @@ local DEFAULT_KEYMAPS = {
     key = "-",
     callback = Api.tree.change_root_to_parent,
     desc = {
-      long = "navigate up to the parent directory of the current file/directory",
+      long = "Navigate up to the parent directory of the current file/directory.",
       short = "Up",
     },
   },
@@ -369,7 +369,7 @@ local DEFAULT_KEYMAPS = {
     key = "bmv",
     callback = Api.marks.bulk.move,
     desc = {
-      long = "Move all bookmarked nodes into specified location",
+      long = "Move all bookmarked nodes into specified location.",
       short = "Move Bookmarked",
     },
   },

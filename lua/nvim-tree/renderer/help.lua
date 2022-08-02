@@ -70,20 +70,20 @@ function M.compute_lines()
 
   local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "")
 
-  local processed = vim.tbl_map(function(bkm)
+  local lines = vim.tbl_map(function(bkm)
     return { lhs = tidy_lhs(bkm.lhs), desc = bkm.desc }
   end, buf_keymaps)
 
-  table.sort(processed, function(a, b)
+  table.sort(lines, function(a, b)
     return sort_lhs(a.lhs, b.lhs)
   end)
 
-  for _, p in pairs(processed) do
+  for _, p in pairs(lines) do
     p.lhs = shorten_lhs(p.lhs)
   end
 
   local num = 0
-  for _, p in pairs(processed) do
+  for _, p in pairs(lines) do
     num = num + 1
     local bind_string = string.format("%-6.6s %s", shorten_lhs(p.lhs), p.desc)
     table.insert(help_lines, bind_string)
