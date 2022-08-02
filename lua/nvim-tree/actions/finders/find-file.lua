@@ -33,10 +33,7 @@ function M.fn(fname)
     end)
     :applier(function(node)
       line = line + 1
-      local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
-      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
-
-      if abs_match or link_match then
+      if vim.startswith(fname_real, node.absolute_path .. utils.path_separator) then
         node.open = true
         if #node.nodes == 0 then
           core.get_explorer():expand(node)
