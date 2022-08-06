@@ -10,22 +10,14 @@ local function tidy_lhs(lhs)
   end
 
   -- uppercase ctrls
-  if lhs:match "^<C%-" then
+  if lhs:lower():match "^<c%-" then
     lhs = lhs:upper()
   end
 
-  return lhs
-end
+  -- space is not escaped
+  lhs = lhs:gsub(" ", "<Space>")
 
-local function shorten_lhs(lhs)
   return lhs
-    :gsub("LeftMouse>$", "LM>")
-    :gsub("RightMouse>$", "RM>")
-    :gsub("MiddleMouse>$", "MM>")
-    :gsub("ScrollWheelDown>$", "SD>")
-    :gsub("ScrollWheelUp>$", "SU>")
-    :gsub("ScrollWheelLeft>$", "SL>")
-    :gsub("ScrollWheelRight>$", "SR>")
 end
 
 -- sort lhs roughly as per :help index
@@ -78,19 +70,16 @@ function M.compute_lines()
     return sort_lhs(a.lhs, b.lhs)
   end)
 
-  for _, p in pairs(lines) do
-    p.lhs = shorten_lhs(p.lhs)
-  end
-
   local num = 0
   for _, p in pairs(lines) do
     num = num + 1
-    local bind_string = string.format("%-6.6s %s", shorten_lhs(p.lhs), p.desc)
+    local bind_string = string.format("%-5s %s", p.lhs, p.desc)
+    local hl_len = math.max(5, string.len(p.lhs))
     table.insert(help_lines, bind_string)
 
-    table.insert(help_hl, { "NvimTreeFolderName", num, 0, 6 })
+    table.insert(help_hl, { "NvimTreeFolderName", num, 0, hl_len })
 
-    table.insert(help_hl, { "NvimTreeFileRenamed", num, 6, -1 })
+    table.insert(help_hl, { "NvimTreeFileRenamed", num, hl_len, -1 })
   end
   return help_lines, help_hl
 end
