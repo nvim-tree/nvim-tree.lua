@@ -389,6 +389,7 @@ local DEFAULT_MAPPING_CONFIG = {
 function M.setup(opts)
   require("nvim-tree.actions.fs.trash").setup(opts)
   require("nvim-tree.actions.node.system-open").setup(opts)
+  require("nvim-tree.actions.node.file-popup").setup(opts)
   require("nvim-tree.actions.node.open-file").setup(opts)
   require("nvim-tree.actions.root.change-dir").setup(opts)
   require("nvim-tree.actions.fs.create-file").setup(opts)
