@@ -187,10 +187,22 @@ Subsequent calls to setup will replace the previous configuration.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
+        -- @deprecated
         mappings = {
           custom_only = false,
           list = {
             -- user mappings go here
+          },
+        },
+        float = {
+          enable = false,
+          open_win_config = {
+            relative = "editor",
+            border = "rounded",
+            width = 30,
+            height = 30,
+            row = 1,
+            col = 1,
           },
         },
       },
@@ -638,6 +650,25 @@ Window / buffer setup.
         A list of keymaps that will extend or override the default keymaps.
           Type: `table`
           Default: see |nvim-tree-default-mappings|
+
+    *nvim-tree.view.float*
+    Configuration options for floating window
+
+        *nvim-tree.view.float.enable*
+        Display nvim-tree window as float (enforces |nvim-tree.actions.open_file.quit_on_open| if set).
+          Type: `boolean`, Default: `false`
+
+        *nvim-tree.view.float.open_win_config*
+        Floating window config. See |nvim_open_win| for more details.
+          Type: `table`, Default:
+            `{`
+              `relative = "editor",`
+              `border = "rounded",`
+              `width = 30,`
+              `height = 30,`
+              `row = 1,`
+              `col = 1,`
+            `}`
 
 *nvim-tree.renderer*
 UI rendering setup
