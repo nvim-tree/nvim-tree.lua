@@ -134,8 +134,12 @@ local function set_window_options_and_buffer()
 end
 
 local function open_window()
-  a.nvim_command "vsp"
-  M.reposition_window()
+  if M.View.float.enable then
+    a.nvim_open_win(0, true, M.View.float.open_win_config)
+  else
+    a.nvim_command "vsp"
+    M.reposition_window()
+  end
   setup_tabpage(a.nvim_get_current_tabpage())
   set_window_options_and_buffer()
 end
@@ -431,6 +435,7 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
+  M.View.float = options.float
   M.on_attach = opts.on_attach
 end
 

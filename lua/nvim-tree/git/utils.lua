@@ -14,7 +14,7 @@ function M.get_toplevel(cwd)
   log.raw("git", toplevel)
   log.profile_end(ps, "git toplevel %s", cwd)
 
-  if not toplevel or #toplevel == 0 or toplevel:match "fatal" then
+  if vim.v.shell_error ~= 0 or not toplevel or #toplevel == 0 or toplevel:match "fatal" then
     return nil
   end
 
@@ -23,6 +23,9 @@ function M.get_toplevel(cwd)
     -- msys2 git support
     if has_cygpath then
       toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
+      if vim.v.shell_error ~= 0 then
+        return nil
+      end
     end
     toplevel = toplevel:gsub("/", "\\")
   end
