@@ -313,6 +313,15 @@ Subsequent calls to setup will replace the previous configuration.
           max_folder_discovery = 300,
           exclude = {},
         },
+        file_popup = {
+          open_win_config = {
+            col = 1,
+            row = 1,
+            relative = "cursor",
+            border = "shadow",
+            style = "minimal",
+          },
+        },
         open_file = {
           quit_on_open = false,
           resize_window = true,
@@ -868,6 +877,22 @@ Configuration for various actions.
         A list of directories that should not be expanded automatically.
         E.g `{ ".git", "target", "build" }` etc.
           Type: `table`, Default: `{}`
+
+    *nvim-tree.actions.file_popup*
+    Configuration for file_popup behaviour.
+
+        *nvim-tree.actions.file_popup.open_win_config*
+        Floating window config for file_popup. See |nvim_open_win| for more details.
+        You shouldn't define `"width"` and `"height"` values here. They will be
+        overridden to fit the file_popup content.
+          Type: `table`, Default:
+            `{`
+              `col = 1,`
+              `row = 1,`
+              `relative = "cursor",`
+              `border = "shadow",`
+              `style = "minimal",`
+            `}`
 
     *nvim-tree.actions.open_file*
     Configuration options for opening a file from nvim-tree.

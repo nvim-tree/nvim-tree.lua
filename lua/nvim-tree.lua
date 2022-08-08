@@ -576,6 +576,15 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       max_folder_discovery = 300,
       exclude = {},
     },
+    file_popup = {
+      open_win_config = {
+        col = 1,
+        row = 1,
+        relative = "cursor",
+        border = "shadow",
+        style = "minimal",
+      },
+    },
     open_file = {
       quit_on_open = false,
       resize_window = true,
