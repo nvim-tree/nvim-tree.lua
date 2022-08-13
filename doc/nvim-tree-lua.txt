@@ -213,6 +213,7 @@ Subsequent calls to setup will replace the previous configuration.
         full_name = false,
         highlight_opened_files = "none",
         root_folder_modifier = ":~",
+        indent_width = 2,
         indent_markers = {
           enable = false,
           inline_arrows = true,
@@ -708,6 +709,10 @@ UI rendering setup
     In what format to show root folder. See `:help filename-modifiers` for
     available options.
       Type: `string`, Default: `":~"`
+
+    *nvim-tree.renderer.indent_width*
+    Number of spaces for an each tree nesting level.
+      Type: `number`, Default: `2`
 
     *nvim-tree.renderer.indent_markers*
     Configuration options for tree indent markers.
