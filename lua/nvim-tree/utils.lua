@@ -408,6 +408,12 @@ function M.array_remove(array, item)
   end
 end
 
+function M.array_remove_nils(array)
+  return vim.tbl_filter(function(v)
+    return v ~= nil
+  end, array)
+end
+
 function M.inject_node(f)
   return function()
     f(require("nvim-tree.lib").get_node_at_cursor())
