@@ -484,6 +484,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         corner = "└",
         edge = "│",
         item = "│",
+        bottom = "─",
         none = " ",
       },
     },

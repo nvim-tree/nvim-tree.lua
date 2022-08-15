@@ -30,25 +30,27 @@ local function get_padding_indent_markers(depth, idx, nodes_number, markers, wit
     for i = 1, depth do
       local glyph
       if idx == nodes_number and i == depth then
-        glyph = M.config.indent_markers.icons.corner
+        local bottom_width = M.config.indent_width - 2 +
+          (with_arrows and not inline_arrows and has_folder_sibling and 2 or 0)
+        glyph = M.config.indent_markers.icons.corner ..
+          string.rep(M.config.indent_markers.icons.bottom, bottom_width) ..
+          (M.config.indent_width > 1 and " " or "")
       elseif markers[i] and i == depth then
-        glyph = M.config.indent_markers.icons.item
+        glyph = M.config.indent_markers.icons.item .. indent
       elseif markers[i] then
-        glyph = M.config.indent_markers.icons.edge
+        glyph = M.config.indent_markers.icons.edge .. indent
       else
-        glyph = M.config.indent_markers.icons.none
+        glyph = M.config.indent_markers.icons.none .. indent
       end
 
       if not with_arrows or (inline_arrows and (depth ~= i or not node.nodes)) then
-        padding = padding .. glyph .. indent
+        padding = padding .. glyph
       elseif inline_arrows then
         padding = padding
-      elseif idx == nodes_number and i == depth and has_folder_sibling then
-        padding = padding .. base_padding .. glyph .. "──" .. indent
-      elseif depth == i and not node.nodes and has_folder_sibling then
-        padding = padding .. base_padding .. glyph .. indent .. base_padding
+      elseif idx ~= nodes_number and depth == i and not node.nodes and has_folder_sibling then
+        padding = padding .. base_padding .. glyph .. base_padding
       else
-        padding = padding .. base_padding .. glyph .. indent
+        padding = padding .. base_padding .. glyph
       end
     end
   end
