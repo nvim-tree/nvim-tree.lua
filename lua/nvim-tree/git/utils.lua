@@ -41,7 +41,7 @@ function M.should_show_untracked(cwd)
     return untracked[cwd]
   end
 
-  local cmd = "git -C " .. cwd .. " config --type=bool status.showUntrackedFiles"
+  local cmd = "git -C " .. cwd .. " config status.showUntrackedFiles"
 
   local ps = log.profile_start("git untracked %s", cwd)
   log.line("git", cmd)
@@ -51,7 +51,7 @@ function M.should_show_untracked(cwd)
   log.raw("git", has_untracked)
   log.profile_end(ps, "git untracked %s", cwd)
 
-  untracked[cwd] = vim.trim(has_untracked) ~= "false"
+  untracked[cwd] = vim.trim(has_untracked) ~= "no"
   return untracked[cwd]
 end
 
