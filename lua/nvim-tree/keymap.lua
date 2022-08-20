@@ -149,7 +149,7 @@ local DEFAULT_KEYMAPS = {
     desc = "copy absolute path to system clipboard",
   },
   {
-    key = "[e",
+    key = "]e",
     callback = Api.node.navigate.diagnostics.next,
     desc = "go to next diagnostic item",
   },
@@ -159,7 +159,7 @@ local DEFAULT_KEYMAPS = {
     desc = "go to next git item",
   },
   {
-    key = "]e",
+    key = "[e",
     callback = Api.node.navigate.diagnostics.prev,
     desc = "go to prev diagnostic item",
   },
