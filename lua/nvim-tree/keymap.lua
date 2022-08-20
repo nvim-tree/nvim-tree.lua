@@ -154,7 +154,7 @@ local DEFAULT_KEYMAPS = {
     desc = "go to next diagnostic item",
   },
   {
-    key = "[c",
+    key = "]c",
     callback = Api.node.navigate.git.next,
     desc = "go to next git item",
   },
@@ -164,7 +164,7 @@ local DEFAULT_KEYMAPS = {
     desc = "go to prev diagnostic item",
   },
   {
-    key = "]c",
+    key = "[c",
     callback = Api.node.navigate.git.prev,
     desc = "go to prev git item",
   },
