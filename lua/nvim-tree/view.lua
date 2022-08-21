@@ -188,9 +188,12 @@ function M.close()
   local current_win = a.nvim_get_current_win()
   for _, win in pairs(a.nvim_list_wins()) do
     if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
+      local is_tree_win_float = a.nvim_win_get_config(tree_win).relative ~= ""
       local prev_win = vim.fn.winnr "#" -- this tab only
-      if tree_win == current_win and prev_win > 0 then
-        a.nvim_set_current_win(vim.fn.win_getid(prev_win))
+      if not is_tree_win_float then
+        if tree_win == current_win and prev_win > 0 then
+          a.nvim_set_current_win(vim.fn.win_getid(prev_win))
+        end
       end
       a.nvim_win_close(tree_win, true)
       events._dispatch_on_tree_close()
