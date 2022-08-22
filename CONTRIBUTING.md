@@ -25,3 +25,11 @@ When adding new options, you should declare the defaults in the main `nvim-tree.
 Once you did, you should run the `scripts/update-help.sh`.
 
 Documentation for options should also be added, see how this is done after `nvim-tree.disable_netrw` in the `nvim-tree-lua.txt` file.
+
+## Pull Request
+
+Please reference any issues in the description e.g. "resolves #1234".
+
+Please consider adding nvim-tree developers as collaborators on your fork, to quickly allow small changes such as documentation tweaks:
+@kyazdani42 and @alex-courtis
+
