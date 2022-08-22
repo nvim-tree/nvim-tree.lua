@@ -45,6 +45,18 @@ function M.reload(node, status)
     t = t or (uv.fs_stat(abs) or {}).type
     if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
       child_names[abs] = true
+
+      -- Recreate node if type changes.
+      if nodes_by_path[abs] then
+        local n = nodes_by_path[abs]
+
+        if n.type ~= t then
+          utils.array_remove(node.nodes, n)
+          common.node_destroy(n)
+          nodes_by_path[abs] = nil
+        end
+      end
+
       if not nodes_by_path[abs] then
         if t == "directory" and uv.fs_access(abs, "R") then
           local folder = builders.folder(node, abs, name)

@@ -11,6 +11,7 @@ function M.folder(parent, absolute_path, name)
   local has_children = handle and uv.fs_scandir_next(handle) ~= nil
 
   return {
+    type = "directory",
     absolute_path = absolute_path,
     fs_stat = uv.fs_stat(absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
@@ -34,6 +35,7 @@ function M.file(parent, absolute_path, name)
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
 
   return {
+    type = "file",
     absolute_path = absolute_path,
     executable = M.is_executable(absolute_path, ext),
     extension = ext,
@@ -61,6 +63,7 @@ function M.link(parent, absolute_path, name)
   end
 
   return {
+    type = "link",
     absolute_path = absolute_path,
     fs_stat = uv.fs_stat(absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
