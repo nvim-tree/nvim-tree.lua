@@ -41,8 +41,18 @@ function M.reload(node, status)
       break
     end
 
+    local stat
+    local function fs_stat_cached(path)
+      if stat ~= nil then
+        return stat
+      end
+
+      stat = uv.fs_stat(path)
+      return stat
+    end
+
     local abs = utils.path_join { cwd, name }
-    t = t or (uv.fs_stat(abs) or {}).type
+    t = t or (fs_stat_cached(abs) or {}).type
     if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
       child_names[abs] = true
 
@@ -73,10 +83,12 @@ function M.reload(node, status)
             table.insert(node.nodes, link)
           end
         end
-      end
-      local n = nodes_by_path[abs]
-      if n then
-        n.executable = builders.is_executable(abs, n.extension or "")
+      else
+        local n = nodes_by_path[abs]
+        if n then
+          n.executable = builders.is_executable(abs, n.extension or "")
+          n.fs_stat = fs_stat_cached(abs)
+        end
       end
     end
   end
