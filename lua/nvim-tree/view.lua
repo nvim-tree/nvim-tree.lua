@@ -192,7 +192,9 @@ function M.close()
       if tree_win == current_win and prev_win > 0 then
         a.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      a.nvim_win_close(tree_win, true)
+      if a.nvim_win_is_valid(tree_win) then
+        a.nvim_win_close(tree_win, true)
+      end
       events._dispatch_on_tree_close()
       return
     end
