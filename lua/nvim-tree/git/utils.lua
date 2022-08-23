@@ -9,7 +9,7 @@ function M.get_toplevel(cwd)
   local ps = log.profile_start("git toplevel %s", cwd)
   log.line("git", cmd)
 
-  local toplevel = vim.fn.system(cmd)
+  local toplevel = vim.fn.system { "git", "-C", vim.fn.shellescape(cwd), "rev-parse", "--show-toplevel" }
 
   log.raw("git", toplevel)
   log.profile_end(ps, "git toplevel %s", cwd)
