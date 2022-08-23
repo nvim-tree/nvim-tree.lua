@@ -669,7 +669,7 @@ Window / buffer setup.
 
         *nvim-tree.view.float.open_win_config*
         Floating window config. See |nvim_open_win| for more details.
-          Type: `table`, Default:
+          Type: `table` or `function` that returns a table, Default:
             `{`
               `relative = "editor",`
               `border = "rounded",`

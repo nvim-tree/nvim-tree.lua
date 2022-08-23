@@ -133,9 +133,17 @@ local function set_window_options_and_buffer()
   end
 end
 
+local function open_win_config()
+  if type(M.View.float.open_win_config) == "function" then
+    return M.View.float.open_win_config()
+  else
+    return M.View.float.open_win_config
+  end
+end
+
 local function open_window()
   if M.View.float.enable then
-    a.nvim_open_win(0, true, M.View.float.open_win_config)
+    a.nvim_open_win(0, true, open_win_config())
   else
     a.nvim_command "vsp"
     M.reposition_window()
