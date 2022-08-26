@@ -86,7 +86,7 @@ function M.reload(node, status)
       else
         local n = nodes_by_path[abs]
         if n then
-          n.executable = builders.is_executable(abs, n.extension or "")
+          n.executable = builders.is_executable(n.parent, abs, n.extension or "")
           n.fs_stat = fs_stat_cached(abs)
         end
       end
