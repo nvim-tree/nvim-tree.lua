@@ -476,6 +476,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     full_name = false,
     highlight_opened_files = "none",
     root_folder_modifier = ":~",
+    indent_width = 2,
     indent_markers = {
       enable = false,
       inline_arrows = true,
@@ -483,6 +484,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         corner = "└",
         edge = "│",
         item = "│",
+        bottom = "─",
         none = " ",
       },
     },

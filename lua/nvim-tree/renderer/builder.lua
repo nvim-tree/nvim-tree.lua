@@ -258,9 +258,9 @@ function Builder:_build_line(node, idx, num_children)
   self.index = self.index + 1
 
   if node.open then
-    self.depth = self.depth + 2
+    self.depth = self.depth + 1
     self:build(node)
-    self.depth = self.depth - 2
+    self.depth = self.depth - 1
   end
 end
 
