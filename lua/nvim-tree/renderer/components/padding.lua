@@ -100,6 +100,7 @@ function M.setup(opts)
     if #symbol == 0 then
       return " "
     end
+    -- return the first character from the UTF-8 encoded string; we may use utf8.codes from Lua 5.3 when available
     return symbol:match "[%z\1-\127\194-\244][\128-\191]*"
   end
 
