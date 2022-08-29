@@ -95,6 +95,17 @@ function M.setup(opts)
   if M.config.indent_width < 1 then
     M.config.indent_width = 1
   end
+
+  local function check_marker(symbol)
+    if #symbol == 0 then
+      return " "
+    end
+    return symbol:match("[%z\1-\127\194-\244][\128-\191]*")
+  end
+
+  for k, v in pairs(M.config.indent_markers.icons) do
+    M.config.indent_markers.icons[k] = check_marker(v)
+  end
 end
 
 return M
