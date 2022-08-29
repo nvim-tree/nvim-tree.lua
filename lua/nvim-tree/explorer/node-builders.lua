@@ -4,6 +4,7 @@ local watch = require "nvim-tree.explorer.watch"
 
 local M = {
   is_windows = vim.fn.has "win32" == 1,
+  is_wsl = vim.fn.has "wsl" == 1,
 }
 
 function M.folder(parent, absolute_path, name)
@@ -24,9 +25,19 @@ function M.folder(parent, absolute_path, name)
   }
 end
 
-function M.is_executable(absolute_path, ext)
+function M.is_executable(parent, absolute_path, ext)
   if M.is_windows then
     return utils.is_windows_exe(ext)
+  elseif M.is_wsl then
+    if parent.is_wsl_windows_fs_path == nil then
+      -- Evaluate lazily when needed and do so only once for each parent
+      -- as 'wslpath' calls can get expensive in highly populated directories.
+      parent.is_wsl_windows_fs_path = utils.is_wsl_windows_fs_path(absolute_path)
+    end
+
+    if parent.is_wsl_windows_fs_path then
+      return utils.is_wsl_windows_fs_exe(ext)
+    end
   end
   return uv.fs_access(absolute_path, "X")
 end
@@ -37,7 +48,7 @@ function M.file(parent, absolute_path, name)
   return {
     type = "file",
     absolute_path = absolute_path,
-    executable = M.is_executable(absolute_path, ext),
+    executable = M.is_executable(parent, absolute_path, ext),
     extension = ext,
     fs_stat = uv.fs_stat(absolute_path),
     name = name,
