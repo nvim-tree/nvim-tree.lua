@@ -712,7 +712,7 @@ UI rendering setup
       Type: `string`, Default: `":~"`
 
     *nvim-tree.renderer.indent_width*
-    Number of spaces for an each tree nesting level.
+    Number of spaces for an each tree nesting level. Minimum 1.
       Type: `number`, Default: `2`
 
     *nvim-tree.renderer.indent_markers*
@@ -728,7 +728,7 @@ UI rendering setup
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.indent_markers.icons*
-        Icons shown before the file/directory.
+        Icons shown before the file/directory. Length 1.
           Type: `table`, Default: `{ corner = "└", edge = "│", item = "│", bottom = "─", none = " ", }`
 
     *nvim-tree.renderer.icons*
