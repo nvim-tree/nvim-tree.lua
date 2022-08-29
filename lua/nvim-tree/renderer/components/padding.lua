@@ -91,6 +91,10 @@ end
 
 function M.setup(opts)
   M.config = opts.renderer
+
+  if M.config.indent_width < 1 then
+    M.config.indent_width = 1
+  end
 end
 
 return M
