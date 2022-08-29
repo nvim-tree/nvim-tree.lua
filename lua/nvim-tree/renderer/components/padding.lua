@@ -100,7 +100,7 @@ function M.setup(opts)
     if #symbol == 0 then
       return " "
     end
-    return symbol:match("[%z\1-\127\194-\244][\128-\191]*")
+    return symbol:match "[%z\1-\127\194-\244][\128-\191]*"
   end
 
   for k, v in pairs(M.config.indent_markers.icons) do
