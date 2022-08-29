@@ -23,7 +23,7 @@ local function clear_buffer(absolute_path)
   local bufs = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
-      if buf.hidden == 0 then
+      if buf.hidden == 0 and (#bufs > 1 or view.View.float.enable) then
         local winnr = a.nvim_get_current_win()
         a.nvim_set_current_win(buf.windows[1])
         vim.cmd ":bn"
