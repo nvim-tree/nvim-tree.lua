@@ -30,6 +30,4 @@ Documentation for options should also be added, see how this is done after `nvim
 
 Please reference any issues in the description e.g. "resolves #1234".
 
-Please consider adding nvim-tree developers as collaborators on your fork, to quickly allow small changes such as documentation tweaks:
-@kyazdani42 and @alex-courtis
-
+Please check "allow edits by maintainers" to allow nvim-tree developers to make small changes such as documentation tweaks.
