@@ -73,6 +73,9 @@ function M.merge_sort(t, comparator)
   end
 
   split_merge(t, 1, #t, comparator)
+  if M.sort_by == "mixin" then
+    M.node_inserter_mixin(t)
+  end
 end
 
 local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
@@ -146,6 +149,26 @@ function M.node_comparator_extension(a, b)
   end
 
   return a.extension:lower() <= b.extension:lower()
+end
+
+function M.node_inserter_mixin(t)
+  local i = 1
+
+  while i <= #t do
+    if t[i] and t[i].nodes then
+      local j = i + 1
+      while j <= #t do
+        if t[j] and not t[j].nodes and t[i].name:lower() == t[j].name:lower():match "(.+)%..+$" then
+          local change_target = t[j]
+          table.remove(t, j)
+          table.insert(t, i, change_target)
+          break
+        end
+        j = j + 1
+      end
+    end
+    i = i + 1
+  end
 end
 
 function M.setup(opts)
