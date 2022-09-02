@@ -32,6 +32,7 @@ local function setup_window(node)
     width = max_width + 1,
     height = #lines,
     noautocmd = true,
+    zindex = 60,
   })
   local winnr = a.nvim_open_win(0, false, open_win_config)
   current_popup = {
