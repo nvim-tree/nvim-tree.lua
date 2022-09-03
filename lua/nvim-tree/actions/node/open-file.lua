@@ -2,6 +2,7 @@
 local api = vim.api
 
 local lib = require "nvim-tree.lib"
+local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 
@@ -146,6 +147,7 @@ local function open_file_in_tab(filename)
 end
 
 local function on_preview(buf_loaded)
+  log.line("dev", "on_preview buf_loaded=%s", tostring(buf_loaded))
   if not buf_loaded then
     vim.bo.bufhidden = "delete"
 
@@ -243,6 +245,7 @@ local function edit_in_current_buf(filename)
 end
 
 function M.fn(mode, filename)
+  log.line("dev", "open-file mode=%s filename='%s'", mode, filename)
   if mode == "tabnew" then
     return open_file_in_tab(filename)
   end
@@ -256,14 +259,19 @@ function M.fn(mode, filename)
   local buf_loaded = is_already_loaded(filename)
 
   local found_win = utils.get_win_buf_from_path(filename)
+  log.line("dev", "open-file found_win=%s", tostring(found_win))
   if found_win and mode == "preview" then
+    log.line("dev", "existing preview")
     return
   end
 
   if not found_win then
+    log.line("dev", "open-file open new win")
     open_in_new_window(filename, mode, win_ids)
   else
+    log.line("dev", "open-file set current win")
     api.nvim_set_current_win(found_win)
+    vim.bo.bufhidden = ""
   end
 
   if M.resize_window then
