@@ -25,6 +25,15 @@ local overlay_bufnr = nil
 local overlay_winnr = nil
 
 local function remove_overlay()
+  if view.View.float.enable then
+    -- return to normal nvim-tree float behaviour when filter window is closed
+    a.nvim_create_autocmd("WinLeave", {
+      pattern = "NvimTree_*",
+      group = a.nvim_create_augroup("NvimTree", { clear = false }),
+      callback = view.close,
+    })
+  end
+
   a.nvim_win_close(overlay_winnr, { force = true })
   overlay_bufnr = nil
   overlay_winnr = nil
@@ -92,12 +101,24 @@ local function configure_buffer_overlay()
 end
 
 local function create_overlay()
+  local min_width = 20
+  if view.View.float.enable then
+    -- don't close nvim-tree float when focus is changed to filter window
+    a.nvim_clear_autocmds {
+      event = "WinLeave",
+      pattern = "NvimTree_*",
+      group = a.nvim_create_augroup("NvimTree", { clear = false }),
+    }
+
+    min_width = min_width - 2
+  end
+
   configure_buffer_overlay()
   overlay_winnr = a.nvim_open_win(overlay_bufnr, true, {
     col = 1,
     row = 0,
     relative = "cursor",
-    width = math.max(20, a.nvim_win_get_width(view.get_winnr()) - #M.prefix - 2),
+    width = math.max(min_width, a.nvim_win_get_width(view.get_winnr()) - #M.prefix - 2),
     height = 1,
     border = "none",
     style = "minimal",
