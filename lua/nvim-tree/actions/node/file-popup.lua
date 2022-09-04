@@ -28,16 +28,13 @@ local function setup_window(node)
   local max_width = vim.fn.max(vim.tbl_map(function(n)
     return #n
   end, lines))
-  local winnr = a.nvim_open_win(0, false, {
-    col = 1,
-    row = 1,
-    relative = "cursor",
+  local open_win_config = vim.tbl_extend("force", M.open_win_config, {
     width = max_width + 1,
     height = #lines,
-    border = "shadow",
     noautocmd = true,
-    style = "minimal",
+    zindex = 60,
   })
+  local winnr = a.nvim_open_win(0, false, open_win_config)
   current_popup = {
     winnr = winnr,
     file_path = node.absolute_path,
@@ -76,6 +73,10 @@ function M.toggle_file_info(node)
     group = a.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
     callback = M.close_popup,
   })
+end
+
+function M.setup(opts)
+  M.open_win_config = opts.actions.file_popup.open_win_config
 end
 
 return M

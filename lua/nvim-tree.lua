@@ -414,6 +414,10 @@ local function setup_autocommands(opts)
       end,
     })
   end
+
+  if opts.view.float.enable then
+    create_nvim_tree_autocmd("WinLeave", { pattern = "NvimTree_*", callback = view.close })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -447,11 +451,21 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
-    -- @deprecated
     mappings = {
       custom_only = false,
       list = {
         -- user mappings go here
+      },
+    },
+    float = {
+      enable = false,
+      open_win_config = {
+        relative = "editor",
+        border = "rounded",
+        width = 30,
+        height = 30,
+        row = 1,
+        col = 1,
       },
     },
   },
@@ -462,6 +476,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     full_name = false,
     highlight_opened_files = "none",
     root_folder_modifier = ":~",
+    indent_width = 2,
     indent_markers = {
       enable = false,
       inline_arrows = true,
@@ -469,6 +484,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         corner = "└",
         edge = "│",
         item = "│",
+        bottom = "─",
         none = " ",
       },
     },
@@ -562,6 +578,15 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       max_folder_discovery = 300,
       exclude = {},
     },
+    file_popup = {
+      open_win_config = {
+        col = 1,
+        row = 1,
+        relative = "cursor",
+        border = "shadow",
+        style = "minimal",
+      },
+    },
     open_file = {
       quit_on_open = false,
       resize_window = true,
@@ -606,6 +631,10 @@ local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
 end
 
+local FIELD_SKIP_VALIDATE = {
+  open_win_config = true,
+}
+
 local FIELD_OVERRIDE_TYPECHECK = {
   width = { string = true, ["function"] = true, number = true },
   height = { string = true, ["function"] = true, number = true },
@@ -623,25 +652,27 @@ local function validate_options(conf)
     end
 
     for k, v in pairs(user) do
-      local invalid
-      local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
-      if def[k] == nil then
-        -- option does not exist
-        invalid = string.format("unknown option: %s%s", prefix, k)
-      elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
-        -- option is of the wrong type and is not a function
-        invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
-      end
-
-      if invalid then
-        if msg then
-          msg = string.format("%s | %s", msg, invalid)
-        else
-          msg = string.format("%s", invalid)
+      if not FIELD_SKIP_VALIDATE[k] then
+        local invalid
+        local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
+        if def[k] == nil then
+          -- option does not exist
+          invalid = string.format("unknown option: %s%s", prefix, k)
+        elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
+          -- option is of the wrong type and is not a function
+          invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
         end
-        user[k] = nil
-      else
-        validate(v, def[k], prefix .. k .. ".")
+
+        if invalid then
+          if msg then
+            msg = string.format("%s | %s", msg, invalid)
+          else
+            msg = string.format("%s", invalid)
+          end
+          user[k] = nil
+        else
+          validate(v, def[k], prefix .. k .. ".")
+        end
       end
     end
   end

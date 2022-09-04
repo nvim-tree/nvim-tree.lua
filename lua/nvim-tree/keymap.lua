@@ -238,7 +238,7 @@ local DEFAULT_KEYMAPS = {
     },
   },
   {
-    key = "[e",
+    key = "]e",
     callback = Api.node.navigate.diagnostics.next,
     desc = {
       long = "Go to next diagnostic item.",
@@ -246,7 +246,7 @@ local DEFAULT_KEYMAPS = {
     },
   },
   {
-    key = "[c",
+    key = "]c",
     callback = Api.node.navigate.git.next,
     desc = {
       long = "Go to next git item.",
@@ -254,7 +254,7 @@ local DEFAULT_KEYMAPS = {
     },
   },
   {
-    key = "]e",
+    key = "[e",
     callback = Api.node.navigate.diagnostics.prev,
     desc = {
       long = "Go to prev diagnostic item.",
@@ -262,7 +262,7 @@ local DEFAULT_KEYMAPS = {
     },
   },
   {
-    key = "]c",
+    key = "[c",
     callback = Api.node.navigate.git.prev,
     desc = {
       long = "Go to prev git item.",

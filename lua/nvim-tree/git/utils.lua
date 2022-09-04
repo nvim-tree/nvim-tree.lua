@@ -14,7 +14,7 @@ function M.get_toplevel(cwd)
   log.raw("git", toplevel)
   log.profile_end(ps, "git toplevel %s", cwd)
 
-  if not toplevel or #toplevel == 0 or toplevel:match "fatal" then
+  if vim.v.shell_error ~= 0 or not toplevel or #toplevel == 0 or toplevel:match "fatal" then
     return nil
   end
 
@@ -23,6 +23,9 @@ function M.get_toplevel(cwd)
     -- msys2 git support
     if has_cygpath then
       toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
+      if vim.v.shell_error ~= 0 then
+        return nil
+      end
     end
     toplevel = toplevel:gsub("/", "\\")
   end
@@ -38,7 +41,7 @@ function M.should_show_untracked(cwd)
     return untracked[cwd]
   end
 
-  local cmd = "git -C " .. cwd .. " config --type=bool status.showUntrackedFiles"
+  local cmd = "git -C " .. cwd .. " config status.showUntrackedFiles"
 
   local ps = log.profile_start("git untracked %s", cwd)
   log.line("git", cmd)
@@ -48,7 +51,7 @@ function M.should_show_untracked(cwd)
   log.raw("git", has_untracked)
   log.profile_end(ps, "git untracked %s", cwd)
 
-  untracked[cwd] = vim.trim(has_untracked) ~= "false"
+  untracked[cwd] = vim.trim(has_untracked) ~= "no"
   return untracked[cwd]
 end
 

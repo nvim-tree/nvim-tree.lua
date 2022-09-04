@@ -3,10 +3,15 @@ local luv = vim.loop
 
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
+local view = require "nvim-tree.view"
 
 local M = {}
 
 local function close_windows(windows)
+  if view.View.float.enable and #a.nvim_list_wins() == 1 then
+    return
+  end
+
   for _, window in ipairs(windows) do
     if a.nvim_win_is_valid(window) then
       a.nvim_win_close(window, true)
@@ -18,11 +23,13 @@ local function clear_buffer(absolute_path)
   local bufs = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
-      if buf.hidden == 0 and #bufs > 1 then
+      if buf.hidden == 0 and (#bufs > 1 or view.View.float.enable) then
         local winnr = a.nvim_get_current_win()
         a.nvim_set_current_win(buf.windows[1])
         vim.cmd ":bn"
-        a.nvim_set_current_win(winnr)
+        if not view.View.float.enable then
+          a.nvim_set_current_win(winnr)
+        end
       end
       a.nvim_buf_delete(buf.bufnr, { force = true })
       if M.close_window then

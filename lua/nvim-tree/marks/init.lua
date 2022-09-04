@@ -17,6 +17,10 @@ local function remove_mark(node)
 end
 
 function M.toggle_mark(node)
+  if node.absolute_path == nil then
+    return
+  end
+
   if M.get_mark(node) then
     remove_mark(node)
   else

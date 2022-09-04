@@ -99,6 +99,7 @@ local git_hl = {
   ["AD"] = "NvimTreeFileStaged",
   ["MD"] = "NvimTreeFileStaged",
   ["T "] = "NvimTreeFileStaged",
+  ["TT"] = "NvimTreeFileStaged",
   [" M"] = "NvimTreeFileDirty",
   ["CM"] = "NvimTreeFileDirty",
   [" C"] = "NvimTreeFileDirty",

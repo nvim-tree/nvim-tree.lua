@@ -19,7 +19,7 @@ local function update_parent_statuses(node, project, root)
 end
 
 local function is_git(path)
-  return path:match "%.git$" ~= nil or path:match(utils.path_add_trailing ".git") ~= nil
+  return vim.fn.fnamemodify(path, ":t") == ".git"
 end
 
 local IGNORED_PATHS = {
