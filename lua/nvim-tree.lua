@@ -697,8 +697,9 @@ function M.setup(conf)
   validate_options(conf)
 
   local opts = merge_options(conf)
-  local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
+  legacy.move_mappings_to_keymap(opts)
 
+  local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
   _config.root_dirs = opts.root_dirs
   _config.prefer_startup_root = opts.prefer_startup_root
   _config.update_focused_file = opts.update_focused_file

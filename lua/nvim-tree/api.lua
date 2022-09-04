@@ -15,12 +15,20 @@ local function inject_node(f)
   end
 end
 
-Api.tree.open = require("nvim-tree").open
-Api.tree.toggle = require("nvim-tree").toggle
+Api.tree.open = function(...)
+  require("nvim-tree").open(...)
+end
+Api.tree.toggle = function(...)
+  require("nvim-tree").toggle(...)
+end
 Api.tree.close = require("nvim-tree.view").close
-Api.tree.focus = require("nvim-tree").focus
+Api.tree.focus = function()
+  require("nvim-tree").focus()
+end
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
-Api.tree.change_root = require("nvim-tree").change_dir
+Api.tree.change_root = function(...)
+  require("nvim-tree").change_dir(...)
+end
 Api.tree.change_root_to_node = inject_node(function(node)
   if node.name == ".." then
     require("nvim-tree.actions.root.change-dir").fn ".."
