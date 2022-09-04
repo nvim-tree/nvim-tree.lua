@@ -1,5 +1,6 @@
 local utils = require "nvim-tree.utils"
-local Api = require "nvim-tree.api"
+
+local DEFAULT_KEYMAPS = require("nvim-tree.keymap").DEFAULT_KEYMAPS
 
 local M = {}
 
@@ -298,55 +299,6 @@ local function removed(opts)
   end
 end
 
-local OLD_MAPPING_TABLE = {
-  edit = Api.node.open.edit,
-  edit_in_place = Api.node.open.replace_tree_buffer,
-  edit_no_picker = Api.node.open.no_window_picker,
-  cd = Api.tree.change_root_to_node,
-  vsplit = Api.node.open.vertical,
-  split = Api.node.open.horizontal,
-  tabnew = Api.node.open.tab,
-  preview = Api.node.open.preview,
-  prev_sibling = Api.node.navigate.sibling.prev,
-  next_sibling = Api.node.navigate.sibling.next,
-  parent_node = Api.node.navigate.parent,
-  close_node = Api.node.navigate.parent_close,
-  first_sibling = Api.node.navigate.sibling.first,
-  last_sibling = Api.node.navigate.sibling.last,
-  toggle_git_ignored = Api.tree.toggle_gitignore_filter,
-  toggle_dotfiles = Api.tree.toggle_hidden_filter,
-  toggle_custom = Api.tree.toggle_custom_filter,
-  refresh = Api.tree.reload,
-  create = Api.fs.create,
-  remove = Api.fs.remove,
-  trash = Api.fs.trash,
-  rename = Api.fs.rename,
-  full_rename = Api.fs.rename_sub,
-  cut = Api.fs.cut,
-  copy = Api.fs.copy.node,
-  paste = Api.fs.paste,
-  copy_name = Api.fs.copy.filename,
-  copy_path = Api.fs.copy.relative_path,
-  copy_absolute_path = Api.fs.copy.absolute_path,
-  prev_git_item = Api.node.navigate.git.prev,
-  next_git_item = Api.node.navigate.git.next,
-  prev_diag_item = Api.node.navigate.diagnostics.prev,
-  next_diag_item = Api.node.navigate.diagnostics.next,
-  dir_up = Api.tree.change_root_to_parent,
-  system_open = Api.node.run.system,
-  live_filter = Api.live_filter.start,
-  clear_live_filter = Api.live_filter.clear,
-  close = Api.tree.close,
-  collapse_all = Api.tree.collapse_all,
-  expand_all = Api.tree.expand_all,
-  search_node = Api.tree.search_node,
-  run_file_command = Api.node.run.cmd,
-  toggle_file_info = Api.node.show_info_popup,
-  toggle_help = Api.tree.toggle_help,
-  toggle_mark = Api.marks.toggle,
-  bulk_move = Api.marks.bulk.move,
-}
-
 function M.move_mappings_to_keymap(opts)
   if opts.on_attach == "disable" and opts.view and opts.view.mappings then
     local custom_only, list = opts.view.mappings.custom_only, opts.view.mappings.list
@@ -355,24 +307,35 @@ function M.move_mappings_to_keymap(opts)
       opts.view.mappings.custom_only = nil
     end
     if list then
+      local keymap_by_action = utils.key_by(DEFAULT_KEYMAPS, "legacy_action")
       if not custom_only then
         opts.remove_keymaps = {}
       end
       local call_list = {}
       opts.on_attach = function(bufnr)
         for _, el in pairs(call_list) do
-          vim.keymap.set(el.mode or "n", el.key, el.callback, { buffer = bufnr, remap = false, silent = true })
+          if el.callback then
+            vim.keymap.set(el.mode or "n", el.key, el.callback, { buffer = bufnr, remap = false, silent = true })
+          elseif el.keymap then
+            vim.keymap.set(
+              el.mode or "n",
+              el.key,
+              el.keymap.callback,
+              { buffer = bufnr, remap = false, silent = true, desc = el.keymap.desc.short }
+            )
+          end
         end
       end
       for _, map in pairs(list) do
         local keys = type(map.key) == "table" and map.key or { map.key }
         local mode = map.mode or "n"
         local callback
+        local keymap
         if map.action ~= "" then
           if map.action_cb then
             callback = map.action_cb
-          else
-            callback = OLD_MAPPING_TABLE[map.action]
+          elseif keymap_by_action[map.action] then
+            keymap = keymap_by_action[map.action]
           end
         end
 
@@ -383,6 +346,8 @@ function M.move_mappings_to_keymap(opts)
 
           if callback then
             table.insert(call_list, { mode = mode, key = k, callback = callback })
+          elseif keymap then
+            table.insert(call_list, { mode = mode, key = k, keymap = keymap })
           end
         end
       end

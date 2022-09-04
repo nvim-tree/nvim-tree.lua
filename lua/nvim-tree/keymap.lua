@@ -11,6 +11,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open a file or directory; root will cd to the above directory.",
       short = "Open",
     },
+    legacy_action = "edit",
   },
   {
     key = "<C-e>",
@@ -19,6 +20,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file in place, effectively replacing the tree explorer.",
       short = "Open: In Place",
     },
+    legacy_action = "edit_in_place",
   },
   {
     key = "O",
@@ -27,6 +29,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file with no window picker.",
       short = "Open: No Window Picker",
     },
+    legacy_action = "edit_no_picker",
   },
   {
     key = { "<C-]>", "<2-RightMouse>" },
@@ -35,6 +38,7 @@ local DEFAULT_KEYMAPS = {
       long = "cd in the directory under the cursor.",
       short = "CD",
     },
+    legacy_action = "cd",
   },
   {
     -- key = "<C-v>",
@@ -44,6 +48,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file in a vertical split.",
       short = "Open: Vertical Split",
     },
+    legacy_action = "vsplit",
   },
   {
     key = "<C-x>",
@@ -52,6 +57,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file in a horizontal split.",
       short = "Open: Horizontal Split",
     },
+    legacy_action = "split",
   },
   {
     key = "<C-t>",
@@ -60,6 +66,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file in a new tab.",
       short = "Open: New Tab",
     },
+    legacy_action = "tabnew",
   },
   {
     key = "<",
@@ -68,6 +75,7 @@ local DEFAULT_KEYMAPS = {
       long = "Navigate to the previous sibling.",
       short = "Previous Sibling",
     },
+    legacy_action = "prev_sibling",
   },
   {
     key = ">",
@@ -76,6 +84,7 @@ local DEFAULT_KEYMAPS = {
       long = "Navigate to the next sibling",
       short = "Next Sibling",
     },
+    legacy_action = "next_sibling",
   },
   {
     key = "P",
@@ -84,6 +93,7 @@ local DEFAULT_KEYMAPS = {
       long = "Move cursor to the parent directory.",
       short = "Parent Directory",
     },
+    legacy_action = "parent_node",
   },
   {
     key = "<BS>",
@@ -92,6 +102,7 @@ local DEFAULT_KEYMAPS = {
       long = "Close current opened directory or parent.",
       short = "Close Directory",
     },
+    legacy_action = "close_node",
   },
   {
     key = "<Tab>",
@@ -100,6 +111,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open file as a preview (keeps the cursor in the tree).",
       short = "Open Preview",
     },
+    legacy_action = "preview",
   },
   {
     key = "K",
@@ -108,6 +120,7 @@ local DEFAULT_KEYMAPS = {
       long = "Navigate to the first sibling.",
       short = "First Sibling",
     },
+    legacy_action = "first_sibling",
   },
   {
     key = "J",
@@ -116,6 +129,7 @@ local DEFAULT_KEYMAPS = {
       long = "Navigate to the last sibling.",
       short = "Last Sibling",
     },
+    legacy_action = "last_sibling",
   },
   {
     key = "I",
@@ -124,6 +138,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle visibility of files/directories hidden via |git.ignore| option.",
       short = "Toggle Git Ignore",
     },
+    legacy_action = "toggle_git_ignored",
   },
   {
     key = "H",
@@ -132,6 +147,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle visibility of dotfiles via |filters.dotfiles| option.",
       short = "Toggle Dotfiles",
     },
+    legacy_action = "toggle_dotfiles",
   },
   {
     key = "U",
@@ -140,6 +156,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle visibility of files/directories hidden via |filters.custom| option.",
       short = "Toggle Hidden",
     },
+    legacy_action = "toggle_custom",
   },
   {
     key = "R",
@@ -148,6 +165,7 @@ local DEFAULT_KEYMAPS = {
       long = "Refresh the tree.",
       short = "Refresh",
     },
+    legacy_action = "refresh",
   },
   {
     key = "a",
@@ -156,6 +174,7 @@ local DEFAULT_KEYMAPS = {
       long = "Create a file; leaving a trailing `/` will add a directory.",
       short = "Create",
     },
+    legacy_action = "create",
   },
   {
     key = "d",
@@ -164,6 +183,7 @@ local DEFAULT_KEYMAPS = {
       long = "Delete a file, prompting for confirmation.",
       short = "Delete",
     },
+    legacy_action = "remove",
   },
   {
     key = "D",
@@ -172,6 +192,7 @@ local DEFAULT_KEYMAPS = {
       long = "Trash a file via |trash| option.",
       short = "Trash",
     },
+    legacy_action = "trash",
   },
   {
     key = "r",
@@ -180,6 +201,7 @@ local DEFAULT_KEYMAPS = {
       long = "Rename a file or directory.",
       short = "Rename",
     },
+    legacy_action = "rename",
   },
   {
     key = "<C-r>",
@@ -188,6 +210,7 @@ local DEFAULT_KEYMAPS = {
       long = "Rename a file or directory and omit the filename on input.",
       short = "Rename: Omit Filename",
     },
+    legacy_action = "full_rename",
   },
   {
     key = "x",
@@ -196,6 +219,7 @@ local DEFAULT_KEYMAPS = {
       long = "Cut file or directory to cut clipboard.",
       short = "Cut",
     },
+    legacy_action = "cut",
   },
   {
     key = "c",
@@ -204,6 +228,7 @@ local DEFAULT_KEYMAPS = {
       long = "Copy file or directory to copy clipboard.",
       short = "Copy",
     },
+    legacy_action = "copy",
   },
   {
     key = "p",
@@ -212,6 +237,7 @@ local DEFAULT_KEYMAPS = {
       long = "Paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation.",
       short = "Paste",
     },
+    legacy_action = "paste",
   },
   {
     key = "y",
@@ -220,6 +246,7 @@ local DEFAULT_KEYMAPS = {
       long = "Copy name to system clipboard.",
       short = "Copy Name",
     },
+    legacy_action = "copy_name",
   },
   {
     key = "Y",
@@ -228,6 +255,7 @@ local DEFAULT_KEYMAPS = {
       long = "Copy relative path to system clipboard.",
       short = "Copy Relative Path",
     },
+    legacy_action = "copy_path",
   },
   {
     key = "gy",
@@ -236,6 +264,7 @@ local DEFAULT_KEYMAPS = {
       long = "Copy absolute path to system clipboard.",
       short = "Copy Absolute Path",
     },
+    legacy_action = "copy_absolute_path",
   },
   {
     key = "]e",
@@ -244,6 +273,7 @@ local DEFAULT_KEYMAPS = {
       long = "Go to next diagnostic item.",
       short = "Next Diagnostic",
     },
+    legacy_action = "next_diag_item",
   },
   {
     key = "]c",
@@ -252,6 +282,7 @@ local DEFAULT_KEYMAPS = {
       long = "Go to next git item.",
       short = "Next Git",
     },
+    legacy_action = "next_git_item",
   },
   {
     key = "[e",
@@ -260,6 +291,7 @@ local DEFAULT_KEYMAPS = {
       long = "Go to prev diagnostic item.",
       short = "Prev Diagnostic",
     },
+    legacy_action = "prev_diag_item",
   },
   {
     key = "[c",
@@ -268,6 +300,7 @@ local DEFAULT_KEYMAPS = {
       long = "Go to prev git item.",
       short = "Prev Git",
     },
+    legacy_action = "prev_git_item",
   },
   {
     key = "-",
@@ -276,6 +309,7 @@ local DEFAULT_KEYMAPS = {
       long = "Navigate up to the parent directory of the current file/directory.",
       short = "Up",
     },
+    legacy_action = "dir_up",
   },
   {
     key = "s",
@@ -284,6 +318,7 @@ local DEFAULT_KEYMAPS = {
       long = "Open a file with default system application or a directory with default file manager, using |system_open| option.",
       short = "Run System",
     },
+    legacy_action = "system_open",
   },
   {
     key = "f",
@@ -292,6 +327,7 @@ local DEFAULT_KEYMAPS = {
       long = "Live filter nodes dynamically based on regex matching.",
       short = "Filter",
     },
+    legacy_action = "live_filter",
   },
   {
     key = "F",
@@ -300,6 +336,7 @@ local DEFAULT_KEYMAPS = {
       long = "Clear live filter.",
       short = "Clean Filter",
     },
+    legacy_action = "clear_live_filter",
   },
   {
     key = "q",
@@ -308,6 +345,7 @@ local DEFAULT_KEYMAPS = {
       long = "Close tree window.",
       short = "Close",
     },
+    legacy_action = "close",
   },
   {
     key = "W",
@@ -316,6 +354,7 @@ local DEFAULT_KEYMAPS = {
       long = "Collapse the whole tree.",
       short = "Collapse",
     },
+    legacy_action = "collapse_all",
   },
   {
     key = "E",
@@ -324,6 +363,7 @@ local DEFAULT_KEYMAPS = {
       long = "Expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| directories; this might hang neovim for a while if running on a big directory.",
       short = "Expand All",
     },
+    legacy_action = "expand_all",
   },
   {
     key = "S",
@@ -332,6 +372,7 @@ local DEFAULT_KEYMAPS = {
       long = "Prompt the user to enter a path and then expands the tree to match the path.",
       short = "Search",
     },
+    legacy_action = "search_node",
   },
   {
     key = ".",
@@ -340,6 +381,7 @@ local DEFAULT_KEYMAPS = {
       long = "Enter vim command mode with the file the cursor is on.",
       short = "Run Command",
     },
+    legacy_action = "run_file_command",
   },
   {
     key = "<C-k>",
@@ -348,6 +390,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle a popup with file info about the file under the cursor.",
       short = "Info",
     },
+    legacy_action = "toggle_file_info",
   },
   {
     key = "g?",
@@ -356,6 +399,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle help.",
       short = "Help",
     },
+    legacy_action = "toggle_help",
   },
   {
     key = "m",
@@ -364,6 +408,7 @@ local DEFAULT_KEYMAPS = {
       long = "Toggle node in bookmarks.",
       short = "Toggle Bookmark",
     },
+    legacy_action = "toggle_mark",
   },
   {
     key = "bmv",
@@ -372,6 +417,7 @@ local DEFAULT_KEYMAPS = {
       long = "Move all bookmarked nodes into specified location.",
       short = "Move Bookmarked",
     },
+    legacy_action = "bulk_move",
   },
 }
 -- END_DEFAULT_KEYMAPS
