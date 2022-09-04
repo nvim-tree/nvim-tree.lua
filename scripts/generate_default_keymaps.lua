@@ -13,7 +13,7 @@ for _, m in pairs(DEFAULT_KEYMAPS) do
   local keys = type(m.key) == "table" and m.key or { m.key }
   for _, key in ipairs(keys) do
     local out = {}
-    out.key = key
+    out.key = string.format("`%s`", key)
     max_key = math.max(#out.key, max_key)
     if first then
       out.short = m.desc.short
