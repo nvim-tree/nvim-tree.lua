@@ -314,8 +314,10 @@ function M.move_mappings_to_keymap(opts)
       local call_list = {}
       opts.on_attach = function(bufnr)
         for _, el in pairs(call_list) do
-          if el.callback then
-            vim.keymap.set(el.mode or "n", el.key, el.callback, { buffer = bufnr, remap = false, silent = true })
+          if el.action_cb then
+            vim.keymap.set(el.mode or "n", el.key, function()
+              el.action_cb(require("nvim-tree.lib").get_node_at_cursor())
+            end, { buffer = bufnr, remap = false, silent = true })
           elseif el.keymap then
             vim.keymap.set(
               el.mode or "n",
@@ -329,11 +331,11 @@ function M.move_mappings_to_keymap(opts)
       for _, map in pairs(list) do
         local keys = type(map.key) == "table" and map.key or { map.key }
         local mode = map.mode or "n"
-        local callback
+        local action_cb
         local keymap
         if map.action ~= "" then
           if map.action_cb then
-            callback = map.action_cb
+            action_cb = map.action_cb
           elseif keymap_by_action[map.action] then
             keymap = keymap_by_action[map.action]
           end
@@ -344,8 +346,8 @@ function M.move_mappings_to_keymap(opts)
             table.insert(opts.remove_keymaps, k)
           end
 
-          if callback then
-            table.insert(call_list, { mode = mode, key = k, callback = callback })
+          if action_cb then
+            table.insert(call_list, { mode = mode, key = k, action_cb = action_cb })
           elseif keymap then
             table.insert(call_list, { mode = mode, key = k, keymap = keymap })
           end
