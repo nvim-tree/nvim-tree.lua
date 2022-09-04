@@ -44,10 +44,9 @@ io.close(file)
 -- lua on_attach
 file = io.open("/tmp/DEFAULT_KEYMAPS.on_attach.lua", "w")
 io.output(file)
-io.write "local Api = require('nvim-tree.api')\n\n"
-io.write "local function on_attach(bufnr)\n"
+io.write "    local Api = require('nvim-tree.api')\n\n"
 fmt = string.format(
-  "  vim.keymap.set('n', %%-%d.%ds %%-%d.%ds { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%%s', })\n",
+  "    vim.keymap.set('n', %%-%d.%ds %%-%d.%ds { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%%s', })\n",
   max_key + 3,
   max_key + 3,
   max_callback + 1,
@@ -59,5 +58,4 @@ for _, m in pairs(DEFAULT_KEYMAPS) do
     io.write(string.format(fmt, "'" .. key .. "',", m.callback .. ",", m.desc.short))
   end
 end
-io.write "end\n"
 io.close(file)

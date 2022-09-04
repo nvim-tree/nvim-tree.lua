@@ -187,7 +187,6 @@ Subsequent calls to setup will replace the previous configuration.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
-        -- @deprecated
         mappings = {
           custom_only = false,
           list = {
@@ -1169,105 +1168,110 @@ Mouse support defined in |KeyBindings|
 
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
 
-`<CR>`            edit                open a file or folder; root will cd to the above directory
+`<CR>`            Open                    Open a file or directory; root will cd to the above directory.
 `o`
 `<2-LeftMouse>`
-`<C-e>`           edit_in_place       edit the file in place, effectively replacing the tree explorer
-`O`               edit_no_picker      same as (edit) with no window picker
-`<C-]>`           cd                  cd in the directory under the cursor
+`<C-e>`           Open: In Place          Open file in place, effectively replacing the tree explorer.
+`O`               Open: No Window Picker  Open file with no window picker.
+`<C-]>`           CD                      cd in the directory under the cursor.
 `<2-RightMouse>`
-`<C-v>`           vsplit              open the file in a vertical split
-`<C-x>`           split               open the file in a horizontal split
-`<C-t>`           tabnew              open the file in a new tab
-`<`               prev_sibling        navigate to the previous sibling of current file/directory
-`>`               next_sibling        navigate to the next sibling of current file/directory
-`P`               parent_node         move cursor to the parent directory
-`<BS>`            close_node          close current opened directory or parent
-`<Tab>`           preview             open the file as a preview (keeps the cursor in the tree)
-`K`               first_sibling       navigate to the first sibling of current file/directory
-`J`               last_sibling        navigate to the last sibling of current file/directory
-`I`               toggle_git_ignored  toggle visibility of files/folders hidden via |git.ignore| option
-`H`               toggle_dotfiles     toggle visibility of dotfiles via |filters.dotfiles| option
-`U`               toggle_custom       toggle visibility of files/folders hidden via |filters.custom| option
-`R`               refresh             refresh the tree
-`a`               create              add a file; leaving a trailing `/` will add a directory
-`d`               remove              delete a file (will prompt for confirmation)
-`D`               trash               trash a file via |trash| option
-`r`               rename              rename a file
-`<C-r>`           full_rename         rename a file and omit the filename on input
-`x`               cut                 add/remove file/directory to cut clipboard
-`c`               copy                add/remove file/directory to copy clipboard
-`p`               paste               paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation
-`y`               copy_name           copy name to system clipboard
-`Y`               copy_path           copy relative path to system clipboard
-`gy`              copy_absolute_path  copy absolute path to system clipboard
-`[e`              prev_diag_item      go to next diagnostic item
-`[c`              prev_git_item       go to next git item
-`]e`              next_diag_item      go to prev diagnostic item
-`]c`              next_git_item       go to prev git item
-`-`               dir_up              navigate up to the parent directory of the current file/directory
-`s`               system_open         open a file with default system application or a folder with default file manager, using |system_open| option
-`f`               live_filter         live filter nodes dynamically based on regex matching.
-`F`               clear_live_filter   clear live filter
-`q`               close               close tree window
-`W`               collapse_all        collapse the whole tree
-`E`               expand_all          expand the whole tree, stopping after expanding |actions.expand_all.max_folder_discovery| folders; this might hang neovim for a while if running on a big folder
-`S`               search_node         prompt the user to enter a path and then expands the tree to match the path
-`.`               run_file_command    enter vim command mode with the file the cursor is on
-`<C-k>`           toggle_file_info    toggle a popup with file infos about the file under the cursor
-`g?`              toggle_help         toggle help
-`m`               toggle_mark         Toggle node in bookmarks
-`bmv`             bulk_move           Move all bookmarked nodes into specified location
+`<ctrL-v>`        Open: Vertical Split    Open file in a vertical split.
+`<C-x>`           Open: Horizontal Split  Open file in a horizontal split.
+`<C-t>`           Open: New Tab           Open file in a new tab.
+`<`               Previous Sibling        Navigate to the previous sibling.
+`>`               Next Sibling            Navigate to the next sibling
+`P`               Parent Directory        Move cursor to the parent directory.
+`<BS>`            Close Directory         Close current opened directory or parent.
+`<Tab>`           Open Preview            Open file as a preview (keeps the cursor in the tree).
+`K`               First Sibling           Navigate to the first sibling.
+`J`               Last Sibling            Navigate to the last sibling.
+`I`               Toggle Git Ignore       Toggle visibility of files/directories hidden via |git.ignore| option.
+`H`               Toggle Dotfiles         Toggle visibility of dotfiles via |filters.dotfiles| option.
+`U`               Toggle Hidden           Toggle visibility of files/directories hidden via |filters.custom| option.
+`R`               Refresh                 Refresh the tree.
+`a`               Create                  Create a file; leaving a trailing `/` will add a directory.
+`d`               Delete                  Delete a file, prompting for confirmation.
+`D`               Trash                   Trash a file via |trash| option.
+`r`               Rename                  Rename a file or directory.
+`<C-r>`           Rename: Omit Filename   Rename a file or directory and omit the filename on input.
+`x`               Cut                     Cut file or directory to cut clipboard.
+`c`               Copy                    Copy file or directory to copy clipboard.
+`p`               Paste                   Paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation.
+`y`               Copy Name               Copy name to system clipboard.
+`Y`               Copy Relative Path      Copy relative path to system clipboard.
+`gy`              Copy Absolute Path      Copy absolute path to system clipboard.
+`]e`              Next Diagnostic         Go to next diagnostic item.
+`]c`              Next Git                Go to next git item.
+`[e`              Prev Diagnostic         Go to prev diagnostic item.
+`[c`              Prev Git                Go to prev git item.
+`-`               Up                      Navigate up to the parent directory of the current file/directory.
+`s`               Run System              Open a file with default system application or a directory with default file manager, using |system_open| option.
+`f`               Filter                  Live filter nodes dynamically based on regex matching.
+`F`               Clean Filter            Clear live filter.
+`q`               Close                   Close tree window.
+`W`               Collapse                Collapse the whole tree.
+`E`               Expand All              Expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| directories; this might hang neovim for a while if running on a big directory.
+`S`               Search                  Prompt the user to enter a path and then expands the tree to match the path.
+`.`               Run Command             Enter vim command mode with the file the cursor is on.
+`<C-k>`           Info                    Toggle a popup with file info about the file under the cursor.
+`g?`              Help                    Toggle help.
+`m`               Toggle Bookmark         Toggle node in bookmarks.
+`bmv`             Move Bookmarked         Move all bookmarked nodes into specified location.
 
 >
-  view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
-    { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
-    { key = "<C-e>",                          action = "edit_in_place" },
-    { key = "O",                              action = "edit_no_picker" },
-    { key = { "<C-]>", "<2-RightMouse>" },    action = "cd" },
-    { key = "<C-v>",                          action = "vsplit" },
-    { key = "<C-x>",                          action = "split" },
-    { key = "<C-t>",                          action = "tabnew" },
-    { key = "<",                              action = "prev_sibling" },
-    { key = ">",                              action = "next_sibling" },
-    { key = "P",                              action = "parent_node" },
-    { key = "<BS>",                           action = "close_node" },
-    { key = "<Tab>",                          action = "preview" },
-    { key = "K",                              action = "first_sibling" },
-    { key = "J",                              action = "last_sibling" },
-    { key = "I",                              action = "toggle_git_ignored" },
-    { key = "H",                              action = "toggle_dotfiles" },
-    { key = "U",                              action = "toggle_custom" },
-    { key = "R",                              action = "refresh" },
-    { key = "a",                              action = "create" },
-    { key = "d",                              action = "remove" },
-    { key = "D",                              action = "trash" },
-    { key = "r",                              action = "rename" },
-    { key = "<C-r>",                          action = "full_rename" },
-    { key = "x",                              action = "cut" },
-    { key = "c",                              action = "copy" },
-    { key = "p",                              action = "paste" },
-    { key = "y",                              action = "copy_name" },
-    { key = "Y",                              action = "copy_path" },
-    { key = "gy",                             action = "copy_absolute_path" },
-    { key = "[e",                             action = "prev_diag_item" },
-    { key = "[c",                             action = "prev_git_item" },
-    { key = "]e",                             action = "next_diag_item" },
-    { key = "]c",                             action = "next_git_item" },
-    { key = "-",                              action = "dir_up" },
-    { key = "s",                              action = "system_open" },
-    { key = "f",                              action = "live_filter" },
-    { key = "F",                              action = "clear_live_filter" },
-    { key = "q",                              action = "close" },
-    { key = "W",                              action = "collapse_all" },
-    { key = "E",                              action = "expand_all" },
-    { key = "S",                              action = "search_node" },
-    { key = ".",                              action = "run_file_command" },
-    { key = "<C-k>",                          action = "toggle_file_info" },
-    { key = "g?",                             action = "toggle_help" },
-    { key = "m",                              action = "toggle_mark" },
-    { key = "bmv",                            action = "bulk_move" },
-  } -- END_DEFAULT_MAPPINGS
+  local on_attach = function(bufnr) -- BEGIN_ON_ATTACH
+    local Api = require('nvim-tree.api')
+
+    vim.keymap.set('n', '<CR>',             Api.node.open.edit,                 { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open', })
+    vim.keymap.set('n', 'o',                Api.node.open.edit,                 { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open', })
+    vim.keymap.set('n', '<2-LeftMouse>',    Api.node.open.edit,                 { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open', })
+    vim.keymap.set('n', '<C-e>',            Api.node.open.replace_tree_buffer,  { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open: In Place', })
+    vim.keymap.set('n', 'O',                Api.node.open.no_window_picker,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open: No Window Picker', })
+    vim.keymap.set('n', '<C-]>',            Api.tree.change_root_to_node,       { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'CD', })
+    vim.keymap.set('n', '<2-RightMouse>',   Api.tree.change_root_to_node,       { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'CD', })
+    vim.keymap.set('n', '<ctrL-v>',         Api.node.open.vertical,             { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open: Vertical Split', })
+    vim.keymap.set('n', '<C-x>',            Api.node.open.horizontal,           { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open: Horizontal Split', })
+    vim.keymap.set('n', '<C-t>',            Api.node.open.tab,                  { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open: New Tab', })
+    vim.keymap.set('n', '<',                Api.node.navigate.sibling.prev,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Previous Sibling', })
+    vim.keymap.set('n', '>',                Api.node.navigate.sibling.next,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Next Sibling', })
+    vim.keymap.set('n', 'P',                Api.node.navigate.parent,           { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Parent Directory', })
+    vim.keymap.set('n', '<BS>',             Api.node.navigate.parent_close,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Close Directory', })
+    vim.keymap.set('n', '<Tab>',            Api.node.open.preview,              { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Open Preview', })
+    vim.keymap.set('n', 'K',                Api.node.navigate.sibling.first,    { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'First Sibling', })
+    vim.keymap.set('n', 'J',                Api.node.navigate.sibling.last,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Last Sibling', })
+    vim.keymap.set('n', 'I',                Api.tree.toggle_gitignore_filter,   { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Toggle Git Ignore', })
+    vim.keymap.set('n', 'H',                Api.tree.toggle_hidden_filter,      { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Toggle Dotfiles', })
+    vim.keymap.set('n', 'U',                Api.tree.toggle_custom_filter,      { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Toggle Hidden', })
+    vim.keymap.set('n', 'R',                Api.tree.reload,                    { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Refresh', })
+    vim.keymap.set('n', 'a',                Api.fs.create,                      { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Create', })
+    vim.keymap.set('n', 'd',                Api.fs.remove,                      { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Delete', })
+    vim.keymap.set('n', 'D',                Api.fs.trash,                       { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Trash', })
+    vim.keymap.set('n', 'r',                Api.fs.rename,                      { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Rename', })
+    vim.keymap.set('n', '<C-r>',            Api.fs.rename_sub,                  { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Rename: Omit Filename', })
+    vim.keymap.set('n', 'x',                Api.fs.cut,                         { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Cut', })
+    vim.keymap.set('n', 'c',                Api.fs.copy.node,                   { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Copy', })
+    vim.keymap.set('n', 'p',                Api.fs.paste,                       { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Paste', })
+    vim.keymap.set('n', 'y',                Api.fs.copy.filename,               { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Copy Name', })
+    vim.keymap.set('n', 'Y',                Api.fs.copy.relative_path,          { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Copy Relative Path', })
+    vim.keymap.set('n', 'gy',               Api.fs.copy.absolute_path,          { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Copy Absolute Path', })
+    vim.keymap.set('n', ']e',               Api.node.navigate.diagnostics.next, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Next Diagnostic', })
+    vim.keymap.set('n', ']c',               Api.node.navigate.git.next,         { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Next Git', })
+    vim.keymap.set('n', '[e',               Api.node.navigate.diagnostics.prev, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Prev Diagnostic', })
+    vim.keymap.set('n', '[c',               Api.node.navigate.git.prev,         { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Prev Git', })
+    vim.keymap.set('n', '-',                Api.tree.change_root_to_parent,     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Up', })
+    vim.keymap.set('n', 's',                Api.node.run.system,                { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Run System', })
+    vim.keymap.set('n', 'f',                Api.live_filter.start,              { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Filter', })
+    vim.keymap.set('n', 'F',                Api.live_filter.clear,              { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Clean Filter', })
+    vim.keymap.set('n', 'q',                Api.tree.close,                     { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Close', })
+    vim.keymap.set('n', 'W',                Api.tree.collapse_all,              { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Collapse', })
+    vim.keymap.set('n', 'E',                Api.tree.expand_all,                { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Expand All', })
+    vim.keymap.set('n', 'S',                Api.tree.search_node,               { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Search', })
+    vim.keymap.set('n', '.',                Api.node.run.cmd,                   { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Run Command', })
+    vim.keymap.set('n', '<C-k>',            Api.node.show_info_popup,           { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Info', })
+    vim.keymap.set('n', 'g?',               Api.tree.toggle_help,               { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Help', })
+    vim.keymap.set('n', 'm',                Api.marks.toggle,                   { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Toggle Bookmark', })
+    vim.keymap.set('n', 'bmv',              Api.marks.bulk.move,                { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Move Bookmarked', })
+  end -- END_ON_ATTACH
 <
 
 ==============================================================================

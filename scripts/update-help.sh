@@ -5,6 +5,9 @@
 # run from repository root: scripts/update-default-opts.sh
 
 
+#
+# DEFAULT_OPTS
+#
 begin="BEGIN_DEFAULT_OPTS"
 end="END_DEFAULT_OPTS"
 
@@ -19,22 +22,26 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_OPTS.6.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
 
-begin="BEGIN_DEFAULT_MAPPINGS"
-end="END_DEFAULT_MAPPINGS"
+#
+# DEFAULT_KEYMAPS
+#
 
-# generate various DEFAULT_MAPPINGS
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/actions/init.lua > /tmp/DEFAULT_MAPPINGS.M.lua
-cat /tmp/DEFAULT_MAPPINGS.M.lua scripts/generate_default_mappings.lua | lua
-
-# help
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_MAPPINGS.lua
-           }; /${end}/p; d }" doc/nvim-tree-lua.txt
-sed -i -e "/^DEFAULT MAPPINGS/,/^>$/{ /^DEFAULT MAPPINGS/{p; r /tmp/DEFAULT_MAPPINGS.help
-           }; /^>$/p; d }" doc/nvim-tree-lua.txt
-
-# generate various DEFAULT_KEYMAPS
 begin="BEGIN_DEFAULT_KEYMAPS"
 end="END_DEFAULT_KEYMAPS"
+
+# scrape DEFAULT_KEYMAPS
 sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; s/callback = \(.*\),/callback = '\1',/g; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_KEYMAPS.M.lua
+
+# generate /tmp/DEFAULT_KEYMAPS.on_attach.lua and /tmp/DEFAULT_KEYMAPS.help
 cat /tmp/DEFAULT_KEYMAPS.M.lua scripts/generate_default_keymaps.lua | lua
+
+# help on_attach
+begin="BEGIN_ON_ATTACH"
+end="END_ON_ATTACH"
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_KEYMAPS.on_attach.lua
+           }; /${end}/p; d }" doc/nvim-tree-lua.txt
+
+# help human
+sed -i -e "/^DEFAULT MAPPINGS/,/^>$/{ /^DEFAULT MAPPINGS/{p; r /tmp/DEFAULT_KEYMAPS.help
+           }; /^>$/p; d }" doc/nvim-tree-lua.txt
 
