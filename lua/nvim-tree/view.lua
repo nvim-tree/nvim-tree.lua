@@ -95,6 +95,8 @@ local function create_buffer(bufnr)
   if type(M.on_attach) == "function" then
     require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
     M.on_attach(M.get_bufnr())
+  else
+    require("nvim-tree.actions").apply_mappings(M.get_bufnr())
   end
 end
 
