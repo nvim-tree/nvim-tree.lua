@@ -68,9 +68,6 @@ function M.change_root(filepath, bufnr)
   change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
 end
 
----@deprecated
-M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
-
 function M.toggle(find_file, no_focus, cwd)
   if view.is_visible() then
     view.close()
