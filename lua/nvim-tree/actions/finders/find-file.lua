@@ -27,12 +27,20 @@ function M.fn(fname)
 
   local line = core.get_nodes_starting_line()
 
+  local absolute_paths_searched = {}
+
   local found = Iterator.builder(core.get_explorer().nodes)
     :matcher(function(node)
       return node.absolute_path == fname_real or node.link_to == fname_real
     end)
     :applier(function(node)
       line = line + 1
+
+      if vim.tbl_contains(absolute_paths_searched, node.absolute_path) then
+        return
+      end
+      table.insert(absolute_paths_searched, node.absolute_path)
+
       local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
       local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
 

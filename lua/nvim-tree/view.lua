@@ -133,9 +133,21 @@ local function set_window_options_and_buffer()
   end
 end
 
+local function open_win_config()
+  if type(M.View.float.open_win_config) == "function" then
+    return M.View.float.open_win_config()
+  else
+    return M.View.float.open_win_config
+  end
+end
+
 local function open_window()
-  a.nvim_command "vsp"
-  M.reposition_window()
+  if M.View.float.enable then
+    a.nvim_open_win(0, true, open_win_config())
+  else
+    a.nvim_command "vsp"
+    M.reposition_window()
+  end
   setup_tabpage(a.nvim_get_current_tabpage())
   set_window_options_and_buffer()
 end
@@ -184,10 +196,12 @@ function M.close()
   local current_win = a.nvim_get_current_win()
   for _, win in pairs(a.nvim_list_wins()) do
     if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
-      a.nvim_win_close(tree_win, true)
       local prev_win = vim.fn.winnr "#" -- this tab only
       if tree_win == current_win and prev_win > 0 then
         a.nvim_set_current_win(vim.fn.win_getid(prev_win))
+      end
+      if a.nvim_win_is_valid(tree_win) then
+        a.nvim_win_close(tree_win, true)
       end
       events._dispatch_on_tree_close()
       return
@@ -232,6 +246,12 @@ function M.grow_from_content()
 end
 
 function M.resize(size)
+  if M.View.float.enable and not M.View.adaptive_size then
+    -- if the floating windows's adaptive size is not desired, then the
+    -- float size should be defined in view.float.open_win_config
+    return
+  end
+
   if type(size) == "string" then
     size = vim.trim(size)
     local first_char = size:sub(1, 1)
@@ -431,6 +451,7 @@ function M.setup(opts)
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
+  M.View.float = options.float
   M.on_attach = opts.on_attach
 end
 
