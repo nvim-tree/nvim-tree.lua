@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for this project. Questions should be asked by starting a [Q&A discussion](https://github.com/kyazdani42/nvim-tree.lua/discussions/new).
 title: ''
 labels: feature request
 assignees: ''

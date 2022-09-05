@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a problem with nvim-tree
+description: Report a problem with nvim-tree. Questions should be asked by starting a [Q&A discussion](https://github.com/kyazdani42/nvim-tree.lua/discussions/new).
 labels: [bug]
 body:
   - type: markdown
