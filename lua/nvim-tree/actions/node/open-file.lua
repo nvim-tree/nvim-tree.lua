@@ -264,6 +264,7 @@ function M.fn(mode, filename)
     open_in_new_window(filename, mode, win_ids)
   else
     api.nvim_set_current_win(found_win)
+    vim.bo.bufhidden = ""
   end
 
   if M.resize_window then
