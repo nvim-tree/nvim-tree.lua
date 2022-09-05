@@ -1,5 +1,5 @@
 local utils = require "nvim-tree.utils"
-local log = require "nvim-tree.log"
+local open_file = require "nvim-tree.actions.node.open-file"
 
 local DEFAULT_KEYMAPS = require("nvim-tree.keymap").DEFAULT_KEYMAPS
 
@@ -358,13 +358,23 @@ local function build_on_attach(call_list)
     return nil
   end
 
-  M.on_attach_lua = "local Api = require('nvim-tree.api')\n\nlocal on_attach = function(bufnr)\n"
+  M.on_attach_lua = [[
+local Api = require('nvim-tree.api')
+local Lib = require('nvim-tree.lib')
+
+local on_attach = function(bufnr)
+]]
+
   for _, el in pairs(call_list) do
     if el.action_cb then
-      M.on_attach_lua = string.format("%s  -- TODO action_cb\n", M.on_attach_lua)
+      M.on_attach_lua = string.format(
+        '%s  vim.keymap.set("n", "%s", function()\n    local node = Lib.get_node_at_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })\n',
+        M.on_attach_lua,
+        el.key
+      )
     elseif el.keymap then
       M.on_attach_lua = string.format(
-        "%s  vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s', })\n",
+        "%s  vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s' })\n",
         M.on_attach_lua,
         el.key,
         LEGACY_CALLBACKS[el.keymap.legacy_action],
@@ -373,7 +383,6 @@ local function build_on_attach(call_list)
     end
   end
   M.on_attach_lua = string.format("%send\n", M.on_attach_lua)
-  log.raw("dev", "%s", M.on_attach_lua)
 
   return function(bufnr)
     for _, el in pairs(call_list) do
@@ -401,7 +410,7 @@ function M.move_mappings_to_keymap(opts)
       opts.view.mappings.custom_only = nil
     end
     if list then
-      local keymap_by_action = utils.key_by(DEFAULT_KEYMAPS, "legacy_action")
+      local keymap_by_legacy_action = utils.key_by(DEFAULT_KEYMAPS, "legacy_action")
       if not custom_only then
         opts.remove_keymaps = {}
       end
@@ -414,8 +423,8 @@ function M.move_mappings_to_keymap(opts)
         if map.action ~= "" then
           if map.action_cb then
             action_cb = map.action_cb
-          elseif keymap_by_action[map.action] then
-            keymap = keymap_by_action[map.action]
+          elseif keymap_by_legacy_action[map.action] then
+            keymap = keymap_by_legacy_action[map.action]
           end
         end
 
@@ -434,6 +443,19 @@ function M.move_mappings_to_keymap(opts)
       opts.on_attach = build_on_attach(call_list)
       opts.view.mappings.list = nil
     end
+  end
+end
+
+function M.generate_on_attach()
+  if #M.on_attach_lua > 0 then
+    local name = "/tmp/my_on_attach.lua"
+    local file = io.open(name, "w")
+    io.output(file)
+    io.write(M.on_attach_lua)
+    io.close(file)
+    open_file.fn("edit", name)
+  else
+    utils.notify.info "no custom mappings"
   end
 end
 

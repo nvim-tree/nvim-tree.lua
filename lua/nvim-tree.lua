@@ -316,6 +316,7 @@ local function setup_vim_commands()
   api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
   end, { bar = true })
+  api.nvim_create_user_command("NvimTreeGenerateOnAttach", legacy.generate_on_attach, {})
 end
 
 function M.change_dir(name)
