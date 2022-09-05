@@ -169,7 +169,6 @@ Subsequent calls to setup will replace the previous configuration.
       open_on_tab = false,
       ignore_buf_on_tab_change = {},
       sort_by = "name",
-      after_sort = false,
       root_dirs = {},
       prefer_startup_root = false,
       sync_root_with_cwd = false,
@@ -420,31 +419,13 @@ if the tree was previously open.
 Changes how files within the same directory are sorted.
 Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension',
 'function'.
+  Type: `string | function(table)`, Default: `"name"`
 >
-  sort_by = function(a, b)
-    if not (a and b) then
-      return true
-    end
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  sort_by = function(t)
+    local sorters = require "nvim-tree.explorer.sorters"
+    local comparator = sorters.retrieve_comparator("name")
+    sorters.split_merge(t, 1, #t, comparator) -- run default merge_sort
 
-    return a.name:lower() <= b.name:lower()
-  end
-
-    
-  end
-  Type: `string | function(a, b)`, Default: `"name"`
-
-*nvim-tree.after_sort*
-Related to nvim-tree.sort_by, this function runs without mergesort.
-Can be defined by your own after-sort works.
-  Type: `function(table)`, Default: `disable`
-
->
-  after_sort = function(t)
     local i = 1
 
     while i <= #t do
