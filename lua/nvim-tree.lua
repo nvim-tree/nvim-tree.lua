@@ -433,6 +433,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_tab = false,
   ignore_buf_on_tab_change = {},
   sort_by = "name",
+  after_sort = false,
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,
@@ -640,6 +641,8 @@ local FIELD_OVERRIDE_TYPECHECK = {
   height = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
+  sort_by = { ["function"] = true, string = true },
+  after_sort = { ["function"] = true, boolean = true },
 }
 
 local function validate_options(conf)

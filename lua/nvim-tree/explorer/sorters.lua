@@ -73,8 +73,8 @@ function M.merge_sort(t, comparator)
   end
 
   split_merge(t, 1, #t, comparator)
-  if M.sort_by == "mixin" then
-    M.node_inserter_mixin(t)
+  if M.after_sort then
+    M.after_sort(t)
   end
 end
 
@@ -151,29 +151,13 @@ function M.node_comparator_extension(a, b)
   return a.extension:lower() <= b.extension:lower()
 end
 
-function M.node_inserter_mixin(t)
-  local i = 1
-
-  while i <= #t do
-    if t[i] and t[i].nodes then
-      local j = i + 1
-      while j <= #t do
-        if t[j] and not t[j].nodes and t[i].name:lower() == t[j].name:lower():match "(.+)%..+$" then
-          local change_target = t[j]
-          table.remove(t, j)
-          table.insert(t, i, change_target)
-          break
-        end
-        j = j + 1
-      end
-    end
-    i = i + 1
-  end
-end
-
 function M.setup(opts)
   M.sort_by = opts.sort_by
-  if M.sort_by == "modification_time" then
+  M.after_sort = opts.after_sort
+
+  if M.sort_by and type(M.sort_by) == "function" then
+    M.node_comparator = M.sort_by
+  elseif M.sort_by == "modification_time" then
     M.node_comparator = M.node_comparator_modification_time
   elseif M.sort_by == "case_sensitive" then
     M.node_comparator = M.node_comparator_name_case_sensisive
