@@ -422,6 +422,7 @@ local DEFAULT_KEYMAPS = {
 }
 -- END_DEFAULT_KEYMAPS
 
+-- TODO fuzzy filtering of keys e.g. "<ctrl-x>" <-> "<C-X>" to prevent two mappings being created
 function M.set_keymaps(bufnr)
   local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
   for _, km in ipairs(M.keymaps) do

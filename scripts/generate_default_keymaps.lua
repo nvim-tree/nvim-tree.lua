@@ -59,3 +59,13 @@ for _, m in pairs(DEFAULT_KEYMAPS) do
   end
 end
 io.close(file)
+
+-- legacy callback mappings
+file = io.open("/tmp/LEGACY_CALLBACKS.lua", "w")
+io.output(file)
+io.write "local LEGACY_CALLBACKS = {\n"
+for _, m in pairs(DEFAULT_KEYMAPS) do
+  io.write(string.format('  %s = "%s",\n', m.legacy_action, m.callback))
+end
+io.write("}\n")
+io.close(file)

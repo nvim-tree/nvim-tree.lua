@@ -1,8 +1,62 @@
 local utils = require "nvim-tree.utils"
+local log = require "nvim-tree.log"
 
 local DEFAULT_KEYMAPS = require("nvim-tree.keymap").DEFAULT_KEYMAPS
 
-local M = {}
+local M = {
+  on_attach_lua = "",
+}
+
+-- BEGIN_LEGACY_CALLBACKS
+local LEGACY_CALLBACKS = {
+  edit = "Api.node.open.edit",
+  edit_in_place = "Api.node.open.replace_tree_buffer",
+  edit_no_picker = "Api.node.open.no_window_picker",
+  cd = "Api.tree.change_root_to_node",
+  vsplit = "Api.node.open.vertical",
+  split = "Api.node.open.horizontal",
+  tabnew = "Api.node.open.tab",
+  prev_sibling = "Api.node.navigate.sibling.prev",
+  next_sibling = "Api.node.navigate.sibling.next",
+  parent_node = "Api.node.navigate.parent",
+  close_node = "Api.node.navigate.parent_close",
+  preview = "Api.node.open.preview",
+  first_sibling = "Api.node.navigate.sibling.first",
+  last_sibling = "Api.node.navigate.sibling.last",
+  toggle_git_ignored = "Api.tree.toggle_gitignore_filter",
+  toggle_dotfiles = "Api.tree.toggle_hidden_filter",
+  toggle_custom = "Api.tree.toggle_custom_filter",
+  refresh = "Api.tree.reload",
+  create = "Api.fs.create",
+  remove = "Api.fs.remove",
+  trash = "Api.fs.trash",
+  rename = "Api.fs.rename",
+  full_rename = "Api.fs.rename_sub",
+  cut = "Api.fs.cut",
+  copy = "Api.fs.copy.node",
+  paste = "Api.fs.paste",
+  copy_name = "Api.fs.copy.filename",
+  copy_path = "Api.fs.copy.relative_path",
+  copy_absolute_path = "Api.fs.copy.absolute_path",
+  next_diag_item = "Api.node.navigate.diagnostics.next",
+  next_git_item = "Api.node.navigate.git.next",
+  prev_diag_item = "Api.node.navigate.diagnostics.prev",
+  prev_git_item = "Api.node.navigate.git.prev",
+  dir_up = "Api.tree.change_root_to_parent",
+  system_open = "Api.node.run.system",
+  live_filter = "Api.live_filter.start",
+  clear_live_filter = "Api.live_filter.clear",
+  close = "Api.tree.close",
+  collapse_all = "Api.tree.collapse_all",
+  expand_all = "Api.tree.expand_all",
+  search_node = "Api.tree.search_node",
+  run_file_command = "Api.node.run.cmd",
+  toggle_file_info = "Api.node.show_info_popup",
+  toggle_help = "Api.tree.toggle_help",
+  toggle_mark = "Api.marks.toggle",
+  bulk_move = "Api.marks.bulk.move",
+}
+-- END_LEGACY_CALLBACKS
 
 -- TODO update bit.ly/3vIpEOJ when adding a migration
 
@@ -299,6 +353,46 @@ local function removed(opts)
   end
 end
 
+local function build_on_attach(call_list)
+  if #call_list == 0 then
+    return nil
+  end
+
+  M.on_attach_lua = "local Api = require('nvim-tree.api')\n\nlocal on_attach = function(bufnr)\n"
+  for _, el in pairs(call_list) do
+    if el.action_cb then
+      M.on_attach_lua = string.format("%s  -- TODO action_cb\n", M.on_attach_lua)
+    elseif el.keymap then
+      M.on_attach_lua = string.format(
+        "%s  vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s', })\n",
+        M.on_attach_lua,
+        el.key,
+        LEGACY_CALLBACKS[el.keymap.legacy_action],
+        el.keymap.desc.short
+      )
+    end
+  end
+  M.on_attach_lua = string.format("%send\n", M.on_attach_lua)
+  log.raw("dev", "%s", M.on_attach_lua)
+
+  return function(bufnr)
+    for _, el in pairs(call_list) do
+      if el.action_cb then
+        vim.keymap.set(el.mode or "n", el.key, function()
+          el.action_cb(require("nvim-tree.lib").get_node_at_cursor())
+        end, { buffer = bufnr, remap = false, silent = true })
+      elseif el.keymap then
+        vim.keymap.set(
+          el.mode or "n",
+          el.key,
+          el.keymap.callback,
+          { buffer = bufnr, remap = false, silent = true, desc = el.keymap.desc.short }
+        )
+      end
+    end
+  end
+end
+
 function M.move_mappings_to_keymap(opts)
   if opts.on_attach == "disable" and opts.view and opts.view.mappings then
     local custom_only, list = opts.view.mappings.custom_only, opts.view.mappings.list
@@ -312,22 +406,6 @@ function M.move_mappings_to_keymap(opts)
         opts.remove_keymaps = {}
       end
       local call_list = {}
-      opts.on_attach = function(bufnr)
-        for _, el in pairs(call_list) do
-          if el.action_cb then
-            vim.keymap.set(el.mode or "n", el.key, function()
-              el.action_cb(require("nvim-tree.lib").get_node_at_cursor())
-            end, { buffer = bufnr, remap = false, silent = true })
-          elseif el.keymap then
-            vim.keymap.set(
-              el.mode or "n",
-              el.key,
-              el.keymap.callback,
-              { buffer = bufnr, remap = false, silent = true, desc = el.keymap.desc.short }
-            )
-          end
-        end
-      end
       for _, map in pairs(list) do
         local keys = type(map.key) == "table" and map.key or { map.key }
         local mode = map.mode or "n"
@@ -353,6 +431,7 @@ function M.move_mappings_to_keymap(opts)
           end
         end
       end
+      opts.on_attach = build_on_attach(call_list)
       opts.view.mappings.list = nil
     end
   end

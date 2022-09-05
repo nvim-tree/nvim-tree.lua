@@ -32,8 +32,14 @@ end="END_DEFAULT_KEYMAPS"
 # scrape DEFAULT_KEYMAPS
 sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; s/callback = \(.*\),/callback = '\1',/g; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_KEYMAPS.M.lua
 
-# generate /tmp/DEFAULT_KEYMAPS.on_attach.lua and /tmp/DEFAULT_KEYMAPS.help
+# generate /tmp/DEFAULT_KEYMAPS.on_attach.lua, /tmp/DEFAULT_KEYMAPS.help and /tmp/LEGACY_CALLBACKS.lua
 cat /tmp/DEFAULT_KEYMAPS.M.lua scripts/generate_default_keymaps.lua | lua
+
+# legacy.lua LEGACY_CALLBACKS
+begin="BEGIN_LEGACY_CALLBACKS"
+end="END_LEGACY_CALLBACKS"
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/LEGACY_CALLBACKS.lua
+           }; /${end}/p; d }" lua/nvim-tree/legacy.lua
 
 # help on_attach
 begin="BEGIN_ON_ATTACH"
