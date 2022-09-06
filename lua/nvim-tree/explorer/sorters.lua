@@ -50,15 +50,15 @@ local function merge(t, first, mid, last, comparator)
   end
 end
 
-function M.split_merge(t, first, last, comparator)
+local function split_merge(t, first, last, comparator)
   if (last - first) < 1 then
     return
   end
 
   local mid = math.floor((first + last) / 2)
 
-  M.split_merge(t, first, mid, comparator)
-  M.split_merge(t, mid + 1, last, comparator)
+  split_merge(t, first, mid, comparator)
+  split_merge(t, mid + 1, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
@@ -66,16 +66,38 @@ end
 ---@param t any[]
 ---@param comparator function|nil
 function M.merge_sort(t, comparator)
-  if not comparator then
-    comparator = function(left, right)
-      return left < right
-    end
-  end
-
   if type(M.sort_by) == "function" then
-    M.sort_by(t)
+    local t_user = {}
+    for _, n in ipairs(t) do
+      table.insert(t_user, {
+        absolute_path = n.absolute_path,
+        executable = n.executable,
+        extension = n.extension,
+        link_to = n.link_to,
+        name = n.name,
+        type = n.type,
+      })
+    end
+
+    local user_order = M.sort_by(t_user)
+
+    for i = 1, #user_order, 1 do
+      for j = 1, #t, 1 do
+        if t[j].absolute_path == user_order[i] then
+          local tmp = t[i]
+          t[i] = t[j]
+          t[j] = tmp
+          break
+        end
+      end
+    end -- reorder the list according to the user order
   else
-    M.split_merge(t, 1, #t, comparator)
+    if not comparator then
+      comparator = function(left, right)
+        return left < right
+      end
+    end
+    split_merge(t, 1, #t, comparator)
   end
 end
 
@@ -152,21 +174,19 @@ function M.node_comparator_extension(a, b)
   return a.extension:lower() <= b.extension:lower()
 end
 
-function M.retrieve_comparator(comparator_name) -- NOTE: for user can use comparator directly
-  if comparator_name == "modification_time" then
-    return M.node_comparator_modification_time
-  elseif comparator_name == "case_sensitive" then
-    return M.node_comparator_name_case_sensisive
-  elseif comparator_name == "extension" then
-    return M.node_comparator_extension
-  else
-    return M.node_comparator_name_ignorecase
-  end
-end
-
 function M.setup(opts)
   M.sort_by = opts.sort_by
-  M.node_comparator = M.retrieve_comparator(M.sort_by)
+  if M.sort_by and type(M.sort_by) ~= "function" then
+    M.node_comparator = M.sort_by
+  elseif M.sort_by == "modification_time" then
+    M.node_comparator = M.node_comparator_modification_time
+  elseif M.sort_by == "case_sensitive" then
+    M.node_comparator = M.node_comparator_name_case_sensisive
+  elseif M.sort_by == "extension" then
+    M.node_comparator = M.node_comparator_extension
+  else
+    M.node_comparator = M.node_comparator_name_ignorecase
+  end
 end
 
 return M

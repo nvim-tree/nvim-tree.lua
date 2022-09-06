@@ -421,28 +421,14 @@ Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension',
 'function'.
   Type: `string | function(table)`, Default: `"name"`
 >
-  sort_by = function(t)
-    local sorters = require "nvim-tree.explorer.sorters"
-    local comparator = sorters.retrieve_comparator("name")
-    sorters.split_merge(t, 1, #t, comparator) -- run default merge_sort
+  sort_by = function(tbl)
 
-    local i = 1
-
-    while i <= #t do
-      if t[i] and t[i].nodes then
-        local j = i + 1
-        while j <= #t do
-          if t[j] and not t[j].nodes and t[i].name:lower() == t[j].name:lower():match "(.+)%..+$" then
-            local change_target = t[j]
-            table.remove(t, j)
-            table.insert(t, i, change_target)
-            break
-          end
-          j = j + 1
-        end
-      end
-      i = i + 1
+    local user_order = {};
+    for i = 1, #tbl do
+      table.insert(user_order, tbl.absolute_path)
     end
+
+    return user_oder
   end
 
 *nvim-tree.hijack_unnamed_buffer_when_opening*
