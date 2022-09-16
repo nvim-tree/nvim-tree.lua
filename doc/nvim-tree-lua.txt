@@ -65,6 +65,10 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     -- examples for your init.lua
 
+    -- disable netrw at the very start of your init.lua (strongly advised)
+    vim.g.loaded = 1
+    vim.g.loaded_netrwPlugin = 1
+
     -- empty setup using defaults
     require("nvim-tree").setup()
 
@@ -371,6 +375,12 @@ Here is a list of the options available in the setup call:
 Completely disable netrw
   Type: `boolean`, Default: `false`
 
+It is strongly advised to eagerly disable netrw, due to race conditions at vim
+startup.
+Set the following at the very beginning of your `init.lua` / `init.vim`: >
+    vim.g.loaded = 1
+    vim.g.loaded_netrwPlugin = 1
+<
 *nvim-tree.hijack_netrw*
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`

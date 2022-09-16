@@ -5,7 +5,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before reporting: search [existing issues](https://github.com/kyazdani42/nvim-tree.lua/issues) and make sure that nvim-tree is updated to the latest version. If you are experiencing performance issues, please [enable profiling](https://github.com/kyazdani42/nvim-tree.lua#performance-issues) and attach the logs.
+        Is this a question?
+        * Please start a new [Q&A discussion](https://github.com/kyazdani42/nvim-tree.lua/discussions/new) instead of raising a bug.
+
+        Before reporting:
+        * search [existing issues](https://github.com/kyazdani42/nvim-tree.lua/issues)
+        * ensure that nvim-tree is updated to the latest version
+
+        If you are experiencing performance issues, please [enable profiling](https://github.com/kyazdani42/nvim-tree.lua#performance-issues) and attach the logs.
   - type: textarea
     attributes:
       label: "Description"
