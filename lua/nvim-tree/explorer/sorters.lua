@@ -98,7 +98,7 @@ function M.merge_sort(t, comparator)
         if b_index == -1 or a_index == nil then
           b_index = 9999999999
         end
-        return a_index < b_index
+        return a_index <= b_index
       end
 
       split_merge(t, 1, #t, mini_comparator) -- sort by user order
