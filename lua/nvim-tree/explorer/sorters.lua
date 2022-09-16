@@ -81,16 +81,35 @@ function M.merge_sort(t, comparator)
 
     local user_order = M.sort_by(t_user)
 
-    for i = 1, #user_order, 1 do
-      for j = 1, #t, 1 do
-        if t[j].absolute_path == user_order[i] then
-          local tmp = t[i]
-          t[i] = t[j]
-          t[j] = tmp
-          break
+    if type(user_order) == "table" then
+      -- do merge sort for prevent memory exceed
+      local mini_comparator = function(a, b)
+        local a_index = vim.tbl_indexof(user_order, a.absolute_path)
+        local b_index = vim.tbl_indexof(user_order, b.absolute_path)
+        if a_index == -1 then
+          a_index = 9999999999
         end
+        if b_index == -1 then
+          b_index = 9999999999
+        end
+        return a_index < b_index
       end
-    end -- reorder the list according to the user order
+
+      split_merge(t, 1, #t, mini_comparator) -- sort by user order
+
+      -- for _, n in ipairs(user_order) do
+      --   for i = 1, #user_order, 1 do
+      --     for j = 1, #t, 1 do
+      --       if t[j] and t[j].absolute_path == user_order[i] then
+      --         local tmp = t[i]
+      --         t[i] = t[j]
+      --         t[j] = tmp
+      --         break
+      --       end
+      --     end
+      --   end -- reorder the list according to the user order
+      -- end
+    end
   else
     if not comparator then
       comparator = function(left, right)

@@ -430,6 +430,17 @@ Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
 function.
   Type: `string` | `function(nodes)`, Default: `"name"`
 
+* Note that function(table) return Type `Table{ absolute_path }`
+
+For example, to use pre-defined sorting method is done like this:
+>
+  sort_by = "case_sensitive"
+
+For example, to use simple user-defined sort_by function is done like this:
+
+>
+  sort_by = function(tbl)
+
   Function is passed a table of nodes, each node containing:
   - `absolute_path`: `string`
   - `executable`:    `boolean`
@@ -451,7 +462,111 @@ function.
       end
       return order
     end
-<
+
+    return user_oder
+  end
+
+Furthermore, You can try more complex example for `rust` sort_by function is done like this:
+
+>
+  sort_by = function(tbl)
+    local function tbl_slice(t, first, last)
+      local slice = {}
+      for i = first, last or #t, 1 do
+        table.insert(slice, t[i])
+      end
+      return slice
+    end
+
+    local function merge(t, first, mid, last, comparator)
+      local n1 = mid - first + 1
+      local n2 = last - mid
+      local ls = tbl_slice(t, first, mid)
+      local rs = tbl_slice(t, mid + 1, last)
+      local i = 1
+      local j = 1
+      local k = first
+      while i <= n1 and j <= n2 do
+        if comparator(ls[i], rs[j]) then
+          t[k] = ls[i]
+          i = i + 1
+        else
+          t[k] = rs[j]
+          j = j + 1
+        end
+        k = k + 1
+      end
+      while i <= n1 do
+        t[k] = ls[i]
+        i = i + 1
+        k = k + 1
+      end
+      while j <= n2 do
+        t[k] = rs[j]
+        j = j + 1
+        k = k + 1
+      end
+    end
+
+    local function split_merge(t, first, last, comparator)
+      if (last - first) < 1 then
+        return
+      end
+
+      local mid = math.floor((first + last) / 2)
+
+      split_merge(t, first, mid, comparator)
+      split_merge(t, mid + 1, last, comparator)
+      merge(t, first, mid, last, comparator)
+    end
+
+    local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
+      if not (a and b) then
+        return true
+      end
+      if a.nodes and not b.nodes then
+        return true
+      elseif not a.nodes and b.nodes then
+        return false
+      end
+
+      if ignorecase then
+        return a.name:lower() <= b.name:lower()
+      else
+        return a.name <= b.name
+      end
+    end
+
+
+    local comparartor = function(a, b) node_comparator_name_ignorecase_or_not(a, b, true) end
+    split_merge(tbl, 1, #tbl, comparartor)
+
+    local i = 1
+    while i <= #tbl do
+      if tbl[i] and tbl[i].nodes then
+        local j = i + 1
+        while j <= #tbl do
+          if tbl[j] and not tbl[j].nodes and tbl[i].name:lower() == tbl[j].name:lower():match "(.+)%..+$" then
+            local change_target = tbl[j]
+            table.remove(tbl, j)
+            table.insert(tbl, i, change_target)
+            break
+          end
+          j = j + 1
+        end
+      end
+      i = i + 1
+    end
+
+    local user_order = {}
+    for j = 1, #tbl do
+      table.insert(user_order, tbl[j].absolute_path)
+    end
+    return user_order
+  end,
+
+
+
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`
