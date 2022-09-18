@@ -82,31 +82,28 @@ function M.merge_sort(t, comparator)
       table.insert(origin_index, n)
     end
 
-    local user_order = M.sort_by(t_user)
+    M.sort_by(t_user)
 
-    if type(user_order) == "table" then
-      -- do merge sort for prevent memory exceed
-
-      local user_index = {}
-      for k, v in pairs(user_order) do
-        if type(v) == "string" and user_index[v] == nil then
-          user_index[v] = k
-        end
+    -- do merge sort for prevent memory exceed
+    local user_index = {}
+    for i, v in ipairs(t_user) do
+      if type(v.absolute_path) == "string" and user_index[v.absolute_path] == nil then
+        user_index[v.absolute_path] = i
       end
-
-      -- if missing value found, then using origin_index
-      local mini_comparator = function(a, b)
-        local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
-        local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
-
-        if type(a_index) == "number" and type(b_index) == "number" then
-          return a_index <= b_index
-        end
-        return (a_index or 0) <= (b_index or 0)
-      end
-
-      split_merge(t, 1, #t, mini_comparator) -- sort by user order
     end
+
+    -- if missing value found, then using origin_index
+    local mini_comparator = function(a, b)
+      local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
+      local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
+
+      if type(a_index) == "number" and type(b_index) == "number" then
+        return a_index <= b_index
+      end
+      return (a_index or 0) <= (b_index or 0)
+    end
+
+    split_merge(t, 1, #t, mini_comparator) -- sort by user order
   else
     if not comparator then
       comparator = function(left, right)

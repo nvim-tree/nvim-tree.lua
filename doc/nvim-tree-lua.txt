@@ -429,7 +429,7 @@ Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
 function.
   Type: `string` | `function(nodes)`, Default: `"name"`
 
-  Function is passed a table of nodes, each node containing:
+  Function is passed a table of nodes to be sorted, each node containing:
   - `absolute_path`: `string`
   - `executable`:    `boolean`
   - `extension`:     `string`
@@ -437,18 +437,11 @@ function.
   - `name`:          `string`
   - `type`:          `"directory"` | `"file"` | `"link"`
 
-  Function will return a table of `absolute_path`
-
   Example: sort by name length: >
     local sort_by = function(nodes)
       table.sort(nodes, function(a, b)
         return #a.name < #b.name
       end)
-      local order = {}
-      for _, n in ipairs(nodes) do
-        table.insert(order, n.absolute_path)
-      end
-      return order
     end
 <
 *nvim-tree.hijack_unnamed_buffer_when_opening*
