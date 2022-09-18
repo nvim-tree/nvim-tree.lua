@@ -191,7 +191,6 @@ Subsequent calls to setup will replace the previous configuration.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
-        -- @deprecated
         mappings = {
           custom_only = false,
           list = {
@@ -426,9 +425,25 @@ if the tree was previously open.
 
 *nvim-tree.sort_by*
 Changes how files within the same directory are sorted.
-Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension'.
-  Type: `string`, Default: `"name"`
+Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
+function.
+  Type: `string` | `function(nodes)`, Default: `"name"`
 
+  Function is passed a table of nodes to be sorted, each node containing:
+  - `absolute_path`: `string`
+  - `executable`:    `boolean`
+  - `extension`:     `string`
+  - `link_to`:       `string`
+  - `name`:          `string`
+  - `type`:          `"directory"` | `"file"` | `"link"`
+
+  Example: sort by name length: >
+    local sort_by = function(nodes)
+      table.sort(nodes, function(a, b)
+        return #a.name < #b.name
+      end)
+    end
+<
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`

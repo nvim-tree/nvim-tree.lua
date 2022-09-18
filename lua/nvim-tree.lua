@@ -640,6 +640,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   height = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
+  sort_by = { ["function"] = true, string = true },
 }
 
 local function validate_options(conf)
