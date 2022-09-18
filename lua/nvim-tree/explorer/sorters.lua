@@ -192,7 +192,7 @@ end
 
 function M.setup(opts)
   M.sort_by = opts.sort_by
-  if M.sort_by and type(M.sort_by) ~= "function" then
+  if M.sort_by and type(M.sort_by) == "function" then
     M.node_comparator = M.sort_by
   elseif M.sort_by == "modification_time" then
     M.node_comparator = M.node_comparator_modification_time
