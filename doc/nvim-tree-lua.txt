@@ -429,17 +429,6 @@ Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
 function.
   Type: `string` | `function(nodes)`, Default: `"name"`
 
-* Note that function(table) return Type `Table{ absolute_path }`
-
-For example, to use pre-defined sorting method is done like this:
->
-  sort_by = "case_sensitive"
-
-For example, to use simple user-defined sort_by function is done like this:
-
->
-  sort_by = function(tbl)
-
   Function is passed a table of nodes, each node containing:
   - `absolute_path`: `string`
   - `executable`:    `boolean`
@@ -461,61 +450,7 @@ For example, to use simple user-defined sort_by function is done like this:
       end
       return order
     end
-
-    return user_oder
-  end
-
-Furthermore, You can try more complex example for sort_by function is done like this:
-
->
-  sort_by = function(tbl)
-    table.sort(tbl, function(a, b)
-      if not (a and b) then
-        return true
-      end
-      if a.type == "directory" and b.type ~= "directory" then
-        return true
-      elseif a.type ~= "directory" and b.type == "directory" then
-        return false
-      end
-
-      if a.type == "link" and b.type ~= "link" then
-        return true
-      elseif a.type ~= "link" and b.type == "link" then
-        return false
-      end
-
-      return a.name:lower() <= b.name:lower()
-      -- return a.name <= b.name
-    end) -- NOTE: organize directory, link, file in name order
-
-    -- sort by name, is directory?
-    local i = 1
-    while i <= #tbl do
-      if tbl[i] and tbl[i].type == "directory" then
-        local j = i + 1
-        while j <= #tbl do
-          if tbl[j] and tbl[j].type ~= "directory" and tbl[i].name:lower() == tbl[j].name:lower():match "(.+)%..+$" then
-            local change_target = tbl[j]
-            table.remove(tbl, j)
-            table.insert(tbl, i, change_target)
-            break
-          end
-          j = j + 1
-        end
-      end
-      i = i + 1
-    end
-
-    local user_order = {}
-    for j = 1, #tbl do
-      if tbl[j] then
-        table.insert(user_order, tbl[j].absolute_path)
-      end
-    end
-    return user_order
-  end
-
+<
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`
