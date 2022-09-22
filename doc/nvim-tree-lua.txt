@@ -185,7 +185,6 @@ Subsequent calls to setup will replace the previous configuration.
         adaptive_size = false,
         centralize_selection = false,
         width = 30,
-        height = 30,
         hide_root_folder = false,
         side = "left",
         preserve_window_proportions = false,
@@ -632,7 +631,6 @@ Window / buffer setup.
 
     *nvim-tree.view.adaptive_size*
     Resize the window on each draw based on the longest line.
-    Only works when |nvim-tree.view.side| is `left` or `right`.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.centralize_selection*
@@ -647,18 +645,10 @@ Window / buffer setup.
     *nvim-tree.view.width*
     Width of the window, can be a `%` string, a number representing columns or
     a function.
-    Only works with `side` is `left` or `right`.
-      Type: `string | number | function`, Default: `30`
-
-    *nvim-tree.view.height*
-    Height of the window, can be `%` string or a number representing rows or a
-    function.
-    Only works with  `side` is `top` or `bottom`
       Type: `string | number | function`, Default: `30`
 
     *nvim-tree.view.side*
-    Side of the tree, can be `"left"`, `"right"`, `"bottom"`, `"top"`.
-    Note that bottom/top are not working correctly yet.
+    Side of the tree, can be `"left"`, `"right"`.
       Type: `string`, Default: `"left"`
 
     *nvim-tree.view.preserve_window_proportions*

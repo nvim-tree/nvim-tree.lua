@@ -7,20 +7,6 @@ local view = require "nvim-tree.view"
 
 local M = {}
 
-local function get_split_side()
-  local side = view.View.side
-  if side == "right" then
-    return "aboveleft"
-  end
-  if side == "left" then
-    return "belowright"
-  end
-  if side == "top" then
-    return "bot"
-  end
-  return "top"
-end
-
 local function get_user_input_char()
   local c = vim.fn.getchar()
   while type(c) ~= "number" do
@@ -193,12 +179,11 @@ local function open_in_new_window(filename, mode, win_ids)
     return
   end
   local do_split = mode == "split" or mode == "vsplit"
-  local split_side = get_split_side()
+  local split_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
   -- Target is invalid or window does not exist in current tabpage: create new window
   if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
-    local split_cmd = view.is_vertical() and "vsplit" or "split"
-    vim.cmd(split_side .. " " .. split_cmd)
+    vim.cmd(split_side .. " vsplit")
     target_winid = api.nvim_get_current_win()
     lib.target_winid = target_winid
 

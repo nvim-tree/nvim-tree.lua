@@ -445,7 +445,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     adaptive_size = false,
     centralize_selection = false,
     width = 30,
-    height = 30,
     hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
@@ -638,7 +637,6 @@ local FIELD_SKIP_VALIDATE = {
 
 local FIELD_OVERRIDE_TYPECHECK = {
   width = { string = true, ["function"] = true, number = true },
-  height = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },

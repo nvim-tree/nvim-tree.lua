@@ -101,8 +101,7 @@ local function create_buffer(bufnr)
 end
 
 local function get_size()
-  local width_or_height = M.is_vertical() and "width" or "height"
-  local size = M.View[width_or_height]
+  local size = M.View.width
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
@@ -116,8 +115,6 @@ end
 local move_tbl = {
   left = "H",
   right = "L",
-  bottom = "J",
-  top = "K",
 }
 
 -- setup_tabpage sets up the initial state of a tab
@@ -239,8 +236,7 @@ local function grow()
 end
 
 function M.grow_from_content()
-  local is_left_or_right = M.View.side == "left" or M.View.side == "right"
-  if M.View.adaptive_size and is_left_or_right then
+  if M.View.adaptive_size then
     grow()
   end
 end
@@ -276,11 +272,7 @@ function M.resize(size)
   end
 
   local new_size = get_size()
-  if M.is_vertical() then
-    a.nvim_win_set_width(M.get_winnr(), new_size)
-  else
-    a.nvim_win_set_height(M.get_winnr(), new_size)
-  end
+  a.nvim_win_set_width(M.get_winnr(), new_size)
 
   events._dispatch_on_tree_resize(new_size)
 
@@ -351,10 +343,6 @@ function M.focus(winnr, open_if_closed)
   end
 
   a.nvim_set_current_win(wnr)
-end
-
-function M.is_vertical()
-  return M.View.side == "left" or M.View.side == "right"
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.
@@ -442,7 +430,7 @@ function M.setup(opts)
   local options = opts.view or {}
   M.View.adaptive_size = options.adaptive_size
   M.View.centralize_selection = options.centralize_selection
-  M.View.side = options.side
+  M.View.side = (options.side == "right") and "right" or "left"
   M.View.width = options.width
   M.View.height = options.height
   M.View.initial_width = get_size()
