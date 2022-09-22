@@ -122,11 +122,15 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     (if you opened a file with something else than the NvimTree, like `fzf` or
     `:split`)
 
+    Invoke with a bang `:NvimTreeFindFile!` to update the root.
+
 |:NvimTreeFindFileToggle|
 
     close the tree or change the cursor in the tree for the current bufname,
     similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
     optional path argument.
+
+    Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
 
 |:NvimTreeClipboard|
 

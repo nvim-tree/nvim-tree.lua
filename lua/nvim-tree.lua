@@ -71,14 +71,14 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
-function M.toggle(find_file, no_focus, cwd)
+function M.toggle(find_file, no_focus, cwd, bang)
   if view.is_visible() then
     view.close()
   else
     local previous_buf = api.nvim_get_current_buf()
     M.open(cwd)
     if _config.update_focused_file.enable or find_file then
-      M.find_file(false, previous_buf)
+      M.find_file(false, previous_buf, bang)
     end
     if no_focus then
       vim.cmd "noautocmd wincmd p"
@@ -310,8 +310,8 @@ local function setup_vim_commands()
     M.find_file(true, nil, res.bang)
   end, { bang = true, bar = true })
   api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
-    M.toggle(true, false, res.args)
-  end, { nargs = "?", complete = "dir" })
+    M.toggle(true, false, res.args, res.bang)
+  end, { bang = true, nargs = "?", complete = "dir" })
   api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
   end, { nargs = 1, bar = true })
