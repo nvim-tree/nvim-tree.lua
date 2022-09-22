@@ -1,4 +1,5 @@
 local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
@@ -114,7 +115,8 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local foldername = name .. self.trailing_slash
   if node.link_to and self.symlink_destination then
     local arrow = icons.i.symlink_arrow
-    foldername = foldername .. arrow .. node.link_to
+    local link_to = utils.path_relative(node.link_to, core.get_cwd())
+    foldername = foldername .. arrow .. link_to
   end
 
   local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
@@ -160,7 +162,8 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   local arrow = icons.i.symlink_arrow
   local symlink_formatted = node.name
   if self.symlink_destination then
-    symlink_formatted = symlink_formatted .. arrow .. node.link_to
+    local link_to = utils.path_relative(node.link_to, core.get_cwd())
+    symlink_formatted = symlink_formatted .. arrow .. link_to
   end
 
   local link_highlight = git_highlight or "NvimTreeSymlink"
@@ -258,9 +261,9 @@ function Builder:_build_line(node, idx, num_children)
   self.index = self.index + 1
 
   if node.open then
-    self.depth = self.depth + 2
+    self.depth = self.depth + 1
     self:build(node)
-    self.depth = self.depth - 2
+    self.depth = self.depth - 1
   end
 end
 

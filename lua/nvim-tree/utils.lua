@@ -10,6 +10,7 @@ local M = {
 }
 
 M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
+M.is_wsl = vim.fn.has "wsl" == 1
 
 function M.path_to_matching_str(path)
   return path:gsub("(%-)", "(%%-)"):gsub("(%.)", "(%%.)"):gsub("(%_)", "(%%_)")
@@ -171,8 +172,11 @@ end
 ---@return boolean
 function M.is_windows_exe(ext)
   if not M.pathexts then
-    local PATHEXT = vim.env.PATHEXT or ""
-    local wexe = vim.split(PATHEXT:gsub("%.", ""), ";")
+    if not vim.env.PATHEXT then
+      return false
+    end
+
+    local wexe = vim.split(vim.env.PATHEXT:gsub("%.", ""), ";")
     M.pathexts = {}
     for _, v in pairs(wexe) do
       M.pathexts[v] = true
@@ -180,6 +184,44 @@ function M.is_windows_exe(ext)
   end
 
   return M.pathexts[ext:upper()]
+end
+
+--- Check whether path maps to Windows filesystem mounted by WSL
+-- @param path string
+-- @return boolean
+function M.is_wsl_windows_fs_path(path)
+  -- Run 'wslpath' command to try translating WSL path to Windows path.
+  -- Consume stderr output as well because 'wslpath' can produce permission
+  -- errors on some files (e.g. temporary files in root of system drive).
+  local handle = io.popen('wslpath -w "' .. path .. '" 2>/dev/null')
+  if handle then
+    local output = handle:read "*a"
+    handle:close()
+
+    return string.find(output, "^\\\\wsl$\\") == nil
+  end
+
+  return false
+end
+
+--- Check whether extension is Windows executable under WSL
+-- @param ext string
+-- @return boolean
+function M.is_wsl_windows_fs_exe(ext)
+  if not vim.env.PATHEXT then
+    -- Extract executable extensions from within WSL.
+    -- Redirect stderr to null to silence warnings when
+    -- Windows command is executed from Linux filesystem:
+    -- > CMD.EXE was started with the above path as the current directory.
+    -- > UNC paths are not supported. Defaulting to Windows directory.
+    local handle = io.popen 'cmd.exe /c "echo %PATHEXT%" 2>/dev/null'
+    if handle then
+      vim.env.PATHEXT = handle:read "*a"
+      handle:close()
+    end
+  end
+
+  return M.is_windows_exe(ext)
 end
 
 function M.rename_loaded_buffers(old_path, new_path)
@@ -406,6 +448,12 @@ function M.array_remove(array, item)
       break
     end
   end
+end
+
+function M.array_remove_nils(array)
+  return vim.tbl_filter(function(v)
+    return v ~= nil
+  end, array)
 end
 
 function M.inject_node(f)

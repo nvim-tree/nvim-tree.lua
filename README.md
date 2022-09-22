@@ -57,6 +57,10 @@ Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https:
 ```lua
 -- examples for your init.lua
 
+-- disable netrw at the very start of your init.lua (strongly advised)
+vim.g.loaded = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- empty setup using defaults
 require("nvim-tree").setup()
 
@@ -121,9 +125,13 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 
 ## Troubleshooting
 
-### Diagnostic Logging
+## Diagnostic Logging
 
 You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See [:help nvim-tree.log](doc/nvim-tree-lua.txt)
+
+## netrw Keeps Popping Up
+
+Eagerly disable netrw. See [:help nvim-tree.disable_netrw](doc/nvim-tree-lua.txt)
 
 ## Performance Issues
 

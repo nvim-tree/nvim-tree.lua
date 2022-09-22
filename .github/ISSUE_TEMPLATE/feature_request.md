@@ -6,6 +6,8 @@ labels: feature request
 assignees: ''
 
 ---
+**Is this a question?**
+Please start a new [Q&A discussion](https://github.com/kyazdani42/nvim-tree.lua/discussions/new) instead of raising a feature request.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]

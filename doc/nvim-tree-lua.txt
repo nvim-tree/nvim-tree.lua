@@ -65,6 +65,10 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     -- examples for your init.lua
 
+    -- disable netrw at the very start of your init.lua (strongly advised)
+    vim.g.loaded = 1
+    vim.g.loaded_netrwPlugin = 1
+
     -- empty setup using defaults
     require("nvim-tree").setup()
 
@@ -187,7 +191,6 @@ Subsequent calls to setup will replace the previous configuration.
         number = false,
         relativenumber = false,
         signcolumn = "yes",
-        -- @deprecated
         mappings = {
           custom_only = false,
           list = {
@@ -213,6 +216,7 @@ Subsequent calls to setup will replace the previous configuration.
         full_name = false,
         highlight_opened_files = "none",
         root_folder_modifier = ":~",
+        indent_width = 2,
         indent_markers = {
           enable = false,
           inline_arrows = true,
@@ -220,6 +224,7 @@ Subsequent calls to setup will replace the previous configuration.
             corner = "└",
             edge = "│",
             item = "│",
+            bottom = "─",
             none = " ",
           },
         },
@@ -369,6 +374,12 @@ Here is a list of the options available in the setup call:
 Completely disable netrw
   Type: `boolean`, Default: `false`
 
+It is strongly advised to eagerly disable netrw, due to race conditions at vim
+startup.
+Set the following at the very beginning of your `init.lua` / `init.vim`: >
+    vim.g.loaded = 1
+    vim.g.loaded_netrwPlugin = 1
+<
 *nvim-tree.hijack_netrw*
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
@@ -414,9 +425,25 @@ if the tree was previously open.
 
 *nvim-tree.sort_by*
 Changes how files within the same directory are sorted.
-Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension'.
-  Type: `string`, Default: `"name"`
+Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
+function.
+  Type: `string` | `function(nodes)`, Default: `"name"`
 
+  Function is passed a table of nodes to be sorted, each node containing:
+  - `absolute_path`: `string`
+  - `executable`:    `boolean`
+  - `extension`:     `string`
+  - `link_to`:       `string`
+  - `name`:          `string`
+  - `type`:          `"directory"` | `"file"` | `"link"`
+
+  Example: sort by name length: >
+    local sort_by = function(nodes)
+      table.sort(nodes, function(a, b)
+        return #a.name < #b.name
+      end)
+    end
+<
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`
@@ -669,7 +696,7 @@ Window / buffer setup.
 
         *nvim-tree.view.float.open_win_config*
         Floating window config. See |nvim_open_win| for more details.
-          Type: `table`, Default:
+          Type: `table` or `function` that returns a table, Default:
             `{`
               `relative = "editor",`
               `border = "rounded",`
@@ -709,6 +736,10 @@ UI rendering setup
     available options.
       Type: `string`, Default: `":~"`
 
+    *nvim-tree.renderer.indent_width*
+    Number of spaces for an each tree nesting level. Minimum 1.
+      Type: `number`, Default: `2`
+
     *nvim-tree.renderer.indent_markers*
     Configuration options for tree indent markers.
 
@@ -722,8 +753,8 @@ UI rendering setup
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.indent_markers.icons*
-        Icons shown before the file/directory.
-          Type: `table`, Default: `{ corner = "└", edge = "│", item = "│", none = " ", }`
+        Icons shown before the file/directory. Length 1.
+          Type: `table`, Default: `{ corner = "└", edge = "│", item = "│", bottom = "─", none = " ", }`
 
     *nvim-tree.renderer.icons*
     Configuration options for icons.
