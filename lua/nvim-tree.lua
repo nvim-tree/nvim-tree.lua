@@ -244,7 +244,10 @@ function M.on_enter(netrw_disabled)
   local should_focus_other_window = false
   local should_find = false
   if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
-    if buf_is_dir or buf_is_empty then
+    if buf_is_empty then
+      should_open = true
+      should_focus_other_window = _config.focus_empty_on_setup
+    elseif buf_is_dir then
       should_open = true
     elseif is_file and _config.open_on_setup_file then
       should_open = true
@@ -431,6 +434,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_setup = false,
   open_on_setup_file = false,
   open_on_tab = false,
+  focus_empty_on_setup = false,
   ignore_buf_on_tab_change = {},
   sort_by = "name",
   root_dirs = {},
@@ -704,6 +708,7 @@ function M.setup(conf)
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.open_on_setup_file = opts.open_on_setup_file
+  _config.focus_empty_on_setup = opts.focus_empty_on_setup
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.ignore_buf_on_tab_change = opts.ignore_buf_on_tab_change

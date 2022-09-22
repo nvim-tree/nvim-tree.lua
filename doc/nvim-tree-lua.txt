@@ -175,6 +175,7 @@ Subsequent calls to setup will replace the previous configuration.
       open_on_setup = false,
       open_on_setup_file = false,
       open_on_tab = false,
+      focus_empty_on_setup = false,
       ignore_buf_on_tab_change = {},
       sort_by = "name",
       root_dirs = {},
@@ -391,6 +392,7 @@ Hijack netrw windows (overridden if |disable_netrw| is `true`)
 *nvim-tree.open_on_setup*
 Will automatically open the tree when running setup if startup buffer is
 a directory, is empty or is unnamed. nvim-tree window will be focused.
+See |nvim-tree.focus_empty_on_setup|
   Type: `boolean`, Default: `false`
 
 *nvim-tree.open_on_setup_file*
@@ -425,6 +427,11 @@ path to be inside the closed folder, otherwise the parent folder.
 *nvim-tree.open_on_tab*
 Opens the tree automatically when switching tabpage or opening a new tabpage
 if the tree was previously open.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.focus_empty_on_setup*
+When the tree opens as a result of |nvim-tree.open_on_setup| or
+|nvim-tree.open_on_tab| and the buffer is empty, focus the buffer.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.sort_by*
