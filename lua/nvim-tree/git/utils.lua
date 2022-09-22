@@ -4,12 +4,13 @@ local log = require "nvim-tree.log"
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
 function M.get_toplevel(cwd)
-  local cmd = "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel"
 
   local ps = log.profile_start("git toplevel %s", cwd)
-  log.line("git", cmd)
 
-  local toplevel = vim.fn.system { "git", "-C", vim.fn.shellescape(cwd), "rev-parse", "--show-toplevel" }
+  local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel" }
+  log.line("git", "%s", vim.inspect(cmd))
+
+  local toplevel = vim.fn.system(cmd)
 
   log.raw("git", toplevel)
   log.profile_end(ps, "git toplevel %s", cwd)
@@ -41,10 +42,10 @@ function M.should_show_untracked(cwd)
     return untracked[cwd]
   end
 
-  local cmd = "git -C " .. cwd .. " config status.showUntrackedFiles"
-
   local ps = log.profile_start("git untracked %s", cwd)
-  log.line("git", cmd)
+
+  local cmd = { "git", "-C", cwd, "config", "status.showUntrackedFiles" }
+  log.line("git", vim.inspect(cmd))
 
   local has_untracked = vim.fn.system(cmd)
 
