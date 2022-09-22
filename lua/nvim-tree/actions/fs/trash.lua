@@ -1,5 +1,7 @@
 local a = vim.api
 
+local lib = require "nvim-tree.lib"
+
 local M = {
   config = {
     is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1,
@@ -93,9 +95,11 @@ function M.fn(node)
   end
 
   if M.config.trash.require_confirm then
-    vim.ui.input({ prompt = "Trash " .. node.name .. " ? y/n: " }, function(choice)
+    local prompt_select = "Trash " .. node.name .. " ?"
+    local prompt_input = prompt_select .. " y/n: "
+    lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
       utils.clear_prompt()
-      if choice == "y" then
+      if item_short == "y" then
         do_trash()
       end
     end)

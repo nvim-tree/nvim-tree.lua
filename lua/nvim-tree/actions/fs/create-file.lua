@@ -19,9 +19,11 @@ end
 
 local function create_file(file)
   if utils.file_exists(file) then
-    vim.ui.input({ prompt = file .. " already exists. Overwrite? y/n: " }, function(choice)
+    local prompt_select = "Overwrite " .. file .. " ?"
+    local prompt_input = prompt_select .. " y/n: "
+    lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
       utils.clear_prompt()
-      if choice == "y" then
+      if item_short == "y" then
         create_and_notify(file)
       end
     end)

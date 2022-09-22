@@ -178,8 +178,9 @@ Subsequent calls to setup will replace the previous configuration.
       sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
-      on_attach = "disable", -- function(bufnr). If nil, will use the deprecated mapping strategy
-      remove_keymaps = false, -- boolean (disable totally or not) or list of key (lhs)
+      on_attach = "disable",
+      remove_keymaps = false,
+      select_prompts = false,
       view = {
         adaptive_size = false,
         centralize_selection = false,
@@ -620,6 +621,11 @@ This can be used to remove the default mappings in the tree.
 - Remove all default mappings by passing `true`
 - Ignore by passing `false`
     Type: `bool` or `{string}`, Default: `false`
+
+*nvim-tree.select_prompts*
+Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator
+such as dressing.nvim or telescope-ui-select.nvim
+Type: `boolean`, Default: `false`
 
 *nvim-tree.view*
 Window / buffer setup.

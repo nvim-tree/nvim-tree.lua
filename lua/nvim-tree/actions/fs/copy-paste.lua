@@ -94,12 +94,14 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 
   if dest_stats then
-    vim.ui.input({ prompt = dest .. " already exists. Overwrite? y/n/r(ename): " }, function(choice)
+    local prompt_select = "Overwrite " .. dest .. " ?"
+    local prompt_input = prompt_select .. " y/n/r(ename): "
+    lib.prompt(prompt_input, prompt_select, { "y", "n", "r" }, { "Yes", "No", "Rename" }, function(item_short)
       utils.clear_prompt()
-      if choice == "y" then
+      if item_short == "y" then
         on_process()
-      elseif choice == "r" then
-        vim.ui.input({ prompt = "New name: ", default = dest, completion = "dir" }, function(new_dest)
+      elseif item_short == "r" then
+        vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
           utils.clear_prompt()
           if new_dest then
             do_single_paste(source, new_dest, action_type, action_fn)

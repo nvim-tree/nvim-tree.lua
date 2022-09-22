@@ -92,6 +92,27 @@ local function should_hijack_current_buf()
   return should_hijack_dir or should_hijack_unnamed
 end
 
+function M.prompt(prompt_input, prompt_select, items_short, items_long, callback)
+  local function format_item(short)
+    for i, s in ipairs(items_short) do
+      if short == s then
+        return items_long[i]
+      end
+    end
+    return ""
+  end
+
+  if M.select_prompts then
+    vim.ui.select(items_short, { prompt = prompt_select, format_item = format_item }, function(item_short)
+      callback(item_short)
+    end)
+  else
+    vim.ui.input({ prompt = prompt_input }, function(item_short)
+      callback(item_short)
+    end)
+  end
+end
+
 function M.open(cwd)
   M.set_target_win()
   if not core.get_explorer() or cwd then
@@ -124,6 +145,7 @@ function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
   M.hijack_directories = opts.hijack_directories
   M.respect_buf_cwd = opts.respect_buf_cwd
+  M.select_prompts = opts.select_prompts
 end
 
 return M

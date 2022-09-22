@@ -4,6 +4,7 @@ local luv = vim.loop
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local view = require "nvim-tree.view"
+local lib = require "nvim-tree.lib"
 
 local M = {}
 
@@ -74,10 +75,11 @@ function M.fn(node)
   if node.name == ".." then
     return
   end
-
-  vim.ui.input({ prompt = "Remove " .. node.name .. " ? y/n: " }, function(choice)
+  local prompt_select = "Remove " .. node.name .. " ?"
+  local prompt_input = prompt_select .. " y/n: "
+  lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
     utils.clear_prompt()
-    if choice == "y" then
+    if item_short == "y" then
       if node.nodes ~= nil and not node.link_to then
         local success = remove_dir(node.absolute_path)
         if not success then
