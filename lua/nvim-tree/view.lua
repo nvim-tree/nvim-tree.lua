@@ -297,7 +297,6 @@ function M.open_in_current_win(opts)
   create_buffer(opts.hijack_current_buf and a.nvim_get_current_buf())
   setup_tabpage(a.nvim_get_current_tabpage())
   set_current_win()
-  set_window_options_and_buffer()
   if opts.resize then
     M.reposition_window()
     M.resize()
