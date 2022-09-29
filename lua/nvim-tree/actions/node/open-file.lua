@@ -183,7 +183,7 @@ local function open_in_new_window(filename, mode, win_ids)
   local split_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
   -- Target is invalid or window does not exist in current tabpage: create new window
-  if not target_winid or not vim.tbl_contains(win_ids, target_winid) then
+  if not vim.tbl_contains(win_ids, target_winid) then
     vim.cmd(split_side .. " vsplit")
     target_winid = api.nvim_get_current_win()
     lib.target_winid = target_winid
