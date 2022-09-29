@@ -4,7 +4,6 @@ local log = require "nvim-tree.log"
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
 function M.get_toplevel(cwd)
-
   local ps = log.profile_start("git toplevel %s", cwd)
 
   local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel" }
