@@ -168,9 +168,10 @@ end
 -- This is only to avoid the BufEnter for nvim-tree to trigger
 -- which would cause find-file to run on an invalid file.
 local function set_current_win_no_autocmd(winid)
-  vim.cmd "set ei=BufEnter"
+  local eventignore = vim.opt.eventignore:get()
+  vim.opt.eventignore:append "BufEnter"
   api.nvim_set_current_win(winid)
-  vim.cmd 'set ei=""'
+  vim.opt.eventignore = eventignore
 end
 
 local function open_in_new_window(filename, mode, win_ids)
