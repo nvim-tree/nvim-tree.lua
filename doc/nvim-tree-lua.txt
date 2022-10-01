@@ -1351,6 +1351,7 @@ There are also links to normal bindings to style the tree itself.
 NvimTreeNormal
 NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
+NvimTreeCursorLineNr    (CursorLineNr)
 NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
 NvimTreeWinSeparator    (VertSplit)
 NvimTreeCursorColumn    (CursorColumn)
