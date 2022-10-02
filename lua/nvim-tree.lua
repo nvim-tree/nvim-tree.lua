@@ -344,6 +344,16 @@ local function setup_autocommands(opts)
 
   local has_watchers = opts.filesystem_watchers.enable
 
+  if opts.auto_close_when_last then
+    create_nvim_tree_autocmd("BufEnter", {
+      callback = function ()
+        if #vim.api.nvim_list_wins() == 1 and vim.api.nvim_buf_get_name(0):match("NvimTree_") ~= nil then
+          vim.cmd "quit"
+        end
+      end
+    })
+  end
+
   if opts.auto_reload_on_write and not has_watchers then
     create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
@@ -424,6 +434,7 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+  auto_close_when_last = false,
   auto_reload_on_write = true,
   create_in_closed_folder = false,
   disable_netrw = false,
