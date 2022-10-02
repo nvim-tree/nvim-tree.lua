@@ -237,32 +237,26 @@ function M.on_enter(netrw_disabled)
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
 
   local buf_is_dir = is_dir and netrw_disabled
-  local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
 
   local should_open = false
   local should_focus_other_window = false
   local should_find = false
   if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
-    if buf_is_empty then
+    if not buf_has_content and _config.open_on_setup then
       should_open = true
       should_focus_other_window = _config.focus_empty_on_setup
-    elseif buf_is_dir then
+    elseif buf_is_dir and _config.open_on_setup then
       should_open = true
     elseif is_file and _config.open_on_setup_file then
       should_open = true
       should_focus_other_window = true
       should_find = _config.update_focused_file.enable
-    elseif _config.ignore_buffer_on_setup then
+    elseif _config.ignore_buffer_on_setup and _config.open_on_setup then
       should_open = true
       should_focus_other_window = true
     end
   end
-
-  local should_hijack = _config.hijack_directories.enable
-    and _config.hijack_directories.auto_open
-    and is_dir
-    and not should_be_preserved
 
   -- Session that left a NvimTree Buffer opened, reopen with it
   local existing_tree_wins = find_existing_windows()
@@ -270,7 +264,7 @@ function M.on_enter(netrw_disabled)
     api.nvim_set_current_win(existing_tree_wins[1])
   end
 
-  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+  if should_open or existing_tree_wins[1] ~= nil then
     lib.open(cwd)
 
     if should_focus_other_window then
