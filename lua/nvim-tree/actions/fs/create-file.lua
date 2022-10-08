@@ -4,6 +4,7 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
+local watch = require "nvim-tree.explorer.watch"
 
 local M = {}
 
@@ -107,11 +108,11 @@ function M.fn(node)
     events._dispatch_folder_created(new_file_path)
     if M.enable_reload then
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+    else
+      -- synchronous call required so that we may focus the file now
+      watch.refresh_path(node.absolute_path)
     end
-    -- INFO: defer needed when reload is automatic (watchers)
-    vim.defer_fn(function()
-      utils.focus_file(utils.path_remove_trailing(new_file_path))
-    end, 150)
+    utils.focus_file(utils.path_remove_trailing(new_file_path))
   end)
 end
 

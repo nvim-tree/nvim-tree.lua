@@ -39,7 +39,7 @@ local function is_folder_ignored(path)
   return false
 end
 
-local function refresh_path(path)
+function M.refresh_path(path)
   log.line("watcher", "node event executing '%s'", path)
   local n = utils.get_node_from_path(path)
   if not n then
@@ -65,7 +65,7 @@ function M.create_watcher(absolute_path)
   local function callback(watcher)
     log.line("watcher", "node event scheduled %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
-      refresh_path(watcher._path)
+      M.refresh_path(watcher._path)
     end)
   end
 
