@@ -1,3 +1,5 @@
+# AMC Testing pull request repo rights.
+
 # A File Explorer For Neovim Written In Lua
 
 [![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
