@@ -1,6 +1,6 @@
 # A File Explorer For Neovim Written In Lua
 
-[![CI](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/kyazdani42/nvim-tree.lua/actions/workflows/ci.yml)
+[![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
 <img align="left" width="143" height="443" src=".github/example.tree.png?raw=true">
 <img align="left" width="174" height="583" src=".github/example.help.png?raw=true">
@@ -28,24 +28,24 @@
 
 [neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
 
-[nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/).
+[nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/).
 
 ## Install
 
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
 
 ```vim
-Plug 'kyazdani42/nvim-web-devicons' " optional, for file icons
-Plug 'kyazdani42/nvim-tree.lua'
+Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+Plug 'nvim-tree/nvim-tree.lua'
 ```
 
 or with [packer](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
-  'kyazdani42/nvim-tree.lua',
+  'nvim-tree/nvim-tree.lua',
   requires = {
-    'kyazdani42/nvim-web-devicons', -- optional, for file icons
+    'nvim-tree/nvim-web-devicons', -- optional, for file icons
   },
   tag = 'nightly' -- optional, updated every week. (see issue #1193)
 }
@@ -120,7 +120,7 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 * `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
 * You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
 * If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
-* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/kyazdani42/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/kyazdani42/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
+* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/nvim-tree/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/nvim-tree/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
 * Hide the `.git` folder: `filters = { custom = { "^.git$" } }`. See [:help nvim-tree.filters.custom](doc/nvim-tree-lua.txt).
 * To disable the display of icons see [:help nvim-tree.renderer.icons.show](doc/nvim-tree-lua.txt).
 
@@ -153,7 +153,7 @@ Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
 *Performance Tips:*
 
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/kyazdani42/nvim-tree.lua/issues/549#issuecomment-1127394585).
+* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/nvim-tree/nvim-tree.lua/issues/549#issuecomment-1127394585).
 
 * Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
 
