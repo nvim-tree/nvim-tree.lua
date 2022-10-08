@@ -25,7 +25,7 @@ local overlay_bufnr = nil
 local overlay_winnr = nil
 
 local function remove_overlay()
-  if view.View.float.enable then
+  if view.View.float.enable and view.View.float.quit_on_focus_loss then
     -- return to normal nvim-tree float behaviour when filter window is closed
     a.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",

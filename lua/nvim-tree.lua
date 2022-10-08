@@ -412,7 +412,7 @@ local function setup_autocommands(opts)
     })
   end
 
-  if opts.view.float.enable then
+  if opts.view.float.enable and opts.view.float.quit_on_focus_loss then
     create_nvim_tree_autocmd("WinLeave", { pattern = "NvimTree_*", callback = view.close })
   end
 end
@@ -457,6 +457,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     float = {
       enable = false,
+      quit_on_focus_loss = true,
       open_win_config = {
         relative = "editor",
         border = "rounded",

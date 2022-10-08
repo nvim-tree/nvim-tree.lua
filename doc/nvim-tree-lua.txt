@@ -702,8 +702,12 @@ Window / buffer setup.
     Configuration options for floating window
 
         *nvim-tree.view.float.enable*
-        Display nvim-tree window as float (enforces |nvim-tree.actions.open_file.quit_on_open| if set).
+        Display nvim-tree window as float (enforces if set).
           Type: `boolean`, Default: `false`
+
+        *nvim-tree.view.float.quit_on_focus_loss
+        When in floating mode, autoclose the popup when the popup loses the focus.
+          Type: `boolean`, Default: `true`
 
         *nvim-tree.view.float.open_win_config*
         Floating window config. See |nvim_open_win| for more details.
