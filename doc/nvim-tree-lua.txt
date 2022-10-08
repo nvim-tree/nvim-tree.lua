@@ -390,29 +390,33 @@ Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
 
 *nvim-tree.open_on_setup*
-Will automatically open the tree when running setup if startup buffer is
-a directory, is empty or is unnamed. nvim-tree window will be focused.
+Will automatically open the tree when running setup if startup buffer is a
+directory, empty or unnamed.
+nvim-tree window will be focused.
 See |nvim-tree.focus_empty_on_setup|
   Type: `boolean`, Default: `false`
 
 *nvim-tree.open_on_setup_file*
-Will automatically open the tree when running setup if startup buffer is a file.
+Will automatically open the tree when running setup if startup buffer is a
+file.
 File window will be focused.
-File will be found if update_focused_file is enabled.
+File will be found if |nvim-tree.update_focused_file| is enabled.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_buffer_on_setup*
-Will ignore the buffer, when deciding to open the tree on setup.
+Always open the tree when |nvim-tree.open_on_setup| is enabled, regardless of
+the startup buffer.
+Buffer window will be focused.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_ft_on_setup*
-List of filetypes that will prevent `open_on_setup` to open.
+List of filetypes that will prevent |nvim-tree.open_on_setup_file|.
 You can use this option if you don't want the tree to open
 in some scenarios (eg using vim startify).
   Type: {string}, Default: `{}`
 
 *nvim-tree.ignore_buf_on_tab_change*
-List of filetypes or buffer names that will prevent `open_on_tab` to open.
+List of filetypes or buffer names that will prevent |nvim-tree.open_on_tab|.
   Type: {string}, Default: `{}`
 
 *nvim-tree.auto_reload_on_write*
