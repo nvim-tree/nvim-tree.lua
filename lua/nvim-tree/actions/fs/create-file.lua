@@ -110,7 +110,10 @@ function M.fn(node)
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     else
       -- synchronous call required so that we may focus the file now
-      watch.refresh_path(node.absolute_path)
+      node = node.nodes ~= nil and node or node.parent
+      if node then
+        watch.refresh_path(node.absolute_path)
+      end
     end
     utils.focus_file(utils.path_remove_trailing(new_file_path))
   end)

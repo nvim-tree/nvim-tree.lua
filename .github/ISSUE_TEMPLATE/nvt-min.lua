@@ -6,8 +6,8 @@ local function load_plugins()
   require("packer").startup {
     {
       "wbthomason/packer.nvim",
-      "kyazdani42/nvim-tree.lua",
-      "kyazdani42/nvim-web-devicons",
+      "nvim-tree/nvim-tree.lua",
+      "nvim-tree/nvim-web-devicons",
       -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
     },
     config = {

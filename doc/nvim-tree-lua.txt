@@ -31,7 +31,7 @@ Features
 
 File Icons
 
-    https://github.com/kyazdani42/nvim-web-devicons is optional and used to display file icons. It requires a patched font: https://www.nerdfonts.com
+    https://github.com/nvim-tree/nvim-web-devicons is optional and used to display file icons. It requires a patched font: https://www.nerdfonts.com
 
      should look like an open folder.
 
