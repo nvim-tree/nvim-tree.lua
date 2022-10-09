@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
-<img align="left" width="143" height="443" src=".github/example.tree.png?raw=true">
-<img align="left" width="174" height="583" src=".github/example.help.png?raw=true">
+<img align="left" width="149" height="484" src=".github/example.tree.png?raw=true">
+<img align="left" width="149" height="484" src=".github/example.help.png?raw=true">
 
    Automatic updates
 
