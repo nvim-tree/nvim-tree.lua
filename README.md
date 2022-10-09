@@ -181,7 +181,25 @@ Let us know you're interested by commenting on issues and raising PRs.
 
 ## Screenshots
 
+### kyazdani42
+
 ![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
+
+### alex-courtis
+
+[nvim-tree.lua](https://github.com/alex-courtis/arch/blob/b5f24e0e7b6554b338e40b3d60f1be437f273023/config/nvim/lua/amc/nvim-tree.lua)
+
+<img src=".github/screenshot-alex-courtis.png?raw=true" alt="alex-courtis tree" width="139" height="513">
+
+### akin909
+
 ![alt text](.github/screenshot2.png?raw=true "akin909 tree")
+
+### stsewd
+
 ![alt text](.github/screenshot3.png?raw=true "stsewd tree")
+
+### reyhankaplan
+
 ![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
+
