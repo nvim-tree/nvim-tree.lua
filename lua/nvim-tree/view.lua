@@ -3,6 +3,7 @@ local a = vim.api
 local M = {}
 
 local events = require "nvim-tree.events"
+local utils = require "nvim-tree.utils"
 
 local function get_win_sep_hl()
   -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
@@ -76,7 +77,7 @@ end
 
 local function wipe_rogue_buffer()
   for _, bufnr in ipairs(a.nvim_list_bufs()) do
-    if not matches_bufnr(bufnr) and a.nvim_buf_get_name(bufnr):match "NvimTree" ~= nil then
+    if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
       pcall(a.nvim_buf_delete, bufnr, { force = true })
     end
   end

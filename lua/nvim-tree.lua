@@ -135,8 +135,7 @@ end
 
 local function find_existing_windows()
   return vim.tbl_filter(function(win)
-    local buf = api.nvim_win_get_buf(win)
-    return api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
+    return utils.is_nvim_tree_buf(api.nvim_win_get_buf(win))
   end, api.nvim_list_wins())
 end
 

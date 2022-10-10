@@ -204,6 +204,7 @@ Subsequent calls to setup will replace the previous configuration.
         },
         float = {
           enable = false,
+          quit_on_focus_loss = true,
           open_win_config = {
             relative = "editor",
             border = "rounded",
