@@ -335,6 +335,16 @@ local function setup_autocommands(opts)
   -- reset highlights when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
 
+  -- prevent new opened file from opening in the same window as nvim-tree
+  create_nvim_tree_autocmd("BufWipeout", {
+    pattern = "NvimTree_*",
+    callback = function()
+      if vim.bo.filetype == "NvimTree" then
+        view._prevent_buffer_override()
+      end
+    end,
+  })
+
   local has_watchers = opts.filesystem_watchers.enable
 
   if opts.auto_reload_on_write and not has_watchers then
@@ -367,12 +377,6 @@ local function setup_autocommands(opts)
         M.find_file(false)
       end,
     })
-  end
-
-  if not opts.actions.open_file.quit_on_open then
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
-  else
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
   end
 
   if opts.hijack_directories.enable then
