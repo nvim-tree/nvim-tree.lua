@@ -462,4 +462,15 @@ function M.inject_node(f)
   end
 end
 
+---Is the buffer a tree?
+---@param bufnr number
+---@return boolean
+function M.is_nvim_tree_buf(bufnr)
+  if vim.fn.bufexists(bufnr) then
+    local bufname = a.nvim_buf_get_name(bufnr)
+    return vim.fn.fnamemodify(bufname, ":t"):match "^NvimTree_[0-9]+$" and vim.fn.filereadable(bufname) == 0
+  end
+  return false
+end
+
 return M
