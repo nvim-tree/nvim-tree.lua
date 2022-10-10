@@ -30,7 +30,11 @@ local function remove_overlay()
     a.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",
       group = a.nvim_create_augroup("NvimTree", { clear = false }),
-      callback = view.close,
+      callback = function()
+        if a.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          view.close()
+        end
+      end,
     })
   end
 

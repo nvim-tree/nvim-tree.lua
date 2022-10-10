@@ -352,7 +352,14 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_change) })
   end
   if opts.hijack_cursor then
-    create_nvim_tree_autocmd("CursorMoved", { pattern = "NvimTree_*", callback = M.place_cursor_on_node })
+    create_nvim_tree_autocmd("CursorMoved", {
+      pattern = "NvimTree_*",
+      callback = function()
+        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          M.place_cursor_on_node()
+        end
+      end,
+    })
   end
   if opts.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
@@ -370,8 +377,16 @@ local function setup_autocommands(opts)
   end
 
   if not opts.actions.open_file.quit_on_open then
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view._prevent_buffer_override })
+    create_nvim_tree_autocmd("BufWipeout", {
+      pattern = "NvimTree_*",
+      callback = function()
+        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          view._prevent_buffer_override()
+        end
+      end,
+    })
   else
+    -- TODO merge #1637
     create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
   end
 
@@ -380,17 +395,27 @@ local function setup_autocommands(opts)
   end
 
   if opts.reload_on_bufenter and not has_watchers then
-    create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
+    create_nvim_tree_autocmd("BufEnter", {
+      pattern = "NvimTree_*",
+      callback = function()
+        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          reloaders.reload_explorer()
+        end
+      end,
+    })
   end
 
   if opts.view.centralize_selection then
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
-        vim.schedule(function()
-          local keys = api.nvim_replace_termcodes("zz", true, false, true)
-          api.nvim_feedkeys(keys, "n", true)
-        end)
+        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          vim.schedule(function()
+            -- TODO merge #1632
+            local keys = api.nvim_replace_termcodes("zz", true, false, true)
+            api.nvim_feedkeys(keys, "n", true)
+          end)
+        end
       end,
     })
   end
@@ -412,7 +437,14 @@ local function setup_autocommands(opts)
   end
 
   if opts.view.float.enable and opts.view.float.quit_on_focus_loss then
-    create_nvim_tree_autocmd("WinLeave", { pattern = "NvimTree_*", callback = view.close })
+    create_nvim_tree_autocmd("WinLeave", {
+      pattern = "NvimTree_*",
+      callback = function()
+        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+          view.close()
+        end
+      end,
+    })
   end
 end
 

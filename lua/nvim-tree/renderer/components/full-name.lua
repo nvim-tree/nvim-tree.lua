@@ -67,7 +67,9 @@ M.setup = function(opts)
     group = group,
     pattern = { "NvimTree_*" },
     callback = function()
-      hide(M.popup_win)
+      if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+        hide(M.popup_win)
+      end
     end,
   })
 
@@ -75,7 +77,9 @@ M.setup = function(opts)
     group = group,
     pattern = { "NvimTree_*" },
     callback = function()
-      show()
+      if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+        show()
+      end
     end,
   })
 end
