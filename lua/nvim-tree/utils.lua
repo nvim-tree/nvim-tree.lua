@@ -462,7 +462,7 @@ function M.inject_node(f)
   end
 end
 
----Is the buffer a tree?
+---Is the buffer a tree? Like /path/to/NvimTree_2 and not a readable file.
 ---@param bufnr number
 ---@return boolean
 function M.is_nvim_tree_buf(bufnr)
