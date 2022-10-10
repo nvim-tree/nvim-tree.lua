@@ -278,7 +278,7 @@ Subsequent calls to setup will replace the previous configuration.
       },
       update_focused_file = {
         enable = false,
-        update_root = false,
+        update_cwd = false,
         ignore_list = {},
       },
       ignore_ft_on_setup = {},
