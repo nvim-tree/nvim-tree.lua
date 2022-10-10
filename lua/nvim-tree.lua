@@ -133,6 +133,13 @@ function M.tab_change()
   end
 end
 
+local function find_existing_windows()
+  return vim.tbl_filter(function(win)
+    local buf = api.nvim_win_get_buf(win)
+    return api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
+  end, api.nvim_list_wins())
+end
+
 local function is_file_readable(fname)
   local stat = luv.fs_stat(fname)
   return stat and stat.type == "file" and luv.fs_access(fname, "R")
@@ -251,7 +258,13 @@ function M.on_enter(netrw_disabled)
     end
   end
 
-  if should_open then
+  -- Session that left a NvimTree Buffer opened, reopen with it
+  local existing_tree_wins = find_existing_windows()
+  if existing_tree_wins[1] then
+    api.nvim_set_current_win(existing_tree_wins[1])
+  end
+
+  if should_open or existing_tree_wins[1] ~= nil then
     lib.open(cwd)
 
     if should_focus_other_window then
