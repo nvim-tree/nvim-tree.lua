@@ -430,7 +430,6 @@ function M._prevent_buffer_override()
     else
       require("nvim-tree.actions.node.open-file").fn("edit", bufname)
     end
-
   end)
 end
 
