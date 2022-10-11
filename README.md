@@ -203,3 +203,8 @@ Let us know you're interested by commenting on issues and raising PRs.
 
 ![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
 
+### almo7aya
+> nvim-tree on floating mode
+
+![alt text](.github/screenshot-almo7aya.png?raw=true "almo7aya tree")
+
