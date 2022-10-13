@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
-<img align="left" width="149" height="484" src=".github/example.tree.png?raw=true">
-<img align="left" width="149" height="484" src=".github/example.help.png?raw=true">
+<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207026-f3434ba1-dc86-4c48-8ab3-b2efc3b85227.png">
+<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207023-7b709e35-7f10-416b-aafb-5bb61268c7d3.png">
 
    Automatic updates
 
@@ -183,23 +183,28 @@ Let us know you're interested by commenting on issues and raising PRs.
 
 ### kyazdani42
 
-![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
+![alt text](https://user-images.githubusercontent.com/17254073/195207043-e1829a8b-7e73-4f7a-97b2-f65dc31387ce.png "kyazdani42 tree")
 
 ### alex-courtis
 
 [nvim-tree.lua](https://github.com/alex-courtis/arch/blob/b5f24e0e7b6554b338e40b3d60f1be437f273023/config/nvim/lua/amc/nvim-tree.lua)
 
-<img src=".github/screenshot-alex-courtis.png?raw=true" alt="alex-courtis tree" width="139" height="513">
+<img src="https://user-images.githubusercontent.com/17254073/195207031-f06d1430-4778-4ab5-89e3-7e53a8bb73d2.png" alt="alex-courtis tree" width="139" height="513">
 
 ### akin909
 
-![alt text](.github/screenshot2.png?raw=true "akin909 tree")
+![alt text](https://user-images.githubusercontent.com/17254073/195207056-46163330-a5b0-40ec-ab4a-16a9589076f9.png "akin909 tree")
 
 ### stsewd
 
-![alt text](.github/screenshot3.png?raw=true "stsewd tree")
+![alt text](https://user-images.githubusercontent.com/17254073/195207071-b3bc5933-8b82-413b-8a27-02eab19ce01c.png "stsewd tree")
 
 ### reyhankaplan
 
-![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
+![alt text](https://user-images.githubusercontent.com/17254073/195207077-6bc4eddc-11b2-4d9d-9bdb-ea72f8307360.png "reyhankaplan tree")
+
+### almo7aya
+> nvim-tree on floating mode
+
+![alt text](https://user-images.githubusercontent.com/17254073/195207307-2dfdad07-0284-4380-b5b8-f2df36c16cec.png "almo7aya tree")
 
