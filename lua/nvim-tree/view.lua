@@ -335,8 +335,10 @@ end
 
 function M.focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
-
-  if a.nvim_win_get_tabpage(wnr or 0) ~= a.nvim_win_get_tabpage(0) then
+  if not a.nvim_win_is_valid(wnr) then
+    M.open()
+    wnr = M.get_winnr()
+  elseif a.nvim_win_get_tabpage(wnr or 0) ~= a.nvim_win_get_tabpage(0) then
     M.close()
     M.open()
     wnr = M.get_winnr()
