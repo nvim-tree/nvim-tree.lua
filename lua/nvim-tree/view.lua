@@ -347,6 +347,7 @@ function M.focus(winnr, open_if_closed)
   end
 
   a.nvim_set_current_win(wnr)
+  require("nvim-tree.renderer").draw()
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.
