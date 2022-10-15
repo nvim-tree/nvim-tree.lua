@@ -295,6 +295,7 @@ local function unnecessary(opts)
   if opts.filesystem_watchers then
     opts.filesystem_watchers.enable = nil
   end
+  opts.auto_reload_on_write = nil
 end
 
 local function removed(opts)

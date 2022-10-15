@@ -165,7 +165,6 @@ nvim-tree will be initialised with default configuration.
 Subsequent calls to setup will replace the previous configuration.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
-      auto_reload_on_write = true,
       create_in_closed_folder = false,
       disable_netrw = false,
       hijack_cursor = false,
@@ -418,10 +417,6 @@ in some scenarios (eg using vim startify).
 *nvim-tree.ignore_buf_on_tab_change*
 List of filetypes or buffer names that will prevent |nvim-tree.open_on_tab|.
   Type: {string}, Default: `{}`
-
-*nvim-tree.auto_reload_on_write*
-Reloads the explorer every time a buffer is written to.
-  Type: `boolean`, Default: `true`
 
 *nvim-tree.create_in_closed_folder*
 Creating a file when the cursor is on a closed folder will set the
