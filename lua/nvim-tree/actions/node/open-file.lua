@@ -212,7 +212,7 @@ local function open_in_new_window(filename, mode, win_ids)
 
   if mode == "preview" then
     -- ignore "WinLeave" autocmd on preview
-    -- because the requested "WinLeave"
+    -- because the registered "WinLeave"
     -- will kill the floating window immediately
     set_current_win_no_autocmd(api.nvim_get_current_win(), "WinLeave")
   end
