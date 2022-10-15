@@ -335,6 +335,16 @@ local function setup_autocommands(opts)
   -- reset highlights when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
 
+  -- prevent new opened file from opening in the same window as nvim-tree
+  create_nvim_tree_autocmd("BufWipeout", {
+    pattern = "NvimTree_*",
+    callback = function()
+      if vim.bo.filetype == "NvimTree" then
+        view._prevent_buffer_override()
+      end
+    end,
+  })
+
   local has_watchers = opts.filesystem_watchers.enable
 
   if opts.auto_reload_on_write and not has_watchers then
@@ -376,19 +386,7 @@ local function setup_autocommands(opts)
     })
   end
 
-  if not opts.actions.open_file.quit_on_open then
-    create_nvim_tree_autocmd("BufWipeout", {
-      pattern = "NvimTree_*",
-      callback = function()
-        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
-          view._prevent_buffer_override()
-        end
-      end,
-    })
-  else
-    -- TODO merge #1637
-    create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
-  end
+  create_nvim_tree_autocmd("BufWipeout", { pattern = "NvimTree_*", callback = view.abandon_current_window })
 
   if opts.hijack_directories.enable then
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
@@ -409,13 +407,12 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
-        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
-          vim.schedule(function()
-            -- TODO merge #1632
-            local keys = api.nvim_replace_termcodes("zz", true, false, true)
-            api.nvim_feedkeys(keys, "n", true)
+        local bufnr = api.nvim_get_current_buf()
+        vim.schedule(function()
+          api.nvim_buf_call(bufnr, function()
+            vim.cmd [[norm! zz]]
           end)
-        end
+        end)
       end,
     })
   end

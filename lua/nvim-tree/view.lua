@@ -399,8 +399,10 @@ function M._prevent_buffer_override()
   -- Otherwise the curwin/curbuf would match the view buffer and the view window.
   vim.schedule(function()
     local curwin = a.nvim_get_current_win()
+    local curwinconfig = a.nvim_win_get_config(curwin)
     local curbuf = a.nvim_win_get_buf(curwin)
     local bufname = a.nvim_buf_get_name(curbuf)
+
     if not bufname:match "NvimTree" then
       for i, tabpage in ipairs(M.View.tabpages) do
         if tabpage.winnr == view_winnr then
@@ -420,7 +422,14 @@ function M._prevent_buffer_override()
     M.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
     pcall(a.nvim_win_close, curwin, { force = true })
-    require("nvim-tree.actions.node.open-file").fn("edit", bufname)
+
+    -- to handle opening a file using :e when nvim-tree is on floating mode
+    -- falling back to the current window instead of creating a new one
+    if curwinconfig.relative ~= "" then
+      require("nvim-tree.actions.node.open-file").fn("edit_in_place", bufname)
+    else
+      require("nvim-tree.actions.node.open-file").fn("edit", bufname)
+    end
   end)
 end
 

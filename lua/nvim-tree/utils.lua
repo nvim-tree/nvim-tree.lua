@@ -117,6 +117,12 @@ end
 -- (grouped or hidden too)
 function M.get_node_from_path(path)
   local explorer = require("nvim-tree.core").get_explorer()
+
+  -- tree may not yet be loaded
+  if not explorer then
+    return
+  end
+
   if explorer.absolute_path == path then
     return explorer
   end

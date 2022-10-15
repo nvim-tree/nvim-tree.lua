@@ -179,32 +179,34 @@ local function open_in_new_window(filename, mode, win_ids)
   if not target_winid then
     return
   end
-  local do_split = mode == "split" or mode == "vsplit"
-  local split_side = (view.View.side == "right") and "aboveleft" or "belowright"
+
+  local create_new_window = #api.nvim_list_wins() == 1
+  local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
   -- Target is invalid or window does not exist in current tabpage: create new window
   if not vim.tbl_contains(win_ids, target_winid) then
-    vim.cmd(split_side .. " vsplit")
+    vim.cmd(new_window_side .. " vsplit")
     target_winid = api.nvim_get_current_win()
     lib.target_winid = target_winid
 
     -- No need to split, as we created a new window.
-    do_split = false
+    create_new_window = false
   elseif not vim.o.hidden then
     -- If `hidden` is not enabled, check if buffer in target window is
     -- modified, and create new split if it is.
     local target_bufid = api.nvim_win_get_buf(target_winid)
     if api.nvim_buf_get_option(target_bufid, "modified") then
-      do_split = true
+      mode = "vsplit"
     end
   end
 
   local fname = vim.fn.fnameescape(filename)
 
   local cmd
-  if do_split or #api.nvim_list_wins() == 1 then
-    local split_cmd = (mode ~= "split") and "vsplit" or "split"
-    cmd = string.format("%s %s %s", split_side, split_cmd, fname)
+  if create_new_window then
+    cmd = string.format("%s vsplit %s", new_window_side, fname)
+  elseif mode:match "split$" then
+    cmd = string.format("%s %s", mode, fname)
   else
     cmd = string.format("edit %s", fname)
   end

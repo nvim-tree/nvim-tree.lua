@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
-<img align="left" width="143" height="443" src=".github/example.tree.png?raw=true">
-<img align="left" width="174" height="583" src=".github/example.help.png?raw=true">
+<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207026-f3434ba1-dc86-4c48-8ab3-b2efc3b85227.png">
+<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207023-7b709e35-7f10-416b-aafb-5bb61268c7d3.png">
 
    Automatic updates
 
@@ -59,7 +59,7 @@ Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https:
 -- examples for your init.lua
 
 -- disable netrw at the very start of your init.lua (strongly advised)
-vim.g.loaded = 1
+vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- empty setup using defaults
@@ -181,7 +181,7 @@ Let us know you're interested by commenting on issues and raising PRs.
 
 ## Screenshots
 
-![alt text](.github/screenshot.png?raw=true "kyazdani42 tree")
-![alt text](.github/screenshot2.png?raw=true "akin909 tree")
-![alt text](.github/screenshot3.png?raw=true "stsewd tree")
-![alt text](.github/screenshot4.png?raw=true "reyhankaplan tree")
+See [Showcases](https://github.com/nvim-tree/nvim-tree.lua/wiki/Showcases) wiki page for examples of user's configurations with sources.
+
+Please add your own!
+
