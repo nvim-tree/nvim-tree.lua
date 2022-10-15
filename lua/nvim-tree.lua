@@ -345,19 +345,6 @@ local function setup_autocommands(opts)
     end,
   })
 
-  local has_watchers = opts.filesystem_watchers.enable
-
-  if opts.auto_reload_on_write and not has_watchers then
-    create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
-  end
-
-  if not has_watchers and opts.git.enable then
-    create_nvim_tree_autocmd("User", {
-      pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
-      callback = reloaders.reload_git,
-    })
-  end
-
   if opts.open_on_tab then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_change) })
   end
@@ -381,10 +368,6 @@ local function setup_autocommands(opts)
 
   if opts.hijack_directories.enable then
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
-  end
-
-  if opts.reload_on_bufenter and not has_watchers then
-    create_nvim_tree_autocmd("BufEnter", { pattern = "NvimTree_*", callback = reloaders.reload_explorer })
   end
 
   if opts.view.centralize_selection then
@@ -562,7 +545,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     exclude = {},
   },
   filesystem_watchers = {
-    enable = true,
     debounce_delay = 50,
   },
   git = {

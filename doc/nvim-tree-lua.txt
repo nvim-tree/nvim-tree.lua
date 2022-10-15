@@ -304,7 +304,6 @@ Subsequent calls to setup will replace the previous configuration.
         exclude = {},
       },
       filesystem_watchers = {
-        enable = true,
         debounce_delay = 50,
       },
       git = {
@@ -594,16 +593,7 @@ Git integration with icons and colors.
   process returned the data.
 
 *nvim-tree.filesystem_watchers*
-Will use file system watcher (libuv fs_event) to watch the filesystem for
-changes.
-Using this will disable BufEnter / BufWritePost events in nvim-tree which
-were used to update the whole tree. With this feature, the tree will be
-updated only for the appropriate folder change, resulting in better
-performance.
-
-    *nvim-tree.filesystem_watchers.enable*
-    Enable / disable the feature.
-      Type: `boolean`, Default: `true`
+Configuration options for the libuv fs_event file system watchers.
 
     *nvim-tree.filesystem_watchers.debounce_delay*
     Idle milliseconds between filesystem change and action.

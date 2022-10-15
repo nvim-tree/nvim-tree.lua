@@ -44,15 +44,8 @@ function M.fn(with_sub)
       end
 
       M.rename(node, new_file_path)
-      if M.enable_reload then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-      end
     end)
   end
-end
-
-function M.setup(opts)
-  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

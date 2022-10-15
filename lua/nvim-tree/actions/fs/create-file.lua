@@ -106,22 +106,19 @@ function M.fn(node)
       utils.notify.info(new_file_path .. " was properly created")
     end
     events._dispatch_folder_created(new_file_path)
-    if M.enable_reload then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-    else
-      -- synchronous call required so that we may focus the file now
-      node = node.nodes ~= nil and node or node.parent
-      if node then
-        watch.refresh_path(node.absolute_path)
-      end
+
+    -- synchronous call required so that we may focus the file now
+    node = node.nodes ~= nil and node or node.parent
+    if node then
+      watch.refresh_path(node.absolute_path)
     end
+
     utils.focus_file(utils.path_remove_trailing(new_file_path))
   end)
 end
 
 function M.setup(opts)
   M.create_in_closed_folder = opts.create_in_closed_folder
-  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

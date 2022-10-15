@@ -168,9 +168,6 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  if M.enable_reload then
-    return require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-  end
 end
 
 local function do_cut(source, destination)
@@ -247,7 +244,6 @@ end
 
 function M.setup(opts)
   M.use_system_clipboard = opts.actions.use_system_clipboard
-  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

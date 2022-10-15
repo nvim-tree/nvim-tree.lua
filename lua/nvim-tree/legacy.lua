@@ -290,6 +290,13 @@ local function refactored(opts)
   utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd")
 end
 
+local function unnecessary(opts)
+  -- 2022/10/15 file system watchers always used
+  if opts.filesystem_watchers then
+    opts.filesystem_watchers.enable = nil
+  end
+end
+
 local function removed(opts)
   if opts.auto_close then
     utils.notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
@@ -312,6 +319,9 @@ function M.migrate_legacy_options(opts)
 
   -- silently move
   refactored(opts)
+
+  -- silently clean unnecessary options that are now default behaviour
+  unnecessary(opts)
 
   -- warn and delete
   removed(opts)

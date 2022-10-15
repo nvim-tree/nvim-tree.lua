@@ -55,9 +55,6 @@ function M.refresh_path(path)
 end
 
 function M.create_watcher(absolute_path)
-  if not M.enabled then
-    return nil
-  end
   if is_git(absolute_path) or is_folder_ignored(absolute_path) then
     return nil
   end
@@ -76,7 +73,6 @@ function M.create_watcher(absolute_path)
 end
 
 function M.setup(opts)
-  M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
   M.uid = 0
 end

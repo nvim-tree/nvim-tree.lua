@@ -27,15 +27,7 @@ function M.bulk_move()
       local to = utils.path_join { location, head }
       FsRename.rename(node, to)
     end
-
-    if M.enable_reload then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-    end
   end)
-end
-
-function M.setup(opts)
-  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M

@@ -75,9 +75,6 @@ function M.fn(node)
           return
         end
         events._dispatch_folder_removed(node.absolute_path)
-        if M.enable_reload then
-          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-        end
       end)
     else
       trash_path(function(_, rc)
@@ -87,9 +84,6 @@ function M.fn(node)
         end
         events._dispatch_file_removed(node.absolute_path)
         clear_buffer(node.absolute_path)
-        if M.enable_reload then
-          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-        end
       end)
     end
   end
@@ -110,7 +104,6 @@ end
 
 function M.setup(opts)
   M.config.trash = opts.trash or {}
-  M.enable_reload = not opts.filesystem_watchers.enable
 end
 
 return M
