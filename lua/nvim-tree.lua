@@ -339,7 +339,7 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufWipeout", {
     pattern = "NvimTree_*",
     callback = function()
-      if vim.bo.filetype == "NvimTree" then
+      if utils.is_nvim_tree_buf(0) then
         view._prevent_buffer_override()
       end
     end,
@@ -365,7 +365,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("CursorMoved", {
       pattern = "NvimTree_*",
       callback = function()
-        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+        if utils.is_nvim_tree_buf(0) then
           M.place_cursor_on_node()
         end
       end,
@@ -394,7 +394,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
-        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+        if utils.is_nvim_tree_buf(0) then
           reloaders.reload_explorer()
         end
       end,
@@ -435,7 +435,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("WinLeave", {
       pattern = "NvimTree_*",
       callback = function()
-        if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+        if utils.is_nvim_tree_buf(0) then
           view.close()
         end
       end,

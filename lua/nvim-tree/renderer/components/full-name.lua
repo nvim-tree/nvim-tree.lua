@@ -2,6 +2,7 @@ local M = {}
 
 local api = vim.api
 local fn = vim.fn
+local utils = require "nvim-tree.utils"
 
 local function hide(win)
   if win then
@@ -67,7 +68,7 @@ M.setup = function(opts)
     group = group,
     pattern = { "NvimTree_*" },
     callback = function()
-      if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+      if utils.is_nvim_tree_buf(0) then
         hide(M.popup_win)
       end
     end,
@@ -77,7 +78,7 @@ M.setup = function(opts)
     group = group,
     pattern = { "NvimTree_*" },
     callback = function()
-      if api.nvim_buf_get_option(0, "filetype") == "NvimTree" then
+      if utils.is_nvim_tree_buf(0) then
         show()
       end
     end,
