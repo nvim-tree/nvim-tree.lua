@@ -347,7 +347,11 @@ function M.focus(winnr, open_if_closed)
   end
 
   a.nvim_set_current_win(wnr)
-  require("nvim-tree.renderer").draw()
+
+  -- Redraw the tree if the window has been changed
+  if wnr == M.get_bufnr then
+    require("nvim-tree.renderer").draw()
+  end
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.

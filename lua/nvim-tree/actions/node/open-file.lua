@@ -167,9 +167,10 @@ end
 
 -- This is only to avoid the BufEnter for nvim-tree to trigger
 -- which would cause find-file to run on an invalid file.
-local function set_current_win_no_autocmd(winid)
+local function set_current_win_no_autocmd(winid, autocmd)
+  autocmd = autocmd or "BufEnter"
   local eventignore = vim.opt.eventignore:get()
-  vim.opt.eventignore:append "BufEnter"
+  vim.opt.eventignore:append(autocmd)
   api.nvim_set_current_win(winid)
   vim.opt.eventignore = eventignore
 end
@@ -207,6 +208,13 @@ local function open_in_new_window(filename, mode, win_ids)
     cmd = string.format("%s %s %s", split_side, split_cmd, fname)
   else
     cmd = string.format("edit %s", fname)
+  end
+
+  if mode == "preview" then
+    -- ignore "WinLeave" autocmd on preview
+    -- because the requested "WinLeave"
+    -- will kill the floating window immediately
+    set_current_win_no_autocmd(api.nvim_get_current_win(), "WinLeave")
   end
 
   set_current_win_no_autocmd(target_winid)
