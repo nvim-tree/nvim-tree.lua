@@ -335,10 +335,8 @@ end
 
 function M.focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
-  if not a.nvim_win_is_valid(wnr) then
-    M.open()
-    wnr = M.get_winnr()
-  elseif a.nvim_win_get_tabpage(wnr or 0) ~= a.nvim_win_get_tabpage(0) then
+
+  if a.nvim_win_get_tabpage(wnr or 0) ~= a.nvim_win_get_tabpage(0) then
     M.close()
     M.open()
     wnr = M.get_winnr()
@@ -347,11 +345,6 @@ function M.focus(winnr, open_if_closed)
   end
 
   a.nvim_set_current_win(wnr)
-
-  -- Redraw the tree if the window has been changed
-  if wnr == M.get_bufnr then
-    require("nvim-tree.renderer").draw()
-  end
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.
