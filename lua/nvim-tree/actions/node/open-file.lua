@@ -209,7 +209,7 @@ local function open_in_new_window(filename, mode, win_ids)
     cmd = string.format("edit %s", fname)
   end
 
-  if mode == "preview" then
+  if mode == "preview" and view.View.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
