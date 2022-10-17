@@ -1,6 +1,7 @@
 local a = vim.api
 
 local view = require "nvim-tree.view"
+local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {
@@ -30,7 +31,11 @@ local function remove_overlay()
     a.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",
       group = a.nvim_create_augroup("NvimTree", { clear = false }),
-      callback = view.close,
+      callback = function()
+        if utils.is_nvim_tree_buf(0) then
+          view.close()
+        end
+      end,
     })
   end
 
