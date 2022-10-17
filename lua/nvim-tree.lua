@@ -257,13 +257,18 @@ function M.on_enter(netrw_disabled)
     end
   end
 
+  local should_hijack = _config.hijack_directories.enable
+    and _config.hijack_directories.auto_open
+    and is_dir
+    and not should_be_preserved
+
   -- Session that left a NvimTree Buffer opened, reopen with it
   local existing_tree_wins = find_existing_windows()
   if existing_tree_wins[1] then
     api.nvim_set_current_win(existing_tree_wins[1])
   end
 
-  if should_open or existing_tree_wins[1] ~= nil then
+  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
     lib.open(cwd)
 
     if should_focus_other_window then
