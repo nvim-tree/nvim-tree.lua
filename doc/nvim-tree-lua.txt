@@ -491,7 +491,8 @@ Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_directories*  (previously `update_to_buf_dir`)
-hijacks new directory buffers when they are opened (`:e dir`).
+hijacks new directory buffers when they are opened (`:e dir`) or if a
+directory is opened on startup e.g. `nvim .`
 
     *nvim-tree.hijack_directories.enable*
     Enable the feature.
