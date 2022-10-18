@@ -295,6 +295,11 @@ local function removed(opts)
     utils.notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
     opts.auto_close = nil
   end
+
+  if opts.focus_empty_on_setup then
+    utils.notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3S7BtqP and https://bit.ly/3yJch2T"
+  end
+  opts.focus_empty_on_setup = nil
 end
 
 function M.migrate_legacy_options(opts)

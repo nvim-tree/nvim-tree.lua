@@ -135,7 +135,8 @@ end
 
 local function find_existing_windows()
   return vim.tbl_filter(function(win)
-    return utils.is_nvim_tree_buf(api.nvim_win_get_buf(win))
+    local buf = api.nvim_win_get_buf(win)
+    return api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
   end, api.nvim_list_wins())
 end
 
@@ -236,22 +237,20 @@ function M.on_enter(netrw_disabled)
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
 
   local buf_is_dir = is_dir and netrw_disabled
+  local buf_is_empty = bufname == "" and not buf_has_content
   local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
 
   local should_open = false
   local should_focus_other_window = false
   local should_find = false
   if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
-    if not buf_has_content and _config.open_on_setup then
-      should_open = true
-      should_focus_other_window = _config.focus_empty_on_setup
-    elseif buf_is_dir and _config.open_on_setup then
+    if buf_is_dir or buf_is_empty then
       should_open = true
     elseif is_file and _config.open_on_setup_file then
       should_open = true
       should_focus_other_window = true
       should_find = _config.update_focused_file.enable
-    elseif _config.ignore_buffer_on_setup and _config.open_on_setup then
+    elseif _config.ignore_buffer_on_setup then
       should_open = true
       should_focus_other_window = true
     end
@@ -459,7 +458,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   open_on_setup = false,
   open_on_setup_file = false,
   open_on_tab = false,
-  focus_empty_on_setup = false,
   ignore_buf_on_tab_change = {},
   sort_by = "name",
   root_dirs = {},
@@ -734,7 +732,6 @@ function M.setup(conf)
   _config.update_focused_file = opts.update_focused_file
   _config.open_on_setup = opts.open_on_setup
   _config.open_on_setup_file = opts.open_on_setup_file
-  _config.focus_empty_on_setup = opts.focus_empty_on_setup
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.ignore_buf_on_tab_change = opts.ignore_buf_on_tab_change
