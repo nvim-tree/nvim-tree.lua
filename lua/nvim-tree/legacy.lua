@@ -297,7 +297,7 @@ local function removed(opts)
   end
 
   if opts.focus_empty_on_setup then
-    utils.notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3S7BtqP and https://bit.ly/3yJch2T"
+    utils.notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
   end
   opts.focus_empty_on_setup = nil
 end
