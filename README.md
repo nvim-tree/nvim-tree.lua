@@ -143,8 +143,10 @@ log = {
   enable = true,
   truncate = true,
   types = {
+    diagnostics = true,
     git = true,
     profile = true,
+    watcher = true,
   },
 },
 ```
