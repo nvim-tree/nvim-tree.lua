@@ -175,6 +175,10 @@ local function set_current_win_no_autocmd(winid, autocmd)
 end
 
 local function open_in_new_window(filename, mode, win_ids)
+  if type(mode) ~= "string" then
+    mode = ""
+  end
+
   local target_winid = get_target_winid(mode)
   if not target_winid then
     return
@@ -239,6 +243,10 @@ local function edit_in_current_buf(filename)
 end
 
 function M.fn(mode, filename)
+  if type(mode) ~= "string" then
+    mode = ""
+  end
+
   if mode == "tabnew" then
     return open_file_in_tab(filename)
   end
