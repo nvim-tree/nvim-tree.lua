@@ -1197,6 +1197,10 @@ The `list` option in `view.mappings.list` is a table of
 <
 Mouse support defined in |KeyBindings|
 
+Single left mouse mappings can be achieved via `<LeftRelease>`.
+
+Single right / middle mouse mappings will requre changes to |mousemodel| or |mouse|.
+
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
 
 `<CR>`            edit                open a file or folder; root will cd to the above directory
