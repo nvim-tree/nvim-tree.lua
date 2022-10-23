@@ -15,17 +15,14 @@ local function get_user_input_char()
   return vim.fn.nr2char(c)
 end
 
----Get user to pick a window. Selectable windows are all windows in the current
----tabpage that aren't NvimTree.
----@return integer|nil -- If a valid window was picked, return its id. If an
----       invalid window was picked / user canceled, return nil. If there are
----       no selectable windows, return -1.
-local function pick_window()
+---Get all windows in the current tabpage that aren't NvimTree.
+---@return table with valid win_ids
+local function selectable_win_ids()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)
 
-  local selectable = vim.tbl_filter(function(id)
+  return vim.tbl_filter(function(id)
     local bufid = api.nvim_win_get_buf(id)
     for option, v in pairs(M.window_picker.exclude) do
       local ok, option_value = pcall(api.nvim_buf_get_option, bufid, option)
@@ -37,6 +34,14 @@ local function pick_window()
     local win_config = api.nvim_win_get_config(id)
     return id ~= tree_winid and win_config.focusable and not win_config.external
   end, win_ids)
+end
+
+---Get user to pick a selectable window.
+---@return integer|nil -- If a valid window was picked, return its id. If an
+---       invalid window was picked / user canceled, return nil. If there are
+---       no selectable windows, return -1.
+local function pick_window()
+  local selectable = selectable_win_ids()
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
   if #selectable == 0 then
@@ -51,6 +56,9 @@ local function pick_window()
   local win_map = {}
   local laststatus = vim.o.laststatus
   vim.o.laststatus = 2
+
+  local tabpage = api.nvim_get_current_tabpage()
+  local win_ids = api.nvim_tabpage_list_wins(tabpage)
 
   local not_selectable = vim.tbl_filter(function(id)
     return not vim.tbl_contains(selectable, id)
@@ -147,10 +155,20 @@ local function on_preview(buf_loaded)
   view.focus()
 end
 
-local function get_target_winid(mode)
+local function get_target_winid(mode, win_ids)
   local target_winid
   if not M.window_picker.enable or mode == "edit_no_picker" then
     target_winid = lib.target_winid
+
+    -- find the first available window
+    if not vim.tbl_contains(win_ids, target_winid) then
+      local selectable = selectable_win_ids()
+      if #selectable > 0 then
+        target_winid = selectable[1]
+      else
+        return
+      end
+    end
   else
     local pick_window_id = pick_window()
     if pick_window_id == nil then
@@ -179,7 +197,7 @@ local function open_in_new_window(filename, mode, win_ids)
     mode = ""
   end
 
-  local target_winid = get_target_winid(mode)
+  local target_winid = get_target_winid(mode, win_ids)
   if not target_winid then
     return
   end
@@ -195,6 +213,9 @@ local function open_in_new_window(filename, mode, win_ids)
 
     -- No need to split, as we created a new window.
     create_new_window = false
+    if mode:match "split$" then
+      mode = "edit"
+    end
   elseif not vim.o.hidden then
     -- If `hidden` is not enabled, check if buffer in target window is
     -- modified, and create new split if it is.
