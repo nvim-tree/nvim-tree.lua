@@ -103,15 +103,44 @@ Basic commands:
 
 `:NvimTreeCollapse` Collapses the nvim-tree recursively.
 
-## Api
-
-nvim-tree exposes a public api; see [:help nvim-tree-api](doc/nvim-tree-lua.txt). This is a stable non breaking api.
-
 ## Mappings
 
 nvim-tree comes with number of mappings; for default mappings please see [:help nvim-tree-default-mappings](doc/nvim-tree-lua.txt), for way of configuring mappings see [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
 `g?` toggles help, showing all the mappings and their actions.
+
+## Roadmap
+
+nvim-tree is stable and new major features will not be added. The focus is on existing user experience.
+
+Users are encouraged to add their own custom features via the public [API](#api).
+
+Development is focused on:
+* Bug fixes
+* Performance
+* Quality of Life improvements
+* API / Events
+* Enhancements to existing features
+
+## API
+
+nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
+
+Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Pull requests](#contributing) are always welcome.
+
+[:help nvim-tree-api](doc/nvim-tree-lua.txt)
+
+### Events
+
+Users may subscribe to events that nvim-tree will dispatch in a variety of situations.
+
+[:help nvim-tree-events](doc/nvim-tree-lua.txt)
+
+### Actions
+
+Custom actions may be mapped which can invoke API or perform your own actions.
+
+[:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
 ## Tips & tricks
 
