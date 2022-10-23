@@ -111,8 +111,6 @@ nvim-tree comes with number of mappings; for default mappings please see [:help 
 
 ## Roadmap
 
-<!-- sync this with help -->
-
 nvim-tree is stable and new major features will not be added. The focus is on existing user experience.
 
 Users are encouraged to add their own custom features via the public [API](#api).
