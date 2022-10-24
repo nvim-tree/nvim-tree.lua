@@ -1091,7 +1091,7 @@ The api is separated in multiple modules, which can be accessed with
 `require("nvim-tree.api").moduleName.functionality`.
 
 Functions that needs a tree node parameter are exposed with an abstraction
-that injects the node from the cursor position in the tree when calling 
+that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
 
@@ -1173,14 +1173,24 @@ exists.
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*
 
-Setting your own mapping in the configuration will soon be deprecated, see |nvim-tree.on_attach| for experimental replacement.
+Setting your own mapping in the configuration will soon be deprecated, see
+|nvim-tree.on_attach| for experimental replacement.
 
-The `list` option in `view.mappings.list` is a table of
+`view.mappings.list` is a table of:
+  {key}       (string|table of string) mandatory |{lhs}|.
 
-- `key` (mandatory) string or a table of string
-- `action` (mandatory) is the name of the action, set to `""` to remove default action, set to an arbitrary description when using `action_cb`
-- `action_cb` (optional) is a custom function that will be called, it receives the node as a parameter.
-- `mode` (optional) is `n` by default
+  {action}    (string) mandatory name of the action.
+              `""` to remove an action with {key}. The case of {key} must
+              exactly match the action you are removing e.g. `'<Tab>'` to
+              remove the default preview action.
+              An arbitrary description when using `action_cb`.
+
+  {action_cb} (function) optional custom function that will be called.
+              Receives the node as a parameter.
+              Non-empty description for `action` is required.
+
+  {mode}      (string) optional mode as per |nvim_set_keymap|.
+              Default `'n'`.
 
 Examples:
 >
@@ -1194,7 +1204,7 @@ Examples:
       mappings = {
         list = {
           -- remove a default mapping for cd
-          { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
+          { key = "<2-RightMouse>", action = "" },
 
           -- add multiple normal mode mappings for edit
           { key = { "<CR>", "o" }, action = "edit", mode = "n" },
@@ -1398,7 +1408,7 @@ nvim-tree will dispatch events whenever an action is made. These events can be
 subscribed to through handler functions. This allows for even further
 customization of nvim-tree.
 
-A handler for an event is just a function which receives one argument, the 
+A handler for an event is just a function which receives one argument, the
 payload of the event. The payload is different for each event type. Refer
 to |nvim_tree_registering_handlers| for more information.
 
@@ -1424,7 +1434,7 @@ You can access the event enum with:
 <
 Here is the list of available variant of this enum:
 
-- Event.Ready 
+- Event.Ready
                 When NvimTree has been initialized
                 • Note: Handler takes no parameter.
 
