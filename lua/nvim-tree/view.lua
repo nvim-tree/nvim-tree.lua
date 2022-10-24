@@ -37,6 +37,7 @@ M.View = {
       "Normal:NvimTreeNormal",
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
+      "LineNr:NvimTreeLineNr",
       get_win_sep_hl(),
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
