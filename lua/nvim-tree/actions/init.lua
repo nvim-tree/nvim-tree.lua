@@ -291,15 +291,19 @@ local function merge_mappings(user_mappings)
   for _, map in pairs(user_mappings) do
     if type(map.key) == "table" then
       for _, key in pairs(map.key) do
-        table.insert(user_keys, key)
-        if is_empty(map.action) then
-          table.insert(removed_keys, key)
+        if type(key) == "string" then
+          table.insert(user_keys, key:lower())
+          if is_empty(map.action) then
+            table.insert(removed_keys, key:lower())
+          end
         end
       end
     else
-      table.insert(user_keys, map.key)
-      if is_empty(map.action) then
-        table.insert(removed_keys, map.key)
+      if type(map.key) == "string" then
+        table.insert(user_keys, map.key:lower())
+        if is_empty(map.action) then
+          table.insert(removed_keys, map.key:lower())
+        end
       end
     end
 
@@ -316,14 +320,19 @@ local function merge_mappings(user_mappings)
     if type(map.key) == "table" then
       local filtered_keys = {}
       for _, key in pairs(map.key) do
-        if not vim.tbl_contains(user_keys, key) and not vim.tbl_contains(removed_keys, key) then
+        if
+          type(key) == "string"
+          and not vim.tbl_contains(user_keys, key:lower())
+          and not vim.tbl_contains(removed_keys, key:lower())
+        then
           table.insert(filtered_keys, key)
         end
       end
       map.key = filtered_keys
       return not vim.tbl_isempty(map.key)
     else
-      return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
+      return type(map.key) ~= "string"
+        or not vim.tbl_contains(user_keys, map.key:lower()) and not vim.tbl_contains(removed_keys, map.key:lower())
     end
   end, M.mappings)
 
@@ -366,14 +375,17 @@ local function filter_mappings(mappings, keys)
   if type(keys) == "boolean" and keys then
     return {}
   elseif type(keys) == "table" then
+    local keys_lower = vim.tbl_map(function(k)
+      return type(k) == "string" and k:lower() or nil
+    end, keys)
     return vim.tbl_filter(function(m)
       if type(m.key) == "table" then
         m.key = vim.tbl_filter(function(k)
-          return not vim.tbl_contains(keys, k)
+          return type(k) ~= "string" or not vim.tbl_contains(keys_lower, k:lower())
         end, m.key)
         return #m.key > 0
       else
-        return not vim.tbl_contains(keys, m.key)
+        return type(m.key) ~= "string" or not vim.tbl_contains(keys_lower, m.key:lower())
       end
     end, vim.deepcopy(mappings))
   else
