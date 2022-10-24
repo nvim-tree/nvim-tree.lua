@@ -1363,6 +1363,7 @@ NvimTreeNormal
 NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
 NvimTreeCursorLineNr    (CursorLineNr)
+NvimTreeLineNr          (LineNr)
 NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
 NvimTreeWinSeparator    (VertSplit)
 NvimTreeCursorColumn    (CursorColumn)
