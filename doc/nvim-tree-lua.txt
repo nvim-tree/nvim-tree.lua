@@ -1177,23 +1177,32 @@ Setting your own mapping in the configuration will soon be deprecated, see |nvim
 
 The `list` option in `view.mappings.list` is a table of
 
-- `key` can be either a string or a table of string (lhs)
-- `action` is the name of the action, set to `""` to remove default action
-- `action_cb` is the function that will be called, it receives the node as a parameter. Optional for default actions
-- `mode` is normal by default
+- `key` (mandatory) string or a table of string
+- `action` (mandatory) is the name of the action, set to `""` to remove default action, set to an arbitrary description when using `action_cb`
+- `action_cb` (optional) is a custom function that will be called, it receives the node as a parameter.
+- `mode` (optional) is `n` by default
+
+Examples:
 >
-  local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+    local function print_node_path(node)
+      print(node.absolute_path)
+    end
 
-  local function print_node_path(node) {
-    print(node.absolute_path)
-  }
+    ----
 
-  local list = {
-    { key = {"<CR>", "o" }, action = "edit", mode = "n"},
-    { key = "p", action = "print_path", action_cb = print_node_path },
-    { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
-    { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
-  }
+    view = {
+      mappings = {
+        list = {
+          -- remove a default mapping for cd
+          { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
+
+          -- add multiple normal mode mappings for edit
+          { key = { "<CR>", "o" }, action = "edit", mode = "n" },
+
+          -- custom action
+          { key = "p", action = "print_the_node_path", action_cb = print_node_path },
+
+          ----
 <
 Mouse support defined in |KeyBindings|
 
