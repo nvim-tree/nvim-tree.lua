@@ -373,6 +373,9 @@ Subsequent calls to setup will replace the previous configuration.
           watcher = false,
         },
       },
+      notify = {
+        threshold = vim.log.levels.INFO,
+      },
     } -- END_DEFAULT_OPTS
 <
 
@@ -1037,6 +1040,13 @@ Configuration for diagnostic logging.
         *nvim-tree.log.types.watcher*
         |nvim-tree.filesystem_watchers| processing, verbose.
           Type: `boolean`, Default: `false`
+
+*nvim-tree.notify*
+Configuration for notification.
+
+    *nvim-tree.notify.threshold*
+    Specify minimum notification level, uses the values from |vim.log.levels|
+      Type: `enum`, Default: `vim.log.levels.INFO`
 
 ==============================================================================
  4.1 VINEGAR STYLE                                         *nvim-tree-vinegar*

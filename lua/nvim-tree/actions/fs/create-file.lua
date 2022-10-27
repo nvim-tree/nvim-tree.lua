@@ -5,13 +5,14 @@ local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
 local watch = require "nvim-tree.explorer.watch"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
 local function create_and_notify(file)
   local ok, fd = pcall(uv.fs_open, file, "w", 420)
   if not ok then
-    utils.notify.error("Couldn't create file " .. file)
+    notify.error("Couldn't create file " .. file)
     return
   end
   uv.fs_close(fd)
@@ -71,7 +72,7 @@ function M.fn(node)
     end
 
     if utils.file_exists(new_file_path) then
-      utils.notify.warn "Cannot create: file already exists"
+      notify.warn "Cannot create: file already exists"
       return
     end
 
@@ -96,14 +97,14 @@ function M.fn(node)
       elseif not utils.file_exists(path_to_create) then
         local success = uv.fs_mkdir(path_to_create, 493)
         if not success then
-          utils.notify.error("Could not create folder " .. path_to_create)
+          notify.error("Could not create folder " .. path_to_create)
           is_error = true
           break
         end
       end
     end
     if not is_error then
-      utils.notify.info(new_file_path .. " was properly created")
+      notify.info(new_file_path .. " was properly created")
     end
     events._dispatch_folder_created(new_file_path)
     if M.enable_reload then

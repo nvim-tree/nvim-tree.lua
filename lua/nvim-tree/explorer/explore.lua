@@ -6,6 +6,7 @@ local common = require "nvim-tree.explorer.common"
 local sorters = require "nvim-tree.explorer.sorters"
 local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
@@ -52,7 +53,7 @@ end
 local function get_dir_handle(cwd)
   local handle = uv.fs_scandir(cwd)
   if type(handle) == "string" then
-    utils.notify.error(handle)
+    notify.error(handle)
     return
   end
   return handle
