@@ -1052,8 +1052,9 @@ You can easily implement a toggle using this too:
 >
     local function toggle_replace()
       local view = require"nvim-tree.view"
+      local api = require"nvim-tree.api"
       if view.is_visible() then
-        view.close()
+        api.close()
       else
         require"nvim-tree".open_replacing_current_buffer()
       end

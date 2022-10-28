@@ -17,7 +17,7 @@ end
 
 Api.tree.open = require("nvim-tree").open
 Api.tree.toggle = require("nvim-tree").toggle
-Api.tree.close = require("nvim-tree.view").close
+Api.tree.close = require("nvim-tree").close
 Api.tree.focus = require("nvim-tree").focus
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
 Api.tree.change_root = require("nvim-tree").change_dir

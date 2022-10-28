@@ -75,8 +75,7 @@ local function matches_bufnr(bufnr)
 end
 
 local function wipe_rogue_buffer()
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
       pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
     end
   end
@@ -184,7 +183,7 @@ local function save_tab_state()
   M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr())
 end
 
-function M.close()
+function M.close(all_tabpages)
   if not M.is_visible() then
     return
   end
@@ -200,6 +199,13 @@ function M.close()
       end
       if vim.api.nvim_win_is_valid(tree_win) then
         vim.api.nvim_win_close(tree_win, true)
+      end
+      if all_tabpages then
+        for _, v in pairs(M.View.tabpages) do
+          if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
+            vim.api.nvim_win_close(v.winnr, true)
+          end
+        end
       end
       events._dispatch_on_tree_close()
       return
