@@ -186,7 +186,7 @@ local function save_tab_state()
   M.View.cursors[tabpage] = a.nvim_win_get_cursor(M.get_winnr())
 end
 
-function M.close()
+function M.close(all_tabpages)
   if not M.is_visible() then
     return
   end
@@ -200,8 +200,13 @@ function M.close()
       if tree_win == current_win and prev_win > 0 then
         a.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      if a.nvim_win_is_valid(tree_win) then
-        a.nvim_win_close(tree_win, true)
+      a.nvim_win_close(tree_win, true)
+      if all_tabpages then
+        for _, v in pairs(M.View.tabpages) do
+          if v.winnr and a.nvim_win_is_valid(v.winnr) then
+            a.nvim_win_close(v.winnr, true)
+          end
+        end
       end
       events._dispatch_on_tree_close()
       return
