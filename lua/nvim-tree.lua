@@ -192,6 +192,7 @@ end
 
 function M.reset_highlight()
   colors.setup()
+  view.reset_winhl()
   renderer.render_hl(view.get_bufnr())
 end
 

@@ -436,6 +436,13 @@ function M.is_root_folder_visible(cwd)
   return cwd ~= "/" and not M.View.hide_root_folder
 end
 
+-- used on ColorScheme event
+function M.reset_winhl()
+  if M.get_winnr() then
+    vim.wo[M.get_winnr()].winhl = M.View.winopts.winhl
+  end
+end
+
 function M.setup(opts)
   local options = opts.view or {}
   M.View.adaptive_size = options.adaptive_size
