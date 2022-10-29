@@ -114,6 +114,7 @@ Api.live_filter.clear = require("nvim-tree.live-filter").clear_filter
 Api.marks.get = inject_node(require("nvim-tree.marks").get_mark)
 Api.marks.list = require("nvim-tree.marks").get_marks
 Api.marks.toggle = inject_node(require("nvim-tree.marks").toggle_mark)
+Api.marks.clear = require("nvim-tree.marks").clear_marks
 Api.marks.bulk.move = require("nvim-tree.marks.bulk-move").bulk_move
 Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
