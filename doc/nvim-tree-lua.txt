@@ -69,6 +69,9 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
 
+    -- set termguicolors to enable highlight groups
+    vim.opt.termguicolors = true
+
     -- empty setup using defaults
     require("nvim-tree").setup()
 
@@ -1336,6 +1339,9 @@ Example (in your `init.vim`):
 <
 You should have 'termguicolors' enabled, otherwise, colors will not be
 applied.
+
+To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
+as per |:highlight|
 
 Default linked group follows name.
 
