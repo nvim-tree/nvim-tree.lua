@@ -76,7 +76,8 @@ function M.apply_filter(node_)
     end
 
     local has_nodes = nodes and (M.always_show_folders or #nodes > filtered_nodes)
-    node.hidden = not (has_nodes or matches(node))
+    local ok, is_match = pcall(matches, node)
+    node.hidden = not (has_nodes or (ok and is_match))
   end
 
   iterate(node_ or TreeExplorer)
