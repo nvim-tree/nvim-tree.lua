@@ -1,6 +1,3 @@
-local api = vim.api
-local uv = vim.loop
-
 local core = require "nvim-tree.core"
 local filters = require "nvim-tree.explorer.filters"
 local find_file = require("nvim-tree.actions.finders.find-file").fn
@@ -17,22 +14,22 @@ local function search(search_dir, input_path)
   local function iter(dir)
     local realpath, path, name, stat, handle, _
 
-    handle, _ = uv.fs_scandir(dir)
+    handle, _ = vim.loop.fs_scandir(dir)
     if not handle then
       return
     end
 
-    realpath, _ = uv.fs_realpath(dir)
+    realpath, _ = vim.loop.fs_realpath(dir)
     if not realpath or vim.tbl_contains(realpaths_searched, realpath) then
       return
     end
     table.insert(realpaths_searched, realpath)
 
-    name, _ = uv.fs_scandir_next(handle)
+    name, _ = vim.loop.fs_scandir_next(handle)
     while name do
       path = dir .. "/" .. name
 
-      stat, _ = uv.fs_stat(path)
+      stat, _ = vim.loop.fs_stat(path)
       if not stat then
         break
       end
@@ -50,7 +47,7 @@ local function search(search_dir, input_path)
         end
       end
 
-      name, _ = uv.fs_scandir_next(handle)
+      name, _ = vim.loop.fs_scandir_next(handle)
     end
   end
 
@@ -63,9 +60,9 @@ function M.fn()
   end
 
   -- temporarily set &path
-  local bufnr = api.nvim_get_current_buf()
-  local path_existed, path_opt = pcall(api.nvim_buf_get_option, bufnr, "path")
-  api.nvim_buf_set_option(bufnr, "path", core.get_cwd() .. "/**")
+  local bufnr = vim.api.nvim_get_current_buf()
+  local path_existed, path_opt = pcall(vim.api.nvim_buf_get_option, bufnr, "path")
+  vim.api.nvim_buf_set_option(bufnr, "path", core.get_cwd() .. "/**")
 
   vim.ui.input({ prompt = "Search: ", completion = "file_in_path" }, function(input_path)
     if not input_path or input_path == "" then
@@ -73,9 +70,9 @@ function M.fn()
     end
     -- reset &path
     if path_existed then
-      api.nvim_buf_set_option(bufnr, "path", path_opt)
+      vim.api.nvim_buf_set_option(bufnr, "path", path_opt)
     else
-      api.nvim_buf_set_option(bufnr, "path", nil)
+      vim.api.nvim_buf_set_option(bufnr, "path", nil)
     end
 
     -- strip trailing slash

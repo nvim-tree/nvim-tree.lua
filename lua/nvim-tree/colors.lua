@@ -1,5 +1,3 @@
-local api = vim.api
-
 local M = {}
 
 local function get_color_from_hl(hl_name, fallback)
@@ -93,12 +91,12 @@ function M.setup()
     local gui = d.gui and " gui=" .. d.gui or ""
     local fg = d.fg and " guifg=" .. d.fg or ""
     local bg = d.bg and " guibg=" .. d.bg or ""
-    api.nvim_command("hi def NvimTree" .. k .. gui .. fg .. bg)
+    vim.api.nvim_command("hi def NvimTree" .. k .. gui .. fg .. bg)
   end
 
   local links = get_links()
   for k, d in pairs(links) do
-    api.nvim_command("hi def link NvimTree" .. k .. " " .. d)
+    vim.api.nvim_command("hi def link NvimTree" .. k .. " " .. d)
   end
 end
 

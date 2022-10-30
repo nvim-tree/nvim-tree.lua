@@ -1,8 +1,5 @@
 local has_notify, notify = pcall(require, "notify")
 
-local a = vim.api
-local uv = vim.loop
-
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {
@@ -39,16 +36,16 @@ function M.str_find(haystack, needle)
 end
 
 function M.read_file(path)
-  local fd = uv.fs_open(path, "r", 438)
+  local fd = vim.loop.fs_open(path, "r", 438)
   if not fd then
     return ""
   end
-  local stat = uv.fs_fstat(fd)
+  local stat = vim.loop.fs_fstat(fd)
   if not stat then
     return ""
   end
-  local data = uv.fs_read(fd, stat.size, 0)
-  uv.fs_close(fd)
+  local data = vim.loop.fs_read(fd, stat.size, 0)
+  vim.loop.fs_close(fd)
   return data or ""
 end
 
@@ -231,19 +228,19 @@ function M.is_wsl_windows_fs_exe(ext)
 end
 
 function M.rename_loaded_buffers(old_path, new_path)
-  for _, buf in pairs(a.nvim_list_bufs()) do
-    if a.nvim_buf_is_loaded(buf) then
-      local buf_name = a.nvim_buf_get_name(buf)
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local buf_name = vim.api.nvim_buf_get_name(buf)
       local exact_match = buf_name == old_path
       local child_match = (
         buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
       )
       if exact_match or child_match then
-        a.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
+        vim.api.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
         -- to avoid the 'overwrite existing file' error message on write for
         -- normal files
-        if a.nvim_buf_get_option(buf, "buftype") == "" then
-          a.nvim_buf_call(buf, function()
+        if vim.api.nvim_buf_get_option(buf, "buftype") == "" then
+          vim.api.nvim_buf_call(buf, function()
             vim.cmd "silent! write!"
             vim.cmd "edit"
           end)
@@ -389,7 +386,7 @@ function M.debounce(context, timeout, callback)
     timer_stop_close(debouncer.timer)
   end
 
-  local timer = uv.new_timer()
+  local timer = vim.loop.new_timer()
   debouncer.timer = timer
   timer:start(timeout, 0, function()
     timer_stop_close(timer)
@@ -477,7 +474,7 @@ function M.is_nvim_tree_buf(bufnr)
     bufnr = 0
   end
   if vim.fn.bufexists(bufnr) then
-    local bufname = a.nvim_buf_get_name(bufnr)
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
     if vim.fn.fnamemodify(bufname, ":t"):match "^NvimTree_[0-9]+$" then
       if vim.bo[bufnr].filetype == "NvimTree" then
         return true
