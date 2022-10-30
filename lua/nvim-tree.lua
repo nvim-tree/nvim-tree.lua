@@ -640,6 +640,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     prefix = "[FILTER]: ",
     always_show_folders = true,
   },
+  notify = {
+    threshold = vim.log.levels.INFO,
+  },
   log = {
     enable = false,
     truncate = false,
@@ -653,9 +656,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       profile = false,
       watcher = false,
     },
-  },
-  notify = {
-    threshold = vim.log.levels.INFO,
   },
 } -- END_DEFAULT_OPTS
 
