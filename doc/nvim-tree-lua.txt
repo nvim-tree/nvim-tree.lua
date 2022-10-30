@@ -1048,6 +1048,11 @@ Configuration for notification.
     Specify minimum notification level, uses the values from |vim.log.levels|
       Type: `enum`, Default: `vim.log.levels.INFO`
 
+    `ERROR`:   hard errors e.g. failure to read from the file system.
+    `WARNING`: non-fatal errors e.g. unable to system open a file.
+    `INFO:`    information only e.g. file copy path confirmation.
+    `DEBUG:`   not used.
+
 ==============================================================================
  4.1 VINEGAR STYLE                                         *nvim-tree-vinegar*
 
