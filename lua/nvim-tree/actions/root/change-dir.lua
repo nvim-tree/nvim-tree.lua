@@ -1,11 +1,9 @@
-local a = vim.api
-
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 
 local M = {
-  current_tab = a.nvim_get_current_tabpage(),
+  current_tab = vim.api.nvim_get_current_tabpage(),
 }
 
 local function clean_input_cwd(name)
@@ -33,7 +31,7 @@ function M.fn(input_cwd, with_open)
     return
   end
 
-  local new_tabpage = a.nvim_get_current_tabpage()
+  local new_tabpage = vim.api.nvim_get_current_tabpage()
   if is_window_event(new_tabpage) then
     return
   end

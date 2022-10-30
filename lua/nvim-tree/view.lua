@@ -1,5 +1,3 @@
-local a = vim.api
-
 local M = {}
 
 local events = require "nvim-tree.events"
@@ -77,9 +75,9 @@ local function matches_bufnr(bufnr)
 end
 
 local function wipe_rogue_buffer()
-  for _, bufnr in ipairs(a.nvim_list_bufs()) do
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
-      pcall(a.nvim_buf_delete, bufnr, { force = true })
+      pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
     end
   end
 end
@@ -87,9 +85,9 @@ end
 local function create_buffer(bufnr)
   wipe_rogue_buffer()
 
-  local tab = a.nvim_get_current_tabpage()
-  BUFNR_PER_TAB[tab] = bufnr or a.nvim_create_buf(false, false)
-  a.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
+  local tab = vim.api.nvim_get_current_tabpage()
+  BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
+  vim.api.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
 
   for option, value in pairs(BUFFER_OPTIONS) do
     vim.bo[M.get_bufnr()][option] = value
@@ -122,7 +120,7 @@ local move_tbl = {
 
 -- setup_tabpage sets up the initial state of a tab
 local function setup_tabpage(tabpage)
-  local winnr = a.nvim_get_current_win()
+  local winnr = vim.api.nvim_get_current_win()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
 end
 
@@ -143,17 +141,17 @@ end
 
 local function open_window()
   if M.View.float.enable then
-    a.nvim_open_win(0, true, open_win_config())
+    vim.api.nvim_open_win(0, true, open_win_config())
   else
-    a.nvim_command "vsp"
+    vim.api.nvim_command "vsp"
     M.reposition_window()
   end
-  setup_tabpage(a.nvim_get_current_tabpage())
+  setup_tabpage(vim.api.nvim_get_current_tabpage())
   set_window_options_and_buffer()
 end
 
 local function is_buf_displayed(buf)
-  return a.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
+  return vim.api.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
 end
 
 local function get_alt_or_next_buf()
@@ -162,7 +160,7 @@ local function get_alt_or_next_buf()
     return alt_buf
   end
 
-  for _, buf in ipairs(a.nvim_list_bufs()) do
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if is_buf_displayed(buf) then
       return buf
     end
@@ -170,7 +168,7 @@ local function get_alt_or_next_buf()
 end
 
 local function switch_buf_if_last_buf()
-  if #a.nvim_list_wins() == 1 then
+  if #vim.api.nvim_list_wins() == 1 then
     local buf = get_alt_or_next_buf()
     if buf then
       vim.cmd("sb" .. buf)
@@ -182,8 +180,8 @@ end
 
 -- save_tab_state saves any state that should be preserved across redraws.
 local function save_tab_state()
-  local tabpage = a.nvim_get_current_tabpage()
-  M.View.cursors[tabpage] = a.nvim_win_get_cursor(M.get_winnr())
+  local tabpage = vim.api.nvim_get_current_tabpage()
+  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr())
 end
 
 function M.close()
@@ -193,15 +191,15 @@ function M.close()
   save_tab_state()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr()
-  local current_win = a.nvim_get_current_win()
-  for _, win in pairs(a.nvim_list_wins()) do
-    if tree_win ~= win and a.nvim_win_get_config(win).relative == "" then
+  local current_win = vim.api.nvim_get_current_win()
+  for _, win in pairs(vim.api.nvim_list_wins()) do
+    if tree_win ~= win and vim.api.nvim_win_get_config(win).relative == "" then
       local prev_win = vim.fn.winnr "#" -- this tab only
       if tree_win == current_win and prev_win > 0 then
-        a.nvim_set_current_win(vim.fn.win_getid(prev_win))
+        vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      if a.nvim_win_is_valid(tree_win) then
-        a.nvim_win_close(tree_win, true)
+      if vim.api.nvim_win_is_valid(tree_win) then
+        vim.api.nvim_win_close(tree_win, true)
       end
       events._dispatch_on_tree_close()
       return
@@ -275,7 +273,7 @@ function M.resize(size)
   end
 
   local new_size = get_size()
-  a.nvim_win_set_width(M.get_winnr(), new_size)
+  vim.api.nvim_win_set_width(M.get_winnr(), new_size)
 
   events._dispatch_on_tree_resize(new_size)
 
@@ -286,19 +284,19 @@ end
 
 function M.reposition_window()
   local move_to = move_tbl[M.View.side]
-  a.nvim_command("wincmd " .. move_to)
+  vim.api.nvim_command("wincmd " .. move_to)
   M.resize()
 end
 
 local function set_current_win()
-  local current_tab = a.nvim_get_current_tabpage()
-  M.View.tabpages[current_tab].winnr = a.nvim_get_current_win()
+  local current_tab = vim.api.nvim_get_current_tabpage()
+  M.View.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
 end
 
 function M.open_in_current_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
-  create_buffer(opts.hijack_current_buf and a.nvim_get_current_buf())
-  setup_tabpage(a.nvim_get_current_tabpage())
+  create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
+  setup_tabpage(vim.api.nvim_get_current_tabpage())
   set_current_win()
   set_window_options_and_buffer()
   if opts.resize then
@@ -308,7 +306,7 @@ function M.open_in_current_win(opts)
 end
 
 function M.abandon_current_window()
-  local tab = a.nvim_get_current_tabpage()
+  local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = nil
   M.View.tabpages[tab].winnr = nil
 end
@@ -316,26 +314,26 @@ end
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
-      if v.winnr and a.nvim_win_is_valid(v.winnr) then
+      if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
         return true
       end
     end
     return false
   end
 
-  return M.get_winnr() ~= nil and a.nvim_win_is_valid(M.get_winnr())
+  return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr())
 end
 
 function M.set_cursor(opts)
   if M.is_visible() then
-    pcall(a.nvim_win_set_cursor, M.get_winnr(), opts)
+    pcall(vim.api.nvim_win_set_cursor, M.get_winnr(), opts)
   end
 end
 
 function M.focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
 
-  if a.nvim_win_get_tabpage(wnr or 0) ~= a.nvim_win_get_tabpage(0) then
+  if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
     M.close()
     M.open()
     wnr = M.get_winnr()
@@ -343,12 +341,12 @@ function M.focus(winnr, open_if_closed)
     M.open()
   end
 
-  a.nvim_set_current_win(wnr)
+  vim.api.nvim_set_current_win(wnr)
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.
 function M.restore_tab_state()
-  local tabpage = a.nvim_get_current_tabpage()
+  local tabpage = vim.api.nvim_get_current_tabpage()
   M.set_cursor(M.View.cursors[tabpage])
 end
 
@@ -356,7 +354,7 @@ end
 ---@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return number
 function M.get_winnr(tabpage)
-  tabpage = tabpage or a.nvim_get_current_tabpage()
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
   if tabinfo ~= nil then
     return tabinfo.winnr
@@ -366,14 +364,14 @@ end
 --- Returns the current nvim tree bufnr
 ---@return number
 function M.get_bufnr()
-  return BUFNR_PER_TAB[a.nvim_get_current_tabpage()]
+  return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
 --- Checks if nvim-tree is displaying the help ui within the tabpage specified
 ---@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return number
 function M.is_help_ui(tabpage)
-  tabpage = tabpage or a.nvim_get_current_tabpage()
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
   if tabinfo ~= nil then
     return tabinfo.help
@@ -381,12 +379,12 @@ function M.is_help_ui(tabpage)
 end
 
 function M.toggle_help(tabpage)
-  tabpage = tabpage or a.nvim_get_current_tabpage()
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   M.View.tabpages[tabpage].help = not M.View.tabpages[tabpage].help
 end
 
 function M.is_buf_valid(bufnr)
-  return bufnr and a.nvim_buf_is_valid(bufnr) and a.nvim_buf_is_loaded(bufnr)
+  return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
 end
 
 function M._prevent_buffer_override()
@@ -397,10 +395,10 @@ function M._prevent_buffer_override()
   -- because this event needs to be run on bufWipeout.
   -- Otherwise the curwin/curbuf would match the view buffer and the view window.
   vim.schedule(function()
-    local curwin = a.nvim_get_current_win()
-    local curwinconfig = a.nvim_win_get_config(curwin)
-    local curbuf = a.nvim_win_get_buf(curwin)
-    local bufname = a.nvim_buf_get_name(curbuf)
+    local curwin = vim.api.nvim_get_current_win()
+    local curwinconfig = vim.api.nvim_win_get_config(curwin)
+    local curbuf = vim.api.nvim_win_get_buf(curwin)
+    local bufname = vim.api.nvim_buf_get_name(curbuf)
 
     if not bufname:match "NvimTree" then
       for i, tabpage in ipairs(M.View.tabpages) do
@@ -420,7 +418,7 @@ function M._prevent_buffer_override()
     vim.cmd "setlocal nowinfixheight"
     M.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
-    pcall(a.nvim_win_close, curwin, { force = true })
+    pcall(vim.api.nvim_win_close, curwin, { force = true })
 
     -- to handle opening a file using :e when nvim-tree is on floating mode
     -- falling back to the current window instead of creating a new one
