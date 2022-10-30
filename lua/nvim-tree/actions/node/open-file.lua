@@ -132,7 +132,7 @@ end
 
 local function open_file_in_tab(filename)
   if M.quit_on_open then
-    api.close()
+    view.close(false)
   end
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
@@ -299,7 +299,7 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open then
-    api.close()
+    view.close(false)
   end
 end
 

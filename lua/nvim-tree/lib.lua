@@ -117,7 +117,7 @@ function M.open(cwd)
     core.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
-    api.close()
+    view.close(false)
     view.open_in_current_win()
     renderer.draw()
   else

@@ -75,7 +75,8 @@ local function matches_bufnr(bufnr)
 end
 
 local function wipe_rogue_buffer()
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
       pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
     end
   end

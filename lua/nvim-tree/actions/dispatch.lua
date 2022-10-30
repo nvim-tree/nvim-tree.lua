@@ -1,12 +1,10 @@
-local api = vim.api
-
 local view = require "nvim-tree.view"
 local lib = require "nvim-tree.lib"
 
 local M = {}
 
 local Actions = {
-  close = api.close,
+  close = view.close,
 
   -- Tree modifiers
   collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn,

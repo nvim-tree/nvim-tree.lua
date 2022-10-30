@@ -768,7 +768,7 @@ function M.setup(conf)
   require("nvim-tree.watcher").purge_watchers()
 
   if not M.setup_called then
-    setup_vim_commands(opts)
+    setup_vim_commands()
   end
 
   if M.setup_called and view.is_visible() then
