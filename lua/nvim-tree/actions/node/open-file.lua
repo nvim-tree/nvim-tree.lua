@@ -17,7 +17,7 @@ end
 
 ---Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
-local function selectable_win_ids()
+local function usable_win_ids()
   local tabpage = api.nvim_get_current_tabpage()
   local win_ids = api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)
@@ -36,12 +36,23 @@ local function selectable_win_ids()
   end, win_ids)
 end
 
----Get user to pick a selectable window.
+---Find the first window in the tab that is not NvimTree.
+---@return integer -1 if none available
+local function first_win_id()
+  local selectable = usable_win_ids()
+  if #selectable > 0 then
+    return selectable[1]
+  else
+    return -1
+  end
+end
+
+---Get user to pick a window in the tab that is not NvimTree.
 ---@return integer|nil -- If a valid window was picked, return its id. If an
 ---       invalid window was picked / user canceled, return nil. If there are
 ---       no selectable windows, return -1.
-local function pick_window()
-  local selectable = selectable_win_ids()
+local function pick_win_id()
+  local selectable = usable_win_ids()
 
   -- If there are no selectable windows: return. If there's only 1, return it without picking.
   if #selectable == 0 then
@@ -160,21 +171,17 @@ local function get_target_winid(mode, win_ids)
   if not M.window_picker.enable or mode == "edit_no_picker" then
     target_winid = lib.target_winid
 
-    -- find the first available window
+    -- first available window
     if not vim.tbl_contains(win_ids, target_winid) then
-      local selectable = selectable_win_ids()
-      if #selectable > 0 then
-        target_winid = selectable[1]
-      else
-        return
-      end
+      target_winid = first_win_id()
     end
   else
-    local pick_window_id = pick_window()
-    if pick_window_id == nil then
+    -- pick a window
+    target_winid = pick_win_id()
+    if target_winid == nil then
+      -- pick failed/cancelled
       return
     end
-    target_winid = pick_window_id
   end
 
   if target_winid == -1 then
