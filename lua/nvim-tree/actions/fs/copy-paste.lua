@@ -129,6 +129,12 @@ local function add_to_clipboard(node, clip)
   utils.notify.info(node.absolute_path .. " added to clipboard.")
 end
 
+function M.clear_clipboard()
+  clipboard.move = {}
+  clipboard.copy = {}
+  utils.notify.info "Clipboard has been emptied."
+end
+
 function M.copy(node)
   add_to_clipboard(node, clipboard.copy)
 end

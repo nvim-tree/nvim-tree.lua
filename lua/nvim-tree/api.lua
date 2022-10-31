@@ -46,6 +46,7 @@ Api.fs.rename = inject_node(require("nvim-tree.actions.fs.rename-file").fn(false
 Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn(true))
 Api.fs.cut = inject_node(require("nvim-tree.actions.fs.copy-paste").cut)
 Api.fs.paste = inject_node(require("nvim-tree.actions.fs.copy-paste").paste)
+Api.fs.clear_clipboard = require("nvim-tree.actions.fs.copy-paste").clear_clipboard
 Api.fs.print_clipboard = require("nvim-tree.actions.fs.copy-paste").print_clipboard
 Api.fs.copy.node = inject_node(require("nvim-tree.actions.fs.copy-paste").copy)
 Api.fs.copy.absolute_path = inject_node(require("nvim-tree.actions.fs.copy-paste").copy_absolute_path)
