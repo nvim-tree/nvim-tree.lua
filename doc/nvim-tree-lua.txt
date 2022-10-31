@@ -1125,6 +1125,7 @@ exists.
     - rename_sub
     - cut
     - paste
+    - clear_clipboard
     - print_clipboard
     - copy.node
     - copy.absolute_path
