@@ -4,7 +4,7 @@ local a = vim.api
 
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
-local util = require "nvim-tree.utils"
+local notify = require "nvim-tree.notify"
 
 -- BEGIN_DEFAULT_MAPPINGS
 local DEFAULT_MAPPINGS = {
@@ -307,7 +307,7 @@ local function merge_mappings(user_mappings)
       if not is_empty(map.action) then
         M.custom_keypress_funcs[map.action] = map.action_cb
       else
-        util.notify.warn "action can't be empty if action_cb provided"
+        notify.warn "action can't be empty if action_cb provided"
       end
     end
   end

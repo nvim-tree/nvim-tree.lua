@@ -1,4 +1,5 @@
 local uv = vim.loop
+local notify = require "nvim-tree.notify"
 
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
@@ -47,7 +48,7 @@ function Event:start()
   self._fs_event, _, name = uv.new_fs_event()
   if not self._fs_event then
     self._fs_event = nil
-    utils.notify.warn(string.format("Could not initialize an fs_event watcher for path %s : %s", self._path, name))
+    notify.warn(string.format("Could not initialize an fs_event watcher for path %s : %s", self._path, name))
     return false
   end
 
@@ -64,7 +65,7 @@ function Event:start()
 
   rc, _, name = self._fs_event:start(self._path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
-    utils.notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
+    notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
     return false
   end
 
@@ -88,7 +89,7 @@ function Event:destroy()
   if self._fs_event then
     local rc, _, name = self._fs_event:stop()
     if rc ~= 0 then
-      utils.notify.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._path, name))
+      notify.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._path, name))
     end
     self._fs_event = nil
   end

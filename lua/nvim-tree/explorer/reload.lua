@@ -6,6 +6,7 @@ local common = require "nvim-tree.explorer.common"
 local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
@@ -22,7 +23,7 @@ function M.reload(node, status)
   local cwd = node.link_to or node.absolute_path
   local handle = uv.fs_scandir(cwd)
   if type(handle) == "string" then
-    utils.notify.error(handle)
+    notify.error(handle)
     return
   end
 

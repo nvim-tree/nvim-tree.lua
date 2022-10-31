@@ -1,5 +1,3 @@
-local has_notify, notify = pcall(require, "notify")
-
 local a = vim.api
 local uv = vim.loop
 
@@ -15,24 +13,6 @@ M.is_wsl = vim.fn.has "wsl" == 1
 function M.path_to_matching_str(path)
   return path:gsub("(%-)", "(%%-)"):gsub("(%.)", "(%%.)"):gsub("(%_)", "(%%_)")
 end
-
-local function notify_level(level)
-  return function(msg)
-    vim.schedule(function()
-      if has_notify then
-        notify(msg, level, { title = "NvimTree" })
-      else
-        vim.notify("[NvimTree] " .. msg, level)
-      end
-    end)
-  end
-end
-
-M.notify = {}
-M.notify.warn = notify_level(vim.log.levels.WARN)
-M.notify.error = notify_level(vim.log.levels.ERROR)
-M.notify.info = notify_level(vim.log.levels.INFO)
-M.notify.debug = notify_level(vim.log.levels.DEBUG)
 
 function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1

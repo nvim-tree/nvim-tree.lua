@@ -56,7 +56,7 @@ function M.setup(opts)
     if M.config.truncate then
       os.remove(M.path)
     end
-    require("nvim-tree.utils").notify.debug("nvim-tree.lua logging to " .. M.path)
+    require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. M.path)
   end
 end
 

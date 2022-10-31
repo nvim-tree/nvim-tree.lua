@@ -640,6 +640,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     prefix = "[FILTER]: ",
     always_show_folders = true,
   },
+  notify = {
+    threshold = vim.log.levels.INFO,
+  },
   log = {
     enable = false,
     truncate = false,
@@ -686,10 +689,11 @@ local function validate_options(conf)
         local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
         if def[k] == nil then
           -- option does not exist
-          invalid = string.format("unknown option: %s%s", prefix, k)
+          invalid = string.format("[NvimTree] unknown option: %s%s", prefix, k)
         elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
           -- option is of the wrong type and is not a function
-          invalid = string.format("invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+          invalid =
+            string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
         end
 
         if invalid then
@@ -709,13 +713,13 @@ local function validate_options(conf)
   validate(conf, DEFAULT_OPTS, "")
 
   if msg then
-    utils.notify.warn(msg .. " | see :help nvim-tree-setup for available configuration options")
+    vim.notify_once(msg .. " | see :help nvim-tree-setup for available configuration options", vim.log.levels.WARN)
   end
 end
 
 function M.setup(conf)
   if vim.fn.has "nvim-0.7" == 0 then
-    utils.notify.warn "nvim-tree.lua requires Neovim 0.7 or higher"
+    vim.notify_once("nvim-tree.lua requires Neovim 0.7 or higher", vim.log.levels.WARN)
     return
   end
 
@@ -742,6 +746,7 @@ function M.setup(conf)
   manage_netrw(opts.disable_netrw, opts.hijack_netrw)
 
   M.config = opts
+  require("nvim-tree.notify").setup(opts)
   require("nvim-tree.log").setup(opts)
 
   log.line("config", "default config + user")

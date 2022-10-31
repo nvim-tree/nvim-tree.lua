@@ -373,6 +373,9 @@ Subsequent calls to setup will replace the previous configuration.
           watcher = false,
         },
       },
+      notify = {
+        threshold = vim.log.levels.INFO,
+      },
     } -- END_DEFAULT_OPTS
 <
 
@@ -991,6 +994,18 @@ The filter can be cleared with the `F` key by default.
     *nvim-tree.live_filter.always_show_folders*
     Whether to filter folders or not.
       Type: `boolean`, Default: `true`
+
+*nvim-tree.notify*
+Configuration for notification.
+
+    *nvim-tree.notify.threshold*
+    Specify minimum notification level, uses the values from |vim.log.levels|
+      Type: `enum`, Default: `vim.log.levels.INFO`
+
+    `ERROR`:   hard errors e.g. failure to read from the file system.
+    `WARNING`: non-fatal errors e.g. unable to system open a file.
+    `INFO:`    information only e.g. file copy path confirmation.
+    `DEBUG:`   not used.
 
 *nvim-tree.log*
 Configuration for diagnostic logging.
