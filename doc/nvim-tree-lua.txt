@@ -1426,9 +1426,10 @@ Handlers are registered by calling the `events.subscribe` function available in 
 For example, registering a handler for when a node is renamed is done like this:
 >
     local api = require('nvim-tree.api')
+    local Event = api.events.Event
 
     api.events.subscribe(Event.NodeRenamed, function(data)
-        print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
+      print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
 <
 
