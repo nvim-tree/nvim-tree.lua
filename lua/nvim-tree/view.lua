@@ -438,7 +438,7 @@ end
 
 -- used on ColorScheme event
 function M.reset_winhl()
-  if M.get_winnr() then
+  if M.get_winnr() and vim.api.nvim_win_is_valid(M.get_winnr()) then
     vim.wo[M.get_winnr()].winhl = M.View.winopts.winhl
   end
 end
