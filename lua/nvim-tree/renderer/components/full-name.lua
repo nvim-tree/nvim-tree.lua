@@ -12,6 +12,28 @@ local function hide(win)
   end
 end
 
+-- reduce signcolumn/foldcolumn from window width
+local function effective_win_width()
+  local win_width = fn.winwidth(0)
+
+  -- return zero if the window cannot be found
+  local win_id = fn.win_getid()
+
+  if win_id == 0 then
+    return win_width
+  end
+
+  -- if the window does not exist the result is an empty list
+  local win_info = fn.getwininfo(win_id)
+
+  -- check if result table is empty
+  if next(win_info) == nil then
+    return win_width
+  end
+
+  return win_width - win_info[1].textoff
+end
+
 local function show()
   local line_nr = api.nvim_win_get_cursor(0)[1]
   if line_nr == 1 and require("nvim-tree.view").is_root_folder_visible() then
@@ -32,14 +54,17 @@ local function show()
     return
   end
 
-  local width = fn.strdisplaywidth(fn.substitute(line, "[^[:print:]]*$", "", "g"))
-  if width < fn.winwidth(0) then
+  local text_width = fn.strdisplaywidth(fn.substitute(line, "[^[:print:]]*$", "", "g"))
+  local win_width = effective_win_width()
+
+  if text_width < win_width then
     return
   end
+
   M.popup_win = api.nvim_open_win(api.nvim_create_buf(false, false), false, {
     relative = "win",
     bufpos = { fn.line "." - 2, 0 },
-    width = math.min(width, vim.o.columns - 2),
+    width = math.min(text_width, vim.o.columns - 2),
     height = 1,
     noautocmd = true,
     style = "minimal",
