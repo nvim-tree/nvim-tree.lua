@@ -54,7 +54,8 @@ function Event:start()
 
   local event_cb = vim.schedule_wrap(function(err, filename)
     if err then
-      log.line("watcher", "event_cb for %s fail : %s", self._path, err)
+      log.line("watcher", "event_cb '%s' '%s' FAIL : %s", self._path, filename, err)
+      self:destroy(string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self._path))
     else
       log.line("watcher", "event_cb '%s' '%s'", self._path, filename)
       for _, listener in ipairs(self._listeners) do
@@ -83,10 +84,14 @@ function Event:remove(listener)
   end
 end
 
-function Event:destroy()
+function Event:destroy(message)
   log.line("watcher", "Event:destroy '%s'", self._path)
 
   if self._fs_event then
+    if message then
+      utils.notify.warn(message)
+    end
+
     local rc, _, name = self._fs_event:stop()
     if rc ~= 0 then
       notify.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._path, name))
