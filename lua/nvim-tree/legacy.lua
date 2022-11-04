@@ -1,4 +1,5 @@
 local utils = require "nvim-tree.utils"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
@@ -292,12 +293,12 @@ end
 
 local function removed(opts)
   if opts.auto_close then
-    utils.notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
+    notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
     opts.auto_close = nil
   end
 
   if opts.focus_empty_on_setup then
-    utils.notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
+    notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
   end
   opts.focus_empty_on_setup = nil
 end
@@ -312,7 +313,7 @@ function M.migrate_legacy_options(opts)
     end
   end
   if msg then
-    utils.notify.warn(msg)
+    notify.warn(msg)
   end
 
   -- silently move

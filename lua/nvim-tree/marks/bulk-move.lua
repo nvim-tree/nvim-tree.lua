@@ -2,12 +2,13 @@ local Marks = require "nvim-tree.marks"
 local Core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local FsRename = require "nvim-tree.actions.fs.rename-file"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
 function M.bulk_move()
   if #Marks.get_marks() == 0 then
-    utils.notify.warn "no bookmark to perform bulk move on, aborting."
+    notify.warn "no bookmark to perform bulk move on, aborting."
     return
   end
 
@@ -17,7 +18,7 @@ function M.bulk_move()
       return
     end
     if vim.fn.filewritable(location) ~= 2 then
-      utils.notify.warn(location .. " is not writable, cannot move.")
+      notify.warn(location .. " is not writable, cannot move.")
       return
     end
 
