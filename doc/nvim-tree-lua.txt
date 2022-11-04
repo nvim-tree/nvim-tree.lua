@@ -308,6 +308,7 @@ Subsequent calls to setup will replace the previous configuration.
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
+        ignore_dirs = {},
       },
       git = {
         enable = true,
@@ -603,6 +604,12 @@ performance.
     *nvim-tree.filesystem_watchers.debounce_delay*
     Idle milliseconds between filesystem change and action.
       Type: `number`, Default: `50` (ms)
+
+    *nvim-tree.filesystem_watchers.ignore_dirs*
+    List of vim regex for absolute directory paths that will not be watched.
+    Backslashes must be escaped e.g. `"my-project/\\.build$"`. See |string-match|.
+    Useful when path is not in `.gitignore` or git integration is disabled.
+      Type: {string}, Default: `{}`
 
 *nvim-tree.on_attach*
 Function ran when creating the nvim-tree buffer.
