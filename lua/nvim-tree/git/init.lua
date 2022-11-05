@@ -1,11 +1,7 @@
 local uv = vim.loop
 
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
 local git_utils = require "nvim-tree.git.utils"
 local Runner = require "nvim-tree.git.runner"
-local Watcher = require("nvim-tree.watcher").Watcher
-local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {
   config = {},
@@ -83,40 +79,6 @@ function M.get_project_root(cwd)
   return M.cwd_to_project_root[cwd]
 end
 
-local function reload_tree_at(project_root)
-  if not M.config.git.enable then
-    return nil
-  end
-
-  log.line("watcher", "git event executing '%s'", project_root)
-  local root_node = utils.get_node_from_path(project_root)
-  if not root_node then
-    return
-  end
-
-  M.reload_project(project_root)
-  local project = M.get_project(project_root)
-
-  local project_files = project.files and project.files or {}
-  local project_dirs = project.dirs and project.dirs or {}
-
-  Iterator.builder(root_node.nodes)
-    :hidden()
-    :applier(function(node)
-      local parent_ignored = node.parent.git_status == "!!"
-      node.git_status = project_dirs[node.absolute_path] or project_files[node.absolute_path]
-      if not node.git_status and parent_ignored then
-        node.git_status = "!!"
-      end
-    end)
-    :recursor(function(node)
-      return node.nodes and #node.nodes > 0 and node.nodes
-    end)
-    :iterate()
-
-  require("nvim-tree.renderer").draw()
-end
-
 function M.load_project_status(cwd)
   if not M.config.git.enable then
     return {}
@@ -140,26 +102,9 @@ function M.load_project_status(cwd)
     timeout = M.config.git.timeout,
   }
 
-  local watcher = nil
-  if M.config.filesystem_watchers.enable then
-    log.line("watcher", "git start")
-
-    local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
-        reload_tree_at(w.project_root)
-      end)
-    end
-
-    watcher = Watcher:new(utils.path_join { project_root, ".git" }, callback, {
-      project_root = project_root,
-    })
-  end
-
   M.projects[project_root] = {
     files = git_status,
     dirs = git_utils.file_status_to_dir_status(git_status, project_root),
-    watcher = watcher,
   }
   return M.projects[project_root]
 end
@@ -171,7 +116,6 @@ end
 
 function M.setup(opts)
   M.config.git = opts.git
-  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M
