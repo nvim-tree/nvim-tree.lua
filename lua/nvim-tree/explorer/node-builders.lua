@@ -1,4 +1,3 @@
-local uv = vim.loop
 local utils = require "nvim-tree.utils"
 local watch = require "nvim-tree.explorer.watch"
 
@@ -8,13 +7,13 @@ local M = {
 }
 
 function M.folder(parent, absolute_path, name)
-  local handle = uv.fs_scandir(absolute_path)
-  local has_children = handle and uv.fs_scandir_next(handle) ~= nil
+  local handle = vim.loop.fs_scandir(absolute_path)
+  local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
 
   return {
     type = "directory",
     absolute_path = absolute_path,
-    fs_stat = uv.fs_stat(absolute_path),
+    fs_stat = vim.loop.fs_stat(absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     name = name,
@@ -39,7 +38,7 @@ function M.is_executable(parent, absolute_path, ext)
       return utils.is_wsl_windows_fs_exe(ext)
     end
   end
-  return uv.fs_access(absolute_path, "X")
+  return vim.loop.fs_access(absolute_path, "X")
 end
 
 function M.file(parent, absolute_path, name)
@@ -50,7 +49,7 @@ function M.file(parent, absolute_path, name)
     absolute_path = absolute_path,
     executable = M.is_executable(parent, absolute_path, ext),
     extension = ext,
-    fs_stat = uv.fs_stat(absolute_path),
+    fs_stat = vim.loop.fs_stat(absolute_path),
     name = name,
     parent = parent,
   }
@@ -63,11 +62,11 @@ end
 -- So we need to check for link_to ~= nil when adding new links to the main tree
 function M.link(parent, absolute_path, name)
   --- I dont know if this is needed, because in my understanding, there isn't hard links in windows, but just to be sure i changed it.
-  local link_to = uv.fs_realpath(absolute_path)
+  local link_to = vim.loop.fs_realpath(absolute_path)
   local open, nodes, has_children, watcher
-  if (link_to ~= nil) and uv.fs_stat(link_to).type == "directory" then
-    local handle = uv.fs_scandir(link_to)
-    has_children = handle and uv.fs_scandir_next(handle) ~= nil
+  if (link_to ~= nil) and vim.loop.fs_stat(link_to).type == "directory" then
+    local handle = vim.loop.fs_scandir(link_to)
+    has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
     open = false
     nodes = {}
     watcher = watch.create_watcher(link_to)
@@ -76,7 +75,7 @@ function M.link(parent, absolute_path, name)
   return {
     type = "link",
     absolute_path = absolute_path,
-    fs_stat = uv.fs_stat(absolute_path),
+    fs_stat = vim.loop.fs_stat(absolute_path),
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     link_to = link_to,

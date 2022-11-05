@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local M = {
   config = {
     is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1,
@@ -18,10 +16,10 @@ function M.fn(node)
     cmd = M.config.system_open.cmd,
     args = M.config.system_open.args,
     errors = "\n",
-    stderr = uv.new_pipe(false),
+    stderr = vim.loop.new_pipe(false),
   }
   table.insert(process.args, node.link_to or node.absolute_path)
-  process.handle, process.pid = uv.spawn(
+  process.handle, process.pid = vim.loop.spawn(
     process.cmd,
     { args = process.args, stdio = { nil, nil, process.stderr }, detached = true },
     function(code)
@@ -39,7 +37,7 @@ function M.fn(node)
     error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
     return
   end
-  uv.read_start(process.stderr, function(err, data)
+  vim.loop.read_start(process.stderr, function(err, data)
     if err then
       return
     end
@@ -47,7 +45,7 @@ function M.fn(node)
       process.errors = process.errors .. data
     end
   end)
-  uv.unref(process.handle)
+  vim.loop.unref(process.handle)
 end
 
 function M.setup(opts)

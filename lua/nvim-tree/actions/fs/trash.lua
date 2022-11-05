@@ -1,5 +1,3 @@
-local a = vim.api
-
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
 
@@ -19,10 +17,10 @@ local function clear_buffer(absolute_path)
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       if buf.hidden == 0 and #bufs > 1 then
-        local winnr = a.nvim_get_current_win()
-        a.nvim_set_current_win(buf.windows[1])
+        local winnr = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_current_win(buf.windows[1])
         vim.cmd ":bn"
-        a.nvim_set_current_win(winnr)
+        vim.api.nvim_set_current_win(winnr)
       end
       vim.api.nvim_buf_delete(buf.bufnr, {})
       return
