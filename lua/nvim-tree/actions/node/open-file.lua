@@ -143,7 +143,8 @@ end
 
 local function open_file_in_tab(filename)
   if M.quit_on_open then
-    view.close(false)
+    view.close() -- TODO Choose one
+    -- view.close_this_tab_only() -- TODO Choose one
   end
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
@@ -306,7 +307,8 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open then
-    view.close(false)
+    view.close() -- TODO Choose one
+    -- view.close_this_tab_only() -- TODO Choose one
   end
 end
 

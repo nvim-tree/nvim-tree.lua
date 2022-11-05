@@ -184,7 +184,7 @@ local function save_tab_state()
   M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr())
 end
 
-function M.close(all_tabpages)
+local function close(all_tabpages)
   if not M.is_visible() then
     return
   end
@@ -212,6 +212,14 @@ function M.close(all_tabpages)
       return
     end
   end
+end
+
+function M.close_this_tab_only()
+  close(false)
+end
+
+function M.close()
+  close(M.View.open_on_tab)
 end
 
 function M.open(options)
@@ -457,6 +465,7 @@ function M.setup(opts)
   M.View.height = options.height
   M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder
+  M.View.open_on_tab = opts.open_on_tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber

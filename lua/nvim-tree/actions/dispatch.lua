@@ -4,7 +4,8 @@ local lib = require "nvim-tree.lib"
 local M = {}
 
 local Actions = {
-  close = view.close,
+  -- close = view.close(), -- TODO Choose one
+  close = view.close_this_tab_only(), -- TODO Choose one
 
   -- Tree modifiers
   collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn,

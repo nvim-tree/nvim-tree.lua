@@ -117,7 +117,8 @@ function M.open(cwd)
     core.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
-    view.close(false)
+    -- view.close() -- TODO Choose one
+    view.close_this_tab_only() -- TODO Choose one
     view.open_in_current_win()
     renderer.draw()
   else
