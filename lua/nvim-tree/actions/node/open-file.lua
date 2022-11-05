@@ -15,7 +15,7 @@ end
 
 ---Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
-local function selectable_win_ids()
+local function usable_win_ids()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
   local tree_winid = view.get_winnr(tabpage)

@@ -12,17 +12,17 @@ end
 
 -- reduce signcolumn/foldcolumn from window width
 local function effective_win_width()
-  local win_width = fn.winwidth(0)
+  local win_width = vim.fn.winwidth(0)
 
   -- return zero if the window cannot be found
-  local win_id = fn.win_getid()
+  local win_id = vim.fn.win_getid()
 
   if win_id == 0 then
     return win_width
   end
 
   -- if the window does not exist the result is an empty list
-  local win_info = fn.getwininfo(win_id)
+  local win_info = vim.fn.getwininfo(win_id)
 
   -- check if result table is empty
   if next(win_info) == nil then
@@ -52,14 +52,17 @@ local function show()
     return
   end
 
-  local width = vim.fn.strdisplaywidth(vim.fn.substitute(line, "[^[:print:]]*$", "", "g"))
-  if width < vim.fn.winwidth(0) then
+  local text_width = vim.fn.strdisplaywidth(vim.fn.substitute(line, "[^[:print:]]*$", "", "g"))
+  local win_width = effective_win_width()
+
+  if text_width < win_width then
     return
   end
+
   M.popup_win = vim.api.nvim_open_win(vim.api.nvim_create_buf(false, false), false, {
     relative = "win",
     bufpos = { vim.fn.line "." - 2, 0 },
-    width = math.min(width, vim.o.columns - 2),
+    width = math.min(text_width, vim.o.columns - 2),
     height = 1,
     noautocmd = true,
     style = "minimal",

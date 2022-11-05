@@ -1,5 +1,3 @@
-local has_notify, notify = pcall(require, "notify")
-
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {
