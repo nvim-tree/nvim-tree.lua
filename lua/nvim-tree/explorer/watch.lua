@@ -36,6 +36,13 @@ local function is_folder_ignored(path)
       return true
     end
   end
+
+  for _, ignore_dir in ipairs(M.ignore_dirs) do
+    if vim.fn.match(path, ignore_dir) ~= -1 then
+      return true
+    end
+  end
+
   return false
 end
 
@@ -78,6 +85,7 @@ end
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
+  M.ignore_dirs = opts.filesystem_watchers.ignore_dirs
   M.uid = 0
 end
 

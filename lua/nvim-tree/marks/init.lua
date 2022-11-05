@@ -28,6 +28,11 @@ function M.toggle_mark(node)
   end
 end
 
+function M.clear_marks()
+  NvimTreeMarks = {}
+  M.draw()
+end
+
 function M.get_mark(node)
   return NvimTreeMarks[node.absolute_path]
 end
