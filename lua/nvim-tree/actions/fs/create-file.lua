@@ -106,7 +106,6 @@ function M.fn(node)
     if not is_error then
       notify.info(new_file_path .. " was properly created")
     end
-    require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     require("nvim-tree.actions.finders.find-file").fn(new_file_path)
   end)
 end
