@@ -16,15 +16,16 @@ function M.fn(fname)
   if running[fname] or not core.get_explorer() then
     return
   end
-  running[fname] = true
 
-  local ps = log.profile_start("find file %s", fname)
   -- always match against the real path
   local fname_real = uv.fs_realpath(fname)
   if not fname_real then
     return
   end
 
+  running[fname] = true
+
+  local ps = log.profile_start("find file %s", fname)
   local line = core.get_nodes_starting_line()
 
   local absolute_paths_searched = {}
