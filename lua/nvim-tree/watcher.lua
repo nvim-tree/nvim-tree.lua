@@ -89,7 +89,7 @@ function Event:destroy(message)
 
   if self._fs_event then
     if message then
-      utils.notify.warn(message)
+      notify.warn(message)
     end
 
     local rc, _, name = self._fs_event:stop()
