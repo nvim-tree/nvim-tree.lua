@@ -218,6 +218,10 @@ function M.close_this_tab_only()
   close(false)
 end
 
+function M.close_all_tabs()
+  close(true)
+end
+
 function M.close()
   close(M.View.open_on_tab)
 end

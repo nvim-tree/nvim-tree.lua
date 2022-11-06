@@ -31,8 +31,7 @@ local function remove_overlay()
       group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          view.close() -- TODO Choose one
-          -- view.close_this_tab_only() -- TODO Choose one
+          view.close()
         end
       end,
     })

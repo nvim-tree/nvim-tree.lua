@@ -70,8 +70,7 @@ M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
 function M.toggle(find_file, no_focus, cwd, bang)
   if view.is_visible() then
-    view.close() -- TODO Choose one
-    -- view.close_this_tab_only() -- TODO Choose one
+    view.close()
   else
     local previous_buf = vim.api.nvim_get_current_buf()
     M.open(cwd)
@@ -439,8 +438,7 @@ local function setup_autocommands(opts)
       pattern = "NvimTree_*",
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          view.close() -- TODO Choose one
-          -- view.close_this_tab_only() -- TODO Choose one
+          view.close()
         end
       end,
     })
@@ -775,8 +773,7 @@ function M.setup(conf)
   end
 
   if M.setup_called and view.is_visible() then
-    view.close() -- TODO Choose one
-    -- view.close_this_tab_only() -- TODO Choose one
+    view.close_all_tabs()
     view.abandon_current_window()
   end
 
