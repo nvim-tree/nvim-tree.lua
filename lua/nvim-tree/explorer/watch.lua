@@ -36,10 +36,17 @@ local function is_folder_ignored(path)
       return true
     end
   end
+
+  for _, ignore_dir in ipairs(M.ignore_dirs) do
+    if vim.fn.match(path, ignore_dir) ~= -1 then
+      return true
+    end
+  end
+
   return false
 end
 
-local function refresh_path(path)
+function M.refresh_path(path)
   log.line("watcher", "node event executing '%s'", path)
   local n = utils.get_node_from_path(path)
   if not n then
@@ -65,7 +72,7 @@ function M.create_watcher(absolute_path)
   local function callback(watcher)
     log.line("watcher", "node event scheduled %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
-      refresh_path(watcher._path)
+      M.refresh_path(watcher._path)
     end)
   end
 
@@ -78,6 +85,7 @@ end
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
+  M.ignore_dirs = opts.filesystem_watchers.ignore_dirs
   M.uid = 0
 end
 

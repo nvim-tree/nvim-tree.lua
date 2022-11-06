@@ -1,4 +1,4 @@
-local utils = require "nvim-tree.utils"
+local notify = require "nvim-tree.notify"
 
 local M = {
   SIGN_GROUP = "NvimTreeGitSigns",
@@ -68,10 +68,10 @@ end
 local function nil_() end
 
 local function warn_status(git_status)
-  utils.notify.warn(
+  notify.warn(
     'Unrecognized git state "'
       .. git_status
-      .. '". Please open up an issue on https://github.com/kyazdani42/nvim-tree.lua/issues with this message.'
+      .. '". Please open up an issue on https://github.com/nvim-tree/nvim-tree.lua/issues with this message.'
   )
 end
 

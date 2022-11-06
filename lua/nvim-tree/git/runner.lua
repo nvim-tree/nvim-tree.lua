@@ -1,4 +1,3 @@
-local uv = vim.loop
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
@@ -60,9 +59,9 @@ end
 
 function Runner:_run_git_job()
   local handle, pid
-  local stdout = uv.new_pipe(false)
-  local stderr = uv.new_pipe(false)
-  local timer = uv.new_timer()
+  local stdout = vim.loop.new_pipe(false)
+  local stderr = vim.loop.new_pipe(false)
+  local timer = vim.loop.new_timer()
 
   local function on_finish(rc)
     self.rc = rc or 0
@@ -79,14 +78,14 @@ function Runner:_run_git_job()
       handle:close()
     end
 
-    pcall(uv.kill, pid)
+    pcall(vim.loop.kill, pid)
   end
 
   local opts = self:_getopts(stdout, stderr)
   log.line("git", "running job with timeout %dms", self.timeout)
   log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
 
-  handle, pid = uv.spawn(
+  handle, pid = vim.loop.spawn(
     "git",
     opts,
     vim.schedule_wrap(function(rc)
@@ -115,8 +114,8 @@ function Runner:_run_git_job()
     self:_log_raw_output(data)
   end
 
-  uv.read_start(stdout, vim.schedule_wrap(manage_stdout))
-  uv.read_start(stderr, vim.schedule_wrap(manage_stderr))
+  vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
+  vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
 end
 
 function Runner:_wait()

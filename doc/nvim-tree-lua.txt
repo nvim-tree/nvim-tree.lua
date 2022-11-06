@@ -31,7 +31,7 @@ Features
 
 File Icons
 
-    https://github.com/kyazdani42/nvim-web-devicons is optional and used to display file icons. It requires a patched font: https://www.nerdfonts.com
+    https://github.com/nvim-tree/nvim-web-devicons is optional and used to display file icons. It requires a patched font: https://www.nerdfonts.com
 
      should look like an open folder.
 
@@ -64,6 +64,13 @@ Requirements
 Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     -- examples for your init.lua
+
+    -- disable netrw at the very start of your init.lua (strongly advised)
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
+
+    -- set termguicolors to enable highlight groups
+    vim.opt.termguicolors = true
 
     -- empty setup using defaults
     require("nvim-tree").setup()
@@ -118,11 +125,15 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     (if you opened a file with something else than the NvimTree, like `fzf` or
     `:split`)
 
+    Invoke with a bang `:NvimTreeFindFile!` to update the root.
+
 |:NvimTreeFindFileToggle|
 
     close the tree or change the cursor in the tree for the current bufname,
     similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
     optional path argument.
+
+    Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
 
 |:NvimTreeClipboard|
 
@@ -174,13 +185,13 @@ Subsequent calls to setup will replace the previous configuration.
       sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
-      on_attach = "disable", -- function(bufnr). If nil, will use the deprecated mapping strategy
-      remove_keymaps = false, -- boolean (disable totally or not) or list of key (lhs)
+      on_attach = "disable",
+      remove_keymaps = false,
+      select_prompts = false,
       view = {
         adaptive_size = false,
         centralize_selection = false,
         width = 30,
-        height = 30,
         hide_root_folder = false,
         side = "left",
         preserve_window_proportions = false,
@@ -195,6 +206,7 @@ Subsequent calls to setup will replace the previous configuration.
         },
         float = {
           enable = false,
+          quit_on_focus_loss = true,
           open_win_config = {
             relative = "editor",
             border = "rounded",
@@ -296,6 +308,7 @@ Subsequent calls to setup will replace the previous configuration.
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
+        ignore_dirs = {},
       },
       git = {
         enable = true,
@@ -361,6 +374,9 @@ Subsequent calls to setup will replace the previous configuration.
           watcher = false,
         },
       },
+      notify = {
+        threshold = vim.log.levels.INFO,
+      },
     } -- END_DEFAULT_OPTS
 <
 
@@ -370,6 +386,12 @@ Here is a list of the options available in the setup call:
 Completely disable netrw
   Type: `boolean`, Default: `false`
 
+It is strongly advised to eagerly disable netrw, due to race conditions at vim
+startup.
+Set the following at the very beginning of your `init.lua` / `init.vim`: >
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
+<
 *nvim-tree.hijack_netrw*
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
@@ -415,9 +437,25 @@ if the tree was previously open.
 
 *nvim-tree.sort_by*
 Changes how files within the same directory are sorted.
-Can be one of 'name', 'case_sensitive', 'modification_time' or 'extension'.
-  Type: `string`, Default: `"name"`
+Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
+function.
+  Type: `string` | `function(nodes)`, Default: `"name"`
 
+  Function is passed a table of nodes to be sorted, each node containing:
+  - `absolute_path`: `string`
+  - `executable`:    `boolean`
+  - `extension`:     `string`
+  - `link_to`:       `string`
+  - `name`:          `string`
+  - `type`:          `"directory"` | `"file"` | `"link"`
+
+  Example: sort by name length: >
+    local sort_by = function(nodes)
+      table.sort(nodes, function(a, b)
+        return #a.name < #b.name
+      end)
+    end
+<
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`
@@ -567,6 +605,12 @@ performance.
     Idle milliseconds between filesystem change and action.
       Type: `number`, Default: `50` (ms)
 
+    *nvim-tree.filesystem_watchers.ignore_dirs*
+    List of vim regex for absolute directory paths that will not be watched.
+    Backslashes must be escaped e.g. `"my-project/\\.build$"`. See |string-match|.
+    Useful when path is not in `.gitignore` or git integration is disabled.
+      Type: {string}, Default: `{}`
+
 *nvim-tree.on_attach*
 Function ran when creating the nvim-tree buffer.
 This can be used to attach keybindings to the tree buffer.
@@ -595,12 +639,16 @@ This can be used to remove the default mappings in the tree.
 - Ignore by passing `false`
     Type: `bool` or `{string}`, Default: `false`
 
+*nvim-tree.select_prompts*
+Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator
+such as dressing.nvim or telescope-ui-select.nvim
+Type: `boolean`, Default: `false`
+
 *nvim-tree.view*
 Window / buffer setup.
 
     *nvim-tree.view.adaptive_size*
     Resize the window on each draw based on the longest line.
-    Only works when |nvim-tree.view.side| is `left` or `right`.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.centralize_selection*
@@ -615,18 +663,10 @@ Window / buffer setup.
     *nvim-tree.view.width*
     Width of the window, can be a `%` string, a number representing columns or
     a function.
-    Only works with `side` is `left` or `right`.
-      Type: `string | number | function`, Default: `30`
-
-    *nvim-tree.view.height*
-    Height of the window, can be `%` string or a number representing rows or a
-    function.
-    Only works with  `side` is `top` or `bottom`
       Type: `string | number | function`, Default: `30`
 
     *nvim-tree.view.side*
-    Side of the tree, can be `"left"`, `"right"`, `"bottom"`, `"top"`.
-    Note that bottom/top are not working correctly yet.
+    Side of the tree, can be `"left"`, `"right"`.
       Type: `string`, Default: `"left"`
 
     *nvim-tree.view.preserve_window_proportions*
@@ -665,8 +705,12 @@ Window / buffer setup.
     Configuration options for floating window
 
         *nvim-tree.view.float.enable*
-        Display nvim-tree window as float (enforces |nvim-tree.actions.open_file.quit_on_open| if set).
+        Tree window will be floating.
           Type: `boolean`, Default: `false`
+
+        *nvim-tree.view.float.quit_on_focus_loss*
+        Close the floating tree window when it loses focus.
+          Type: `boolean`, Default: `true`
 
         *nvim-tree.view.float.open_win_config*
         Floating window config. See |nvim_open_win| for more details.
@@ -958,6 +1002,18 @@ The filter can be cleared with the `F` key by default.
     Whether to filter folders or not.
       Type: `boolean`, Default: `true`
 
+*nvim-tree.notify*
+Configuration for notification.
+
+    *nvim-tree.notify.threshold*
+    Specify minimum notification level, uses the values from |vim.log.levels|
+      Type: `enum`, Default: `vim.log.levels.INFO`
+
+    `ERROR`:   hard errors e.g. failure to read from the file system.
+    `WARNING`: non-fatal errors e.g. unable to system open a file.
+    `INFO:`    information only e.g. file copy path confirmation.
+    `DEBUG:`   not used.
+
 *nvim-tree.log*
 Configuration for diagnostic logging.
 
@@ -1060,7 +1116,7 @@ The api is separated in multiple modules, which can be accessed with
 `require("nvim-tree.api").moduleName.functionality`.
 
 Functions that needs a tree node parameter are exposed with an abstraction
-that injects the node from the cursor position in the tree when calling 
+that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
 
@@ -1091,6 +1147,7 @@ exists.
     - rename_sub
     - cut
     - paste
+    - clear_clipboard
     - print_clipboard
     - copy.node
     - copy.absolute_path
@@ -1134,6 +1191,7 @@ exists.
     - get
     - list
     - toggle
+    - clear
     - bulk.move
     - navigate.next
     - navigate.prev
@@ -1142,29 +1200,52 @@ exists.
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*
 
-Setting your own mapping in the configuration will soon be deprecated, see |nvim-tree.on_attach| for experimental replacement.
+Setting your own mapping in the configuration will soon be deprecated, see
+|nvim-tree.on_attach| for experimental replacement.
 
-The `list` option in `view.mappings.list` is a table of
+`view.mappings.list` is a table of:
+  {key}       (string|table of string) mandatory |{lhs}|.
 
-- `key` can be either a string or a table of string (lhs)
-- `action` is the name of the action, set to `""` to remove default action
-- `action_cb` is the function that will be called, it receives the node as a parameter. Optional for default actions
-- `mode` is normal by default
+  {action}    (string) mandatory name of the action.
+              `""` to remove an action with {key}. The case of {key} must
+              exactly match the action you are removing e.g. `'<Tab>'` to
+              remove the default preview action.
+              An arbitrary description when using `action_cb`.
+
+  {action_cb} (function) optional custom function that will be called.
+              Receives the node as a parameter.
+              Non-empty description for `action` is required.
+
+  {mode}      (string) optional mode as per |nvim_set_keymap|.
+              Default `'n'`.
+
+Examples:
 >
-  local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+    local function print_node_path(node)
+      print(node.absolute_path)
+    end
 
-  local function print_node_path(node) {
-    print(node.absolute_path)
-  }
+    ----
 
-  local list = {
-    { key = {"<CR>", "o" }, action = "edit", mode = "n"},
-    { key = "p", action = "print_path", action_cb = print_node_path },
-    { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
-    { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
-  }
+    view = {
+      mappings = {
+        list = {
+          -- remove a default mapping for cd
+          { key = "<2-RightMouse>", action = "" },
+
+          -- add multiple normal mode mappings for edit
+          { key = { "<CR>", "o" }, action = "edit", mode = "n" },
+
+          -- custom action
+          { key = "p", action = "print_the_node_path", action_cb = print_node_path },
+
+          ----
 <
 Mouse support defined in |KeyBindings|
+
+Single left mouse mappings can be achieved via `<LeftRelease>`.
+
+Single right / middle mouse mappings will requre changes to |mousemodel| or |mouse|.
 
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
 
@@ -1288,6 +1369,9 @@ Example (in your `init.vim`):
 You should have 'termguicolors' enabled, otherwise, colors will not be
 applied.
 
+To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
+as per |:highlight|
+
 Default linked group follows name.
 
 NvimTreeSymlink
@@ -1323,6 +1407,8 @@ There are also links to normal bindings to style the tree itself.
 NvimTreeNormal
 NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
+NvimTreeCursorLineNr    (CursorLineNr)
+NvimTreeLineNr          (LineNr)
 NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
 NvimTreeWinSeparator    (VertSplit)
 NvimTreeCursorColumn    (CursorColumn)
@@ -1357,7 +1443,7 @@ nvim-tree will dispatch events whenever an action is made. These events can be
 subscribed to through handler functions. This allows for even further
 customization of nvim-tree.
 
-A handler for an event is just a function which receives one argument, the 
+A handler for an event is just a function which receives one argument, the
 payload of the event. The payload is different for each event type. Refer
 to |nvim_tree_registering_handlers| for more information.
 
@@ -1369,9 +1455,10 @@ Handlers are registered by calling the `events.subscribe` function available in 
 For example, registering a handler for when a node is renamed is done like this:
 >
     local api = require('nvim-tree.api')
+    local Event = api.events.Event
 
     api.events.subscribe(Event.NodeRenamed, function(data)
-        print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
+      print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
 <
 
@@ -1383,7 +1470,7 @@ You can access the event enum with:
 <
 Here is the list of available variant of this enum:
 
-- Event.Ready 
+- Event.Ready
                 When NvimTree has been initialized
                 • Note: Handler takes no parameter.
 

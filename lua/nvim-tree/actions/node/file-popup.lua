@@ -1,5 +1,4 @@
 local utils = require "nvim-tree.utils"
-local a = vim.api
 
 local M = {}
 
@@ -34,19 +33,19 @@ local function setup_window(node)
     noautocmd = true,
     zindex = 60,
   })
-  local winnr = a.nvim_open_win(0, false, open_win_config)
+  local winnr = vim.api.nvim_open_win(0, false, open_win_config)
   current_popup = {
     winnr = winnr,
     file_path = node.absolute_path,
   }
-  local bufnr = a.nvim_create_buf(false, true)
-  a.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-  a.nvim_win_set_buf(winnr, bufnr)
+  local bufnr = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  vim.api.nvim_win_set_buf(winnr, bufnr)
 end
 
 function M.close_popup()
   if current_popup ~= nil then
-    a.nvim_win_close(current_popup.winnr, { force = true })
+    vim.api.nvim_win_close(current_popup.winnr, { force = true })
     vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
 
     current_popup = nil
@@ -69,8 +68,8 @@ function M.toggle_file_info(node)
 
   setup_window(node)
 
-  a.nvim_create_autocmd("CursorMoved", {
-    group = a.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
+  vim.api.nvim_create_autocmd("CursorMoved", {
+    group = vim.api.nvim_create_augroup("NvimTreeRemoveFilePopup", {}),
     callback = M.close_popup,
   })
 end

@@ -1,4 +1,4 @@
-local uv = vim.loop
+local notify = require "nvim-tree.notify"
 
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
@@ -44,16 +44,17 @@ function Event:start()
 
   local rc, _, name
 
-  self._fs_event, _, name = uv.new_fs_event()
+  self._fs_event, _, name = vim.loop.new_fs_event()
   if not self._fs_event then
     self._fs_event = nil
-    utils.notify.warn(string.format("Could not initialize an fs_event watcher for path %s : %s", self._path, name))
+    notify.warn(string.format("Could not initialize an fs_event watcher for path %s : %s", self._path, name))
     return false
   end
 
   local event_cb = vim.schedule_wrap(function(err, filename)
     if err then
-      log.line("watcher", "event_cb for %s fail : %s", self._path, err)
+      log.line("watcher", "event_cb '%s' '%s' FAIL : %s", self._path, filename, err)
+      self:destroy(string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self._path))
     else
       log.line("watcher", "event_cb '%s' '%s'", self._path, filename)
       for _, listener in ipairs(self._listeners) do
@@ -64,7 +65,7 @@ function Event:start()
 
   rc, _, name = self._fs_event:start(self._path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
-    utils.notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
+    notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
     return false
   end
 
@@ -82,13 +83,17 @@ function Event:remove(listener)
   end
 end
 
-function Event:destroy()
+function Event:destroy(message)
   log.line("watcher", "Event:destroy '%s'", self._path)
 
   if self._fs_event then
+    if message then
+      notify.warn(message)
+    end
+
     local rc, _, name = self._fs_event:stop()
     if rc ~= 0 then
-      utils.notify.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._path, name))
+      notify.warn(string.format("Could not stop the fs_event watcher for path %s : %s", self._path, name))
     end
     self._fs_event = nil
   end

@@ -1,11 +1,10 @@
-local uv = vim.loop
-
 local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
 local common = require "nvim-tree.explorer.common"
 local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
+local notify = require "nvim-tree.notify"
 
 local M = {}
 
@@ -20,9 +19,9 @@ end
 
 function M.reload(node, status)
   local cwd = node.link_to or node.absolute_path
-  local handle = uv.fs_scandir(cwd)
+  local handle = vim.loop.fs_scandir(cwd)
   if type(handle) == "string" then
-    utils.notify.error(handle)
+    notify.error(handle)
     return
   end
 
@@ -36,7 +35,7 @@ function M.reload(node, status)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local ok, name, t = pcall(uv.fs_scandir_next, handle)
+    local ok, name, t = pcall(vim.loop.fs_scandir_next, handle)
     if not ok or not name then
       break
     end
@@ -47,7 +46,7 @@ function M.reload(node, status)
         return stat
       end
 
-      stat = uv.fs_stat(path)
+      stat = vim.loop.fs_stat(path)
       return stat
     end
 
@@ -68,7 +67,7 @@ function M.reload(node, status)
       end
 
       if not nodes_by_path[abs] then
-        if t == "directory" and uv.fs_access(abs, "R") then
+        if t == "directory" and vim.loop.fs_access(abs, "R") then
           local folder = builders.folder(node, abs, name)
           nodes_by_path[abs] = folder
           table.insert(node.nodes, folder)

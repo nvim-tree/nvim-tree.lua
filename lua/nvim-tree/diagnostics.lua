@@ -1,4 +1,3 @@
-local a = vim.api
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
@@ -18,7 +17,7 @@ local sign_names = {
 
 local function add_sign(linenr, severity)
   local buf = view.get_bufnr()
-  if not a.nvim_buf_is_valid(buf) or not a.nvim_buf_is_loaded(buf) then
+  if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
     return
   end
   local sign_name = sign_names[severity][1]
@@ -30,8 +29,8 @@ local function from_nvim_lsp()
 
   for _, diagnostic in ipairs(vim.diagnostic.get()) do
     local buf = diagnostic.bufnr
-    if a.nvim_buf_is_valid(buf) then
-      local bufname = a.nvim_buf_get_name(buf)
+    if vim.api.nvim_buf_is_valid(buf) then
+      local bufname = vim.api.nvim_buf_get_name(buf)
       local lowest_severity = buffer_severity[bufname]
       if not lowest_severity or diagnostic.severity < lowest_severity then
         buffer_severity[bufname] = diagnostic.severity

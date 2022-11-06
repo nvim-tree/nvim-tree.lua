@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local M = {
   config = nil,
   path = nil,
@@ -29,7 +27,7 @@ function M.profile_start(fmt, ...)
     return
   end
   M.line("profile", "START " .. (fmt or "???"), ...)
-  return uv.hrtime()
+  return vim.loop.hrtime()
 end
 
 --- Write to log file via M.line
@@ -39,7 +37,7 @@ function M.profile_end(start, fmt, ...)
   if not M.path or not M.config.types.profile and not M.config.types.all then
     return
   end
-  local millis = start and math.modf((uv.hrtime() - start) / 1000000) or -1
+  local millis = start and math.modf((vim.loop.hrtime() - start) / 1000000) or -1
   M.line("profile", "END   " .. (fmt or "???") .. "  " .. millis .. "ms", ...)
 end
 
@@ -56,7 +54,7 @@ function M.setup(opts)
     if M.config.truncate then
       os.remove(M.path)
     end
-    require("nvim-tree.utils").notify.debug("nvim-tree.lua logging to " .. M.path)
+    require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. M.path)
   end
 end
 
