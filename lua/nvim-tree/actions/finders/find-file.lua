@@ -1,5 +1,4 @@
 local log = require "nvim-tree.log"
-local uv = vim.loop
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
@@ -18,7 +17,7 @@ function M.fn(fname)
   end
 
   -- always match against the real path
-  local fname_real = uv.fs_realpath(fname)
+  local fname_real = vim.loop.fs_realpath(fname)
   if not fname_real then
     return
   end

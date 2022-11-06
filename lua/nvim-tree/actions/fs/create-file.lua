@@ -1,21 +1,18 @@
-local uv = vim.loop
-
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
-local watch = require "nvim-tree.explorer.watch"
 local notify = require "nvim-tree.notify"
 
 local M = {}
 
 local function create_and_notify(file)
-  local ok, fd = pcall(uv.fs_open, file, "w", 420)
+  local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
   if not ok then
     notify.error("Couldn't create file " .. file)
     return
   end
-  uv.fs_close(fd)
+  vim.loop.fs_close(fd)
   events._dispatch_file_created(file)
 end
 
@@ -95,28 +92,21 @@ function M.fn(node)
       if is_last_path_file and idx == num_nodes then
         create_file(path_to_create)
       elseif not utils.file_exists(path_to_create) then
-        local success = uv.fs_mkdir(path_to_create, 493)
+        local success = vim.loop.fs_mkdir(path_to_create, 493)
         if not success then
           notify.error("Could not create folder " .. path_to_create)
           is_error = true
           break
         end
+        events._dispatch_folder_created(path_to_create)
       end
     end
     if not is_error then
       notify.info(new_file_path .. " was properly created")
     end
-    events._dispatch_folder_created(new_file_path)
-    if M.enable_reload then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-    else
-      -- synchronous call required so that we may focus the file now
-      node = node.nodes ~= nil and node or node.parent
-      if node then
-        watch.refresh_path(node.absolute_path)
-      end
-    end
-    utils.focus_file(utils.path_remove_trailing(new_file_path))
+
+    -- implicitly refreshes contents
+    require("nvim-tree.actions.finders.find-file").fn(new_file_path)
   end)
 end
 

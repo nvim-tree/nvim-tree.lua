@@ -1,5 +1,3 @@
-local api = vim.api
-
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
@@ -19,7 +17,7 @@ function M.get_node_at_cursor()
     return
   end
 
-  local cursor = api.nvim_win_get_cursor(view.get_winnr())
+  local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
   if view.is_help_ui() then
     local help_lines = require("nvim-tree.renderer.help").compute_lines()
@@ -57,7 +55,7 @@ function M.expand_or_collapse(node)
 end
 
 function M.set_target_win()
-  local id = api.nvim_get_current_win()
+  local id = vim.api.nvim_get_current_win()
   local tree_id = view.get_winnr()
   if tree_id and id == tree_id then
     M.target_winid = 0
@@ -81,10 +79,10 @@ local function open_view_and_draw()
 end
 
 local function should_hijack_current_buf()
-  local bufnr = api.nvim_get_current_buf()
-  local bufname = api.nvim_buf_get_name(bufnr)
-  local bufmodified = api.nvim_buf_get_option(bufnr, "modified")
-  local ft = api.nvim_buf_get_option(bufnr, "ft")
+  local bufnr = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  local bufmodified = vim.api.nvim_buf_get_option(bufnr, "modified")
+  local ft = vim.api.nvim_buf_get_option(bufnr, "ft")
 
   local should_hijack_unnamed = M.hijack_unnamed_buffer_when_opening and bufname == "" and not bufmodified and ft == ""
   local should_hijack_dir = bufname ~= "" and vim.fn.isdirectory(bufname) == 1 and M.hijack_directories.enable

@@ -1,6 +1,3 @@
-local a = vim.api
-local luv = vim.loop
-
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local view = require "nvim-tree.view"
@@ -10,13 +7,13 @@ local notify = require "nvim-tree.notify"
 local M = {}
 
 local function close_windows(windows)
-  if view.View.float.enable and #a.nvim_list_wins() == 1 then
+  if view.View.float.enable and #vim.api.nvim_list_wins() == 1 then
     return
   end
 
   for _, window in ipairs(windows) do
-    if a.nvim_win_is_valid(window) then
-      a.nvim_win_close(window, true)
+    if vim.api.nvim_win_is_valid(window) then
+      vim.api.nvim_win_close(window, true)
     end
   end
 end
@@ -26,14 +23,14 @@ local function clear_buffer(absolute_path)
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       if buf.hidden == 0 and (#bufs > 1 or view.View.float.enable) then
-        local winnr = a.nvim_get_current_win()
-        a.nvim_set_current_win(buf.windows[1])
+        local winnr = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_current_win(buf.windows[1])
         vim.cmd ":bn"
         if not view.View.float.enable then
-          a.nvim_set_current_win(winnr)
+          vim.api.nvim_set_current_win(winnr)
         end
       end
-      a.nvim_buf_delete(buf.bufnr, { force = true })
+      vim.api.nvim_buf_delete(buf.bufnr, { force = true })
       if M.close_window then
         close_windows(buf.windows)
       end
@@ -43,13 +40,13 @@ local function clear_buffer(absolute_path)
 end
 
 local function remove_dir(cwd)
-  local handle = luv.fs_scandir(cwd)
+  local handle = vim.loop.fs_scandir(cwd)
   if type(handle) == "string" then
     return notify.error(handle)
   end
 
   while true do
-    local name, t = luv.fs_scandir_next(handle)
+    local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
@@ -61,7 +58,7 @@ local function remove_dir(cwd)
         return false
       end
     else
-      local success = luv.fs_unlink(new_cwd)
+      local success = vim.loop.fs_unlink(new_cwd)
       if not success then
         return false
       end
@@ -69,7 +66,7 @@ local function remove_dir(cwd)
     end
   end
 
-  return luv.fs_rmdir(cwd)
+  return vim.loop.fs_rmdir(cwd)
 end
 
 function M.fn(node)
@@ -88,7 +85,7 @@ function M.fn(node)
         end
         events._dispatch_folder_removed(node.absolute_path)
       else
-        local success = luv.fs_unlink(node.absolute_path)
+        local success = vim.loop.fs_unlink(node.absolute_path)
         if not success then
           return notify.error("Could not remove " .. node.name)
         end

@@ -1,5 +1,3 @@
-local a = vim.api
-
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
@@ -28,9 +26,9 @@ local overlay_winnr = nil
 local function remove_overlay()
   if view.View.float.enable and view.View.float.quit_on_focus_loss then
     -- return to normal nvim-tree float behaviour when filter window is closed
-    a.nvim_create_autocmd("WinLeave", {
+    vim.api.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",
-      group = a.nvim_create_augroup("NvimTree", { clear = false }),
+      group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
       callback = function()
         if utils.is_nvim_tree_buf(0) then
           view.close()
@@ -39,7 +37,7 @@ local function remove_overlay()
     })
   end
 
-  a.nvim_win_close(overlay_winnr, { force = true })
+  vim.api.nvim_win_close(overlay_winnr, { force = true })
   overlay_bufnr = nil
   overlay_winnr = nil
 
@@ -85,54 +83,54 @@ end
 
 local function record_char()
   vim.schedule(function()
-    M.filter = a.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
+    M.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
     M.apply_filter()
     redraw()
   end)
 end
 
 local function configure_buffer_overlay()
-  overlay_bufnr = a.nvim_create_buf(false, true)
+  overlay_bufnr = vim.api.nvim_create_buf(false, true)
 
-  a.nvim_buf_attach(overlay_bufnr, true, {
+  vim.api.nvim_buf_attach(overlay_bufnr, true, {
     on_lines = record_char,
   })
 
-  a.nvim_create_autocmd("InsertLeave", {
+  vim.api.nvim_create_autocmd("InsertLeave", {
     callback = remove_overlay,
     once = true,
   })
 
-  a.nvim_buf_set_keymap(overlay_bufnr, "i", "<CR>", "<cmd>stopinsert<CR>", {})
+  vim.api.nvim_buf_set_keymap(overlay_bufnr, "i", "<CR>", "<cmd>stopinsert<CR>", {})
 end
 
 local function create_overlay()
   local min_width = 20
   if view.View.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
-    a.nvim_clear_autocmds {
+    vim.api.nvim_clear_autocmds {
       event = "WinLeave",
       pattern = "NvimTree_*",
-      group = a.nvim_create_augroup("NvimTree", { clear = false }),
+      group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
     }
 
     min_width = min_width - 2
   end
 
   configure_buffer_overlay()
-  overlay_winnr = a.nvim_open_win(overlay_bufnr, true, {
+  overlay_winnr = vim.api.nvim_open_win(overlay_bufnr, true, {
     col = 1,
     row = 0,
     relative = "cursor",
-    width = math.max(min_width, a.nvim_win_get_width(view.get_winnr()) - #M.prefix - 2),
+    width = math.max(min_width, vim.api.nvim_win_get_width(view.get_winnr()) - #M.prefix - 2),
     height = 1,
     border = "none",
     style = "minimal",
   })
-  a.nvim_buf_set_option(overlay_bufnr, "modifiable", true)
-  a.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { M.filter })
+  vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true)
+  vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { M.filter })
   vim.cmd "startinsert"
-  a.nvim_win_set_cursor(overlay_winnr, { 1, #M.filter + 1 })
+  vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #M.filter + 1 })
 end
 
 function M.start_filtering()

@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local git_utils = require "nvim-tree.git.utils"
 local Runner = require "nvim-tree.git.runner"
 
@@ -70,7 +68,7 @@ function M.get_project_root(cwd)
     return nil
   end
 
-  local stat, _ = uv.fs_stat(cwd)
+  local stat, _ = vim.loop.fs_stat(cwd)
   if not stat or stat.type ~= "directory" then
     return nil
   end

@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
@@ -17,7 +15,7 @@ local function do_copy(source, destination)
   local source_stats, handle
   local success, errmsg
 
-  source_stats, errmsg = uv.fs_stat(source)
+  source_stats, errmsg = vim.loop.fs_stat(source)
   if not source_stats then
     log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, errmsg)
     return false, errmsg
@@ -31,14 +29,14 @@ local function do_copy(source, destination)
   end
 
   if source_stats.type == "file" then
-    success, errmsg = uv.fs_copyfile(source, destination)
+    success, errmsg = vim.loop.fs_copyfile(source, destination)
     if not success then
       log.line("copy_paste", "do_copy fs_copyfile failed '%s'", errmsg)
       return false, errmsg
     end
     return true
   elseif source_stats.type == "directory" then
-    handle, errmsg = uv.fs_scandir(source)
+    handle, errmsg = vim.loop.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
     elseif not handle then
@@ -46,14 +44,14 @@ local function do_copy(source, destination)
       return false, errmsg
     end
 
-    success, errmsg = uv.fs_mkdir(destination, source_stats.mode)
+    success, errmsg = vim.loop.fs_mkdir(destination, source_stats.mode)
     if not success then
       log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, errmsg)
       return false, errmsg
     end
 
     while true do
-      local name, _ = uv.fs_scandir_next(handle)
+      local name, _ = vim.loop.fs_scandir_next(handle)
       if not name then
         break
       end
@@ -80,7 +78,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
 
   log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
 
-  dest_stats, errmsg, errcode = uv.fs_stat(dest)
+  dest_stats, errmsg, errcode = vim.loop.fs_stat(dest)
   if not dest_stats and errcode ~= "ENOENT" then
     notify.error("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
     return false, errmsg
@@ -155,7 +153,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   local destination = node.absolute_path
-  local stats, errmsg, errcode = uv.fs_stat(destination)
+  local stats, errmsg, errcode = vim.loop.fs_stat(destination)
   if not stats and errcode ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, errmsg)
     notify.error("Could not " .. action_type .. " " .. destination .. " - " .. (errmsg or "???"))
@@ -188,7 +186,7 @@ local function do_cut(source, destination)
     return true
   end
 
-  local success, errmsg = uv.fs_rename(source, destination)
+  local success, errmsg = vim.loop.fs_rename(source, destination)
   if not success then
     log.line("copy_paste", "do_cut fs_rename failed '%s'", errmsg)
     return false, errmsg

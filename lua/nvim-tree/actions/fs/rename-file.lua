@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
@@ -17,7 +15,7 @@ function M.rename(node, to)
     return
   end
 
-  local success, err = uv.fs_rename(node.absolute_path, to)
+  local success, err = vim.loop.fs_rename(node.absolute_path, to)
   if not success then
     return notify.warn(err_fmt(node.absolute_path, to, err))
   end
