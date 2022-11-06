@@ -223,7 +223,7 @@ function M.close_all_tabs()
 end
 
 function M.close()
-  close(M.View.open_on_tab)
+  close(M.View.tab.sync.close)
 end
 
 function M.open(options)
@@ -469,7 +469,7 @@ function M.setup(opts)
   M.View.height = options.height
   M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder
-  M.View.open_on_tab = opts.open_on_tab
+  M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
