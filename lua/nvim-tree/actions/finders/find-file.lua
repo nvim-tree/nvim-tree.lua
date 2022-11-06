@@ -15,23 +15,20 @@ function M.fn(fname)
   if running[fname] or not core.get_explorer() then
     return
   end
+  running[fname] = true
 
+  local ps = log.profile_start("find file %s", fname)
   -- always match against the real path
   local fname_real = vim.loop.fs_realpath(fname)
   if not fname_real then
     return
   end
 
-  running[fname] = true
-
-  local ps = log.profile_start("find file %s", fname)
-
-  -- first line is the root node
-  local line = core.get_nodes_starting_line() - 1
+  local line = core.get_nodes_starting_line()
 
   local absolute_paths_searched = {}
 
-  local found = Iterator.builder({ core.get_explorer() })
+  local found = Iterator.builder(core.get_explorer().nodes)
     :matcher(function(node)
       return node.absolute_path == fname_real or node.link_to == fname_real
     end)
@@ -48,7 +45,9 @@ function M.fn(fname)
 
       if abs_match or link_match then
         node.open = true
-        core.get_explorer():expand(node)
+        if #node.nodes == 0 then
+          core.get_explorer():expand(node)
+        end
       end
     end)
     :recursor(function(node)
