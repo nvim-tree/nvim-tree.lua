@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
+local log = require "nvim-tree.log"
 
 local M = {}
 
@@ -39,11 +40,16 @@ function M.reload_explorer()
   end
   event_running = true
 
+  local ps = log.profile_start "reload_explorer"
+
   local projects = git.reload()
   refresh_nodes(core.get_explorer(), projects)
   if view.is_visible() then
     renderer.draw()
   end
+
+  log.profile_end(ps, "reload_explorer")
+
   event_running = false
 end
 
@@ -53,9 +59,14 @@ function M.reload_git()
   end
   event_running = true
 
+  local ps = log.profile_start "reload_git"
+
   local projects = git.reload()
   M.reload_node_status(core.get_explorer(), projects)
   renderer.draw()
+
+  log.profile_end(ps, "reload_git")
+
   event_running = false
 end
 
