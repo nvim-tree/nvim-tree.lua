@@ -11,6 +11,12 @@ local M = {
   cwd_to_project_root = {},
 }
 
+local WATCHED_FILES = {
+  "HEAD",
+  "config",
+  "index",
+}
+
 function M.reload()
   if not M.config.git.enable then
     return {}
@@ -149,7 +155,7 @@ function M.load_project_status(cwd)
       end)
     end
 
-    watcher = Watcher:new(utils.path_join { project_root, ".git" }, callback, {
+    watcher = Watcher:new(utils.path_join { project_root, ".git" }, WATCHED_FILES, callback, {
       project_root = project_root,
     })
   end

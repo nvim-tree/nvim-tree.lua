@@ -77,7 +77,7 @@ function M.create_watcher(absolute_path)
   end
 
   M.uid = M.uid + 1
-  return Watcher:new(absolute_path, callback, {
+  return Watcher:new(absolute_path, nil, callback, {
     context = "explorer:watch:" .. absolute_path .. ":" .. M.uid,
   })
 end
