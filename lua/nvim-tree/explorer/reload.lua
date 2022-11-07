@@ -5,6 +5,7 @@ local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
+local git = require "nvim-tree.git"
 
 local M = {}
 
@@ -116,6 +117,33 @@ function M.reload(node, status)
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
   return node.nodes
+end
+
+local function reload_and_get_git_project(path)
+  local project_root = git.get_project_root(path)
+  git.reload_project(project_root, path)
+  return project_root, git.get_project(project_root) or {}
+end
+
+local function update_parent_statuses(node, project, root)
+  while project and node and node.absolute_path ~= root do
+    require("nvim-tree.explorer.common").update_git_status(node, false, project)
+    node = node.parent
+  end
+end
+
+function M.refresh_path(path)
+  local n = utils.get_node_from_path(path)
+  if not n then
+    return
+  end
+
+  local node = utils.get_parent_of_group(n)
+  local project_root, project = reload_and_get_git_project(path)
+  M.reload(node, project)
+  update_parent_statuses(node, project, project_root)
+
+  require("nvim-tree.renderer").draw()
 end
 
 function M.setup(opts)

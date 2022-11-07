@@ -2,7 +2,7 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
-local watch = require "nvim-tree.explorer.watch"
+local reload = require "nvim-tree.explorer.reload"
 local notify = require "nvim-tree.notify"
 
 local M = {}
@@ -111,7 +111,7 @@ function M.fn(node)
       -- synchronous call required so that we may focus the file now
       node = node.nodes ~= nil and node or node.parent
       if node then
-        watch.refresh_path(node.absolute_path)
+        reload.refresh_path(node.absolute_path)
       end
     end
     utils.focus_file(utils.path_remove_trailing(new_file_path))
