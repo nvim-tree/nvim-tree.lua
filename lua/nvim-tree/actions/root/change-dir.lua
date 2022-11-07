@@ -7,6 +7,7 @@ local M = {
 }
 
 local function clean_input_cwd(name)
+  name = vim.fn.fnameescape(name)
   local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h")
   if name == ".." and root_parent_cwd then
     return vim.fn.expand(root_parent_cwd)

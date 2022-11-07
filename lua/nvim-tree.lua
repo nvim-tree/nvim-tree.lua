@@ -226,9 +226,9 @@ function M.on_enter(netrw_disabled)
   local is_file = stats and stats.type == "file"
   local cwd
   if is_dir then
-    cwd = vim.fn.expand(bufname)
+    cwd = vim.fn.expand(vim.fn.fnameescape(bufname))
     -- INFO: could potentially conflict with rooter plugins
-    vim.cmd("noautocmd cd " .. cwd)
+    vim.cmd("noautocmd cd " .. vim.fn.fnameescape(cwd))
   end
 
   local lines = not is_dir and vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
