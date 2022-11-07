@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
+local watch = require "nvim-tree.explorer.watch"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
@@ -27,6 +28,8 @@ function M.fn(fname)
   local line = core.get_nodes_starting_line()
 
   local absolute_paths_searched = {}
+
+  watch.refresh_path(vim.fn.fnamemodify(fname, ":h"))
 
   local found = Iterator.builder(core.get_explorer().nodes)
     :matcher(function(node)
