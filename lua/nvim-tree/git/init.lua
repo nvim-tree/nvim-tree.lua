@@ -11,10 +11,14 @@ local M = {
   cwd_to_project_root = {},
 }
 
+-- Files under .git that should result in a reload when changed.
+-- Utilities (like watchman) can also write to this directory (often) and aren't useful for us.
 local WATCHED_FILES = {
-  "HEAD",
-  "config",
-  "index",
+  "FETCH_HEAD", -- remote ref
+  "HEAD", -- local ref
+  "HEAD.lock", -- HEAD will not always be updated e.g. revert
+  "config", -- user config
+  "index", -- staging area
 }
 
 function M.reload()
