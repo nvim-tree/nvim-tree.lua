@@ -74,16 +74,19 @@ local function matches_bufnr(bufnr)
   return false
 end
 
-local function wipe_rogue_buffer()
+function M.wipe_rogue_buffer()
+  local was_wiped = false
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
       pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
+      was_wiped = true
     end
   end
+  return was_wiped
 end
 
 local function create_buffer(bufnr)
-  wipe_rogue_buffer()
+  M.wipe_rogue_buffer()
 
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
