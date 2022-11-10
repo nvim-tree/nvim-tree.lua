@@ -336,13 +336,14 @@ local function setup_autocommands(opts)
 
   create_nvim_tree_autocmd("SessionLoadPost", {
     callback = function()
-      if view.wipe_rogue_buffer() then
-        view.open({focus_tree = false })
+      if M.setup_called and view.is_visible() then
+        view.abandon_current_window()
+        view.open { focus_tree = false }
         if _config.update_focused_file.enable then
           vim.schedule(M.find_file)
         end
       end
-    end
+    end,
   })
 
   -- reset highlights when colorscheme is changed
