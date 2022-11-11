@@ -78,6 +78,11 @@ function M.wipe_rogue_buffer()
   local was_wiped = false
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
+
+      -- if restored from session, values might be incorrect
+      for option, value in pairs(BUFFER_OPTIONS) do
+        vim.bo[bufnr][option] = value
+      end
       pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
       was_wiped = true
     end
