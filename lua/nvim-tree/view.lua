@@ -74,19 +74,16 @@ local function matches_bufnr(bufnr)
   return false
 end
 
-function M.wipe_rogue_buffer()
-  local was_wiped = false
+local function wipe_rogue_buffer()
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if not matches_bufnr(bufnr) and utils.is_nvim_tree_buf(bufnr) then
       pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
-      was_wiped = true
     end
   end
-  return was_wiped
 end
 
 local function create_buffer(bufnr)
-  M.wipe_rogue_buffer()
+  wipe_rogue_buffer()
 
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
@@ -314,6 +311,15 @@ function M.abandon_current_window()
   M.View.tabpages[tab].winnr = nil
 end
 
+function M.reset_all_tabs()
+  for _, tab in pairs(vim.api.nvim_list_tabpages()) do
+    BUFNR_PER_TAB[tab] = nil
+    if M.View.tabpages[tab] then
+      M.View.tabpages[tab].winnr = nil
+    end
+  end
+end
+
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
@@ -462,3 +468,4 @@ function M.setup(opts)
 end
 
 return M
+

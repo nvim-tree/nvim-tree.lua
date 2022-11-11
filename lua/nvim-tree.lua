@@ -130,6 +130,12 @@ function M.tab_change()
   end
 end
 
+local function get_normal_windows()
+  return vim.tbl_filter(function(win)
+    return vim.api.nvim_win_get_config(win).relative == ""
+  end, vim.api.nvim_list_wins())
+end
+
 local function find_existing_windows()
   return vim.tbl_filter(function(win)
     local buf = vim.api.nvim_win_get_buf(win)
@@ -259,13 +265,8 @@ function M.on_enter(netrw_disabled)
     and is_dir
     and not should_be_preserved
 
-  -- Session that left a NvimTree Buffer opened, reopen with it
-  local existing_tree_wins = find_existing_windows()
-  if existing_tree_wins[1] then
-    vim.api.nvim_set_current_win(existing_tree_wins[1])
-  end
-
-  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+  -- if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+  if should_open or should_hijack then
     lib.open(cwd)
 
     if should_focus_other_window then
@@ -336,11 +337,25 @@ local function setup_autocommands(opts)
 
   create_nvim_tree_autocmd("SessionLoadPost", {
     callback = function()
-      if view.wipe_rogue_buffer() then
-        view.open({focus_tree = false })
-        if _config.update_focused_file.enable then
-          vim.schedule(M.find_file)
-        end
+      view.reset_all_tabs()
+      local existing = find_existing_windows()
+      if #existing == 0 then
+        return
+      end
+
+      if #find_existing_windows() == #get_normal_windows() then
+        vim.schedule(function()
+          M.toggle(false, false)
+          if _config.update_focused_file.enable then
+            vim.schedule(M.find_file)
+          end
+        end)
+        return
+      end
+
+      M.toggle(false, false)
+      if _config.update_focused_file.enable then
+        vim.schedule(M.find_file)
       end
     end
   })
