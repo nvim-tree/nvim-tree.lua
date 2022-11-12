@@ -199,6 +199,8 @@ Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
 
 PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 
+See [bug](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aissue+is%3Aopen+label%3Abug) and [PR Please](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aopen+is%3Aissue+label%3A%22PR+please%22) issues if you are looking for some work to get you started.
+
 ### Help Wanted
 
 Developers with the following environments:
