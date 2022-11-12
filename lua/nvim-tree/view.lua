@@ -168,6 +168,7 @@ local function get_alt_or_next_buf()
 end
 
 local function switch_buf_if_last_buf()
+  print("switching buf if last buf")
   if #vim.api.nvim_list_wins() == 1 then
     local buf = get_alt_or_next_buf()
     if buf then
@@ -188,6 +189,7 @@ function M.close()
   if not M.is_visible() then
     return
   end
+  print("saving tab state")
   save_tab_state()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr()

@@ -339,27 +339,23 @@ local function setup_autocommands(opts)
     callback = function()
       view.reset_all_tabs()
       local existing = find_existing_windows()
+      local normal = get_normal_windows()
+      -- nvim tree wasn't open in last session
       if #existing == 0 then
         return
       end
 
-      -- The only existing window is an nvim tree, so we need to wait for
-      -- nvim tree to get rendered, then delete the blank buffer
-      if #find_existing_windows() == #get_normal_windows() then
+      -- only nvim tree was open in last session
+      if #existing == #normal then
+        vim.cmd("vsp")
         vim.schedule(function()
-          M.toggle(false, false)
-          if _config.update_focused_file.enable then
-            vim.schedule(M.find_file)
-          end
-          for _, bufnr in pairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_get_name(bufnr):match "NvimTree" == nil then
-              pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
-            end
-          end
+          view.open_in_current_win()
+          require('nvim-tree.renderer').draw()
         end)
         return
       end
 
+      -- nvim tree and other files were open in last session
       M.toggle(false, false)
       if _config.update_focused_file.enable then
         vim.schedule(M.find_file)
