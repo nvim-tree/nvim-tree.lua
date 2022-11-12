@@ -193,7 +193,7 @@ local function close(tabpage)
   local tree_win = M.get_winnr(tabpage)
   local current_win = vim.api.nvim_get_current_win()
   for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
-    if tree_win ~= win and vim.api.nvim_win_get_config(win).relative == "" then
+    if vim.api.nvim_win_get_config(win).relative == "" then
       local prev_win = vim.fn.winnr "#" -- this tab only
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
