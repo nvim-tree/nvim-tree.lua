@@ -326,7 +326,18 @@ end
 function M.abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = nil
-  M.View.tabpages[tab].winnr = nil
+  if M.View.tabpages[tab] then
+    M.View.tabpages[tab].winnr = nil
+  end
+end
+
+function M.abandon_all_windows()
+  for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
+    BUFNR_PER_TAB[tab] = nil
+    if M.View.tabpages[tab] then
+      M.View.tabpages[tab].winnr = nil
+    end
+  end
 end
 
 function M.is_visible(opts)

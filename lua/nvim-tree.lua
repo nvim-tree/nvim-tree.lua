@@ -776,9 +776,9 @@ function M.setup(conf)
     setup_vim_commands()
   end
 
-  if M.setup_called and view.is_visible() then
+  if M.setup_called then
     view.close_all_tabs()
-    view.abandon_current_window()
+    view.abandon_all_windows()
   end
 
   if M.setup_called and core.get_explorer() ~= nil then
