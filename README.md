@@ -22,6 +22,8 @@
 <br clear="left"/>
 <br />
 
+Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for Showcases, Tips, Recipes and more.
+
 [Join us on matrix](https://matrix.to/#/#nvim-tree:matrix.org)
 
 ## Requirements
@@ -144,17 +146,6 @@ Users may subscribe to events that nvim-tree will dispatch in a variety of situa
 Custom actions may be mapped which can invoke API or perform your own actions.
 
 [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
-
-## Tips & tricks
-
-* You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
-* You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
-* `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
-* You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
-* If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
-* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/nvim-tree/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/nvim-tree/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
-* Hide the `.git` folder: `filters = { custom = { "^.git$" } }`. See [:help nvim-tree.filters.custom](doc/nvim-tree-lua.txt).
-* To disable the display of icons see [:help nvim-tree.renderer.icons.show](doc/nvim-tree-lua.txt).
 
 ## Troubleshooting
 
