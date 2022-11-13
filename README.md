@@ -131,7 +131,7 @@ Development is focused on:
 
 nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
 
-Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Pull requests](#contributing) are always welcome.
+Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Contributions](#Contributing) are always welcome.
 
 [:help nvim-tree-api](doc/nvim-tree-lua.txt)
 
@@ -149,7 +149,7 @@ Custom actions may be mapped which can invoke API or perform your own actions.
 
 ## Contributing
 
-PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
+PRs are always welcome. See [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) to get started.
 
 See [bug](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aissue+is%3Aopen+label%3Abug) and [PR Please](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aopen+is%3Aissue+label%3A%22PR+please%22) issues if you are looking for some work to get you started.
 
