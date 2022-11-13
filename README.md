@@ -147,45 +147,6 @@ Custom actions may be mapped which can invoke API or perform your own actions.
 
 [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
-## Troubleshooting
-
-## Diagnostic Logging
-
-You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See [:help nvim-tree.log](doc/nvim-tree-lua.txt)
-
-## netrw Keeps Popping Up
-
-Eagerly disable netrw. See [:help nvim-tree.disable_netrw](doc/nvim-tree-lua.txt)
-
-## Performance Issues
-
-If you are experiencing performance issues with nvim-tree.lua, you can enable profiling in the logs. It is advisable to enable git logging at the same time, as that can be a source of performance problems.
-
-```lua
-log = {
-  enable = true,
-  truncate = true,
-  types = {
-    diagnostics = true,
-    git = true,
-    profile = true,
-    watcher = true,
-  },
-},
-```
-
-Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
-
-*Performance Tips:*
-
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/nvim-tree/nvim-tree.lua/issues/549#issuecomment-1127394585).
-
-* Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
-
-* Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
-
-* Try temporarily disabling git integration by setting `git.enable = false` in your setup.
-
 ## Contributing
 
 PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
