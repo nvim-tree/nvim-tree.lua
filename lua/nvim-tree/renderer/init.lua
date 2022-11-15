@@ -64,6 +64,7 @@ function M.draw()
   else
     lines, hl, signs = Builder.new(core.get_cwd())
       :configure_root_modifier(M.config.root_folder_modifier)
+      :configure_root_updir(M.config.add_root_updir)
       :configure_trailing_slash(M.config.add_trailing)
       :configure_special_files(M.config.special_files)
       :configure_picture_map(picture_map)

@@ -497,6 +497,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   renderer = {
     add_trailing = false,
+    add_root_updir = true,
     group_empty = false,
     highlight_git = false,
     full_name = false,

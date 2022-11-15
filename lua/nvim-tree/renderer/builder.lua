@@ -25,6 +25,11 @@ function Builder:configure_root_modifier(root_folder_modifier)
   return self
 end
 
+function Builder:configure_root_updir(add_root_updir)
+  self.add_root_updir = add_root_updir
+  return self
+end
+
 function Builder:configure_trailing_slash(with_trailing)
   self.trailing_slash = with_trailing and "/" or ""
   return self
@@ -294,14 +299,18 @@ function Builder:build(tree)
   return self
 end
 
-local function format_root_name(root_cwd, modifier)
+local function format_root_name(root_cwd, modifier, add_root_updir)
   local base_root = utils.path_remove_trailing(vim.fn.fnamemodify(root_cwd, modifier))
-  return utils.path_join { base_root, ".." }
+  if add_root_updir then
+    return utils.path_join { base_root, ".." }
+  else
+    return base_root
+  end
 end
 
 function Builder:build_header(show_header)
   if show_header then
-    local root_name = format_root_name(self.root_cwd, self.root_folder_modifier)
+    local root_name = format_root_name(self.root_cwd, self.root_folder_modifier, self.add_root_updir)
     self:_insert_line(root_name)
     self:_insert_highlight("NvimTreeRootFolder", 0, string.len(root_name))
     self.index = 1
