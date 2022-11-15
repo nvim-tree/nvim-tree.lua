@@ -224,7 +224,7 @@ Subsequent calls to setup will replace the previous configuration.
         full_name = false,
         highlight_opened_files = "none",
         root_folder_modifier = ":~",
-        add_root_updir = false,
+        add_root_updir = true,
         indent_width = 2,
         indent_markers = {
           enable = false,
