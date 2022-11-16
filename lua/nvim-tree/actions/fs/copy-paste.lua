@@ -145,7 +145,7 @@ end
 local function do_paste(node, action_type, action_fn)
   node = lib.get_last_group_node(node)
   if node.name == ".." then
-    node = node.parent or core.get_explorer()
+    node = core.get_explorer()
   end
   local clip = clipboard[action_type]
   if #clip == 0 then
