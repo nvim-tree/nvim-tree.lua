@@ -179,21 +179,21 @@ local function switch_buf_if_last_buf()
 end
 
 -- save_tab_state saves any state that should be preserved across redraws.
-local function save_tab_state()
-  local tabpage = vim.api.nvim_get_current_tabpage()
-  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr())
+local function save_tab_state(tabnr)
+  local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
+  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage))
 end
 
-function M.close()
-  if not M.is_visible() then
+local function close(tabpage)
+  if not M.is_visible { tabpage = tabpage } then
     return
   end
-  save_tab_state()
+  save_tab_state(tabpage)
   switch_buf_if_last_buf()
-  local tree_win = M.get_winnr()
+  local tree_win = M.get_winnr(tabpage)
   local current_win = vim.api.nvim_get_current_win()
-  for _, win in pairs(vim.api.nvim_list_wins()) do
-    if tree_win ~= win and vim.api.nvim_win_get_config(win).relative == "" then
+  for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+    if vim.api.nvim_win_get_config(win).relative == "" then
       local prev_win = vim.fn.winnr "#" -- this tab only
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
@@ -204,6 +204,24 @@ function M.close()
       events._dispatch_on_tree_close()
       return
     end
+  end
+end
+
+function M.close_this_tab_only()
+  close(vim.api.nvim_get_current_tabpage())
+end
+
+function M.close_all_tabs()
+  for tabpage, _ in pairs(M.View.tabpages) do
+    close(tabpage)
+  end
+end
+
+function M.close()
+  if M.View.tab.sync.close then
+    M.close_all_tabs()
+  else
+    M.close_this_tab_only()
   end
 end
 
@@ -308,10 +326,29 @@ end
 function M.abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = nil
-  M.View.tabpages[tab].winnr = nil
+  if M.View.tabpages[tab] then
+    M.View.tabpages[tab].winnr = nil
+  end
+end
+
+function M.abandon_all_windows()
+  for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
+    BUFNR_PER_TAB[tab] = nil
+    if M.View.tabpages[tab] then
+      M.View.tabpages[tab].winnr = nil
+    end
+  end
 end
 
 function M.is_visible(opts)
+  if opts and opts.tabpage then
+    if M.View.tabpages[opts.tabpage] == nil then
+      return false
+    end
+    local winnr = M.View.tabpages[opts.tabpage].winnr
+    return winnr and vim.api.nvim_win_is_valid(winnr)
+  end
+
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
       if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
@@ -450,6 +487,7 @@ function M.setup(opts)
   M.View.height = options.height
   M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder
+  M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber

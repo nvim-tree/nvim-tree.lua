@@ -177,8 +177,6 @@ Subsequent calls to setup will replace the previous configuration.
       ignore_buffer_on_setup = false,
       open_on_setup = false,
       open_on_setup_file = false,
-      open_on_tab = false,
-      ignore_buf_on_tab_change = {},
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
@@ -360,6 +358,13 @@ Subsequent calls to setup will replace the previous configuration.
         prefix = "[FILTER]: ",
         always_show_folders = true,
       },
+      tab = {
+        sync = {
+          open = false,
+          close = false,
+          ignore = {},
+        },
+      },
       log = {
         enable = false,
         truncate = false,
@@ -417,10 +422,6 @@ You can use this option if you don't want the tree to open
 in some scenarios (eg using vim startify).
   Type: {string}, Default: `{}`
 
-*nvim-tree.ignore_buf_on_tab_change*
-List of filetypes or buffer names that will prevent `open_on_tab` to open.
-  Type: {string}, Default: `{}`
-
 *nvim-tree.auto_reload_on_write*
 Reloads the explorer every time a buffer is written to.
   Type: `boolean`, Default: `true`
@@ -428,11 +429,6 @@ Reloads the explorer every time a buffer is written to.
 *nvim-tree.create_in_closed_folder*
 Creating a file when the cursor is on a closed folder will set the
 path to be inside the closed folder, otherwise the parent folder.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.open_on_tab*
-Opens the tree automatically when switching tabpage or opening a new tabpage
-if the tree was previously open.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.sort_by*
@@ -1002,6 +998,26 @@ The filter can be cleared with the `F` key by default.
     Whether to filter folders or not.
       Type: `boolean`, Default: `true`
 
+*nvim-tree.tab*
+Configuration for tab behaviour.
+
+    *nvim-tree.tab.sync*
+    Configuration for syncing nvim-tree across tabs.
+
+        *nvim-tree.tab.sync.open*  (previously `nvim-tree.open_on_tab`)
+        Opens the tree automatically when switching tabpage or opening a new
+        tabpage if the tree was previously open.
+          Type: `boolean`, Default: `false`
+
+        *nvim-tree.tab.sync.close*
+        Closes the tree across all tabpages when the tree is closed.
+          Type: `boolean`, Default: `false`
+
+        *nvim-tree.tab.sync.ignore*  (previously `nvim-tree.ignore_buf_on_tab_change`)
+        List of filetypes or buffer names on new tab that will prevent
+        |nvim-tree.tab.sync.open| and |nvim-tree.tab.sync.close|
+          Type: {string}, Default: `{}`
+
 *nvim-tree.notify*
 Configuration for notification.
 
@@ -1074,8 +1090,9 @@ You can easily implement a toggle using this too:
 >
     local function toggle_replace()
       local view = require"nvim-tree.view"
+      local api = require"nvim-tree.api"
       if view.is_visible() then
-        view.close()
+        api.tree.close()
       else
         require"nvim-tree".open_replacing_current_buffer()
       end

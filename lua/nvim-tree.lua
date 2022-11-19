@@ -116,11 +116,11 @@ function M.open_replacing_current_buffer(cwd)
   require("nvim-tree.actions.finders.find-file").fn(bufname)
 end
 
-function M.tab_change()
+function M.tab_enter()
   if view.is_visible { any_tabpage = true } then
     local bufname = vim.api.nvim_buf_get_name(0)
     local ft = vim.api.nvim_buf_get_option(0, "ft")
-    for _, filter in ipairs(M.config.ignore_buf_on_tab_change) do
+    for _, filter in ipairs(M.config.tab.sync.ignore) do
       if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
         return
       end
@@ -360,8 +360,8 @@ local function setup_autocommands(opts)
     })
   end
 
-  if opts.open_on_tab then
-    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_change) })
+  if opts.tab.sync.open then
+    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
   end
   if opts.hijack_cursor then
     create_nvim_tree_autocmd("CursorMoved", {
@@ -455,8 +455,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   ignore_buffer_on_setup = false,
   open_on_setup = false,
   open_on_setup_file = false,
-  open_on_tab = false,
-  ignore_buf_on_tab_change = {},
   sort_by = "name",
   root_dirs = {},
   prefer_startup_root = false,
@@ -638,6 +636,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     prefix = "[FILTER]: ",
     always_show_folders = true,
   },
+  tab = {
+    sync = {
+      open = false,
+      close = false,
+      ignore = {},
+    },
+  },
   notify = {
     threshold = vim.log.levels.INFO,
   },
@@ -737,7 +742,6 @@ function M.setup(conf)
   _config.open_on_setup_file = opts.open_on_setup_file
   _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
   _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
-  _config.ignore_buf_on_tab_change = opts.ignore_buf_on_tab_change
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
 
@@ -772,9 +776,9 @@ function M.setup(conf)
     setup_vim_commands()
   end
 
-  if M.setup_called and view.is_visible() then
-    view.close()
-    view.abandon_current_window()
+  if M.setup_called then
+    view.close_all_tabs()
+    view.abandon_all_windows()
   end
 
   if M.setup_called and core.get_explorer() ~= nil then
