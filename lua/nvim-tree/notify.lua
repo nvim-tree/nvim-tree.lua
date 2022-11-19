@@ -30,8 +30,8 @@ do
   end
 
   for _, x in ipairs(modes) do
-    M[x.name] = function(msg, ...)
-      return dispatch(x.level, msg, ...)
+    M[x.name] = function(msg)
+      return dispatch(x.level, msg)
     end
   end
 end
