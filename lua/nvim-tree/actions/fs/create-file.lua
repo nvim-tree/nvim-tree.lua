@@ -111,9 +111,10 @@ function M.fn(node)
       -- synchronous call required so that we may focus the file now
       node = node.nodes ~= nil and node or node.parent
       if node then
-        watch.refresh_path(node.absolute_path)
+        watch.refresh_node(node)
       end
     end
+    -- TODO #1731 #1716 this gets upset by watcher add new file to linked directories above
     utils.focus_file(utils.path_remove_trailing(new_file_path))
   end)
 end

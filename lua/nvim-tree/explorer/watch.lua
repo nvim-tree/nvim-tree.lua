@@ -46,39 +46,57 @@ local function is_folder_ignored(path)
   return false
 end
 
-function M.refresh_path(path)
-  log.line("watcher", "node event executing '%s'", path)
-  local n = utils.get_node_from_path(path)
-  if not n then
+function M.refresh_node(node)
+  if type(node) ~= "table" then
     return
   end
 
-  local node = utils.get_parent_of_group(n)
+  if node.link_to then
+    log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
+  else
+    log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
+  end
+
+  local path = node.absolute_path
+
+  local parent_node = utils.get_parent_of_group(node)
+
   local project_root, project = reload_and_get_git_project(path)
-  require("nvim-tree.explorer.reload").reload(node, project)
-  update_parent_statuses(node, project, project_root)
+
+  require("nvim-tree.explorer.reload").reload(parent_node, project)
+
+  update_parent_statuses(parent_node, project, project_root)
 
   require("nvim-tree.renderer").draw()
 end
 
-function M.create_watcher(absolute_path)
-  if not M.enabled then
+function M.create_watcher(node)
+  if not M.enabled or type(node) ~= "table" then
     return nil
   end
-  if is_git(absolute_path) or is_folder_ignored(absolute_path) then
+
+  local path
+  if node.type == "link" then
+    path = node.link_to
+  else
+    path = node.absolute_path
+  end
+
+  if is_git(path) or is_folder_ignored(path) then
     return nil
   end
 
   local function callback(watcher)
-    log.line("watcher", "node event scheduled %s", watcher.context)
+    log.line("watcher", "node event scheduled refresh %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
-      M.refresh_path(watcher._path)
+      M.refresh_node(node)
     end)
   end
 
   M.uid = M.uid + 1
-  return Watcher:new(absolute_path, nil, callback, {
-    context = "explorer:watch:" .. absolute_path .. ":" .. M.uid,
+  return Watcher:new(path, nil, callback, {
+    context = "explorer:watch:" .. path .. ":" .. M.uid,
+    node = node,
   })
 end
 

@@ -5,6 +5,7 @@ local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
+local log = require "nvim-tree.log"
 
 local M = {}
 
@@ -24,6 +25,8 @@ function M.reload(node, status)
     notify.error(handle)
     return
   end
+
+  local ps = log.profile_start("reload %s", cwd)
 
   if node.group_next then
     node.nodes = { node.group_next }
@@ -110,11 +113,13 @@ function M.reload(node, status)
     node.group_next = child_folder_only
     local ns = M.reload(child_folder_only, status)
     node.nodes = ns or {}
+    log.profile_end(ps, "reload %s", cwd)
     return ns
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
+  log.profile_end(ps, "reload %s", cwd)
   return node.nodes
 end
 
