@@ -255,9 +255,9 @@ function M.on_enter(netrw_disabled)
   end
 
   local should_hijack = _config.hijack_directories.enable
-      and _config.hijack_directories.auto_open
-      and is_dir
-      and not should_be_preserved
+    and _config.hijack_directories.auto_open
+    and is_dir
+    and not should_be_preserved
 
   -- Session that left a NvimTree Buffer opened, reopen with it
   local existing_tree_wins = find_existing_windows()
