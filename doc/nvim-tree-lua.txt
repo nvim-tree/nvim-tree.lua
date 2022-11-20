@@ -291,6 +291,7 @@ Subsequent calls to setup will replace the previous configuration.
         enable = false,
         show_on_dirs = false,
         debounce_delay = 50,
+        severity = null,
         icons = {
           hint = "",
           info = "",
@@ -547,6 +548,10 @@ Show LSP and COC diagnostics in the signcolumn
     *nvim-tree.diagnostics.icons*
     Icons for diagnostic severity.
       Type: `table`, Default: `{ hint = "", info = "", warning = "", error = "" }`
+
+    *nvim-tree.diagnostics.severity*
+    Controls the severity of the diagnostics.
+      Type: |vim.diagnostic.severity|, Default: vim.diagnostic.severity.HINT 
 
     `NOTE`: it will use the default diagnostic color groups to highlight the signs.
     If you wish to customize, you can override these groups:
