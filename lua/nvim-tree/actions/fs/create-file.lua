@@ -99,12 +99,12 @@ function M.fn(node)
           is_error = true
           break
         end
+        events._dispatch_folder_created(new_file_path)
       end
     end
     if not is_error then
       notify.info(new_file_path .. " was properly created")
     end
-    events._dispatch_folder_created(new_file_path)
     if M.enable_reload then
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     else
