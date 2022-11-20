@@ -11,7 +11,7 @@ local function refresh_nodes(node, projects)
   local project_root = git.get_project_root(cwd)
   explorer_module.reload(node, projects[project_root] or {})
   for _, _node in ipairs(node.nodes) do
-    if _node.nodes and _node.open then
+    if _node.nodes then
       refresh_nodes(_node, projects)
     end
   end
