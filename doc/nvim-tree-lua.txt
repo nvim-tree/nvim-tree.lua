@@ -291,6 +291,10 @@ Subsequent calls to setup will replace the previous configuration.
         enable = false,
         show_on_dirs = false,
         debounce_delay = 50,
+        severity = {
+          min = vim.diagnostic.severity.HINT,
+          max = vim.diagnostic.severity.ERROR
+        },
         icons = {
           hint = "",
           info = "",
@@ -365,6 +369,9 @@ Subsequent calls to setup will replace the previous configuration.
           ignore = {},
         },
       },
+      notify = {
+        threshold = vim.log.levels.INFO,
+      },
       log = {
         enable = false,
         truncate = false,
@@ -378,9 +385,6 @@ Subsequent calls to setup will replace the previous configuration.
           profile = false,
           watcher = false,
         },
-      },
-      notify = {
-        threshold = vim.log.levels.INFO,
       },
     } -- END_DEFAULT_OPTS
 <
@@ -532,6 +536,13 @@ Configuration options for the system open command.
 *nvim-tree.diagnostics*
 Show LSP and COC diagnostics in the signcolumn
 
+    `NOTE`: it will use the default diagnostic color groups to highlight the signs.
+    If you wish to customize, you can override these groups:
+    - `NvimTreeLspDiagnosticsError`
+    - `NvimTreeLspDiagnosticsWarning`
+    - `NvimTreeLspDiagnosticsInformation`
+    - `NvimTreeLspDiagnosticsHint`
+
     *nvim-tree.diagnostics.enable*
     Enable/disable the feature.
       Type: `boolean`, Default: `false`
@@ -548,12 +559,16 @@ Show LSP and COC diagnostics in the signcolumn
     Icons for diagnostic severity.
       Type: `table`, Default: `{ hint = "", info = "", warning = "", error = "" }`
 
-    `NOTE`: it will use the default diagnostic color groups to highlight the signs.
-    If you wish to customize, you can override these groups:
-    - `NvimTreeLspDiagnosticsError`
-    - `NvimTreeLspDiagnosticsWarning`
-    - `NvimTreeLspDiagnosticsInformation`
-    - `NvimTreeLspDiagnosticsHint`
+    *nvim-tree.diagnostics.severity*
+    Severity for which the diagnostics will be displayed. See |diagnostic-severity|
+
+      *nvim-tree.diagnostics.severity.min*
+      Minimum severity.
+        Type: |vim.diagnostic.severity|, Default: `vim.diagnostic.severity.HINT`
+
+      *nvim-tree.diagnostics.severity.max*
+      Maximum severity.
+        Type: |vim.diagnostic.severity|, Default: `vim.diagnostic.severity.ERROR`
 
 *nvim-tree.git*
 Git integration with icons and colors.
