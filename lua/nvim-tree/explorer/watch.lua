@@ -1,22 +1,8 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
-local git = require "nvim-tree.git"
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {}
-
-local function reload_and_get_git_project(path)
-  local project_root = git.get_project_root(path)
-  git.reload_project(project_root, path)
-  return project_root, git.get_project(project_root) or {}
-end
-
-local function update_parent_statuses(node, project, root)
-  while project and node and node.absolute_path ~= root do
-    require("nvim-tree.explorer.common").update_git_status(node, false, project)
-    node = node.parent
-  end
-end
 
 local function is_git(path)
   return vim.fn.fnamemodify(path, ":t") == ".git"
@@ -46,28 +32,6 @@ local function is_folder_ignored(path)
   return false
 end
 
-function M.refresh_node(node)
-  if type(node) ~= "table" then
-    return
-  end
-
-  if node.link_to then
-    log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
-  else
-    log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
-  end
-
-  local parent_node = utils.get_parent_of_group(node)
-
-  local project_root, project = reload_and_get_git_project(node.absolute_path)
-
-  require("nvim-tree.explorer.reload").reload(parent_node, project)
-
-  update_parent_statuses(parent_node, project, project_root)
-
-  require("nvim-tree.renderer").draw()
-end
-
 function M.create_watcher(node)
   if not M.enabled or type(node) ~= "table" then
     return nil
@@ -87,7 +51,13 @@ function M.create_watcher(node)
   local function callback(watcher)
     log.line("watcher", "node event scheduled refresh %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
-      M.refresh_node(node)
+      if node.link_to then
+        log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
+      else
+        log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
+      end
+      require("nvim-tree.explorer.reload").refresh_node(node)
+      require("nvim-tree.renderer").draw()
     end)
   end
 
