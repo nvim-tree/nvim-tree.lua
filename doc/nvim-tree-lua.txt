@@ -567,7 +567,7 @@ Show LSP and COC diagnostics in the signcolumn
         Type: |vim.diagnostic.severity|, Default: `vim.diagnostic.severity.HINT`
 
       *nvim-tree.diagnostics.severity.max*
-      Minimum severity.
+      Maximum severity.
         Type: |vim.diagnostic.severity|, Default: `vim.diagnostic.severity.ERROR`
 
 *nvim-tree.git*
