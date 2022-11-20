@@ -30,9 +30,8 @@ function M.fn(fname)
 
   local ps = log.profile_start("find file %s", fname_real)
 
-  if not M.filesystem_watchers_enabled then
-    reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
-  end
+  -- we cannot wait for watchers
+  reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
 
   local line = core.get_nodes_starting_line()
 
@@ -73,10 +72,6 @@ function M.fn(fname)
   running[fname_real] = false
 
   log.profile_end(ps, "find file %s", fname_real)
-end
-
-function M.setup(opts)
-  M.filesystem_watchers_enabled = opts.filesystem_watchers.enabled
 end
 
 return M
