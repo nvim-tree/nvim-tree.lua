@@ -571,7 +571,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     debounce_delay = 50,
     severity = {
       min = vim.diagnostic.severity.HINT,
-      max = vim.diagnostic.severity.ERROR
+      max = vim.diagnostic.severity.ERROR,
     },
     icons = {
       hint = "",
