@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
+local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
@@ -12,16 +13,25 @@ local running = {}
 ---Find a path in the tree, expand it and focus it
 ---@param fname string full path
 function M.fn(fname)
-  if running[fname] or not core.get_explorer() then
+  if not core.get_explorer() then
     return
   end
-  running[fname] = true
 
-  local ps = log.profile_start("find file %s", fname)
   -- always match against the real path
   local fname_real = vim.loop.fs_realpath(fname)
   if not fname_real then
     return
+  end
+
+  if running[fname_real] then
+    return
+  end
+  running[fname_real] = true
+
+  local ps = log.profile_start("find file %s", fname_real)
+
+  if not M.filesystem_watchers_enabled then
+    reloaders.reload_explorer()
   end
 
   local line = core.get_nodes_starting_line()
@@ -60,9 +70,13 @@ function M.fn(fname)
     view.set_cursor { line, 0 }
   end
 
-  running[fname] = false
+  running[fname_real] = false
 
-  log.profile_end(ps, "find file %s", fname)
+  log.profile_end(ps, "find file %s", fname_real)
+end
+
+function M.setup(opts)
+  M.filesystem_watchers_enabled = opts.filesystem_watchers.enabled
 end
 
 return M
