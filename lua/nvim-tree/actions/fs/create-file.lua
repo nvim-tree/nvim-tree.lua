@@ -2,7 +2,7 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
-local watch = require "nvim-tree.explorer.watch"
+local reload = require "nvim-tree.explorer.reload"
 local notify = require "nvim-tree.notify"
 
 local M = {}
@@ -111,7 +111,7 @@ function M.fn(node)
       -- synchronous call required so that we may focus the file now
       node = node.nodes ~= nil and node or node.parent
       if node then
-        watch.refresh_node(node)
+        reload.refresh_node(node)
       end
     end
     -- TODO #1731 #1716 this gets upset by watcher add new file to linked directories above
