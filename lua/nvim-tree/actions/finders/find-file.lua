@@ -3,7 +3,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
-local reloaders = require "nvim-tree.actions.reloaders.reloaders"
+local reload = require "nvim-tree.explorer.reload"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
@@ -31,7 +31,7 @@ function M.fn(fname)
   local ps = log.profile_start("find file %s", fname_real)
 
   if not M.filesystem_watchers_enabled then
-    reloaders.reload_explorer()
+    reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
   end
 
   local line = core.get_nodes_starting_line()
