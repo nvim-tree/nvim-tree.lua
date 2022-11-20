@@ -57,11 +57,9 @@ function M.refresh_node(node)
     log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
   end
 
-  local path = node.absolute_path
-
   local parent_node = utils.get_parent_of_group(node)
 
-  local project_root, project = reload_and_get_git_project(path)
+  local project_root, project = reload_and_get_git_project(node.absolute_path)
 
   require("nvim-tree.explorer.reload").reload(parent_node, project)
 
