@@ -26,7 +26,7 @@ function M.reload(node, status)
     return
   end
 
-  local ps = log.profile_start("reload %s", cwd)
+  local ps = log.profile_start("reload %s", node.absolute_path)
 
   if node.group_next then
     node.nodes = { node.group_next }
@@ -113,13 +113,13 @@ function M.reload(node, status)
     node.group_next = child_folder_only
     local ns = M.reload(child_folder_only, status)
     node.nodes = ns or {}
-    log.profile_end(ps, "reload %s", cwd)
+    log.profile_end(ps, "reload %s", node.absolute_path)
     return ns
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
-  log.profile_end(ps, "reload %s", cwd)
+  log.profile_end(ps, "reload %s", node.absolute_path)
   return node.nodes
 end
 
