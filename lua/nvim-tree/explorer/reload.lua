@@ -166,7 +166,7 @@ function M.refresh_nodes_for_path(path)
   local pn = string.format("refresh_nodes_for_path %s", path)
   local ps = log.profile_start(pn)
 
-  NodeIterator.builder(explorer.nodes)
+  NodeIterator.builder({ explorer })
     :hidden()
     :recursor(function(node)
       if node.group_next then
