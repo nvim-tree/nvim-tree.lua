@@ -304,8 +304,14 @@ local function removed(opts)
 
   if opts.focus_empty_on_setup then
     notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
+    opts.focus_empty_on_setup = nil
   end
-  opts.focus_empty_on_setup = nil
+
+  if opts.renderer.root_folder_modifier then
+    notify.warn "renderer.root_folder_modifier has been renamed to renderer.root_folder_label. Please update your setup."
+    opts.renderer.root_folder_label = opts.renderer.root_folder_modifier
+    opts.renderer.root_folder_modifier = nil
+  end
 end
 
 function M.migrate_legacy_options(opts)
