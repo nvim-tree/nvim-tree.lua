@@ -155,7 +155,7 @@ function M.refresh_node(node)
   update_parent_statuses(parent_node, project, project_root)
 end
 
----Refresh contents and git status for all nodes for a path: actual directory and links
+---Refresh contents and git status for all nodes to a path: actual directory and links
 ---@param path string absolute path
 function M.refresh_nodes_for_path(path)
   local explorer = require("nvim-tree.core").get_explorer()
@@ -177,7 +177,9 @@ function M.refresh_nodes_for_path(path)
       end
     end)
     :applier(function(node)
-      if node.absolute_path == path or node.link_to == path then
+      local abs_contains = node.absolute_path and path:match("^" .. node.absolute_path)
+      local link_contains = node.link_to and path:match("^" .. node.link_to)
+      if abs_contains or link_contains then
         M.refresh_node(node)
       end
     end)
