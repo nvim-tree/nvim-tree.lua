@@ -64,7 +64,6 @@ local function pick_win_id()
   local win_opts = {}
   local win_map = {}
   local laststatus = vim.o.laststatus
-  vim.o.laststatus = 2
 
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
@@ -73,35 +72,42 @@ local function pick_win_id()
     return not vim.tbl_contains(selectable, id)
   end, win_ids)
 
-  if laststatus == 3 then
-    for _, win_id in ipairs(not_selectable) do
-      local ok_status, statusline = pcall(vim.api.nvim_win_get_option, win_id, "statusline")
-      local ok_hl, winhl = pcall(vim.api.nvim_win_get_option, win_id, "winhl")
+  if not M.window_picker.use_winbar then
+    vim.o.laststatus = 2
 
-      win_opts[win_id] = {
-        statusline = ok_status and statusline or "",
-        winhl = ok_hl and winhl or "",
-      }
+    if laststatus == 3 then
+      for _, win_id in ipairs(not_selectable) do
+        local ok_status, statusline = pcall(vim.api.nvim_win_get_option, win_id, "statusline")
+        local ok_hl, winhl = pcall(vim.api.nvim_win_get_option, win_id, "winhl")
 
-      -- Clear statusline for windows not selectable
-      vim.api.nvim_win_set_option(win_id, "statusline", " ")
+        win_opts[win_id] = {
+          statusline = ok_status and statusline or "",
+          winhl = ok_hl and winhl or "",
+        }
+
+        -- Clear statusline for windows not selectable
+        vim.api.nvim_win_set_option(win_id, "statusline", " ")
+      end
     end
   end
+
+  local indicator_setting = M.window_picker.use_winbar and "winbar" or "statusline"
+  local indicator_hl = M.window_picker.use_winbar and "WinBar" or "StatusLine"
 
   -- Setup UI
   for _, id in ipairs(selectable) do
     local char = M.window_picker.chars:sub(i, i)
-    local ok_status, statusline = pcall(vim.api.nvim_win_get_option, id, "statusline")
-    local ok_hl, winhl = pcall(vim.api.nvim_win_get_option, id, "winhl")
+    local ok_status, indicator = pcall(vim.api.nvim_win_get_option, id, indicator_setting)
+    local ok_hl, winhl = pcall(vim.api.nvim_win_get_option, id, indicator_hl)
 
     win_opts[id] = {
-      statusline = ok_status and statusline or "",
+      [indicator_setting] = ok_status and indicator or "",
       winhl = ok_hl and winhl or "",
     }
     win_map[char] = id
 
-    vim.api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=")
-    vim.api.nvim_win_set_option(id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker")
+    vim.api.nvim_win_set_option(id, indicator_setting, "%=" .. char .. "%=")
+    vim.api.nvim_win_set_option(id, "winhl", indicator_hl .. ":NvimTreeWindowPicker," .. indicator_hl .. "NC:NvimTreeWindowPicker")
 
     i = i + 1
     if i > #M.window_picker.chars then
@@ -124,15 +130,17 @@ local function pick_win_id()
     end
   end
 
-  if laststatus == 3 then
-    for _, id in ipairs(not_selectable) do
-      for opt, value in pairs(win_opts[id]) do
-        vim.api.nvim_win_set_option(id, opt, value)
+  if not M.window_picker.use_winbar then
+    if laststatus == 3 then
+      for _, id in ipairs(not_selectable) do
+        for opt, value in pairs(win_opts[id]) do
+          vim.api.nvim_win_set_option(id, opt, value)
+        end
       end
     end
-  end
 
-  vim.o.laststatus = laststatus
+    vim.o.laststatus = laststatus
+  end
 
   if not vim.tbl_contains(vim.split(M.window_picker.chars, ""), resp) then
     return
