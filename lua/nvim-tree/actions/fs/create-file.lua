@@ -2,8 +2,9 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local lib = require "nvim-tree.lib"
 local core = require "nvim-tree.core"
-local reload = require "nvim-tree.explorer.reload"
 local notify = require "nvim-tree.notify"
+
+local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
 
@@ -105,17 +106,9 @@ function M.fn(node)
     if not is_error then
       notify.info(new_file_path .. " was properly created")
     end
-    if M.enable_reload then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-    else
-      -- synchronous call required so that we may focus the file now
-      node = node.nodes ~= nil and node or node.parent
-      if node then
-        reload.refresh_node(node)
-      end
-    end
-    -- TODO #1731 #1716 this gets upset by watcher add new file to linked directories above
-    utils.focus_file(utils.path_remove_trailing(new_file_path))
+
+    -- synchronously refreshes as we can't wait for the watchers
+    find_file(utils.path_remove_trailing(new_file_path))
   end)
 end
 
