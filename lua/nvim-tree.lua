@@ -495,12 +495,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   renderer = {
     add_trailing = false,
-    add_root_updir = true,
     group_empty = false,
     highlight_git = false,
     full_name = false,
     highlight_opened_files = "none",
-    root_folder_modifier = ":~",
+    root_folder_label = ":~",
     indent_width = 2,
     indent_markers = {
       enable = false,
@@ -680,6 +679,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
+  root_folder_label = { ["function"] = true, string = true },
 }
 
 local function validate_options(conf)

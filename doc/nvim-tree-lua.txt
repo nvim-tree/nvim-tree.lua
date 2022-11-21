@@ -221,8 +221,7 @@ Subsequent calls to setup will replace the previous configuration.
         highlight_git = false,
         full_name = false,
         highlight_opened_files = "none",
-        root_folder_modifier = ":~",
-        add_root_updir = true,
+        root_folder_label = ":~",
         indent_width = 2,
         indent_markers = {
           enable = false,
@@ -761,14 +760,10 @@ UI rendering setup
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
-    *nvim-tree.renderer.root_folder_modifier*
+    *nvim-tree.renderer.root_folder_label*
     In what format to show root folder. See `:help filename-modifiers` for
-    available options.
-      Type: `string`, Default: `":~"`
-
-    *nvim-tree.renderer.add_root_updir*
-    Append `/..` to the root folder.
-      Type: `boolean`, Default: `true`
+    available `string` options.
+      Type: `string` or `function(root_cwd)`, Default: `":~"`
 
     *nvim-tree.renderer.indent_width*
     Number of spaces for an each tree nesting level. Minimum 1.
