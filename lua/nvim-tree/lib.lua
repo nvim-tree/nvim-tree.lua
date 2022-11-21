@@ -32,6 +32,45 @@ function M.get_node_at_cursor()
   return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@param node table
+---@return table|nil cloned node
+local function clone_node(node)
+  if not node then
+    node = core.get_explorer()
+    if not node then
+      return nil
+    end
+  end
+
+  local n = {
+    absolute_path = node.absolute_path,
+    executable = node.executable,
+    extension = node.extension,
+    git_status = node.git_status,
+    has_children = node.has_children,
+    hidden = node.hidden,
+    link_to = node.link_to,
+    name = node.name,
+    open = node.open,
+    type = node.type,
+  }
+
+  if type(node.nodes) == "table" then
+    n.nodes = {}
+    for _, child in ipairs(node.nodes) do
+      table.insert(n.nodes, clone_node(child))
+    end
+  end
+
+  return n
+end
+
+---Api.tree.get_nodes
+function M.get_nodes()
+  return clone_node(core.get_explorer())
+end
+
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 function M.get_last_group_node(node)
   local next = node
@@ -117,7 +156,7 @@ function M.open(cwd)
     core.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
-    view.close()
+    view.close_this_tab_only()
     view.open_in_current_win()
     renderer.draw()
   else
