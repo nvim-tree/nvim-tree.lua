@@ -27,7 +27,7 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  for _, diagnostic in ipairs(vim.diagnostic.get()) do
+  for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
     local buf = diagnostic.bufnr
     if vim.api.nvim_buf_is_valid(buf) then
       local bufname = vim.api.nvim_buf_get_name(buf)
@@ -140,6 +140,7 @@ local links = {
 function M.setup(opts)
   M.enable = opts.diagnostics.enable
   M.debounce_delay = opts.diagnostics.debounce_delay
+  M.severity = opts.diagnostics.severity
 
   if M.enable then
     log.line("diagnostics", "setup")

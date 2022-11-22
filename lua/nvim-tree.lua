@@ -569,6 +569,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     enable = false,
     show_on_dirs = false,
     debounce_delay = 50,
+    severity = {
+      min = vim.diagnostic.severity.HINT,
+      max = vim.diagnostic.severity.ERROR,
+    },
     icons = {
       hint = "",
       info = "",
