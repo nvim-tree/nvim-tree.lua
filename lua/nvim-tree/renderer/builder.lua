@@ -298,7 +298,7 @@ end
 
 local function format_root_name(root_cwd, root_label)
   if type(root_label) == "function" then
-    label = root_label(root_cwd)
+    local label = root_label(root_cwd)
     if type(label) == "string" then
       return label
     else
