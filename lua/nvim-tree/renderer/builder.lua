@@ -8,7 +8,7 @@ local icons = require "nvim-tree.renderer.components.icons"
 local Builder = {}
 Builder.__index = Builder
 
-local DEFAULT_ROOT_FOLDER_LABEL = ":~"
+local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
 
 function Builder.new(root_cwd)
   return setmetatable({

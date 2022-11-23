@@ -221,7 +221,7 @@ Subsequent calls to setup will replace the previous configuration.
         highlight_git = false,
         full_name = false,
         highlight_opened_files = "none",
-        root_folder_label = ":~",
+        root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
         indent_markers = {
           enable = false,
@@ -763,7 +763,7 @@ UI rendering setup
     *nvim-tree.renderer.root_folder_label*
     In what format to show root folder. See `:help filename-modifiers` for
     available `string` options.
-      Type: `string` or `function(root_cwd)`, Default: `":~"`
+      Type: `string` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
 
     *nvim-tree.renderer.indent_width*
     Number of spaces for an each tree nesting level. Minimum 1.
