@@ -8,6 +8,8 @@ local icons = require "nvim-tree.renderer.components.icons"
 local Builder = {}
 Builder.__index = Builder
 
+local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
+
 function Builder.new(root_cwd)
   return setmetatable({
     index = 0,
@@ -20,8 +22,8 @@ function Builder.new(root_cwd)
   }, Builder)
 end
 
-function Builder:configure_root_modifier(root_folder_modifier)
-  self.root_folder_modifier = root_folder_modifier or ":~"
+function Builder:configure_root_label(root_folder_label)
+  self.root_folder_label = root_folder_label or DEFAULT_ROOT_FOLDER_LABEL
   return self
 end
 
@@ -294,14 +296,21 @@ function Builder:build(tree)
   return self
 end
 
-local function format_root_name(root_cwd, modifier)
-  local base_root = utils.path_remove_trailing(vim.fn.fnamemodify(root_cwd, modifier))
-  return utils.path_join { base_root, ".." }
+local function format_root_name(root_cwd, root_label)
+  if type(root_label) == "function" then
+    local label = root_label(root_cwd)
+    if type(label) == "string" then
+      return label
+    else
+      root_label = DEFAULT_ROOT_FOLDER_LABEL
+    end
+  end
+  return utils.path_remove_trailing(vim.fn.fnamemodify(root_cwd, root_label))
 end
 
 function Builder:build_header(show_header)
   if show_header then
-    local root_name = format_root_name(self.root_cwd, self.root_folder_modifier)
+    local root_name = format_root_name(self.root_cwd, self.root_folder_label)
     self:_insert_line(root_name)
     self:_insert_highlight("NvimTreeRootFolder", 0, string.len(root_name))
     self.index = 1
