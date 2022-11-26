@@ -294,6 +294,9 @@ local function refactored(opts)
   utils.move_missing_val(opts, "", "open_on_tab", opts, "tab.sync", "open", false)
   utils.move_missing_val(opts, "", "open_on_tab", opts, "tab.sync", "close")
   utils.move_missing_val(opts, "", "ignore_buf_on_tab_change", opts, "tab.sync", "ignore")
+
+  -- 2022/11/22
+  utils.move_missing_val(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label")
 end
 
 local function removed(opts)
@@ -304,8 +307,8 @@ local function removed(opts)
 
   if opts.focus_empty_on_setup then
     notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
+    opts.focus_empty_on_setup = nil
   end
-  opts.focus_empty_on_setup = nil
 end
 
 function M.migrate_legacy_options(opts)
