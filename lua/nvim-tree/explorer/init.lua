@@ -15,9 +15,9 @@ function Explorer.new(cwd)
   local explorer = setmetatable({
     absolute_path = cwd,
     nodes = {},
-    watcher = watch.create_watcher(cwd),
     open = true,
   }, Explorer)
+  explorer.watcher = watch.create_watcher(explorer)
   explorer:_load(explorer)
   return explorer
 end

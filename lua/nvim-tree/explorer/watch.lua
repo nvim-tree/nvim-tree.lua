@@ -1,22 +1,8 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
-local git = require "nvim-tree.git"
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {}
-
-local function reload_and_get_git_project(path)
-  local project_root = git.get_project_root(path)
-  git.reload_project(project_root, path)
-  return project_root, git.get_project(project_root) or {}
-end
-
-local function update_parent_statuses(node, project, root)
-  while project and node and node.absolute_path ~= root do
-    require("nvim-tree.explorer.common").update_git_status(node, false, project)
-    node = node.parent
-  end
-end
 
 local function is_git(path)
   return vim.fn.fnamemodify(path, ":t") == ".git"
@@ -46,39 +32,38 @@ local function is_folder_ignored(path)
   return false
 end
 
-function M.refresh_path(path)
-  log.line("watcher", "node event executing '%s'", path)
-  local n = utils.get_node_from_path(path)
-  if not n then
-    return
-  end
-
-  local node = utils.get_parent_of_group(n)
-  local project_root, project = reload_and_get_git_project(path)
-  require("nvim-tree.explorer.reload").reload(node, project)
-  update_parent_statuses(node, project, project_root)
-
-  require("nvim-tree.renderer").draw()
-end
-
-function M.create_watcher(absolute_path)
-  if not M.enabled then
+function M.create_watcher(node)
+  if not M.enabled or type(node) ~= "table" then
     return nil
   end
-  if is_git(absolute_path) or is_folder_ignored(absolute_path) then
+
+  local path
+  if node.type == "link" then
+    path = node.link_to
+  else
+    path = node.absolute_path
+  end
+
+  if is_git(path) or is_folder_ignored(path) then
     return nil
   end
 
   local function callback(watcher)
-    log.line("watcher", "node event scheduled %s", watcher.context)
+    log.line("watcher", "node event scheduled refresh %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
-      M.refresh_path(watcher._path)
+      if node.link_to then
+        log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
+      else
+        log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
+      end
+      require("nvim-tree.explorer.reload").refresh_node(node)
+      require("nvim-tree.renderer").draw()
     end)
   end
 
   M.uid = M.uid + 1
-  return Watcher:new(absolute_path, nil, callback, {
-    context = "explorer:watch:" .. absolute_path .. ":" .. M.uid,
+  return Watcher:new(path, nil, callback, {
+    context = "explorer:watch:" .. path .. ":" .. M.uid,
   })
 end
 
