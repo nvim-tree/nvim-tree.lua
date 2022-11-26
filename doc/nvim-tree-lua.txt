@@ -1406,7 +1406,7 @@ NvimTreeSymlink
 NvimTreeFolderName          (Directory)
 NvimTreeRootFolder
 NvimTreeFolderIcon
-NvimTreeOpenedFolderIcon
+NvimTreeOpenedFolderIcon    (NvimTreeFolderIcon)
 NvimTreeFileIcon
 NvimTreeEmptyFolderName     (Directory)
 NvimTreeOpenedFolderName    (Directory)
