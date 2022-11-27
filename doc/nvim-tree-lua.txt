@@ -290,6 +290,7 @@ Subsequent calls to setup will replace the previous configuration.
       diagnostics = {
         enable = false,
         show_on_dirs = false,
+        show_on_open_dirs = true,
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
@@ -554,6 +555,11 @@ Show LSP and COC diagnostics in the signcolumn
     *nvim-tree.diagnostics.show_on_dirs*
     Show diagnostic icons on parent directories.
       Type: `boolean`, Default: `false`
+
+    *nvim-tree.diagnostics.show_on_open_dirs*
+    Show diagnostics icons on directories that are open.
+    Only relevant when `diagnostics.show_on_dirs` is `true`.
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.diagnostics.icons*
     Icons for diagnostic severity.
