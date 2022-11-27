@@ -1,3 +1,5 @@
+local notify = require "nvim-tree.notify"
+
 local M = {
   config = {
     is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1,
@@ -27,14 +29,13 @@ function M.fn(node)
       process.stderr:close()
       process.handle:close()
       if code ~= 0 then
-        process.errors = process.errors .. string.format("NvimTree system_open: return code %d.", code)
-        error(process.errors)
+        notify.warn(string.format("system_open failed with return code %d: %s", code, process.errors))
       end
     end
   )
   table.remove(process.args)
   if not process.handle then
-    error("\n" .. process.pid .. "\nNvimTree system_open: failed to spawn process using '" .. process.cmd .. "'.")
+    notify.warn(string.format("system_open failed to spawn command '%s': %s", process.cmd, process.pid))
     return
   end
   vim.loop.read_start(process.stderr, function(err, data)

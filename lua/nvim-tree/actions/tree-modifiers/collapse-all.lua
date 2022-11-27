@@ -31,7 +31,9 @@ function M.fn(keep_buffers)
   Iterator.builder(core.get_explorer().nodes)
     :hidden()
     :applier(function(node)
-      node.open = keep_buffers == true and matches(node.absolute_path)
+      if node.nodes ~= nil then
+        node.open = keep_buffers == true and matches(node.absolute_path)
+      end
     end)
     :recursor(function(n)
       return n.nodes

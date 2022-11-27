@@ -25,6 +25,8 @@ Api.tree.close = require("nvim-tree.view").close
 Api.tree.focus = function()
   require("nvim-tree").focus()
 end
+Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only
+Api.tree.close_in_all_tabs = require("nvim-tree.view").close_all_tabs
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
 Api.tree.change_root = function(...)
   require("nvim-tree").change_dir(...)
@@ -38,6 +40,7 @@ Api.tree.change_root_to_node = inject_node(function(node)
 end)
 Api.tree.change_root_to_parent = inject_node(require("nvim-tree.actions.root.dir-up").fn)
 Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
+Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
 Api.tree.find_file = require("nvim-tree.actions.finders.find-file").fn
 Api.tree.search_node = require("nvim-tree.actions.finders.search-node").fn
 Api.tree.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn

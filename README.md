@@ -22,6 +22,8 @@
 <br clear="left"/>
 <br />
 
+Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for Showcases, Tips, Recipes and more.
+
 [Join us on matrix](https://matrix.to/#/#nvim-tree:matrix.org)
 
 ## Requirements
@@ -129,7 +131,7 @@ Development is focused on:
 
 nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
 
-Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Pull requests](#contributing) are always welcome.
+Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Contributions](#Contributing) are always welcome.
 
 [:help nvim-tree-api](doc/nvim-tree-lua.txt)
 
@@ -145,59 +147,11 @@ Custom actions may be mapped which can invoke API or perform your own actions.
 
 [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
-## Tips & tricks
-
-* You can add a directory by adding a `/` at the end of the paths, entering multiple directories `BASE/foo/bar/baz` will add directory foo, then bar and add a file baz to it.
-* You can update window options for the tree by setting `require"nvim-tree.view".View.winopts.MY_OPTION = MY_OPTION_VALUE`
-* `toggle` has a second parameter which allows to toggle without focusing the explorer (`require"nvim-tree".toggle(false, true)`).
-* You can allow nvim-tree to behave like vinegar, see [:help nvim-tree-vinegar](doc/nvim-tree-lua.txt)
-* If you `:set nosplitright`, the files will open on the left side of the tree, placing the tree window in the right side of the file you opened.
-* You can automatically close the tab/vim when nvim-tree is the last window in the tab: <https://github.com/nvim-tree/nvim-tree.lua/discussions/1115>. WARNING: this can catastrophically fail: <https://github.com/nvim-tree/nvim-tree.lua/issues/1368>. This will not be added to nvim-tree and the team will not provide support / assistance with this, due to complexities in vim event timings and side-effects.
-* Hide the `.git` folder: `filters = { custom = { "^.git$" } }`. See [:help nvim-tree.filters.custom](doc/nvim-tree-lua.txt).
-* To disable the display of icons see [:help nvim-tree.renderer.icons.show](doc/nvim-tree-lua.txt).
-
-## Troubleshooting
-
-## Diagnostic Logging
-
-You may enable diagnostic logging to `$XDG_CACHE_HOME/nvim/nvim-tree.log`. See [:help nvim-tree.log](doc/nvim-tree-lua.txt)
-
-## netrw Keeps Popping Up
-
-Eagerly disable netrw. See [:help nvim-tree.disable_netrw](doc/nvim-tree-lua.txt)
-
-## Performance Issues
-
-If you are experiencing performance issues with nvim-tree.lua, you can enable profiling in the logs. It is advisable to enable git logging at the same time, as that can be a source of performance problems.
-
-```lua
-log = {
-  enable = true,
-  truncate = true,
-  types = {
-    diagnostics = true,
-    git = true,
-    profile = true,
-    watcher = true,
-  },
-},
-```
-
-Please attach `$XDG_CACHE_HOME/nvim/nvim-tree.log` if you raise an issue.
-
-*Performance Tips:*
-
-* If you are using fish as an editor shell (which might be fixed in the future), try set `shell=/bin/bash` in your vim config. Alternatively, you can [prevent fish from loading interactive configuration in a non-interactive shell](https://github.com/nvim-tree/nvim-tree.lua/issues/549#issuecomment-1127394585).
-
-* Try manually running the git command (see the logs) in your shell e.g. `git --no-optional-locks status --porcelain=v1 --ignored=matching -u`.
-
-* Huge git repositories may timeout after the default `git.timeout` of 400ms. Try increasing that in your setup if you see `[git] job timed out` in the logs.
-
-* Try temporarily disabling git integration by setting `git.enable = false` in your setup.
-
 ## Contributing
 
-PRs are always welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
+PRs are always welcome. See [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) to get started.
+
+See [bug](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aissue+is%3Aopen+label%3Abug) and [PR Please](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aopen+is%3Aissue+label%3A%22PR+please%22) issues if you are looking for some work to get you started.
 
 ### Help Wanted
 
