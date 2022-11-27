@@ -126,9 +126,9 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
 
   if #icon > 0 then
     if node.open then
-      self:_insert_highlight("NvimTreeFolderOpenIcon", offset, offset + #icon)
+      self:_insert_highlight("NvimTreeOpenedFolderIcon", offset, offset + #icon)
     else
-      self:_insert_highlight("NvimTreeFolderClosedIcon", offset, offset + #icon)
+      self:_insert_highlight("NvimTreeClosedFolderIcon", offset, offset + #icon)
     end
   end
 
