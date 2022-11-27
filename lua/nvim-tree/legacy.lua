@@ -423,17 +423,14 @@ end
 
 function M.move_mappings_to_keymap(opts)
   if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings then
-    local custom_only, list = opts.view.mappings.custom_only, opts.view.mappings.list
+    local list = opts.view.mappings.list
     log.line("config", "generating on_attach for %d legacy view.mappings.list:", #list)
-    if custom_only then
+    if opts.view.mappings.custom_only then
       opts.remove_keymaps = true
       opts.view.mappings.custom_only = nil
     end
     if list then
       local keymap_by_legacy_action = utils.key_by(DEFAULT_KEYMAPS, "legacy_action")
-      if not custom_only then
-        opts.remove_keymaps = {}
-      end
       local call_list = {}
       for _, map in pairs(list) do
         local keys = type(map.key) == "table" and map.key or { map.key }
@@ -449,7 +446,10 @@ function M.move_mappings_to_keymap(opts)
         end
 
         for _, k in pairs(keys) do
-          if not custom_only and not vim.tbl_contains(opts.remove_keymaps, k) then
+          if map.action == "" and opts.remove_keymaps ~= true then
+            if type(opts.remove_keymaps) ~= "table" then
+              opts.remove_keymaps = {}
+            end
             table.insert(opts.remove_keymaps, k)
           end
 

@@ -704,6 +704,7 @@ Window / buffer setup.
         *nvim-tree.view.mappings.custom_only*
         Will use only the provided user mappings and not the default otherwise,
         extends the default mappings with the provided user mappings.
+        Overrides |nvim-tree.remove_keymaps|
           Type: `boolean`, Default: `false`
 
         *nvim-tree.view.mappings.list*
