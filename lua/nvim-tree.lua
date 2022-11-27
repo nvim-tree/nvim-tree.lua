@@ -736,7 +736,6 @@ function M.setup(conf)
   validate_options(conf)
 
   local opts = merge_options(conf)
-  legacy.move_mappings_to_keymap(opts)
 
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
   _config.root_dirs = opts.root_dirs
@@ -757,6 +756,8 @@ function M.setup(conf)
 
   log.line("config", "default config + user")
   log.raw("config", "%s\n", vim.inspect(opts))
+
+  legacy.move_mappings_to_keymap(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)

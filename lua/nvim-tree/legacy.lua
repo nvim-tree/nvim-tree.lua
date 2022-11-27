@@ -1,6 +1,7 @@
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 local open_file = require "nvim-tree.actions.node.open-file"
+local log = require "nvim-tree.log"
 
 local DEFAULT_KEYMAPS = require("nvim-tree.keymap").DEFAULT_KEYMAPS
 
@@ -380,20 +381,24 @@ local on_attach = function(bufnr)
 ]]
 
   for _, el in pairs(call_list) do
+    local vim_keymap_set
     if el.action_cb then
-      M.on_attach_lua = string.format(
-        '%s  vim.keymap.set("n", "%s", function()\n    local node = Lib.get_node_at_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })\n',
-        M.on_attach_lua,
+      vim_keymap_set = string.format(
+        'vim.keymap.set("n", "%s", function()\n    local node = Lib.get_node_at_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })',
         el.key
       )
     elseif el.keymap then
-      M.on_attach_lua = string.format(
-        "%s  vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s' })\n",
-        M.on_attach_lua,
+      vim_keymap_set = string.format(
+        "vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s' })",
         el.key,
         LEGACY_CALLBACKS[el.keymap.legacy_action],
         el.keymap.desc.short
       )
+    end
+
+    if vim_keymap_set then
+      log.line("config", "generated  %s", vim_keymap_set)
+      M.on_attach_lua = string.format("%s  %s\n", M.on_attach_lua, vim_keymap_set)
     end
   end
   M.on_attach_lua = string.format("%send\n", M.on_attach_lua)
@@ -417,8 +422,9 @@ local on_attach = function(bufnr)
 end
 
 function M.move_mappings_to_keymap(opts)
-  if opts.on_attach == "disable" and opts.view and opts.view.mappings then
+  if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings then
     local custom_only, list = opts.view.mappings.custom_only, opts.view.mappings.list
+    log.line("config", "generating on_attach for %d legacy view.mappings.list:", #list)
     if custom_only then
       opts.remove_keymaps = true
       opts.view.mappings.custom_only = nil
@@ -469,7 +475,7 @@ function M.generate_on_attach()
     io.close(file)
     open_file.fn("edit", name)
   else
-    utils.notify.info "no custom mappings"
+    notify.info "no custom mappings"
   end
 end
 

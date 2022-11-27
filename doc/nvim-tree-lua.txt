@@ -625,23 +625,22 @@ performance.
 *nvim-tree.on_attach*
 Function ran when creating the nvim-tree buffer.
 This can be used to attach keybindings to the tree buffer.
-When on_attach is "disabled", it will use the older mapping strategy, otherwise it
-will use the newer one.
->
-    on_attach = function(bufnr)
-        local inject_node = require("nvim-tree.utils").inject_node
+When on_attach is not a function, |nvim-tree.view.mappings| will be used.
+  Type: `function(bufnr)`, Default: `"disable"`
 
-        vim.keymap.set("n", "<leader>n", inject_node(function(node)
-            if node then
-                print(node.absolute_path)
-            end
-        end), { buffer = bufnr, noremap = true })
+  Example: >
+    local Api = require('nvim-tree.api')
+    local Lib = require('nvim-tree.lib')
 
-        vim.bo[bufnr].path = "/tmp"
+    local my_on_attach = function(bufnr)
+      vim.keymap.set('n', '?', Api.tree.toggle_help, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Help' })
+      vim.keymap.set('n', 'h', Api.tree.toggle_help, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Help' })
+      vim.keymap.set("n", "<C-P>", function()
+        local node = Lib.get_node_at_cursor()
+        print(node.absolute_path)
+      end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })
     end
 <
-    Type: `function(bufnr)`, Default: `"disable"`
-
 *nvim-tree.remove_keymaps*
 This can be used to remove the default mappings in the tree.
 - Remove specific keys by passing a `string` table of keys

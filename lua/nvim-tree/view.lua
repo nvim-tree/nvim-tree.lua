@@ -93,8 +93,8 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
+  require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
   if type(M.on_attach) == "function" then
-    require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
     M.on_attach(M.get_bufnr())
   end
 end
