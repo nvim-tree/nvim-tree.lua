@@ -12,6 +12,7 @@ local Actions = {
   toggle_dotfiles = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles,
   toggle_custom = require("nvim-tree.actions.tree-modifiers.toggles").custom,
   toggle_git_ignored = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored,
+  toggle_git_clean = require("nvim-tree.actions.tree-modifiers.toggles").git_clean,
 
   -- Filesystem operations
   copy_absolute_path = require("nvim-tree.actions.fs.copy-paste").copy_absolute_path,

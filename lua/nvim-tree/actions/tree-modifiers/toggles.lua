@@ -15,6 +15,11 @@ function M.git_ignored()
   return reloaders.reload_explorer()
 end
 
+function M.git_clean()
+  filters.config.filter_git_clean = not filters.config.filter_git_clean
+  return reloaders.reload_explorer()
+end
+
 function M.dotfiles()
   filters.config.filter_dotfiles = not filters.config.filter_dotfiles
   return reloaders.reload_explorer()

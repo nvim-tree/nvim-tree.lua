@@ -77,6 +77,11 @@ local DEFAULT_MAPPINGS = {
     desc = "navigate to the last sibling of current file/directory",
   },
   {
+    key = "C",
+    action = "toggle_git_clean",
+    desc = "toggle visibility of git clean via |filters.git_clean| option",
+  },
+  {
     key = "I",
     action = "toggle_git_ignored",
     desc = "toggle visibility of files/folders hidden via |git.ignore| option",

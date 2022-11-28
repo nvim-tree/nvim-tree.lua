@@ -293,7 +293,7 @@ Subsequent calls to setup will replace the previous configuration.
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
-          max = vim.diagnostic.severity.ERROR
+          max = vim.diagnostic.severity.ERROR,
         },
         icons = {
           hint = "",
@@ -306,6 +306,7 @@ Subsequent calls to setup will replace the previous configuration.
         dotfiles = false,
         custom = {},
         exclude = {},
+        git_clean = false,
       },
       filesystem_watchers = {
         enable = true,
@@ -889,6 +890,11 @@ Filtering options.
     Toggle via the `toggle_dotfiles` action, default mapping `H`.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.filters.git_clean*
+    Do not show files with no git status. This will show ignored files when
+    |nvim-tree.git.ignore| is set, as they are effectively dirty.
+      Type: `boolean`, Default: `false`
+
     *nvim-tree.filters.custom*
     Custom list of vim regex for file/directory names that will not be shown.
     Backslashes must be escaped e.g. "^\\.git". See |string-match|.
@@ -1305,6 +1311,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `<Tab>`           preview             open the file as a preview (keeps the cursor in the tree)
 `K`               first_sibling       navigate to the first sibling of current file/directory
 `J`               last_sibling        navigate to the last sibling of current file/directory
+`C`               toggle_git_clean    toggle visibility of git clean via |filters.git_clean| option
 `I`               toggle_git_ignored  toggle visibility of files/folders hidden via |git.ignore| option
 `H`               toggle_dotfiles     toggle visibility of dotfiles via |filters.dotfiles| option
 `U`               toggle_custom       toggle visibility of files/folders hidden via |filters.custom| option
@@ -1354,6 +1361,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "<Tab>",                          action = "preview" },
     { key = "K",                              action = "first_sibling" },
     { key = "J",                              action = "last_sibling" },
+    { key = "C",                              action = "toggle_git_clean" },
     { key = "I",                              action = "toggle_git_ignored" },
     { key = "H",                              action = "toggle_dotfiles" },
     { key = "U",                              action = "toggle_custom" },

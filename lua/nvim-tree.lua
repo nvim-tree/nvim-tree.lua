@@ -584,6 +584,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     dotfiles = false,
     custom = {},
     exclude = {},
+    git_clean = false,
   },
   filesystem_watchers = {
     enable = true,

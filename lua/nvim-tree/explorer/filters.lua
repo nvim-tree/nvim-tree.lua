@@ -52,9 +52,29 @@ function M.should_ignore(path)
 end
 
 function M.should_ignore_git(path, status)
-  return M.config.filter_git_ignored
-    and (M.config.filter_git_ignored and status and status[path] == "!!")
-    and not is_excluded(path)
+  if type(status) ~= "table" or type(status.files) ~= "table" or type(status.dirs) ~= "table" then
+    return false
+  end
+
+  -- exclusions override all
+  if is_excluded(path) then
+    return false
+  end
+
+  -- default to clean
+  local st = status.files[path] or status.dirs[path] or "  "
+
+  -- ignored overrides clean as they are effectively dirty
+  if M.config.filter_git_ignored and st == "!!" then
+    return true
+  end
+
+  -- clean last
+  if M.config.filter_git_clean and st == "  " then
+    return true
+  end
+
+  return false
 end
 
 function M.setup(opts)
@@ -62,6 +82,7 @@ function M.setup(opts)
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
     filter_git_ignored = opts.git.ignore,
+    filter_git_clean = opts.filters.git_clean,
   }
 
   M.ignore_list = {}

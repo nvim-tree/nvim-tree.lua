@@ -71,7 +71,7 @@ function M.reload(node, status)
 
     local abs = utils.path_join { cwd, name }
     t = t or (fs_stat_cached(abs) or {}).type
-    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status.files) then
+    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status) then
       child_names[abs] = true
 
       -- Recreate node if type changes.
