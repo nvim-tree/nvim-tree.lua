@@ -640,6 +640,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       resize_window = true,
       window_picker = {
         enable = true,
+        picker = "default",
         chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
         exclude = {
           filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
@@ -699,6 +700,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
   root_folder_label = { ["function"] = true, string = true },
+  picker = { ["function"] = true, string = true },
 }
 
 local function validate_options(conf)
