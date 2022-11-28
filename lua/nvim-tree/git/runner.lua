@@ -6,8 +6,17 @@ Runner.__index = Runner
 
 function Runner:_parse_status_output(line)
   local status = line:sub(1, 2)
+  local path = line:sub(4, -2)
+  if utils.str_find(status, "R") then
+    -- rename have format of "from -> to"
+    -- we just what the "to" part
+    local _, j = path:find " -> "
+    -- Note: The edge case where " -> " is a part of a file name is not addressed
+    path = path:sub(j + 1, -1)
+  end
+
   -- removing `"` when git is returning special file status containing spaces
-  local path = line:sub(4, -2):gsub('^"', ""):gsub('"$', "")
+  path = path:gsub('^"', ""):gsub('"$', "")
   -- replacing slashes if on windows
   if vim.fn.has "win32" == 1 then
     path = path:gsub("/", "\\")
