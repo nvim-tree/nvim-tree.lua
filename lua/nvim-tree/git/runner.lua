@@ -10,13 +10,23 @@ function Runner:_parse_status_output(line)
   if utils.str_find(status, "R") then
     -- rename have format of "from -> to"
     -- we just what the "to" part
-    local _, j = path:find " -> "
-    -- Note: The edge case where " -> " is a part of a file name is not addressed
-    path = path:sub(j + 1, -1)
+    if path:sub(1, 1) == '"' then
+      -- incase " -> " is a part of the file name
+      local _, j = path:find '" %-> "'
+      path = path:sub(j, -1)
+    else
+      local _, j = path:find " %-> "
+      path = path:sub(j + 1, -1)
+    end
   end
 
   -- removing `"` when git is returning special file status containing spaces
-  path = path:gsub('^"', ""):gsub('"$', "")
+  if path:sub(1, 1) == '"' then
+    path = path:sub(2, -2)
+    path = path:gsub('\\"', '"')
+    path = path:gsub("\\\\", "\\")
+  end
+
   -- replacing slashes if on windows
   if vim.fn.has "win32" == 1 then
     path = path:gsub("/", "\\")
@@ -131,6 +141,7 @@ function Runner:_wait()
   local function is_done()
     return self.rc ~= nil
   end
+
   while not vim.wait(30, is_done) do
   end
 end
