@@ -61,6 +61,8 @@ local function get_links()
     FolderName = "Directory",
     EmptyFolderName = "Directory",
     OpenedFolderName = "Directory",
+    OpenedFolderIcon = "NvimTreeFolderIcon",
+    ClosedFolderIcon = "NvimTreeFolderIcon",
     Normal = "Normal",
     NormalNC = "NvimTreeNormal",
     EndOfBuffer = "EndOfBuffer",
