@@ -15,7 +15,7 @@ end
 local function populate_children(handle, cwd, node, status)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
-  local bufinfo = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
+  local bufinfo = vim.fn.getbufinfo { buflisted = 1 }
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then

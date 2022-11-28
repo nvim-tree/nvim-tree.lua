@@ -14,7 +14,7 @@ local function search(search_dir, input_path)
   local function iter(dir)
     local realpath, path, name, stat, handle, _
 
-    local bufinfo = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
+    local bufinfo = vim.fn.getbufinfo { buflisted = 1 }
 
     handle, _ = vim.loop.fs_scandir(dir)
     if not handle then

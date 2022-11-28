@@ -16,9 +16,10 @@ end
 
 ---Check if the given path should be ignored.
 ---@param path string Absolute path
----@param bufinfo table vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
+---@param bufinfo table vim.fn.getbufinfo { buflisted = 1 }
+---@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
 ---@return boolean
-function M.should_ignore(path, bufinfo)
+function M.should_ignore(path, bufinfo, unloaded_bufnr)
   local basename = utils.path_basename(path)
 
   -- exclusions override all filters
@@ -26,10 +27,12 @@ function M.should_ignore(path, bufinfo)
     return false
   end
 
+  -- TODO exact match for files, ../ for dirs
+
   -- filter files with no open buffer and directories containing no open buffers
   if M.config.filter_no_buffer and type(bufinfo) == "table" then
     for _, buf in ipairs(bufinfo) do
-      if buf.name:find(path, 1, true) then
+      if buf.name:find(path, 1, true) and buf.bufnr ~= unloaded_bufnr then
         return false
       end
     end
