@@ -898,7 +898,7 @@ Filtering options.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.filters.no_buffer*
-    Do not show files that have no open buffer.
+    Do not show files that have no listed buffer.
     Toggle via the `toggle_no_buffer` action, default mapping `B`.
       Type: `boolean`, Default: `false`
 
