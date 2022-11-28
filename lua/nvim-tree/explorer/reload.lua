@@ -44,6 +44,8 @@ function M.reload(node, status)
 
   local ps = log.profile_start("reload %s", node.absolute_path)
 
+  local bufinfo = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
+
   if node.group_next then
     node.nodes = { node.group_next }
     node.group_next = nil
@@ -71,7 +73,7 @@ function M.reload(node, status)
 
     local abs = utils.path_join { cwd, name }
     t = t or (fs_stat_cached(abs) or {}).type
-    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status) then
+    if not filters.should_ignore(abs, bufinfo) and not filters.should_ignore_git(abs, status) then
       child_names[abs] = true
 
       -- Recreate node if type changes.

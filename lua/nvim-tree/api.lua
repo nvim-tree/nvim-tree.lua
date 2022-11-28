@@ -39,6 +39,7 @@ Api.tree.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all")
 Api.tree.expand_all = inject_node(require("nvim-tree.actions.tree-modifiers.expand-all").fn)
 Api.tree.toggle_gitignore_filter = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored
 Api.tree.toggle_git_clean_filter = require("nvim-tree.actions.tree-modifiers.toggles").git_clean
+Api.tree.toggle_no_buffer_filter = require("nvim-tree.actions.tree-modifiers.toggles").no_buffer
 Api.tree.toggle_custom_filter = require("nvim-tree.actions.tree-modifiers.toggles").custom
 Api.tree.toggle_hidden_filter = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles
 Api.tree.toggle_help = require("nvim-tree.actions.tree-modifiers.toggles").help

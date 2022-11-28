@@ -582,9 +582,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   filters = {
     dotfiles = false,
+    git_clean = false,
+    no_buffer = false,
     custom = {},
     exclude = {},
-    git_clean = false,
   },
   filesystem_watchers = {
     enable = true,

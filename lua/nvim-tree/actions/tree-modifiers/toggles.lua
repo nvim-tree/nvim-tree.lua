@@ -20,6 +20,11 @@ function M.git_clean()
   return reloaders.reload_explorer()
 end
 
+function M.no_buffer()
+  filters.config.filter_no_buffer = not filters.config.filter_no_buffer
+  return reloaders.reload_explorer()
+end
+
 function M.dotfiles()
   filters.config.filter_dotfiles = not filters.config.filter_dotfiles
   return reloaders.reload_explorer()

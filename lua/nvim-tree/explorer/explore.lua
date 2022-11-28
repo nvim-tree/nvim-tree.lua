@@ -15,6 +15,7 @@ end
 local function populate_children(handle, cwd, node, status)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
+  local bufinfo = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
@@ -23,7 +24,11 @@ local function populate_children(handle, cwd, node, status)
 
     local abs = utils.path_join { cwd, name }
     t = get_type_from(t, abs)
-    if not filters.should_ignore(abs) and not filters.should_ignore_git(abs, status) and not nodes_by_path[abs] then
+    if
+      not filters.should_ignore(abs, bufinfo)
+      and not filters.should_ignore_git(abs, status)
+      and not nodes_by_path[abs]
+    then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name)

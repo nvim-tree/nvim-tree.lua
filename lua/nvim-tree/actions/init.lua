@@ -92,6 +92,11 @@ local DEFAULT_MAPPINGS = {
     desc = "toggle visibility of dotfiles via |filters.dotfiles| option",
   },
   {
+    key = "B",
+    action = "toggle_no_buffer",
+    desc = "toggle visibility of files/folders hidden via |filters.no_buffer| option",
+  },
+  {
     key = "U",
     action = "toggle_custom",
     desc = "toggle visibility of files/folders hidden via |filters.custom| option",

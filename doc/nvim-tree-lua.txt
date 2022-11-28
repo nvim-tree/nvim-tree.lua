@@ -304,9 +304,10 @@ Subsequent calls to setup will replace the previous configuration.
       },
       filters = {
         dotfiles = false,
+        git_clean = false,
+        no_buffer = false,
         custom = {},
         exclude = {},
-        git_clean = false,
       },
       filesystem_watchers = {
         enable = true,
@@ -893,6 +894,12 @@ Filtering options.
     *nvim-tree.filters.git_clean*
     Do not show files with no git status. This will show ignored files when
     |nvim-tree.git.ignore| is set, as they are effectively dirty.
+    Toggle via the `toggle_git_clean` action, default mapping `C`.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.filters.no_buffer*
+    Do not show files that have no open buffer.
+    Toggle via the `toggle_no_buffer` action, default mapping `B`.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.filters.custom*
@@ -1181,6 +1188,7 @@ exists.
     - expand_all
     - toggle_gitignore_filter
     - toggle_git_clean_filter
+    - toggle_no_buffer_filter
     - toggle_custom_filter
     - toggle_hidden_filter
     - toggle_help
@@ -1315,6 +1323,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `C`               toggle_git_clean    toggle visibility of git clean via |filters.git_clean| option
 `I`               toggle_git_ignored  toggle visibility of files/folders hidden via |git.ignore| option
 `H`               toggle_dotfiles     toggle visibility of dotfiles via |filters.dotfiles| option
+`B`               toggle_no_buffer    toggle visibility of files/folders hidden via |filters.no_buffer| option
 `U`               toggle_custom       toggle visibility of files/folders hidden via |filters.custom| option
 `R`               refresh             refresh the tree
 `a`               create              add a file; leaving a trailing `/` will add a directory
@@ -1365,6 +1374,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "C",                              action = "toggle_git_clean" },
     { key = "I",                              action = "toggle_git_ignored" },
     { key = "H",                              action = "toggle_dotfiles" },
+    { key = "B",                              action = "toggle_no_buffer" },
     { key = "U",                              action = "toggle_custom" },
     { key = "R",                              action = "refresh" },
     { key = "a",                              action = "create" },
