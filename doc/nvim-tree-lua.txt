@@ -1180,6 +1180,7 @@ exists.
     - collapse_all `(keep_buffers?: bool)`
     - expand_all
     - toggle_gitignore_filter
+    - toggle_git_clean_filter
     - toggle_custom_filter
     - toggle_hidden_filter
     - toggle_help
