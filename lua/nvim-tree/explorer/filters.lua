@@ -27,12 +27,10 @@ function M.should_ignore(path, bufinfo, unloaded_bufnr)
     return false
   end
 
-  -- TODO exact match for files, ../ for dirs
-
   -- filter files with no open buffer and directories containing no open buffers
   if M.config.filter_no_buffer and type(bufinfo) == "table" then
     for _, buf in ipairs(bufinfo) do
-      if buf.name:find(path, 1, true) and buf.bufnr ~= unloaded_bufnr then
+      if buf.name == path or buf.name:find(path .. "/", 1, true) and buf.bufnr ~= unloaded_bufnr then
         return false
       end
     end
