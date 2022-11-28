@@ -621,6 +621,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       resize_window = true,
       window_picker = {
         enable = true,
+        custom_function = nil,
         chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
         exclude = {
           filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
@@ -672,6 +673,7 @@ end
 
 local FIELD_SKIP_VALIDATE = {
   open_win_config = true,
+  custom_function = true,
 }
 
 local FIELD_OVERRIDE_TYPECHECK = {
