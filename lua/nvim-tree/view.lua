@@ -168,7 +168,6 @@ local function get_alt_or_next_buf()
 end
 
 local function switch_buf_if_last_buf()
-  print("switching buf if last buf")
   if #vim.api.nvim_list_wins() == 1 then
     local buf = get_alt_or_next_buf()
     if buf then
@@ -189,7 +188,6 @@ function M.close()
   if not M.is_visible() then
     return
   end
-  print("saving tab state")
   save_tab_state()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr()
@@ -313,15 +311,6 @@ function M.abandon_current_window()
   M.View.tabpages[tab].winnr = nil
 end
 
-function M.reset_all_tabs()
-  for _, tab in pairs(vim.api.nvim_list_tabpages()) do
-    BUFNR_PER_TAB[tab] = nil
-    if M.View.tabpages[tab] then
-      M.View.tabpages[tab].winnr = nil
-    end
-  end
-end
-
 function M.is_visible(opts)
   if opts and opts.any_tabpage then
     for _, v in pairs(M.View.tabpages) do
@@ -374,8 +363,8 @@ end
 
 --- Returns the current nvim tree bufnr
 ---@return number
-function M.get_bufnr()
-  return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
+function M.get_bufnr(tabnr)
+  return BUFNR_PER_TAB[tabnr or vim.api.nvim_get_current_tabpage()]
 end
 
 --- Checks if nvim-tree is displaying the help ui within the tabpage specified

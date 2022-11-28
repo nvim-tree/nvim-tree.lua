@@ -38,6 +38,10 @@ function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
 end
 
+function M.get_tabnr(name)
+  return tonumber(string.sub(name, string.find(name, "%d+")))
+end
+
 ---Get the basename of the given path.
 ---@param path string
 ---@return string

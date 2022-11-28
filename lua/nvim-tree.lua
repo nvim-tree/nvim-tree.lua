@@ -130,19 +130,6 @@ function M.tab_change()
   end
 end
 
-local function get_normal_windows()
-  return vim.tbl_filter(function(win)
-    return vim.api.nvim_win_get_config(win).relative == ""
-  end, vim.api.nvim_list_wins())
-end
-
-local function find_existing_windows()
-  return vim.tbl_filter(function(win)
-    local buf = vim.api.nvim_win_get_buf(win)
-    return vim.api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
-  end, vim.api.nvim_list_wins())
-end
-
 local function is_file_readable(fname)
   local stat = vim.loop.fs_stat(fname)
   return stat and stat.type == "file" and vim.loop.fs_access(fname, "R")
@@ -265,7 +252,6 @@ function M.on_enter(netrw_disabled)
     and is_dir
     and not should_be_preserved
 
-  -- if should_open or should_hijack or existing_tree_wins[1] ~= nil then
   if should_open or should_hijack then
     lib.open(cwd)
 
@@ -292,6 +278,41 @@ local function manage_netrw(disable_netrw, hijack_netrw)
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
   end
+end
+
+local function reattach_session()
+  vim.schedule(function()
+    -- save current tab
+    local saved_tabnr = vim.api.nvim_get_current_tabpage()
+
+    local to_open = {}
+    for _, winnr in pairs(vim.api.nvim_list_wins()) do
+      local bufnr = vim.api.nvim_win_get_buf(winnr)
+      if utils.is_nvim_tree_buf(bufnr) then
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        to_open[utils.get_tabnr(name)] = true
+      end
+    end
+
+    for _, tabnr in pairs(vim.api.nvim_list_tabpages()) do
+      if not vim.api.nvim_tabpage_is_valid(tabnr) then
+        -- tab is invalid if only contain nvim_tree
+        -- this will clean up empty tabs
+        return
+      end
+      vim.api.nvim_set_current_tabpage(tabnr)
+      local saved_winnr = vim.api.nvim_get_current_win()
+      local saved_bufnr = vim.api.nvim_get_current_buf()
+      local had_focus = utils.is_nvim_tree_buf(saved_bufnr)
+      if to_open[tabnr] then
+        lib.open()
+        if not had_focus then
+          vim.api.nvim_set_current_win(saved_winnr)
+        end
+      end
+    end
+    vim.api.nvim_set_current_tabpage(saved_tabnr)
+  end)
 end
 
 local function setup_vim_commands()
@@ -336,31 +357,7 @@ local function setup_autocommands(opts)
   end
 
   create_nvim_tree_autocmd("SessionLoadPost", {
-    callback = function()
-      view.reset_all_tabs()
-      local existing = find_existing_windows()
-      local normal = get_normal_windows()
-      -- nvim tree wasn't open in last session
-      if #existing == 0 then
-        return
-      end
-
-      -- only nvim tree was open in last session
-      if #existing == #normal then
-        vim.cmd("vsp")
-        vim.schedule(function()
-          view.open_in_current_win()
-          require('nvim-tree.renderer').draw()
-        end)
-        return
-      end
-
-      -- nvim tree and other files were open in last session
-      M.toggle(false, false)
-      if _config.update_focused_file.enable then
-        vim.schedule(M.find_file)
-      end
-    end
+    callback = reattach_session
   })
 
   -- reset highlights when colorscheme is changed

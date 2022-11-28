@@ -113,17 +113,12 @@ end
 
 function M.open(cwd)
   M.set_target_win()
-  print("open x")
   if not core.get_explorer() or cwd then
-  print("no explorer")
     core.init(cwd or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
-    print("should hijack")
     view.close()
-    print("closed")
     view.open_in_current_win()
-    print("opening in current")
     renderer.draw()
   else
     open_view_and_draw()
