@@ -12,10 +12,10 @@ function Runner:_parse_status_output(line)
     -- we just what the "to" part
     if path:sub(1, 1) == '"' then
       -- incase " -> " is a part of the file name
-      local _, j = path:find '" %-> "'
+      local _, j = path:find('" -> "', nil, true)
       path = path:sub(j, -1)
     else
-      local _, j = path:find " %-> "
+      local _, j = path:find(" -> ", nil, true)
       path = path:sub(j + 1, -1)
     end
   end
