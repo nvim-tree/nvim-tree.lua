@@ -175,7 +175,11 @@ local function get_target_winid(mode, win_ids)
     end
   else
     -- pick a window
-    target_winid = M.window_picker.custom_function and M.window_picker.custom_function() or pick_win_id()
+    if M.window_picker.custom_function then
+      target_winid =  M.window_picker.custom_function()
+    else
+      target_winid = pick_win_id()
+    end
     if target_winid == nil then
       -- pick failed/cancelled
       return
