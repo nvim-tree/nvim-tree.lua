@@ -357,7 +357,7 @@ local function setup_autocommands(opts)
   end
 
   create_nvim_tree_autocmd("SessionLoadPost", {
-    callback = reattach_session
+    callback = reattach_session,
   })
 
   -- reset highlights when colorscheme is changed
