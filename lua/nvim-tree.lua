@@ -568,6 +568,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   diagnostics = {
     enable = false,
     show_on_dirs = false,
+    show_on_open_dirs = true,
     debounce_delay = 50,
     severity = {
       min = vim.diagnostic.severity.HINT,
@@ -594,6 +595,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     enable = true,
     ignore = true,
     show_on_dirs = true,
+    show_on_open_dirs = true,
     timeout = 400,
   },
   actions = {

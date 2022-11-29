@@ -292,6 +292,7 @@ Subsequent calls to setup will replace the previous configuration.
       diagnostics = {
         enable = false,
         show_on_dirs = false,
+        show_on_open_dirs = true,
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
@@ -318,6 +319,7 @@ Subsequent calls to setup will replace the previous configuration.
         enable = true,
         ignore = true,
         show_on_dirs = true,
+        show_on_open_dirs = true,
         timeout = 400,
       },
       actions = {
@@ -557,6 +559,11 @@ Show LSP and COC diagnostics in the signcolumn
     Show diagnostic icons on parent directories.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.diagnostics.show_on_open_dirs*
+    Show diagnostics icons on directories that are open.
+    Only relevant when `diagnostics.show_on_dirs` is `true`.
+      Type: `boolean`, Default: `true`
+
     *nvim-tree.diagnostics.icons*
     Icons for diagnostic severity.
       Type: `table`, Default: `{ hint = "", info = "", warning = "", error = "" }`
@@ -586,6 +593,11 @@ Git integration with icons and colors.
 
     *nvim-tree.git.show_on_dirs*
     Show status icons of children when directory itself has no status icon.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.git.show_on_open_dirs*
+    Show status icons on directories that are open.
+    Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.timeout*

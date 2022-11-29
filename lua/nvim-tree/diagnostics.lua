@@ -114,7 +114,7 @@ function M.update()
         for line, node in pairs(nodes_by_line) do
           local nodepath = utils.canonical_path(node.absolute_path)
           log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
-          if M.show_on_dirs and vim.startswith(bufpath, nodepath) then
+          if M.show_on_dirs and vim.startswith(bufpath, nodepath) and (not node.open or M.show_on_open_dirs) then
             log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
             node.diag_status = severity
             add_sign(line, severity)
@@ -147,6 +147,7 @@ function M.setup(opts)
   end
 
   M.show_on_dirs = opts.diagnostics.show_on_dirs
+  M.show_on_open_dirs = opts.diagnostics.show_on_open_dirs
   vim.fn.sign_define(sign_names[1][1], { text = opts.diagnostics.icons.error, texthl = sign_names[1][2] })
   vim.fn.sign_define(sign_names[2][1], { text = opts.diagnostics.icons.warning, texthl = sign_names[2][2] })
   vim.fn.sign_define(sign_names[3][1], { text = opts.diagnostics.icons.info, texthl = sign_names[3][2] })

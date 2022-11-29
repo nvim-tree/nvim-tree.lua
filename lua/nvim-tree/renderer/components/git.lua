@@ -75,9 +75,13 @@ local function warn_status(git_status)
   )
 end
 
+local function show_git(node)
+  return node.git_status and (not node.open or M.git_show_on_open_dirs)
+end
+
 local function get_icons_(node)
   local git_status = node.git_status
-  if not git_status then
+  if not show_git(node) then
     return nil
   end
 
@@ -137,7 +141,7 @@ end
 
 local function get_highlight_(node)
   local git_status = node.git_status
-  if not git_status then
+  if not show_git(node) then
     return
   end
 
@@ -162,6 +166,8 @@ function M.setup(opts)
   else
     M.get_highlight = nil_
   end
+
+  M.git_show_on_open_dirs = opts.git.show_on_open_dirs
 end
 
 return M
