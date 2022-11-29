@@ -22,20 +22,19 @@ function M.has_one_child_folder(node)
 end
 
 function M.update_git_status(node, parent_ignored, status)
-  -- status of the node's absolute path
+  local get_status
   if node.nodes then
-    node.git_status = get_dir_git_status(parent_ignored, status, node.absolute_path)
+    get_status = get_dir_git_status
   else
-    node.git_status = get_git_status(parent_ignored, status, node.absolute_path)
+    get_status = get_git_status
   end
+
+  -- status of the node's absolute path
+  node.git_status = get_status(parent_ignored, status, node.absolute_path)
 
   -- status of the link target, if the link itself is not dirty
   if node.link_to and not node.git_status then
-    if node.nodes then
-      node.git_status = get_dir_git_status(parent_ignored, status, node.link_to)
-    else
-      node.git_status = get_git_status(parent_ignored, status, node.link_to)
-    end
+    node.git_status = get_status(parent_ignored, status, node.link_to)
   end
 end
 

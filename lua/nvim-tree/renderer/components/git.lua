@@ -6,63 +6,45 @@ local M = {
 }
 
 local function build_icons_table(i)
+  local icons = {
+    staged = { icon = i.staged, hl = "NvimTreeGitStaged" },
+    unstaged = { icon = i.unstaged, hl = "NvimTreeGitDirty" },
+    untracked = { icon = i.untracked, hl = "NvimTreeGitNew" },
+    unmerged = { icon = i.unmerged, hl = "NvimTreeGitMerge" },
+    deleted = { icon = i.deleted, hl = "NvimTreeGitDeleted" },
+    ignored = { icon = i.ignored, hl = "NvimTreeGitIgnored" },
+  }
   return {
-    ["M "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
-    [" M"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
-    ["C "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
-    [" C"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
-    ["CM"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
-    [" T"] = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
-    ["T "] = { { icon = i.staged, hl = "NvimTreeGitStaged" } },
-    ["MM"] = {
-      { icon = i.staged, hl = "NvimTreeGitStaged" },
-      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
-    },
-    ["MD"] = {
-      { icon = i.staged, hl = "NvimTreeGitStaged" },
-    },
-    ["A "] = {
-      { icon = i.staged, hl = "NvimTreeGitStaged" },
-    },
-    ["AD"] = {
-      { icon = i.staged, hl = "NvimTreeGitStaged" },
-    },
-    [" A"] = {
-      { icon = i.untracked, hl = "NvimTreeGitNew" },
-    },
+    ["M "] = { icons.staged },
+    [" M"] = { icons.unstaged },
+    ["C "] = { icons.staged },
+    [" C"] = { icons.unstaged },
+    ["CM"] = { icons.unstaged },
+    [" T"] = { icons.unstaged },
+    ["T "] = { icons.staged },
+    ["MM"] = { icons.staged, icons.unstaged },
+    ["MD"] = { icons.staged },
+    ["A "] = { icons.staged },
+    ["AD"] = { icons.staged },
+    [" A"] = { icons.untracked },
     -- not sure about this one
-    ["AA"] = {
-      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = i.untracked, hl = "NvimTreeGitNew" },
-    },
-    ["AU"] = {
-      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
-      { icon = i.untracked, hl = "NvimTreeGitNew" },
-    },
-    ["AM"] = {
-      { icon = i.staged, hl = "NvimTreeGitStaged" },
-      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
-    },
-    ["??"] = { { icon = i.untracked, hl = "NvimTreeGitNew" } },
-    ["R "] = { { icon = i.renamed, hl = "NvimTreeGitRenamed" } },
-    [" R"] = { { icon = i.renamed, hl = "NvimTreeGitRenamed" } },
-    ["RM"] = {
-      { icon = i.unstaged, hl = "NvimTreeGitDirty" },
-      { icon = i.renamed, hl = "NvimTreeGitRenamed" },
-    },
-    ["UU"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UD"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
-    ["UA"] = { { icon = i.unmerged, hl = "NvimTreeGitMerge" } },
-    [" D"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
-    ["D "] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
-    ["RD"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
-    ["DD"] = { { icon = i.deleted, hl = "NvimTreeGitDeleted" } },
-    ["DU"] = {
-      { icon = i.deleted, hl = "NvimTreeGitDeleted" },
-      { icon = i.unmerged, hl = "NvimTreeGitMerge" },
-    },
-    ["!!"] = { { icon = i.ignored, hl = "NvimTreeGitIgnored" } },
-    dirty = { { icon = i.unstaged, hl = "NvimTreeGitDirty" } },
+    ["AA"] = { icons.unmerged, icons.untracked },
+    ["AU"] = { icons.unmerged, icons.untracked },
+    ["AM"] = { icons.staged, icons.unstaged },
+    ["??"] = { icons.untracked },
+    ["R "] = { icons.renamed },
+    [" R"] = { icons.renamed },
+    ["RM"] = { icons.unstaged, icons.renamed },
+    ["UU"] = { icons.unmerged },
+    ["UD"] = { icons.unmerged },
+    ["UA"] = { icons.unmerged },
+    [" D"] = { icons.deleted },
+    ["D "] = { icons.deleted },
+    ["RD"] = { icons.deleted },
+    ["DD"] = { icons.deleted },
+    ["DU"] = { icons.deleted, icons.unmerged },
+    ["!!"] = { icons.ignored },
+    dirty = { icons.unstaged },
   }
 end
 
