@@ -2,6 +2,7 @@ local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local lib = require "nvim-tree.lib"
+local explorer_common = require "nvim-tree.explorer.common"
 
 local M = {}
 
@@ -14,7 +15,7 @@ function M.fn(where, what)
     for line, node in pairs(nodes_by_line) do
       local valid = false
       if what == "git" then
-        valid = node.git_status ~= nil and (not node.open or M.show_on_open_dirs)
+        valid = explorer_common.has_git_status(node)
       elseif what == "diag" then
         valid = node.diag_status ~= nil
       end
@@ -50,10 +51,6 @@ function M.fn(where, what)
       end
     end
   end
-end
-
-function M.setup(opts)
-  M.show_on_open_dirs = opts.git.show_on_open_dirs
 end
 
 return M

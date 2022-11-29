@@ -395,7 +395,6 @@ function M.setup(opts)
   require("nvim-tree.actions.fs.remove-file").setup(opts)
   require("nvim-tree.actions.fs.copy-paste").setup(opts)
   require("nvim-tree.actions.tree-modifiers.expand-all").setup(opts)
-  require("nvim-tree.actions.moves.item").setup(opts)
 
   cleanup_existing_mappings()
 
