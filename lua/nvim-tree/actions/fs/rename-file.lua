@@ -45,7 +45,6 @@ function M.fn(with_sub, relative_rename)
         append = ""
       end
       prepend = abs_directory
-      print(filename .. "|" .. (extension_index or "na") .. "|" .. prepend .. "|" ..append)
     else
       prepend = ""
       append = ""
