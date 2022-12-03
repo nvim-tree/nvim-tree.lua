@@ -123,7 +123,7 @@ local DEFAULT_MAPPINGS = {
   },
   {
     key = "e",
-    action = "relative_rename",
+    action = "rename_relative",
     desc = "rename base name with changing directory or extension",
   },
   {

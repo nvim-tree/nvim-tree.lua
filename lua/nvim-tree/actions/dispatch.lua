@@ -25,7 +25,7 @@ local Actions = {
   trash = require("nvim-tree.actions.fs.trash").fn,
   remove = require("nvim-tree.actions.fs.remove-file").fn,
   rename = require("nvim-tree.actions.fs.rename-file").fn(false),
-  relative_rename = require("nvim-tree.actions.fs.rename-file").fn(false, true),
+  rename_relative = require("nvim-tree.actions.fs.rename-file").fn(false, true),
 
   -- Movements in tree
   close_node = require("nvim-tree.actions.moves.parent").fn(true),
