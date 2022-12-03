@@ -176,7 +176,7 @@ local function get_target_winid(mode, win_ids)
   else
     -- pick a window
     if type(M.window_picker.picker) == "function" then
-      target_winid =  M.window_picker.picker()
+      target_winid = M.window_picker.picker()
     else
       target_winid = pick_win_id()
     end
