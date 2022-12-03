@@ -39,7 +39,7 @@ function M.update_git_status(node, parent_ignored, status)
   end
 end
 
-function M.has_git_status(node)
+function M.shows_git_status(node)
   if not node.git_status then
     -- status doesn't exist
     return false

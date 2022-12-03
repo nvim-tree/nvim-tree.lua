@@ -77,7 +77,7 @@ local function warn_status(git_status)
 end
 
 local function get_icons_(node)
-  if not explorer_common.has_git_status(node) then
+  if not explorer_common.shows_git_status(node) then
     return nil
   end
 
@@ -138,7 +138,7 @@ end
 
 local function get_highlight_(node)
   local git_status = node.git_status
-  if not explorer_common.has_git_status(node) then
+  if not explorer_common.shows_git_status(node) then
     return
   end
 

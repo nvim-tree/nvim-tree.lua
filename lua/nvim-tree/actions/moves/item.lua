@@ -15,7 +15,7 @@ function M.fn(where, what)
     for line, node in pairs(nodes_by_line) do
       local valid = false
       if what == "git" then
-        valid = explorer_common.has_git_status(node)
+        valid = explorer_common.shows_git_status(node)
       elseif what == "diag" then
         valid = node.diag_status ~= nil
       end
