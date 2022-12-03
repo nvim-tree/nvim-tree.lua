@@ -1328,6 +1328,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `D`               trash               trash a file via |trash| option
 `r`               rename              rename a file
 `<C-r>`           full_rename         rename a file and omit the filename on input
+`e`               relative_rename     rename base name with changing directory or extension
 `x`               cut                 add/remove file/directory to cut clipboard
 `c`               copy                add/remove file/directory to copy clipboard
 `p`               paste               paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation
@@ -1377,6 +1378,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "D",                              action = "trash" },
     { key = "r",                              action = "rename" },
     { key = "<C-r>",                          action = "full_rename" },
+    { key = "e",                              action = "relative_rename" },
     { key = "x",                              action = "cut" },
     { key = "c",                              action = "copy" },
     { key = "p",                              action = "paste" },
