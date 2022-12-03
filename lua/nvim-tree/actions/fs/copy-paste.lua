@@ -160,10 +160,9 @@ local function do_paste(node, action_type, action_fn)
     return
   end
   local is_dir = stats and stats.type == "directory"
-
   if not is_dir then
     destination = vim.fn.fnamemodify(destination, ":p:h")
-  elseif not node.open then
+  elseif not (M.create_in_closed_folder or node.open) then
     destination = vim.fn.fnamemodify(destination, ":p:h:h")
   end
 
@@ -253,6 +252,7 @@ end
 function M.setup(opts)
   M.use_system_clipboard = opts.actions.use_system_clipboard
   M.enable_reload = not opts.filesystem_watchers.enable
+  M.create_in_closed_folder = opts.create_in_closed_folder
 end
 
 return M
