@@ -10,9 +10,7 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
     return file_status
   end
 
-  if M.config.git.show_on_dirs then
-    return status.dirs and status.dirs[absolute_path]
-  end
+  return status.dirs and status.dirs[absolute_path]
 end
 
 local function get_git_status(parent_ignored, status, absolute_path)
@@ -38,6 +36,22 @@ function M.update_git_status(node, parent_ignored, status)
     else
       node.git_status = get_git_status(parent_ignored, status, node.link_to)
     end
+  end
+end
+
+function M.shows_git_status(node)
+  if not node.git_status then
+    -- status doesn't exist
+    return false
+  elseif not node.nodes then
+    -- status exist and is a file
+    return true
+  elseif not node.open then
+    -- status exist, is a closed dir
+    return M.config.git.show_on_dirs
+  else
+    -- status exist, is a open dir
+    return M.config.git.show_on_dirs and M.config.git.show_on_open_dirs
   end
 end
 
