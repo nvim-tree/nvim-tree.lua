@@ -124,7 +124,7 @@ local DEFAULT_MAPPINGS = {
   {
     key = "e",
     action = "rename_root",
-    desc = "rename a file with filename-modifiers ':t:r' without changing extension"
+    desc = "rename a file with filename-modifiers ':t:r' without changing extension",
   },
   {
     key = "x",
