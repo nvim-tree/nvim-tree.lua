@@ -435,7 +435,7 @@ Reloads the explorer every time a buffer is written to.
   Type: `boolean`, Default: `true`
 
 *nvim-tree.create_in_closed_folder*
-Creating a file when the cursor is on a closed folder will set the
+Creating or pasting a file when the cursor is on a closed folder will set the
 path to be inside the closed folder, otherwise the parent folder.
   Type: `boolean`, Default: `true`
 
