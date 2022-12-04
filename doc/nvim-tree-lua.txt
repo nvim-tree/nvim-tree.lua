@@ -296,7 +296,7 @@ Subsequent calls to setup will replace the previous configuration.
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
-          max = vim.diagnostic.severity.ERROR
+          max = vim.diagnostic.severity.ERROR,
         },
         icons = {
           hint = "",
@@ -1328,7 +1328,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `D`               trash               trash a file via |trash| option
 `r`               rename              rename a file
 `<C-r>`           full_rename         rename a file and omit the filename on input
-`e`               rename_relative     rename base name with changing directory or extension
+`e`               rename_root         rename a file with filename-modifiers ':t:r' without changing extension
 `x`               cut                 add/remove file/directory to cut clipboard
 `c`               copy                add/remove file/directory to copy clipboard
 `p`               paste               paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation
@@ -1378,7 +1378,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "D",                              action = "trash" },
     { key = "r",                              action = "rename" },
     { key = "<C-r>",                          action = "full_rename" },
-    { key = "e",                              action = "rename_relative" },
+    { key = "e",                              action = "rename_root" },
     { key = "x",                              action = "cut" },
     { key = "c",                              action = "copy" },
     { key = "p",                              action = "paste" },
