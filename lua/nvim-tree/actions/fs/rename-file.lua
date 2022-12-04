@@ -36,10 +36,10 @@ function M.fn(with_sub, relative_rename)
     local default_path, prepend, append
     if relative_rename then
       local filename = node.absolute_path:sub(abs_directory:len() + 1)
-      local extension_index = filename:find "%.[^%.]*$" or -1
-      if extension_index > 1 then
-        default_path = filename:sub(0, extension_index - 1)
-        append = filename:sub(extension_index)
+      local extension = vim.fn.fnamemodify(node.name, ':e')
+      if extension:len() > 0 then
+        default_path = vim.fn.fnamemodify(node.name, ':t:r')
+        append = "." .. extension
       else
         default_path = filename
         append = ""
