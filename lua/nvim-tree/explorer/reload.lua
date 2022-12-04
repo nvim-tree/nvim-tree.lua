@@ -34,7 +34,7 @@ local function update_parent_statuses(node, project, root)
   end
 end
 
-function M.reload(node, status, unloaded_bufnr)
+function M.reload(node, git_status, unloaded_bufnr)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if type(handle) == "string" then
@@ -44,7 +44,7 @@ function M.reload(node, status, unloaded_bufnr)
 
   local ps = log.profile_start("reload %s", node.absolute_path)
 
-  local bufinfo = vim.fn.getbufinfo { buflisted = 1 }
+  local filter_status = filters.prepare(git_status, unloaded_bufnr)
 
   if node.group_next then
     node.nodes = { node.group_next }
@@ -73,7 +73,7 @@ function M.reload(node, status, unloaded_bufnr)
 
     local abs = utils.path_join { cwd, name }
     t = t or (fs_stat_cached(abs) or {}).type
-    if not filters.should_ignore(abs, bufinfo, unloaded_bufnr) and not filters.should_ignore_git(abs, status) then
+    if not filters.should_filter(abs, filter_status) then
       child_names[abs] = true
 
       -- Recreate node if type changes.
@@ -114,7 +114,7 @@ function M.reload(node, status, unloaded_bufnr)
   end
 
   node.nodes = vim.tbl_map(
-    update_status(nodes_by_path, node_ignored, status),
+    update_status(nodes_by_path, node_ignored, git_status),
     vim.tbl_filter(function(n)
       if child_names[n.absolute_path] then
         return child_names[n.absolute_path]
@@ -129,7 +129,7 @@ function M.reload(node, status, unloaded_bufnr)
   local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
-    local ns = M.reload(child_folder_only, status)
+    local ns = M.reload(child_folder_only, git_status)
     node.nodes = ns or {}
     log.profile_end(ps, "reload %s", node.absolute_path)
     return ns

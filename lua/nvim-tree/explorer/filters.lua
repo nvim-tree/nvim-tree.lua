@@ -14,39 +14,61 @@ local function is_excluded(path)
   return false
 end
 
----Check if the given path should be ignored.
+---Check if the given path is git clean/ignored
+---@param path string Absolute path
+---@param git_status table from prepare
+---@return boolean
+local function git(path, git_status)
+  if type(git_status) ~= "table" or type(git_status.files) ~= "table" or type(git_status.dirs) ~= "table" then
+    return false
+  end
+
+  -- default status to clean
+  local status = git_status.files[path] or git_status.dirs[path] or "  "
+
+  -- filter ignored; overrides clean as they are effectively dirty
+  if M.config.filter_git_ignored and status == "!!" then
+    return true
+  end
+
+  -- filter clean
+  if M.config.filter_git_clean and status == "  " then
+    return true
+  end
+
+  return false
+end
+
+---Check if the given path has no listed buffer
 ---@param path string Absolute path
 ---@param bufinfo table vim.fn.getbufinfo { buflisted = 1 }
 ---@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
 ---@return boolean
-function M.should_ignore(path, bufinfo, unloaded_bufnr)
-  local basename = utils.path_basename(path)
-
-  -- exclusions override all filters
-  if is_excluded(path) then
+local function buf(path, bufinfo, unloaded_bufnr)
+  if not M.config.filter_no_buffer or type(bufinfo) ~= "table" then
     return false
   end
 
   -- filter files with no open buffer and directories containing no open buffers
-  if M.config.filter_no_buffer and type(bufinfo) == "table" then
-    for _, buf in ipairs(bufinfo) do
-      if buf.name == path or buf.name:find(path .. "/", 1, true) and buf.bufnr ~= unloaded_bufnr then
-        return false
-      end
-    end
-    return true
-  end
-
-  -- filter dotfiles
-  if M.config.filter_dotfiles then
-    if basename:sub(1, 1) == "." then
-      return true
+  for _, b in ipairs(bufinfo) do
+    if b.name == path or b.name:find(path .. "/", 1, true) and b.bufnr ~= unloaded_bufnr then
+      return false
     end
   end
 
+  return true
+end
+
+local function dotfile(path)
+  return M.config.filter_dotfiles and utils.path_basename(path):sub(1, 1) == "."
+end
+
+local function custom(path)
   if not M.config.filter_custom then
     return false
   end
+
+  local basename = utils.path_basename(path)
 
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
@@ -66,30 +88,43 @@ function M.should_ignore(path, bufinfo, unloaded_bufnr)
   return false
 end
 
-function M.should_ignore_git(path, status)
-  if type(status) ~= "table" or type(status.files) ~= "table" or type(status.dirs) ~= "table" then
-    return false
+---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
+---@param git_status table results of git.load_project_status(...)
+---@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+---@return table
+--- git_status: reference
+--- unloaded_bufnr: copy
+--- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
+--- buffer_severity: TODO
+function M.prepare(git_status, unloaded_bufnr)
+  local status = {
+    git_status = git_status or {},
+    unloaded_bufnr = unloaded_bufnr,
+    bufinfo = {},
+    buffer_severity = {},
+  }
+
+  if M.config.filter_no_buffer then
+    status.bufinfo = vim.fn.getbufinfo { buflisted = 1 }
   end
 
+  return status
+end
+
+---Check if the given path should be filtered.
+---@param path string Absolute path
+---@param status table from prepare
+---@return boolean
+function M.should_filter(path, status)
   -- exclusions override all filters
   if is_excluded(path) then
     return false
   end
 
-  -- default status to clean
-  local st = status.files[path] or status.dirs[path] or "  "
-
-  -- filter ignored; overrides clean as they are effectively dirty
-  if M.config.filter_git_ignored and st == "!!" then
-    return true
-  end
-
-  -- filter clean
-  if M.config.filter_git_clean and st == "  " then
-    return true
-  end
-
-  return false
+  return git(path, status.git_status)
+    or buf(path, status.bufinfo, status.unloaded_bufnr)
+    or dotfile(path)
+    or custom(path)
 end
 
 function M.setup(opts)
@@ -99,6 +134,7 @@ function M.setup(opts)
     filter_git_ignored = opts.git.ignore,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
+    filter_diagnostics_ok = opts.filters.diagnostics_ok,
   }
 
   M.ignore_list = {}
