@@ -85,7 +85,9 @@ local function get_icons_(node)
     end
   end
 
-  table.sort(iconss, function(a, b) return a.ord < b.ord end)
+  table.sort(iconss, function(a, b)
+    return a.ord < b.ord
+  end)
 
   return iconss
 end
