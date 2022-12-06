@@ -11,6 +11,7 @@ local function build_icons_table(i)
     unstaged = { icon = i.unstaged, hl = "NvimTreeGitDirty" },
     untracked = { icon = i.untracked, hl = "NvimTreeGitNew" },
     unmerged = { icon = i.unmerged, hl = "NvimTreeGitMerge" },
+    renamed = { icon = i.renamed, hl = "NvimTreeGitRenamed" },
     deleted = { icon = i.deleted, hl = "NvimTreeGitDeleted" },
     ignored = { icon = i.ignored, hl = "NvimTreeGitIgnored" },
   }
