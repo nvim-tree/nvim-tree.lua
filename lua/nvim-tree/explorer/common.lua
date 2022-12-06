@@ -95,8 +95,6 @@ function M.get_git_status(node)
         ["D "] = true,
         ["RD"] = true,
         ["DD"] = true,
-        -- TODO: test if this should be deleted
-        ["DU"] = true,
       }
       for _, s in pairs(node.git_status.dir.direct) do
         if deleted[s] then
