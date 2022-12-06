@@ -47,7 +47,7 @@ function M.reload_explorer(_, unloaded_bufnr)
 end
 
 function M.reload_git()
-  if not core.get_explorer() or not git.config.enable or event_running then
+  if not core.get_explorer() or not git.config.git.enable or event_running then
     return
   end
   event_running = true
