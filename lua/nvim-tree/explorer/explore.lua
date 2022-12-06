@@ -13,7 +13,7 @@ local function get_type_from(type_, cwd)
 end
 
 local function populate_children(handle, cwd, node, git_status)
-  local node_ignored = node.git_status == "!!"
+  local node_ignored = common.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
   local filter_status = filters.prepare(git_status)
   while true do

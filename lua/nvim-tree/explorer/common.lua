@@ -1,20 +1,31 @@
 local M = {}
 
+-- node.git_status structure:
+-- {
+--   file = string | nil,
+--   dir = {
+--     direct = { string } | nil,
+--     indirect = { string } | nil,
+--   } | nil,
+-- }
+
 local function get_dir_git_status(parent_ignored, status, absolute_path)
   if parent_ignored then
-    return "!!"
+    return { file = "!!" }
   end
 
-  local file_status = status.files and status.files[absolute_path]
-  if file_status then
-    return file_status
-  end
-
-  return status.dirs and status.dirs[absolute_path]
+  return {
+    file = status.files and status.files[absolute_path],
+    dir = {
+      direct = status.dirs.direct[absolute_path],
+      indirect = status.dirs.indirect[absolute_path],
+    },
+  }
 end
 
 local function get_git_status(parent_ignored, status, absolute_path)
-  return parent_ignored and "!!" or status.files and status.files[absolute_path]
+  local file_status = parent_ignored and "!!" or status.files and status.files[absolute_path]
+  return { file = file_status }
 end
 
 function M.has_one_child_folder(node)
@@ -38,20 +49,71 @@ function M.update_git_status(node, parent_ignored, status)
   end
 end
 
-function M.shows_git_status(node)
-  if not node.git_status then
+function M.get_git_status(node)
+  local git_status = node.git_status
+  if not git_status then
     -- status doesn't exist
-    return false
-  elseif not node.nodes then
-    -- status exist and is a file
-    return true
-  elseif not node.open then
-    -- status exist, is a closed dir
-    return M.config.git.show_on_dirs
-  else
-    -- status exist, is a open dir
-    return M.config.git.show_on_dirs and M.config.git.show_on_open_dirs
+    return nil
   end
+
+  if not node.nodes then
+    -- file
+    return git_status.file and { git_status.file }
+  end
+
+  -- dir
+  if not M.config.git.show_on_dirs then
+    return nil
+  end
+
+  local status = {}
+  if not node.open or M.config.git.show_on_open_dirs then
+    -- dir is closed or we should show on open_dirs
+    if git_status.file ~= nil then
+      table.insert(status, git_status.file)
+    end
+    if git_status.dir ~= nil then
+      if git_status.dir.direct ~= nil then
+        for _, s in pairs(node.git_status.dir.direct) do
+          table.insert(status, s)
+        end
+      end
+      if git_status.dir.indirect ~= nil then
+        for _, s in pairs(node.git_status.dir.indirect) do
+          table.insert(status, s)
+        end
+      end
+    end
+  else
+    -- dir is open and we shouldn't show on open_dirs
+    if git_status.file ~= nil then
+      table.insert(status, git_status.file)
+    end
+    if git_status.dir ~= nil and git_status.dir.direct ~= nil then
+      local deleted = {
+        [" D"] = true,
+        ["D "] = true,
+        ["RD"] = true,
+        ["DD"] = true,
+        -- TODO: test if this should be deleted
+        ["DU"] = true,
+      }
+      for _, s in pairs(node.git_status.dir.direct) do
+        if deleted[s] then
+          table.insert(status, s)
+        end
+      end
+    end
+  end
+  if #status == 0 then
+    return nil
+  else
+    return status
+  end
+end
+
+function M.is_git_ignored(node)
+  return node.git_status and node.git_status.file == "!!"
 end
 
 function M.node_destroy(node)

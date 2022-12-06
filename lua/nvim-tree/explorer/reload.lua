@@ -53,7 +53,7 @@ function M.reload(node, git_status, unloaded_bufnr)
 
   local child_names = {}
 
-  local node_ignored = node.git_status == "!!"
+  local node_ignored = common.is_git_ignored(node)
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
     local ok, name, t = pcall(vim.loop.fs_scandir_next, handle)

@@ -55,24 +55,43 @@ function M.should_show_untracked(cwd)
   return untracked[cwd]
 end
 
+local function nil_insert(t, k)
+  t = t or {}
+  t[k] = true
+  return t
+end
+
 function M.file_status_to_dir_status(status, cwd)
-  local dirs = {}
+  local direct = {}
   for p, s in pairs(status) do
     if s ~= "!!" then
       local modified = vim.fn.fnamemodify(p, ":h")
-      dirs[modified] = s
+      direct[modified] = nil_insert(direct[modified], s)
     end
   end
 
-  for dirname, s in pairs(dirs) do
-    local modified = dirname
-    while modified ~= cwd and modified ~= "/" do
-      modified = vim.fn.fnamemodify(modified, ":h")
-      dirs[modified] = s
+  local indirect = {}
+  for dirname, statuses in pairs(direct) do
+    for s, _ in pairs(statuses) do
+      local modified = dirname
+      while modified ~= cwd and modified ~= "/" do
+        modified = vim.fn.fnamemodify(modified, ":h")
+        indirect[modified] = nil_insert(indirect[modified], s)
+      end
     end
   end
 
-  return dirs
+  local r = { indirect = indirect, direct = direct }
+  for _, d in pairs(r) do
+    for dirname, statuses in pairs(d) do
+      local new_statuses = {}
+      for s, _ in pairs(statuses) do
+        table.insert(new_statuses, s)
+      end
+      d[dirname] = new_statuses
+    end
+  end
+  return r
 end
 
 return M

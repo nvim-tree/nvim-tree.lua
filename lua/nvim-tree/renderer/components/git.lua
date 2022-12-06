@@ -59,20 +59,32 @@ local function warn_status(git_status)
 end
 
 local function get_icons_(node)
-  if not explorer_common.shows_git_status(node) then
+  local git_statuses = explorer_common.get_git_status(node)
+  if git_statuses == nil then
     return nil
   end
 
-  local git_status = node.git_status
-  local icons = M.git_icons[git_status]
-  if not icons then
-    if not M.config.highlight_git then
-      warn_status(git_status)
+  local inserted = {}
+  local iconss = {}
+
+  for _, git_status in pairs(git_statuses) do
+    local icons = M.git_icons[git_status]
+    if not icons then
+      if not M.config.highlight_git then
+        warn_status(git_status)
+      end
+      return nil
     end
-    return nil
+
+    for _, icon in pairs(icons) do
+      if not inserted[icon] then
+        table.insert(iconss, icon)
+        inserted[icon] = true
+      end
+    end
   end
 
-  return icons
+  return iconss
 end
 
 local git_hl = {
@@ -119,12 +131,12 @@ function M.setup_signs(i)
 end
 
 local function get_highlight_(node)
-  local git_status = node.git_status
-  if not explorer_common.shows_git_status(node) then
+  local git_status = explorer_common.get_git_status(node)
+  if git_status == nil then
     return
   end
 
-  return git_hl[git_status]
+  return git_hl[git_status[1]]
 end
 
 function M.setup(opts)

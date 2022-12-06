@@ -20,6 +20,8 @@ end
 function M.reload_node_status(parent_node, projects)
   local project_root = git.get_project_root(parent_node.absolute_path)
   local status = projects[project_root] or {}
+  require("nvim-tree.log").line("dev", "reloaders")
+  -- TODO: when is this called
   for _, node in ipairs(parent_node.nodes) do
     if node.nodes then
       node.git_status = status.dirs and status.dirs[node.absolute_path]
