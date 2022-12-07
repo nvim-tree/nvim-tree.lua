@@ -16,7 +16,7 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
 
   return {
     file = status.files and status.files[absolute_path],
-    dir = {
+    dir = status.dirs and {
       direct = status.dirs.direct[absolute_path],
       indirect = status.dirs.indirect[absolute_path],
     },
