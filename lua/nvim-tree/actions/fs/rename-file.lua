@@ -24,33 +24,41 @@ function M.rename(node, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
 
-function M.fn(modifier_arg)
-  local modifier = modifier_arg
+function M.fn(initialisation_arg)
+  local default_modifier = ":t"
   -- backwards compatibility, support modifier as boolean
-  if type(modifier_arg) == "boolean" then
-    if modifier_arg then
+  if type(initialisation_arg) == "boolean" then
+    if initialisation_arg then
       modifier = ":p"
-    else
-      modifier = ":t"
     end
+  elseif type(initialisation_arg) == "string" then
+    default_modifier = initialisation_arg
   end
 
-  -- support for only specific modifiers have been implemented
-  local allowed_modifiers = {
-    ":p",
-    ":t",
-    ":t:r"
-  }
+  return function(node, modifier_arg)
+    local modifier = default_modifier
+    if modifier_arg ~= nil then
+      modifier = modifier_arg
+    end
 
-  local lookup = {}
-  for _, v in ipairs(allowed_modifiers) do lookup[v] = true end
+    -- support for only specific modifiers have been implemented
+    local allowed_modifiers = {
+      ":p",
+      ":t",
+      ":t:r",
+    }
 
-  if (lookup[modifier] == nil) then
-    return notify.warn("Modifier " .. modifier ..
-      " is not in allowed list : "..table.concat(allowed_modifiers, ","))
-  end
+    local lookup = {}
+    for _, v in ipairs(allowed_modifiers) do
+      lookup[v] = true
+    end
 
-  return function(node)
+    if lookup[modifier] == nil then
+      return notify.warn(
+        "Modifier " .. modifier .. " is not in allowed list : " .. table.concat(allowed_modifiers, ",")
+      )
+    end
+
     node = lib.get_last_group_node(node)
     if node.name == ".." then
       return
@@ -66,8 +74,8 @@ function M.fn(modifier_arg)
     else
       default_path = vim.fn.fnamemodify(node.name, modifier)
       if modifier == ":t:r" then
-        local extension = vim.fn.fnamemodify(node.name, ':e')
-        append = extension:len() == 0 and "" or "." ..extension
+        local extension = vim.fn.fnamemodify(node.name, ":e")
+        append = extension:len() == 0 and "" or "." .. extension
       end
     end
 
