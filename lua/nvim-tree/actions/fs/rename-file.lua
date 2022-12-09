@@ -24,7 +24,32 @@ function M.rename(node, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
 
-function M.fn(with_sub, relative_rename)
+function M.fn(modifier_arg)
+  local modifier = modifier_arg
+  -- backwards compatibility, support modifier as boolean
+  if type(modifier_arg) == "boolean" then
+    if modifier_arg then
+      modifier = ":p"
+    else
+      modifier = ":t"
+    end
+  end
+
+  -- support for only specific modifiers have been implemented
+  local allowed_modifiers = {
+    ":p",
+    ":t",
+    ":t:r"
+  }
+
+  local lookup = {}
+  for _, v in ipairs(allowed_modifiers) do lookup[v] = true end
+
+  if (lookup[modifier] == nil) then
+    return notify.warn("Modifier " .. modifier ..
+      " is not in allowed list : "..table.concat(allowed_modifiers, ","))
+  end
+
   return function(node)
     node = lib.get_last_group_node(node)
     if node.name == ".." then
@@ -32,26 +57,17 @@ function M.fn(with_sub, relative_rename)
     end
 
     local namelen = node.name:len()
-    local abs_directory = node.absolute_path:sub(0, namelen * -1 - 1)
-    local default_path, prepend, append
-    if relative_rename then
-      local filename = node.absolute_path:sub(abs_directory:len() + 1)
-      local extension = vim.fn.fnamemodify(node.name, ':e')
-      if extension:len() > 0 then
-        default_path = vim.fn.fnamemodify(node.name, ':t:r')
-        append = "." .. extension
-      else
-        default_path = filename
-        append = ""
-      end
-      prepend = abs_directory
+    local directory = node.absolute_path:sub(0, namelen - 1)
+    local default_path
+    local prepend = ""
+    local append = ""
+    if modifier == ":" then
+      default_path = directory
     else
-      prepend = ""
-      append = ""
-      if with_sub then
-        default_path = abs_directory
-      else
-        default_path = node.absolute_path
+      default_path = vim.fn.fnamemodify(node.name, modifier)
+      if modifier == ":t:r" then
+        local extension = vim.fn.fnamemodify(node.name, ':e')
+        append = extension:len() == 0 and "" or "." ..extension
       end
     end
 
