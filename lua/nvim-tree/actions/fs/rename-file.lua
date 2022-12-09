@@ -35,10 +35,16 @@ function M.fn(initialisation_arg)
     default_modifier = initialisation_arg
   end
 
-  return function(node, modifier_arg)
+  return function(modifier_arg)
+    local node
     local modifier = default_modifier
-    if modifier_arg ~= nil then
+    if type(modifier_arg) == "table" then
+      node = modifier_arg
+    elseif type(modifier_arg) == "string" then
+      node = lib.get_node_at_cursor()
       modifier = modifier_arg
+    else
+      return notify.warn("Type " .. type(modifier_arg) .. " not supported in rename")
     end
 
     -- support for only specific modifiers have been implemented
