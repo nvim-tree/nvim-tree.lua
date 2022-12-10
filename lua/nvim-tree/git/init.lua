@@ -136,6 +136,8 @@ function M.load_project_status(cwd)
     return {}
   end
 
+  local absolutegitdir = git_utils.get_absolutegitdir(cwd)
+
   local status = M.projects[project_root]
   if status then
     return status
@@ -153,14 +155,15 @@ function M.load_project_status(cwd)
     log.line("watcher", "git start")
 
     local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+      log.line("watcher", "git event scheduled '%s'", w.absolutegitdir)
+      utils.debounce("git:watcher:" .. w.absolutegitdir, M.config.filesystem_watchers.debounce_delay, function()
         reload_tree_at(w.project_root)
       end)
     end
 
-    watcher = Watcher:new(utils.path_join { project_root, ".git" }, WATCHED_FILES, callback, {
+    watcher = Watcher:new(absolutegitdir, WATCHED_FILES, callback, {
       project_root = project_root,
+      absolutegitdir = absolutegitdir,
     })
   end
 

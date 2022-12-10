@@ -3,6 +3,37 @@ local log = require "nvim-tree.log"
 
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
+function M.get_absolutegitdir(cwd)
+  local ps = log.profile_start("git absolutegitdir %s", cwd)
+
+  local cmd = { "git", "-C", cwd, "rev-parse", "--absolute-git-dir" }
+  log.line("git", "%s", vim.inspect(cmd))
+
+  local absolutegitdir = vim.fn.system(cmd)
+
+  log.raw("git", absolutegitdir)
+  log.profile_end(ps, "git absolutegitdir %s", cwd)
+
+  if vim.v.shell_error ~= 0 or not absolutegitdir or #absolutegitdir == 0 or absolutegitdir:match "fatal" then
+    return nil
+  end
+
+  -- git always returns path with forward slashes
+  if vim.fn.has "win32" == 1 then
+    -- msys2 git support
+    if has_cygpath then
+      absolutegitdir = vim.fn.system("cygpath -w " .. vim.fn.shellescape(absolutegitdir))
+      if vim.v.shell_error ~= 0 then
+        return nil
+      end
+    end
+    absolutegitdir = absolutegitdir:gsub("/", "\\")
+  end
+
+  -- remove newline
+  return absolutegitdir:sub(0, -2)
+end
+
 function M.get_toplevel(cwd)
   local ps = log.profile_start("git toplevel %s", cwd)
 
