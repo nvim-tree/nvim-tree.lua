@@ -643,21 +643,17 @@ Function ran when creating the nvim-tree buffer.
 This can be used to attach keybindings to the tree buffer.
 When on_attach is "disabled", it will use the older mapping strategy, otherwise it
 will use the newer one.
->
-    on_attach = function(bufnr)
-        local inject_node = require("nvim-tree.utils").inject_node
-
-        vim.keymap.set("n", "<leader>n", inject_node(function(node)
-            if node then
-                print(node.absolute_path)
-            end
-        end), { buffer = bufnr, noremap = true })
-
-        vim.bo[bufnr].path = "/tmp"
-    end
-<
     Type: `function(bufnr)`, Default: `"disable"`
+    e.g. >
+      local api = require("nvim-tree.api")
 
+      local function on_attach(bufnr)
+        vim.keymap.set("n", "<C-P>", function()
+          local node = api.tree.get_node_under_cursor()
+          print(node.absolute_path)
+        end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "print the node's absolute path" })
+      end
+<
 *nvim-tree.remove_keymaps*
 This can be used to remove the default mappings in the tree.
 - Remove specific keys by passing a `string` table of keys
@@ -1172,15 +1168,15 @@ A good functionality to enable is |nvim-tree.hijack_directories|.
 
 Nvim-tree's public API can be used to access features.
 >
-    local nt_api = require("nvim-tree.api")
-
-    nt_api.tree.toggle()
+e.g. >
+    local api = require("nvim-tree.api")
+    api.tree.toggle()
 <
 This module exposes stable functionalities, it is advised to use this in order
 to avoid breaking configurations due to internal breaking changes.
 
 The api is separated in multiple modules, which can be accessed with
-`require("nvim-tree.api").moduleName.functionality`.
+`api.<module>.<function>`
 
 Functions that needs a tree node parameter are exposed with an abstraction
 that injects the node from the cursor position in the tree when calling
@@ -1520,26 +1516,18 @@ to |nvim_tree_registering_handlers| for more information.
 
 |nvim_tree_registering_handlers|
 
-Handlers are registered by calling the `events.subscribe` function available in the
-`require("nvim-tree.api")` module.
+Handlers are registered by calling |nvim-tree-api| `events.subscribe`
+function with an `events.Event` kind.
 
-For example, registering a handler for when a node is renamed is done like this:
->
-    local api = require('nvim-tree.api')
+e.g. handler for node renamed: >
+    local api = require("nvim-tree.api")
     local Event = api.events.Event
 
     api.events.subscribe(Event.NodeRenamed, function(data)
       print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
 <
-
 |nvim_tree_events_kind|
-
-You can access the event enum with:
->
-    local Event = require('nvim-tree.api').events.Event
-<
-Here is the list of available variant of this enum:
 
 - Event.Ready
                 When NvimTree has been initialized
