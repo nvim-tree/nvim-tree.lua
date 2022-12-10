@@ -53,7 +53,7 @@ function M.fn(initialisation_arg)
 
     if lookup[modifier] == nil then
       return notify.warn(
-        "Modifier " .. modifier .. " is not in allowed list : " .. table.concat(allowed_modifiers, ",")
+        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(allowed_modifiers, ",")
       )
     end
 
