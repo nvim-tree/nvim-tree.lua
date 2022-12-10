@@ -24,18 +24,15 @@ function M.rename(node, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
 
-function M.fn(initialisation_arg)
-  local default_modifier = initialisation_arg or ":t"
-  return function(modifier_arg)
-    local node
-    local modifier = default_modifier
-    if type(modifier_arg) == "table" then
-      node = modifier_arg
-    elseif type(modifier_arg) == "string" then
+function M.fn(default_modifier)
+  default_modifier = default_modifier or ":t"
+
+  return function(node, modifier)
+    if type(node) ~= "table" then
       node = lib.get_node_at_cursor()
-      modifier = modifier_arg
-    else
-      node = lib.get_node_at_cursor()
+    end
+
+    if type(modifier) ~= "string" then
       modifier = default_modifier
     end
 

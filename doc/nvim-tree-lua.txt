@@ -1196,8 +1196,10 @@ exists.
     - create
     - remove
     - trash
+    - rename_node `(node: table, modifier?: string vim.fn.fnamemodify argument)`
     - rename
     - rename_sub
+    - rename_basename
     - cut
     - paste
     - clear_clipboard
