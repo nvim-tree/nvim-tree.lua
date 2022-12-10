@@ -2,6 +2,7 @@ local lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
 local M = {}
@@ -192,6 +193,7 @@ local function do_cut(source, destination)
     return false, errmsg
   end
   utils.rename_loaded_buffers(source, destination)
+  events._dispatch_node_renamed(source, destination)
   return true
 end
 
