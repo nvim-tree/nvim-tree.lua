@@ -97,11 +97,6 @@ local DEFAULT_MAPPINGS = {
     desc = "toggle visibility of files/folders hidden via |filters.no_buffer| option",
   },
   {
-    key = "A",
-    action = "toggle_diagnostics_ok",
-    desc = "toggle visibility of files/folders hidden via |filters.diagnostics_ok| option",
-  },
-  {
     key = "U",
     action = "toggle_custom",
     desc = "toggle visibility of files/folders hidden via |filters.custom| option",

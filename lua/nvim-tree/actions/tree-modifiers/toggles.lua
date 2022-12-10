@@ -25,11 +25,6 @@ function M.no_buffer()
   return reloaders.reload_explorer()
 end
 
-function M.diagnostics_ok()
-  filters.config.filter_diagnostics_ok = not filters.config.filter_diagnostics_ok
-  return reloaders.reload_explorer()
-end
-
 function M.dotfiles()
   filters.config.filter_dotfiles = not filters.config.filter_dotfiles
   return reloaders.reload_explorer()

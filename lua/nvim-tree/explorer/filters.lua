@@ -95,13 +95,11 @@ end
 --- git_status: reference
 --- unloaded_bufnr: copy
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
---- buffer_severity: TODO
 function M.prepare(git_status, unloaded_bufnr)
   local status = {
     git_status = git_status or {},
     unloaded_bufnr = unloaded_bufnr,
     bufinfo = {},
-    buffer_severity = {},
   }
 
   if M.config.filter_no_buffer then
@@ -134,7 +132,6 @@ function M.setup(opts)
     filter_git_ignored = opts.git.ignore,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
-    filter_diagnostics_ok = opts.filters.diagnostics_ok,
   }
 
   M.ignore_list = {}

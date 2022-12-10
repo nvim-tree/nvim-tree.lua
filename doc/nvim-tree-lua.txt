@@ -309,7 +309,6 @@ Subsequent calls to setup will replace the previous configuration.
         dotfiles = false,
         git_clean = false,
         no_buffer = false,
-        diagnostics_ok = false,
         custom = {},
         exclude = {},
       },
@@ -919,11 +918,6 @@ Filtering options.
     delete/wipe. A reload or filesystem event will result in an update.
       Type: `boolean`, Default: `false`
 
-    *nvim-tree.filters.diagnostics_ok*
-    Do not show files that have no diagnostic issues.
-    Toggle via the `toggle_diagnostics_ok` action, default mapping `A`.
-      Type: `boolean`, Default: `false`
-
     *nvim-tree.filters.custom*
     Custom list of vim regex for file/directory names that will not be shown.
     Backslashes must be escaped e.g. "^\\.git". See |string-match|.
@@ -1346,7 +1340,6 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `I`               toggle_git_ignored     toggle visibility of files/folders hidden via |git.ignore| option
 `H`               toggle_dotfiles        toggle visibility of dotfiles via |filters.dotfiles| option
 `B`               toggle_no_buffer       toggle visibility of files/folders hidden via |filters.no_buffer| option
-`A`               toggle_diagnostics_ok  toggle visibility of files/folders hidden via |filters.diagnostics_ok| option
 `U`               toggle_custom          toggle visibility of files/folders hidden via |filters.custom| option
 `R`               refresh                refresh the tree
 `a`               create                 add a file; leaving a trailing `/` will add a directory
@@ -1398,7 +1391,6 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "I",                              action = "toggle_git_ignored" },
     { key = "H",                              action = "toggle_dotfiles" },
     { key = "B",                              action = "toggle_no_buffer" },
-    { key = "A",                              action = "toggle_diagnostics_ok" },
     { key = "U",                              action = "toggle_custom" },
     { key = "R",                              action = "refresh" },
     { key = "a",                              action = "create" },
