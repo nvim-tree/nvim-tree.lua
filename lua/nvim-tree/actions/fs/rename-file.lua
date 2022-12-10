@@ -5,6 +5,12 @@ local notify = require "nvim-tree.notify"
 
 local M = {}
 
+local ALLOWED_MODIFIERS = {
+  [":p"] = true,
+  [":t"] = true,
+  [":t:r"] = true,
+}
+
 local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
@@ -37,20 +43,9 @@ function M.fn(default_modifier)
     end
 
     -- support for only specific modifiers have been implemented
-    local allowed_modifiers = {
-      ":p",
-      ":t",
-      ":t:r",
-    }
-
-    local lookup = {}
-    for _, v in ipairs(allowed_modifiers) do
-      lookup[v] = true
-    end
-
-    if lookup[modifier] == nil then
+    if not ALLOWED_MODIFIERS[modifier] then
       return notify.warn(
-        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(allowed_modifiers, ",")
+        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ",")
       )
     end
 
