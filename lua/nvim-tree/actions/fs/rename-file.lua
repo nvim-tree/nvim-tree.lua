@@ -59,8 +59,6 @@ function M.fn(default_modifier)
     local default_path
     local prepend = ""
     local append = ""
-    print(modifier)
-    print(node.name)
     default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
     if modifier:sub(0,2) == ":t" then
       prepend = directory
@@ -71,8 +69,6 @@ function M.fn(default_modifier)
     end
 
     local input_opts = { prompt = "Rename to ", default = default_path, completion = "file" }
-
-    print(prepend .. "|" .. default_path .. "|" .. append)
 
     vim.ui.input(input_opts, function(new_file_path)
       utils.clear_prompt()
