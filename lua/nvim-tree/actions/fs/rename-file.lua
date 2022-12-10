@@ -25,16 +25,7 @@ function M.rename(node, to)
 end
 
 function M.fn(initialisation_arg)
-  local default_modifier = ":t"
-  -- backwards compatibility, support modifier as boolean
-  if type(initialisation_arg) == "boolean" then
-    if initialisation_arg then
-      modifier = ":p"
-    end
-  elseif type(initialisation_arg) == "string" then
-    default_modifier = initialisation_arg
-  end
-
+  local default_modifier = initialisation_arg or ":t"
   return function(modifier_arg)
     local node
     local modifier = default_modifier
@@ -44,7 +35,8 @@ function M.fn(initialisation_arg)
       node = lib.get_node_at_cursor()
       modifier = modifier_arg
     else
-      return notify.warn("Type " .. type(modifier_arg) .. " not supported in rename")
+      node = lib.get_node_at_cursor()
+      modifier = default_modifier
     end
 
     -- support for only specific modifiers have been implemented
