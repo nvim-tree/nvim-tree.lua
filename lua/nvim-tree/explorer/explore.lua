@@ -12,9 +12,10 @@ local function get_type_from(type_, cwd)
   return type_ or (vim.loop.fs_stat(cwd) or {}).type
 end
 
-local function populate_children(handle, cwd, node, status)
+local function populate_children(handle, cwd, node, git_status)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
+  local filter_status = filters.prepare(git_status)
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
@@ -23,11 +24,7 @@ local function populate_children(handle, cwd, node, status)
 
     local abs = utils.path_join { cwd, name }
     t = get_type_from(t, abs)
-    if
-      not filters.should_ignore(abs)
-      and not filters.should_ignore_git(abs, status.files)
-      and not nodes_by_path[abs]
-    then
+    if not filters.should_filter(abs, filter_status) and not nodes_by_path[abs] then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name)
@@ -42,7 +39,7 @@ local function populate_children(handle, cwd, node, status)
       if child then
         table.insert(node.nodes, child)
         nodes_by_path[child.absolute_path] = true
-        common.update_git_status(child, node_ignored, status)
+        common.update_git_status(child, node_ignored, git_status)
       end
     end
   end

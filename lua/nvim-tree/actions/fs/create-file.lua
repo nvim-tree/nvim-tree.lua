@@ -42,8 +42,7 @@ local function get_num_nodes(iter)
 end
 
 local function get_containing_folder(node)
-  local is_open = M.create_in_closed_folder or node.open
-  if node.nodes ~= nil and is_open then
+  if node.nodes ~= nil then
     return utils.path_add_trailing(node.absolute_path)
   end
   local node_name_size = #(node.name or "")
@@ -113,7 +112,6 @@ function M.fn(node)
 end
 
 function M.setup(opts)
-  M.create_in_closed_folder = opts.create_in_closed_folder
   M.enable_reload = not opts.filesystem_watchers.enable
 end
 
