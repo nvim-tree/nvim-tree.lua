@@ -15,6 +15,7 @@ function M.rename(node, to)
     return
   end
 
+  events._dispatch_will_rename_node(node.absolute_path, to)
   local success, err = vim.loop.fs_rename(node.absolute_path, to)
   if not success then
     return notify.warn(err_fmt(node.absolute_path, to, err))
