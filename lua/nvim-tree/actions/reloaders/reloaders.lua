@@ -6,13 +6,13 @@ local core = require "nvim-tree.core"
 
 local M = {}
 
-local function refresh_nodes(node, projects)
+local function refresh_nodes(node, projects, unloaded_bufnr)
   local cwd = node.cwd or node.link_to or node.absolute_path
   local project_root = git.get_project_root(cwd)
-  explorer_module.reload(node, projects[project_root] or {})
+  explorer_module.reload(node, projects[project_root] or {}, unloaded_bufnr)
   for _, _node in ipairs(node.nodes) do
     if _node.nodes and _node.open then
-      refresh_nodes(_node, projects)
+      refresh_nodes(_node, projects, unloaded_bufnr)
     end
   end
 end
@@ -33,14 +33,16 @@ function M.reload_node_status(parent_node, projects)
 end
 
 local event_running = false
-function M.reload_explorer()
+---@param _ table unused node passed by action
+---@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+function M.reload_explorer(_, unloaded_bufnr)
   if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
   local projects = git.reload()
-  refresh_nodes(core.get_explorer(), projects)
+  refresh_nodes(core.get_explorer(), projects, unloaded_bufnr)
   if view.is_visible() then
     renderer.draw()
   end
