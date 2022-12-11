@@ -60,7 +60,7 @@ function M.fn(default_modifier)
     local prepend = ""
     local append = ""
     default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
-    if modifier:sub(0,2) == ":t" then
+    if modifier:sub(0, 2) == ":t" then
       prepend = directory
     end
     if modifier == ":t:r" then
