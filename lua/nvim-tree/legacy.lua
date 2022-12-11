@@ -305,7 +305,7 @@ local function removed(opts)
   end
 
   if opts.create_in_closed_folder then
-    notify.warn "create_in_closed_folder has been removed. Please use api.fs.create to add a file under your desired node."
+    notify.warn "create_in_closed_folder has been removed and is now the default behaviour. You may use api.fs.create to add a file under your desired node."
   end
   opts.create_in_closed_folder = nil
 end
