@@ -268,12 +268,6 @@ local g_migrations = {
       o.respect_buf_cwd = vim.g.nvim_tree_respect_buf_cwd == 1
     end
   end,
-
-  nvim_tree_create_in_closed_folder = function(o)
-    if o.create_in_closed_folder == nil then
-      o.create_in_closed_folder = vim.g.nvim_tree_create_in_closed_folder == 1
-    end
-  end,
 }
 
 local function refactored(opts)
@@ -309,6 +303,11 @@ local function removed(opts)
     notify.warn "focus_empty_on_setup has been removed and will be replaced by a new startup configuration. Please remove this option. See https://bit.ly/3yJch2T"
     opts.focus_empty_on_setup = nil
   end
+
+  if opts.create_in_closed_folder then
+    notify.warn "create_in_closed_folder has been removed and is now the default behaviour. You may use api.fs.create to add a file under your desired node."
+  end
+  opts.create_in_closed_folder = nil
 end
 
 function M.migrate_legacy_options(opts)

@@ -161,11 +161,8 @@ local function do_paste(node, action_type, action_fn)
     return
   end
   local is_dir = stats and stats.type == "directory"
-
   if not is_dir then
     destination = vim.fn.fnamemodify(destination, ":p:h")
-  elseif not node.open then
-    destination = vim.fn.fnamemodify(destination, ":p:h:h")
   end
 
   for _, _node in ipairs(clip) do
