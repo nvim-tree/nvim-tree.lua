@@ -171,7 +171,6 @@ Subsequent calls to setup will replace the previous configuration.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
-      create_in_closed_folder = true,
       disable_netrw = false,
       hijack_cursor = false,
       hijack_netrw = true,
@@ -432,11 +431,6 @@ in some scenarios (eg using vim startify).
 
 *nvim-tree.auto_reload_on_write*
 Reloads the explorer every time a buffer is written to.
-  Type: `boolean`, Default: `true`
-
-*nvim-tree.create_in_closed_folder*
-Creating or pasting a file when the cursor is on a closed folder will set the
-path to be inside the closed folder, otherwise the parent folder.
   Type: `boolean`, Default: `true`
 
 *nvim-tree.sort_by*
