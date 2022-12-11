@@ -41,8 +41,7 @@ local DEFAULT_KEYMAPS = {
     legacy_action = "cd",
   },
   {
-    -- key = "<C-v>",
-    key = "<ctrL-v>",
+    key = "<C-v>",
     callback = Api.node.open.vertical,
     desc = {
       long = "Open file in a vertical split.",
@@ -422,10 +421,10 @@ local DEFAULT_KEYMAPS = {
 }
 -- END_DEFAULT_KEYMAPS
 
--- TODO fuzzy filtering of keys e.g. "<ctrl-x>" <-> "<C-X>" to prevent two mappings being created
-function M.set_keymaps(bufnr)
+function M.on_attach_default(bufnr)
   local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
-  for _, km in ipairs(M.keymaps) do
+
+  for _, km in ipairs(M.DEFAULT_KEYMAPS) do
     local keys = type(km.key) == "table" and km.key or { km.key }
     for _, key in ipairs(keys) do
       opts.desc = km.desc.short
@@ -434,46 +433,16 @@ function M.set_keymaps(bufnr)
   end
 end
 
-local function filter_default_mappings(keys_to_disable)
-  local new_map = {}
-  for _, m in pairs(DEFAULT_KEYMAPS) do
-    local keys = type(m.key) == "table" and m.key or { m.key }
-    local reminding_keys = {}
-    for _, key in pairs(keys) do
-      local found = false
-      for _, key_to_disable in pairs(keys_to_disable) do
-        if key_to_disable == key then
-          found = true
-          break
-        end
-      end
-      if not found then
-        table.insert(reminding_keys, key)
-      end
-    end
-    if #reminding_keys > 0 then
-      local map = vim.deepcopy(m)
-      map.key = reminding_keys
-      table.insert(new_map, map)
-    end
-  end
-  return new_map
-end
-
-local function get_keymaps(keys_to_disable)
-  if keys_to_disable == true then
-    return {}
-  end
-
-  if type(keys_to_disable) == "table" and #keys_to_disable > 0 then
-    return filter_default_mappings(keys_to_disable)
-  end
-
-  return DEFAULT_KEYMAPS
-end
-
 function M.setup(opts)
-  M.keymaps = get_keymaps(opts.remove_keymaps)
+  if type(opts.on_attach) == "function" then
+    M.on_attach = opts.on_attach
+  else
+    M.on_attach = M.on_attach_default
+  end
+
+  if type(opts.remove_keymaps) == "table" then
+    M.remove_keys = opts.remove_keymaps
+  end
 end
 
 M.DEFAULT_KEYMAPS = DEFAULT_KEYMAPS

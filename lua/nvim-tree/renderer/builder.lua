@@ -127,7 +127,11 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   self:_insert_line(line)
 
   if #icon > 0 then
-    self:_insert_highlight("NvimTreeFolderIcon", offset, offset + #icon)
+    if node.open then
+      self:_insert_highlight("NvimTreeOpenedFolderIcon", offset, offset + #icon)
+    else
+      self:_insert_highlight("NvimTreeClosedFolderIcon", offset, offset + #icon)
+    end
   end
 
   local foldername_hl = "NvimTreeFolderName"

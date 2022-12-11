@@ -11,6 +11,7 @@ local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 local copy_paste = require "nvim-tree.actions.fs.copy-paste"
 local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
+local filters = require "nvim-tree.explorer.filters"
 
 local _config = {}
 
@@ -351,6 +352,22 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
   end
 
+  create_nvim_tree_autocmd("BufReadPost", {
+    callback = function()
+      if filters.config.filter_no_buffer then
+        reloaders.reload_explorer()
+      end
+    end,
+  })
+
+  create_nvim_tree_autocmd("BufUnload", {
+    callback = function(data)
+      if filters.config.filter_no_buffer then
+        reloaders.reload_explorer(nil, data.buf)
+      end
+    end,
+  })
+
   if not has_watchers and opts.git.enable then
     create_nvim_tree_autocmd("User", {
       pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
@@ -445,7 +462,6 @@ end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
-  create_in_closed_folder = false,
   disable_netrw = false,
   hijack_cursor = false,
   hijack_netrw = true,
@@ -566,6 +582,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   diagnostics = {
     enable = false,
     show_on_dirs = false,
+    show_on_open_dirs = true,
     debounce_delay = 50,
     severity = {
       min = vim.diagnostic.severity.HINT,
@@ -580,6 +597,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   filters = {
     dotfiles = false,
+    git_clean = false,
+    no_buffer = false,
     custom = {},
     exclude = {},
   },
@@ -592,6 +611,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     enable = true,
     ignore = true,
     show_on_dirs = true,
+    show_on_open_dirs = true,
     timeout = 400,
   },
   actions = {
@@ -757,7 +777,7 @@ function M.setup(conf)
   log.line("config", "default config + user")
   log.raw("config", "%s\n", vim.inspect(opts))
 
-  legacy.move_mappings_to_keymap(opts)
+  legacy.generate_legacy_on_attach(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)
