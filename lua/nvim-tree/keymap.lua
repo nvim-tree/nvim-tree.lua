@@ -421,41 +421,24 @@ local DEFAULT_KEYMAPS = {
 }
 -- END_DEFAULT_KEYMAPS
 
-function M.apply_keymaps(bufnr)
+function M.on_attach_default(bufnr)
   local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
 
-  -- Maybe map all DEFAULT_KEYMAPS
-  if M.apply_defaults then
-    for _, km in ipairs(M.DEFAULT_KEYMAPS) do
-      local keys = type(km.key) == "table" and km.key or { km.key }
-      for _, key in ipairs(keys) do
-        opts.desc = km.desc.short
-        vim.keymap.set("n", key, km.callback, opts)
-      end
+  for _, km in ipairs(M.DEFAULT_KEYMAPS) do
+    local keys = type(km.key) == "table" and km.key or { km.key }
+    for _, key in ipairs(keys) do
+      opts.desc = km.desc.short
+      vim.keymap.set("n", key, km.callback, opts)
     end
-  end
-
-  -- Maybe remove_keys
-  -- We must remove after mapping instead of filtering the defaults as there are many ways to specify a key
-  -- e.g. <c-k> <C-K>, <TaB> <tab>
-  if M.remove_keys then
-    opts.desc = nil
-    for _, key in ipairs(M.remove_keys) do
-      -- Delete may only be called for mappings that exist, hence we must create a dummy mapping first.
-      vim.keymap.set("n", key, "", opts)
-      vim.keymap.del("n", key, opts)
-    end
-  end
-
-  -- Maybe apply user mappings, including legacy view.mappings.list
-  if type(M.on_attach) == "function" then
-    M.on_attach(bufnr)
   end
 end
 
 function M.setup(opts)
-  M.on_attach = opts.on_attach
-  M.apply_defaults = opts.remove_keymaps ~= true
+  if type(opts.on_attach) == "function" then
+    M.on_attach = opts.on_attach
+  else
+    M.on_attach = M.on_attach_default
+  end
 
   if type(opts.remove_keymaps) == "table" then
     M.remove_keys = opts.remove_keymaps

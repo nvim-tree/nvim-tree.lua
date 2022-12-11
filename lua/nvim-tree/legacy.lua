@@ -1,9 +1,8 @@
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 local open_file = require "nvim-tree.actions.node.open-file"
+local keymap = require "nvim-tree.keymap"
 local log = require "nvim-tree.log"
-
-local DEFAULT_KEYMAPS = require("nvim-tree.keymap").DEFAULT_KEYMAPS
 
 local M = {
   on_attach_lua = "",
@@ -11,52 +10,53 @@ local M = {
 
 -- BEGIN_LEGACY_CALLBACKS
 local LEGACY_CALLBACKS = {
-  edit = "Api.node.open.edit",
-  edit_in_place = "Api.node.open.replace_tree_buffer",
-  edit_no_picker = "Api.node.open.no_window_picker",
-  cd = "Api.tree.change_root_to_node",
-  vsplit = "Api.node.open.vertical",
-  split = "Api.node.open.horizontal",
-  tabnew = "Api.node.open.tab",
-  prev_sibling = "Api.node.navigate.sibling.prev",
-  next_sibling = "Api.node.navigate.sibling.next",
-  parent_node = "Api.node.navigate.parent",
-  close_node = "Api.node.navigate.parent_close",
-  preview = "Api.node.open.preview",
-  first_sibling = "Api.node.navigate.sibling.first",
-  last_sibling = "Api.node.navigate.sibling.last",
-  toggle_git_ignored = "Api.tree.toggle_gitignore_filter",
-  toggle_dotfiles = "Api.tree.toggle_hidden_filter",
-  toggle_custom = "Api.tree.toggle_custom_filter",
-  refresh = "Api.tree.reload",
-  create = "Api.fs.create",
-  remove = "Api.fs.remove",
-  trash = "Api.fs.trash",
-  rename = "Api.fs.rename",
-  full_rename = "Api.fs.rename_sub",
-  cut = "Api.fs.cut",
-  copy = "Api.fs.copy.node",
-  paste = "Api.fs.paste",
-  copy_name = "Api.fs.copy.filename",
-  copy_path = "Api.fs.copy.relative_path",
-  copy_absolute_path = "Api.fs.copy.absolute_path",
-  next_diag_item = "Api.node.navigate.diagnostics.next",
-  next_git_item = "Api.node.navigate.git.next",
-  prev_diag_item = "Api.node.navigate.diagnostics.prev",
-  prev_git_item = "Api.node.navigate.git.prev",
-  dir_up = "Api.tree.change_root_to_parent",
-  system_open = "Api.node.run.system",
-  live_filter = "Api.live_filter.start",
-  clear_live_filter = "Api.live_filter.clear",
-  close = "Api.tree.close",
-  collapse_all = "Api.tree.collapse_all",
-  expand_all = "Api.tree.expand_all",
-  search_node = "Api.tree.search_node",
-  run_file_command = "Api.node.run.cmd",
-  toggle_file_info = "Api.node.show_info_popup",
-  toggle_help = "Api.tree.toggle_help",
-  toggle_mark = "Api.marks.toggle",
-  bulk_move = "Api.marks.bulk.move",
+  -- TODO sync
+  edit = "api.node.open.edit",
+  edit_in_place = "api.node.open.replace_tree_buffer",
+  edit_no_picker = "api.node.open.no_window_picker",
+  cd = "api.tree.change_root_to_node",
+  vsplit = "api.node.open.vertical",
+  split = "api.node.open.horizontal",
+  tabnew = "api.node.open.tab",
+  prev_sibling = "api.node.navigate.sibling.prev",
+  next_sibling = "api.node.navigate.sibling.next",
+  parent_node = "api.node.navigate.parent",
+  close_node = "api.node.navigate.parent_close",
+  preview = "api.node.open.preview",
+  first_sibling = "api.node.navigate.sibling.first",
+  last_sibling = "api.node.navigate.sibling.last",
+  toggle_git_ignored = "api.tree.toggle_gitignore_filter",
+  toggle_dotfiles = "api.tree.toggle_hidden_filter",
+  toggle_custom = "api.tree.toggle_custom_filter",
+  refresh = "api.tree.reload",
+  create = "api.fs.create",
+  remove = "api.fs.remove",
+  trash = "api.fs.trash",
+  rename = "api.fs.rename",
+  full_rename = "api.fs.rename_sub",
+  cut = "api.fs.cut",
+  copy = "api.fs.copy.node",
+  paste = "api.fs.paste",
+  copy_name = "api.fs.copy.filename",
+  copy_path = "api.fs.copy.relative_path",
+  copy_absolute_path = "api.fs.copy.absolute_path",
+  next_diag_item = "api.node.navigate.diagnostics.next",
+  next_git_item = "api.node.navigate.git.next",
+  prev_diag_item = "api.node.navigate.diagnostics.prev",
+  prev_git_item = "api.node.navigate.git.prev",
+  dir_up = "api.tree.change_root_to_parent",
+  system_open = "api.node.run.system",
+  live_filter = "api.live_filter.start",
+  clear_live_filter = "api.live_filter.clear",
+  close = "api.tree.close",
+  collapse_all = "api.tree.collapse_all",
+  expand_all = "api.tree.expand_all",
+  search_node = "api.tree.search_node",
+  run_file_command = "api.node.run.cmd",
+  toggle_file_info = "api.node.show_info_popup",
+  toggle_help = "api.tree.toggle_help",
+  toggle_mark = "api.marks.toggle",
+  bulk_move = "api.marks.bulk.move",
 }
 -- END_LEGACY_CALLBACKS
 
@@ -367,14 +367,14 @@ local function removed(opts)
   opts.create_in_closed_folder = nil
 end
 
+-- TODO pcall vim.keymap.del("n", key, opts) for action = "" and remove_keymaps
 local function build_on_attach(call_list)
   if #call_list == 0 then
     return nil
   end
 
   M.on_attach_lua = [[
-local Api = require('nvim-tree.api')
-local Lib = require('nvim-tree.lib')
+local api = require('nvim-tree.api')
 
 local on_attach = function(bufnr)
 ]]
@@ -383,7 +383,7 @@ local on_attach = function(bufnr)
     local vim_keymap_set
     if el.action_cb then
       vim_keymap_set = string.format(
-        'vim.keymap.set("n", "%s", function()\n    local node = Lib.get_node_at_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })',
+        'vim.keymap.set("n", "%s", function()\n    local node = api.tree.get_node_under_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })',
         el.key
       )
     elseif el.keymap then
@@ -403,10 +403,11 @@ local on_attach = function(bufnr)
   M.on_attach_lua = string.format("%send\n", M.on_attach_lua)
 
   return function(bufnr)
+    keymap.on_attach_default(bufnr)
     for _, el in pairs(call_list) do
       if el.action_cb then
         vim.keymap.set(el.mode or "n", el.key, function()
-          el.action_cb(require("nvim-tree.lib").get_node_at_cursor())
+          el.action_cb(require("nvim-tree.api").tree.get_node_under_cursor())
         end, { buffer = bufnr, remap = false, silent = true })
       elseif el.keymap then
         vim.keymap.set(
@@ -420,27 +421,37 @@ local on_attach = function(bufnr)
   end
 end
 
-function M.move_mappings_to_keymap(opts)
+function M.generate_legacy_on_attach(opts)
   if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings then
     local list = opts.view.mappings.list
     log.line("config", "generating on_attach for %d legacy view.mappings.list:", #list)
+
     if opts.view.mappings.custom_only then
       opts.remove_keymaps = true
       opts.view.mappings.custom_only = nil
     end
+
     if list then
-      local keymap_by_legacy_action = utils.key_by(DEFAULT_KEYMAPS, "legacy_action")
+      local keymap_by_legacy_action = utils.key_by(keymap.DEFAULT_KEYMAPS, "legacy_action")
       local call_list = {}
+
+      for _, km in ipairs(keymap.DEFAULT_KEYMAPS) do
+        local keys = type(km.key) == "table" and km.key or { km.key }
+        for _, k in ipairs(keys) do
+          table.insert(call_list, { mode = "n", key = k, keymap = km })
+        end
+      end
+
       for _, map in pairs(list) do
         local keys = type(map.key) == "table" and map.key or { map.key }
         local mode = map.mode or "n"
         local action_cb
-        local keymap
+        local km
         if map.action ~= "" then
           if map.action_cb then
             action_cb = map.action_cb
           elseif keymap_by_legacy_action[map.action] then
-            keymap = keymap_by_legacy_action[map.action]
+            km = keymap_by_legacy_action[map.action]
           end
         end
 
@@ -454,8 +465,8 @@ function M.move_mappings_to_keymap(opts)
 
           if action_cb then
             table.insert(call_list, { mode = mode, key = k, action_cb = action_cb })
-          elseif keymap then
-            table.insert(call_list, { mode = mode, key = k, keymap = keymap })
+          elseif km then
+            table.insert(call_list, { mode = mode, key = k, keymap = km })
           end
         end
       end

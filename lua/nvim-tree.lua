@@ -777,7 +777,7 @@ function M.setup(conf)
   log.line("config", "default config + user")
   log.raw("config", "%s\n", vim.inspect(opts))
 
-  legacy.move_mappings_to_keymap(opts)
+  legacy.generate_legacy_on_attach(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)

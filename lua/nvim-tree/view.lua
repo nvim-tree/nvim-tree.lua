@@ -94,7 +94,7 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
-  require("nvim-tree.keymap").apply_keymaps(M.get_bufnr())
+  require("nvim-tree.keymap").on_attach(M.get_bufnr())
 end
 
 local function get_size()
