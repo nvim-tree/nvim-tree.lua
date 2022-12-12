@@ -60,19 +60,19 @@ local function warn_status(git_status)
 end
 
 local function get_icons_(node)
-  local git_statuses = explorer_common.get_git_status(node)
-  if git_statuses == nil then
+  local git_status = explorer_common.get_git_status(node)
+  if git_status == nil then
     return nil
   end
 
   local inserted = {}
   local iconss = {}
 
-  for _, git_status in pairs(git_statuses) do
-    local icons = M.git_icons[git_status]
+  for _, s in pairs(git_status) do
+    local icons = M.git_icons[s]
     if not icons then
       if not M.config.highlight_git then
-        warn_status(git_status)
+        warn_status(s)
       end
       return nil
     end
