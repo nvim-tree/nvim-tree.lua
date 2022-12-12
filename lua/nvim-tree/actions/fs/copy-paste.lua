@@ -184,6 +184,7 @@ local function do_cut(source, destination)
     return true
   end
 
+  events._dispatch_will_rename_node(source, destination)
   local success, errmsg = vim.loop.fs_rename(source, destination)
   if not success then
     log.line("copy_paste", "do_cut fs_rename failed '%s'", errmsg)
