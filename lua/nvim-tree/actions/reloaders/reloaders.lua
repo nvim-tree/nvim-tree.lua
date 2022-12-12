@@ -3,7 +3,7 @@ local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
-local explorer_common = require "nvim-tree.explorer.common"
+local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {}
 
@@ -22,7 +22,7 @@ function M.reload_node_status(parent_node, projects)
   local project_root = git.get_project_root(parent_node.absolute_path)
   local status = projects[project_root] or {}
   for _, node in ipairs(parent_node.nodes) do
-    explorer_common.update_git_status(node, explorer_common.is_git_ignored(parent_node), status)
+    explorer_node.update_git_status(node, explorer_node.is_git_ignored(parent_node), status)
     if node.nodes and #node.nodes > 0 then
       M.reload_node_status(node, projects)
     end

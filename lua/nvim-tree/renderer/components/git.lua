@@ -1,5 +1,5 @@
 local notify = require "nvim-tree.notify"
-local explorer_common = require "nvim-tree.explorer.common"
+local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {
   SIGN_GROUP = "NvimTreeGitSigns",
@@ -60,7 +60,7 @@ local function warn_status(git_status)
 end
 
 local function get_icons_(node)
-  local git_status = explorer_common.get_git_status(node)
+  local git_status = explorer_node.get_git_status(node)
   if git_status == nil then
     return nil
   end
@@ -132,7 +132,7 @@ function M.setup_signs(i)
 end
 
 local function get_highlight_(node)
-  local git_status = explorer_common.get_git_status(node)
+  local git_status = explorer_node.get_git_status(node)
   if git_status == nil then
     return
   end
