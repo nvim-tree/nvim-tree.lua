@@ -424,9 +424,8 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
-        local bufnr = vim.api.nvim_get_current_buf()
         vim.schedule(function()
-          vim.api.nvim_buf_call(bufnr, function()
+          vim.api.nvim_buf_call(0, function()
             vim.cmd [[norm! zz]]
           end)
         end)
