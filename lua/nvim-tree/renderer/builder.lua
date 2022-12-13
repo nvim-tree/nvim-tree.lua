@@ -248,17 +248,10 @@ function Builder:_build_line(node, idx, num_children)
   local git_highlight = git.get_highlight(node)
   local git_icons_tbl = git.get_icons(node)
 
-  if git_icons_tbl and #git_icons_tbl > 0 then
-    if self.is_git_sign then
-      local git_info = git_icons_tbl[1]
-      table.insert(self.signs, { sign = git_info.hl, lnum = self.index + 1 })
-      git_icons_tbl = {}
-    else
-      -- sort icons so it looks slightly better
-      table.sort(git_icons_tbl, function(a, b)
-        return a.ord < b.ord
-      end)
-    end
+  if git_icons_tbl and #git_icons_tbl > 0 and self.is_git_sign then
+    local git_info = git_icons_tbl[1]
+    table.insert(self.signs, { sign = git_info.hl, lnum = self.index + 1 })
+    git_icons_tbl = {}
   end
 
   local is_folder = node.nodes ~= nil

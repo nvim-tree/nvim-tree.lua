@@ -7,13 +7,13 @@ local M = {
 
 local function build_icons_table(i)
   local icons = {
-    staged = { icon = i.staged, hl = "NvimTreeGitStaged", ord = 1 },
-    unstaged = { icon = i.unstaged, hl = "NvimTreeGitDirty", ord = 2 },
-    renamed = { icon = i.renamed, hl = "NvimTreeGitRenamed", ord = 3 },
-    deleted = { icon = i.deleted, hl = "NvimTreeGitDeleted", ord = 4 },
-    unmerged = { icon = i.unmerged, hl = "NvimTreeGitMerge", ord = 5 },
-    untracked = { icon = i.untracked, hl = "NvimTreeGitNew", ord = 6 },
-    ignored = { icon = i.ignored, hl = "NvimTreeGitIgnored", ord = 7 },
+    staged = { icon = i.staged, hl = "NvimTreeGitStaged" },
+    unstaged = { icon = i.unstaged, hl = "NvimTreeGitDirty" },
+    renamed = { icon = i.renamed, hl = "NvimTreeGitRenamed" },
+    deleted = { icon = i.deleted, hl = "NvimTreeGitDeleted" },
+    unmerged = { icon = i.unmerged, hl = "NvimTreeGitMerge" },
+    untracked = { icon = i.untracked, hl = "NvimTreeGitNew" },
+    ignored = { icon = i.ignored, hl = "NvimTreeGitIgnored" },
   }
   return {
     ["M "] = { icons.staged },
