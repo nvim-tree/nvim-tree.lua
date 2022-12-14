@@ -44,7 +44,7 @@ function M.reload_explorer(_, unloaded_bufnr)
   local projects = git.reload()
   refresh_nodes(core.get_explorer(), projects, unloaded_bufnr)
   if view.is_visible() then
-    renderer.draw()
+    renderer.draw(unloaded_bufnr)
   end
   event_running = false
 end
