@@ -69,21 +69,6 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
-function M.toggle(find_file, no_focus, cwd, bang)
-  if view.is_visible() then
-    view.close()
-  else
-    local previous_buf = vim.api.nvim_get_current_buf()
-    M.open(cwd)
-    if _config.update_focused_file.enable or find_file then
-      find_file(false, previous_buf, bang)
-    end
-    if no_focus then
-      vim.cmd "noautocmd wincmd p"
-    end
-  end
-end
-
 function M.open(cwd)
   cwd = cwd ~= "" and cwd or nil
   if view.is_visible() then
@@ -176,6 +161,21 @@ function M.find_file(with_open, bufnr, bang)
     vim.log.levels.WARN
   )
   find_file(with_open, bufnr, bang)
+end
+
+function M.toggle(do_find_file, no_focus, cwd, bang)
+  if view.is_visible() then
+    view.close()
+  else
+    local previous_buf = vim.api.nvim_get_current_buf()
+    M.open(cwd)
+    if _config.update_focused_file.enable or do_find_file then
+      find_file(false, previous_buf, bang)
+    end
+    if no_focus then
+      vim.cmd "noautocmd wincmd p"
+    end
+  end
 end
 
 M.resize = view.resize
