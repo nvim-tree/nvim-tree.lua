@@ -745,8 +745,8 @@ local function validate_options(conf)
 end
 
 function M.setup(conf)
-  if vim.fn.has "nvim-0.7" == 0 then
-    vim.notify_once("nvim-tree.lua requires Neovim 0.7 or higher", vim.log.levels.WARN)
+  if vim.fn.has "nvim-0.8" == 0 then
+    vim.notify_once("nvim-tree.lua requires Neovim 0.8 or higher", vim.log.levels.WARN)
     return
   end
 

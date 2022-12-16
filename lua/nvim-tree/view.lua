@@ -4,12 +4,6 @@ local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
 
-local function get_win_sep_hl()
-  -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
-  local has_win_sep = pcall(vim.cmd, "silent hi WinSeparator")
-  return has_win_sep and "WinSeparator:NvimTreeWinSeparator" or "VertSplit:NvimTreeWinSeparator"
-end
-
 M.View = {
   adaptive_size = false,
   centralize_selection = false,
@@ -38,7 +32,7 @@ M.View = {
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
       "LineNr:NvimTreeLineNr",
-      get_win_sep_hl(),
+      "WinSeparator:NvimTreeWinSeparator",
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
       "SignColumn:NvimTreeSignColumn",

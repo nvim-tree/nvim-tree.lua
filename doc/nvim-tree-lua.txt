@@ -58,7 +58,7 @@ Git Integration
 
 Requirements
 
-    This file explorer requires `neovim >= 0.7.0`
+    This file explorer requires `neovim >= 0.8.0`
 
 ==============================================================================
  2. QUICK START                                         *nvim-tree-quickstart*
@@ -1474,8 +1474,7 @@ NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
 NvimTreeCursorLineNr    (CursorLineNr)
 NvimTreeLineNr          (LineNr)
-NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
-NvimTreeWinSeparator    (VertSplit)
+NvimTreeWinSeparator    (WinSeparator)
 NvimTreeCursorColumn    (CursorColumn)
 
 There are also links for file highlight with git properties, linked to their
