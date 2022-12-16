@@ -163,13 +163,13 @@ function M.find_file(with_open, bufnr, bang)
   find_file(with_open, bufnr, bang)
 end
 
-function M.toggle(do_find_file, no_focus, cwd, bang)
+function M.toggle(with_find_file, no_focus, cwd, bang)
   if view.is_visible() then
     view.close()
   else
     local previous_buf = vim.api.nvim_get_current_buf()
     M.open(cwd)
-    if _config.update_focused_file.enable or do_find_file then
+    if _config.update_focused_file.enable or with_find_file then
       find_file(false, previous_buf, bang)
     end
     if no_focus then
