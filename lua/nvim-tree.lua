@@ -69,21 +69,6 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
-function M.toggle(find_file, no_focus, cwd, bang)
-  if view.is_visible() then
-    view.close()
-  else
-    local previous_buf = vim.api.nvim_get_current_buf()
-    M.open(cwd)
-    if _config.update_focused_file.enable or find_file then
-      M.find_file(false, previous_buf, bang)
-    end
-    if no_focus then
-      vim.cmd "noautocmd wincmd p"
-    end
-  end
-end
-
 function M.open(cwd)
   cwd = cwd ~= "" and cwd or nil
   if view.is_visible() then
@@ -143,7 +128,7 @@ local function is_file_readable(fname)
   return stat and stat.type == "file" and vim.loop.fs_access(fname, "R")
 end
 
-function M.find_file(with_open, bufnr, bang)
+local function find_file(with_open, bufnr, bang)
   if not with_open and not core.get_explorer() then
     return
   end
@@ -162,13 +147,35 @@ function M.find_file(with_open, bufnr, bang)
     M.open()
   end
 
-  -- if we don't schedule, it will search for NvimTree
-  vim.schedule(function()
-    if bang or _config.update_focused_file.update_root then
-      M.change_root(filepath, bufnr)
+  if bang or _config.update_focused_file.update_root then
+    M.change_root(filepath, bufnr)
+  end
+
+  require("nvim-tree.actions.finders.find-file").fn(filepath)
+end
+
+---@deprecated 2022/12/16
+function M.find_file(with_open, bufnr, bang)
+  vim.notify_once(
+    "require('nvim-tree').find_file is not API and will soon be unavailable. Please use api.tree.find_file as per :help nvim-tree-api",
+    vim.log.levels.WARN
+  )
+  find_file(with_open, bufnr, bang)
+end
+
+function M.toggle(with_find_file, no_focus, cwd, bang)
+  if view.is_visible() then
+    view.close()
+  else
+    local previous_buf = vim.api.nvim_get_current_buf()
+    M.open(cwd)
+    if _config.update_focused_file.enable or with_find_file then
+      find_file(false, previous_buf, bang)
     end
-    require("nvim-tree.actions.finders.find-file").fn(filepath)
-  end)
+    if no_focus then
+      vim.cmd "noautocmd wincmd p"
+    end
+  end
 end
 
 M.resize = view.resize
@@ -272,7 +279,7 @@ function M.on_enter(netrw_disabled)
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
       if should_find then
-        M.find_file(false)
+        find_file(false)
       end
     end
   end
@@ -306,7 +313,7 @@ local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    M.find_file(true, nil, res.bang)
+    find_file(true, nil, res.bang)
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     M.toggle(true, false, res.args, res.bang)
@@ -324,7 +331,7 @@ function M.change_dir(name)
   change_dir.fn(name)
 
   if _config.update_focused_file.enable then
-    M.find_file(false)
+    find_file(false)
   end
 end
 
@@ -400,7 +407,9 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
-        M.find_file(false)
+        utils.debounce("BufEnter:find_file", opts.update_focused_file.debounce_delay, function()
+          find_file(false)
+        end)
       end,
     })
   end
@@ -572,6 +581,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   update_focused_file = {
     enable = false,
+    debounce_delay = 15,
     update_root = false,
     ignore_list = {},
   },
