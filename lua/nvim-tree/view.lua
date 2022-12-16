@@ -27,6 +27,7 @@ M.View = {
     foldmethod = "manual",
     foldcolumn = "0",
     cursorcolumn = false,
+    cursorline = true,
     cursorlineopt = "both",
     colorcolumn = "0",
     wrap = false,

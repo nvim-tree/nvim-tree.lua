@@ -171,7 +171,6 @@ Subsequent calls to setup will replace the previous configuration.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
-      create_in_closed_folder = false,
       disable_netrw = false,
       hijack_cursor = false,
       hijack_netrw = true,
@@ -292,10 +291,11 @@ Subsequent calls to setup will replace the previous configuration.
       diagnostics = {
         enable = false,
         show_on_dirs = false,
+        show_on_open_dirs = true,
         debounce_delay = 50,
         severity = {
           min = vim.diagnostic.severity.HINT,
-          max = vim.diagnostic.severity.ERROR
+          max = vim.diagnostic.severity.ERROR,
         },
         icons = {
           hint = "",
@@ -306,6 +306,8 @@ Subsequent calls to setup will replace the previous configuration.
       },
       filters = {
         dotfiles = false,
+        git_clean = false,
+        no_buffer = false,
         custom = {},
         exclude = {},
       },
@@ -318,6 +320,7 @@ Subsequent calls to setup will replace the previous configuration.
         enable = true,
         ignore = true,
         show_on_dirs = true,
+        show_on_open_dirs = true,
         timeout = 400,
       },
       actions = {
@@ -345,6 +348,7 @@ Subsequent calls to setup will replace the previous configuration.
           resize_window = true,
           window_picker = {
             enable = true,
+            picker = "default",
             chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
             exclude = {
               filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
@@ -431,11 +435,6 @@ in some scenarios (eg using vim startify).
 *nvim-tree.auto_reload_on_write*
 Reloads the explorer every time a buffer is written to.
   Type: `boolean`, Default: `true`
-
-*nvim-tree.create_in_closed_folder*
-Creating a file when the cursor is on a closed folder will set the
-path to be inside the closed folder, otherwise the parent folder.
-  Type: `boolean`, Default: `false`
 
 *nvim-tree.sort_by*
 Changes how files within the same directory are sorted.
@@ -557,6 +556,11 @@ Show LSP and COC diagnostics in the signcolumn
     Show diagnostic icons on parent directories.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.diagnostics.show_on_open_dirs*
+    Show diagnostics icons on directories that are open.
+    Only relevant when `diagnostics.show_on_dirs` is `true`.
+      Type: `boolean`, Default: `true`
+
     *nvim-tree.diagnostics.icons*
     Icons for diagnostic severity.
       Type: `table`, Default: `{ hint = "", info = "", warning = "", error = "" }`
@@ -586,6 +590,11 @@ Git integration with icons and colors.
 
     *nvim-tree.git.show_on_dirs*
     Show status icons of children when directory itself has no status icon.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.git.show_on_open_dirs*
+    Show status icons on directories that are open.
+    Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.timeout*
@@ -629,21 +638,17 @@ Function ran when creating the nvim-tree buffer.
 This can be used to attach keybindings to the tree buffer.
 When on_attach is "disabled", it will use the older mapping strategy, otherwise it
 will use the newer one.
->
-    on_attach = function(bufnr)
-        local inject_node = require("nvim-tree.utils").inject_node
-
-        vim.keymap.set("n", "<leader>n", inject_node(function(node)
-            if node then
-                print(node.absolute_path)
-            end
-        end), { buffer = bufnr, noremap = true })
-
-        vim.bo[bufnr].path = "/tmp"
-    end
-<
     Type: `function(bufnr)`, Default: `"disable"`
+    e.g. >
+      local api = require("nvim-tree.api")
 
+      local function on_attach(bufnr)
+        vim.keymap.set("n", "<C-P>", function()
+          local node = api.tree.get_node_under_cursor()
+          print(node.absolute_path)
+        end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "print the node's absolute path" })
+      end
+<
 *nvim-tree.remove_keymaps*
 This can be used to remove the default mappings in the tree.
 - Remove specific keys by passing a `string` table of keys
@@ -891,6 +896,19 @@ Filtering options.
     Toggle via the `toggle_dotfiles` action, default mapping `H`.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.filters.git_clean*
+    Do not show files with no git status. This will show ignored files when
+    |nvim-tree.git.ignore| is set, as they are effectively dirty.
+    Toggle via the `toggle_git_clean` action, default mapping `C`.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.filters.no_buffer*
+    Do not show files that have no listed buffer.
+    Toggle via the `toggle_no_buffer` action, default mapping `B`.
+    For performance reasons this may not immediately update on buffer
+    delete/wipe. A reload or filesystem event will result in an update.
+      Type: `boolean`, Default: `false`
+
     *nvim-tree.filters.custom*
     Custom list of vim regex for file/directory names that will not be shown.
     Backslashes must be escaped e.g. "^\\.git". See |string-match|.
@@ -982,6 +1000,18 @@ Configuration for various actions.
             from which you last opened the tree.
               Type: `boolean`, Default: `true`
 
+            *nvim-tree.actions.open_file.window_picker.picker*
+            Change the default window picker, can be a string `default` or a function.
+            The function should return the window id that will open the node,
+            or `nil` if an invalid window is picked or user cancelled the action.
+              Type: `string or function`, Default: `"default"`
+              Using s1n7ax/nvim-window-picker plugin:
+              e.g. >
+                require('window-picker').setup()
+                function()
+                  return require('window-picker').pick_window()
+                end
+<
             *nvim-tree.actions.open_file.window_picker.chars*
             A string of chars used as identifiers by the window picker.
               Type: `string`, Default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
@@ -1145,15 +1175,15 @@ A good functionality to enable is |nvim-tree.hijack_directories|.
 
 Nvim-tree's public API can be used to access features.
 >
-    local nt_api = require("nvim-tree.api")
-
-    nt_api.tree.toggle()
+e.g. >
+    local api = require("nvim-tree.api")
+    api.tree.toggle()
 <
 This module exposes stable functionalities, it is advised to use this in order
 to avoid breaking configurations due to internal breaking changes.
 
 The api is separated in multiple modules, which can be accessed with
-`require("nvim-tree.api").moduleName.functionality`.
+`api.<module>.<function>`
 
 Functions that needs a tree node parameter are exposed with an abstraction
 that injects the node from the cursor position in the tree when calling
@@ -1176,6 +1206,8 @@ exists.
     - collapse_all `(keep_buffers?: bool)`
     - expand_all
     - toggle_gitignore_filter
+    - toggle_git_clean_filter
+    - toggle_no_buffer_filter
     - toggle_custom_filter
     - toggle_hidden_filter
     - toggle_help
@@ -1307,8 +1339,10 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `<Tab>`           preview             open the file as a preview (keeps the cursor in the tree)
 `K`               first_sibling       navigate to the first sibling of current file/directory
 `J`               last_sibling        navigate to the last sibling of current file/directory
+`C`               toggle_git_clean    toggle visibility of git clean via |filters.git_clean| option
 `I`               toggle_git_ignored  toggle visibility of files/folders hidden via |git.ignore| option
 `H`               toggle_dotfiles     toggle visibility of dotfiles via |filters.dotfiles| option
+`B`               toggle_no_buffer    toggle visibility of files/folders hidden via |filters.no_buffer| option
 `U`               toggle_custom       toggle visibility of files/folders hidden via |filters.custom| option
 `R`               refresh             refresh the tree
 `a`               create              add a file; leaving a trailing `/` will add a directory
@@ -1356,8 +1390,10 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "<Tab>",                          action = "preview" },
     { key = "K",                              action = "first_sibling" },
     { key = "J",                              action = "last_sibling" },
+    { key = "C",                              action = "toggle_git_clean" },
     { key = "I",                              action = "toggle_git_ignored" },
     { key = "H",                              action = "toggle_dotfiles" },
+    { key = "B",                              action = "toggle_no_buffer" },
     { key = "U",                              action = "toggle_custom" },
     { key = "R",                              action = "refresh" },
     { key = "a",                              action = "create" },
@@ -1487,26 +1523,18 @@ to |nvim_tree_registering_handlers| for more information.
 
 |nvim_tree_registering_handlers|
 
-Handlers are registered by calling the `events.subscribe` function available in the
-`require("nvim-tree.api")` module.
+Handlers are registered by calling |nvim-tree-api| `events.subscribe`
+function with an `events.Event` kind.
 
-For example, registering a handler for when a node is renamed is done like this:
->
-    local api = require('nvim-tree.api')
+e.g. handler for node renamed: >
+    local api = require("nvim-tree.api")
     local Event = api.events.Event
 
     api.events.subscribe(Event.NodeRenamed, function(data)
       print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
 <
-
 |nvim_tree_events_kind|
-
-You can access the event enum with:
->
-    local Event = require('nvim-tree.api').events.Event
-<
-Here is the list of available variant of this enum:
 
 - Event.Ready
                 When NvimTree has been initialized
