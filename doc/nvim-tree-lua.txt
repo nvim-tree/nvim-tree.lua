@@ -280,7 +280,6 @@ Subsequent calls to setup will replace the previous configuration.
       },
       update_focused_file = {
         enable = false,
-        debounce_delay = 15,
         update_root = false,
         ignore_list = {},
       },
@@ -507,11 +506,6 @@ until it finds the file.
     *nvim-tree.update_focused_file.enable*
     Enable this feature.
       Type: `boolean`, Default: `false`
-
-    *nvim-tree.update_focused_file.debounce_delay*
-    Idle milliseconds between BufEnter and update.
-    The last BufEnter will be focused, others are discarded.
-      Type: `number`, Default: `15` (ms)
 
     *nvim-tree.update_focused_file.update_root*  (previously `update_focused_file.update_cwd`)
     Update the root directory of the tree if the file is not under current
