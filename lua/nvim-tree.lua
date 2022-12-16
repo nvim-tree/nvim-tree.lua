@@ -794,20 +794,19 @@ function M.setup(conf)
   end
 
   setup_autocommands(opts)
-  require("nvim-tree.watcher").purge_watchers()
 
   if not M.setup_called then
+    -- first call to setup
     setup_vim_commands()
-  end
-
-  if M.setup_called then
+  else
+    -- subsequent calls to setup
+    require("nvim-tree.watcher").purge_watchers()
     view.close_all_tabs()
     view.abandon_all_windows()
-  end
-
-  if M.setup_called and core.get_explorer() ~= nil then
-    git.purge_state()
-    TreeExplorer = nil
+    if core.get_explorer() ~= nil then
+      git.purge_state()
+      TreeExplorer = nil
+    end
   end
 
   M.setup_called = true
