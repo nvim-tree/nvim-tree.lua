@@ -161,11 +161,8 @@ local function do_paste(node, action_type, action_fn)
     return
   end
   local is_dir = stats and stats.type == "directory"
-
   if not is_dir then
     destination = vim.fn.fnamemodify(destination, ":p:h")
-  elseif not node.open then
-    destination = vim.fn.fnamemodify(destination, ":p:h:h")
   end
 
   for _, _node in ipairs(clip) do
@@ -187,6 +184,7 @@ local function do_cut(source, destination)
     return true
   end
 
+  events._dispatch_will_rename_node(source, destination)
   local success, errmsg = vim.loop.fs_rename(source, destination)
   if not success then
     log.line("copy_paste", "do_cut fs_rename failed '%s'", errmsg)

@@ -424,9 +424,8 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
-        local bufnr = vim.api.nvim_get_current_buf()
         vim.schedule(function()
-          vim.api.nvim_buf_call(bufnr, function()
+          vim.api.nvim_buf_call(0, function()
             vim.cmd [[norm! zz]]
           end)
         end)
@@ -464,7 +463,6 @@ end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
-  create_in_closed_folder = false,
   disable_netrw = false,
   hijack_cursor = false,
   hijack_netrw = true,
@@ -796,20 +794,19 @@ function M.setup(conf)
   end
 
   setup_autocommands(opts)
-  require("nvim-tree.watcher").purge_watchers()
 
   if not M.setup_called then
+    -- first call to setup
     setup_vim_commands()
-  end
-
-  if M.setup_called then
+  else
+    -- subsequent calls to setup
+    require("nvim-tree.watcher").purge_watchers()
     view.close_all_tabs()
     view.abandon_all_windows()
-  end
-
-  if M.setup_called and core.get_explorer() ~= nil then
-    git.purge_state()
-    TreeExplorer = nil
+    if core.get_explorer() ~= nil then
+      git.purge_state()
+      TreeExplorer = nil
+    end
   end
 
   M.setup_called = true

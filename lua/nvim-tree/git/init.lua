@@ -173,6 +173,7 @@ function M.load_project_status(cwd)
 end
 
 function M.purge_state()
+  log.line("git", "purge_state")
   M.projects = {}
   M.cwd_to_project_root = {}
 end
