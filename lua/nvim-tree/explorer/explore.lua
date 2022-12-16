@@ -5,6 +5,7 @@ local sorters = require "nvim-tree.explorer.sorters"
 local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
+local log = require "nvim-tree.log"
 
 local M = {}
 
@@ -61,6 +62,9 @@ function M.explore(node, status)
     return
   end
 
+  local pn = string.format("explore init %s", node.absolute_path)
+  local ps = log.profile_start(pn)
+
   populate_children(handle, cwd, node, status)
 
   local is_root = not node.parent
@@ -69,11 +73,15 @@ function M.explore(node, status)
     node.group_next = child_folder_only
     local ns = M.explore(child_folder_only, status)
     node.nodes = ns or {}
+
+    log.profile_end(ps, pn)
     return ns
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
+
+  log.profile_end(ps, pn)
   return node.nodes
 end
 

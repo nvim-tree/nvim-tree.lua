@@ -2,6 +2,7 @@ local M = {}
 
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
+local log = require "nvim-tree.log"
 
 local function get_win_sep_hl()
   -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
@@ -231,6 +232,9 @@ function M.open(options)
     return
   end
 
+  local pn = string.format "view open"
+  local ps = log.profile_start(pn)
+
   create_buffer()
   open_window()
   M.resize()
@@ -240,6 +244,8 @@ function M.open(options)
     vim.cmd "wincmd p"
   end
   events._dispatch_on_tree_open()
+
+  log.profile_end(ps, pn)
 end
 
 local function grow()
