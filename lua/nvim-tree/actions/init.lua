@@ -132,6 +132,11 @@ local DEFAULT_MAPPINGS = {
     desc = "rename a file and omit the filename on input",
   },
   {
+    key = "e",
+    action = "rename_basename",
+    desc = "rename a file with filename-modifiers ':t:r' without changing extension",
+  },
+  {
     key = "x",
     action = "cut",
     desc = "add/remove file/directory to cut clipboard",

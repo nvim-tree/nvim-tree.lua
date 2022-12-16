@@ -9,9 +9,9 @@ local Api = {
 }
 
 local function inject_node(f)
-  return function(node)
+  return function(node, ...)
     node = node or require("nvim-tree.lib").get_node_at_cursor()
-    f(node)
+    f(node, ...)
   end
 end
 
@@ -47,8 +47,10 @@ Api.tree.toggle_help = require("nvim-tree.actions.tree-modifiers.toggles").help
 Api.fs.create = inject_node(require("nvim-tree.actions.fs.create-file").fn)
 Api.fs.remove = inject_node(require("nvim-tree.actions.fs.remove-file").fn)
 Api.fs.trash = inject_node(require("nvim-tree.actions.fs.trash").fn)
-Api.fs.rename = inject_node(require("nvim-tree.actions.fs.rename-file").fn(false))
-Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn(true))
+Api.fs.rename_node = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
+Api.fs.rename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
+Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":p")
+Api.fs.rename_basename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
 Api.fs.cut = inject_node(require("nvim-tree.actions.fs.copy-paste").cut)
 Api.fs.paste = inject_node(require("nvim-tree.actions.fs.copy-paste").paste)
 Api.fs.clear_clipboard = require("nvim-tree.actions.fs.copy-paste").clear_clipboard

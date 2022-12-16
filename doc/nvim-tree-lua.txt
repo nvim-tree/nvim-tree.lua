@@ -1203,8 +1203,10 @@ exists.
     - create
     - remove
     - trash
+    - rename_node `(node: table, modifier?: string vim.fn.fnamemodify argument)`
     - rename
     - rename_sub
+    - rename_basename
     - cut
     - paste
     - clear_clipboard
@@ -1337,6 +1339,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `D`               trash               trash a file via |trash| option
 `r`               rename              rename a file
 `<C-r>`           full_rename         rename a file and omit the filename on input
+`e`               rename_basename     rename a file with filename-modifiers ':t:r' without changing extension
 `x`               cut                 add/remove file/directory to cut clipboard
 `c`               copy                add/remove file/directory to copy clipboard
 `p`               paste               paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation
@@ -1388,6 +1391,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = "D",                              action = "trash" },
     { key = "r",                              action = "rename" },
     { key = "<C-r>",                          action = "full_rename" },
+    { key = "e",                              action = "rename_basename" },
     { key = "x",                              action = "cut" },
     { key = "c",                              action = "copy" },
     { key = "p",                              action = "paste" },

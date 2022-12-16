@@ -22,11 +22,12 @@ local Actions = {
   copy = require("nvim-tree.actions.fs.copy-paste").copy,
   create = require("nvim-tree.actions.fs.create-file").fn,
   cut = require("nvim-tree.actions.fs.copy-paste").cut,
-  full_rename = require("nvim-tree.actions.fs.rename-file").fn(true),
+  full_rename = require("nvim-tree.actions.fs.rename-file").fn ":p",
   paste = require("nvim-tree.actions.fs.copy-paste").paste,
   trash = require("nvim-tree.actions.fs.trash").fn,
   remove = require("nvim-tree.actions.fs.remove-file").fn,
-  rename = require("nvim-tree.actions.fs.rename-file").fn(false),
+  rename = require("nvim-tree.actions.fs.rename-file").fn ":t",
+  rename_basename = require("nvim-tree.actions.fs.rename-file").fn ":t:r",
 
   -- Movements in tree
   close_node = require("nvim-tree.actions.moves.parent").fn(true),

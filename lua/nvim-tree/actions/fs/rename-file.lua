@@ -5,6 +5,12 @@ local notify = require "nvim-tree.notify"
 
 local M = {}
 
+local ALLOWED_MODIFIERS = {
+  [":p"] = true,
+  [":t"] = true,
+  [":t:r"] = true,
+}
+
 local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
@@ -25,17 +31,45 @@ function M.rename(node, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
 
-function M.fn(with_sub)
-  return function(node)
+function M.fn(default_modifier)
+  default_modifier = default_modifier or ":t"
+
+  return function(node, modifier)
+    if type(node) ~= "table" then
+      node = lib.get_node_at_cursor()
+    end
+
+    if type(modifier) ~= "string" then
+      modifier = default_modifier
+    end
+
+    -- support for only specific modifiers have been implemented
+    if not ALLOWED_MODIFIERS[modifier] then
+      return notify.warn(
+        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ",")
+      )
+    end
+
     node = lib.get_last_group_node(node)
     if node.name == ".." then
       return
     end
 
     local namelen = node.name:len()
-    local abs_path = with_sub and node.absolute_path:sub(0, namelen * -1 - 1) or node.absolute_path
+    local directory = node.absolute_path:sub(0, namelen * -1 - 1)
+    local default_path
+    local prepend = ""
+    local append = ""
+    default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
+    if modifier:sub(0, 2) == ":t" then
+      prepend = directory
+    end
+    if modifier == ":t:r" then
+      local extension = vim.fn.fnamemodify(node.name, ":e")
+      append = extension:len() == 0 and "" or "." .. extension
+    end
 
-    local input_opts = { prompt = "Rename to ", default = abs_path, completion = "file" }
+    local input_opts = { prompt = "Rename to ", default = default_path, completion = "file" }
 
     vim.ui.input(input_opts, function(new_file_path)
       utils.clear_prompt()
@@ -43,7 +77,7 @@ function M.fn(with_sub)
         return
       end
 
-      M.rename(node, new_file_path)
+      M.rename(node, prepend .. new_file_path .. append)
       if M.enable_reload then
         require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
       end
