@@ -206,7 +206,7 @@ function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_le
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
 end
 
-function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
+function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
   local offset = string.len(padding)
 
   local icon = self:_build_file_icon(node, offset)
@@ -228,7 +228,9 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
     self:_insert_highlight("NvimTreeImageFile", col_start, col_end)
   end
 
-  local should_highlight_opened_files = self.highlight_opened_files and vim.fn.bufloaded(node.absolute_path) > 0
+  local should_highlight_opened_files = self.highlight_opened_files
+    and vim.fn.bufloaded(node.absolute_path) > 0
+    and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr
   if should_highlight_opened_files then
     self:_highlight_opened_files(node, offset, #icon, git_icons_length)
   end
@@ -238,7 +240,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl)
   end
 end
 
-function Builder:_build_line(node, idx, num_children)
+function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
 
   if string.len(padding) > 0 then
@@ -262,13 +264,13 @@ function Builder:_build_line(node, idx, num_children)
   elseif is_symlink then
     self:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   else
-    self:_build_file(node, padding, git_highlight, git_icons_tbl)
+    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
   end
   self.index = self.index + 1
 
   if node.open then
     self.depth = self.depth + 1
-    self:build(node)
+    self:build(node, unloaded_bufnr)
     self.depth = self.depth - 1
   end
 end
@@ -287,12 +289,12 @@ function Builder:_get_nodes_number(nodes)
   return i
 end
 
-function Builder:build(tree)
+function Builder:build(tree, unloaded_bufnr)
   local num_children = self:_get_nodes_number(tree.nodes)
   local idx = 1
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
-      self:_build_line(node, idx, num_children)
+      self:_build_line(node, idx, num_children, unloaded_bufnr)
       idx = idx + 1
     end
   end
