@@ -1001,16 +1001,14 @@ Configuration for various actions.
               Type: `boolean`, Default: `true`
 
             *nvim-tree.actions.open_file.window_picker.picker*
-            Change the default window picker, can be a string `default` or a function.
+            Change the default window picker, can be a string `"default"` or a function.
             The function should return the window id that will open the node,
             or `nil` if an invalid window is picked or user cancelled the action.
-              Type: `string or function`, Default: `"default"`
-              Using s1n7ax/nvim-window-picker plugin:
-              e.g. >
-                require('window-picker').setup()
-                function()
-                  return require('window-picker').pick_window()
-                end
+              Type: `string` | `function`, Default: `"default"`
+              e.g. s1n7ax/nvim-window-picker plugin: >
+                window_picker = {
+                  enable = true,
+                  picker = require('window-picker').pick_window,
 <
             *nvim-tree.actions.open_file.window_picker.chars*
             A string of chars used as identifiers by the window picker.
