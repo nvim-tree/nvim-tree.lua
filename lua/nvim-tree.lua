@@ -169,6 +169,15 @@ local function find_file(with_open, bufnr, bang)
   require("nvim-tree.actions.finders.find-file").fn(filepath)
 end
 
+---@deprecated 2022/12/16
+function M.find_file(with_open, bufnr, bang)
+  vim.notify_once(
+    "require('nvim-tree').find_file is not API and will soon be unavailable. Please use api.tree.find_file as per :help nvim-tree-api",
+    vim.log.levels.WARN
+  )
+  find_file(with_open, bufnr, bang)
+end
+
 M.resize = view.resize
 
 function M.open_on_directory()
