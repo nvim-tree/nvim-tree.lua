@@ -582,7 +582,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   update_focused_file = {
     enable = false,
-    debounce_delay = 50,
+    debounce_delay = 15,
     update_root = false,
     ignore_list = {},
   },
