@@ -1,6 +1,6 @@
 local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
-local common = require "nvim-tree.explorer.common"
+local explorer_node = require "nvim-tree.explorer.node"
 local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
@@ -15,7 +15,7 @@ local M = {}
 local function update_status(nodes_by_path, node_ignored, status)
   return function(node)
     if nodes_by_path[node.absolute_path] then
-      common.update_git_status(node, node_ignored, status)
+      explorer_node.update_git_status(node, node_ignored, status)
     end
     return node
   end
@@ -29,7 +29,7 @@ end
 
 local function update_parent_statuses(node, project, root)
   while project and node and node.absolute_path ~= root do
-    common.update_git_status(node, false, project)
+    explorer_node.update_git_status(node, false, project)
     node = node.parent
   end
 end
@@ -53,7 +53,7 @@ function M.reload(node, git_status, unloaded_bufnr)
 
   local child_names = {}
 
-  local node_ignored = node.git_status == "!!"
+  local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
     local name, t = utils.fs_scandir_next_profiled(handle, cwd)
@@ -82,7 +82,7 @@ function M.reload(node, git_status, unloaded_bufnr)
 
         if n.type ~= t then
           utils.array_remove(node.nodes, n)
-          common.node_destroy(n)
+          explorer_node.node_destroy(n)
           nodes_by_path[abs] = nil
         end
       end
@@ -119,14 +119,14 @@ function M.reload(node, git_status, unloaded_bufnr)
       if child_names[n.absolute_path] then
         return child_names[n.absolute_path]
       else
-        common.node_destroy(n)
+        explorer_node.node_destroy(n)
         return nil
       end
     end, node.nodes)
   )
 
   local is_root = not node.parent
-  local child_folder_only = common.has_one_child_folder(node) and node.nodes[1]
+  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = M.reload(child_folder_only, git_status)
