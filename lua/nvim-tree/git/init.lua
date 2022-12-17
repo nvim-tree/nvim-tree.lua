@@ -4,6 +4,7 @@ local git_utils = require "nvim-tree.git.utils"
 local Runner = require "nvim-tree.git.runner"
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require "nvim-tree.iterators.node-iterator"
+local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {
   config = {},
@@ -103,19 +104,13 @@ local function reload_tree_at(project_root)
   end
 
   M.reload_project(project_root)
-  local project = M.get_project(project_root)
-
-  local project_files = project.files and project.files or {}
-  local project_dirs = project.dirs and project.dirs or {}
+  local git_status = M.get_project(project_root)
 
   Iterator.builder(root_node.nodes)
     :hidden()
     :applier(function(node)
-      local parent_ignored = node.parent.git_status == "!!"
-      node.git_status = project_dirs[node.absolute_path] or project_files[node.absolute_path]
-      if not node.git_status and parent_ignored then
-        node.git_status = "!!"
-      end
+      local parent_ignored = explorer_node.is_git_ignored(node.parent)
+      explorer_node.update_git_status(node, parent_ignored, git_status)
     end)
     :recursor(function(node)
       return node.nodes and #node.nodes > 0 and node.nodes

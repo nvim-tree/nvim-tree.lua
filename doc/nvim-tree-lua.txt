@@ -599,7 +599,7 @@ Git integration with icons and colors.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.show_on_open_dirs*
-    Show status icons on directories that are open.
+    Show status icons of children on directories that are open.
     Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
 
