@@ -18,7 +18,7 @@ local function populate_children(handle, cwd, node, git_status)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
   local filter_status = filters.prepare(git_status)
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle)
+    local name, t = utils.fs_scandir_next_profiled(handle, cwd)
     if not name then
       break
     end
@@ -47,9 +47,9 @@ local function populate_children(handle, cwd, node, git_status)
 end
 
 local function get_dir_handle(cwd)
-  local handle = vim.loop.fs_scandir(cwd)
-  if type(handle) == "string" then
-    notify.error(handle)
+  local handle, err = utils.fs_scandir_profiled(cwd)
+  if err then
+    notify.error(string.format("Failed exploring %s: %s", cwd, vim.inspect(err)))
     return
   end
   return handle

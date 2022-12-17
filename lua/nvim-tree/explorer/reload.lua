@@ -36,9 +36,9 @@ end
 
 function M.reload(node, git_status, unloaded_bufnr)
   local cwd = node.link_to or node.absolute_path
-  local handle = vim.loop.fs_scandir(cwd)
-  if type(handle) == "string" then
-    notify.error(handle)
+  local handle, err = utils.fs_scandir_profiled(cwd)
+  if err then
+    notify.error(string.format("Failed reloading %s: %s", cwd, vim.inspect(err)))
     return
   end
 
@@ -56,8 +56,8 @@ function M.reload(node, git_status, unloaded_bufnr)
   local node_ignored = node.git_status == "!!"
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local ok, name, t = pcall(vim.loop.fs_scandir_next, handle)
-    if not ok or not name then
+    local name, t = utils.fs_scandir_next_profiled(handle, cwd)
+    if not name then
       break
     end
 

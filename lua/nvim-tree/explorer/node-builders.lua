@@ -7,8 +7,8 @@ local M = {
 }
 
 function M.folder(parent, absolute_path, name)
-  local handle = vim.loop.fs_scandir(absolute_path)
-  local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
+  local handle = utils.fs_scandir_profiled(absolute_path)
+  local has_children = handle and utils.fs_scandir_next_profiled(handle, absolute_path) ~= nil
 
   local node = {
     type = "directory",
@@ -71,8 +71,8 @@ function M.link(parent, absolute_path, name)
   local is_dir_link = (link_to ~= nil) and vim.loop.fs_stat(link_to).type == "directory"
 
   if is_dir_link then
-    local handle = vim.loop.fs_scandir(link_to)
-    has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
+    local handle = utils.fs_scandir_profiled(link_to)
+    has_children = handle and utils.fs_scandir_next_profiled(handle, link_to) ~= nil
     open = false
     nodes = {}
   end
