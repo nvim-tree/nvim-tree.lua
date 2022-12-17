@@ -24,7 +24,7 @@ do
       if has_notify and notify_plugin then
         notify_plugin(msg, level, { title = "NvimTree" })
       else
-        vim.notify("[NvimTree] " .. msg, level)
+        vim.notify(string.format("[NvimTree] %s", vim.inspect(msg)), level)
       end
     end)
   end
