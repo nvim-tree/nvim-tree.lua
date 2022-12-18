@@ -70,6 +70,7 @@ function M.draw(unloaded_bufnr)
       :configure_opened_file_highlighting(M.config.highlight_opened_files)
       :configure_git_icons_padding(M.config.icons.padding)
       :configure_git_icons_placement(M.config.icons.git_placement)
+      :configure_modified(M.config.icons.modified, M.config.icons.modified_placement, M.config.modified)
       :configure_symlink_destination(M.config.symlink_destination)
       :configure_filter(live_filter.filter, live_filter.prefix)
       :build_header(view.is_root_folder_visible(core.get_cwd()))
@@ -100,6 +101,7 @@ end
 
 function M.setup(opts)
   M.config = opts.renderer
+  M.config.modified = opts.modified
 
   _padding.setup(opts)
   full_name.setup(opts)

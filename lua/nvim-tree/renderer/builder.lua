@@ -68,6 +68,13 @@ function Builder:configure_git_icons_placement(where)
   return self
 end
 
+function Builder:configure_modified(modified_icon, modified_placement, modified)
+  self.modified = modified
+  self.modified.icon = modified_icon
+  self.modified.placement = modified_placement
+  return self
+end
+
 function Builder:configure_symlink_destination(show)
   self.symlink_destination = show
   return self
@@ -206,7 +213,7 @@ function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_le
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
 end
 
-function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
+function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr, modified)
   local offset = string.len(padding)
 
   local icon = self:_build_file_icon(node, offset)
@@ -214,7 +221,11 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unload
   local git_icons_starts_at = offset + #icon + (self.is_git_after and #node.name + 1 or 0)
   local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
 
-  self:_insert_line(self:_format_line(padding .. icon, node.name, git_icons))
+  local name = node.name
+  if modified then
+    name = name .. self.modified.icon
+  end
+  self:_insert_line(self:_format_line(padding .. icon, name, git_icons))
 
   local git_icons_length = self.is_git_after and 0 or #git_icons
   local col_start = offset + #icon + git_icons_length
@@ -263,6 +274,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     end
   end
 
+  local modified = vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.getbufinfo(node.absolute_path)[1].changed == 1
+
   local is_folder = node.nodes ~= nil
   local is_symlink = node.link_to ~= nil
 
@@ -271,7 +284,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   elseif is_symlink then
     self:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   else
-    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
+    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr, modified)
   end
   self.index = self.index + 1
 

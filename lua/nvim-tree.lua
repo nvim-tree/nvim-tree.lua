@@ -468,6 +468,16 @@ local function setup_autocommands(opts)
       end,
     })
   end
+
+  if opts.modified.enable then
+    create_nvim_tree_autocmd("BufModifiedSet", {
+      callback = function()
+        utils.debounce("BufModifiedSet:modified_files", opts.modified.debounce_delay, function()
+          reloaders.reload_explorer()
+        end)
+      end,
+    })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
