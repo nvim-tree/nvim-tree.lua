@@ -132,7 +132,7 @@ end
 function M.clear_clipboard()
   clipboard.move = {}
   clipboard.copy = {}
-  utils.notify.info "Clipboard has been emptied."
+  notify.info "Clipboard has been emptied."
 end
 
 function M.copy(node)
