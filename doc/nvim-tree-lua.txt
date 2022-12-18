@@ -222,7 +222,7 @@ Subsequent calls to setup will replace the previous configuration.
         highlight_git = false,
         full_name = false,
         highlight_opened_files = "none",
-        highlight_modified = false,
+        highlight_modified = "none",
         root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
         indent_markers = {
@@ -806,10 +806,11 @@ UI rendering setup
       Type: `string`, Default: `"none"`
 
     *nvim-tree.renderer.highlight_modified*
-    Enable file highlight for modified files using NvimTreeModified highlight
-    groups.
+    Highlight icons and/or names for modified files using `NvimTreeModified`
+    highlight groups.
+    Value can be `"none"`, `"icon"`, `"name"` or `"all"`
     This can be used with or without the icons.
-      Type: `boolean`, Default `false`
+      Type: `string`, Default `"none"`
 
     *nvim-tree.renderer.root_folder_label*  (previously `renderer.root_folder_modifier`)
     In what format to show root folder. See `:help filename-modifiers` for
