@@ -4,7 +4,6 @@ local explorer_node = require "nvim-tree.explorer.node"
 local sorters = require "nvim-tree.explorer.sorters"
 local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
-local notify = require "nvim-tree.notify"
 local log = require "nvim-tree.log"
 
 local M = {}
@@ -46,18 +45,9 @@ local function populate_children(handle, cwd, node, git_status)
   end
 end
 
-local function get_dir_handle(cwd)
-  local handle, err = utils.fs_scandir_profiled(cwd)
-  if err then
-    notify.error(string.format("Failed exploring %s: %s", cwd, vim.inspect(err)))
-    return
-  end
-  return handle
-end
-
 function M.explore(node, status)
   local cwd = node.link_to or node.absolute_path
-  local handle = get_dir_handle(cwd)
+  local handle = utils.fs_scandir_profiled(cwd)
   if not handle then
     return
   end
