@@ -121,6 +121,7 @@ function M.node_destroy(node)
 
   if node.watcher then
     node.watcher:destroy()
+    node.watcher = nil
   end
 end
 

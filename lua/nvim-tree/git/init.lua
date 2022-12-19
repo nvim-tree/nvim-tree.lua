@@ -150,6 +150,9 @@ function M.load_project_status(cwd)
     local callback = function(w)
       log.line("watcher", "git event scheduled '%s'", w.project_root)
       utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+        if w.destroyed then
+          return
+        end
         reload_tree_at(w.project_root)
       end)
     end
