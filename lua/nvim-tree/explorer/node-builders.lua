@@ -50,7 +50,9 @@ function M.file(parent, absolute_path, name)
   return {
     type = "file",
     absolute_path = absolute_path,
-    executable = M.is_executable(parent, absolute_path, ext),
+    -- #1831 this appears to be very expensive on WSL; test bypassing
+    -- executable = M.is_executable(parent, absolute_path, ext),
+    executable = false,
     extension = ext,
     fs_stat = vim.loop.fs_stat(absolute_path),
     name = name,
