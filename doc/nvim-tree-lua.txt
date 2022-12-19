@@ -241,7 +241,6 @@ Subsequent calls to setup will replace the previous configuration.
           git_placement = "before",
           padding = " ",
           symlink_arrow = " ➛ ",
-          modified = "[+]",
           modified_placement = "after",
           show = {
             file = true,
@@ -253,6 +252,7 @@ Subsequent calls to setup will replace the previous configuration.
             default = "",
             symlink = "",
             bookmark = "",
+            modified = "●",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -866,11 +866,6 @@ UI rendering setup
         Used as a separator between symlinks' source and target.
           Type: `string`, Default: `" ➛ "`
 
-        *nvim-tree.renderer.icons.modified*
-        Icon to display for modified files. Can be multiple characters if
-        |renderer.icons.modified_placement| isn't `"signcolumn"`.
-          Type: `string`, Default: `"[+]"`
-
         *nvim-tree.renderer.icons.modified_placement*
         Place where the modified icon will be rendered.
         Can be `"after"` or `"before"` filename (after the file/folders icons)
@@ -908,6 +903,11 @@ UI rendering setup
             *nvim-tree.renderer.icons.glyphs.symlink*
             Glyph for symlinks to files.
               Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.glyphs.modified*
+            Icon to display for modified files. Can be multiple characters if
+            |renderer.icons.modified_placement| isn't `"signcolumn"`.
+              Type: `string`, Default: `"●"`
 
             *nvim-tree.renderer.icons.glyphs.folder*
             Glyphs for directories.
