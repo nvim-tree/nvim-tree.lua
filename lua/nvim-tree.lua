@@ -362,8 +362,12 @@ local function setup_autocommands(opts)
   end
 
   create_nvim_tree_autocmd("BufReadPost", {
-    callback = function()
-      if filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none" then
+    callback = function(data)
+      -- update opened file buffers
+      if
+        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+        and vim.bo[data.buf].buftype == ""
+      then
         reloaders.reload_explorer()
       end
     end,
@@ -371,7 +375,11 @@ local function setup_autocommands(opts)
 
   create_nvim_tree_autocmd("BufUnload", {
     callback = function(data)
-      if filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none" then
+      -- update opened file buffers
+      if
+        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+        and vim.bo[data.buf].buftype == ""
+      then
         reloaders.reload_explorer(nil, data.buf)
       end
     end,
