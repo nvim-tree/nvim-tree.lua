@@ -4,7 +4,6 @@ local explorer_node = require "nvim-tree.explorer.node"
 local filters = require "nvim-tree.explorer.filters"
 local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
-local notify = require "nvim-tree.notify"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 
@@ -36,9 +35,8 @@ end
 
 function M.reload(node, git_status, unloaded_bufnr)
   local cwd = node.link_to or node.absolute_path
-  local handle, err = utils.fs_scandir_profiled(cwd)
-  if err then
-    notify.error(string.format("Failed reloading %s: %s", cwd, vim.inspect(err)))
+  local handle = utils.fs_scandir_profiled(cwd)
+  if not handle then
     return
   end
 

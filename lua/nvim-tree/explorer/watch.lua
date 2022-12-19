@@ -51,6 +51,9 @@ function M.create_watcher(node)
   local function callback(watcher)
     log.line("watcher", "node event scheduled refresh %s", watcher.context)
     utils.debounce(watcher.context, M.debounce_delay, function()
+      if watcher.destroyed then
+        return
+      end
       if node.link_to then
         log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
       else

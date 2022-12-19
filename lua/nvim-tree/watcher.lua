@@ -99,6 +99,8 @@ function Event:destroy(message)
   end
 
   Event._events[self._path] = nil
+
+  self.destroyed = true
 end
 
 function Watcher:new(path, files, callback, data)
@@ -139,6 +141,8 @@ function Watcher:destroy()
   self._event:remove(self._listener)
 
   utils.array_remove(Watcher._watchers, self)
+
+  self.destroyed = true
 end
 
 M.Watcher = Watcher
