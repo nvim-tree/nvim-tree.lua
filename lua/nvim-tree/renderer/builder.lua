@@ -116,17 +116,24 @@ function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
   return icon
 end
 
+---return modified icon if node is modified, otherwise return empty string
+---@param node table
+---@return string modified icon
+function Builder:_get_modified_icon(node)
+  if not modified.is_modified(node) or self.modified.placement == "signcolumn" then
+    return ""
+  end
+
+  return self.modified.placement == "before" and self.modified.icon .. " " or " " .. self.modified.icon
+end
+
 function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local offset = string.len(padding)
 
-  local name = get_folder_name(node)
-  if modified.is_modified(node) then
-    name = name .. self.modified.icon
-  end
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
 
-  local foldername = name .. self.trailing_slash
+  local foldername = get_folder_name(node) .. self.trailing_slash
   if node.link_to and self.symlink_destination then
     local arrow = icons.i.symlink_arrow
     local link_to = utils.path_relative(node.link_to, core.get_cwd())
@@ -134,8 +141,14 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   end
 
   local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
-  local fname_starts_at = offset + #icon + (self.is_git_after and 0 or #git_icons)
-  local line = self:_format_line(padding .. icon, foldername, git_icons)
+  local modified_icon = self:_get_modified_icon(node)
+
+  -- TODO: this is duplicated logic with _build_file & _build_symlink
+  local fname_starts_at = offset
+    + #icon
+    + (self.is_git_after and 0 or #git_icons)
+    + (self.modified.placement ~= "before" and 0 or #modified_icon)
+  local line = self:_format_line(padding .. icon, foldername, git_icons, modified_icon)
   self:_insert_line(line)
 
   if #icon > 0 then
@@ -162,13 +175,24 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   end
 end
 
-function Builder:_format_line(before, after, git_icons)
+---format line
+---@param before string
+---@param after string
+---@param git_icons string|nil
+---@param modified_icon string
+---@return string
+function Builder:_format_line(before, after, git_icons, modified_icon)
   git_icons = self.is_git_after and git_icons and " " .. git_icons or git_icons
+
+  local is_modified_after = self.modified.placement ~= "before"
+
   return string.format(
-    "%s%s%s%s",
+    "%s%s%s%s%s%s",
     before,
     self.is_git_after and "" or git_icons,
+    is_modified_after and "" or modified_icon,
     after,
+    is_modified_after and modified_icon or "",
     self.is_git_after and git_icons or ""
   )
 end
@@ -188,9 +212,14 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
 
   local git_icons_starts_at = offset + #icon + (self.is_git_after and #symlink_formatted + 1 or 0)
   local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
-  local line = self:_format_line(padding .. icon, symlink_formatted, git_icons)
+  local modified_icon = self:_get_modified_icon(node)
+  local line = self:_format_line(padding .. icon, symlink_formatted, git_icons, modified_icon)
 
-  self:_insert_highlight(link_highlight, offset + (self.is_git_after and 0 or #git_icons), string.len(line))
+  self:_insert_highlight(
+    link_highlight,
+    offset + (self.is_git_after and 0 or #git_icons) + (self.modified.placement ~= "before" and 0 or #modified_icon),
+    string.len(line)
+  )
   self:_insert_line(line)
 end
 
@@ -226,14 +255,12 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unload
   local git_icons_starts_at = offset + #icon + (self.is_git_after and #node.name + 1 or 0)
   local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
 
-  local name = node.name
-  if modified.is_modified(node) then
-    name = name .. self.modified.icon
-  end
-  self:_insert_line(self:_format_line(padding .. icon, name, git_icons))
+  local modified_icon = self:_get_modified_icon(node)
+  self:_insert_line(self:_format_line(padding .. icon, node.name, git_icons, modified_icon))
 
   local git_icons_length = self.is_git_after and 0 or #git_icons
-  local col_start = offset + #icon + git_icons_length
+  local modified_icon_length = self.modified.placement ~= "before" and 0 or #modified_icon
+  local col_start = offset + #icon + git_icons_length + modified_icon_length
   local col_end = col_start + #node.name
 
   if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
