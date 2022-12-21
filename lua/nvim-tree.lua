@@ -12,6 +12,7 @@ local copy_paste = require "nvim-tree.actions.fs.copy-paste"
 local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
+local modified = require "nvim-tree.modified"
 
 local _config = {}
 
@@ -481,6 +482,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufModifiedSet", {
       callback = function()
         utils.debounce("BufModifiedSet:modified_files", opts.modified.debounce_delay, function()
+          modified.reload()
           reloaders.reload_explorer()
         end)
       end,
@@ -828,6 +830,7 @@ function M.setup(conf)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
+  require("nvim-tree.modified").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end

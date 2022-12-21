@@ -1,5 +1,6 @@
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local modified = require "nvim-tree.modified"
 
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
@@ -68,10 +69,11 @@ function Builder:configure_git_icons_placement(where)
   return self
 end
 
-function Builder:configure_modified(modified_icon, modified_placement, modified)
-  self.modified = modified
-  self.modified.icon = modified_icon
-  self.modified.placement = modified_placement
+function Builder:configure_modified(modified_icon, modified_placement)
+  self.modified = {
+    icon = modified_icon,
+    placement = modified_placement,
+  }
   return self
 end
 
@@ -118,6 +120,9 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local offset = string.len(padding)
 
   local name = get_folder_name(node)
+  if modified.is_modified(node) then
+    name = name .. self.modified.icon
+  end
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
 
@@ -213,7 +218,7 @@ function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_le
   self:_insert_highlight("NvimTreeOpenedFile", from, to)
 end
 
-function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr, modified)
+function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
   local offset = string.len(padding)
 
   local icon = self:_build_file_icon(node, offset)
@@ -222,7 +227,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unload
   local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
 
   local name = node.name
-  if modified then
+  if modified.is_modified(node) then
     name = name .. self.modified.icon
   end
   self:_insert_line(self:_format_line(padding .. icon, name, git_icons))
@@ -274,8 +279,6 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     end
   end
 
-  local modified = vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.getbufinfo(node.absolute_path)[1].changed == 1
-
   local is_folder = node.nodes ~= nil
   local is_symlink = node.link_to ~= nil
 
@@ -284,7 +287,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   elseif is_symlink then
     self:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   else
-    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr, modified)
+    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
   end
   self.index = self.index + 1
 
