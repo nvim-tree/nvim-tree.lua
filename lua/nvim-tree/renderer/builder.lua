@@ -143,11 +143,7 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
   local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
   local modified_icon = self:_get_modified_icon(node)
 
-  -- TODO: this is duplicated logic with _build_file & _build_symlink
-  local fname_starts_at = offset
-    + #icon
-    + (self.is_git_after and 0 or #git_icons)
-    + (self.modified.placement ~= "before" and 0 or #modified_icon)
+  local fname_starts_at = self:_get_filename_offset(offset, icon, git_icons, modified_icon)
   local line = self:_format_line(padding .. icon, foldername, git_icons, modified_icon)
   self:_insert_line(line)
 
@@ -197,6 +193,18 @@ function Builder:_format_line(before, after, git_icons, modified_icon)
   )
 end
 
+---@param offset integer
+---@param icon string
+---@param git_icons string
+---@param modified_icon string
+---@return integer
+function Builder:_get_filename_offset(offset, icon, git_icons, modified_icon)
+  return offset
+    + #icon
+    + (self.is_git_after and 0 or #git_icons)
+    + (self.modified.placement ~= "before" and 0 or #modified_icon)
+end
+
 function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
   local offset = string.len(padding)
 
@@ -217,6 +225,7 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
 
   self:_insert_highlight(
     link_highlight,
+    -- TODO: is this a bug? where's icon?
     offset + (self.is_git_after and 0 or #git_icons) + (self.modified.placement ~= "before" and 0 or #modified_icon),
     string.len(line)
   )
@@ -258,9 +267,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unload
   local modified_icon = self:_get_modified_icon(node)
   self:_insert_line(self:_format_line(padding .. icon, node.name, git_icons, modified_icon))
 
-  local git_icons_length = self.is_git_after and 0 or #git_icons
-  local modified_icon_length = self.modified.placement ~= "before" and 0 or #modified_icon
-  local col_start = offset + #icon + git_icons_length + modified_icon_length
+  local col_start = self:_get_filename_offset(offset, icon, git_icons, modified_icon)
   local col_end = col_start + #node.name
 
   if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
@@ -275,7 +282,7 @@ function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unload
     and vim.fn.bufloaded(node.absolute_path) > 0
     and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr
   if should_highlight_opened_files then
-    self:_highlight_opened_files(node, offset, #icon, git_icons_length)
+    self:_highlight_opened_files(node, offset, #icon, self.is_git_after and 0 or #git_icons)
   end
 
   if git_highlight then
