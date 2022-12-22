@@ -479,8 +479,7 @@ local function setup_autocommands(opts)
   end
 
   if opts.modified.enable then
-    -- TODO: :wq doesn't update properly
-    create_nvim_tree_autocmd("BufModifiedSet", {
+    create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
         utils.debounce("BufModifiedSet:modified_files", opts.modified.debounce_delay, function()
           modified.reload()
