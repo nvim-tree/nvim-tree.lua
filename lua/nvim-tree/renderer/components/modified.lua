@@ -8,7 +8,7 @@ local HIGHLIGHT = "NvimTreeModifiedFile"
 ---@param node table
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
-  if not modified.is_modified(node) then
+  if not modified.is_modified(node) or not M.show_icon then
     return nil
   end
 
@@ -30,7 +30,8 @@ function M.get_highlight(node)
 end
 
 function M.setup(opts)
-  M.icon = opts.renderer.icons.show.modified and opts.renderer.icons.glyphs.modified or nil
+  M.icon = opts.renderer.icons.glyphs.modified
+  M.show_icon = opts.renderer.icons.show.modified
 
   M.setup_signs()
 end
