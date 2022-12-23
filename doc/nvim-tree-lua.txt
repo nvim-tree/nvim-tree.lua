@@ -864,7 +864,6 @@ UI rendering setup
 
         *nvim-tree.renderer.icons.padding*
         Inserted between icon and filename.
-        Use with caution, it could break rendering if you set an empty string depending on your font.
           Type: `string`, Default: `" "`
 
         *nvim-tree.renderer.icons.symlink_arrow*
