@@ -915,8 +915,7 @@ UI rendering setup
               Type: `string`, Default: `""`
 
             *nvim-tree.renderer.icons.glyphs.modified*
-            Icon to display for modified files. Can be multiple characters if
-            |renderer.icons.modified_placement| isn't `"signcolumn"`.
+            Icon to display for modified files.
               Type: `string`, Default: `"●"`
 
             *nvim-tree.renderer.icons.glyphs.folder*
