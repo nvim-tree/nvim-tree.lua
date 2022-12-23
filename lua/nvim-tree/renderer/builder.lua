@@ -193,7 +193,7 @@ end
 ---@return HighlightedString[]|nil icon
 function Builder:_get_git_icons(node)
   local git_icons = git.get_icons(node)
-  if git_icons and #git_icons > 0 and self.is_git_sign then
+  if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
     local sign = git_icons[1]
     table.insert(self.signs, { sign = sign.hl, lnum = self.index + 1, priority = 1 })
     git_icons = nil
