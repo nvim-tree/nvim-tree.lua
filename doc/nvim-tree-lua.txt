@@ -247,6 +247,7 @@ Subsequent calls to setup will replace the previous configuration.
             folder = true,
             folder_arrow = true,
             git = true,
+            modified = true,
           },
           glyphs = {
             default = "",
@@ -649,6 +650,10 @@ Indicate which file have unsaved modification.
     succession (e.g. lsp rename).
       Type: `number`, Default: `50` (ms)
 
+  You will still need to set |renderer.icons.show.modified| `= true` or
+  |renderer.highlight_modified| `= true` to be able to see things in the
+  tree.
+
 *nvim-tree.filesystem_watchers*
 Will use file system watcher (libuv fs_event) to watch the filesystem for
 changes.
@@ -891,6 +896,11 @@ UI rendering setup
             *nvim-tree.renderer.icons.show.git*
             Show a git status icon, see |renderer.icons.git_placement|
             Requires |git.enable| `= true`
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.modified*
+            Show a modified icon, see |renderer.icons.modified_placement|
+            Requires |modified.enable| `= true`
               Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.glyphs*
@@ -1515,6 +1525,7 @@ NvimTreeEmptyFolderName     (Directory)
 NvimTreeOpenedFolderName    (Directory)
 NvimTreeExecFile
 NvimTreeOpenedFile
+NvimTreeModifiedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeIndentMarker
