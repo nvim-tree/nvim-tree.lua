@@ -190,6 +190,7 @@ Subsequent calls to setup will replace the previous configuration.
       view = {
         adaptive_size = false,
         centralize_selection = false,
+        cursorline = true,
         width = 30,
         hide_root_folder = false,
         side = "left",

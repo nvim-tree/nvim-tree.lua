@@ -499,6 +499,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   view = {
     adaptive_size = false,
     centralize_selection = false,
+    cursorline = true,
     width = 30,
     hide_root_folder = false,
     side = "left",
