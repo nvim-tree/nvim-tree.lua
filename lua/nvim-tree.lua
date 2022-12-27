@@ -481,10 +481,8 @@ local function setup_autocommands(opts)
   if opts.modified.enable then
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
-        utils.debounce("BufModifiedSet:modified_files", opts.modified.debounce_delay, function()
-          modified.reload()
-          reloaders.reload_explorer()
-        end)
+        modified.reload()
+        reloaders.reload_explorer()
       end,
     })
   end
@@ -653,7 +651,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     enable = false,
     show_on_dirs = true,
     show_on_open_dirs = false,
-    debounce_delay = 50,
   },
   actions = {
     use_system_clipboard = true,
