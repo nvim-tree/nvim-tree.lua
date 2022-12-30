@@ -119,15 +119,19 @@ local function pick_win_id()
 
   -- Restore window options
   for _, id in ipairs(selectable) do
-    for opt, value in pairs(win_opts[id]) do
-      vim.api.nvim_win_set_option(id, opt, value)
+    if vim.api.nvim_win_is_valid(id) then
+      for opt, value in pairs(win_opts[id]) do
+        vim.api.nvim_win_set_option(id, opt, value)
+      end
     end
   end
 
   if laststatus == 3 then
     for _, id in ipairs(not_selectable) do
-      for opt, value in pairs(win_opts[id]) do
-        vim.api.nvim_win_set_option(id, opt, value)
+      if vim.api.nvim_win_is_valid(id) then
+        for opt, value in pairs(win_opts[id]) do
+          vim.api.nvim_win_set_option(id, opt, value)
+        end
       end
     end
   end

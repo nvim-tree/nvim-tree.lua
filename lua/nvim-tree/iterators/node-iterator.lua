@@ -1,3 +1,4 @@
+local async = require "nvim-tree.async"
 local NodeIterator = {}
 NodeIterator.__index = NodeIterator
 
@@ -41,6 +42,33 @@ function NodeIterator:iterate()
   local iteration_count = 0
   local function iter(nodes)
     for _, node in ipairs(nodes) do
+      if self._filter_hidden(node) then
+        iteration_count = iteration_count + 1
+        if self._match(node) then
+          return node, iteration_count
+        end
+        self._apply_fn_on_node(node, iteration_count)
+        local children = self._recurse_with(node)
+        if children then
+          local n = iter(children)
+          if n then
+            return n, iteration_count
+          end
+        end
+      end
+    end
+    return nil, 0
+  end
+
+  return iter(self.nodes)
+end
+
+function NodeIterator:async_iterate()
+  local interrupter = async.Interrupter.new()
+  local iteration_count = 0
+  local function iter(nodes)
+    for _, node in ipairs(nodes) do
+      interrupter:check()
       if self._filter_hidden(node) then
         iteration_count = iteration_count + 1
         if self._match(node) then

@@ -2,6 +2,7 @@ local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
+local async = require "nvim-tree.async"
 
 local M = {}
 
@@ -22,11 +23,19 @@ function M.rename(node, to)
   end
 
   events._dispatch_will_rename_node(node.absolute_path, to)
-  local success, err = vim.loop.fs_rename(node.absolute_path, to)
+  local success, err
+  if M.enable_async then
+    err, success = async.call(vim.loop.fs_rename, node.absolute_path, to)
+  else
+    success, err = vim.loop.fs_rename(node.absolute_path, to)
+  end
   if not success then
     return notify.warn(err_fmt(node.absolute_path, to, err))
   end
   notify.info(node.absolute_path .. " ➜ " .. to)
+  if M.enable_async then
+    async.schedule()
+  end
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
@@ -76,10 +85,20 @@ function M.fn(default_modifier)
       if not new_file_path then
         return
       end
-
-      M.rename(node, prepend .. new_file_path .. append)
-      if M.enable_reload then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      if M.enable_async then
+        async.exec(M.rename, node, prepend .. new_file_path .. append, function(err)
+          if err then
+            notify.error(err)
+          end
+          if M.enable_reload then
+            require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+          end
+        end)
+      else
+        M.rename(node, prepend .. new_file_path .. append)
+        if M.enable_reload then
+          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        end
       end
     end)
   end
@@ -87,6 +106,7 @@ end
 
 function M.setup(opts)
   M.enable_reload = not opts.filesystem_watchers.enable
+  M.enable_async = opts.experimental.async.rename_file
 end
 
 return M

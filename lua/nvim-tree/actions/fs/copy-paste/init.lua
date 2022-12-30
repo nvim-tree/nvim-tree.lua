@@ -4,6 +4,7 @@ local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
+local async = require "nvim-tree.actions.fs.copy-paste.async"
 
 local M = {}
 
@@ -130,16 +131,25 @@ local function add_to_clipboard(node, clip)
 end
 
 function M.clear_clipboard()
+  if M.enable_async then
+    return async.clear_clipboard()
+  end
   clipboard.move = {}
   clipboard.copy = {}
   notify.info "Clipboard has been emptied."
 end
 
 function M.copy(node)
+  if M.enable_async then
+    return async.copy(node)
+  end
   add_to_clipboard(node, clipboard.copy)
 end
 
 function M.cut(node)
+  if M.enable_async then
+    return async.cut(node)
+  end
   add_to_clipboard(node, clipboard.move)
 end
 
@@ -195,7 +205,10 @@ local function do_cut(source, destination)
   return true
 end
 
-function M.paste(node)
+function M.paste(node, cb)
+  if M.enable_async then
+    return async.paste(node, cb)
+  end
   if clipboard.move[1] ~= nil then
     return do_paste(node, "move", do_cut)
   end
@@ -204,6 +217,9 @@ function M.paste(node)
 end
 
 function M.print_clipboard()
+  if M.enable_async then
+    return async.print_clipboard()
+  end
   local content = {}
   if #clipboard.move > 0 then
     table.insert(content, "Cut")
@@ -234,10 +250,16 @@ local function copy_to_clipboard(content)
 end
 
 function M.copy_filename(node)
+  if M.enable_async then
+    return async.copy_filename(node)
+  end
   return copy_to_clipboard(node.name)
 end
 
 function M.copy_path(node)
+  if M.enable_async then
+    return async.copy_path(node)
+  end
   local absolute_path = node.absolute_path
   local relative_path = utils.path_relative(absolute_path, core.get_cwd())
   local content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
@@ -245,6 +267,9 @@ function M.copy_path(node)
 end
 
 function M.copy_absolute_path(node)
+  if M.enable_async then
+    return async.copy_absolute_path(node)
+  end
   local absolute_path = node.absolute_path
   local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
   return copy_to_clipboard(content)
@@ -253,6 +278,8 @@ end
 function M.setup(opts)
   M.use_system_clipboard = opts.actions.use_system_clipboard
   M.enable_reload = not opts.filesystem_watchers.enable
+  M.enable_async = opts.experimental.async.copy_paste
+  async.setup(opts)
 end
 
 return M

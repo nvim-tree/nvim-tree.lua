@@ -5,16 +5,27 @@ local core = require "nvim-tree.core"
 local notify = require "nvim-tree.notify"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
+local async = require "nvim-tree.async"
 
 local M = {}
 
 local function create_and_notify(file)
-  local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
-  if not ok then
+  local fd, err
+  if M.enable_async then
+    err, fd = async.call(vim.loop.fs_open, file, "w", 420)
+  else
+    fd, err = vim.loop.fs_open(file, "w", 420)
+  end
+  if err then
     notify.error("Couldn't create file " .. file)
     return
   end
-  vim.loop.fs_close(fd)
+  if M.enable_async then
+    async.call(vim.loop.fs_close, fd)
+    async.schedule()
+  else
+    vim.loop.fs_close(fd)
+  end
   events._dispatch_file_created(file)
 end
 
@@ -49,7 +60,61 @@ local function get_containing_folder(node)
   return node.absolute_path:sub(0, -node_name_size - 1)
 end
 
-function M.fn(node)
+local async_fn = async.wrap(function(node)
+  local containing_folder = get_containing_folder(node)
+
+  local input_opts = { prompt = "Create file ", default = containing_folder, completion = "file" }
+
+  local new_file_path = async.call(vim.ui.input, input_opts)
+  utils.clear_prompt()
+  if not new_file_path or new_file_path == containing_folder then
+    return
+  end
+
+  if utils.file_exists(new_file_path) then
+    notify.warn "Cannot create: file already exists"
+    return
+  end
+
+  -- create a folder for each path element if the folder does not exist
+  -- if the answer ends with a /, create a file for the last path element
+  local is_last_path_file = not new_file_path:match(utils.path_separator .. "$")
+  local path_to_create = ""
+  local idx = 0
+
+  local num_nodes = get_num_nodes(utils.path_split(utils.path_remove_trailing(new_file_path)))
+  local is_error = false
+  for path in utils.path_split(new_file_path) do
+    idx = idx + 1
+    local p = utils.path_remove_trailing(path)
+    async.schedule()
+    if #path_to_create == 0 and vim.fn.has "win32" == 1 then
+      path_to_create = utils.path_join { p, path_to_create }
+    else
+      path_to_create = utils.path_join { path_to_create, p }
+    end
+    if is_last_path_file and idx == num_nodes then
+      create_file(path_to_create)
+    elseif not utils.file_exists(path_to_create) then
+      local err = async.call(vim.loop.fs_mkdir, path_to_create, 493)
+      if err then
+        notify.error("Could not create folder " .. path_to_create .. " :" .. err)
+        is_error = true
+        break
+      end
+      async.schedule()
+      events._dispatch_folder_created(new_file_path)
+    end
+  end
+  if not is_error then
+    notify.info(new_file_path .. " was properly created")
+  end
+
+  -- synchronously refreshes as we can't wait for the watchers
+  find_file(utils.path_remove_trailing(new_file_path))
+end, 1)
+
+function M.fn(node, cb)
   node = node and lib.get_last_group_node(node)
   if not node or node.name == ".." then
     node = {
@@ -57,6 +122,10 @@ function M.fn(node)
       nodes = core.get_explorer().nodes,
       open = true,
     }
+  end
+
+  if M.enable_async then
+    return async_fn(node, cb)
   end
 
   local containing_folder = get_containing_folder(node)
@@ -113,6 +182,7 @@ end
 
 function M.setup(opts)
   M.enable_reload = not opts.filesystem_watchers.enable
+  M.enable_async = opts.experimental.async.create_file
 end
 
 return M

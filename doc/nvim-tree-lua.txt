@@ -63,7 +63,7 @@ Requirements
 ==============================================================================
  2. QUICK START                                         *nvim-tree-quickstart*
 
-Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
+Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file. >lua
 
     -- examples for your init.lua
 
@@ -168,7 +168,7 @@ setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
 
 Subsequent calls to setup will replace the previous configuration.
->
+>lua
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
       disable_netrw = false,
@@ -393,6 +393,14 @@ Subsequent calls to setup will replace the previous configuration.
           watcher = false,
         },
       },
+      experimental = {
+        async = {
+          copy_paste = false,
+          create_file = false,
+          remove_file = false,
+          rename_file = false,
+        }
+      }
     } -- END_DEFAULT_OPTS
 <
 
@@ -404,7 +412,7 @@ Completely disable netrw
 
 It is strongly advised to eagerly disable netrw, due to race conditions at vim
 startup.
-Set the following at the very beginning of your `init.lua` / `init.vim`: >
+Set the following at the very beginning of your `init.lua` / `init.vim`: >lua
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
 <
@@ -451,7 +459,7 @@ function.
   - `name`:          `string`
   - `type`:          `"directory"` | `"file"` | `"link"`
 
-  Example: sort by name length: >
+  Example: sort by name length: >lua
     local sort_by = function(nodes)
       table.sort(nodes, function(a, b)
         return #a.name < #b.name
@@ -645,7 +653,7 @@ This can be used to attach keybindings to the tree buffer.
 When on_attach is "disabled", it will use the older mapping strategy, otherwise it
 will use the newer one.
     Type: `function(bufnr)`, Default: `"disable"`
-    e.g. >
+    e.g. >lua
       local api = require("nvim-tree.api")
 
       local function on_attach(bufnr)
@@ -779,7 +787,7 @@ UI rendering setup
       Type: `string` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
 
       Function is passed the absolute path of the root folder and should return a string.
-      e.g. >
+      e.g. >lua
         my_root_folder_label = function(path)
           return ".../" .. vim.fn.fnamemodify(path, ":t")
         end
@@ -1011,7 +1019,7 @@ Configuration for various actions.
             The function should return the window id that will open the node,
             or `nil` if an invalid window is picked or user cancelled the action.
               Type: `string` | `function`, Default: `"default"`
-              e.g. s1n7ax/nvim-window-picker plugin: >
+              e.g. s1n7ax/nvim-window-picker plugin: >lua
                 window_picker = {
                   enable = true,
                   picker = require('window-picker').pick_window,
@@ -1133,6 +1141,18 @@ Configuration for diagnostic logging.
         |nvim-tree.filesystem_watchers| processing, verbose.
           Type: `boolean`, Default: `false`
 
+*nvim-tree.experimental*
+Configuration for experimental features.
+
+    *nvim-tree.experimental.async*
+    Control experimental async behavior.
+
+        *nvim-tree.experimental.async.copy_paste*
+        Toggle async behavior of copy paste operation.
+        Type: `boolean`, Default: `false`
+
+        TODO here
+
 ==============================================================================
  4.1 VINEGAR STYLE                                         *nvim-tree-vinegar*
 
@@ -1143,8 +1163,8 @@ it in a specific way:
 
 - Use `require"nvim-tree".open_replacing_current_buffer()` instead of the
 default open command.
-You can easily implement a toggle using this too:
->
+You can easily implement a toggle using this too: >lua
+
     local function toggle_replace()
       local view = require"nvim-tree.view"
       local api = require"nvim-tree.api"
@@ -1156,8 +1176,8 @@ You can easily implement a toggle using this too:
     end
 <
 - Use the `edit_in_place` action to edit files. It's bound to `<C-e>` by
-default, vinegar uses `<CR>`. You can override this with:
->
+default, vinegar uses `<CR>`. You can override this with: >lua
+
     require"nvim-tree".setup {
       view = {
         mappings = {
@@ -1178,8 +1198,8 @@ A good functionality to enable is |nvim-tree.hijack_directories|.
  5. API                                                   *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features.
->
-e.g. >
+
+e.g. >lua
     local api = require("nvim-tree.api")
     api.tree.toggle()
 <
@@ -1299,7 +1319,7 @@ Setting your own mapping in the configuration will soon be deprecated, see
               Default `'n'`.
 
 Examples:
->
+>lua
     local function print_node_path(node)
       print(node.absolute_path)
     end
@@ -1381,7 +1401,7 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `m`               toggle_mark         Toggle node in bookmarks
 `bmv`             bulk_move           Move all bookmarked nodes into specified location
 
->
+>lua
   view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
     { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
     { key = "<C-e>",                          action = "edit_in_place" },
@@ -1443,7 +1463,7 @@ All the following highlight groups can be configured by hand. Aside from
 groups.
 
 Example (in your `init.vim`):
->
+>vim
     highlight NvimTreeSymlink guifg=blue gui=bold,underline
 <
 You should have 'termguicolors' enabled, otherwise, colors will not be
@@ -1533,7 +1553,7 @@ to |nvim_tree_registering_handlers| for more information.
 Handlers are registered by calling |nvim-tree-api| `events.subscribe`
 function with an `events.Event` kind.
 
-e.g. handler for node renamed: >
+e.g. handler for node renamed: >lua
     local api = require("nvim-tree.api")
     local Event = api.events.Event
 
@@ -1594,11 +1614,10 @@ To get the list of marked paths, you can call
 Navigation for marks is not bound by default in nvim-tree because we don't
 want to focus the tree view each time we wish to switch to another mark.
 
-This requires binding bookmark navigation yourself.
-
--- in your lua configuration
-vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
-vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
-vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
-
+This requires binding bookmark navigation yourself. >lua
+    -- in your lua configuration
+    vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
+    vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
+    vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
+<
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
