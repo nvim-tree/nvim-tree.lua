@@ -239,9 +239,9 @@ Subsequent calls to setup will replace the previous configuration.
         icons = {
           webdev_colors = true,
           git_placement = "before",
+          modified_placement = "after",
           padding = " ",
           symlink_arrow = " ➛ ",
-          modified_placement = "after",
           show = {
             file = true,
             folder = true,
@@ -855,6 +855,12 @@ UI rendering setup
         Note that the diagnostic signs and the modified sign will take precedence over the git signs.
           Type: `string`, Default: `before`
 
+        *nvim-tree.renderer.icons.modified_placement*
+        Place where the modified icon will be rendered.
+        Can be `"after"` or `"before"` filename (after the file/folders icons)
+        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+          Type: `string`, Default: `after`
+
         *nvim-tree.renderer.icons.padding*
         Inserted between icon and filename.
           Type: `string`, Default: `" "`
@@ -862,12 +868,6 @@ UI rendering setup
         *nvim-tree.renderer.icons.symlink_arrow*
         Used as a separator between symlinks' source and target.
           Type: `string`, Default: `" ➛ "`
-
-        *nvim-tree.renderer.icons.modified_placement*
-        Place where the modified icon will be rendered.
-        Can be `"after"` or `"before"` filename (after the file/folders icons)
-        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
-          Type: `string`, Default: `after`
 
         *nvim-tree.renderer.icons.show*
         Configuration options for showing icon types.
