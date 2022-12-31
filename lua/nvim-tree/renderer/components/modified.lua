@@ -33,7 +33,9 @@ function M.setup(opts)
   M.icon = opts.renderer.icons.glyphs.modified
   M.show_icon = opts.renderer.icons.show.modified
 
-  M.setup_signs()
+  if opts.renderer.icons.modified_placement == "signcolumn" then
+    M.setup_signs()
+  end
 end
 
 return M

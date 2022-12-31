@@ -150,7 +150,9 @@ function M.setup(opts)
 
   M.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
 
-  M.setup_signs(opts.renderer.icons.glyphs.git)
+  if opts.renderer.icons.git_placement == "signcolumn" then
+    M.setup_signs(opts.renderer.icons.glyphs.git)
+  end
 
   if opts.renderer.icons.show.git then
     M.get_icons = get_icons_
