@@ -272,21 +272,25 @@ end
 ---@param modified_icon HighlightedString|nil
 ---@return HighlightedString[]
 function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
+  local added_len = 0
   local function add_to_end(t1, t2)
-    local added_len = 0
-    for _, v in ipairs(t2) do
-      added_len = added_len + #v.str
-    end
-
     for _, v in ipairs(t2) do
       if added_len > 0 then
         table.insert(t1, { str = self.icon_padding })
       end
       table.insert(t1, v)
     end
+
+    -- first add_to_end don't need padding
+    -- hence added_len is calculated at the end to be used next time
+    added_len = 0
+    for _, v in ipairs(t2) do
+      added_len = added_len + #v.str
+    end
   end
 
-  local line = { padding, icon }
+  local line = { padding }
+  add_to_end(line, { icon })
   if git_icons and self.git_placement == "before" then
     add_to_end(line, git_icons)
   end
