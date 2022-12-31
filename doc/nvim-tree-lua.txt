@@ -191,6 +191,7 @@ Subsequent calls to setup will replace the previous configuration.
       view = {
         adaptive_size = false,
         centralize_selection = false,
+        cursorline = true,
         width = 30,
         hide_root_folder = false,
         side = "left",
@@ -680,6 +681,10 @@ Window / buffer setup.
     When entering nvim-tree, reposition the view so that the current node is
     initially centralized, see |zz|.
       Type: `boolean`, Default: `false`
+
+    *nvim-tree.view.cursorline*
+    Enable |cursorline| in the tree window.
+      Type: `boolean`, Default: `true`
 
     *nvim-tree.view.hide_root_folder*
     Hide the path of the current working directory on top of the tree.
