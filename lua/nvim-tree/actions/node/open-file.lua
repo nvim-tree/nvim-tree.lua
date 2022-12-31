@@ -234,9 +234,11 @@ local function open_in_new_window(filename, mode, win_ids)
     end
   end
 
-  local fname = vim.fn.fnameescape(filename)
-  if vim.fn.has("win32") then
-    fname = fname:gsub("%(", "\\(")
+  local fname = vim.fn.fnameescape(utils.canonical_path(filename))
+  fname = vim.loop.fs_realpath(fname);
+
+  if utils.is_windows then
+    fname =  fname:gsub("%(", "\\(")
   end
 
   local cmd
@@ -256,8 +258,7 @@ local function open_in_new_window(filename, mode, win_ids)
   else
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
-  
-  
+
   pcall(vim.cmd, cmd)
   lib.set_target_win()
 end
