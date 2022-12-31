@@ -40,6 +40,7 @@ local function get_hl_groups()
     SpecialFile = { gui = "bold,underline", fg = colors.yellow },
     ImageFile = { gui = "bold", fg = colors.purple },
     OpenedFile = { gui = "bold", fg = colors.green },
+    ModifiedFile = { fg = colors.green },
 
     GitDirty = { fg = colors.dark_red },
     GitDeleted = { fg = colors.dark_red },

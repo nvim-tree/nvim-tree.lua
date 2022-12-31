@@ -1,19 +1,17 @@
 local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
 
-local M = {
-  SIGN_GROUP = "NvimTreeGitSigns",
-}
+local M = {}
 
 local function build_icons_table(i)
   local icons = {
-    staged = { icon = i.staged, hl = "NvimTreeGitStaged", ord = 1 },
-    unstaged = { icon = i.unstaged, hl = "NvimTreeGitDirty", ord = 2 },
-    renamed = { icon = i.renamed, hl = "NvimTreeGitRenamed", ord = 3 },
-    deleted = { icon = i.deleted, hl = "NvimTreeGitDeleted", ord = 4 },
-    unmerged = { icon = i.unmerged, hl = "NvimTreeGitMerge", ord = 5 },
-    untracked = { icon = i.untracked, hl = "NvimTreeGitNew", ord = 6 },
-    ignored = { icon = i.ignored, hl = "NvimTreeGitIgnored", ord = 7 },
+    staged = { str = i.staged, hl = "NvimTreeGitStaged", ord = 1 },
+    unstaged = { str = i.unstaged, hl = "NvimTreeGitDirty", ord = 2 },
+    renamed = { str = i.renamed, hl = "NvimTreeGitRenamed", ord = 3 },
+    deleted = { str = i.deleted, hl = "NvimTreeGitDeleted", ord = 4 },
+    unmerged = { str = i.unmerged, hl = "NvimTreeGitMerge", ord = 5 },
+    untracked = { str = i.untracked, hl = "NvimTreeGitNew", ord = 6 },
+    ignored = { str = i.ignored, hl = "NvimTreeGitIgnored", ord = 7 },
   }
   return {
     ["M "] = { icons.staged },
@@ -59,6 +57,8 @@ local function warn_status(git_status)
   )
 end
 
+---@param node table
+---@return HighlightedString[]|nil
 local function get_icons_(node)
   local git_status = explorer_node.get_git_status(node)
   if git_status == nil then
@@ -84,6 +84,11 @@ local function get_icons_(node)
       end
     end
   end
+
+  -- sort icons so it looks slightly better
+  table.sort(iconss, function(a, b)
+    return a.ord < b.ord
+  end)
 
   return iconss
 end
@@ -145,7 +150,9 @@ function M.setup(opts)
 
   M.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
 
-  M.setup_signs(opts.renderer.icons.glyphs.git)
+  if opts.renderer.icons.git_placement == "signcolumn" then
+    M.setup_signs(opts.renderer.icons.glyphs.git)
+  end
 
   if opts.renderer.icons.show.git then
     M.get_icons = get_icons_

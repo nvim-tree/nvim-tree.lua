@@ -224,6 +224,7 @@ Subsequent calls to setup will replace the previous configuration.
         highlight_git = false,
         full_name = false,
         highlight_opened_files = "none",
+        highlight_modified = "none",
         root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
         indent_markers = {
@@ -240,6 +241,7 @@ Subsequent calls to setup will replace the previous configuration.
         icons = {
           webdev_colors = true,
           git_placement = "before",
+          modified_placement = "after",
           padding = " ",
           symlink_arrow = " ➛ ",
           show = {
@@ -247,11 +249,13 @@ Subsequent calls to setup will replace the previous configuration.
             folder = true,
             folder_arrow = true,
             git = true,
+            modified = true,
           },
           glyphs = {
             default = "",
             symlink = "",
             bookmark = "",
+            modified = "●",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -325,6 +329,11 @@ Subsequent calls to setup will replace the previous configuration.
         show_on_dirs = true,
         show_on_open_dirs = true,
         timeout = 400,
+      },
+      modified = {
+        enable = false,
+        show_on_dirs = true,
+        show_on_open_dirs = true,
       },
       actions = {
         use_system_clipboard = true,
@@ -544,6 +553,7 @@ Configuration options for the system open command.
 
 *nvim-tree.diagnostics*
 Show LSP and COC diagnostics in the signcolumn
+Note that the modified sign will take precedence over the diagnostics signs.
 
     `NOTE`: it will use the default diagnostic color groups to highlight the signs.
     If you wish to customize, you can override these groups:
@@ -618,6 +628,26 @@ Git integration with icons and colors.
   The git integration is blocking, so if your timeout is too long (like not in
   milliseconds but a few seconds), it will not render anything until the git
   process returned the data.
+
+*nvim-tree.modified*
+Indicate which file have unsaved modification.
+
+    *nvim-tree.modified.enable*
+    Enable / disable the feature.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.modified.show_on_dirs*
+    Show modified indication on directory whose children are modified.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.modified.show_on_open_dirs*
+    Show modified indication on open directories.
+    Only relevant when |modified.show_on_dirs| is `true`.
+      Type: `boolean`, Default: `true`
+
+  You will still need to set |renderer.icons.show.modified| `= true` or
+  |renderer.highlight_modified| `= true` to be able to see things in the
+  tree.
 
 *nvim-tree.filesystem_watchers*
 Will use file system watcher (libuv fs_event) to watch the filesystem for
@@ -779,6 +809,13 @@ UI rendering setup
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
+    *nvim-tree.renderer.highlight_modified*
+    Highlight icons and/or names for modified files using `NvimTreeModified`
+    highlight groups.
+    Value can be `"none"`, `"icon"`, `"name"` or `"all"`
+    This can be used with or without the icons.
+      Type: `string`, Default `"none"`
+
     *nvim-tree.renderer.root_folder_label*  (previously `renderer.root_folder_modifier`)
     In what format to show root folder. See `:help filename-modifiers` for
     available `string` options.
@@ -821,12 +858,17 @@ UI rendering setup
         Place where the git icons will be rendered.
         Can be `"after"` or `"before"` filename (after the file/folders icons)
         or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
-        Note that the diagnostic signs will take precedence over the git signs.
+        Note that the diagnostic signs and the modified sign will take precedence over the git signs.
           Type: `string`, Default: `before`
+
+        *nvim-tree.renderer.icons.modified_placement*
+        Place where the modified icon will be rendered.
+        Can be `"after"` or `"before"` filename (after the file/folders icons)
+        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+          Type: `string`, Default: `after`
 
         *nvim-tree.renderer.icons.padding*
         Inserted between icon and filename.
-        Use with caution, it could break rendering if you set an empty string depending on your font.
           Type: `string`, Default: `" "`
 
         *nvim-tree.renderer.icons.symlink_arrow*
@@ -854,8 +896,15 @@ UI rendering setup
             Requires |git.enable| `= true`
               Type: `boolean`, Default: `true`
 
+            *nvim-tree.renderer.icons.show.modified*
+            Show a modified icon, see |renderer.icons.modified_placement|
+            Requires |modified.enable| `= true`
+              Type: `boolean`, Default: `true`
+
         *nvim-tree.renderer.icons.glyphs*
         Configuration options for icon glyphs.
+        NOTE: Do not set any glyphs to more than two characters if it's going
+        to appear in the signcolumn.
 
             *nvim-tree.renderer.icons.glyphs.default*
             Glyph for files. Will be overridden by `nvim-web-devicons` if available.
@@ -864,6 +913,10 @@ UI rendering setup
             *nvim-tree.renderer.icons.glyphs.symlink*
             Glyph for symlinks to files.
               Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.glyphs.modified*
+            Icon to display for modified files.
+              Type: `string`, Default: `"●"`
 
             *nvim-tree.renderer.icons.glyphs.folder*
             Glyphs for directories.
@@ -1471,6 +1524,7 @@ NvimTreeEmptyFolderName     (Directory)
 NvimTreeOpenedFolderName    (Directory)
 NvimTreeExecFile
 NvimTreeOpenedFile
+NvimTreeModifiedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeIndentMarker

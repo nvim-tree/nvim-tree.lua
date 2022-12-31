@@ -68,6 +68,12 @@ local function get_padding_arrows(node, indent)
   end
 end
 
+---@param depth integer
+---@param idx integer
+---@param nodes_number integer
+---@param node table
+---@param markers table
+---@return HighlightedString
 function M.get_padding(depth, idx, nodes_number, node, markers)
   local padding = ""
 
@@ -86,7 +92,7 @@ function M.get_padding(depth, idx, nodes_number, node, markers)
     padding = padding .. get_padding_arrows(node, not show_markers)
   end
 
-  return padding
+  return { str = padding, hl = "NvimTreeIndentMarker" }
 end
 
 function M.setup(opts)

@@ -4,6 +4,7 @@ local core = require "nvim-tree.core"
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
+local modified = require "nvim-tree.renderer.components.modified"
 
 local Builder = {}
 Builder.__index = Builder
@@ -50,21 +51,32 @@ end
 
 function Builder:configure_opened_file_highlighting(highlight_opened_files)
   self.highlight_opened_files = highlight_opened_files
-
   return self
 end
 
-function Builder:configure_git_icons_padding(padding)
-  self.git_icon_padding = padding or " "
+function Builder:configure_modified_highlighting(highlight_modified)
+  self.highlight_modified = highlight_modified
+  return self
+end
+
+function Builder:configure_icon_padding(padding)
+  self.icon_padding = padding or " "
   return self
 end
 
 function Builder:configure_git_icons_placement(where)
-  if where == "signcolumn" then
-    vim.fn.sign_unplace(git.SIGN_GROUP)
-    self.is_git_sign = true
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "before" -- default before
   end
-  self.is_git_after = where == "after" and not self.is_git_sign
+  self.git_placement = where
+  return self
+end
+
+function Builder:configure_modified_placement(where)
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "after" -- default after
+  end
+  self.modified_placement = where
   return self
 end
 
@@ -91,46 +103,48 @@ local function get_folder_name(node)
   return name
 end
 
-function Builder:_unwrap_git_data(git_icons_and_hl_groups, offset)
-  if not git_icons_and_hl_groups then
+---@class HighlightedString
+---@field str string
+---@field hl string|nil
+
+---@param highlighted_strings HighlightedString[]
+---@return string
+function Builder:_unwrap_highlighted_strings(highlighted_strings)
+  if not highlighted_strings then
     return ""
   end
 
-  local icon = ""
-  for i, v in ipairs(git_icons_and_hl_groups) do
-    if #v.icon > 0 then
-      self:_insert_highlight(v.hl, offset + #icon, offset + #icon + #v.icon)
-      local remove_padding = self.is_git_after and i == #git_icons_and_hl_groups
-      icon = icon .. v.icon .. (remove_padding and "" or self.git_icon_padding)
+  local string = ""
+  for _, v in ipairs(highlighted_strings) do
+    if #v.str > 0 then
+      if v.hl then
+        self:_insert_highlight(v.hl, #string, #string + #v.str)
+      end
+      string = string .. v.str
     end
   end
-  return icon
+  return string
 end
 
-function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
-  local offset = string.len(padding)
-
-  local name = get_folder_name(node)
+---@param node table
+---@return HighlightedString icon, HighlightedString name
+function Builder:_build_folder(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
 
-  local foldername = name .. self.trailing_slash
+  local foldername = get_folder_name(node) .. self.trailing_slash
   if node.link_to and self.symlink_destination then
     local arrow = icons.i.symlink_arrow
     local link_to = utils.path_relative(node.link_to, core.get_cwd())
     foldername = foldername .. arrow .. link_to
   end
 
-  local git_icons = self:_unwrap_git_data(git_icons_tbl, offset + #icon + (self.is_git_after and #foldername + 1 or 0))
-  local fname_starts_at = offset + #icon + (self.is_git_after and 0 or #git_icons)
-  local line = self:_format_line(padding .. icon, foldername, git_icons)
-  self:_insert_line(line)
-
+  local icon_hl
   if #icon > 0 then
     if node.open then
-      self:_insert_highlight("NvimTreeOpenedFolderIcon", offset, offset + #icon)
+      icon_hl = "NvimTreeOpenedFolderIcon"
     else
-      self:_insert_highlight("NvimTreeClosedFolderIcon", offset, offset + #icon)
+      icon_hl = "NvimTreeClosedFolderIcon"
     end
   end
 
@@ -143,27 +157,12 @@ function Builder:_build_folder(node, padding, git_hl, git_icons_tbl)
     foldername_hl = "NvimTreeEmptyFolderName"
   end
 
-  self:_insert_highlight(foldername_hl, fname_starts_at, fname_starts_at + #foldername)
-
-  if git_hl then
-    self:_insert_highlight(git_hl, fname_starts_at, fname_starts_at + #foldername)
-  end
+  return { str = icon, hl = icon_hl }, { str = foldername, hl = foldername_hl }
 end
 
-function Builder:_format_line(before, after, git_icons)
-  git_icons = self.is_git_after and git_icons and " " .. git_icons or git_icons
-  return string.format(
-    "%s%s%s%s",
-    before,
-    self.is_git_after and "" or git_icons,
-    after,
-    self.is_git_after and git_icons or ""
-  )
-end
-
-function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
-  local offset = string.len(padding)
-
+---@param node table
+---@return HighlightedString icon, HighlightedString name
+function Builder:_build_symlink(node)
   local icon = icons.i.symlink
   local arrow = icons.i.symlink_arrow
   local symlink_formatted = node.name
@@ -172,107 +171,173 @@ function Builder:_build_symlink(node, padding, git_highlight, git_icons_tbl)
     symlink_formatted = symlink_formatted .. arrow .. link_to
   end
 
-  local link_highlight = git_highlight or "NvimTreeSymlink"
+  local link_highlight = "NvimTreeSymlink"
 
-  local git_icons_starts_at = offset + #icon + (self.is_git_after and #symlink_formatted + 1 or 0)
-  local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
-  local line = self:_format_line(padding .. icon, symlink_formatted, git_icons)
-
-  self:_insert_highlight(link_highlight, offset + (self.is_git_after and 0 or #git_icons), string.len(line))
-  self:_insert_line(line)
+  return { str = icon }, { str = symlink_formatted, hl = link_highlight }
 end
 
-function Builder:_build_file_icon(node, offset)
+---@param node table
+---@return HighlightedString icon
+function Builder:_build_file_icon(node)
   local icon, hl_group = icons.get_file_icon(node.name, node.extension)
-  if hl_group then
-    self:_insert_highlight(hl_group, offset, offset + #icon)
-  end
-  return icon, false
+  return { str = icon, hl = hl_group }
 end
 
-function Builder:_highlight_opened_files(node, offset, icon_length, git_icons_length)
-  local from = offset
-  local to = offset
+---@param node table
+---@return HighlightedString icon, HighlightedString name
+function Builder:_build_file(node)
+  local icon = self:_build_file_icon(node)
 
-  if self.highlight_opened_files == "icon" then
-    to = from + icon_length
-  elseif self.highlight_opened_files == "name" then
-    from = offset + icon_length + git_icons_length
-    to = from + #node.name
-  elseif self.highlight_opened_files == "all" then
-    to = from + icon_length + git_icons_length + #node.name
-  end
-
-  self:_insert_highlight("NvimTreeOpenedFile", from, to)
-end
-
-function Builder:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
-  local offset = string.len(padding)
-
-  local icon = self:_build_file_icon(node, offset)
-
-  local git_icons_starts_at = offset + #icon + (self.is_git_after and #node.name + 1 or 0)
-  local git_icons = self:_unwrap_git_data(git_icons_tbl, git_icons_starts_at)
-
-  self:_insert_line(self:_format_line(padding .. icon, node.name, git_icons))
-
-  local git_icons_length = self.is_git_after and 0 or #git_icons
-  local col_start = offset + #icon + git_icons_length
-  local col_end = col_start + #node.name
-
+  local hl
   if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
-    self:_insert_highlight("NvimTreeSpecialFile", col_start, col_end)
+    hl = "NvimTreeSpecialFile"
   elseif node.executable then
-    self:_insert_highlight("NvimTreeExecFile", col_start, col_end)
+    hl = "NvimTreeExecFile"
   elseif self.picture_map[node.extension] then
-    self:_insert_highlight("NvimTreeImageFile", col_start, col_end)
+    hl = "NvimTreeImageFile"
   end
 
-  local should_highlight_opened_files = self.highlight_opened_files
+  return icon, { str = node.name, hl = hl }
+end
+
+---@param node table
+---@return HighlightedString[]|nil icon
+function Builder:_get_git_icons(node)
+  local git_icons = git.get_icons(node)
+  if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
+    local sign = git_icons[1]
+    table.insert(self.signs, { sign = sign.hl, lnum = self.index + 1, priority = 1 })
+    git_icons = nil
+  end
+  return git_icons
+end
+
+---@param node table
+---@return HighlightedString|nil icon
+function Builder:_get_modified_icon(node)
+  local modified_icon = modified.get_icon(node)
+  if modified_icon and self.modified_placement == "signcolumn" then
+    local sign = modified_icon
+    table.insert(self.signs, { sign = sign.hl, lnum = self.index + 1, priority = 3 })
+    modified_icon = nil
+  end
+  return modified_icon
+end
+
+---@param node table
+---@return string icon_highlight, string name_highlight
+function Builder:_get_highlight_override(node, unloaded_bufnr)
+  -- highlights precedence:
+  -- original < git < opened_file < modified
+  local name_hl, icon_hl
+
+  -- git
+  local git_highlight = git.get_highlight(node)
+  if git_highlight then
+    name_hl = git_highlight
+  end
+
+  -- opened file
+  if
+    self.highlight_opened_files
     and vim.fn.bufloaded(node.absolute_path) > 0
     and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr
-  if should_highlight_opened_files then
-    self:_highlight_opened_files(node, offset, #icon, git_icons_length)
-  end
-
-  if git_highlight then
-    self:_insert_highlight(git_highlight, col_start, col_end)
-  end
-end
-
-function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
-  local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
-
-  if string.len(padding) > 0 then
-    self:_insert_highlight("NvimTreeIndentMarker", 0, string.len(padding))
-  end
-
-  local git_highlight = git.get_highlight(node)
-  local git_icons_tbl = git.get_icons(node)
-
-  if git_icons_tbl and #git_icons_tbl > 0 then
-    if self.is_git_sign then
-      local git_info = git_icons_tbl[1]
-      table.insert(self.signs, { sign = git_info.hl, lnum = self.index + 1 })
-      git_icons_tbl = {}
-    else
-      -- sort icons so it looks slightly better
-      table.sort(git_icons_tbl, function(a, b)
-        return a.ord < b.ord
-      end)
+  then
+    if self.highlight_opened_files == "all" or self.highlight_opened_files == "name" then
+      name_hl = "NvimTreeOpenedFile"
+    end
+    if self.highlight_opened_files == "all" or self.highlight_opened_files == "icon" then
+      icon_hl = "NvimTreeOpenedFile"
     end
   end
 
+  -- modified file
+  local modified_highlight = modified.get_highlight(node)
+  if modified_highlight then
+    if self.highlight_modified == "all" or self.highlight_modified == "name" then
+      name_hl = modified_highlight
+    end
+    if self.highlight_modified == "all" or self.highlight_modified == "icon" then
+      icon_hl = modified_highlight
+    end
+  end
+
+  return icon_hl, name_hl
+end
+
+---@param padding HighlightedString
+---@param icon HighlightedString
+---@param name HighlightedString
+---@param git_icons HighlightedString[]|nil
+---@param modified_icon HighlightedString|nil
+---@return HighlightedString[]
+function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
+  local added_len = 0
+  local function add_to_end(t1, t2)
+    for _, v in ipairs(t2) do
+      if added_len > 0 then
+        table.insert(t1, { str = self.icon_padding })
+      end
+      table.insert(t1, v)
+    end
+
+    -- first add_to_end don't need padding
+    -- hence added_len is calculated at the end to be used next time
+    added_len = 0
+    for _, v in ipairs(t2) do
+      added_len = added_len + #v.str
+    end
+  end
+
+  local line = { padding }
+  add_to_end(line, { icon })
+  if git_icons and self.git_placement == "before" then
+    add_to_end(line, git_icons)
+  end
+  if modified_icon and self.modified_placement == "before" then
+    add_to_end(line, { modified_icon })
+  end
+  add_to_end(line, { name })
+  if git_icons and self.git_placement == "after" then
+    add_to_end(line, git_icons)
+  end
+  if modified_icon and self.modified_placement == "after" then
+    add_to_end(line, { modified_icon })
+  end
+
+  return line
+end
+
+function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
+  -- various components
+  local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
+  local git_icons = self:_get_git_icons(node)
+  local modified_icon = self:_get_modified_icon(node)
+
+  -- main components
   local is_folder = node.nodes ~= nil
   local is_symlink = node.link_to ~= nil
-
+  local icon, name
   if is_folder then
-    self:_build_folder(node, padding, git_highlight, git_icons_tbl)
+    icon, name = self:_build_folder(node)
   elseif is_symlink then
-    self:_build_symlink(node, padding, git_highlight, git_icons_tbl)
+    icon, name = self:_build_symlink(node)
   else
-    self:_build_file(node, padding, git_highlight, git_icons_tbl, unloaded_bufnr)
+    icon, name = self:_build_file(node)
   end
+
+  -- highlight override
+  local icon_hl, name_hl = self:_get_highlight_override(node, unloaded_bufnr)
+  if icon_hl then
+    icon.hl = icon_hl
+  end
+  if name_hl then
+    name.hl = name_hl
+  end
+
+  local line = self:_format_line(padding, icon, name, git_icons, modified_icon)
+  self:_insert_line(self:_unwrap_highlighted_strings(line))
+
   self.index = self.index + 1
 
   if node.open then
