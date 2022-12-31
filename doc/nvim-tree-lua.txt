@@ -331,7 +331,7 @@ Subsequent calls to setup will replace the previous configuration.
       modified = {
         enable = false,
         show_on_dirs = true,
-        show_on_open_dirs = false,
+        show_on_open_dirs = true,
       },
       actions = {
         use_system_clipboard = true,
@@ -641,7 +641,7 @@ Indicate which file have unsaved modification.
     *nvim-tree.modified.show_on_open_dirs*
     Show modified indication on open directories.
     Only relevant when |modified.show_on_dirs| is `true`.
-      Type: `boolean`, Default: `false`
+      Type: `boolean`, Default: `true`
 
   You will still need to set |renderer.icons.show.modified| `= true` or
   |renderer.highlight_modified| `= true` to be able to see things in the

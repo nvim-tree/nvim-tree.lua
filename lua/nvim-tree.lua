@@ -650,7 +650,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   modified = {
     enable = false,
     show_on_dirs = true,
-    show_on_open_dirs = false,
+    show_on_open_dirs = true,
   },
   actions = {
     use_system_clipboard = true,
