@@ -104,9 +104,7 @@ function M.reload(node, git_status, unloaded_bufnr)
       else
         local n = nodes_by_path[abs]
         if n then
-          -- #1831 this appears to be very expensive on WSL; test bypassing
-          -- n.executable = builders.is_executable(n.parent, abs, n.extension or "")
-          n.executable = false
+          n.executable = builders.is_executable(abs)
           n.fs_stat = fs_stat_cached(abs)
         end
       end

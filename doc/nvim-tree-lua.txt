@@ -15,6 +15,7 @@ CONTENTS                                                           *nvim-tree*
   7. Highlight Groups                         |nvim-tree-highlight|
   8. Events                                   |nvim-tree-events|
   9. Bookmarks                                |nvim-tree-bookmarks|
+ 10. OS Specific Restrictions                 |nvim-tree-os-specific|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -1580,7 +1581,7 @@ e.g. handler for node renamed: >
                   {folder_name}  `{string}` Absolute path to the removed folder.
 
 ==============================================================================
- 9. BOOKMARKS                                      *nvim-tree-bookmarks*
+ 9. BOOKMARKS                                            *nvim-tree-bookmarks*
 
 You can toggle marks on files/folders with
 `require("nvim-tree.api").marks.toggle(node)` which is bound to `m` by
@@ -1600,5 +1601,16 @@ This requires binding bookmark navigation yourself.
 vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
 vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
 vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
+
+==============================================================================
+ 10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+
+macOS
+- Trash is unavailable
+
+Windows WSL and PowerShell
+- Trash is unavailable
+- Executable file detection is disabled as this is non-performant and can
+  freeze nvim
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
