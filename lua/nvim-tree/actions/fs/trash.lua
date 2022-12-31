@@ -1,13 +1,7 @@
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
 
-local M = {
-  config = {
-    is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1,
-    is_macos = vim.fn.has "mac" == 1 or vim.fn.has "macunix" == 1,
-    is_unix = vim.fn.has "unix" == 1,
-  },
-}
+local M = {}
 
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
@@ -34,7 +28,7 @@ function M.fn(node)
   end
 
   -- configs
-  if M.config.is_unix then
+  if utils.is_unix then
     if M.config.trash.cmd == nil then
       M.config.trash.cmd = "trash"
     end
@@ -108,6 +102,7 @@ function M.fn(node)
 end
 
 function M.setup(opts)
+  M.config = {}
   M.config.trash = opts.trash or {}
   M.enable_reload = not opts.filesystem_watchers.enable
 end

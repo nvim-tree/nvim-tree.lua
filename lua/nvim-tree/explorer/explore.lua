@@ -23,6 +23,10 @@ local function populate_children(handle, cwd, node, git_status)
     end
 
     local abs = utils.path_join { cwd, name }
+
+    local pn = string.format("explore populate_children %s", abs)
+    local ps = log.profile_start(pn)
+
     t = get_type_from(t, abs)
     if not filters.should_filter(abs, filter_status) and not nodes_by_path[abs] then
       local child = nil
@@ -42,6 +46,8 @@ local function populate_children(handle, cwd, node, git_status)
         explorer_node.update_git_status(child, node_ignored, git_status)
       end
     end
+
+    log.profile_end(ps, pn)
   end
 end
 
