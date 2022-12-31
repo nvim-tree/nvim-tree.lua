@@ -17,7 +17,7 @@ function M.reload()
   end
 end
 
----@param node table TODO: we should probably have a Node type
+---@param node table
 ---@return boolean
 function M.is_modified(node)
   return M.config.enable
