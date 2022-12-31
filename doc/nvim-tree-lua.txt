@@ -898,6 +898,8 @@ UI rendering setup
 
         *nvim-tree.renderer.icons.glyphs*
         Configuration options for icon glyphs.
+        NOTE: Do not set any glyphs to more than two characters if it's going
+        to appear in the signcolumn.
 
             *nvim-tree.renderer.icons.glyphs.default*
             Glyph for files. Will be overridden by `nvim-web-devicons` if available.
