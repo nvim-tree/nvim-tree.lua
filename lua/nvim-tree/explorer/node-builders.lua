@@ -1,10 +1,7 @@
 local utils = require "nvim-tree.utils"
 local watch = require "nvim-tree.explorer.watch"
 
-local M = {
-  is_windows = vim.fn.has "win32" == 1,
-  is_wsl = vim.fn.has "wsl" == 1,
-}
+local M = {}
 
 function M.folder(parent, absolute_path, name)
   local handle = utils.fs_scandir_profiled(absolute_path)
@@ -27,21 +24,16 @@ function M.folder(parent, absolute_path, name)
   return node
 end
 
-function M.is_executable(parent, absolute_path, ext)
-  if M.is_windows then
-    return utils.is_windows_exe(ext)
-  elseif M.is_wsl then
-    if parent.is_wsl_windows_fs_path == nil then
-      -- Evaluate lazily when needed and do so only once for each parent
-      -- as 'wslpath' calls can get expensive in highly populated directories.
-      parent.is_wsl_windows_fs_path = utils.is_wsl_windows_fs_path(absolute_path)
-    end
-
-    if parent.is_wsl_windows_fs_path then
-      return utils.is_wsl_windows_fs_exe(ext)
-    end
+--- path is an executable file or directory
+--- @param absolute_path string
+--- @return boolean
+function M.is_executable(absolute_path)
+  if utils.is_windows or utils.is_wsl then
+    --- executable detection on windows is buggy and not performant hence it is disabled
+    return false
+  else
+    return vim.loop.fs_access(absolute_path, "X")
   end
-  return vim.loop.fs_access(absolute_path, "X")
 end
 
 function M.file(parent, absolute_path, name)
@@ -50,7 +42,7 @@ function M.file(parent, absolute_path, name)
   return {
     type = "file",
     absolute_path = absolute_path,
-    executable = M.is_executable(parent, absolute_path, ext),
+    executable = M.is_executable(absolute_path),
     extension = ext,
     fs_stat = vim.loop.fs_stat(absolute_path),
     name = name,

@@ -13,7 +13,7 @@ local running = {}
 ---Find a path in the tree, expand it and focus it
 ---@param fname string full path
 function M.fn(fname)
-  if not core.get_explorer() then
+  if not core.get_explorer() or not view.is_visible() then
     return
   end
 
