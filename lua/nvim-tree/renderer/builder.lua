@@ -65,12 +65,18 @@ function Builder:configure_icon_padding(padding)
 end
 
 function Builder:configure_git_icons_placement(where)
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "before" -- default before
+  end
   self.git_placement = where
   return self
 end
 
-function Builder:configure_modified_placement(modified_placement)
-  self.modified_placement = modified_placement
+function Builder:configure_modified_placement(where)
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "after" -- default after
+  end
+  self.modified_placement = where
   return self
 end
 
