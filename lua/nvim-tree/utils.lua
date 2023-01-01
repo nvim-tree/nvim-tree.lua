@@ -197,12 +197,8 @@ end
 -- Create empty sub-tables if not present
 -- @param tbl to create empty inside of
 -- @param path dot separated string of sub-tables
--- @return deepest sub-table
+-- @return table deepest sub-table
 function M.table_create_missing(tbl, path)
-  if tbl == nil then
-    return nil
-  end
-
   local t = tbl
   for s in string.gmatch(path, "([^%.]+)%.*") do
     if t[s] == nil then
@@ -222,12 +218,8 @@ end
 --- @param dst table to copy to
 --- @param dst_path string dot separated string of sub-tables, created when missing
 --- @param dst_pos string value pos
---- @param remove boolean default true
+--- @param remove boolean
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  if remove == nil then
-    remove = true
-  end
-
   local ok, err = pcall(vim.validate, {
     src = { src, "table" },
     src_path = { src_path, "string" },
@@ -246,11 +238,10 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remo
     if src[pos] and type(src[pos]) == "table" then
       src = src[pos]
     else
-      src = nil
-      break
+      return
     end
   end
-  local src_val = src and src[src_pos]
+  local src_val = src[src_pos]
   if src_val == nil then
     return
   end

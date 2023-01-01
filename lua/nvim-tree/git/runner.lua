@@ -45,7 +45,7 @@ function Runner:_handle_incoming_data(prev_output, incoming)
     self._parse_status_output(line)
   end
 
-  return nil
+  return ""
 end
 
 function Runner:_getopts(stdout_handle, stderr_handle)
