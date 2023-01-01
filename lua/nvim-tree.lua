@@ -420,7 +420,7 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
-        utils.debounce("BufEnter:find_file", opts.update_focused_file.debounce_delay, function()
+        utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
           find_file(false)
         end)
       end,
@@ -609,7 +609,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   update_focused_file = {
     enable = false,
-    debounce_delay = 15,
     update_root = false,
     ignore_list = {},
   },
