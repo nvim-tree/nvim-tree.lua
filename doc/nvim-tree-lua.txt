@@ -712,8 +712,8 @@ Window / buffer setup.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.view.debounce_delay*
-    Idle milliseconds between BufReadPost, BufUnload and update.
-    The last BufReadPost or BufUnload will be focused, others are discarded.
+    Idle milliseconds between BufReadPost, BufUnload or BufEnter and update.
+    The last BufReadPost, BufUnload or BufEnter will be focused, others are discarded.
       Type: `number`, Default: `15` (ms)
 
     *nvim-tree.view.hide_root_folder*
