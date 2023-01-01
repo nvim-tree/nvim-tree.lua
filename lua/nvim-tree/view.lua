@@ -483,7 +483,6 @@ function M.setup(opts)
   local options = opts.view or {}
   M.View.adaptive_size = options.adaptive_size
   M.View.centralize_selection = options.centralize_selection
-  M.View.debounce_delay = options.debounce_delay
   M.View.side = (options.side == "right") and "right" or "left"
   M.View.width = options.width
   M.View.height = options.height
