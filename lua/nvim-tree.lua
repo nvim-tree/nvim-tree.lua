@@ -485,8 +485,10 @@ local function setup_autocommands(opts)
   if opts.modified.enable then
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
-        modified.reload()
-        reloaders.reload_explorer()
+        utils.debounce("Buf:modified", opts.view.debounce_delay, function()
+          modified.reload()
+          reloaders.reload_explorer()
+        end)
       end,
     })
   end
