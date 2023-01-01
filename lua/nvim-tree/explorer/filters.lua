@@ -91,8 +91,8 @@ local function custom(path)
 end
 
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
----@param git_status table results of git.load_project_status(...)
----@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+---@param git_status table|nil optional results of git.load_project_status(...)
+---@param unloaded_bufnr number|nil optional bufnr recently unloaded via BufUnload event
 ---@return table
 --- git_status: reference
 --- unloaded_bufnr: copy

@@ -14,9 +14,11 @@ function M.raw(typ, fmt, ...)
 
   local line = string.format(fmt, ...)
   local file = io.open(M.path, "a")
-  io.output(file)
-  io.write(line)
-  io.close(file)
+  if file then
+    io.output(file)
+    io.write(line)
+    io.close(file)
+  end
 end
 
 --- Write to log file via M.line
@@ -24,7 +26,7 @@ end
 --- @return number nanos to pass to profile_end
 function M.profile_start(fmt, ...)
   if not M.path or not M.config.types.profile and not M.config.types.all then
-    return
+    return 0
   end
   M.line("profile", "START " .. (fmt or "???"), ...)
   return vim.loop.hrtime()

@@ -389,8 +389,8 @@ function M.restore_tab_state()
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
----@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number
+---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number|nil
 function M.get_winnr(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
@@ -406,8 +406,8 @@ function M.get_bufnr()
 end
 
 --- Checks if nvim-tree is displaying the help ui within the tabpage specified
----@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number
+---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number|nil
 function M.is_help_ui(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]

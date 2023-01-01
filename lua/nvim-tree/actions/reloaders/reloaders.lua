@@ -30,8 +30,8 @@ function M.reload_node_status(parent_node, projects)
 end
 
 local event_running = false
----@param _ table unused node passed by action
----@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+---@param _ table|nil unused node passed by action
+---@param unloaded_bufnr number|nil optional bufnr recently unloaded via BufUnload event
 function M.reload_explorer(_, unloaded_bufnr)
   if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
     return
