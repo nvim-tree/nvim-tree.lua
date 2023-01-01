@@ -24,6 +24,9 @@ local function refactored(opts)
 
   -- 2022/11/22
   utils.move_missing_val(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label", true)
+
+  -- 2023/01/01
+  utils.move_missing_val(opts, "update_focused_file", "debounce_delay", opts, "view", "debounce_delay", true)
 end
 
 local function removed(opts)
