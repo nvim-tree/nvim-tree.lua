@@ -32,6 +32,15 @@ function M.get_node_at_cursor()
   return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
 end
 
+--- Place the cursor at the node if it is visible or at the top.
+--- @param node table
+function M.place_cursor_at_node(node)
+  local _, l = utils.find_node(core.get_explorer().nodes, function(n)
+    return n == node
+  end)
+  view.set_cursor { l + 1, 1 }
+end
+
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@param node table
 ---@return table|nil cloned node
