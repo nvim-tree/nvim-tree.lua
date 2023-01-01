@@ -369,7 +369,7 @@ local function setup_autocommands(opts)
         (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
         and vim.bo[data.buf].buftype == ""
       then
-        utils.debounce("BufReadPost:filter_buffer", opts.view.debounce_delay, function()
+        utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer()
         end)
       end
@@ -383,7 +383,7 @@ local function setup_autocommands(opts)
         (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
         and vim.bo[data.buf].buftype == ""
       then
-        utils.debounce("BufUnload:filter_buffer", opts.view.debounce_delay, function()
+        utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer(nil, data.buf)
         end)
       end
