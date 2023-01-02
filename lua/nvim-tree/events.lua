@@ -88,7 +88,7 @@ function M._dispatch_on_tree_resize(size)
 end
 
 --@private
-function M._dispatch_tree_attach_post(buf)
+function M._dispatch_tree_attached_post(buf)
   dispatch(M.Event.TreeAttachedPost, buf)
 end
 
