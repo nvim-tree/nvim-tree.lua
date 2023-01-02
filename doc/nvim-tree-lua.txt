@@ -1335,7 +1335,7 @@ exists.
     - navigate.prev
     - navigate.select
 
-api.config.mappings.current()        *nvim-tree.api.config.mappings.current()*
+api.config.mappings.active()          *nvim-tree.api.config.mappings.active()*
     Retrieve a clone of the currently active mappings:
     |nvim-tree-default-mappings| with |nvim-tree.view.mappings| applied.
     Changing the active mappings will require a call to |nvim-tree-setup|

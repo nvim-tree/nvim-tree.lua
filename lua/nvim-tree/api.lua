@@ -128,7 +128,7 @@ Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 
-Api.config.mappings.current = require("nvim-tree.actions").current_mappings_clone
+Api.config.mappings.active = require("nvim-tree.actions").active_mappings_clone
 Api.config.mappings.default = require("nvim-tree.actions").default_mappings_clone
 
 return Api

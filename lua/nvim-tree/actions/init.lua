@@ -407,7 +407,7 @@ end
 
 --- clone active for the user
 --- @return table
-function M.current_mappings_clone()
+function M.active_mappings_clone()
   return vim.deepcopy(M.mappings)
 end
 
