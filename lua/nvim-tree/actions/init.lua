@@ -3,6 +3,7 @@
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local notify = require "nvim-tree.notify"
+local utils = require "nvim-tree.utils"
 
 -- BEGIN_DEFAULT_MAPPINGS
 local DEFAULT_MAPPINGS = {
@@ -398,6 +399,18 @@ local DEFAULT_MAPPING_CONFIG = {
   custom_only = false,
   list = {},
 }
+
+--- clone default for the user
+--- @return table
+function M.default_mappings_clone()
+  return utils.table_deep_clone(DEFAULT_MAPPINGS)
+end
+
+--- clone active for the user
+--- @return table
+function M.current_mappings_clone()
+  return utils.table_deep_clone(M.mappings)
+end
 
 function M.setup(opts)
   require("nvim-tree.actions.fs.trash").setup(opts)
