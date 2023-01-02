@@ -15,6 +15,7 @@ M.Event = {
   FolderCreated = "FolderCreated",
   FolderRemoved = "FolderRemoved",
   Resize = "Resize",
+  OnAttachPost = "OnAttachPost",
 }
 
 local function get_handlers(event_name)
@@ -84,6 +85,11 @@ end
 --@private
 function M._dispatch_on_tree_resize(size)
   dispatch(M.Event.Resize, size)
+end
+
+--@private
+function M._dispatch_on_attach_post(buf)
+  dispatch(M.Event.OnAttachPost, buf)
 end
 
 --- @deprecated

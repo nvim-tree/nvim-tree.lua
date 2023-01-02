@@ -1639,6 +1639,11 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                   {folder_name}  `{string}` Absolute path to the removed folder.
 
+- Event.OnAttachPost
+                Invoked after |nvim-tree.on_attach| has been called.
+                handler parameters: ~
+                  {buf}          `{number} `API buffer handle (buffer number)
+
 ==============================================================================
  9. BOOKMARKS                                            *nvim-tree-bookmarks*
 
