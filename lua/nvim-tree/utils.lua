@@ -388,23 +388,6 @@ function M.array_remove_nils(array)
   end, array)
 end
 
---- create a new deep cloned table
---- @param t table
---- @return table
-function M.table_deep_clone(t)
-  local c = {}
-
-  for k, v in pairs(t) do
-    if type(v) == "table" then
-      c[k] = M.table_deep_clone(v)
-    else
-      c[k] = v
-    end
-  end
-
-  return c
-end
-
 function M.inject_node(f)
   return function()
     f(require("nvim-tree.lib").get_node_at_cursor())
