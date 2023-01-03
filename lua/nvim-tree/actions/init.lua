@@ -399,6 +399,18 @@ local DEFAULT_MAPPING_CONFIG = {
   list = {},
 }
 
+--- clone default for the user
+--- @return table
+function M.default_mappings_clone()
+  return vim.deepcopy(DEFAULT_MAPPINGS)
+end
+
+--- clone active for the user
+--- @return table
+function M.active_mappings_clone()
+  return vim.deepcopy(M.mappings)
+end
+
 function M.setup(opts)
   require("nvim-tree.actions.fs.trash").setup(opts)
   require("nvim-tree.actions.node.system-open").setup(opts)
