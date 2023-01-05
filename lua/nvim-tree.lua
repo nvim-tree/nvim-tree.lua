@@ -495,6 +495,7 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+  file_deletion_confirmation = true,
   auto_reload_on_write = true,
   disable_netrw = false,
   hijack_cursor = false,
