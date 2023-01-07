@@ -96,7 +96,7 @@ function M.fn(node)
   end
 
 
-  if M.file_deletion_confirmation then
+  if M.config.ui.confirm.node_deletion then
     local prompt_select = "Remove " .. node.name .. " ?"
     local prompt_input = prompt_select .. " y/n: "
     lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
@@ -111,9 +111,10 @@ function M.fn(node)
 end
 
 function M.setup(opts)
+	M.config = {}
+	M.config.ui = opts.ui or {}
   M.enable_reload = not opts.filesystem_watchers.enable
   M.close_window = opts.actions.remove_file.close_window
-  M.file_deletion_confirmation = opts.file_deletion_confirmation
 end
 
 return M

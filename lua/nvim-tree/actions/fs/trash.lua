@@ -87,7 +87,7 @@ function M.fn(node)
     end
   end
 
-  if M.config.trash.require_confirm then
+  if M.config.ui.confirm.trash then
     local prompt_select = "Trash " .. node.name .. " ?"
     local prompt_input = prompt_select .. " y/n: "
     lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
@@ -103,7 +103,7 @@ end
 
 function M.setup(opts)
   M.config = {}
-  M.config.trash = opts.trash or {}
+  M.config.ui = opts.ui or {}
   M.enable_reload = not opts.filesystem_watchers.enable
 end
 

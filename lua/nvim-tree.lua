@@ -495,6 +495,12 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+	ui = {
+		confirm = {
+		 node_deletion = true,
+		 trash = true,
+		},
+	},
   file_deletion_confirmation = true,
   auto_reload_on_write = true,
   disable_netrw = false,
