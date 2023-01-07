@@ -501,7 +501,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
 		 trash = true,
 		},
 	},
-  file_deletion_confirmation = true,
   auto_reload_on_write = true,
   disable_netrw = false,
   hijack_cursor = false,
@@ -705,7 +704,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   trash = {
     cmd = "gio trash",
-    require_confirm = true,
   },
   live_filter = {
     prefix = "[FILTER]: ",
