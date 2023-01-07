@@ -13,7 +13,7 @@ jobs:
           release-type: node
           package-name: ${{env.ACTION_NAME}}
           command: github-release
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
