@@ -95,6 +95,7 @@ local function create_buffer(bufnr)
   else
     require("nvim-tree.actions").apply_mappings(M.get_bufnr())
   end
+  events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
 local function get_size()
