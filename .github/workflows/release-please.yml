@@ -10,8 +10,8 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: node
-          package-name: ${{env.ACTION_NAME}}
+          release-type: simple
+          package-name: nvim-tree
           command: github-release
       - uses: actions/checkout@v3
       - name: tag major and minor versions
