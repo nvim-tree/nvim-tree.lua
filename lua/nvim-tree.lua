@@ -495,12 +495,6 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
-	ui = {
-		confirm = {
-		 node_deletion = true,
-		 trash = true,
-		},
-	},
   auto_reload_on_write = true,
   disable_netrw = false,
   hijack_cursor = false,
@@ -718,6 +712,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   notify = {
     threshold = vim.log.levels.INFO,
+  },
+  ui = {
+    confirm = {
+      remove = true,
+      trash = true,
+    },
   },
   log = {
     enable = false,
