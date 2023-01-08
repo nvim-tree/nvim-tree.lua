@@ -27,6 +27,9 @@ local function refactored(opts)
 
   -- 2023/01/01
   utils.move_missing_val(opts, "update_focused_file", "debounce_delay", opts, "view", "debounce_delay", true)
+
+  -- 2023/01/08
+  utils.move_missing_val(opts, "trash", "require_confirm", opts, "ui.confirm", "trash", true)
 end
 
 local function removed(opts)

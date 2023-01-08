@@ -32,8 +32,8 @@ function M.fn(node)
     if M.config.trash.cmd == nil then
       M.config.trash.cmd = "trash"
     end
-    if M.config.trash.require_confirm == nil then
-      M.config.trash.require_confirm = true
+    if M.config.ui.confirm.trash == nil then
+      M.config.ui.confirm.trash = true
     end
   else
     notify.warn "Trash is currently a UNIX only feature!"
@@ -87,7 +87,7 @@ function M.fn(node)
     end
   end
 
-  if M.config.trash.require_confirm then
+  if M.config.ui.confirm.trash then
     local prompt_select = "Trash " .. node.name .. " ?"
     local prompt_input = prompt_select .. " y/n: "
     lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
@@ -103,6 +103,7 @@ end
 
 function M.setup(opts)
   M.config = {}
+  M.config.ui = opts.ui or {}
   M.config.trash = opts.trash or {}
   M.enable_reload = not opts.filesystem_watchers.enable
 end
