@@ -374,7 +374,6 @@ Subsequent calls to setup will replace the previous configuration.
       },
       trash = {
         cmd = "gio trash",
-        require_confirm = true,
       },
       live_filter = {
         prefix = "[FILTER]: ",
@@ -389,6 +388,12 @@ Subsequent calls to setup will replace the previous configuration.
       },
       notify = {
         threshold = vim.log.levels.INFO,
+      },
+      ui = {
+        confirm = {
+          remove = true,
+          trash = true,
+        },
       },
       log = {
         enable = false,
@@ -1145,6 +1150,20 @@ Configuration for notification.
     `WARNING`: non-fatal errors e.g. unable to system open a file.
     `INFO:`    information only e.g. file copy path confirmation.
     `DEBUG:`   not used.
+
+*nvim-tree.ui*
+General UI configuration.
+
+    *nvim-tree.ui.confirm*
+    Confirmation prompts.
+
+        *nvim-tree.ui.confirm.remove*
+        Prompt before removing.
+          Type: `boolean`, Default: `true`
+
+        *nvim-tree.ui.confirm.trash*  (previously `trash.require_confirm`)
+        Prompt before trashing.
+          Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
 Configuration for diagnostic logging.
