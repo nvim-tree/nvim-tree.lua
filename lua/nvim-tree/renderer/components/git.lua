@@ -39,6 +39,7 @@ local function build_icons_table(i)
     ["UA"] = { icons.unmerged },
     [" D"] = { icons.deleted },
     ["D "] = { icons.deleted },
+    ["DA"] = { icons.unstaged },
     ["RD"] = { icons.deleted },
     ["DD"] = { icons.deleted },
     ["DU"] = { icons.deleted, icons.unmerged },
