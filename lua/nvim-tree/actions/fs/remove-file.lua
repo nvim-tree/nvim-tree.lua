@@ -73,34 +73,45 @@ function M.fn(node)
   if node.name == ".." then
     return
   end
-  local prompt_select = "Remove " .. node.name .. " ?"
-  local prompt_input = prompt_select .. " y/n: "
-  lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
-    utils.clear_prompt()
-    if item_short == "y" then
-      if node.nodes ~= nil and not node.link_to then
-        local success = remove_dir(node.absolute_path)
-        if not success then
-          return notify.error("Could not remove " .. node.name)
-        end
-        events._dispatch_folder_removed(node.absolute_path)
-      else
-        local success = vim.loop.fs_unlink(node.absolute_path)
-        if not success then
-          return notify.error("Could not remove " .. node.name)
-        end
-        events._dispatch_file_removed(node.absolute_path)
-        clear_buffer(node.absolute_path)
+
+  local function do_remove()
+    if node.nodes ~= nil and not node.link_to then
+      local success = remove_dir(node.absolute_path)
+      if not success then
+        return notify.error("Could not remove " .. node.name)
       end
-      notify.info(node.absolute_path .. " was properly removed.")
-      if M.enable_reload then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      events._dispatch_folder_removed(node.absolute_path)
+    else
+      local success = vim.loop.fs_unlink(node.absolute_path)
+      if not success then
+        return notify.error("Could not remove " .. node.name)
       end
+      events._dispatch_file_removed(node.absolute_path)
+      clear_buffer(node.absolute_path)
     end
-  end)
+    notify.info(node.absolute_path .. " was properly removed.")
+    if M.enable_reload then
+      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+    end
+  end
+
+  if M.config.ui.confirm.remove then
+    local prompt_select = "Remove " .. node.name .. " ?"
+    local prompt_input = prompt_select .. " y/n: "
+    lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
+      utils.clear_prompt()
+      if item_short == "y" then
+        do_remove()
+      end
+    end)
+  else
+    do_remove()
+  end
 end
 
 function M.setup(opts)
+  M.config = {}
+  M.config.ui = opts.ui or {}
   M.enable_reload = not opts.filesystem_watchers.enable
   M.close_window = opts.actions.remove_file.close_window
 end

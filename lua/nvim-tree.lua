@@ -698,7 +698,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   trash = {
     cmd = "gio trash",
-    require_confirm = true,
   },
   live_filter = {
     prefix = "[FILTER]: ",
@@ -713,6 +712,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   notify = {
     threshold = vim.log.levels.INFO,
+  },
+  ui = {
+    confirm = {
+      remove = true,
+      trash = true,
+    },
   },
   log = {
     enable = false,
