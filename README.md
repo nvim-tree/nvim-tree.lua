@@ -1,3 +1,13 @@
+# Broken master 2023/01/10
+
+An incorrectly executed force push to master resulted in lost changes and conflicting commit history. The changes have been manually restored: https://github.com/nvim-tree/nvim-tree.lua/issues/1906
+
+If your plugin manager experiences issues updating delete/reinstall nvim-tree.
+
+Please accept my apologies for the inconvenience.
+
+Alex
+
 # A File Explorer For Neovim Written In Lua
 
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
