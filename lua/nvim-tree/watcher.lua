@@ -159,4 +159,29 @@ function M.purge_watchers()
   end
 end
 
+--- Windows NT will present directories that cannot be enumerated.
+--- Detect these by attempting to start an event monitor.
+--- @param path string
+--- @return boolean
+function M.is_fs_event_capable(path)
+  if not utils.is_windows then
+    return true
+  end
+
+  local fs_event = vim.loop.new_fs_event()
+  if not fs_event then
+    return false
+  end
+
+  if fs_event:start(path, FS_EVENT_FLAGS, function() end) ~= 0 then
+    return false
+  end
+
+  if fs_event:stop() ~= 0 then
+    return false
+  end
+
+  return true
+end
+
 return M
