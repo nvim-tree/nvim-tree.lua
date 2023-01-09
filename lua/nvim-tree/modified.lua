@@ -9,10 +9,16 @@ function M.reload()
   local bufs = vim.fn.getbufinfo { bufmodified = true, buflisted = true }
   for _, buf in pairs(bufs) do
     local path = buf.name
-    M._record[path] = true
-    while path ~= vim.fn.getcwd() and path ~= "/" do
-      path = vim.fn.fnamemodify(path, ":h")
-      M._record[path] = true
+    if path ~= "" then -- not a [No Name] buffer
+      -- mark all the parent as modified as well
+      while
+        M._record[path] ~= true
+        -- no need to keep going if already recorded
+        -- This also prevents an infinite loop
+      do
+        M._record[path] = true
+        path = vim.fn.fnamemodify(path, ":h")
+      end
     end
   end
 end
