@@ -6,6 +6,7 @@ local Api = {
   fs = { copy = {} },
   git = {},
   live_filter = {},
+  config = { mappings = {} },
 }
 
 local function inject_node(f)
@@ -126,5 +127,8 @@ Api.marks.bulk.move = require("nvim-tree.marks.bulk-move").bulk_move
 Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
+
+Api.config.mappings.active = require("nvim-tree.actions").active_mappings_clone
+Api.config.mappings.default = require("nvim-tree.actions").default_mappings_clone
 
 return Api
