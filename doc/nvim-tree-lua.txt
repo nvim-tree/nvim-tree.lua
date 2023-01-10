@@ -1674,6 +1674,21 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                   {buf}          `{number} `API buffer handle (buffer number)
 
+|nvim_tree_events_startup|
+
+There are two special startup events in the form of User autocommands:
+
+`NvimTreeRequired`      first `require("nvim-tree")`
+`NvimTreeSetup`         `setup({})` completed
+
+Example subscription: >
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "NvimTreeRequired",
+    callback = function(data)
+      ---
+    end,
+  }
+<
 ==============================================================================
  9. BOOKMARKS                                            *nvim-tree-bookmarks*
 
