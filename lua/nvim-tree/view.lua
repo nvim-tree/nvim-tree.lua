@@ -98,8 +98,8 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
-local function get_size()
-  local size = M.View.width
+local function get_size(size)
+  size = size or M.View.width
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
@@ -246,14 +246,20 @@ end
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
-  local max_length = M.View.initial_width
+  local padding = 3
+  local resizing_width = M.View.initial_width - padding
+  local max_width = get_size(M.View.max_width) - padding
   for _, l in pairs(lines) do
-    local count = vim.fn.strchars(l) + 3 -- plus some padding
-    if max_length < count then
-      max_length = count
+    local count = vim.fn.strchars(l)
+    if resizing_width < count then
+      resizing_width = count
+    end
+    if M.View.adaptive_size and max_width >= 0 and resizing_width >= max_width then
+      resizing_width = max_width
+      break
     end
   end
-  M.resize(max_length)
+  M.resize(resizing_width + padding)
 end
 
 function M.grow_from_content()
@@ -486,6 +492,7 @@ function M.setup(opts)
   M.View.centralize_selection = options.centralize_selection
   M.View.side = (options.side == "right") and "right" or "left"
   M.View.width = options.width
+  M.View.max_width = options.max_width
   M.View.height = options.height
   M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder

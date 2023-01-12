@@ -194,6 +194,7 @@ Subsequent calls to setup will replace the previous configuration.
         cursorline = true,
         debounce_delay = 15,
         width = 30,
+        max_width = -1,
         hide_root_folder = false,
         side = "left",
         preserve_window_proportions = false,
@@ -729,6 +730,12 @@ Window / buffer setup.
     Width of the window, can be a `%` string, a number representing columns or
     a function.
       Type: `string | number | function`, Default: `30`
+
+    *nvim-tree.view.max_width*
+    Maximum width of the window when `nvim-tree.view.adaptive_size` is `true`, can be
+    a `%` string, a number representing columns or a function. If set to `-1`, the
+    width is unbounded.
+      Type: `string | number | function`, Default: `-1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
