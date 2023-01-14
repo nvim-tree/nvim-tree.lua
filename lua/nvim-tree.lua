@@ -865,10 +865,12 @@ function M.setup(conf)
 
   vim.schedule(function()
     M.on_enter(netrw_disabled)
+    vim.g.NvimTreeSetup = 1
     vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
   end)
 end
 
+vim.g.NvimTreeRequired = 1
 vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeRequired" })
 
 return M

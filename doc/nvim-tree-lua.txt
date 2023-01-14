@@ -1681,13 +1681,16 @@ There are two special startup events in the form of User autocommands:
 `NvimTreeRequired`      first `require("nvim-tree")`
 `NvimTreeSetup`         `setup({})` completed
 
+Immediately before firing: a global variable of the same name will be set to a
+value of 1.
+
 Example subscription: >
   vim.api.nvim_create_autocmd("User", {
     pattern = "NvimTreeRequired",
     callback = function(data)
       ---
     end,
-  }
+  })
 <
 ==============================================================================
  9. BOOKMARKS                                            *nvim-tree-bookmarks*
