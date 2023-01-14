@@ -54,7 +54,14 @@ function Event:start()
   local event_cb = vim.schedule_wrap(function(err, filename)
     if err then
       log.line("watcher", "event_cb '%s' '%s' FAIL : %s", self._path, filename, err)
-      self:destroy(string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self._path))
+      local message = string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self._path)
+      if err == "EPERM" and (utils.is_windows or utils.is_wsl) then
+        -- on directory removal windows will cascade the filesystem events out of order
+        log.line("watcher", message)
+        self:destroy()
+      else
+        self:destroy(message)
+      end
     else
       log.line("watcher", "event_cb '%s' '%s'", self._path, filename)
       for _, listener in ipairs(self._listeners) do
