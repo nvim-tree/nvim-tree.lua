@@ -36,7 +36,7 @@ local function refactored(opts)
     if opts.view.adaptive_size and type(opts.view.width) ~= "table" then
       local width = opts.view.width
       opts.view.width = {
-        min = width
+        min = width,
       }
     end
     opts.view.adaptive_size = nil

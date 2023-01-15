@@ -743,7 +743,7 @@ local FIELD_SKIP_VALIDATE = {
 }
 
 local FIELD_OVERRIDE_TYPECHECK = {
-  width = { string = true, ["function"] = true, number = true, ["table"] = true, },
+  width = { string = true, ["function"] = true, number = true, ["table"] = true },
   max = { string = true, ["function"] = true, number = true },
   min = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
