@@ -518,7 +518,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     cursorline = true,
     debounce_delay = 15,
     width = 30,
-    max_width = -1,
+    max_width = 30,
     hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
@@ -745,8 +745,9 @@ local FIELD_SKIP_VALIDATE = {
 }
 
 local FIELD_OVERRIDE_TYPECHECK = {
-  width = { string = true, ["function"] = true, number = true },
-  max_width = { string = true, ["function"] = true, number = true },
+  width = { string = true, ["function"] = true, number = true, ["table"] = true, },
+  max = { string = true, ["function"] = true, number = true },
+  min = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },

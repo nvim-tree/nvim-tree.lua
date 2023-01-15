@@ -4,6 +4,9 @@ local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
 
+-- there are sizing oddities when dropping below the default winwidth of 20
+local MIN_WIDTH = 20
+
 M.View = {
   adaptive_size = false,
   centralize_selection = false,
@@ -98,16 +101,23 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
-local function get_size(size)
-  size = size or M.View.width
+---Calculate a window width, minimum MIN_WIDTH
+---@param size number|function|string
+---@return number
+local function calculate_width(size)
+  local width
+
   if type(size) == "number" then
-    return size
+    width = size
   elseif type(size) == "function" then
-    return size()
+    width = size()
+  else
+    local size_as_number = tonumber(size:sub(0, -2))
+    local percent_as_decimal = size_as_number / 100
+    width = math.floor(vim.o.columns * percent_as_decimal)
   end
-  local size_as_number = tonumber(size:sub(0, -2))
-  local percent_as_decimal = size_as_number / 100
-  return math.floor(vim.o.columns * percent_as_decimal)
+
+  return math.max(MIN_WIDTH, width)
 end
 
 local move_tbl = {
@@ -246,9 +256,9 @@ end
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
-  local padding =  M.View.winopts.signcolumn and 2 or 0
+  local padding = M.View.winopts.signcolumn and 2 or 0
   local resizing_width = M.View.initial_width - padding
-  local max_width = get_size(M.View.max_width) - padding
+  local max_width = calculate_width(M.View.max_width) - padding
   for _, l in pairs(lines) do
     local count = vim.fn.strchars(l)
     if resizing_width < count then
@@ -298,10 +308,10 @@ function M.resize(size)
     return
   end
 
-  local new_size = get_size()
-  vim.api.nvim_win_set_width(M.get_winnr(), new_size)
+  local new_width = calculate_width(M.View.width)
+  vim.api.nvim_win_set_width(M.get_winnr(), new_width)
 
-  events._dispatch_on_tree_resize(new_size)
+  events._dispatch_on_tree_resize(new_width)
 
   if not M.View.preserve_window_proportions then
     vim.cmd ":wincmd ="
@@ -494,7 +504,7 @@ function M.setup(opts)
   M.View.width = options.width
   M.View.max_width = options.max_width
   M.View.height = options.height
-  M.View.initial_width = get_size()
+  M.View.initial_width = calculate_width(M.View.width)
   M.View.hide_root_folder = options.hide_root_folder
   M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
