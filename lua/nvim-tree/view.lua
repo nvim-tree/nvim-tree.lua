@@ -111,10 +111,17 @@ local function calculate_width(size)
     width = size
   elseif type(size) == "function" then
     width = size()
+    if type(width) ~= "number" then
+      width = MIN_WIDTH
+    end
   elseif type(size) == "string" then
     local size_as_number = tonumber(size:sub(0, -2))
-    local percent_as_decimal = size_as_number / 100
-    width = math.floor(vim.o.columns * percent_as_decimal)
+    if type(size_as_number) == "number" then
+      local percent_as_decimal = size_as_number / 100
+      width = math.floor(vim.o.columns * percent_as_decimal)
+    else
+      width = MIN_WIDTH
+    end
   else
     width = MIN_WIDTH
   end
