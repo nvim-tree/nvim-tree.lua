@@ -30,6 +30,17 @@ local function refactored(opts)
 
   -- 2023/01/08
   utils.move_missing_val(opts, "trash", "require_confirm", opts, "ui.confirm", "trash", true)
+
+  -- 2023/01/15
+  if opts.view and opts.view.adaptive_size ~= nil then
+    if opts.view.adaptive_size and type(opts.view.width) ~= "table" then
+      local width = opts.view.width
+      opts.view.width = {
+        min = width
+      }
+    end
+    opts.view.adaptive_size = nil
+  end
 end
 
 local function removed(opts)
