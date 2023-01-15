@@ -246,7 +246,7 @@ end
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
-  local padding = 3
+  local padding =  M.View.winopts.signcolumn and 2 or 0
   local resizing_width = M.View.initial_width - padding
   local max_width = get_size(M.View.max_width) - padding
   for _, l in pairs(lines) do
