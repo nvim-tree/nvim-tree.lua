@@ -1724,5 +1724,6 @@ Windows WSL and PowerShell
 - Trash is unavailable
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
+- Some filesystem watcher error related to permissions will not be reported
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
