@@ -97,6 +97,11 @@ local function create_file(new_file_path)
   if not is_error then
     notify.info(new_file_path .. " was properly created")
   end
+  if M.enable_async then
+    async.schedule()
+  end
+  -- synchronously refreshes as we can't wait for the watchers
+  find_file(utils.path_remove_trailing(new_file_path))
 end
 
 local function get_containing_folder(node)
@@ -135,15 +140,12 @@ function M.fn(node, cb)
 
     if M.enable_async then
       async.exec(create_file, new_file_path, function(err)
-        find_file(utils.path_remove_trailing(new_file_path))
         if cb then
           cb(err)
         end
       end)
     else
       create_file(new_file_path)
-      -- synchronously refreshes as we can't wait for the watchers
-      find_file(utils.path_remove_trailing(new_file_path))
     end
   end)
 end
