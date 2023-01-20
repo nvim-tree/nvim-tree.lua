@@ -26,7 +26,7 @@ function M.bulk_move()
     for _, node in pairs(marks) do
       local head = vim.fn.fnamemodify(node.absolute_path, ":t")
       local to = utils.path_join { location, head }
-      FsRename.rename(node, to)
+      FsRename.rename(node, to, false)
     end
 
     if M.enable_reload then

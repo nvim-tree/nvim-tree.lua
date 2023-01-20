@@ -733,6 +733,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       watcher = false,
     },
   },
+  experimental = {
+    async = {
+      create_file = false,
+      rename_file = false,
+    },
+  },
 } -- END_DEFAULT_OPTS
 
 local function merge_options(conf)

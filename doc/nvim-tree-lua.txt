@@ -408,6 +408,12 @@ Subsequent calls to setup will replace the previous configuration.
           watcher = false,
         },
       },
+      experimental = {
+        async = {
+          create_file = false,
+          rename_file = false,
+        }
+      }
     } -- END_DEFAULT_OPTS
 <
 
@@ -1204,6 +1210,20 @@ Configuration for diagnostic logging.
 
         *nvim-tree.log.types.watcher*
         |nvim-tree.filesystem_watchers| processing, verbose.
+          Type: `boolean`, Default: `false`
+
+*nvim-tree.experimental*
+Configuration for experimental features.
+
+    *nvim-tree.experimental.async*
+    Control experimental async behavior.
+
+        *nvim-tree.experimental.async.create_file*
+        Toggle async behavior of create file operation.
+          Type: `boolean`, Default: `false`
+
+        *nvim-tree.experimental.async.rename_file*
+        Toggle async behavior of rename file operation.
           Type: `boolean`, Default: `false`
 
 ==============================================================================
