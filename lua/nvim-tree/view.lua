@@ -249,8 +249,16 @@ end
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
+
   -- 1 column of right-padding to indicate end of path
-  local padding = 3
+  local padding = 1
+
+  -- account for sign/number columns etc.
+  local wininfo = vim.fn.getwininfo(M.get_winnr())
+  if type(wininfo) == "table" and type(wininfo[1]) == "table" then
+    padding = padding + wininfo[1].textoff
+  end
+
   local resizing_width = M.View.initial_width - padding
   local max_width
 
