@@ -513,7 +513,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   remove_keymaps = false,
   select_prompts = false,
   view = {
-    adaptive_size = false,
     centralize_selection = false,
     cursorline = true,
     debounce_delay = 15,
@@ -744,7 +743,9 @@ local FIELD_SKIP_VALIDATE = {
 }
 
 local FIELD_OVERRIDE_TYPECHECK = {
-  width = { string = true, ["function"] = true, number = true },
+  width = { string = true, ["function"] = true, number = true, ["table"] = true },
+  max = { string = true, ["function"] = true, number = true },
+  min = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },

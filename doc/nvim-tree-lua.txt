@@ -81,7 +81,6 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
-        adaptive_size = true,
         mappings = {
           list = {
             { key = "u", action = "dir_up" },
@@ -188,7 +187,6 @@ Subsequent calls to setup will replace the previous configuration.
       remove_keymaps = false,
       select_prompts = false,
       view = {
-        adaptive_size = false,
         centralize_selection = false,
         cursorline = true,
         debounce_delay = 15,
@@ -709,10 +707,6 @@ Type: `boolean`, Default: `false`
 *nvim-tree.view*
 Window / buffer setup.
 
-    *nvim-tree.view.adaptive_size*
-    Resize the window on each draw based on the longest line.
-      Type: `boolean`, Default: `false`
-
     *nvim-tree.view.centralize_selection*
     When entering nvim-tree, reposition the view so that the current node is
     initially centralized, see |zz|.
@@ -732,9 +726,19 @@ Window / buffer setup.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.width*
-    Width of the window, can be a `%` string, a number representing columns or
-    a function.
-      Type: `string | number | function`, Default: `30`
+    Width of the window: can be a `%` string, a number representing columns, a
+    function or a table.
+    A table indicates that the view should be dynamically sized based on the
+    longest line (previously `view.adaptive_size`).
+      Type: `string | number | function | table`, Default: `30`
+
+        *nvim-tree.view.width.min*
+          Minimum dynamic width.
+          Type: `string | number | function`, Default: `30`
+
+        *nvim-tree.view.width.max*
+          Maximum dynamic width, -1 for unbounded.
+          Type: `string | number | function`, Default: `-1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
