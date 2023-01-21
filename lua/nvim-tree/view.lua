@@ -5,6 +5,7 @@ local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
 
 local DEFAULT_MIN_WIDTH = 30
+local DEFAULT_MAX_WIDTH = -1
 
 M.View = {
   adaptive_size = false,
@@ -91,9 +92,9 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
-  if type(M.config.on_attach) == "function" then
+  if type(M.on_attach) == "function" then
     require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
-    M.config.on_attach(M.get_bufnr())
+    M.on_attach(M.get_bufnr())
   else
     require("nvim-tree.actions").apply_mappings(M.get_bufnr())
   end
@@ -254,10 +255,10 @@ local function grow()
   local max_width
 
   -- maybe bound max
-  if M.config.width.max == -1 then
+  if M.View.max_width == -1 then
     max_width = -1
   else
-    max_width = get_size(M.config.width.max) - padding
+    max_width = get_size(M.View.max_width) - padding
   end
 
   for _, l in pairs(lines) do
@@ -498,31 +499,30 @@ function M.reset_winhl()
 end
 
 function M.setup(opts)
-  M.config = opts.view or {}
+  local options = opts.view or {}
+  M.View.centralize_selection = options.centralize_selection
+  M.View.side = (options.side == "right") and "right" or "left"
+  M.View.height = options.height
+  M.View.hide_root_folder = options.hide_root_folder
+  M.View.tab = opts.tab
+  M.View.preserve_window_proportions = options.preserve_window_proportions
+  M.View.winopts.cursorline = options.cursorline
+  M.View.winopts.number = options.number
+  M.View.winopts.relativenumber = options.relativenumber
+  M.View.winopts.signcolumn = options.signcolumn
+  M.View.float = options.float
+  M.on_attach = opts.on_attach
 
-  M.View.centralize_selection = M.config.centralize_selection
-  M.View.side = (M.config.side == "right") and "right" or "left"
-  M.View.height = M.config.height
-  M.View.hide_root_folder = M.config.hide_root_folder
-  M.View.tab = M.config.tab
-  M.View.preserve_window_proportions = M.config.preserve_window_proportions
-  M.View.winopts.cursorline = M.config.cursorline
-  M.View.winopts.number = M.config.number
-  M.View.winopts.relativenumber = M.config.relativenumber
-  M.View.winopts.signcolumn = M.config.signcolumn
-  M.View.float = M.config.float
-
-  if type(M.config.width) == "table" then
-    M.config.width.min = M.config.width.min or DEFAULT_MIN_WIDTH
-    M.config.width.max = M.config.width.max or -1
+  if type(options.width) == "table" then
     M.View.adaptive_size = true
-    M.View.width = M.config.width.min
+    M.View.width = options.width.min or DEFAULT_MIN_WIDTH
+    M.View.max_width = options.width.max or DEFAULT_MAX_WIDTH
   else
     M.View.adaptive_size = false
-    M.View.width = M.config.width
+    M.View.width = options.width
   end
 
-  M.View.initial_width = get_size(M.View.width)
+  M.View.initial_width = get_size()
 end
 
 return M
