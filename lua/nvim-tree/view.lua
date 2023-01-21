@@ -4,8 +4,7 @@ local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
 
--- there are sizing oddities when dropping below the default winwidth of 20
-local MIN_WIDTH = 20
+local DEFAULT_MIN_WIDTH = 30
 
 M.View = {
   adaptive_size = false,
@@ -101,32 +100,16 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
----Calculate a window width, minimum MIN_WIDTH
----@param size number|function|string
----@return number
-local function calculate_width(size)
-  local width
-
+local function get_size(size)
+  size = size or M.View.width
   if type(size) == "number" then
-    width = size
+    return size
   elseif type(size) == "function" then
-    width = size()
-    if type(width) ~= "number" then
-      width = MIN_WIDTH
-    end
-  elseif type(size) == "string" then
-    local size_as_number = tonumber(size:sub(0, -2))
-    if type(size_as_number) == "number" then
-      local percent_as_decimal = size_as_number / 100
-      width = math.floor(vim.o.columns * percent_as_decimal)
-    else
-      width = MIN_WIDTH
-    end
-  else
-    width = MIN_WIDTH
+    return size()
   end
-
-  return math.max(MIN_WIDTH, width)
+  local size_as_number = tonumber(size:sub(0, -2))
+  local percent_as_decimal = size_as_number / 100
+  return math.floor(vim.o.columns * percent_as_decimal)
 end
 
 local move_tbl = {
@@ -274,7 +257,7 @@ local function grow()
   if M.config.width.max == -1 then
     max_width = -1
   else
-    max_width = calculate_width(M.config.width.max) - padding
+    max_width = get_size(M.config.width.max) - padding
   end
 
   for _, l in pairs(lines) do
@@ -326,10 +309,10 @@ function M.resize(size)
     return
   end
 
-  local new_width = calculate_width(M.View.width)
-  vim.api.nvim_win_set_width(M.get_winnr(), new_width)
+  local new_size = get_size()
+  vim.api.nvim_win_set_width(M.get_winnr(), new_size)
 
-  events._dispatch_on_tree_resize(new_width)
+  events._dispatch_on_tree_resize(new_size)
 
   if not M.View.preserve_window_proportions then
     vim.cmd ":wincmd ="
@@ -530,7 +513,7 @@ function M.setup(opts)
   M.View.float = M.config.float
 
   if type(M.config.width) == "table" then
-    M.config.width.min = M.config.width.min or MIN_WIDTH
+    M.config.width.min = M.config.width.min or DEFAULT_MIN_WIDTH
     M.config.width.max = M.config.width.max or -1
     M.View.adaptive_size = true
     M.View.width = M.config.width.min
@@ -539,7 +522,7 @@ function M.setup(opts)
     M.View.width = M.config.width
   end
 
-  M.View.initial_width = calculate_width(M.View.width)
+  M.View.initial_width = get_size(M.View.width)
 end
 
 return M

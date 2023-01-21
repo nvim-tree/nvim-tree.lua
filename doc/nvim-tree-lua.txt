@@ -726,24 +726,17 @@ Window / buffer setup.
     *nvim-tree.view.width*
     Width of the window: can be a `%` string, a number representing columns, a
     function or a table.
-    A minimum of 20 as per the |winwidth| default will always apply.
     A table indicates that the view should be dynamically sized based on the
     longest line (previously `view.adaptive_size`).
       Type: `string | number | function | table`, Default: `30`
 
         *nvim-tree.view.width.min*
           Minimum dynamic width.
-          Type: `string | number | function`, Default: `20`
+          Type: `string | number | function`, Default: `30`
 
         *nvim-tree.view.width.max*
           Maximum dynamic width, -1 for unbounded.
           Type: `string | number | function`, Default: `-1`
-
-    *nvim-tree.view.max_width*
-    Maximum width of the window when `nvim-tree.view.adaptive_size` is `true`, can be
-    a `%` string, a number representing columns or a function. If set to `-1`, the
-    width is unbounded.
-      Type: `string | number | function`, Default: `-1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
