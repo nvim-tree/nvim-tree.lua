@@ -83,8 +83,8 @@ function M._dispatch_on_tree_close()
 end
 
 --@private
-function M._dispatch_on_tree_resize(width)
-  dispatch(M.Event.Resize, width)
+function M._dispatch_on_tree_resize(size)
+  dispatch(M.Event.Resize, size)
 end
 
 --@private
