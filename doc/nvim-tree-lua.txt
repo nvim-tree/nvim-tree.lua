@@ -539,16 +539,23 @@ until it finds the file.
       Type: {string}, Default: `{}`
 
 *nvim-tree.system_open*
-Configuration options for the system open command.
+Open a file or directory in your preferred application.
 
     *nvim-tree.system_open.cmd*
-    The command to run, leaving empty should work but useful if you want to
-    override the default command with another one.
+    The open command itself.
       Type: `string`, Default: `""`
 
+    Leave empty for OS specific default:
+      UNIX:    `"xdg-open"`
+      macOS:   `"open"`
+      Windows: "`cmd"`
+
     *nvim-tree.system_open.args*
-    The command arguments as a list.
+    Optional argument list.
       Type: {string}, Default: `{}`
+
+    Leave empty for OS specific default:
+      Windows: `{ "/c", "start", '""' }`
 
 *nvim-tree.diagnostics*
 Show LSP and COC diagnostics in the signcolumn
@@ -995,6 +1002,7 @@ Configuration options for trashing.
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
     The default is shipped with glib2 which is a common linux package.
+    Only available for UNIX.
       Type: `string`, Default: `"gio trash"`
 
 *nvim-tree.actions*
