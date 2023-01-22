@@ -22,6 +22,13 @@ end
 
 Api.tree.open = require("nvim-tree").open
 
+---@class ApiTreeToggleOpts
+---@field path string|nil
+---@field current_window boolean|nil
+---@field focus boolean|nil
+---@field find_file boolean|nil
+---@field update_root boolean|nil
+
 Api.tree.toggle = require("nvim-tree").toggle
 Api.tree.close = require("nvim-tree.view").close
 Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only

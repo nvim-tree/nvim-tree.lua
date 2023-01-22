@@ -73,19 +73,17 @@ M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 ---Open the tree, focusing if already open.
 ---@param opts ApiTreeOpenOpts|nil|string
 function M.open(opts)
-  opts = opts or {}
-
-  -- legacy case: only parameter is path
-  if type(opts) == "string" then
-    opts = { path = opts }
+  -- legacy arguments
+  if type(opts) ~= "table" then
+    opts = {
+      path = opts,
+    }
   end
 
+  opts = opts or {}
+
   -- sanitise path
-  if type(opts.path) == "string" then
-    if vim.fn.isdirectory(opts.path) == 0 then
-      opts.path = nil
-    end
-  else
+  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
     opts.path = nil
   end
 
@@ -181,16 +179,35 @@ function M.find_file(with_open, bufnr, bang)
   find_file(with_open, bufnr, bang)
 end
 
-function M.toggle(with_find_file, no_focus, cwd, bang)
+---Toggle the tree.
+---@param opts ApiTreeToggleOpts|nil|boolean
+function M.toggle(opts, no_focus, cwd, bang)
+  -- legacy arguments
+  if type(opts) ~= "table" then
+    opts = {
+      path = cwd,
+      focus = not no_focus,
+      find_file = opts,
+      update_root = bang,
+    }
+  end
+
+  opts = opts or {}
+
+  -- sanitise path
+  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
+    opts.path = nil
+  end
+
   if view.is_visible() then
     view.close()
   else
     local previous_buf = vim.api.nvim_get_current_buf()
-    M.open(cwd)
-    if _config.update_focused_file.enable or with_find_file then
-      find_file(false, previous_buf, bang)
+    M.open { path = opts.path, current_window = opts.current_window }
+    if _config.update_focused_file.enable or opts.find_file then
+      find_file(false, previous_buf, opts.update_root)
     end
-    if no_focus then
+    if not opts.focus then
       vim.cmd "noautocmd wincmd p"
     end
   end
@@ -292,7 +309,7 @@ function M.on_enter(netrw_disabled)
   end
 
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    lib.open({ path = cwd })
+    lib.open { path = cwd }
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
@@ -321,11 +338,11 @@ end
 
 local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
-    M.open(res.args)
+    M.open { path = res.args }
   end, { nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeClose", view.close, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeToggle", function(res)
-    M.toggle(false, false, res.args)
+    M.toggle { find_file = false, focus = true, path = res.args, update_root = false }
   end, { nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeFocus", M.focus, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
@@ -334,7 +351,7 @@ local function setup_vim_commands()
     find_file(true, nil, res.bang)
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
-    M.toggle(true, false, res.args, res.bang)
+    M.toggle { find_file = true, focus = false, path = res.args, update_root = res.bang }
   end, { bang = true, nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
