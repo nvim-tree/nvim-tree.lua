@@ -70,13 +70,30 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
-function M.open(cwd)
-  cwd = cwd ~= "" and cwd or nil
+---Open the tree, focusing if already open.
+---@param opts ApiTreeOpenOpts|nil|string
+function M.open(opts)
+  opts = opts or {}
+
+  -- legacy case: only parameter is path
+  if type(opts) == "string" then
+    opts = { path = opts }
+  end
+
+  -- sanitise path
+  if type(opts.path) == "string" then
+    if vim.fn.isdirectory(opts.path) == 0 then
+      opts.path = nil
+    end
+  else
+    opts.path = nil
+  end
+
   if view.is_visible() then
     lib.set_target_win()
     view.focus()
   else
-    lib.open(cwd)
+    lib.open(opts)
   end
 end
 
@@ -275,7 +292,7 @@ function M.on_enter(netrw_disabled)
   end
 
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    lib.open(cwd)
+    lib.open({ path = cwd })
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"

@@ -1238,8 +1238,17 @@ that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
 
+api.tree.open({opts})                                    *nvim-tree.api.tree.open()*
+    Open the tree, focusing it if already open.
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {path}           (string)  root directory for the tree
+      • {current_window} (boolean) open the tree in the current window
+
 - api.tree:                                             *nvim-tree.api.tree*
-    - open `(path?: string)`
     - close
     - toggle `(find_file?: bool, no_focus?: bool, path?: string)`
     - focus

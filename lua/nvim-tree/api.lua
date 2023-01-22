@@ -16,7 +16,12 @@ local function inject_node(f)
   end
 end
 
+---@class ApiTreeOpenOpts
+---@field path string|nil path
+---@field current_window boolean|nil
+
 Api.tree.open = require("nvim-tree").open
+
 Api.tree.toggle = require("nvim-tree").toggle
 Api.tree.close = require("nvim-tree.view").close
 Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only
