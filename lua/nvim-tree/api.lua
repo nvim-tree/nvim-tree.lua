@@ -77,7 +77,6 @@ Api.tree.toggle_hidden_filter = require("nvim-tree.actions.tree-modifiers.toggle
 
 Api.tree.toggle_help = require("nvim-tree.actions.tree-modifiers.toggles").help
 
-
 Api.fs.create = inject_node(require("nvim-tree.actions.fs.create-file").fn)
 Api.fs.remove = inject_node(require("nvim-tree.actions.fs.remove-file").fn)
 Api.fs.trash = inject_node(require("nvim-tree.actions.fs.trash").fn)
