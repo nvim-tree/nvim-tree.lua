@@ -2,7 +2,6 @@ local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
-local log = require "nvim-tree.log"
 
 local M = {
   target_winid = nil,
@@ -151,7 +150,7 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
   end
 end
 
----Open the tree, initialising as needed. Maybe hijack the current buffer. 
+---Open the tree, initialising as needed. Maybe hijack the current buffer.
 ---@param opts ApiTreeOpenOpts|string|nil legacy case opts is path string
 function M.open(opts)
   opts = opts or {}
@@ -165,7 +164,7 @@ function M.open(opts)
     view.open_in_current_win()
     renderer.draw()
   elseif opts.current_window then
-    view.open_in_current_win({ hijack_current_buf = false, resize = false })
+    view.open_in_current_win { hijack_current_buf = false, resize = false }
     renderer.draw()
   else
     open_view_and_draw()
