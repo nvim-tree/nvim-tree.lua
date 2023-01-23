@@ -18,21 +18,6 @@ local function create_and_notify(file)
   events._dispatch_file_created(file)
 end
 
-local function create_file(file)
-  if utils.file_exists(file) then
-    local prompt_select = "Overwrite " .. file .. " ?"
-    local prompt_input = prompt_select .. " y/n: "
-    lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
-      utils.clear_prompt()
-      if item_short == "y" then
-        create_and_notify(file)
-      end
-    end)
-  else
-    create_and_notify(file)
-  end
-end
-
 local function get_num_nodes(iter)
   local i = 0
   for _ in iter do
@@ -91,7 +76,7 @@ function M.fn(node)
         path_to_create = utils.path_join { path_to_create, p }
       end
       if is_last_path_file and idx == num_nodes then
-        create_file(path_to_create)
+        create_and_notify(path_to_create)
       elseif not utils.file_exists(path_to_create) then
         local success = vim.loop.fs_mkdir(path_to_create, 493)
         if not success then
