@@ -74,7 +74,14 @@ require("nvim-tree").setup()
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
   view = {
-    adaptive_size = true,
+    -- adaptive width (use width = number instead for static width)
+    width = {
+      min = 30
+      -- -1 means no limit
+      max = -1,
+      -- set total padding space when resizing (handy for custom status columns)
+      padding = 3
+    }
     mappings = {
       list = {
         { key = "u", action = "dir_up" },

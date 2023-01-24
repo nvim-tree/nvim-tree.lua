@@ -734,11 +734,16 @@ Window / buffer setup.
 
         *nvim-tree.view.width.min*
           Minimum dynamic width.
-          Type: `string | number | function`, Default: `30`
+            Type: `string | number | function`, Default: `30`
 
         *nvim-tree.view.width.max*
           Maximum dynamic width, -1 for unbounded.
-          Type: `string | number | function`, Default: `-1`
+            Type: `string | number | function`, Default: `-1`
+
+        *nvim-tree.view.width.padding*
+          dynamic padding when resizing. Useful for custom status-column
+          styles.
+            Type: `number`, Default: `3`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
