@@ -1273,7 +1273,7 @@ api.tree.close_in_all_tabs()           *nvim-tree.api.tree.close_in_all_tabs()*
 api.tree.focus()                                   *nvim-tree.api.tree.focus()*
     Focus the tree, opening it if necessary.
 
-api.tree.reload()                                  *nvim-tree.api.tree.focus()*
+api.tree.reload()                                  *nvim-tree.api.tree.reload()*
     Refresh the tree. Does nothing if closed.
 
 api.tree.change_root({path})                 *nvim-tree.api.tree.change_root()*
