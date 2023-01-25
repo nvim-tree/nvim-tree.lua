@@ -1277,7 +1277,7 @@ api.tree.reload()                                  *nvim-tree.api.tree.reload()*
     Refresh the tree. Does nothing if closed.
 
 api.tree.change_root({path})                 *nvim-tree.api.tree.change_root()*
-    Change the tree's root to a path.   
+    Change the tree's root to a path.
 
     Parameters: ~
       • {path} (string) absolute or relative path
@@ -1296,7 +1296,6 @@ api.tree.change_root_to_parent({node})
     Parameters: ~
       • {node} (Node) folder or file
 
-                                
 api.tree.get_node_under_cursor()   *nvim-tree.api.tree.get_node_under_cursor()*
     Retrieve the currently focused node.
 

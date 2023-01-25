@@ -351,7 +351,7 @@ local function setup_vim_commands()
     find_file(true, nil, res.bang)
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
-    M.toggle { find_file = true, focus = false, path = res.args, update_root = res.bang }
+    M.toggle { find_file = true, focus = true, path = res.args, update_root = res.bang }
   end, { bang = true, nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
