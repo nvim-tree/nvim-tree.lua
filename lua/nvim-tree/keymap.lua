@@ -1,4 +1,4 @@
-local Api = require "nvim-tree.api"
+local api = require "nvim-tree.api"
 
 local M = {}
 
@@ -6,7 +6,7 @@ local M = {}
 local DEFAULT_KEYMAPS = {
   {
     key = { "<CR>", "o", "<2-LeftMouse>" },
-    callback = Api.node.open.edit,
+    callback = api.node.open.edit,
     desc = {
       long = "Open a file or directory; root will cd to the above directory.",
       short = "Open",
@@ -15,7 +15,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-e>",
-    callback = Api.node.open.replace_tree_buffer,
+    callback = api.node.open.replace_tree_buffer,
     desc = {
       long = "Open file in place, effectively replacing the tree explorer.",
       short = "Open: In Place",
@@ -24,7 +24,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "O",
-    callback = Api.node.open.no_window_picker,
+    callback = api.node.open.no_window_picker,
     desc = {
       long = "Open file with no window picker.",
       short = "Open: No Window Picker",
@@ -33,7 +33,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = { "<C-]>", "<2-RightMouse>" },
-    callback = Api.tree.change_root_to_node,
+    callback = api.tree.change_root_to_node,
     desc = {
       long = "cd in the directory under the cursor.",
       short = "CD",
@@ -42,7 +42,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-v>",
-    callback = Api.node.open.vertical,
+    callback = api.node.open.vertical,
     desc = {
       long = "Open file in a vertical split.",
       short = "Open: Vertical Split",
@@ -51,7 +51,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-x>",
-    callback = Api.node.open.horizontal,
+    callback = api.node.open.horizontal,
     desc = {
       long = "Open file in a horizontal split.",
       short = "Open: Horizontal Split",
@@ -60,7 +60,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-t>",
-    callback = Api.node.open.tab,
+    callback = api.node.open.tab,
     desc = {
       long = "Open file in a new tab.",
       short = "Open: New Tab",
@@ -69,7 +69,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<",
-    callback = Api.node.navigate.sibling.prev,
+    callback = api.node.navigate.sibling.prev,
     desc = {
       long = "Navigate to the previous sibling.",
       short = "Previous Sibling",
@@ -78,7 +78,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = ">",
-    callback = Api.node.navigate.sibling.next,
+    callback = api.node.navigate.sibling.next,
     desc = {
       long = "Navigate to the next sibling",
       short = "Next Sibling",
@@ -87,7 +87,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "P",
-    callback = Api.node.navigate.parent,
+    callback = api.node.navigate.parent,
     desc = {
       long = "Move cursor to the parent directory.",
       short = "Parent Directory",
@@ -96,7 +96,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<BS>",
-    callback = Api.node.navigate.parent_close,
+    callback = api.node.navigate.parent_close,
     desc = {
       long = "Close current opened directory or parent.",
       short = "Close Directory",
@@ -105,7 +105,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<Tab>",
-    callback = Api.node.open.preview,
+    callback = api.node.open.preview,
     desc = {
       long = "Open file as a preview (keeps the cursor in the tree).",
       short = "Open Preview",
@@ -114,7 +114,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "K",
-    callback = Api.node.navigate.sibling.first,
+    callback = api.node.navigate.sibling.first,
     desc = {
       long = "Navigate to the first sibling.",
       short = "First Sibling",
@@ -123,7 +123,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "J",
-    callback = Api.node.navigate.sibling.last,
+    callback = api.node.navigate.sibling.last,
     desc = {
       long = "Navigate to the last sibling.",
       short = "Last Sibling",
@@ -132,7 +132,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "I",
-    callback = Api.tree.toggle_gitignore_filter,
+    callback = api.tree.toggle_gitignore_filter,
     desc = {
       long = "Toggle visibility of files/directories hidden via |git.ignore| option.",
       short = "Toggle Git Ignore",
@@ -141,7 +141,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "H",
-    callback = Api.tree.toggle_hidden_filter,
+    callback = api.tree.toggle_hidden_filter,
     desc = {
       long = "Toggle visibility of dotfiles via |filters.dotfiles| option.",
       short = "Toggle Dotfiles",
@@ -150,7 +150,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "U",
-    callback = Api.tree.toggle_custom_filter,
+    callback = api.tree.toggle_custom_filter,
     desc = {
       long = "Toggle visibility of files/directories hidden via |filters.custom| option.",
       short = "Toggle Hidden",
@@ -159,7 +159,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "R",
-    callback = Api.tree.reload,
+    callback = api.tree.reload,
     desc = {
       long = "Refresh the tree.",
       short = "Refresh",
@@ -168,7 +168,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "a",
-    callback = Api.fs.create,
+    callback = api.fs.create,
     desc = {
       long = "Create a file; leaving a trailing `/` will add a directory.",
       short = "Create",
@@ -177,7 +177,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "d",
-    callback = Api.fs.remove,
+    callback = api.fs.remove,
     desc = {
       long = "Delete a file, prompting for confirmation.",
       short = "Delete",
@@ -186,7 +186,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "D",
-    callback = Api.fs.trash,
+    callback = api.fs.trash,
     desc = {
       long = "Trash a file via |trash| option.",
       short = "Trash",
@@ -195,7 +195,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "r",
-    callback = Api.fs.rename,
+    callback = api.fs.rename,
     desc = {
       long = "Rename a file or directory.",
       short = "Rename",
@@ -204,7 +204,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-r>",
-    callback = Api.fs.rename_sub,
+    callback = api.fs.rename_sub,
     desc = {
       long = "Rename a file or directory and omit the filename on input.",
       short = "Rename: Omit Filename",
@@ -213,7 +213,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "e",
-    callback = Api.fs.rename_basename,
+    callback = api.fs.rename_basename,
     desc = {
       long = "no description",
       short = "Rename: Basename",
@@ -222,7 +222,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "x",
-    callback = Api.fs.cut,
+    callback = api.fs.cut,
     desc = {
       long = "Cut file or directory to cut clipboard.",
       short = "Cut",
@@ -231,7 +231,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "c",
-    callback = Api.fs.copy.node,
+    callback = api.fs.copy.node,
     desc = {
       long = "Copy file or directory to copy clipboard.",
       short = "Copy",
@@ -240,7 +240,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "p",
-    callback = Api.fs.paste,
+    callback = api.fs.paste,
     desc = {
       long = "Paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation.",
       short = "Paste",
@@ -249,7 +249,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "y",
-    callback = Api.fs.copy.filename,
+    callback = api.fs.copy.filename,
     desc = {
       long = "Copy name to system clipboard.",
       short = "Copy Name",
@@ -258,7 +258,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "Y",
-    callback = Api.fs.copy.relative_path,
+    callback = api.fs.copy.relative_path,
     desc = {
       long = "Copy relative path to system clipboard.",
       short = "Copy Relative Path",
@@ -267,7 +267,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "gy",
-    callback = Api.fs.copy.absolute_path,
+    callback = api.fs.copy.absolute_path,
     desc = {
       long = "Copy absolute path to system clipboard.",
       short = "Copy Absolute Path",
@@ -276,7 +276,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "]e",
-    callback = Api.node.navigate.diagnostics.next,
+    callback = api.node.navigate.diagnostics.next,
     desc = {
       long = "Go to next diagnostic item.",
       short = "Next Diagnostic",
@@ -285,7 +285,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "]c",
-    callback = Api.node.navigate.git.next,
+    callback = api.node.navigate.git.next,
     desc = {
       long = "Go to next git item.",
       short = "Next Git",
@@ -294,7 +294,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "[e",
-    callback = Api.node.navigate.diagnostics.prev,
+    callback = api.node.navigate.diagnostics.prev,
     desc = {
       long = "Go to prev diagnostic item.",
       short = "Prev Diagnostic",
@@ -303,7 +303,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "[c",
-    callback = Api.node.navigate.git.prev,
+    callback = api.node.navigate.git.prev,
     desc = {
       long = "Go to prev git item.",
       short = "Prev Git",
@@ -312,7 +312,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "-",
-    callback = Api.tree.change_root_to_parent,
+    callback = api.tree.change_root_to_parent,
     desc = {
       long = "Navigate up to the parent directory of the current file/directory.",
       short = "Up",
@@ -321,7 +321,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "s",
-    callback = Api.node.run.system,
+    callback = api.node.run.system,
     desc = {
       long = "Open a file with default system application or a directory with default file manager, using |system_open| option.",
       short = "Run System",
@@ -330,7 +330,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "f",
-    callback = Api.live_filter.start,
+    callback = api.live_filter.start,
     desc = {
       long = "Live filter nodes dynamically based on regex matching.",
       short = "Filter",
@@ -339,7 +339,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "F",
-    callback = Api.live_filter.clear,
+    callback = api.live_filter.clear,
     desc = {
       long = "Clear live filter.",
       short = "Clean Filter",
@@ -348,7 +348,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "q",
-    callback = Api.tree.close,
+    callback = api.tree.close,
     desc = {
       long = "Close tree window.",
       short = "Close",
@@ -357,7 +357,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "W",
-    callback = Api.tree.collapse_all,
+    callback = api.tree.collapse_all,
     desc = {
       long = "Collapse the whole tree.",
       short = "Collapse",
@@ -366,7 +366,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "E",
-    callback = Api.tree.expand_all,
+    callback = api.tree.expand_all,
     desc = {
       long = "Expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| directories; this might hang neovim for a while if running on a big directory.",
       short = "Expand All",
@@ -375,7 +375,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "S",
-    callback = Api.tree.search_node,
+    callback = api.tree.search_node,
     desc = {
       long = "Prompt the user to enter a path and then expands the tree to match the path.",
       short = "Search",
@@ -384,7 +384,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = ".",
-    callback = Api.node.run.cmd,
+    callback = api.node.run.cmd,
     desc = {
       long = "Enter vim command mode with the file the cursor is on.",
       short = "Run Command",
@@ -393,7 +393,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "<C-k>",
-    callback = Api.node.show_info_popup,
+    callback = api.node.show_info_popup,
     desc = {
       long = "Toggle a popup with file info about the file under the cursor.",
       short = "Info",
@@ -402,7 +402,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "g?",
-    callback = Api.tree.toggle_help,
+    callback = api.tree.toggle_help,
     desc = {
       long = "Toggle help.",
       short = "Help",
@@ -411,7 +411,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "m",
-    callback = Api.marks.toggle,
+    callback = api.marks.toggle,
     desc = {
       long = "Toggle node in bookmarks.",
       short = "Toggle Bookmark",
@@ -420,7 +420,7 @@ local DEFAULT_KEYMAPS = {
   },
   {
     key = "bmv",
-    callback = Api.marks.bulk.move,
+    callback = api.marks.bulk.move,
     desc = {
       long = "Move all bookmarked nodes into specified location.",
       short = "Move Bookmarked",
@@ -430,58 +430,60 @@ local DEFAULT_KEYMAPS = {
 }
 -- END_DEFAULT_KEYMAPS
 
+-- stylua: ignore start
 function M.on_attach_default(bufnr)
-  vim.keymap.set('n', '<CR>', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'o', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<2-LeftMouse>', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-e>', Api.node.open.replace_tree_buffer, { desc = 'Open: In Place', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'O', Api.node.open.no_window_picker, { desc = 'Open: No Window Picker', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-]>', Api.tree.change_root_to_node, { desc = 'CD', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<2-RightMouse>', Api.tree.change_root_to_node, { desc = 'CD', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-v>', Api.node.open.vertical, { desc = 'Open: Vertical Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-x>', Api.node.open.horizontal, { desc = 'Open: Horizontal Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-t>', Api.node.open.tab, { desc = 'Open: New Tab', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<', Api.node.navigate.sibling.prev, { desc = 'Previous Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '>', Api.node.navigate.sibling.next, { desc = 'Next Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'P', Api.node.navigate.parent, { desc = 'Parent Directory', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<BS>', Api.node.navigate.parent_close, { desc = 'Close Directory', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<Tab>', Api.node.open.preview, { desc = 'Open Preview', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'K', Api.node.navigate.sibling.first, { desc = 'First Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'J', Api.node.navigate.sibling.last, { desc = 'Last Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'I', Api.tree.toggle_gitignore_filter, { desc = 'Toggle Git Ignore', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'H', Api.tree.toggle_hidden_filter, { desc = 'Toggle Dotfiles', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'U', Api.tree.toggle_custom_filter, { desc = 'Toggle Hidden', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'R', Api.tree.reload, { desc = 'Refresh', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'a', Api.fs.create, { desc = 'Create', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'd', Api.fs.remove, { desc = 'Delete', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'D', Api.fs.trash, { desc = 'Trash', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'r', Api.fs.rename, { desc = 'Rename', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-r>', Api.fs.rename_sub, { desc = 'Rename: Omit Filename', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'e', nil, { desc = 'Rename: Basename', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'x', Api.fs.cut, { desc = 'Cut', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'c', Api.fs.copy.node, { desc = 'Copy', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'p', Api.fs.paste, { desc = 'Paste', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'y', Api.fs.copy.filename, { desc = 'Copy Name', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'Y', Api.fs.copy.relative_path, { desc = 'Copy Relative Path', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'gy', Api.fs.copy.absolute_path, { desc = 'Copy Absolute Path', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', ']e', Api.node.navigate.diagnostics.next, { desc = 'Next Diagnostic', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', ']c', Api.node.navigate.git.next, { desc = 'Next Git', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '[e', Api.node.navigate.diagnostics.prev, { desc = 'Prev Diagnostic', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '[c', Api.node.navigate.git.prev, { desc = 'Prev Git', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '-', Api.tree.change_root_to_parent, { desc = 'Up', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 's', Api.node.run.system, { desc = 'Run System', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'f', Api.live_filter.start, { desc = 'Filter', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'F', Api.live_filter.clear, { desc = 'Clean Filter', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'q', Api.tree.close, { desc = 'Close', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'W', Api.tree.collapse_all, { desc = 'Collapse', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'E', Api.tree.expand_all, { desc = 'Expand All', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'S', Api.tree.search_node, { desc = 'Search', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '.', Api.node.run.cmd, { desc = 'Run Command', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', '<C-k>', Api.node.show_info_popup, { desc = 'Info', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'g?', Api.tree.toggle_help, { desc = 'Help', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'm', Api.marks.toggle, { desc = 'Toggle Bookmark', buffer = bufnr, noremap = true, silent = true, nowait = true })
-  vim.keymap.set('n', 'bmv', Api.marks.bulk.move, { desc = 'Move Bookmarked', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     { desc = 'Open: In Place',         buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              { desc = 'Info',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-r>', api.fs.rename_sub,                     { desc = 'Rename: Omit Filename',  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-t>', api.node.open.tab,                     { desc = 'Open: New Tab',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-v>', api.node.open.vertical,                { desc = 'Open: Vertical Split',   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-x>', api.node.open.horizontal,              { desc = 'Open: Horizontal Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<BS>',  api.node.navigate.parent_close,        { desc = 'Close Directory',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<CR>',  api.node.open.edit,                    { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<Tab>', api.node.open.preview,                 { desc = 'Open Preview',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '>',     api.node.navigate.sibling.next,        { desc = 'Next Sibling',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<',     api.node.navigate.sibling.prev,        { desc = 'Previous Sibling',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '.',     api.node.run.cmd,                      { desc = 'Run Command',            buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '-',     api.tree.change_root_to_parent,        { desc = 'Up',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'a',     api.fs.create,                         { desc = 'Create',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   { desc = 'Move Bookmarked',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'c',     api.fs.copy.node,                      { desc = 'Copy',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            { desc = 'Prev Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']c',    api.node.navigate.git.next,            { desc = 'Next Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'd',     api.fs.remove,                         { desc = 'Delete',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'D',     api.fs.trash,                          { desc = 'Trash',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'E',     api.tree.expand_all,                   { desc = 'Expand All',             buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'e',     api.fs.rename_basename,                { desc = 'Rename: Basename',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']e',    api.node.navigate.diagnostics.next,    { desc = 'Next Diagnostic',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[e',    api.node.navigate.diagnostics.prev,    { desc = 'Prev Diagnostic',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'F',     api.live_filter.clear,                 { desc = 'Clean Filter',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'f',     api.live_filter.start,                 { desc = 'Filter',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'g?',    api.tree.toggle_help,                  { desc = 'Help',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'gy',    api.fs.copy.absolute_path,             { desc = 'Copy Absolute Path',     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,         { desc = 'Toggle Dotfiles',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,      { desc = 'Toggle Git Ignore',      buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'J',     api.node.navigate.sibling.last,        { desc = 'Last Sibling',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'K',     api.node.navigate.sibling.first,       { desc = 'First Sibling',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'm',     api.marks.toggle,                      { desc = 'Toggle Bookmark',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'o',     api.node.open.edit,                    { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'O',     api.node.open.no_window_picker,        { desc = 'Open: No Window Picker', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'p',     api.fs.paste,                          { desc = 'Paste',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'P',     api.node.navigate.parent,              { desc = 'Parent Directory',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'q',     api.tree.close,                        { desc = 'Close',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'r',     api.fs.rename,                         { desc = 'Rename',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'R',     api.tree.reload,                       { desc = 'Refresh',                buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 's',     api.node.run.system,                   { desc = 'Run System',             buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'S',     api.tree.search_node,                  { desc = 'Search',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'U',     api.tree.toggle_custom_filter,         { desc = 'Toggle Hidden',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'W',     api.tree.collapse_all,                 { desc = 'Collapse',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'x',     api.fs.cut,                            { desc = 'Cut',                    buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'y',     api.fs.copy.filename,                  { desc = 'Copy Name',              buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'Y',     api.fs.copy.relative_path,             { desc = 'Copy Relative Path',     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-LeftMouse>',  api.node.open.edit,           { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
 end
+-- stylua: ignore end
 
 function M.setup(opts)
   if type(opts.on_attach) ~= "function" then

@@ -22,7 +22,7 @@ end
 
 -- sort lhs roughly as per :help index
 local PAT_MOUSE = "^<.*Mouse"
-local PAT_CTRL = "^<C\\-"
+local PAT_CTRL = "^<C%-"
 local PAT_SPECIAL = "^<.+"
 local function sort_lhs(a, b)
   -- mouse last
@@ -46,14 +46,8 @@ local function sort_lhs(a, b)
     return false
   end
 
-  -- non-alpha next
-  if a:match "^%a" and not b:match "^%a" then
-    return false
-  elseif not a:match "^%a" and b:match "^%a" then
-    return true
-  end
-
-  return a < b
+  -- lowercase alpha characters only
+  return a:gsub("[^a-zA-Z]", ""):lower() < b:gsub("[^a-zA-Z]", ""):lower()
 end
 
 function M.compute_lines()
