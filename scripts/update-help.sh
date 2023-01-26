@@ -21,6 +21,22 @@ sed -e "s/^  /      /" /tmp/DEFAULT_OPTS.2.lua > /tmp/DEFAULT_OPTS.6.lua
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_OPTS.6.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
+#
+# DEFAULT_ON_ATTACH
+#
+
+begin="BEGIN_DEFAULT_ON_ATTACH"
+end="END_DEFAULT_ON_ATTACH"
+
+# scrape DEFAULT_ON_ATTACH, indented at 2
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_ON_ATTACH.2.lua
+
+# indent some more
+sed -e "s/^  /    /" /tmp/DEFAULT_ON_ATTACH.2.lua > /tmp/DEFAULT_ON_ATTACH.4.lua
+
+# help, indented at 4
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.4.lua
+           }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
 #
 # DEFAULT_KEYMAPS
@@ -40,12 +56,6 @@ begin="BEGIN_LEGACY_CALLBACKS"
 end="END_LEGACY_CALLBACKS"
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/LEGACY_CALLBACKS.lua
            }; /${end}/p; d }" lua/nvim-tree/legacy.lua
-
-# help on_attach
-begin="BEGIN_ON_ATTACH"
-end="END_ON_ATTACH"
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_KEYMAPS.on_attach.lua
-           }; /${end}/p; d }" doc/nvim-tree-lua.txt
 
 # help human
 sed -i -e "/^DEFAULT MAPPINGS/,/^>$/{ /^DEFAULT MAPPINGS/{p; r /tmp/DEFAULT_KEYMAPS.help

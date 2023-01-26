@@ -41,25 +41,6 @@ end
 io.write "\n"
 io.close(file)
 
--- lua on_attach
-file = io.open("/tmp/DEFAULT_KEYMAPS.on_attach.lua", "w")
-io.output(file)
-io.write "    local Api = require('nvim-tree.api')\n\n"
-fmt = string.format(
-  "    vim.keymap.set('n', %%-%d.%ds %%-%d.%ds { desc = '%%s', buffer = bufnr, noremap = true, silent = true, nowait = true, })\n",
-  max_key + 3,
-  max_key + 3,
-  max_callback + 1,
-  max_callback + 1
-)
-for _, m in pairs(DEFAULT_KEYMAPS) do
-  local keys = type(m.key) == "table" and m.key or { m.key }
-  for _, key in ipairs(keys) do
-    io.write(string.format(fmt, "'" .. key .. "',", m.callback .. ",", m.desc.short))
-  end
-end
-io.close(file)
-
 -- legacy callback mappings
 file = io.open("/tmp/LEGACY_CALLBACKS.lua", "w")
 io.output(file)

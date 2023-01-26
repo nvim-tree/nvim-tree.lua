@@ -431,7 +431,8 @@ local DEFAULT_KEYMAPS = {
 -- END_DEFAULT_KEYMAPS
 
 -- stylua: ignore start
-function M.on_attach_default(bufnr)
+function M.default_on_attach(bufnr)
+  -- BEGIN_DEFAULT_ON_ATTACH
   vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     { desc = 'Open: In Place',         buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              { desc = 'Info',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
@@ -482,12 +483,13 @@ function M.on_attach_default(bufnr)
   vim.keymap.set('n', 'Y',     api.fs.copy.relative_path,             { desc = 'Copy Relative Path',     buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', '<2-LeftMouse>',  api.node.open.edit,           { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  -- END_DEFAULT_ON_ATTACH
 end
 -- stylua: ignore end
 
 function M.setup(opts)
   if type(opts.on_attach) ~= "function" then
-    M.on_attach = M.on_attach_default
+    M.on_attach = M.default_on_attach
   else
     M.on_attach = opts.on_attach
   end
