@@ -132,7 +132,7 @@ end
 function M.clear_clipboard()
   clipboard.move = {}
   clipboard.copy = {}
-  utils.notify.info "Clipboard has been emptied."
+  notify.info "Clipboard has been emptied."
 end
 
 function M.copy(node)
@@ -184,6 +184,7 @@ local function do_cut(source, destination)
     return true
   end
 
+  events._dispatch_will_rename_node(source, destination)
   local success, errmsg = vim.loop.fs_rename(source, destination)
   if not success then
     log.line("copy_paste", "do_cut fs_rename failed '%s'", errmsg)

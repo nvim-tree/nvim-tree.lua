@@ -2,12 +2,10 @@ local M = {}
 
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
+local log = require "nvim-tree.log"
 
-local function get_win_sep_hl()
-  -- #1221 WinSeparator not present in nvim 0.6.1 and some builds of 0.7.0
-  local has_win_sep = pcall(vim.cmd, "silent hi WinSeparator")
-  return has_win_sep and "WinSeparator:NvimTreeWinSeparator" or "VertSplit:NvimTreeWinSeparator"
-end
+local DEFAULT_MIN_WIDTH = 30
+local DEFAULT_MAX_WIDTH = -1
 
 M.View = {
   adaptive_size = false,
@@ -37,7 +35,7 @@ M.View = {
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
       "LineNr:NvimTreeLineNr",
-      get_win_sep_hl(),
+      "WinSeparator:NvimTreeWinSeparator",
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
       "SignColumn:NvimTreeSignColumn",
@@ -97,8 +95,8 @@ local function create_buffer(bufnr)
   require("nvim-tree.keymap").on_attach(M.get_bufnr())
 end
 
-local function get_size()
-  local size = M.View.width
+local function get_size(size)
+  size = size or M.View.width
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
@@ -226,6 +224,9 @@ function M.open(options)
     return
   end
 
+  local pn = string.format "view open"
+  local ps = log.profile_start(pn)
+
   create_buffer()
   open_window()
   M.resize()
@@ -235,19 +236,36 @@ function M.open(options)
     vim.cmd "wincmd p"
   end
   events._dispatch_on_tree_open()
+
+  log.profile_end(ps, pn)
 end
 
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
-  local max_length = M.View.initial_width
+  -- 1 column of right-padding to indicate end of path
+  local padding = 3
+  local resizing_width = M.View.initial_width - padding
+  local max_width
+
+  -- maybe bound max
+  if M.View.max_width == -1 then
+    max_width = -1
+  else
+    max_width = get_size(M.View.max_width) - padding
+  end
+
   for _, l in pairs(lines) do
-    local count = vim.fn.strchars(l) + 3 -- plus some padding
-    if max_length < count then
-      max_length = count
+    local count = vim.fn.strchars(l)
+    if resizing_width < count then
+      resizing_width = count
+    end
+    if M.View.adaptive_size and max_width >= 0 and resizing_width >= max_width then
+      resizing_width = max_width
+      break
     end
   end
-  M.resize(max_length)
+  M.resize(resizing_width + padding)
 end
 
 function M.grow_from_content()
@@ -384,8 +402,8 @@ function M.restore_tab_state()
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
----@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number
+---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number|nil
 function M.get_winnr(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
@@ -401,8 +419,8 @@ function M.get_bufnr()
 end
 
 --- Checks if nvim-tree is displaying the help ui within the tabpage specified
----@param tabpage number: (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number
+---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@return number|nil
 function M.is_help_ui(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
@@ -476,19 +494,29 @@ end
 
 function M.setup(opts)
   local options = opts.view or {}
-  M.View.adaptive_size = options.adaptive_size
   M.View.centralize_selection = options.centralize_selection
   M.View.side = (options.side == "right") and "right" or "left"
-  M.View.width = options.width
   M.View.height = options.height
-  M.View.initial_width = get_size()
   M.View.hide_root_folder = options.hide_root_folder
   M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
+  M.View.winopts.cursorline = options.cursorline
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
   M.View.float = options.float
+  M.on_attach = opts.on_attach
+
+  if type(options.width) == "table" then
+    M.View.adaptive_size = true
+    M.View.width = options.width.min or DEFAULT_MIN_WIDTH
+    M.View.max_width = options.width.max or DEFAULT_MAX_WIDTH
+  else
+    M.View.adaptive_size = false
+    M.View.width = options.width
+  end
+
+  M.View.initial_width = get_size()
 end
 
 return M

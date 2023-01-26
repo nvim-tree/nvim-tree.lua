@@ -24,7 +24,9 @@ local function git(path, git_status)
   end
 
   -- default status to clean
-  local status = git_status.files[path] or git_status.dirs[path] or "  "
+  local status = git_status.files[path]
+  status = status or git_status.dirs.direct[path] and git_status.dirs.direct[path][1]
+  status = status or git_status.dirs.indirect[path] and git_status.dirs.indirect[path][1]
 
   -- filter ignored; overrides clean as they are effectively dirty
   if M.config.filter_git_ignored and status == "!!" then
@@ -32,7 +34,7 @@ local function git(path, git_status)
   end
 
   -- filter clean
-  if M.config.filter_git_clean and status == "  " then
+  if M.config.filter_git_clean and not status then
     return true
   end
 
@@ -89,8 +91,8 @@ local function custom(path)
 end
 
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
----@param git_status table results of git.load_project_status(...)
----@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+---@param git_status table|nil optional results of git.load_project_status(...)
+---@param unloaded_bufnr number|nil optional bufnr recently unloaded via BufUnload event
 ---@return table
 --- git_status: reference
 --- unloaded_bufnr: copy

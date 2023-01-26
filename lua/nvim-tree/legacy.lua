@@ -71,16 +71,33 @@ local function refactored(opts)
   end
 
   -- 2022/06/20
-  utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root")
-  utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd")
+  utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root", true)
+  utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd", true)
 
   -- 2022/11/07
   utils.move_missing_val(opts, "", "open_on_tab", opts, "tab.sync", "open", false)
-  utils.move_missing_val(opts, "", "open_on_tab", opts, "tab.sync", "close")
-  utils.move_missing_val(opts, "", "ignore_buf_on_tab_change", opts, "tab.sync", "ignore")
+  utils.move_missing_val(opts, "", "open_on_tab", opts, "tab.sync", "close", true)
+  utils.move_missing_val(opts, "", "ignore_buf_on_tab_change", opts, "tab.sync", "ignore", true)
 
   -- 2022/11/22
-  utils.move_missing_val(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label")
+  utils.move_missing_val(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label", true)
+
+  -- 2023/01/01
+  utils.move_missing_val(opts, "update_focused_file", "debounce_delay", opts, "view", "debounce_delay", true)
+
+  -- 2023/01/08
+  utils.move_missing_val(opts, "trash", "require_confirm", opts, "ui.confirm", "trash", true)
+
+  -- 2023/01/15
+  if opts.view and opts.view.adaptive_size ~= nil then
+    if opts.view.adaptive_size and type(opts.view.width) ~= "table" then
+      local width = opts.view.width
+      opts.view.width = {
+        min = width,
+      }
+    end
+    opts.view.adaptive_size = nil
+  end
 end
 
 local function removed(opts)

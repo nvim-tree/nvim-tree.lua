@@ -9,12 +9,12 @@ CONTENTS                                                           *nvim-tree*
   2. Quickstart                               |nvim-tree-quickstart|
   3. Commands                                 |nvim-tree-commands|
   4. Setup/Configuration                      |nvim-tree-setup|
-  4.1 Vinegar Style                           |nvim-tree-vinegar|
   5. Api                                      |nvim-tree-api|
   6. Mappings                                 |nvim-tree-mappings|
   7. Highlight Groups                         |nvim-tree-highlight|
   8. Events                                   |nvim-tree-events|
   9. Bookmarks                                |nvim-tree-bookmarks|
+ 10. OS Specific Restrictions                 |nvim-tree-os-specific|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -58,7 +58,7 @@ Git Integration
 
 Requirements
 
-    This file explorer requires `neovim >= 0.7.0`
+    This file explorer requires `neovim >= 0.8.0`
 
 ==============================================================================
  2. QUICK START                                         *nvim-tree-quickstart*
@@ -81,7 +81,6 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
-        adaptive_size = true,
         mappings = {
           list = {
             { key = "u", action = "dir_up" },
@@ -188,8 +187,9 @@ Subsequent calls to setup will replace the previous configuration.
       remove_keymaps = false,
       select_prompts = false,
       view = {
-        adaptive_size = false,
         centralize_selection = false,
+        cursorline = true,
+        debounce_delay = 15,
         width = 30,
         hide_root_folder = false,
         side = "left",
@@ -222,6 +222,7 @@ Subsequent calls to setup will replace the previous configuration.
         highlight_git = false,
         full_name = false,
         highlight_opened_files = "none",
+        highlight_modified = "none",
         root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
         indent_markers = {
@@ -238,6 +239,7 @@ Subsequent calls to setup will replace the previous configuration.
         icons = {
           webdev_colors = true,
           git_placement = "before",
+          modified_placement = "after",
           padding = " ",
           symlink_arrow = " ➛ ",
           show = {
@@ -245,11 +247,13 @@ Subsequent calls to setup will replace the previous configuration.
             folder = true,
             folder_arrow = true,
             git = true,
+            modified = true,
           },
           glyphs = {
             default = "",
             symlink = "",
             bookmark = "",
+            modified = "●",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -323,6 +327,11 @@ Subsequent calls to setup will replace the previous configuration.
         show_on_open_dirs = true,
         timeout = 400,
       },
+      modified = {
+        enable = false,
+        show_on_dirs = true,
+        show_on_open_dirs = true,
+      },
       actions = {
         use_system_clipboard = true,
         change_dir = {
@@ -348,6 +357,7 @@ Subsequent calls to setup will replace the previous configuration.
           resize_window = true,
           window_picker = {
             enable = true,
+            picker = "default",
             chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
             exclude = {
               filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
@@ -361,7 +371,6 @@ Subsequent calls to setup will replace the previous configuration.
       },
       trash = {
         cmd = "gio trash",
-        require_confirm = true,
       },
       live_filter = {
         prefix = "[FILTER]: ",
@@ -376,6 +385,12 @@ Subsequent calls to setup will replace the previous configuration.
       },
       notify = {
         threshold = vim.log.levels.INFO,
+      },
+      ui = {
+        confirm = {
+          remove = true,
+          trash = true,
+        },
       },
       log = {
         enable = false,
@@ -522,19 +537,27 @@ until it finds the file.
       Type: {string}, Default: `{}`
 
 *nvim-tree.system_open*
-Configuration options for the system open command.
+Open a file or directory in your preferred application.
 
     *nvim-tree.system_open.cmd*
-    The command to run, leaving empty should work but useful if you want to
-    override the default command with another one.
+    The open command itself.
       Type: `string`, Default: `""`
 
+    Leave empty for OS specific default:
+      UNIX:    `"xdg-open"`
+      macOS:   `"open"`
+      Windows: "`cmd"`
+
     *nvim-tree.system_open.args*
-    The command arguments as a list.
+    Optional argument list.
       Type: {string}, Default: `{}`
+
+    Leave empty for OS specific default:
+      Windows: `{ "/c", "start", '""' }`
 
 *nvim-tree.diagnostics*
 Show LSP and COC diagnostics in the signcolumn
+Note that the modified sign will take precedence over the diagnostics signs.
 
     `NOTE`: it will use the default diagnostic color groups to highlight the signs.
     If you wish to customize, you can override these groups:
@@ -592,7 +615,7 @@ Git integration with icons and colors.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.show_on_open_dirs*
-    Show status icons on directories that are open.
+    Show status icons of children on directories that are open.
     Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
 
@@ -609,6 +632,26 @@ Git integration with icons and colors.
   The git integration is blocking, so if your timeout is too long (like not in
   milliseconds but a few seconds), it will not render anything until the git
   process returned the data.
+
+*nvim-tree.modified*
+Indicate which file have unsaved modification.
+
+    *nvim-tree.modified.enable*
+    Enable / disable the feature.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.modified.show_on_dirs*
+    Show modified indication on directory whose children are modified.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.modified.show_on_open_dirs*
+    Show modified indication on open directories.
+    Only relevant when |modified.show_on_dirs| is `true`.
+      Type: `boolean`, Default: `true`
+
+  You will still need to set |renderer.icons.show.modified| `= true` or
+  |renderer.highlight_modified| `= true` to be able to see things in the
+  tree.
 
 *nvim-tree.filesystem_watchers*
 Will use file system watcher (libuv fs_event) to watch the filesystem for
@@ -665,23 +708,38 @@ Type: `boolean`, Default: `false`
 *nvim-tree.view*
 Window / buffer setup.
 
-    *nvim-tree.view.adaptive_size*
-    Resize the window on each draw based on the longest line.
-      Type: `boolean`, Default: `false`
-
     *nvim-tree.view.centralize_selection*
     When entering nvim-tree, reposition the view so that the current node is
     initially centralized, see |zz|.
       Type: `boolean`, Default: `false`
+
+    *nvim-tree.view.cursorline*
+    Enable |cursorline| in the tree window.
+      Type: `boolean`, Default: `true`
+
+    *nvim-tree.view.debounce_delay*
+    Idle milliseconds before some reload / refresh operations.
+    Increase if you experience performance issues around screen refresh.
+      Type: `number`, Default: `15` (ms)
 
     *nvim-tree.view.hide_root_folder*
     Hide the path of the current working directory on top of the tree.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.width*
-    Width of the window, can be a `%` string, a number representing columns or
-    a function.
-      Type: `string | number | function`, Default: `30`
+    Width of the window: can be a `%` string, a number representing columns, a
+    function or a table.
+    A table indicates that the view should be dynamically sized based on the
+    longest line (previously `view.adaptive_size`).
+      Type: `string | number | function | table`, Default: `30`
+
+        *nvim-tree.view.width.min*
+          Minimum dynamic width.
+          Type: `string | number | function`, Default: `30`
+
+        *nvim-tree.view.width.max*
+          Maximum dynamic width, -1 for unbounded.
+          Type: `string | number | function`, Default: `-1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
@@ -768,6 +826,13 @@ UI rendering setup
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
+    *nvim-tree.renderer.highlight_modified*
+    Highlight icons and/or names for modified files using `NvimTreeModified`
+    highlight groups.
+    Value can be `"none"`, `"icon"`, `"name"` or `"all"`
+    This can be used with or without the icons.
+      Type: `string`, Default `"none"`
+
     *nvim-tree.renderer.root_folder_label*  (previously `renderer.root_folder_modifier`)
     In what format to show root folder. See `:help filename-modifiers` for
     available `string` options.
@@ -810,12 +875,17 @@ UI rendering setup
         Place where the git icons will be rendered.
         Can be `"after"` or `"before"` filename (after the file/folders icons)
         or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
-        Note that the diagnostic signs will take precedence over the git signs.
+        Note that the diagnostic signs and the modified sign will take precedence over the git signs.
           Type: `string`, Default: `before`
+
+        *nvim-tree.renderer.icons.modified_placement*
+        Place where the modified icon will be rendered.
+        Can be `"after"` or `"before"` filename (after the file/folders icons)
+        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+          Type: `string`, Default: `after`
 
         *nvim-tree.renderer.icons.padding*
         Inserted between icon and filename.
-        Use with caution, it could break rendering if you set an empty string depending on your font.
           Type: `string`, Default: `" "`
 
         *nvim-tree.renderer.icons.symlink_arrow*
@@ -843,8 +913,15 @@ UI rendering setup
             Requires |git.enable| `= true`
               Type: `boolean`, Default: `true`
 
+            *nvim-tree.renderer.icons.show.modified*
+            Show a modified icon, see |renderer.icons.modified_placement|
+            Requires |modified.enable| `= true`
+              Type: `boolean`, Default: `true`
+
         *nvim-tree.renderer.icons.glyphs*
         Configuration options for icon glyphs.
+        NOTE: Do not set any glyphs to more than two characters if it's going
+        to appear in the signcolumn.
 
             *nvim-tree.renderer.icons.glyphs.default*
             Glyph for files. Will be overridden by `nvim-web-devicons` if available.
@@ -853,6 +930,10 @@ UI rendering setup
             *nvim-tree.renderer.icons.glyphs.symlink*
             Glyph for symlinks to files.
               Type: `string`, Default: `""`
+
+            *nvim-tree.renderer.icons.glyphs.modified*
+            Icon to display for modified files.
+              Type: `string`, Default: `"●"`
 
             *nvim-tree.renderer.icons.glyphs.folder*
             Glyphs for directories.
@@ -927,11 +1008,8 @@ Configuration options for trashing.
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
     The default is shipped with glib2 which is a common linux package.
+    Only available for UNIX.
       Type: `string`, Default: `"gio trash"`
-
-    *nvim-tree.trash.require_confirm*
-    Show a prompt before trashing takes place.
-      Type: `boolean`, Default: `true`
 
 *nvim-tree.actions*
 Configuration for various actions.
@@ -1001,6 +1079,16 @@ Configuration for various actions.
             from which you last opened the tree.
               Type: `boolean`, Default: `true`
 
+            *nvim-tree.actions.open_file.window_picker.picker*
+            Change the default window picker, can be a string `"default"` or a function.
+            The function should return the window id that will open the node,
+            or `nil` if an invalid window is picked or user cancelled the action.
+              Type: `string` | `function`, Default: `"default"`
+              e.g. s1n7ax/nvim-window-picker plugin: >
+                window_picker = {
+                  enable = true,
+                  picker = require('window-picker').pick_window,
+<
             *nvim-tree.actions.open_file.window_picker.chars*
             A string of chars used as identifiers by the window picker.
               Type: `string`, Default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
@@ -1072,6 +1160,20 @@ Configuration for notification.
     `INFO:`    information only e.g. file copy path confirmation.
     `DEBUG:`   not used.
 
+*nvim-tree.ui*
+General UI configuration.
+
+    *nvim-tree.ui.confirm*
+    Confirmation prompts.
+
+        *nvim-tree.ui.confirm.remove*
+        Prompt before removing.
+          Type: `boolean`, Default: `true`
+
+        *nvim-tree.ui.confirm.trash*  (previously `trash.require_confirm`)
+        Prompt before trashing.
+          Type: `boolean`, Default: `true`
+
 *nvim-tree.log*
 Configuration for diagnostic logging.
 
@@ -1119,47 +1221,6 @@ Configuration for diagnostic logging.
           Type: `boolean`, Default: `false`
 
 ==============================================================================
- 4.1 VINEGAR STYLE                                         *nvim-tree-vinegar*
-
-|nvim_tree_vinegar|                                    *nvim_tree_vinegar*
-
-nvim-tree can behave like vinegar. To allow this, you will need to configure
-it in a specific way:
-
-- Use `require"nvim-tree".open_replacing_current_buffer()` instead of the
-default open command.
-You can easily implement a toggle using this too:
->
-    local function toggle_replace()
-      local view = require"nvim-tree.view"
-      local api = require"nvim-tree.api"
-      if view.is_visible() then
-        api.tree.close()
-      else
-        require"nvim-tree".open_replacing_current_buffer()
-      end
-    end
-<
-- Use the `edit_in_place` action to edit files. It's bound to `<C-e>` by
-default, vinegar uses `<CR>`. You can override this with:
->
-    require"nvim-tree".setup {
-      view = {
-        mappings = {
-          list = {
-            { key = "<CR>", action = "edit_in_place" }
-          }
-        }
-      }
-    }
-<
-Going up a dir is bound to `-` by default in nvim-tree which is identical to
-vinegar, no change is needed here.
-
-You'll also need to set |nvim-tree.hijack_netrw| to `true` during setup.
-A good functionality to enable is |nvim-tree.hijack_directories|.
-
-==============================================================================
  5. API                                                   *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features.
@@ -1179,34 +1240,126 @@ that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
 
-- api.tree:                                             *nvim-tree.api.tree*
-    - open `(path?: string)`
-    - close
-    - toggle `(find_file?: bool, no_focus?: bool, path?: string)`
-    - focus
-    - reload
-    - change_root `(path: string)`
-    - change_root_to_node
-    - change_root_to_parent
-    - get_node_under_cursor
-    - get_nodes
-    - find_file `(filename: string)`
-    - search_node
-    - collapse_all `(keep_buffers?: bool)`
-    - expand_all
-    - toggle_gitignore_filter
-    - toggle_git_clean_filter
-    - toggle_no_buffer_filter
-    - toggle_custom_filter
-    - toggle_hidden_filter
-    - toggle_help
+api.tree.open({opts})                              *nvim-tree.api.tree.open()*
+    Open the tree, focusing it if already open.
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {path}           (string)  root directory for the tree
+      • {current_window} (boolean) open the tree in the current window
+
+api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
+    Open or close the tree.
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {path}           (string)  root directory for the tree
+      • {current_window} (boolean) open the tree in the current window
+      • {focus}          (boolean) focus the tree when opening
+      • {find_file}      (boolean) find the current buffer
+      • {update_root}    (boolean) see |nvim-tree.update_focused_file.update_root|
+
+api.tree.close()                                   *nvim-tree.api.tree.close()*
+    Close the tree, affecting all tabs as per |nvim-tree.tab.sync.close|
+
+api.tree.close_in_this_tab()           *nvim-tree.api.tree.close_in_this_tab()*
+    Close the tree in this tab only.
+
+api.tree.close_in_all_tabs()           *nvim-tree.api.tree.close_in_all_tabs()*
+    Close the tree in all tabs.
+
+api.tree.focus()                                   *nvim-tree.api.tree.focus()*
+    Focus the tree, opening it if necessary.
+
+api.tree.reload()                                  *nvim-tree.api.tree.reload()*
+    Refresh the tree. Does nothing if closed.
+
+api.tree.change_root({path})                 *nvim-tree.api.tree.change_root()*
+    Change the tree's root to a path.
+
+    Parameters: ~
+      • {path} (string) absolute or relative path
+
+                                     *nvim-tree.api.tree.change_root_to_node()*
+api.tree.change_root_to_node({node})
+    Change the tree's root to a folder node or the parent of a file node.
+
+    Parameters: ~
+      • {node} (Node) folder or file
+
+                                   *nvim-tree.api.tree.change_root_to_parent()*
+api.tree.change_root_to_parent({node})
+    Change the tree's root to the parent of a node.
+
+    Parameters: ~
+      • {node} (Node) folder or file
+
+api.tree.get_node_under_cursor()   *nvim-tree.api.tree.get_node_under_cursor()*
+    Retrieve the currently focused node.
+
+    Return: ~
+      node or nil if tree is not visible
+
+api.tree.get_nodes()                           *nvim-tree.api.tree.get_nodes()*
+    Retrieve a hierarchical list of all the nodes. This is a cloned list for
+    reference purposes only and should not be passed into other API functions.
+
+    Return: ~
+      table of nodes
+
+api.tree.find_file({path})                     *nvim-tree.api.tree.find_file()*
+    Find and focus a file or folder in the tree.
+
+    Parameters: ~
+      • {path} (string) absolute path
+
+api.tree.search_node()                       *nvim-tree.api.tree.search_node()*
+    Open the search dialogue as per the search_node action.
+
+api.tree.collapse_all({keep_buffers})       *nvim-tree.api.tree.collapse_all()*
+    Collapse the tree.
+
+    Parameters: ~
+      • {keep_buffers} (boolean) do not collapse nodes with open buffers.
+
+api.tree.expand_all({keep_buffers})           *nvim-tree.api.tree.expand_all()*
+    Expand all nodes in the tree.
+
+                                 *nvim-tree.api.tree.toggle_gitignore_filter()*
+api.tree.toggle_gitignore_filter()
+    Toggle |nvim-tree.git.ignore| filter.
+
+                                 *nvim-tree.api.tree.toggle_git_clean_filter()*
+api.tree.toggle_git_clean_filter()
+    Toggle |nvim-tree.filters.git_clean| filter.
+
+                                 *nvim-tree.api.tree.toggle_no_buffer_filter()*
+api.tree.toggle_no_buffer_filter()
+    Toggle |nvim-tree.filters.no_buffer| filter.
+
+                                    *nvim-tree.api.tree.toggle_custom_filter()*
+api.tree.toggle_custom_filter()
+    Toggle |nvim-tree.filters.custom| filter.
+
+                                    *nvim-tree.api.tree.toggle_hidden_filter()*
+api.tree.toggle_hidden_filter()
+    Toggle |nvim-tree.filters.dotfiles| filter.
+
+api.tree.toggle_help()                       *nvim-tree.api.tree.toggle_help()*
+    Toggle help view.
 
 - api.fs:                                               *nvim-tree.api.fs*
     - create
     - remove
     - trash
+    - rename_node `(node: table, modifier?: string vim.fn.fnamemodify argument)`
     - rename
     - rename_sub
+    - rename_basename
     - cut
     - paste
     - clear_clipboard
@@ -1258,6 +1411,20 @@ exists.
     - navigate.next
     - navigate.prev
     - navigate.select
+
+api.config.mappings.active()          *nvim-tree.api.config.mappings.active()*
+    Retrieve a clone of the currently active mappings:
+    |nvim-tree-default-mappings| with |nvim-tree.view.mappings| applied.
+    Changing the active mappings will require a call to |nvim-tree-setup|
+
+    Return: ~
+        (table) as per |nvim-tree.view.mappings.list|
+
+api.config.mappings.default()        *nvim-tree.api.config.mappings.default()*
+    Retrieve a clone of the default mappings: |nvim-tree-default-mappings|
+
+    Return: ~
+        (table) as per |nvim-tree.view.mappings.list|
 
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*
@@ -1447,6 +1614,7 @@ NvimTreeEmptyFolderName     (Directory)
 NvimTreeOpenedFolderName    (Directory)
 NvimTreeExecFile
 NvimTreeOpenedFile
+NvimTreeModifiedFile
 NvimTreeSpecialFile
 NvimTreeImageFile
 NvimTreeIndentMarker
@@ -1473,8 +1641,7 @@ NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
 NvimTreeCursorLineNr    (CursorLineNr)
 NvimTreeLineNr          (LineNr)
-NvimTreeVertSplit       (VertSplit)     [deprecated, use NvimTreeWinSeparator]
-NvimTreeWinSeparator    (VertSplit)
+NvimTreeWinSeparator    (WinSeparator)
 NvimTreeCursorColumn    (CursorColumn)
 
 There are also links for file highlight with git properties, linked to their
@@ -1562,8 +1729,32 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                   {folder_name}  `{string}` Absolute path to the removed folder.
 
+- Event.TreeAttachedPost
+                Invoked after the tree's buffer has been created and mappings
+                have been applied: |nvim-tree-mappings| or |nvim-tree.on_attach|
+                handler parameters: ~
+                  {buf}          `{number} `API buffer handle (buffer number)
+
+|nvim_tree_events_startup|
+
+There are two special startup events in the form of User autocommands:
+
+`NvimTreeRequired`      first `require("nvim-tree")`
+`NvimTreeSetup`         `setup({})` completed
+
+Immediately before firing: a global variable of the same name will be set to a
+value of 1.
+
+Example subscription: >
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "NvimTreeRequired",
+    callback = function(data)
+      ---
+    end,
+  })
+<
 ==============================================================================
- 9. BOOKMARKS                                      *nvim-tree-bookmarks*
+ 9. BOOKMARKS                                            *nvim-tree-bookmarks*
 
 You can toggle marks on files/folders with
 `require("nvim-tree.api").marks.toggle(node)` which is bound to `m` by
@@ -1583,5 +1774,17 @@ This requires binding bookmark navigation yourself.
 vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
 vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
 vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
+
+==============================================================================
+ 10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+
+macOS
+- Trash is unavailable
+
+Windows WSL and PowerShell
+- Trash is unavailable
+- Executable file detection is disabled as this is non-performant and can
+  freeze nvim
+- Some filesystem watcher error related to permissions will not be reported
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:

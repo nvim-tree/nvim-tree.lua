@@ -1,12 +1,16 @@
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
+local log = require "nvim-tree.log"
 
 local M = {
   debouncers = {},
 }
 
-M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
+M.is_unix = vim.fn.has "unix" == 1
+M.is_macos = vim.fn.has "mac" == 1 or vim.fn.has "macunix" == 1
 M.is_wsl = vim.fn.has "wsl" == 1
+-- false for WSL
+M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
 function M.path_to_matching_str(path)
   return path:gsub("(%-)", "(%%-)"):gsub("(%.)", "(%%.)"):gsub("(%_)", "(%%_)")
@@ -151,63 +155,6 @@ function M.get_nodes_by_line(nodes_all, line_start)
   return nodes_by_line
 end
 
----Matching executable files in Windows.
----@param ext string
----@return boolean
-function M.is_windows_exe(ext)
-  if not M.pathexts then
-    if not vim.env.PATHEXT then
-      return false
-    end
-
-    local wexe = vim.split(vim.env.PATHEXT:gsub("%.", ""), ";")
-    M.pathexts = {}
-    for _, v in pairs(wexe) do
-      M.pathexts[v] = true
-    end
-  end
-
-  return M.pathexts[ext:upper()]
-end
-
---- Check whether path maps to Windows filesystem mounted by WSL
--- @param path string
--- @return boolean
-function M.is_wsl_windows_fs_path(path)
-  -- Run 'wslpath' command to try translating WSL path to Windows path.
-  -- Consume stderr output as well because 'wslpath' can produce permission
-  -- errors on some files (e.g. temporary files in root of system drive).
-  local handle = io.popen('wslpath -w "' .. path .. '" 2>/dev/null')
-  if handle then
-    local output = handle:read "*a"
-    handle:close()
-
-    return string.find(output, "^\\\\wsl$\\") == nil
-  end
-
-  return false
-end
-
---- Check whether extension is Windows executable under WSL
--- @param ext string
--- @return boolean
-function M.is_wsl_windows_fs_exe(ext)
-  if not vim.env.PATHEXT then
-    -- Extract executable extensions from within WSL.
-    -- Redirect stderr to null to silence warnings when
-    -- Windows command is executed from Linux filesystem:
-    -- > CMD.EXE was started with the above path as the current directory.
-    -- > UNC paths are not supported. Defaulting to Windows directory.
-    local handle = io.popen 'cmd.exe /c "echo %PATHEXT%" 2>/dev/null'
-    if handle then
-      vim.env.PATHEXT = handle:read "*a"
-      handle:close()
-    end
-  end
-
-  return M.is_windows_exe(ext)
-end
-
 function M.rename_loaded_buffers(old_path, new_path)
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
@@ -250,12 +197,8 @@ end
 -- Create empty sub-tables if not present
 -- @param tbl to create empty inside of
 -- @param path dot separated string of sub-tables
--- @return deepest sub-table
+-- @return table deepest sub-table
 function M.table_create_missing(tbl, path)
-  if tbl == nil then
-    return nil
-  end
-
   local t = tbl
   for s in string.gmatch(path, "([^%.]+)%.*") do
     if t[s] == nil then
@@ -275,12 +218,8 @@ end
 --- @param dst table to copy to
 --- @param dst_path string dot separated string of sub-tables, created when missing
 --- @param dst_pos string value pos
---- @param remove boolean default true
+--- @param remove boolean
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  if remove == nil then
-    remove = true
-  end
-
   local ok, err = pcall(vim.validate, {
     src = { src, "table" },
     src_path = { src_path, "string" },
@@ -299,11 +238,10 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remo
     if src[pos] and type(src[pos]) == "table" then
       src = src[pos]
     else
-      src = nil
-      break
+      return
     end
   end
-  local src_val = src and src[src_pos]
+  local src_val = src[src_pos]
   if src_val == nil then
     return
   end
@@ -477,6 +415,53 @@ function M.is_nvim_tree_buf(bufnr)
     end
   end
   return false
+end
+
+---Profile a call to vim.loop.fs_scandir
+---This should be removed following resolution of #1831
+---@param path string
+---@return userdata|nil uv_fs_t
+---@return string|nil type
+---@return string|nil err (fail)
+---@return string|nil name (fail)
+function M.fs_scandir_profiled(path)
+  local pn = string.format("fs_scandir %s", path)
+  local ps = log.profile_start(pn)
+
+  local handle, err, name = vim.loop.fs_scandir(path)
+
+  if err or name then
+    log.line("profile", "      %s err     '%s'", pn, vim.inspect(err))
+    log.line("profile", "      %s name    '%s'", pn, vim.inspect(name))
+  end
+
+  log.profile_end(ps, pn)
+
+  return handle, err, name
+end
+
+---Profile a call to vim.loop.fs_scandir_next
+---This should be removed following resolution of #1831
+---@param handle userdata uv_fs_t
+---@param tag string arbitrary
+---@return string|nil name
+---@return string|nil type
+---@return string|nil err (fail)
+---@return string|nil name (fail)
+function M.fs_scandir_next_profiled(handle, tag)
+  local pn = string.format("fs_scandir_next %s", tag)
+  local ps = log.profile_start(pn)
+
+  local n, t, err, name = vim.loop.fs_scandir_next(handle)
+
+  if err or name then
+    log.line("profile", "      %s err  '%s'", pn, vim.inspect(err))
+    log.line("profile", "      %s name '%s'", pn, vim.inspect(name))
+  end
+
+  log.profile_end(ps, pn)
+
+  return n, t, err, name
 end
 
 return M

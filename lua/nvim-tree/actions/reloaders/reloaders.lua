@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
+local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {}
 
@@ -21,11 +22,7 @@ function M.reload_node_status(parent_node, projects)
   local project_root = git.get_project_root(parent_node.absolute_path)
   local status = projects[project_root] or {}
   for _, node in ipairs(parent_node.nodes) do
-    if node.nodes then
-      node.git_status = status.dirs and status.dirs[node.absolute_path]
-    else
-      node.git_status = status.files and status.files[node.absolute_path]
-    end
+    explorer_node.update_git_status(node, explorer_node.is_git_ignored(parent_node), status)
     if node.nodes and #node.nodes > 0 then
       M.reload_node_status(node, projects)
     end
@@ -33,8 +30,8 @@ function M.reload_node_status(parent_node, projects)
 end
 
 local event_running = false
----@param _ table unused node passed by action
----@param unloaded_bufnr number optional bufnr recently unloaded via BufUnload event
+---@param _ table|nil unused node passed by action
+---@param unloaded_bufnr number|nil optional bufnr recently unloaded via BufUnload event
 function M.reload_explorer(_, unloaded_bufnr)
   if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
     return
@@ -44,13 +41,13 @@ function M.reload_explorer(_, unloaded_bufnr)
   local projects = git.reload()
   refresh_nodes(core.get_explorer(), projects, unloaded_bufnr)
   if view.is_visible() then
-    renderer.draw()
+    renderer.draw(unloaded_bufnr)
   end
   event_running = false
 end
 
 function M.reload_git()
-  if not core.get_explorer() or not git.config.enable or event_running then
+  if not core.get_explorer() or not git.config.git.enable or event_running then
     return
   end
   event_running = true

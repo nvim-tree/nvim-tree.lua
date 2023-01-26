@@ -6,6 +6,7 @@ local global_handlers = {}
 
 M.Event = {
   Ready = "Ready",
+  WillRenameNode = "WillRenameNode",
   NodeRenamed = "NodeRenamed",
   TreeOpen = "TreeOpen",
   TreeClose = "TreeClose",
@@ -14,6 +15,7 @@ M.Event = {
   FolderCreated = "FolderCreated",
   FolderRemoved = "FolderRemoved",
   Resize = "Resize",
+  TreeAttachedPost = "TreeAttachedPost",
 }
 
 local function get_handlers(event_name)
@@ -38,6 +40,11 @@ end
 --@private
 function M._dispatch_ready()
   dispatch(M.Event.Ready)
+end
+
+--@private
+function M._dispatch_will_rename_node(old_name, new_name)
+  dispatch(M.Event.WillRenameNode, { old_name = old_name, new_name = new_name })
 end
 
 --@private
@@ -78,6 +85,11 @@ end
 --@private
 function M._dispatch_on_tree_resize(size)
   dispatch(M.Event.Resize, size)
+end
+
+--@private
+function M._dispatch_tree_attached_post(buf)
+  dispatch(M.Event.TreeAttachedPost, buf)
 end
 
 --- @deprecated

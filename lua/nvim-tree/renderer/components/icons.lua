@@ -1,7 +1,7 @@
 local M = { i = {} }
 
 local function config_symlinks()
-  M.i.symlink = #M.config.glyphs.symlink > 0 and M.config.glyphs.symlink .. M.config.padding or ""
+  M.i.symlink = #M.config.glyphs.symlink > 0 and M.config.glyphs.symlink or ""
   M.i.symlink_arrow = M.config.symlink_arrow
 end
 
@@ -28,14 +28,14 @@ local function get_folder_icon(open, is_symlink, has_children)
       n = M.config.glyphs.folder.empty
     end
   end
-  return n .. M.config.padding
+  return n
 end
 
 local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
   local icon = M.config.glyphs.default
   if #icon > 0 then
-    return icon .. M.config.padding, hl_group
+    return icon, hl_group
   else
     return ""
   end
@@ -47,7 +47,7 @@ local function get_file_icon_webdev(fname, extension)
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
-    return icon .. M.config.padding, hl_group
+    return icon, hl_group
   elseif string.match(extension, "%.(.*)") then
     -- If there are more extensions to the file, try to grab the icon for them recursively
     return get_file_icon_webdev(fname, string.match(extension, "%.(.*)"))

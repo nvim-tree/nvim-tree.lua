@@ -150,14 +150,21 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
   end
 end
 
-function M.open(cwd)
+---Open the tree, initialising as needed. Maybe hijack the current buffer.
+---@param opts ApiTreeOpenOpts|string|nil legacy case opts is path string
+function M.open(opts)
+  opts = opts or {}
+
   M.set_target_win()
-  if not core.get_explorer() or cwd then
-    core.init(cwd or vim.loop.cwd())
+  if not core.get_explorer() or opts.path then
+    core.init(opts.path or vim.loop.cwd())
   end
   if should_hijack_current_buf() then
     view.close_this_tab_only()
     view.open_in_current_win()
+    renderer.draw()
+  elseif opts.current_window then
+    view.open_in_current_win { hijack_current_buf = false, resize = false }
     renderer.draw()
   else
     open_view_and_draw()

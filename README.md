@@ -28,7 +28,7 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 ## Requirements
 
-[neovim >=0.7.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
+[neovim >=0.8.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
 
 [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/). Your terminal emulator must be configured to use that font, usually "Hack Nerd Font"
 
@@ -130,6 +130,8 @@ Development is focused on:
 ## API
 
 nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
+
+See wiki [Recipes](https://github.com/nvim-tree/nvim-tree.lua/wiki/Recipes) and [Tips](https://github.com/nvim-tree/nvim-tree.lua/wiki/Tips) for ideas and insipration.
 
 Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issues/new?assignees=&labels=feature+request&template=feature_request.md&title=) if the API is insufficent for your needs. [Contributions](#Contributing) are always welcome.
 

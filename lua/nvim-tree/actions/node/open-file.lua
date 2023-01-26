@@ -175,7 +175,11 @@ local function get_target_winid(mode, win_ids)
     end
   else
     -- pick a window
-    target_winid = pick_win_id()
+    if type(M.window_picker.picker) == "function" then
+      target_winid = M.window_picker.picker()
+    else
+      target_winid = pick_win_id()
+    end
     if target_winid == nil then
       -- pick failed/cancelled
       return
@@ -265,7 +269,7 @@ end
 
 local function edit_in_current_buf(filename)
   require("nvim-tree.view").abandon_current_window()
-  vim.cmd("edit " .. vim.fn.fnameescape(filename))
+  vim.cmd("keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
 function M.fn(mode, filename)
