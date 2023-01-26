@@ -126,9 +126,12 @@ end
 
 local function set_window_options_and_buffer()
   pcall(vim.cmd, "buffer " .. M.get_bufnr())
+  local eventignore = vim.opt.eventignore:get()
+  vim.opt.eventignore = "all"
   for k, v in pairs(M.View.winopts) do
     vim.opt_local[k] = v
   end
+  vim.opt.eventignore = eventignore
 end
 
 local function open_win_config()
