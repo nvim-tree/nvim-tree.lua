@@ -26,21 +26,6 @@ for _, m in pairs(DEFAULT_KEYMAPS) do
   max_callback = math.max(#m.callback, max_callback)
 end
 
--- help
-local file = io.open("/tmp/DEFAULT_KEYMAPS.help", "w")
-io.output(file)
-io.write "\n"
-local fmt = string.format("%%-%d.%ds  %%-%d.%ds  %%s\n", max_key, max_key, max_short, max_short)
-for _, m in pairs(outs_help) do
-  if not m.short then
-    io.write(string.format("%s\n", m.key))
-  else
-    io.write(string.format(fmt, m.key, m.short, m.long))
-  end
-end
-io.write "\n"
-io.close(file)
-
 -- legacy callback mappings
 file = io.open("/tmp/LEGACY_CALLBACKS.lua", "w")
 io.output(file)

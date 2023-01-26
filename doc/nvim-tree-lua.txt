@@ -1477,58 +1477,6 @@ Single left mouse mappings can be achieved via `<LeftRelease>`.
 Single right / middle mouse mappings will requre changes to |mousemodel| or |mouse|.
 
 DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
-
-`<CR>`            Open                    Open a file or directory; root will cd to the above directory.
-`o`
-`<2-LeftMouse>`
-`<C-e>`           Open: In Place          Open file in place, effectively replacing the tree explorer.
-`O`               Open: No Window Picker  Open file with no window picker.
-`<C-]>`           CD                      cd in the directory under the cursor.
-`<2-RightMouse>`
-`<C-v>`           Open: Vertical Split    Open file in a vertical split.
-`<C-x>`           Open: Horizontal Split  Open file in a horizontal split.
-`<C-t>`           Open: New Tab           Open file in a new tab.
-`<`               Previous Sibling        Navigate to the previous sibling.
-`>`               Next Sibling            Navigate to the next sibling
-`P`               Parent Directory        Move cursor to the parent directory.
-`<BS>`            Close Directory         Close current opened directory or parent.
-`<Tab>`           Open Preview            Open file as a preview (keeps the cursor in the tree).
-`K`               First Sibling           Navigate to the first sibling.
-`J`               Last Sibling            Navigate to the last sibling.
-`I`               Toggle Git Ignore       Toggle visibility of files/directories hidden via |git.ignore| option.
-`H`               Toggle Dotfiles         Toggle visibility of dotfiles via |filters.dotfiles| option.
-`U`               Toggle Hidden           Toggle visibility of files/directories hidden via |filters.custom| option.
-`R`               Refresh                 Refresh the tree.
-`a`               Create                  Create a file; leaving a trailing `/` will add a directory.
-`d`               Delete                  Delete a file, prompting for confirmation.
-`D`               Trash                   Trash a file via |trash| option.
-`r`               Rename                  Rename a file or directory.
-`<C-r>`           Rename: Omit Filename   Rename a file or directory and omit the filename on input.
-`e`               Rename: Basename        no description
-`x`               Cut                     Cut file or directory to cut clipboard.
-`c`               Copy                    Copy file or directory to copy clipboard.
-`p`               Paste                   Paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation.
-`y`               Copy Name               Copy name to system clipboard.
-`Y`               Copy Relative Path      Copy relative path to system clipboard.
-`gy`              Copy Absolute Path      Copy absolute path to system clipboard.
-`]e`              Next Diagnostic         Go to next diagnostic item.
-`]c`              Next Git                Go to next git item.
-`[e`              Prev Diagnostic         Go to prev diagnostic item.
-`[c`              Prev Git                Go to prev git item.
-`-`               Up                      Navigate up to the parent directory of the current file/directory.
-`s`               Run System              Open a file with default system application or a directory with default file manager, using |system_open| option.
-`f`               Filter                  Live filter nodes dynamically based on regex matching.
-`F`               Clean Filter            Clear live filter.
-`q`               Close                   Close tree window.
-`W`               Collapse                Collapse the whole tree.
-`E`               Expand All              Expand the whole tree, stopping after expanding |callbacks.expand_all.max_folder_discovery| directories; this might hang neovim for a while if running on a big directory.
-`S`               Search                  Prompt the user to enter a path and then expands the tree to match the path.
-`.`               Run Command             Enter vim command mode with the file the cursor is on.
-`<C-k>`           Info                    Toggle a popup with file info about the file under the cursor.
-`g?`              Help                    Toggle help.
-`m`               Toggle Bookmark         Toggle node in bookmarks.
-`bmv`             Move Bookmarked         Move all bookmarked nodes into specified location.
-
 >
   local on_attach = function(bufnr)
     local api = require('nvim-tree.api')

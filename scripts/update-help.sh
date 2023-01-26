@@ -57,7 +57,3 @@ end="END_LEGACY_CALLBACKS"
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/LEGACY_CALLBACKS.lua
            }; /${end}/p; d }" lua/nvim-tree/legacy.lua
 
-# help human
-sed -i -e "/^DEFAULT MAPPINGS/,/^>$/{ /^DEFAULT MAPPINGS/{p; r /tmp/DEFAULT_KEYMAPS.help
-           }; /^>$/p; d }" doc/nvim-tree-lua.txt
-
