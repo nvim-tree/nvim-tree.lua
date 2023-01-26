@@ -82,6 +82,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
       sort_by = "case_sensitive",
       view = {
         mappings = {
+          width = 30,
           list = {
             { key = "u", action = "dir_up" },
           },
@@ -741,9 +742,8 @@ Window / buffer setup.
             Type: `string | number | function`, Default: `-1`
 
         *nvim-tree.view.width.padding*
-          dynamic padding when resizing. Useful for custom status-column
-          styles.
-            Type: `number`, Default: `3`
+          extra padding to the right.
+            Type: `string | number | function`, Default: `1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.

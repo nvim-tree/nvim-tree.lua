@@ -6,7 +6,7 @@ local log = require "nvim-tree.log"
 
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
-local DEFAULT_PADDING = 3
+local DEFAULT_PADDING = 1
 
 M.View = {
   adaptive_size = false,
@@ -103,7 +103,6 @@ local function create_buffer(bufnr)
 end
 
 local function get_size(size)
-  size = size or M.View.width
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
@@ -112,6 +111,11 @@ local function get_size(size)
   local size_as_number = tonumber(size:sub(0, -2))
   local percent_as_decimal = size_as_number / 100
   return math.floor(vim.o.columns * percent_as_decimal)
+end
+
+local function get_width(size)
+  size = size or M.View.width
+  return get_size(size)
 end
 
 local move_tbl = {
@@ -250,8 +254,10 @@ end
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
-  -- 1 column of right-padding to indicate end of path
-  local padding = M.View.padding
+  -- number of columns of right-padding to indicate end of path
+  local padding = get_size(M.View.padding)
+  print(padding)
+
   local resizing_width = M.View.initial_width - padding
   local max_width
 
@@ -259,7 +265,7 @@ local function grow()
   if M.View.max_width == -1 then
     max_width = -1
   else
-    max_width = get_size(M.View.max_width) - padding
+    max_width = get_width(M.View.max_width) - padding
   end
 
   for _, l in pairs(lines) do
@@ -311,7 +317,7 @@ function M.resize(size)
     return
   end
 
-  local new_size = get_size()
+  local new_size = get_width()
   vim.api.nvim_win_set_width(M.get_winnr(), new_size)
 
   events._dispatch_on_tree_resize(new_size)
@@ -524,7 +530,7 @@ function M.setup(opts)
     M.View.width = options.width
   end
 
-  M.View.initial_width = get_size()
+  M.View.initial_width = get_width()
 end
 
 return M
