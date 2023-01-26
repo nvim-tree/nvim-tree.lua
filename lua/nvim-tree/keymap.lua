@@ -212,6 +212,15 @@ local DEFAULT_KEYMAPS = {
     legacy_action = "full_rename",
   },
   {
+    key = "e",
+    callback = Api.fs.rename_basename,
+    desc = {
+      long = "no description",
+      short = "Rename: Basename",
+    },
+    legacy_action = "rename_basename",
+  },
+  {
     key = "x",
     callback = Api.fs.cut,
     desc = {
@@ -422,26 +431,63 @@ local DEFAULT_KEYMAPS = {
 -- END_DEFAULT_KEYMAPS
 
 function M.on_attach_default(bufnr)
-  local opts = { noremap = true, silent = true, nowait = true, buffer = bufnr }
-
-  for _, km in ipairs(M.DEFAULT_KEYMAPS) do
-    local keys = type(km.key) == "table" and km.key or { km.key }
-    for _, key in ipairs(keys) do
-      opts.desc = km.desc.short
-      vim.keymap.set("n", key, km.callback, opts)
-    end
-  end
+  vim.keymap.set('n', '<CR>', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'o', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-LeftMouse>', Api.node.open.edit, { desc = 'Open', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-e>', Api.node.open.replace_tree_buffer, { desc = 'Open: In Place', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'O', Api.node.open.no_window_picker, { desc = 'Open: No Window Picker', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-]>', Api.tree.change_root_to_node, { desc = 'CD', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-RightMouse>', Api.tree.change_root_to_node, { desc = 'CD', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-v>', Api.node.open.vertical, { desc = 'Open: Vertical Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-x>', Api.node.open.horizontal, { desc = 'Open: Horizontal Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-t>', Api.node.open.tab, { desc = 'Open: New Tab', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<', Api.node.navigate.sibling.prev, { desc = 'Previous Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '>', Api.node.navigate.sibling.next, { desc = 'Next Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'P', Api.node.navigate.parent, { desc = 'Parent Directory', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<BS>', Api.node.navigate.parent_close, { desc = 'Close Directory', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<Tab>', Api.node.open.preview, { desc = 'Open Preview', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'K', Api.node.navigate.sibling.first, { desc = 'First Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'J', Api.node.navigate.sibling.last, { desc = 'Last Sibling', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'I', Api.tree.toggle_gitignore_filter, { desc = 'Toggle Git Ignore', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'H', Api.tree.toggle_hidden_filter, { desc = 'Toggle Dotfiles', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'U', Api.tree.toggle_custom_filter, { desc = 'Toggle Hidden', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'R', Api.tree.reload, { desc = 'Refresh', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'a', Api.fs.create, { desc = 'Create', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'd', Api.fs.remove, { desc = 'Delete', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'D', Api.fs.trash, { desc = 'Trash', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'r', Api.fs.rename, { desc = 'Rename', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-r>', Api.fs.rename_sub, { desc = 'Rename: Omit Filename', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'e', nil, { desc = 'Rename: Basename', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'x', Api.fs.cut, { desc = 'Cut', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'c', Api.fs.copy.node, { desc = 'Copy', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'p', Api.fs.paste, { desc = 'Paste', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'y', Api.fs.copy.filename, { desc = 'Copy Name', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'Y', Api.fs.copy.relative_path, { desc = 'Copy Relative Path', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'gy', Api.fs.copy.absolute_path, { desc = 'Copy Absolute Path', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']e', Api.node.navigate.diagnostics.next, { desc = 'Next Diagnostic', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']c', Api.node.navigate.git.next, { desc = 'Next Git', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[e', Api.node.navigate.diagnostics.prev, { desc = 'Prev Diagnostic', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[c', Api.node.navigate.git.prev, { desc = 'Prev Git', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '-', Api.tree.change_root_to_parent, { desc = 'Up', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 's', Api.node.run.system, { desc = 'Run System', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'f', Api.live_filter.start, { desc = 'Filter', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'F', Api.live_filter.clear, { desc = 'Clean Filter', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'q', Api.tree.close, { desc = 'Close', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'W', Api.tree.collapse_all, { desc = 'Collapse', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'E', Api.tree.expand_all, { desc = 'Expand All', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'S', Api.tree.search_node, { desc = 'Search', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '.', Api.node.run.cmd, { desc = 'Run Command', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-k>', Api.node.show_info_popup, { desc = 'Info', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'g?', Api.tree.toggle_help, { desc = 'Help', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'm', Api.marks.toggle, { desc = 'Toggle Bookmark', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'bmv', Api.marks.bulk.move, { desc = 'Move Bookmarked', buffer = bufnr, noremap = true, silent = true, nowait = true })
 end
 
 function M.setup(opts)
-  if type(opts.on_attach) == "function" then
-    M.on_attach = opts.on_attach
-  else
+  if type(opts.on_attach) ~= "function" then
     M.on_attach = M.on_attach_default
-  end
-
-  if type(opts.remove_keymaps) == "table" then
-    M.remove_keys = opts.remove_keymaps
+  else
+    M.on_attach = opts.on_attach
   end
 end
 

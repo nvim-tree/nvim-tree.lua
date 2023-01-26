@@ -10,53 +10,53 @@ local M = {
 
 -- BEGIN_LEGACY_CALLBACKS
 local LEGACY_CALLBACKS = {
-  -- TODO sync
-  edit = "api.node.open.edit",
-  edit_in_place = "api.node.open.replace_tree_buffer",
-  edit_no_picker = "api.node.open.no_window_picker",
-  cd = "api.tree.change_root_to_node",
-  vsplit = "api.node.open.vertical",
-  split = "api.node.open.horizontal",
-  tabnew = "api.node.open.tab",
-  prev_sibling = "api.node.navigate.sibling.prev",
-  next_sibling = "api.node.navigate.sibling.next",
-  parent_node = "api.node.navigate.parent",
-  close_node = "api.node.navigate.parent_close",
-  preview = "api.node.open.preview",
-  first_sibling = "api.node.navigate.sibling.first",
-  last_sibling = "api.node.navigate.sibling.last",
-  toggle_git_ignored = "api.tree.toggle_gitignore_filter",
-  toggle_dotfiles = "api.tree.toggle_hidden_filter",
-  toggle_custom = "api.tree.toggle_custom_filter",
-  refresh = "api.tree.reload",
-  create = "api.fs.create",
-  remove = "api.fs.remove",
-  trash = "api.fs.trash",
-  rename = "api.fs.rename",
-  full_rename = "api.fs.rename_sub",
-  cut = "api.fs.cut",
-  copy = "api.fs.copy.node",
-  paste = "api.fs.paste",
-  copy_name = "api.fs.copy.filename",
-  copy_path = "api.fs.copy.relative_path",
-  copy_absolute_path = "api.fs.copy.absolute_path",
-  next_diag_item = "api.node.navigate.diagnostics.next",
-  next_git_item = "api.node.navigate.git.next",
-  prev_diag_item = "api.node.navigate.diagnostics.prev",
-  prev_git_item = "api.node.navigate.git.prev",
-  dir_up = "api.tree.change_root_to_parent",
-  system_open = "api.node.run.system",
-  live_filter = "api.live_filter.start",
-  clear_live_filter = "api.live_filter.clear",
-  close = "api.tree.close",
-  collapse_all = "api.tree.collapse_all",
-  expand_all = "api.tree.expand_all",
-  search_node = "api.tree.search_node",
-  run_file_command = "api.node.run.cmd",
-  toggle_file_info = "api.node.show_info_popup",
-  toggle_help = "api.tree.toggle_help",
-  toggle_mark = "api.marks.toggle",
-  bulk_move = "api.marks.bulk.move",
+  edit = "Api.node.open.edit",
+  edit_in_place = "Api.node.open.replace_tree_buffer",
+  edit_no_picker = "Api.node.open.no_window_picker",
+  cd = "Api.tree.change_root_to_node",
+  vsplit = "Api.node.open.vertical",
+  split = "Api.node.open.horizontal",
+  tabnew = "Api.node.open.tab",
+  prev_sibling = "Api.node.navigate.sibling.prev",
+  next_sibling = "Api.node.navigate.sibling.next",
+  parent_node = "Api.node.navigate.parent",
+  close_node = "Api.node.navigate.parent_close",
+  preview = "Api.node.open.preview",
+  first_sibling = "Api.node.navigate.sibling.first",
+  last_sibling = "Api.node.navigate.sibling.last",
+  toggle_git_ignored = "Api.tree.toggle_gitignore_filter",
+  toggle_dotfiles = "Api.tree.toggle_hidden_filter",
+  toggle_custom = "Api.tree.toggle_custom_filter",
+  refresh = "Api.tree.reload",
+  create = "Api.fs.create",
+  remove = "Api.fs.remove",
+  trash = "Api.fs.trash",
+  rename = "Api.fs.rename",
+  full_rename = "Api.fs.rename_sub",
+  rename_basename = "Api.fs.rename_basename",
+  cut = "Api.fs.cut",
+  copy = "Api.fs.copy.node",
+  paste = "Api.fs.paste",
+  copy_name = "Api.fs.copy.filename",
+  copy_path = "Api.fs.copy.relative_path",
+  copy_absolute_path = "Api.fs.copy.absolute_path",
+  next_diag_item = "Api.node.navigate.diagnostics.next",
+  next_git_item = "Api.node.navigate.git.next",
+  prev_diag_item = "Api.node.navigate.diagnostics.prev",
+  prev_git_item = "Api.node.navigate.git.prev",
+  dir_up = "Api.tree.change_root_to_parent",
+  system_open = "Api.node.run.system",
+  live_filter = "Api.live_filter.start",
+  clear_live_filter = "Api.live_filter.clear",
+  close = "Api.tree.close",
+  collapse_all = "Api.tree.collapse_all",
+  expand_all = "Api.tree.expand_all",
+  search_node = "Api.tree.search_node",
+  run_file_command = "Api.node.run.cmd",
+  toggle_file_info = "Api.node.show_info_popup",
+  toggle_help = "Api.tree.toggle_help",
+  toggle_mark = "Api.marks.toggle",
+  bulk_move = "Api.marks.bulk.move",
 }
 -- END_LEGACY_CALLBACKS
 
@@ -133,12 +133,12 @@ local on_attach = function(bufnr)
     local vim_keymap_set
     if el.action_cb then
       vim_keymap_set = string.format(
-        'vim.keymap.set("n", "%s", function()\n    local node = api.tree.get_node_under_cursor()\n    -- my code\n  end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })',
+        'vim.keymap.set("n", "%s", function()\n    local node = api.tree.get_node_under_cursor()\n    -- my code\n  end, { desc = "my description", buffer = bufnr, noremap = true, silent = true, nowait = true })',
         el.key
       )
     elseif el.keymap then
       vim_keymap_set = string.format(
-        "vim.keymap.set('n', '%s', %s, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%s' })",
+        "vim.keymap.set('n', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })",
         el.key,
         LEGACY_CALLBACKS[el.keymap.legacy_action],
         el.keymap.desc.short
@@ -172,7 +172,7 @@ local on_attach = function(bufnr)
 end
 
 function M.generate_legacy_on_attach(opts)
-  if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings then
+  if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings and opts.view.mappings.list and #opts.view.mappings.list > 0 then
     local list = opts.view.mappings.list
     log.line("config", "generating on_attach for %d legacy view.mappings.list:", #list)
 

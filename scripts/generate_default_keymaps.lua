@@ -46,7 +46,7 @@ file = io.open("/tmp/DEFAULT_KEYMAPS.on_attach.lua", "w")
 io.output(file)
 io.write "    local Api = require('nvim-tree.api')\n\n"
 fmt = string.format(
-  "    vim.keymap.set('n', %%-%d.%ds %%-%d.%ds { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = '%%s', })\n",
+  "    vim.keymap.set('n', %%-%d.%ds %%-%d.%ds { desc = '%%s', buffer = bufnr, noremap = true, silent = true, nowait = true, })\n",
   max_key + 3,
   max_key + 3,
   max_callback + 1,
