@@ -1,64 +1,21 @@
+local api = require "nvim-tree.api"
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 local open_file = require "nvim-tree.actions.node.open-file"
 local keymap = require "nvim-tree.keymap"
-local log = require "nvim-tree.log"
 
 local M = {
   on_attach_lua = "",
 }
 
--- BEGIN_LEGACY_CALLBACKS
-local LEGACY_CALLBACKS = {
-  edit = "api.node.open.edit",
-  edit_in_place = "api.node.open.replace_tree_buffer",
-  edit_no_picker = "api.node.open.no_window_picker",
-  cd = "api.tree.change_root_to_node",
-  vsplit = "api.node.open.vertical",
-  split = "api.node.open.horizontal",
-  tabnew = "api.node.open.tab",
-  prev_sibling = "api.node.navigate.sibling.prev",
-  next_sibling = "api.node.navigate.sibling.next",
-  parent_node = "api.node.navigate.parent",
-  close_node = "api.node.navigate.parent_close",
-  preview = "api.node.open.preview",
-  first_sibling = "api.node.navigate.sibling.first",
-  last_sibling = "api.node.navigate.sibling.last",
-  toggle_git_ignored = "api.tree.toggle_gitignore_filter",
-  toggle_dotfiles = "api.tree.toggle_hidden_filter",
-  toggle_custom = "api.tree.toggle_custom_filter",
-  refresh = "api.tree.reload",
-  create = "api.fs.create",
-  remove = "api.fs.remove",
-  trash = "api.fs.trash",
-  rename = "api.fs.rename",
-  full_rename = "api.fs.rename_sub",
-  rename_basename = "api.fs.rename_basename",
-  cut = "api.fs.cut",
-  copy = "api.fs.copy.node",
-  paste = "api.fs.paste",
-  copy_name = "api.fs.copy.filename",
-  copy_path = "api.fs.copy.relative_path",
-  copy_absolute_path = "api.fs.copy.absolute_path",
-  next_diag_item = "api.node.navigate.diagnostics.next",
-  next_git_item = "api.node.navigate.git.next",
-  prev_diag_item = "api.node.navigate.diagnostics.prev",
-  prev_git_item = "api.node.navigate.git.prev",
-  dir_up = "api.tree.change_root_to_parent",
-  system_open = "api.node.run.system",
-  live_filter = "api.live_filter.start",
-  clear_live_filter = "api.live_filter.clear",
-  close = "api.tree.close",
-  collapse_all = "api.tree.collapse_all",
-  expand_all = "api.tree.expand_all",
-  search_node = "api.tree.search_node",
-  run_file_command = "api.node.run.cmd",
-  toggle_file_info = "api.node.show_info_popup",
-  toggle_help = "api.tree.toggle_help",
-  toggle_mark = "api.marks.toggle",
-  bulk_move = "api.marks.bulk.move",
+-- TODO complete list from DEFAULT_MAPPINGS from actions/init.lua
+local LEGACY_MAPPINGS = {
+  close_node = {
+    key = "<BS>",
+    fn = api.node.navigate.parent_close,
+    t = "api.node.navigate.parent_close",
+  },
 }
--- END_LEGACY_CALLBACKS
 
 local function refactored(opts)
   -- mapping actions
@@ -117,113 +74,99 @@ local function removed(opts)
   opts.create_in_closed_folder = nil
 end
 
--- TODO pcall vim.keymap.del("n", key, opts) for action = "" and remove_keymaps
-local function build_on_attach(call_list)
-  if #call_list == 0 then
-    return nil
-  end
-
-  M.on_attach_lua = [[
-local api = require('nvim-tree.api')
-
-local on_attach = function(bufnr)
-]]
-
-  for _, el in pairs(call_list) do
-    local vim_keymap_set
-    if el.action_cb then
-      vim_keymap_set = string.format(
-        'vim.keymap.set("n", "%s", function()\n    local node = api.tree.get_node_under_cursor()\n    -- my code\n  end, { desc = "my description", buffer = bufnr, noremap = true, silent = true, nowait = true })',
-        el.key
-      )
-    elseif el.keymap then
-      vim_keymap_set = string.format(
-        "vim.keymap.set('n', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })",
-        el.key,
-        LEGACY_CALLBACKS[el.keymap.legacy_action],
-        el.keymap.desc.short
-      )
-    end
-
-    if vim_keymap_set then
-      log.line("config", "generated  %s", vim_keymap_set)
-      M.on_attach_lua = string.format("%s  %s\n", M.on_attach_lua, vim_keymap_set)
-    end
-  end
-  M.on_attach_lua = string.format("%send\n", M.on_attach_lua)
-
+local function generate_on_attach_function(list, remove_keys, remove_defaults)
   return function(bufnr)
-    keymap.default_on_attach(bufnr)
-    for _, el in pairs(call_list) do
-      if el.action_cb then
-        vim.keymap.set(el.mode or "n", el.key, function()
-          el.action_cb(require("nvim-tree.api").tree.get_node_under_cursor())
-        end, { buffer = bufnr, remap = false, silent = true })
-      elseif el.keymap then
-        vim.keymap.set(
-          el.mode or "n",
-          el.key,
-          el.keymap.callback,
-          { buffer = bufnr, remap = false, silent = true, desc = el.keymap.desc.short }
-        )
+    -- apply defaults first
+    if not remove_defaults then
+      keymap.default_on_attach(bufnr)
+    end
+
+    -- explicit removals
+    for _, key in ipairs(remove_keys) do
+      vim.keymap.set("n", key, "", { buffer = bufnr })
+      vim.keymap.del("n", key, { buffer = bufnr })
+    end
+
+    -- mappings
+    for _, m in ipairs(list) do
+      local keys = type(m.key) == "table" and m.key or { m.key }
+      for _, k in ipairs(keys) do
+        if LEGACY_MAPPINGS[m.action] then
+          -- straight action
+          vim.keymap.set(
+            m.mode or "n",
+            k,
+            LEGACY_MAPPINGS[m.action].fn,
+            { desc = m.action, buffer = bufnr, noremap = true, silent = true, nowait = true }
+          )
+        elseif type(m.action_cb) == "function" then
+          -- action_cb
+          vim.keymap.set(m.mode or "n", k, function()
+            m.action_cb(api.tree.get_node_under_cursor())
+          end, { desc = m.action, buffer = bufnr, noremap = true, silent = true, nowait = true })
+        end
       end
     end
   end
 end
 
-function M.generate_legacy_on_attach(opts)
-  if type(opts.on_attach) ~= "function" and opts.view and opts.view.mappings and opts.view.mappings.list and #opts.view.mappings.list > 0 then
-    local list = opts.view.mappings.list
-    log.line("config", "generating on_attach for %d legacy view.mappings.list:", #list)
+local function generate_on_attach_lua(list, remove_keys, remove_defaults)
+  local lua = [[
+local api = require('nvim-tree.api')
 
-    if opts.view.mappings.custom_only then
-      opts.remove_keymaps = true
-      opts.view.mappings.custom_only = nil
-    end
+local on_attach = function(bufnr)]]
 
-    if list then
-      local keymap_by_legacy_action = utils.key_by(keymap.DEFAULT_KEYMAPS, "legacy_action")
-      local call_list = {}
+  -- TODO generate from LEGACY_MAPPINGS; text table from default_on_attach is not worth the effort
 
-      for _, km in ipairs(keymap.DEFAULT_KEYMAPS) do
-        local keys = type(km.key) == "table" and km.key or { km.key }
-        for _, k in ipairs(keys) do
-          table.insert(call_list, { mode = "n", key = k, keymap = km })
-        end
+  -- explicit removals
+  if #remove_keys > 0 then
+    lua = lua .. "\n\n  -- remove_keys"
+  end
+  for _, key in ipairs(remove_keys) do
+    lua = lua .. "\n" .. string.format([[  vim.keymap.set('n', '%s', '', { buffer = bufnr })]], key)
+    lua = lua .. "\n" .. string.format([[  vim.keymap.del('n', '%s', { buffer = bufnr })]], key)
+  end
+
+  -- list
+  if #list > 0 then
+    lua = lua .. "\n\n  -- view.mappings.list"
+  end
+  for _, m in ipairs(list) do
+    local keys = type(m.key) == "table" and m.key or { m.key }
+    for _, k in ipairs(keys) do
+      if LEGACY_MAPPINGS[m.action] then
+        lua = lua .. "\n" .. string.format([[ vim.keymap.set('%s', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]], m.mode or "n", k, LEGACY_MAPPINGS[m.action].t, m.action)
+      elseif type(m.action_cb) == "function" then
+        lua = lua .. "\n" .. string.format([[ vim.keymap.set('%s', '%s', function()]], m.mode or "n", k)
+        lua = lua .. "\n" .. string.format([[   local node = api.tree.get_node_under_cursor()]])
+        lua = lua .. "\n" .. string.format([[   -- your code goes here]])
+        lua = lua .. "\n" .. string.format([[ end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]], m.action)
       end
-
-      for _, map in pairs(list) do
-        local keys = type(map.key) == "table" and map.key or { map.key }
-        local mode = map.mode or "n"
-        local action_cb
-        local km
-        if map.action ~= "" then
-          if map.action_cb then
-            action_cb = map.action_cb
-          elseif keymap_by_legacy_action[map.action] then
-            km = keymap_by_legacy_action[map.action]
-          end
-        end
-
-        for _, k in pairs(keys) do
-          if map.action == "" and opts.remove_keymaps ~= true then
-            if type(opts.remove_keymaps) ~= "table" then
-              opts.remove_keymaps = {}
-            end
-            table.insert(opts.remove_keymaps, k)
-          end
-
-          if action_cb then
-            table.insert(call_list, { mode = mode, key = k, action_cb = action_cb })
-          elseif km then
-            table.insert(call_list, { mode = mode, key = k, keymap = km })
-          end
-        end
-      end
-      opts.on_attach = build_on_attach(call_list)
-      opts.view.mappings.list = nil
     end
   end
+
+  lua = lua .. "\nend"
+
+  return lua
+end
+
+function M.generate_legacy_on_attach(opts)
+  if type(opts.on_attach) == "function" then
+    return
+  end
+
+  local list = opts.view and opts.view.mappings and opts.view.mappings.list or {}
+  local remove_keys = type(opts.remove_keymaps) == "table" and opts.remove_keymaps or {}
+  local remove_defaults = opts.remove_keymaps == true
+    or opts.view and opts.view.mappings and opts.view.mappings.custom_only
+
+  -- do nothing unless the user has configured something
+  if #list == 0 and #remove_keys == 0 and not remove_defaults then
+    return
+  end
+
+  opts.on_attach = generate_on_attach_function(list, remove_keys, remove_defaults)
+  M.on_attach_lua = generate_on_attach_lua(list, remove_keys, remove_defaults)
 end
 
 function M.generate_on_attach()
