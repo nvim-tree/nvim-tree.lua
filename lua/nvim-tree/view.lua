@@ -256,6 +256,12 @@ local function grow()
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = get_size(M.View.padding)
+
+  -- account for sign/number columns etc.
+  local wininfo = vim.fn.getwininfo(M.get_winnr())
+  if type(wininfo) == "table" and type(wininfo[1]) == "table" then
+    padding = padding + wininfo[1].textoff
+  end
   print(padding)
 
   local resizing_width = M.View.initial_width - padding
