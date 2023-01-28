@@ -81,6 +81,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
+        width = 30,
         mappings = {
           list = {
             { key = "u", action = "dir_up" },
@@ -733,12 +734,16 @@ Window / buffer setup.
       Type: `string | number | function | table`, Default: `30`
 
         *nvim-tree.view.width.min*
-          Minimum dynamic width.
+        Minimum dynamic width.
           Type: `string | number | function`, Default: `30`
 
         *nvim-tree.view.width.max*
-          Maximum dynamic width, -1 for unbounded.
+        Maximum dynamic width, -1 for unbounded.
           Type: `string | number | function`, Default: `-1`
+
+        *nvim-tree.view.width.padding*
+        Extra padding to the right.
+          Type: `string | number | function`, Default: `1`
 
     *nvim-tree.view.side*
     Side of the tree, can be `"left"`, `"right"`.
