@@ -265,7 +265,6 @@ local function grow()
   if type(wininfo) == "table" and type(wininfo[1]) == "table" then
     padding = padding + wininfo[1].textoff
   end
-  print(padding)
 
   local resizing_width = M.View.initial_width - padding
   local max_width
