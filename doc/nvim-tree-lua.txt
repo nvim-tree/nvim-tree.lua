@@ -81,8 +81,8 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
+        width = 30,
         mappings = {
-          width = 30,
           list = {
             { key = "u", action = "dir_up" },
           },
