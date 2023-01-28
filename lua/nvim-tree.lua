@@ -267,12 +267,6 @@ function M.on_enter(netrw_disabled)
   local stats = vim.loop.fs_stat(bufname)
   local is_dir = stats and stats.type == "directory"
   local is_file = stats and stats.type == "file"
-  local cwd
-  if is_dir then
-    cwd = vim.fn.expand(vim.fn.fnameescape(bufname))
-    -- INFO: could potentially conflict with rooter plugins
-    vim.cmd("noautocmd cd " .. vim.fn.fnameescape(cwd))
-  end
 
   local lines = not is_dir and vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
   local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
@@ -309,6 +303,13 @@ function M.on_enter(netrw_disabled)
   end
 
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+    local cwd
+    if is_dir then
+      cwd = vim.fn.expand(vim.fn.fnameescape(bufname))
+      -- INFO: could potentially conflict with rooter plugins
+      vim.cmd("noautocmd cd " .. vim.fn.fnameescape(cwd))
+    end
+
     lib.open { path = cwd }
 
     if should_focus_other_window then
