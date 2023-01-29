@@ -13,6 +13,7 @@ local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
+local notify = require "nvim-tree.notify"
 
 local _config = {}
 
@@ -900,7 +901,17 @@ function M.setup(conf)
   M.setup_called = true
 
   vim.schedule(function()
-    M.on_enter(netrw_disabled)
+    if
+      #opts.ignore_ft_on_setup > 0
+      or opts.open_on_setup == true
+      or opts.open_on_setup_file
+      or opts.ignore_buffer_on_setup
+    then
+      notify.info "open_on_setup behaviour has been deprecated, please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
+      M.on_enter(netrw_disabled)
+    else
+      M.initialized = true
+    end
     vim.g.NvimTreeSetup = 1
     vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
   end)
