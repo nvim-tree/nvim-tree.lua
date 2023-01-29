@@ -1,6 +1,5 @@
 local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
-local log = require "nvim-tree.log"
 
 local M = {}
 
