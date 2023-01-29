@@ -8,14 +8,56 @@ local M = {
   on_attach_lua = "",
 }
 
--- TODO complete list from DEFAULT_MAPPINGS from actions/init.lua
+-- stylua: ignore start
 local LEGACY_MAPPINGS = {
-  close_node = {
-    key = "<BS>",
-    fn = api.node.navigate.parent_close,
-    t = "api.node.navigate.parent_close",
-  },
+  edit = { key = { "<CR>", "o", "<2-LeftMouse>" }, desc = "Open", fn = api.node.open.edit, n = "api.node.open.edit" },
+  edit_in_place = { key = "<C-e>", desc = "Open: In Place", fn = api.node.open.replace_tree_buffer, n = "api.node.open.replace_tree_buffer" },
+  edit_no_picker = { key = "O", desc = "Open: No Window Picker", fn = api.node.open.no_window_picker, n = "api.node.open.no_window_picker" },
+  cd = { key = { "<C-]>", "<2-RightMouse>" }, desc = "CD", fn = api.tree.change_root_to_node, n = "api.tree.change_root_to_node" },
+  vsplit = { key = "<C-v>", desc = "Open: Vertical Split", fn = api.node.open.vertical, n = "api.node.open.vertical" },
+  split = { key = "<C-x>", desc = "Open: Horizontal Split", fn = api.node.open.horizontal, n = "api.node.open.horizontal" },
+  tabnew = { key = "<C-t>", desc = "Open: New Tab", fn = api.node.open.tab, n = "api.node.open.tab" },
+  prev_sibling = { key = "<", desc = "Previous Sibling", fn = api.node.navigate.sibling.prev, n = "api.node.navigate.sibling.prev" },
+  next_sibling = { key = ">", desc = "Next Sibling", fn = api.node.navigate.sibling.next, n = "api.node.navigate.sibling.next" },
+  parent_node = { key = "P", desc = "Parent Directory", fn = api.node.navigate.parent, n = "api.node.navigate.parent" },
+  close_node = { key = "<BS>", desc = "Close Directory", fn = api.node.navigate.parent_close, n = "api.node.navigate.parent_close" },
+  preview = { key = "<Tab>", desc = "Open Preview", fn = api.node.open.preview, n = "api.node.open.preview" },
+  first_sibling = { key = "K", desc = "First Sibling", fn = api.node.navigate.sibling.first, n = "api.node.navigate.sibling.first" },
+  last_sibling = { key = "J", desc = "Last Sibling", fn = api.node.navigate.sibling.last, n = "api.node.navigate.sibling.last" },
+  toggle_git_ignored = { key = "I", desc = "Toggle Git Ignore", fn = api.tree.toggle_gitignore_filter, n = "api.tree.toggle_gitignore_filter" },
+  toggle_dotfiles = { key = "H", desc = "Toggle Dotfiles", fn = api.tree.toggle_hidden_filter, n = "api.tree.toggle_hidden_filter" },
+  toggle_custom = { key = "U", desc = "Toggle Hidden", fn = api.tree.toggle_custom_filter, n = "api.tree.toggle_custom_filter" },
+  refresh = { key = "R", desc = "Refresh", fn = api.tree.reload, n = "api.tree.reload" },
+  create = { key = "a", desc = "Create", fn = api.fs.create, n = "api.fs.create" },
+  remove = { key = "d", desc = "Delete", fn = api.fs.remove, n = "api.fs.remove" },
+  trash = { key = "D", desc = "Trash", fn = api.fs.trash, n = "api.fs.trash" },
+  rename = { key = "r", desc = "Rename", fn = api.fs.rename, n = "api.fs.rename" },
+  full_rename = { key = "<C-r>", desc = "Rename: Omit Filename", fn = api.fs.rename_sub, n = "api.fs.rename_sub" },
+  cut = { key = "x", desc = "Cut", fn = api.fs.cut, n = "api.fs.cut" },
+  copy = { key = "c", desc = "Copy", fn = api.fs.copy.node, n = "api.fs.copy.node" },
+  paste = { key = "p", desc = "Paste", fn = api.fs.paste, n = "api.fs.paste" },
+  copy_name = { key = "y", desc = "Copy Name", fn = api.fs.copy.filename, n = "api.fs.copy.filename" },
+  copy_path = { key = "Y", desc = "Copy Relative Path", fn = api.fs.copy.relative_path, n = "api.fs.copy.relative_path" },
+  copy_absolute_path = { key = "gy", desc = "Copy Absolute Path", fn = api.fs.copy.absolute_path, n = "api.fs.copy.absolute_path" },
+  next_diag_item = { key = "]e", desc = "Next Diagnostic", fn = api.node.navigate.diagnostics.next, n = "api.node.navigate.diagnostics.next" },
+  next_git_item = { key = "]c", desc = "Next Git", fn = api.node.navigate.git.next, n = "api.node.navigate.git.next" },
+  prev_diag_item = { key = "[e", desc = "Prev Diagnostic", fn = api.node.navigate.diagnostics.prev, n = "api.node.navigate.diagnostics.prev" },
+  prev_git_item = { key = "[c", desc = "Prev Git", fn = api.node.navigate.git.prev, n = "api.node.navigate.git.prev" },
+  dir_up = { key = "-", desc = "Up", fn = api.tree.change_root_to_parent, n = "api.tree.change_root_to_parent" },
+  system_open = { key = "s", desc = "Run System", fn = api.node.run.system, n = "api.node.run.system" },
+  live_filter = { key = "f", desc = "Filter", fn = api.live_filter.start, n = "api.live_filter.start" },
+  clear_live_filter = { key = "F", desc = "Clean Filter", fn = api.live_filter.clear, n = "api.live_filter.clear" },
+  close = { key = "q", desc = "Close", fn = api.tree.close, n = "api.tree.close" },
+  collapse_all = { key = "W", desc = "Collapse", fn = api.tree.collapse_all, n = "api.tree.collapse_all" },
+  expand_all = { key = "E", desc = "Expand All", fn = api.tree.expand_all, n = "api.tree.expand_all" },
+  search_node = { key = "S", desc = "Search", fn = api.tree.search_node, n = "api.tree.search_node" },
+  run_file_command = { key = ".", desc = "Run Command", fn = api.node.run.cmd, n = "api.node.run.cmd" },
+  toggle_file_info = { key = "<C-k>", desc = "Info", fn = api.node.show_info_popup, n = "api.node.show_info_popup" },
+  toggle_help = { key = "g?", desc = "Help", fn = api.tree.toggle_help, n = "api.tree.toggle_help" },
+  toggle_mark = { key = "m", desc = "Toggle Bookmark", fn = api.marks.toggle, n = "api.marks.toggle" },
+  bulk_move = { key = "bmv", desc = "Move Bookmarked", fn = api.marks.bulk.move, n = "api.marks.bulk.move" },
 }
+-- stylua: ignore end
 
 local function refactored(opts)
   -- mapping actions
@@ -110,13 +152,13 @@ local function generate_on_attach_function(list, remove_keys, remove_defaults)
   end
 end
 
-local function generate_on_attach_lua(list, remove_keys, remove_defaults)
+local function generate_on_attach_lua(list, remove_keys)
   local lua = [[
 local api = require('nvim-tree.api')
 
-local on_attach = function(bufnr)]]
+local on_attach = function(bufnr)
 
-  -- TODO generate from LEGACY_MAPPINGS; text table from default_on_attach is not worth the effort
+  -- please insert mappings from :help nvim-tree-default-mappings]]
 
   -- explicit removals
   if #remove_keys > 0 then
@@ -135,12 +177,25 @@ local on_attach = function(bufnr)]]
     local keys = type(m.key) == "table" and m.key or { m.key }
     for _, k in ipairs(keys) do
       if LEGACY_MAPPINGS[m.action] then
-        lua = lua .. "\n" .. string.format([[ vim.keymap.set('%s', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]], m.mode or "n", k, LEGACY_MAPPINGS[m.action].t, m.action)
+        lua = lua
+          .. "\n"
+          .. string.format(
+            [[ vim.keymap.set('%s', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
+            m.mode or "n",
+            k,
+            LEGACY_MAPPINGS[m.action].n,
+            LEGACY_MAPPINGS[m.action].desc
+          )
       elseif type(m.action_cb) == "function" then
         lua = lua .. "\n" .. string.format([[ vim.keymap.set('%s', '%s', function()]], m.mode or "n", k)
-        lua = lua .. "\n" .. string.format([[   local node = api.tree.get_node_under_cursor()]])
-        lua = lua .. "\n" .. string.format([[   -- your code goes here]])
-        lua = lua .. "\n" .. string.format([[ end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]], m.action)
+        lua = lua .. "\n" .. string.format [[   local node = api.tree.get_node_under_cursor()]]
+        lua = lua .. "\n" .. string.format [[   -- your code goes here]]
+        lua = lua
+          .. "\n"
+          .. string.format(
+            [[ end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
+            m.action
+          )
       end
     end
   end
@@ -166,7 +221,7 @@ function M.generate_legacy_on_attach(opts)
   end
 
   opts.on_attach = generate_on_attach_function(list, remove_keys, remove_defaults)
-  M.on_attach_lua = generate_on_attach_lua(list, remove_keys, remove_defaults)
+  M.on_attach_lua = generate_on_attach_lua(list, remove_keys)
 end
 
 function M.generate_on_attach()
