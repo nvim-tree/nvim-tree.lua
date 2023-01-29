@@ -5,8 +5,67 @@ local open_file = require "nvim-tree.actions.node.open-file"
 local keymap = require "nvim-tree.keymap"
 
 local M = {
-  on_attach_lua = "",
+  user_on_attach_lua = ""
 }
+
+local DEFAULT_ON_ATTACH = [[
+local api = require('nvim-tree.api')
+
+local on_attach = function(bufnr)
+
+  -- BEGIN_DEFAULT_ON_ATTACH
+  vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     { desc = 'Open: In Place',         buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              { desc = 'Info',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-r>', api.fs.rename_sub,                     { desc = 'Rename: Omit Filename',  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-t>', api.node.open.tab,                     { desc = 'Open: New Tab',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-v>', api.node.open.vertical,                { desc = 'Open: Vertical Split',   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<C-x>', api.node.open.horizontal,              { desc = 'Open: Horizontal Split', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<BS>',  api.node.navigate.parent_close,        { desc = 'Close Directory',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<CR>',  api.node.open.edit,                    { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<Tab>', api.node.open.preview,                 { desc = 'Open Preview',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '>',     api.node.navigate.sibling.next,        { desc = 'Next Sibling',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<',     api.node.navigate.sibling.prev,        { desc = 'Previous Sibling',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '.',     api.node.run.cmd,                      { desc = 'Run Command',            buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '-',     api.tree.change_root_to_parent,        { desc = 'Up',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'a',     api.fs.create,                         { desc = 'Create',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   { desc = 'Move Bookmarked',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'c',     api.fs.copy.node,                      { desc = 'Copy',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            { desc = 'Prev Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']c',    api.node.navigate.git.next,            { desc = 'Next Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'd',     api.fs.remove,                         { desc = 'Delete',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'D',     api.fs.trash,                          { desc = 'Trash',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'E',     api.tree.expand_all,                   { desc = 'Expand All',             buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'e',     api.fs.rename_basename,                { desc = 'Rename: Basename',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', ']e',    api.node.navigate.diagnostics.next,    { desc = 'Next Diagnostic',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '[e',    api.node.navigate.diagnostics.prev,    { desc = 'Prev Diagnostic',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'F',     api.live_filter.clear,                 { desc = 'Clean Filter',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'f',     api.live_filter.start,                 { desc = 'Filter',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'g?',    api.tree.toggle_help,                  { desc = 'Help',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'gy',    api.fs.copy.absolute_path,             { desc = 'Copy Absolute Path',     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,         { desc = 'Toggle Dotfiles',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,      { desc = 'Toggle Git Ignore',      buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'J',     api.node.navigate.sibling.last,        { desc = 'Last Sibling',           buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'K',     api.node.navigate.sibling.first,       { desc = 'First Sibling',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'm',     api.marks.toggle,                      { desc = 'Toggle Bookmark',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'o',     api.node.open.edit,                    { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'O',     api.node.open.no_window_picker,        { desc = 'Open: No Window Picker', buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'p',     api.fs.paste,                          { desc = 'Paste',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'P',     api.node.navigate.parent,              { desc = 'Parent Directory',       buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'q',     api.tree.close,                        { desc = 'Close',                  buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'r',     api.fs.rename,                         { desc = 'Rename',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'R',     api.tree.reload,                       { desc = 'Refresh',                buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 's',     api.node.run.system,                   { desc = 'Run System',             buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'S',     api.tree.search_node,                  { desc = 'Search',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'U',     api.tree.toggle_custom_filter,         { desc = 'Toggle Hidden',          buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'W',     api.tree.collapse_all,                 { desc = 'Collapse',               buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'x',     api.fs.cut,                            { desc = 'Cut',                    buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'y',     api.fs.copy.filename,                  { desc = 'Copy Name',              buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'Y',     api.fs.copy.relative_path,             { desc = 'Copy Relative Path',     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-LeftMouse>',  api.node.open.edit,           { desc = 'Open',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
+  -- END_DEFAULT_ON_ATTACH
+]]
 
 -- stylua: ignore start
 local LEGACY_MAPPINGS = {
@@ -153,54 +212,47 @@ local function generate_on_attach_function(list, remove_keys, remove_defaults)
 end
 
 local function generate_on_attach_lua(list, remove_keys)
-  local lua = [[
-local api = require('nvim-tree.api')
-
-local on_attach = function(bufnr)
-
-  -- please insert mappings from :help nvim-tree-default-mappings]]
+  local lua = ""
 
   -- explicit removals
   if #remove_keys > 0 then
-    lua = lua .. "\n\n  -- remove_keys"
+    lua = lua .. "\n  -- remove_keys\n"
   end
   for _, key in ipairs(remove_keys) do
-    lua = lua .. "\n" .. string.format([[  vim.keymap.set('n', '%s', '', { buffer = bufnr })]], key)
-    lua = lua .. "\n" .. string.format([[  vim.keymap.del('n', '%s', { buffer = bufnr })]], key)
+    lua = lua .. string.format([[  vim.keymap.set('n', '%s', '', { buffer = bufnr })]], key) .. "\n"
+    lua = lua .. string.format([[  vim.keymap.del('n', '%s', { buffer = bufnr })]], key) .. "\n"
   end
 
   -- list
   if #list > 0 then
-    lua = lua .. "\n\n  -- view.mappings.list"
+    lua = lua .. "\n  -- view.mappings.list\n"
   end
   for _, m in ipairs(list) do
     local keys = type(m.key) == "table" and m.key or { m.key }
     for _, k in ipairs(keys) do
       if LEGACY_MAPPINGS[m.action] then
         lua = lua
-          .. "\n"
           .. string.format(
-            [[ vim.keymap.set('%s', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
+            [[  vim.keymap.set('%s', '%s', %s, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
             m.mode or "n",
             k,
             LEGACY_MAPPINGS[m.action].n,
             LEGACY_MAPPINGS[m.action].desc
           )
-      elseif type(m.action_cb) == "function" then
-        lua = lua .. "\n" .. string.format([[ vim.keymap.set('%s', '%s', function()]], m.mode or "n", k)
-        lua = lua .. "\n" .. string.format [[   local node = api.tree.get_node_under_cursor()]]
-        lua = lua .. "\n" .. string.format [[   -- your code goes here]]
-        lua = lua
           .. "\n"
+      elseif type(m.action_cb) == "function" then
+        lua = lua .. string.format([[  vim.keymap.set('%s', '%s', function()]], m.mode or "n", k) .. "\n"
+        lua = lua .. [[    local node = api.tree.get_node_under_cursor()]] .. "\n"
+        lua = lua .. [[    -- your code goes here]] .. "\n"
+        lua = lua
           .. string.format(
-            [[ end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
+            [[  end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
             m.action
           )
+          .. "\n"
       end
     end
   end
-
-  lua = lua .. "\nend"
 
   return lua
 end
@@ -221,20 +273,17 @@ function M.generate_legacy_on_attach(opts)
   end
 
   opts.on_attach = generate_on_attach_function(list, remove_keys, remove_defaults)
-  M.on_attach_lua = generate_on_attach_lua(list, remove_keys)
+  M.user_on_attach_lua = generate_on_attach_lua(list, remove_keys)
 end
 
 function M.generate_on_attach()
-  if #M.on_attach_lua > 0 then
-    local name = "/tmp/my_on_attach.lua"
-    local file = io.open(name, "w")
-    io.output(file)
-    io.write(M.on_attach_lua)
-    io.close(file)
-    open_file.fn("edit", name)
-  else
-    notify.info "no custom mappings"
-  end
+  local name = "/tmp/my_on_attach.lua"
+  local file = io.output(name)
+  io.write(DEFAULT_ON_ATTACH)
+  io.write(M.user_on_attach_lua)
+  io.write("end")
+  io.close(file)
+  open_file.fn("edit", name)
 end
 
 function M.migrate_legacy_options(opts)
