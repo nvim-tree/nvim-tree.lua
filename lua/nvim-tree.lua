@@ -217,10 +217,8 @@ end
 M.resize = view.resize
 
 function M.open_on_directory()
-  require "amc.log".line("open_on_directory")
   local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
   if not should_proceed then
-    require "amc.log".line("open_on_directory exit early")
     return
   end
 
@@ -309,15 +307,11 @@ function M.on_enter(netrw_disabled)
     local cwd
     if is_dir then
       cwd = vim.fn.expand(vim.fn.fnameescape(bufname))
-      require "amc.log".line("cd %s", cwd)
       -- INFO: could potentially conflict with rooter plugins
       vim.cmd("noautocmd cd " .. vim.fn.fnameescape(cwd))
     end
 
     lib.open { path = cwd }
-
-    require "amc.log".line("should_hijack = %s", should_hijack)
-    require "amc.log".line("should_focus_other_window = %s", should_focus_other_window)
 
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
@@ -907,7 +901,12 @@ function M.setup(conf)
   M.setup_called = true
 
   vim.schedule(function()
-    if #opts.ignore_ft_on_setup > 0 or opts.open_on_setup == true or opts.open_on_setup_file or opts.ignore_buffer_on_setup then
+    if
+      #opts.ignore_ft_on_setup > 0
+      or opts.open_on_setup == true
+      or opts.open_on_setup_file
+      or opts.ignore_buffer_on_setup
+    then
       notify.info "open_on_setup behaviour has been deprecated, please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
       M.on_enter(netrw_disabled)
     else
