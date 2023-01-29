@@ -5,7 +5,7 @@ local open_file = require "nvim-tree.actions.node.open-file"
 local keymap = require "nvim-tree.keymap"
 
 local M = {
-  user_on_attach_lua = ""
+  user_on_attach_lua = "",
 }
 
 local DEFAULT_ON_ATTACH = [[
@@ -281,7 +281,7 @@ function M.generate_on_attach()
   local file = io.output(name)
   io.write(DEFAULT_ON_ATTACH)
   io.write(M.user_on_attach_lua)
-  io.write("end")
+  io.write "end"
   io.close(file)
   open_file.fn("edit", name)
 end
