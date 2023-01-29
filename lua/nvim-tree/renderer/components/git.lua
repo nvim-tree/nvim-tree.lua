@@ -1,5 +1,6 @@
 local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
+local log = require "nvim-tree.log"
 
 local M = {}
 
@@ -79,9 +80,11 @@ local function get_icons_(node)
     end
 
     for _, icon in pairs(icons) do
-      if not inserted[icon] then
-        table.insert(iconss, icon)
-        inserted[icon] = true
+      if #icon.str > 0 then
+        if not inserted[icon] then
+          table.insert(iconss, icon)
+          inserted[icon] = true
+        end
       end
     end
   end
