@@ -75,7 +75,7 @@ M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 ---@param opts ApiTreeOpenOpts|nil|string
 function M.open(opts)
   -- legacy arguments
-  if type(opts) ~= "table" then
+  if type(opts) == "string" then
     opts = {
       path = opts,
     }
@@ -184,16 +184,27 @@ end
 ---@param opts ApiTreeToggleOpts|nil|boolean
 function M.toggle(opts, no_focus, cwd, bang)
   -- legacy arguments
-  if type(opts) ~= "table" then
+  if type(opts) == "boolean" then
     opts = {
-      path = cwd,
-      focus = not no_focus,
-      find_file = opts,
-      update_root = bang,
+      find_file = opts
     }
+    if type(cwd) == "string" then
+      opts.path = cwd
+    end
+    if type(no_focus) == "boolean" then
+      opts.focus = not no_focus
+    end
+    if type(bang) == "boolean" then
+      opts.update_root = bang
+    end
   end
 
   opts = opts or {}
+
+  -- defaults
+  if opts.focus == nil then
+    opts.focus = true
+  end
 
   -- sanitise path
   if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
