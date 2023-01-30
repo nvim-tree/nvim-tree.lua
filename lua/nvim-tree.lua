@@ -186,7 +186,7 @@ function M.toggle(opts, no_focus, cwd, bang)
   -- legacy arguments
   if type(opts) == "boolean" then
     opts = {
-      find_file = opts
+      find_file = opts,
     }
     if type(cwd) == "string" then
       opts.path = cwd
