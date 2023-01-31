@@ -71,31 +71,6 @@ end
 ---@deprecated
 M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
----Open the tree, focusing if already open.
----@param opts ApiTreeOpenOpts|nil|string
-function M.open(opts)
-  -- legacy arguments
-  if type(opts) == "string" then
-    opts = {
-      path = opts,
-    }
-  end
-
-  opts = opts or {}
-
-  -- sanitise path
-  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
-    opts.path = nil
-  end
-
-  if view.is_visible() then
-    lib.set_target_win()
-    view.focus()
-  else
-    lib.open(opts)
-  end
-end
-
 function M.open_replacing_current_buffer(cwd)
   if view.is_visible() then
     return
@@ -178,6 +153,37 @@ function M.find_file(with_open, bufnr, bang)
     vim.log.levels.WARN
   )
   find_file(with_open, bufnr, bang)
+end
+
+---Open the tree, focusing if already open.
+---@param opts ApiTreeOpenOpts|nil|string
+function M.open(opts)
+  -- legacy arguments
+  if type(opts) == "string" then
+    opts = {
+      path = opts,
+    }
+  end
+
+  opts = opts or {}
+
+  local previous_buf = vim.api.nvim_get_current_buf()
+
+  -- sanitise path
+  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
+    opts.path = nil
+  end
+
+  if view.is_visible() then
+    lib.set_target_win()
+    view.focus()
+  else
+    lib.open(opts)
+  end
+
+  if _config.update_focused_file.enable or opts.find_file then
+    find_file(false, previous_buf, opts.update_root)
+  end
 end
 
 ---Toggle the tree.

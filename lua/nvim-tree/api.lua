@@ -19,15 +19,17 @@ end
 ---@class ApiTreeOpenOpts
 ---@field path string|nil path
 ---@field current_window boolean|nil default false
+---@field find_file boolean|nil default false
+---@field update_root boolean|nil default false
 
 Api.tree.open = require("nvim-tree").open
 
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
 ---@field current_window boolean|nil default false
----@field focus boolean|nil default true
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
+---@field focus boolean|nil default true
 
 Api.tree.toggle = require("nvim-tree").toggle
 
