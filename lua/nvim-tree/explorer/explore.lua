@@ -59,7 +59,7 @@ end
 
 function M.explore(node, status)
   local cwd = node.link_to or node.absolute_path
-  local handle = utils.fs_scandir_profiled(cwd)
+  local handle = vim.loop.fs_scandir(cwd)
   if not handle then
     return
   end
