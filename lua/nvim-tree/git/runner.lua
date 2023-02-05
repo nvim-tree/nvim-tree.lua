@@ -163,6 +163,11 @@ function Runner.run(opts)
 
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
+    timeouts = timeouts + 1
+    if timeouts == MAX_TIMEOUTS then
+      notify.warn(string.format("%d git jobs have timed out after %dms, disabling git integration. Please consider increasing git.timeout", timeouts, opts.timeout))
+      require "nvim-tree.git".disable_git_integration()
+    end
   elseif self.rc ~= 0 then
     log.line("git", "job fail rc %d %s %s", self.rc, opts.project_root, opts.path)
   else
