@@ -1,8 +1,12 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
+local notify = require "nvim-tree.notify"
 
 local Runner = {}
 Runner.__index = Runner
+
+local timeouts = 0
+local MAX_TIMEOUTS = 5
 
 function Runner:_parse_status_output(status, path)
   -- replacing slashes if on windows

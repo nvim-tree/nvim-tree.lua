@@ -176,6 +176,13 @@ function M.purge_state()
   M.cwd_to_project_root = {}
 end
 
+--- Disable git integration permanently
+function M.disable_git_integration()
+  log.line("git", "disabling git integration")
+  M.purge_state()
+  M.config.git.enable = false
+end
+
 function M.setup(opts)
   M.config.git = opts.git
   M.config.filesystem_watchers = opts.filesystem_watchers
