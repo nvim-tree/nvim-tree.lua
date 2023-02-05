@@ -11,7 +11,9 @@ function M.get_toplevel(cwd)
 
   local toplevel = vim.fn.system(cmd)
 
-  log.raw("git", toplevel)
+  if log.enabled "git" then
+    log.raw("git", toplevel)
+  end
   log.profile_end(ps, "git toplevel %s", cwd)
 
   if vim.v.shell_error ~= 0 or not toplevel or #toplevel == 0 or toplevel:match "fatal" then
@@ -48,7 +50,9 @@ function M.should_show_untracked(cwd)
 
   local has_untracked = vim.fn.system(cmd)
 
-  log.raw("git", has_untracked)
+  if log.enabled "git" then
+    log.raw("git", has_untracked)
+  end
   log.profile_end(ps, "git untracked %s", cwd)
 
   untracked[cwd] = vim.trim(has_untracked) ~= "no"

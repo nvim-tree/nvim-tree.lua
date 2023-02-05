@@ -880,8 +880,10 @@ function M.setup(conf)
   require("nvim-tree.notify").setup(opts)
   require("nvim-tree.log").setup(opts)
 
-  log.line("config", "default config + user")
-  log.raw("config", "%s\n", vim.inspect(opts))
+  if log.enabled "config" then
+    log.line("config", "default config + user")
+    log.raw("config", "%s\n", vim.inspect(opts))
+  end
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)

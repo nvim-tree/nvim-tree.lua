@@ -437,8 +437,10 @@ function M.setup(opts)
 
   require("nvim-tree.actions.dispatch").setup(M.custom_keypress_funcs)
 
-  log.line("config", "active mappings")
-  log.raw("config", "%s\n", vim.inspect(M.mappings))
+  if log.enabled "config" then
+    log.line("config", "active mappings")
+    log.raw("config", "%s\n", vim.inspect(M.mappings))
+  end
 end
 
 return M

@@ -59,7 +59,7 @@ function Runner:_getopts(stdout_handle, stderr_handle)
 end
 
 function Runner:_log_raw_output(output)
-  if output and type(output) == "string" then
+  if log.enabled "git" and output and type(output) == "string" then
     log.raw("git", "%s", output)
     log.line("git", "done")
   end
