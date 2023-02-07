@@ -54,11 +54,6 @@ function M.fn(node)
       return
     end
 
-    if utils.file_exists(new_file_path) then
-      notify.warn "Cannot create: file already exists"
-      return
-    end
-
     -- create a folder for each path element if the folder does not exist
     -- if the answer ends with a /, create a file for the last path element
     local is_last_path_file = not new_file_path:match(utils.path_separator .. "$")
