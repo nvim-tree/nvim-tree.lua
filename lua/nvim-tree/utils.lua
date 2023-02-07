@@ -154,25 +154,33 @@ function M.get_nodes_by_line(nodes_all, line_start)
   return nodes_by_line
 end
 
-function M.rename_loaded_buffers(old_path, new_path)
+--- Rename and write a buffer if from exists and to does not.
+--- @param from_path string absolute path
+--- @param to_path string absolute path
+function M.rename_loaded_buffers(from_path, to_path)
+  -- find from then to
+  local from_buf, to_buf
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
-      local buf_name = vim.api.nvim_buf_get_name(buf)
-      local exact_match = buf_name == old_path
-      local child_match = (
-        buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
-      )
-      if exact_match or child_match then
-        vim.api.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
-        -- to avoid the 'overwrite existing file' error message on write for
-        -- normal files
-        if vim.api.nvim_buf_get_option(buf, "buftype") == "" then
-          vim.api.nvim_buf_call(buf, function()
-            vim.cmd "silent! write!"
-            vim.cmd "edit"
-          end)
-        end
+      local path = vim.api.nvim_buf_get_name(buf)
+      if path == from_path then
+        from_buf = buf
+      elseif path == to_path then
+        to_buf = buf
       end
+    end
+  end
+
+  -- don't clobber
+  if from_buf and not to_buf then
+    vim.api.nvim_buf_set_name(from_buf, to_path)
+    -- to avoid the 'overwrite existing file' error message on write for
+    -- normal files
+    if vim.api.nvim_buf_get_option(from_buf, "buftype") == "" then
+      vim.api.nvim_buf_call(from_buf, function()
+        vim.cmd "silent! write!"
+        vim.cmd "edit"
+      end)
     end
   end
 end
