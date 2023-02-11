@@ -21,29 +21,32 @@ function M.raw(typ, fmt, ...)
   end
 end
 
+---@class Profile
+---@field start number nanos
+---@field tag string
+
 --- Write profile start to log file
 --- START is prefixed
 --- @param fmt string for string.format
 --- @vararg any arguments for string.format
---- @return number nanos to pass to profile_end
+--- @return Profile to pass to profile_end
 function M.profile_start(fmt, ...)
+  local profile = {}
   if M.enabled "profile" then
-    M.line("profile", "START " .. (fmt or "???"), ...)
-    return vim.loop.hrtime()
-  else
-    return 0
+    profile.start = vim.loop.hrtime()
+    profile.tag = string.format((fmt or "???"), ...)
+    M.line("profile", "START %s", profile.tag)
   end
+  return profile
 end
 
 --- Write profile end to log file
 --- END is prefixed and duration in seconds is suffixed
---- @param start number nanos returned from profile_start
---- @param fmt string for string.format
---- @vararg any arguments for string.format
-function M.profile_end(start, fmt, ...)
-  if M.enabled "profile" then
-    local millis = start and math.modf((vim.loop.hrtime() - start) / 1000000) or -1
-    M.line("profile", "END   " .. (fmt or "???") .. "  " .. millis .. "ms", ...)
+--- @param profile Profile returned from profile_start
+function M.profile_end(profile)
+  if M.enabled "profile" and type(profile) == "table" then
+    local millis = profile.start and math.modf((vim.loop.hrtime() - profile.start) / 1000000) or -1
+    M.line("profile", "END   %s %dms", profile.tag or "", millis)
   end
 end
 
@@ -54,7 +57,7 @@ end
 --- @vararg any arguments for string.format
 function M.line(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, fmt), ...)
+    M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, (fmt or "???")), ...)
   end
 end
 

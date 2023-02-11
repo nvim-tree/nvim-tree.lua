@@ -26,8 +26,7 @@ local function populate_children(handle, cwd, node, git_status)
 
     local abs = utils.path_join { cwd, name }
 
-    local pn = string.format("explore populate_children %s", abs)
-    local ps = log.profile_start(pn)
+    local profile = log.profile_start("explore populate_children %s", abs)
 
     t = get_type_from(t, abs)
     if
@@ -53,7 +52,7 @@ local function populate_children(handle, cwd, node, git_status)
       end
     end
 
-    log.profile_end(ps, pn)
+    log.profile_end(profile)
   end
 end
 
@@ -64,8 +63,7 @@ function M.explore(node, status)
     return
   end
 
-  local pn = string.format("explore init %s", node.absolute_path)
-  local ps = log.profile_start(pn)
+  local profile = log.profile_start("explore init %s", node.absolute_path)
 
   populate_children(handle, cwd, node, status)
 
@@ -76,14 +74,14 @@ function M.explore(node, status)
     local ns = M.explore(child_folder_only, status)
     node.nodes = ns or {}
 
-    log.profile_end(ps, pn)
+    log.profile_end(profile)
     return ns
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
 
-  log.profile_end(ps, pn)
+  log.profile_end(profile)
   return node.nodes
 end
 
