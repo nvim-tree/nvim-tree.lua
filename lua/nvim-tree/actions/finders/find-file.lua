@@ -28,7 +28,7 @@ function M.fn(fname)
   end
   running[fname_real] = true
 
-  local ps = log.profile_start("find file %s", fname_real)
+  local profile = log.profile_start("find file %s", fname_real)
 
   -- we cannot wait for watchers
   reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
@@ -71,7 +71,7 @@ function M.fn(fname)
 
   running[fname_real] = false
 
-  log.profile_end(ps, "find file %s", fname_real)
+  log.profile_end(profile)
 end
 
 return M

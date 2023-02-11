@@ -140,7 +140,7 @@ end
 
 -- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
 function Runner.run(opts)
-  local ps = log.profile_start("git job %s %s", opts.project_root, opts.path)
+  local profile = log.profile_start("git job %s %s", opts.project_root, opts.path)
 
   local self = setmetatable({
     project_root = opts.project_root,
@@ -155,7 +155,7 @@ function Runner.run(opts)
   self:_run_git_job()
   self:_wait()
 
-  log.profile_end(ps, "git job %s %s", opts.project_root, opts.path)
+  log.profile_end(profile)
 
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.project_root, opts.path)

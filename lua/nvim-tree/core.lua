@@ -10,8 +10,7 @@ TreeExplorer = nil
 local first_init_done = false
 
 function M.init(foldername)
-  local pn = string.format("core init %s", foldername)
-  local ps = log.profile_start(pn)
+  local profile = log.profile_start("core init %s", foldername)
 
   if TreeExplorer then
     TreeExplorer:destroy()
@@ -21,7 +20,7 @@ function M.init(foldername)
     events._dispatch_ready()
     first_init_done = true
   end
-  log.profile_end(ps, pn)
+  log.profile_end(profile)
 end
 
 function M.get_explorer()
