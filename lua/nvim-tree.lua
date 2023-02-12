@@ -13,6 +13,7 @@ local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
+local notify = require "nvim-tree.notify"
 
 local _config = {}
 
@@ -65,31 +66,6 @@ function M.change_root(filepath, bufnr)
   end
   -- finally fall back to the folder containing the file
   change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
-end
-
----Open the tree, focusing if already open.
----@param opts ApiTreeOpenOpts|nil|string
-function M.open(opts)
-  -- legacy arguments
-  if type(opts) ~= "table" then
-    opts = {
-      path = opts,
-    }
-  end
-
-  opts = opts or {}
-
-  -- sanitise path
-  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
-    opts.path = nil
-  end
-
-  if view.is_visible() then
-    lib.set_target_win()
-    view.focus()
-  else
-    lib.open(opts)
-  end
 end
 
 function M.open_replacing_current_buffer(cwd)
@@ -176,20 +152,62 @@ function M.find_file(with_open, bufnr, bang)
   find_file(with_open, bufnr, bang)
 end
 
----Toggle the tree.
----@param opts ApiTreeToggleOpts|nil|boolean
-function M.toggle(opts, no_focus, cwd, bang)
+---Open the tree, focusing if already open.
+---@param opts ApiTreeOpenOpts|nil|string
+function M.open(opts)
   -- legacy arguments
-  if type(opts) ~= "table" then
+  if type(opts) == "string" then
     opts = {
-      path = cwd,
-      focus = not no_focus,
-      find_file = opts,
-      update_root = bang,
+      path = opts,
     }
   end
 
   opts = opts or {}
+
+  local previous_buf = vim.api.nvim_get_current_buf()
+
+  -- sanitise path
+  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
+    opts.path = nil
+  end
+
+  if view.is_visible() then
+    lib.set_target_win()
+    view.focus()
+  else
+    lib.open(opts)
+  end
+
+  if _config.update_focused_file.enable or opts.find_file then
+    find_file(false, previous_buf, opts.update_root)
+  end
+end
+
+---Toggle the tree.
+---@param opts ApiTreeToggleOpts|nil|boolean
+function M.toggle(opts, no_focus, cwd, bang)
+  -- legacy arguments
+  if type(opts) == "boolean" then
+    opts = {
+      find_file = opts,
+    }
+    if type(cwd) == "string" then
+      opts.path = cwd
+    end
+    if type(no_focus) == "boolean" then
+      opts.focus = not no_focus
+    end
+    if type(bang) == "boolean" then
+      opts.update_root = bang
+    end
+  end
+
+  opts = opts or {}
+
+  -- defaults
+  if opts.focus == nil then
+    opts.focus = true
+  end
 
   -- sanitise path
   if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
@@ -861,8 +879,10 @@ function M.setup(conf)
   require("nvim-tree.notify").setup(opts)
   require("nvim-tree.log").setup(opts)
 
-  log.line("config", "default config + user")
-  log.raw("config", "%s\n", vim.inspect(opts))
+  if log.enabled "config" then
+    log.line("config", "default config + user")
+    log.raw("config", "%s\n", vim.inspect(opts))
+  end
 
   legacy.generate_legacy_on_attach(opts)
 
@@ -901,7 +921,17 @@ function M.setup(conf)
   M.setup_called = true
 
   vim.schedule(function()
-    M.on_enter(netrw_disabled)
+    if
+      #opts.ignore_ft_on_setup > 0
+      or opts.open_on_setup == true
+      or opts.open_on_setup_file
+      or opts.ignore_buffer_on_setup
+    then
+      notify.info "open_on_setup behaviour has been deprecated, please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
+      M.on_enter(netrw_disabled)
+    else
+      M.initialized = true
+    end
     vim.g.NvimTreeSetup = 1
     vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
   end)

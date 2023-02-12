@@ -36,12 +36,12 @@ end
 
 function M.reload(node, git_status, unloaded_bufnr)
   local cwd = node.link_to or node.absolute_path
-  local handle = utils.fs_scandir_profiled(cwd)
+  local handle = vim.loop.fs_scandir(cwd)
   if not handle then
     return
   end
 
-  local ps = log.profile_start("reload %s", node.absolute_path)
+  local profile = log.profile_start("reload %s", node.absolute_path)
 
   local filter_status = filters.prepare(git_status, unloaded_bufnr)
 
@@ -55,7 +55,7 @@ function M.reload(node, git_status, unloaded_bufnr)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local name, t = utils.fs_scandir_next_profiled(handle, cwd)
+    local name, t = vim.loop.fs_scandir_next(handle, cwd)
     if not name then
       break
     end
@@ -130,13 +130,13 @@ function M.reload(node, git_status, unloaded_bufnr)
     node.group_next = child_folder_only
     local ns = M.reload(child_folder_only, git_status)
     node.nodes = ns or {}
-    log.profile_end(ps, "reload %s", node.absolute_path)
+    log.profile_end(profile)
     return ns
   end
 
   sorters.merge_sort(node.nodes, sorters.node_comparator)
   live_filter.apply_filter(node)
-  log.profile_end(ps, "reload %s", node.absolute_path)
+  log.profile_end(profile)
   return node.nodes
 end
 
@@ -164,8 +164,7 @@ function M.refresh_nodes_for_path(path)
     return
   end
 
-  local pn = string.format("refresh_nodes_for_path %s", path)
-  local ps = log.profile_start(pn)
+  local profile = log.profile_start("refresh_nodes_for_path %s", path)
 
   NodeIterator.builder({ explorer })
     :hidden()
@@ -186,7 +185,7 @@ function M.refresh_nodes_for_path(path)
     end)
     :iterate()
 
-  log.profile_end(ps, pn)
+  log.profile_end(profile)
 end
 
 function M.setup(opts)

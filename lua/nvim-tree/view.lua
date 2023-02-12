@@ -232,8 +232,7 @@ function M.open(options)
     return
   end
 
-  local pn = string.format "view open"
-  local ps = log.profile_start(pn)
+  local profile = log.profile_start "view open"
 
   create_buffer()
   open_window()
@@ -245,7 +244,7 @@ function M.open(options)
   end
   events._dispatch_on_tree_open()
 
-  log.profile_end(ps, pn)
+  log.profile_end(profile)
 end
 
 local function grow()

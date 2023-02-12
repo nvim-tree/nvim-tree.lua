@@ -26,6 +26,10 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 [Join us on matrix](https://matrix.to/#/#nvim-tree:matrix.org)
 
+## Breaking Change 2023-01-30
+
+Existing `*_on_setup*` mechanisms have been removed in favour of [Open At Startup](https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup)
+
 ## Requirements
 
 [neovim >=0.8.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)

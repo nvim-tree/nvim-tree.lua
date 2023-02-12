@@ -427,21 +427,25 @@ Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
 
 *nvim-tree.open_on_setup*
+Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
 Will automatically open the tree when running setup if startup buffer is
 a directory, is empty or is unnamed. nvim-tree window will be focused.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.open_on_setup_file*
+Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
 Will automatically open the tree when running setup if startup buffer is a file.
 File window will be focused.
 File will be found if update_focused_file is enabled.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_buffer_on_setup*
+Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
 Will ignore the buffer, when deciding to open the tree on setup.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.ignore_ft_on_setup*
+Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
 List of filetypes that will prevent `open_on_setup` to open.
 You can use this option if you don't want the tree to open
 in some scenarios (eg using vim startify).
@@ -1249,24 +1253,26 @@ api.tree.open({opts})                              *nvim-tree.api.tree.open()*
     Open the tree, focusing it if already open.
 
     Parameters: ~
-      • {opts} (table) optional parameters
+      • {opts} (table) optional parameters with boolean defaults
 
     Options: ~
-      • {path}           (string)  root directory for the tree
-      • {current_window} (boolean) open the tree in the current window
+      • {path}           (string)         root directory for the tree
+      • {current_window} (boolean, false) open the tree in the current window
+      • {find_file}      (boolean, false) find the current buffer
+      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
 
 api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
     Open or close the tree.
 
     Parameters: ~
-      • {opts} (table) optional parameters
+      • {opts} (table) optional parameters with boolean defaults
 
     Options: ~
-      • {path}           (string)  root directory for the tree
-      • {current_window} (boolean) open the tree in the current window
-      • {focus}          (boolean) focus the tree when opening
-      • {find_file}      (boolean) find the current buffer
-      • {update_root}    (boolean) see |nvim-tree.update_focused_file.update_root|
+      • {path}           (string)         root directory for the tree
+      • {current_window} (boolean, false) open the tree in the current window
+      • {find_file}      (boolean, false) find the current buffer
+      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {focus}          (boolean, true)  focus the tree when opening
 
 api.tree.close()                                   *nvim-tree.api.tree.close()*
     Close the tree, affecting all tabs as per |nvim-tree.tab.sync.close|
