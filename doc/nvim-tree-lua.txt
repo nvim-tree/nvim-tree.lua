@@ -626,6 +626,7 @@ Git integration with icons and colors.
 
     *nvim-tree.git.timeout*
     Kills the git process after some time if it takes too long.
+    Git integration will be disabled after 10 git jobs exceed this timeout.
       Type: `number`, Default: `400` (ms)
 
   You will still need to set |renderer.icons.show.git| `= true` or

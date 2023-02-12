@@ -1,8 +1,12 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
+local notify = require "nvim-tree.notify"
 
 local Runner = {}
 Runner.__index = Runner
+
+local timeouts = 0
+local MAX_TIMEOUTS = 5
 
 function Runner:_parse_status_output(status, path)
   -- replacing slashes if on windows
@@ -159,6 +163,17 @@ function Runner.run(opts)
 
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
+    timeouts = timeouts + 1
+    if timeouts == MAX_TIMEOUTS then
+      notify.warn(
+        string.format(
+          "%d git jobs have timed out after %dms, disabling git integration. Try increasing git.timeout",
+          timeouts,
+          opts.timeout
+        )
+      )
+      require("nvim-tree.git").disable_git_integration()
+    end
   elseif self.rc ~= 0 then
     log.line("git", "job fail rc %d %s %s", self.rc, opts.project_root, opts.path)
   else
