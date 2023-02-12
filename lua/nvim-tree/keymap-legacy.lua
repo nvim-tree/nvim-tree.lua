@@ -3,7 +3,9 @@ local open_file = require "nvim-tree.actions.node.open-file"
 local keymap = require "nvim-tree.keymap"
 
 local M = {
-  user_on_attach_lua = "",
+  on_attach_lua = "",
+  legacy_default = {},
+  legacy_active = {},
 }
 
 local DEFAULT_ON_ATTACH = [[
@@ -157,6 +159,71 @@ local function generate_on_attach_function(list, remove_keys, remove_defaults)
   end
 end
 
+local function generate_legacy_default_mappings()
+  local mappings = {}
+
+  for a, m in pairs(LEGACY_MAPPINGS) do
+    table.insert(mappings, {
+      action = a,
+      desc = m.desc,
+      key = m.key,
+    })
+  end
+
+  return mappings
+end
+
+-- taken from actions/init merge_mappings
+local function generate_legacy_active_mappings(user_mappings, default)
+  if #user_mappings == 0 then
+    return default
+  end
+
+  local function is_empty(s)
+    return s == ""
+  end
+
+  local user_keys = {}
+  local removed_keys = {}
+  -- remove default mappings if action is a empty string
+  for _, map in pairs(user_mappings) do
+    if type(map.key) == "table" then
+      for _, key in pairs(map.key) do
+        table.insert(user_keys, key)
+        if is_empty(map.action) then
+          table.insert(removed_keys, key)
+        end
+      end
+    else
+      table.insert(user_keys, map.key)
+      if is_empty(map.action) then
+        table.insert(removed_keys, map.key)
+      end
+    end
+  end
+
+  local default_map = vim.tbl_filter(function(map)
+    if type(map.key) == "table" then
+      local filtered_keys = {}
+      for _, key in pairs(map.key) do
+        if not vim.tbl_contains(user_keys, key) and not vim.tbl_contains(removed_keys, key) then
+          table.insert(filtered_keys, key)
+        end
+      end
+      map.key = filtered_keys
+      return not vim.tbl_isempty(map.key)
+    else
+      return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
+    end
+  end, default)
+
+  local user_map = vim.tbl_filter(function(map)
+    return not is_empty(map.action)
+  end, user_mappings)
+
+  return vim.fn.extend(default_map, user_map)
+end
+
 local function generate_on_attach_lua(list, remove_keys)
   local lua = ""
 
@@ -219,17 +286,27 @@ function M.generate_legacy_on_attach(opts)
   end
 
   opts.on_attach = generate_on_attach_function(list, remove_keys, remove_defaults)
-  M.user_on_attach_lua = generate_on_attach_lua(list, remove_keys)
+  M.on_attach_lua = generate_on_attach_lua(list, remove_keys)
+  M.legacy_default = generate_legacy_default_mappings()
+  M.legacy_active = generate_legacy_active_mappings(list, vim.deepcopy(M.legacy_default))
 end
 
 function M.generate_on_attach()
   local name = "/tmp/my_on_attach.lua"
   local file = io.output(name)
   io.write(DEFAULT_ON_ATTACH)
-  io.write(M.user_on_attach_lua)
+  io.write(M.on_attach_lua)
   io.write "end"
   io.close(file)
   open_file.fn("edit", name)
+end
+
+function M.active_mappings_clone()
+  return vim.deepcopy(M.legacy_active)
+end
+
+function M.default_mappings_clone()
+  return vim.deepcopy(M.legacy_default)
 end
 
 return M

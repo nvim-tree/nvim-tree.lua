@@ -170,8 +170,11 @@ Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 
--- TODO #1579 source from LEGACY_MAPPINGS
--- Api.config.mappings.active = require("nvim-tree.actions").active_mappings_clone
--- Api.config.mappings.default = require("nvim-tree.actions").default_mappings_clone
+Api.config.mappings.active = function()
+  return require("nvim-tree.keymap-legacy").active_mappings_clone()
+end
+Api.config.mappings.default = function()
+  return require("nvim-tree.keymap-legacy").default_mappings_clone()
+end
 
 return Api
