@@ -28,7 +28,9 @@ local on_attach = function(bufnr)
   vim.keymap.set('n', '-',     api.tree.change_root_to_parent,        { desc = 'Up',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', 'a',     api.fs.create,                         { desc = 'Create',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   { desc = 'Move Bookmarked',        buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      { desc = 'Toggle No Buffer',       buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', 'c',     api.fs.copy.node,                      { desc = 'Copy',                   buffer = bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      { desc = 'Toggle Git Clean',       buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            { desc = 'Prev Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', ']c',    api.node.navigate.git.next,            { desc = 'Next Git',               buffer = bufnr, noremap = true, silent = true, nowait = true })
   vim.keymap.set('n', 'd',     api.fs.remove,                         { desc = 'Delete',                 buffer = bufnr, noremap = true, silent = true, nowait = true })
@@ -82,6 +84,8 @@ local LEGACY_MAPPINGS = {
   first_sibling = { key = "K", desc = "First Sibling", fn = api.node.navigate.sibling.first, n = "api.node.navigate.sibling.first" },
   last_sibling = { key = "J", desc = "Last Sibling", fn = api.node.navigate.sibling.last, n = "api.node.navigate.sibling.last" },
   toggle_git_ignored = { key = "I", desc = "Toggle Git Ignore", fn = api.tree.toggle_gitignore_filter, n = "api.tree.toggle_gitignore_filter" },
+  toggle_no_buffer = { key = "B", desc = "Toggle No Buffer", fn = api.tree.toggle_no_buffer_filter, n = "api.tree.toggle_no_buffer_filter" },
+  toggle_git_clean = { key = "C", desc = "Toggle Git Clean", fn = api.tree.toggle_git_clean_filter, n = "api.tree.toggle_git_clean_filter" },
   toggle_dotfiles = { key = "H", desc = "Toggle Dotfiles", fn = api.tree.toggle_hidden_filter, n = "api.tree.toggle_hidden_filter" },
   toggle_custom = { key = "U", desc = "Toggle Hidden", fn = api.tree.toggle_custom_filter, n = "api.tree.toggle_custom_filter" },
   refresh = { key = "R", desc = "Refresh", fn = api.tree.reload, n = "api.tree.reload" },
@@ -90,6 +94,7 @@ local LEGACY_MAPPINGS = {
   trash = { key = "D", desc = "Trash", fn = api.fs.trash, n = "api.fs.trash" },
   rename = { key = "r", desc = "Rename", fn = api.fs.rename, n = "api.fs.rename" },
   full_rename = { key = "<C-r>", desc = "Rename: Omit Filename", fn = api.fs.rename_sub, n = "api.fs.rename_sub" },
+  rename_basename = { key = "e", desc = "Rename: Basename", fn = api.fs.rename_basename, n = "api.fs.rename_basename" },
   cut = { key = "x", desc = "Cut", fn = api.fs.cut, n = "api.fs.cut" },
   copy = { key = "c", desc = "Copy", fn = api.fs.copy.node, n = "api.fs.copy.node" },
   paste = { key = "p", desc = "Paste", fn = api.fs.paste, n = "api.fs.paste" },

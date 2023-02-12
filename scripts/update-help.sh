@@ -38,7 +38,7 @@ sed -e "s/^  /    /" /tmp/DEFAULT_ON_ATTACH.2.lua > /tmp/DEFAULT_ON_ATTACH.4.lua
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.4.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
-# legacy, indented at 2
+# legacy keymap, indented at 2
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.2.lua
-           }; /${end}/p; d; }" lua/nvim-tree/legacy.lua
+           }; /${end}/p; d; }" lua/nvim-tree/keymap-legacy.lua
 
