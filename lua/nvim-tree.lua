@@ -14,6 +14,7 @@ local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
 local notify = require "nvim-tree.notify"
+local keymap_legacy = require "nvim-tree.keymap-legacy"
 
 local _config = {}
 
@@ -376,7 +377,7 @@ local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
   end, { bar = true })
-  vim.api.nvim_create_user_command("NvimTreeGenerateOnAttach", legacy.generate_on_attach, {})
+  vim.api.nvim_create_user_command("NvimTreeGenerateOnAttach", keymap_legacy.generate_on_attach, {})
 end
 
 function M.change_dir(name)
@@ -884,7 +885,7 @@ function M.setup(conf)
     log.raw("config", "%s\n", vim.inspect(opts))
   end
 
-  legacy.generate_legacy_on_attach(opts)
+  keymap_legacy.generate_legacy_on_attach(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)
