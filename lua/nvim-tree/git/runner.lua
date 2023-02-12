@@ -70,41 +70,38 @@ function Runner:_log_raw_output(output)
 end
 
 function Runner:_run_git_job()
-  local handle
+  local handle, pid
   local stdout = vim.loop.new_pipe(false)
   local stderr = vim.loop.new_pipe(false)
   local timer = vim.loop.new_timer()
 
-  local function on_finish(rc, signal)
-    log.line("git", "rc=%d, signal=%s", tostring(rc), tostring(signal))
+  local function on_finish(rc)
     self.rc = rc or 0
-
-    if timer and not timer:is_closing() then
-      timer:stop()
-      timer:close()
+    if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
+      return
     end
-    if stdout and not stdout:is_closing() then
-      stdout:read_stop()
-      stdout:close()
-    end
-    if stderr and not stderr:is_closing() then
-      stderr:read_stop()
-      stderr:close()
-    end
-    if handle and not handle:is_closing() then
+    timer:stop()
+    timer:close()
+    stdout:read_stop()
+    stderr:read_stop()
+    stdout:close()
+    stderr:close()
+    if handle then
       handle:close()
     end
+
+    pcall(vim.loop.kill, pid)
   end
 
   local opts = self:_getopts(stdout, stderr)
   log.line("git", "running job with timeout %dms", self.timeout)
   log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
 
-  handle = vim.loop.spawn(
+  handle, pid = vim.loop.spawn(
     "git",
     opts,
-    vim.schedule_wrap(function(rc, signal)
-      on_finish(rc, signal)
+    vim.schedule_wrap(function(rc)
+      on_finish(rc)
     end)
   )
 
@@ -112,11 +109,7 @@ function Runner:_run_git_job()
     self.timeout,
     0,
     vim.schedule_wrap(function()
-      log.line("git", "timed out, killing")
-      self.timed_out = true
-      if handle then
-        handle:kill "sigkill"
-      end
+      on_finish(-1)
     end)
   )
 
@@ -142,7 +135,7 @@ end
 
 function Runner:_wait()
   local function is_done()
-    return self.rc ~= nil or self.timed_out
+    return self.rc ~= nil
   end
 
   while not vim.wait(30, is_done) do
@@ -160,8 +153,7 @@ function Runner.run(opts)
     list_ignored = opts.list_ignored,
     timeout = opts.timeout or 400,
     output = {},
-    rc = nil,
-    timed_out = false,
+    rc = nil, -- -1 indicates timeout
   }, Runner)
 
   self:_run_git_job()
@@ -169,7 +161,7 @@ function Runner.run(opts)
 
   log.profile_end(profile)
 
-  if self.timed_out then
+  if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
     timeouts = timeouts + 1
     if timeouts == MAX_TIMEOUTS then
