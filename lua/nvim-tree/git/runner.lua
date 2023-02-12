@@ -167,7 +167,7 @@ function Runner.run(opts)
     if timeouts == MAX_TIMEOUTS then
       notify.warn(
         string.format(
-          "%d git jobs have timed out after %dms, disabling git integration. Please consider increasing git.timeout",
+          "%d git jobs have timed out after %dms, disabling git integration. Try increasing git.timeout",
           timeouts,
           opts.timeout
         )
