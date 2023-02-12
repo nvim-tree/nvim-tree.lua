@@ -88,6 +88,10 @@ local function get_icons_(node)
     end
   end
 
+  if #iconss == 0 then
+    return nil
+  end
+
   -- sort icons so it looks slightly better
   table.sort(iconss, function(a, b)
     return a.ord < b.ord
