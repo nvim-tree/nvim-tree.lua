@@ -90,7 +90,7 @@ function M.update()
     return
   end
   utils.debounce("diagnostics", M.debounce_delay, function()
-    local ps = log.profile_start "diagnostics update"
+    local profile = log.profile_start "diagnostics update"
     log.line("diagnostics", "update")
 
     local buffer_severity
@@ -130,7 +130,7 @@ function M.update()
         end
       end
     end
-    log.profile_end(ps, "diagnostics update")
+    log.profile_end(profile)
   end)
 end
 

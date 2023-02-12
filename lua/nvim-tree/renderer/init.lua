@@ -55,7 +55,7 @@ function M.draw(unloaded_bufnr)
     return
   end
 
-  local ps = log.profile_start "draw"
+  local profile = log.profile_start "draw"
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
@@ -100,7 +100,7 @@ function M.draw(unloaded_bufnr)
 
   view.grow_from_content()
 
-  log.profile_end(ps, "draw")
+  log.profile_end(profile)
 end
 
 function M.setup(opts)

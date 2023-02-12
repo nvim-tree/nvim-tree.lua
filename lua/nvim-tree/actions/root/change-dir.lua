@@ -56,9 +56,9 @@ end
 
 local function add_profiling_to(f)
   return function(foldername, should_open_view)
-    local ps = log.profile_start("change dir %s", foldername)
+    local profile = log.profile_start("change dir %s", foldername)
     f(foldername, should_open_view)
-    log.profile_end(ps, "change dir %s", foldername)
+    log.profile_end(profile)
   end
 end
 
