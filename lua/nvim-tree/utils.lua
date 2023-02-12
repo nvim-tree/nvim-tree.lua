@@ -177,11 +177,24 @@ function M.rename_loaded_buffers(old_path, new_path)
   end
 end
 
+--- Path exists and is readable. fs_stat is used to test.
+--- On windows and macos there are case sensitivity issues with fs_stat; fs_open
+--- is used as it do not suffer these issues.
 --- @param path string path to file or directory
 --- @return boolean
 function M.file_exists(path)
-  local _, error = vim.loop.fs_stat(path)
-  return error == nil
+  if M.is_windows or M.is_macos then
+    local f = vim.loop.fs_open(path, "r", 438)
+    if type(f) == "number" then
+      vim.loop.fs_close(f)
+      return true
+    else
+      return false
+    end
+  else
+    local stat = vim.loop.fs_stat(path)
+    return type(stat) == "table"
+  end
 end
 
 --- @param path string
