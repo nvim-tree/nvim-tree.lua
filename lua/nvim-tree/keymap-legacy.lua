@@ -173,10 +173,33 @@ local function generate_legacy_default_mappings()
   return mappings
 end
 
--- taken from actions/init merge_mappings
-local function generate_legacy_active_mappings(user_mappings, default)
+-- taken from actions/init merge_mappings and filter_mappings
+local function generate_legacy_active_mappings(user_mappings, defaults, remove_keys, remove_defaults)
+  local filtered_defaults
+
+  --
+  -- filter_mappings
+  --
+  if remove_defaults then
+    filtered_defaults = {}
+  else
+    filtered_defaults = vim.tbl_filter(function(m)
+      if type(m.key) == "table" then
+        m.key = vim.tbl_filter(function(k)
+          return not vim.tbl_contains(remove_keys, k)
+        end, m.key)
+        return #m.key > 0
+      else
+        return not vim.tbl_contains(remove_keys, m.key)
+      end
+    end, vim.deepcopy(defaults))
+  end
+
+  --
+  -- merge_mappings
+  --
   if #user_mappings == 0 then
-    return default
+    return filtered_defaults
   end
 
   local function is_empty(s)
@@ -215,7 +238,7 @@ local function generate_legacy_active_mappings(user_mappings, default)
     else
       return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
     end
-  end, default)
+  end, filtered_defaults)
 
   local user_map = vim.tbl_filter(function(map)
     return not is_empty(map.action)
@@ -288,7 +311,7 @@ function M.generate_legacy_on_attach(opts)
   opts.on_attach = generate_on_attach_function(list, remove_keys, remove_defaults)
   M.on_attach_lua = generate_on_attach_lua(list, remove_keys)
   M.legacy_default = generate_legacy_default_mappings()
-  M.legacy_active = generate_legacy_active_mappings(list, vim.deepcopy(M.legacy_default))
+  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, remove_keys, remove_defaults)
 end
 
 function M.generate_on_attach()

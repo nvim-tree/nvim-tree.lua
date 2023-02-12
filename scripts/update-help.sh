@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# run after changing nvim-tree.lua DEFAULT_OPTS or nvim-tree/keymap.lua M.default_on_attach
-# scrapes and updates nvim-tree-lua.txt
+# run after changing nvim-tree.lua DEFAULT_OPTS or keymap.lua M.default_on_attach
+# scrapes and updates nvim-tree-lua.txt and keymap-legacy.lua
 # run from repository root: scripts/update-help.sh
 
 
