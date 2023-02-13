@@ -179,6 +179,14 @@ function M.refresh_nodes_for_path(path)
     :applier(function(node)
       local abs_contains = node.absolute_path and path:match("^" .. node.absolute_path)
       local link_contains = node.link_to and path:match("^" .. node.link_to)
+      log.line(
+        "all",
+        "refresh_nodes_for_path absolute_path='%s' link_to='%s' %s %s",
+        node.absolute_path,
+        node.link_to,
+        abs_contains and "abs_contains" or "",
+        link_contains and "link_contains" or ""
+      )
       if abs_contains or link_contains then
         M.refresh_node(node)
       end
