@@ -2,6 +2,7 @@ local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
+local events = require "nvim-tree.events"
 
 local M = {
   target_winid = nil,
@@ -170,6 +171,7 @@ function M.open(opts)
     open_view_and_draw()
   end
   view.restore_tab_state()
+  events._dispatch_on_tree_open()
 end
 
 -- @deprecated: use nvim-tree.actions.tree-modifiers.collapse-all.fn
