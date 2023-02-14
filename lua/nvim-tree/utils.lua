@@ -154,25 +154,39 @@ function M.get_nodes_by_line(nodes_all, line_start)
   return nodes_by_line
 end
 
-function M.rename_loaded_buffers(old_path, new_path)
+--- Find buffer for path.
+--- @param path string absolute path
+--- @return number|nil buffer number
+local function buf_for_path(path)
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) then
-      local buf_name = vim.api.nvim_buf_get_name(buf)
-      local exact_match = buf_name == old_path
-      local child_match = (
-        buf_name:sub(1, #old_path) == old_path and buf_name:sub(#old_path + 1, #old_path + 1) == path_separator
-      )
-      if exact_match or child_match then
-        vim.api.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
-        -- to avoid the 'overwrite existing file' error message on write for
-        -- normal files
-        if vim.api.nvim_buf_get_option(buf, "buftype") == "" then
-          vim.api.nvim_buf_call(buf, function()
-            vim.cmd "silent! write!"
-            vim.cmd "edit"
-          end)
-        end
-      end
+    if vim.api.nvim_buf_get_name(buf) == path then
+      return buf
+    end
+  end
+end
+
+--- Rename a buffer. Deletes to if present.
+--- @param from_path string absolute path
+--- @param to_path string absolute path
+function M.rename_loaded_buffers(from_path, to_path)
+
+  -- existing from and to
+  local from_buf = buf_for_path(from_path)
+  local to_buf = buf_for_path(to_path)
+
+  -- delete the old: this will close the windows it is open in; too bad
+  if to_buf then
+    vim.api.nvim_buf_delete(to_buf, { force = true })
+  end
+
+  if from_buf then
+    -- the actual rename
+    vim.api.nvim_buf_set_name(from_buf, to_path)
+
+    -- following a rename there will be an unlisted empty buffer created; remove it
+    local from_unlisted = buf_for_path(from_path)
+    if from_unlisted then
+      vim.api.nvim_buf_delete(from_unlisted, { force = true })
     end
   end
 end
