@@ -166,6 +166,9 @@ function M.refresh_nodes_for_path(path)
 
   local profile = log.profile_start("refresh_nodes_for_path %s", path)
 
+  -- avoids cycles
+  local paths_refreshed = {}
+
   NodeIterator.builder({ explorer })
     :hidden()
     :recursor(function(node)
@@ -188,7 +191,10 @@ function M.refresh_nodes_for_path(path)
         link_contains and "link_contains" or ""
       )
       if abs_contains or link_contains then
-        M.refresh_node(node)
+        if not paths_refreshed[node.absolute_path] then
+          paths_refreshed[node.absolute_path] = true
+          M.refresh_node(node)
+        end
       end
     end)
     :iterate()
