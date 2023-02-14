@@ -169,7 +169,6 @@ end
 --- @param from_path string absolute path
 --- @param to_path string absolute path
 function M.rename_loaded_buffers(from_path, to_path)
-
   -- existing from and to
   local from_buf = buf_for_path(from_path)
   local to_buf = buf_for_path(to_path)
