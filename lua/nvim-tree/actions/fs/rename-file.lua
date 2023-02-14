@@ -16,16 +16,42 @@ local function err_fmt(from, to, reason)
 end
 
 function M.rename(node, to)
+  local success, err, delete_first
+
   if utils.file_exists(to) then
-    notify.warn(err_fmt(node.absolute_path, to, "file already exists"))
-    return
+    local overwrite = false
+
+    local prompt_select = "Overwrite " .. to .. " ?"
+    local prompt_input = prompt_select .. " y/n: "
+    lib.prompt(prompt_input, prompt_select, { "y", "n" }, { "Yes", "No" }, function(item_short)
+      utils.clear_prompt()
+      overwrite = item_short == "y"
+    end)
+
+    if not overwrite then
+      return
+    end
+
+    -- case insensitive file systems cannot handle renaming clobbering well
+    if utils.is_macos or utils.is_windows or utils.is_wsl then
+      delete_first = true
+    end
   end
 
   events._dispatch_will_rename_node(node.absolute_path, to)
-  local success, err = vim.loop.fs_rename(node.absolute_path, to)
+
+  if delete_first then
+    success, err = vim.loop.fs_unlink(to)
+    if not success then
+      return notify.warn(string.format("Cannot delete %s: %s", to, err))
+    end
+  end
+
+  success, err = vim.loop.fs_rename(node.absolute_path, to)
   if not success then
     return notify.warn(err_fmt(node.absolute_path, to, err))
   end
+
   notify.info(node.absolute_path .. " ➜ " .. to)
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
