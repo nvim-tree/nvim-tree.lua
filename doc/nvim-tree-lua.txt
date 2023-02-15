@@ -1615,6 +1615,7 @@ as per |:highlight|
 Default linked group follows name.
 
 NvimTreeSymlink
+NvimTreeFolderSymlink
 NvimTreeFolderName          (Directory)
 NvimTreeRootFolder
 NvimTreeFolderIcon
