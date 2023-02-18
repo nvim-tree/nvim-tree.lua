@@ -30,8 +30,10 @@ function M.fn(fname)
 
   local profile = log.profile_start("find file %s", fname_real)
 
-  -- we cannot wait for watchers
-  reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
+  -- we cannot wait for watchers to populate a new node
+  if utils.get_node_from_path(fname_real) == nil then
+    reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
+  end
 
   local line = core.get_nodes_starting_line()
 
