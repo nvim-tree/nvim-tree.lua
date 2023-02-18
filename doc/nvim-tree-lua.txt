@@ -826,17 +826,20 @@ UI rendering setup
 
     *nvim-tree.renderer.highlight_git*
     Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
+    Requires |nvim-tree.git.enable|
     This can be used with or without the icons.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_opened_files*
-    Highlight icons and/or names for opened files.
+    Highlight icons and/or names for opened files using the
+    `NvimTreeOpenedFile` highlight group.
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
     *nvim-tree.renderer.highlight_modified*
-    Highlight icons and/or names for modified files using `NvimTreeModified`
-    highlight groups.
+    Highlight icons and/or names for modified files using the
+    `NvimTreeModifiedFile` highlight group.
+    Requires |nvim-tree.modified.enable|
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`
     This can be used with or without the icons.
       Type: `string`, Default `"none"`
