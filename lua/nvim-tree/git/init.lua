@@ -143,29 +143,36 @@ function M.load_project_status(cwd)
     timeout = M.config.git.timeout,
   }
 
+  local git_directory = git_utils.get_git_directory(project_root)
+
   local watcher = nil
   if M.config.filesystem_watchers.enable then
     log.line("watcher", "git start")
 
-    local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
-        if w.destroyed then
-          return
-        end
-        reload_tree_at(w.project_root)
-      end)
-    end
+    if git_directory == nil then
+      log.line("watcher", "could not found the location of .git folder")
+    else
+      local callback = function(w)
+        log.line("watcher", "git event scheduled '%s'", w.project_root)
+        utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+          if w.destroyed then
+            return
+          end
+          reload_tree_at(w.project_root)
+        end)
+      end
 
-    watcher = Watcher:new(utils.path_join { project_root, ".git" }, WATCHED_FILES, callback, {
-      project_root = project_root,
-    })
+      watcher = Watcher:new(git_directory, WATCHED_FILES, callback, {
+        project_root = project_root,
+      })
+    end
   end
 
   M.projects[project_root] = {
     files = git_status,
     dirs = git_utils.file_status_to_dir_status(git_status, project_root),
     watcher = watcher,
+    git_dir = git_directory,
   }
   return M.projects[project_root]
 end

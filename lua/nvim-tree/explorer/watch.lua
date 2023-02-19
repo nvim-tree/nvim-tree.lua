@@ -4,10 +4,6 @@ local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {}
 
-local function is_git(path)
-  return vim.fn.fnamemodify(path, ":t") == ".git"
-end
-
 local IGNORED_PATHS = {
   -- disable watchers on kernel filesystems
   -- which have a lot of unwanted events
@@ -44,7 +40,7 @@ function M.create_watcher(node)
     path = node.absolute_path
   end
 
-  if is_git(path) or is_folder_ignored(path) then
+  if is_folder_ignored(path) then
     return nil
   end
 

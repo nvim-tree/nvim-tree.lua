@@ -3,6 +3,22 @@ local log = require "nvim-tree.log"
 
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
+local function norm_path(path)
+  -- git always returns path with forward slashes
+  if vim.fn.has "win32" == 1 then
+    -- msys2 git support
+    if has_cygpath then
+      path = vim.fn.system("cygpath -w " .. vim.fn.shellescape(path))
+      if vim.v.shell_error ~= 0 then
+        return nil
+      end
+    end
+    path = path:gsub("/", "\\")
+  end
+
+  return path
+end
+
 function M.get_toplevel(cwd)
   local profile = log.profile_start("git toplevel %s", cwd)
 
@@ -18,16 +34,9 @@ function M.get_toplevel(cwd)
     return nil
   end
 
-  -- git always returns path with forward slashes
-  if vim.fn.has "win32" == 1 then
-    -- msys2 git support
-    if has_cygpath then
-      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
-      if vim.v.shell_error ~= 0 then
-        return nil
-      end
-    end
-    toplevel = toplevel:gsub("/", "\\")
+  toplevel = norm_path(toplevel)
+  if toplevel == nil then
+    return nil
   end
 
   -- remove newline
@@ -92,6 +101,30 @@ function M.file_status_to_dir_status(status, cwd)
     end
   end
   return r
+end
+
+function M.get_git_directory(cwd)
+  local profile = log.profile_start("git directory %s", cwd)
+
+  local cmd = { "git", "-C", cwd, "rev-parse", "--absolute-git-dir" }
+  log.line("git", vim.inspect(cmd))
+
+  local git_dir = vim.fn.system(cmd)
+
+  log.raw("git", git_dir)
+  log.profile_end(profile)
+
+  if vim.v.shell_error ~= 0 or not git_dir or #git_dir == 0 or git_dir:match "fatal" then
+    return nil
+  end
+
+  git_dir = norm_path(git_dir)
+  if git_dir == nil then
+    return nil
+  end
+
+  -- remove newline
+  return git_dir:sub(0, -2)
 end
 
 return M
