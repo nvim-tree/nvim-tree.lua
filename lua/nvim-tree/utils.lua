@@ -59,9 +59,9 @@ function M.path_relative(path, relative_to)
   local p = path
   if r then
     -- take the relative path starting after '/'
-    -- if somehow given a completely matching path, 
+    -- if somehow given a completely matching path,
     -- returns ""
-    p = path:sub(r+1)
+    p = path:sub(r + 1)
   end
   return p
 end
