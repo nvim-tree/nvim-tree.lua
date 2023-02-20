@@ -129,6 +129,19 @@ local LEGACY_MAPPINGS = {
 }
 -- stylua: ignore end
 
+local function all_mapped_keys(list)
+  local mapped_keys = {}
+  for _, map in pairs(list) do
+    if map.action ~= "" then
+      local keys = type(map.key) == "table" and map.key or { map.key }
+      for _, key in ipairs(keys) do
+        table.insert(mapped_keys, key)
+      end
+    end
+  end
+  return mapped_keys
+end
+
 local function all_unmapped_keys(list, remove_keys)
   local unmapped_keys = vim.deepcopy(remove_keys)
   for _, map in pairs(list) do
@@ -244,23 +257,27 @@ local function generate_legacy_default_mappings()
   return mappings
 end
 
-local function generate_legacy_active_mappings(list, defaults, unmapped_keys, remove_defaults)
+local function generate_legacy_active_mappings(list, defaults, unmapped_keys, mapped_keys, remove_defaults)
   local filtered_defaults
 
-  --
-  -- remove explicitly unmapped defaults
-  --
   if remove_defaults then
+    --
+    -- unmap all defaults
+    --
     filtered_defaults = {}
   else
+    --
+    -- unmap defaults by removal and override
+    --
+    local to_unmap = vim.fn.extend(unmapped_keys, mapped_keys)
     filtered_defaults = vim.tbl_filter(function(m)
       if type(m.key) == "table" then
         m.key = vim.tbl_filter(function(k)
-          return not vim.tbl_contains(unmapped_keys, k)
+          return not vim.tbl_contains(to_unmap, k)
         end, m.key)
         return #m.key > 0
       else
-        return not vim.tbl_contains(unmapped_keys, m.key)
+        return not vim.tbl_contains(to_unmap, m.key)
       end
     end, vim.deepcopy(defaults))
   end
@@ -295,13 +312,14 @@ function M.generate_legacy_on_attach(opts)
     return
   end
 
+  local mapped_keys = all_mapped_keys(list)
   local unmapped_keys = all_unmapped_keys(list, remove_keymaps)
 
   opts.on_attach = generate_on_attach_function(list, unmapped_keys, remove_defaults)
   M.on_attach_lua = generate_on_attach_lua(list, unmapped_keys, remove_defaults)
 
   M.legacy_default = generate_legacy_default_mappings()
-  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, unmapped_keys, remove_defaults)
+  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, unmapped_keys, mapped_keys, remove_defaults)
 end
 
 function M.generate_on_attach()
