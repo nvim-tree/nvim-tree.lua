@@ -179,14 +179,14 @@ local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
 end
 
 local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
-  local lua = BEGIN_ON_ATTACH .. "\n"
+  local lua = BEGIN_ON_ATTACH
 
   if remove_defaults then
     -- no defaults
     lua = lua .. "\n  -- remove_keymaps = true OR view.mappings.custom_only = true\n"
   else
     -- defaults with explicit removals
-    lua = lua .. DEFAULT_ON_ATTACH
+    lua = lua .. "\n" .. DEFAULT_ON_ATTACH .. "\n"
     if #unmapped_keys > 0 then
       lua = lua .. '\n  -- remove_keymaps, action = ""\n'
     end
