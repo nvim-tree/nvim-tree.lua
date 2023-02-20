@@ -8,6 +8,16 @@ local M = {
   legacy_active = {},
 }
 
+local BEGIN_ON_ATTACH = [[
+local api = require('nvim-tree.api')
+
+local on_attach = function(bufnr)
+]]
+
+local END_ON_ATTACH = [[
+end
+]]
+
 local DEFAULT_ON_ATTACH = [[
   -- BEGIN_DEFAULT_ON_ATTACH
   vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
@@ -169,15 +179,11 @@ local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
 end
 
 local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
-  local lua = [[
-local api = require('nvim-tree.api')
-
-local on_attach = function(bufnr)
-]]
+  local lua = BEGIN_ON_ATTACH .. "\n"
 
   if remove_defaults then
     -- no defaults
-    lua = lua .. "\n  -- remove_keymaps = true\n"
+    lua = lua .. "\n  -- remove_keymaps = true OR view.mappings.custom_only = true\n"
   else
     -- defaults with explicit removals
     lua = lua .. DEFAULT_ON_ATTACH
@@ -216,12 +222,12 @@ local on_attach = function(bufnr)
             [[  end, { desc = '%s', buffer = bufnr, noremap = true, silent = true, nowait = true })]],
             m.action
           )
-          .. "\n"
+          .. "\n\n"
       end
     end
   end
 
-  return lua
+  return lua .. "\n" .. END_ON_ATTACH
 end
 
 local function generate_legacy_default_mappings()
@@ -273,6 +279,8 @@ local function generate_legacy_active_mappings(list, defaults, unmapped_keys, re
 end
 
 function M.generate_legacy_on_attach(opts)
+  M.on_attach_lua = BEGIN_ON_ATTACH .. "\n" .. DEFAULT_ON_ATTACH .. "\n" .. END_ON_ATTACH
+
   if type(opts.on_attach) == "function" then
     return
   end
@@ -300,7 +308,6 @@ function M.generate_on_attach()
   local name = "/tmp/my_on_attach.lua"
   local file = io.output(name)
   io.write(M.on_attach_lua)
-  io.write "end"
   io.close(file)
   open_file.fn("edit", name)
 end
