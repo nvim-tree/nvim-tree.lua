@@ -168,94 +168,6 @@ local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
   end
 end
 
-local function generate_legacy_default_mappings()
-  local mappings = {}
-
-  for a, m in pairs(LEGACY_MAPPINGS) do
-    table.insert(mappings, {
-      action = a,
-      desc = m.desc,
-      key = m.key,
-    })
-  end
-
-  return mappings
-end
-
--- taken from actions/init merge_mappings and filter_mappings
-local function generate_legacy_active_mappings(user_mappings, defaults, remove_keys, remove_defaults)
-  local filtered_defaults
-
-  --
-  -- filter_mappings
-  --
-  if remove_defaults then
-    filtered_defaults = {}
-  else
-    filtered_defaults = vim.tbl_filter(function(m)
-      if type(m.key) == "table" then
-        m.key = vim.tbl_filter(function(k)
-          return not vim.tbl_contains(remove_keys, k)
-        end, m.key)
-        return #m.key > 0
-      else
-        return not vim.tbl_contains(remove_keys, m.key)
-      end
-    end, vim.deepcopy(defaults))
-  end
-
-  --
-  -- merge_mappings
-  --
-  if #user_mappings == 0 then
-    return filtered_defaults
-  end
-
-  local function is_empty(s)
-    return s == ""
-  end
-
-  local user_keys = {}
-  local removed_keys = {}
-  -- remove default mappings if action is a empty string
-  for _, map in pairs(user_mappings) do
-    if type(map.key) == "table" then
-      for _, key in pairs(map.key) do
-        table.insert(user_keys, key)
-        if is_empty(map.action) then
-          table.insert(removed_keys, key)
-        end
-      end
-    else
-      table.insert(user_keys, map.key)
-      if is_empty(map.action) then
-        table.insert(removed_keys, map.key)
-      end
-    end
-  end
-
-  local default_map = vim.tbl_filter(function(map)
-    if type(map.key) == "table" then
-      local filtered_keys = {}
-      for _, key in pairs(map.key) do
-        if not vim.tbl_contains(user_keys, key) and not vim.tbl_contains(removed_keys, key) then
-          table.insert(filtered_keys, key)
-        end
-      end
-      map.key = filtered_keys
-      return not vim.tbl_isempty(map.key)
-    else
-      return not vim.tbl_contains(user_keys, map.key) and not vim.tbl_contains(removed_keys, map.key)
-    end
-  end, filtered_defaults)
-
-  local user_map = vim.tbl_filter(function(map)
-    return not is_empty(map.action)
-  end, user_mappings)
-
-  return vim.fn.extend(default_map, user_map)
-end
-
 local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
   local lua = [[
 local api = require('nvim-tree.api')
@@ -312,6 +224,54 @@ local on_attach = function(bufnr)
   return lua
 end
 
+local function generate_legacy_default_mappings()
+  local mappings = {}
+
+  for a, m in pairs(LEGACY_MAPPINGS) do
+    table.insert(mappings, {
+      action = a,
+      desc = m.desc,
+      key = m.key,
+    })
+  end
+
+  return mappings
+end
+
+local function generate_legacy_active_mappings(list, defaults, unmapped_keys, remove_defaults)
+  local filtered_defaults
+
+  --
+  -- remove explicitly unmapped defaults
+  --
+  if remove_defaults then
+    filtered_defaults = {}
+  else
+    filtered_defaults = vim.tbl_filter(function(m)
+      if type(m.key) == "table" then
+        m.key = vim.tbl_filter(function(k)
+          return not vim.tbl_contains(unmapped_keys, k)
+        end, m.key)
+        return #m.key > 0
+      else
+        return not vim.tbl_contains(unmapped_keys, m.key)
+      end
+    end, vim.deepcopy(defaults))
+  end
+
+  --
+  -- remove user action = ""
+  --
+  local user_map = vim.tbl_filter(function(map)
+    return map.action ~= ""
+  end, list)
+
+  --
+  -- merge
+  --
+  return vim.fn.extend(filtered_defaults, user_map)
+end
+
 function M.generate_legacy_on_attach(opts)
   if type(opts.on_attach) == "function" then
     return
@@ -333,7 +293,7 @@ function M.generate_legacy_on_attach(opts)
   M.on_attach_lua = generate_on_attach_lua(list, unmapped_keys, remove_defaults)
 
   M.legacy_default = generate_legacy_default_mappings()
-  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, remove_keymaps, remove_defaults)
+  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, unmapped_keys, remove_defaults)
 end
 
 function M.generate_on_attach()
