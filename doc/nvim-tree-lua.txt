@@ -11,6 +11,8 @@ CONTENTS                                                           *nvim-tree*
   4. Setup/Configuration                      |nvim-tree-setup|
   5. Api                                      |nvim-tree-api|
   6. Mappings                                 |nvim-tree-mappings|
+  6.1 Default Mappings                        |nvim-tree-mappings-default|
+  6.2 Legacy Mappings                         |nvim-tree-mappings-legacy|
   7. Highlight Groups                         |nvim-tree-highlight|
   8. Events                                   |nvim-tree-events|
   9. Bookmarks                                |nvim-tree-bookmarks|
@@ -99,27 +101,27 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
-|:NvimTreeOpen|
+*:NvimTreeOpen*
 
     opens the tree. Takes an optional path argument.
 
-|:NvimTreeClose|
+*:NvimTreeClose*
 
     closes the tree
 
-|:NvimTreeToggle|
+*:NvimTreeToggle*
 
     open or close the tree. Takes an optional path argument.
 
-|:NvimTreeFocus|
+*:NvimTreeFocus*
 
     open the tree if it is closed, and then focus on the tree
 
-|:NvimTreeRefresh|
+*:NvimTreeRefresh*
 
     refresh the tree
 
-|:NvimTreeFindFile|
+*:NvimTreeFindFile*
 
     The command will change the cursor in the tree for the current bufname.
 
@@ -129,7 +131,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFile!` to update the root.
 
-|:NvimTreeFindFileToggle|
+*:NvimTreeFindFileToggle*
 
     close the tree or change the cursor in the tree for the current bufname,
     similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
@@ -137,11 +139,11 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
 
-|:NvimTreeClipboard|
+*:NvimTreeClipboard*
 
     Print clipboard content for both cut and copy
 
-|:NvimTreeResize|
+*:NvimTreeResize*
 
     Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
     resizes the window to the width of 50. If the size starts with "+" or "-" it
@@ -149,15 +151,21 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     Example `:NvimTreeResize -20` removes the value 20 from the current width. And
     `:NvimTreeResize +20` adds the value 20 to the current width.
 
-|:NvimTreeCollapse|
+*:NvimTreeCollapse*
 
     Collapses the nvim-tree recursively.
 
-|:NvimTreeCollapseKeepBuffers|
+*:NvimTreeCollapseKeepBuffers*
 
     Collapses the nvim-tree recursively, but keep the directories open, which are
     used in an open buffer.
 
+*:NvimTreeGenerateOnAttach*
+
+    Creates and opens a new file `/tmp/my_on_attach.lua` containing an
+    |nvim-tree.on_attach| function based on your |nvim-tree.view.mappings|,
+    |nvim-tree.remove_keymaps| as well as the defaults.
+    See https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach
 
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
@@ -184,7 +192,7 @@ Subsequent calls to setup will replace the previous configuration.
       sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
-      on_attach = "disable",
+      on_attach = "default",
       remove_keymaps = false,
       select_prompts = false,
       view = {
@@ -682,23 +690,13 @@ performance.
       Type: {string}, Default: `{}`
 
 *nvim-tree.on_attach*
-Function ran when creating the nvim-tree buffer.
-This can be used to attach keybindings to the tree buffer.
-When on_attach is not a function, |nvim-tree.view.mappings| will be used.
-  Type: `function(bufnr)`, Default: `"disable"`
-  e.g. >
-    local api = require('nvim-tree.api')
+Runs when creating the nvim-tree buffer. Use this to set your nvim-tree
+specific mappings. See |nvim-tree-mappings|.
+When on_attach is not a function, |nvim-tree-mappings-default| will be called.
+  Type: `function(bufnr) | string`, Default: `"default"`
 
-    local function on_attach(bufnr)
-      vim.keymap.set('n', '?', api.tree.toggle_help, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Help' })
-      vim.keymap.set('n', 'h', api.tree.toggle_help, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = 'Help' })
-      vim.keymap.set("n", "<C-P>", function()
-        local node = api.tree.get_node_under_cursor()
-        print(node.absolute_path)
-      end, { buffer = bufnr, noremap = true, silent = true, nowait = true, desc = "my description" })
-    end
-<
 *nvim-tree.remove_keymaps*
+Deprecated: please see |nvim-tree-mappings-legacy|
 This can be used to remove the default mappings in the tree.
 - Remove specific keys by passing a `string` table of keys
     eg. {"<C-o>", "<CR>", "o", "<Tab>"}
@@ -775,7 +773,7 @@ Window / buffer setup.
       Type: `string`, Default: `"yes"`
 
     *nvim-tree.view.mappings*
-    Configuration options for |nvim-tree-mappings|
+    Deprecated: please see |nvim-tree-mappings-legacy|
 
         *nvim-tree.view.mappings.custom_only*
         Will use only the provided user mappings and not the default otherwise,
@@ -786,7 +784,7 @@ Window / buffer setup.
         *nvim-tree.view.mappings.list*
         A list of keymaps that will extend or override the default keymaps.
           Type: `table`
-          Default: see |nvim-tree-default-mappings|
+          Default: see |nvim-tree-mappings-legacy|
 
     *nvim-tree.view.float*
     Configuration options for floating window
@@ -1445,54 +1443,52 @@ api.config.mappings.default()        *nvim-tree.api.config.mappings.default()*
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*
 
-Setting your own mapping in the configuration will soon be deprecated, see
-|nvim-tree.on_attach| for experimental replacement.
+Mappings are set via the |nvim-tree.on_attach| function, which is run upon
+creating the nvim-tree buffer. Mappings may be directly to |nvim-tree-api|
+functions or your own.
 
-`view.mappings.list` is a table of:
-  {key}       (string|table of string) mandatory |{lhs}|.
+When on_attach is not a function, |nvim-tree-mappings-default| will be used.
 
-  {action}    (string) mandatory name of the action.
-              `""` to remove an action with {key}. The case of {key} must
-              exactly match the action you are removing e.g. `'<Tab>'` to
-              remove the default preview action.
-              An arbitrary description when using `action_cb`.
+Active mappings may be viewed via HELP, default `g?`. The mapping's description
+is used when displaying HELP.
 
-  {action_cb} (function) optional custom function that will be called.
-              Receives the node as a parameter.
-              Non-empty description for `action` is required.
-
-  {mode}      (string) optional mode as per |nvim_set_keymap|.
-              Default `'n'`.
-
-Examples:
+The `on_attach` function is passed the `bufnr` of nvim-tree. Use
+|vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g.
 >
-    local function print_node_path(node)
+    local M = {}
+
+    local api = require("nvim-tree.api")
+
+    function M.on_attach(bufnr)
+      -- put some default mappings here
+	  vim.keymap.set('n', 'h', api.tree.toggle_help,   { desc = 'Help',  buffer = bufnr, noremap = true, silent = true, nowait = true })
+	  vim.keymap.set('n', '?', api.tree.toggle_help,   { desc = 'Help',  buffer = bufnr, noremap = true, silent = true, nowait = true })
+	  vim.keymap.set('n', 'p', M.print_node_path,      { desc = 'Print', buffer = bufnr, noremap = true, silent = true, nowait = true })
+    end
+
+    function M.print_node_path()
+      local node = api.tree.get_node_under_cursor()
       print(node.absolute_path)
     end
 
-    ----
-
-    view = {
-      mappings = {
-        list = {
-          -- remove a default mapping for cd
-          { key = "<2-RightMouse>", action = "" },
-
-          -- add multiple normal mode mappings for edit
-          { key = { "<CR>", "o" }, action = "edit", mode = "n" },
-
-          -- custom action
-          { key = "p", action = "print_the_node_path", action_cb = print_node_path },
-
-          ----
+    require("nvim-tree").setup({
+      on_attach = M.on_attach,
+      --
+    })
 <
-Mouse support defined in |KeyBindings|
+Mouse support is defined in |KeyBindings|
 
 Single left mouse mappings can be achieved via `<LeftRelease>`.
 
 Single right / middle mouse mappings will requre changes to |mousemodel| or |mouse|.
 
-DEFAULT MAPPINGS                                     *nvim-tree-default-mappings*
+==============================================================================
+ 6.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*
+
+In the absence of an |nvim-tree.on_attach| function, the following defaults
+will be applied.
+
+You are encouraged to copy these to your own |nvim-tree.on_attach| function.
 >
   local on_attach = function(bufnr)
     local api = require('nvim-tree.api')
@@ -1552,7 +1548,58 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, { desc = 'CD',                     buffer = bufnr, noremap = true, silent = true, nowait = true })
     -- END_DEFAULT_ON_ATTACH
   end
+<
+==============================================================================
+ 6.2 LEGACY MAPPINGS                               *nvim-tree-mappings-legacy*
 
+nvim-tree mappings were provided via the deprecated |nvim-tree.view.mappings|
+and |nvim-tree.remove_keymaps|
+
+These are ignored when |nvim-tree.on_attach| is present.
+
+You are encouraged to migrate you existing legacy mappings to
+|nvim-tree.on_attach| using |:NvimTreeGenerateOnAttach|
+
+Please visit https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach
+
+`view.mappings.list` is a table of:
+  {key}       (string|table of string) mandatory |{lhs}|.
+
+  {action}    (string) mandatory name of the action.
+              `""` to remove an action with {key}. The case of {key} must
+              exactly match the action you are removing e.g. `'<Tab>'` to
+              remove the default preview action.
+              An arbitrary description when using `action_cb`.
+
+  {action_cb} (function) optional custom function that will be called.
+              Receives the node as a parameter.
+              Non-empty description for `action` is required.
+
+  {mode}      (string) optional mode as per |nvim_set_keymap|.
+              Default `'n'`.
+
+Examples:
+>
+    local function print_node_path(node)
+      print(node.absolute_path)
+    end
+
+    ----
+
+    view = {
+      mappings = {
+        list = {
+          -- remove a default mapping for cd
+          { key = "<2-RightMouse>", action = "" },
+
+          -- add multiple normal mode mappings for edit
+          { key = { "<CR>", "o" }, action = "edit", mode = "n" },
+
+          -- custom action
+          { key = "p", action = "print_the_node_path", action_cb = print_node_path },
+
+          ----
+<
 ==============================================================================
  7. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
 
