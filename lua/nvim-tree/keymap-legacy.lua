@@ -20,6 +20,15 @@ local M = {
 }
 
 local BEGIN_ON_ATTACH = [[
+--
+-- This function has been generated from your
+-- view.mappings.list
+-- view.mappings.custom_only
+-- remove_keymaps
+--
+-- Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach for assistance in migrating.
+--
+
 local api = require('nvim-tree.api')
 
 local on_attach = function(bufnr)
