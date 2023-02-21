@@ -1,11 +1,22 @@
 local api = require "nvim-tree.api"
 local open_file = require "nvim-tree.actions.node.open-file"
 local keymap = require "nvim-tree.keymap"
+local notify = require "nvim-tree.notify"
 
 local M = {
-  on_attach_lua = "",
+  -- only populated when legacy mappings active
+  on_attach_lua = nil,
+
+  -- API config.mappings.active .default
   legacy_default = {},
   legacy_active = {},
+
+  -- used by generated on_attach
+  on_attach = {
+    list = {},
+    unmapped_keys = {},
+    remove_defaults = false,
+  },
 }
 
 local BEGIN_ON_ATTACH = [[
@@ -156,20 +167,24 @@ local function all_unmapped_keys(list, remove_keys)
 end
 
 local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
+  M.on_attach.list = vim.deepcopy(list)
+  M.on_attach.unmapped_keys = vim.deepcopy(unmapped_keys)
+  M.on_attach.remove_defaults = remove_defaults
+
   return function(bufnr)
     -- apply defaults first
-    if not remove_defaults then
+    if not M.on_attach.remove_defaults then
       keymap.default_on_attach(bufnr)
     end
 
     -- explicit removals
-    for _, key in ipairs(unmapped_keys) do
+    for _, key in ipairs(M.on_attach.unmapped_keys) do
       vim.keymap.set("n", key, "", { buffer = bufnr })
       vim.keymap.del("n", key, { buffer = bufnr })
     end
 
     -- mappings
-    for _, m in ipairs(list) do
+    for _, m in ipairs(M.on_attach.list) do
       local keys = type(m.key) == "table" and m.key or { m.key }
       for _, k in ipairs(keys) do
         if LEGACY_MAPPINGS[m.action] then
@@ -196,12 +211,12 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
 
   if remove_defaults then
     -- no defaults
-    lua = lua .. "\n  -- remove_keymaps = true OR view.mappings.custom_only = true\n"
+    lua = lua .. "\n  -- no defaults: remove_keymaps = true OR view.mappings.custom_only = true\n"
   else
     -- defaults with explicit removals
-    lua = lua .. "\n" .. DEFAULT_ON_ATTACH .. "\n"
+    lua = lua .. "\n" .. DEFAULT_ON_ATTACH
     if #unmapped_keys > 0 then
-      lua = lua .. '\n  -- remove_keymaps, action = ""\n'
+      lua = lua .. '\n  -- view.mappings.list..action = "", remove_keymaps\n'
     end
     for _, key in ipairs(unmapped_keys) do
       lua = lua .. string.format([[  vim.keymap.set('n', '%s', '', { buffer = bufnr })]], key) .. "\n"
@@ -296,7 +311,7 @@ local function generate_legacy_active_mappings(list, defaults, unmapped_keys, ma
 end
 
 function M.generate_legacy_on_attach(opts)
-  M.on_attach_lua = BEGIN_ON_ATTACH .. "\n" .. DEFAULT_ON_ATTACH .. "\n" .. END_ON_ATTACH
+  M.on_attach_lua = nil
 
   if type(opts.on_attach) == "function" then
     return
@@ -322,7 +337,12 @@ function M.generate_legacy_on_attach(opts)
   M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, unmapped_keys, mapped_keys, remove_defaults)
 end
 
-function M.generate_on_attach()
+function M.cmd_generate_on_attach()
+  if not M.on_attach_lua then
+    notify.info "No view.mappings.list for on_attach generation."
+    return
+  end
+
   local name = "/tmp/my_on_attach.lua"
   local file = io.output(name)
   io.write(M.on_attach_lua)
