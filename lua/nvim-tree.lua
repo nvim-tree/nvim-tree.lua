@@ -27,7 +27,16 @@ function M.focus()
   view.focus()
 end
 
+local function mysub(mystr)
+  if vim.opt.shellslash._value == true then
+    return mystr:gsub('/', package.config:sub(1, 1))
+  end
+  return mystr
+end
+
 function M.change_root(filepath, bufnr)
+  filepath = mysub(filepath)
+
   -- skip if current file is in ignore_list
   local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
   for _, value in pairs(_config.update_focused_file.ignore_list) do
@@ -37,7 +46,7 @@ function M.change_root(filepath, bufnr)
   end
 
   local cwd = core.get_cwd()
-  local vim_cwd = vim.fn.getcwd()
+  local vim_cwd = mysub(vim.fn.getcwd())
 
   -- test if in vim_cwd
   if utils.path_relative(filepath, vim_cwd) ~= filepath then
@@ -52,7 +61,7 @@ function M.change_root(filepath, bufnr)
   end
 
   -- otherwise test M.init_root
-  if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
+  if _config.prefer_startup_root and utils.path_relative(filepath, mysub(M.init_root)) ~= filepath then
     change_dir.fn(M.init_root)
     return
   end
