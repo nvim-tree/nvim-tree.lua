@@ -28,7 +28,7 @@ function M.focus()
 end
 
 local function mysub(mystr)
-  if vim.opt.shellslash and vim.opt.shellslash._value == true then
+  if vim.fn.has('win32') == 1 and vim.opt.shellslash._value == true then
     return mystr:gsub('/', package.config:sub(1, 1))
   end
   return mystr
