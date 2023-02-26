@@ -30,8 +30,7 @@ local function populate_children(handle, cwd, node, git_status)
 
     t = get_type_from(t, abs)
     if
-      abs ~= git_status.git_dir
-      and not filters.should_filter(abs, filter_status)
+      not filters.should_filter(abs, filter_status)
       and not nodes_by_path[abs]
       and Watcher.is_fs_event_capable(abs)
     then

@@ -162,6 +162,10 @@ function M.load_project_status(cwd)
         end)
       end
 
+      -- Add $GIT_DIR to the list of directory to ignore
+      local base_gitdir = utils.path_basename(git_directory)
+      table.insert(M.config.filesystem_watchers.ignore_dirs, base_gitdir)
+
       watcher = Watcher:new(git_directory, WATCHED_FILES, callback, {
         project_root = project_root,
       })
@@ -172,7 +176,6 @@ function M.load_project_status(cwd)
     files = git_status,
     dirs = git_utils.file_status_to_dir_status(git_status, project_root),
     watcher = watcher,
-    git_dir = git_directory,
   }
   return M.projects[project_root]
 end
