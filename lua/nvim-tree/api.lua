@@ -22,7 +22,9 @@ end
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 
-Api.tree.open = require("nvim-tree").open
+Api.tree.open = function(...)
+  require("nvim-tree").open(...)
+end
 
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
@@ -31,7 +33,9 @@ Api.tree.open = require("nvim-tree").open
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default true
 
-Api.tree.toggle = require("nvim-tree").toggle
+Api.tree.toggle = function(...)
+  require("nvim-tree").toggle(...)
+end
 
 Api.tree.close = require("nvim-tree.view").close
 
@@ -39,11 +43,15 @@ Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only
 
 Api.tree.close_in_all_tabs = require("nvim-tree.view").close_all_tabs
 
-Api.tree.focus = require("nvim-tree").focus
+Api.tree.focus = function()
+  require("nvim-tree").focus()
+end
 
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
 
-Api.tree.change_root = require("nvim-tree").change_dir
+Api.tree.change_root = function(...)
+  require("nvim-tree").change_dir(...)
+end
 
 Api.tree.change_root_to_node = inject_node(function(node)
   if node.name == ".." then
@@ -162,7 +170,11 @@ Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 
-Api.config.mappings.active = require("nvim-tree.actions").active_mappings_clone
-Api.config.mappings.default = require("nvim-tree.actions").default_mappings_clone
+Api.config.mappings.active = function()
+  return require("nvim-tree.keymap-legacy").active_mappings_clone()
+end
+Api.config.mappings.default = function()
+  return require("nvim-tree.keymap-legacy").default_mappings_clone()
+end
 
 return Api

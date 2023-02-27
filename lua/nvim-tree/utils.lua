@@ -276,7 +276,9 @@ end
 function M.key_by(tbl, key)
   local keyed = {}
   for _, val in ipairs(tbl) do
-    keyed[val[key]] = val
+    if val[key] then
+      keyed[val[key]] = val
+    end
   end
   return keyed
 end

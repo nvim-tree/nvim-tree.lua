@@ -14,6 +14,7 @@ local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
 local notify = require "nvim-tree.notify"
+local keymap_legacy = require "nvim-tree.keymap-legacy"
 
 local _config = {}
 
@@ -67,9 +68,6 @@ function M.change_root(filepath, bufnr)
   -- finally fall back to the folder containing the file
   change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
 end
-
----@deprecated
-M.on_keypress = require("nvim-tree.actions.dispatch").dispatch
 
 function M.open_replacing_current_buffer(cwd)
   if view.is_visible() then
@@ -379,6 +377,7 @@ local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
     collapse_all.fn(true)
   end, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeGenerateOnAttach", keymap_legacy.cmd_generate_on_attach, {})
 end
 
 function M.change_dir(name)
@@ -562,7 +561,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   sync_root_with_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
-  on_attach = "disable",
+  on_attach = "default",
   remove_keymaps = false,
   select_prompts = false,
   view = {
@@ -862,6 +861,7 @@ function M.setup(conf)
   validate_options(conf)
 
   local opts = merge_options(conf)
+
   local netrw_disabled = opts.disable_netrw or opts.hijack_netrw
 
   _config.root_dirs = opts.root_dirs
@@ -884,6 +884,8 @@ function M.setup(conf)
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(opts))
   end
+
+  keymap_legacy.generate_legacy_on_attach(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)

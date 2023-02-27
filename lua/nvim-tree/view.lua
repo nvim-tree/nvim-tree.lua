@@ -93,13 +93,7 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
-  if type(M.on_attach) == "function" then
-    require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
-    M.on_attach(M.get_bufnr())
-  else
-    require("nvim-tree.actions").apply_mappings(M.get_bufnr())
-  end
-  events._dispatch_tree_attached_post(M.get_bufnr())
+  require("nvim-tree.keymap").on_attach(M.get_bufnr())
 end
 
 local function get_size(size)
