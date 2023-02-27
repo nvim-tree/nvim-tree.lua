@@ -23,10 +23,9 @@ end
 --- Remove prefix 'nvim-tree: '
 --- Hardcoded to keep default_on_attach simple
 --- @param desc string
---- @return string
---- @return number
+--- @return string|nil
 local function tidy_desc(desc)
-  return desc:gsub("^nvim%-tree: ", "")
+  return desc and desc:gsub("^nvim%-tree: ", "") or ""
 end
 
 -- sort lhs roughly as per :help index
