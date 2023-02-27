@@ -20,6 +20,15 @@ local function tidy_lhs(lhs)
   return lhs
 end
 
+--- Remove prefix 'nvim-tree: '
+--- Hardcoded to keep default_on_attach simple
+--- @param desc string
+--- @return string
+--- @return number
+local function tidy_desc(desc)
+  return desc:gsub("^nvim%-tree: ", "")
+end
+
 -- sort lhs roughly as per :help index
 local PAT_MOUSE = "^<.*Mouse"
 local PAT_CTRL = "^<C%-"
@@ -57,7 +66,7 @@ function M.compute_lines()
   local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "")
 
   local lines = vim.tbl_map(function(bkm)
-    return { lhs = tidy_lhs(bkm.lhs), desc = bkm.desc }
+    return { lhs = tidy_lhs(bkm.lhs), desc = tidy_desc(bkm.desc) }
   end, buf_keymaps)
 
   table.sort(lines, function(a, b)
