@@ -258,12 +258,7 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
         lua = lua .. string.format([[  vim.keymap.set('%s', '%s', function()]], m.mode or "n", k) .. "\n"
         lua = lua .. [[    local node = api.tree.get_node_under_cursor()]] .. "\n"
         lua = lua .. [[    -- your code goes here]] .. "\n"
-        lua = lua
-          .. string.format(
-            [[  end, opts('%s'))]],
-            m.action
-          )
-          .. "\n\n"
+        lua = lua .. string.format([[  end, opts('%s'))]], m.action) .. "\n\n"
       end
     end
   end
