@@ -22,9 +22,17 @@ local M = {
 local BEGIN_ON_ATTACH = [[
 --
 -- This function has been generated from your
--- view.mappings.list
--- view.mappings.custom_only
--- remove_keymaps
+--   view.mappings.list
+--   view.mappings.custom_only
+--   remove_keymaps
+--
+-- You should add this function to your configuration and set on_attach = on_attach in the nvim-tree setup call.
+--
+-- Although care was taken to ensure correctness and completeness, your review is required.
+--
+-- Please check for the following issues in auto generated content:
+--   "Mappings removed" is as you expect
+--   "Mappings migrated" are correct
 --
 -- Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach for assistance in migrating.
 --
@@ -32,18 +40,51 @@ local BEGIN_ON_ATTACH = [[
 local api = require('nvim-tree.api')
 
 local on_attach = function(bufnr)
+
+  local opts = function(desc)
+    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
 ]]
 
 local END_ON_ATTACH = [[
 end
 ]]
 
-local DEFAULT_ON_ATTACH = [[
-  -- BEGIN_DEFAULT_ON_ATTACH
-  local opts = function(desc)
-    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-  end
+local REMOVAL_COMMENT_ON_ATTACH = [[
 
+
+  -- Mappings removed via:
+  --   remove_keymaps
+  --   OR
+  --   view.mappings.list..action = ""
+  --
+  -- The dummy set before del is done for safety, in case a default mapping does not exist.
+  --
+  -- You might tidy things by removing these along with their default mapping.
+]]
+
+local CUSTOM_COMMENT_ON_ATTACH = [[
+
+
+  -- Mappings migrated from view.mappings.list
+  --
+  -- You will need to insert "your code goes here" for any mappings with a custom action_cb
+]]
+
+local NO_DEFAULTS_COMMENT_ON_ATTACH = [[
+
+
+  -- Default mappings not inserted as:
+  --  remove_keymaps = true
+  --  OR
+  --  view.mappings.custom_only = true
+]]
+
+local DEFAULT_ON_ATTACH = [[
+
+  -- Default mappings. Feel free to modify or remove as you wish.
+  --
+  -- BEGIN_DEFAULT_ON_ATTACH
   vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
   vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     opts('Open: In Place'))
   vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              opts('Info'))
@@ -224,12 +265,12 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
 
   if remove_defaults then
     -- no defaults
-    lua = lua .. "\n  -- no defaults: remove_keymaps = true OR view.mappings.custom_only = true\n"
+    lua = lua .. NO_DEFAULTS_COMMENT_ON_ATTACH
   else
     -- defaults with explicit removals
     lua = lua .. "\n" .. DEFAULT_ON_ATTACH
     if #unmapped_keys > 0 then
-      lua = lua .. '\n  -- view.mappings.list..action = "", remove_keymaps\n'
+      lua = lua .. REMOVAL_COMMENT_ON_ATTACH
     end
     for _, key in ipairs(unmapped_keys) do
       lua = lua .. string.format([[  vim.keymap.set('n', '%s', '', { buffer = bufnr })]], key) .. "\n"
@@ -239,7 +280,7 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
 
   -- list
   if #list > 0 then
-    lua = lua .. "\n  -- view.mappings.list\n"
+    lua = lua .. CUSTOM_COMMENT_ON_ATTACH
   end
   for _, m in ipairs(list) do
     local keys = type(m.key) == "table" and m.key or { m.key }
