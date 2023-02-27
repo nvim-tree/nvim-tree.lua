@@ -241,19 +241,26 @@ local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
     for _, m in ipairs(M.on_attach.list) do
       local keys = type(m.key) == "table" and m.key or { m.key }
       for _, k in ipairs(keys) do
-        if LEGACY_MAPPINGS[m.action] then
-          -- straight action
+        local legacy_mapping = LEGACY_MAPPINGS[m.action] or LEGACY_MAPPINGS[m.cb]
+        if legacy_mapping then
+          -- straight action or cb, which generated an action string at setup time
           vim.keymap.set(
             m.mode or "n",
             k,
-            LEGACY_MAPPINGS[m.action].fn,
-            { desc = m.action, buffer = bufnr, noremap = true, silent = true, nowait = true }
+            legacy_mapping.fn,
+            { desc = m.cb or m.action, buffer = bufnr, noremap = true, silent = true, nowait = true }
           )
         elseif type(m.action_cb) == "function" then
           -- action_cb
           vim.keymap.set(m.mode or "n", k, function()
             m.action_cb(api.tree.get_node_under_cursor())
-          end, { desc = m.action, buffer = bufnr, noremap = true, silent = true, nowait = true })
+          end, {
+            desc = m.action or "no description",
+            buffer = bufnr,
+            noremap = true,
+            silent = true,
+            nowait = true,
+          })
         end
       end
     end
@@ -285,21 +292,22 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
   for _, m in ipairs(list) do
     local keys = type(m.key) == "table" and m.key or { m.key }
     for _, k in ipairs(keys) do
-      if LEGACY_MAPPINGS[m.action] then
+      local legacy_mapping = LEGACY_MAPPINGS[m.action] or LEGACY_MAPPINGS[m.cb]
+      if legacy_mapping then
         lua = lua
           .. string.format(
             [[  vim.keymap.set('%s', '%s', %s, opts('%s'))]],
             m.mode or "n",
             k,
-            LEGACY_MAPPINGS[m.action].n,
-            LEGACY_MAPPINGS[m.action].desc
+            legacy_mapping.n,
+            legacy_mapping.desc
           )
           .. "\n"
       elseif type(m.action_cb) == "function" then
         lua = lua .. string.format([[  vim.keymap.set('%s', '%s', function()]], m.mode or "n", k) .. "\n"
         lua = lua .. [[    local node = api.tree.get_node_under_cursor()]] .. "\n"
         lua = lua .. [[    -- your code goes here]] .. "\n"
-        lua = lua .. string.format([[  end, opts('%s'))]], m.action) .. "\n\n"
+        lua = lua .. string.format([[  end, opts('%s'))]], m.action or "no description") .. "\n\n"
       end
     end
   end
