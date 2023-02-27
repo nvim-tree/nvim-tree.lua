@@ -30,7 +30,7 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 Existing `*_on_setup*` mechanisms have been removed in favour of [Open At Startup](https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup)
 
-## New Mapping Method 2023-03-01
+## New Mapping Method 2023-02-27
 
 [:help nvim-tree.view.mappings](doc/nvim-tree-lua.txt) have been deprecated in favour of [:help nvim-tree.on_attach](doc/nvim-tree-lua.txt). Please visit [Migrating To on_attach](https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach) to transition.
 
