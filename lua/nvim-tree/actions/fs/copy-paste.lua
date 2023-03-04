@@ -122,7 +122,7 @@ local function add_to_clipboard(node, clip)
   for idx, _node in ipairs(clip) do
     if _node.absolute_path == node.absolute_path then
       table.remove(clip, idx)
-      return notify.info(node.absolute_path .. " removed to clipboard.")
+      return notify.info(node.absolute_path .. " removed from clipboard.")
     end
   end
   table.insert(clip, node)
