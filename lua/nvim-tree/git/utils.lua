@@ -101,7 +101,7 @@ function M.get_git_directory(cwd)
     return nil
   end
 
-  git_dir = norm_path(git_dir)
+  git_dir = utils.norm_path(git_dir)
   if git_dir == nil then
     return nil
   end
