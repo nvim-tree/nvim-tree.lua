@@ -29,16 +29,13 @@ begin="BEGIN_DEFAULT_ON_ATTACH"
 end="END_DEFAULT_ON_ATTACH"
 
 # scrape DEFAULT_ON_ATTACH, indented at 2
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_ON_ATTACH.2.lua
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_ON_ATTACH.lua
 
-# indent some more
-sed -e "s/^  /    /" /tmp/DEFAULT_ON_ATTACH.2.lua > /tmp/DEFAULT_ON_ATTACH.4.lua
-
-# help, indented at 4
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.4.lua
+# help
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
-# legacy keymap, indented at 2
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.2.lua
+# legacy keymap
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
            }; /${end}/p; d; }" lua/nvim-tree/keymap-legacy.lua
 
