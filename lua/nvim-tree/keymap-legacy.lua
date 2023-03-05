@@ -37,11 +37,10 @@ local BEGIN_ON_ATTACH = [[
 -- Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach for assistance in migrating.
 --
 
-local api = require('nvim-tree.api')
+local function on_attach(bufnr)
+  local api = require('nvim-tree.api')
 
-local on_attach = function(bufnr)
-
-  local opts = function(desc)
+  local function opts(desc)
     return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
 ]]
