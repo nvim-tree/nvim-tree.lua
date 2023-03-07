@@ -31,12 +31,17 @@ function M.focus()
   view.focus()
 end
 
-function M.change_root(filepath, bufnr)
+--- Update the tree root to a directory or the directory containing
+--- @param path string relative or absolute
+--- @param bufnr number|nil
+function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
-  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
-  for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
-      return
+  if type(bufnr) == "number" then
+    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+    for _, value in pairs(_config.update_focused_file.ignore_list) do
+      if utils.str_find(path, value) or utils.str_find(ft, value) then
+        return
+      end
     end
   end
 
@@ -44,32 +49,32 @@ function M.change_root(filepath, bufnr)
   local vim_cwd = vim.fn.getcwd()
 
   -- test if in vim_cwd
-  if utils.path_relative(filepath, vim_cwd) ~= filepath then
+  if utils.path_relative(path, vim_cwd) ~= path then
     if vim_cwd ~= cwd then
       change_dir.fn(vim_cwd)
     end
     return
   end
   -- test if in cwd
-  if utils.path_relative(filepath, cwd) ~= filepath then
+  if utils.path_relative(path, cwd) ~= path then
     return
   end
 
   -- otherwise test M.init_root
-  if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
+  if _config.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
     change_dir.fn(M.init_root)
     return
   end
   -- otherwise root_dirs
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
-    if utils.path_relative(filepath, dir) ~= filepath then
+    if utils.path_relative(path, dir) ~= path then
       change_dir.fn(dir)
       return
     end
   end
   -- finally fall back to the folder containing the file
-  change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
+  change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.open_replacing_current_buffer(cwd)
@@ -218,7 +223,7 @@ function M.on_enter(netrw_disabled)
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
       if should_find then
-        find_file.fn(false)
+        find_file.fn()
       end
     end
   end
@@ -253,7 +258,7 @@ local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    find_file.fn(true, nil, res.bang)
+    find_file.fn { open = true, update_root = res.bang }
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     toggle.fn { find_file = true, focus = true, path = res.args, update_root = res.bang }
@@ -272,7 +277,7 @@ function M.change_dir(name)
   change_dir.fn(name)
 
   if _config.update_focused_file.enable then
-    find_file.fn(false)
+    find_file.fn()
   end
 end
 
@@ -361,7 +366,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
-          find_file.fn(false)
+          find_file.fn()
         end)
       end,
     })

@@ -1332,8 +1332,7 @@ api.tree.find_file({opts})                     *nvim-tree.api.tree.find_file()*
     • {opts} (table) optional parameters with boolean defaults
 
     Options: ~
-    • {path}           (string)         absolute path to find
-    • {bufnr}          (number)         buffer to find, overrides {path}
+    • {buf}            (string|number)  absolute/relative path OR bufnr to find
     • {open}           (boolean, false) open the tree
     • {current_window} (boolean, false) open the tree in the current window
     • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|

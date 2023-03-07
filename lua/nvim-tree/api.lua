@@ -64,15 +64,13 @@ Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
 Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
 
 ---@class ApiTreeFindFileOpts
----@field path string|nil
----@field bufnr number|nil
+---@field buf string|number|nil
 ---@field open boolean|nil default false
 ---@field current_window boolean|nil default false
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default false
 
--- TODO #2011 change to actions.tree.find-file
-Api.tree.find_file = require("nvim-tree.actions.finders.find-file").fn
+Api.tree.find_file = require("nvim-tree.actions.tree.find-file").fn
 
 Api.tree.search_node = require("nvim-tree.actions.finders.search-node").fn
 

@@ -1,5 +1,6 @@
 local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
+local finders_find_file = require "nvim-tree.actions.finders.find-file"
 
 local M = {}
 
@@ -39,7 +40,7 @@ function M.fn(opts)
     end
 
     -- find
-    require("nvim-tree.actions.finders.find-file").fn(previous_path)
+    finders_find_file.fn(previous_path)
   end
 end
 
