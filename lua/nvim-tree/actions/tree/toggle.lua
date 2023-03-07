@@ -1,11 +1,13 @@
+local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
-local open = require "nvim-tree.actions.tree.open"
-local find_file = require "nvim-tree.actions.tree.find-file"
 
 local M = {}
 
 ---Toggle the tree.
----@param opts ApiTreeToggleOpts|nil|boolean
+---@param opts ApiTreeToggleOpts|nil|boolean legacy -> opts.find_file
+---@param no_focus string|nil legacy -> opts.focus
+---@param cwd boolean|nil legacy -> opts.path
+---@param bang boolean|nil legacy -> opts.update_root
 function M.fn(opts, no_focus, cwd, bang)
   -- legacy arguments
   if type(opts) == "boolean" then
@@ -22,7 +24,6 @@ function M.fn(opts, no_focus, cwd, bang)
       opts.update_root = bang
     end
   end
-
   opts = opts or {}
 
   -- defaults
@@ -30,19 +31,33 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.focus = true
   end
 
+  local previous_buf = vim.api.nvim_get_current_buf()
+  local previous_path = vim.api.nvim_buf_get_name(previous_buf)
+
   -- sanitise path
   if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
     opts.path = nil
   end
 
   if view.is_visible() then
+    -- close
     view.close()
   else
-    local previous_buf = vim.api.nvim_get_current_buf()
-    open.fn { path = opts.path, current_window = opts.current_window }
+    -- open
+    lib.open { path = opts.path, current_window = opts.current_window }
+
+    -- find file
     if M.config.update_focused_file.enable or opts.find_file then
-      find_file.fn(false, previous_buf, opts.update_root)
+      -- update root
+      if opts.update_root then
+        require("nvim-tree").change_root(previous_path, previous_buf)
+      end
+
+      -- find
+      require("nvim-tree.actions.finders.find-file").fn(previous_path)
     end
+
+    -- restore focus
     if not opts.focus then
       vim.cmd "noautocmd wincmd p"
     end
