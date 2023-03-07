@@ -61,6 +61,21 @@ use {
 }
 ```
 
+or with [lazy](https://github.com/folke/lazy.nvim.git) importing file below or directory it is contained on lazy setup.
+```
+return {
+  "nvim-tree/nvim-tree.lua",
+  version = "*",
+  dependencies = {
+    "nvim-tree/nvim-web-devicons" 
+  },
+  config = function ()
+    require("nvim-tree").setup {
+  }
+  end
+}
+```
+
 ## Setup
 
 Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https://neovim.io/doc/user/lua.html) if using in a vim file.
