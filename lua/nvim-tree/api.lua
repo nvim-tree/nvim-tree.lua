@@ -172,6 +172,8 @@ Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 
+Api.config.mappings.default_on_attach = require("nvim-tree.keymap").default_on_attach
+
 Api.config.mappings.active = function()
   return require("nvim-tree.keymap-legacy").active_mappings_clone()
 end

@@ -1,14 +1,14 @@
-local api = require "nvim-tree.api"
-
 local M = {}
 
 -- stylua: ignore start
 function M.default_on_attach(bufnr)
-  -- BEGIN_DEFAULT_ON_ATTACH
-  local opts = function(desc)
+  local api = require('nvim-tree.api')
+
+  local function opts(desc)
     return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
 
+  -- BEGIN_DEFAULT_ON_ATTACH
   vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
   vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     opts('Open: In Place'))
   vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              opts('Info'))
