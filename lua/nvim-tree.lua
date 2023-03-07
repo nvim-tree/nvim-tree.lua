@@ -205,9 +205,6 @@ function M.on_enter(netrw_disabled)
     vim.api.nvim_set_current_win(existing_tree_wins[1])
   end
 
-  log.line("dev", "should_focus_other_window %s", should_focus_other_window)
-  log.line("dev", "should_find %s", should_find)
-
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
     local cwd
     if is_dir then
@@ -226,7 +223,6 @@ function M.on_enter(netrw_disabled)
     end
   end
   M.initialized = true
-  log.line("dev", "on_enter DONE")
 end
 
 function M.get_config()
