@@ -8,15 +8,12 @@ local change_dir = require "nvim-tree.actions.root.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
 local reloaders = require "nvim-tree.actions.reloaders.reloaders"
-local copy_paste = require "nvim-tree.actions.fs.copy-paste"
-local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
 local notify = require "nvim-tree.notify"
 local keymap_legacy = require "nvim-tree.keymap-legacy"
 local find_file = require "nvim-tree.actions.tree.find-file"
-local toggle = require "nvim-tree.actions.tree.toggle"
 local open = require "nvim-tree.actions.tree.open"
 
 local _config = {}
@@ -245,30 +242,39 @@ local function manage_netrw(disable_netrw, hijack_netrw)
   end
 end
 
--- TODO #2011 change to API
 local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
-    open.fn { path = res.args }
+    require("nvim-tree.api").tree.open { path = res.args }
   end, { nargs = "?", complete = "dir" })
-  vim.api.nvim_create_user_command("NvimTreeClose", view.close, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeClose", function()
+    require("nvim-tree.api").tree.close()
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeToggle", function(res)
-    toggle.fn { find_file = false, focus = true, path = res.args, update_root = false }
+    require("nvim-tree.api").tree.toggle { find_file = false, focus = true, path = res.args, update_root = false }
   end, { nargs = "?", complete = "dir" })
-  vim.api.nvim_create_user_command("NvimTreeFocus", M.focus, { bar = true })
-  vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
-  vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeFocus", function()
+    require("nvim-tree.api").tree.focus()
+  end, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeRefresh", function()
+    require("nvim-tree.api").tree.reload()
+  end, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeClipboard", function()
+    require("nvim-tree.api").fs.print_clipboard()
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    find_file.fn { open = true, update_root = res.bang }
+    require("nvim-tree.api").tree.find_file { open = true, update_root = res.bang }
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
-    toggle.fn { find_file = true, focus = true, path = res.args, update_root = res.bang }
+    require("nvim-tree.api").tree.toggle { find_file = true, focus = true, path = res.args, update_root = res.bang }
   end, { bang = true, nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
   end, { nargs = 1, bar = true })
-  vim.api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeCollapse", function()
+    require("nvim-tree.api").tree.collapse_all(false)
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
-    collapse_all.fn(true)
+    require("nvim-tree.api").tree.collapse_all(true)
   end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeGenerateOnAttach", keymap_legacy.cmd_generate_on_attach, {})
 end
