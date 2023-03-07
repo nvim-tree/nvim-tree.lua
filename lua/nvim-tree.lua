@@ -27,7 +27,7 @@ local M = {
 }
 
 function M.focus()
-  M.open()
+  open.fn()
   view.focus()
 end
 
@@ -164,6 +164,9 @@ function M.on_enter(netrw_disabled)
     vim.api.nvim_set_current_win(existing_tree_wins[1])
   end
 
+  log.line("dev", "should_focus_other_window %s", should_focus_other_window)
+  log.line("dev", "should_find %s", should_find)
+
   if should_open or should_hijack or existing_tree_wins[1] ~= nil then
     local cwd
     if is_dir then
@@ -177,11 +180,12 @@ function M.on_enter(netrw_disabled)
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
       if should_find then
-        find_file(false)
+        find_file.fn(false)
       end
     end
   end
   M.initialized = true
+  log.line("dev", "on_enter DONE")
 end
 
 function M.get_config()
@@ -199,7 +203,7 @@ local function manage_netrw(disable_netrw, hijack_netrw)
   end
 end
 
--- TODO #1212 change to API
+-- TODO #2011 change to API
 local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
     open.fn { path = res.args }
@@ -231,7 +235,7 @@ function M.change_dir(name)
   change_dir.fn(name)
 
   if _config.update_focused_file.enable then
-    find_file(false)
+    find_file.fn(false)
   end
 end
 
@@ -320,7 +324,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
-          find_file(false)
+          find_file.fn(false)
         end)
       end,
     })
