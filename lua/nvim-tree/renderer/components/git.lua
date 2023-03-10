@@ -21,7 +21,7 @@ local function build_icons_table(i)
     ["CM"] = { icons.unstaged },
     [" T"] = { icons.unstaged },
     ["T "] = { icons.staged },
-    ["TM"] = { icons.unstaged },
+    ["TM"] = { icons.staged, icons.unstaged },
     ["MM"] = { icons.staged, icons.unstaged },
     ["MD"] = { icons.staged },
     ["A "] = { icons.staged },
