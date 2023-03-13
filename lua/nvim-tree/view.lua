@@ -94,6 +94,8 @@ local function create_buffer(bufnr)
   end
 
   require("nvim-tree.keymap").on_attach(M.get_bufnr())
+
+  events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
 local function get_size(size)
