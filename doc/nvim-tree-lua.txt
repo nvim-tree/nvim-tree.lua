@@ -103,23 +103,35 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
 *:NvimTreeOpen*
 
-    opens the tree. Takes an optional path argument.
+    Opens the tree. See |nvim-tree.api.tree.open()|
+
+    Calls: `api.tree.open({ path = "<arg>" })`
 
 *:NvimTreeClose*
 
-    closes the tree
+    Closes the tree. See |nvim-tree.api.tree.close()|
+
+    Calls: `api.tree.close()`
 
 *:NvimTreeToggle*
 
-    open or close the tree. Takes an optional path argument.
+    Open or close the tree. See |nvim-tree.api.tree.toggle()|
+
+    Calls: `api.tree.toggle({ path = "<arg>" })`
 
 *:NvimTreeFocus*
 
-    open the tree if it is closed, and then focus on the tree
+    Open the tree if it is closed, and then focus on the tree.
+
+    See |nvim-tree.api.tree.toggle()|
+
+    Calls: `api.tree.focus()`
 
 *:NvimTreeRefresh*
 
-    refresh the tree
+    Refresh the tree. See |nvim-tree.api.tree.reload()|
+
+    Calls: `api.tree.reload()`
 
 *:NvimTreeFindFile*
 
@@ -131,6 +143,10 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFile!` to update the root.
 
+    See |nvim-tree.api.tree.find_file()|
+
+    Calls: `api.tree.find_file { open = true, update_root = <bang> }`
+
 *:NvimTreeFindFileToggle*
 
     close the tree or change the cursor in the tree for the current bufname,
@@ -139,9 +155,17 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
 
+    See |nvim-tree.api.tree.toggle()|
+
+    Calls: `api.tree.toggle { find_file = true, focus = true, path = "<arg>", update_root = <bang> }`
+
 *:NvimTreeClipboard*
 
     Print clipboard content for both cut and copy
+
+    See |nvim-tree.api.fs.print_clipboard()|
+
+    Calls: `api.fs.print_clipboard()`
 
 *:NvimTreeResize*
 
@@ -155,10 +179,18 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Collapses the nvim-tree recursively.
 
+    See |nvim-tree.api.tree.collapse_all()|
+
+    Calls: `api.tree.collapse_all(false)`
+
 *:NvimTreeCollapseKeepBuffers*
 
     Collapses the nvim-tree recursively, but keep the directories open, which are
     used in an open buffer.
+
+    See |nvim-tree.api.tree.collapse_all()|
+
+    Calls: `api.tree.collapse_all(true)`
 
 *:NvimTreeGenerateOnAttach*
 
@@ -1266,7 +1298,8 @@ api.tree.open({opts})                              *nvim-tree.api.tree.open()*
       • {path}           (string)         root directory for the tree
       • {current_window} (boolean, false) open the tree in the current window
       • {find_file}      (boolean, false) find the current buffer
-      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {update_root}    (boolean, false) requires {find_file}, see
+                                          |nvim-tree.update_focused_file.update_root|
 
 api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
     Open or close the tree.
@@ -1278,7 +1311,8 @@ api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
       • {path}           (string)         root directory for the tree
       • {current_window} (boolean, false) open the tree in the current window
       • {find_file}      (boolean, false) find the current buffer
-      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {update_root}    (boolean, false) requires {find_file}, see
+                                          |nvim-tree.update_focused_file.update_root|
       • {focus}          (boolean, true)  focus the tree when opening
 
 api.tree.close()                                   *nvim-tree.api.tree.close()*
@@ -1329,11 +1363,19 @@ api.tree.get_nodes()                           *nvim-tree.api.tree.get_nodes()*
     Return: ~
       table of nodes
 
-api.tree.find_file({path})                     *nvim-tree.api.tree.find_file()*
-    Find and focus a file or folder in the tree.
+api.tree.find_file({opts})                     *nvim-tree.api.tree.find_file()*
+    Find and focus a file or folder in the tree. Finds current buffer unless
+    otherwise specified.
 
     Parameters: ~
-      • {path} (string) absolute path
+    • {opts} (table) optional parameters with boolean defaults
+
+    Options: ~
+    • {buf}            (string|number)  absolute/relative path OR bufnr to find
+    • {open}           (boolean, false) open the tree
+    • {current_window} (boolean, false) requires {open}, open in the current window
+    • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+    • {focus}          (boolean, false) focus the tree
 
 api.tree.search_node()                       *nvim-tree.api.tree.search_node()*
     Open the search dialogue as per the search_node action.

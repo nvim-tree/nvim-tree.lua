@@ -22,9 +22,7 @@ end
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 
-Api.tree.open = function(...)
-  require("nvim-tree").open(...)
-end
+Api.tree.open = require("nvim-tree.actions.tree.open").fn
 
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
@@ -33,9 +31,7 @@ end
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default true
 
-Api.tree.toggle = function(...)
-  require("nvim-tree").toggle(...)
-end
+Api.tree.toggle = require("nvim-tree.actions.tree.toggle").fn
 
 Api.tree.close = require("nvim-tree.view").close
 
@@ -67,7 +63,14 @@ Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
 
 Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
 
-Api.tree.find_file = require("nvim-tree.actions.finders.find-file").fn
+---@class ApiTreeFindFileOpts
+---@field buf string|number|nil
+---@field open boolean|nil default false
+---@field current_window boolean|nil default false
+---@field update_root boolean|nil default false
+---@field focus boolean|nil default false
+
+Api.tree.find_file = require("nvim-tree.actions.tree.find-file").fn
 
 Api.tree.search_node = require("nvim-tree.actions.finders.search-node").fn
 

@@ -8,13 +8,13 @@ local change_dir = require "nvim-tree.actions.root.change-dir"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
 local reloaders = require "nvim-tree.actions.reloaders.reloaders"
-local copy_paste = require "nvim-tree.actions.fs.copy-paste"
-local collapse_all = require "nvim-tree.actions.tree-modifiers.collapse-all"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
 local notify = require "nvim-tree.notify"
 local keymap_legacy = require "nvim-tree.keymap-legacy"
+local find_file = require "nvim-tree.actions.tree.find-file"
+local open = require "nvim-tree.actions.tree.open"
 
 local _config = {}
 
@@ -24,16 +24,21 @@ local M = {
 }
 
 function M.focus()
-  M.open()
+  open.fn()
   view.focus()
 end
 
-function M.change_root(filepath, bufnr)
+--- Update the tree root to a directory or the directory containing
+--- @param path string relative or absolute
+--- @param bufnr number|nil
+function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
-  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
-  for _, value in pairs(_config.update_focused_file.ignore_list) do
-    if utils.str_find(filepath, value) or utils.str_find(ft, value) then
-      return
+  if type(bufnr) == "number" then
+    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+    for _, value in pairs(_config.update_focused_file.ignore_list) do
+      if utils.str_find(path, value) or utils.str_find(ft, value) then
+        return
+      end
     end
   end
 
@@ -41,32 +46,32 @@ function M.change_root(filepath, bufnr)
   local vim_cwd = vim.fn.getcwd()
 
   -- test if in vim_cwd
-  if utils.path_relative(filepath, vim_cwd) ~= filepath then
+  if utils.path_relative(path, vim_cwd) ~= path then
     if vim_cwd ~= cwd then
       change_dir.fn(vim_cwd)
     end
     return
   end
   -- test if in cwd
-  if utils.path_relative(filepath, cwd) ~= filepath then
+  if utils.path_relative(path, cwd) ~= path then
     return
   end
 
   -- otherwise test M.init_root
-  if _config.prefer_startup_root and utils.path_relative(filepath, M.init_root) ~= filepath then
+  if _config.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
     change_dir.fn(M.init_root)
     return
   end
   -- otherwise root_dirs
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
-    if utils.path_relative(filepath, dir) ~= filepath then
+    if utils.path_relative(path, dir) ~= path then
       change_dir.fn(dir)
       return
     end
   end
   -- finally fall back to the folder containing the file
-  change_dir.fn(vim.fn.fnamemodify(filepath, ":p:h"))
+  change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.open_replacing_current_buffer(cwd)
@@ -111,122 +116,6 @@ local function find_existing_windows()
     local buf = vim.api.nvim_win_get_buf(win)
     return vim.api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
   end, vim.api.nvim_list_wins())
-end
-
-local function is_file_readable(fname)
-  local stat = vim.loop.fs_stat(fname)
-  return stat and stat.type == "file" and vim.loop.fs_access(fname, "R")
-end
-
-local function find_file(with_open, bufnr, bang)
-  if not with_open and not core.get_explorer() then
-    return
-  end
-
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  if not vim.api.nvim_buf_is_valid(bufnr) then
-    return
-  end
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local filepath = utils.canonical_path(vim.fn.fnamemodify(bufname, ":p"))
-  if not is_file_readable(filepath) then
-    return
-  end
-
-  if with_open then
-    M.open()
-  end
-
-  if bang or _config.update_focused_file.update_root then
-    M.change_root(filepath, bufnr)
-  end
-
-  require("nvim-tree.actions.finders.find-file").fn(filepath)
-end
-
----@deprecated 2022/12/16
-function M.find_file(with_open, bufnr, bang)
-  vim.notify_once(
-    "require('nvim-tree').find_file is not API and will soon be unavailable. Please use api.tree.find_file as per :help nvim-tree-api",
-    vim.log.levels.WARN
-  )
-  find_file(with_open, bufnr, bang)
-end
-
----Open the tree, focusing if already open.
----@param opts ApiTreeOpenOpts|nil|string
-function M.open(opts)
-  -- legacy arguments
-  if type(opts) == "string" then
-    opts = {
-      path = opts,
-    }
-  end
-
-  opts = opts or {}
-
-  local previous_buf = vim.api.nvim_get_current_buf()
-
-  -- sanitise path
-  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
-    opts.path = nil
-  end
-
-  if view.is_visible() then
-    lib.set_target_win()
-    view.focus()
-  else
-    lib.open(opts)
-  end
-
-  if _config.update_focused_file.enable or opts.find_file then
-    find_file(false, previous_buf, opts.update_root)
-  end
-end
-
----Toggle the tree.
----@param opts ApiTreeToggleOpts|nil|boolean
-function M.toggle(opts, no_focus, cwd, bang)
-  -- legacy arguments
-  if type(opts) == "boolean" then
-    opts = {
-      find_file = opts,
-    }
-    if type(cwd) == "string" then
-      opts.path = cwd
-    end
-    if type(no_focus) == "boolean" then
-      opts.focus = not no_focus
-    end
-    if type(bang) == "boolean" then
-      opts.update_root = bang
-    end
-  end
-
-  opts = opts or {}
-
-  -- defaults
-  if opts.focus == nil then
-    opts.focus = true
-  end
-
-  -- sanitise path
-  if type(opts.path) ~= "string" or vim.fn.isdirectory(opts.path) == 0 then
-    opts.path = nil
-  end
-
-  if view.is_visible() then
-    view.close()
-  else
-    local previous_buf = vim.api.nvim_get_current_buf()
-    M.open { path = opts.path, current_window = opts.current_window }
-    if _config.update_focused_file.enable or opts.find_file then
-      find_file(false, previous_buf, opts.update_root)
-    end
-    if not opts.focus then
-      vim.cmd "noautocmd wincmd p"
-    end
-  end
 end
 
 M.resize = view.resize
@@ -331,7 +220,7 @@ function M.on_enter(netrw_disabled)
     if should_focus_other_window then
       vim.cmd "noautocmd wincmd p"
       if should_find then
-        find_file(false)
+        find_file.fn()
       end
     end
   end
@@ -355,27 +244,37 @@ end
 
 local function setup_vim_commands()
   vim.api.nvim_create_user_command("NvimTreeOpen", function(res)
-    M.open { path = res.args }
+    require("nvim-tree.api").tree.open { path = res.args }
   end, { nargs = "?", complete = "dir" })
-  vim.api.nvim_create_user_command("NvimTreeClose", view.close, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeClose", function()
+    require("nvim-tree.api").tree.close()
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeToggle", function(res)
-    M.toggle { find_file = false, focus = true, path = res.args, update_root = false }
+    require("nvim-tree.api").tree.toggle { find_file = false, focus = true, path = res.args, update_root = false }
   end, { nargs = "?", complete = "dir" })
-  vim.api.nvim_create_user_command("NvimTreeFocus", M.focus, { bar = true })
-  vim.api.nvim_create_user_command("NvimTreeRefresh", reloaders.reload_explorer, { bar = true })
-  vim.api.nvim_create_user_command("NvimTreeClipboard", copy_paste.print_clipboard, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeFocus", function()
+    require("nvim-tree.api").tree.focus()
+  end, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeRefresh", function()
+    require("nvim-tree.api").tree.reload()
+  end, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeClipboard", function()
+    require("nvim-tree.api").fs.print_clipboard()
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    find_file(true, nil, res.bang)
+    require("nvim-tree.api").tree.find_file { open = true, update_root = res.bang }
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
-    M.toggle { find_file = true, focus = true, path = res.args, update_root = res.bang }
+    require("nvim-tree.api").tree.toggle { find_file = true, focus = true, path = res.args, update_root = res.bang }
   end, { bang = true, nargs = "?", complete = "dir" })
   vim.api.nvim_create_user_command("NvimTreeResize", function(res)
     M.resize(res.args)
   end, { nargs = 1, bar = true })
-  vim.api.nvim_create_user_command("NvimTreeCollapse", collapse_all.fn, { bar = true })
+  vim.api.nvim_create_user_command("NvimTreeCollapse", function()
+    require("nvim-tree.api").tree.collapse_all(false)
+  end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeCollapseKeepBuffers", function()
-    collapse_all.fn(true)
+    require("nvim-tree.api").tree.collapse_all(true)
   end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeGenerateOnAttach", keymap_legacy.cmd_generate_on_attach, {})
 end
@@ -384,7 +283,7 @@ function M.change_dir(name)
   change_dir.fn(name)
 
   if _config.update_focused_file.enable then
-    find_file(false)
+    find_file.fn()
   end
 end
 
@@ -473,7 +372,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
-          find_file(false)
+          find_file.fn()
         end)
       end,
     })

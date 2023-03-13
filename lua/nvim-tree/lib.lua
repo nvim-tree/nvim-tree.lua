@@ -4,6 +4,10 @@ local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 
+---@class LibOpenOpts
+---@field path string|nil path
+---@field current_window boolean|nil default false
+
 local M = {
   target_winid = nil,
 }
@@ -152,7 +156,7 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
 end
 
 ---Open the tree, initialising as needed. Maybe hijack the current buffer.
----@param opts ApiTreeOpenOpts|string|nil legacy case opts is path string
+---@param opts LibOpenOpts|nil
 function M.open(opts)
   opts = opts or {}
 

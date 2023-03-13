@@ -11,28 +11,28 @@ local M = {}
 local running = {}
 
 ---Find a path in the tree, expand it and focus it
----@param fname string full path
-function M.fn(fname)
+---@param path string relative or absolute
+function M.fn(path)
   if not core.get_explorer() or not view.is_visible() then
     return
   end
 
   -- always match against the real path
-  local fname_real = vim.loop.fs_realpath(fname)
-  if not fname_real then
+  local path_real = vim.loop.fs_realpath(path)
+  if not path_real then
     return
   end
 
-  if running[fname_real] then
+  if running[path_real] then
     return
   end
-  running[fname_real] = true
+  running[path_real] = true
 
-  local profile = log.profile_start("find file %s", fname_real)
+  local profile = log.profile_start("find file %s", path_real)
 
   -- we cannot wait for watchers to populate a new node
-  if utils.get_node_from_path(fname_real) == nil then
-    reload.refresh_nodes_for_path(vim.fn.fnamemodify(fname_real, ":h"))
+  if utils.get_node_from_path(path_real) == nil then
+    reload.refresh_nodes_for_path(vim.fn.fnamemodify(path_real, ":h"))
   end
 
   local line = core.get_nodes_starting_line()
@@ -41,7 +41,7 @@ function M.fn(fname)
 
   local found = Iterator.builder(core.get_explorer().nodes)
     :matcher(function(node)
-      return node.absolute_path == fname_real or node.link_to == fname_real
+      return node.absolute_path == path_real or node.link_to == path_real
     end)
     :applier(function(node)
       line = line + 1
@@ -51,8 +51,8 @@ function M.fn(fname)
       end
       table.insert(absolute_paths_searched, node.absolute_path)
 
-      local abs_match = vim.startswith(fname_real, node.absolute_path .. utils.path_separator)
-      local link_match = node.link_to and vim.startswith(fname_real, node.link_to .. utils.path_separator)
+      local abs_match = vim.startswith(path_real, node.absolute_path .. utils.path_separator)
+      local link_match = node.link_to and vim.startswith(path_real, node.link_to .. utils.path_separator)
 
       if abs_match or link_match then
         node.open = true
@@ -71,7 +71,7 @@ function M.fn(fname)
     view.set_cursor { line, 0 }
   end
 
-  running[fname_real] = false
+  running[path_real] = false
 
   log.profile_end(profile)
 end
