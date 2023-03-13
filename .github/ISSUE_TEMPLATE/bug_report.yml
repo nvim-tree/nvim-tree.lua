@@ -48,8 +48,8 @@ body:
     attributes:
       label: "Minimal config"
       description: "Minimal(!) configuration necessary to reproduce the issue.
-      
-        See [wiki: "Clean Room" Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions.
+
+        See [wiki: Clean Room Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions.
 
         Please paste the contents of your `/tmp/nvt-min.lua` here."
       render: lua
