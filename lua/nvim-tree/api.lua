@@ -182,4 +182,11 @@ Api.config.mappings.default = function()
   return require("nvim-tree.keymap-legacy").default_mappings_clone()
 end
 
+Api.config.mappings.get_keymap = function()
+  return require("nvim-tree.keymap").get_keymap()
+end
+Api.config.mappings.get_keymap_default = function()
+  return require("nvim-tree.keymap").get_keymap_default()
+end
+
 return Api

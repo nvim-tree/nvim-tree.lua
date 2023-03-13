@@ -1494,6 +1494,23 @@ api.config.mappings.default()        *nvim-tree.api.config.mappings.default()*
     Return: ~
         (table) as per |nvim-tree.view.mappings.list|
 
+                                  *nvim-tree.api.config.mappings.get_keymap()*
+api.config.mappings.get_keymap()
+    Retrieves all buffer local mappings for nvim-tree.
+    These are the mappings that are applied by |nvim-tree.on_attach|, which
+    may include default mappings.
+
+    Return: ~
+        (table) as per |nvim_buf_get_keymap()|
+
+                                  *nvim-tree.api.config.mappings.get_keymap()*
+api.config.mappings.get_keymap_default()
+    Retrieves the buffer local mappings for nvim-tree that are applied by
+    |nvim-tree.api.config.mappings.default_on_attach()|
+
+    Return: ~
+        (table) as per |nvim_buf_get_keymap()|
+
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*
 
