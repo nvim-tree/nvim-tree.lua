@@ -42,24 +42,11 @@ Existing `*_on_setup*` mechanisms have been removed in favour of [Open At Startu
 
 ## Install
 
-Install with [vim-plug](https://github.com/junegunn/vim-plug):
+Please install via your preferred package manager. See [Installation](https://github.com/nvim-tree/nvim-tree.lua/wiki/Installation) for specific package manager instructions.
 
-```vim
-Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
-Plug 'nvim-tree/nvim-tree.lua'
-```
+`nvim-tree/nvim-tree.lua`
 
-or with [packer](https://github.com/wbthomason/packer.nvim):
-
-```lua
-use {
-  'nvim-tree/nvim-tree.lua',
-  requires = {
-    'nvim-tree/nvim-web-devicons', -- optional, for file icons
-  },
-  tag = 'nightly' -- optional, updated every week. (see issue #1193)
-}
-```
+`nvim-tree/nvim-web-devicons` optional, for file icons
 
 ## Setup
 
