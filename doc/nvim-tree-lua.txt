@@ -1293,7 +1293,8 @@ api.tree.open({opts})                              *nvim-tree.api.tree.open()*
       • {path}           (string)         root directory for the tree
       • {current_window} (boolean, false) open the tree in the current window
       • {find_file}      (boolean, false) find the current buffer
-      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {update_root}    (boolean, false) requires {find_file}, see
+                                          |nvim-tree.update_focused_file.update_root|
 
 api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
     Open or close the tree.
@@ -1305,7 +1306,8 @@ api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
       • {path}           (string)         root directory for the tree
       • {current_window} (boolean, false) open the tree in the current window
       • {find_file}      (boolean, false) find the current buffer
-      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {update_root}    (boolean, false) requires {find_file}, see
+                                          |nvim-tree.update_focused_file.update_root|
       • {focus}          (boolean, true)  focus the tree when opening
 
 api.tree.close()                                   *nvim-tree.api.tree.close()*
@@ -1366,7 +1368,7 @@ api.tree.find_file({opts})                     *nvim-tree.api.tree.find_file()*
     Options: ~
     • {buf}            (string|number)  absolute/relative path OR bufnr to find
     • {open}           (boolean, false) open the tree
-    • {current_window} (boolean, false) open the tree in the current window
+    • {current_window} (boolean, false) requires {open}, open in the current window
     • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
     • {focus}          (boolean, false) focus the tree
 
