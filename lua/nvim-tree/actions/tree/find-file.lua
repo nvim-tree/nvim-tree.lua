@@ -28,6 +28,9 @@ function M.fn(opts)
     bufnr = vim.api.nvim_get_current_buf()
     path = vim.api.nvim_buf_get_name(bufnr)
   elseif type(opts.buf) == "number" then
+    if not vim.api.nvim_buf_is_valid(opts.buf) then
+      return
+    end
     bufnr = tonumber(opts.buf)
     path = vim.api.nvim_buf_get_name(bufnr)
   elseif type(opts.buf) == "string" then
