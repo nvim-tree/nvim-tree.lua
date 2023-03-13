@@ -170,12 +170,17 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
 
-You must run setup() function to initialise nvim-tree.
+You must run setup() function once to initialise nvim-tree. It may be called
+again to apply a change in configuration without restarting nvim.
 
 setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
+>
+The first setup() call is cheap: it does nothing more than validate / apply
+the configuration. Nothing happens until the tree is first opened.
 
-Subsequent calls to setup will replace the previous configuration.
+Subsequent setup() calls are expensive as they tear down the world before
+applying configuration.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       auto_reload_on_write = true,
