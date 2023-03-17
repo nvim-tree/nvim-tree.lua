@@ -23,7 +23,7 @@ end
 
 local function prevent_cwd_change(foldername)
   local is_same_cwd = foldername == core.get_cwd()
-  local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd( -1, -1)
   return is_same_cwd or is_restricted_above
 end
 
@@ -63,8 +63,10 @@ local function add_profiling_to(f)
 end
 
 M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
-  if should_change_dir() then
+  local isDir = vim.fn.isdirectory(foldername) -- prevent problems on non existing dirs
+  if should_change_dir() and isDir == 1 then
     cd(M.options.global, foldername)
+    core.init(foldername)
   end
 
   core.init(foldername)

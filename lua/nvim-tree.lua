@@ -197,9 +197,9 @@ function M.on_enter(netrw_disabled)
   end
 
   local should_hijack = _config.hijack_directories.enable
-    and _config.hijack_directories.auto_open
-    and is_dir
-    and not should_be_preserved
+      and _config.hijack_directories.auto_open
+      and is_dir
+      and not should_be_preserved
 
   -- Session that left a NvimTree Buffer opened, reopen with it
   local existing_tree_wins = find_existing_windows()
@@ -317,8 +317,8 @@ local function setup_autocommands(opts)
     callback = function(data)
       -- update opened file buffers
       if
-        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
-        and vim.bo[data.buf].buftype == ""
+          (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+          and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer()
@@ -331,8 +331,8 @@ local function setup_autocommands(opts)
     callback = function(data)
       -- update opened file buffers
       if
-        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
-        and vim.bo[data.buf].buftype == ""
+          (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+          and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer(nil, data.buf)
@@ -372,7 +372,9 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
-          find_file.fn()
+          if not vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()):match "NvimTree" ~= nil then
+            find_file.fn()
+          end
         end)
       end,
     })
@@ -445,7 +447,8 @@ local function setup_autocommands(opts)
   end
 end
 
-local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+local DEFAULT_OPTS = {
+-- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
   disable_netrw = false,
   hijack_cursor = false,
@@ -694,9 +697,9 @@ local FIELD_SKIP_VALIDATE = {
 }
 
 local FIELD_OVERRIDE_TYPECHECK = {
-  width = { string = true, ["function"] = true, number = true, ["table"] = true },
-  max = { string = true, ["function"] = true, number = true },
-  min = { string = true, ["function"] = true, number = true },
+  width = { string = true,["function"] = true, number = true,["table"] = true },
+  max = { string = true,["function"] = true, number = true },
+  min = { string = true,["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
@@ -723,7 +726,7 @@ local function validate_options(conf)
         elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
           -- option is of the wrong type and is not a function
           invalid =
-            string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+              string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
         end
 
         if invalid then
@@ -822,10 +825,10 @@ function M.setup(conf)
 
   vim.schedule(function()
     if
-      #opts.ignore_ft_on_setup > 0
-      or opts.open_on_setup == true
-      or opts.open_on_setup_file
-      or opts.ignore_buffer_on_setup
+        #opts.ignore_ft_on_setup > 0
+        or opts.open_on_setup == true
+        or opts.open_on_setup_file
+        or opts.ignore_buffer_on_setup
     then
       notify.info "open_on_setup behaviour has been deprecated, please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
       M.on_enter(netrw_disabled)
