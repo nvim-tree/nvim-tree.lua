@@ -4,8 +4,8 @@ local M = {}
 --- @param fn function(bufnr) on_attach or default_on_attach
 --- @return table as per vim.api.nvim_buf_get_keymap
 local function generate_keymap(fn)
-  -- create a scratch buffer
-  local scratch_bufnr = vim.api.nvim_create_buf(true, true)
+  -- create an unlisted scratch buffer
+  local scratch_bufnr = vim.api.nvim_create_buf(false, true)
 
   -- apply mappings
   fn(scratch_bufnr)
