@@ -1551,7 +1551,7 @@ Mouse support is defined in |KeyBindings|
 
 Single left mouse mappings can be achieved via `<LeftRelease>`.
 
-Single right / middle mouse mappings will requre changes to |mousemodel| or |mouse|.
+Single right / middle mouse mappings will require changes to |mousemodel| or |mouse|.
 
 ==============================================================================
  6.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*

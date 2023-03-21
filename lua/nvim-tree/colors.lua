@@ -88,8 +88,8 @@ local function get_links()
 end
 
 function M.setup()
-  local higlight_groups = get_hl_groups()
-  for k, d in pairs(higlight_groups) do
+  local highlight_groups = get_hl_groups()
+  for k, d in pairs(highlight_groups) do
     local gui = d.gui and " gui=" .. d.gui or ""
     local fg = d.fg and " guifg=" .. d.fg or ""
     local bg = d.bg and " guibg=" .. d.bg or ""
