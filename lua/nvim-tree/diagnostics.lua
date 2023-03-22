@@ -41,6 +41,10 @@ local function from_nvim_lsp()
   return buffer_severity
 end
 
+local function is_severity_in_range(severity, config)
+  return config.max <= severity and severity <= config.min
+end
+
 local function from_coc()
   if vim.g.coc_service_initialized ~= 1 then
     return {}
@@ -51,21 +55,18 @@ local function from_coc()
     return {}
   end
 
-  local buffer_severity = {}
   local diagnostics = {}
-
   for _, diagnostic in ipairs(diagnostic_list) do
     local bufname = diagnostic.file
-    local severity = severity_levels[diagnostic.severity]
+    local coc_severity = severity_levels[diagnostic.severity]
 
-    local severity_list = diagnostics[bufname] or {}
-    table.insert(severity_list, severity)
-    diagnostics[bufname] = severity_list
+    local serverity = diagnostics[bufname] or vim.diagnostic.severity.HINT
+    diagnostics[bufname] = math.min(coc_severity, serverity)
   end
 
-  for bufname, severity_list in pairs(diagnostics) do
-    if not buffer_severity[bufname] then
-      local severity = math.min(unpack(severity_list))
+  local buffer_severity = {}
+  for bufname, severity in pairs(diagnostics) do
+    if is_severity_in_range(severity, M.severity) then
       buffer_severity[bufname] = severity
     end
   end
