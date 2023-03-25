@@ -1,3 +1,5 @@
+local notify = require "nvim-tree.notify"
+
 local Api = {
   tree = {},
   node = { navigate = { sibling = {}, git = {}, diagnostics = {} }, run = {}, open = {} },
@@ -176,9 +178,11 @@ Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 Api.config.mappings.default_on_attach = require("nvim-tree.keymap").default_on_attach
 
 Api.config.mappings.active = function()
+  notify.warn "api.config.mappings.active is deprecated in favor of config.mappings.get_keymap"
   return require("nvim-tree.keymap-legacy").active_mappings_clone()
 end
 Api.config.mappings.default = function()
+  notify.warn "api.config.mappings.default is deprecated in favor of config.mappings.get_keymap_default"
   return require("nvim-tree.keymap-legacy").default_mappings_clone()
 end
 
