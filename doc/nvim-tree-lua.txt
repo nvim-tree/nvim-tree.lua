@@ -1503,13 +1503,22 @@ api.config.mappings.get_keymap()
     Return: ~
         (table) as per |nvim_buf_get_keymap()|
 
-                                  *nvim-tree.api.config.mappings.get_keymap_default()*
+                          *nvim-tree.api.config.mappings.get_keymap_default()*
 api.config.mappings.get_keymap_default()
     Retrieves the buffer local mappings for nvim-tree that are applied by
     |nvim-tree.api.config.mappings.default_on_attach()|
 
     Return: ~
         (table) as per |nvim_buf_get_keymap()|
+
+api.get_commands()                              *nvim-tree.api.get_commands()*
+    Retrieve all commands, see |nvim-tree-commands|
+
+    Return: ~
+        (table) array containing |nvim_create_user_command()| parameters:
+        • {name}    (string)
+        • {command} (function)
+        • {opts}    (table)
 
 ==============================================================================
  6. MAPPINGS                                              *nvim-tree-mappings*

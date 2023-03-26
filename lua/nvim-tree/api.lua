@@ -193,4 +193,8 @@ Api.config.mappings.get_keymap_default = function()
   return require("nvim-tree.keymap").get_keymap_default()
 end
 
+Api.get_commands = function()
+  return require("nvim-tree.commands").get_commands()
+end
+
 return Api
