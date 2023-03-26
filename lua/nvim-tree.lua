@@ -42,6 +42,11 @@ function M.change_root(path, bufnr)
     end
   end
 
+  -- don't find inexistent
+  if vim.fn.filereadable(path) == 0 then
+    return
+  end
+
   local cwd = core.get_cwd()
   local vim_cwd = vim.fn.getcwd()
 
