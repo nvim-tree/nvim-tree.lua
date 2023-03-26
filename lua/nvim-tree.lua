@@ -267,7 +267,7 @@ local function setup_vim_commands()
     require("nvim-tree.api").fs.print_clipboard()
   end, { bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    require("nvim-tree.api").tree.find_file { open = true, update_root = res.bang }
+    require("nvim-tree.api").tree.find_file { open = true, focus = true, update_root = res.bang }
   end, { bang = true, bar = true })
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
     require("nvim-tree.api").tree.toggle { find_file = true, focus = true, path = res.args, update_root = res.bang }
