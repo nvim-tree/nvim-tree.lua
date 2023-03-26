@@ -6,7 +6,7 @@ local notify = require "nvim-tree.notify"
 local M = {}
 
 local ALLOWED_MODIFIERS = {
-  [":p"] = true,
+  [":p:h"] = true,
   [":t"] = true,
   [":t:r"] = true,
 }
@@ -67,6 +67,9 @@ function M.fn(default_modifier)
     if modifier == ":t:r" then
       local extension = vim.fn.fnamemodify(node.name, ":e")
       append = extension:len() == 0 and "" or "." .. extension
+    end
+    if modifier == ":p:h" then
+      default_path = default_path .. "/"
     end
 
     local input_opts = { prompt = "Rename to ", default = default_path, completion = "file" }
