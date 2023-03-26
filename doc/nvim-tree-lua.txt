@@ -1511,7 +1511,7 @@ api.config.mappings.get_keymap_default()
     Return: ~
         (table) as per |nvim_buf_get_keymap()|
 
-api.get_commands()                              *nvim-tree.api.get_commands()*
+api.commands.get()                              *nvim-tree.api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
 
     Return: ~

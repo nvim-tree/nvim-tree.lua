@@ -132,7 +132,7 @@ local CMDS = {
   },
 }
 
-function M.get_commands()
+function M.get()
   return vim.deepcopy(CMDS)
 end
 
