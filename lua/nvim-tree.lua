@@ -42,6 +42,11 @@ function M.change_root(path, bufnr)
     end
   end
 
+  -- don't find inexistent
+  if vim.fn.filereadable(path) == 0 then
+    return
+  end
+
   local cwd = core.get_cwd()
   local vim_cwd = vim.fn.getcwd()
 
@@ -268,7 +273,7 @@ local function setup_vim_commands()
   end, { bar = true, desc = "nvim-tree: print clipboard" })
 
   vim.api.nvim_create_user_command("NvimTreeFindFile", function(res)
-    require("nvim-tree.api").tree.find_file { open = true, update_root = res.bang }
+    require("nvim-tree.api").tree.find_file { open = true, focus = true, update_root = res.bang }
   end, { bang = true, bar = true, desc = "nvim-tree: find file" })
 
   vim.api.nvim_create_user_command("NvimTreeFindFileToggle", function(res)
