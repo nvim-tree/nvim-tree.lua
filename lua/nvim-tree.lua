@@ -290,7 +290,7 @@ local function setup_vim_commands()
   vim.api.nvim_create_user_command(
     "NvimTreeGenerateOnAttach",
     keymap_legacy.cmd_generate_on_attach,
-    { desc = "nvim-tree: generate on_attach from view.mappings" }
+    { desc = "nvim-tree: generate on_attach function from deprecated view.mappings" }
   )
 end
 
