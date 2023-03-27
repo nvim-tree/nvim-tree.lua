@@ -9,6 +9,7 @@ local Api = {
   git = {},
   live_filter = {},
   config = { mappings = {} },
+  commands = {},
 }
 
 local function inject_node(f)
@@ -191,6 +192,10 @@ Api.config.mappings.get_keymap = function()
 end
 Api.config.mappings.get_keymap_default = function()
   return require("nvim-tree.keymap").get_keymap_default()
+end
+
+Api.commands.get = function()
+  return require("nvim-tree.commands").get()
 end
 
 return Api
