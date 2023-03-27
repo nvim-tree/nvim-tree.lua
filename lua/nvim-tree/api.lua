@@ -2,7 +2,7 @@ local notify = require "nvim-tree.notify"
 
 local Api = {
   tree = {},
-  node = { navigate = { sibling = {}, git = {}, diagnostics = {}, listed = {} }, run = {}, open = {} },
+  node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {} }, run = {}, open = {} },
   events = {},
   marks = { bulk = {}, navigate = {} },
   fs = { copy = {} },
@@ -157,8 +157,8 @@ Api.node.navigate.git.next = inject_node(require("nvim-tree.actions.moves.item")
 Api.node.navigate.git.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "git"))
 Api.node.navigate.diagnostics.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "diag"))
 Api.node.navigate.diagnostics.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
-Api.node.navigate.listed.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "listed"))
-Api.node.navigate.listed.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "listed"))
+Api.node.navigate.opened.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
+Api.node.navigate.opened.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
 
 Api.git.reload = require("nvim-tree.actions.reloaders.reloaders").reload_git
 

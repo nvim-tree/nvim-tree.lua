@@ -18,7 +18,7 @@ function M.fn(where, what)
         valid = explorer_node.get_git_status(node) ~= nil
       elseif what == "diag" then
         valid = node.diag_status ~= nil
-      elseif what == "listed" then
+      elseif what == "opened" then
         valid = vim.fn.bufloaded(node.absolute_path) ~= 0
       end
 

@@ -7,3 +7,6 @@ end_of_line = lf
 [*.lua]
 indent_style = space
 indent_size = 2
+
+[nvim-tree-lua.txt]
+max_line_length = 78
