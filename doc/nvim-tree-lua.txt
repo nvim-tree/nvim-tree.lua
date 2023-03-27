@@ -870,6 +870,8 @@ UI rendering setup
     *nvim-tree.renderer.highlight_opened_files*
     Highlight icons and/or names for |bufloaded()| files using the
     `NvimTreeOpenedFile` highlight group.
+    See |nvim-tree.api.navigate.opened.next()| and
+    |nvim-tree.api.navigate.opened.prev()|
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
