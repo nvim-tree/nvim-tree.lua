@@ -1461,10 +1461,10 @@ api.node.navigate.diagnostics.next()
 api.node.navigate.diagnostics.prev()
     Navigate to the next item showing diagnostic status.
 
-api.node.navigate.open.next()             *nvim-tree.api.navigate.open.next()*
+api.node.navigate.listed.next()         *nvim-tree.api.navigate.listed.next()*
     Navigate to the next item with a listed buffer.
 
-api.node.navigate.open.prev()             *nvim-tree.api.navigate.open.prev()*
+api.node.navigate.listed.prev()         *nvim-tree.api.navigate.listed.prev()*
     Navigate to the previous item with a listed buffer.
 
 - api.git:                                              *nvim-tree.api.git*
