@@ -27,6 +27,13 @@ local function reload_and_get_git_project(path)
   return project_root, git.get_project(project_root) or {}
 end
 
+local function reload_and_get_git_project_async(path, callback)
+  local project_root = git.get_project_root(path)
+  git.reload_project_async(project_root, path, function()
+    callback(project_root, git.get_project(project_root) or {})
+  end)
+end
+
 local function update_parent_statuses(node, project, root)
   while project and node and node.absolute_path ~= root do
     explorer_node.update_git_status(node, false, project)
@@ -154,6 +161,20 @@ function M.refresh_node(node)
   require("nvim-tree.explorer.reload").reload(parent_node, project)
 
   update_parent_statuses(parent_node, project, project_root)
+end
+
+function M.refresh_node_async(node, callback)
+  if type(node) ~= "table" then
+    return
+  end
+
+  local parent_node = utils.get_parent_of_group(node)
+
+  reload_and_get_git_project_async(node.absolute_path, function(project_root, project)
+    require("nvim-tree.explorer.reload").reload(parent_node, project)
+    update_parent_statuses(parent_node, project, project_root)
+    callback()
+  end)
 end
 
 ---Refresh contents and git status for all nodes to a path: actual directory and links

@@ -69,50 +69,30 @@ function Runner:_log_raw_output(output)
   end
 end
 
-function Runner:_run_git_job()
-  local handle, pid
-  local stdout = vim.loop.new_pipe(false)
-  local stderr = vim.loop.new_pipe(false)
-  local timer = vim.loop.new_timer()
-
-  local function on_finish(rc)
-    self.rc = rc or 0
-    if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
-      return
-    end
-    timer:stop()
-    timer:close()
-    stdout:read_stop()
-    stderr:read_stop()
-    stdout:close()
-    stderr:close()
-    if handle then
-      handle:close()
-    end
-
-    pcall(vim.loop.kill, pid)
+function Runner:_on_finish(rc)
+  self.rc = rc or 0
+  if
+    self.timer:is_closing()
+    or self.stdout:is_closing()
+    or self.stderr:is_closing()
+    or (self.handle and self.handle:is_closing())
+  then
+    return
+  end
+  self.timer:stop()
+  self.timer:close()
+  self.stdout:read_stop()
+  self.stderr:read_stop()
+  self.stdout:close()
+  self.stderr:close()
+  if self.handle then
+    self.handle:close()
   end
 
-  local opts = self:_getopts(stdout, stderr)
-  log.line("git", "running job with timeout %dms", self.timeout)
-  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
+  pcall(vim.loop.kill, self.pid)
+end
 
-  handle, pid = vim.loop.spawn(
-    "git",
-    opts,
-    vim.schedule_wrap(function(rc)
-      on_finish(rc)
-    end)
-  )
-
-  timer:start(
-    self.timeout,
-    0,
-    vim.schedule_wrap(function()
-      on_finish(-1)
-    end)
-  )
-
+function Runner:_start_readers()
   local output_leftover = ""
   local function manage_stdout(err, data)
     if err then
@@ -129,8 +109,66 @@ function Runner:_run_git_job()
     self:_log_raw_output(data)
   end
 
-  vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
-  vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
+  vim.loop.read_start(self.stdout, vim.schedule_wrap(manage_stdout))
+  vim.loop.read_start(self.stderr, vim.schedule_wrap(manage_stderr))
+end
+
+function Runner:_run_git_job()
+  self.stdout = vim.loop.new_pipe(false)
+  self.stderr = vim.loop.new_pipe(false)
+  self.timer = vim.loop.new_timer()
+
+  local opts = self:_getopts(self.stdout, self.stderr)
+  log.line("git", "running job with timeout %dms", self.timeout)
+  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
+
+  self.handle, self.pid = vim.loop.spawn(
+    "git",
+    opts,
+    vim.schedule_wrap(function(rc)
+      self:_on_finish(rc)
+    end)
+  )
+
+  self.timer:start(
+    self.timeout,
+    0,
+    vim.schedule_wrap(function()
+      self:_on_finish(-1)
+    end)
+  )
+
+  self:_start_readers()
+end
+
+function Runner:_run_git_job_async(callback)
+  self.stdout = vim.loop.new_pipe(false)
+  self.stderr = vim.loop.new_pipe(false)
+  self.timer = vim.loop.new_timer()
+
+  local opts = self:_getopts(self.stdout, self.stderr)
+  log.line("git", "running async job with timeout %dms", self.timeout)
+  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
+
+  self.handle, self.pid = vim.loop.spawn(
+    "git",
+    opts,
+    vim.schedule_wrap(function(rc)
+      self:_on_finish(rc)
+      callback()
+    end)
+  )
+
+  self.timer:start(
+    self.timeout,
+    0,
+    vim.schedule_wrap(function()
+      self:_on_finish(-1)
+      callback()
+    end)
+  )
+
+  self:_start_readers()
 end
 
 function Runner:_wait()
@@ -139,6 +177,28 @@ function Runner:_wait()
   end
 
   while not vim.wait(30, is_done) do
+  end
+end
+
+-- TODO fold back into run following git async experiment completion
+function Runner:_finalise(opts)
+  if self.rc == -1 then
+    log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
+    timeouts = timeouts + 1
+    if timeouts == MAX_TIMEOUTS then
+      notify.warn(
+        string.format(
+          "%d git jobs have timed out after %dms, disabling git integration. Try increasing git.timeout",
+          timeouts,
+          opts.timeout
+        )
+      )
+      require("nvim-tree.git").disable_git_integration()
+    end
+  elseif self.rc ~= 0 then
+    log.line("git", "job fail rc %d %s %s", self.rc, opts.project_root, opts.path)
+  else
+    log.line("git", "job success    %s %s", opts.project_root, opts.path)
   end
 end
 
@@ -161,26 +221,31 @@ function Runner.run(opts)
 
   log.profile_end(profile)
 
-  if self.rc == -1 then
-    log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
-    timeouts = timeouts + 1
-    if timeouts == MAX_TIMEOUTS then
-      notify.warn(
-        string.format(
-          "%d git jobs have timed out after %dms, disabling git integration. Try increasing git.timeout",
-          timeouts,
-          opts.timeout
-        )
-      )
-      require("nvim-tree.git").disable_git_integration()
-    end
-  elseif self.rc ~= 0 then
-    log.line("git", "job fail rc %d %s %s", self.rc, opts.project_root, opts.path)
-  else
-    log.line("git", "job success    %s %s", opts.project_root, opts.path)
-  end
+  self:_finalise(opts)
 
   return self.output
+end
+
+function Runner.run_async(opts, callback)
+  local profile = log.profile_start("git async job %s %s", opts.project_root, opts.path)
+
+  local self = setmetatable({
+    project_root = opts.project_root,
+    path = opts.path,
+    list_untracked = opts.list_untracked,
+    list_ignored = opts.list_ignored,
+    timeout = opts.timeout or 400,
+    output = {},
+    rc = nil, -- -1 indicates timeout
+  }, Runner)
+
+  self:_run_git_job_async(function()
+    log.profile_end(profile)
+
+    self:_finalise(opts)
+
+    callback(self.output)
+  end)
 end
 
 return Runner

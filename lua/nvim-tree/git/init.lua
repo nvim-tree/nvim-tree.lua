@@ -22,6 +22,22 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
+-- TODO fold back into reload_project following git async experiment completion
+local function reload_git_status(project_root, path, project, git_status)
+  if path then
+    for p in pairs(project.files) do
+      if p:find(path, 1, true) == 1 then
+        project.files[p] = nil
+      end
+    end
+    project.files = vim.tbl_deep_extend("force", project.files, git_status)
+  else
+    project.files = git_status
+  end
+
+  project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
+end
+
 function M.reload()
   if not M.config.git.enable then
     return {}
@@ -52,18 +68,29 @@ function M.reload_project(project_root, path)
     timeout = M.config.git.timeout,
   }
 
-  if path then
-    for p in pairs(project.files) do
-      if p:find(path, 1, true) == 1 then
-        project.files[p] = nil
-      end
-    end
-    project.files = vim.tbl_deep_extend("force", project.files, git_status)
-  else
-    project.files = git_status
+  reload_git_status(project_root, path, project, git_status)
+end
+
+function M.reload_project_async(project_root, path, callback)
+  local project = M.projects[project_root]
+  if not project or not M.config.git.enable then
+    return
   end
 
-  project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
+  if path and path:find(project_root, 1, true) ~= 1 then
+    return
+  end
+
+  Runner.run_async({
+    project_root = project_root,
+    path = path,
+    list_untracked = git_utils.should_show_untracked(project_root),
+    list_ignored = true,
+    timeout = M.config.git.timeout,
+  }, function(git_status)
+    reload_git_status(project_root, path, project, git_status)
+    callback()
+  end)
 end
 
 function M.get_project(project_root)

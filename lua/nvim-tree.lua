@@ -674,6 +674,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       trash = true,
     },
   },
+  experimental = {
+    git = {
+      async = false,
+    },
+  },
   log = {
     enable = false,
     truncate = false,
