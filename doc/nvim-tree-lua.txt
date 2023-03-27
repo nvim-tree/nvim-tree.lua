@@ -1446,10 +1446,26 @@ api.tree.toggle_help()                       *nvim-tree.api.tree.toggle_help()*
     - navigate.sibling.last
     - navigate.parent
     - navigate.parent_close
-    - navigate.git.next
-    - navigate.git.prev
-    - navigate.diagnostics.next
-    - navigate.diagnostics.prev
+
+api.node.navigate.git.next()               *nvim-tree.api.navigate.git.next()*
+    Navigate to the next item showing git status.
+
+api.node.navigate.git.prev()               *nvim-tree.api.navigate.git.prev()*
+    Navigate to the previous item showing git status.
+
+                                   *nvim-tree.api.navigate.diagnostics.next()*
+api.node.navigate.diagnostics.next() 
+    Navigate to the next item showing diagnostic status.
+
+                                   *nvim-tree.api.navigate.diagnostics.prev()*
+api.node.navigate.diagnostics.prev()
+    Navigate to the next item showing diagnostic status.
+
+api.node.navigate.open.next()             *nvim-tree.api.navigate.open.next()*
+    Navigate to the next item with a listed buffer.
+
+api.node.navigate.open.prev()             *nvim-tree.api.navigate.open.prev()*
+    Navigate to the previous item with a listed buffer.
 
 - api.git:                                              *nvim-tree.api.git*
     - reload
