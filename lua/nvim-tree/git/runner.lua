@@ -69,30 +69,54 @@ function Runner:_log_raw_output(output)
   end
 end
 
-function Runner:_on_finish(rc)
-  self.rc = rc or 0
-  if
-    self.timer:is_closing()
-    or self.stdout:is_closing()
-    or self.stderr:is_closing()
-    or (self.handle and self.handle:is_closing())
-  then
-    return
-  end
-  self.timer:stop()
-  self.timer:close()
-  self.stdout:read_stop()
-  self.stderr:read_stop()
-  self.stdout:close()
-  self.stderr:close()
-  if self.handle then
-    self.handle:close()
+function Runner:_run_git_job(callback)
+  local handle, pid
+  local stdout = vim.loop.new_pipe(false)
+  local stderr = vim.loop.new_pipe(false)
+  local timer = vim.loop.new_timer()
+
+  local function on_finish(rc)
+    self.rc = rc or 0
+    if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
+      return
+    end
+    timer:stop()
+    timer:close()
+    stdout:read_stop()
+    stderr:read_stop()
+    stdout:close()
+    stderr:close()
+    if handle then
+      handle:close()
+    end
+
+    pcall(vim.loop.kill, pid)
+
+    if callback then
+      callback()
+    end
   end
 
-  pcall(vim.loop.kill, self.pid)
-end
+  local opts = self:_getopts(stdout, stderr)
+  log.line("git", "running job with timeout %dms", self.timeout)
+  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
 
-function Runner:_start_readers()
+  handle, pid = vim.loop.spawn(
+    "git",
+    opts,
+    vim.schedule_wrap(function(rc)
+      on_finish(rc)
+    end)
+  )
+
+  timer:start(
+    self.timeout,
+    0,
+    vim.schedule_wrap(function()
+      on_finish(-1)
+    end)
+  )
+
   local output_leftover = ""
   local function manage_stdout(err, data)
     if err then
@@ -109,66 +133,8 @@ function Runner:_start_readers()
     self:_log_raw_output(data)
   end
 
-  vim.loop.read_start(self.stdout, vim.schedule_wrap(manage_stdout))
-  vim.loop.read_start(self.stderr, vim.schedule_wrap(manage_stderr))
-end
-
-function Runner:_run_git_job()
-  self.stdout = vim.loop.new_pipe(false)
-  self.stderr = vim.loop.new_pipe(false)
-  self.timer = vim.loop.new_timer()
-
-  local opts = self:_getopts(self.stdout, self.stderr)
-  log.line("git", "running job with timeout %dms", self.timeout)
-  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
-
-  self.handle, self.pid = vim.loop.spawn(
-    "git",
-    opts,
-    vim.schedule_wrap(function(rc)
-      self:_on_finish(rc)
-    end)
-  )
-
-  self.timer:start(
-    self.timeout,
-    0,
-    vim.schedule_wrap(function()
-      self:_on_finish(-1)
-    end)
-  )
-
-  self:_start_readers()
-end
-
-function Runner:_run_git_job_async(callback)
-  self.stdout = vim.loop.new_pipe(false)
-  self.stderr = vim.loop.new_pipe(false)
-  self.timer = vim.loop.new_timer()
-
-  local opts = self:_getopts(self.stdout, self.stderr)
-  log.line("git", "running async job with timeout %dms", self.timeout)
-  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
-
-  self.handle, self.pid = vim.loop.spawn(
-    "git",
-    opts,
-    vim.schedule_wrap(function(rc)
-      self:_on_finish(rc)
-      callback()
-    end)
-  )
-
-  self.timer:start(
-    self.timeout,
-    0,
-    vim.schedule_wrap(function()
-      self:_on_finish(-1)
-      callback()
-    end)
-  )
-
-  self:_start_readers()
+  vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
+  vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
 end
 
 function Runner:_wait()
@@ -239,7 +205,7 @@ function Runner.run_async(opts, callback)
     rc = nil, -- -1 indicates timeout
   }, Runner)
 
-  self:_run_git_job_async(function()
+  self:_run_git_job(function()
     log.profile_end(profile)
 
     self:_finalise(opts)
