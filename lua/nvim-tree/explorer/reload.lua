@@ -21,6 +21,7 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
+-- TODO always use callback once async/await is available
 local function reload_and_get_git_project(path, callback)
   local project_root = git.get_project_root(path)
 

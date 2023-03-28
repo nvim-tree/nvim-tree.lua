@@ -26,6 +26,8 @@ local function populate_children(handle, cwd, node, git_status)
 
     local abs = utils.path_join { cwd, name }
 
+    local profile = log.profile_start("explore populate_children %s", abs)
+
     t = get_type_from(t, abs)
     if
       not filters.should_filter(abs, filter_status)
@@ -49,6 +51,8 @@ local function populate_children(handle, cwd, node, git_status)
         explorer_node.update_git_status(child, node_ignored, git_status)
       end
     end
+
+    log.profile_end(profile)
   end
 end
 

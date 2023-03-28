@@ -189,7 +189,7 @@ function Runner.run(opts, callback)
   local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", opts.project_root, opts.path)
 
   if async and callback then
-    -- async
+    -- async, always call back
     self:_run_git_job(function()
       log.profile_end(profile)
 
@@ -198,7 +198,7 @@ function Runner.run(opts, callback)
       callback(self.output)
     end)
   else
-    -- sync
+    -- sync, maybe call back
     self:_run_git_job()
     self:_wait()
 
