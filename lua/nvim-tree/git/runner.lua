@@ -78,6 +78,7 @@ function Runner:_run_git_job(callback)
   local function on_finish(rc)
     self.rc = rc or 0
     if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
+      callback()
       return
     end
     timer:stop()
@@ -146,7 +147,6 @@ function Runner:_wait()
   end
 end
 
--- TODO fold back into run following git async experiment completion
 function Runner:_finalise(opts)
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.project_root, opts.path)
@@ -168,10 +168,11 @@ function Runner:_finalise(opts)
   end
 end
 
--- This module runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
-function Runner.run(opts)
-  local profile = log.profile_start("git job %s %s", opts.project_root, opts.path)
-
+--- Runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
+--- @param opts table
+--- @param callback function|nil executed passing return when complete
+--- @return table|nil status by absolute path, nil if callback present
+function Runner.run(opts, callback)
   local self = setmetatable({
     project_root = opts.project_root,
     path = opts.path,
@@ -182,36 +183,38 @@ function Runner.run(opts)
     rc = nil, -- -1 indicates timeout
   }, Runner)
 
-  self:_run_git_job()
-  self:_wait()
+  local async = callback ~= nil and self.config.git_async
+  local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", opts.project_root, opts.path)
 
-  log.profile_end(profile)
+  if async and callback then
+    -- async
+    self:_run_git_job(function()
+      log.profile_end(profile)
 
-  self:_finalise(opts)
+      self:_finalise(opts)
 
-  return self.output
-end
+      callback(self.output)
+    end)
+  else
+    -- sync
+    self:_run_git_job()
+    self:_wait()
 
-function Runner.run_async(opts, callback)
-  local profile = log.profile_start("git async job %s %s", opts.project_root, opts.path)
-
-  local self = setmetatable({
-    project_root = opts.project_root,
-    path = opts.path,
-    list_untracked = opts.list_untracked,
-    list_ignored = opts.list_ignored,
-    timeout = opts.timeout or 400,
-    output = {},
-    rc = nil, -- -1 indicates timeout
-  }, Runner)
-
-  self:_run_git_job(function()
     log.profile_end(profile)
 
     self:_finalise(opts)
 
-    callback(self.output)
-  end)
+    if callback then
+      callback(self.output)
+    else
+      return self.output
+    end
+  end
+end
+
+function Runner.setup(opts)
+  Runner.config = {}
+  Runner.config.git_async = opts.experimental.git.async
 end
 
 return Runner

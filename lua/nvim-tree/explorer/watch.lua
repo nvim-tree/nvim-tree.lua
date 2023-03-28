@@ -59,14 +59,9 @@ function M.create_watcher(node)
       else
         log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
       end
-      if M.git_async then
-        require("nvim-tree.explorer.reload").refresh_node_async(node, function()
-          require("nvim-tree.renderer").draw()
-        end)
-      else
-        require("nvim-tree.explorer.reload").refresh_node(node)
+      require("nvim-tree.explorer.reload").refresh_node(node, function()
         require("nvim-tree.renderer").draw()
-      end
+      end)
     end)
   end
 
@@ -80,7 +75,6 @@ function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
   M.ignore_dirs = opts.filesystem_watchers.ignore_dirs
-  M.git_async = opts.experimental.git.async
   M.uid = 0
 end
 

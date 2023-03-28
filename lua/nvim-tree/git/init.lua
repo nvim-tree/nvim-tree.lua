@@ -22,7 +22,6 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
--- TODO fold back into reload_project following git async experiment completion
 local function reload_git_status(project_root, path, project, git_status)
   if path then
     for p in pairs(project.files) do
@@ -50,17 +49,23 @@ function M.reload()
   return M.projects
 end
 
-function M.reload_project(project_root, path)
+function M.reload_project(project_root, path, callback)
   local project = M.projects[project_root]
   if not project or not M.config.git.enable then
+    if callback then
+      callback()
+    end
     return
   end
 
   if path and path:find(project_root, 1, true) ~= 1 then
+    if callback then
+      callback()
+    end
     return
   end
 
-  local git_status = Runner.run {
+  local opts = {
     project_root = project_root,
     path = path,
     list_untracked = git_utils.should_show_untracked(project_root),
@@ -68,29 +73,15 @@ function M.reload_project(project_root, path)
     timeout = M.config.git.timeout,
   }
 
-  reload_git_status(project_root, path, project, git_status)
-end
-
-function M.reload_project_async(project_root, path, callback)
-  local project = M.projects[project_root]
-  if not project or not M.config.git.enable then
-    return
-  end
-
-  if path and path:find(project_root, 1, true) ~= 1 then
-    return
-  end
-
-  Runner.run_async({
-    project_root = project_root,
-    path = path,
-    list_untracked = git_utils.should_show_untracked(project_root),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
-  }, function(git_status)
+  if callback then
+    Runner.run(opts, function(git_status)
+      reload_git_status(project_root, path, project, git_status)
+      callback()
+    end)
+  else
+    local git_status = Runner.run(opts)
     reload_git_status(project_root, path, project, git_status)
-    callback()
-  end)
+  end
 end
 
 function M.get_project(project_root)
