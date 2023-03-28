@@ -66,8 +66,9 @@ M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
   local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
   if should_change_dir() and valid_dir then
     cd(M.options.global, foldername)
-    core.init(foldername)
   end
+
+  core.init(foldername)
 
   if should_open_view then
     require("nvim-tree.lib").open()
