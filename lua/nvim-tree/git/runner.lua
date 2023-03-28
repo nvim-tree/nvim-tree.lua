@@ -78,7 +78,9 @@ function Runner:_run_git_job(callback)
   local function on_finish(rc)
     self.rc = rc or 0
     if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
-      callback()
+      if callback then
+        callback()
+      end
       return
     end
     timer:stop()

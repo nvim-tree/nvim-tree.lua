@@ -162,10 +162,13 @@ function M.refresh_node(node, callback)
   if callback then
     reload_and_get_git_project(node.absolute_path, function(project_root, project)
       require("nvim-tree.explorer.reload").reload(parent_node, project)
+
       update_parent_statuses(parent_node, project, project_root)
+
       callback()
     end)
   else
+    -- TODO use callback once async/await is available
     local project_root, project = reload_and_get_git_project(node.absolute_path)
 
     require("nvim-tree.explorer.reload").reload(parent_node, project)

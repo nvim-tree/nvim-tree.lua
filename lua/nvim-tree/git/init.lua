@@ -79,6 +79,7 @@ function M.reload_project(project_root, path, callback)
       callback()
     end)
   else
+    -- TODO use callback once async/await is available
     local git_status = Runner.run(opts)
     reload_git_status(project_root, path, project, git_status)
   end
@@ -121,21 +122,22 @@ local function reload_tree_at(project_root)
     return
   end
 
-  M.reload_project(project_root)
-  local git_status = M.get_project(project_root)
+  M.reload_project(project_root, nil, function()
+    local git_status = M.get_project(project_root)
 
-  Iterator.builder(root_node.nodes)
-    :hidden()
-    :applier(function(node)
-      local parent_ignored = explorer_node.is_git_ignored(node.parent)
-      explorer_node.update_git_status(node, parent_ignored, git_status)
-    end)
-    :recursor(function(node)
-      return node.nodes and #node.nodes > 0 and node.nodes
-    end)
-    :iterate()
+    Iterator.builder(root_node.nodes)
+      :hidden()
+      :applier(function(node)
+        local parent_ignored = explorer_node.is_git_ignored(node.parent)
+        explorer_node.update_git_status(node, parent_ignored, git_status)
+      end)
+      :recursor(function(node)
+        return node.nodes and #node.nodes > 0 and node.nodes
+      end)
+      :iterate()
 
-  require("nvim-tree.renderer").draw()
+    require("nvim-tree.renderer").draw()
+  end)
 end
 
 function M.load_project_status(cwd)
