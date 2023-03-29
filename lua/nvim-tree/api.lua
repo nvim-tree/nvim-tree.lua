@@ -130,11 +130,13 @@ local function open_or_expand_or_dir_up(mode)
 end
 
 local function open_preview(node)
-  if node.nodes or node.name == ".." then
-    return
+  if node.name == ".." then
+    require("nvim-tree.actions.root.change-dir").fn ".."
+  elseif node.nodes then
+    require("nvim-tree.lib").expand_or_collapse(node)
+  else
+    edit("preview", node)
   end
-
-  edit("preview", node)
 end
 
 Api.node.open.edit = inject_node(open_or_expand_or_dir_up "edit")
