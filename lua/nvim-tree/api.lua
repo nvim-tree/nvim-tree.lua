@@ -130,7 +130,10 @@ local function open_or_expand_or_dir_up(mode)
 end
 
 local function open_preview(node)
-  if node.nodes or node.name == ".." then
+  if node.name == ".." then
+    return
+  elseif node.nodes then
+    require("nvim-tree.lib").expand_or_collapse(node)
     return
   end
 
