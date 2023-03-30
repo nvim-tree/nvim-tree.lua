@@ -36,7 +36,7 @@ function M.fn(keep_buffers)
       end
     end)
     :recursor(function(n)
-      return n.nodes
+      return n.group_next and { n.group_next } or n.nodes
     end)
     :iterate()
 

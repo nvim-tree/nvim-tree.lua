@@ -44,7 +44,9 @@ function M.fn(path)
       return node.absolute_path == path_real or node.link_to == path_real
     end)
     :applier(function(node)
-      line = line + 1
+      if not node.group_next then
+        line = line + 1
+      end
 
       if vim.tbl_contains(absolute_paths_searched, node.absolute_path) then
         return
@@ -55,14 +57,16 @@ function M.fn(path)
       local link_match = node.link_to and vim.startswith(path_real, node.link_to .. utils.path_separator)
 
       if abs_match or link_match then
-        node.open = true
+        if not node.group_next then
+          node.open = true
+        end
         if #node.nodes == 0 then
           core.get_explorer():expand(node)
         end
       end
     end)
     :recursor(function(node)
-      return node.open and node.nodes
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
 

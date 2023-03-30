@@ -89,7 +89,7 @@ function M.find_node(nodes, fn)
   local node, i = Iterator.builder(nodes)
     :matcher(fn)
     :recursor(function(node)
-      return node.open and #node.nodes > 0 and node.nodes
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
@@ -146,11 +146,14 @@ function M.get_nodes_by_line(nodes_all, line_start)
 
   Iterator.builder(nodes_all)
     :applier(function(node)
+      if node.group_next then
+        return
+      end
       nodes_by_line[line] = node
       line = line + 1
     end)
     :recursor(function(node)
-      return node.open == true and node.nodes
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
 

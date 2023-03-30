@@ -2,6 +2,7 @@ local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local lib = require "nvim-tree.lib"
 
 local M = {}
 
@@ -9,18 +10,13 @@ function M.fn(should_close)
   should_close = should_close or false
 
   return function(node)
+    node = lib.get_last_group_node(node)
     if should_close and node.open then
       node.open = false
       return renderer.draw()
     end
 
-    local parent = node.parent
-
-    if renderer.config.group_empty and parent then
-      while parent.parent and parent.parent.group_next do
-        parent = parent.parent
-      end
-    end
+    local parent = utils.get_parent_of_group(node).parent
 
     if not parent or not parent.parent then
       return view.set_cursor { 1, 0 }
