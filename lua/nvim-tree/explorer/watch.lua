@@ -59,8 +59,9 @@ function M.create_watcher(node)
       else
         log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
       end
-      require("nvim-tree.explorer.reload").refresh_node(node)
-      require("nvim-tree.renderer").draw()
+      require("nvim-tree.explorer.reload").refresh_node(node, function()
+        require("nvim-tree.renderer").draw()
+      end)
     end)
   end
 

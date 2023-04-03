@@ -438,6 +438,11 @@ applying configuration.
           trash = true,
         },
       },
+      experimental = {
+        git = {
+          async = false,
+        },
+      },
       log = {
         enable = false,
         truncate = false,
@@ -1223,6 +1228,16 @@ General UI configuration.
         *nvim-tree.ui.confirm.trash*  (previously `trash.require_confirm`)
         Prompt before trashing.
           Type: `boolean`, Default: `true`
+
+*nvim-tree.experimental*
+Experimental features that may become default or optional functionality.
+
+    *nvim-tree.experimental.git.async*
+    Direct file writes and `.git/` writes are executed asynchronously: the
+    git process runs in the background. The tree updates on completion.
+    Other git actions such as first tree draw and explicit refreshes are still
+    done in the foreground.
+      Type: `boolean`, Default: `false`
 
 *nvim-tree.log*
 Configuration for diagnostic logging.
