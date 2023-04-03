@@ -868,8 +868,10 @@ UI rendering setup
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_opened_files*
-    Highlight icons and/or names for opened files using the
+    Highlight icons and/or names for |bufloaded()| files using the
     `NvimTreeOpenedFile` highlight group.
+    See |nvim-tree.api.navigate.opened.next()| and
+    |nvim-tree.api.navigate.opened.prev()|
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
@@ -1033,7 +1035,7 @@ Filtering options.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.filters.no_buffer*
-    Do not show files that have no listed buffer.
+    Do not show files that have no |buflisted()| buffer.
     Toggle via the `toggle_no_buffer` action, default mapping `B`.
     For performance reasons this may not immediately update on buffer
     delete/wipe. A reload or filesystem event will result in an update.
@@ -1269,7 +1271,7 @@ Configuration for diagnostic logging.
           Type: `boolean`, Default: `false`
 
 ==============================================================================
- 5. API                                                   *nvim-tree-api*
+ 5. API                                                        *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features.
 >
@@ -1315,55 +1317,55 @@ api.tree.toggle({opts})                          *nvim-tree.api.tree.toggle()*
                                           |nvim-tree.update_focused_file.update_root|
       • {focus}          (boolean, true)  focus the tree when opening
 
-api.tree.close()                                   *nvim-tree.api.tree.close()*
+api.tree.close()                                  *nvim-tree.api.tree.close()*
     Close the tree, affecting all tabs as per |nvim-tree.tab.sync.close|
 
-api.tree.close_in_this_tab()           *nvim-tree.api.tree.close_in_this_tab()*
+api.tree.close_in_this_tab()          *nvim-tree.api.tree.close_in_this_tab()*
     Close the tree in this tab only.
 
-api.tree.close_in_all_tabs()           *nvim-tree.api.tree.close_in_all_tabs()*
+api.tree.close_in_all_tabs()          *nvim-tree.api.tree.close_in_all_tabs()*
     Close the tree in all tabs.
 
-api.tree.focus()                                   *nvim-tree.api.tree.focus()*
+api.tree.focus()                                  *nvim-tree.api.tree.focus()*
     Focus the tree, opening it if necessary.
 
-api.tree.reload()                                  *nvim-tree.api.tree.reload()*
+api.tree.reload()                                *nvim-tree.api.tree.reload()*
     Refresh the tree. Does nothing if closed.
 
-api.tree.change_root({path})                 *nvim-tree.api.tree.change_root()*
+api.tree.change_root({path})                *nvim-tree.api.tree.change_root()*
     Change the tree's root to a path.
 
     Parameters: ~
       • {path} (string) absolute or relative path
 
-                                     *nvim-tree.api.tree.change_root_to_node()*
+                                    *nvim-tree.api.tree.change_root_to_node()*
 api.tree.change_root_to_node({node})
     Change the tree's root to a folder node or the parent of a file node.
 
     Parameters: ~
       • {node} (Node) folder or file
 
-                                   *nvim-tree.api.tree.change_root_to_parent()*
+                                  *nvim-tree.api.tree.change_root_to_parent()*
 api.tree.change_root_to_parent({node})
     Change the tree's root to the parent of a node.
 
     Parameters: ~
       • {node} (Node) folder or file
 
-api.tree.get_node_under_cursor()   *nvim-tree.api.tree.get_node_under_cursor()*
+api.tree.get_node_under_cursor()  *nvim-tree.api.tree.get_node_under_cursor()*
     Retrieve the currently focused node.
 
     Return: ~
       node or nil if tree is not visible
 
-api.tree.get_nodes()                           *nvim-tree.api.tree.get_nodes()*
+api.tree.get_nodes()                          *nvim-tree.api.tree.get_nodes()*
     Retrieve a hierarchical list of all the nodes. This is a cloned list for
     reference purposes only and should not be passed into other API functions.
 
     Return: ~
       table of nodes
 
-api.tree.find_file({opts})                     *nvim-tree.api.tree.find_file()*
+api.tree.find_file({opts})                    *nvim-tree.api.tree.find_file()*
     Find and focus a file or folder in the tree. Finds current buffer unless
     otherwise specified.
 
@@ -1377,39 +1379,39 @@ api.tree.find_file({opts})                     *nvim-tree.api.tree.find_file()*
     • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
     • {focus}          (boolean, false) focus the tree
 
-api.tree.search_node()                       *nvim-tree.api.tree.search_node()*
+api.tree.search_node()                      *nvim-tree.api.tree.search_node()*
     Open the search dialogue as per the search_node action.
 
-api.tree.collapse_all({keep_buffers})       *nvim-tree.api.tree.collapse_all()*
+api.tree.collapse_all({keep_buffers})      *nvim-tree.api.tree.collapse_all()*
     Collapse the tree.
 
     Parameters: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
-api.tree.expand_all({keep_buffers})           *nvim-tree.api.tree.expand_all()*
+api.tree.expand_all({keep_buffers})          *nvim-tree.api.tree.expand_all()*
     Expand all nodes in the tree.
 
-                                 *nvim-tree.api.tree.toggle_gitignore_filter()*
+                                *nvim-tree.api.tree.toggle_gitignore_filter()*
 api.tree.toggle_gitignore_filter()
     Toggle |nvim-tree.git.ignore| filter.
 
-                                 *nvim-tree.api.tree.toggle_git_clean_filter()*
+                                *nvim-tree.api.tree.toggle_git_clean_filter()*
 api.tree.toggle_git_clean_filter()
     Toggle |nvim-tree.filters.git_clean| filter.
 
-                                 *nvim-tree.api.tree.toggle_no_buffer_filter()*
+                                *nvim-tree.api.tree.toggle_no_buffer_filter()*
 api.tree.toggle_no_buffer_filter()
     Toggle |nvim-tree.filters.no_buffer| filter.
 
-                                    *nvim-tree.api.tree.toggle_custom_filter()*
+                                   *nvim-tree.api.tree.toggle_custom_filter()*
 api.tree.toggle_custom_filter()
     Toggle |nvim-tree.filters.custom| filter.
 
-                                    *nvim-tree.api.tree.toggle_hidden_filter()*
+                                   *nvim-tree.api.tree.toggle_hidden_filter()*
 api.tree.toggle_hidden_filter()
     Toggle |nvim-tree.filters.dotfiles| filter.
 
-api.tree.toggle_help()                       *nvim-tree.api.tree.toggle_help()*
+api.tree.toggle_help()                      *nvim-tree.api.tree.toggle_help()*
     Toggle help view.
 
 - api.fs:                                               *nvim-tree.api.fs*
@@ -1429,7 +1431,7 @@ api.tree.toggle_help()                       *nvim-tree.api.tree.toggle_help()*
     - copy.filename
     - copy.relative_path
 
-- api.node:                                             *nvim-tree.api.node*
+- api.node:                                               *nvim-tree.api.node*
     - open.edit
     - open.replace_tree_buffer
     - open.no_window_picker
@@ -1446,23 +1448,41 @@ api.tree.toggle_help()                       *nvim-tree.api.tree.toggle_help()*
     - navigate.sibling.last
     - navigate.parent
     - navigate.parent_close
-    - navigate.git.next
-    - navigate.git.prev
-    - navigate.diagnostics.next
-    - navigate.diagnostics.prev
 
-- api.git:                                              *nvim-tree.api.git*
+api.node.navigate.git.next()               *nvim-tree.api.navigate.git.next()*
+    Navigate to the next item showing git status.
+
+api.node.navigate.git.prev()               *nvim-tree.api.navigate.git.prev()*
+    Navigate to the previous item showing git status.
+
+                                   *nvim-tree.api.navigate.diagnostics.next()*
+api.node.navigate.diagnostics.next() 
+    Navigate to the next item showing diagnostic status.
+
+                                   *nvim-tree.api.navigate.diagnostics.prev()*
+api.node.navigate.diagnostics.prev()
+    Navigate to the next item showing diagnostic status.
+
+api.node.navigate.opened.next()         *nvim-tree.api.navigate.opened.next()*
+    Navigate to the next |bufloaded()| item.
+    See |nvim-tree.renderer.highlight_opened_files|
+
+api.node.navigate.opened.prev()         *nvim-tree.api.navigate.opened.prev()*
+    Navigate to the previous |bufloaded()| item.
+    See |nvim-tree.renderer.highlight_opened_files|
+
+- api.git:                                                 *nvim-tree.api.git*
     - reload
 
 - api.events:                                           *nvim-tree.api.events*
     - subscribe `(eventType: Event, callback: function(...args))`
     - Event (enum type, please see |nvim_tree_events_kind|)
 
-- api.live_filter:                                      *nvim-tree.api.live_filter*
+- api.live_filter:                                 *nvim-tree.api.live_filter*
     - start
     - clear
 
-- api.marks:                                            *nvim-tree.api.marks*
+- api.marks:                                             *nvim-tree.api.marks*
     - get
     - list
     - toggle
