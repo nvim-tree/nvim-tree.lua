@@ -131,7 +131,7 @@ end
 function Builder:_build_folder(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
-
+  local foldername = get_folder_name(node) .. self.trailing_slash
 
   local icon_hl
   if #icon > 0 then
@@ -143,21 +143,20 @@ function Builder:_build_folder(node)
   end
 
   local foldername_hl = "NvimTreeFolderName"
-  if vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
+  if node.link_to and self.symlink_destination then
+    local arrow = icons.i.symlink_arrow
+    local link_to = utils.path_relative(node.link_to, core.get_cwd())
+    foldername = foldername .. arrow .. link_to
+    foldername_hl = "NvimTreeSymlinkFolderName"
+    icon_hl = "NvimTreeSymlinkFolderName"
+  elseif
+    vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name)
+  then
     foldername_hl = "NvimTreeSpecialFolderName"
   elseif node.open then
     foldername_hl = "NvimTreeOpenedFolderName"
   elseif not has_children then
     foldername_hl = "NvimTreeEmptyFolderName"
-  end
-
-  local foldername = get_folder_name(node) .. self.trailing_slash
-  if node.link_to and self.symlink_destination then
-    local arrow = icons.i.symlink_arrow
-    local link_to = utils.path_relative(node.link_to, core.get_cwd())
-    foldername = foldername .. arrow .. link_to
-    foldername_hl = "NvimTreeFolderSymlink"
-    icon_hl = "NvimTreeFolderSymlink"
   end
 
   return { str = icon, hl = icon_hl }, { str = foldername, hl = foldername_hl }
