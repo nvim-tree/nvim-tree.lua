@@ -1446,45 +1446,90 @@ api.tree.toggle_help()                      *nvim-tree.api.tree.toggle_help()*
     - copy.filename
     - copy.relative_path
 
-- api.node:                                               *nvim-tree.api.node*
-    - open.edit
-    - open.replace_tree_buffer
-    - open.no_window_picker
-    - open.vertical
-    - open.horizontal
-    - open.tab
-    - open.preview
-    - show_info_popup
-    - run.cmd
-    - run.system
-    - navigate.sibling.next
-    - navigate.sibling.prev
-    - navigate.sibling.first
-    - navigate.sibling.last
-    - navigate.parent
-    - navigate.parent_close
+api.node.open.edit()                          *nvim-tree.api.node.open.edit()*
+    File:   open as per |nvim-tree.actions.open_file|
+    Folder: expand or collapse
+    Root:   change directory up
 
-api.node.navigate.git.next()               *nvim-tree.api.navigate.git.next()*
+                               *nvim-tree.api.node.open.replace_tree_buffer()*
+api.node.open.replace_tree_buffer()
+    |nvim-tree.api.node.edit()|, file will be opened in place: in the
+    nvim-tree window.
+
+                                  *nvim-tree.api.node.open.no_window_picker()*
+api.node.open.no_window_picker()
+    |nvim-tree.api.node.edit()|, window picker will never be used as per
+    |nvim-tree.actions.open_file.window_picker.enable| `false`
+
+api.node.open.vertical()                  *nvim-tree.api.node.open.vertical()*
+    |nvim-tree.api.node.edit()|, file will be opened in a new vertical split.
+
+api.node.open.horizontal()              *nvim-tree.api.node.open.horizontal()*
+    |nvim-tree.api.node.edit()|, file will be opened in a new horizontal split.
+
+api.node.open.tab()                            *nvim-tree.api.node.open.tab()*
+    |nvim-tree.api.node.edit()|, file will be opened in a new tab.
+
+api.node.open.preview()                    *nvim-tree.api.node.open.preview()*
+    |nvim-tree.api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
+
+api.node.node.navigate.git.next()     *nvim-tree.api.node.navigate.git.next()*
     Navigate to the next item showing git status.
 
-api.node.navigate.git.prev()               *nvim-tree.api.navigate.git.prev()*
+api.node.navigate.git.prev()          *nvim-tree.api.node.navigate.git.prev()*
     Navigate to the previous item showing git status.
 
-                                   *nvim-tree.api.navigate.diagnostics.next()*
-api.node.navigate.diagnostics.next() 
+                              *nvim-tree.api.node.navigate.diagnostics.next()*
+api.node.navigate.diagnostics.next()
     Navigate to the next item showing diagnostic status.
 
-                                   *nvim-tree.api.navigate.diagnostics.prev()*
+                              *nvim-tree.api.node.navigate.diagnostics.prev()*
 api.node.navigate.diagnostics.prev()
     Navigate to the next item showing diagnostic status.
 
-api.node.navigate.opened.next()         *nvim-tree.api.navigate.opened.next()*
+                                   *nvim-tree.api.node.navigate.opened.next()*
+api.node.navigate.opened.next()
     Navigate to the next |bufloaded()| item.
     See |nvim-tree.renderer.highlight_opened_files|
 
-api.node.navigate.opened.prev()         *nvim-tree.api.navigate.opened.prev()*
+                                   *nvim-tree.api.node.navigate.opened.prev()*
+api.node.navigate.opened.prev()
     Navigate to the previous |bufloaded()| item.
     See |nvim-tree.renderer.highlight_opened_files|
+
+                                  *nvim-tree.api.node.navigate.sibling.next()*
+api.node.navigate.sibling.next()
+    Navigate to the next node in the current node's folder, wraps.
+
+                                  *nvim-tree.api.node.navigate.sibling.prev()*
+api.node.navigate.sibling.prev()
+    Navigate to the previous node in the current node's folder, wraps.
+
+                                 *nvim-tree.api.node.navigate.sibling.first()*
+api.node.navigate.sibling.first()
+    Navigate to the first node in the current node's folder.
+
+                                  *nvim-tree.api.node.navigate.sibling.last()*
+api.node.navigate.sibling.last()
+    Navigate to the last node in the current node's folder.
+
+                                        *nvim-tree.api.node.navigate.parent()*
+api.node.navigate.parent()
+    Navigate to the parent folder of the current node.
+
+                                  *nvim-tree.api.node.navigate.parent_close()*
+api.node.navigate.parent_close()
+    |api.node.navigate.parent()|, closing that folder.
+
+api.node.show_info_popup()              *nvim-tree.api.node.show_info_popup()*
+    Open a popup window showing: fullpath, size, accessed, modified, created.
+
+api.node.run.cmd()                              *nvim-tree.api.node.run.cmd()*
+    Enter |cmdline| with the full path of the node and the cursor at the start
+    of the line.
+
+api.node.run.system()                        *nvim-tree.api.node.run.system()*
+    Execute |nvim-tree.system_open|
 
 - api.git:                                                 *nvim-tree.api.git*
     - reload
