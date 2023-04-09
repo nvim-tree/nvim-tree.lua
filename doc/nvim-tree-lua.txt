@@ -440,6 +440,7 @@ applying configuration.
       },
       notify = {
         threshold = vim.log.levels.INFO,
+        handler = "default",
       },
       ui = {
         confirm = {
@@ -1223,6 +1224,19 @@ Configuration for notification.
     `WARNING`: non-fatal errors e.g. unable to system open a file.
     `INFO:`    information only e.g. file copy path confirmation.
     `DEBUG:`   not used.
+
+    *nvim-tree.notify.handler*
+    Change the default notification handler, can be a string `"default"` or a function.
+    The default handler will use |vim.notify()|
+      Type: `string` | `function`, Default: `"default"`
+
+    Parameters: ~
+      • {msg}   (string) See |vim.notify()|
+      • {level} (number) See |vim.notify()|
+      • {opts}  (table)  Optional parameters
+
+    Options: ~
+      • {title} (string) Usually `"NvimTree"`
 
 *nvim-tree.ui*
 General UI configuration.

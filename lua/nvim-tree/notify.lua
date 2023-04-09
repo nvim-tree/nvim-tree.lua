@@ -1,7 +1,12 @@
 local M = {}
 
+local fallback_handler = function(msg, level, opts)
+  vim.notify(string.format("[%s] %s", opts.title, vim.inspect(msg)), level)
+end
+
 local config = {
   threshold = vim.log.levels.INFO,
+  handler = fallback_handler,
 }
 
 local modes = {
@@ -13,19 +18,13 @@ local modes = {
 }
 
 do
-  local has_notify, notify_plugin = pcall(require, "notify")
-
   local dispatch = function(level, msg)
     if level < config.threshold then
       return
     end
 
     vim.schedule(function()
-      if has_notify and notify_plugin then
-        notify_plugin(msg, level, { title = "NvimTree" })
-      else
-        vim.notify(string.format("[NvimTree] %s", vim.inspect(msg)), level)
-      end
+      config.handler(msg, level, { title = "NvimTree" })
     end)
   end
 
@@ -36,9 +35,23 @@ do
   end
 end
 
+local create_default_handler = function()
+  local has_notify, notify_plugin = pcall(require, "notify")
+  if has_notify and notify_plugin then
+    return notify_plugin
+  else
+    return fallback_handler
+  end
+end
+
 function M.setup(opts)
   opts = opts or {}
   config.threshold = opts.notify.threshold or vim.log.levels.INFO
+  if type(opts.notify.handler) == "function" then
+    config.handler = opts.notify.handler
+  else
+    config.handler = create_default_handler()
+  end
 end
 
 return M
