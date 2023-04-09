@@ -1403,8 +1403,9 @@ api.tree.collapse_all({keep_buffers})      *nvim-tree.api.tree.collapse_all()*
     Parameters: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
-api.tree.expand_all({keep_buffers})          *nvim-tree.api.tree.expand_all()*
-    Expand all nodes in the tree.
+api.tree.expand_all()                        *nvim-tree.api.tree.expand_all()*
+    Recursively expand all nodes in the tree.
+    Folder: only the nodes underneath that folder.
 
                                 *nvim-tree.api.tree.toggle_gitignore_filter()*
 api.tree.toggle_gitignore_filter()
