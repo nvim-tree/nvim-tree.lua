@@ -1385,14 +1385,14 @@ api.tree.find_file({opts})                    *nvim-tree.api.tree.find_file()*
     otherwise specified.
 
     Parameters: ~
-    • {opts} (table) optional parameters with boolean defaults
+      • {opts} (table) optional parameters with boolean defaults
 
     Options: ~
-    • {buf}            (string|number)  absolute/relative path OR bufnr to find
-    • {open}           (boolean, false) open the tree
-    • {current_window} (boolean, false) requires {open}, open in the current window
-    • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
-    • {focus}          (boolean, false) focus the tree
+      • {buf}            (string|number)  absolute/relative path OR bufnr to find
+      • {open}           (boolean, false) open the tree
+      • {current_window} (boolean, false) requires {open}, open in the current window
+      • {update_root}    (boolean, false) see |nvim-tree.update_focused_file.update_root|
+      • {focus}          (boolean, false) focus the tree
 
 api.tree.search_node()                      *nvim-tree.api.tree.search_node()*
     Open the search dialogue as per the search_node action.
@@ -1532,26 +1532,62 @@ api.node.run.cmd()                              *nvim-tree.api.node.run.cmd()*
 api.node.run.system()                        *nvim-tree.api.node.run.system()*
     Execute |nvim-tree.system_open|
 
-- api.git:                                                 *nvim-tree.api.git*
-    - reload
+api.git.reload()                                  *nvim-tree.api.git.reload()*
+    Update the git status of the entire tree.
 
-- api.events:                                           *nvim-tree.api.events*
-    - subscribe `(eventType: Event, callback: function(...args))`
-    - Event (enum type, please see |nvim_tree_events_kind|)
+                                            *nvim-tree.api.events.subscribe()*
+api.events.subscribe({event_type}, {callback})
+    Register a handler for an event, see |nvim-tree-events|
 
-- api.live_filter:                                 *nvim-tree.api.live_filter*
-    - start
-    - clear
+    Parameters: ~
+      • {event_type} (string)   |nvim-tree.api.events.Event|
+      • {callback}   (function) see |nvim_tree_events_kind| for parameters
 
-- api.marks:                                             *nvim-tree.api.marks*
-    - get
-    - list
-    - toggle
-    - clear
-    - bulk.move
-    - navigate.next
-    - navigate.prev
-    - navigate.select
+api.events.Event                                  *nvim-tree.api.events.Event*
+    String enum: |nvim_tree_events_kind|
+
+
+api.live_filter.start()                    *nvim-tree.api.live_filter.start()*
+    Enter |nvim-tree.live_filter| mode.
+
+api.live_filter.clear()                    *nvim-tree.api.live_filter.clear()*
+    Exit |nvim-tree.live_filter| mode.
+
+api.marks.get({node})                              *nvim-tree.api.marks.get()*
+    Return the node if it is marked.
+
+    Parameters: ~
+      • {node} (Node) folder or file
+
+api.marks.list()                                  *nvim-tree.api.marks.list()*
+    Retrieve all marked nodes.
+
+    Return: ~
+      (table) marked nodes
+
+api.marks.toggle({node})                        *nvim-tree.api.marks.toggle()*
+    Toggle node mark.
+
+    Parameters: ~
+      • {node} (Node) folder or file
+
+api.marks.clear()                                *nvim-tree.api.marks.clear()*
+    Clear all marks.
+
+api.marks.bulk.move()                        *nvim-tree.api.marks.bulk.move()*
+    Prompts for a directory to move all marked nodes into.
+
+api.marks.navigate.next()                *nvim-tree.api.marks.navigate.next()*
+    Navigate to the next marked node, wraps.
+    Opens files as per |nvim-tree.actions.open_file|
+    Works best with |nvim-tree.update_focused_file| enabled.
+
+api.marks.navigate.prev()                *nvim-tree.api.marks.navigate.prev()*
+    As per |nvim-tree.api.marks.navigate.next()|
+
+api.marks.navigate.select()            *nvim-tree.api.marks.navigate.select()*
+    Prompts for selection of a marked node as per
+    |nvim-tree.api.marks.navigate.next()|
 
                            *nvim-tree.api.config.mappings.default_on_attach()*
 api.config.mappings.default_on_attach({bufnr})
@@ -1874,8 +1910,8 @@ to |nvim_tree_registering_handlers| for more information.
 
 |nvim_tree_registering_handlers|
 
-Handlers are registered by calling |nvim-tree-api| `events.subscribe`
-function with an `events.Event` kind.
+Handlers are registered by calling |nvim-tree.api.events.subscribe()|
+function with an |nvim-tree.api.events.Event|
 
 e.g. handler for node renamed: >
     local api = require("nvim-tree.api")
