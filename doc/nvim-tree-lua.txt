@@ -112,19 +112,19 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
 *:NvimTreeOpen*
 
-    Opens the tree. See |nvim-tree.api.tree.open()|
+    Opens the tree. See |nvim-tree-api.tree.open()|
 
     Calls: `api.tree.open({ path = "<arg>" })`
 
 *:NvimTreeClose*
 
-    Closes the tree. See |nvim-tree.api.tree.close()|
+    Closes the tree. See |nvim-tree-api.tree.close()|
 
     Calls: `api.tree.close()`
 
 *:NvimTreeToggle*
 
-    Open or close the tree. See |nvim-tree.api.tree.toggle()|
+    Open or close the tree. See |nvim-tree-api.tree.toggle()|
 
     Calls: `api.tree.toggle({ path = "<arg>" })`
 
@@ -132,13 +132,13 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Open the tree if it is closed, and then focus on the tree.
 
-    See |nvim-tree.api.tree.toggle()|
+    See |nvim-tree-api.tree.toggle()|
 
     Calls: `api.tree.focus()`
 
 *:NvimTreeRefresh*
 
-    Refresh the tree. See |nvim-tree.api.tree.reload()|
+    Refresh the tree. See |nvim-tree-api.tree.reload()|
 
     Calls: `api.tree.reload()`
 
@@ -152,7 +152,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFile!` to update the root.
 
-    See |nvim-tree.api.tree.find_file()|
+    See |nvim-tree-api.tree.find_file()|
 
     Calls: `api.tree.find_file { open = true, update_root = <bang> }`
 
@@ -164,7 +164,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
 
-    See |nvim-tree.api.tree.toggle()|
+    See |nvim-tree-api.tree.toggle()|
 
     Calls: `api.tree.toggle { find_file = true, focus = true, path = "<arg>", update_root = <bang> }`
 
@@ -172,7 +172,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Print clipboard content for both cut and copy
 
-    See |nvim-tree.api.fs.print_clipboard()|
+    See |nvim-tree-api.fs.print_clipboard()|
 
     Calls: `api.fs.print_clipboard()`
 
@@ -188,7 +188,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
 
     Collapses the nvim-tree recursively.
 
-    See |nvim-tree.api.tree.collapse_all()|
+    See |nvim-tree-api.tree.collapse_all()|
 
     Calls: `api.tree.collapse_all(false)`
 
@@ -197,7 +197,7 @@ Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
     Collapses the nvim-tree recursively, but keep the directories open, which are
     used in an open buffer.
 
-    See |nvim-tree.api.tree.collapse_all()|
+    See |nvim-tree-api.tree.collapse_all()|
 
     Calls: `api.tree.collapse_all(true)`
 
@@ -884,8 +884,8 @@ UI rendering setup
     *nvim-tree.renderer.highlight_opened_files*
     Highlight icons and/or names for |bufloaded()| files using the
     `NvimTreeOpenedFile` highlight group.
-    See |nvim-tree.api.navigate.opened.next()| and
-    |nvim-tree.api.navigate.opened.prev()|
+    See |nvim-tree-api.navigate.opened.next()| and
+    |nvim-tree-api.navigate.opened.prev()|
     Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
       Type: `string`, Default: `"none"`
 
@@ -1540,25 +1540,25 @@ node.open.edit()                              *nvim-tree-api.node.open.edit()*
 
                                *nvim-tree-api.node.open.replace_tree_buffer()*
 node.open.replace_tree_buffer()
-    |nvim-tree.api.node.edit()|, file will be opened in place: in the
+    |nvim-tree-api.node.edit()|, file will be opened in place: in the
     nvim-tree window.
 
                                   *nvim-tree-api.node.open.no_window_picker()*
 node.open.no_window_picker()
-    |nvim-tree.api.node.edit()|, window picker will never be used as per
+    |nvim-tree-api.node.edit()|, window picker will never be used as per
     |nvim-tree.actions.open_file.window_picker.enable| `false`
 
 node.open.vertical()                      *nvim-tree-api.node.open.vertical()*
-    |nvim-tree.api.node.edit()|, file will be opened in a new vertical split.
+    |nvim-tree-api.node.edit()|, file will be opened in a new vertical split.
 
 node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
-    |nvim-tree.api.node.edit()|, file will be opened in a new horizontal split.
+    |nvim-tree-api.node.edit()|, file will be opened in a new horizontal split.
 
 node.open.tab()                                *nvim-tree-api.node.open.tab()*
-    |nvim-tree.api.node.edit()|, file will be opened in a new tab.
+    |nvim-tree-api.node.edit()|, file will be opened in a new tab.
 
 node.open.preview()                        *nvim-tree-api.node.open.preview()*
-    |nvim-tree.api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
+    |nvim-tree-api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
 
 node.node.navigate.git.next()         *nvim-tree-api.node.navigate.git.next()*
     Navigate to the next item showing git status.
@@ -1632,7 +1632,7 @@ events.subscribe({event_type},     {callback})
     Register a handler for an event, see |nvim-tree-events|
 
     Parameters: ~
-      • {event_type} (string)   |nvim-tree.api.events.Event|
+      • {event_type} (string)   |nvim-tree-api.events.Event|
       • {callback}   (function) see |nvim_tree_events_kind| for parameters
 
 events.Event                                      *nvim-tree-api.events.Event*
@@ -1681,11 +1681,11 @@ marks.navigate.next()                    *nvim-tree-api.marks.navigate.next()*
     Works best with |nvim-tree.update_focused_file| enabled.
 
 marks.navigate.prev()                    *nvim-tree-api.marks.navigate.prev()*
-    As per |nvim-tree.api.marks.navigate.next()|
+    As per |nvim-tree-api.marks.navigate.next()|
 
 marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
     Prompts for selection of a marked node as per
-    |nvim-tree.api.marks.navigate.next()|
+    |nvim-tree-api.marks.navigate.next()|
 
 ==============================================================================
  5.8 API CONFIG                                         *nvim-tree-api.config*
@@ -1724,7 +1724,7 @@ config.mappings.get_keymap()
                           *nvim-tree-api.config.mappings.get_keymap_default()*
 config.mappings.get_keymap_default()
     Retrieves the buffer local mappings for nvim-tree that are applied by
-    |nvim-tree.api.config.mappings.default_on_attach()|
+    |nvim-tree-api.config.mappings.default_on_attach()|
 
     Return: ~
         (table) as per |nvim_buf_get_keymap()|
@@ -1745,7 +1745,7 @@ commands.get()                                  *nvim-tree-api.commands.get()*
  6. MAPPINGS                                              *nvim-tree-mappings*
 
 Mappings are set via the |nvim-tree.on_attach| function, which is run upon
-creating the nvim-tree buffer. Mappings may be directly to |nvim-tree-api|
+creating the nvim-tree buffer. Mappings may be directly to |nvim-tree-api.
 functions or your own.
 
 When on_attach is not a function, |nvim-tree-mappings-default| will be used.
@@ -1853,7 +1853,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   -- END_DEFAULT_ON_ATTACH
 <
 Alternatively, you may apply these default mappings from your |nvim-tree.on_attach| via
-|nvim-tree.api.config.mappings.default_on_attach()| e.g.
+|nvim-tree-api.config.mappings.default_on_attach()| e.g.
 >
   local function my_on_attach(bufnr)
     local api = require('nvim-tree.api')
@@ -2014,8 +2014,8 @@ to |nvim_tree_registering_handlers| for more information.
 
 |nvim_tree_registering_handlers|
 
-Handlers are registered by calling |nvim-tree.api.events.subscribe()|
-function with an |nvim-tree.api.events.Event|
+Handlers are registered by calling |nvim-tree-api.events.subscribe()|
+function with an |nvim-tree-api.events.Event|
 
 e.g. handler for node renamed: >
     local api = require("nvim-tree.api")
