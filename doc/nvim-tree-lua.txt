@@ -1430,22 +1430,90 @@ api.tree.toggle_hidden_filter()
 api.tree.toggle_help()                      *nvim-tree.api.tree.toggle_help()*
     Toggle help view.
 
-- api.fs:                                               *nvim-tree.api.fs*
-    - create
-    - remove
-    - trash
-    - rename_node `(node: table, modifier?: string vim.fn.fnamemodify argument)`
-    - rename
-    - rename_sub
-    - rename_basename
-    - cut
-    - paste
-    - clear_clipboard
-    - print_clipboard
-    - copy.node
-    - copy.absolute_path
-    - copy.filename
-    - copy.relative_path
+api.fs.create({node})                              *nvim-tree.api.fs.create()*
+    Prompt to create a file or directory. Use a trailing `/` for a directory.
+
+    Parameters: ~
+      • {node} (Node) parent, uses the parent of a file.
+
+api.fs.remove({node})                              *nvim-tree.api.fs.remove()*
+    Delete a file or folder from the file system.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.trash({node})                                *nvim-tree.api.fs.trash()*
+    Trash a file or folder as per |nvim-tree.trash|
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.rename_node({node})                    *nvim-tree.api.fs.rename_node()*
+    Prompt to rename a file or folder.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.rename({node})                              *nvim-tree.api.fs.rename()*
+    Prompt to rename a file or folder by name.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.rename_basename({node})            *nvim-tree.api.fs.rename_basename()*
+    Prompt to rename a file or folder by name with extension omitted.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.rename_sub({node})                      *nvim-tree.api.fs.rename_sub()*
+    Prompt to rename a file or folder by absolute path with name omitted.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.cut({node})                                    *nvim-tree.api.fs.cut()*
+    Cut a file or folder to the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.paste({node})                                *nvim-tree.api.fs.paste()*
+    Paste a file or folder from the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node} (Node) destination folder, uses the parent of a file.
+
+api.fs.copy.node({node})                        *nvim-tree.api.fs.copy.node()*
+    Copy a file or folder from the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.copy.absolute_path({node})      *nvim-tree.api.fs.copy.absolute_path()*
+    Copy the absolute path of a file or folder to the system clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.copy.filename({node})                *nvim-tree.api.fs.copy.filename()*
+    Copy the name of a file or folder to the system clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.copy.relative_path({node})      *nvim-tree.api.fs.copy.relative_path()*
+    Copy the path of a file or folder relative to the tree root to the system
+    clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+api.fs.clear_clipboard()                  *nvim-tree.api.fs.clear_clipboard()*
+    Clear the nvim-tree clipboard.
+
+api.fs.print_clipboard()                  *nvim-tree.api.fs.print_clipboard()*
+    Print the contents of the nvim-tree clipboard.
 
 api.node.open.edit()                          *nvim-tree.api.node.open.edit()*
     File:   open as per |nvim-tree.actions.open_file|
