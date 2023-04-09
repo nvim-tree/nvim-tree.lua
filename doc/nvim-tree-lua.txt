@@ -1901,6 +1901,12 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                     size:        `number` size of the view in columns.
 
+- Event.WillRenameNode
+                • Note: A node can either be a file or a directory.
+                handler parameters: ~
+                  {old_name}     `{string}` Absolute path to the old node location.
+                  {new_name}     `{string}` Absolute path to the new node location.
+
 - Event.NodeRenamed
                 • Note: A node can either be a file or a directory.
                 handler parameters: ~
