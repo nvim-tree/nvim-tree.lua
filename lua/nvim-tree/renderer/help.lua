@@ -1,3 +1,5 @@
+local view = require "nvim-tree.view"
+
 local M = {}
 
 local function tidy_lhs(lhs)
@@ -59,7 +61,7 @@ local function sort_lhs(a, b)
 end
 
 function M.compute_lines()
-  local help_lines = { "HELP" }
+  local help_lines = { "nvim-tree Mappings" }
   local help_hl = { { "NvimTreeRootFolder", 0, 0, #help_lines[1] } }
 
   local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "")
@@ -84,6 +86,52 @@ function M.compute_lines()
     table.insert(help_hl, { "NvimTreeFileRenamed", num, hl_len, -1 })
   end
   return help_lines, help_hl
+end
+
+function M.show()
+  local help_lines, help_hl = M.compute_lines()
+
+  -- calculate width
+  local width = 1
+  for _, l in ipairs(help_lines) do
+    width = math.max(width, #l)
+  end
+
+  -- create the buffer
+  local bufnr = vim.api.nvim_create_buf(false, true)
+
+  -- populate it
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, help_lines)
+  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+
+  -- highlight it
+  for _, data in ipairs(help_hl) do
+    vim.api.nvim_buf_add_highlight(bufnr, -1, data[1], data[2], data[3], data[4])
+  end
+
+  -- open a very restricted window
+  local winnr = vim.api.nvim_open_win(bufnr, true, {
+    relative = "editor",
+    border = "rounded",
+    width = width,
+    height = #help_lines,
+    row = 1,
+    col = 1,
+    style = "minimal",
+    noautocmd = true,
+  })
+
+  -- style it a bit like the tree
+  vim.wo[winnr].cursorline = view.View.winopts.cursorline
+
+  -- close window and delete buffer on leave
+  vim.api.nvim_create_autocmd("WinLeave", {
+    buffer = bufnr,
+    callback = function()
+      vim.api.nvim_win_close(winnr, true)
+      vim.api.nvim_buf_delete(bufnr, { force = true })
+    end,
+  })
 end
 
 return M
