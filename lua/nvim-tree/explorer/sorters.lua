@@ -87,7 +87,11 @@ function M.sort(t)
       table.insert(origin_index, n)
     end
 
-    C.user(t_user)
+    local predefined = C.user(t_user)
+    if predefined then
+      split_merge(t, 1, #t, get_comparator(predefined))
+      return
+    end
 
     -- do merge sort for prevent memory exceed
     local user_index = {}
