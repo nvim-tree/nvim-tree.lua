@@ -47,8 +47,6 @@ M.View = {
 
 -- The initial state of a tab
 local tabinitial = {
-  -- True if help is displayed
-  help = false,
   -- The position of the cursor { line, column }
   cursor = { 0, 0 },
   -- The NvimTree window number
@@ -432,22 +430,6 @@ end
 ---@return number
 function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
-end
-
---- Checks if nvim-tree is displaying the help ui within the tabpage specified
----@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number|nil
-function M.is_help_ui(tabpage)
-  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  local tabinfo = M.View.tabpages[tabpage]
-  if tabinfo ~= nil then
-    return tabinfo.help
-  end
-end
-
-function M.toggle_help(tabpage)
-  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  M.View.tabpages[tabpage].help = not M.View.tabpages[tabpage].help
 end
 
 function M.is_buf_valid(bufnr)

@@ -24,11 +24,6 @@ function M.get_node_at_cursor()
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
-  if view.is_help_ui() then
-    local help_lines = require("nvim-tree.help").compute_lines()
-    local help_text = utils.get_nodes_by_line(help_lines, 1)[line]
-    return { name = help_text }
-  end
 
   if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
     return { name = ".." }

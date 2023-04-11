@@ -7,7 +7,6 @@ local modified = require "nvim-tree.renderer.components.modified"
 local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
-local help = require "nvim-tree.help"
 local git = require "nvim-tree.renderer.components.git"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
@@ -60,27 +59,21 @@ function M.draw(unloaded_bufnr)
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl
-  local signs = {}
-  if view.is_help_ui() then
-    lines, hl = help.compute_lines()
-  else
-    lines, hl, signs = Builder.new(core.get_cwd())
-      :configure_root_label(M.config.root_folder_label)
-      :configure_trailing_slash(M.config.add_trailing)
-      :configure_special_files(M.config.special_files)
-      :configure_picture_map(picture_map)
-      :configure_opened_file_highlighting(M.config.highlight_opened_files)
-      :configure_modified_highlighting(M.config.highlight_modified)
-      :configure_icon_padding(M.config.icons.padding)
-      :configure_git_icons_placement(M.config.icons.git_placement)
-      :configure_modified_placement(M.config.icons.modified_placement)
-      :configure_symlink_destination(M.config.symlink_destination)
-      :configure_filter(live_filter.filter, live_filter.prefix)
-      :build_header(view.is_root_folder_visible(core.get_cwd()))
-      :build(core.get_explorer(), unloaded_bufnr)
-      :unwrap()
-  end
+  local lines, hl, signs = Builder.new(core.get_cwd())
+    :configure_root_label(M.config.root_folder_label)
+    :configure_trailing_slash(M.config.add_trailing)
+    :configure_special_files(M.config.special_files)
+    :configure_picture_map(picture_map)
+    :configure_opened_file_highlighting(M.config.highlight_opened_files)
+    :configure_modified_highlighting(M.config.highlight_modified)
+    :configure_icon_padding(M.config.icons.padding)
+    :configure_git_icons_placement(M.config.icons.git_placement)
+    :configure_modified_placement(M.config.icons.modified_placement)
+    :configure_symlink_destination(M.config.symlink_destination)
+    :configure_filter(live_filter.filter, live_filter.prefix)
+    :build_header(view.is_root_folder_visible(core.get_cwd()))
+    :build(core.get_explorer(), unloaded_bufnr)
+    :unwrap()
 
   _draw(bufnr, lines, hl, signs)
 
@@ -90,13 +83,8 @@ function M.draw(unloaded_bufnr)
     vim.api.nvim_win_set_cursor(view.get_winnr(), cursor)
   end
 
-  if view.is_help_ui() then
-    diagnostics.clear()
-    marks.clear()
-  else
-    diagnostics.update()
-    marks.draw()
-  end
+  diagnostics.update()
+  marks.draw()
 
   view.grow_from_content()
 

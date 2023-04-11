@@ -171,7 +171,7 @@ local function open()
     "n",
     "q",
     close,
-    { desc = "nvim-tree: quit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true }
+    { desc = "nvim-tree: exit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true }
   )
 
   -- close window and delete buffer on leave
