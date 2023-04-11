@@ -1,6 +1,10 @@
 local view = require "nvim-tree.view"
 
-local M = {}
+local M = {
+  -- one and only buf/win
+  bufnr = nil,
+  winnr = nil,
+}
 
 local function tidy_lhs(lhs)
   -- nvim_buf_get_keymap replaces leading "<" with "<lt>" e.g. "<lt>CTRL-v>"
@@ -88,33 +92,49 @@ function M.compute_lines()
   return help_lines, help_hl
 end
 
-function M.show()
-  local help_lines, help_hl = M.compute_lines()
+--- close the window and delete the buffer, if they exist
+local function close()
+  if M.winnr then
+    vim.api.nvim_win_close(M.winnr, true)
+    M.winnr = nil
+  end
+  if M.bufnr then
+    vim.api.nvim_buf_delete(M.bufnr, { force = true })
+    M.bufnr = nil
+  end
+end
+
+--- open a new window and buffer
+local function open()
+  -- close existing, shouldn't be necessary
+  close()
+
+  local lines, hl = M.compute_lines()
 
   -- calculate width
   local width = 1
-  for _, l in ipairs(help_lines) do
+  for _, l in ipairs(lines) do
     width = math.max(width, #l)
   end
 
   -- create the buffer
-  local bufnr = vim.api.nvim_create_buf(false, true)
+  M.bufnr = vim.api.nvim_create_buf(false, true)
 
   -- populate it
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, help_lines)
-  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+  vim.api.nvim_buf_set_lines(M.bufnr, 0, -1, false, lines)
+  vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false)
 
   -- highlight it
-  for _, data in ipairs(help_hl) do
-    vim.api.nvim_buf_add_highlight(bufnr, -1, data[1], data[2], data[3], data[4])
+  for _, data in ipairs(hl) do
+    vim.api.nvim_buf_add_highlight(M.bufnr, -1, data[1], data[2], data[3], data[4])
   end
 
   -- open a very restricted window
-  local winnr = vim.api.nvim_open_win(bufnr, true, {
+  M.winnr = vim.api.nvim_open_win(M.bufnr, true, {
     relative = "editor",
     border = "rounded",
     width = width,
-    height = #help_lines,
+    height = #lines,
     row = 1,
     col = 1,
     style = "minimal",
@@ -122,16 +142,22 @@ function M.show()
   })
 
   -- style it a bit like the tree
-  vim.wo[winnr].cursorline = view.View.winopts.cursorline
+  vim.wo[M.winnr].cursorline = view.View.winopts.cursorline
 
   -- close window and delete buffer on leave
   vim.api.nvim_create_autocmd("WinLeave", {
-    buffer = bufnr,
-    callback = function()
-      vim.api.nvim_win_close(winnr, true)
-      vim.api.nvim_buf_delete(bufnr, { force = true })
-    end,
+    buffer = M.bufnr,
+    once = true,
+    callback = close,
   })
+end
+
+function M.toggle()
+  if M.winnr or M.bufnr then
+    close()
+  else
+    open()
+  end
 end
 
 return M
