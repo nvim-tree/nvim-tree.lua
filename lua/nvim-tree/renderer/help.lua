@@ -1,4 +1,5 @@
 local view = require "nvim-tree.view"
+local keymap = require "nvim-tree.keymap"
 
 local M = {
   -- one and only buf/win
@@ -68,11 +69,9 @@ function M.compute_lines()
   local help_lines = { "nvim-tree Mappings" }
   local help_hl = { { "NvimTreeRootFolder", 0, 0, #help_lines[1] } }
 
-  local buf_keymaps = vim.api.nvim_buf_get_keymap(vim.api.nvim_get_current_buf(), "")
-
   local lines = vim.tbl_map(function(bkm)
     return { lhs = tidy_lhs(bkm.lhs), desc = tidy_desc(bkm.desc) }
-  end, buf_keymaps)
+  end, keymap.get_keymap())
 
   table.sort(lines, function(a, b)
     return sort_lhs(a.lhs, b.lhs)
