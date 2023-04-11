@@ -52,14 +52,14 @@ end
 --- @param a string
 --- @param b string
 local function sort_lhs(a, b)
-  -- mouse last
+  -- mouse first
   if a:match(PAT_MOUSE) and not b:match(PAT_MOUSE) then
-    return false
-  elseif not a:match(PAT_MOUSE) and b:match(PAT_MOUSE) then
     return true
+  elseif not a:match(PAT_MOUSE) and b:match(PAT_MOUSE) then
+    return false
   end
 
-  -- ctrl first
+  -- ctrl next
   if a:match(PAT_CTRL) and not b:match(PAT_CTRL) then
     return true
   elseif not a:match(PAT_CTRL) and b:match(PAT_CTRL) then
@@ -73,8 +73,8 @@ local function sort_lhs(a, b)
     return false
   end
 
-  -- lowercase alpha characters only
-  return a:gsub("[^a-zA-Z]", ""):lower() < b:gsub("[^a-zA-Z]", ""):lower()
+  -- remainder alpha
+  return a:gsub("[^a-zA-Z]", "") < b:gsub("[^a-zA-Z]", "")
 end
 
 --- Compute all lines for the buffer
