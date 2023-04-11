@@ -92,49 +92,4 @@ function M._dispatch_tree_attached_post(buf)
   dispatch(M.Event.TreeAttachedPost, buf)
 end
 
---- @deprecated
-function M.on_nvim_tree_ready(handler)
-  M.subscribe(M.Event.Ready, handler)
-end
-
---- @deprecated
-function M.on_node_renamed(handler)
-  M.subscribe(M.Event.NodeRenamed, handler)
-end
-
---- @deprecated
-function M.on_file_created(handler)
-  M.subscribe(M.Event.FileCreated, handler)
-end
-
---- @deprecated
-function M.on_file_removed(handler)
-  M.subscribe(M.Event.FileRemoved, handler)
-end
-
---- @deprecated
-function M.on_folder_created(handler)
-  M.subscribe(M.Event.FolderCreated, handler)
-end
-
---- @deprecated
-function M.on_folder_removed(handler)
-  M.subscribe(M.Event.FolderRemoved, handler)
-end
-
---- @deprecated
-function M.on_tree_open(handler)
-  M.subscribe(M.Event.TreeOpen, handler)
-end
-
---- @deprecated
-function M.on_tree_close(handler)
-  M.subscribe(M.Event.TreeClose, handler)
-end
-
---- @deprecated
-function M.on_tree_resize(handler)
-  M.subscribe(M.Event.Resize, handler)
-end
-
 return M
