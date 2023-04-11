@@ -178,19 +178,6 @@ function M.open(opts)
   events._dispatch_on_tree_open()
 end
 
--- @deprecated: use nvim-tree.actions.tree-modifiers.collapse-all.fn
-M.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn
--- @deprecated: use nvim-tree.actions.root.dir-up.fn
-M.dir_up = require("nvim-tree.actions.root.dir-up").fn
--- @deprecated: use nvim-tree.actions.root.change-dir.fn
-M.change_dir = require("nvim-tree.actions.root.change-dir").fn
--- @deprecated: use nvim-tree.actions.reloaders.reloaders.reload_explorer
-M.refresh_tree = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
--- @deprecated: use nvim-tree.actions.reloaders.reloaders.reload_git
-M.reload_git = require("nvim-tree.actions.reloaders.reloaders").reload_git
--- @deprecated: use nvim-tree.actions.finders.find-file.fn
-M.set_index_and_redraw = require("nvim-tree.actions.finders.find-file").fn
-
 function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
   M.hijack_directories = opts.hijack_directories
