@@ -179,7 +179,7 @@ Api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions.moves.item"
 
 Api.git.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_git)
 
-Api.events.subscribe = wrap(require("nvim-tree.events").subscribe)
+Api.events.subscribe = require("nvim-tree.events").subscribe
 Api.events.Event = require("nvim-tree.events").Event
 
 Api.live_filter.start = wrap(require("nvim-tree.live-filter").start_filtering)
