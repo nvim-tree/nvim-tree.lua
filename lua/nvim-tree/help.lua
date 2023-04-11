@@ -82,8 +82,8 @@ end
 --- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
 --- @return number maximum length of text
 local function compute()
-  local lines = { "nvim-tree Mappings" }
-  local hl = { { "NvimTreeRootFolder", 0, 0, #lines[1] } }
+  local lines = { "nvim-tree mappings   exit: q" }
+  local hl = { { "NvimTreeRootFolder", 0, 0, 18 } }
   local width = 0
 
   -- formatted lhs and desc from active keymap
@@ -146,8 +146,8 @@ local function open()
   vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false)
 
   -- highlight it
-  for _, data in ipairs(hl) do
-    vim.api.nvim_buf_add_highlight(M.bufnr, -1, data[1], data[2], data[3], data[4])
+  for _, h in ipairs(hl) do
+    vim.api.nvim_buf_add_highlight(M.bufnr, -1, h[1], h[2], h[3], h[4])
   end
 
   -- open a very restricted window
@@ -165,6 +165,14 @@ local function open()
   -- style it a bit like the tree
   vim.wo[M.winnr].winhl = WIN_HL
   vim.wo[M.winnr].cursorline = M.config.cursorline
+
+  -- quit binding
+  vim.keymap.set(
+    "n",
+    "q",
+    close,
+    { desc = "nvim-tree: quit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true }
+  )
 
   -- close window and delete buffer on leave
   vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
