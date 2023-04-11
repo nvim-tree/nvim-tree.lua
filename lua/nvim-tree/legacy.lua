@@ -43,6 +43,12 @@ local function refactored(opts)
   end
 end
 
+local function deprecated(opts)
+  if opts.view.hide_root_folder then
+    notify.info "view.hide_root_folder is deprecated, please set renderer.root_folder_label = false"
+  end
+end
+
 local function removed(opts)
   if opts.auto_close then
     notify.warn "auto close feature has been removed, see note in the README (tips & reminder section)"
@@ -63,6 +69,9 @@ end
 function M.migrate_legacy_options(opts)
   -- silently move
   refactored(opts)
+
+  -- warn
+  deprecated(opts)
 
   -- warn and delete
   removed(opts)
