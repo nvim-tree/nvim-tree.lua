@@ -1,12 +1,19 @@
 local view = require "nvim-tree.view"
 local keymap = require "nvim-tree.keymap"
 
+local PAT_MOUSE = "^<.*Mouse"
+local PAT_CTRL = "^<C%-"
+local PAT_SPECIAL = "^<.+"
+
 local M = {
   -- one and only buf/win
   bufnr = nil,
   winnr = nil,
 }
 
+--- Shorten and normalise a vim command lhs
+--- @param lhs string
+--- @return string
 local function tidy_lhs(lhs)
   -- nvim_buf_get_keymap replaces leading "<" with "<lt>" e.g. "<lt>CTRL-v>"
   lhs = lhs:gsub("^<lt>", "<")
@@ -30,15 +37,14 @@ end
 --- Remove prefix 'nvim-tree: '
 --- Hardcoded to keep default_on_attach simple
 --- @param desc string
---- @return string|nil
+--- @return string
 local function tidy_desc(desc)
   return desc and desc:gsub("^nvim%-tree: ", "") or ""
 end
 
--- sort lhs roughly as per :help index
-local PAT_MOUSE = "^<.*Mouse"
-local PAT_CTRL = "^<C%-"
-local PAT_SPECIAL = "^<.+"
+--- sort vim command lhs roughly as per :help index
+--- @param a string
+--- @param b string
 local function sort_lhs(a, b)
   -- mouse last
   if a:match(PAT_MOUSE) and not b:match(PAT_MOUSE) then
@@ -65,30 +71,45 @@ local function sort_lhs(a, b)
   return a:gsub("[^a-zA-Z]", ""):lower() < b:gsub("[^a-zA-Z]", ""):lower()
 end
 
-function M.compute_lines()
-  local help_lines = { "nvim-tree Mappings" }
-  local help_hl = { { "NvimTreeRootFolder", 0, 0, #help_lines[1] } }
+--- Compute all lines for the buffer
+--- @return table strings of text
+--- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
+--- @return number maximum length of text
+function M.compute()
+  local lines = { "nvim-tree Mappings" }
+  local hl = { { "NvimTreeRootFolder", 0, 0, #lines[1] } }
+  local width = 0
 
-  local lines = vim.tbl_map(function(bkm)
-    return { lhs = tidy_lhs(bkm.lhs), desc = tidy_desc(bkm.desc) }
+  -- formatted lhs and desc from active keymap
+  local mappings = vim.tbl_map(function(map)
+    return { lhs = tidy_lhs(map.lhs), desc = tidy_desc(map.desc) }
   end, keymap.get_keymap())
 
-  table.sort(lines, function(a, b)
+  -- sort roughly by lhs
+  table.sort(mappings, function(a, b)
     return sort_lhs(a.lhs, b.lhs)
   end)
 
-  local num = 0
-  for _, p in pairs(lines) do
-    num = num + 1
-    local bind_string = string.format("%-5s %s", p.lhs, p.desc)
-    local hl_len = math.max(5, string.len(p.lhs))
-    table.insert(help_lines, bind_string)
-
-    table.insert(help_hl, { "NvimTreeFolderName", num, 0, hl_len })
-
-    table.insert(help_hl, { "NvimTreeFileRenamed", num, hl_len, -1 })
+  -- longest lhs and description
+  local max_lhs = 0
+  local max_desc = 0
+  for _, l in pairs(mappings) do
+    max_lhs = math.max(#l.lhs, max_lhs)
+    max_desc = math.max(#l.desc, max_desc)
   end
-  return help_lines, help_hl
+
+  local fmt = string.format("%%-%ds %%-%ds", max_lhs, max_desc)
+  for i, l in ipairs(mappings) do
+    -- format in left aligned columns
+    local line = string.format(fmt, l.lhs, l.desc)
+    table.insert(lines, line)
+    width = math.max(#line, width)
+
+    -- highlight lhs
+    table.insert(hl, { "NvimTreeFolderName", i, 0, #l.lhs })
+  end
+
+  return lines, hl, width
 end
 
 --- close the window and delete the buffer, if they exist
@@ -108,13 +129,8 @@ local function open()
   -- close existing, shouldn't be necessary
   close()
 
-  local lines, hl = M.compute_lines()
-
-  -- calculate width
-  local width = 1
-  for _, l in ipairs(lines) do
-    width = math.max(width, #l)
-  end
+  -- text and highlight
+  local lines, hl, width = M.compute()
 
   -- create the buffer
   M.bufnr = vim.api.nvim_create_buf(false, true)
@@ -144,7 +160,7 @@ local function open()
   vim.wo[M.winnr].cursorline = view.View.winopts.cursorline
 
   -- close window and delete buffer on leave
-  vim.api.nvim_create_autocmd("WinLeave", {
+  vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
     buffer = M.bufnr,
     once = true,
     callback = close,
