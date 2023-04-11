@@ -1,11 +1,17 @@
-local view = require "nvim-tree.view"
 local keymap = require "nvim-tree.keymap"
 
 local PAT_MOUSE = "^<.*Mouse"
 local PAT_CTRL = "^<C%-"
 local PAT_SPECIAL = "^<.+"
 
+local WIN_HL = table.concat({
+  "Normal:NvimTreeNormal",
+  "CursorLine:NvimTreeCursorLine",
+}, ",")
+
 local M = {
+  config = {},
+
   -- one and only buf/win
   bufnr = nil,
   winnr = nil,
@@ -75,7 +81,7 @@ end
 --- @return table strings of text
 --- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
 --- @return number maximum length of text
-function M.compute()
+local function compute()
   local lines = { "nvim-tree Mappings" }
   local hl = { { "NvimTreeRootFolder", 0, 0, #lines[1] } }
   local width = 0
@@ -130,7 +136,7 @@ local function open()
   close()
 
   -- text and highlight
-  local lines, hl, width = M.compute()
+  local lines, hl, width = compute()
 
   -- create the buffer
   M.bufnr = vim.api.nvim_create_buf(false, true)
@@ -157,7 +163,8 @@ local function open()
   })
 
   -- style it a bit like the tree
-  vim.wo[M.winnr].cursorline = view.View.winopts.cursorline
+  vim.wo[M.winnr].winhl = WIN_HL
+  vim.wo[M.winnr].cursorline = M.config.cursorline
 
   -- close window and delete buffer on leave
   vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
@@ -173,6 +180,10 @@ function M.toggle()
   else
     open()
   end
+end
+
+function M.setup(opts)
+  M.config.cursorline = opts.view.cursorline
 end
 
 return M

@@ -771,6 +771,7 @@ function M.setup(conf)
   require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
   require("nvim-tree.modified").setup(opts)
+  require("nvim-tree.help").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end
