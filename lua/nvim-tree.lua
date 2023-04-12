@@ -595,7 +595,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
-  root_folder_label = { ["function"] = true, string = true },
+  root_folder_label = { ["function"] = true, string = true, boolean = true },
   picker = { ["function"] = true, string = true },
 }
 
