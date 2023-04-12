@@ -112,7 +112,7 @@ local function compute()
     width = math.max(#line, width)
 
     -- highlight lhs
-    table.insert(hl, { "NvimTreeFolderName", i, 0, #l.lhs })
+    table.insert(hl, { "NvimTreeFolderName", i, 0, #l.lhs + 1 })
   end
 
   return lines, hl, width
