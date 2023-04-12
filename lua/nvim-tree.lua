@@ -12,7 +12,6 @@ local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
-local notify = require "nvim-tree.notify"
 local keymap_legacy = require "nvim-tree.keymap-legacy"
 local find_file = require "nvim-tree.actions.tree.find-file"
 local open = require "nvim-tree.actions.tree.open"
@@ -20,7 +19,6 @@ local open = require "nvim-tree.actions.tree.open"
 local _config = {}
 
 local M = {
-  setup_called = false,
   init_root = "",
 }
 
@@ -117,15 +115,8 @@ function M.tab_enter()
   end
 end
 
-local function find_existing_windows()
-  return vim.tbl_filter(function(win)
-    local buf = vim.api.nvim_win_get_buf(win)
-    return vim.api.nvim_buf_get_name(buf):match "NvimTree" ~= nil
-  end, vim.api.nvim_list_wins())
-end
-
 function M.open_on_directory()
-  local should_proceed = M.initialized and (_config.hijack_directories.auto_open or view.is_visible())
+  local should_proceed = _config.hijack_directories.auto_open or view.is_visible()
   if not should_proceed then
     return
   end
@@ -165,70 +156,6 @@ function M.place_cursor_on_node()
   if idx >= 0 then
     vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
   end
-end
-
-function M.on_enter(netrw_disabled)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local buftype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  local ft_ignore = _config.ignore_ft_on_setup
-
-  local stats = vim.loop.fs_stat(bufname)
-  local is_dir = stats and stats.type == "directory"
-  local is_file = stats and stats.type == "file"
-
-  local lines = not is_dir and vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) or {}
-  local buf_has_content = #lines > 1 or (#lines == 1 and lines[1] ~= "")
-
-  local buf_is_dir = is_dir and netrw_disabled
-  local buf_is_empty = bufname == "" and not buf_has_content
-  local should_be_preserved = vim.tbl_contains(ft_ignore, buftype)
-
-  local should_open = false
-  local should_focus_other_window = false
-  local should_find = false
-  if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
-    if buf_is_dir or buf_is_empty then
-      should_open = true
-    elseif is_file and _config.open_on_setup_file then
-      should_open = true
-      should_focus_other_window = true
-      should_find = _config.update_focused_file.enable
-    elseif _config.ignore_buffer_on_setup then
-      should_open = true
-      should_focus_other_window = true
-    end
-  end
-
-  local should_hijack = _config.hijack_directories.enable
-    and _config.hijack_directories.auto_open
-    and is_dir
-    and not should_be_preserved
-
-  -- Session that left a NvimTree Buffer opened, reopen with it
-  local existing_tree_wins = find_existing_windows()
-  if existing_tree_wins[1] then
-    vim.api.nvim_set_current_win(existing_tree_wins[1])
-  end
-
-  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
-    local cwd
-    if is_dir then
-      cwd = vim.fn.expand(vim.fn.fnameescape(bufname))
-      -- INFO: could potentially conflict with rooter plugins
-      vim.cmd("noautocmd cd " .. vim.fn.fnameescape(cwd))
-    end
-
-    lib.open { path = cwd }
-
-    if should_focus_other_window then
-      vim.cmd "noautocmd wincmd p"
-      if should_find then
-        find_file.fn()
-      end
-    end
-  end
-  M.initialized = true
 end
 
 function M.get_config()
@@ -418,9 +345,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
-  ignore_buffer_on_setup = false,
-  open_on_setup = false,
-  open_on_setup_file = false,
   sort_by = "name",
   root_dirs = {},
   prefer_startup_root = false,
@@ -531,7 +455,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     update_root = false,
     ignore_list = {},
   },
-  ignore_ft_on_setup = {},
   system_open = {
     cmd = "",
     args = {},
@@ -672,7 +595,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
-  root_folder_label = { ["function"] = true, string = true },
+  root_folder_label = { ["function"] = true, string = true, boolean = true },
   picker = { ["function"] = true, string = true },
 }
 
@@ -738,10 +661,6 @@ function M.setup(conf)
   _config.root_dirs = opts.root_dirs
   _config.prefer_startup_root = opts.prefer_startup_root
   _config.update_focused_file = opts.update_focused_file
-  _config.open_on_setup = opts.open_on_setup
-  _config.open_on_setup_file = opts.open_on_setup_file
-  _config.ignore_buffer_on_setup = opts.ignore_buffer_on_setup
-  _config.ignore_ft_on_setup = opts.ignore_ft_on_setup
   _config.hijack_directories = opts.hijack_directories
   _config.hijack_directories.enable = _config.hijack_directories.enable and netrw_disabled
 
@@ -778,7 +697,7 @@ function M.setup(conf)
 
   setup_autocommands(opts)
 
-  if not M.setup_called then
+  if vim.g.NvimTreeSetup ~= 1 then
     -- first call to setup
     commands.setup()
   else
@@ -792,23 +711,8 @@ function M.setup(conf)
     end
   end
 
-  M.setup_called = true
-
-  vim.schedule(function()
-    if
-      #opts.ignore_ft_on_setup > 0
-      or opts.open_on_setup == true
-      or opts.open_on_setup_file
-      or opts.ignore_buffer_on_setup
-    then
-      notify.info "open_on_setup behaviour has been deprecated, please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
-      M.on_enter(netrw_disabled)
-    else
-      M.initialized = true
-    end
-    vim.g.NvimTreeSetup = 1
-    vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
-  end)
+  vim.g.NvimTreeSetup = 1
+  vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
 end
 
 vim.g.NvimTreeRequired = 1
