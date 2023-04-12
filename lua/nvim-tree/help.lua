@@ -82,7 +82,6 @@ end
 --- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
 --- @return number maximum length of text
 local function compute()
-  local lines = { "nvim-tree mappings   exit: q" }
   local hl = { { "NvimTreeRootFolder", 0, 0, 18 } }
   local width = 0
 
