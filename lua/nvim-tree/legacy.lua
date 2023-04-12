@@ -44,7 +44,7 @@ local function refactored(opts)
 end
 
 local function deprecated(opts)
-  if opts.view.hide_root_folder then
+  if opts.view and opts.view.hide_root_folder then
     notify.info "view.hide_root_folder is deprecated, please set renderer.root_folder_label = false"
   end
 end
