@@ -153,7 +153,7 @@ local function open()
   -- open a very restricted window
   M.winnr = vim.api.nvim_open_win(M.bufnr, true, {
     relative = "editor",
-    border = "rounded",
+    border = "none",
     width = width,
     height = #lines,
     row = 1,
