@@ -105,7 +105,7 @@ local function compute()
   end
 
   local lines = { ("nvim-tree mappings%sexit: q"):format(string.rep(" ", max_desc + max_lhs - 23)) }
-  local fmt = string.format("%%-%ds %%-%ds", max_lhs, max_desc)
+  local fmt = string.format(" %%-%ds %%-%ds", max_lhs, max_desc)
   for i, l in ipairs(mappings) do
     -- format in left aligned columns
     local line = string.format(fmt, l.lhs, l.desc)
