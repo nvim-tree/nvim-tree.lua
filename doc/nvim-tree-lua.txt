@@ -229,9 +229,6 @@ applying configuration.
       hijack_cursor = false,
       hijack_netrw = true,
       hijack_unnamed_buffer_when_opening = false,
-      ignore_buffer_on_setup = false,
-      open_on_setup = false,
-      open_on_setup_file = false,
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
@@ -342,7 +339,6 @@ applying configuration.
         update_root = false,
         ignore_list = {},
       },
-      ignore_ft_on_setup = {},
       system_open = {
         cmd = "",
         args = {},
@@ -484,31 +480,6 @@ Set the following at the very beginning of your `init.lua` / `init.vim`: >
 *nvim-tree.hijack_netrw*
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
-
-*nvim-tree.open_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will automatically open the tree when running setup if startup buffer is
-a directory, is empty or is unnamed. nvim-tree window will be focused.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.open_on_setup_file*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will automatically open the tree when running setup if startup buffer is a file.
-File window will be focused.
-File will be found if update_focused_file is enabled.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.ignore_buffer_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will ignore the buffer, when deciding to open the tree on setup.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.ignore_ft_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-List of filetypes that will prevent `open_on_setup` to open.
-You can use this option if you don't want the tree to open
-in some scenarios (eg using vim startify).
-  Type: {string}, Default: `{}`
 
 *nvim-tree.auto_reload_on_write*
 Reloads the explorer every time a buffer is written to.
