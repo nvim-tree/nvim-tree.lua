@@ -15,10 +15,26 @@ local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
 
+local function create_parent_dir(path)
+  local parent_dir = utils.path_remove_trailing(path:match("^(.*)/[^/]*$") or ".")
+  if not utils.file_exists(parent_dir) then
+    local ok, err = vim.loop.fs_mkdir(parent_dir, 493) -- 493 == 0755 in octal notation
+    if not ok then
+      return false, err
+    end
+  end
+  return true
+end
+
 function M.rename(node, to)
   if utils.file_exists(to) then
     notify.warn(err_fmt(node.absolute_path, to, "file already exists"))
     return
+  end
+
+  local ok, err = create_parent_dir(to)
+  if not ok then
+    return notify.warn(err_fmt(node.absolute_path, to, "could not create parent directory: " .. err))
   end
 
   events._dispatch_will_rename_node(node.absolute_path, to)
@@ -58,16 +74,8 @@ function M.fn(default_modifier)
     local namelen = node.name:len()
     local directory = node.absolute_path:sub(0, namelen * -1 - 1)
     local default_path
-    local prepend = ""
-    local append = ""
     default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
-    if modifier:sub(0, 2) == ":t" then
-      prepend = directory
-    end
-    if modifier == ":t:r" then
-      local extension = vim.fn.fnamemodify(node.name, ":e")
-      append = extension:len() == 0 and "" or "." .. extension
-    end
+
     if modifier == ":p:h" then
       default_path = default_path .. "/"
     end
@@ -76,11 +84,15 @@ function M.fn(default_modifier)
 
     vim.ui.input(input_opts, function(new_file_path)
       utils.clear_prompt()
-      if not new_file_path then
+      if not new_file_path
+
+      then
         return
       end
 
-      M.rename(node, prepend .. new_file_path .. append)
+      local new_file_path_with_parent = directory .. "/" .. new_file_path
+
+      M.rename(node, new_file_path_with_parent)
       if M.enable_reload then
         require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
       end
