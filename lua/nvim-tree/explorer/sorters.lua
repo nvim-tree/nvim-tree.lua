@@ -1,7 +1,13 @@
-local M = {
-  sort_by = nil,
-  node_comparator = nil,
-}
+local M = {}
+
+local C = {}
+
+--- Predefined comparator, defaulting to name
+--- @param sort_by string as per options
+--- @return function
+local function get_comparator(sort_by)
+  return C[sort_by] or C.name
+end
 
 ---Create a shallow copy of a portion of a list.
 ---@param t table
@@ -62,11 +68,10 @@ local function split_merge(t, first, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
----Perform a merge sort on a given list.
----@param t any[]
----@param comparator function|nil
-function M.merge_sort(t, comparator)
-  if type(M.sort_by) == "function" then
+---Perform a merge sort using sort_by option.
+---@param t table nodes
+function M.sort(t)
+  if C.user then
     local t_user = {}
     local origin_index = {}
 
@@ -82,7 +87,11 @@ function M.merge_sort(t, comparator)
       table.insert(origin_index, n)
     end
 
-    M.sort_by(t_user)
+    local predefined = C.user(t_user)
+    if predefined then
+      split_merge(t, 1, #t, get_comparator(predefined))
+      return
+    end
 
     -- do merge sort for prevent memory exceed
     local user_index = {}
@@ -105,12 +114,7 @@ function M.merge_sort(t, comparator)
 
     split_merge(t, 1, #t, mini_comparator) -- sort by user order
   else
-    if not comparator then
-      comparator = function(left, right)
-        return left < right
-      end
-    end
-    split_merge(t, 1, #t, comparator)
+    split_merge(t, 1, #t, get_comparator(M.config.sort_by))
   end
 end
 
@@ -131,15 +135,15 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   end
 end
 
-function M.node_comparator_name_case_sensitive(a, b)
+function C.case_sensitive(a, b)
   return node_comparator_name_ignorecase_or_not(a, b, false)
 end
 
-function M.node_comparator_name_ignorecase(a, b)
+function C.name(a, b)
   return node_comparator_name_ignorecase_or_not(a, b, true)
 end
 
-function M.node_comparator_modification_time(a, b)
+function C.modification_time(a, b)
   if not (a and b) then
     return true
   end
@@ -163,7 +167,7 @@ function M.node_comparator_modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
-function M.node_comparator_extension(a, b)
+function C.extension(a, b)
   if not (a and b) then
     return true
   end
@@ -188,17 +192,11 @@ function M.node_comparator_extension(a, b)
 end
 
 function M.setup(opts)
-  M.sort_by = opts.sort_by
-  if M.sort_by and type(M.sort_by) == "function" then
-    M.node_comparator = M.sort_by
-  elseif M.sort_by == "modification_time" then
-    M.node_comparator = M.node_comparator_modification_time
-  elseif M.sort_by == "case_sensitive" then
-    M.node_comparator = M.node_comparator_name_case_sensitive
-  elseif M.sort_by == "extension" then
-    M.node_comparator = M.node_comparator_extension
-  else
-    M.node_comparator = M.node_comparator_name_ignorecase
+  M.config = {}
+  M.config.sort_by = opts.sort_by
+
+  if type(opts.sort_by) == "function" then
+    C.user = opts.sort_by
   end
 end
 
