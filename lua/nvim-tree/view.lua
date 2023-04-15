@@ -47,8 +47,6 @@ M.View = {
 
 -- The initial state of a tab
 local tabinitial = {
-  -- True if help is displayed
-  help = false,
   -- The position of the cursor { line, column }
   cursor = { 0, 0 },
   -- The NvimTree window number
@@ -93,12 +91,8 @@ local function create_buffer(bufnr)
     vim.bo[M.get_bufnr()][option] = value
   end
 
-  if type(M.on_attach) == "function" then
-    require("nvim-tree.keymap").set_keymaps(M.get_bufnr())
-    M.on_attach(M.get_bufnr())
-  else
-    require("nvim-tree.actions").apply_mappings(M.get_bufnr())
-  end
+  require("nvim-tree.keymap").on_attach(M.get_bufnr())
+
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
@@ -438,22 +432,6 @@ function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
---- Checks if nvim-tree is displaying the help ui within the tabpage specified
----@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@return number|nil
-function M.is_help_ui(tabpage)
-  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  local tabinfo = M.View.tabpages[tabpage]
-  if tabinfo ~= nil then
-    return tabinfo.help
-  end
-end
-
-function M.toggle_help(tabpage)
-  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  M.View.tabpages[tabpage].help = not M.View.tabpages[tabpage].help
-end
-
 function M.is_buf_valid(bufnr)
   return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
 end
@@ -517,7 +495,7 @@ function M.setup(opts)
   M.View.centralize_selection = options.centralize_selection
   M.View.side = (options.side == "right") and "right" or "left"
   M.View.height = options.height
-  M.View.hide_root_folder = options.hide_root_folder
+  M.View.hide_root_folder = options.hide_root_folder or opts.renderer.root_folder_label == false
   M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.cursorline = options.cursorline

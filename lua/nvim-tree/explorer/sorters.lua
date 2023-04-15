@@ -131,7 +131,7 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   end
 end
 
-function M.node_comparator_name_case_sensisive(a, b)
+function M.node_comparator_name_case_sensitive(a, b)
   return node_comparator_name_ignorecase_or_not(a, b, false)
 end
 
@@ -194,7 +194,7 @@ function M.setup(opts)
   elseif M.sort_by == "modification_time" then
     M.node_comparator = M.node_comparator_modification_time
   elseif M.sort_by == "case_sensitive" then
-    M.node_comparator = M.node_comparator_name_case_sensisive
+    M.node_comparator = M.node_comparator_name_case_sensitive
   elseif M.sort_by == "extension" then
     M.node_comparator = M.node_comparator_extension
   else

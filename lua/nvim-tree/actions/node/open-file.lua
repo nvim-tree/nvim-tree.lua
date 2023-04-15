@@ -230,7 +230,9 @@ local function open_in_new_window(filename, mode, win_ids)
     -- modified, and create new split if it is.
     local target_bufid = vim.api.nvim_win_get_buf(target_winid)
     if vim.api.nvim_buf_get_option(target_bufid, "modified") then
-      mode = "vsplit"
+      if not mode:match "split$" then
+        mode = "vsplit"
+      end
     end
   end
 

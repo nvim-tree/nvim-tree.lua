@@ -4,6 +4,10 @@ local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 
+---@class LibOpenOpts
+---@field path string|nil path
+---@field current_window boolean|nil default false
+
 local M = {
   target_winid = nil,
 }
@@ -20,11 +24,6 @@ function M.get_node_at_cursor()
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   local line = cursor[1]
-  if view.is_help_ui() then
-    local help_lines = require("nvim-tree.renderer.help").compute_lines()
-    local help_text = utils.get_nodes_by_line(help_lines, 1)[line]
-    return { name = help_text }
-  end
 
   if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
     return { name = ".." }
@@ -152,7 +151,7 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
 end
 
 ---Open the tree, initialising as needed. Maybe hijack the current buffer.
----@param opts ApiTreeOpenOpts|string|nil legacy case opts is path string
+---@param opts LibOpenOpts|nil
 function M.open(opts)
   opts = opts or {}
 
@@ -173,19 +172,6 @@ function M.open(opts)
   view.restore_tab_state()
   events._dispatch_on_tree_open()
 end
-
--- @deprecated: use nvim-tree.actions.tree-modifiers.collapse-all.fn
-M.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn
--- @deprecated: use nvim-tree.actions.root.dir-up.fn
-M.dir_up = require("nvim-tree.actions.root.dir-up").fn
--- @deprecated: use nvim-tree.actions.root.change-dir.fn
-M.change_dir = require("nvim-tree.actions.root.change-dir").fn
--- @deprecated: use nvim-tree.actions.reloaders.reloaders.reload_explorer
-M.refresh_tree = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
--- @deprecated: use nvim-tree.actions.reloaders.reloaders.reload_git
-M.reload_git = require("nvim-tree.actions.reloaders.reloaders").reload_git
--- @deprecated: use nvim-tree.actions.finders.find-file.fn
-M.set_index_and_redraw = require("nvim-tree.actions.finders.find-file").fn
 
 function M.setup(opts)
   M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening

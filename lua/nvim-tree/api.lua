@@ -1,12 +1,15 @@
+local notify = require "nvim-tree.notify"
+
 local Api = {
   tree = {},
-  node = { navigate = { sibling = {}, git = {}, diagnostics = {} }, run = {}, open = {} },
+  node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {} }, run = {}, open = {} },
   events = {},
   marks = { bulk = {}, navigate = {} },
   fs = { copy = {} },
   git = {},
   live_filter = {},
   config = { mappings = {} },
+  commands = {},
 }
 
 local function inject_node(f)
@@ -22,7 +25,7 @@ end
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 
-Api.tree.open = require("nvim-tree").open
+Api.tree.open = require("nvim-tree.actions.tree.open").fn
 
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
@@ -31,7 +34,7 @@ Api.tree.open = require("nvim-tree").open
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default true
 
-Api.tree.toggle = require("nvim-tree").toggle
+Api.tree.toggle = require("nvim-tree.actions.tree.toggle").fn
 
 Api.tree.close = require("nvim-tree.view").close
 
@@ -39,11 +42,15 @@ Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only
 
 Api.tree.close_in_all_tabs = require("nvim-tree.view").close_all_tabs
 
-Api.tree.focus = require("nvim-tree").focus
+Api.tree.focus = function()
+  require("nvim-tree").focus()
+end
 
 Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
 
-Api.tree.change_root = require("nvim-tree").change_dir
+Api.tree.change_root = function(...)
+  require("nvim-tree").change_dir(...)
+end
 
 Api.tree.change_root_to_node = inject_node(function(node)
   if node.name == ".." then
@@ -59,7 +66,14 @@ Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
 
 Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
 
-Api.tree.find_file = require("nvim-tree.actions.finders.find-file").fn
+---@class ApiTreeFindFileOpts
+---@field buf string|number|nil
+---@field open boolean|nil default false
+---@field current_window boolean|nil default false
+---@field update_root boolean|nil default false
+---@field focus boolean|nil default false
+
+Api.tree.find_file = require("nvim-tree.actions.tree.find-file").fn
 
 Api.tree.search_node = require("nvim-tree.actions.finders.search-node").fn
 
@@ -77,14 +91,14 @@ Api.tree.toggle_custom_filter = require("nvim-tree.actions.tree-modifiers.toggle
 
 Api.tree.toggle_hidden_filter = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles
 
-Api.tree.toggle_help = require("nvim-tree.actions.tree-modifiers.toggles").help
+Api.tree.toggle_help = require("nvim-tree.help").toggle
 
 Api.fs.create = inject_node(require("nvim-tree.actions.fs.create-file").fn)
 Api.fs.remove = inject_node(require("nvim-tree.actions.fs.remove-file").fn)
 Api.fs.trash = inject_node(require("nvim-tree.actions.fs.trash").fn)
 Api.fs.rename_node = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
 Api.fs.rename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
-Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":p")
+Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":p:h")
 Api.fs.rename_basename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
 Api.fs.cut = inject_node(require("nvim-tree.actions.fs.copy-paste").cut)
 Api.fs.paste = inject_node(require("nvim-tree.actions.fs.copy-paste").paste)
@@ -116,11 +130,13 @@ local function open_or_expand_or_dir_up(mode)
 end
 
 local function open_preview(node)
-  if node.nodes or node.name == ".." then
-    return
+  if node.name == ".." then
+    require("nvim-tree.actions.root.change-dir").fn ".."
+  elseif node.nodes then
+    require("nvim-tree.lib").expand_or_collapse(node)
+  else
+    edit("preview", node)
   end
-
-  edit("preview", node)
 end
 
 Api.node.open.edit = inject_node(open_or_expand_or_dir_up "edit")
@@ -144,6 +160,8 @@ Api.node.navigate.git.next = inject_node(require("nvim-tree.actions.moves.item")
 Api.node.navigate.git.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "git"))
 Api.node.navigate.diagnostics.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "diag"))
 Api.node.navigate.diagnostics.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
+Api.node.navigate.opened.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
+Api.node.navigate.opened.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
 
 Api.git.reload = require("nvim-tree.actions.reloaders.reloaders").reload_git
 
@@ -162,7 +180,26 @@ Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
 Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
 Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
 
-Api.config.mappings.active = require("nvim-tree.actions").active_mappings_clone
-Api.config.mappings.default = require("nvim-tree.actions").default_mappings_clone
+Api.config.mappings.default_on_attach = require("nvim-tree.keymap").default_on_attach
+
+Api.config.mappings.active = function()
+  notify.warn "api.config.mappings.active is deprecated in favor of config.mappings.get_keymap"
+  return require("nvim-tree.keymap-legacy").active_mappings_clone()
+end
+Api.config.mappings.default = function()
+  notify.warn "api.config.mappings.default is deprecated in favor of config.mappings.get_keymap_default"
+  return require("nvim-tree.keymap-legacy").default_mappings_clone()
+end
+
+Api.config.mappings.get_keymap = function()
+  return require("nvim-tree.keymap").get_keymap()
+end
+Api.config.mappings.get_keymap_default = function()
+  return require("nvim-tree.keymap").get_keymap_default()
+end
+
+Api.commands.get = function()
+  return require("nvim-tree.commands").get()
+end
 
 return Api
