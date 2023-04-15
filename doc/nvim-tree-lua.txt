@@ -229,9 +229,6 @@ applying configuration.
       hijack_cursor = false,
       hijack_netrw = true,
       hijack_unnamed_buffer_when_opening = false,
-      ignore_buffer_on_setup = false,
-      open_on_setup = false,
-      open_on_setup_file = false,
       sort_by = "name",
       root_dirs = {},
       prefer_startup_root = false,
@@ -342,7 +339,6 @@ applying configuration.
         update_root = false,
         ignore_list = {},
       },
-      ignore_ft_on_setup = {},
       system_open = {
         cmd = "",
         args = {},
@@ -484,31 +480,6 @@ Set the following at the very beginning of your `init.lua` / `init.vim`: >
 *nvim-tree.hijack_netrw*
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
-
-*nvim-tree.open_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will automatically open the tree when running setup if startup buffer is
-a directory, is empty or is unnamed. nvim-tree window will be focused.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.open_on_setup_file*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will automatically open the tree when running setup if startup buffer is a file.
-File window will be focused.
-File will be found if update_focused_file is enabled.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.ignore_buffer_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-Will ignore the buffer, when deciding to open the tree on setup.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.ignore_ft_on_setup*
-Deprecated: please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup
-List of filetypes that will prevent `open_on_setup` to open.
-You can use this option if you don't want the tree to open
-in some scenarios (eg using vim startify).
-  Type: {string}, Default: `{}`
 
 *nvim-tree.auto_reload_on_write*
 Reloads the explorer every time a buffer is written to.
@@ -778,6 +749,7 @@ Window / buffer setup.
       Type: `number`, Default: `15` (ms)
 
     *nvim-tree.view.hide_root_folder*
+    Deprecated: please set |nvim-tree.renderer.root_folder_label| to `false`.
     Hide the path of the current working directory on top of the tree.
       Type: `boolean`, Default: `false`
 
@@ -897,13 +869,14 @@ UI rendering setup
     This can be used with or without the icons.
       Type: `string`, Default `"none"`
 
-    *nvim-tree.renderer.root_folder_label*  (previously `renderer.root_folder_modifier`)
+    *nvim-tree.renderer.root_folder_label*
     In what format to show root folder. See `:help filename-modifiers` for
     available `string` options.
-      Type: `string` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
+    Set to `false` to hide the root folder.
+      Type: `string` or `boolean` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
 
-      Function is passed the absolute path of the root folder and should return a string.
-      e.g. >
+      Function is passed the absolute path of the root folder and should
+      return a string. e.g. >
         my_root_folder_label = function(path)
           return ".../" .. vim.fn.fnamemodify(path, ":t")
         end
