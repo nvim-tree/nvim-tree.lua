@@ -148,7 +148,6 @@ function Builder:_build_folder(node)
     local link_to = utils.path_relative(node.link_to, core.get_cwd())
     foldername = foldername .. arrow .. link_to
     foldername_hl = "NvimTreeSymlinkFolderName"
-    icon_hl = "NvimTreeSymlinkFolderName"
   elseif
     vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name)
   then
