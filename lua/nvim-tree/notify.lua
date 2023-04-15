@@ -13,19 +13,13 @@ local modes = {
 }
 
 do
-  local has_notify, notify_plugin = pcall(require, "notify")
-
   local dispatch = function(level, msg)
     if level < config.threshold then
       return
     end
 
     vim.schedule(function()
-      if has_notify and notify_plugin then
-        notify_plugin(msg, level, { title = "NvimTree" })
-      else
-        vim.notify(string.format("[NvimTree] %s", vim.inspect(msg)), level)
-      end
+      vim.notify(msg, level, { title = "NvimTree" })
     end)
   end
 

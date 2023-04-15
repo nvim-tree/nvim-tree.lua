@@ -49,11 +49,9 @@ body:
       label: "Minimal config"
       description: "Minimal(!) configuration necessary to reproduce the issue.
 
-        (Right click) save [nvt-min.lua](https://raw.githubusercontent.com/nvim-tree/nvim-tree.lua/master/.github/ISSUE_TEMPLATE/nvt-min.lua) to `/tmp` and run using `nvim -nu /tmp/nvt-min.lua`
+        See [wiki: Clean Room Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions.
 
-        If _absolutely_ necessary, add plugins and modify the nvim-tree setup at the indicated lines.
-
-        Paste the contents of your `/tmp/nvt-min.lua` here."
+        Please paste the contents of your `/tmp/nvt-min.lua` here."
       render: lua
     validations:
       required: true

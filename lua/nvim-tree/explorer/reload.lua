@@ -21,10 +21,18 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
-local function reload_and_get_git_project(path)
+-- TODO always use callback once async/await is available
+local function reload_and_get_git_project(path, callback)
   local project_root = git.get_project_root(path)
-  git.reload_project(project_root, path)
-  return project_root, git.get_project(project_root) or {}
+
+  if callback then
+    git.reload_project(project_root, path, function()
+      callback(project_root, git.get_project(project_root) or {})
+    end)
+  else
+    git.reload_project(project_root, path)
+    return project_root, git.get_project(project_root) or {}
+  end
 end
 
 local function update_parent_statuses(node, project, root)
@@ -142,18 +150,32 @@ end
 
 ---Refresh contents and git status for a single node
 ---@param node table
-function M.refresh_node(node)
+function M.refresh_node(node, callback)
   if type(node) ~= "table" then
+    if callback then
+      callback()
+    end
     return
   end
 
   local parent_node = utils.get_parent_of_group(node)
 
-  local project_root, project = reload_and_get_git_project(node.absolute_path)
+  if callback then
+    reload_and_get_git_project(node.absolute_path, function(project_root, project)
+      require("nvim-tree.explorer.reload").reload(parent_node, project)
 
-  require("nvim-tree.explorer.reload").reload(parent_node, project)
+      update_parent_statuses(parent_node, project, project_root)
 
-  update_parent_statuses(parent_node, project, project_root)
+      callback()
+    end)
+  else
+    -- TODO use callback once async/await is available
+    local project_root, project = reload_and_get_git_project(node.absolute_path)
+
+    require("nvim-tree.explorer.reload").reload(parent_node, project)
+
+    update_parent_statuses(parent_node, project, project_root)
+  end
 end
 
 ---Refresh contents and git status for all nodes to a path: actual directory and links
@@ -166,6 +188,9 @@ function M.refresh_nodes_for_path(path)
 
   local profile = log.profile_start("refresh_nodes_for_path %s", path)
 
+  -- avoids cycles
+  local absolute_paths_refreshed = {}
+
   NodeIterator.builder({ explorer })
     :hidden()
     :recursor(function(node)
@@ -177,10 +202,13 @@ function M.refresh_nodes_for_path(path)
       end
     end)
     :applier(function(node)
-      local abs_contains = node.absolute_path and path:match("^" .. node.absolute_path)
-      local link_contains = node.link_to and path:match("^" .. node.link_to)
+      local abs_contains = node.absolute_path and path:find(node.absolute_path, 1, true) == 1
+      local link_contains = node.link_to and path:find(node.link_to, 1, true) == 1
       if abs_contains or link_contains then
-        M.refresh_node(node)
+        if not absolute_paths_refreshed[node.absolute_path] then
+          absolute_paths_refreshed[node.absolute_path] = true
+          M.refresh_node(node)
+        end
       end
     end)
     :iterate()
