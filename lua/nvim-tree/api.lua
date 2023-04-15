@@ -12,7 +12,21 @@ local Api = {
   commands = {},
 }
 
-local function inject_node(f)
+--- Do nothing when setup not called.
+--- f function to invoke
+local function wrap(f)
+  return function()
+    if vim.g.NvimTreeSetup == 1 then
+      return f()
+    else
+      notify.error "nvim-tree setup not called"
+    end
+  end
+end
+
+--- Inject the node as the first argument if absent.
+--- f function to invoke
+local function wrap_node(f)
   return function(node, ...)
     node = node or require("nvim-tree.lib").get_node_at_cursor()
     f(node, ...)
@@ -25,7 +39,7 @@ end
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 
-Api.tree.open = require("nvim-tree.actions.tree.open").fn
+Api.tree.open = wrap(require("nvim-tree.actions.tree.open").fn)
 
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
@@ -34,25 +48,25 @@ Api.tree.open = require("nvim-tree.actions.tree.open").fn
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default true
 
-Api.tree.toggle = require("nvim-tree.actions.tree.toggle").fn
+Api.tree.toggle = wrap(require("nvim-tree.actions.tree.toggle").fn)
 
-Api.tree.close = require("nvim-tree.view").close
+Api.tree.close = wrap(require("nvim-tree.view").close)
 
-Api.tree.close_in_this_tab = require("nvim-tree.view").close_this_tab_only
+Api.tree.close_in_this_tab = wrap(require("nvim-tree.view").close_this_tab_only)
 
-Api.tree.close_in_all_tabs = require("nvim-tree.view").close_all_tabs
+Api.tree.close_in_all_tabs = wrap(require("nvim-tree.view").close_all_tabs)
 
-Api.tree.focus = function()
+Api.tree.focus = wrap(function()
   require("nvim-tree").focus()
-end
+end)
 
-Api.tree.reload = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
+Api.tree.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_explorer)
 
-Api.tree.change_root = function(...)
+Api.tree.change_root = wrap(function(...)
   require("nvim-tree").change_dir(...)
-end
+end)
 
-Api.tree.change_root_to_node = inject_node(function(node)
+Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." then
     require("nvim-tree.actions.root.change-dir").fn ".."
   elseif node.nodes ~= nil then
@@ -60,11 +74,11 @@ Api.tree.change_root_to_node = inject_node(function(node)
   end
 end)
 
-Api.tree.change_root_to_parent = inject_node(require("nvim-tree.actions.root.dir-up").fn)
+Api.tree.change_root_to_parent = wrap_node(require("nvim-tree.actions.root.dir-up").fn)
 
-Api.tree.get_node_under_cursor = require("nvim-tree.lib").get_node_at_cursor
+Api.tree.get_node_under_cursor = wrap(require("nvim-tree.lib").get_node_at_cursor)
 
-Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
+Api.tree.get_nodes = wrap(require("nvim-tree.lib").get_nodes)
 
 ---@class ApiTreeFindFileOpts
 ---@field buf string|number|nil
@@ -73,41 +87,41 @@ Api.tree.get_nodes = require("nvim-tree.lib").get_nodes
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default false
 
-Api.tree.find_file = require("nvim-tree.actions.tree.find-file").fn
+Api.tree.find_file = wrap(require("nvim-tree.actions.tree.find-file").fn)
 
-Api.tree.search_node = require("nvim-tree.actions.finders.search-node").fn
+Api.tree.search_node = wrap(require("nvim-tree.actions.finders.search-node").fn)
 
-Api.tree.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn
+Api.tree.collapse_all = wrap(require("nvim-tree.actions.tree-modifiers.collapse-all").fn)
 
-Api.tree.expand_all = inject_node(require("nvim-tree.actions.tree-modifiers.expand-all").fn)
+Api.tree.expand_all = wrap_node(require("nvim-tree.actions.tree-modifiers.expand-all").fn)
 
-Api.tree.toggle_gitignore_filter = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored
+Api.tree.toggle_gitignore_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").git_ignored)
 
-Api.tree.toggle_git_clean_filter = require("nvim-tree.actions.tree-modifiers.toggles").git_clean
+Api.tree.toggle_git_clean_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").git_clean)
 
-Api.tree.toggle_no_buffer_filter = require("nvim-tree.actions.tree-modifiers.toggles").no_buffer
+Api.tree.toggle_no_buffer_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").no_buffer)
 
-Api.tree.toggle_custom_filter = require("nvim-tree.actions.tree-modifiers.toggles").custom
+Api.tree.toggle_custom_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").custom)
 
-Api.tree.toggle_hidden_filter = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles
+Api.tree.toggle_hidden_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").dotfiles)
 
-Api.tree.toggle_help = require("nvim-tree.actions.tree-modifiers.toggles").help
+Api.tree.toggle_help = wrap(require("nvim-tree.help").toggle)
 
-Api.fs.create = inject_node(require("nvim-tree.actions.fs.create-file").fn)
-Api.fs.remove = inject_node(require("nvim-tree.actions.fs.remove-file").fn)
-Api.fs.trash = inject_node(require("nvim-tree.actions.fs.trash").fn)
-Api.fs.rename_node = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
-Api.fs.rename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
-Api.fs.rename_sub = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":p:h")
-Api.fs.rename_basename = inject_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
-Api.fs.cut = inject_node(require("nvim-tree.actions.fs.copy-paste").cut)
-Api.fs.paste = inject_node(require("nvim-tree.actions.fs.copy-paste").paste)
-Api.fs.clear_clipboard = require("nvim-tree.actions.fs.copy-paste").clear_clipboard
-Api.fs.print_clipboard = require("nvim-tree.actions.fs.copy-paste").print_clipboard
-Api.fs.copy.node = inject_node(require("nvim-tree.actions.fs.copy-paste").copy)
-Api.fs.copy.absolute_path = inject_node(require("nvim-tree.actions.fs.copy-paste").copy_absolute_path)
-Api.fs.copy.filename = inject_node(require("nvim-tree.actions.fs.copy-paste").copy_filename)
-Api.fs.copy.relative_path = inject_node(require("nvim-tree.actions.fs.copy-paste").copy_path)
+Api.fs.create = wrap_node(require("nvim-tree.actions.fs.create-file").fn)
+Api.fs.remove = wrap_node(require("nvim-tree.actions.fs.remove-file").fn)
+Api.fs.trash = wrap_node(require("nvim-tree.actions.fs.trash").fn)
+Api.fs.rename_node = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
+Api.fs.rename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
+Api.fs.rename_sub = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":p:h")
+Api.fs.rename_basename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
+Api.fs.cut = wrap_node(require("nvim-tree.actions.fs.copy-paste").cut)
+Api.fs.paste = wrap_node(require("nvim-tree.actions.fs.copy-paste").paste)
+Api.fs.clear_clipboard = wrap(require("nvim-tree.actions.fs.copy-paste").clear_clipboard)
+Api.fs.print_clipboard = wrap(require("nvim-tree.actions.fs.copy-paste").print_clipboard)
+Api.fs.copy.node = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy)
+Api.fs.copy.absolute_path = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_absolute_path)
+Api.fs.copy.filename = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_filename)
+Api.fs.copy.relative_path = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_path)
 
 local function edit(mode, node)
   local path = node.absolute_path
@@ -139,67 +153,69 @@ local function open_preview(node)
   end
 end
 
-Api.node.open.edit = inject_node(open_or_expand_or_dir_up "edit")
-Api.node.open.replace_tree_buffer = inject_node(open_or_expand_or_dir_up "edit_in_place")
-Api.node.open.no_window_picker = inject_node(open_or_expand_or_dir_up "edit_no_picker")
-Api.node.open.vertical = inject_node(open_or_expand_or_dir_up "vsplit")
-Api.node.open.horizontal = inject_node(open_or_expand_or_dir_up "split")
-Api.node.open.tab = inject_node(open_or_expand_or_dir_up "tabnew")
-Api.node.open.preview = inject_node(open_preview)
+Api.node.open.edit = wrap_node(open_or_expand_or_dir_up "edit")
+Api.node.open.replace_tree_buffer = wrap_node(open_or_expand_or_dir_up "edit_in_place")
+Api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up "edit_no_picker")
+Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
+Api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up "split")
+Api.node.open.tab = wrap_node(open_or_expand_or_dir_up "tabnew")
+Api.node.open.preview = wrap_node(open_preview)
 
-Api.node.show_info_popup = inject_node(require("nvim-tree.actions.node.file-popup").toggle_file_info)
-Api.node.run.cmd = inject_node(require("nvim-tree.actions.node.run-command").run_file_command)
-Api.node.run.system = inject_node(require("nvim-tree.actions.node.system-open").fn)
-Api.node.navigate.sibling.next = inject_node(require("nvim-tree.actions.moves.sibling").fn "next")
-Api.node.navigate.sibling.prev = inject_node(require("nvim-tree.actions.moves.sibling").fn "prev")
-Api.node.navigate.sibling.first = inject_node(require("nvim-tree.actions.moves.sibling").fn "first")
-Api.node.navigate.sibling.last = inject_node(require("nvim-tree.actions.moves.sibling").fn "last")
-Api.node.navigate.parent = inject_node(require("nvim-tree.actions.moves.parent").fn(false))
-Api.node.navigate.parent_close = inject_node(require("nvim-tree.actions.moves.parent").fn(true))
-Api.node.navigate.git.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "git"))
-Api.node.navigate.git.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "git"))
-Api.node.navigate.diagnostics.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "diag"))
-Api.node.navigate.diagnostics.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
-Api.node.navigate.opened.next = inject_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
-Api.node.navigate.opened.prev = inject_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
+Api.node.show_info_popup = wrap_node(require("nvim-tree.actions.node.file-popup").toggle_file_info)
+Api.node.run.cmd = wrap_node(require("nvim-tree.actions.node.run-command").run_file_command)
+Api.node.run.system = wrap_node(require("nvim-tree.actions.node.system-open").fn)
+Api.node.navigate.sibling.next = wrap_node(require("nvim-tree.actions.moves.sibling").fn "next")
+Api.node.navigate.sibling.prev = wrap_node(require("nvim-tree.actions.moves.sibling").fn "prev")
+Api.node.navigate.sibling.first = wrap_node(require("nvim-tree.actions.moves.sibling").fn "first")
+Api.node.navigate.sibling.last = wrap_node(require("nvim-tree.actions.moves.sibling").fn "last")
+Api.node.navigate.parent = wrap_node(require("nvim-tree.actions.moves.parent").fn(false))
+Api.node.navigate.parent_close = wrap_node(require("nvim-tree.actions.moves.parent").fn(true))
+Api.node.navigate.git.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "git"))
+Api.node.navigate.git.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "git"))
+Api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "diag"))
+Api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
+Api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
+Api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
 
-Api.git.reload = require("nvim-tree.actions.reloaders.reloaders").reload_git
+Api.git.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_git)
 
 Api.events.subscribe = require("nvim-tree.events").subscribe
 Api.events.Event = require("nvim-tree.events").Event
 
-Api.live_filter.start = require("nvim-tree.live-filter").start_filtering
-Api.live_filter.clear = require("nvim-tree.live-filter").clear_filter
+Api.live_filter.start = wrap(require("nvim-tree.live-filter").start_filtering)
+Api.live_filter.clear = wrap(require("nvim-tree.live-filter").clear_filter)
 
-Api.marks.get = inject_node(require("nvim-tree.marks").get_mark)
-Api.marks.list = require("nvim-tree.marks").get_marks
-Api.marks.toggle = inject_node(require("nvim-tree.marks").toggle_mark)
-Api.marks.clear = require("nvim-tree.marks").clear_marks
-Api.marks.bulk.move = require("nvim-tree.marks.bulk-move").bulk_move
-Api.marks.navigate.next = require("nvim-tree.marks.navigation").next
-Api.marks.navigate.prev = require("nvim-tree.marks.navigation").prev
-Api.marks.navigate.select = require("nvim-tree.marks.navigation").select
+Api.marks.get = wrap_node(require("nvim-tree.marks").get_mark)
+Api.marks.list = wrap(require("nvim-tree.marks").get_marks)
+Api.marks.toggle = wrap_node(require("nvim-tree.marks").toggle_mark)
+Api.marks.clear = wrap(require("nvim-tree.marks").clear_marks)
+Api.marks.bulk.move = wrap(require("nvim-tree.marks.bulk-move").bulk_move)
+Api.marks.navigate.next = wrap(require("nvim-tree.marks.navigation").next)
+Api.marks.navigate.prev = wrap(require("nvim-tree.marks.navigation").prev)
+Api.marks.navigate.select = wrap(require("nvim-tree.marks.navigation").select)
 
 Api.config.mappings.default_on_attach = require("nvim-tree.keymap").default_on_attach
 
-Api.config.mappings.active = function()
+Api.config.mappings.active = wrap(function()
   notify.warn "api.config.mappings.active is deprecated in favor of config.mappings.get_keymap"
   return require("nvim-tree.keymap-legacy").active_mappings_clone()
-end
+end)
+
 Api.config.mappings.default = function()
   notify.warn "api.config.mappings.default is deprecated in favor of config.mappings.get_keymap_default"
   return require("nvim-tree.keymap-legacy").default_mappings_clone()
 end
 
-Api.config.mappings.get_keymap = function()
+Api.config.mappings.get_keymap = wrap(function()
   return require("nvim-tree.keymap").get_keymap()
-end
-Api.config.mappings.get_keymap_default = function()
-  return require("nvim-tree.keymap").get_keymap_default()
-end
+end)
 
-Api.commands.get = function()
+Api.config.mappings.get_keymap_default = wrap(function()
+  return require("nvim-tree.keymap").get_keymap_default()
+end)
+
+Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
-end
+end)
 
 return Api
