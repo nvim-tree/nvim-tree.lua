@@ -164,13 +164,13 @@ local function on_preview(buf_loaded)
   view.focus()
 end
 
-local function get_target_winid(mode, win_ids)
+local function get_target_winid(mode)
   local target_winid
   if not M.window_picker.enable or mode == "edit_no_picker" then
     target_winid = lib.target_winid
 
     -- first available window
-    if not vim.tbl_contains(win_ids, target_winid) then
+    if not vim.tbl_contains(vim.api.nvim_tabpage_list_wins(0), target_winid) then
       target_winid = first_win_id()
     end
   else
@@ -201,20 +201,21 @@ local function set_current_win_no_autocmd(winid, autocmd)
   vim.opt.eventignore = eventignore
 end
 
-local function open_in_new_window(filename, mode, win_ids)
+local function open_in_new_window(filename, mode)
   if type(mode) ~= "string" then
     mode = ""
   end
 
-  local target_winid = get_target_winid(mode, win_ids)
+  local target_winid = get_target_winid(mode)
   if not target_winid then
     return
   end
 
-  local create_new_window = #vim.api.nvim_list_wins() == 1
+  local win_ids = vim.api.nvim_list_wins()
+  local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
   local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
-  -- Target is invalid or window does not exist in current tabpage: create new window
+  -- Target is invalid: create new window
   if not vim.tbl_contains(win_ids, target_winid) then
     vim.cmd(new_window_side .. " vsplit")
     target_winid = vim.api.nvim_get_current_win()
@@ -287,8 +288,6 @@ function M.fn(mode, filename)
     return edit_in_current_buf(filename)
   end
 
-  local tabpage = vim.api.nvim_get_current_tabpage()
-  local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
   local buf_loaded = is_already_loaded(filename)
 
   local found_win = utils.get_win_buf_from_path(filename)
@@ -297,7 +296,7 @@ function M.fn(mode, filename)
   end
 
   if not found_win then
-    open_in_new_window(filename, mode, win_ids)
+    open_in_new_window(filename, mode)
   else
     vim.api.nvim_set_current_win(found_win)
     vim.bo.bufhidden = ""

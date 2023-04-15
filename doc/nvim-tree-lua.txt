@@ -1121,6 +1121,7 @@ Configuration for various actions.
             Change the default window picker, can be a string `"default"` or a function.
             The function should return the window id that will open the node,
             or `nil` if an invalid window is picked or user cancelled the action.
+            The picker may create a new window.
               Type: `string` | `function`, Default: `"default"`
               e.g. s1n7ax/nvim-window-picker plugin: >
                 window_picker = {
