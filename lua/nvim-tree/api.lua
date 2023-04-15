@@ -15,9 +15,9 @@ local Api = {
 --- Do nothing when setup not called.
 --- f function to invoke
 local function wrap(f)
-  return function()
+  return function(...)
     if vim.g.NvimTreeSetup == 1 then
-      return f()
+      return f(...)
     else
       notify.error "nvim-tree setup not called"
     end
