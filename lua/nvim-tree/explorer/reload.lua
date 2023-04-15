@@ -142,7 +142,7 @@ function M.reload(node, git_status, unloaded_bufnr)
     return ns
   end
 
-  sorters.merge_sort(node.nodes, sorters.node_comparator)
+  sorters.sort(node.nodes)
   live_filter.apply_filter(node)
   log.profile_end(profile)
   return node.nodes

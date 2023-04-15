@@ -491,7 +491,8 @@ Can be one of `name`, `case_sensitive`, `modification_time`, `extension` or a
 function.
   Type: `string` | `function(nodes)`, Default: `"name"`
 
-  Function is passed a table of nodes to be sorted, each node containing:
+  Function may perform a sort or return a string with one of the above
+  methods. It is passed a table of nodes to be sorted, each node containing:
   - `absolute_path`: `string`
   - `executable`:    `boolean`
   - `extension`:     `string`
