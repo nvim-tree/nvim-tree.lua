@@ -595,7 +595,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sort_by = { ["function"] = true, string = true },
-  root_folder_label = { ["function"] = true, string = true },
+  root_folder_label = { ["function"] = true, string = true, boolean = true },
   picker = { ["function"] = true, string = true },
 }
 
@@ -690,6 +690,7 @@ function M.setup(conf)
   require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
   require("nvim-tree.modified").setup(opts)
+  require("nvim-tree.help").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end

@@ -105,7 +105,7 @@ Api.tree.toggle_custom_filter = wrap(require("nvim-tree.actions.tree-modifiers.t
 
 Api.tree.toggle_hidden_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").dotfiles)
 
-Api.tree.toggle_help = wrap(require("nvim-tree.actions.tree-modifiers.toggles").help)
+Api.tree.toggle_help = wrap(require("nvim-tree.help").toggle)
 
 Api.fs.create = wrap_node(require("nvim-tree.actions.fs.create-file").fn)
 Api.fs.remove = wrap_node(require("nvim-tree.actions.fs.remove-file").fn)
