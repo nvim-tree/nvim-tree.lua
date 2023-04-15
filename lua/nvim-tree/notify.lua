@@ -19,7 +19,7 @@ do
     end
 
     vim.schedule(function()
-        vim.notify(msg, level, { title = "NvimTree" })
+      vim.notify(msg, level, { title = "NvimTree" })
     end)
   end
 
