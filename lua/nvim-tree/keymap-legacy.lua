@@ -1,22 +1,10 @@
 local api = require "nvim-tree.api"
 local open_file = require "nvim-tree.actions.node.open-file"
-local keymap = require "nvim-tree.keymap"
 local notify = require "nvim-tree.notify"
 
 local M = {
-  -- only populated when legacy mappings active
+  -- only populated when legacy mappings present
   on_attach_lua = nil,
-
-  -- API config.mappings.active .default
-  legacy_default = {},
-  legacy_active = {},
-
-  -- used by generated on_attach
-  on_attach = {
-    list = {},
-    unmapped_keys = {},
-    remove_defaults = false,
-  },
 }
 
 local BEGIN_ON_ATTACH = [[
@@ -193,19 +181,6 @@ local LEGACY_MAPPINGS = {
 }
 -- stylua: ignore end
 
-local function all_mapped_keys(list)
-  local mapped_keys = {}
-  for _, map in pairs(list) do
-    if map.action ~= "" then
-      local keys = type(map.key) == "table" and map.key or { map.key }
-      for _, key in ipairs(keys) do
-        table.insert(mapped_keys, key)
-      end
-    end
-  end
-  return mapped_keys
-end
-
 local function all_unmapped_keys(list, remove_keys)
   local unmapped_keys = vim.deepcopy(remove_keys)
   for _, map in pairs(list) do
@@ -217,53 +192,6 @@ local function all_unmapped_keys(list, remove_keys)
     end
   end
   return unmapped_keys
-end
-
-local function generate_on_attach_function(list, unmapped_keys, remove_defaults)
-  M.on_attach.list = vim.deepcopy(list)
-  M.on_attach.unmapped_keys = vim.deepcopy(unmapped_keys)
-  M.on_attach.remove_defaults = remove_defaults
-
-  return function(bufnr)
-    -- apply defaults first
-    if not M.on_attach.remove_defaults then
-      keymap.default_on_attach(bufnr)
-    end
-
-    -- explicit removals
-    for _, key in ipairs(M.on_attach.unmapped_keys) do
-      vim.keymap.set("n", key, "", { buffer = bufnr })
-      vim.keymap.del("n", key, { buffer = bufnr })
-    end
-
-    -- mappings
-    for _, m in ipairs(M.on_attach.list) do
-      local keys = type(m.key) == "table" and m.key or { m.key }
-      for _, k in ipairs(keys) do
-        local legacy_mapping = LEGACY_MAPPINGS[m.action] or LEGACY_MAPPINGS[m.cb]
-        if legacy_mapping then
-          -- straight action or cb, which generated an action string at setup time
-          vim.keymap.set(
-            m.mode or "n",
-            k,
-            legacy_mapping.fn,
-            { desc = m.cb or m.action, buffer = bufnr, noremap = true, silent = true, nowait = true }
-          )
-        elseif type(m.action_cb) == "function" then
-          -- action_cb
-          vim.keymap.set(m.mode or "n", k, function()
-            m.action_cb(api.tree.get_node_under_cursor())
-          end, {
-            desc = m.action or "no description",
-            buffer = bufnr,
-            noremap = true,
-            silent = true,
-            nowait = true,
-          })
-        end
-      end
-    end
-  end
 end
 
 local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
@@ -314,59 +242,7 @@ local function generate_on_attach_lua(list, unmapped_keys, remove_defaults)
   return lua .. "\n" .. END_ON_ATTACH
 end
 
-local function generate_legacy_default_mappings()
-  local mappings = {}
-
-  for a, m in pairs(LEGACY_MAPPINGS) do
-    table.insert(mappings, {
-      action = a,
-      desc = m.desc,
-      key = m.key,
-    })
-  end
-
-  return mappings
-end
-
-local function generate_legacy_active_mappings(list, defaults, unmapped_keys, mapped_keys, remove_defaults)
-  local filtered_defaults
-
-  if remove_defaults then
-    --
-    -- unmap all defaults
-    --
-    filtered_defaults = {}
-  else
-    --
-    -- unmap defaults by removal and override
-    --
-    local to_unmap = vim.fn.extend(unmapped_keys, mapped_keys)
-    filtered_defaults = vim.tbl_filter(function(m)
-      if type(m.key) == "table" then
-        m.key = vim.tbl_filter(function(k)
-          return not vim.tbl_contains(to_unmap, k)
-        end, m.key)
-        return #m.key > 0
-      else
-        return not vim.tbl_contains(to_unmap, m.key)
-      end
-    end, vim.deepcopy(defaults))
-  end
-
-  --
-  -- remove user action = ""
-  --
-  local user_map = vim.tbl_filter(function(map)
-    return map.action ~= ""
-  end, list)
-
-  --
-  -- merge
-  --
-  return vim.fn.extend(filtered_defaults, user_map)
-end
-
-function M.generate_legacy_on_attach(opts)
+function M.generate_legacy_on_attach_lua(opts)
   M.on_attach_lua = nil
 
   if type(opts.on_attach) == "function" then
@@ -383,16 +259,11 @@ function M.generate_legacy_on_attach(opts)
     return
   end
 
-  notify.info "view.mappings.list has been deprecated in favour of on_attach. Please run :NvimTreeGenerateOnAttach and visit https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach"
+  notify.error "view.mappings has been replaced by on_attach. Please run :NvimTreeGenerateOnAttach and visit https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach"
 
-  local mapped_keys = all_mapped_keys(list)
   local unmapped_keys = all_unmapped_keys(list, remove_keymaps)
 
-  opts.on_attach = generate_on_attach_function(list, unmapped_keys, remove_defaults)
   M.on_attach_lua = generate_on_attach_lua(list, unmapped_keys, remove_defaults)
-
-  M.legacy_default = generate_legacy_default_mappings()
-  M.legacy_active = generate_legacy_active_mappings(list, M.legacy_default, unmapped_keys, mapped_keys, remove_defaults)
 end
 
 function M.cmd_generate_on_attach()

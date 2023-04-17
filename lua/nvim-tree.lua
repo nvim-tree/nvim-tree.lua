@@ -675,7 +675,7 @@ function M.setup(conf)
     log.raw("config", "%s\n", vim.inspect(opts))
   end
 
-  keymap_legacy.generate_legacy_on_attach(opts)
+  keymap_legacy.generate_legacy_on_attach_lua(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)
