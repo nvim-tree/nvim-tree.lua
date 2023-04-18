@@ -3,6 +3,8 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
+local find_file = require("nvim-tree.actions.finders.find-file").fn
+
 local M = {}
 
 local ALLOWED_MODIFIERS = {
@@ -84,6 +86,8 @@ function M.fn(default_modifier)
       if M.enable_reload then
         require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
       end
+
+      find_file(utils.path_remove_trailing(new_file_path))
     end)
   end
 end
