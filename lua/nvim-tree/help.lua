@@ -82,8 +82,8 @@ end
 --- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
 --- @return number maximum length of text
 local function compute()
-  local hl = { { "NvimTreeRootFolder", 0, 0, 18 } }
-  local width = 0
+  local head_lhs = "nvim-tree mappings"
+  local head_rhs = "exit: q"
 
   -- formatted lhs and desc from active keymap
   local mappings = vim.tbl_map(function(map)
@@ -103,7 +103,15 @@ local function compute()
     max_desc = math.max(#l.desc, max_desc)
   end
 
-  local lines = { ("nvim-tree mappings%sexit: q"):format(string.rep(" ", max_desc + max_lhs - 23)) }
+  -- increase desc if lines are shorter than the header
+  max_desc = math.max(max_desc, #head_lhs + #head_rhs - max_lhs)
+
+  -- header, not padded
+  local hl = { { "NvimTreeRootFolder", 0, 0, #head_lhs } }
+  local lines = { ("%s%s%s"):format(head_lhs, string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs + 2), head_rhs) }
+  local width = #lines[1]
+
+  -- mappings, left padded 1
   local fmt = string.format(" %%-%ds %%-%ds", max_lhs, max_desc)
   for i, l in ipairs(mappings) do
     -- format in left aligned columns
@@ -112,7 +120,7 @@ local function compute()
     width = math.max(#line, width)
 
     -- highlight lhs
-    table.insert(hl, { "NvimTreeFolderName", i, 0, #l.lhs + 1 })
+    table.insert(hl, { "NvimTreeFolderName", i, 1, #l.lhs + 1 })
   end
 
   return lines, hl, width
