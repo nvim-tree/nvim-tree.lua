@@ -1,6 +1,6 @@
 *nvim-tree.lua* A File Explorer For Neovim Written In Lua
 
-Author: Yazdani Kiyan <yazdani.kiyan@protonmail.com>
+Author: Yazdani Kiyan
 
 ==============================================================================
 CONTENTS                                                           *nvim-tree*
@@ -73,39 +73,30 @@ Requirements
 
 ==============================================================================
  2. QUICK START                                         *nvim-tree-quickstart*
+>
+  -- disable netrw at the very start of your init.lua (strongly advised)
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
 
-Setup should be run in a lua file or in a |lua-heredoc| if using in a vim file.
+  -- set termguicolors to enable highlight groups
+  vim.opt.termguicolors = true
 
-    -- examples for your init.lua
+  -- empty setup using defaults
+  require("nvim-tree").setup()
 
-    -- disable netrw at the very start of your init.lua (strongly advised)
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-
-    -- set termguicolors to enable highlight groups
-    vim.opt.termguicolors = true
-
-    -- empty setup using defaults
-    require("nvim-tree").setup()
-
-    -- OR setup with some options
-    require("nvim-tree").setup({
-      sort_by = "case_sensitive",
-      view = {
-        width = 30,
-        mappings = {
-          list = {
-            { key = "u", action = "dir_up" },
-          },
-        },
-      },
-      renderer = {
-        group_empty = true,
-      },
-      filters = {
-        dotfiles = true,
-      },
-    })
+  -- OR setup with some options
+  require("nvim-tree").setup({
+    sort_by = "case_sensitive",
+    view = {
+      width = 30,
+    },
+    renderer = {
+      group_empty = true,
+    },
+    filters = {
+      dotfiles = true,
+    },
+  })
 <
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
@@ -1417,6 +1408,28 @@ tree.toggle_hidden_filter()
 tree.toggle_help()                          *nvim-tree-api.tree.toggle_help()*
     Toggle help view.
 
+tree.is_tree_buf({bufnr})                   *nvim-tree-api.tree.is_tree_buf()*
+    Checks if a buffer is an nvim-tree.
+
+    Parameters: ~
+      • {bufnr} (number|nil) buffer handle, 0 or nil for current buffer
+
+    Return: ~
+      (boolean) buffer is an nvim-tree buffer
+
+tree.is_visible({opts})                      *nvim-tree-api.tree.is_visible()*
+    Checks if nvim-tree is visible on the current, specified or any tab.
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {tabpage}     (number)  as per |nvim_get_current_tabpage()|
+      • {any_tabpage} (boolean) visible on any tab, default false
+
+    Return: ~
+      (boolean) nvim-tree is visible
+
 ==============================================================================
  5.2 API FILE SYSTEM                                        *nvim-tree-api.fs*
 
@@ -1729,28 +1742,26 @@ Active mappings may be viewed via HELP, default `g?`. The mapping's description
 is used when displaying HELP.
 
 The `on_attach` function is passed the `bufnr` of nvim-tree. Use
-|vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g.
->
-    local M = {}
+|vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g. >
 
-    local api = require("nvim-tree.api")
+  local function my_on_attach(bufnr)
+    local api = require('nvim-tree.api')
 
-    function M.on_attach(bufnr)
-      -- put some default mappings here
-	  vim.keymap.set('n', 'h', api.tree.toggle_help,   { desc = 'Help',  buffer = bufnr, noremap = true, silent = true, nowait = true })
-	  vim.keymap.set('n', '?', api.tree.toggle_help,   { desc = 'Help',  buffer = bufnr, noremap = true, silent = true, nowait = true })
-	  vim.keymap.set('n', 'p', M.print_node_path,      { desc = 'Print', buffer = bufnr, noremap = true, silent = true, nowait = true })
+    local function opts(desc)
+      return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    function M.print_node_path()
-      local node = api.tree.get_node_under_cursor()
-      print(node.absolute_path)
-    end
+    -- put some default mappings here
 
-    require("nvim-tree").setup({
-      on_attach = M.on_attach,
-      --
-    })
+    -- user mappings
+    vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
+  end
+
+  require("nvim-tree").setup({
+    ---
+    on_attach = my_on_attach,
+    ---
+  })
 <
 Mouse support is defined in |KeyBindings|
 
@@ -1758,6 +1769,17 @@ Single left mouse mappings can be achieved via `<LeftRelease>`.
 
 Single right / middle mouse mappings will require changes to |mousemodel| or |mouse|.
 
+You may execute your own functions as well as |nvim-tree-api| functions e.g. >
+
+  local function print_node_path()
+    local api = require('nvim-tree.api')
+    local node = api.tree.get_node_under_cursor()
+    print(node.absolute_path)
+  end
+
+  -- on_attach
+  vim.keymap.set('n', '<C-P>', print_node_path, opts('Print Path'))
+<
 ==============================================================================
  6.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*
 

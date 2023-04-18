@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
-<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207026-f3434ba1-dc86-4c48-8ab3-b2efc3b85227.png">
-<img align="left" width="149" height="484" src="https://user-images.githubusercontent.com/17254073/195207023-7b709e35-7f10-416b-aafb-5bb61268c7d3.png">
+<img align="left" width="199" height="598" src="https://user-images.githubusercontent.com/1505378/232662694-8dc494e0-24da-497a-8541-29344293378c.png">
+<img align="left" width="199" height="598" src="https://user-images.githubusercontent.com/1505378/232662698-2f321315-c67a-486b-85d8-8c391de52392.png">
 
    Automatic updates
 
