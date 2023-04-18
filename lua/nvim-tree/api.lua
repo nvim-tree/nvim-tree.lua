@@ -107,6 +107,8 @@ Api.tree.toggle_hidden_filter = wrap(require("nvim-tree.actions.tree-modifiers.t
 
 Api.tree.toggle_help = wrap(require("nvim-tree.help").toggle)
 
+Api.tree.is_tree_buf = wrap(require("nvim-tree.utils").is_nvim_tree_buf)
+
 ---@class ApiTreeIsVisibleOpts
 ---@field tabpage number|nil
 ---@field any_tabpage boolean|nil default false

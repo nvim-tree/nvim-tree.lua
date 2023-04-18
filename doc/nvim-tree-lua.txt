@@ -1408,6 +1408,15 @@ tree.toggle_hidden_filter()
 tree.toggle_help()                          *nvim-tree-api.tree.toggle_help()*
     Toggle help view.
 
+tree.is_tree_buf({bufnr})                   *nvim-tree-api.tree.is_tree_buf()*
+    Checks if a buffer is an nvim-tree.
+
+    Parameters: ~
+      • {bufnr} (number|nil) buffer handle, 0 or nil for current buffer
+
+    Return: ~
+      (boolean) buffer is an nvim-tree buffer
+
 tree.is_visible({opts})                      *nvim-tree-api.tree.is_visible()*
     Checks if nvim-tree is visible on the current, specified or any tab.
 
