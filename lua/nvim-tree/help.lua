@@ -108,7 +108,8 @@ local function compute()
 
   -- header, not padded
   local hl = { { "NvimTreeRootFolder", 0, 0, #head_lhs } }
-  local lines = { ("%s%s%s"):format(head_lhs, string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs + 2), head_rhs) }
+  local lines =
+    { ("%s%s%s"):format(head_lhs, string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs + 2), head_rhs) }
   local width = #lines[1]
 
   -- mappings, left padded 1
