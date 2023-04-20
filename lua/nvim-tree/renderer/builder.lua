@@ -1,6 +1,7 @@
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 
+local diagnostics = require "nvim-tree.diagnostics"
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
@@ -69,6 +70,14 @@ function Builder:configure_git_icons_placement(where)
     where = "before" -- default before
   end
   self.git_placement = where
+  return self
+end
+
+function Builder:configure_diagnostic_icons_placement(where)
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "signcolumn" -- default before
+  end
+  self.diagnostic_placement = where
   return self
 end
 
@@ -226,6 +235,20 @@ function Builder:_get_modified_icon(node)
 end
 
 ---@param node table
+---@return HighlightedString|nil icon
+function Builder:_get_diagnostic_icon(node, diagnostic_severity)
+  local diagnostic_icon = diagnostics.get_sign(diagnostic_severity)
+
+  if self.diagnostic_placement == "signcolumn" and diagnostic_severity then
+    node.diag_status = diagnostic_severity
+    diagnostics.add_sign(self.index + 1, diagnostic_severity)
+    diagnostic_icon = nil
+  end
+
+  return diagnostic_icon
+end
+
+---@param node table
 ---@return string icon_highlight, string name_highlight
 function Builder:_get_highlight_override(node, unloaded_bufnr)
   -- highlights precedence:
@@ -272,9 +295,9 @@ end
 ---@param git_icons HighlightedString[]|nil
 ---@param modified_icon HighlightedString|nil
 ---@return HighlightedString[]
-function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
+function Builder:_format_line(padding, icon, name, git_icons, modified_icon, diagnostic_icon)
   local added_len = 0
-  local function add_to_end(t1, t2)
+  local function append_to_line(t1, t2)
     for _, v in ipairs(t2) do
       if added_len > 0 then
         table.insert(t1, { str = self.icon_padding })
@@ -291,29 +314,39 @@ function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
   end
 
   local line = { padding }
-  add_to_end(line, { icon })
+  append_to_line(line, { icon })
+
   if git_icons and self.git_placement == "before" then
-    add_to_end(line, git_icons)
+    append_to_line(line, git_icons)
   end
   if modified_icon and self.modified_placement == "before" then
-    add_to_end(line, { modified_icon })
+    append_to_line(line, { modified_icon })
   end
-  add_to_end(line, { name })
+  if diagnostic_icon and self.diagnostic_placement == "before" then
+    append_to_line(line, { diagnostic_icon })
+  end
+
+  append_to_line(line, { name })
+
   if git_icons and self.git_placement == "after" then
-    add_to_end(line, git_icons)
+    append_to_line(line, git_icons)
   end
   if modified_icon and self.modified_placement == "after" then
-    add_to_end(line, { modified_icon })
+    append_to_line(line, { modified_icon })
+  end
+  if diagnostic_icon and self.diagnostic_placement == "after" then
+    append_to_line(line, { diagnostic_icon })
   end
 
   return line
 end
 
-function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
+function Builder:_build_line(node, idx, num_children, unloaded_bufnr, diagnostic_severity)
   -- various components
   local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
   local git_icons = self:_get_git_icons(node)
   local modified_icon = self:_get_modified_icon(node)
+  local diagnostic_icon = self:_get_diagnostic_icon(node, diagnostic_severity)
 
   -- main components
   local is_folder = node.nodes ~= nil
@@ -336,7 +369,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     name.hl = name_hl
   end
 
-  local line = self:_format_line(padding, icon, name, git_icons, modified_icon)
+  local line = self:_format_line(padding, icon, name, git_icons, modified_icon, diagnostic_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1
@@ -364,10 +397,12 @@ end
 
 function Builder:build(tree, unloaded_bufnr)
   local num_children = self:_get_nodes_number(tree.nodes)
+  local _diagnostics = diagnostics.get_diagnostics()
   local idx = 1
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
-      self:_build_line(node, idx, num_children, unloaded_bufnr)
+      local nodepath = utils.canonical_path(node.absolute_path)
+      self:_build_line(node, idx, num_children, unloaded_bufnr, _diagnostics[nodepath])
       idx = idx + 1
     end
   end

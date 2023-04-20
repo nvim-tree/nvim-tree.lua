@@ -68,6 +68,7 @@ function M.draw(unloaded_bufnr)
     :configure_modified_highlighting(M.config.highlight_modified)
     :configure_icon_padding(M.config.icons.padding)
     :configure_git_icons_placement(M.config.icons.git_placement)
+    :configure_diagnostic_icons_placement(M.config.icons.diagnostic_placement)
     :configure_modified_placement(M.config.icons.modified_placement)
     :configure_symlink_destination(M.config.symlink_destination)
     :configure_filter(live_filter.filter, live_filter.prefix)
@@ -83,7 +84,6 @@ function M.draw(unloaded_bufnr)
     vim.api.nvim_win_set_cursor(view.get_winnr(), cursor)
   end
 
-  diagnostics.update()
   marks.draw()
 
   view.grow_from_content()

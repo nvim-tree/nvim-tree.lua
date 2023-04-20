@@ -304,14 +304,14 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd("DiagnosticChanged", {
       callback = function()
         log.line("diagnostics", "DiagnosticChanged")
-        require("nvim-tree.diagnostics").update()
+        reloaders.reload_explorer()
       end,
     })
     create_nvim_tree_autocmd("User", {
       pattern = "CocDiagnosticChange",
       callback = function()
         log.line("diagnostics", "CocDiagnosticChange")
-        require("nvim-tree.diagnostics").update()
+        reloaders.reload_explorer()
       end,
     })
   end
