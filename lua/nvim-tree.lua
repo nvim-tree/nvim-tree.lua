@@ -406,6 +406,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     icons = {
       webdev_colors = true,
+      diagnostic_placement = "signcolumn",
       git_placement = "before",
       modified_placement = "after",
       padding = " ",
