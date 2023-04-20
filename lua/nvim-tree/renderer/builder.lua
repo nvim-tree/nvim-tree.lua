@@ -75,7 +75,7 @@ end
 
 function Builder:configure_diagnostic_icons_placement(where)
   if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
-    where = "signcolumn" -- default before
+    where = "signcolumn"
   end
   self.diagnostic_placement = where
   return self

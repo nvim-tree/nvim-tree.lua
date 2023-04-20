@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local diagnostics = require "nvim-tree.diagnostics"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local modified = require "nvim-tree.renderer.components.modified"

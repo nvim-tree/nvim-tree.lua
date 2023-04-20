@@ -1,4 +1,3 @@
-local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
