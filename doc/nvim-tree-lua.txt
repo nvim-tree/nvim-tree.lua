@@ -1546,6 +1546,15 @@ node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
 node.open.tab()                                *nvim-tree-api.node.open.tab()*
     |nvim-tree-api.node.edit()|, file will be opened in a new tab.
 
+                                          *nvim-tree-api.node.open.tab_drop()*
+node.open.tab_drop()
+    Switch to tab containing window with selected file if it exists.
+    Open file in new tab otherwise.
+
+    File:   open file using `tab :drop`
+    Folder: expand or collapse
+    Root:   change directory up
+
 node.open.preview()                        *nvim-tree-api.node.open.preview()*
     |nvim-tree-api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
 
