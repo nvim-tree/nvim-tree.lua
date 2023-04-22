@@ -31,3 +31,6 @@ Documentation for options should also be added, see how this is done after `nvim
 Please reference any issues in the description e.g. "resolves #1234".
 
 Please check "allow edits by maintainers" to allow nvim-tree developers to make small changes such as documentation tweaks.
+
+A test case to reproduce the issue is required. A ["Clean Room" Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) is preferred.
+
