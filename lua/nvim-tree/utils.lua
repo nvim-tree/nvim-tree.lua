@@ -5,10 +5,11 @@ local M = {
   debouncers = {},
 }
 
+local has_cygpath = vim.fn.executable "cygpath" == 1
+
 M.is_unix = vim.fn.has "unix" == 1
 M.is_macos = vim.fn.has "mac" == 1 or vim.fn.has "macunix" == 1
 M.is_wsl = vim.fn.has "wsl" == 1
--- false for WSL
 M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
 function M.str_find(haystack, needle)
@@ -36,6 +37,26 @@ end
 
 function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
+end
+
+--- Normalise a path:
+---  windows: replace slashes with backslashes
+---   cygwin: resolve path first via cygpath
+--- @param path string
+--- @return string|nil nil on cygpath failure
+function M.norm_path(path)
+  if M.is_windows then
+    -- msys2 git support
+    if has_cygpath then
+      path = vim.fn.system("cygpath -w " .. vim.fn.shellescape(path))
+      if vim.v.shell_error ~= 0 then
+        return nil
+      end
+    end
+    path = path:gsub("/", "\\")
+  end
+
+  return path
 end
 
 ---Get the basename of the given path.
