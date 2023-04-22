@@ -1527,13 +1527,6 @@ node.open.edit()                              *nvim-tree-api.node.open.edit()*
     Folder: expand or collapse
     Root:   change directory up
 
-                                          *nvim-tree-api.node.open.tab_drop()*
-node.open.tab_drop()
-    Like edit(), but reuse already-opened window in tab. See also: |:drop| 
-    File:   open already-opened as per |nvim-tree.actions.open_file|
-    Folder: expand or collapse
-    Root:   change directory up 
-
                                *nvim-tree-api.node.open.replace_tree_buffer()*
 node.open.replace_tree_buffer()
     |nvim-tree-api.node.edit()|, file will be opened in place: in the
@@ -1552,6 +1545,15 @@ node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
 
 node.open.tab()                                *nvim-tree-api.node.open.tab()*
     |nvim-tree-api.node.edit()|, file will be opened in a new tab.
+
+                                          *nvim-tree-api.node.open.tab_drop()*
+node.open.tab_drop()
+    Switch to tab containing window with selected file if it exists.
+    Open file in new tab otherwise.
+
+    File:   open file using `tab :drop`
+    Folder: expand or collapse
+    Root:   change directory up
 
 node.open.preview()                        *nvim-tree-api.node.open.preview()*
     |nvim-tree-api.node.edit()|, file buffer will have |bufhidden| set to `delete`.

@@ -141,7 +141,6 @@ local function pick_win_id()
   return win_map[resp]
 end
 
-
 local function open_file_in_tab(filename)
   if M.quit_on_open then
     view.close()
@@ -149,7 +148,6 @@ local function open_file_in_tab(filename)
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
--- See :drop command. This will always focus already-opened tab
 local function tab_drop(filename)
   if M.quit_on_open then
     view.close()
