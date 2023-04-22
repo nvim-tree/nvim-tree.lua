@@ -24,7 +24,7 @@
 
 Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for Showcases, Tips, Recipes and more.
 
-[Join us on matrix](https://matrix.to/#/#nvim-tree:matrix.org)
+Community support: [matrix](https://matrix.to/#/#nvim-tree:matrix.org)
 
 ## New Mapping Method 2023-02-27
 
