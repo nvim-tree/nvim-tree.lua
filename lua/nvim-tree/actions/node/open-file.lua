@@ -141,11 +141,20 @@ local function pick_win_id()
   return win_map[resp]
 end
 
+
 local function open_file_in_tab(filename)
   if M.quit_on_open then
     view.close()
   end
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
+end
+
+-- See :drop command. This will always focus already-opened tab
+local function tab_drop(filename)
+  if M.quit_on_open then
+    view.close()
+  end
+  vim.cmd("tab :drop " .. vim.fn.fnameescape(filename))
 end
 
 local function on_preview(buf_loaded)
@@ -282,6 +291,10 @@ function M.fn(mode, filename)
 
   if mode == "tabnew" then
     return open_file_in_tab(filename)
+  end
+
+  if mode == "tab_drop" then
+    return tab_drop(filename)
   end
 
   if mode == "edit_in_place" then
