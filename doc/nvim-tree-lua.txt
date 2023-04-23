@@ -1734,8 +1734,8 @@ commands.get()                                  *nvim-tree-api.commands.get()*
  6. MAPPINGS                                              *nvim-tree-mappings*
 
 Mappings are set via the |nvim-tree.on_attach| function, which is run upon
-creating the nvim-tree buffer. Mappings may be directly to |nvim-tree-api.
-functions or your own.
+creating the nvim-tree buffer. Mappings are usually |nvim-tree-api| functions
+however may be your own.
 
 When on_attach is not a function, |nvim-tree-mappings-default| will be used.
 
@@ -1752,16 +1752,19 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
       return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    -- put default mappings here
+    -- put default mappings here, see defaults in the next section
     vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
     vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     opts('Open: In Place'))
     ---
 
-    -- additional mappings
-    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+    -- remove a default
+    vim.keymap.del('n', '<C-]>', { buffer = bufnr })
 
-    -- override defaults
+    -- override a default
     vim.keymap.set('n', '<C-e>', api.tree.reload,                       opts('Refresh'))
+
+    -- add your mappings
+    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
   end
 
   require("nvim-tree").setup({
