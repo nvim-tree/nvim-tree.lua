@@ -1608,6 +1608,15 @@ node.open.vertical()                      *nvim-tree-api.node.open.vertical()*
 node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
     |nvim-tree-api.node.edit()|, file will be opened in a new horizontal split.
 
+node.open.drop()                               *nvim-tree-api.node.open.tab()*
+    Switch to window with selected file if it exists.
+    Open file in current window otherwise.
+    See: `:h :drop`.
+
+    File:   open file using `:drop`
+    Folder: expand or collapse
+    Root:   change directory up
+
 node.open.tab()                                *nvim-tree-api.node.open.tab()*
     |nvim-tree-api.node.edit()|, file will be opened in a new tab.
 
