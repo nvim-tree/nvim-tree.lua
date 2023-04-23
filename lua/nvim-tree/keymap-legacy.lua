@@ -402,7 +402,7 @@ function M.cmd_generate_on_attach()
     return
   end
 
-  local name = utils.path_join { vim.fn.stdpath "cache", "my_on_attach.lua" }
+  local name = utils.path_join { vim.fn.stdpath "cache", "nvim-tree-on-attach.lua" }
   local file = io.output(name)
   io.write(M.on_attach_lua)
   io.close(file)

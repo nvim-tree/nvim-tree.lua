@@ -194,7 +194,7 @@ Requirements
 
 *:NvimTreeGenerateOnAttach*
 
-    Creates and opens a new file `my_on_attach.lua` in |stdpath| `"cache"`,
+    Creates and opens a new file `nvim-tree-on-attach.lua` in |stdpath| `"cache"`,
     usually `$XDG_CACHE_HOME/nvim`. Contains |nvim-tree.on_attach| function based
     on your |nvim-tree.view.mappings|, |nvim-tree.remove_keymaps| as well as the
     defaults.
