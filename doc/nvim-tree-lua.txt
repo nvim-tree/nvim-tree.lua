@@ -194,9 +194,10 @@ Requirements
 
 *:NvimTreeGenerateOnAttach*
 
-    Creates and opens a new file `/tmp/my_on_attach.lua` containing an
-    |nvim-tree.on_attach| function based on your |nvim-tree.view.mappings|,
-    |nvim-tree.remove_keymaps| as well as the defaults.
+    Creates and opens a new file `nvim-tree-on-attach.lua` in |stdpath| `"cache"`,
+    usually `$XDG_CACHE_HOME/nvim`. Contains |nvim-tree.on_attach| function based
+    on your |nvim-tree.view.mappings|, |nvim-tree.remove_keymaps| as well as the
+    defaults.
     See https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach
 
 ==============================================================================
@@ -1219,7 +1220,8 @@ In the event of a problem please disable the experiment and raise an issue.
 Configuration for diagnostic logging.
 
     *nvim-tree.log.enable*
-    Enable logging to a file `$XDG_CACHE_HOME/nvim/nvim-tree.log`
+    Enable logging to a file `nvim-tree.log` in |stdpath| `"cache"`, usually
+    `$XDG_CACHE_HOME/nvim`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.log.truncate*
