@@ -1,3 +1,6 @@
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 vim.cmd [[set runtimepath=$VIMRUNTIME]]
 vim.cmd [[set packpath=/tmp/nvt-min/site]]
 local package_root = "/tmp/nvt-min/site/pack"
