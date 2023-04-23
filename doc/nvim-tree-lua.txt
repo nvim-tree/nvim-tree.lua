@@ -194,9 +194,10 @@ Requirements
 
 *:NvimTreeGenerateOnAttach*
 
-    Creates and opens a new file `/tmp/my_on_attach.lua` containing an
-    |nvim-tree.on_attach| function based on your |nvim-tree.view.mappings|,
-    |nvim-tree.remove_keymaps| as well as the defaults.
+    Creates and opens a new file `nvim-tree-on-attach.lua` in |stdpath| `"cache"`,
+    usually `$XDG_CACHE_HOME/nvim`. Contains |nvim-tree.on_attach| function based
+    on your |nvim-tree.view.mappings|, |nvim-tree.remove_keymaps| as well as the
+    defaults.
     See https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach
 
 ==============================================================================
@@ -436,7 +437,7 @@ applying configuration.
       },
       experimental = {
         git = {
-          async = false,
+          async = true,
         },
       },
       log = {
@@ -1206,19 +1207,21 @@ General UI configuration.
 
 *nvim-tree.experimental*
 Experimental features that may become default or optional functionality.
+In the event of a problem please disable the experiment and raise an issue.
 
     *nvim-tree.experimental.git.async*
     Direct file writes and `.git/` writes are executed asynchronously: the
     git process runs in the background. The tree updates on completion.
     Other git actions such as first tree draw and explicit refreshes are still
     done in the foreground.
-      Type: `boolean`, Default: `false`
+      Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
 Configuration for diagnostic logging.
 
     *nvim-tree.log.enable*
-    Enable logging to a file `$XDG_CACHE_HOME/nvim/nvim-tree.log`
+    Enable logging to a file `nvim-tree.log` in |stdpath| `"cache"`, usually
+    `$XDG_CACHE_HOME/nvim`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.log.truncate*
@@ -1544,6 +1547,15 @@ node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
 
 node.open.tab()                                *nvim-tree-api.node.open.tab()*
     |nvim-tree-api.node.edit()|, file will be opened in a new tab.
+
+                                          *nvim-tree-api.node.open.tab_drop()*
+node.open.tab_drop()
+    Switch to tab containing window with selected file if it exists.
+    Open file in new tab otherwise.
+
+    File:   open file using `tab :drop`
+    Folder: expand or collapse
+    Root:   change directory up
 
 node.open.preview()                        *nvim-tree-api.node.open.preview()*
     |nvim-tree-api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
