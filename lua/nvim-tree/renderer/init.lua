@@ -68,6 +68,8 @@ function M.draw(unloaded_bufnr)
     :configure_icon_padding(M.config.icons.padding)
     :configure_git_icons_placement(M.config.icons.git_placement)
     :configure_diagnostic_icons_placement(M.config.icons.diagnostic_placement)
+    :configure_show_on_dirs(M.config.diagnostics.show_on_dirs)
+    :configure_show_on_open_dirs(M.config.diagnostics.show_on_open_dirs)
     :configure_modified_placement(M.config.icons.modified_placement)
     :configure_symlink_destination(M.config.symlink_destination)
     :configure_filter(live_filter.filter, live_filter.prefix)
@@ -92,6 +94,7 @@ end
 
 function M.setup(opts)
   M.config = opts.renderer
+  M.config.diagnostics = opts.diagnostics
   M.config.modified = opts.modified
 
   _padding.setup(opts)

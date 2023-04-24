@@ -24,6 +24,16 @@ function Builder.new(root_cwd)
   }, Builder)
 end
 
+function Builder:configure_show_on_open_dirs(show_on_open_dirs)
+  self.show_on_open_dirs = show_on_open_dirs
+  return self
+end
+
+function Builder:configure_show_on_dirs(show_on_dirs)
+  self.show_on_dirs = show_on_dirs
+  return self
+end
+
 function Builder:configure_root_label(root_folder_label)
   self.root_folder_label = root_folder_label or DEFAULT_ROOT_FOLDER_LABEL
   return self
@@ -237,15 +247,13 @@ end
 ---@param node table
 ---@return HighlightedString|nil icon
 function Builder:_get_diagnostic_icon(node, diagnostic_severity)
-  local diagnostic_icon = diagnostics.get_sign(diagnostic_severity)
-
   if self.diagnostic_placement == "signcolumn" and diagnostic_severity then
     node.diag_status = diagnostic_severity
     diagnostics.add_sign(self.index + 1, diagnostic_severity)
-    diagnostic_icon = nil
+    return nil
   end
 
-  return diagnostic_icon
+  return diagnostics.get_sign(diagnostic_severity)
 end
 
 ---@param node table
@@ -397,17 +405,35 @@ end
 
 function Builder:build(tree, unloaded_bufnr)
   local num_children = self:_get_nodes_number(tree.nodes)
-  local all_diagnostics = diagnostics.get_diagnostics()
+  local diagnostic_severities_by_path = diagnostics.get_diagnostics()
 
   if self.diagnostic_placement == "signcolumn" then
     diagnostics.clear()
   end
 
   local idx = 1
+
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
+      local is_folder = node.nodes ~= nil
       local nodepath = utils.canonical_path(node.absolute_path)
-      self:_build_line(node, idx, num_children, unloaded_bufnr, all_diagnostics[nodepath])
+
+      local severity = nil
+      if is_folder then
+        for bufname, buf_severity in pairs(diagnostic_severities_by_path) do
+          local bufpath = utils.canonical_path(bufname)
+          if
+            self.show_on_dirs
+            and vim.startswith(bufpath:gsub("\\", "/"), nodepath:gsub("\\", "/") .. "/")
+            and (not node.open or self.show_on_open_dirs)
+          then
+            severity = buf_severity
+          end
+        end
+      elseif diagnostic_severities_by_path[nodepath] then
+        severity = diagnostic_severities_by_path[nodepath]
+      end
+      self:_build_line(node, idx, num_children, unloaded_bufnr, severity)
       idx = idx + 1
     end
   end

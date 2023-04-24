@@ -134,9 +134,6 @@ function M.setup(opts)
     log.line("diagnostics", "setup")
   end
 
-  M.show_on_dirs = opts.diagnostics.show_on_dirs
-  M.show_on_open_dirs = opts.diagnostics.show_on_open_dirs
-
   for lhs, rhs in pairs(links) do
     vim.cmd("hi def link " .. lhs .. " " .. rhs)
   end
