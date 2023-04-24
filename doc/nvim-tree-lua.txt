@@ -1766,7 +1766,6 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
     vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
     vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     opts('Open: In Place'))
     ---
-
     -- OR use all default mappings
     api.config.mappings.default_on_attach(bufnr)
 
@@ -1778,6 +1777,7 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
 
     -- add your mappings
     vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+    ---
   end
 
   require("nvim-tree").setup({
