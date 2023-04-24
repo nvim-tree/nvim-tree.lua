@@ -5,6 +5,8 @@ local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
+local find_file = require("nvim-tree.actions.finders.find-file").fn
+
 local M = {}
 
 local clipboard = {
@@ -91,6 +93,8 @@ local function do_single_paste(source, dest, action_type, action_fn)
       notify.error("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
       return false, errmsg
     end
+
+    find_file(utils.path_remove_trailing(dest))
   end
 
   if dest_stats then
