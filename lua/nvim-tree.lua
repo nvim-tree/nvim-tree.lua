@@ -562,7 +562,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   experimental = {
     git = {
-      async = false,
+      async = true,
     },
   },
   log = {

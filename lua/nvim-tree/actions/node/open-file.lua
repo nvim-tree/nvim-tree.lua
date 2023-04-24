@@ -148,6 +148,13 @@ local function open_file_in_tab(filename)
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
+local function tab_drop(filename)
+  if M.quit_on_open then
+    view.close()
+  end
+  vim.cmd("tab :drop " .. vim.fn.fnameescape(filename))
+end
+
 local function on_preview(buf_loaded)
   if not buf_loaded then
     vim.bo.bufhidden = "delete"
@@ -282,6 +289,10 @@ function M.fn(mode, filename)
 
   if mode == "tabnew" then
     return open_file_in_tab(filename)
+  end
+
+  if mode == "tab_drop" then
+    return tab_drop(filename)
   end
 
   if mode == "edit_in_place" then
