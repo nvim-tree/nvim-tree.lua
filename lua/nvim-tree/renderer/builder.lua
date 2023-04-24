@@ -397,12 +397,17 @@ end
 
 function Builder:build(tree, unloaded_bufnr)
   local num_children = self:_get_nodes_number(tree.nodes)
-  local _diagnostics = diagnostics.get_diagnostics()
+  local all_diagnostics = diagnostics.get_diagnostics()
+
+  if self.diagnostic_placement == "signcolumn" then
+    diagnostics.clear()
+  end
+
   local idx = 1
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
       local nodepath = utils.canonical_path(node.absolute_path)
-      self:_build_line(node, idx, num_children, unloaded_bufnr, _diagnostics[nodepath])
+      self:_build_line(node, idx, num_children, unloaded_bufnr, all_diagnostics[nodepath])
       idx = idx + 1
     end
   end
