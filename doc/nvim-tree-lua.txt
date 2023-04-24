@@ -77,7 +77,7 @@ Requirements
 Install the plugins via your package manager:
   `"nvim-tree/nvim-tree.lua"`
   `"nvim-tree/nvim-web-devicons"`
->
+
 Setup the plugin in your `init.lua` >
 
   -- disable netrw at the very start of your init.lua (strongly advised)
