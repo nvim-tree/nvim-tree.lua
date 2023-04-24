@@ -44,13 +44,11 @@ Please install via your preferred package manager. See [Installation](https://gi
 
 `nvim-tree/nvim-web-devicons` optional, for file icons
 
-## Setup
+## Quick Start
 
-Setup should be run in a lua file or in a lua heredoc [:help lua-heredoc](https://neovim.io/doc/user/lua.html) if using in a vim file.
+Setup the plugin in your `init.lua`
 
 ```lua
--- examples for your init.lua
-
 -- disable netrw at the very start of your init.lua (strongly advised)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -64,6 +62,9 @@ require("nvim-tree").setup()
 -- OR setup with some options
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
+  view = {
+    width = 30,
+  },
   renderer = {
     group_empty = true,
   },
@@ -72,6 +73,10 @@ require("nvim-tree").setup({
   },
 })
 ```
+
+Open the tree:  `:NvimTreeOpen`
+
+Show the mappings:  `g?`
 
 For complete list of available configuration options see [:help nvim-tree-setup](doc/nvim-tree-lua.txt)
 
