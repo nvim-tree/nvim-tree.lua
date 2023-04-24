@@ -1,10 +1,66 @@
 {
-	"$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-	"runtime.version" : "Lua 5.1",
-	"diagnostics": {
-		"globals": [
-			"vim"
-		]
-	}
+  "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+  "runtime.version" : "Lua 5.1",
+  "diagnostics": {
+    "globals": [
+      "vim"
+    ],
+    "neededFileStatus": {
+      "ambiguity-1": "Any",
+      "assign-type-mismatch": "Any",
+      "await-in-sync": "Any",
+      "cast-local-type": "Any",
+      "cast-type-mismatch": "Any",
+      "circle-doc-class": "Any",
+      "close-non-object": "Any",
+      "code-after-break": "Any",
+      "codestyle-check": "None",
+      "count-down-loop": "Any",
+      "deprecated": "Any",
+      "different-requires": "Any",
+      "discard-returns": "Any",
+      "doc-field-no-class": "Any",
+      "duplicate-doc-alias": "Any",
+      "duplicate-doc-field": "Any",
+      "duplicate-doc-param": "Any",
+      "duplicate-index": "Any",
+      "duplicate-set-field": "Any",
+      "empty-block": "Any",
+      "global-in-nil-env": "Any",
+      "lowercase-global": "Any",
+      "missing-parameter": "Any",
+      "missing-return": "Any",
+      "missing-return-value": "Any",
+      "need-check-nil": "Any",
+      "newfield-call": "Any",
+      "newline-call": "Any",
+      "no-unknown": "None",
+      "not-yieldable": "Any",
+      "param-type-mismatch": "Any",
+      "redefined-local": "Any",
+      "redundant-parameter": "Any",
+      "redundant-return": "Any",
+      "redundant-return-value": "Any",
+      "redundant-value": "Any",
+      "return-type-mismatch": "Any",
+      "spell-check": "None",
+      "trailing-space": "Any",
+      "unbalanced-assignments": "Any",
+      "undefined-doc-class": "Any",
+      "undefined-doc-name": "Any",
+      "undefined-doc-param": "Any",
+      "undefined-env-child": "Any",
+      "undefined-field": "None",
+      "undefined-global": "Any",
+      "unknown-cast-variable": "Any",
+      "unknown-diag-code": "Any",
+      "unknown-operator": "Any",
+      "unreachable-code": "Any",
+      "unused-function": "Any",
+      "unused-label": "Any",
+      "unused-local": "Any",
+      "unused-vararg": "Any"
+    }
+  }
 }
 
