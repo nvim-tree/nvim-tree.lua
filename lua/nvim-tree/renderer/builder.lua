@@ -1,6 +1,7 @@
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 
+local log = require "nvim-tree.log"
 local diagnostics = require "nvim-tree.diagnostics"
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
@@ -413,6 +414,8 @@ function Builder:build(tree, unloaded_bufnr)
 
   local idx = 1
 
+  local profile = log.profile_start "diagnostic update"
+  log.line("diagnostics", "update")
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
       local is_folder = node.nodes ~= nil
@@ -422,21 +425,25 @@ function Builder:build(tree, unloaded_bufnr)
       if is_folder then
         for bufname, buf_severity in pairs(diagnostic_severities_by_path) do
           local bufpath = utils.canonical_path(bufname)
+          log.line("diagnostics", " %d checking nodepath '%s'", idx, nodepath)
           if
             self.show_on_dirs
             and vim.startswith(bufpath:gsub("\\", "/"), nodepath:gsub("\\", "/") .. "/")
             and (not node.open or self.show_on_open_dirs)
           then
+            log.line("diagnostics", " matched folder node '%s'", nodepath)
             severity = buf_severity
           end
         end
       elseif diagnostic_severities_by_path[nodepath] then
+        log.line("diagnostics", " matched file node '%s'", nodepath)
         severity = diagnostic_severities_by_path[nodepath]
       end
       self:_build_line(node, idx, num_children, unloaded_bufnr, severity)
       idx = idx + 1
     end
   end
+  log.profile_end(profile)
 
   return self
 end
