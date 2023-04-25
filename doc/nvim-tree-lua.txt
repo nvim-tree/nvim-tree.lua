@@ -1610,7 +1610,7 @@ node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
 
 node.open.drop()                              *nvim-tree-api.node.open.drop()*
     Switch to window with selected file if it exists.
-    Open file in current window otherwise.
+    Open file otherwise.
     See: `:h :drop`.
 
     File:   open file using `:drop`
