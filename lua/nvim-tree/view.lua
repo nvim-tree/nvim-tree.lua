@@ -32,7 +32,6 @@ M.View = {
     wrap = false,
     winhl = table.concat({
       "EndOfBuffer:NvimTreeEndOfBuffer",
-      "Normal:NvimTreeNormal",
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
       "LineNr:NvimTreeLineNr",
@@ -503,6 +502,9 @@ function M.setup(opts)
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
   M.View.float = options.float
+  M.View.winopts.winhl = table.concat({
+    "Normal:" .. (M.View.float.enable and "NvimTreeNormalFloat" or "NvimTreeNormal"),
+  }, ",")
   M.on_attach = opts.on_attach
 
   if type(options.width) == "table" then

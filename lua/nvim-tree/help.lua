@@ -5,7 +5,7 @@ local PAT_CTRL = "^<C%-"
 local PAT_SPECIAL = "^<.+"
 
 local WIN_HL = table.concat({
-  "Normal:NvimTreeNormal",
+  "Normal:NvimTreeNormalFloat",
   "CursorLine:NvimTreeCursorLine",
 }, ",")
 
