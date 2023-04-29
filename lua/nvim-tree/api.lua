@@ -162,6 +162,7 @@ local function open_preview(node)
 end
 
 Api.node.open.edit = wrap_node(open_or_expand_or_dir_up "edit")
+Api.node.open.tab_drop = wrap_node(open_or_expand_or_dir_up "tab_drop")
 Api.node.open.replace_tree_buffer = wrap_node(open_or_expand_or_dir_up "edit_in_place")
 Api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up "edit_no_picker")
 Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
