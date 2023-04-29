@@ -40,9 +40,15 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
            }; /${end}/p; d; }" lua/nvim-tree/keymap-legacy.lua
 
 # help human, unused
-rm -f /tmp/DEFAULT_ON_ATTACH.help
+echo > /tmp/DEFAULT_ON_ATTACH.help
 sed -E "s/^ *vim.keymap.set\('n', '(.*)',.*api(.*),.*opts\('(.*)'.*$/'\`\1\`' '\3' '|nvim-tree-api\2()|'/g
 " /tmp/DEFAULT_ON_ATTACH.lua | while read line
 do
 	eval "printf '%-17.17s %-23.23s %s\n' ${line}" >> /tmp/DEFAULT_ON_ATTACH.help
 done
+echo >> /tmp/DEFAULT_ON_ATTACH.help
+
+begin="Show the mappings:"
+end="======"
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.help
+           }; /${end}/p; d; }" doc/nvim-tree-lua.txt
