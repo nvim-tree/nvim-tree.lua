@@ -1,5 +1,6 @@
 -- Copyright 2019 Yazdani Kiyan under MIT License
 local lib = require "nvim-tree.lib"
+local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 
@@ -58,6 +59,17 @@ local function pick_win_id()
   end
   if #selectable == 1 then
     return selectable[1]
+  end
+
+  if #M.window_picker.chars < #selectable then
+    notify.error(
+      string.format(
+        "More windows (%d) than actions.open_file.window_picker.chars (%d) - please add more.",
+        #selectable,
+        #M.window_picker.chars
+      )
+    )
+    return nil
   end
 
   local i = 1
