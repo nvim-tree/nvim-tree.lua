@@ -1,4 +1,4 @@
-local lib = require "nvim-tree.lib"
+lo cal lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
 local colors = require "nvim-tree.colors"
 local renderer = require "nvim-tree.renderer"
