@@ -403,7 +403,7 @@ end
 
 ---Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
 ---This is cheap, as the readable test should only ever be needed when resuming a vim session.
----@param bufnr number may be 0 or nil for current
+---@param bufnr number|nil may be 0 or nil for current
 ---@return boolean
 function M.is_nvim_tree_buf(bufnr)
   if bufnr == nil then
