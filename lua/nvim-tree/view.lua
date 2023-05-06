@@ -32,7 +32,6 @@ M.View = {
     wrap = false,
     winhl = table.concat({
       "EndOfBuffer:NvimTreeEndOfBuffer",
-      "Normal:NvimTreeNormal",
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
       "LineNr:NvimTreeLineNr",
@@ -40,7 +39,9 @@ M.View = {
       "StatusLine:NvimTreeStatusLine",
       "StatusLineNC:NvimTreeStatuslineNC",
       "SignColumn:NvimTreeSignColumn",
+      "Normal:NvimTreeNormal",
       "NormalNC:NvimTreeNormalNC",
+      "NormalFloat:NvimTreeNormalFloat",
     }, ","),
   },
 }
