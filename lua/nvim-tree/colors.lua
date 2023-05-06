@@ -66,6 +66,7 @@ local function get_links()
     OpenedFolderIcon = "NvimTreeFolderIcon",
     ClosedFolderIcon = "NvimTreeFolderIcon",
     Normal = "Normal",
+    NormalFloat = "NormalFloat",
     NormalNC = "NvimTreeNormal",
     EndOfBuffer = "EndOfBuffer",
     CursorLineNr = "CursorLineNr",

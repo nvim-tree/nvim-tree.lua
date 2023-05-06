@@ -2065,6 +2065,7 @@ NvimTreeWindowPicker
 There are also links to normal bindings to style the tree itself.
 
 NvimTreeNormal
+NvimTreeNormalFloat
 NvimTreeEndOfBuffer     (NonText)
 NvimTreeCursorLine      (CursorLine)
 NvimTreeCursorLineNr    (CursorLineNr)
