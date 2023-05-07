@@ -7,9 +7,9 @@ local M = {}
 M.ignore_dirs = {
   -- disable watchers on kernel filesystems
   -- which have a lot of unwanted events
-  "/sys",
-  "/proc",
-  "/dev",
+  "^/sys",
+  "^/proc",
+  "^/dev",
 }
 
 function M.ignore_dir(path)
