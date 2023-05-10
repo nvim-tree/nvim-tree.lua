@@ -145,9 +145,14 @@ function M.start_filtering()
 end
 
 function M.clear_filter()
+  local node = require("nvim-tree.api").tree.get_node_under_cursor()
   M.filter = nil
   reset_filter()
   redraw()
+
+  if node ~= nil then
+    utils.focus_file(node.absolute_path)
+  end
 end
 
 function M.setup(opts)
