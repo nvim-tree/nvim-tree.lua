@@ -237,7 +237,12 @@ local function open_in_new_window(filename, mode)
     return
   end
 
-  local win_ids = vim.api.nvim_list_wins()
+  -- non-floating windows
+  local win_ids = vim.tbl_filter(function(id)
+    local config = vim.api.nvim_win_get_config(id)
+    return config and config.relative == ""
+  end, vim.api.nvim_list_wins())
+
   local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
   local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
