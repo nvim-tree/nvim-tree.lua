@@ -1,5 +1,6 @@
 -- Copyright 2019 Yazdani Kiyan under MIT License
 local lib = require "nvim-tree.lib"
+local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 
@@ -58,6 +59,17 @@ local function pick_win_id()
   end
   if #selectable == 1 then
     return selectable[1]
+  end
+
+  if #M.window_picker.chars < #selectable then
+    notify.error(
+      string.format(
+        "More windows (%d) than actions.open_file.window_picker.chars (%d) - please add more.",
+        #selectable,
+        #M.window_picker.chars
+      )
+    )
+    return nil
   end
 
   local i = 1
@@ -148,6 +160,13 @@ local function open_file_in_tab(filename)
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
+local function drop(filename)
+  if M.quit_on_open then
+    view.close()
+  end
+  vim.cmd("drop " .. vim.fn.fnameescape(filename))
+end
+
 local function tab_drop(filename)
   if M.quit_on_open then
     view.close()
@@ -218,7 +237,12 @@ local function open_in_new_window(filename, mode)
     return
   end
 
-  local win_ids = vim.api.nvim_list_wins()
+  -- non-floating windows
+  local win_ids = vim.tbl_filter(function(id)
+    local config = vim.api.nvim_win_get_config(id)
+    return config and config.relative == ""
+  end, vim.api.nvim_list_wins())
+
   local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
   local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
 
@@ -289,6 +313,10 @@ function M.fn(mode, filename)
 
   if mode == "tabnew" then
     return open_file_in_tab(filename)
+  end
+
+  if mode == "drop" then
+    return drop(filename)
   end
 
   if mode == "tab_drop" then

@@ -5,11 +5,10 @@ local M = {
   debouncers = {},
 }
 
-local has_cygpath = vim.fn.executable "cygpath" == 1
-
 M.is_unix = vim.fn.has "unix" == 1
 M.is_macos = vim.fn.has "mac" == 1 or vim.fn.has "macunix" == 1
 M.is_wsl = vim.fn.has "wsl" == 1
+-- false for WSL
 M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
 function M.str_find(haystack, needle)
@@ -37,26 +36,6 @@ end
 
 function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
-end
-
---- Normalise a path:
----  windows: replace slashes with backslashes
----   cygwin: resolve path first via cygpath
---- @param path string
---- @return string|nil nil on cygpath failure
-function M.norm_path(path)
-  if M.is_windows then
-    -- msys2 git support
-    if has_cygpath then
-      path = vim.fn.system("cygpath -w " .. vim.fn.shellescape(path))
-      if vim.v.shell_error ~= 0 then
-        return nil
-      end
-    end
-    path = path:gsub("/", "\\")
-  end
-
-  return path
 end
 
 ---Get the basename of the given path.
@@ -110,7 +89,7 @@ function M.find_node(nodes, fn)
   local node, i = Iterator.builder(nodes)
     :matcher(fn)
     :recursor(function(node)
-      return node.open and #node.nodes > 0 and node.nodes
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
@@ -167,11 +146,14 @@ function M.get_nodes_by_line(nodes_all, line_start)
 
   Iterator.builder(nodes_all)
     :applier(function(node)
+      if node.group_next then
+        return
+      end
       nodes_by_line[line] = node
       line = line + 1
     end)
     :recursor(function(node)
-      return node.open == true and node.nodes
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
 
@@ -421,7 +403,7 @@ end
 
 ---Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
 ---This is cheap, as the readable test should only ever be needed when resuming a vim session.
----@param bufnr number may be 0 or nil for current
+---@param bufnr number|nil may be 0 or nil for current
 ---@return boolean
 function M.is_nvim_tree_buf(bufnr)
   if bufnr == nil then

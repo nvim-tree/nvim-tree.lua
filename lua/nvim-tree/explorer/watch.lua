@@ -4,7 +4,11 @@ local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {}
 
-M.ignore_dirs = {
+local function is_git(path)
+  return vim.fn.fnamemodify(path, ":t") == ".git"
+end
+
+local IGNORED_PATHS = {
   -- disable watchers on kernel filesystems
   -- which have a lot of unwanted events
   "/sys",
@@ -12,11 +16,13 @@ M.ignore_dirs = {
   "/dev",
 }
 
-function M.ignore_dir(path)
-  table.insert(M.ignore_dirs, path)
-end
-
 local function is_folder_ignored(path)
+  for _, folder in ipairs(IGNORED_PATHS) do
+    if vim.startswith(path, folder) then
+      return true
+    end
+  end
+
   for _, ignore_dir in ipairs(M.ignore_dirs) do
     if vim.fn.match(path, ignore_dir) ~= -1 then
       return true
@@ -38,7 +44,7 @@ function M.create_watcher(node)
     path = node.absolute_path
   end
 
-  if is_folder_ignored(path) then
+  if is_git(path) or is_folder_ignored(path) then
     return nil
   end
 
@@ -68,7 +74,7 @@ end
 function M.setup(opts)
   M.enabled = opts.filesystem_watchers.enable
   M.debounce_delay = opts.filesystem_watchers.debounce_delay
-  M.ignore_dirs = vim.tbl_extend("force", M.ignore_dirs, opts.filesystem_watchers.ignore_dirs)
+  M.ignore_dirs = opts.filesystem_watchers.ignore_dirs
   M.uid = 0
 end
 

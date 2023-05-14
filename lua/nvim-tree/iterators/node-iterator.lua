@@ -42,7 +42,9 @@ function NodeIterator:iterate()
   local function iter(nodes)
     for _, node in ipairs(nodes) do
       if self._filter_hidden(node) then
-        iteration_count = iteration_count + 1
+        if not node.group_next then
+          iteration_count = iteration_count + 1
+        end
         if self._match(node) then
           return node, iteration_count
         end

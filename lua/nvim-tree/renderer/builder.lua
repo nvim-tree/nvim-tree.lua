@@ -383,6 +383,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr, diagnostic
 
   self.index = self.index + 1
 
+  node = require("nvim-tree.lib").get_last_group_node(node)
+
   if node.open then
     self.depth = self.depth + 1
     self:build(node, unloaded_bufnr)

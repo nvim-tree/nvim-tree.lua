@@ -2,7 +2,6 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local git_utils = require "nvim-tree.git.utils"
 local Runner = require "nvim-tree.git.runner"
-local Watch = require "nvim-tree.explorer.watch"
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local explorer_node = require "nvim-tree.explorer.node"
@@ -165,34 +164,22 @@ function M.load_project_status(cwd)
   }
 
   local watcher = nil
-
   if M.config.filesystem_watchers.enable then
     log.line("watcher", "git start")
 
-    local git_directory = git_utils.get_git_directory(project_root)
-
-    if git_directory == nil then
-      log.line("watcher", "could not found the location of .git folder")
-    else
-      local callback = function(w)
-        log.line("watcher", "git event scheduled '%s'", w.project_root)
-        utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
-          if w.destroyed then
-            return
-          end
-          reload_tree_at(w.project_root)
-        end)
-      end
-
-      -- Add GIT_DIR to the list of directory to ignore
-      -- local base_gitdir = utils.path_basename(git_directory)
-      -- Watch.ignore_dir(base_gitdir)
-      Watch.ignore_dir(git_directory)
-
-      watcher = Watcher:new(git_directory, WATCHED_FILES, callback, {
-        project_root = project_root,
-      })
+    local callback = function(w)
+      log.line("watcher", "git event scheduled '%s'", w.project_root)
+      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+        if w.destroyed then
+          return
+        end
+        reload_tree_at(w.project_root)
+      end)
     end
+
+    watcher = Watcher:new(utils.path_join { project_root, ".git" }, WATCHED_FILES, callback, {
+      project_root = project_root,
+    })
   end
 
   M.projects[project_root] = {
