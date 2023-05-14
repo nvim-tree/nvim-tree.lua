@@ -349,7 +349,7 @@ end
 ---@param opts OpenInWinOpts|nil
 function M.open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
-  if opts.winid then
+  if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
   end
   create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
