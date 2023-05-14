@@ -48,7 +48,7 @@ function M.fn(opts)
     end
   elseif opts.open then
     -- open
-    lib.open { current_window = opts.current_window }
+    lib.open { current_window = opts.current_window, winid = opts.winid }
     if not opts.focus then
       vim.cmd "noautocmd wincmd p"
     end
