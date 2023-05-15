@@ -50,7 +50,8 @@ Setup the plugin in your `init.lua`
 
 ```lua
 -- disable netrw at the very start of your init.lua (strongly advised)
--- this will disable `gx`, if you want to keep it, use hijack_netrw instead.
+-- Disclaimer: this will disable all Netrw features including commands, keybindings, etc. See more here: https://neovim.io/doc/user/pi_netrw.html
+-- If you want to keep using Netrw, use hijack_netrw instead.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
