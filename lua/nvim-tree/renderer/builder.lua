@@ -173,8 +173,9 @@ function Builder:_build_symlink(node)
   end
 
   local link_highlight = "NvimTreeSymlink"
+  local icon_hl = "NvimTreeSymlinkIcon"
 
-  return { str = icon }, { str = symlink_formatted, hl = link_highlight }
+  return { str = icon, hl = icon_hl }, { str = symlink_formatted, hl = link_highlight }
 end
 
 ---@param node table
