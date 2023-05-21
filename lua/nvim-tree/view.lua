@@ -1,8 +1,13 @@
-local M = {}
-
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
+
+---@class OpenInWinOpts
+---@field hijack_current_buf boolean|nil default true
+---@field resize boolean|nil default true
+---@field winid number|nil 0 or nil for current
+
+local M = {}
 
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
@@ -340,8 +345,13 @@ local function set_current_win()
   M.View.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
 end
 
-function M.open_in_current_win(opts)
+---Open the tree in the a window
+---@param opts OpenInWinOpts|nil
+function M.open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
+  if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
+    vim.api.nvim_set_current_win(opts.winid)
+  end
   create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
   setup_tabpage(vim.api.nvim_get_current_tabpage())
   set_current_win()
