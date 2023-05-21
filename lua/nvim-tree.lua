@@ -96,7 +96,7 @@ function M.open_replacing_current_buffer(cwd)
   if not core.get_explorer() or cwd ~= core.get_cwd() then
     core.init(cwd)
   end
-  view.open_in_current_win { hijack_current_buf = false, resize = false }
+  view.open_in_win { hijack_current_buf = false, resize = false }
   require("nvim-tree.renderer").draw()
   require("nvim-tree.actions.finders.find-file").fn(bufname)
 end

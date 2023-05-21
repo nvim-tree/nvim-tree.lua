@@ -7,6 +7,7 @@ local events = require "nvim-tree.events"
 ---@class LibOpenOpts
 ---@field path string|nil path
 ---@field current_window boolean|nil default false
+---@field winid number|nil
 
 local M = {
   target_winid = nil,
@@ -163,10 +164,13 @@ function M.open(opts)
   end
   if should_hijack_current_buf() then
     view.close_this_tab_only()
-    view.open_in_current_win()
+    view.open_in_win()
+    renderer.draw()
+  elseif opts.winid then
+    view.open_in_win { hijack_current_buf = false, resize = false, winid = opts.winid }
     renderer.draw()
   elseif opts.current_window then
-    view.open_in_current_win { hijack_current_buf = false, resize = false }
+    view.open_in_win { hijack_current_buf = false, resize = false }
     renderer.draw()
   else
     open_view_and_draw()
