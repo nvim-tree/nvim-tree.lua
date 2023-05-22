@@ -46,10 +46,12 @@ Please install via your preferred package manager. See [Installation](https://gi
 
 ## Quick Start
 
+Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
+
 Setup the plugin in your `init.lua`
 
 ```lua
--- disable netrw at the very start of your init.lua (strongly advised)
+-- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
