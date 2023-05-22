@@ -36,6 +36,7 @@ end
 ---@class ApiTreeOpenOpts
 ---@field path string|nil path
 ---@field current_window boolean|nil default false
+---@field winid number|nil
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 
@@ -44,6 +45,7 @@ Api.tree.open = wrap(require("nvim-tree.actions.tree.open").fn)
 ---@class ApiTreeToggleOpts
 ---@field path string|nil
 ---@field current_window boolean|nil default false
+---@field winid number|nil
 ---@field find_file boolean|nil default false
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default true
@@ -84,6 +86,7 @@ Api.tree.get_nodes = wrap(require("nvim-tree.lib").get_nodes)
 ---@field buf string|number|nil
 ---@field open boolean|nil default false
 ---@field current_window boolean|nil default false
+---@field winid number|nil
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default false
 

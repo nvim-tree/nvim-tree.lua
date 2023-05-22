@@ -29,7 +29,7 @@ function M.fn(opts)
     view.focus()
   else
     -- open
-    lib.open { path = opts.path, current_window = opts.current_window }
+    lib.open { path = opts.path, current_window = opts.current_window, winid = opts.winid }
   end
 
   -- find file
