@@ -2,9 +2,6 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
--- Keeps memory of focused node when entering filter prompt
-local last_node
-
 local M = {
   filter = nil,
 }
@@ -137,7 +134,7 @@ local function create_overlay()
 end
 
 function M.start_filtering()
-  last_node = require("nvim-tree.lib").get_node_at_cursor()
+  view.View.last_focused_node = require("nvim-tree.lib").get_node_at_cursor()
   M.filter = M.filter or ""
 
   redraw()
@@ -150,6 +147,8 @@ end
 
 function M.clear_filter()
   local node = require("nvim-tree.lib").get_node_at_cursor()
+  local last_node = view.View.last_focused_node
+
   M.filter = nil
   reset_filter()
   redraw()
