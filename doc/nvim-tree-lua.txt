@@ -26,6 +26,7 @@ CONTENTS                                                           *nvim-tree*
   8. Events                                   |nvim-tree-events|
   9. Bookmarks                                |nvim-tree-bookmarks|
  10. OS Specific Restrictions                 |nvim-tree-os-specific|
+ 11. Netrw                                    |nvim-tree-netrw|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -78,9 +79,11 @@ Install the plugins via your package manager:
   `"nvim-tree/nvim-tree.lua"`
   `"nvim-tree/nvim-web-devicons"`
 
+Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
+
 Setup the plugin in your `init.lua` >
 
-  -- disable netrw at the very start of your init.lua (strongly advised)
+  -- disable netrw at the very start of your init.lua
   vim.g.loaded_netrw = 1
   vim.g.loaded_netrwPlugin = 1
 
@@ -359,7 +362,7 @@ applying configuration.
           glyphs = {
             default = "",
             symlink = "",
-            bookmark = "",
+            bookmark = "󰆤",
             modified = "●",
             folder = {
               arrow_closed = "",
@@ -2230,5 +2233,26 @@ Windows WSL and PowerShell
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
 - Some filesystem watcher error related to permissions will not be reported
+
+==============================================================================
+ 11. NETRW                                                  *nvim-tree-netrw*
+
+|netrw| is a standard neovim plugin that is enabled by default. It provides,
+amongst other functionality, a file/directory browser.
+
+It interferes with nvim-tree and the intended user experience is nvim-tree
+replacing the |netrw| browser.
+
+It is strongly recommended to disable |netrw|. As it is a bundled plugin it
+must be disabled manually at the start of your `init.lua` as per |netrw-noload|: >
+
+  vim.g.loaded_netrw       = 1
+  vim.g.loaded_netrwPlugin = 1
+<
+There are many |netrw| features features beyond the file browser. If you want to
+keep using |netrw| without its browser features please ensure:
+
+|nvim-tree.disable_netrw| `= false`
+|nvim-tree.hijack_netrw| ` = true`
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
