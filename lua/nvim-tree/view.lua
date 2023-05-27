@@ -19,7 +19,9 @@ M.View = {
   tabpages = {},
   cursors = {},
   hide_root_folder = false,
-  last_focused_node = nil,
+  live_filter = {
+    prev_focused_node = nil,
+  },
   winopts = {
     relativenumber = false,
     number = false,
