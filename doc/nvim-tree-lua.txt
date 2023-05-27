@@ -58,15 +58,15 @@ Colours
 
 Git Integration
 
-    Icon indicates when a file is:
-    - ✗  unstaged or folder is dirty
-    - ✓  staged
-    - ★  new file
-    - ✓ ✗ partially staged
-    - ✓ ★ new file staged
-    - ✓ ★ ✗ new file staged and has unstaged modifications
-    - ═  merging
-    - ➜  renamed
+    One or two icons for git status. When two are shown, the left is staged.
+
+      ✗  unstaged
+      ✓  staged
+        unmerged
+      ➜  renamed
+      ★  untracked
+        deleted
+      ◌  ignored
 
 Requirements
 
