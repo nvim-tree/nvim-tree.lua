@@ -502,9 +502,6 @@ applying configuration.
         },
       },
       experimental = {
-        git = {
-          async = true,
-        },
       },
       log = {
         enable = false,
@@ -1274,13 +1271,6 @@ General UI configuration.
 *nvim-tree.experimental*
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
-
-    *nvim-tree.experimental.git.async*
-    Direct file writes and `.git/` writes are executed asynchronously: the
-    git process runs in the background. The tree updates on completion.
-    Other git actions such as first tree draw and explicit refreshes are still
-    done in the foreground.
-      Type: `boolean`, Default: `true`
 
 *nvim-tree.log*
 Configuration for diagnostic logging.

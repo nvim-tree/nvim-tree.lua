@@ -559,11 +559,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       trash = true,
     },
   },
-  experimental = {
-    git = {
-      async = true,
-    },
-  },
+  experimental = {},
   log = {
     enable = false,
     truncate = false,
@@ -683,7 +679,6 @@ function M.setup(conf)
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)
   require("nvim-tree.git").setup(opts)
-  require("nvim-tree.git.runner").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
