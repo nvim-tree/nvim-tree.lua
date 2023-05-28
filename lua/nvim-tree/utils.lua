@@ -409,7 +409,7 @@ function M.is_nvim_tree_buf(bufnr)
   if bufnr == nil then
     bufnr = 0
   end
-  if vim.fn.bufexists(bufnr) then
+  if vim.api.nvim_buf_is_valid(bufnr) then
     local bufname = vim.api.nvim_buf_get_name(bufnr)
     if vim.fn.fnamemodify(bufname, ":t"):match "^NvimTree_[0-9]+$" then
       if vim.bo[bufnr].filetype == "NvimTree" then
