@@ -735,7 +735,8 @@ Git integration with icons and colors.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.disable_for_dirs*
-    Disable git integration when git top-level matches absolute path.
+    Disable git integration when git top-level matches these paths.
+    May be relative, evaluated via |fnamemodify| `":p"`
       Type: `table`, Default: `{}`
 
     *nvim-tree.git.timeout*
