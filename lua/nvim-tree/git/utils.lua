@@ -3,6 +3,9 @@ local log = require "nvim-tree.log"
 
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
+--- Retrieve the git toplevel directory
+--- @param cwd string path
+--- @return string|nil toplevel absolute path
 function M.get_toplevel(cwd)
   local profile = log.profile_start("git toplevel %s", cwd)
 

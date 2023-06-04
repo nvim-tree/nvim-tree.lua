@@ -107,6 +107,30 @@ Setup the plugin in your `init.lua` >
     },
   })
 <
+Optionally customise your |nvim-tree-mappings| via |nvim-tree.on_attach| >
+
+  local function my_on_attach(bufnr)
+    local api = require "nvim-tree.api"
+
+    local function opts(desc)
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    -- default mappings
+    api.config.mappings.default_on_attach(bufnr)
+
+    -- custom mappings
+    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+  end
+
+  -- pass to setup along with your other options
+  require("nvim-tree").setup {
+    ---
+    on_attach = my_on_attach,
+    ---
+  }
+<
 Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
@@ -434,6 +458,7 @@ applying configuration.
         ignore = true,
         show_on_dirs = true,
         show_on_open_dirs = true,
+        disable_for_dirs = {},
         timeout = 400,
       },
       modified = {
@@ -501,8 +526,7 @@ applying configuration.
           trash = true,
         },
       },
-      experimental = {
-      },
+      experimental = {},
       log = {
         enable = false,
         truncate = false,
@@ -709,6 +733,11 @@ Git integration with icons and colors.
     Show status icons of children on directories that are open.
     Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
+
+    *nvim-tree.git.disable_for_dirs*
+    Disable git integration when git top-level matches these paths.
+    May be relative, evaluated via |fnamemodify| `":p"`
+      Type: `table`, Default: `{}`
 
     *nvim-tree.git.timeout*
     Kills the git process after some time if it takes too long.
