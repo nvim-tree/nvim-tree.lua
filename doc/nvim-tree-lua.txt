@@ -458,7 +458,7 @@ applying configuration.
         ignore = true,
         show_on_dirs = true,
         show_on_open_dirs = true,
-        disabled_dirs = {},
+        disable_for_dirs = {},
         timeout = 400,
       },
       modified = {
@@ -734,7 +734,7 @@ Git integration with icons and colors.
     Only relevant when `git.show_on_dirs` is `true`.
       Type: `boolean`, Default: `true`
 
-    *nvim-tree.git.disabled_dirs*
+    *nvim-tree.git.disable_for_dirs*
     Disable git integration when git top-level matches absolute path.
       Type: `table`, Default: `{}`
 

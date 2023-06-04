@@ -108,9 +108,9 @@ function M.get_project_root(cwd)
   end
 
   local toplevel = git_utils.get_toplevel(cwd)
-  for _, disabled_dir in ipairs(M.config.git.disabled_dirs) do
+  for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
     local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
-    local disabled_norm = vim.fn.fnamemodify(disabled_dir, ":p")
+    local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
     if toplevel_norm == disabled_norm then
       return nil
     end
