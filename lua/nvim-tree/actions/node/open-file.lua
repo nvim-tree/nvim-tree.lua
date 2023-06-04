@@ -282,7 +282,7 @@ local function open_in_new_window(filename, mode)
   -- Prevents the filename from being displayed in the message
   -- box and thus causing a 'Press enter to continue...' when the
   -- cmdheight=1.
-  cmd = 'silent! ' .. cmd
+  cmd = "silent! " .. cmd
 
   if mode == "preview" and view.View.float.enable then
     -- ignore "WinLeave" autocmd on preview
