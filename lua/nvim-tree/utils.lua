@@ -354,6 +354,10 @@ function M.focus_file(path)
   require("nvim-tree.view").set_cursor { i + 1, 1 }
 end
 
+---Focus node passed as parameter if visible, otherwise focus first visible parent.
+---If none of the parents is visible focus root.
+---If node is nil do nothing.
+---@param node table|nil node to focus
 function M.focus_node_or_parent(node)
   local explorer = require("nvim-tree.core").get_explorer()
 
