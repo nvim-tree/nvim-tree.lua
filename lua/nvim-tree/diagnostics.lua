@@ -27,13 +27,20 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
-    local buf = diagnostic.bufnr
-    if vim.api.nvim_buf_is_valid(buf) then
-      local bufname = vim.api.nvim_buf_get_name(buf)
-      local lowest_severity = buffer_severity[bufname]
-      if not lowest_severity or diagnostic.severity < lowest_severity then
-        buffer_severity[bufname] = diagnostic.severity
+  local is_disabled = false
+  if vim.fn.has "nvim-0.9" == 1 then
+    is_disabled = vim.diagnostic.is_disabled()
+  end
+
+  if not is_disabled then
+    for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
+      local buf = diagnostic.bufnr
+      if vim.api.nvim_buf_is_valid(buf) then
+        local bufname = vim.api.nvim_buf_get_name(buf)
+        local lowest_severity = buffer_severity[bufname]
+        if not lowest_severity or diagnostic.severity < lowest_severity then
+          buffer_severity[bufname] = diagnostic.severity
+        end
       end
     end
   end
