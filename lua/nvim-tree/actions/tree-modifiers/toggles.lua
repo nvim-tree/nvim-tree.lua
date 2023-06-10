@@ -1,5 +1,4 @@
 local lib = require "nvim-tree.lib"
-local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local filters = require "nvim-tree.explorer.filters"
 local reloaders = require "nvim-tree.actions.reloaders.reloaders"
@@ -9,24 +8,7 @@ local M = {}
 local function reload()
   local node = lib.get_node_at_cursor()
   reloaders.reload_explorer()
-  local explorer = core.get_explorer()
-
-  if explorer == nil then
-    return
-  end
-
-  while node do
-    local found_node, _ = utils.find_node(explorer.nodes, function(node_)
-      return node_.absolute_path == node.absolute_path
-    end)
-
-    if found_node or node.parent == nil then
-      utils.focus_file(node.absolute_path)
-      break
-    end
-
-    node = node.parent
-  end
+  utils.focus_node_or_parent(node)
 end
 
 function M.custom()
