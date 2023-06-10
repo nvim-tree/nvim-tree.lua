@@ -186,7 +186,8 @@ function M.load_project_status(cwd)
       end)
     end
 
-    watcher = Watcher:new(utils.path_join { project_root, ".git" }, WATCHED_FILES, callback, {
+    local git_dir = vim.env.GIT_DIR or utils.path_join { project_root, ".git" }
+    watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
       project_root = project_root,
     })
   end
