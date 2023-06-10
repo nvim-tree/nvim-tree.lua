@@ -185,7 +185,7 @@ function Runner.run(opts, callback)
     rc = nil, -- -1 indicates timeout
   }, Runner)
 
-  local async = callback ~= nil and self.config.git_async
+  local async = callback ~= nil
   local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", opts.project_root, opts.path)
 
   if async and callback then
@@ -212,11 +212,6 @@ function Runner.run(opts, callback)
       return self.output
     end
   end
-end
-
-function Runner.setup(opts)
-  Runner.config = {}
-  Runner.config.git_async = opts.experimental.git.async
 end
 
 return Runner

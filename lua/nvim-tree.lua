@@ -492,6 +492,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     ignore = true,
     show_on_dirs = true,
     show_on_open_dirs = true,
+    disable_for_dirs = {},
     timeout = 400,
   },
   modified = {
@@ -559,11 +560,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       trash = true,
     },
   },
-  experimental = {
-    git = {
-      async = true,
-    },
-  },
+  experimental = {},
   log = {
     enable = false,
     truncate = false,
@@ -683,7 +680,6 @@ function M.setup(conf)
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)
   require("nvim-tree.git").setup(opts)
-  require("nvim-tree.git.runner").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)

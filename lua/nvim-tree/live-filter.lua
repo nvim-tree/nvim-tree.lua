@@ -134,6 +134,7 @@ local function create_overlay()
 end
 
 function M.start_filtering()
+  view.View.live_filter.prev_focused_node = require("nvim-tree.lib").get_node_at_cursor()
   M.filter = M.filter or ""
 
   redraw()
@@ -145,9 +146,18 @@ function M.start_filtering()
 end
 
 function M.clear_filter()
+  local node = require("nvim-tree.lib").get_node_at_cursor()
+  local last_node = view.View.live_filter.prev_focused_node
+
   M.filter = nil
   reset_filter()
   redraw()
+
+  if node then
+    utils.focus_file(node.absolute_path)
+  elseif last_node then
+    utils.focus_file(last_node.absolute_path)
+  end
 end
 
 function M.setup(opts)

@@ -107,7 +107,16 @@ function M.get_project_root(cwd)
     return nil
   end
 
-  M.cwd_to_project_root[cwd] = git_utils.get_toplevel(cwd)
+  local toplevel = git_utils.get_toplevel(cwd)
+  for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
+    local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
+    local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
+    if toplevel_norm == disabled_norm then
+      return nil
+    end
+  end
+
+  M.cwd_to_project_root[cwd] = toplevel
   return M.cwd_to_project_root[cwd]
 end
 
