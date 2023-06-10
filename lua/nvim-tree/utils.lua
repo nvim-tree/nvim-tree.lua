@@ -354,6 +354,31 @@ function M.focus_file(path)
   require("nvim-tree.view").set_cursor { i + 1, 1 }
 end
 
+---Focus node passed as parameter if visible, otherwise focus first visible parent.
+---If none of the parents is visible focus root.
+---If node is nil do nothing.
+---@param node table|nil node to focus
+function M.focus_node_or_parent(node)
+  local explorer = require("nvim-tree.core").get_explorer()
+
+  if explorer == nil then
+    return
+  end
+
+  while node do
+    local found_node, i = M.find_node(explorer.nodes, function(node_)
+      return node_.absolute_path == node.absolute_path
+    end)
+
+    if found_node or node.parent == nil then
+      require("nvim-tree.view").set_cursor { i + 1, 1 }
+      break
+    end
+
+    node = node.parent
+  end
+end
+
 function M.get_win_buf_from_path(path)
   for _, w in pairs(vim.api.nvim_tabpage_list_wins(0)) do
     local b = vim.api.nvim_win_get_buf(w)
