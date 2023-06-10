@@ -1,6 +1,7 @@
 local renderer = require "nvim-tree.renderer"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local lib = require "nvim-tree.lib"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
@@ -22,17 +23,20 @@ local function buf_match()
 end
 
 function M.fn(keep_buffers)
-  if not core.get_explorer() then
+  local node = lib.get_node_at_cursor()
+  local explorer = core.get_explorer()
+
+  if explorer == nil then
     return
   end
 
   local matches = buf_match()
 
-  Iterator.builder(core.get_explorer().nodes)
+  Iterator.builder(explorer.nodes)
     :hidden()
-    :applier(function(node)
-      if node.nodes ~= nil then
-        node.open = keep_buffers == true and matches(node.absolute_path)
+    :applier(function(n)
+      if n.nodes ~= nil then
+        n.open = keep_buffers == true and matches(n.absolute_path)
       end
     end)
     :recursor(function(n)
@@ -41,6 +45,7 @@ function M.fn(keep_buffers)
     :iterate()
 
   renderer.draw()
+  utils.focus_node_or_parent(node)
 end
 
 return M
