@@ -2268,7 +2268,7 @@ must be disabled manually at the start of your `init.lua` as per |netrw-noload|:
   vim.g.loaded_netrw       = 1
   vim.g.loaded_netrwPlugin = 1
 <
-There are many |netrw| features features beyond the file browser. If you want to
+There are many |netrw| features beyond the file browser. If you want to
 keep using |netrw| without its browser features please ensure:
 
 |nvim-tree.disable_netrw| `= false`
