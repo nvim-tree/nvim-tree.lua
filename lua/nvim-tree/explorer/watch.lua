@@ -2,7 +2,10 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local Watcher = require("nvim-tree.watcher").Watcher
 
-local M = {}
+local M = {
+  config = {},
+  uid = 0,
+}
 
 local function is_git(path)
   return vim.fn.fnamemodify(path, ":t") == ".git"
@@ -23,7 +26,7 @@ local function is_folder_ignored(path)
     end
   end
 
-  for _, ignore_dir in ipairs(M.ignore_dirs) do
+  for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
     if vim.fn.match(path, ignore_dir) ~= -1 then
       return true
     end
@@ -33,7 +36,7 @@ local function is_folder_ignored(path)
 end
 
 function M.create_watcher(node)
-  if not M.enabled or type(node) ~= "table" then
+  if not M.config.filesystem_watchers.enable or type(node) ~= "table" then
     return nil
   end
 
@@ -50,7 +53,7 @@ function M.create_watcher(node)
 
   local function callback(watcher)
     log.line("watcher", "node event scheduled refresh %s", watcher.context)
-    utils.debounce(watcher.context, M.debounce_delay, function()
+    utils.debounce(watcher.context, M.config.filesystem_watchers.debounce_delay, function()
       if watcher.destroyed then
         return
       end
@@ -72,9 +75,7 @@ function M.create_watcher(node)
 end
 
 function M.setup(opts)
-  M.enabled = opts.filesystem_watchers.enable
-  M.debounce_delay = opts.filesystem_watchers.debounce_delay
-  M.ignore_dirs = opts.filesystem_watchers.ignore_dirs
+  M.config.filesystem_watchers = opts.filesystem_watchers
   M.uid = 0
 end
 

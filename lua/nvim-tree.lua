@@ -201,11 +201,14 @@ local function setup_autocommands(opts)
     end,
   })
 
-  local has_watchers = opts.filesystem_watchers.enable
-
-  if opts.auto_reload_on_write and not has_watchers then
-    create_nvim_tree_autocmd("BufWritePost", { callback = reloaders.reload_explorer })
-  end
+  create_nvim_tree_autocmd("BufWritePost", {
+    callback = function()
+      if opts.auto_reload_on_write and not opts.filesystem_watchers.enable then
+        log.line("dev", "BufWritePost reloading")
+        reloaders.reload_explorer()
+      end
+    end,
+  })
 
   create_nvim_tree_autocmd("BufReadPost", {
     callback = function(data)
@@ -235,12 +238,14 @@ local function setup_autocommands(opts)
     end,
   })
 
-  if not has_watchers and opts.git.enable then
-    create_nvim_tree_autocmd("User", {
-      pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
-      callback = reloaders.reload_git,
-    })
-  end
+  create_nvim_tree_autocmd("User", {
+    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
+    callback = function()
+      if not opts.filesystem_watchers.enable and opts.git.enable then
+        reloaders.reload_git()
+      end
+    end,
+  })
 
   if opts.tab.sync.open then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
@@ -276,16 +281,16 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
 
-  if opts.reload_on_bufenter and not has_watchers then
-    create_nvim_tree_autocmd("BufEnter", {
-      pattern = "NvimTree_*",
-      callback = function()
+  create_nvim_tree_autocmd("BufEnter", {
+    pattern = "NvimTree_*",
+    callback = function()
+      if opts.reload_on_bufenter and not opts.filesystem_watchers.enable then
         if utils.is_nvim_tree_buf(0) then
           reloaders.reload_explorer()
         end
-      end,
-    })
-  end
+      end
+    end,
+  })
 
   if opts.view.centralize_selection then
     create_nvim_tree_autocmd("BufEnter", {
@@ -639,6 +644,16 @@ local function validate_options(conf)
   end
 end
 
+function M.purge_all_state()
+  require("nvim-tree.watcher").purge_watchers()
+  view.close_all_tabs()
+  view.abandon_all_windows()
+  if core.get_explorer() ~= nil then
+    git.purge_state()
+    TreeExplorer = nil
+  end
+end
+
 function M.setup(conf)
   if vim.fn.has "nvim-0.8" == 0 then
     vim.notify_once("nvim-tree.lua requires Neovim 0.8 or higher", vim.log.levels.WARN)
@@ -687,6 +702,7 @@ function M.setup(conf)
   require("nvim-tree.marks").setup(opts)
   require("nvim-tree.modified").setup(opts)
   require("nvim-tree.help").setup(opts)
+  require("nvim-tree.watcher").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end
@@ -698,13 +714,7 @@ function M.setup(conf)
     commands.setup()
   else
     -- subsequent calls to setup
-    require("nvim-tree.watcher").purge_watchers()
-    view.close_all_tabs()
-    view.abandon_all_windows()
-    if core.get_explorer() ~= nil then
-      git.purge_state()
-      TreeExplorer = nil
-    end
+    M.purge_all_state()
   end
 
   vim.g.NvimTreeSetup = 1

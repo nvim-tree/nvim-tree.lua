@@ -96,8 +96,4 @@ function M.fn(node)
   end)
 end
 
-function M.setup(opts)
-  M.enable_reload = not opts.filesystem_watchers.enable
-end
-
 return M

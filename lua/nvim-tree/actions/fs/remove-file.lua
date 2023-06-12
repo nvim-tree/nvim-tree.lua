@@ -4,7 +4,9 @@ local view = require "nvim-tree.view"
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
 
-local M = {}
+local M = {
+  config = {}
+}
 
 local function close_windows(windows)
   if view.View.float.enable and #vim.api.nvim_list_wins() == 1 then
@@ -31,7 +33,7 @@ local function clear_buffer(absolute_path)
         end
       end
       vim.api.nvim_buf_delete(buf.bufnr, { force = true })
-      if M.close_window then
+      if M.config.actions.remove_file.close_window then
         close_windows(buf.windows)
       end
       return
@@ -90,7 +92,7 @@ function M.fn(node)
       clear_buffer(node.absolute_path)
     end
     notify.info(node.absolute_path .. " was properly removed.")
-    if M.enable_reload then
+    if not M.config.filesystem_watchers.enable then
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
   end
@@ -110,10 +112,9 @@ function M.fn(node)
 end
 
 function M.setup(opts)
-  M.config = {}
-  M.config.ui = opts.ui or {}
-  M.enable_reload = not opts.filesystem_watchers.enable
-  M.close_window = opts.actions.remove_file.close_window
+  M.config.ui = opts.ui
+  M.config.actions = opts.actions
+  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M
