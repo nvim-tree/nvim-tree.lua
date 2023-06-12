@@ -2,7 +2,7 @@ local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
 
 local M = {
-  config = {}
+  config = {},
 }
 
 local utils = require "nvim-tree.utils"

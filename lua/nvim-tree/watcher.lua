@@ -3,7 +3,7 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
 local M = {
-  config = {}
+  config = {},
 }
 
 local Event = {
@@ -75,7 +75,10 @@ function Event:start()
   if rc ~= 0 then
     local warning = string.format("Could not start the fs_event watcher for path %s : %s", self._path, name)
     if name == "EMFILE" then
-      M.disable_watchers(warning, "Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#could-not-start-fs_event-for-path--emfile")
+      M.disable_watchers(
+        warning,
+        "Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#could-not-start-fs_event-for-path--emfile"
+      )
     else
       notify.warn(warning)
     end

@@ -6,7 +6,7 @@ local notify = require "nvim-tree.notify"
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {
-  config = {}
+  config = {},
 }
 
 local ALLOWED_MODIFIERS = {
