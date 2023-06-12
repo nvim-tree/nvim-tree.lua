@@ -25,7 +25,7 @@ function M.get_toplevel(cwd)
   if vim.fn.has "win32" == 1 then
     -- msys2 git support
     if has_cygpath then
-      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
+      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel:sub(0, -2)))
       if vim.v.shell_error ~= 0 then
         return nil
       end
