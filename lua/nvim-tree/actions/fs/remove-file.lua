@@ -81,6 +81,7 @@ function M.remove(node)
     end
     events._dispatch_folder_removed(node.absolute_path)
   else
+    events._dispatch_will_remove_file(node.absolute_path)
     local success = vim.loop.fs_unlink(node.absolute_path)
     if not success then
       return notify.error("Could not remove " .. node.name)
