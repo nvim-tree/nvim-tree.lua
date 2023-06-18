@@ -71,27 +71,33 @@ local function remove_dir(cwd)
   return vim.loop.fs_rmdir(cwd)
 end
 
+--- Remove a node, notify errors, dispatch events
+--- @param node table
+function M.remove(node)
+  if node.nodes ~= nil and not node.link_to then
+    local success = remove_dir(node.absolute_path)
+    if not success then
+      return notify.error("Could not remove " .. node.name)
+    end
+    events._dispatch_folder_removed(node.absolute_path)
+  else
+    local success = vim.loop.fs_unlink(node.absolute_path)
+    if not success then
+      return notify.error("Could not remove " .. node.name)
+    end
+    events._dispatch_file_removed(node.absolute_path)
+    clear_buffer(node.absolute_path)
+  end
+  notify.info(node.absolute_path .. " was properly removed.")
+end
+
 function M.fn(node)
   if node.name == ".." then
     return
   end
 
   local function do_remove()
-    if node.nodes ~= nil and not node.link_to then
-      local success = remove_dir(node.absolute_path)
-      if not success then
-        return notify.error("Could not remove " .. node.name)
-      end
-      events._dispatch_folder_removed(node.absolute_path)
-    else
-      local success = vim.loop.fs_unlink(node.absolute_path)
-      if not success then
-        return notify.error("Could not remove " .. node.name)
-      end
-      events._dispatch_file_removed(node.absolute_path)
-      clear_buffer(node.absolute_path)
-    end
-    notify.info(node.absolute_path .. " was properly removed.")
+    M.remove(node)
     if not M.config.filesystem_watchers.enable then
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
