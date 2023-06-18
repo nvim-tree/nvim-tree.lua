@@ -1,6 +1,5 @@
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
-local log = require "nvim-tree.log"
 
 local M = {
   debouncers = {},
