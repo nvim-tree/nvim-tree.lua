@@ -1,5 +1,6 @@
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
+local log = require "nvim-tree.log"
 
 local M = {
   debouncers = {},
@@ -161,6 +162,17 @@ function M.get_nodes_by_line(nodes_all, line_start)
 end
 
 function M.rename_loaded_buffers(old_path, new_path)
+  -- delete new if it exists
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local buf_name = vim.api.nvim_buf_get_name(buf)
+      if buf_name == new_path then
+        vim.api.nvim_buf_delete(buf, { force = true })
+      end
+    end
+  end
+
+  -- rename old to new
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
       local buf_name = vim.api.nvim_buf_get_name(buf)
