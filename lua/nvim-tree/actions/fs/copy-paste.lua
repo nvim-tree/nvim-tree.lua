@@ -100,21 +100,30 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 
   if dest_stats then
-    local prompt_select = "Overwrite " .. dest .. " ?"
-    local prompt_input = prompt_select .. " y/n/r(ename): "
-    lib.prompt(prompt_input, prompt_select, { "y", "n", "r" }, { "Yes", "No", "Rename" }, function(item_short)
-      utils.clear_prompt()
-      if item_short == "y" then
-        on_process()
-      elseif item_short == "r" then
-        vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
-          utils.clear_prompt()
-          if new_dest then
-            do_single_paste(source, new_dest, action_type, action_fn)
-          end
-        end)
-      end
-    end)
+    if source == dest then
+      vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
+        utils.clear_prompt()
+        if new_dest then
+          do_single_paste(source, new_dest, action_type, action_fn)
+        end
+      end)
+    else
+      local prompt_select = "Overwrite " .. dest .. " ?"
+      local prompt_input = prompt_select .. " y/n/r(ename): "
+      lib.prompt(prompt_input, prompt_select, { "y", "n", "r" }, { "Yes", "No", "Rename" }, function(item_short)
+        utils.clear_prompt()
+        if item_short == "y" then
+          on_process()
+        elseif item_short == "r" then
+          vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
+            utils.clear_prompt()
+            if new_dest then
+              do_single_paste(source, new_dest, action_type, action_fn)
+            end
+          end)
+        end
+      end)
+    end
   else
     on_process()
   end
