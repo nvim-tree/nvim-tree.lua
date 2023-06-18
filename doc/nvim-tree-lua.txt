@@ -1285,9 +1285,9 @@ Configuration for notification.
     `INFO:`    information only e.g. file copy path confirmation.
     `DEBUG:`   not used.
 
-    nvim-tree.notify.absolute_path 
+    *nvim-tree.notify.absolute_path* 
     Whether to use absolute paths or item names in fs action notifications. 
-      Type: boolean, Default: true
+      Type: `boolean`, Default: `true`
 
 *nvim-tree.ui*
 General UI configuration.
