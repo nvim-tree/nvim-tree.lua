@@ -74,21 +74,22 @@ end
 --- Remove a node, notify errors, dispatch events
 --- @param node table
 function M.remove(node)
+  local notify_node = M.config.notify.absolute_path and node.absolute_path or node.name
   if node.nodes ~= nil and not node.link_to then
     local success = remove_dir(node.absolute_path)
     if not success then
-      return notify.error("Could not remove " .. node.name)
+      return notify.error("Could not remove " .. notify_node)
     end
     events._dispatch_folder_removed(node.absolute_path)
   else
     local success = vim.loop.fs_unlink(node.absolute_path)
     if not success then
-      return notify.error("Could not remove " .. node.name)
+      return notify.error("Could not remove " .. notify_node)
     end
     events._dispatch_file_removed(node.absolute_path)
     clear_buffer(node.absolute_path)
   end
-  notify.info(node.absolute_path .. " was properly removed.")
+  notify.info(notify_node .. " was properly removed.")
 end
 
 function M.fn(node)
@@ -121,6 +122,7 @@ function M.setup(opts)
   M.config.ui = opts.ui
   M.config.actions = opts.actions
   M.config.filesystem_watchers = opts.filesystem_watchers
+  M.config.notify = opts.notify
 end
 
 return M

@@ -6,12 +6,15 @@ local notify = require "nvim-tree.notify"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
-local M = {}
+local M = {
+  config = {},
+}
 
 local function create_and_notify(file)
   local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
   if not ok then
-    notify.error("Couldn't create file " .. file)
+    local notify_file = M.config.notify.absolute_path and file or utils.get_last_path_elem(file)
+    notify.error("Couldn't create file " .. notify_file)
     return
   end
   vim.loop.fs_close(fd)
@@ -80,7 +83,9 @@ function M.fn(node)
       elseif not utils.file_exists(path_to_create) then
         local success = vim.loop.fs_mkdir(path_to_create, 493)
         if not success then
-          notify.error("Could not create folder " .. path_to_create)
+          local notify_folder = M.config.notify.absolute_path and path_to_create or
+              utils.get_last_path_elem(path_to_create)
+          notify.error("Could not create folder " .. notify_folder)
           is_error = true
           break
         end
@@ -88,12 +93,17 @@ function M.fn(node)
       end
     end
     if not is_error then
-      notify.info(new_file_path .. " was properly created")
+      local notify_new_item = M.config.notify.absolute_path and new_file_path or utils.get_last_path_elem(new_file_path)
+      notify.info(notify_new_item .. " was properly created")
     end
 
     -- synchronously refreshes as we can't wait for the watchers
     find_file(utils.path_remove_trailing(new_file_path))
   end)
+end
+
+function M.setup(opts)
+  M.config.notify = opts.notify
 end
 
 return M

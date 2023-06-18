@@ -38,6 +38,14 @@ function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
 end
 
+--- Retrieve last element of a path.
+--- @param path string Path to retrieve last element from.
+--- @return string Last element of the path.
+function M.get_last_path_elem(path)
+  path = M.path_remove_trailing(path)
+  return string.match(path, "[^" .. path_separator .. "]+$")
+end
+
 ---Get the basename of the given path.
 ---@param path string
 ---@return string
