@@ -74,7 +74,7 @@ end
 --- Remove a node, notify errors, dispatch events
 --- @param node table
 function M.remove(node)
-  local notify_node = M.config.notify.absolute_path and node.absolute_path or node.name
+  local notify_node = utils.path_or_tail(M.config.notify.absolute_path, node.absolute_path)
   if node.nodes ~= nil and not node.link_to then
     local success = remove_dir(node.absolute_path)
     if not success then

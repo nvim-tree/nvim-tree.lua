@@ -20,8 +20,8 @@ local function err_fmt(from, to, reason)
 end
 
 function M.rename(node, to)
-  local notify_from = M.config.notify.absolute_path and node.absolute_path or node.name
-  local notify_to = M.config.notify.absolute_path and to or utils.get_last_path_elem(to)
+  local notify_from = utils.path_or_tail(M.config.notify.absolute_path, node.absolute_path)
+  local notify_to = utils.path_or_tail(M.config.notify.absolute_path, to)
 
   if utils.file_exists(to) then
     notify.warn(err_fmt(notify_from, notify_to, "file already exists"))

@@ -360,8 +360,7 @@ local function setup_autocommands(opts)
   end
 end
 
-local DEFAULT_OPTS = {
-  -- BEGIN_DEFAULT_OPTS
+local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   auto_reload_on_write = true,
   disable_netrw = false,
   hijack_cursor = false,

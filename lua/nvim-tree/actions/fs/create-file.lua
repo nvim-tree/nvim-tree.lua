@@ -13,7 +13,7 @@ local M = {
 local function create_and_notify(file)
   local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
   if not ok then
-    local notify_file = M.config.notify.absolute_path and file or utils.get_last_path_elem(file)
+    local notify_file = utils.path_or_tail(M.config.notify.absolute_path, file)
     notify.error("Couldn't create file " .. notify_file)
     return
   end
@@ -83,8 +83,7 @@ function M.fn(node)
       elseif not utils.file_exists(path_to_create) then
         local success = vim.loop.fs_mkdir(path_to_create, 493)
         if not success then
-          local notify_folder = M.config.notify.absolute_path and path_to_create or
-              utils.get_last_path_elem(path_to_create)
+          local notify_folder = utils.path_or_tail(M.config.notify.absolute_path, path_to_create)
           notify.error("Could not create folder " .. notify_folder)
           is_error = true
           break
@@ -93,7 +92,7 @@ function M.fn(node)
       end
     end
     if not is_error then
-      local notify_new_item = M.config.notify.absolute_path and new_file_path or utils.get_last_path_elem(new_file_path)
+      local notify_new_item = utils.path_or_tail(M.config.notify.absolute_path, new_file_path)
       notify.info(notify_new_item .. " was properly created")
     end
 
