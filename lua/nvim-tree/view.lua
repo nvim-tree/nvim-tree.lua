@@ -330,7 +330,11 @@ function M.resize(size)
   local new_size = get_width()
   vim.api.nvim_win_set_width(M.get_winnr(), new_size)
 
-  events._dispatch_on_tree_resize(new_size)
+  -- TODO #1545 remove similar check from setup_autocommands
+  -- We let nvim handle sending resize events after 0.9
+  if vim.fn.has "nvim-0.9" == 0 then
+    events._dispatch_on_tree_resize(new_size)
+  end
 
   if not M.View.preserve_window_proportions then
     vim.cmd ":wincmd ="
