@@ -4,7 +4,9 @@ local utils = require "nvim-tree.utils"
 local FsRename = require "nvim-tree.actions.fs.rename-file"
 local notify = require "nvim-tree.notify"
 
-local M = {}
+local M = {
+  config = {},
+}
 
 function M.bulk_move()
   if #Marks.get_marks() == 0 then
@@ -29,14 +31,14 @@ function M.bulk_move()
       FsRename.rename(node, to)
     end
 
-    if M.enable_reload then
+    if not M.config.filesystem_watchers.enable then
       require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
   end)
 end
 
 function M.setup(opts)
-  M.enable_reload = not opts.filesystem_watchers.enable
+  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M

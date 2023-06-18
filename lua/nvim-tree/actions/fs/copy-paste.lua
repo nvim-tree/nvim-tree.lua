@@ -7,7 +7,9 @@ local notify = require "nvim-tree.notify"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
-local M = {}
+local M = {
+  config = {},
+}
 
 local clipboard = {
   move = {},
@@ -175,7 +177,7 @@ local function do_paste(node, action_type, action_fn)
   end
 
   clipboard[action_type] = {}
-  if M.enable_reload then
+  if not M.config.filesystem_watchers.enable then
     return require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
   end
 end
@@ -226,7 +228,7 @@ function M.print_clipboard()
 end
 
 local function copy_to_clipboard(content)
-  if M.use_system_clipboard == true then
+  if M.config.actions.use_system_clipboard == true then
     vim.fn.setreg("+", content)
     vim.fn.setreg('"', content)
     return notify.info(string.format("Copied %s to system clipboard!", content))
@@ -255,8 +257,8 @@ function M.copy_absolute_path(node)
 end
 
 function M.setup(opts)
-  M.use_system_clipboard = opts.actions.use_system_clipboard
-  M.enable_reload = not opts.filesystem_watchers.enable
+  M.config.filesystem_watchers = opts.filesystem_watchers
+  M.config.actions = opts.actions
 end
 
 return M

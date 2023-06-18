@@ -1,9 +1,10 @@
 local notify = require "nvim-tree.notify"
-
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
-local M = {}
+local M = {
+  config = {},
+}
 
 local Event = {
   _events = {},
@@ -72,7 +73,15 @@ function Event:start()
 
   rc, _, name = self._fs_event:start(self._path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
-    notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
+    local warning = string.format("Could not start the fs_event watcher for path %s : %s", self._path, name)
+    if name == "EMFILE" then
+      M.disable_watchers(
+        warning,
+        "Please see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#could-not-start-fs_event-for-path--emfile"
+      )
+    else
+      notify.warn(warning)
+    end
     return false
   end
 
@@ -154,6 +163,15 @@ end
 
 M.Watcher = Watcher
 
+--- Permanently disable watchers and purge all state following a catastrophic error.
+--- @param warning string
+--- @param detail string
+function M.disable_watchers(warning, detail)
+  notify.warn(string.format("%s Disabling watchers: %s", warning, detail))
+  M.config.filesystem_watchers.enable = false
+  require("nvim-tree").purge_all_state()
+end
+
 function M.purge_watchers()
   log.line("watcher", "purge_watchers")
 
@@ -189,6 +207,10 @@ function M.is_fs_event_capable(path)
   end
 
   return true
+end
+
+function M.setup(opts)
+  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M

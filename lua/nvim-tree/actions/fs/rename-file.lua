@@ -5,7 +5,9 @@ local notify = require "nvim-tree.notify"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
-local M = {}
+local M = {
+  config = {},
+}
 
 local ALLOWED_MODIFIERS = {
   [":p:h"] = true,
@@ -83,7 +85,7 @@ function M.fn(default_modifier)
       end
 
       M.rename(node, prepend .. new_file_path .. append)
-      if M.enable_reload then
+      if not M.config.filesystem_watchers.enable then
         require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
       end
 
@@ -93,7 +95,7 @@ function M.fn(default_modifier)
 end
 
 function M.setup(opts)
-  M.enable_reload = not opts.filesystem_watchers.enable
+  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M
