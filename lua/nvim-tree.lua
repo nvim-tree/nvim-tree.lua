@@ -215,8 +215,8 @@ local function setup_autocommands(opts)
     callback = function(data)
       -- update opened file buffers
       if
-          (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
-          and vim.bo[data.buf].buftype == ""
+        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+        and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer()
@@ -229,8 +229,8 @@ local function setup_autocommands(opts)
     callback = function(data)
       -- update opened file buffers
       if
-          (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
-          and vim.bo[data.buf].buftype == ""
+        (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none")
+        and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           reloaders.reload_explorer(nil, data.buf)
@@ -638,7 +638,7 @@ local function validate_options(conf)
         elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
           -- option is of the wrong type and is not a function
           invalid =
-              string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+            string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
         end
 
         if invalid then
