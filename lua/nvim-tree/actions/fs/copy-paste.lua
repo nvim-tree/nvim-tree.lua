@@ -80,19 +80,20 @@ end
 local function do_single_paste(source, dest, action_type, action_fn)
   local dest_stats
   local success, errmsg, errcode
+  local notify_source = notify.render_path(source)
 
   log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
 
   dest_stats, errmsg, errcode = vim.loop.fs_stat(dest)
   if not dest_stats and errcode ~= "ENOENT" then
-    notify.error("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
+    notify.error("Could not " .. action_type .. " " .. notify_source .. " - " .. (errmsg or "???"))
     return false, errmsg
   end
 
   local function on_process()
     success, errmsg = action_fn(source, dest)
     if not success then
-      notify.error("Could not " .. action_type .. " " .. source .. " - " .. (errmsg or "???"))
+      notify.error("Could not " .. action_type .. " " .. notify_source .. " - " .. (errmsg or "???"))
       return false, errmsg
     end
 
@@ -124,15 +125,16 @@ local function add_to_clipboard(node, clip)
   if node.name == ".." then
     return
   end
+  local notify_node = notify.render_path(node.absolute_path)
 
   for idx, _node in ipairs(clip) do
     if _node.absolute_path == node.absolute_path then
       table.remove(clip, idx)
-      return notify.info(node.absolute_path .. " removed from clipboard.")
+      return notify.info(notify_node .. " removed from clipboard.")
     end
   end
   table.insert(clip, node)
-  notify.info(node.absolute_path .. " added to clipboard.")
+  notify.info(notify_node .. " added to clipboard.")
 end
 
 function M.clear_clipboard()
@@ -163,7 +165,7 @@ local function do_paste(node, action_type, action_fn)
   local stats, errmsg, errcode = vim.loop.fs_stat(destination)
   if not stats and errcode ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, errmsg)
-    notify.error("Could not " .. action_type .. " " .. destination .. " - " .. (errmsg or "???"))
+    notify.error("Could not " .. action_type .. " " .. notify.render_path(destination) .. " - " .. (errmsg or "???"))
     return
   end
   local is_dir = stats and stats.type == "directory"
@@ -214,13 +216,13 @@ function M.print_clipboard()
   if #clipboard.move > 0 then
     table.insert(content, "Cut")
     for _, item in pairs(clipboard.move) do
-      table.insert(content, " * " .. item.absolute_path)
+      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
     end
   end
   if #clipboard.copy > 0 then
     table.insert(content, "Copy")
     for _, item in pairs(clipboard.copy) do
-      table.insert(content, " * " .. item.absolute_path)
+      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
     end
   end
 
