@@ -75,6 +75,7 @@ end
 
 function M.setup(opts)
   vim.fn.sign_define(SIGN_NAME, { text = opts.renderer.icons.glyphs.bookmark, texthl = "NvimTreeBookmark" })
+  require("nvim-tree.marks.bulk-delete").setup(opts)
   require("nvim-tree.marks.bulk-move").setup(opts)
 end
 
