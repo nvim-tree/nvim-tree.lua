@@ -2191,9 +2191,19 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                   {fname}        `{string}` Absolute path to the created file
 
+- Event.WillCreateFile
+                handler parameters: ~
+                  {fname}        `{string}` Absolute path to the file to be
+                  created
+
 - Event.FileRemoved
                 handler parameters: ~
                   {fname}        `{string}` Absolute path to the removed file.
+
+- Event.WillRemoveFile
+                handler parameters: ~
+                  {fname}        `{string}` Absolute path to the file to be
+                  removed
 
 - Event.FolderCreated
                 handler parameters: ~
