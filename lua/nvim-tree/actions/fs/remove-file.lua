@@ -74,7 +74,7 @@ end
 --- Remove a node, notify errors, dispatch events
 --- @param node table
 function M.remove(node)
-  local notify_node = utils.path_or_tail(M.config.notify.absolute_path, node.absolute_path)
+  local notify_node = notify.render_path(node.absolute_path)
   if node.nodes ~= nil and not node.link_to then
     local success = remove_dir(node.absolute_path)
     if not success then
@@ -123,7 +123,6 @@ function M.setup(opts)
   M.config.ui = opts.ui
   M.config.actions = opts.actions
   M.config.filesystem_watchers = opts.filesystem_watchers
-  M.config.notify = opts.notify
 end
 
 return M

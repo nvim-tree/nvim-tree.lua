@@ -38,13 +38,6 @@ function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
 end
 
---- @param get_path boolean wether to return path or last element of the path.
---- @param path string path
---- @return string path or path tail
-function M.path_or_tail(get_path, path)
-  return get_path and path or vim.fn.fnamemodify(M.path_remove_trailing(path), ":t")
-end
-
 ---Get the basename of the given path.
 ---@param path string
 ---@return string

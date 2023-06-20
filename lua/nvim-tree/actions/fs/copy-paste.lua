@@ -80,7 +80,7 @@ end
 local function do_single_paste(source, dest, action_type, action_fn)
   local dest_stats
   local success, errmsg, errcode
-  local notify_source = utils.path_or_tail(M.config.notify.absolute_path, source)
+  local notify_source = notify.render_path(source)
 
   log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
 
@@ -125,7 +125,7 @@ local function add_to_clipboard(node, clip)
   if node.name == ".." then
     return
   end
-  local notify_node = utils.path_or_tail(M.config.notify.absolute_path, node.absolute_path)
+  local notify_node = notify.render_path(node.absolute_path)
 
   for idx, _node in ipairs(clip) do
     if _node.absolute_path == node.absolute_path then
@@ -162,11 +162,10 @@ local function do_paste(node, action_type, action_fn)
   end
 
   local destination = node.absolute_path
-  local notify_destination = utils.path_or_tail(M.config.notify.absolute_path, destination)
   local stats, errmsg, errcode = vim.loop.fs_stat(destination)
   if not stats and errcode ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, errmsg)
-    notify.error("Could not " .. action_type .. " " .. notify_destination .. " - " .. (errmsg or "???"))
+    notify.error("Could not " .. action_type .. " " .. notify.render_path(destination) .. " - " .. (errmsg or "???"))
     return
   end
   local is_dir = stats and stats.type == "directory"
@@ -217,13 +216,13 @@ function M.print_clipboard()
   if #clipboard.move > 0 then
     table.insert(content, "Cut")
     for _, item in pairs(clipboard.move) do
-      table.insert(content, " * " .. (utils.path_or_tail(M.config.notify.absolute_path, item.absolute_path)))
+      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
     end
   end
   if #clipboard.copy > 0 then
     table.insert(content, "Copy")
     for _, item in pairs(clipboard.copy) do
-      table.insert(content, " * " .. (utils.path_or_tail(M.config.notify.absolute_path, item.absolute_path)))
+      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
     end
   end
 
@@ -262,7 +261,6 @@ end
 function M.setup(opts)
   M.config.filesystem_watchers = opts.filesystem_watchers
   M.config.actions = opts.actions
-  M.config.notify = opts.notify
 end
 
 return M
