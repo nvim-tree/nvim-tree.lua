@@ -11,6 +11,7 @@ local M = {
 }
 
 local function create_and_notify(file)
+  events._dispatch_will_create_file(file)
   local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
   if not ok then
     local notify_file = utils.path_or_tail(M.config.notify.absolute_path, file)
