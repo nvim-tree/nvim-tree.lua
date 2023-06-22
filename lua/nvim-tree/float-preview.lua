@@ -51,9 +51,9 @@ end
 
 function FloatPreview:preview(path)
   self.path = path
-  self.buf = vim.api.nvim_create_buf(false, false)
+  self.buf = vim.api.nvim_create_buf(false, true)
 
-  vim.api.nvim_buf_set_option(self.buf, "bufhidden", "delete")
+  vim.api.nvim_buf_set_option(self.buf, "bufhidden", "wipe")
   vim.api.nvim_buf_set_option(self.buf, "readonly", true)
 
   local width = vim.api.nvim_get_option("columns")
