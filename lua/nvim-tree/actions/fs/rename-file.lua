@@ -20,17 +20,20 @@ local function err_fmt(from, to, reason)
 end
 
 function M.rename(node, to)
+  local notify_from = notify.render_path(node.absolute_path)
+  local notify_to = notify.render_path(to)
+
   if utils.file_exists(to) then
-    notify.warn(err_fmt(node.absolute_path, to, "file already exists"))
+    notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
     return
   end
 
   events._dispatch_will_rename_node(node.absolute_path, to)
   local success, err = vim.loop.fs_rename(node.absolute_path, to)
   if not success then
-    return notify.warn(err_fmt(node.absolute_path, to, err))
+    return notify.warn(err_fmt(notify_from, notify_to, err))
   end
-  notify.info(node.absolute_path .. " ➜ " .. to)
+  notify.info(notify_from .. "  " .. notify_to)
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
