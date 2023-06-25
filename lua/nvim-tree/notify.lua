@@ -2,6 +2,7 @@ local M = {}
 
 local config = {
   threshold = vim.log.levels.INFO,
+  absolute_path = true,
 }
 
 local modes = {
@@ -30,9 +31,18 @@ do
   end
 end
 
+function M.render_path(path)
+  if config.absolute_path then
+    return path
+  else
+    return vim.fn.fnamemodify(path .. "/", ":h:t")
+  end
+end
+
 function M.setup(opts)
   opts = opts or {}
   config.threshold = opts.notify.threshold or vim.log.levels.INFO
+  config.absolute_path = opts.notify.absolute_path
 end
 
 return M
