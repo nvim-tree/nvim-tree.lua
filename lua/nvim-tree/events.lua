@@ -10,7 +10,9 @@ M.Event = {
   NodeRenamed = "NodeRenamed",
   TreeOpen = "TreeOpen",
   TreeClose = "TreeClose",
+  WillCreateFile = "WillCreateFile",
   FileCreated = "FileCreated",
+  WillRemoveFile = "WillRemoveFile",
   FileRemoved = "FileRemoved",
   FolderCreated = "FolderCreated",
   FolderRemoved = "FolderRemoved",
@@ -53,8 +55,18 @@ function M._dispatch_node_renamed(old_name, new_name)
 end
 
 --@private
+function M._dispatch_will_remove_file(fname)
+  dispatch(M.Event.WillRemoveFile, { fname = fname })
+end
+
+--@private
 function M._dispatch_file_removed(fname)
   dispatch(M.Event.FileRemoved, { fname = fname })
+end
+
+--@private
+function M._dispatch_will_create_file(fname)
+  dispatch(M.Event.WillCreateFile, { fname = fname })
 end
 
 --@private

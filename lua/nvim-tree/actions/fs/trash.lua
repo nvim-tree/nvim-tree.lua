@@ -75,6 +75,7 @@ function M.fn(node)
         end
       end)
     else
+      events._dispatch_will_remove_file(node.absolute_path)
       trash_path(function(_, rc)
         if rc ~= 0 then
           notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
