@@ -46,8 +46,10 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: "Minimal config"
+      label: "Clean room replication"
       description: "Minimal(!) configuration necessary to reproduce the issue.
+
+        If not provided it is very unlikely that the nvim-tree team will be able to address your issue.
 
         See [wiki: Clean Room Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions.
 
