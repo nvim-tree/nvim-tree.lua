@@ -10,6 +10,7 @@ local M = {
   config = {},
   projects = {},
   cwd_to_project_root = {},
+  cwd_ignored = {},
 }
 
 -- Files under .git that should result in a reload when changed.
@@ -51,7 +52,9 @@ end
 
 function M.reload_project(project_root, path, callback)
   local project = M.projects[project_root]
-  if not project or not M.config.git.enable then
+  local ignored = M.cwd_ignored[path]
+
+  if not project or ignored or not M.config.git.enable then
     if callback then
       callback()
     end
@@ -114,6 +117,10 @@ function M.get_project_root(cwd)
     if toplevel_norm == disabled_norm then
       return nil
     end
+  end
+
+  if toplevel then
+    M.cwd_ignored[cwd] = git_utils.get_ignored(cwd)
   end
 
   M.cwd_to_project_root[cwd] = toplevel

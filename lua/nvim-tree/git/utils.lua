@@ -37,6 +37,24 @@ function M.get_toplevel(cwd)
   return toplevel:sub(0, -2)
 end
 
+--- Determine whether a directory is git ignored
+--- @param cwd string path
+--- @return boolean
+function M.get_ignored(cwd)
+  local profile = log.profile_start("git ignored %s", cwd)
+  log.line("dev", "get_ignored %s", cwd)
+
+  local cmd = { "git", "-C", cwd, "check-ignore", "-q", cwd }
+  log.line("git", "%s", vim.inspect(cmd))
+
+  vim.fn.system(cmd)
+
+  log.line("git", "check-ignore exit status %d", vim.v.shell_error)
+  log.profile_end(profile)
+
+  return vim.v.shell_error == 0
+end
+
 local untracked = {}
 
 function M.should_show_untracked(cwd)
