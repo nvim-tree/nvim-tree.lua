@@ -3,7 +3,6 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
-local reload = require "nvim-tree.explorer.reload"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
@@ -30,10 +29,8 @@ function M.fn(path)
 
   local profile = log.profile_start("find file %s", path_real)
 
-  -- we cannot wait for watchers to populate a new node
-  if utils.get_node_from_path(path_real) == nil then
-    reload.refresh_nodes_for_path(vim.fn.fnamemodify(path_real, ":h"))
-  end
+  -- force a re-expand when the node is not in the tree
+  local node_present = utils.get_node_from_path(path_real) ~= nil
 
   local line = core.get_nodes_starting_line()
 
@@ -60,7 +57,7 @@ function M.fn(path)
         if not node.group_next then
           node.open = true
         end
-        if #node.nodes == 0 then
+        if #node.nodes == 0 or not node_present then
           core.get_explorer():expand(node)
         end
       end
