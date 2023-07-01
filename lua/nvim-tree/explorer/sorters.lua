@@ -191,6 +191,32 @@ function C.extension(a, b)
   return a.extension:lower() <= b.extension:lower()
 end
 
+function C.filetype(a, b)
+  local a_ft = vim.filetype.match { filename = a.name }
+  local b_ft = vim.filetype.match { filename = b.name }
+
+  -- directories first
+  if a.nodes and not b.nodes then
+    return true
+  elseif not a.nodes and b.nodes then
+    return false
+  end
+
+  -- both nil, whatever
+  if not (a_ft and b_ft) then
+    return true
+  end
+
+  -- one is nil, the other wins
+  if a_ft and not b_ft then
+    return true
+  elseif not a_ft and b_ft then
+    return false
+  end
+
+  return a_ft <= b_ft
+end
+
 function M.setup(opts)
   M.config = {}
   M.config.sort_by = opts.sort_by
