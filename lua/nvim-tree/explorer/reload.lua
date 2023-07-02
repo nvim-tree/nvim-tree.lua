@@ -7,7 +7,6 @@ local live_filter = require "nvim-tree.live-filter"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 
-local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
 local M = {}
@@ -176,44 +175,6 @@ function M.refresh_node(node, callback)
 
     update_parent_statuses(parent_node, project, project_root)
   end
-end
-
----Refresh contents and git status for all nodes to a path: actual directory and links
----@param path string absolute path
-function M.refresh_nodes_for_path(path)
-  local explorer = require("nvim-tree.core").get_explorer()
-  if not explorer then
-    return
-  end
-
-  local profile = log.profile_start("refresh_nodes_for_path %s", path)
-
-  -- avoids cycles
-  local absolute_paths_refreshed = {}
-
-  NodeIterator.builder({ explorer })
-    :hidden()
-    :recursor(function(node)
-      if node.group_next then
-        return { node.group_next }
-      end
-      if node.nodes then
-        return node.nodes
-      end
-    end)
-    :applier(function(node)
-      local abs_contains = node.absolute_path and path:find(node.absolute_path, 1, true) == 1
-      local link_contains = node.link_to and path:find(node.link_to, 1, true) == 1
-      if abs_contains or link_contains then
-        if not absolute_paths_refreshed[node.absolute_path] then
-          absolute_paths_refreshed[node.absolute_path] = true
-          M.refresh_node(node)
-        end
-      end
-    end)
-    :iterate()
-
-  log.profile_end(profile)
 end
 
 function M.setup(opts)
