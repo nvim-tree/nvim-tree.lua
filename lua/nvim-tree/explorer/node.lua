@@ -50,7 +50,7 @@ function M.update_git_status(node, parent_ignored, status)
 end
 
 function M.get_git_status(node)
-  local git_status = node.git_status
+  local git_status = node and node.git_status
   if not git_status then
     -- status doesn't exist
     return nil
@@ -67,7 +67,7 @@ function M.get_git_status(node)
   end
 
   local status = {}
-  if not node.open or M.config.git.show_on_open_dirs then
+  if not require("nvim-tree.lib").get_last_group_node(node).open or M.config.git.show_on_open_dirs then
     -- dir is closed or we should show on open_dirs
     if git_status.file ~= nil then
       table.insert(status, git_status.file)
