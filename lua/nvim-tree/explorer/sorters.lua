@@ -178,17 +178,17 @@ function C.extension(a, b)
     return false
   end
 
-  if not (a.extension and b.extension) then
-    return true
-  end
-
   if a.extension and not b.extension then
     return true
   elseif not a.extension and b.extension then
     return false
   end
 
-  return a.extension:lower() <= b.extension:lower()
+  if a.extension:lower() == b.extension:lower() then
+    return C.name(a, b)
+  end
+
+  return a.extension:lower() < b.extension:lower()
 end
 
 function M.setup(opts)
