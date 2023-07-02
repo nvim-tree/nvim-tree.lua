@@ -167,6 +167,59 @@ function C.modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
+function C.suffix(a, b)
+  if not (a and b) then
+    return true
+  end
+
+  -- directories go first
+  if a.nodes and not b.nodes then
+    return true
+  elseif not a.nodes and b.nodes then
+    return false
+  elseif a.nodes and b.nodes then
+    return C.name(a, b)
+  end
+
+  -- dotfiles go second
+  local a_first = string.sub(a.name, 1, 1)
+  local b_first = string.sub(b.name, 1, 1)
+
+  if a_first == "." and b_first ~= "." then
+    return true
+  elseif a_first ~= "." and b_first == "." then
+    return false
+  elseif a_first == "." and b_first == "." then
+    return C.name(a, b)
+  end
+
+  -- check if we have suffixes
+  local a_suffix_ndx = string.find(a.name, "%.%a+$")
+  local b_suffix_ndx = string.find(b.name, "%.%a+$")
+
+  if a_suffix_ndx and not b_suffix_ndx then
+    return true
+  elseif not a_suffix_ndx and b_suffix_ndx then
+    return false
+  elseif not (a_suffix_ndx and b_suffix_ndx) then
+    return C.name(a, b)
+  end
+
+  -- finally, compare by suffixes
+  local a_suffix = string.sub(a.name, a_suffix_ndx)
+  local b_suffix = string.sub(b.name, b_suffix_ndx)
+
+  if a_suffix and not b_suffix then
+    return true
+  elseif not a_suffix and b_suffix then
+    return false
+  elseif a_suffix:lower() == b_suffix:lower() then
+    return C.name(a, b)
+  end
+
+  return a_suffix:lower() < b_suffix:lower()
+end
+
 function C.extension(a, b)
   if not (a and b) then
     return true
