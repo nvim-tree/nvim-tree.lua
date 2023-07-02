@@ -202,11 +202,6 @@ function C.filetype(a, b)
     return false
   end
 
-  -- both nil, whatever
-  if not (a_ft and b_ft) then
-    return true
-  end
-
   -- one is nil, the other wins
   if a_ft and not b_ft then
     return true
@@ -214,7 +209,12 @@ function C.filetype(a, b)
     return false
   end
 
-  return a_ft <= b_ft
+  -- same filetype or both nil, sort by name
+  if a_ft == b_ft then
+    return C.name(a, b)
+  end
+
+  return a_ft < b_ft
 end
 
 function M.setup(opts)
