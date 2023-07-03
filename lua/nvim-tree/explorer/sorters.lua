@@ -182,32 +182,29 @@ function C.suffix(a, b)
   end
 
   -- dotfiles go second
-  local a_first = string.sub(a.name, 1, 1)
-  local b_first = string.sub(b.name, 1, 1)
-
-  if a_first == "." and b_first ~= "." then
+  if a.name:sub(1, 1) == "." and b.name:sub(1, 1) ~= "." then
     return true
-  elseif a_first ~= "." and b_first == "." then
+  elseif a.name:sub(1, 1) ~= "." and b.name:sub(1, 1) == "." then
     return false
-  elseif a_first == "." and b_first == "." then
+  elseif a.name:sub(1, 1) == "." and b.name:sub(1, 1) == "." then
     return C.name(a, b)
   end
 
-  -- check if we have suffixes
-  local a_suffix_ndx = string.find(a.name, "%.%a+$")
-  local b_suffix_ndx = string.find(b.name, "%.%a+$")
+  -- unsuffixed go third
+  local a_suffix_ndx = a.name:find("%.%a+$")
+  local b_suffix_ndx = b.name:find("%.%a+$")
 
-  if a_suffix_ndx and not b_suffix_ndx then
+  if not a_suffix_ndx and b_suffix_ndx then
     return true
-  elseif not a_suffix_ndx and b_suffix_ndx then
+  elseif a_suffix_ndx and not b_suffix_ndx then
     return false
   elseif not (a_suffix_ndx and b_suffix_ndx) then
     return C.name(a, b)
   end
 
   -- finally, compare by suffixes
-  local a_suffix = string.sub(a.name, a_suffix_ndx)
-  local b_suffix = string.sub(b.name, b_suffix_ndx)
+  local a_suffix = a.name:sub(a_suffix_ndx)
+  local b_suffix = b.name:sub(b_suffix_ndx)
 
   if a_suffix and not b_suffix then
     return true
