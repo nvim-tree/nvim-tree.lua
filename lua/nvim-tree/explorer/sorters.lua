@@ -184,11 +184,13 @@ function C.extension(a, b)
     return false
   end
 
-  if a.extension:lower() == b.extension:lower() then
+  local a_ext = (a.extension or ''):lower()
+  local b_ext = (b.extension or ''):lower()
+  if a_ext == b_ext then
     return C.name(a, b)
   end
 
-  return a.extension:lower() < b.extension:lower()
+  return a_ext < b_ext
 end
 
 function M.setup(opts)
