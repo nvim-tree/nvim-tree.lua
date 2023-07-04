@@ -191,8 +191,8 @@ function C.suffix(a, b)
   end
 
   -- unsuffixed go third
-  local a_suffix_ndx = a.name:find("%.%a+$")
-  local b_suffix_ndx = b.name:find("%.%a+$")
+  local a_suffix_ndx = a.name:find "%.%w+$"
+  local b_suffix_ndx = b.name:find "%.%w+$"
 
   if not a_suffix_ndx and b_suffix_ndx then
     return true
