@@ -8,7 +8,14 @@ local M = {
 }
 
 local function is_git(path)
-  return vim.fn.fnamemodify(path, ":t") == ".git"
+  -- If $GIT_DIR is set, consider its value to be equivalent to '.git'
+  if path == vim.env.GIT_DIR then
+    return true
+  elseif vim.fn.fnamemodify(path, ":t") == ".git" then
+    return true
+  else
+    return false
+  end
 end
 
 local IGNORED_PATHS = {
