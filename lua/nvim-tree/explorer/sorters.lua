@@ -123,10 +123,13 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   if not (a and b) then
     return true
   end
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+
+  if M.config.sort_folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   if ignorecase then
@@ -148,10 +151,13 @@ function C.modification_time(a, b)
   if not (a and b) then
     return true
   end
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+
+  if M.config.sort_folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   local last_modified_a = 0
@@ -174,12 +180,14 @@ function C.suffix(a, b)
   end
 
   -- directories go first
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
-  elseif a.nodes and b.nodes then
-    return C.name(a, b)
+  if M.config.sort_folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    elseif a.nodes and b.nodes then
+      return C.name(a, b)
+    end
   end
 
   -- dotfiles go second
@@ -223,10 +231,12 @@ function C.extension(a, b)
     return true
   end
 
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+  if M.config.sort_folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   if a.extension and not b.extension then
@@ -249,10 +259,12 @@ function C.filetype(a, b)
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+  if M.config.sort_folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   -- one is nil, the other wins
@@ -273,6 +285,7 @@ end
 function M.setup(opts)
   M.config = {}
   M.config.sort_by = opts.sort_by
+  M.config.sort_folders_first = opts.sort_folders_first
 
   if type(opts.sort_by) == "function" then
     C.user = opts.sort_by

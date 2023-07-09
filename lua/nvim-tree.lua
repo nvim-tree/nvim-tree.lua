@@ -367,6 +367,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
   sort_by = "name",
+  sort_folders_first = true,
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,

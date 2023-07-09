@@ -313,6 +313,7 @@ applying configuration.
       hijack_netrw = true,
       hijack_unnamed_buffer_when_opening = false,
       sort_by = "name",
+      sort_folders_first = true,
       root_dirs = {},
       prefer_startup_root = false,
       sync_root_with_cwd = false,
@@ -591,6 +592,11 @@ Can be one of `"name"`, `"case_sensitive"`, `"modification_time"`, `"extension"`
       end)
     end
 <
+*nvim-tree.sort_folders_first*
+Sort folders before files. Has no effect when |nvim-tree.sort_by| is a
+function.
+  Type: `boolean`, Default: `true`
+
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
   Type: `boolean`, Default: `false`
