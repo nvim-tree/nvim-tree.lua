@@ -179,17 +179,19 @@ function C.extension(a, b)
     return false
   end
 
-  if not (a.extension and b.extension) then
-    return true
-  end
-
   if a.extension and not b.extension then
     return true
   elseif not a.extension and b.extension then
     return false
   end
 
-  return a.extension:lower() <= b.extension:lower()
+  local a_ext = (a.extension or ""):lower()
+  local b_ext = (b.extension or ""):lower()
+  if a_ext == b_ext then
+    return C.name(a, b)
+  end
+
+  return a_ext < b_ext
 end
 
 function C.filetype(a, b)
