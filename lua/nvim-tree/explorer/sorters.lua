@@ -80,6 +80,7 @@ function M.sort(t)
         absolute_path = n.absolute_path,
         executable = n.executable,
         extension = n.extension,
+        filetype = vim.filetype.match { filename = n.name },
         link_to = n.link_to,
         name = n.name,
         type = n.type,
