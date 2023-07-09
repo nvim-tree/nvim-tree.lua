@@ -168,6 +168,56 @@ function C.modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
+function C.suffix(a, b)
+  if not (a and b) then
+    return true
+  end
+
+  -- directories go first
+  if a.nodes and not b.nodes then
+    return true
+  elseif not a.nodes and b.nodes then
+    return false
+  elseif a.nodes and b.nodes then
+    return C.name(a, b)
+  end
+
+  -- dotfiles go second
+  if a.name:sub(1, 1) == "." and b.name:sub(1, 1) ~= "." then
+    return true
+  elseif a.name:sub(1, 1) ~= "." and b.name:sub(1, 1) == "." then
+    return false
+  elseif a.name:sub(1, 1) == "." and b.name:sub(1, 1) == "." then
+    return C.name(a, b)
+  end
+
+  -- unsuffixed go third
+  local a_suffix_ndx = a.name:find "%.%w+$"
+  local b_suffix_ndx = b.name:find "%.%w+$"
+
+  if not a_suffix_ndx and b_suffix_ndx then
+    return true
+  elseif a_suffix_ndx and not b_suffix_ndx then
+    return false
+  elseif not (a_suffix_ndx and b_suffix_ndx) then
+    return C.name(a, b)
+  end
+
+  -- finally, compare by suffixes
+  local a_suffix = a.name:sub(a_suffix_ndx)
+  local b_suffix = b.name:sub(b_suffix_ndx)
+
+  if a_suffix and not b_suffix then
+    return true
+  elseif not a_suffix and b_suffix then
+    return false
+  elseif a_suffix:lower() == b_suffix:lower() then
+    return C.name(a, b)
+  end
+
+  return a_suffix:lower() < b_suffix:lower()
+end
+
 function C.extension(a, b)
   if not (a and b) then
     return true
