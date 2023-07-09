@@ -80,6 +80,7 @@ function M.sort(t)
         absolute_path = n.absolute_path,
         executable = n.executable,
         extension = n.extension,
+        filetype = vim.filetype.match { filename = n.name },
         link_to = n.link_to,
         name = n.name,
         type = n.type,
@@ -189,6 +190,32 @@ function C.extension(a, b)
   end
 
   return a.extension:lower() <= b.extension:lower()
+end
+
+function C.filetype(a, b)
+  local a_ft = vim.filetype.match { filename = a.name }
+  local b_ft = vim.filetype.match { filename = b.name }
+
+  -- directories first
+  if a.nodes and not b.nodes then
+    return true
+  elseif not a.nodes and b.nodes then
+    return false
+  end
+
+  -- one is nil, the other wins
+  if a_ft and not b_ft then
+    return true
+  elseif not a_ft and b_ft then
+    return false
+  end
+
+  -- same filetype or both nil, sort by name
+  if a_ft == b_ft then
+    return C.name(a, b)
+  end
+
+  return a_ft < b_ft
 end
 
 function M.setup(opts)
