@@ -185,8 +185,8 @@ function C.extension(a, b)
     return false
   end
 
-  local a_ext = (a.extension or ''):lower()
-  local b_ext = (b.extension or ''):lower()
+  local a_ext = (a.extension or ""):lower()
+  local b_ext = (b.extension or ""):lower()
   if a_ext == b_ext then
     return C.name(a, b)
   end
