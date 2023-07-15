@@ -2235,6 +2235,13 @@ e.g. handler for node renamed: >
                 handler parameters: ~
                   {buf}          `{number} `API buffer handle (buffer number)
 
+- Event.TreeRendered
+                Invoked every time the tree is redrawn. Normally this event
+                happens after |Event.TreeOpen| except that handlers of this
+                one will have access to the tree buffer populated with the
+                final content.
+                • Note: Handler takes no parameter.
+
 |nvim_tree_events_startup|
 
 There are two special startup events in the form of User autocommands:
