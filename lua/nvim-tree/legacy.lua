@@ -41,6 +41,9 @@ local function refactored(opts)
     end
     opts.view.adaptive_size = nil
   end
+
+  -- 2023/07/15
+  utils.move_missing_val(opts, "", "sort_by", opts, "sort", "sorter", true)
 end
 
 local function deprecated(opts)

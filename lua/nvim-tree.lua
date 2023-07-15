@@ -366,7 +366,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
-  sort_by = "name",
+  sort = {
+    sorter = "name",
+    folders_first = true,
+  },
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,
@@ -613,7 +616,7 @@ local FIELD_OVERRIDE_TYPECHECK = {
   min = { string = true, ["function"] = true, number = true },
   remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
-  sort_by = { ["function"] = true, string = true },
+  sorter = { ["function"] = true, string = true },
   root_folder_label = { ["function"] = true, string = true, boolean = true },
   picker = { ["function"] = true, string = true },
 }

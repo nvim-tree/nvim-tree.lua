@@ -3,10 +3,10 @@ local M = {}
 local C = {}
 
 --- Predefined comparator, defaulting to name
---- @param sort_by string as per options
+--- @param sorter string as per options
 --- @return function
-local function get_comparator(sort_by)
-  return C[sort_by] or C.name
+local function get_comparator(sorter)
+  return C[sorter] or C.name
 end
 
 ---Create a shallow copy of a portion of a list.
@@ -68,7 +68,7 @@ local function split_merge(t, first, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
----Perform a merge sort using sort_by option.
+---Perform a merge sort using sorter option.
 ---@param t table nodes
 function M.sort(t)
   if C.user then
@@ -115,7 +115,7 @@ function M.sort(t)
 
     split_merge(t, 1, #t, mini_comparator) -- sort by user order
   else
-    split_merge(t, 1, #t, get_comparator(M.config.sort_by))
+    split_merge(t, 1, #t, get_comparator(M.config.sort.sorter))
   end
 end
 
@@ -123,10 +123,13 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   if not (a and b) then
     return true
   end
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+
+  if M.config.sort.folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   if ignorecase then
@@ -148,10 +151,13 @@ function C.modification_time(a, b)
   if not (a and b) then
     return true
   end
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+
+  if M.config.sort.folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   local last_modified_a = 0
@@ -174,12 +180,14 @@ function C.suffix(a, b)
   end
 
   -- directories go first
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
-  elseif a.nodes and b.nodes then
-    return C.name(a, b)
+  if M.config.sort.folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    elseif a.nodes and b.nodes then
+      return C.name(a, b)
+    end
   end
 
   -- dotfiles go second
@@ -223,10 +231,12 @@ function C.extension(a, b)
     return true
   end
 
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+  if M.config.sort.folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   if a.extension and not b.extension then
@@ -249,10 +259,12 @@ function C.filetype(a, b)
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  if a.nodes and not b.nodes then
-    return true
-  elseif not a.nodes and b.nodes then
-    return false
+  if M.config.sort.folders_first then
+    if a.nodes and not b.nodes then
+      return true
+    elseif not a.nodes and b.nodes then
+      return false
+    end
   end
 
   -- one is nil, the other wins
@@ -272,10 +284,10 @@ end
 
 function M.setup(opts)
   M.config = {}
-  M.config.sort_by = opts.sort_by
+  M.config.sort = opts.sort
 
-  if type(opts.sort_by) == "function" then
-    C.user = opts.sort_by
+  if type(M.config.sort.sorter) == "function" then
+    C.user = M.config.sort.sorter
   end
 end
 
