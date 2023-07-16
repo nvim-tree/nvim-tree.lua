@@ -91,7 +91,7 @@ function M.draw(unloaded_bufnr)
 
   log.profile_end(profile)
 
-  events._dispatch_on_tree_rendered()
+  events._dispatch_on_tree_rendered(bufnr, view.get_winnr())
 end
 
 function M.setup(opts)

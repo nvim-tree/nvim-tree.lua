@@ -106,8 +106,8 @@ function M._dispatch_tree_attached_post(buf)
 end
 
 --@private
-function M._dispatch_on_tree_rendered()
-  dispatch(M.Event.TreeRendered, nil)
+function M._dispatch_on_tree_rendered(bufnr, winnr)
+  dispatch(M.Event.TreeRendered, { bufnr = bufnr, winnr = winnr })
 end
 
 return M

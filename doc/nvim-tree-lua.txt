@@ -2240,7 +2240,9 @@ e.g. handler for node renamed: >
                 happens after |Event.TreeOpen| except that handlers of this
                 one will have access to the tree buffer populated with the
                 final content.
-                • Note: Handler takes no parameter.
+                handler parameters: ~
+                  {bufnr}          `{number} `API buffer handle (buffer number)
+                  {winnr}          `{number} `API window handle (window number)
 
 |nvim_tree_events_startup|
 
