@@ -8,7 +8,17 @@ local M = {
 }
 
 local function is_git(path)
-  return vim.fn.fnamemodify(path, ":t") == ".git"
+  -- If $GIT_DIR is set, consider its value to be equivalent to '.git'.
+  -- Expand $GIT_DIR (and `path`) to a full path (see :help filename-modifiers), since
+  -- it's possible to set it to a relative path. We want to make our best
+  -- effort to expand that to a valid absolute path.
+  if vim.fn.fnamemodify(path, ":p") == vim.fn.fnamemodify(vim.env.GIT_DIR, ":p") then
+    return true
+  elseif vim.fn.fnamemodify(path, ":t") == ".git" then
+    return true
+  else
+    return false
+  end
 end
 
 local IGNORED_PATHS = {
