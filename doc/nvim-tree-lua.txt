@@ -137,59 +137,59 @@ Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
 
-`<C-]>`           CD                      |nvim-tree-api.tree.change_root_to_node()|
-`<C-e>`           Open: In Place          |nvim-tree-api.node.open.replace_tree_buffer()|
-`<C-k>`           Info                    |nvim-tree-api.node.show_info_popup()|
-`<C-r>`           Rename: Omit Filename   |nvim-tree-api.fs.rename_sub()|
-`<C-t>`           Open: New Tab           |nvim-tree-api.node.open.tab()|
-`<C-v>`           Open: Vertical Split    |nvim-tree-api.node.open.vertical()|
-`<C-x>`           Open: Horizontal Split  |nvim-tree-api.node.open.horizontal()|
-`<BS>`            Close Directory         |nvim-tree-api.node.navigate.parent_close()|
-`<CR>`            Open                    |nvim-tree-api.node.open.edit()|
-`<Tab>`           Open Preview            |nvim-tree-api.node.open.preview()|
-`>`               Next Sibling            |nvim-tree-api.node.navigate.sibling.next()|
-`<`               Previous Sibling        |nvim-tree-api.node.navigate.sibling.prev()|
-`.`               Run Command             |nvim-tree-api.node.run.cmd()|
-`-`               Up                      |nvim-tree-api.tree.change_root_to_parent()|
-`a`               Create                  |nvim-tree-api.fs.create()|
-`bd`              Delete Bookmarked       |nvim-tree-api.marks.bulk.delete()|
-`bmv`             Move Bookmarked         |nvim-tree-api.marks.bulk.move()|
-`B`               Toggle No Buffer        |nvim-tree-api.tree.toggle_no_buffer_filter()|
-`c`               Copy                    |nvim-tree-api.fs.copy.node()|
-`C`               Toggle Git Clean        |nvim-tree-api.tree.toggle_git_clean_filter()|
-`[c`              Prev Git                |nvim-tree-api.node.navigate.git.prev()|
-`]c`              Next Git                |nvim-tree-api.node.navigate.git.next()|
-`d`               Delete                  |nvim-tree-api.fs.remove()|
-`D`               Trash                   |nvim-tree-api.fs.trash()|
-`E`               Expand All              |nvim-tree-api.tree.expand_all()|
-`e`               Rename: Basename        |nvim-tree-api.fs.rename_basename()|
-`]e`              Next Diagnostic         |nvim-tree-api.node.navigate.diagnostics.next()|
-`[e`              Prev Diagnostic         |nvim-tree-api.node.navigate.diagnostics.prev()|
-`F`               Clean Filter            |nvim-tree-api.live_filter.clear()|
-`f`               Filter                  |nvim-tree-api.live_filter.start()|
-`g?`              Help                    |nvim-tree-api.tree.toggle_help()|
-`gy`              Copy Absolute Path      |nvim-tree-api.fs.copy.absolute_path()|
-`H`               Toggle Dotfiles         |nvim-tree-api.tree.toggle_hidden_filter()|
-`I`               Toggle Git Ignore       |nvim-tree-api.tree.toggle_gitignore_filter()|
-`J`               Last Sibling            |nvim-tree-api.node.navigate.sibling.last()|
-`K`               First Sibling           |nvim-tree-api.node.navigate.sibling.first()|
-`m`               Toggle Bookmark         |nvim-tree-api.marks.toggle()|
-`o`               Open                    |nvim-tree-api.node.open.edit()|
-`O`               Open: No Window Picker  |nvim-tree-api.node.open.no_window_picker()|
-`p`               Paste                   |nvim-tree-api.fs.paste()|
-`P`               Parent Directory        |nvim-tree-api.node.navigate.parent()|
-`q`               Close                   |nvim-tree-api.tree.close()|
-`r`               Rename                  |nvim-tree-api.fs.rename()|
-`R`               Refresh                 |nvim-tree-api.tree.reload()|
-`s`               Run System              |nvim-tree-api.node.run.system()|
-`S`               Search                  |nvim-tree-api.tree.search_node()|
-`U`               Toggle Hidden           |nvim-tree-api.tree.toggle_custom_filter()|
-`W`               Collapse                |nvim-tree-api.tree.collapse_all()|
-`x`               Cut                     |nvim-tree-api.fs.cut()|
-`y`               Copy Name               |nvim-tree-api.fs.copy.filename()|
-`Y`               Copy Relative Path      |nvim-tree-api.fs.copy.relative_path()|
-`<2-LeftMouse>`   Open                    |nvim-tree-api.node.open.edit()|
-`<2-RightMouse>`  CD                      |nvim-tree-api.tree.change_root_to_node()|
+`<C-]>`           CD                         |nvim-tree-api.tree.change_root_to_node()|
+`<C-e>`           Open: In Place             |nvim-tree-api.node.open.replace_tree_buffer()|
+`<C-k>`           Info                       |nvim-tree-api.node.show_info_popup()|
+`<C-r>`           Rename: Omit Filename      |nvim-tree-api.fs.rename_sub()|
+`<C-t>`           Open: New Tab              |nvim-tree-api.node.open.tab()|
+`<C-v>`           Open: Vertical Split       |nvim-tree-api.node.open.vertical()|
+`<C-x>`           Open: Horizontal Split     |nvim-tree-api.node.open.horizontal()|
+`<BS>`            Close Directory            |nvim-tree-api.node.navigate.parent_close()|
+`<CR>`            Open                       |nvim-tree-api.node.open.edit()|
+`<Tab>`           Open Preview               |nvim-tree-api.node.open.preview()|
+`>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
+`<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
+`.`               Run Command                |nvim-tree-api.node.run.cmd()|
+`-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
+`a`               Create                     |nvim-tree-api.fs.create()|
+`bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
+`bmv`             Move Bookmarked            |nvim-tree-api.marks.bulk.move()|
+`B`               Toggle Filter: No Buffer   |nvim-tree-api.tree.toggle_no_buffer_filter()|
+`c`               Copy                       |nvim-tree-api.fs.copy.node()|
+`C`               Toggle Filter: Git Clean   |nvim-tree-api.tree.toggle_git_clean_filter()|
+`[c`              Prev Git                   |nvim-tree-api.node.navigate.git.prev()|
+`]c`              Next Git                   |nvim-tree-api.node.navigate.git.next()|
+`d`               Delete                     |nvim-tree-api.fs.remove()|
+`D`               Trash                      |nvim-tree-api.fs.trash()|
+`E`               Expand All                 |nvim-tree-api.tree.expand_all()|
+`e`               Rename: Basename           |nvim-tree-api.fs.rename_basename()|
+`]e`              Next Diagnostic            |nvim-tree-api.node.navigate.diagnostics.next()|
+`[e`              Prev Diagnostic            |nvim-tree-api.node.navigate.diagnostics.prev()|
+`F`               Clean Filter               |nvim-tree-api.live_filter.clear()|
+`f`               Filter                     |nvim-tree-api.live_filter.start()|
+`g?`              Help                       |nvim-tree-api.tree.toggle_help()|
+`gy`              Copy Absolute Path         |nvim-tree-api.fs.copy.absolute_path()|
+`H`               Toggle Filter: Dotfiles    |nvim-tree-api.tree.toggle_hidden_filter()|
+`I`               Toggle Filter: Git Ignore  |nvim-tree-api.tree.toggle_gitignore_filter()|
+`J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
+`K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
+`m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
+`o`               Open                       |nvim-tree-api.node.open.edit()|
+`O`               Open: No Window Picker     |nvim-tree-api.node.open.no_window_picker()|
+`p`               Paste                      |nvim-tree-api.fs.paste()|
+`P`               Parent Directory           |nvim-tree-api.node.navigate.parent()|
+`q`               Close                      |nvim-tree-api.tree.close()|
+`r`               Rename                     |nvim-tree-api.fs.rename()|
+`R`               Refresh                    |nvim-tree-api.tree.reload()|
+`s`               Run System                 |nvim-tree-api.node.run.system()|
+`S`               Search                     |nvim-tree-api.tree.search_node()|
+`U`               Toggle Filter: Hidden      |nvim-tree-api.tree.toggle_custom_filter()|
+`W`               Collapse                   |nvim-tree-api.tree.collapse_all()|
+`x`               Cut                        |nvim-tree-api.fs.cut()|
+`y`               Copy Name                  |nvim-tree-api.fs.copy.filename()|
+`Y`               Copy Relative Path         |nvim-tree-api.fs.copy.relative_path()|
+`<2-LeftMouse>`   Open                       |nvim-tree-api.node.open.edit()|
+`<2-RightMouse>`  CD                         |nvim-tree-api.tree.change_root_to_node()|
 
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
@@ -448,6 +448,7 @@ applying configuration.
         },
       },
       filters = {
+        git_ignored = true,
         dotfiles = false,
         git_clean = false,
         no_buffer = false,
@@ -461,7 +462,6 @@ applying configuration.
       },
       git = {
         enable = true,
-        ignore = true,
         show_on_dirs = true,
         show_on_open_dirs = true,
         disable_for_dirs = {},
@@ -736,11 +736,6 @@ Git integration with icons and colors.
 
     *nvim-tree.git.enable*
     Enable / disable the feature.
-      Type: `boolean`, Default: `true`
-
-    *nvim-tree.git.ignore*
-    Ignore files based on `.gitignore`. Requires |git.enable| `= true`
-    Toggle via the `toggle_git_ignored` action, default mapping `I`.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.git.show_on_dirs*
@@ -1113,20 +1108,25 @@ UI rendering setup
 *nvim-tree.filters*
 Filtering options.
 
+    *nvim-tree.filters.git_ignored*  (previously `git.ignore`)
+    Ignore files based on `.gitignore`. Requires |git.enable| `= true`
+    Toggle via |nvim-tree-api.tree.toggle_gitignore_filter()|, default `I`
+      Type: `boolean`, Default: `true`
+
     *nvim-tree.filters.dotfiles*
     Do not show dotfiles: files starting with a `.`
-    Toggle via the `toggle_dotfiles` action, default mapping `H`.
+    Toggle via |nvim-tree-api.tree.toggle_hidden_filter()|, default `H`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.filters.git_clean*
     Do not show files with no git status. This will show ignored files when
-    |nvim-tree.git.ignore| is set, as they are effectively dirty.
-    Toggle via the `toggle_git_clean` action, default mapping `C`.
+    |nvim-tree.filters.git_ignored| is set, as they are effectively dirty.
+    Toggle via |nvim-tree-api.tree.toggle_git_clean_filter()|, default `C`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.filters.no_buffer*
     Do not show files that have no |buflisted()| buffer.
-    Toggle via the `toggle_no_buffer` action, default mapping `B`.
+    Toggle via |nvim-tree-api.tree.toggle_no_buffer_filter()|, default `B`
     For performance reasons this may not immediately update on buffer
     delete/wipe. A reload or filesystem event will result in an update.
       Type: `boolean`, Default: `false`
@@ -1134,12 +1134,12 @@ Filtering options.
     *nvim-tree.filters.custom*
     Custom list of vim regex for file/directory names that will not be shown.
     Backslashes must be escaped e.g. "^\\.git". See |string-match|.
-    Toggle via the `toggle_custom` action, default mapping `U`.
+    Toggle via |nvim-tree-api.tree.toggle_custom_filter()|, default `U`
       Type: {string}, Default: `{}`
 
     *nvim-tree.filters.exclude*
     List of directories or files to exclude from filtering: always show them.
-    Overrides `git.ignore`, `filters.dotfiles` and `filters.custom`.
+    Overrides `filters.git_ignored`, `filters.dotfiles` and `filters.custom`.
       Type: {string}, Default: `{}`
 
 *nvim-tree.trash*
@@ -1503,7 +1503,7 @@ tree.expand_all()                            *nvim-tree-api.tree.expand_all()*
 
                                 *nvim-tree-api.tree.toggle_gitignore_filter()*
 tree.toggle_gitignore_filter()
-    Toggle |nvim-tree.git.ignore| filter.
+    Toggle |nvim-tree.filters.git_ignored| filter.
 
                                 *nvim-tree-api.tree.toggle_git_clean_filter()*
 tree.toggle_git_clean_filter()
@@ -1961,9 +1961,9 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'a',     api.fs.create,                         opts('Create'))
   vim.keymap.set('n', 'bd',    api.marks.bulk.delete,                 opts('Delete Bookmarked'))
   vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   opts('Move Bookmarked'))
-  vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      opts('Toggle No Buffer'))
+  vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      opts('Toggle Filter: No Buffer'))
   vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
-  vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      opts('Toggle Git Clean'))
+  vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      opts('Toggle Filter: Git Clean'))
   vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            opts('Prev Git'))
   vim.keymap.set('n', ']c',    api.node.navigate.git.next,            opts('Next Git'))
   vim.keymap.set('n', 'd',     api.fs.remove,                         opts('Delete'))
@@ -1976,8 +1976,8 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'f',     api.live_filter.start,                 opts('Filter'))
   vim.keymap.set('n', 'g?',    api.tree.toggle_help,                  opts('Help'))
   vim.keymap.set('n', 'gy',    api.fs.copy.absolute_path,             opts('Copy Absolute Path'))
-  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,         opts('Toggle Dotfiles'))
-  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,      opts('Toggle Git Ignore'))
+  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,         opts('Toggle Filter: Dotfiles'))
+  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,      opts('Toggle Filter: Git Ignore'))
   vim.keymap.set('n', 'J',     api.node.navigate.sibling.last,        opts('Last Sibling'))
   vim.keymap.set('n', 'K',     api.node.navigate.sibling.first,       opts('First Sibling'))
   vim.keymap.set('n', 'm',     api.marks.toggle,                      opts('Toggle Bookmark'))
@@ -1990,7 +1990,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'R',     api.tree.reload,                       opts('Refresh'))
   vim.keymap.set('n', 's',     api.node.run.system,                   opts('Run System'))
   vim.keymap.set('n', 'S',     api.tree.search_node,                  opts('Search'))
-  vim.keymap.set('n', 'U',     api.tree.toggle_custom_filter,         opts('Toggle Hidden'))
+  vim.keymap.set('n', 'U',     api.tree.toggle_custom_filter,         opts('Toggle Filter: Hidden'))
   vim.keymap.set('n', 'W',     api.tree.collapse_all,                 opts('Collapse'))
   vim.keymap.set('n', 'x',     api.fs.cut,                            opts('Cut'))
   vim.keymap.set('n', 'y',     api.fs.copy.filename,                  opts('Copy Name'))

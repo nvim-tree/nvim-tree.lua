@@ -500,6 +500,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   filters = {
+    git_ignored = true,
     dotfiles = false,
     git_clean = false,
     no_buffer = false,
@@ -513,7 +514,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   git = {
     enable = true,
-    ignore = true,
     show_on_dirs = true,
     show_on_open_dirs = true,
     disable_for_dirs = {},
