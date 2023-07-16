@@ -205,7 +205,6 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufWritePost", {
     callback = function()
       if opts.auto_reload_on_write and not opts.filesystem_watchers.enable then
-        log.line("dev", "BufWritePost reloading")
         reloaders.reload_explorer()
       end
     end,

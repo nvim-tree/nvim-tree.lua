@@ -37,6 +37,25 @@ local function reload_git_status(project_root, path, project, git_status)
   project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
 end
 
+--- Is this path in a known ignored directory?
+--- @param path string
+--- @param project table git status
+--- @return boolean
+local function path_ignored_in_project(path, project)
+  if not path or not project then
+    return false
+  end
+
+  if project and project.files then
+    for file, status in pairs(project.files) do
+      if status == "!!" and vim.startswith(path, file) then
+        return true
+      end
+    end
+  end
+  return false
+end
+
 function M.reload()
   if not M.config.git.enable then
     return {}
@@ -58,7 +77,7 @@ function M.reload_project(project_root, path, callback)
     return
   end
 
-  if path and path:find(project_root, 1, true) ~= 1 then
+  if path and (path:find(project_root, 1, true) ~= 1 or path_ignored_in_project(path, project)) then
     if callback then
       callback()
     end
@@ -105,6 +124,14 @@ function M.get_project_root(cwd)
   local stat, _ = vim.loop.fs_stat(cwd)
   if not stat or stat.type ~= "directory" then
     return nil
+  end
+
+  -- short-circuit any known ignored paths
+  for root, project in pairs(M.projects) do
+    if project and path_ignored_in_project(cwd, project) then
+      M.cwd_to_project_root[cwd] = root
+      return root
+    end
   end
 
   local toplevel = git_utils.get_toplevel(cwd)
