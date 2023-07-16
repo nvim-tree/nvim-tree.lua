@@ -131,7 +131,7 @@ function M.setup(opts)
   M.config = {
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
-    filter_git_ignored = opts.git.ignore,
+    filter_git_ignored = opts.filters.git_ignored,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
   }

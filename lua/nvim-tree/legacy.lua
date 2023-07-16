@@ -44,6 +44,9 @@ local function refactored(opts)
 
   -- 2023/07/15
   utils.move_missing_val(opts, "", "sort_by", opts, "sort", "sorter", true)
+
+  -- 2023/07/16
+  utils.move_missing_val(opts, "git", "ignore", opts, "filters", "git_ignored", true)
 end
 
 local function deprecated(opts)
