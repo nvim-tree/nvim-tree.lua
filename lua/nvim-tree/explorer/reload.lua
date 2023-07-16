@@ -20,18 +20,12 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
--- TODO always use callback once async/await is available
 local function reload_and_get_git_project(path, callback)
   local project_root = git.get_project_root(path)
 
-  if callback then
-    git.reload_project(project_root, path, function()
-      callback(project_root, git.get_project(project_root) or {})
-    end)
-  else
-    git.reload_project(project_root, path)
-    return project_root, git.get_project(project_root) or {}
-  end
+  git.reload_project(project_root, path, function()
+    callback(project_root, git.get_project(project_root) or {})
+  end)
 end
 
 local function update_parent_statuses(node, project, root)
@@ -149,32 +143,21 @@ end
 
 ---Refresh contents and git status for a single node
 ---@param node table
+---@param callback function
 function M.refresh_node(node, callback)
   if type(node) ~= "table" then
-    if callback then
-      callback()
-    end
-    return
+    callback()
   end
 
   local parent_node = utils.get_parent_of_group(node)
 
-  if callback then
-    reload_and_get_git_project(node.absolute_path, function(project_root, project)
-      require("nvim-tree.explorer.reload").reload(parent_node, project)
-
-      update_parent_statuses(parent_node, project, project_root)
-
-      callback()
-    end)
-  else
-    -- TODO use callback once async/await is available
-    local project_root, project = reload_and_get_git_project(node.absolute_path)
-
+  reload_and_get_git_project(node.absolute_path, function(project_root, project)
     require("nvim-tree.explorer.reload").reload(parent_node, project)
 
     update_parent_statuses(parent_node, project, project_root)
-  end
+
+    callback()
+  end)
 end
 
 function M.setup(opts)
