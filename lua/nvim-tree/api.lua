@@ -1,4 +1,6 @@
 local notify = require "nvim-tree.notify"
+local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 
 local Api = {
   tree = {},
@@ -135,7 +137,10 @@ Api.fs.copy.filename = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy
 Api.fs.copy.relative_path = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_path)
 
 local function edit(mode, node)
-  local path = node.absolute_path
+  -- get relative path
+  local absolute_path = node.absolute_path
+  local path = utils.path_relative(absolute_path, core.get_cwd())
+
   if node.link_to and not node.nodes then
     path = node.link_to
   end
