@@ -2,6 +2,7 @@ local core = require "nvim-tree.core"
 local diagnostics = require "nvim-tree.diagnostics"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
+local events = require "nvim-tree.events"
 local modified = require "nvim-tree.renderer.components.modified"
 
 local _padding = require "nvim-tree.renderer.components.padding"
@@ -89,6 +90,8 @@ function M.draw(unloaded_bufnr)
   view.grow_from_content()
 
   log.profile_end(profile)
+
+  events._dispatch_on_tree_rendered(bufnr, view.get_winnr())
 end
 
 function M.setup(opts)
