@@ -30,16 +30,11 @@ function M.fn(node)
   end
 
   -- configs
-  if utils.is_unix then
-    if M.config.trash.cmd == nil then
-      M.config.trash.cmd = "trash"
-    end
-    if M.config.ui.confirm.trash == nil then
-      M.config.ui.confirm.trash = true
-    end
-  else
-    notify.warn "Trash is currently a UNIX only feature!"
-    return
+  if M.config.trash.cmd == nil then
+    M.config.trash.cmd = "trash"
+  end
+  if M.config.ui.confirm.trash == nil then
+    M.config.ui.confirm.trash = true
   end
 
   local binary = M.config.trash.cmd:gsub(" .*$", "")
@@ -55,11 +50,15 @@ function M.fn(node)
 
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
-    vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
+    local need_sync_wait = utils.is_windows
+    local job = vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
       detach = true,
       on_exit = on_exit,
       on_stderr = on_stderr,
     })
+    if need_sync_wait then
+      vim.fn.jobwait({job})
+    end
   end
 
   local function do_trash()
