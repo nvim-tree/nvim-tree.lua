@@ -52,12 +52,12 @@ function M.fn(node)
   local function trash_path(on_exit)
     local need_sync_wait = utils.is_windows
     local job = vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
-      detach = true,
+      detach = not need_sync_wait,
       on_exit = on_exit,
       on_stderr = on_stderr,
     })
     if need_sync_wait then
-      vim.fn.jobwait({job})
+      vim.fn.jobwait { job }
     end
   end
 
