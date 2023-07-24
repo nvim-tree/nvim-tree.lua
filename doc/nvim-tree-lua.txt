@@ -2292,7 +2292,7 @@ macOS
   system.
 
 Windows WSL and PowerShell
-- Trash is synchronized.
+- Trash is synchronized
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
 - Some filesystem watcher error related to permissions will not be reported
