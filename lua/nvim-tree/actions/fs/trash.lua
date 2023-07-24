@@ -44,7 +44,7 @@ function M.fn(node)
 
   local binary = M.config.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
-    notify.warn(binary .. " is not executable.")
+    notify.warn(string.format("trash.cmd '%s' is not available.", M.config.trash.cmd))
     return
   end
 
