@@ -1148,7 +1148,6 @@ Configuration options for trashing.
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
     The default is shipped with glib2 which is a common linux package.
-    Only available for UNIX.
       Type: `string`, Default: `"gio trash"`
 
 *nvim-tree.actions*
