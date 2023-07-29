@@ -30,7 +30,7 @@ end
 
 local function update_parent_statuses(node, project, root)
   while project and node and node.absolute_path ~= root do
-    explorer_node.update_git_status(node, false, project)
+    explorer_node.update_git_status(node, explorer_node.is_git_ignored(node.parent), project)
     node = node.parent
   end
 end

@@ -111,7 +111,7 @@ function M.get_git_status(node)
 end
 
 function M.is_git_ignored(node)
-  return node.git_status and node.git_status.file == "!!"
+  return node and node.git_status and node.git_status.file == "!!"
 end
 
 function M.node_destroy(node)
