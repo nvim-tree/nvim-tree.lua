@@ -494,7 +494,7 @@ applying configuration.
         },
         open_file = {
           quit_on_open = false,
-          prevent_buffer_override = true,
+          eject = true,
           resize_window = true,
           window_picker = {
             enable = true,
@@ -1206,7 +1206,7 @@ Configuration for various actions.
         Closes the explorer when opening a file.
           Type: `boolean`, Default: `false`
 
-        *nvim-tree.actions.open_file.prevent_buffer_override*
+        *nvim-tree.actions.open_file.eject*
         Prevent new opened file from opening in the same window as the tree.
           Type: `boolean`, Default: `true`
 

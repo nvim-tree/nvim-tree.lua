@@ -196,7 +196,7 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufWipeout", {
     pattern = "NvimTree_*",
     callback = function()
-      if utils.is_nvim_tree_buf(0) and opts.actions.open_file.prevent_buffer_override then
+      if utils.is_nvim_tree_buf(0) and opts.actions.open_file.eject then
         view._prevent_buffer_override()
       end
     end,
@@ -545,7 +545,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     open_file = {
       quit_on_open = false,
-      prevent_buffer_override = true,
+      eject = true,
       resize_window = true,
       window_picker = {
         enable = true,
