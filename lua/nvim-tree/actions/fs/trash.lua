@@ -29,8 +29,8 @@ function M.fn(node)
     return
   end
 
+  -- configs
   if utils.is_unix or utils.is_windows then
-    -- configs
     if M.config.trash.cmd == nil then
       M.config.trash.cmd = "trash"
     end
