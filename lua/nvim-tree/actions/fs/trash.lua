@@ -29,12 +29,17 @@ function M.fn(node)
     return
   end
 
-  -- configs
-  if M.config.trash.cmd == nil then
-    M.config.trash.cmd = "trash"
-  end
-  if M.config.ui.confirm.trash == nil then
-    M.config.ui.confirm.trash = true
+  if utils.is_unix or utils.is_windows then
+    -- configs
+    if M.config.trash.cmd == nil then
+      M.config.trash.cmd = "trash"
+    end
+    if M.config.ui.confirm.trash == nil then
+      M.config.ui.confirm.trash = true
+    end
+  else
+    notify.warn "Trash is currently a UNIX only feature!"
+    return
   end
 
   local binary = M.config.trash.cmd:gsub(" .*$", "")
