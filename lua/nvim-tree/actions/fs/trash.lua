@@ -30,7 +30,7 @@ function M.fn(node)
   end
 
   -- configs
-  if utils.is_unix then
+  if utils.is_unix or utils.is_windows then
     if M.config.trash.cmd == nil then
       M.config.trash.cmd = "trash"
     end
@@ -55,11 +55,15 @@ function M.fn(node)
 
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
-    vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
-      detach = true,
+    local need_sync_wait = utils.is_windows
+    local job = vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
+      detach = not need_sync_wait,
       on_exit = on_exit,
       on_stderr = on_stderr,
     })
+    if need_sync_wait then
+      vim.fn.jobwait { job }
+    end
   end
 
   local function do_trash()

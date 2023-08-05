@@ -494,6 +494,7 @@ applying configuration.
         },
         open_file = {
           quit_on_open = false,
+          eject = true,
           resize_window = true,
           window_picker = {
             enable = true,
@@ -1147,7 +1148,7 @@ Configuration options for trashing.
 
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
-    Only available for UNIX.
+    The default `"gio trash"` is shipped with glib2 which is a common linux package.
     The default `"gio trash"` is shipped with glib2 which is a common linux package.
     The macOS default `"trash"` is part of the base operating system.
       Type: `string`, Default: `"gio trash"` or `"trash"`
@@ -1205,8 +1206,11 @@ Configuration for various actions.
 
         *nvim-tree.actions.open_file.quit_on_open*
         Closes the explorer when opening a file.
-        It will also disable preventing a buffer overriding the tree.
           Type: `boolean`, Default: `false`
+
+        *nvim-tree.actions.open_file.eject*
+        Prevent new opened file from opening in the same window as the tree.
+          Type: `boolean`, Default: `true`
 
         *nvim-tree.actions.open_file.resize_window*  (previously `view.auto_resize`)
         Resizes the tree when opening a file.
@@ -2293,7 +2297,7 @@ macOS
   system.
 
 Windows WSL and PowerShell
-- Trash is unavailable
+- Trash is synchronized
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
 - Some filesystem watcher error related to permissions will not be reported
