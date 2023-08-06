@@ -600,7 +600,7 @@ File and folder sorting options.
           end)
         end
 <
-    *nvim-tree.sort.sort_folders_first*
+    *nvim-tree.sort.folders_first*
     Sort folders before files. Has no effect when |nvim-tree.sort.sorter| is a
     function.
       Type: `boolean`, Default: `true`
