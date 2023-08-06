@@ -147,8 +147,8 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
       callback(item_short)
     end)
   else
-    vim.ui.input({ prompt = prompt_input }, function(item_short)
-      callback(item_short)
+    vim.ui.input({ prompt = prompt_input, default = items_short[1] or "" }, function(item_short)
+      callback(item_short and item_short:sub(1, 1) or nil)
     end)
   end
 end
