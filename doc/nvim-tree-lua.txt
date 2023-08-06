@@ -1149,9 +1149,9 @@ Configuration options for trashing.
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
     The default `"gio trash"` is shipped with glib2 which is a common linux package.
-    The default `"gio trash"` is shipped with glib2 which is a common linux package.
-    The macOS default `"trash"` is part of the base operating system.
-      Type: `string`, Default: `"gio trash"` or `"trash"`
+    macOS default `"trash"` requires the homebrew package `trash`
+    Windows default `"???"` requires TODO @linrongbin16  
+      Type: `string`, Default: `"gio trash"` or `"trash"` or `"TODO @linrongbin16"`
 
 *nvim-tree.actions*
 Configuration for various actions.

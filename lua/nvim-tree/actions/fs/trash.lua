@@ -29,19 +29,6 @@ function M.fn(node)
     return
   end
 
-  -- configs
-  if utils.is_unix or utils.is_windows then
-    if M.config.trash.cmd == nil then
-      M.config.trash.cmd = "trash"
-    end
-    if M.config.ui.confirm.trash == nil then
-      M.config.ui.confirm.trash = true
-    end
-  else
-    notify.warn "Trash is currently a UNIX only feature!"
-    return
-  end
-
   local binary = M.config.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
     notify.warn(string.format("trash.cmd '%s' is not available.", M.config.trash.cmd))
