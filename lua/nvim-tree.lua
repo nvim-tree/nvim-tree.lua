@@ -671,10 +671,8 @@ end
 
 --- Apply OS specific localisations to DEFAULT_OPTS
 local function localise_default_opts()
-  if utils.is_macos then
+  if utils.is_macos or utils.is_windows then
     DEFAULT_OPTS.trash.cmd = "trash"
-  elseif utils.is_windows then
-    DEFAULT_OPTS.trash.cmd = "TODO @linrongbin16"
   end
 end
 
