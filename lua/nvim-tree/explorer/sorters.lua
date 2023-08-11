@@ -23,6 +23,31 @@ local function tbl_slice(t, first, last)
   return slice
 end
 
+---Evaluate `sort.folders_first` and `sort.files_first`
+---@param a table
+---@param b table
+---@param third_option_callback function|nil function should return `boolean`. Evaluated only if necessary
+---@return boolean|nil
+local function folders_or_files_first(a, b, third_option_callback)
+  local x = nil
+
+  if a.nodes and not b.nodes then
+    x = true
+  elseif not a.nodes and b.nodes then
+    x = false
+  elseif a.nodes and b.nodes and third_option_callback ~= nil then
+    x = third_option_callback()
+  end
+
+  if x ~= nil then
+    if M.config.sort.files_first then
+      return not x
+    elseif M.config.sort.folders_first then
+      return x
+    end
+  end
+end
+
 local function merge(t, first, mid, last, comparator)
   local n1 = mid - first + 1
   local n2 = last - mid
@@ -124,12 +149,9 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   if ignorecase then
@@ -152,12 +174,9 @@ function C.modification_time(a, b)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   local last_modified_a = 0
@@ -180,14 +199,12 @@ function C.suffix(a, b)
   end
 
   -- directories go first
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    elseif a.nodes and b.nodes then
-      return C.name(a, b)
-    end
+  local early_return = folders_or_files_first(a, b, function()
+    return C.name(a, b)
+  end)
+
+  if early_return ~= nil then
+    return early_return
   end
 
   -- dotfiles go second
@@ -231,12 +248,9 @@ function C.extension(a, b)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   if a.extension and not b.extension then
@@ -259,12 +273,9 @@ function C.filetype(a, b)
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   -- one is nil, the other wins

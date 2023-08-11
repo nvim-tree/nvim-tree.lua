@@ -373,6 +373,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   sort = {
     sorter = "name",
     folders_first = true,
+    files_first = false,
   },
   root_dirs = {},
   prefer_startup_root = false,
