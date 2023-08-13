@@ -1154,8 +1154,10 @@ Configuration options for trashing.
 
     *nvim-tree.trash.cmd*
     The command used to trash items (must be installed on your system).
-    The default is shipped with glib2 which is a common linux package.
-      Type: `string`, Default: `"gio trash"`
+    The default     `"gio trash"` is shipped with glib2 which is a common linux package.
+    macOS default   `"trash"` requires the homebrew package `trash`
+    Windows default `"trash"` requires `trash-cli` or similar
+      Type: `string`, Default: `"gio trash"` or `"trash"`
 
 *nvim-tree.actions*
 Configuration for various actions.
@@ -2297,7 +2299,6 @@ vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select
  10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
 macOS
-- Trash is unavailable
 - Rename to different case is not possible when using a case insensitive file
   system.
 
