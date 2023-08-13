@@ -669,6 +669,13 @@ local function validate_options(conf)
   end
 end
 
+--- Apply OS specific localisations to DEFAULT_OPTS
+local function localise_default_opts()
+  if utils.is_macos or utils.is_windows then
+    DEFAULT_OPTS.trash.cmd = "trash"
+  end
+end
+
 function M.purge_all_state()
   require("nvim-tree.watcher").purge_watchers()
   view.close_all_tabs()
@@ -686,6 +693,8 @@ function M.setup(conf)
   end
 
   M.init_root = vim.fn.getcwd()
+
+  localise_default_opts()
 
   legacy.migrate_legacy_options(conf or {})
 
