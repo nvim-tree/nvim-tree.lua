@@ -210,16 +210,6 @@ Api.marks.navigate.select = wrap(require("nvim-tree.marks.navigation").select)
 
 Api.config.mappings.default_on_attach = require("nvim-tree.keymap").default_on_attach
 
-Api.config.mappings.active = wrap(function()
-  notify.warn "api.config.mappings.active is deprecated in favor of config.mappings.get_keymap"
-  return require("nvim-tree.keymap-legacy").active_mappings_clone()
-end)
-
-Api.config.mappings.default = function()
-  notify.warn "api.config.mappings.default is deprecated in favor of config.mappings.get_keymap_default"
-  return require("nvim-tree.keymap-legacy").default_mappings_clone()
-end
-
 Api.config.mappings.get_keymap = wrap(function()
   return require("nvim-tree.keymap").get_keymap()
 end)

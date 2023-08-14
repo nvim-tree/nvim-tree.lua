@@ -26,10 +26,6 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 Community support: [matrix](https://matrix.to/#/#nvim-tree:matrix.org)
 
-## New Mapping Method 2023-02-27
-
-[:help nvim-tree.view.mappings](doc/nvim-tree-lua.txt) have been deprecated in favour of [:help nvim-tree.on_attach](doc/nvim-tree-lua.txt). Please visit [Migrating To on_attach](https://github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach) to transition.
-
 ## Requirements
 
 [neovim >=0.8.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
