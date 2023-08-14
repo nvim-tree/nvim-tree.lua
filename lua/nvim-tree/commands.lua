@@ -1,4 +1,3 @@
-local keymap_legacy = require "nvim-tree.keymap-legacy"
 local api = require "nvim-tree.api"
 local view = require "nvim-tree.view"
 
@@ -119,15 +118,6 @@ local CMDS = {
     },
     command = function()
       api.tree.collapse_all(true)
-    end,
-  },
-  {
-    name = "NvimTreeGenerateOnAttach",
-    opts = {
-      desc = "nvim-tree: generate on_attach function from deprecated view.mappings",
-    },
-    command = function()
-      keymap_legacy.cmd_generate_on_attach()
     end,
   },
 }
