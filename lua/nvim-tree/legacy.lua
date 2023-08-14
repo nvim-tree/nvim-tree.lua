@@ -4,15 +4,6 @@ local notify = require "nvim-tree.notify"
 local M = {}
 
 local function refactored(opts)
-  -- mapping actions
-  if opts.view and opts.view.mappings and opts.view.mappings.list then
-    for _, m in pairs(opts.view.mappings.list) do
-      if m.action == "toggle_ignored" then
-        m.action = "toggle_git_ignored"
-      end
-    end
-  end
-
   -- 2022/06/20
   utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root", true)
   utils.move_missing_val(opts, "", "update_cwd", opts, "", "sync_root_with_cwd", true)
