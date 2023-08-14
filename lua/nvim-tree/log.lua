@@ -71,7 +71,7 @@ end
 function M.setup(opts)
   M.config = opts.log
   if M.config and M.config.enable and M.config.types then
-    M.path = string.format("%s/nvim-tree.log", vim.fn.stdpath "cache", os.date "%H:%M:%S", vim.env.USER)
+    M.path = string.format("%s/nvim-tree.log", vim.fn.stdpath "log", os.date "%H:%M:%S", vim.env.USER)
     if M.config.truncate then
       os.remove(M.path)
     end
