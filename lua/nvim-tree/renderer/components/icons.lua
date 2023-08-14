@@ -9,13 +9,21 @@ local function empty()
   return ""
 end
 
-local function get_folder_icon(open, is_symlink, has_children)
+local function get_folder_icon(node, has_children)
+  if M.config.webdev_colors_folder then
+    local icon, icon_hl = M.devicons.get_icon(node.name, node.extension)
+    if icon ~= nil then
+      return icon, icon_hl
+    end
+  end
+
+  local is_symlink = node.links_to ~= nil
   local n
-  if is_symlink and open then
+  if is_symlink and node.open then
     n = M.config.glyphs.folder.symlink_open
   elseif is_symlink then
     n = M.config.glyphs.folder.symlink
-  elseif open then
+  elseif node.open then
     if has_children then
       n = M.config.glyphs.folder.open
     else
@@ -28,7 +36,7 @@ local function get_folder_icon(open, is_symlink, has_children)
       n = M.config.glyphs.folder.empty
     end
   end
-  return n
+  return n, nil
 end
 
 local function get_file_icon_default()
