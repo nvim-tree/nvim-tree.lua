@@ -24,27 +24,29 @@ local function tbl_slice(t, first, last)
 end
 
 ---Evaluate `sort.folders_first` and `sort.files_first`
----@param a table
----@param b table
----@param third_option_callback function|nil function should return `boolean`. Evaluated only if necessary
+---@param a table node
+---@param b table node
+---@param fallback function|nil function should return `boolean`. Evaluated only if necessary
 ---@return boolean|nil
-local function folders_or_files_first(a, b, third_option_callback)
-  local x = nil
+local function folders_or_files_first(a, b, fallback)
+  local a_and_not_b, not_a_and_b
 
-  if a.nodes and not b.nodes then
-    x = true
-  elseif not a.nodes and b.nodes then
-    x = false
-  elseif a.nodes and b.nodes and third_option_callback ~= nil then
-    x = third_option_callback()
+  if M.config.sort.files_first then
+    a_and_not_b = false
+    not_a_and_b = true
+  elseif M.config.sort.folders_first then
+    a_and_not_b = true
+    not_a_and_b = false
+  else
+    return
   end
 
-  if x ~= nil then
-    if M.config.sort.files_first then
-      return not x
-    elseif M.config.sort.folders_first then
-      return x
-    end
+  if a.nodes and not b.nodes then
+    return a_and_not_b
+  elseif not a.nodes and b.nodes then
+    return not_a_and_b
+  elseif fallback and a.nodes and b.nodes then
+    return fallback()
   end
 end
 
