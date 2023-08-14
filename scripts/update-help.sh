@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # run after changing nvim-tree.lua DEFAULT_OPTS or keymap.lua M.default_on_attach
-# scrapes and updates nvim-tree-lua.txt and keymap-legacy.lua
+# scrapes and updates nvim-tree-lua.txt
 # run from repository root: scripts/update-help.sh
 
 
@@ -34,10 +34,6 @@ sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keym
 # help lua
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
-
-# legacy keymap lua
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
-           }; /${end}/p; d; }" lua/nvim-tree/keymap-legacy.lua
 
 # help human
 echo > /tmp/DEFAULT_ON_ATTACH.help

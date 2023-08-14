@@ -12,7 +12,6 @@ local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
-local keymap_legacy = require "nvim-tree.keymap-legacy"
 local find_file = require "nvim-tree.actions.tree.find-file"
 local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
@@ -381,7 +380,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   reload_on_bufenter = false,
   respect_buf_cwd = false,
   on_attach = "default",
-  remove_keymaps = false,
   select_prompts = false,
   view = {
     centralize_selection = false,
@@ -394,12 +392,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     number = false,
     relativenumber = false,
     signcolumn = "yes",
-    mappings = {
-      custom_only = false,
-      list = {
-        -- user mappings go here
-      },
-    },
     float = {
       enable = false,
       quit_on_focus_loss = true,
@@ -620,7 +612,6 @@ local FIELD_OVERRIDE_TYPECHECK = {
   width = { string = true, ["function"] = true, number = true, ["table"] = true },
   max = { string = true, ["function"] = true, number = true },
   min = { string = true, ["function"] = true, number = true },
-  remove_keymaps = { boolean = true, table = true },
   on_attach = { ["function"] = true, string = true },
   sorter = { ["function"] = true, string = true },
   root_folder_label = { ["function"] = true, string = true, boolean = true },
@@ -721,8 +712,6 @@ function M.setup(conf)
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(opts))
   end
-
-  keymap_legacy.generate_legacy_on_attach(opts)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)
