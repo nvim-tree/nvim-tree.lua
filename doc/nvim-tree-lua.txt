@@ -1332,8 +1332,8 @@ In the event of a problem please disable the experiment and raise an issue.
 Configuration for diagnostic logging.
 
     *nvim-tree.log.enable*
-    Enable logging to a file `nvim-tree.log` in |stdpath| `"cache"`, usually
-    `$XDG_CACHE_HOME/nvim`
+    Enable logging to a file `nvim-tree.log` in |stdpath| `"log"`, usually
+    `${XDG_STATE_HOME}/nvim`
       Type: `boolean`, Default: `false`
 
     *nvim-tree.log.truncate*
