@@ -94,7 +94,7 @@ local function create_buffer(bufnr)
 
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
-  vim.api.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
+  vim.api.nvim_buf_set_name(M.get_bufnr(), "tree://NvimTree_" .. tab)
 
   for option, value in pairs(BUFFER_OPTIONS) do
     vim.bo[M.get_bufnr()][option] = value
