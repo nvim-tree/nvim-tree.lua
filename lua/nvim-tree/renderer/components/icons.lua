@@ -10,7 +10,7 @@ local function empty()
 end
 
 local function get_folder_icon(node, has_children)
-  if M.config.webdev_colors_folder then
+  if M.devicons and M.config.webdev_colors_folder then
     local icon, icon_hl = M.devicons.get_icon(node.name, node.extension)
     if icon ~= nil then
       return icon, icon_hl
