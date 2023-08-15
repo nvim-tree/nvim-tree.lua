@@ -214,10 +214,7 @@ end
 -- @param string string
 -- @return string
 function M.escape_windows_special_chars(string)
-  if M.is_windows then
-    return string:gsub("%(", "\\("):gsub("%)", "\\)")
-  end
-  return string
+  return M.is_windows and string:gsub("%(", "\\("):gsub("%)", "\\)") or string
 end
 
 -- Create empty sub-tables if not present
