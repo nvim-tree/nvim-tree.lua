@@ -110,8 +110,8 @@ local function do_single_paste(source, dest, action_type, action_fn)
       end)
     else
       local prompt_select = "Overwrite " .. dest .. " ?"
-      local prompt_input = prompt_select .. " y/n/R(ename): "
-      lib.prompt(prompt_input, prompt_select, { "r", "y", "n" }, { "Rename", "Yes", "No" }, function(item_short)
+      local prompt_input = prompt_select .. " R(ename)/y/n: "
+      lib.prompt(prompt_input, prompt_select, { "r", "y" }, { "Rename", "Yes" }, function(item_short)
         utils.clear_prompt()
         if item_short == "y" then
           on_process()
