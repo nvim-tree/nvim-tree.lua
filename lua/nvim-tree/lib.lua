@@ -81,6 +81,16 @@ function M.get_last_group_node(node)
   return next
 end
 
+function M.get_all_nodes_in_group(node)
+  local next = utils.get_parent_of_group(node)
+  local nodes = {}
+  while next do
+    table.insert(nodes, next)
+    next = next.group_next
+  end
+  return nodes
+end
+
 function M.expand_or_collapse(node)
   if node.has_children then
     node.has_children = false
@@ -90,8 +100,10 @@ function M.expand_or_collapse(node)
     core.get_explorer():expand(node)
   end
 
-  node = M.get_last_group_node(node)
-  node.open = not node.open
+  local open = not M.get_last_group_node(node).open
+  for _, n in ipairs(M.get_all_nodes_in_group(node)) do
+    n.open = open
+  end
 
   renderer.draw()
 end
