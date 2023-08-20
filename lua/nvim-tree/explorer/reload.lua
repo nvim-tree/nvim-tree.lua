@@ -30,8 +30,30 @@ local function reload_and_get_git_project(path, callback)
 end
 
 local function update_parent_statuses(node, project, root)
-  while project and node and node.absolute_path ~= root do
+  while project and node do
+    -- step up to the containing project
+    if node.absolute_path == root then
+      -- stop at the top of the tree
+      if not node.parent then
+        break
+      end
+
+      root = git.get_project_root(node.parent.absolute_path)
+
+      -- stop when no more projects
+      if not root then
+        break
+      end
+
+      -- update the containing project
+      project = git.get_project(root)
+      git.reload_project(root, node.absolute_path, nil)
+    end
+
+    -- update status
     explorer_node.update_git_status(node, explorer_node.is_git_ignored(node.parent), project)
+
+    -- maybe parent
     node = node.parent
   end
 end
