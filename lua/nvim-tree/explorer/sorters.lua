@@ -26,9 +26,8 @@ end
 ---Evaluate `sort.folders_first` and `sort.files_first`
 ---@param a table node
 ---@param b table node
----@param fallback function|nil function should return `boolean`. Evaluated only if necessary
 ---@return boolean|nil
-local function folders_or_files_first(a, b, fallback)
+local function folders_or_files_first(a, b)
   if not (M.config.sort.folders_first or M.config.sort.files_first) then
     return
   end
@@ -39,9 +38,6 @@ local function folders_or_files_first(a, b, fallback)
   elseif a.nodes and not b.nodes then
     -- folder <> file
     return not M.config.sort.files_first
-  elseif fallback and a.nodes and b.nodes then
-    -- folder <> folder
-    return fallback()
   end
 end
 
@@ -196,12 +192,11 @@ function C.suffix(a, b)
   end
 
   -- directories go first
-  local early_return = folders_or_files_first(a, b, function()
-    return C.name(a, b)
-  end)
-
+  local early_return = folders_or_files_first(a, b)
   if early_return ~= nil then
     return early_return
+  elseif a.nodes and b.nodes then
+    return C.name(a, b)
   end
 
   -- dotfiles go second
