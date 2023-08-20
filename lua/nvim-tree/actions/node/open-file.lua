@@ -270,6 +270,7 @@ local function open_in_new_window(filename, mode)
   end
 
   local fname = vim.fn.fnameescape(filename)
+  fname = utils.escape_special_chars(fname)
 
   local cmd
   if create_new_window then
