@@ -29,23 +29,18 @@ end
 ---@param fallback function|nil function should return `boolean`. Evaluated only if necessary
 ---@return boolean|nil
 local function folders_or_files_first(a, b, fallback)
-  local a_and_not_b, not_a_and_b
-
-  if M.config.sort.files_first then
-    a_and_not_b = false
-    not_a_and_b = true
-  elseif M.config.sort.folders_first then
-    a_and_not_b = true
-    not_a_and_b = false
-  else
+  if not (M.config.sort.folders_first or M.config.sort.files_first) then
     return
   end
 
-  if a.nodes and not b.nodes then
-    return a_and_not_b
-  elseif not a.nodes and b.nodes then
-    return not_a_and_b
+  if not a.nodes and b.nodes then
+    -- file <> folder
+    return M.config.sort.files_first
+  elseif a.nodes and not b.nodes then
+    -- folder <> file
+    return not M.config.sort.files_first
   elseif fallback and a.nodes and b.nodes then
+    -- folder <> folder
     return fallback()
   end
 end
