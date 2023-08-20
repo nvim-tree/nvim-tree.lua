@@ -210,6 +210,16 @@ function M.canonical_path(path)
   return path
 end
 
+-- Escapes special characters in string if windows else returns unmodified string.
+-- @param path string
+-- @return path
+function M.escape_special_chars(path)
+  if path == nil then
+    return path
+  end
+  return M.is_windows and path:gsub("%(", "\\("):gsub("%)", "\\)") or path
+end
+
 -- Create empty sub-tables if not present
 -- @param tbl to create empty inside of
 -- @param path dot separated string of sub-tables
