@@ -4,18 +4,22 @@ local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
 local explorer_node = require "nvim-tree.explorer.node"
+local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
 local function refresh_nodes(node, projects, unloaded_bufnr)
-  local cwd = node.cwd or node.link_to or node.absolute_path
-  local project_root = git.get_project_root(cwd)
-  explorer_module.reload(node, projects[project_root] or {}, unloaded_bufnr)
-  for _, _node in ipairs(node.nodes) do
-    if _node.nodes and _node.open then
-      refresh_nodes(_node, projects, unloaded_bufnr)
-    end
-  end
+  Iterator.builder({ node })
+    :applier(function(n)
+      if n.open and n.nodes then
+        local project_root = git.get_project_root(n.cwd or n.link_to or n.absolute_path)
+        explorer_module.reload(n, projects[project_root] or {}, unloaded_bufnr)
+      end
+    end)
+    :recursor(function(n)
+      return n.group_next and { n.group_next } or (n.open and n.nodes)
+    end)
+    :iterate()
 end
 
 function M.reload_node_status(parent_node, projects)

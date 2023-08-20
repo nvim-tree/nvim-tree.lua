@@ -1648,7 +1648,7 @@ node.open.tab_drop()
 node.open.preview()                        *nvim-tree-api.node.open.preview()*
     |nvim-tree-api.node.edit()|, file buffer will have |bufhidden| set to `delete`.
 
-node.node.navigate.git.next()         *nvim-tree-api.node.navigate.git.next()*
+node.navigate.git.next()         *nvim-tree-api.node.navigate.git.next()*
     Navigate to the next item showing git status.
 
 node.navigate.git.prev()              *nvim-tree-api.node.navigate.git.prev()*
