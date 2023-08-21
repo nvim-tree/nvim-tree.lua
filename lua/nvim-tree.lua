@@ -425,8 +425,16 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       },
     },
     icons = {
-      webdev_colors = true,
-      webdev_colors_folder = false,
+      web_devicons = {
+        file = {
+          enabled = true,
+          color = true,
+        },
+        folder = {
+          enabled = false,
+          color = true,
+        },
+      },
       git_placement = "before",
       modified_placement = "after",
       padding = " ",

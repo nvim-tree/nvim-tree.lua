@@ -33,12 +33,15 @@ local function get_folder_icon_default(node, has_children)
 end
 
 local function get_folder_icon_webdev(node, has_children)
-  local icon, icon_hl = M.devicons.get_icon(node.name, node.extension)
-  if icon ~= nil then
-    return icon, icon_hl
+  local icon, hl_group = M.devicons.get_icon(node.name, node.extension)
+  if not M.config.web_devicons.folder.color then
+    hl_group = nil
   end
-
-  return get_folder_icon_default(node, has_children)
+  if icon ~= nil then
+    return icon, hl_group
+  else
+    return get_folder_icon_default(node, has_children)
+  end
 end
 
 local function get_file_icon_default()
@@ -53,7 +56,7 @@ end
 
 local function get_file_icon_webdev(fname, extension)
   local icon, hl_group = M.devicons.get_icon(fname, extension)
-  if not M.config.webdev_colors then
+  if not M.config.web_devicons.file.color then
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
@@ -68,7 +71,7 @@ end
 
 local function config_file_icon()
   if M.config.show.file then
-    if M.devicons then
+    if M.devicons and M.config.web_devicons.file.enabled then
       M.get_file_icon = get_file_icon_webdev
     else
       M.get_file_icon = get_file_icon_default
@@ -80,7 +83,7 @@ end
 
 local function config_folder_icon()
   if M.config.show.folder then
-    if M.devicons and M.config.webdev_colors_folder then
+    if M.devicons and M.config.web_devicons.folder.enabled then
       M.get_folder_icon = get_folder_icon_webdev
     else
       M.get_folder_icon = get_folder_icon_default
