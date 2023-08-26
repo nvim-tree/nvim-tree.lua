@@ -23,6 +23,24 @@ local function tbl_slice(t, first, last)
   return slice
 end
 
+---Evaluate `sort.folders_first` and `sort.files_first`
+---@param a table node
+---@param b table node
+---@return boolean|nil
+local function folders_or_files_first(a, b)
+  if not (M.config.sort.folders_first or M.config.sort.files_first) then
+    return
+  end
+
+  if not a.nodes and b.nodes then
+    -- file <> folder
+    return M.config.sort.files_first
+  elseif a.nodes and not b.nodes then
+    -- folder <> file
+    return not M.config.sort.files_first
+  end
+end
+
 local function merge(t, first, mid, last, comparator)
   local n1 = mid - first + 1
   local n2 = last - mid
@@ -124,12 +142,9 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   if ignorecase then
@@ -152,12 +167,9 @@ function C.modification_time(a, b)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   local last_modified_a = 0
@@ -180,14 +192,11 @@ function C.suffix(a, b)
   end
 
   -- directories go first
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    elseif a.nodes and b.nodes then
-      return C.name(a, b)
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
+  elseif a.nodes and b.nodes then
+    return C.name(a, b)
   end
 
   -- dotfiles go second
@@ -231,12 +240,9 @@ function C.extension(a, b)
     return true
   end
 
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   if a.extension and not b.extension then
@@ -259,12 +265,9 @@ function C.filetype(a, b)
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  if M.config.sort.folders_first then
-    if a.nodes and not b.nodes then
-      return true
-    elseif not a.nodes and b.nodes then
-      return false
-    end
+  local early_return = folders_or_files_first(a, b)
+  if early_return ~= nil then
+    return early_return
   end
 
   -- one is nil, the other wins
