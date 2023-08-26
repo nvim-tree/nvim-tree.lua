@@ -428,11 +428,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     icons = {
       web_devicons = {
         file = {
-          enabled = true,
+          enable = true,
           color = true,
         },
         folder = {
-          enabled = false,
+          enable = false,
           color = true,
         },
       },

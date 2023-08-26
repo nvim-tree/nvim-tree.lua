@@ -364,11 +364,11 @@ applying configuration.
         icons = {
           web_devicons = {
             file = {
-              enabled = true,
+              enable = true,
               color = true,
             },
             folder = {
-              enabled = false,
+              enable = false,
               color = true,
             },
           },
@@ -985,7 +985,7 @@ UI rendering setup
             *nvim-tree.renderer.icons.web_devicons.file*
             File icons.
 
-                *nvim-tree.renderer.icons.web_devicons.file.enabled*
+                *nvim-tree.renderer.icons.web_devicons.file.enable*
                 Show icons on files.
                 Overrides |nvim-tree.renderer.icons.glyphs.default|
                   Type: `boolean`, Default: `true`
@@ -997,7 +997,7 @@ UI rendering setup
             *nvim-tree.renderer.icons.web_devicons.folder*
             Folder icons.
 
-                *nvim-tree.renderer.icons.web_devicons.folder.enabled*
+                *nvim-tree.renderer.icons.web_devicons.folder.enable*
                 Show icons on folders.
                 Overrides |nvim-tree.renderer.icons.glyphs.folder|
                   Type: `boolean`, Default: `false`

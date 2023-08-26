@@ -71,7 +71,7 @@ end
 
 local function config_file_icon()
   if M.config.show.file then
-    if M.devicons and M.config.web_devicons.file.enabled then
+    if M.devicons and M.config.web_devicons.file.enable then
       M.get_file_icon = get_file_icon_webdev
     else
       M.get_file_icon = get_file_icon_default
@@ -83,7 +83,7 @@ end
 
 local function config_folder_icon()
   if M.config.show.folder then
-    if M.devicons and M.config.web_devicons.folder.enabled then
+    if M.devicons and M.config.web_devicons.folder.enable then
       M.get_folder_icon = get_folder_icon_webdev
     else
       M.get_folder_icon = get_folder_icon_default
