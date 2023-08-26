@@ -130,11 +130,10 @@ end
 ---@return HighlightedString icon, HighlightedString name
 function Builder:_build_folder(node)
   local has_children = #node.nodes ~= 0 or node.has_children
-  local icon = icons.get_folder_icon(node.open, node.link_to ~= nil, has_children)
+  local icon, icon_hl = icons.get_folder_icon(node, has_children)
   local foldername = get_folder_name(node) .. self.trailing_slash
 
-  local icon_hl
-  if #icon > 0 then
+  if #icon > 0 and icon_hl == nil then
     if node.open then
       icon_hl = "NvimTreeOpenedFolderIcon"
     else
