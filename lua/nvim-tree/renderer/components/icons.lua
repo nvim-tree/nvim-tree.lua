@@ -9,13 +9,14 @@ local function empty()
   return ""
 end
 
-local function get_folder_icon(open, is_symlink, has_children)
+local function get_folder_icon_default(node, has_children)
+  local is_symlink = node.links_to ~= nil
   local n
-  if is_symlink and open then
+  if is_symlink and node.open then
     n = M.config.glyphs.folder.symlink_open
   elseif is_symlink then
     n = M.config.glyphs.folder.symlink
-  elseif open then
+  elseif node.open then
     if has_children then
       n = M.config.glyphs.folder.open
     else
@@ -28,7 +29,19 @@ local function get_folder_icon(open, is_symlink, has_children)
       n = M.config.glyphs.folder.empty
     end
   end
-  return n
+  return n, nil
+end
+
+local function get_folder_icon_webdev(node, has_children)
+  local icon, hl_group = M.devicons.get_icon(node.name, node.extension)
+  if not M.config.web_devicons.folder.color then
+    hl_group = nil
+  end
+  if icon ~= nil then
+    return icon, hl_group
+  else
+    return get_folder_icon_default(node, has_children)
+  end
 end
 
 local function get_file_icon_default()
@@ -43,7 +56,7 @@ end
 
 local function get_file_icon_webdev(fname, extension)
   local icon, hl_group = M.devicons.get_icon(fname, extension)
-  if not M.config.webdev_colors then
+  if not M.config.web_devicons.file.color then
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
@@ -58,7 +71,7 @@ end
 
 local function config_file_icon()
   if M.config.show.file then
-    if M.devicons then
+    if M.devicons and M.config.web_devicons.file.enable then
       M.get_file_icon = get_file_icon_webdev
     else
       M.get_file_icon = get_file_icon_default
@@ -70,7 +83,11 @@ end
 
 local function config_folder_icon()
   if M.config.show.folder then
-    M.get_folder_icon = get_folder_icon
+    if M.devicons and M.config.web_devicons.folder.enable then
+      M.get_folder_icon = get_folder_icon_webdev
+    else
+      M.get_folder_icon = get_folder_icon_default
+    end
   else
     M.get_folder_icon = empty
   end

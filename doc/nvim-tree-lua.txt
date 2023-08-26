@@ -308,6 +308,7 @@ applying configuration.
       sort = {
         sorter = "name",
         folders_first = true,
+        files_first = false,
       },
       root_dirs = {},
       prefer_startup_root = false,
@@ -361,7 +362,16 @@ applying configuration.
           },
         },
         icons = {
-          webdev_colors = true,
+          web_devicons = {
+            file = {
+              enable = true,
+              color = true,
+            },
+            folder = {
+              enable = false,
+              color = true,
+            },
+          },
           git_placement = "before",
           modified_placement = "after",
           padding = " ",
@@ -588,6 +598,11 @@ File and folder sorting options.
     Sort folders before files. Has no effect when |nvim-tree.sort.sorter| is a
     function.
       Type: `boolean`, Default: `true`
+
+    *nvim-tree.sort.files_first*
+    Sort files before folders. Has no effect when |nvim-tree.sort.sorter| is a
+    function. If set to `true` it overrides |nvim-tree.sort.folders_first|.
+      Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
@@ -964,9 +979,32 @@ UI rendering setup
     *nvim-tree.renderer.icons*
     Configuration options for icons.
 
-        *nvim-tree.renderer.icons.webdev_colors*
-        Use the webdev icon colors, otherwise `NvimTreeFileIcon`.
-          Type: `boolean`, Default: `true`
+        *nvim-tree.renderer.icons.web_devicons*
+        Configure optional plugin `"nvim-tree/nvim-web-devicons"`
+
+            *nvim-tree.renderer.icons.web_devicons.file*
+            File icons.
+
+                *nvim-tree.renderer.icons.web_devicons.file.enable*
+                Show icons on files.
+                Overrides |nvim-tree.renderer.icons.glyphs.default|
+                  Type: `boolean`, Default: `true`
+
+                *nvim-tree.renderer.icons.web_devicons.file.color*
+                Use icon colors for files.
+                  Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.web_devicons.folder*
+            Folder icons.
+
+                *nvim-tree.renderer.icons.web_devicons.folder.enable*
+                Show icons on folders.
+                Overrides |nvim-tree.renderer.icons.glyphs.folder|
+                  Type: `boolean`, Default: `false`
+
+                *nvim-tree.renderer.icons.web_devicons.folder.color*
+                Use icon colors for folders.
+                  Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.git_placement*
         Place where the git icons will be rendered.
@@ -993,7 +1031,7 @@ UI rendering setup
         Configuration options for showing icon types.
 
             *nvim-tree.renderer.icons.show.file*
-            Show an icon before the file name. `nvim-web-devicons` will be used if available.
+            Show an icon before the file name.
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.folder*
@@ -1021,7 +1059,8 @@ UI rendering setup
         to appear in the signcolumn.
 
             *nvim-tree.renderer.icons.glyphs.default*
-            Glyph for files. Will be overridden by `nvim-web-devicons` if available.
+            Glyph for files.
+            Overridden by |nvim-tree.renderer.icons.web_devicons| if available.
               Type: `string`, Default: `""`
 
             *nvim-tree.renderer.icons.glyphs.symlink*
@@ -1034,6 +1073,7 @@ UI rendering setup
 
             *nvim-tree.renderer.icons.glyphs.folder*
             Glyphs for directories.
+            Overridden by |nvim-tree.renderer.icons.web_devicons| if available.
               Type: `table`, Default:
                 `{`
                   `arrow_closed = "",`
