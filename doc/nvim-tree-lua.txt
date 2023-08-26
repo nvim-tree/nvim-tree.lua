@@ -308,6 +308,7 @@ applying configuration.
       sort = {
         sorter = "name",
         folders_first = true,
+        files_first = false,
       },
       root_dirs = {},
       prefer_startup_root = false,
@@ -588,6 +589,11 @@ File and folder sorting options.
     Sort folders before files. Has no effect when |nvim-tree.sort.sorter| is a
     function.
       Type: `boolean`, Default: `true`
+
+    *nvim-tree.sort.files_first*
+    Sort files before folders. Has no effect when |nvim-tree.sort.sorter| is a
+    function. If set to `true` it overrides |nvim-tree.sort.folders_first|.
+      Type: `boolean`, Default: `false`
 
 *nvim-tree.hijack_unnamed_buffer_when_opening*
 Opens in place of the unnamed buffer if it's empty.
