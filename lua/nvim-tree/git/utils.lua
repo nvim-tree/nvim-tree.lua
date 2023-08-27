@@ -24,7 +24,7 @@ function M.get_toplevel(cwd)
     return nil, nil
   end
 
-  local toplevel, git_dir = out:match("([^\n]+)\n+([^\n]+)")
+  local toplevel, git_dir = out:match "([^\n]+)\n+([^\n]+)"
   if not toplevel then
     return nil, nil
   end
