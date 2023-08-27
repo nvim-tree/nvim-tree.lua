@@ -8,10 +8,11 @@ local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {
   config = {},
-  projects = {},
-  cwd_to_project_root = {},
   project_root_to_git_dir = {},
 }
+
+local projects = {}
+local cwd_to_project_root = {}
 
 -- Files under .git that should result in a reload when changed.
 -- Utilities (like watchman) can also write to this directory (often) and aren't useful for us.
@@ -62,15 +63,15 @@ function M.reload()
     return {}
   end
 
-  for project_root in pairs(M.projects) do
+  for project_root in pairs(projects) do
     M.reload_project(project_root)
   end
 
-  return M.projects
+  return projects
 end
 
 function M.reload_project(project_root, path, callback)
-  local project = M.projects[project_root]
+  local project = projects[project_root]
   if not project or not M.config.git.enable then
     if callback then
       callback()
@@ -105,20 +106,16 @@ function M.reload_project(project_root, path, callback)
   end
 end
 
-function M.get_project(project_root)
-  return M.projects[project_root]
-end
-
-function M.get_project_root(cwd)
+local function get_project_root(cwd)
   if not M.config.git.enable then
     return nil
   end
 
-  if M.cwd_to_project_root[cwd] then
-    return M.cwd_to_project_root[cwd]
+  if cwd_to_project_root[cwd] then
+    return cwd_to_project_root[cwd]
   end
 
-  if M.cwd_to_project_root[cwd] == false then
+  if cwd_to_project_root[cwd] == false then
     return nil
   end
 
@@ -128,9 +125,9 @@ function M.get_project_root(cwd)
   end
 
   -- short-circuit any known ignored paths
-  for root, project in pairs(M.projects) do
+  for root, project in pairs(projects) do
     if project and path_ignored_in_project(cwd, project) then
-      M.cwd_to_project_root[cwd] = root
+      cwd_to_project_root[cwd] = root
       return root
     end
   end
@@ -144,11 +141,19 @@ function M.get_project_root(cwd)
     end
   end
 
-  M.cwd_to_project_root[cwd] = toplevel
+  cwd_to_project_root[cwd] = toplevel
   if toplevel then
     M.project_root_to_git_dir[toplevel] = git_dir
   end
-  return M.cwd_to_project_root[cwd]
+  return cwd_to_project_root[cwd]
+end
+
+--- Retrieve the project containing a path
+--- @param path string absolute
+--- @return table|nil project
+function M.get_project(path)
+  local project_root = get_project_root(path)
+  return projects[project_root]
 end
 
 local function reload_tree_at(project_root)
@@ -163,13 +168,13 @@ local function reload_tree_at(project_root)
   end
 
   M.reload_project(project_root, nil, function()
-    local git_status = M.get_project(project_root)
+    local project = projects[project_root]
 
     Iterator.builder(root_node.nodes)
       :hidden()
       :applier(function(node)
         local parent_ignored = explorer_node.is_git_ignored(node.parent)
-        explorer_node.update_git_status(node, parent_ignored, git_status)
+        explorer_node.update_git_status(node, parent_ignored, project)
       end)
       :recursor(function(node)
         return node.nodes and #node.nodes > 0 and node.nodes
@@ -185,16 +190,18 @@ function M.load_project_status(cwd)
     return {}
   end
 
-  local project_root = M.get_project_root(cwd)
+  local project_root = get_project_root(cwd)
   if not project_root then
-    M.cwd_to_project_root[cwd] = false
+    cwd_to_project_root[cwd] = false
     return {}
   end
 
-  local status = M.projects[project_root]
+  local status = projects[project_root]
   if status then
     return status
   end
+
+  local git_dir = vim.env.GIT_DIR or M.project_root_to_git_dir[project_root] or utils.path_join { project_root, ".git" }
 
   local git_status = Runner.run {
     project_root = project_root,
@@ -217,26 +224,25 @@ function M.load_project_status(cwd)
       end)
     end
 
-    local git_dir = vim.env.GIT_DIR
-      or M.project_root_to_git_dir[project_root]
-      or utils.path_join { project_root, ".git" }
     watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
       project_root = project_root,
     })
   end
 
-  M.projects[project_root] = {
+  projects[project_root] = {
+    toplevel = project_root,
+    git_dir = git_dir,
     files = git_status,
     dirs = git_utils.file_status_to_dir_status(git_status, project_root),
     watcher = watcher,
   }
-  return M.projects[project_root]
+  return projects[project_root]
 end
 
 function M.purge_state()
   log.line("git", "purge_state")
-  M.projects = {}
-  M.cwd_to_project_root = {}
+  projects = {}
+  cwd_to_project_root = {}
 end
 
 --- Disable git integration permanently

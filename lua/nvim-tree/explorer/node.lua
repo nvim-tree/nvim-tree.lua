@@ -32,7 +32,7 @@ function M.has_one_child_folder(node)
   return #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R")
 end
 
-function M.update_git_status(node, parent_ignored, status)
+function M.update_git_status(node, parent_ignored, project)
   local get_status
   if node.nodes then
     get_status = get_dir_git_status
@@ -41,11 +41,11 @@ function M.update_git_status(node, parent_ignored, status)
   end
 
   -- status of the node's absolute path
-  node.git_status = get_status(parent_ignored, status, node.absolute_path)
+  node.git_status = get_status(parent_ignored, project, node.absolute_path)
 
   -- status of the link target, if the link itself is not dirty
   if node.link_to and not node.git_status then
-    node.git_status = get_status(parent_ignored, status, node.link_to)
+    node.git_status = get_status(parent_ignored, project, node.link_to)
   end
 end
 

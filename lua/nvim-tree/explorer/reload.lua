@@ -22,32 +22,31 @@ local function update_status(nodes_by_path, node_ignored, status)
 end
 
 local function reload_and_get_git_project(path, callback)
-  local project_root = git.get_project_root(path)
+  local project = git.get_project(path) or {}
 
-  git.reload_project(project_root, path, function()
-    callback(project_root, git.get_project(project_root) or {})
+  git.reload_project(project.toplevel, path, function()
+    callback(project)
   end)
 end
 
-local function update_parent_statuses(node, project, root)
+local function update_parent_statuses(node, project)
   while project and node do
     -- step up to the containing project
-    if node.absolute_path == root then
+    if node.absolute_path == project.toplevel then
       -- stop at the top of the tree
       if not node.parent then
         break
       end
 
-      root = git.get_project_root(node.parent.absolute_path)
+      project = git.get_project(node.parent.absolute_path)
 
       -- stop when no more projects
-      if not root then
+      if not project then
         break
       end
 
       -- update the containing project
-      project = git.get_project(root)
-      git.reload_project(root, node.absolute_path, nil)
+      git.reload_project(project.toplevel, node.absolute_path, nil)
     end
 
     -- update status
@@ -174,10 +173,10 @@ function M.refresh_node(node, callback)
 
   local parent_node = utils.get_parent_of_group(node)
 
-  reload_and_get_git_project(node.absolute_path, function(project_root, project)
+  reload_and_get_git_project(node.absolute_path, function(project)
     require("nvim-tree.explorer.reload").reload(parent_node, project)
 
-    update_parent_statuses(parent_node, project, project_root)
+    update_parent_statuses(parent_node, project)
 
     callback()
   end)
@@ -211,11 +210,10 @@ function M.refresh_parent_nodes_for_path(path)
 
   -- refresh in order; this will expand groups as needed
   for _, node in ipairs(parent_nodes) do
-    local project_root = git.get_project_root(node.absolute_path)
-    local project = git.get_project(project_root) or {}
+    local project = git.get_project(node.absolute_path) or {}
 
     M.reload(node, project)
-    update_parent_statuses(node, project, project_root)
+    update_parent_statuses(node, project)
   end
 
   log.profile_end(profile)

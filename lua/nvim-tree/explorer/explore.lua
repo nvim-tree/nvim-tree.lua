@@ -57,7 +57,7 @@ local function populate_children(handle, cwd, node, git_status)
   end
 end
 
-function M.explore(node, status)
+function M.explore(node, project)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -66,7 +66,7 @@ function M.explore(node, status)
 
   local profile = log.profile_start("explore init %s", node.absolute_path)
 
-  populate_children(handle, cwd, node, status)
+  populate_children(handle, cwd, node, project)
 
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]

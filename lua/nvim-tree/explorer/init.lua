@@ -24,8 +24,8 @@ end
 
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
-  local git_status = git.load_project_status(cwd)
-  M.explore(node, git_status)
+  local project = git.load_project_status(cwd)
+  M.explore(node, project)
 end
 
 function Explorer:expand(node)
