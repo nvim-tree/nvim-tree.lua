@@ -10,6 +10,7 @@ local M = {
   config = {},
   projects = {},
   cwd_to_project_root = {},
+  project_root_to_git_dir = {},
 }
 
 -- Files under .git that should result in a reload when changed.
@@ -134,7 +135,7 @@ function M.get_project_root(cwd)
     end
   end
 
-  local toplevel = git_utils.get_toplevel(cwd)
+  local toplevel, git_dir = git_utils.get_toplevel(cwd)
   for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
     local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
     local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
@@ -144,6 +145,9 @@ function M.get_project_root(cwd)
   end
 
   M.cwd_to_project_root[cwd] = toplevel
+  if toplevel then
+    M.project_root_to_git_dir[toplevel] = git_dir
+  end
   return M.cwd_to_project_root[cwd]
 end
 
@@ -213,7 +217,7 @@ function M.load_project_status(cwd)
       end)
     end
 
-    local git_dir = vim.env.GIT_DIR or utils.path_join { project_root, ".git" }
+    local git_dir = vim.env.GIT_DIR or M.project_root_to_git_dir[project_root] or utils.path_join { project_root, ".git" }
     watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
       project_root = project_root,
     })
