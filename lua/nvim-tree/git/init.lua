@@ -23,7 +23,7 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
-local function reload_git_status(project_root, path, project, git_status)
+local function reload_git_status(toplevel, path, project, git_status)
   if path then
     for p in pairs(project.files) do
       if p:find(path, 1, true) == 1 then
@@ -35,7 +35,7 @@ local function reload_git_status(project_root, path, project, git_status)
     project.files = git_status
   end
 
-  project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
+  project.dirs = git_utils.file_status_to_dir_status(project.files, toplevel)
 end
 
 --- Is this path in a known ignored directory?
@@ -57,19 +57,19 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
-local function reload_tree_at(project_root)
+local function reload_tree_at(toplevel)
   if not M.config.git.enable then
     return nil
   end
 
-  log.line("watcher", "git event executing '%s'", project_root)
-  local root_node = utils.get_node_from_path(project_root)
+  log.line("watcher", "git event executing '%s'", toplevel)
+  local root_node = utils.get_node_from_path(toplevel)
   if not root_node then
     return
   end
 
-  M.reload_project(project_root, nil, function()
-    local project = projects_by_toplevel[project_root]
+  M.reload_project(toplevel, nil, function()
+    local project = projects_by_toplevel[toplevel]
 
     Iterator.builder(root_node.nodes)
       :hidden()
@@ -92,7 +92,7 @@ end
 --- @return table project
 local function create_project(toplevel, git_dir)
   local git_status = Runner.run {
-    project_root = toplevel,
+    toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
@@ -110,8 +110,8 @@ local function create_project(toplevel, git_dir)
     log.line("watcher", "git start")
 
     local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+      log.line("watcher", "git event scheduled '%s'", w.toplevel)
+      utils.debounce("git:watcher:" .. w.toplevel, M.config.filesystem_watchers.debounce_delay, function()
         if w.destroyed then
           return
         end
@@ -185,7 +185,7 @@ function M.reload_project(project, path, callback)
   end
 
   local opts = {
-    project_root = project.toplevel,
+    toplevel = project.toplevel,
     path = path,
     list_untracked = git_utils.should_show_untracked(project.toplevel),
     list_ignored = true,
