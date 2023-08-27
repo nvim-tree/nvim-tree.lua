@@ -240,7 +240,11 @@ end
 
 function M.purge_state()
   log.line("git", "purge_state")
-  -- TODO 2382 we never tore down the watcher
+  for _, project in pairs(projects_by_toplevel) do
+    if project.watcher then
+      project.watcher:destroy()
+    end
+  end
   projects_by_toplevel = {}
   projects_by_path = {}
 end
