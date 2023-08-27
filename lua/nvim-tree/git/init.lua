@@ -8,12 +8,10 @@ local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {
   config = {},
-  project_root_to_git_dir = {},
 }
 
--- TODO 2382 remove the toplevel key
-local projects = {}
-local cwd_to_project_root = {}
+local projects_by_toplevel = {}
+local projects_by_path = {} -- false when no project
 
 -- Files under .git that should result in a reload when changed.
 -- Utilities (like watchman) can also write to this directory (often) and aren't useful for us.
@@ -59,20 +57,117 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
+local function reload_tree_at(project_root)
+  if not M.config.git.enable then
+    return nil
+  end
+
+  log.line("watcher", "git event executing '%s'", project_root)
+  local root_node = utils.get_node_from_path(project_root)
+  if not root_node then
+    return
+  end
+
+  M.reload_project(project_root, nil, function()
+    local project = projects_by_toplevel[project_root]
+
+    Iterator.builder(root_node.nodes)
+      :hidden()
+      :applier(function(node)
+        local parent_ignored = explorer_node.is_git_ignored(node.parent)
+        explorer_node.update_git_status(node, parent_ignored, project)
+      end)
+      :recursor(function(node)
+        return node.nodes and #node.nodes > 0 and node.nodes
+      end)
+      :iterate()
+
+    require("nvim-tree.renderer").draw()
+  end)
+end
+
+--- Create a populated git project synchronously.
+--- @param toplevel string absolute
+--- @param git_dir string absolute
+--- @return table project
+local function create_project(toplevel, git_dir)
+  local git_status = Runner.run {
+    project_root = toplevel,
+    list_untracked = git_utils.should_show_untracked(toplevel),
+    list_ignored = true,
+    timeout = M.config.git.timeout,
+  }
+
+  local project = {
+    toplevel = toplevel,
+    git_dir = git_dir,
+    files = git_status,
+    dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
+  }
+  projects_by_toplevel[toplevel] = project
+
+  if M.config.filesystem_watchers.enable then
+    log.line("watcher", "git start")
+
+    local callback = function(w)
+      log.line("watcher", "git event scheduled '%s'", w.project_root)
+      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+        if w.destroyed then
+          return
+        end
+        reload_tree_at(w.toplevel)
+      end)
+    end
+
+    project.watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
+      toplevel = toplevel,
+    })
+  end
+
+  return project
+end
+
+--- Find an project known for a path.
+--- @param path string absolute
+--- @return table|nil project
+local function find_project(path)
+  -- known
+  if projects_by_path[path] then
+    return projects_by_path[path]
+  end
+
+  -- ignore non-directories
+  local stat, _ = vim.loop.fs_stat(path)
+  if not stat or stat.type ~= "directory" then
+    projects_by_path[path] = false
+    return nil
+  end
+
+  -- short-circuit any known ignored paths
+  for _, project in pairs(projects_by_toplevel) do
+    if project and path_ignored_in_project(path, project) then
+      projects_by_path[path] = project
+      return project
+    end
+  end
+
+  return nil
+end
+
 --- Reload all git projects
 function M.reload()
   if not M.config.git.enable then
     return {}
   end
 
-  for _, project in pairs(projects) do
+  for _, project in pairs(projects_by_toplevel) do
     M.reload_project(project, nil, nil)
   end
 end
 
 --- Reload the git project.
 --- @param project table|nil
---- @param path string|nil only reload this path, NOP if ignored
+--- @param path string|nil only reload this path, NOP if this path is ignored
 --- @param callback function|nil no arguments
 function M.reload_project(project, path, callback)
   if not project or not M.config.git.enable then
@@ -109,143 +204,45 @@ function M.reload_project(project, path, callback)
   end
 end
 
-local function get_project_root(cwd)
-  if not M.config.git.enable then
-    return nil
-  end
-
-  if cwd_to_project_root[cwd] then
-    return cwd_to_project_root[cwd]
-  end
-
-  if cwd_to_project_root[cwd] == false then
-    return nil
-  end
-
-  local stat, _ = vim.loop.fs_stat(cwd)
-  if not stat or stat.type ~= "directory" then
-    return nil
-  end
-
-  -- short-circuit any known ignored paths
-  for root, project in pairs(projects) do
-    if project and path_ignored_in_project(cwd, project) then
-      cwd_to_project_root[cwd] = root
-      return root
-    end
-  end
-
-  local toplevel, git_dir = git_utils.get_toplevel(cwd)
-  for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
-    local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
-    local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
-    if toplevel_norm == disabled_norm then
-      return nil
-    end
-  end
-
-  cwd_to_project_root[cwd] = toplevel
-  if toplevel then
-    M.project_root_to_git_dir[toplevel] = git_dir
-  end
-  return cwd_to_project_root[cwd]
-end
-
---- Retrieve the project containing a path
+--- Retrieve the project containing a path, creating and populating if necessary.
 --- @param path string absolute
 --- @return table|nil project
 function M.get_project(path)
-  local project_root = get_project_root(path)
-  return projects[project_root]
-end
-
-local function reload_tree_at(project_root)
   if not M.config.git.enable then
     return nil
   end
 
-  log.line("watcher", "git event executing '%s'", project_root)
-  local root_node = utils.get_node_from_path(project_root)
-  if not root_node then
-    return
+  -- existing project known for this path
+  local project = find_project(path)
+  if project then
+    return project
   end
 
-  M.reload_project(project_root, nil, function()
-    local project = projects[project_root]
-
-    Iterator.builder(root_node.nodes)
-      :hidden()
-      :applier(function(node)
-        local parent_ignored = explorer_node.is_git_ignored(node.parent)
-        explorer_node.update_git_status(node, parent_ignored, project)
-      end)
-      :recursor(function(node)
-        return node.nodes and #node.nodes > 0 and node.nodes
-      end)
-      :iterate()
-
-    require("nvim-tree.renderer").draw()
-  end)
-end
-
-function M.load_project_status(cwd)
-  if not M.config.git.enable then
-    return {}
+  -- determine git directories
+  local toplevel, git_dir = git_utils.get_toplevel(path)
+  if not toplevel or not git_dir then
+    projects_by_path[path] = false
+    return nil
   end
 
-  local project_root = get_project_root(cwd)
-  if not project_root then
-    cwd_to_project_root[cwd] = false
-    return {}
+  -- exisiting project unknown for this path
+  project = projects_by_toplevel[toplevel]
+  if project then
+    projects_by_path[path] = project
+    return project
   end
 
-  local status = projects[project_root]
-  if status then
-    return status
-  end
-
-  local git_dir = vim.env.GIT_DIR or M.project_root_to_git_dir[project_root] or utils.path_join { project_root, ".git" }
-
-  local git_status = Runner.run {
-    project_root = project_root,
-    list_untracked = git_utils.should_show_untracked(project_root),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
-  }
-
-  local watcher = nil
-  if M.config.filesystem_watchers.enable then
-    log.line("watcher", "git start")
-
-    local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
-        if w.destroyed then
-          return
-        end
-        reload_tree_at(w.project_root)
-      end)
-    end
-
-    watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
-      project_root = project_root,
-    })
-  end
-
-  projects[project_root] = {
-    toplevel = project_root,
-    git_dir = git_dir,
-    files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
-    watcher = watcher,
-  }
-  return projects[project_root]
+  -- lazily create the new project
+  project = create_project(toplevel, git_dir)
+  projects_by_path[path] = project
+  return project
 end
 
 function M.purge_state()
   log.line("git", "purge_state")
-  projects = {}
-  cwd_to_project_root = {}
+  -- TODO 2382 we never tore down the watcher
+  projects_by_toplevel = {}
+  projects_by_path = {}
 end
 
 --- Disable git integration permanently

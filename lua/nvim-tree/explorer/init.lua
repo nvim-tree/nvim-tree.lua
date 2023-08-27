@@ -24,7 +24,7 @@ end
 
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
-  local project = git.load_project_status(cwd)
+  local project = git.get_project(cwd)
   M.explore(node, project)
 end
 
@@ -56,3 +56,4 @@ end
 M.Explorer = Explorer
 
 return M
+

@@ -72,9 +72,9 @@ function M.explore(node, project)
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
     local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
-    local child_status = git.load_project_status(child_cwd)
+    local child_project = git.get_project(child_cwd)
     node.group_next = child_folder_only
-    local ns = M.explore(child_folder_only, child_status)
+    local ns = M.explore(child_folder_only, child_project)
     node.nodes = ns or {}
 
     log.profile_end(profile)

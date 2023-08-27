@@ -12,8 +12,10 @@ local function refresh_nodes(node, unloaded_bufnr)
   Iterator.builder({ node })
     :applier(function(n)
       if n.open and n.nodes then
-        local project = git.get_project(n.cwd or n.link_to or n.absolute_path) or {}
-        explorer_module.reload(n, project, unloaded_bufnr)
+        local project = git.get_project(n.cwd or n.link_to or n.absolute_path)
+        if project then
+          explorer_module.reload(n, project, unloaded_bufnr)
+        end
       end
     end)
     :recursor(function(n)
@@ -23,7 +25,10 @@ local function refresh_nodes(node, unloaded_bufnr)
 end
 
 function M.reload_node_status(parent_node)
-  local project = git.get_project(parent_node.absolute_path) or {}
+  local project = git.get_project(parent_node.absolute_path)
+  if not project then
+    return
+  end
   for _, node in ipairs(parent_node.nodes) do
     explorer_node.update_git_status(node, explorer_node.is_git_ignored(parent_node), project)
     if node.nodes and #node.nodes > 0 then

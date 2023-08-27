@@ -33,6 +33,10 @@ function M.has_one_child_folder(node)
 end
 
 function M.update_git_status(node, parent_ignored, project)
+  if not project then
+    return
+  end
+
   local get_status
   if node.nodes then
     get_status = get_dir_git_status
