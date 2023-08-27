@@ -10,8 +10,14 @@ local M = {
   config = {},
 }
 
+-- all projects keyed by toplevel
 local projects_by_toplevel = {}
-local projects_by_path = {} -- false when no project
+
+-- index of paths inside projects
+local projects_by_path = {}
+
+-- paths not inside a git project
+local paths_no_project = {}
 
 -- Files under .git that should result in a reload when changed.
 -- Utilities (like watchman) can also write to this directory (often) and aren't useful for us.
@@ -128,6 +134,7 @@ local function create_project(toplevel, git_dir)
 end
 
 --- Find an project known for a path.
+--- Updates paths_no_project when not a directory.
 --- @param path string absolute
 --- @return table|nil project
 local function find_project(path)
@@ -139,7 +146,7 @@ local function find_project(path)
   -- ignore non-directories
   local stat, _ = vim.loop.fs_stat(path)
   if not stat or stat.type ~= "directory" then
-    projects_by_path[path] = false
+    paths_no_project[path] = true
     return nil
   end
 
@@ -208,7 +215,7 @@ end
 --- @param path string absolute
 --- @return table|nil project
 function M.get_project(path)
-  if not M.config.git.enable then
+  if not M.config.git.enable or paths_no_project[path] then
     return nil
   end
 
@@ -221,11 +228,11 @@ function M.get_project(path)
   -- determine git directories
   local toplevel, git_dir = git_utils.get_toplevel(path)
   if not toplevel or not git_dir then
-    projects_by_path[path] = false
+    paths_no_project[path] = true
     return nil
   end
 
-  -- exisiting project unknown for this path
+  -- exisiting project now known for this path
   project = projects_by_toplevel[toplevel]
   if project then
     projects_by_path[path] = project
@@ -247,6 +254,7 @@ function M.purge_state()
   end
   projects_by_toplevel = {}
   projects_by_path = {}
+  paths_no_project = {}
 end
 
 --- Disable git integration permanently
