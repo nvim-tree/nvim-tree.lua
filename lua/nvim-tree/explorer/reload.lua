@@ -21,14 +21,6 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
-local function reload_and_get_git_project(path, callback)
-  local project = git.get_project(path) or {}
-
-  git.reload_project(project.toplevel, path, function()
-    callback(project)
-  end)
-end
-
 local function update_parent_statuses(node, project)
   while project and node do
     -- step up to the containing project
@@ -46,7 +38,7 @@ local function update_parent_statuses(node, project)
       end
 
       -- update the containing project
-      git.reload_project(project.toplevel, node.absolute_path, nil)
+      git.reload_project(project, node.absolute_path, nil)
     end
 
     -- update status
@@ -171,10 +163,11 @@ function M.refresh_node(node, callback)
     callback()
   end
 
+  local project = git.get_project(node.absolute_path)
   local parent_node = utils.get_parent_of_group(node)
 
-  reload_and_get_git_project(node.absolute_path, function(project)
-    require("nvim-tree.explorer.reload").reload(parent_node, project)
+  git.reload_project(project, node.absolute_path, function()
+    M.reload(parent_node, project)
 
     update_parent_statuses(parent_node, project)
 
@@ -210,7 +203,7 @@ function M.refresh_parent_nodes_for_path(path)
 
   -- refresh in order; this will expand groups as needed
   for _, node in ipairs(parent_nodes) do
-    local project = git.get_project(node.absolute_path) or {}
+    local project = git.get_project(node.absolute_path)
 
     M.reload(node, project)
     update_parent_statuses(node, project)

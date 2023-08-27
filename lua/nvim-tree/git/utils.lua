@@ -9,6 +9,10 @@ local has_cygpath = vim.fn.executable "cygpath" == 1
 --- @return string|nil toplevel absolute path
 --- @return string|nil git_dir absolute path
 function M.get_toplevel(cwd)
+  if not cwd then
+    return nil, nil
+  end
+
   local profile = log.profile_start("git toplevel git_dir %s", cwd)
 
   -- both paths are absolute
@@ -55,6 +59,10 @@ end
 local untracked = {}
 
 function M.should_show_untracked(cwd)
+  if not cwd then
+    return false
+  end
+
   if untracked[cwd] ~= nil then
     return untracked[cwd]
   end

@@ -11,6 +11,7 @@ local M = {
   project_root_to_git_dir = {},
 }
 
+-- TODO 2382 remove the toplevel key
 local projects = {}
 local cwd_to_project_root = {}
 
@@ -58,20 +59,22 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
+--- Reload all git projects
 function M.reload()
   if not M.config.git.enable then
     return {}
   end
 
-  for project_root in pairs(projects) do
-    M.reload_project(project_root)
+  for _, project in pairs(projects) do
+    M.reload_project(project, nil, nil)
   end
-
-  return projects
 end
 
-function M.reload_project(project_root, path, callback)
-  local project = projects[project_root]
+--- Reload the git project.
+--- @param project table|nil
+--- @param path string|nil only reload this path, NOP if ignored
+--- @param callback function|nil no arguments
+function M.reload_project(project, path, callback)
   if not project or not M.config.git.enable then
     if callback then
       callback()
@@ -79,7 +82,7 @@ function M.reload_project(project_root, path, callback)
     return
   end
 
-  if path and (path:find(project_root, 1, true) ~= 1 or path_ignored_in_project(path, project)) then
+  if path and (path:find(project.toplevel, 1, true) ~= 1 or path_ignored_in_project(path, project)) then
     if callback then
       callback()
     end
@@ -87,22 +90,22 @@ function M.reload_project(project_root, path, callback)
   end
 
   local opts = {
-    project_root = project_root,
+    project_root = project.toplevel,
     path = path,
-    list_untracked = git_utils.should_show_untracked(project_root),
+    list_untracked = git_utils.should_show_untracked(project.toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
   }
 
   if callback then
     Runner.run(opts, function(git_status)
-      reload_git_status(project_root, path, project, git_status)
+      reload_git_status(project.toplevel, path, project, git_status)
       callback()
     end)
   else
     -- TODO use callback once async/await is available
     local git_status = Runner.run(opts)
-    reload_git_status(project_root, path, project, git_status)
+    reload_git_status(project.toplevel, path, project, git_status)
   end
 end
 
