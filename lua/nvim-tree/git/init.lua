@@ -12,7 +12,7 @@ local M = {
   -- all projects keyed by toplevel
   _projects_by_toplevel = {},
 
-  -- index of paths inside toplevels, false when not inside a toplevel
+  -- index of paths inside toplevels, false when not inside a project
   _toplevels_by_path = {},
 
   -- git dirs by toplevel
@@ -29,7 +29,7 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
-local function reload_git_status(project_root, path, project, git_status)
+local function reload_git_status(toplevel, path, project, git_status)
   if path then
     for p in pairs(project.files) do
       if p:find(path, 1, true) == 1 then
@@ -41,7 +41,7 @@ local function reload_git_status(project_root, path, project, git_status)
     project.files = git_status
   end
 
-  project.dirs = git_utils.file_status_to_dir_status(project.files, project_root)
+  project.dirs = git_utils.file_status_to_dir_status(project.files, toplevel)
 end
 
 --- Is this path in a known ignored directory?
@@ -68,15 +68,15 @@ function M.reload()
     return {}
   end
 
-  for project_root in pairs(M._projects_by_toplevel) do
-    M.reload_project(project_root)
+  for toplevel in pairs(M._projects_by_toplevel) do
+    M.reload_project(toplevel)
   end
 
   return M._projects_by_toplevel
 end
 
-function M.reload_project(project_root, path, callback)
-  local project = M._projects_by_toplevel[project_root]
+function M.reload_project(toplevel, path, callback)
+  local project = M._projects_by_toplevel[toplevel]
   if not project or not M.config.git.enable then
     if callback then
       callback()
@@ -84,7 +84,7 @@ function M.reload_project(project_root, path, callback)
     return
   end
 
-  if path and (path:find(project_root, 1, true) ~= 1 or path_ignored_in_project(path, project)) then
+  if path and (path:find(toplevel, 1, true) ~= 1 or path_ignored_in_project(path, project)) then
     if callback then
       callback()
     end
@@ -92,56 +92,56 @@ function M.reload_project(project_root, path, callback)
   end
 
   local opts = {
-    project_root = project_root,
+    project_root = toplevel,
     path = path,
-    list_untracked = git_utils.should_show_untracked(project_root),
+    list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
   }
 
   if callback then
     Runner.run(opts, function(git_status)
-      reload_git_status(project_root, path, project, git_status)
+      reload_git_status(toplevel, path, project, git_status)
       callback()
     end)
   else
     -- TODO use callback once async/await is available
     local git_status = Runner.run(opts)
-    reload_git_status(project_root, path, project, git_status)
+    reload_git_status(toplevel, path, project, git_status)
   end
 end
 
-function M.get_project(project_root)
-  return M._projects_by_toplevel[project_root]
+function M.get_project(toplevel)
+  return M._projects_by_toplevel[toplevel]
 end
 
-function M.get_project_root(cwd)
+function M.get_toplevel(path)
   if not M.config.git.enable then
     return nil
   end
 
-  if M._toplevels_by_path[cwd] then
-    return M._toplevels_by_path[cwd]
+  if M._toplevels_by_path[path] then
+    return M._toplevels_by_path[path]
   end
 
-  if M._toplevels_by_path[cwd] == false then
+  if M._toplevels_by_path[path] == false then
     return nil
   end
 
-  local stat, _ = vim.loop.fs_stat(cwd)
+  local stat, _ = vim.loop.fs_stat(path)
   if not stat or stat.type ~= "directory" then
     return nil
   end
 
   -- short-circuit any known ignored paths
   for root, project in pairs(M._projects_by_toplevel) do
-    if project and path_ignored_in_project(cwd, project) then
-      M._toplevels_by_path[cwd] = root
+    if project and path_ignored_in_project(path, project) then
+      M._toplevels_by_path[path] = root
       return root
     end
   end
 
-  local toplevel, git_dir = git_utils.get_toplevel(cwd)
+  local toplevel, git_dir = git_utils.get_toplevel(path)
   for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
     local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
     local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
@@ -150,26 +150,26 @@ function M.get_project_root(cwd)
     end
   end
 
-  M._toplevels_by_path[cwd] = toplevel
+  M._toplevels_by_path[path] = toplevel
   if toplevel then
     M._git_dirs_by_toplevel[toplevel] = git_dir
   end
-  return M._toplevels_by_path[cwd]
+  return M._toplevels_by_path[path]
 end
 
-local function reload_tree_at(project_root)
+local function reload_tree_at(toplevel)
   if not M.config.git.enable then
     return nil
   end
 
-  log.line("watcher", "git event executing '%s'", project_root)
-  local root_node = utils.get_node_from_path(project_root)
+  log.line("watcher", "git event executing '%s'", toplevel)
+  local root_node = utils.get_node_from_path(toplevel)
   if not root_node then
     return
   end
 
-  M.reload_project(project_root, nil, function()
-    local git_status = M.get_project(project_root)
+  M.reload_project(toplevel, nil, function()
+    local git_status = M.get_project(toplevel)
 
     Iterator.builder(root_node.nodes)
       :hidden()
@@ -186,25 +186,25 @@ local function reload_tree_at(project_root)
   end)
 end
 
-function M.load_project_status(cwd)
+function M.load_project_status(path)
   if not M.config.git.enable then
     return {}
   end
 
-  local project_root = M.get_project_root(cwd)
-  if not project_root then
-    M._toplevels_by_path[cwd] = false
+  local toplevel = M.get_toplevel(path)
+  if not toplevel then
+    M._toplevels_by_path[path] = false
     return {}
   end
 
-  local status = M._projects_by_toplevel[project_root]
+  local status = M._projects_by_toplevel[toplevel]
   if status then
     return status
   end
 
   local git_status = Runner.run {
-    project_root = project_root,
-    list_untracked = git_utils.should_show_untracked(project_root),
+    project_root = toplevel,
+    list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
   }
@@ -214,29 +214,29 @@ function M.load_project_status(cwd)
     log.line("watcher", "git start")
 
     local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.project_root)
-      utils.debounce("git:watcher:" .. w.project_root, M.config.filesystem_watchers.debounce_delay, function()
+      log.line("watcher", "git event scheduled '%s'", w.toplevel)
+      utils.debounce("git:watcher:" .. w.toplevel, M.config.filesystem_watchers.debounce_delay, function()
         if w.destroyed then
           return
         end
-        reload_tree_at(w.project_root)
+        reload_tree_at(w.toplevel)
       end)
     end
 
     local git_dir = vim.env.GIT_DIR
-      or M._git_dirs_by_toplevel[project_root]
-      or utils.path_join { project_root, ".git" }
+      or M._git_dirs_by_toplevel[toplevel]
+      or utils.path_join { toplevel, ".git" }
     watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
-      project_root = project_root,
+      toplevel = toplevel,
     })
   end
 
-  M._projects_by_toplevel[project_root] = {
+  M._projects_by_toplevel[toplevel] = {
     files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, project_root),
+    dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
     watcher = watcher,
   }
-  return M._projects_by_toplevel[project_root]
+  return M._projects_by_toplevel[toplevel]
 end
 
 function M.purge_state()
