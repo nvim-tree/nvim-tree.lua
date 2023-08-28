@@ -63,6 +63,8 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
+--- Reload all projects
+--- @return table projects maybe empty
 function M.reload()
   if not M.config.git.enable then
     return {}
@@ -75,9 +77,13 @@ function M.reload()
   return M._projects_by_toplevel
 end
 
+--- Reload one project. Does nothing when no project or path is ignored
+--- @param toplevel string|nil
+--- @param path string|nil optional path to update only
+--- @param callback function|nil
 function M.reload_project(toplevel, path, callback)
   local project = M._projects_by_toplevel[toplevel]
-  if not project or not M.config.git.enable then
+  if not toplevel or not project or not M.config.git.enable then
     if callback then
       callback()
     end
@@ -111,10 +117,19 @@ function M.reload_project(toplevel, path, callback)
   end
 end
 
+--- Retrieve a known project
+--- @return table|nil project
 function M.get_project(toplevel)
   return M._projects_by_toplevel[toplevel]
 end
 
+--- Retrieve the toplevel for a path. nil on:
+---  git disabled
+---  not part of a project
+---  not a directory
+---  path in git.disable_for_dirs
+--- @param path string absolute
+--- @return string|nil
 function M.get_toplevel(path)
   if not M.config.git.enable then
     return nil
@@ -141,7 +156,13 @@ function M.get_toplevel(path)
     end
   end
 
+  -- attempt to fetch toplevel
   local toplevel, git_dir = git_utils.get_toplevel(path)
+  if not toplevel or not git_dir then
+    return nil
+  end
+
+  -- ignore disabled paths
   for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
     local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
     local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
@@ -151,14 +172,12 @@ function M.get_toplevel(path)
   end
 
   M._toplevels_by_path[path] = toplevel
-  if toplevel then
-    M._git_dirs_by_toplevel[toplevel] = git_dir
-  end
+  M._git_dirs_by_toplevel[toplevel] = git_dir
   return M._toplevels_by_path[path]
 end
 
 local function reload_tree_at(toplevel)
-  if not M.config.git.enable then
+  if not M.config.git.enable or not toplevel then
     return nil
   end
 
@@ -186,6 +205,10 @@ local function reload_tree_at(toplevel)
   end)
 end
 
+--- Load the project status for a path. Does nothing when no toplevel for path.
+--- Only fetches project status when unknown, otherwise returns existing.
+--- @param path string absolute
+--- @return table project maybe empty
 function M.load_project_status(path)
   if not M.config.git.enable then
     return {}
