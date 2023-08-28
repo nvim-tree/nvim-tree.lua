@@ -98,7 +98,7 @@ function M.reload_project(toplevel, path, callback)
   end
 
   local opts = {
-    project_root = toplevel,
+    toplevel = toplevel,
     path = path,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
@@ -226,7 +226,7 @@ function M.load_project_status(path)
   end
 
   local git_status = Runner.run {
-    project_root = toplevel,
+    toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
