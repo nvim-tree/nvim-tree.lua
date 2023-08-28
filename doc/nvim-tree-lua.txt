@@ -152,7 +152,7 @@ Show the mappings:  `g?`
 `-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
 `a`               Create                     |nvim-tree-api.fs.create()|
 `bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
-`bt`              Trash Bookmarked           nvim-tree-api.marks.bulk.trash()
+`bt`              Trash Bookmarked           |nvim-tree-api.marks.bulk.trash()|
 `bmv`             Move Bookmarked            |nvim-tree-api.marks.bulk.move()|
 `B`               Toggle Filter: No Buffer   |nvim-tree-api.tree.toggle_no_buffer_filter()|
 `c`               Copy                       |nvim-tree-api.fs.copy.node()|
