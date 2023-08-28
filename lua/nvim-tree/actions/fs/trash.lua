@@ -24,11 +24,7 @@ local function clear_buffer(absolute_path)
   end
 end
 
-function M.fn(node)
-  if node.name == ".." then
-    return
-  end
-
+function M.remove(node)
   local binary = M.config.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
     notify.warn(string.format("trash.cmd '%s' is not an executable.", M.config.trash.cmd))
@@ -53,32 +49,40 @@ function M.fn(node)
     end
   end
 
+  if node.nodes ~= nil and not node.link_to then
+    trash_path(function(_, rc)
+      if rc ~= 0 then
+        notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+        return
+      end
+      events._dispatch_folder_removed(node.absolute_path)
+      if not M.config.filesystem_watchers.enable then
+        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      end
+    end)
+  else
+    events._dispatch_will_remove_file(node.absolute_path)
+    trash_path(function(_, rc)
+      if rc ~= 0 then
+        notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
+        return
+      end
+      events._dispatch_file_removed(node.absolute_path)
+      clear_buffer(node.absolute_path)
+      if not M.config.filesystem_watchers.enable then
+        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      end
+    end)
+  end
+end
+
+function M.fn(node)
+  if node.name == ".." then
+    return
+  end
+
   local function do_trash()
-    if node.nodes ~= nil and not node.link_to then
-      trash_path(function(_, rc)
-        if rc ~= 0 then
-          notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
-          return
-        end
-        events._dispatch_folder_removed(node.absolute_path)
-        if not M.config.filesystem_watchers.enable then
-          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-        end
-      end)
-    else
-      events._dispatch_will_remove_file(node.absolute_path)
-      trash_path(function(_, rc)
-        if rc ~= 0 then
-          notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
-          return
-        end
-        events._dispatch_file_removed(node.absolute_path)
-        clear_buffer(node.absolute_path)
-        if not M.config.filesystem_watchers.enable then
-          require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-        end
-      end)
-    end
+    M.remove(node)
   end
 
   if M.config.ui.confirm.trash then
