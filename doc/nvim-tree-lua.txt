@@ -383,6 +383,7 @@ applying configuration.
             folder = true,
             folder_arrow = true,
             git = true,
+            diagnostics = true,
             modified = true,
           },
           glyphs = {
@@ -1053,6 +1054,11 @@ UI rendering setup
             *nvim-tree.renderer.icons.show.git*
             Show a git status icon, see |renderer.icons.git_placement|
             Requires |git.enable| `= true`
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.diagnostics*
+            Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|
+            Requires |diagnostics.enable| `= true`
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.modified*

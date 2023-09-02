@@ -16,7 +16,7 @@ end
 ---@param node table
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
-  if M.config.diagnostics.enable then
+  if M.config.diagnostics.enable and M.config.renderer.icons.show.diagnostics then
     return I[node.diag_status]
   end
 end

@@ -447,6 +447,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder = true,
         folder_arrow = true,
         git = true,
+        diagnostics = true,
         modified = true,
       },
       glyphs = {
