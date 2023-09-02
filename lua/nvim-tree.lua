@@ -409,6 +409,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     add_trailing = false,
     group_empty = false,
     highlight_git = false,
+    highlight_diagnostics = false,
     full_name = false,
     highlight_opened_files = "none",
     highlight_modified = "none",

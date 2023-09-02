@@ -139,15 +139,9 @@ function M.update()
       end
     end
     log.profile_end(profile)
+    require("nvim-tree.renderer").draw()
   end)
 end
-
-local links = {
-  NvimTreeLspDiagnosticsError = "DiagnosticError",
-  NvimTreeLspDiagnosticsWarning = "DiagnosticWarn",
-  NvimTreeLspDiagnosticsInformation = "DiagnosticInfo",
-  NvimTreeLspDiagnosticsHint = "DiagnosticHint",
-}
 
 function M.setup(opts)
   M.enable = opts.diagnostics.enable
@@ -164,10 +158,6 @@ function M.setup(opts)
   vim.fn.sign_define(sign_names[2][1], { text = opts.diagnostics.icons.warning, texthl = sign_names[2][2] })
   vim.fn.sign_define(sign_names[3][1], { text = opts.diagnostics.icons.info, texthl = sign_names[3][2] })
   vim.fn.sign_define(sign_names[4][1], { text = opts.diagnostics.icons.hint, texthl = sign_names[4][2] })
-
-  for lhs, rhs in pairs(links) do
-    vim.cmd("hi def link " .. lhs .. " " .. rhs)
-  end
 end
 
 return M

@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local diagnostics = require "nvim-tree.diagnostics"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local events = require "nvim-tree.events"
@@ -9,6 +8,7 @@ local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
 local git = require "nvim-tree.renderer.components.git"
+local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
 local marks = require "nvim-tree.marks"
@@ -84,7 +84,6 @@ function M.draw(unloaded_bufnr)
     vim.api.nvim_win_set_cursor(view.get_winnr(), cursor)
   end
 
-  diagnostics.update()
   marks.draw()
 
   view.grow_from_content()
@@ -102,6 +101,7 @@ function M.setup(opts)
   full_name.setup(opts)
   git.setup(opts)
   modified.setup(opts)
+  diagnostics.setup(opts)
   icon_component.setup(opts)
 end
 

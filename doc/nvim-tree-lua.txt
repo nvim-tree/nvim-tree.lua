@@ -345,6 +345,7 @@ applying configuration.
         add_trailing = false,
         group_empty = false,
         highlight_git = false,
+        highlight_diagnostics = false,
         full_name = false,
         highlight_opened_files = "none",
         highlight_modified = "none",
@@ -923,8 +924,14 @@ UI rendering setup
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_git*
-    Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
+    Enable highlight for git attributes using `NvimTreeGit*` highlight groups.
     Requires |nvim-tree.git.enable|
+    This can be used with or without the icons.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_diagnostics*
+    Enable highlight for diagnostics using `LspDiagnosticsError*Text` highlight groups.
+    Requires |nvim-tree.diagnostics.enable|
     This can be used with or without the icons.
       Type: `boolean`, Default: `false`
 
@@ -2078,6 +2085,14 @@ NvimTreeFileRenamed     (NvimTreeGitRenamed)
 NvimTreeFileNew         (NvimTreeGitNew)
 NvimTreeFileDeleted     (NvimTreeGitDeleted)
 NvimTreeFileIgnored     (NvimTreeGitIgnored)
+
+There are also links for text highlight for diagnostic status, linked by
+default to their icon equivalent.
+
+NvimTreeLspDiagnosticsErrorText     (NvimTreeLspDiagnosticsError)
+NvimTreeLspDiagnosticsWarningText   (NvimTreeLspDiagnosticsWarning)
+NvimTreeLspDiagnosticsInfoText      (NvimTreeLspDiagnosticsInformation)
+NvimTreeLspDiagnosticsHintText      (NvimTreeLspDiagnosticsHint)
 
 There are 2 highlight groups for the live filter feature
 

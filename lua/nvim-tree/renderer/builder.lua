@@ -5,6 +5,7 @@ local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 local modified = require "nvim-tree.renderer.components.modified"
+local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 
 local Builder = {}
 Builder.__index = Builder
@@ -261,6 +262,12 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
     if self.highlight_modified == "all" or self.highlight_modified == "icon" then
       icon_hl = modified_highlight
     end
+  end
+
+  -- diagnostic status
+  local diagnostic_highlight = diagnostics.get_highlight(node)
+  if diagnostic_highlight then
+    name_hl = diagnostic_highlight
   end
 
   return icon_hl, name_hl
