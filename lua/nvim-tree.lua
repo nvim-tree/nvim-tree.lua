@@ -438,6 +438,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
       git_placement = "before",
+      diagnostics_placement = "signcolumn",
       modified_placement = "after",
       padding = " ",
       symlink_arrow = " ➛ ",

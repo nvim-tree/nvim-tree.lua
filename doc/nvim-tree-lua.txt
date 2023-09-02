@@ -374,6 +374,7 @@ applying configuration.
             },
           },
           git_placement = "before",
+          diagnostics_placement = "signcolumn",
           modified_placement = "after",
           padding = " ",
           symlink_arrow = " ➛ ",
@@ -690,15 +691,7 @@ Open a file or directory in your preferred application.
       Windows: `{ "/c", "start", '""' }`
 
 *nvim-tree.diagnostics*
-Show LSP and COC diagnostics in the signcolumn
-Note that the modified sign will take precedence over the diagnostics signs.
-
-    `NOTE`: it will use the default diagnostic color groups to highlight the signs.
-    If you wish to customize, you can override these groups:
-    - `NvimTreeLspDiagnosticsError`
-    - `NvimTreeLspDiagnosticsWarning`
-    - `NvimTreeLspDiagnosticsInformation`
-    - `NvimTreeLspDiagnosticsHint`
+Show LSP and COC diagnostics.
 
     *nvim-tree.diagnostics.enable*
     Enable/disable the feature.
@@ -882,7 +875,7 @@ Window / buffer setup.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.signcolumn*
-    Show diagnostic sign column. Value can be `"yes"`, `"auto"`, `"no"`.
+    Show |signcolumn|. Value can be `"yes"`, `"auto"`, `"no"`.
       Type: `string`, Default: `"yes"`
 
     *nvim-tree.view.float*
@@ -986,6 +979,8 @@ UI rendering setup
     *nvim-tree.renderer.icons*
     Configuration options for icons.
 
+        Sign column icon precedence: git < modified < diagnostics
+
         *nvim-tree.renderer.icons.web_devicons*
         Configure optional plugin `"nvim-tree/nvim-web-devicons"`
 
@@ -1017,8 +1012,13 @@ UI rendering setup
         Place where the git icons will be rendered.
         Can be `"after"` or `"before"` filename (after the file/folders icons)
         or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
-        Note that the diagnostic signs and the modified sign will take precedence over the git signs.
           Type: `string`, Default: `before`
+
+        *nvim-tree.renderer.icons.diagnostics_placement*
+        Place where the diagnostics icon will be rendered.
+        Can be `"after"` or `"before"` filename (after the file/folders icons)
+        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+          Type: `string`, Default: `signcolumn`
 
         *nvim-tree.renderer.icons.modified_placement*
         Place where the modified icon will be rendered.
