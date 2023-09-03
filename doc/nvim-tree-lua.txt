@@ -7,6 +7,9 @@ CONTENTS                                                           *nvim-tree*
 
   1. Introduction                             |nvim-tree-introduction|
   2. Quickstart                               |nvim-tree-quickstart|
+  2.1  Quickstart: Setup                        |nvim-tree-quickstart-setup|
+  2.2  Quickstart: Help                         |nvim-tree-quickstart-help|
+  2.3  Quickstart: Custom Mappings              |nvim-tree-quickstart-custom-mappings|
   3. Commands                                 |nvim-tree-commands|
   4. Setup                                    |nvim-tree-setup|
   5. Opts                                     |nvim-tree-opts|
@@ -91,13 +94,16 @@ Requirements
     This file explorer requires `neovim >= 0.8.0`
 
 ==============================================================================
- 2. QUICK START                                         *nvim-tree-quickstart*
+ 2. QUICKSTART                                          *nvim-tree-quickstart*
 
 Install the plugins via your package manager:
   `"nvim-tree/nvim-tree.lua"`
   `"nvim-tree/nvim-web-devicons"`
 
 Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
+
+==============================================================================
+ 2.1 QUICKSTART: SETUP                            *nvim-tree-quickstart-setup*
 
 Setup the plugin in your `init.lua` >
 
@@ -127,30 +133,9 @@ Setup the plugin in your `init.lua` >
     },
   })
 <
-Optionally customise your |nvim-tree-mappings| via |nvim-tree.on_attach| >
+==============================================================================
+ 2.2 QUICKSTART: HELP                              *nvim-tree-quickstart-help*
 
-  local function my_on_attach(bufnr)
-    local api = require "nvim-tree.api"
-
-    local function opts(desc)
-      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-    end
-
-    -- default mappings
-    api.config.mappings.default_on_attach(bufnr)
-
-    -- custom mappings
-    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
-    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
-  end
-
-  -- pass to setup along with your other options
-  require("nvim-tree").setup {
-    ---
-    on_attach = my_on_attach,
-    ---
-  }
-<
 Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
@@ -209,6 +194,34 @@ Show the mappings:  `g?`
 `<2-LeftMouse>`   Open                       |nvim-tree-api.node.open.edit()|
 `<2-RightMouse>`  CD                         |nvim-tree-api.tree.change_root_to_node()|
 
+==============================================================================
+ 2.3 QUICKSTART: CUSTOM MAPPINGS        *nvim-tree-quickstart-custom-mappings*
+
+|nvim-tree-mappings-default| are applied by default however you may customise
+via |nvim-tree.on_attach| e.g. >
+
+  local function my_on_attach(bufnr)
+    local api = require "nvim-tree.api"
+
+    local function opts(desc)
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    -- default mappings
+    api.config.mappings.default_on_attach(bufnr)
+
+    -- custom mappings
+    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+  end
+
+  -- pass to setup along with your other options
+  require("nvim-tree").setup {
+    ---
+    on_attach = my_on_attach,
+    ---
+  }
+<
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
