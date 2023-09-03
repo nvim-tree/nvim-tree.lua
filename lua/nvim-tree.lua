@@ -492,6 +492,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     cmd = "",
     args = {},
   },
+  git = {
+    enable = true,
+    show_on_dirs = true,
+    show_on_open_dirs = true,
+    disable_for_dirs = {},
+    timeout = 400,
+  },
   diagnostics = {
     enable = false,
     show_on_dirs = false,
@@ -508,6 +515,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       error = "",
     },
   },
+  modified = {
+    enable = false,
+    show_on_dirs = true,
+    show_on_open_dirs = true,
+  },
   filters = {
     git_ignored = true,
     dotfiles = false,
@@ -516,22 +528,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     custom = {},
     exclude = {},
   },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
+  },
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
     ignore_dirs = {},
-  },
-  git = {
-    enable = true,
-    show_on_dirs = true,
-    show_on_open_dirs = true,
-    disable_for_dirs = {},
-    timeout = 400,
-  },
-  modified = {
-    enable = false,
-    show_on_dirs = true,
-    show_on_open_dirs = true,
   },
   actions = {
     use_system_clipboard = true,
@@ -573,10 +577,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   trash = {
     cmd = "gio trash",
-  },
-  live_filter = {
-    prefix = "[FILTER]: ",
-    always_show_folders = true,
   },
   tab = {
     sync = {
