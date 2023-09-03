@@ -5,6 +5,7 @@ local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 local modified = require "nvim-tree.renderer.components.modified"
+local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 
 local Builder = {}
 Builder.__index = Builder
@@ -69,6 +70,14 @@ function Builder:configure_git_icons_placement(where)
     where = "before" -- default before
   end
   self.git_placement = where
+  return self
+end
+
+function Builder:configure_diagnostics_icon_placement(where)
+  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
+    where = "before" -- default before
+  end
+  self.diagnostics_placement = where
   return self
 end
 
@@ -206,11 +215,21 @@ end
 function Builder:_get_git_icons(node)
   local git_icons = git.get_icons(node)
   if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
-    local sign = git_icons[1]
-    table.insert(self.signs, { sign = sign.hl, lnum = self.index + 1, priority = 1 })
+    table.insert(self.signs, { sign = git_icons[1].hl, lnum = self.index + 1, priority = 1 })
     git_icons = nil
   end
   return git_icons
+end
+
+---@param node table
+---@return HighlightedString[]|nil icon
+function Builder:_get_diagnostics_icon(node)
+  local diagnostics_icon = diagnostics.get_icon(node)
+  if diagnostics_icon and self.diagnostics_placement == "signcolumn" then
+    table.insert(self.signs, { sign = diagnostics_icon.hl, lnum = self.index + 1, priority = 2 })
+    diagnostics_icon = nil
+  end
+  return diagnostics_icon
 end
 
 ---@param node table
@@ -218,8 +237,7 @@ end
 function Builder:_get_modified_icon(node)
   local modified_icon = modified.get_icon(node)
   if modified_icon and self.modified_placement == "signcolumn" then
-    local sign = modified_icon
-    table.insert(self.signs, { sign = sign.hl, lnum = self.index + 1, priority = 3 })
+    table.insert(self.signs, { sign = modified_icon.hl, lnum = self.index + 1, priority = 3 })
     modified_icon = nil
   end
   return modified_icon
@@ -263,6 +281,12 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
     end
   end
 
+  -- diagnostic status
+  local diagnostic_highlight = diagnostics.get_highlight(node)
+  if diagnostic_highlight then
+    name_hl = diagnostic_highlight
+  end
+
   return icon_hl, name_hl
 end
 
@@ -270,9 +294,10 @@ end
 ---@param icon HighlightedString
 ---@param name HighlightedString
 ---@param git_icons HighlightedString[]|nil
+---@param diagnostics_icon HighlightedString|nil
 ---@param modified_icon HighlightedString|nil
 ---@return HighlightedString[]
-function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
+function Builder:_format_line(padding, icon, name, git_icons, diagnostics_icon, modified_icon)
   local added_len = 0
   local function add_to_end(t1, t2)
     for _, v in ipairs(t2) do
@@ -298,12 +323,20 @@ function Builder:_format_line(padding, icon, name, git_icons, modified_icon)
   if modified_icon and self.modified_placement == "before" then
     add_to_end(line, { modified_icon })
   end
+  if diagnostics_icon and self.diagnostics_placement == "before" then
+    add_to_end(line, { diagnostics_icon })
+  end
+
   add_to_end(line, { name })
+
   if git_icons and self.git_placement == "after" then
     add_to_end(line, git_icons)
   end
   if modified_icon and self.modified_placement == "after" then
     add_to_end(line, { modified_icon })
+  end
+  if diagnostics_icon and self.diagnostics_placement == "after" then
+    add_to_end(line, { diagnostics_icon })
   end
 
   return line
@@ -314,6 +347,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
   local git_icons = self:_get_git_icons(node)
   local modified_icon = self:_get_modified_icon(node)
+  local diagnostics_icon = self:_get_diagnostics_icon(node)
 
   -- main components
   local is_folder = node.nodes ~= nil
@@ -336,7 +370,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     name.hl = name_hl
   end
 
-  local line = self:_format_line(padding, icon, name, git_icons, modified_icon)
+  local line = self:_format_line(padding, icon, name, git_icons, diagnostics_icon, modified_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1

@@ -409,6 +409,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     add_trailing = false,
     group_empty = false,
     highlight_git = false,
+    highlight_diagnostics = false,
     full_name = false,
     highlight_opened_files = "none",
     highlight_modified = "none",
@@ -437,6 +438,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
       git_placement = "before",
+      diagnostics_placement = "signcolumn",
       modified_placement = "after",
       padding = " ",
       symlink_arrow = " ➛ ",
@@ -445,6 +447,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder = true,
         folder_arrow = true,
         git = true,
+        diagnostics = true,
         modified = true,
       },
       glyphs = {

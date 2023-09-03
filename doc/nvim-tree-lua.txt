@@ -345,6 +345,7 @@ applying configuration.
         add_trailing = false,
         group_empty = false,
         highlight_git = false,
+        highlight_diagnostics = false,
         full_name = false,
         highlight_opened_files = "none",
         highlight_modified = "none",
@@ -373,6 +374,7 @@ applying configuration.
             },
           },
           git_placement = "before",
+          diagnostics_placement = "signcolumn",
           modified_placement = "after",
           padding = " ",
           symlink_arrow = " ➛ ",
@@ -381,6 +383,7 @@ applying configuration.
             folder = true,
             folder_arrow = true,
             git = true,
+            diagnostics = true,
             modified = true,
           },
           glyphs = {
@@ -689,15 +692,7 @@ Open a file or directory in your preferred application.
       Windows: `{ "/c", "start", '""' }`
 
 *nvim-tree.diagnostics*
-Show LSP and COC diagnostics in the signcolumn
-Note that the modified sign will take precedence over the diagnostics signs.
-
-    `NOTE`: it will use the default diagnostic color groups to highlight the signs.
-    If you wish to customize, you can override these groups:
-    - `NvimTreeLspDiagnosticsError`
-    - `NvimTreeLspDiagnosticsWarning`
-    - `NvimTreeLspDiagnosticsInformation`
-    - `NvimTreeLspDiagnosticsHint`
+Show LSP and COC diagnostics.
 
     *nvim-tree.diagnostics.enable*
     Enable/disable the feature.
@@ -881,7 +876,7 @@ Window / buffer setup.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.view.signcolumn*
-    Show diagnostic sign column. Value can be `"yes"`, `"auto"`, `"no"`.
+    Show |signcolumn|. Value can be `"yes"`, `"auto"`, `"no"`.
       Type: `string`, Default: `"yes"`
 
     *nvim-tree.view.float*
@@ -910,6 +905,8 @@ Window / buffer setup.
 *nvim-tree.renderer*
 UI rendering setup
 
+    Highlight override precedence: git < opened < modified < diagnostics
+
     *nvim-tree.renderer.add_trailing*
     Appends a trailing slash to folder names.
       Type: `boolean`, Default: `false`
@@ -923,8 +920,14 @@ UI rendering setup
       Type: `boolean`, Default: `false`
 
     *nvim-tree.renderer.highlight_git*
-    Enable file highlight for git attributes using `NvimTreeGit*` highlight groups.
+    Enable highlight for git attributes using `NvimTreeGit*` highlight groups.
     Requires |nvim-tree.git.enable|
+    This can be used with or without the icons.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.highlight_diagnostics*
+    Enable highlight for diagnostics using `LspDiagnosticsError*Text` highlight groups.
+    Requires |nvim-tree.diagnostics.enable|
     This can be used with or without the icons.
       Type: `boolean`, Default: `false`
 
@@ -979,6 +982,8 @@ UI rendering setup
     *nvim-tree.renderer.icons*
     Configuration options for icons.
 
+        Sign column icon precedence: git < modified < diagnostics
+
         *nvim-tree.renderer.icons.web_devicons*
         Configure optional plugin `"nvim-tree/nvim-web-devicons"`
 
@@ -1010,8 +1015,13 @@ UI rendering setup
         Place where the git icons will be rendered.
         Can be `"after"` or `"before"` filename (after the file/folders icons)
         or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
-        Note that the diagnostic signs and the modified sign will take precedence over the git signs.
           Type: `string`, Default: `before`
+
+        *nvim-tree.renderer.icons.diagnostics_placement*
+        Place where the diagnostics icon will be rendered.
+        Can be `"after"` or `"before"` filename (after the file/folders icons)
+        or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+          Type: `string`, Default: `signcolumn`
 
         *nvim-tree.renderer.icons.modified_placement*
         Place where the modified icon will be rendered.
@@ -1046,6 +1056,11 @@ UI rendering setup
             *nvim-tree.renderer.icons.show.git*
             Show a git status icon, see |renderer.icons.git_placement|
             Requires |git.enable| `= true`
+              Type: `boolean`, Default: `true`
+
+            *nvim-tree.renderer.icons.show.diagnostics*
+            Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|
+            Requires |diagnostics.enable| `= true`
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.show.modified*
@@ -2078,6 +2093,14 @@ NvimTreeFileRenamed     (NvimTreeGitRenamed)
 NvimTreeFileNew         (NvimTreeGitNew)
 NvimTreeFileDeleted     (NvimTreeGitDeleted)
 NvimTreeFileIgnored     (NvimTreeGitIgnored)
+
+There are also links for text highlight for diagnostic status, linked by
+default to their icon equivalent.
+
+NvimTreeLspDiagnosticsErrorText     (NvimTreeLspDiagnosticsError)
+NvimTreeLspDiagnosticsWarningText   (NvimTreeLspDiagnosticsWarning)
+NvimTreeLspDiagnosticsInfoText      (NvimTreeLspDiagnosticsInformation)
+NvimTreeLspDiagnosticsHintText      (NvimTreeLspDiagnosticsHint)
 
 There are 2 highlight groups for the live filter feature
 
