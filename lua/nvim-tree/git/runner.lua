@@ -89,11 +89,13 @@ function Runner:_run_git_job(callback)
     stderr:read_stop()
     stdout:close()
     stderr:close()
-    if handle then
+
+    -- don't close the handle when killing as it will leave a zombie
+    if rc == -1 then
+      pcall(vim.loop.kill, pid, "sigkill")
+    elseif handle then
       handle:close()
     end
-
-    pcall(vim.loop.kill, pid)
 
     if callback then
       callback()
