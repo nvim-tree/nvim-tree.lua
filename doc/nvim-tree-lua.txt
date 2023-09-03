@@ -905,6 +905,8 @@ Window / buffer setup.
 *nvim-tree.renderer*
 UI rendering setup
 
+    Highlight override precedence: git < opened < modified < diagnostics
+
     *nvim-tree.renderer.add_trailing*
     Appends a trailing slash to folder names.
       Type: `boolean`, Default: `false`
