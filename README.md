@@ -40,9 +40,11 @@ Please install via your preferred package manager. See [Installation](https://gi
 
 `nvim-tree/nvim-web-devicons` optional, for file icons
 
+Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
+
 ## Quick Start
 
-Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
+### Setup
 
 Setup the plugin in your `init.lua`
 
@@ -72,7 +74,15 @@ require("nvim-tree").setup({
 })
 ```
 
-Optionally customise your mappings, see [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
+### Help
+
+Open the tree:  `:NvimTreeOpen`
+
+Show the mappings:  `g?`
+
+### Custom Mappings
+
+[:help nvim-tree-mappings-default](doc/nvim-tree-lua.txt) are applied by default however you may customise via |nvim-tree.on_attach| e.g.
 
 ```lua
 local function my_on_attach(bufnr)
@@ -98,14 +108,6 @@ require("nvim-tree").setup {
 }
 ```
 
-Open the tree:  `:NvimTreeOpen`
-
-Show the mappings:  `g?`
-
-For complete list of available configuration options see [:help nvim-tree-setup](doc/nvim-tree-lua.txt)
-
-Each option is documented in `:help nvim-tree.OPTION_NAME`. Nested options can be accessed by appending `.`, for example [:help nvim-tree.filters.dotfiles](doc/nvim-tree-lua.txt)
-
 ## Commands
 
 See [:help nvim-tree-commands](doc/nvim-tree-lua.txt)
@@ -119,12 +121,6 @@ Basic commands:
 `:NvimTreeFindFile` Move the cursor in the tree for the current buffer, opening folders if needed.
 
 `:NvimTreeCollapse` Collapses the nvim-tree recursively.
-
-## Mappings
-
-`g?` toggles help, showing all the mappings and their actions.
-
-To customise your mappings see [:help nvim-tree.on_attach](doc/nvim-tree-lua.txt) and [:help nvim-tree-mappings](doc/nvim-tree-lua.txt)
 
 ## Roadmap
 
@@ -154,20 +150,6 @@ You may also subscribe to events that nvim-tree will dispatch in a variety of si
 PRs are always welcome. See [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) to get started.
 
 See [bug](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aissue+is%3Aopen+label%3Abug) and [PR Please](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aopen+is%3Aissue+label%3A%22PR+please%22) issues if you are looking for some work to get you started.
-
-### Help Wanted
-
-Developers with the following environments:
-
-* Apple macOS
-* Windows
-  * WSL
-  * msys
-  * powershell
-
-Help triaging, diagnosing and fixing issues specific to those environments is needed, as the nvim-tree developers do not have access to or expertise in these environments.
-
-Let us know you're interested by commenting on issues and raising PRs.
 
 ## Screenshots
 

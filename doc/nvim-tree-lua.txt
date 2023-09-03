@@ -7,6 +7,9 @@ CONTENTS                                                           *nvim-tree*
 
   1. Introduction                             |nvim-tree-introduction|
   2. Quickstart                               |nvim-tree-quickstart|
+  2.1  Quickstart: Setup                        |nvim-tree-quickstart-setup|
+  2.2  Quickstart: Help                         |nvim-tree-quickstart-help|
+  2.3  Quickstart: Custom Mappings              |nvim-tree-quickstart-custom-mappings|
   3. Commands                                 |nvim-tree-commands|
   4. Setup                                    |nvim-tree-setup|
   5. Opts                                     |nvim-tree-opts|
@@ -40,12 +43,11 @@ CONTENTS                                                           *nvim-tree*
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
   7. Mappings                                 |nvim-tree-mappings|
-  7.1  Default Mappings                         |nvim-tree-mappings-default|
+  7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
   9. Events                                   |nvim-tree-events|
- 10. Bookmarks                                |nvim-tree-bookmarks|
- 11. OS Specific Restrictions                 |nvim-tree-os-specific|
- 12. Netrw                                    |nvim-tree-netrw|
+ 10. OS Specific Restrictions                 |nvim-tree-os-specific|
+ 11. Netrw                                    |nvim-tree-netrw|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -92,13 +94,16 @@ Requirements
     This file explorer requires `neovim >= 0.8.0`
 
 ==============================================================================
- 2. QUICK START                                         *nvim-tree-quickstart*
+ 2. QUICKSTART                                          *nvim-tree-quickstart*
 
 Install the plugins via your package manager:
   `"nvim-tree/nvim-tree.lua"`
   `"nvim-tree/nvim-web-devicons"`
 
 Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
+
+==============================================================================
+ 2.1 QUICKSTART: SETUP                            *nvim-tree-quickstart-setup*
 
 Setup the plugin in your `init.lua` >
 
@@ -128,30 +133,9 @@ Setup the plugin in your `init.lua` >
     },
   })
 <
-Optionally customise your |nvim-tree-mappings| via |nvim-tree.on_attach| >
+==============================================================================
+ 2.2 QUICKSTART: HELP                              *nvim-tree-quickstart-help*
 
-  local function my_on_attach(bufnr)
-    local api = require "nvim-tree.api"
-
-    local function opts(desc)
-      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-    end
-
-    -- default mappings
-    api.config.mappings.default_on_attach(bufnr)
-
-    -- custom mappings
-    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
-    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
-  end
-
-  -- pass to setup along with your other options
-  require("nvim-tree").setup {
-    ---
-    on_attach = my_on_attach,
-    ---
-  }
-<
 Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
@@ -210,6 +194,34 @@ Show the mappings:  `g?`
 `<2-LeftMouse>`   Open                       |nvim-tree-api.node.open.edit()|
 `<2-RightMouse>`  CD                         |nvim-tree-api.tree.change_root_to_node()|
 
+==============================================================================
+ 2.3 QUICKSTART: CUSTOM MAPPINGS        *nvim-tree-quickstart-custom-mappings*
+
+|nvim-tree-mappings-default| are applied by default however you may customise
+via |nvim-tree.on_attach| e.g. >
+
+  local function my_on_attach(bufnr)
+    local api = require "nvim-tree.api"
+
+    local function opts(desc)
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    -- default mappings
+    api.config.mappings.default_on_attach(bufnr)
+
+    -- custom mappings
+    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+  end
+
+  -- pass to setup along with your other options
+  require("nvim-tree").setup {
+    ---
+    on_attach = my_on_attach,
+    ---
+  }
+<
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
@@ -1050,15 +1062,13 @@ Leave empty for OS specific default:
 ==============================================================================
  5.7 OPTS: GIT                                            *nvim-tree-opts-git*
 
-You will still need to set |renderer.icons.show.git| `= true` or
-|renderer.highlight_git| `= true` to be able to see git status in the
-tree. This will be changed in the future versions.
+Git operations are run in the background thus status may not immediately
+appear.
 
-The configurable timeout will kill the current process and so disable the
-git integration for the project that takes too long.
-The git integration is blocking, so if your timeout is too long (like not in
-milliseconds but a few seconds), it will not render anything until the git
-process returned the data.
+Processes will be killed if they exceed |nvim-tree.git.timeout|
+
+Git integration will be disabled following 5 timeouts and you will be
+notified.
 
 *nvim-tree.git.enable*
 Enable / disable the feature.
@@ -2007,7 +2017,7 @@ You may execute your own functions as well as |nvim-tree-api| functions e.g. >
   vim.keymap.set('n', '<C-P>', print_node_path, opts('Print Path'))
 <
 ==============================================================================
- 7.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*
+ 7.1 MAPPINGS: DEFAULT                            *nvim-tree-mappings-default*
 
 In the absence of an |nvim-tree.on_attach| function, the following defaults
 will be applied.
@@ -2304,29 +2314,7 @@ Example subscription: >
   })
 <
 ==============================================================================
- 10. BOOKMARKS                                           *nvim-tree-bookmarks*
-
-You can toggle marks on files/folders with
-`require("nvim-tree.api").marks.toggle(node)` which is bound to `m` by
-default.
-
-To get the list of marked paths, you can call
-`require("nvim-tree.api").marks.list()`. This will return `{node}`.
-
-*nvim-tree.bookmarks.navigation*
-
-Navigation for marks is not bound by default in nvim-tree because we don't
-want to focus the tree view each time we wish to switch to another mark.
-
-This requires binding bookmark navigation yourself.
-
--- in your lua configuration
-vim.keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
-vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
-vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
-
-==============================================================================
- 11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+ 10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
 macOS
 - Rename to different case is not possible when using a case insensitive file
@@ -2339,7 +2327,7 @@ Windows WSL and PowerShell
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
- 12. NETRW                                                  *nvim-tree-netrw*
+ 11. NETRW                                                  *nvim-tree-netrw*
 
 |netrw| is a standard neovim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
