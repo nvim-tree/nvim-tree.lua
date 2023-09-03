@@ -8,24 +8,25 @@ CONTENTS                                                           *nvim-tree*
   1. Introduction                             |nvim-tree-introduction|
   2. Quickstart                               |nvim-tree-quickstart|
   3. Commands                                 |nvim-tree-commands|
-  4. Setup/Configuration                      |nvim-tree-setup|
-  5. API                                      |nvim-tree-api|
-  5.1  API Tree                                 |nvim-tree-api.tree|
-  5.2  API File System                          |nvim-tree-api.fs|
-  5.3  API Node                                 |nvim-tree-api.node|
-  5.4  API Git                                  |nvim-tree-api.git|
-  5.5  API Events                               |nvim-tree-api.events|
-  5.6  API Live Filter                          |nvim-tree-api.live_filter|
-  5.7  API Marks                                |nvim-tree-api.marks|
-  5.8  API Config                               |nvim-tree-api.config|
-  5.9  API Commands                             |nvim-tree-api.commands|
-  6. Mappings                                 |nvim-tree-mappings|
-  6.1  Default Mappings                         |nvim-tree-mappings-default|
-  7. Highlight Groups                         |nvim-tree-highlight|
-  8. Events                                   |nvim-tree-events|
-  9. Bookmarks                                |nvim-tree-bookmarks|
- 10. OS Specific Restrictions                 |nvim-tree-os-specific|
- 11. Netrw                                    |nvim-tree-netrw|
+  4. Setup                                    |nvim-tree-setup|
+  5. Options                                  |nvim-tree-options|
+  6. API                                      |nvim-tree-api|
+  6.1  API Tree                                 |nvim-tree-api.tree|
+  6.2  API File System                          |nvim-tree-api.fs|
+  6.3  API Node                                 |nvim-tree-api.node|
+  6.4  API Git                                  |nvim-tree-api.git|
+  6.5  API Events                               |nvim-tree-api.events|
+  6.6  API Live Filter                          |nvim-tree-api.live_filter|
+  6.7  API Marks                                |nvim-tree-api.marks|
+  6.8  API Config                               |nvim-tree-api.config|
+  6.9  API Commands                             |nvim-tree-api.commands|
+  7. Mappings                                 |nvim-tree-mappings|
+  7.1  Default Mappings                         |nvim-tree-mappings-default|
+  8. Highlight Groups                         |nvim-tree-highlight|
+  9. Events                                   |nvim-tree-events|
+ 10. Bookmarks                                |nvim-tree-bookmarks|
+ 11. OS Specific Restrictions                 |nvim-tree-os-specific|
+ 12. Netrw                                    |nvim-tree-netrw|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -298,25 +299,27 @@ the configuration. Nothing happens until the tree is first opened.
 
 Subsequent setup() calls are expensive as they tear down the world before
 applying configuration.
+
+Following is the default configuration. See |nvim-tree-options| for details.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
+      on_attach = "default",
+      hijack_cursor = false,
       auto_reload_on_write = true,
       disable_netrw = false,
-      hijack_cursor = false,
       hijack_netrw = true,
       hijack_unnamed_buffer_when_opening = false,
-      sort = {
-        sorter = "name",
-        folders_first = true,
-        files_first = false,
-      },
       root_dirs = {},
       prefer_startup_root = false,
       sync_root_with_cwd = false,
       reload_on_bufenter = false,
       respect_buf_cwd = false,
-      on_attach = "default",
       select_prompts = false,
+      sort = {
+        sorter = "name",
+        folders_first = true,
+        files_first = false,
+      },
       view = {
         centralize_selection = false,
         cursorline = true,
@@ -549,7 +552,22 @@ applying configuration.
     } -- END_DEFAULT_OPTS
 <
 
-Here is a list of the options available in the setup call:
+==============================================================================
+ 5. OPTIONS                                                *nvim-tree-options*
+
+*nvim-tree.on_attach*
+Runs when creating the nvim-tree buffer. Use this to set your nvim-tree
+specific mappings. See |nvim-tree-mappings|.
+When on_attach is not a function, |nvim-tree-mappings-default| will be called.
+  Type: `function(bufnr) | string`, Default: `"default"`
+
+*nvim-tree.hijack_cursor*
+Keeps the cursor on the first letter of the filename when moving in the tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.auto_reload_on_write*
+Reloads the explorer every time a buffer is written to.
+  Type: `boolean`, Default: `true`
 
 *nvim-tree.disable_netrw*
 Completely disable netrw
@@ -565,9 +583,36 @@ Set the following at the very beginning of your `init.lua` / `init.vim`: >
 Hijack netrw windows (overridden if |disable_netrw| is `true`)
   Type: `boolean`, Default: `true`
 
-*nvim-tree.auto_reload_on_write*
-Reloads the explorer every time a buffer is written to.
-  Type: `boolean`, Default: `true`
+*nvim-tree.hijack_unnamed_buffer_when_opening*
+Opens in place of the unnamed buffer if it's empty.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.root_dirs*
+Preferred root directories.
+Only relevant when `update_focused_file.update_root` is `true`
+  Type: `{string}`, Default: `{}`
+
+*nvim-tree.prefer_startup_root*
+Prefer startup root directory when updating root directory of the tree.
+Only relevant when `update_focused_file.update_root` is `true`
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
+Changes the tree root directory on `DirChanged` and refreshes the tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.reload_on_bufenter*
+Automatically reloads the tree on `BufEnter` nvim-tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.respect_buf_cwd*
+Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+  Type: `boolean`, Default: `false`
+
+*nvim-tree.select_prompts*
+Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator
+such as dressing.nvim or telescope-ui-select.nvim
+Type: `boolean`, Default: `false`
 
 *nvim-tree.sort*
 File and folder sorting options.
@@ -606,39 +651,6 @@ File and folder sorting options.
     Sort files before folders. Has no effect when |nvim-tree.sort.sorter| is a
     function. If set to `true` it overrides |nvim-tree.sort.folders_first|.
       Type: `boolean`, Default: `false`
-
-*nvim-tree.hijack_unnamed_buffer_when_opening*
-Opens in place of the unnamed buffer if it's empty.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.hijack_cursor*
-Keeps the cursor on the first letter of the filename when moving in the tree.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.root_dirs*
-Preferred root directories.
-Only relevant when `update_focused_file.update_root` is `true`
-  Type: `{string}`, Default: `{}`
-
-*nvim-tree.prefer_startup_root*
-Prefer startup root directory when updating root directory of the tree.
-Only relevant when `update_focused_file.update_root` is `true`
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
-Changes the tree root directory on `DirChanged` and refreshes the tree.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.reload_on_bufenter*
-Automatically reloads the tree on `BufEnter` nvim-tree.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.respect_buf_cwd*
-Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
-  Type: `boolean`, Default: `false`
-
-*nvim-tree.hijack_directories*  (previously `update_to_buf_dir`)
-hijacks new directory buffers when they are opened (`:e dir`).
 
     *nvim-tree.hijack_directories.enable*
     Enable the feature.
@@ -803,17 +815,6 @@ performance.
     Backslashes must be escaped e.g. `"my-project/\\.build$"`. See |string-match|.
     Useful when path is not in `.gitignore` or git integration is disabled.
       Type: {string}, Default: `{}`
-
-*nvim-tree.on_attach*
-Runs when creating the nvim-tree buffer. Use this to set your nvim-tree
-specific mappings. See |nvim-tree-mappings|.
-When on_attach is not a function, |nvim-tree-mappings-default| will be called.
-  Type: `function(bufnr) | string`, Default: `"default"`
-
-*nvim-tree.select_prompts*
-Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator
-such as dressing.nvim or telescope-ui-select.nvim
-Type: `boolean`, Default: `false`
 
 *nvim-tree.view*
 Window / buffer setup.
@@ -1392,7 +1393,7 @@ Configuration for diagnostic logging.
           Type: `boolean`, Default: `false`
 
 ==============================================================================
- 5. API                                                        *nvim-tree-api*
+ 6. API                                                        *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features.
 >
@@ -1412,7 +1413,7 @@ the function. It will use the node you pass as an argument in priority if it
 exists.
 
 ==============================================================================
- 5.1 API TREE                                             *nvim-tree-api.tree*
+ 6.1 API TREE                                             *nvim-tree-api.tree*
 
 tree.open({opts})                                  *nvim-tree-api.tree.open()*
     Open the tree, focusing it if already open.
@@ -1568,7 +1569,7 @@ tree.is_visible({opts})                      *nvim-tree-api.tree.is_visible()*
       (boolean) nvim-tree is visible
 
 ==============================================================================
- 5.2 API FILE SYSTEM                                        *nvim-tree-api.fs*
+ 6.2 API FILE SYSTEM                                        *nvim-tree-api.fs*
 
 fs.create({node})                                  *nvim-tree-api.fs.create()*
     Prompt to create a file or directory. Use a trailing `/` for a directory.
@@ -1656,7 +1657,7 @@ fs.print_clipboard()                      *nvim-tree-api.fs.print_clipboard()*
     Print the contents of the nvim-tree clipboard.
 
 ==============================================================================
- 5.3 API NODE                                             *nvim-tree-api.node*
+ 6.3 API NODE                                             *nvim-tree-api.node*
 
 node.open.edit()                              *nvim-tree-api.node.open.edit()*
     File:   open as per |nvim-tree.actions.open_file|
@@ -1762,13 +1763,13 @@ node.run.system()                            *nvim-tree-api.node.run.system()*
     Execute |nvim-tree.system_open|
 
 ==============================================================================
- 5.4 API GIT                                               *nvim-tree-api.git*
+ 6.4 API GIT                                               *nvim-tree-api.git*
 
 git.reload()                                      *nvim-tree-api.git.reload()*
     Update the git status of the entire tree.
 
 ==============================================================================
- 5.5 API EVENTS                                         *nvim-tree-api.events*
+ 6.5 API EVENTS                                         *nvim-tree-api.events*
 
                                             *nvim-tree-api.events.subscribe()*
 events.subscribe({event_type},     {callback})
@@ -1783,7 +1784,7 @@ events.Event                                      *nvim-tree-api.events.Event*
 
 
 ==============================================================================
- 5.6 API LIVE FILTER                               *nvim-tree-api.live_filter*
+ 6.6 API LIVE FILTER                               *nvim-tree-api.live_filter*
 
 live_filter.start()                        *nvim-tree-api.live_filter.start()*
     Enter |nvim-tree.live_filter| mode.
@@ -1792,7 +1793,7 @@ live_filter.clear()                        *nvim-tree-api.live_filter.clear()*
     Exit |nvim-tree.live_filter| mode.
 
 ==============================================================================
- 5.7 API MARKS                                           *nvim-tree-api.marks*
+ 6.7 API MARKS                                           *nvim-tree-api.marks*
 
 marks.get({node})                                  *nvim-tree-api.marks.get()*
     Return the node if it is marked.
@@ -1834,7 +1835,7 @@ marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
     |nvim-tree-api.marks.navigate.next()|
 
 ==============================================================================
- 5.8 API CONFIG                                         *nvim-tree-api.config*
+ 6.8 API CONFIG                                         *nvim-tree-api.config*
 
                            *nvim-tree-api.config.mappings.default_on_attach()*
 config.mappings.default_on_attach({bufnr})
@@ -1861,7 +1862,7 @@ config.mappings.get_keymap_default()
         (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
- 5.8 API COMMANDS                                     *nvim-tree-api.commands*
+ 6.8 API COMMANDS                                     *nvim-tree-api.commands*
 
 commands.get()                                  *nvim-tree-api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
@@ -1873,7 +1874,7 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {opts}    (table)
 
 ==============================================================================
- 6. MAPPINGS                                              *nvim-tree-mappings*
+ 7. MAPPINGS                                              *nvim-tree-mappings*
 
 Mappings are set via the |nvim-tree.on_attach| function, which is run upon
 creating the nvim-tree buffer. Mappings are usually |nvim-tree-api| functions
@@ -1936,7 +1937,7 @@ You may execute your own functions as well as |nvim-tree-api| functions e.g. >
   vim.keymap.set('n', '<C-P>', print_node_path, opts('Print Path'))
 <
 ==============================================================================
- 6.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*
+ 7.1 DEFAULT MAPPINGS                             *nvim-tree-mappings-default*
 
 In the absence of an |nvim-tree.on_attach| function, the following defaults
 will be applied.
@@ -2021,7 +2022,7 @@ Alternatively, you may apply these default mappings from your |nvim-tree.on_atta
   end
 <
 ==============================================================================
- 7. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
+ 8. HIGHLIGHT GROUPS                                     *nvim-tree-highlight*
 
 All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
@@ -2113,7 +2114,7 @@ NvimTreeBookmark
 
 
 ==============================================================================
- 8. EVENTS                                                  *nvim-tree-events*
+ 9. EVENTS                                                  *nvim-tree-events*
 
 |nvim_tree_events|
 
@@ -2226,7 +2227,7 @@ Example subscription: >
   })
 <
 ==============================================================================
- 9. BOOKMARKS                                            *nvim-tree-bookmarks*
+ 10. BOOKMARKS                                           *nvim-tree-bookmarks*
 
 You can toggle marks on files/folders with
 `require("nvim-tree.api").marks.toggle(node)` which is bound to `m` by
@@ -2248,7 +2249,7 @@ vim.keymap.set("n", "<leader>mp", require("nvim-tree.api").marks.navigate.prev)
 vim.keymap.set("n", "<leader>ms", require("nvim-tree.api").marks.navigate.select)
 
 ==============================================================================
- 10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+ 11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
 macOS
 - Rename to different case is not possible when using a case insensitive file
@@ -2261,7 +2262,7 @@ Windows WSL and PowerShell
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
- 11. NETRW                                                  *nvim-tree-netrw*
+ 12. NETRW                                                  *nvim-tree-netrw*
 
 |netrw| is a standard neovim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.

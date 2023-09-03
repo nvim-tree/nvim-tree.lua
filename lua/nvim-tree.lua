@@ -364,23 +364,23 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+  on_attach = "default",
+  hijack_cursor = false,
   auto_reload_on_write = true,
   disable_netrw = false,
-  hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
-  sort = {
-    sorter = "name",
-    folders_first = true,
-    files_first = false,
-  },
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
-  on_attach = "default",
   select_prompts = false,
+  sort = {
+    sorter = "name",
+    folders_first = true,
+    files_first = false,
+  },
   view = {
     centralize_selection = false,
     cursorline = true,
