@@ -62,15 +62,15 @@ function M.draw()
   local buf = view.get_bufnr()
   local add = core.get_nodes_starting_line() - 1
   Iterator.builder(core.get_explorer().nodes)
-      :recursor(function(node)
-        return node.group_next and { node.group_next } or (node.open and node.nodes)
-      end)
-      :applier(function(node, idx)
-        if M.get_mark(node) then
-          vim.fn.sign_place(0, GROUP, SIGN_NAME, buf, { lnum = idx + add, priority = 3 })
-        end
-      end)
-      :iterate()
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and node.nodes)
+    end)
+    :applier(function(node, idx)
+      if M.get_mark(node) then
+        vim.fn.sign_place(0, GROUP, SIGN_NAME, buf, { lnum = idx + add, priority = 3 })
+      end
+    end)
+    :iterate()
 end
 
 function M.setup(opts)
