@@ -13,7 +13,7 @@ jobs:
           release-type: simple
           package-name: nvim-tree
           command: github-release
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
