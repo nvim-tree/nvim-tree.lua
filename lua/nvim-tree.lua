@@ -630,10 +630,29 @@ local FIELD_OVERRIDE_TYPECHECK = {
   picker = { ["function"] = true, string = true },
 }
 
+local ACCEPTED_STRINGS = {
+  sort = {
+    sorter = { "name", "case_sensitive", "modification_time", "extension", "suffix", "filetype" },
+  },
+  view = {
+    side = { "left", "right" },
+    signcolumn = { "yes", "no", "auto" },
+  },
+  renderer = {
+    highlight_opened_files = { "none", "icon", "name", "all" },
+    highlight_modified = { "none", "icon", "name", "all" },
+    icons = {
+      git_placement = { "before", "after", "signcolumn" },
+      diagnostics_placement = { "before", "after", "signcolumn" },
+      modified_placement = { "before", "after", "signcolumn" },
+    },
+  },
+}
+
 local function validate_options(conf)
   local msg
 
-  local function validate(user, def, prefix)
+  local function validate(user, def, strs, prefix)
     -- only compare tables with contents that are not integer indexed
     if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
       return
@@ -650,6 +669,9 @@ local function validate_options(conf)
           -- option is of the wrong type and is not a function
           invalid =
             string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+        elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
+          -- option has type `string` but value is not accepted
+          invalid = string.format("[NvimTree] invalid value for field %s%s: '%s'", prefix, k, v)
         end
 
         if invalid then
@@ -660,13 +682,13 @@ local function validate_options(conf)
           end
           user[k] = nil
         else
-          validate(v, def[k], prefix .. k .. ".")
+          validate(v, def[k], strs[k] or {}, prefix .. k .. ".")
         end
       end
     end
   end
 
-  validate(conf, DEFAULT_OPTS, "")
+  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, "")
 
   if msg then
     vim.notify_once(msg .. " | see :help nvim-tree-setup for available configuration options\n", vim.log.levels.WARN)
