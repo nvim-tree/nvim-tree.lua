@@ -2142,27 +2142,29 @@ Icon: >
     NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
     NvimTreeClosedFolderIcon    NvimTreeFolderIcon
     NvimTreeBookmark
+    NvimTreeFolderArrowClosed   NvimTreeIndentMarker
+    NvimTreeFolderArrowOpen     NvimTreeIndentMarker
 <
 Indent: >
     NvimTreeIndentMarker
 <
 Standard: >
-    NvimTreeNormal          Normal
-    NvimTreeNormalFloat     NormalFloat
-    NvimTreeNormalNC        NormalFloat
+    NvimTreeNormal              Normal
+    NvimTreeNormalFloat         NormalFloat
+    NvimTreeNormalNC            NormalFloat
 
-    NvimTreeLineNr          LineNr
-    NvimTreeWinSeparator    WinSeparator
-    NvimTreeEndOfBuffer     EndOfBuffer
-    NvimTreePopup           Normal
-    NvimTreeSignColumn      NvimTreeNormal
+    NvimTreeLineNr              LineNr
+    NvimTreeWinSeparator        WinSeparator
+    NvimTreeEndOfBuffer         EndOfBuffer
+    NvimTreePopup               Normal
+    NvimTreeSignColumn          NvimTreeNormal
 
-    NvimTreeCursorColumn    CursorColumn
-    NvimTreeCursorLine      CursorLine
-    NvimTreeCursorLineNr    CursorLineNr
+    NvimTreeCursorColumn        CursorColumn
+    NvimTreeCursorLine          CursorLine
+    NvimTreeCursorLineNr        CursorLineNr
 
-    NvimTreeStatusLine      StatusLine
-    NvimTreeStatusLineNC    StatusLineNC
+    NvimTreeStatusLine          StatusLine
+    NvimTreeStatusLineNC        StatusLineNC
 <
 Picker: >
     NvimTreeWindowPicker
