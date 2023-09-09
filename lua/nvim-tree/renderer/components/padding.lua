@@ -58,24 +58,14 @@ local function get_padding_indent_markers(depth, idx, nodes_number, markers, wit
   return padding
 end
 
-local function get_padding_arrows(node, indent)
-  if node.nodes then
-    return M.config.icons.glyphs.folder[node.open and "arrow_open" or "arrow_closed"] .. " "
-  elseif indent then
-    return "  "
-  else
-    return ""
-  end
-end
-
 ---@param depth integer
 ---@param idx integer
 ---@param nodes_number integer
 ---@param node table
 ---@param markers table
----@return HighlightedString
-function M.get_padding(depth, idx, nodes_number, node, markers)
-  local padding = ""
+---@return HighlightedString[]
+function M.get_indent_markers(depth, idx, nodes_number, node, markers)
+  local str = ""
 
   local show_arrows = M.config.icons.show.folder_arrow
   local show_markers = M.config.indent_markers.enable
@@ -83,16 +73,38 @@ function M.get_padding(depth, idx, nodes_number, node, markers)
   local indent_width = M.config.indent_width
 
   if show_markers then
-    padding = padding .. get_padding_indent_markers(depth, idx, nodes_number, markers, show_arrows, inline_arrows, node)
+    str = str .. get_padding_indent_markers(depth, idx, nodes_number, markers, show_arrows, inline_arrows, node)
   else
-    padding = padding .. string.rep(" ", depth * indent_width)
+    str = str .. string.rep(" ", depth * indent_width)
   end
 
-  if show_arrows then
-    padding = padding .. get_padding_arrows(node, not show_markers)
+  return { str = str, hl = "NvimTreeIndentMarker" }
+end
+
+---@param node table
+---@return HighlightedString[]|nil
+function M.get_arrows(node)
+  if not M.config.icons.show.folder_arrow then
+    return
   end
 
-  return { str = padding, hl = "NvimTreeIndentMarker" }
+  local str
+  local hl = "NvimTreeFolderArrowClosed"
+
+  if node.nodes then
+    if node.open then
+      str = M.config.icons.glyphs.folder["arrow_open"] .. " "
+      hl = "NvimTreeFolderArrowOpen"
+    else
+      str = M.config.icons.glyphs.folder["arrow_closed"] .. " "
+    end
+  elseif M.config.indent_markers.enable then
+    str = ""
+  else
+    str = "  "
+  end
+
+  return { str = str, hl = hl }
 end
 
 function M.setup(opts)

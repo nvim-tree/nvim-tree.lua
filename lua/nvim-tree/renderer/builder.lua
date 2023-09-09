@@ -290,14 +290,15 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
   return icon_hl, name_hl
 end
 
----@param padding HighlightedString
+---@param indent_markers HighlightedString[]
+---@param arrows HighlightedString[]|nil
 ---@param icon HighlightedString
 ---@param name HighlightedString
 ---@param git_icons HighlightedString[]|nil
 ---@param diagnostics_icon HighlightedString|nil
 ---@param modified_icon HighlightedString|nil
 ---@return HighlightedString[]
-function Builder:_format_line(padding, icon, name, git_icons, diagnostics_icon, modified_icon)
+function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
   local added_len = 0
   local function add_to_end(t1, t2)
     for _, v in ipairs(t2) do
@@ -315,7 +316,7 @@ function Builder:_format_line(padding, icon, name, git_icons, diagnostics_icon, 
     end
   end
 
-  local line = { padding }
+  local line = { indent_markers, arrows }
   add_to_end(line, { icon })
   if git_icons and self.git_placement == "before" then
     add_to_end(line, git_icons)
@@ -344,7 +345,8 @@ end
 
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   -- various components
-  local padding = pad.get_padding(self.depth, idx, num_children, node, self.markers)
+  local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
+  local arrows = pad.get_arrows(node)
   local git_icons = self:_get_git_icons(node)
   local modified_icon = self:_get_modified_icon(node)
   local diagnostics_icon = self:_get_diagnostics_icon(node)
@@ -370,7 +372,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     name.hl = name_hl
   end
 
-  local line = self:_format_line(padding, icon, name, git_icons, diagnostics_icon, modified_icon)
+  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1
