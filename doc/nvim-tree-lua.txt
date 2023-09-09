@@ -2135,11 +2135,12 @@ Folder Text: >
     NvimTreeRootFolder
 <
 Icon: >
+    NvimTreeFileIcon
+    NvimTreeOpenedFileIcon      NvimTreeOpenedFile
     NvimTreeSymlinkIcon
     NvimTreeFolderIcon
     NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
     NvimTreeClosedFolderIcon    NvimTreeFolderIcon
-    NvimTreeFileIcon
     NvimTreeBookmark
 <
 Indent: >
