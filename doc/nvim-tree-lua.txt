@@ -2180,28 +2180,43 @@ Git Icon: >
     NvimTreeGitRenamed
     NvimTreeGitNew
     NvimTreeGitDeleted
-    NvimTreeGitIgnored      Comment
+    NvimTreeGitIgnored                  Comment
 <
-Git Text: >
-    NvimTreeFileDirty       NvimTreeGitDirty
-    NvimTreeFileStaged      NvimTreeGitStaged
-    NvimTreeFileMerge       NvimTreeGitMerge
-    NvimTreeFileRenamed     NvimTreeGitRenamed
-    NvimTreeFileNew         NvimTreeGitNew
-    NvimTreeFileDeleted     NvimTreeGitDeleted
-    NvimTreeFileIgnored     NvimTreeGitIgnored
+Git File Text: >
+    NvimTreeFileDirty                   NvimTreeGitDirty
+    NvimTreeFileStaged                  NvimTreeGitStaged
+    NvimTreeFileMerge                   NvimTreeGitMerge
+    NvimTreeFileRenamed                 NvimTreeGitRenamed
+    NvimTreeFileNew                     NvimTreeGitNew
+    NvimTreeFileDeleted                 NvimTreeGitDeleted
+    NvimTreeFileIgnored                 NvimTreeGitIgnored
+<
+Git Folder Text: >
+    NvimTreeFolderDirty                 NvimTreeFileDirty
+    NvimTreeFolderStaged                NvimTreeFileStaged
+    NvimTreeFolderMerge                 NvimTreeFileMerge
+    NvimTreeFolderRenamed               NvimTreeFileRenamed
+    NvimTreeFolderNew                   NvimTreeFileNew
+    NvimTreeFolderDeleted               NvimTreeFileDeleted
+    NvimTreeFolderIgnored               NvimTreeFileIgnored
 <
 Diagnostics Icon: >
-    NvimTreeLspDiagnosticsError         DiagnosticError
-    NvimTreeLspDiagnosticsWarning       DiagnosticWarn
-    NvimTreeLspDiagnosticsInformation   DiagnosticInfo
-    NvimTreeLspDiagnosticsHint          DiagnosticHint
+    NvimTreeLspDiagnosticsError             DiagnosticError
+    NvimTreeLspDiagnosticsWarning           DiagnosticWarn
+    NvimTreeLspDiagnosticsInformation       DiagnosticInfo
+    NvimTreeLspDiagnosticsHint              DiagnosticHint
 <
-Diagnostics Text: >
-    NvimTreeLspDiagnosticsErrorText     NvimTreeLspDiagnosticsError
-    NvimTreeLspDiagnosticsWarningText   NvimTreeLspDiagnosticsWarning
-    NvimTreeLspDiagnosticsInfoText      NvimTreeLspDiagnosticsInformation
-    NvimTreeLspDiagnosticsHintText      NvimTreeLspDiagnosticsHint
+Diagnostics File Text: >
+    NvimTreeLspDiagnosticsErrorText         NvimTreeLspDiagnosticsError
+    NvimTreeLspDiagnosticsWarningText       NvimTreeLspDiagnosticsWarning
+    NvimTreeLspDiagnosticsInfoText          NvimTreeLspDiagnosticsInformation
+    NvimTreeLspDiagnosticsHintText          NvimTreeLspDiagnosticsHint
+<
+Diagnostics Folder Text: >
+    NvimTreeLspDiagnosticsErrorFolderText   NvimTreeLspDiagnosticsErrorText
+    NvimTreeLspDiagnosticsWarningFolderText NvimTreeLspDiagnosticsWarningText
+    NvimTreeLspDiagnosticsInfoFolderText    NvimTreeLspDiagnosticsInfoText
+    NvimTreeLspDiagnosticsHintFolderText    NvimTreeLspDiagnosticsHintText
 <
 ==============================================================================
  9. EVENTS                                                  *nvim-tree-events*
