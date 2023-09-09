@@ -266,7 +266,7 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
       name_hl = "NvimTreeOpenedFile"
     end
     if self.highlight_opened_files == "all" or self.highlight_opened_files == "icon" then
-      icon_hl = "NvimTreeOpenedFile"
+      icon_hl = "NvimTreeOpenedFileIcon"
     end
   end
 
