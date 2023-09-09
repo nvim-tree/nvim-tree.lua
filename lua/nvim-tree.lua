@@ -691,7 +691,7 @@ local function validate_options(conf)
   validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, "")
 
   if msg then
-    vim.notify_once(msg .. " | see :help nvim-tree-setup for available configuration options\n", vim.log.levels.WARN)
+    vim.notify_once(msg .. " | see :help nvim-tree-opts for available configuration options\n", vim.log.levels.WARN)
   end
 end
 
