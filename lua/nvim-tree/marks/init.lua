@@ -63,7 +63,7 @@ function M.draw()
   local add = core.get_nodes_starting_line() - 1
   Iterator.builder(core.get_explorer().nodes)
     :recursor(function(node)
-      return node.open and node.nodes
+      return node.group_next and { node.group_next } or (node.open and node.nodes)
     end)
     :applier(function(node, idx)
       if M.get_mark(node) then
