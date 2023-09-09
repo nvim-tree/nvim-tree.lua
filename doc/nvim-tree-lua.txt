@@ -2180,16 +2180,25 @@ Git Icon: >
     NvimTreeGitRenamed
     NvimTreeGitNew
     NvimTreeGitDeleted
-    NvimTreeGitIgnored      Comment
+    NvimTreeGitIgnored                  Comment
 <
-Git Text: >
-    NvimTreeFileDirty       NvimTreeGitDirty
-    NvimTreeFileStaged      NvimTreeGitStaged
-    NvimTreeFileMerge       NvimTreeGitMerge
-    NvimTreeFileRenamed     NvimTreeGitRenamed
-    NvimTreeFileNew         NvimTreeGitNew
-    NvimTreeFileDeleted     NvimTreeGitDeleted
-    NvimTreeFileIgnored     NvimTreeGitIgnored
+Git File Text: >
+    NvimTreeFileDirty                   NvimTreeGitDirty
+    NvimTreeFileStaged                  NvimTreeGitStaged
+    NvimTreeFileMerge                   NvimTreeGitMerge
+    NvimTreeFileRenamed                 NvimTreeGitRenamed
+    NvimTreeFileNew                     NvimTreeGitNew
+    NvimTreeFileDeleted                 NvimTreeGitDeleted
+    NvimTreeFileIgnored                 NvimTreeGitIgnored
+<
+Git Folder Text: >
+    NvimTreeFolderDirty                 NvimTreeFileDirty
+    NvimTreeFolderStaged                NvimTreeFileStaged
+    NvimTreeFolderMerge                 NvimTreeFileMerge
+    NvimTreeFolderRenamed               NvimTreeFileRenamed
+    NvimTreeFolderNew                   NvimTreeFileNew
+    NvimTreeFolderDeleted               NvimTreeFileDeleted
+    NvimTreeFolderIgnored               NvimTreeFileIgnored
 <
 Diagnostics Icon: >
     NvimTreeLspDiagnosticsError         DiagnosticError
