@@ -443,8 +443,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
       git_placement = "before",
-      diagnostics_placement = "signcolumn",
       modified_placement = "after",
+      diagnostics_placement = "signcolumn",
       bookmarks_placement = "signcolumn",
       padding = " ",
       symlink_arrow = " ➛ ",
@@ -453,8 +453,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder = true,
         folder_arrow = true,
         git = true,
-        diagnostics = true,
         modified = true,
+        diagnostics = true,
         bookmarks = true,
       },
       glyphs = {
@@ -648,8 +648,9 @@ local ACCEPTED_STRINGS = {
     highlight_modified = { "none", "icon", "name", "all" },
     icons = {
       git_placement = { "before", "after", "signcolumn" },
-      diagnostics_placement = { "before", "after", "signcolumn" },
       modified_placement = { "before", "after", "signcolumn" },
+      diagnostics_placement = { "before", "after", "signcolumn" },
+      bookmarks_placement = { "before", "after", "signcolumn" },
     },
   },
 }

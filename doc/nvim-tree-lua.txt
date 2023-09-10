@@ -413,8 +413,8 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             },
           },
           git_placement = "before",
-          diagnostics_placement = "signcolumn",
           modified_placement = "after",
+          diagnostics_placement = "signcolumn",
           bookmarks_placement = "signcolumn",
           padding = " ",
           symlink_arrow = " ➛ ",
@@ -423,8 +423,8 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             folder = true,
             folder_arrow = true,
             git = true,
-            diagnostics = true,
             modified = true,
+            diagnostics = true,
             bookmarks = true,
           },
           glyphs = {
@@ -945,6 +945,7 @@ Sign column icon precedence: bookmarked < git < modified < diagnostics
 
     *nvim-tree.renderer.icons.show*
     Configuration options for showing icon types.
+    Left to right order: file/folder, git, modified, diagnostics, bookmarks.
 
         *nvim-tree.renderer.icons.show.file*
         Show an icon before the file name.
@@ -964,14 +965,14 @@ Sign column icon precedence: bookmarked < git < modified < diagnostics
         Requires |git.enable| `= true`
           Type: `boolean`, Default: `true`
 
-        *nvim-tree.renderer.icons.show.diagnostics*
-        Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|
-        Requires |diagnostics.enable| `= true`
-          Type: `boolean`, Default: `true`
-
         *nvim-tree.renderer.icons.show.modified*
         Show a modified icon, see |renderer.icons.modified_placement|
         Requires |modified.enable| `= true`
+          Type: `boolean`, Default: `true`
+
+        *nvim-tree.renderer.icons.show.diagnostics*
+        Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|
+        Requires |diagnostics.enable| `= true`
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.bookmarks*
