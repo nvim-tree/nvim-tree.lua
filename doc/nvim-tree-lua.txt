@@ -387,6 +387,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         highlight_diagnostics = false,
         highlight_opened_files = "none",
         highlight_modified = "none",
+        highlight_bookmarks = false,
         indent_markers = {
           enable = false,
           inline_arrows = true,
@@ -412,6 +413,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
           git_placement = "before",
           diagnostics_placement = "signcolumn",
           modified_placement = "after",
+          bookmarks_placement = "signcolumn",
           padding = " ",
           symlink_arrow = " ➛ ",
           show = {
@@ -421,6 +423,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             git = true,
             diagnostics = true,
             modified = true,
+            bookmarks = true,
           },
           glyphs = {
             default = "",
@@ -817,20 +820,17 @@ Whether to show the destination of the symlink.
 *nvim-tree.renderer.highlight_git*
 Enable highlight for git attributes using `NvimTreeGit*` highlight groups.
 Requires |nvim-tree.git.enable|
-This can be used with or without the icons.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.renderer.highlight_diagnostics*
 Enable highlight for diagnostics using `LspDiagnosticsError*Text` highlight groups.
 Requires |nvim-tree.diagnostics.enable|
-This can be used with or without the icons.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.renderer.highlight_opened_files*
 Highlight icons and/or names for |bufloaded()| files using the
 `NvimTreeOpenedFile` highlight group.
-See |nvim-tree-api.navigate.opened.next()| and
-|nvim-tree-api.navigate.opened.prev()|
+See |nvim-tree-api.navigate.opened.next()| and |nvim-tree-api.navigate.opened.prev()|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
   Type: `string`, Default: `"none"`
 
@@ -839,8 +839,11 @@ Highlight icons and/or names for modified files using the
 `NvimTreeModifiedFile` highlight group.
 Requires |nvim-tree.modified.enable|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`
-This can be used with or without the icons.
   Type: `string`, Default `"none"`
+
+*nvim-tree.renderer.highlight_bookmarks*
+Highlight bookmarked using the `NvimTreeBookmarkText` highlight group.
+  Type: `boolean`, Default `false`
 
 *nvim-tree.renderer.indent_markers*
 Configuration options for tree indent markers.
@@ -868,7 +871,7 @@ Configuration options for tree indent markers.
 *nvim-tree.renderer.icons*
 Configuration options for icons.
 
-Sign column icon precedence: git < modified < diagnostics
+Sign column icon precedence: bookmarked < git < modified < diagnostics
 
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
@@ -915,6 +918,12 @@ Sign column icon precedence: git < modified < diagnostics
     or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
       Type: `string`, Default: `after`
 
+    *nvim-tree.renderer.icons.bookmarks_placement*
+    Place where the bookmarks icon will be rendered.
+    Can be `"after"` or `"before"` filename (after the file/folders icons)
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+      Type: `string`, Default: `signcolumn`
+
     *nvim-tree.renderer.icons.padding*
     Inserted between icon and filename.
       Type: `string`, Default: `" "`
@@ -952,6 +961,10 @@ Sign column icon precedence: git < modified < diagnostics
         *nvim-tree.renderer.icons.show.modified*
         Show a modified icon, see |renderer.icons.modified_placement|
         Requires |modified.enable| `= true`
+          Type: `boolean`, Default: `true`
+
+        *nvim-tree.renderer.icons.show.bookmarks*
+        Show a bookmark icon, see |renderer.icons.bookmarks_placement|
           Type: `boolean`, Default: `true`
 
     *nvim-tree.renderer.icons.glyphs*
@@ -2141,7 +2154,6 @@ Icon: >
     NvimTreeFolderIcon
     NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
     NvimTreeClosedFolderIcon    NvimTreeFolderIcon
-    NvimTreeBookmark
     NvimTreeFolderArrowClosed   NvimTreeIndentMarker
     NvimTreeFolderArrowOpen     NvimTreeIndentMarker
 <
@@ -2169,6 +2181,12 @@ Standard: >
 Clipboard: >
     NvimTreeCopiedText
     NvimTreeCutText
+<
+Bookmark Icon: >
+    NvimTreeBookmark
+<
+Bookmark Text: >
+    NvimTreeBookmarkText        NvimTreeBookmark
 <
 Picker: >
     NvimTreeWindowPicker
