@@ -2166,6 +2166,10 @@ Standard: >
     NvimTreeStatusLine          StatusLine
     NvimTreeStatusLineNC        StatusLineNC
 <
+Clipboard: >
+    NvimTreeCopiedText
+    NvimTreeCutText
+<
 Picker: >
     NvimTreeWindowPicker
 <

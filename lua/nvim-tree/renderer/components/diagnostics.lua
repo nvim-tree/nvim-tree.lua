@@ -6,7 +6,7 @@ local ICON = {}
 
 ---diagnostics text highlight group if there is a status
 ---@param node table
----@return string|nil highlight
+---@return string|nil group
 function M.get_highlight(node)
   if node and M.config.diagnostics.enable and M.config.renderer.highlight_diagnostics then
     if node.nodes then
@@ -44,24 +44,24 @@ function M.setup(opts)
 
   ICON[vim.diagnostic.severity.ERROR] = {
     str = M.config.diagnostics.icons.error,
-    hl = "NvimTreeLspDiagnosticsError",
+    hl = { "NvimTreeLspDiagnosticsError" },
   }
 
   ICON[vim.diagnostic.severity.WARN] = {
     str = M.config.diagnostics.icons.warning,
-    hl = "NvimTreeLspDiagnosticsWarning",
+    hl = { "NvimTreeLspDiagnosticsWarning" },
   }
   ICON[vim.diagnostic.severity.INFO] = {
     str = M.config.diagnostics.icons.info,
-    hl = "NvimTreeLspDiagnosticsInfo",
+    hl = { "NvimTreeLspDiagnosticsInfo" },
   }
   ICON[vim.diagnostic.severity.HINT] = {
     str = M.config.diagnostics.icons.hint,
-    hl = "NvimTreeLspDiagnosticsHint",
+    hl = { "NvimTreeLspDiagnosticsHint" },
   }
 
   for _, i in ipairs(ICON) do
-    vim.fn.sign_define(i.hl, { text = i.str, texthl = i.hl })
+    vim.fn.sign_define(i.hl[1], { text = i.str, texthl = i.hl[1] })
   end
 end
 

@@ -4,6 +4,7 @@ local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
+local renderer = require "nvim-tree.renderer"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -150,14 +151,17 @@ function M.clear_clipboard()
   clipboard.move = {}
   clipboard.copy = {}
   notify.info "Clipboard has been emptied."
+  renderer.draw()
 end
 
 function M.copy(node)
   add_to_clipboard(node, clipboard.copy)
+  renderer.draw()
 end
 
 function M.cut(node)
   add_to_clipboard(node, clipboard.move)
+  renderer.draw()
 end
 
 local function do_paste(node, action_type, action_fn)
@@ -265,6 +269,23 @@ function M.copy_absolute_path(node)
   local absolute_path = node.absolute_path
   local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
   return copy_to_clipboard(content)
+end
+
+---clipboard text highlight group
+---@param node table
+---@return string|nil group
+function M.get_highlight(node)
+  for _, n in ipairs(clipboard.move) do
+    if node == n then
+      return "NvimTreeCutText"
+    end
+  end
+
+  for _, n in ipairs(clipboard.copy) do
+    if node == n then
+      return "NvimTreeCopiedText"
+    end
+  end
 end
 
 function M.setup(opts)
