@@ -389,7 +389,6 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         highlight_modified = "none",
         highlight_bookmarks = false,
         highlight_clipboard = true,
-        highlight_bookmarks = false,
         indent_markers = {
           enable = false,
           inline_arrows = true,
@@ -851,10 +850,6 @@ Highlight bookmarked using the `NvimTreeBookmarkText` highlight group.
 Enable highlight for clipboard items using the `NvimTreeCutText` and
 `NvimTreeCopiedText` highlight groups.
   Type: `boolean`, Default: `true`
-
-*nvim-tree.renderer.highlight_bookmarks*
-Highlight bookmarked using the `NvimTreeBookmarkText` highlight group.
-  Type: `boolean`, Default `false`
 
 *nvim-tree.renderer.indent_markers*
 Configuration options for tree indent markers.
