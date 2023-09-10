@@ -299,7 +299,7 @@ function Builder:_get_highlight_extra(node)
   local name_hl = {}
 
   -- clipboard
-  local clipboard_highlight = require "nvim-tree.actions.fs.copy-paste".get_highlight(node)
+  local clipboard_highlight = require("nvim-tree.actions.fs.copy-paste").get_highlight(node)
   table.insert(name_hl, clipboard_highlight)
 
   return icon_hl, name_hl
