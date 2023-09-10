@@ -57,7 +57,7 @@ local function get_hl_groups()
     LiveFilterValue = { gui = "bold", fg = "#fff" },
 
     Bookmark = { fg = colors.green },
-    BookmarkText = { gui = "underdashed" }
+    BookmarkText = { gui = "underdashed" },
   }
 end
 
