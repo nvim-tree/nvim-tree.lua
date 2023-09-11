@@ -620,14 +620,27 @@ local FIELD_SKIP_VALIDATE = {
   open_win_config = true,
 }
 
-local FIELD_OVERRIDE_TYPECHECK = {
-  width = { string = true, ["function"] = true, number = true, ["table"] = true },
-  max = { string = true, ["function"] = true, number = true },
-  min = { string = true, ["function"] = true, number = true },
-  on_attach = { ["function"] = true, string = true },
-  sorter = { ["function"] = true, string = true },
-  root_folder_label = { ["function"] = true, string = true, boolean = true },
-  picker = { ["function"] = true, string = true },
+local ACCEPTED_TYPES = {
+  on_attach = { "function", "string" },
+  sort = {
+    sorter = { "function", "string" },
+  },
+  view = {
+    width = { "string", "function", "number", "table",
+      min = { "string", "function", "number" },
+      max = { "string", "function", "number" },
+    },
+  },
+  renderer = {
+    root_folder_label = { "function", "string", "boolean" },
+  },
+  actions = {
+    open_file = {
+      window_picker = {
+        picker = { "function", "string" },
+      },
+    },
+  },
 }
 
 local ACCEPTED_STRINGS = {
@@ -652,7 +665,7 @@ local ACCEPTED_STRINGS = {
 local function validate_options(conf)
   local msg
 
-  local function validate(user, def, strs, prefix)
+  local function validate(user, def, strs, types, prefix)
     -- only compare tables with contents that are not integer indexed
     if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
       return
@@ -661,11 +674,11 @@ local function validate_options(conf)
     for k, v in pairs(user) do
       if not FIELD_SKIP_VALIDATE[k] then
         local invalid
-        local override_typecheck = FIELD_OVERRIDE_TYPECHECK[k] or {}
+
         if def[k] == nil then
           -- option does not exist
           invalid = string.format("[NvimTree] unknown option: %s%s", prefix, k)
-        elseif type(v) ~= type(def[k]) and not override_typecheck[type(v)] then
+        elseif type(v) ~= type(def[k]) and types[k] and not vim.tbl_contains(types[k], type(v)) then
           -- option is of the wrong type and is not a function
           invalid =
             string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
@@ -682,13 +695,13 @@ local function validate_options(conf)
           end
           user[k] = nil
         else
-          validate(v, def[k], strs[k] or {}, prefix .. k .. ".")
+          validate(v, def[k], strs[k] or {}, types[k] or {}, prefix .. k .. ".")
         end
       end
     end
   end
 
-  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, "")
+  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, ACCEPTED_TYPES, "")
 
   if msg then
     vim.notify_once(msg .. " | see :help nvim-tree-opts for available configuration options", vim.log.levels.WARN)
