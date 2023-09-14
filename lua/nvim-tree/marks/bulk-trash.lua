@@ -16,10 +16,6 @@ local function do_trash(nodes)
   end
 
   marks.clear_marks()
-
-  if not M.config.filesystem_watchers.enable then
-    require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-  end
 end
 
 function M.bulk_trash()
