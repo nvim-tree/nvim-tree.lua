@@ -1804,7 +1804,7 @@ marks.clear()                                    *nvim-tree-api.marks.clear()*
 marks.bulk.delete()                        *nvim-tree-api.marks.bulk.delete()*
     Delete all marked. Optionally prompts.
 
-marks.bulk.trash()                        *nvim-tree-api.marks.bulk.trash()*
+marks.bulk.trash()                          *nvim-tree-api.marks.bulk.trash()*
     Trash all marked. Optionally prompts.
 
 marks.bulk.move()                            *nvim-tree-api.marks.bulk.move()*
