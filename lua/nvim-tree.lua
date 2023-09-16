@@ -678,10 +678,22 @@ local function validate_options(conf)
         if def[k] == nil then
           -- option does not exist
           invalid = string.format("[NvimTree] unknown option: %s%s", prefix, k)
-        elseif type(v) ~= type(def[k]) and types[k] and not vim.tbl_contains(types[k], type(v)) then
-          -- option is of the wrong type and is not a function
-          invalid =
-            string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+        elseif type(v) ~= type(def[k]) then
+          local expected
+
+          if types[k] and #types[k] > 0 then
+            if not vim.tbl_contains(types[k], type(v)) then
+              expected = table.concat(types[k], "|")
+            end
+          else
+            expected = type(def[k])
+          end
+
+          if expected then
+            -- option is of the wrong type
+            invalid =
+              string.format("[NvimTree] Invalid option: %s%s. Expected %s, got %s", prefix, k, expected, type(v))
+          end
         elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
           -- option has type `string` but value is not accepted
           invalid = string.format("[NvimTree] invalid value for field %s%s: '%s'", prefix, k, v)
