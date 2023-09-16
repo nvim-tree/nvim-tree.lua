@@ -156,6 +156,7 @@ Show the mappings:  `g?`
 `-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
 `a`               Create                     |nvim-tree-api.fs.create()|
 `bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
+`bt`              Trash Bookmarked           |nvim-tree-api.marks.bulk.trash()|
 `bmv`             Move Bookmarked            |nvim-tree-api.marks.bulk.move()|
 `B`               Toggle Filter: No Buffer   |nvim-tree-api.tree.toggle_no_buffer_filter()|
 `c`               Copy                       |nvim-tree-api.fs.copy.node()|
@@ -1899,6 +1900,9 @@ marks.clear()                                    *nvim-tree-api.marks.clear()*
 marks.bulk.delete()                        *nvim-tree-api.marks.bulk.delete()*
     Delete all marked. Optionally prompts.
 
+marks.bulk.trash()                          *nvim-tree-api.marks.bulk.trash()*
+    Trash all marked. Optionally prompts.
+
 marks.bulk.move()                            *nvim-tree-api.marks.bulk.move()*
     Prompts for a directory to move all marked nodes into.
 
@@ -2047,6 +2051,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', '-',     api.tree.change_root_to_parent,        opts('Up'))
   vim.keymap.set('n', 'a',     api.fs.create,                         opts('Create'))
   vim.keymap.set('n', 'bd',    api.marks.bulk.delete,                 opts('Delete Bookmarked'))
+  vim.keymap.set('n', 'bt',    api.marks.bulk.trash,                  opts('Trash Bookmarked'))
   vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   opts('Move Bookmarked'))
   vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      opts('Toggle Filter: No Buffer'))
   vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
