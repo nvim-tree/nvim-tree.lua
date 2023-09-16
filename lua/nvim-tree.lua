@@ -364,34 +364,34 @@ local function setup_autocommands(opts)
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+  on_attach = "default",
+  hijack_cursor = false,
   auto_reload_on_write = true,
   disable_netrw = false,
-  hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
-  sort = {
-    sorter = "name",
-    folders_first = true,
-    files_first = false,
-  },
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
-  on_attach = "default",
   select_prompts = false,
+  sort = {
+    sorter = "name",
+    folders_first = true,
+    files_first = false,
+  },
   view = {
     centralize_selection = false,
     cursorline = true,
     debounce_delay = 15,
-    width = 30,
     hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
     number = false,
     relativenumber = false,
     signcolumn = "yes",
+    width = 30,
     float = {
       enable = false,
       quit_on_focus_loss = true,
@@ -408,12 +408,15 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   renderer = {
     add_trailing = false,
     group_empty = false,
-    highlight_git = false,
     full_name = false,
-    highlight_opened_files = "none",
-    highlight_modified = "none",
     root_folder_label = ":~:s?$?/..?",
     indent_width = 2,
+    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
+    symlink_destination = true,
+    highlight_git = false,
+    highlight_diagnostics = false,
+    highlight_opened_files = "none",
+    highlight_modified = "none",
     indent_markers = {
       enable = false,
       inline_arrows = true,
@@ -437,6 +440,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
       git_placement = "before",
+      diagnostics_placement = "signcolumn",
       modified_placement = "after",
       padding = " ",
       symlink_arrow = " ➛ ",
@@ -445,6 +449,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder = true,
         folder_arrow = true,
         git = true,
+        diagnostics = true,
         modified = true,
       },
       glyphs = {
@@ -473,8 +478,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
     },
-    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
-    symlink_destination = true,
   },
   hijack_directories = {
     enable = true,
@@ -488,6 +491,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   system_open = {
     cmd = "",
     args = {},
+  },
+  git = {
+    enable = true,
+    show_on_dirs = true,
+    show_on_open_dirs = true,
+    disable_for_dirs = {},
+    timeout = 400,
   },
   diagnostics = {
     enable = false,
@@ -505,6 +515,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       error = "",
     },
   },
+  modified = {
+    enable = false,
+    show_on_dirs = true,
+    show_on_open_dirs = true,
+  },
   filters = {
     git_ignored = true,
     dotfiles = false,
@@ -513,22 +528,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     custom = {},
     exclude = {},
   },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
+  },
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
     ignore_dirs = {},
-  },
-  git = {
-    enable = true,
-    show_on_dirs = true,
-    show_on_open_dirs = true,
-    disable_for_dirs = {},
-    timeout = 400,
-  },
-  modified = {
-    enable = false,
-    show_on_dirs = true,
-    show_on_open_dirs = true,
   },
   actions = {
     use_system_clipboard = true,
@@ -570,10 +577,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   trash = {
     cmd = "gio trash",
-  },
-  live_filter = {
-    prefix = "[FILTER]: ",
-    always_show_folders = true,
   },
   tab = {
     sync = {
@@ -627,10 +630,29 @@ local FIELD_OVERRIDE_TYPECHECK = {
   picker = { ["function"] = true, string = true },
 }
 
+local ACCEPTED_STRINGS = {
+  sort = {
+    sorter = { "name", "case_sensitive", "modification_time", "extension", "suffix", "filetype" },
+  },
+  view = {
+    side = { "left", "right" },
+    signcolumn = { "yes", "no", "auto" },
+  },
+  renderer = {
+    highlight_opened_files = { "none", "icon", "name", "all" },
+    highlight_modified = { "none", "icon", "name", "all" },
+    icons = {
+      git_placement = { "before", "after", "signcolumn" },
+      diagnostics_placement = { "before", "after", "signcolumn" },
+      modified_placement = { "before", "after", "signcolumn" },
+    },
+  },
+}
+
 local function validate_options(conf)
   local msg
 
-  local function validate(user, def, prefix)
+  local function validate(user, def, strs, prefix)
     -- only compare tables with contents that are not integer indexed
     if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
       return
@@ -647,6 +669,9 @@ local function validate_options(conf)
           -- option is of the wrong type and is not a function
           invalid =
             string.format("[NvimTree] invalid option: %s%s expected: %s actual: %s", prefix, k, type(def[k]), type(v))
+        elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
+          -- option has type `string` but value is not accepted
+          invalid = string.format("[NvimTree] invalid value for field %s%s: '%s'", prefix, k, v)
         end
 
         if invalid then
@@ -657,16 +682,16 @@ local function validate_options(conf)
           end
           user[k] = nil
         else
-          validate(v, def[k], prefix .. k .. ".")
+          validate(v, def[k], strs[k] or {}, prefix .. k .. ".")
         end
       end
     end
   end
 
-  validate(conf, DEFAULT_OPTS, "")
+  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, "")
 
   if msg then
-    vim.notify_once(msg .. " | see :help nvim-tree-setup for available configuration options\n", vim.log.levels.WARN)
+    vim.notify_once(msg .. " | see :help nvim-tree-opts for available configuration options", vim.log.levels.WARN)
   end
 end
 
@@ -689,7 +714,7 @@ end
 
 function M.setup(conf)
   if vim.fn.has "nvim-0.8" == 0 then
-    vim.notify_once("nvim-tree.lua requires Neovim 0.8 or higher\n", vim.log.levels.WARN)
+    vim.notify_once("nvim-tree.lua requires Neovim 0.8 or higher", vim.log.levels.WARN)
     return
   end
 

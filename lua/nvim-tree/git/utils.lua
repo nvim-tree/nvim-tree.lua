@@ -1,40 +1,55 @@
 local M = {}
 local log = require "nvim-tree.log"
+local utils = require "nvim-tree.utils"
 
 local has_cygpath = vim.fn.executable "cygpath" == 1
 
 --- Retrieve the git toplevel directory
 --- @param cwd string path
 --- @return string|nil toplevel absolute path
+--- @return string|nil git_dir absolute path
 function M.get_toplevel(cwd)
-  local profile = log.profile_start("git toplevel %s", cwd)
+  local profile = log.profile_start("git toplevel git_dir %s", cwd)
 
-  local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel" }
-  log.line("git", "%s", vim.inspect(cmd))
+  -- both paths are absolute
+  local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel", "--absolute-git-dir" }
+  log.line("git", "%s", table.concat(cmd, " "))
 
-  local toplevel = vim.fn.system(cmd)
+  local out = vim.fn.system(cmd)
 
-  log.raw("git", toplevel)
+  log.raw("git", out)
   log.profile_end(profile)
 
-  if vim.v.shell_error ~= 0 or not toplevel or #toplevel == 0 or toplevel:match "fatal" then
-    return nil
+  if vim.v.shell_error ~= 0 or not out or #out == 0 or out:match "fatal" then
+    return nil, nil
+  end
+
+  local toplevel, git_dir = out:match "([^\n]+)\n+([^\n]+)"
+  if not toplevel then
+    return nil, nil
+  end
+  if not git_dir then
+    git_dir = utils.path_join { toplevel, ".git" }
   end
 
   -- git always returns path with forward slashes
   if vim.fn.has "win32" == 1 then
     -- msys2 git support
     if has_cygpath then
-      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel:sub(0, -2)))
+      toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
       if vim.v.shell_error ~= 0 then
-        return nil
+        return nil, nil
+      end
+      git_dir = vim.fn.system("cygpath -w " .. vim.fn.shellescape(git_dir))
+      if vim.v.shell_error ~= 0 then
+        return nil, nil
       end
     end
     toplevel = toplevel:gsub("/", "\\")
+    git_dir = git_dir:gsub("/", "\\")
   end
 
-  -- remove newline
-  return toplevel:sub(0, -2)
+  return toplevel, git_dir
 end
 
 local untracked = {}
@@ -47,7 +62,7 @@ function M.should_show_untracked(cwd)
   local profile = log.profile_start("git untracked %s", cwd)
 
   local cmd = { "git", "-C", cwd, "config", "status.showUntrackedFiles" }
-  log.line("git", vim.inspect(cmd))
+  log.line("git", table.concat(cmd, " "))
 
   local has_untracked = vim.fn.system(cmd)
 
