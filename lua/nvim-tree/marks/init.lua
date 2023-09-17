@@ -49,7 +49,7 @@ function M.get_marks()
 end
 
 function M.setup(opts)
-  renderer = require("nvim-tree.renderer")
+  renderer = require "nvim-tree.renderer"
 
   require("nvim-tree.marks.bulk-delete").setup(opts)
   require("nvim-tree.marks.bulk-trash").setup(opts)
