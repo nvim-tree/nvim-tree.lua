@@ -5,13 +5,13 @@ local M = {}
 
 local function build_icons_table(i)
   local icons = {
-    staged = { str = i.staged, hl = "NvimTreeGitStaged", ord = 1 },
-    unstaged = { str = i.unstaged, hl = "NvimTreeGitDirty", ord = 2 },
-    renamed = { str = i.renamed, hl = "NvimTreeGitRenamed", ord = 3 },
-    deleted = { str = i.deleted, hl = "NvimTreeGitDeleted", ord = 4 },
-    unmerged = { str = i.unmerged, hl = "NvimTreeGitMerge", ord = 5 },
-    untracked = { str = i.untracked, hl = "NvimTreeGitNew", ord = 6 },
-    ignored = { str = i.ignored, hl = "NvimTreeGitIgnored", ord = 7 },
+    staged = { str = i.staged, hl = { "NvimTreeGitStaged" }, ord = 1 },
+    unstaged = { str = i.unstaged, hl = { "NvimTreeGitDirty" }, ord = 2 },
+    renamed = { str = i.renamed, hl = { "NvimTreeGitRenamed" }, ord = 3 },
+    deleted = { str = i.deleted, hl = { "NvimTreeGitDeleted" }, ord = 4 },
+    unmerged = { str = i.unmerged, hl = { "NvimTreeGitMerge" }, ord = 5 },
+    untracked = { str = i.untracked, hl = { "NvimTreeGitNew" }, ord = 6 },
+    ignored = { str = i.ignored, hl = { "NvimTreeGitIgnored" }, ord = 7 },
   }
   return {
     ["M "] = { icons.staged },

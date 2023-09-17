@@ -4,6 +4,9 @@ local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
+local renderer = require "nvim-tree.renderer"
+
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -12,7 +15,7 @@ local M = {
 }
 
 local clipboard = {
-  move = {},
+  cut = {},
   copy = {},
 }
 
@@ -130,34 +133,37 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 end
 
-local function add_to_clipboard(node, clip)
+local function toggle(node, clip)
   if node.name == ".." then
     return
   end
   local notify_node = notify.render_path(node.absolute_path)
 
-  for idx, _node in ipairs(clip) do
-    if _node.absolute_path == node.absolute_path then
-      table.remove(clip, idx)
-      return notify.info(notify_node .. " removed from clipboard.")
-    end
+  if utils.array_remove(clip, node) then
+    return notify.info(notify_node .. " removed from clipboard.")
   end
+
   table.insert(clip, node)
   notify.info(notify_node .. " added to clipboard.")
 end
 
 function M.clear_clipboard()
-  clipboard.move = {}
+  clipboard.cut = {}
   clipboard.copy = {}
   notify.info "Clipboard has been emptied."
+  renderer.draw()
 end
 
 function M.copy(node)
-  add_to_clipboard(node, clipboard.copy)
+  utils.array_remove(clipboard.cut, node)
+  toggle(node, clipboard.copy)
+  renderer.draw()
 end
 
 function M.cut(node)
-  add_to_clipboard(node, clipboard.move)
+  utils.array_remove(clipboard.copy, node)
+  toggle(node, clipboard.cut)
+  renderer.draw()
 end
 
 local function do_paste(node, action_type, action_fn)
@@ -213,8 +219,8 @@ local function do_cut(source, destination)
 end
 
 function M.paste(node)
-  if clipboard.move[1] ~= nil then
-    return do_paste(node, "move", do_cut)
+  if clipboard.cut[1] ~= nil then
+    return do_paste(node, "cut", do_cut)
   end
 
   return do_paste(node, "copy", do_copy)
@@ -222,16 +228,16 @@ end
 
 function M.print_clipboard()
   local content = {}
-  if #clipboard.move > 0 then
+  if #clipboard.cut > 0 then
     table.insert(content, "Cut")
-    for _, item in pairs(clipboard.move) do
-      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
+    for _, node in pairs(clipboard.cut) do
+      table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
   if #clipboard.copy > 0 then
     table.insert(content, "Copy")
-    for _, item in pairs(clipboard.copy) do
-      table.insert(content, " * " .. (notify.render_path(item.absolute_path)))
+    for _, node in pairs(clipboard.copy) do
+      table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
 
@@ -267,9 +273,34 @@ function M.copy_absolute_path(node)
   return copy_to_clipboard(content)
 end
 
+---Clipboard text highlight group and position when highlight_clipboard.
+---@param node table
+---@return HL_POSITION position none when clipboard empty
+---@return string|nil group only when node present in clipboard
+function M.get_highlight(node)
+  if M.hl_pos == HL_POSITION.none then
+    return HL_POSITION.none, nil
+  end
+
+  for _, n in ipairs(clipboard.cut) do
+    if node == n then
+      return M.hl_pos, "NvimTreeCutHL"
+    end
+  end
+
+  for _, n in ipairs(clipboard.copy) do
+    if node == n then
+      return M.hl_pos, "NvimTreeCopiedHL"
+    end
+  end
+
+  return HL_POSITION.none, nil
+end
+
 function M.setup(opts)
   M.config.filesystem_watchers = opts.filesystem_watchers
   M.config.actions = opts.actions
+  M.hl_pos = HL_POSITION[opts.renderer.highlight_clipboard]
 end
 
 return M

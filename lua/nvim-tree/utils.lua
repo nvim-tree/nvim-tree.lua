@@ -425,12 +425,18 @@ function M.array_shallow_clone(array)
   return to
 end
 
--- remove item from array if it exists
+--- Remove and return item from array if present.
+--- @param array table
+--- @param item any
+--- @return any|nil removed
 function M.array_remove(array, item)
+  if not array then
+    return nil
+  end
   for i, v in ipairs(array) do
     if v == item then
       table.remove(array, i)
-      break
+      return v
     end
   end
 end

@@ -12,7 +12,7 @@ function M.get_icon(node)
     return nil
   end
 
-  return { str = M.icon, hl = HIGHLIGHT }
+  return { str = M.icon, hl = { HIGHLIGHT } }
 end
 
 function M.setup_signs()

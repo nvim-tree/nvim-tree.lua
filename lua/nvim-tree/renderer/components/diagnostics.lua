@@ -1,19 +1,32 @@
-local M = {}
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
-local HS_FILE = {}
-local HS_FOLDER = {}
-local ICON = {}
+local M = {
+  HS_FILE = {},
+  HS_FOLDER = {},
+  ICON = {},
+  hl_pos = HL_POSITION.none,
+}
 
----diagnostics text highlight group if there is a status
+---Diagnostics text highlight group when highlight_diagnostics.
 ---@param node table
----@return string|nil highlight
+---@return HL_POSITION position none when no status
+---@return string|nil group only when status
 function M.get_highlight(node)
-  if node and M.config.diagnostics.enable and M.config.renderer.highlight_diagnostics then
-    if node.nodes then
-      return HS_FOLDER[node.diag_status]
-    else
-      return HS_FILE[node.diag_status]
-    end
+  if not node or M.hl_pos == HL_POSITION.none then
+    return HL_POSITION.none, nil
+  end
+
+  local group
+  if node.nodes then
+    group = M.HS_FOLDER[node.diag_status]
+  else
+    group = M.HS_FILE[node.diag_status]
+  end
+
+  if group then
+    return M.hl_pos, group
+  else
+    return HL_POSITION.none, nil
   end
 end
 
@@ -22,7 +35,7 @@ end
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
   if node and M.config.diagnostics.enable and M.config.renderer.icons.show.diagnostics then
-    return ICON[node.diag_status]
+    return M.ICON[node.diag_status]
   end
 end
 
@@ -32,36 +45,42 @@ function M.setup(opts)
     renderer = opts.renderer,
   }
 
-  HS_FILE[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorText"
-  HS_FILE[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningText"
-  HS_FILE[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoText"
-  HS_FILE[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintText"
+  if opts.diagnostics.enable and opts.renderer.highlight_diagnostics then
+    -- TODO add a HL_POSITION
+    -- M.hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics]
+    M.hl_pos = HL_POSITION.name
+  end
 
-  HS_FOLDER[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorFolderText"
-  HS_FOLDER[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningFolderText"
-  HS_FOLDER[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoFolderText"
-  HS_FOLDER[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintFolderText"
+  M.HS_FILE[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorText"
+  M.HS_FILE[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningText"
+  M.HS_FILE[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoText"
+  M.HS_FILE[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintText"
 
-  ICON[vim.diagnostic.severity.ERROR] = {
+  M.HS_FOLDER[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorFolderText"
+  M.HS_FOLDER[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningFolderText"
+  M.HS_FOLDER[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoFolderText"
+  M.HS_FOLDER[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintFolderText"
+
+  M.ICON[vim.diagnostic.severity.ERROR] = {
     str = M.config.diagnostics.icons.error,
-    hl = "NvimTreeLspDiagnosticsError",
+    hl = { "NvimTreeLspDiagnosticsError" },
   }
 
-  ICON[vim.diagnostic.severity.WARN] = {
+  M.ICON[vim.diagnostic.severity.WARN] = {
     str = M.config.diagnostics.icons.warning,
-    hl = "NvimTreeLspDiagnosticsWarning",
+    hl = { "NvimTreeLspDiagnosticsWarning" },
   }
-  ICON[vim.diagnostic.severity.INFO] = {
+  M.ICON[vim.diagnostic.severity.INFO] = {
     str = M.config.diagnostics.icons.info,
-    hl = "NvimTreeLspDiagnosticsInfo",
+    hl = { "NvimTreeLspDiagnosticsInfo" },
   }
-  ICON[vim.diagnostic.severity.HINT] = {
+  M.ICON[vim.diagnostic.severity.HINT] = {
     str = M.config.diagnostics.icons.hint,
-    hl = "NvimTreeLspDiagnosticsHint",
+    hl = { "NvimTreeLspDiagnosticsHint" },
   }
 
-  for _, i in ipairs(ICON) do
-    vim.fn.sign_define(i.hl, { text = i.str, texthl = i.hl })
+  for _, i in ipairs(M.ICON) do
+    vim.fn.sign_define(i.hl[1], { text = i.str, texthl = i.hl[1] })
   end
 end
 
