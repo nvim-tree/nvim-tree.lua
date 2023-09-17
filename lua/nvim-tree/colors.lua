@@ -110,6 +110,8 @@ local function get_links()
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
     SignColumn = "NvimTreeNormal",
+    CutHL = "SpellBad",
+    CopiedHL = "SpellRare",
   }
 end
 

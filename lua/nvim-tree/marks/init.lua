@@ -48,6 +48,7 @@ end
 
 function M.setup(opts)
   require("nvim-tree.marks.bulk-delete").setup(opts)
+  require("nvim-tree.marks.bulk-trash").setup(opts)
   require("nvim-tree.marks.bulk-move").setup(opts)
 end
 

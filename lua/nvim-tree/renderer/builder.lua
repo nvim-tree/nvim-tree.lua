@@ -8,6 +8,8 @@ local modified = require "nvim-tree.renderer.components.modified"
 local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 local bookmarks = require "nvim-tree.renderer.components.bookmarks"
 
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+
 local Builder = {}
 Builder.__index = Builder
 
@@ -302,31 +304,24 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
     end
   end
 
-  -- diagnostic status
-  local diagnostic_highlight = diagnostics.get_highlight(node)
-  if diagnostic_highlight then
-    name_hl = diagnostic_highlight
-  end
-
   return icon_hl, name_hl
 end
 
+---Append optional highlighting to icon or name.
 ---@param node table
----@return string[] icon_hl
----@return string[] name_hl
-function Builder:_get_highlight_extra(node)
-  local icon_hl = {}
-  local name_hl = {}
-
-  -- clipboard
-  local clipboard_highlight = require("nvim-tree.actions.fs.copy-paste").get_highlight(node)
-  table.insert(name_hl, clipboard_highlight)
-
-  -- bookmarks
-  local bookmark_highlight = bookmarks.get_highlight(node)
-  table.insert(name_hl, bookmark_highlight)
-
-  return icon_hl, name_hl
+---@param get_hl fun(node: table): HL_POSITION, string
+---@param icon_hl string[] icons to append to
+---@param name_hl string[] names to append to
+function Builder:_append_highlight(node, get_hl, icon_hl, name_hl)
+  local pos, hl = get_hl(node)
+  if pos ~= HL_POSITION.none and hl then
+    if pos == HL_POSITION.all or pos == HL_POSITION.icon then
+      table.insert(icon_hl, hl)
+    end
+    if pos == HL_POSITION.all or pos == HL_POSITION.name then
+      table.insert(name_hl, hl)
+    end
+  end
 end
 
 ---@param indent_markers HighlightedString[]
@@ -399,6 +394,8 @@ function Builder:_format_line(
 end
 
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
+  local copy_paste = require "nvim-tree.actions.fs.copy-paste"
+
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
@@ -431,16 +428,10 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
-  local icon_hl_extra, name_hl_extra = self:_get_highlight_extra(node)
-  for _, hl in ipairs(icon_hl_extra) do
-    table.insert(icon.hl, hl)
-  end
-  for _, hl in ipairs(name_hl_extra) do
-    table.insert(name.hl, hl)
-  end
+  self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
+  self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
-  local line =
-    self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmarks_icon)
+  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1
