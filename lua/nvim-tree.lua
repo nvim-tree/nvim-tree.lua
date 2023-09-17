@@ -667,19 +667,32 @@ local function validate_options(conf)
   local msg
 
   local function validate(user, def, strs, types, prefix)
-    -- only compare tables with contents that are not integer indexed
-    if type(user) ~= "table" or type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
+    -- if user's option is not a table there is nothing to do
+    if type(user) ~= "table" then
       return
+    end
+
+    -- by default check for default value
+    local check_def = true
+
+    -- only compare tables with contents that are not integer indexed
+    if type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
+      -- unless the field can be a table (and is not a table in default config)
+      if vim.tbl_contains(types, "table") then
+        check_def = false
+      else
+        return
+      end
     end
 
     for k, v in pairs(user) do
       if not FIELD_SKIP_VALIDATE[k] then
         local invalid
 
-        if def[k] == nil then
+        if check_def and def[k] == nil then
           -- option does not exist
           invalid = string.format("[NvimTree] unknown option: %s%s", prefix, k)
-        elseif type(v) ~= type(def[k]) then
+        elseif not check_def or type(v) ~= type(def[k]) then
           local expected
 
           if types[k] and #types[k] > 0 then
@@ -707,7 +720,7 @@ local function validate_options(conf)
             msg = string.format("%s", invalid)
           end
           user[k] = nil
-        else
+        elseif check_def then
           validate(v, def[k], strs[k] or {}, types[k] or {}, prefix .. k .. ".")
         end
       end
