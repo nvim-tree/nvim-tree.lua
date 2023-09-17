@@ -84,7 +84,7 @@ function Builder:configure_diagnostics_icon_placement(where)
   return self
 end
 
-function Builder:configure_bookmarks_icon_placement(where)
+function Builder:configure_bookmark_icon_placement(where)
   if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
     where = "before" -- default before
   end
@@ -256,21 +256,19 @@ end
 
 ---@param node table
 ---@return HighlightedString[]|nil icon
-function Builder:_get_bookmarks_icon(node)
-  local bookmarks_icon = bookmarks.get_icon(node)
-  if bookmarks_icon and self.bookmarks_placement == "signcolumn" then
-    table.insert(self.signs, { sign = bookmarks_icon.hl[1], lnum = self.index + 1, priority = 4 })
-    bookmarks_icon = nil
+function Builder:_get_bookmark_icon(node)
+  local bookmark_icon = bookmarks.get_icon(node)
+  if bookmark_icon and self.bookmarks_placement == "signcolumn" then
+    table.insert(self.signs, { sign = bookmark_icon.hl[1], lnum = self.index + 1, priority = 4 })
+    bookmark_icon = nil
   end
-  return bookmarks_icon
+  return bookmark_icon
 end
 
 ---@param node table
 ---@return string|nil icon_hl
 ---@return string|nil name_hl
 function Builder:_get_highlight_override(node, unloaded_bufnr)
-  -- highlights precedence:
-  -- original < git < opened_file < modified
   local name_hl, icon_hl
 
   -- git
@@ -331,7 +329,7 @@ end
 ---@param git_icons HighlightedString[]|nil
 ---@param diagnostics_icon HighlightedString|nil
 ---@param modified_icon HighlightedString|nil
----@param bookmarks_icon HighlightedString|nil
+---@param bookmark_icon HighlightedString|nil
 ---@return HighlightedString[]
 function Builder:_format_line(
   indent_markers,
@@ -341,7 +339,7 @@ function Builder:_format_line(
   git_icons,
   diagnostics_icon,
   modified_icon,
-  bookmarks_icon
+  bookmark_icon
 )
   local added_len = 0
   local function add_to_end(t1, t2)
@@ -371,8 +369,8 @@ function Builder:_format_line(
   if diagnostics_icon and self.diagnostics_placement == "before" then
     add_to_end(line, { diagnostics_icon })
   end
-  if bookmarks_icon and self.bookmarks_placement == "before" then
-    add_to_end(line, { bookmarks_icon })
+  if bookmark_icon and self.bookmarks_placement == "before" then
+    add_to_end(line, { bookmark_icon })
   end
 
   add_to_end(line, { name })
@@ -386,8 +384,8 @@ function Builder:_format_line(
   if diagnostics_icon and self.diagnostics_placement == "after" then
     add_to_end(line, { diagnostics_icon })
   end
-  if bookmarks_icon and self.bookmarks_placement == "after" then
-    add_to_end(line, { bookmarks_icon })
+  if bookmark_icon and self.bookmarks_placement == "after" then
+    add_to_end(line, { bookmark_icon })
   end
 
   return line
@@ -400,8 +398,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
-  -- sign column precedence: bookmarks < git < modified < diagnostics
-  local bookmarks_icon = self:_get_bookmarks_icon(node)
+  -- adds icons to signcolumn
+  local bookmark_icon = self:_get_bookmark_icon(node)
   local git_icons = self:_get_git_icons(node)
   local modified_icon = self:_get_modified_icon(node)
   local diagnostics_icon = self:_get_diagnostics_icon(node)
@@ -428,10 +426,11 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
+  self:_append_highlight(node, bookmarks.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
-  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
+  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1

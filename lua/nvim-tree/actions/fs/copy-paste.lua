@@ -300,7 +300,7 @@ end
 function M.setup(opts)
   M.config.filesystem_watchers = opts.filesystem_watchers
   M.config.actions = opts.actions
-  M.hl_pos = HL_POSITION[opts.renderer.highlight_clipboard]
+  M.hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none
 end
 
 return M

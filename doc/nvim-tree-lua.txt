@@ -388,7 +388,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         highlight_diagnostics = false,
         highlight_opened_files = "none",
         highlight_modified = "none",
-        highlight_bookmarks = false,
+        highlight_bookmarks = "none",
         highlight_clipboard = "name",
         indent_markers = {
           enable = false,
@@ -780,7 +780,8 @@ Use nvim-tree in a floating window.
 ==============================================================================
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
-Highlight precedence: git < opened < modified < diagnostics
+Highlight precedence:
+  clipboard > diagnostics > bookmarked > modified > opened > git
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
@@ -844,8 +845,9 @@ Value can be `"none"`, `"icon"`, `"name"` or `"all"`
   Type: `string`, Default `"none"`
 
 *nvim-tree.renderer.highlight_bookmarks*
-Highlight bookmarked using the `NvimTreeBookmarkText` highlight group.
-  Type: `boolean`, Default `false`
+Highlight bookmarked using the `NvimTreeBookmarkHL` group.
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`
+  Type: `string`, Default `"none"`
 
 *nvim-tree.renderer.highlight_clipboard*
 Enable highlight for clipboard items using the `NvimTreeCutHL` and
@@ -879,7 +881,11 @@ Configuration options for tree indent markers.
 *nvim-tree.renderer.icons*
 Configuration options for icons.
 
-Sign column icon precedence: bookmarked < git < modified < diagnostics
+Icon sign column precedence:
+  diagnostics > modified > git > bookmarked
+
+Left to right order:
+  git, modified, diagnostics, bookmarked
 
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
@@ -2198,8 +2204,8 @@ Clipboard: >
 Bookmark Icon: >
     NvimTreeBookmark
 <
-Bookmark Text: >
-    NvimTreeBookmarkText        NvimTreeBookmark
+Bookmark Highlight: >
+    NvimTreeBookmarkHL          SpellLocal
 <
 Picker: >
     NvimTreeWindowPicker
