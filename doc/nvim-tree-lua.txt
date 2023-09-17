@@ -388,6 +388,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         highlight_diagnostics = false,
         highlight_opened_files = "none",
         highlight_modified = "none",
+        highlight_clipboard = "name",
         indent_markers = {
           enable = false,
           inline_arrows = true,
@@ -842,6 +843,12 @@ Requires |nvim-tree.modified.enable|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`
 This can be used with or without the icons.
   Type: `string`, Default `"none"`
+
+*nvim-tree.renderer.highlight_clipboard*
+Enable highlight for clipboard items using the `NvimTreeCutHL` and
+`NvimTreeCopiedHL` groups.
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+  Type: `string`, Default: `"name"`
 
 *nvim-tree.renderer.indent_markers*
 Configuration options for tree indent markers.
@@ -2170,6 +2177,10 @@ Standard: >
 
     NvimTreeStatusLine          StatusLine
     NvimTreeStatusLineNC        StatusLineNC
+<
+Clipboard: >
+    NvimTreeCopiedHL            SpellRare
+    NvimTreeCutHL               SpellBad
 <
 Picker: >
     NvimTreeWindowPicker

@@ -38,7 +38,11 @@ function M.render_hl(bufnr, hl)
   end
   vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
   for _, data in ipairs(hl or M.last_highlights) do
-    vim.api.nvim_buf_add_highlight(bufnr, namespace_id, data[1], data[2], data[3], data[4])
+    if type(data[1]) == "table" then
+      for _, group in ipairs(data[1]) do
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
+      end
+    end
   end
 end
 

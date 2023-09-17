@@ -417,6 +417,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     highlight_diagnostics = false,
     highlight_opened_files = "none",
     highlight_modified = "none",
+    highlight_clipboard = "name",
     indent_markers = {
       enable = false,
       inline_arrows = true,

@@ -78,7 +78,7 @@ function M.get_indent_markers(depth, idx, nodes_number, node, markers)
     str = str .. string.rep(" ", depth * indent_width)
   end
 
-  return { str = str, hl = "NvimTreeIndentMarker" }
+  return { str = str, hl = { "NvimTreeIndentMarker" } }
 end
 
 ---@param node table
@@ -104,7 +104,7 @@ function M.get_arrows(node)
     str = "  "
   end
 
-  return { str = str, hl = hl }
+  return { str = str, hl = { hl } }
 end
 
 function M.setup(opts)
