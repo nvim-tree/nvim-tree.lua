@@ -844,9 +844,10 @@ This can be used with or without the icons.
   Type: `string`, Default `"none"`
 
 *nvim-tree.renderer.highlight_clipboard*
-Enable highlight for clipboard items using the `NvimTreeCutText` and
-`NvimTreeCopiedText` highlight groups.
-  Type: `boolean`, Default: `true`
+Enable highlight for clipboard items using the `NvimTreeCutHL` and
+`NvimTreeCopiedHL` groups.
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+  Type: `string`, Default: `"name"`
 
 *nvim-tree.renderer.indent_markers*
 Configuration options for tree indent markers.
@@ -2173,8 +2174,8 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 Clipboard: >
-    NvimTreeCopiedText
-    NvimTreeCutText
+    NvimTreeCopiedHL            SpellRare
+    NvimTreeCutHL               SpellBad
 <
 Picker: >
     NvimTreeWindowPicker

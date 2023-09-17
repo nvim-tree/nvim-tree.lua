@@ -60,6 +60,11 @@ function Builder:configure_modified_highlighting(highlight_modified)
   return self
 end
 
+function Builder:configure_clipboard_highlighting(highlight_clipboard)
+  self.highlight_clipboard = highlight_clipboard
+  return self
+end
+
 function Builder:configure_icon_padding(padding)
   self.icon_padding = padding or " "
   return self
@@ -291,18 +296,29 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
   return icon_hl, name_hl
 end
 
+---Append optional highlighting to icon or name
+---
 ---@param node table
----@return string[] icon_hl
----@return string[] name_hl
-function Builder:_get_highlight_extra(node)
-  local icon_hl = {}
-  local name_hl = {}
-
-  -- clipboard
-  local clipboard_highlight = require("nvim-tree.actions.fs.copy-paste").get_highlight(node)
-  table.insert(name_hl, clipboard_highlight)
-
-  return icon_hl, name_hl
+---@param enable_for string
+---|"'none'"
+---|"'icon'"
+---|"'name'"
+---|"'all'"
+---@param get_highlight fun(node: table): string|nil
+---@param icon_hl string[] icons to append to
+---@param name_hl string[] names to append to
+function Builder:_append_highlight(node, enable_for, get_highlight, icon_hl, name_hl)
+  if enable_for ~= "none" then
+    local hl = get_highlight(node)
+    if hl then
+      if self.highlight_clipboard == "all" or self.highlight_clipboard == "icon" then
+        table.insert(icon_hl, hl)
+      end
+      if self.highlight_clipboard == "all" or self.highlight_clipboard == "name" then
+        table.insert(name_hl, hl)
+      end
+    end
+  end
 end
 
 ---@param indent_markers HighlightedString[]
@@ -359,6 +375,8 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
 end
 
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
+  local copy_paste = require "nvim-tree.actions.fs.copy-paste"
+
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
@@ -388,13 +406,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
-  local icon_hl_extra, name_hl_extra = self:_get_highlight_extra(node)
-  for _, hl in ipairs(icon_hl_extra) do
-    table.insert(icon.hl, hl)
-  end
-  for _, hl in ipairs(name_hl_extra) do
-    table.insert(name.hl, hl)
-  end
+  self:_append_highlight(node, self.highlight_clipboard, copy_paste.get_highlight, icon.hl, name.hl)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))

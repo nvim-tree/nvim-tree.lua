@@ -42,9 +42,6 @@ local function get_hl_groups()
     OpenedFile = { gui = "bold", fg = colors.green },
     ModifiedFile = { fg = colors.green },
 
-    CopiedText = { gui = "underline" },
-    CutText = { gui = "strikethrough" },
-
     GitDirty = { fg = colors.dark_red },
     GitDeleted = { fg = colors.dark_red },
     GitStaged = { fg = colors.green },
@@ -109,6 +106,8 @@ local function get_links()
     StatusLine = "StatusLine",
     StatusLineNC = "StatusLineNC",
     SignColumn = "NvimTreeNormal",
+    CutHL = "SpellBad",
+    CopiedHL = "SpellRare",
   }
 end
 

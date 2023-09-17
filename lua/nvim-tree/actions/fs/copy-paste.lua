@@ -275,19 +275,15 @@ end
 ---@param node table
 ---@return string|nil group
 function M.get_highlight(node)
-  if not M.config.renderer.highlight_clipboard then
-    return nil
-  end
-
   for _, n in ipairs(clipboard.cut) do
     if node == n then
-      return "NvimTreeCutText"
+      return "NvimTreeCutHL"
     end
   end
 
   for _, n in ipairs(clipboard.copy) do
     if node == n then
-      return "NvimTreeCopiedText"
+      return "NvimTreeCopiedHL"
     end
   end
 end
@@ -295,7 +291,6 @@ end
 function M.setup(opts)
   M.config.filesystem_watchers = opts.filesystem_watchers
   M.config.actions = opts.actions
-  M.config.renderer = opts.renderer
 end
 
 return M
