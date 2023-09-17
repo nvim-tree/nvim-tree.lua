@@ -7,6 +7,8 @@ local icons = require "nvim-tree.renderer.components.icons"
 local modified = require "nvim-tree.renderer.components.modified"
 local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+
 local Builder = {}
 Builder.__index = Builder
 
@@ -57,11 +59,6 @@ end
 
 function Builder:configure_modified_highlighting(highlight_modified)
   self.highlight_modified = highlight_modified
-  return self
-end
-
-function Builder:configure_clipboard_highlighting(highlight_clipboard)
-  self.highlight_clipboard = highlight_clipboard
   return self
 end
 
@@ -297,26 +294,18 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
 end
 
 ---Append optional highlighting to icon or name
----
 ---@param node table
----@param enable_for string
----|"'none'"
----|"'icon'"
----|"'name'"
----|"'all'"
----@param get_highlight fun(node: table): string|nil
+---@param get_hl fun(node: table): HL_POSITION, string
 ---@param icon_hl string[] icons to append to
 ---@param name_hl string[] names to append to
-function Builder:_append_highlight(node, enable_for, get_highlight, icon_hl, name_hl)
-  if enable_for ~= "none" then
-    local hl = get_highlight(node)
-    if hl then
-      if self.highlight_clipboard == "all" or self.highlight_clipboard == "icon" then
-        table.insert(icon_hl, hl)
-      end
-      if self.highlight_clipboard == "all" or self.highlight_clipboard == "name" then
-        table.insert(name_hl, hl)
-      end
+function Builder:_append_highlight(node, get_hl, icon_hl, name_hl)
+  local pos, hl = get_hl(node)
+  if pos ~= HL_POSITION.none and hl then
+    if pos == HL_POSITION.all or pos == HL_POSITION.icon then
+      table.insert(icon_hl, hl)
+    end
+    if pos == HL_POSITION.all or pos == HL_POSITION.name then
+      table.insert(name_hl, hl)
     end
   end
 end
@@ -406,7 +395,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
-  self:_append_highlight(node, self.highlight_clipboard, copy_paste.get_highlight, icon.hl, name.hl)
+  self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
