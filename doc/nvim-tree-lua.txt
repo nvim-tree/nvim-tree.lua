@@ -884,9 +884,6 @@ Configuration options for icons.
 Icon sign column precedence:
   diagnostics > modified > git > bookmarked
 
-Left to right order:
-  git, modified, diagnostics, bookmarked
-
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
 
@@ -948,7 +945,7 @@ Left to right order:
 
     *nvim-tree.renderer.icons.show*
     Configuration options for showing icon types.
-    Left to right order: file/folder, git, modified, diagnostics, bookmarks.
+    Left to right order: file/folder, git, modified, diagnostics, bookmarked.
 
         *nvim-tree.renderer.icons.show.file*
         Show an icon before the file name.

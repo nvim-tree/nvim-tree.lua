@@ -5,6 +5,7 @@ local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 local renderer = require "nvim-tree.renderer"
+local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
@@ -195,7 +196,7 @@ local function do_paste(node, action_type, action_fn)
 
   clipboard[action_type] = {}
   if not M.config.filesystem_watchers.enable then
-    return require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+    return reloaders.reload_explorer()
   end
 end
 

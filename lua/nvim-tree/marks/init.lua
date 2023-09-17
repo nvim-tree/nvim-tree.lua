@@ -1,3 +1,5 @@
+local renderer = {} -- circular dependency
+
 local NvimTreeMarks = {}
 
 local M = {}
@@ -5,13 +7,13 @@ local M = {}
 local function add_mark(node)
   NvimTreeMarks[node.absolute_path] = node
 
-  require("nvim-tree.renderer").draw()
+  renderer.draw()
 end
 
 local function remove_mark(node)
   NvimTreeMarks[node.absolute_path] = nil
 
-  require("nvim-tree.renderer").draw()
+  renderer.draw()
 end
 
 function M.toggle_mark(node)
@@ -25,13 +27,13 @@ function M.toggle_mark(node)
     add_mark(node)
   end
 
-  require("nvim-tree.renderer").draw()
+  renderer.draw()
 end
 
 function M.clear_marks()
   NvimTreeMarks = {}
 
-  require("nvim-tree.renderer").draw()
+  renderer.draw()
 end
 
 function M.get_mark(node)
@@ -47,6 +49,8 @@ function M.get_marks()
 end
 
 function M.setup(opts)
+  renderer = require("nvim-tree.renderer")
+
   require("nvim-tree.marks.bulk-delete").setup(opts)
   require("nvim-tree.marks.bulk-trash").setup(opts)
   require("nvim-tree.marks.bulk-move").setup(opts)

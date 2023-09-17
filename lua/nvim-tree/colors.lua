@@ -42,9 +42,6 @@ local function get_hl_groups()
     OpenedFile = { gui = "bold", fg = colors.green },
     ModifiedFile = { fg = colors.green },
 
-    CopiedText = { gui = "undercurl" },
-    CutText = { gui = "strikethrough" },
-
     GitDirty = { fg = colors.dark_red },
     GitDeleted = { fg = colors.dark_red },
     GitStaged = { fg = colors.green },
@@ -57,7 +54,6 @@ local function get_hl_groups()
     LiveFilterValue = { gui = "bold", fg = "#fff" },
 
     Bookmark = { fg = colors.green },
-    BookmarkText = { gui = "underdashed" },
   }
 end
 
