@@ -284,16 +284,10 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
     end
   end
 
-  -- diagnostic status
-  local diagnostic_highlight = diagnostics.get_highlight(node)
-  if diagnostic_highlight then
-    name_hl = diagnostic_highlight
-  end
-
   return icon_hl, name_hl
 end
 
----Append optional highlighting to icon or name
+---Append optional highlighting to icon or name.
 ---@param node table
 ---@param get_hl fun(node: table): HL_POSITION, string
 ---@param icon_hl string[] icons to append to
@@ -395,6 +389,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
+  self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon)

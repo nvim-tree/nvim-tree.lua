@@ -273,7 +273,7 @@ function M.copy_absolute_path(node)
   return copy_to_clipboard(content)
 end
 
----Clipboard text highlight group and position.
+---Clipboard text highlight group and position when highlight_clipboard.
 ---@param node table
 ---@return HL_POSITION position none when clipboard empty
 ---@return string|nil group only when node present in clipboard
