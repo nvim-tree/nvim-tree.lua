@@ -627,7 +627,11 @@ local ACCEPTED_TYPES = {
     sorter = { "function", "string" },
   },
   view = {
-    width = { "string", "function", "number", "table",
+    width = {
+      "string",
+      "function",
+      "number",
+      "table",
       min = { "string", "function", "number" },
       max = { "string", "function", "number" },
     },
