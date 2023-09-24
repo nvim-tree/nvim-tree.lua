@@ -417,6 +417,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     highlight_diagnostics = false,
     highlight_opened_files = "none",
     highlight_modified = "none",
+    highlight_bookmarks = "none",
     highlight_clipboard = "name",
     indent_markers = {
       enable = false,
@@ -441,8 +442,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
       git_placement = "before",
-      diagnostics_placement = "signcolumn",
       modified_placement = "after",
+      diagnostics_placement = "signcolumn",
+      bookmarks_placement = "signcolumn",
       padding = " ",
       symlink_arrow = " ➛ ",
       show = {
@@ -450,8 +452,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         folder = true,
         folder_arrow = true,
         git = true,
-        diagnostics = true,
         modified = true,
+        diagnostics = true,
+        bookmarks = true,
       },
       glyphs = {
         default = "",
@@ -659,10 +662,13 @@ local ACCEPTED_STRINGS = {
   renderer = {
     highlight_opened_files = { "none", "icon", "name", "all" },
     highlight_modified = { "none", "icon", "name", "all" },
+    highlight_bookmarks = { "none", "icon", "name", "all" },
+    highlight_clipboard = { "none", "icon", "name", "all" },
     icons = {
       git_placement = { "before", "after", "signcolumn" },
-      diagnostics_placement = { "before", "after", "signcolumn" },
       modified_placement = { "before", "after", "signcolumn" },
+      diagnostics_placement = { "before", "after", "signcolumn" },
+      bookmarks_placement = { "before", "after", "signcolumn" },
     },
   },
 }

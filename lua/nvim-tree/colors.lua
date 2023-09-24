@@ -108,6 +108,7 @@ local function get_links()
     SignColumn = "NvimTreeNormal",
     CutHL = "SpellBad",
     CopiedHL = "SpellRare",
+    BookmarkHL = "SpellLocal",
   }
 end
 
