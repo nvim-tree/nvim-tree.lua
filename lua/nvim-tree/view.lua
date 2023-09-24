@@ -513,7 +513,7 @@ function M.setup(opts)
   M.View.centralize_selection = options.centralize_selection
   M.View.side = (options.side == "right") and "right" or "left"
   M.View.height = options.height
-  M.View.hide_root_folder = options.hide_root_folder or opts.renderer.root_folder_label == false
+  M.View.hide_root_folder = opts.renderer.root_folder_label == false
   M.View.tab = opts.tab
   M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.cursorline = options.cursorline
