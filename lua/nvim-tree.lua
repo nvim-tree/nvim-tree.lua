@@ -765,7 +765,7 @@ end
 
 function M.setup(conf)
   if vim.fn.has "nvim-0.8" == 0 then
-    notify_once("nvim-tree.lua requires Neovim 0.8 or higher")
+    notify_once "nvim-tree.lua requires Neovim 0.8 or higher"
     return
   end
 
