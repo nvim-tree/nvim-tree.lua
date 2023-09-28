@@ -727,9 +727,9 @@ local function validate_options(conf)
 
         if invalid then
           if msg then
-            msg = string.format("%s | %s", msg, invalid)
+            msg = string.format("%s\n%s", msg, invalid)
           else
-            msg = string.format("[NvimTree] %s", invalid)
+            msg = string.format("[NvimTree]\n%s", invalid)
           end
           user[k] = nil
         else
@@ -742,7 +742,7 @@ local function validate_options(conf)
   validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, ACCEPTED_TYPES, "")
 
   if msg then
-    notify_once(msg .. " | see :help nvim-tree-opts for available configuration options")
+    notify_once(msg .. "\n\nsee :help nvim-tree-opts for available configuration options")
   end
 end
 
