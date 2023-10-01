@@ -1,5 +1,9 @@
 local M = {}
 
+M.supports_title = (pcall(require, "notify") and vim.notify == require "notify" or vim.notify == require("notify").notify)
+  or (pcall(require, "noice") and vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify)
+  or (pcall(require, "notifier") and require("notifier.config").has_component "nvim")
+
 local config = {
   threshold = vim.log.levels.INFO,
   absolute_path = true,
@@ -17,6 +21,10 @@ do
   local dispatch = function(level, msg)
     if level < config.threshold then
       return
+    end
+
+    if not M.supports_title then
+      msg = "[NvimTree]\n" .. msg
     end
 
     vim.schedule(function()

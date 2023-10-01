@@ -15,8 +15,13 @@ local modified = require "nvim-tree.modified"
 local find_file = require "nvim-tree.actions.tree.find-file"
 local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
+local notify = require "nvim-tree.notify"
 
 local function notify_once(msg, level)
+  if not notify.supports_title then
+    msg = "[NvimTree]\n" .. msg
+  end
+
   vim.schedule(function()
     vim.notify_once(msg, level or vim.log.levels.WARN, { title = "NvimTree" })
   end)
@@ -729,7 +734,7 @@ local function validate_options(conf)
           if msg then
             msg = string.format("%s\n%s", msg, invalid)
           else
-            msg = string.format("[NvimTree]\n%s", invalid)
+            msg = invalid
           end
           user[k] = nil
         else
