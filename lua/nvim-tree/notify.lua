@@ -1,7 +1,7 @@
 local M = {}
 
-M.supports_title = (pcall(require, "notify") and vim.notify == require "notify" or vim.notify == require("notify").notify)
-  or (pcall(require, "noice") and vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify)
+M.supports_title = (pcall(require, "notify") and (vim.notify == require "notify" or vim.notify == require("notify").notify))
+  or (pcall(require, "noice") and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
   or (pcall(require, "notifier") and require("notifier.config").has_component "nvim")
 
 local config = {
