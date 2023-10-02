@@ -746,7 +746,7 @@ longest line (previously `view.adaptive_size`).
 
     *nvim-tree.view.width.padding*
     Extra padding to the right.
-      Type: `string`, Default: `" "`
+      Type: `function | number`, Default: `1`
 
 *nvim-tree.view.float*
 Use nvim-tree in a floating window.
