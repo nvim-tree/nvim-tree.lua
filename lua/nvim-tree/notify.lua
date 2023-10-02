@@ -1,8 +1,8 @@
 local M = {}
 
-M.supports_title = (pcall(require, "notify") and (vim.notify == require "notify" or vim.notify == require("notify").notify))
-  or (pcall(require, "noice") and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
-  or (pcall(require, "notifier") and require("notifier.config").has_component "nvim")
+M.supports_title = (package.loaded.notify and (vim.notify == require "notify" or vim.notify == require("notify").notify))
+  or (package.loaded.noice and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
+  or (package.loaded.notifier and require("notifier.config").has_component "nvim")
 
 local config = {
   threshold = vim.log.levels.INFO,
