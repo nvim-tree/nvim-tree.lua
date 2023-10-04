@@ -17,16 +17,6 @@ local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
-local function notify_once(msg, level)
-  if not notify.supports_title then
-    msg = "[NvimTree]\n" .. msg
-  end
-
-  vim.schedule(function()
-    vim.notify_once(msg, level or vim.log.levels.WARN, { title = "NvimTree" })
-  end)
-end
-
 local _config = {}
 
 local M = {
@@ -747,7 +737,7 @@ local function validate_options(conf)
   validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, ACCEPTED_TYPES, "")
 
   if msg then
-    notify_once(msg .. "\n\nsee :help nvim-tree-opts for available configuration options")
+    notify.warn(msg .. "\n\nsee :help nvim-tree-opts for available configuration options")
   end
 end
 
@@ -770,7 +760,7 @@ end
 
 function M.setup(conf)
   if vim.fn.has "nvim-0.8" == 0 then
-    notify_once "nvim-tree.lua requires Neovim 0.8 or higher"
+    notify.warn "nvim-tree.lua requires Neovim 0.8 or higher"
     return
   end
 

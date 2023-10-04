@@ -1,13 +1,20 @@
 local M = {}
 
-M.supports_title = (package.loaded.notify and (vim.notify == require "notify" or vim.notify == require("notify").notify))
-  or (package.loaded.noice and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
-  or (package.loaded.notifier and require("notifier.config").has_component "nvim")
-
 local config = {
   threshold = vim.log.levels.INFO,
   absolute_path = true,
 }
+
+local title_support
+function M.supports_title()
+  if title_support == nil then
+    title_support = (package.loaded.notify and (vim.notify == require "notify" or vim.notify == require("notify").notify))
+      or (package.loaded.noice and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
+      or (package.loaded.notifier and require("notifier.config").has_component "nvim")
+  end
+
+  return title_support
+end
 
 local modes = {
   { name = "trace", level = vim.log.levels.TRACE },
@@ -23,11 +30,11 @@ do
       return
     end
 
-    if not M.supports_title then
-      msg = "[NvimTree]\n" .. msg
-    end
-
     vim.schedule(function()
+      if not M.supports_title() then
+        msg = "[NvimTree]\n" .. msg
+      end
+
       vim.notify(msg, level, { title = "NvimTree" })
     end)
   end
