@@ -47,10 +47,13 @@ function M.render_hl(bufnr, hl)
 end
 
 local picture_map = {
-  jpg = true,
-  jpeg = true,
-  png = true,
+  bmp = true,
   gif = true,
+  jpeg = true,
+  jpg = true,
+  jxl = true,
+  png = true,
+  webp = true,
 }
 
 function M.draw(unloaded_bufnr)
