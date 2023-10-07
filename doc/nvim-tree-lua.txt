@@ -734,19 +734,23 @@ Width of the window: can be a `%` string, a number representing columns, a
 function or a table.
 A table indicates that the view should be dynamically sized based on the
 longest line (previously `view.adaptive_size`).
-  Type: `string | number | function | table`, Default: `30`
+  Type: `string | number | table | function()` returning a number
+  Default: `30`
 
     *nvim-tree.view.width.min*
     Minimum dynamic width.
-      Type: `string | number | function`, Default: `30`
+      Type: `string | number | function()` returning a number
+      Default: `30`
 
     *nvim-tree.view.width.max*
     Maximum dynamic width, -1 for unbounded.
-      Type: `string | number | function`, Default: `-1`
+      Type: `string | number | function()` returning a number
+      Default: `-1`
 
     *nvim-tree.view.width.padding*
     Extra padding to the right.
-      Type: `string`, Default: `" "`
+      Type: `number | function()` returning a number
+      Default: `1`
 
 *nvim-tree.view.float*
 Use nvim-tree in a floating window.
@@ -761,7 +765,8 @@ Use nvim-tree in a floating window.
 
     *nvim-tree.view.float.open_win_config*
     Floating window config. See |nvim_open_win| for more details.
-      Type: `table` or `function` that returns a table, Default:
+      Type: `table | function` returning a table
+      Default:
         `{`
           `relative = "editor",`
           `border = "rounded",`
