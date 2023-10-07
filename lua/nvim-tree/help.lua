@@ -109,8 +109,7 @@ local function compute()
 
   -- header, not padded
   local hl = { { "NvimTreeRootFolder", 0, 0, #head_lhs } }
-  local lines =
-    { ("%s%s%s"):format(head_lhs, string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs + 2), head_rhs) }
+  local lines = { ("%s%s%s"):format(head_lhs, string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs + 2), head_rhs) }
   local width = #lines[1]
 
   -- mappings, left padded 1
@@ -177,12 +176,7 @@ local function open()
   vim.wo[M.winnr].cursorline = M.config.cursorline
 
   -- quit binding
-  vim.keymap.set(
-    "n",
-    "q",
-    close,
-    { desc = "nvim-tree: exit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true }
-  )
+  vim.keymap.set("n", "q", close, { desc = "nvim-tree: exit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true })
 
   -- close window and delete buffer on leave
   vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
