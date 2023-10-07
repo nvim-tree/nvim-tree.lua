@@ -121,10 +121,7 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status)
-    or buf(path, status.bufinfo, status.unloaded_bufnr)
-    or dotfile(path)
-    or custom(path)
+  return git(path, status.git_status) or buf(path, status.bufinfo, status.unloaded_bufnr) or dotfile(path) or custom(path)
 end
 
 function M.setup(opts)
