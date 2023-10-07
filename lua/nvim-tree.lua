@@ -642,6 +642,7 @@ local ACCEPTED_TYPES = {
       "table",
       min = { "string", "function", "number" },
       max = { "string", "function", "number" },
+      padding = { "function", "number" },
     },
   },
   renderer = {
