@@ -44,8 +44,10 @@ function M.fn(path)
       return node.absolute_path == path_real or node.link_to == path_real
     end)
     :applier(function(node)
+      local incremented_line = false
       if not node.group_next then
         line = line + 1
+        incremented_line = true
       end
 
       if vim.tbl_contains(absolute_paths_searched, node.absolute_path) then
@@ -62,6 +64,9 @@ function M.fn(path)
         end
         if #node.nodes == 0 then
           core.get_explorer():expand(node)
+          if node.group_next and incremented_line then
+            line = line - 1
+          end
         end
       end
     end)
