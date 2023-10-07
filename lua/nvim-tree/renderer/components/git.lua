@@ -94,11 +94,7 @@ end
 local function nil_() end
 
 local function warn_status(git_status)
-  notify.warn(
-    'Unrecognized git state "'
-      .. git_status
-      .. '". Please open up an issue on https://github.com/nvim-tree/nvim-tree.lua/issues with this message.'
-  )
+  notify.warn('Unrecognized git state "' .. git_status .. '". Please open up an issue on https://github.com/nvim-tree/nvim-tree.lua/issues with this message.')
 end
 
 ---@param node table

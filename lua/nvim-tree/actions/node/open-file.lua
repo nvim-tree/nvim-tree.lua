@@ -62,13 +62,7 @@ local function pick_win_id()
   end
 
   if #M.window_picker.chars < #selectable then
-    notify.error(
-      string.format(
-        "More windows (%d) than actions.open_file.window_picker.chars (%d) - please add more.",
-        #selectable,
-        #M.window_picker.chars
-      )
-    )
+    notify.error(string.format("More windows (%d) than actions.open_file.window_picker.chars (%d) - please add more.", #selectable, #M.window_picker.chars))
     return nil
   end
 

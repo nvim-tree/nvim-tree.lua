@@ -95,11 +95,7 @@ function M.update()
         for line, node in pairs(nodes_by_line) do
           local nodepath = utils.canonical_path(node.absolute_path)
           log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
-          if
-            M.show_on_dirs
-            and vim.startswith(bufpath:gsub("\\", "/"), nodepath:gsub("\\", "/") .. "/")
-            and (not node.open or M.show_on_open_dirs)
-          then
+          if M.show_on_dirs and vim.startswith(bufpath:gsub("\\", "/"), nodepath:gsub("\\", "/") .. "/") and (not node.open or M.show_on_open_dirs) then
             log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
             node.diag_status = severity
           elseif nodepath == bufpath then
