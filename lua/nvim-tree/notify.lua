@@ -27,13 +27,14 @@ local modes = {
 
 do
   local dispatch = function(level, msg)
-    if level < config.threshold then
+    if level < config.threshold or not msg then
       return
     end
 
     vim.schedule(function()
       if not M.supports_title() then
-        msg = "[NvimTree]\n" .. msg
+        -- add title to the message, with a newline if the message is multiline
+        msg = string.format("[NvimTree]%s%s", msg:match "\n" and "\n" or " ", msg)
       end
 
       vim.notify(msg, level, { title = "NvimTree" })
