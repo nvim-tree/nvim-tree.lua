@@ -34,7 +34,7 @@ do
     vim.schedule(function()
       if not M.supports_title() then
         -- add title to the message, with a newline if the message is multiline
-        msg = string.format("[NvimTree]%s%s", msg:match "\n" and "\n" or " ", msg)
+        msg = string.format("[NvimTree]%s%s", (msg:match "\n" and "\n" or " "), msg)
       end
 
       vim.notify(msg, level, { title = "NvimTree" })
