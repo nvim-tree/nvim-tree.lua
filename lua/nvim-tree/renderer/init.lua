@@ -51,6 +51,8 @@ local picture_map = {
   jpeg = true,
   png = true,
   gif = true,
+  webp = true,
+  jxl = true,
 }
 
 function M.draw(unloaded_bufnr)
