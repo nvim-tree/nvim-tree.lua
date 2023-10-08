@@ -41,6 +41,15 @@ local function refactored(opts)
 
   -- 2023/08/26
   utils.move_missing_val(opts, "renderer.icons", "webdev_colors", opts, "renderer.icons.web_devicons.file", "color", true)
+
+  -- 2023/10/08
+  if type(opts.renderer) == "table" and type(opts.renderer.highlight_diagnostics) == "boolean" then
+    if opts.renderer.highlight_diagnostics then
+      opts.renderer.highlight_diagnostics = "name"
+    else
+      opts.renderer.highlight_diagnostics = "none"
+    end
+  end
 end
 
 local function deprecated(opts)

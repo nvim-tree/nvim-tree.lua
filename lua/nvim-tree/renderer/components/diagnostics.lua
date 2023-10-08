@@ -1,10 +1,15 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
 local M = {
-  HS_FILE = {},
-  HS_FOLDER = {},
-  ICON = {},
-  hl_pos = HL_POSITION.none,
+  -- highlight strings for the icons
+  HS_ICON = {},
+
+  -- highlight groups for HL
+  HG_FILE = {},
+  HG_FOLDER = {},
+
+  -- position for HL
+  HL_POS = HL_POSITION.none,
 }
 
 ---Diagnostics text highlight group when highlight_diagnostics.
@@ -12,19 +17,19 @@ local M = {
 ---@return HL_POSITION position none when no status
 ---@return string|nil group only when status
 function M.get_highlight(node)
-  if not node or M.hl_pos == HL_POSITION.none then
+  if not node or M.HL_POS == HL_POSITION.none then
     return HL_POSITION.none, nil
   end
 
   local group
   if node.nodes then
-    group = M.HS_FOLDER[node.diag_status]
+    group = M.HG_FOLDER[node.diag_status]
   else
-    group = M.HS_FILE[node.diag_status]
+    group = M.HG_FILE[node.diag_status]
   end
 
   if group then
-    return M.hl_pos, group
+    return M.HL_POS, group
   else
     return HL_POSITION.none, nil
   end
@@ -35,7 +40,7 @@ end
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
   if node and M.config.diagnostics.enable and M.config.renderer.icons.show.diagnostics then
-    return M.ICON[node.diag_status]
+    return M.HS_ICON[node.diag_status]
   end
 end
 
@@ -46,40 +51,38 @@ function M.setup(opts)
   }
 
   if opts.diagnostics.enable and opts.renderer.highlight_diagnostics then
-    -- TODO add a HL_POSITION
-    -- M.hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics]
-    M.hl_pos = HL_POSITION.name
+    M.HL_POS = HL_POSITION[opts.renderer.highlight_diagnostics]
   end
 
-  M.HS_FILE[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorText"
-  M.HS_FILE[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningText"
-  M.HS_FILE[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoText"
-  M.HS_FILE[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintText"
+  M.HG_FILE[vim.diagnostic.severity.ERROR] = "NvimTreeDiagnosticErrorFileHL"
+  M.HG_FILE[vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarningFileHL"
+  M.HG_FILE[vim.diagnostic.severity.INFO] = "NvimTreeDiagnosticInfoFileHL"
+  M.HG_FILE[vim.diagnostic.severity.HINT] = "NvimTreeDiagnosticHintFileHL"
 
-  M.HS_FOLDER[vim.diagnostic.severity.ERROR] = "NvimTreeLspDiagnosticsErrorFolderText"
-  M.HS_FOLDER[vim.diagnostic.severity.WARN] = "NvimTreeLspDiagnosticsWarningFolderText"
-  M.HS_FOLDER[vim.diagnostic.severity.INFO] = "NvimTreeLspDiagnosticsInfoFolderText"
-  M.HS_FOLDER[vim.diagnostic.severity.HINT] = "NvimTreeLspDiagnosticsHintFolderText"
+  M.HG_FOLDER[vim.diagnostic.severity.ERROR] = "NvimTreeDiagnosticErrorFolderHL"
+  M.HG_FOLDER[vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarningFolderHL"
+  M.HG_FOLDER[vim.diagnostic.severity.INFO] = "NvimTreeDiagnosticInfoFolderHL"
+  M.HG_FOLDER[vim.diagnostic.severity.HINT] = "NvimTreeDiagnosticHintFolderHL"
 
-  M.ICON[vim.diagnostic.severity.ERROR] = {
+  M.HS_ICON[vim.diagnostic.severity.ERROR] = {
     str = M.config.diagnostics.icons.error,
-    hl = { "NvimTreeLspDiagnosticsError" },
+    hl = { "NvimTreeDiagnosticErrorIcon" },
   }
 
-  M.ICON[vim.diagnostic.severity.WARN] = {
+  M.HS_ICON[vim.diagnostic.severity.WARN] = {
     str = M.config.diagnostics.icons.warning,
-    hl = { "NvimTreeLspDiagnosticsWarning" },
+    hl = { "NvimTreeDiagnosticWarningIcon" },
   }
-  M.ICON[vim.diagnostic.severity.INFO] = {
+  M.HS_ICON[vim.diagnostic.severity.INFO] = {
     str = M.config.diagnostics.icons.info,
-    hl = { "NvimTreeLspDiagnosticsInfo" },
+    hl = { "NvimTreeDiagnosticInfoIcon" },
   }
-  M.ICON[vim.diagnostic.severity.HINT] = {
+  M.HS_ICON[vim.diagnostic.severity.HINT] = {
     str = M.config.diagnostics.icons.hint,
-    hl = { "NvimTreeLspDiagnosticsHint" },
+    hl = { "NvimTreeDiagnosticHintIcon" },
   }
 
-  for _, i in ipairs(M.ICON) do
+  for _, i in ipairs(M.HS_ICON) do
     vim.fn.sign_define(i.hl[1], { text = i.str, texthl = i.hl[1] })
   end
 end

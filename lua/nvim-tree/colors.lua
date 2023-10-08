@@ -1,11 +1,103 @@
 local M = {}
 
+-- nvim-tree default highlight group links
+local DEFAULT_LINKS = {
+  -- File Text
+  NvimTreeFolderName = "Directory",
+  NvimTreeEmptyFolderName = "Directory",
+  NvimTreeOpenedFolderName = "Directory",
+  NvimTreeSymlinkFolderName = "Directory",
+
+  -- Folder Text
+  NvimTreeOpenedFileIcon = "NvimTreeOpenedFile",
+  NvimTreeOpenedFolderIcon = "NvimTreeFolderIcon",
+  NvimTreeClosedFolderIcon = "NvimTreeFolderIcon",
+
+  -- Standard
+  NvimTreeNormal = "Normal",
+  NvimTreeNormalFloat = "NormalFloat",
+  NvimTreeNormalNC = "NvimTreeNormal",
+  NvimTreeLineNr = "LineNr",
+  NvimTreeWinSeparator = "WinSeparator",
+  NvimTreeEndOfBuffer = "EndOfBuffer",
+  NvimTreePopup = "Normal",
+  NvimTreeSignColumn = "NvimTreeNormal",
+  NvimTreeCursorLine = "CursorLine",
+  NvimTreeCursorColumn = "CursorColumn",
+  NvimTreeCursorLineNr = "CursorLineNr",
+  NvimTreeStatusLine = "StatusLine",
+  NvimTreeStatusLineNC = "StatusLineNC",
+
+  -- Clipboard
+  NvimTreeCutHL = "SpellBad",
+  NvimTreeCopiedHL = "SpellRare",
+
+  -- Bookmark Highlight
+  NvimTreeBookmarkHL = "SpellLocal",
+
+  -- Git Icon
+  NvimTreeGitIgnored = "Comment",
+
+  -- Git File Text
+  NvimTreeFileDirty = "NvimTreeGitDirty",
+  NvimTreeFileStaged = "NvimTreeGitStaged",
+  NvimTreeFileMerge = "NvimTreeGitMerge",
+  NvimTreeFileRenamed = "NvimTreeGitRenamed",
+  NvimTreeFileNew = "NvimTreeGitNew",
+  NvimTreeFileDeleted = "NvimTreeGitDeleted",
+  NvimTreeFileIgnored = "NvimTreeGitIgnored",
+
+  -- Git Folder Text
+  NvimTreeFolderDirty = "NvimTreeFileDirty",
+  NvimTreeFolderStaged = "NvimTreeFileStaged",
+  NvimTreeFolderMerge = "NvimTreeFileMerge",
+  NvimTreeFolderRenamed = "NvimTreeFileRenamed",
+  NvimTreeFolderNew = "NvimTreeFileNew",
+  NvimTreeFolderDeleted = "NvimTreeFileDeleted",
+  NvimTreeFolderIgnored = "NvimTreeFileIgnored",
+
+  -- Diagnostics Icon
+  NvimTreeDiagnosticErrorIcon = "DiagnosticError",
+  NvimTreeDiagnosticWarnIcon = "DiagnosticWarn",
+  NvimTreeDiagnosticInfoIcon = "DiagnosticInfo",
+  NvimTreeDiagnosticHintIcon = "DiagnosticHint",
+
+  -- Diagnostics File Highlight
+  NvimTreeDiagnosticErrorFileHL = "DiagnosticUnderlineError",
+  NvimTreeDiagnosticWarnFileHL = "DiagnosticUnderlineWarn",
+  NvimTreeDiagnosticInfoFileHL = "DiagnosticUnderlineInfo",
+  NvimTreeDiagnosticHintFileHL = "DiagnosticUnderlineHint",
+
+  -- Diagnostics Folder Highlight
+  NvimTreeDiagnosticErrorFolderHL = "DiagnosticUnderlineError",
+  NvimTreeDiagnosticWarnFolderHL = "DiagnosticUnderlineWarn",
+  NvimTreeDiagnosticInfoFolderHL = "DiagnosticUnderlineInfo",
+  NvimTreeDiagnosticHintFolderHL = "DiagnosticUnderlineHint",
+}
+
+-- nvim-tree highlight groups to legacy
+local LEGACY_LINKS = {
+  NvimTreeDiagnosticErrorIcon = "NvimTreeLspDiagnosticsError",
+  NvimTreeDiagnosticWarnIcon = "NvimTreeLspDiagnosticsWarning",
+  NvimTreeDiagnosticInfoIcon = "NvimTreeLspDiagnosticsInformation",
+  NvimTreeDiagnosticHintIcon = "NvimTreeLspDiagnosticsHint",
+  NvimTreeDiagnosticErrorFileHL = "NvimTreeLspDiagnosticsErrorText",
+  NvimTreeDiagnosticWarnFileHL = "NvimTreeLspDiagnosticsWarningText",
+  NvimTreeDiagnosticInfoFileHL = "NvimTreeLspDiagnosticsInformationText",
+  NvimTreeDiagnosticHintFileHL = "NvimTreeLspDiagnosticsHintText",
+  NvimTreeDiagnosticErrorFolderHL = "NvimTreeLspDiagnosticsErrorFolderText",
+  NvimTreeDiagnosticWarnFolderHL = "NvimTreeLspDiagnosticsWarningFolderText",
+  NvimTreeDiagnosticInfoFolderHL = "NvimTreeLspDiagnosticsInformationFolderText",
+  NvimTreeDiagnosticHintFolderHL = "NvimTreeLspDiagnosticsHintFolderText",
+}
+
 local function get_color_from_hl(hl_name, fallback)
   local id = vim.api.nvim_get_hl_id_by_name(hl_name)
   if not id then
     return fallback
   end
 
+  -- TODO this is unreachable as nvim_get_hl_id_by_name returns a new ID if not present
   local foreground = vim.fn.synIDattr(vim.fn.synIDtrans(id), "fg")
   if not foreground or foreground == "" then
     return fallback
@@ -57,61 +149,6 @@ local function get_hl_groups()
   }
 end
 
-local function get_links()
-  return {
-    FolderName = "Directory",
-    EmptyFolderName = "Directory",
-    OpenedFolderName = "Directory",
-    SymlinkFolderName = "Directory",
-    OpenedFolderIcon = "NvimTreeFolderIcon",
-    ClosedFolderIcon = "NvimTreeFolderIcon",
-    OpenedFileIcon = "NvimTreeOpenedFile",
-    Normal = "Normal",
-    NormalFloat = "NormalFloat",
-    NormalNC = "NvimTreeNormal",
-    EndOfBuffer = "EndOfBuffer",
-    CursorLineNr = "CursorLineNr",
-    LineNr = "LineNr",
-    CursorLine = "CursorLine",
-    WinSeparator = "WinSeparator",
-    CursorColumn = "CursorColumn",
-    FileDirty = "NvimTreeGitDirty",
-    FileNew = "NvimTreeGitNew",
-    FileRenamed = "NvimTreeGitRenamed",
-    FileMerge = "NvimTreeGitMerge",
-    FileStaged = "NvimTreeGitStaged",
-    FileDeleted = "NvimTreeGitDeleted",
-    FileIgnored = "NvimTreeGitIgnored",
-    FolderDirty = "NvimTreeFileDirty",
-    FolderNew = "NvimTreeFileNew",
-    FolderRenamed = "NvimTreeFileRenamed",
-    FolderMerge = "NvimTreeFileMerge",
-    FolderStaged = "NvimTreeFileStaged",
-    FolderDeleted = "NvimTreeFileDeleted",
-    FolderIgnored = "NvimTreeFileIgnored",
-    LspDiagnosticsError = "DiagnosticError",
-    LspDiagnosticsWarning = "DiagnosticWarn",
-    LspDiagnosticsInformation = "DiagnosticInfo",
-    LspDiagnosticsHint = "DiagnosticHint",
-    LspDiagnosticsErrorText = "NvimTreeLspDiagnosticsError",
-    LspDiagnosticsWarningText = "NvimTreeLspDiagnosticsWarning",
-    LspDiagnosticsInformationText = "NvimTreeLspDiagnosticsInformation",
-    LspDiagnosticsHintText = "NvimTreeLspDiagnosticsHintFile",
-    LspDiagnosticsErrorFolderText = "NvimTreeLspDiagnosticsErrorText",
-    LspDiagnosticsWarningFolderText = "NvimTreeLspDiagnosticsWarningText",
-    LspDiagnosticsInformationFolderText = "NvimTreeLspDiagnosticsInformationText",
-    LspDiagnosticsHintFolderText = "NvimTreeLspDiagnosticsHintFileText",
-    Popup = "Normal",
-    GitIgnored = "Comment",
-    StatusLine = "StatusLine",
-    StatusLineNC = "StatusLineNC",
-    SignColumn = "NvimTreeNormal",
-    CutHL = "SpellBad",
-    CopiedHL = "SpellRare",
-    BookmarkHL = "SpellLocal",
-  }
-end
-
 function M.setup()
   local highlight_groups = get_hl_groups()
   for k, d in pairs(highlight_groups) do
@@ -121,9 +158,18 @@ function M.setup()
     vim.api.nvim_command("hi def NvimTree" .. k .. gui .. fg .. bg)
   end
 
-  local links = get_links()
-  for k, d in pairs(links) do
-    vim.api.nvim_command("hi def link NvimTree" .. k .. " " .. d)
+  -- hard link override when legacy only is present
+  for from, to in pairs(LEGACY_LINKS) do
+    local hl_from = vim.api.nvim_get_hl(0, { name = from })
+    local hl_to = vim.api.nvim_get_hl(0, { name = to })
+    if vim.tbl_isempty(hl_from) and not vim.tbl_isempty(hl_to) then
+      vim.api.nvim_command("hi link " .. from .. " " .. to)
+    end
+  end
+
+  -- default links
+  for from, to in pairs(DEFAULT_LINKS) do
+    vim.api.nvim_command("hi def link " .. from .. " " .. to)
   end
 end
 
