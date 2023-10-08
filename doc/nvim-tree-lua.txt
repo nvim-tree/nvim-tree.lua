@@ -46,6 +46,7 @@ CONTENTS                                                           *nvim-tree*
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
+  8.1  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
  11. OS Specific Restrictions                 |nvim-tree-os-specific|
@@ -388,7 +389,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
         symlink_destination = true,
         highlight_git = false,
-        highlight_diagnostics = false,
+        highlight_diagnostics = "none",
         highlight_opened_files = "none",
         highlight_modified = "none",
         highlight_bookmarks = "none",
@@ -837,9 +838,10 @@ Requires |nvim-tree.git.enable|
   Type: `boolean`, Default: `false`
 
 *nvim-tree.renderer.highlight_diagnostics*
-Enable highlight for diagnostics using `LspDiagnosticsError*Text` highlight groups.
+Enable highlight for diagnostics using `NvimTreeDiagnostic*HL` highlight groups. 
 Requires |nvim-tree.diagnostics.enable|
-  Type: `boolean`, Default: `false`
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+  Type: `string`, Default: `"none"`
 
 *nvim-tree.renderer.highlight_opened_files*
 Highlight icons and/or names for |bufloaded()| files using the
@@ -2336,22 +2338,67 @@ Git Folder Text: >
     NvimTreeFolderIgnored               NvimTreeFileIgnored
 <
 Diagnostics Icon: >
-    NvimTreeLspDiagnosticsError             DiagnosticError
-    NvimTreeLspDiagnosticsWarning           DiagnosticWarn
-    NvimTreeLspDiagnosticsInformation       DiagnosticInfo
-    NvimTreeLspDiagnosticsHint              DiagnosticHint
+    NvimTreeDiagnosticErrorIcon         DiagnosticError
+    NvimTreeDiagnosticWarnIcon          DiagnosticWarn
+    NvimTreeDiagnosticInfoIcon          DiagnosticInfo
+    NvimTreeDiagnosticHintIcon          DiagnosticHint
 <
-Diagnostics File Text: >
-    NvimTreeLspDiagnosticsErrorText         NvimTreeLspDiagnosticsError
-    NvimTreeLspDiagnosticsWarningText       NvimTreeLspDiagnosticsWarning
-    NvimTreeLspDiagnosticsInfoText          NvimTreeLspDiagnosticsInformation
-    NvimTreeLspDiagnosticsHintText          NvimTreeLspDiagnosticsHint
+Diagnostics File Highlight: >
+    NvimTreeDiagnosticErrorFileHL       DiagnosticUnderlineError
+    NvimTreeDiagnosticWarnFileHL        DiagnosticUnderlineWarn
+    NvimTreeDiagnosticInfoFileHL        DiagnosticUnderlineInfo
+    NvimTreeDiagnosticHintFileHL        DiagnosticUnderlineHint
 <
-Diagnostics Folder Text: >
-    NvimTreeLspDiagnosticsErrorFolderText   NvimTreeLspDiagnosticsErrorText
-    NvimTreeLspDiagnosticsWarningFolderText NvimTreeLspDiagnosticsWarningText
-    NvimTreeLspDiagnosticsInfoFolderText    NvimTreeLspDiagnosticsInfoText
-    NvimTreeLspDiagnosticsHintFolderText    NvimTreeLspDiagnosticsHintText
+Diagnostics Folder Highlight: >
+    NvimTreeDiagnosticErrorFolderHL     DiagnosticUnderlineError
+    NvimTreeDiagnosticWarnFolderHL      DiagnosticUnderlineWarn
+    NvimTreeDiagnosticInfoFolderHL      DiagnosticUnderlineInfo
+    NvimTreeDiagnosticHintFolderHL      DiagnosticUnderlineHint
+<
+
+==============================================================================
+ 8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
+
+2023/10/XX revision xxxxx made significant highlighting changes, some breaking:
+
+- Highlight groups named consistently
+- Standard vim highlight groups such |DiagnosticUnderlineError| are now the
+  defaults.
+- All `highlight_xxx` e.g. |nvim-tree.renderer.highlight_git| are granular,
+  allowing  `"none"`, `"icon"`, `"name"` or `"all"`
+- `highlight_xxx` has highlight groups for both File and Folder
+- `highlight_xxx` is additive instead of overwriting. See
+  |nvim-tree-opts-renderer| for precedence.
+
+Legacy style may be applied: >
+
+    :hi link NvimTreeDiagnosticErrorFileHL      DiagnosticError
+    :hi link NvimTreeDiagnosticWarnFileHL       DiagnosticWarn
+    :hi link NvimTreeDiagnosticInfoFileHL       DiagnosticInfo
+    :hi link NvimTreeDiagnosticHintFileHL       DiagnosticHint
+
+    :hi link NvimTreeDiagnosticErrorFolderHL    DiagnosticError
+    :hi link NvimTreeDiagnosticWarnFolderHL     DiagnosticWarn
+    :hi link NvimTreeDiagnosticInfoFolderHL     DiagnosticInfo
+    :hi link NvimTreeDiagnosticHintFolderHL     DiagnosticHint
+<
+Legacy highlight group are still obeyed when they are defined and the current
+highlight group is not, hard linking as follows: >
+
+    NvimTreeLspDiagnosticsError                 NvimTreeDiagnosticErrorIcon
+    NvimTreeLspDiagnosticsWarning               NvimTreeDiagnosticWarnIcon
+    NvimTreeLspDiagnosticsInformation           NvimTreeDiagnosticInfoIcon
+    NvimTreeLspDiagnosticsHint                  NvimTreeDiagnosticHintIcon
+
+    NvimTreeLspDiagnosticsErrorText             NvimTreeDiagnosticErrorFileHL
+    NvimTreeLspDiagnosticsWarningText           NvimTreeDiagnosticWarnFileHL
+    NvimTreeLspDiagnosticsInformationText       NvimTreeDiagnosticInfoFileHL
+    NvimTreeLspDiagnosticsHintText              NvimTreeDiagnosticHintFileHL
+
+    NvimTreeLspDiagnosticsErrorFolderText       NvimTreeDiagnosticErrorFolderHL 
+    NvimTreeLspDiagnosticsWarningFolderText     NvimTreeDiagnosticWarnFolderHL
+    NvimTreeLspDiagnosticsInformationFolderText NvimTreeDiagnosticInfoFolderHL
+    NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
 <
 ==============================================================================
  9. EVENTS                                                  *nvim-tree-events*
