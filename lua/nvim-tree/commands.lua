@@ -33,7 +33,12 @@ local CMDS = {
       complete = "dir",
     },
     command = function(c)
-      api.tree.toggle { find_file = false, focus = true, path = c.args, update_root = false }
+      api.tree.toggle {
+        find_file = false,
+        focus = true,
+        path = c.args,
+        update_root = false,
+      }
     end,
   },
   {
@@ -74,7 +79,11 @@ local CMDS = {
       bar = true,
     },
     command = function(c)
-      api.tree.find_file { open = true, focus = true, update_root = c.bang }
+      api.tree.find_file {
+        open = true,
+        focus = true,
+        update_root = c.bang,
+      }
     end,
   },
   {
@@ -86,7 +95,12 @@ local CMDS = {
       complete = "dir",
     },
     command = function(c)
-      api.tree.toggle { find_file = true, focus = true, path = c.args, update_root = c.bang }
+      api.tree.toggle {
+        find_file = true,
+        focus = true,
+        path = c.args,
+        update_root = c.bang,
+      }
     end,
   },
   {

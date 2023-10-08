@@ -45,7 +45,11 @@ function M.fn(opts, no_focus, cwd, bang)
     view.close()
   else
     -- open
-    lib.open { path = opts.path, current_window = opts.current_window, winid = opts.winid }
+    lib.open {
+      path = opts.path,
+      current_window = opts.current_window,
+      winid = opts.winid,
+    }
 
     -- find file
     if M.config.update_focused_file.enable or opts.find_file then

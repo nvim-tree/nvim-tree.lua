@@ -47,7 +47,11 @@ function M.fn(node)
 
   local containing_folder = get_containing_folder(node)
 
-  local input_opts = { prompt = "Create file ", default = containing_folder, completion = "file" }
+  local input_opts = {
+    prompt = "Create file ",
+    default = containing_folder,
+    completion = "file",
+  }
 
   vim.ui.input(input_opts, function(new_file_path)
     utils.clear_prompt()

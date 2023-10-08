@@ -5,7 +5,12 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
-local severity_levels = { Error = 1, Warning = 2, Information = 3, Hint = 4 }
+local severity_levels = {
+  Error = 1,
+  Warning = 2,
+  Information = 3,
+  Hint = 4,
+}
 
 local function from_nvim_lsp()
   local buffer_severity = {}

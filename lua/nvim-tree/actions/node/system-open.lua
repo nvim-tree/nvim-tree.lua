@@ -17,7 +17,11 @@ function M.fn(node)
   }
   table.insert(process.args, node.link_to or node.absolute_path)
 
-  local opts = { args = process.args, stdio = { nil, nil, process.stderr }, detached = true }
+  local opts = {
+    args = process.args,
+    stdio = { nil, nil, process.stderr },
+    detached = true,
+  }
 
   process.handle, process.pid = vim.loop.spawn(process.cmd, opts, function(code)
     process.stderr:read_stop()

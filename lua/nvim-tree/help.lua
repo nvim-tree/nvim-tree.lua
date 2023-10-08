@@ -176,7 +176,13 @@ local function open()
   vim.wo[M.winnr].cursorline = M.config.cursorline
 
   -- quit binding
-  vim.keymap.set("n", "q", close, { desc = "nvim-tree: exit help", buffer = M.bufnr, noremap = true, silent = true, nowait = true })
+  vim.keymap.set("n", "q", close, {
+    desc = "nvim-tree: exit help",
+    buffer = M.bufnr,
+    noremap = true,
+    silent = true,
+    nowait = true,
+  })
 
   -- close window and delete buffer on leave
   vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {

@@ -224,7 +224,11 @@ end
 function Builder:_get_git_icons(node)
   local git_icons = git.get_icons(node)
   if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
-    table.insert(self.signs, { sign = git_icons[1].hl[1], lnum = self.index + 1, priority = 1 })
+    table.insert(self.signs, {
+      sign = git_icons[1].hl[1],
+      lnum = self.index + 1,
+      priority = 1,
+    })
     git_icons = nil
   end
   return git_icons
@@ -235,7 +239,11 @@ end
 function Builder:_get_diagnostics_icon(node)
   local diagnostics_icon = diagnostics.get_icon(node)
   if diagnostics_icon and self.diagnostics_placement == "signcolumn" then
-    table.insert(self.signs, { sign = diagnostics_icon.hl[1], lnum = self.index + 1, priority = 2 })
+    table.insert(self.signs, {
+      sign = diagnostics_icon.hl[1],
+      lnum = self.index + 1,
+      priority = 2,
+    })
     diagnostics_icon = nil
   end
   return diagnostics_icon
@@ -246,7 +254,11 @@ end
 function Builder:_get_modified_icon(node)
   local modified_icon = modified.get_icon(node)
   if modified_icon and self.modified_placement == "signcolumn" then
-    table.insert(self.signs, { sign = modified_icon.hl[1], lnum = self.index + 1, priority = 3 })
+    table.insert(self.signs, {
+      sign = modified_icon.hl[1],
+      lnum = self.index + 1,
+      priority = 3,
+    })
     modified_icon = nil
   end
   return modified_icon
@@ -257,7 +269,11 @@ end
 function Builder:_get_bookmark_icon(node)
   local bookmark_icon = bookmarks.get_icon(node)
   if bookmark_icon and self.bookmarks_placement == "signcolumn" then
-    table.insert(self.signs, { sign = bookmark_icon.hl[1], lnum = self.index + 1, priority = 4 })
+    table.insert(self.signs, {
+      sign = bookmark_icon.hl[1],
+      lnum = self.index + 1,
+      priority = 4,
+    })
     bookmark_icon = nil
   end
   return bookmark_icon
