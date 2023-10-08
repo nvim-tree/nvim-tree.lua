@@ -7,7 +7,7 @@ local Api = {
       sibling = {},
       git = {},
       diagnostics = {},
-      opened = {}
+      opened = {},
     },
     run = {},
     open = {},
