@@ -168,9 +168,7 @@ function Builder:_build_folder(node)
     local link_to = utils.path_relative(node.link_to, core.get_cwd())
     foldername = foldername .. arrow .. link_to
     foldername_hl = "NvimTreeSymlinkFolderName"
-  elseif
-    vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name)
-  then
+  elseif vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
     foldername_hl = "NvimTreeSpecialFolderName"
   elseif node.open then
     foldername_hl = "NvimTreeOpenedFolderName"
@@ -278,11 +276,7 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
   end
 
   -- opened file
-  if
-    self.highlight_opened_files
-    and vim.fn.bufloaded(node.absolute_path) > 0
-    and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr
-  then
+  if self.highlight_opened_files and vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr then
     if self.highlight_opened_files == "all" or self.highlight_opened_files == "name" then
       name_hl = "NvimTreeOpenedFile"
     end
@@ -331,16 +325,7 @@ end
 ---@param modified_icon HighlightedString|nil
 ---@param bookmark_icon HighlightedString|nil
 ---@return HighlightedString[]
-function Builder:_format_line(
-  indent_markers,
-  arrows,
-  icon,
-  name,
-  git_icons,
-  diagnostics_icon,
-  modified_icon,
-  bookmark_icon
-)
+function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
   local added_len = 0
   local function add_to_end(t1, t2)
     for _, v in ipairs(t2) do
@@ -430,8 +415,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
-  local line =
-    self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
+  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1

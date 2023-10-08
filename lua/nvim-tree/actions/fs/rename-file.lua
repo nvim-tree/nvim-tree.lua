@@ -52,9 +52,7 @@ function M.fn(default_modifier)
 
     -- support for only specific modifiers have been implemented
     if not ALLOWED_MODIFIERS[modifier] then
-      return notify.warn(
-        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ",")
-      )
+      return notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
     end
 
     node = lib.get_last_group_node(node)

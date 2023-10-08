@@ -7,15 +7,12 @@ local config = {
 
 local title_support
 function M.supports_title()
-  -- TODO increase stylua column_width
-  -- stylua: ignore start
   if title_support == nil then
     title_support = (package.loaded.notify and (vim.notify == require "notify" or vim.notify == require("notify").notify))
       or (package.loaded.noice and (vim.notify == require("noice").notify or vim.notify == require("noice.source.notify").notify))
       or (package.loaded.notifier and require("notifier.config").has_component "nvim")
       or false
   end
-  -- stylua: ignore end
 
   return title_support
 end
