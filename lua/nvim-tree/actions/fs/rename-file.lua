@@ -10,6 +10,7 @@ local M = {
 }
 
 local ALLOWED_MODIFIERS = {
+  [":p"] = true,
   [":p:h"] = true,
   [":t"] = true,
   [":t:r"] = true,

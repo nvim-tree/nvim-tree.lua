@@ -1717,6 +1717,12 @@ fs.rename_sub({node})                          *nvim-tree-api.fs.rename_sub()*
     Parameters: ~
       • {node} (Node) file or folder
 
+fs.rename_full({node})                          *nvim-tree-api.fs.rename_full()*
+    Prompt to rename a file or folder by absolute path.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
 fs.cut({node})                                        *nvim-tree-api.fs.cut()*
     Cut a file or folder to the nvim-tree clipboard.
 
