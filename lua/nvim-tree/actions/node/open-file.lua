@@ -186,7 +186,7 @@ end
 
 local function get_target_winid(mode)
   local target_winid
-  if not M.window_picker.enable or mode == "edit_no_picker" then
+  if not M.window_picker.enable or mode == "edit_no_picker" or mode == "preview_no_picker" then
     target_winid = lib.target_winid
 
     -- first available window
@@ -275,7 +275,7 @@ local function open_in_new_window(filename, mode)
     cmd = string.format("edit %s", fname)
   end
 
-  if mode == "preview" and view.View.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
@@ -326,7 +326,7 @@ function M.fn(mode, filename)
   local buf_loaded = is_already_loaded(filename)
 
   local found_win = utils.get_win_buf_from_path(filename)
-  if found_win and mode == "preview" then
+  if found_win and (mode == "preview" or mode == "preview_no_picker") then
     return
   end
 
@@ -341,7 +341,7 @@ function M.fn(mode, filename)
     view.resize()
   end
 
-  if mode == "preview" then
+  if mode == "preview" or mode == "preview_no_picker" then
     return on_preview(buf_loaded)
   end
 
