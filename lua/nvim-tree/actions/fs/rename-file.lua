@@ -77,7 +77,11 @@ function M.fn(default_modifier)
       default_path = default_path .. "/"
     end
 
-    local input_opts = { prompt = "Rename to ", default = default_path, completion = "file" }
+    local input_opts = {
+      prompt = "Rename to ",
+      default = default_path,
+      completion = "file",
+    }
 
     vim.ui.input(input_opts, function(new_file_path)
       utils.clear_prompt()
