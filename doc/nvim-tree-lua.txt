@@ -114,7 +114,7 @@ Setup the plugin in your `init.lua` >
   vim.g.loaded_netrw = 1
   vim.g.loaded_netrwPlugin = 1
 
-  -- set termguicolors to enable highlight groups
+  -- optionally enable 24-bit colour
   vim.opt.termguicolors = true
 
   -- empty setup using defaults
@@ -909,7 +909,7 @@ Icon sign column precedence:
               Type: `boolean`, Default: `true`
 
             *nvim-tree.renderer.icons.web_devicons.file.color*
-            Use icon colors for files.
+            Use icon colors for files. Overrides highlight groups.
               Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.web_devicons.folder*
@@ -921,7 +921,7 @@ Icon sign column precedence:
               Type: `boolean`, Default: `false`
 
             *nvim-tree.renderer.icons.web_devicons.folder.color*
-            Use icon colors for folders.
+            Use icon colors for folders. Overrides highlight groups.
               Type: `boolean`, Default: `true`
 
     *nvim-tree.renderer.icons.git_placement*
@@ -2239,42 +2239,13 @@ groups.
 Example |:highlight| >
     :hi NvimTreeSymlink guifg=blue gui=bold,underline
 <
-You should have 'termguicolors' enabled, otherwise, colors will not be
-applied.
+It is recommended to enable 'termguicolors' for the more pleasant 24-bit colours.
 
 To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
-Default linked group follows name.
+Default linked group or definition follows name.
 
-File Text: >
-    NvimTreeSymlink
-    NvimTreeExecFile
-    NvimTreeOpenedFile
-    NvimTreeModifiedFile
-    NvimTreeSpecialFile
-    NvimTreeImageFile
-<
-Folder Text: >
-    NvimTreeFolderName          Directory
-    NvimTreeEmptyFolderName     Directory
-    NvimTreeOpenedFolderName    Directory
-    NvimTreeSymlinkFolderName   Directory
-    NvimTreeRootFolder
-<
-Icon: >
-    NvimTreeFileIcon
-    NvimTreeOpenedFileIcon      NvimTreeOpenedFile
-    NvimTreeSymlinkIcon
-    NvimTreeFolderIcon
-    NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
-    NvimTreeClosedFolderIcon    NvimTreeFolderIcon
-    NvimTreeFolderArrowClosed   NvimTreeIndentMarker
-    NvimTreeFolderArrowOpen     NvimTreeIndentMarker
-<
-Indent: >
-    NvimTreeIndentMarker
-<
 Standard: >
     NvimTreeNormal              Normal
     NvimTreeNormalFloat         NormalFloat
@@ -2293,49 +2264,77 @@ Standard: >
     NvimTreeStatusLine          StatusLine
     NvimTreeStatusLineNC        StatusLineNC
 <
+File Text: >
+    NvimTreeExecFile            Constant
+    NvimTreeImageFile           PreProc
+    NvimTreeModifiedFile        Constant
+    NvimTreeOpenedFile          Constant
+    NvimTreeSpecialFile         PreProc
+    NvimTreeSymlink             Statement
+<
+Folder Text: >
+    NvimTreeRootFolder          PreProc
+    NvimTreeFolderName          Directory
+    NvimTreeEmptyFolderName     Directory
+    NvimTreeOpenedFolderName    Directory
+    NvimTreeSymlinkFolderName   Directory
+<
+Icon: >
+    NvimTreeFolderIcon          "guifg=#8094b4 ctermfg=Blue"
+    NvimTreeFileIcon            NvimTreeNormal
+    NvimTreeSymlinkIcon         NvimTreeNormal
+    NvimTreeOpenedFileIcon      NvimTreeOpenedFile
+    NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
+    NvimTreeClosedFolderIcon    NvimTreeFolderIcon
+    NvimTreeFolderArrowClosed   NvimTreeIndentMarker
+    NvimTreeFolderArrowOpen     NvimTreeIndentMarker
+<
+Indent: >
+    NvimTreeIndentMarker        NvimTreeFileIcon
+<
 Clipboard: >
     NvimTreeCopiedHL            SpellRare
     NvimTreeCutHL               SpellBad
 <
 Bookmark Icon: >
-    NvimTreeBookmark
+    NvimTreeBookmark            Constant
 <
 Bookmark Highlight: >
     NvimTreeBookmarkHL          SpellLocal
 <
 Picker: >
-    NvimTreeWindowPicker
+    NvimTreeWindowPicker        "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan"
 <
 Live Filter: >
-    NvimTreeLiveFilterPrefix
-    NvimTreeLiveFilterValue
+    NvimTreeLiveFilterPrefix    PreProc
+    NvimTreeLiveFilterValue     ModeMsg
 <
 Git Icon: >
-    NvimTreeGitDirty
-    NvimTreeGitStaged
-    NvimTreeGitMerge
-    NvimTreeGitRenamed
-    NvimTreeGitNew
-    NvimTreeGitDeleted
-    NvimTreeGitIgnored                  Comment
+    NvimTreeGitDeleted          Statement
+    NvimTreeGitDirty            Statement
+    NvimTreeGitIgnored          Comment
+    NvimTreeGitMerge            Constant
+    NvimTreeGitNew              PreProc
+    NvimTreeGitRenamed          PreProc
+    NvimTreeGitStaged           Constant
 <
 Git File Text: >
-    NvimTreeFileDirty                   NvimTreeGitDirty
-    NvimTreeFileStaged                  NvimTreeGitStaged
-    NvimTreeFileMerge                   NvimTreeGitMerge
-    NvimTreeFileRenamed                 NvimTreeGitRenamed
-    NvimTreeFileNew                     NvimTreeGitNew
-    NvimTreeFileDeleted                 NvimTreeGitDeleted
-    NvimTreeFileIgnored                 NvimTreeGitIgnored
+    NvimTreeFileDirty           NvimTreeGitDirty
+    NvimTreeFileStaged          NvimTreeGitStaged
+    NvimTreeFileMerge           NvimTreeGitMerge
+    NvimTreeFileRenamed         NvimTreeGitRenamed
+    NvimTreeFileNew             NvimTreeGitNew
+    NvimTreeFileDeleted         NvimTreeGitDeleted
+    NvimTreeFileIgnored         NvimTreeGitIgnored
 <
 Git Folder Text: >
-    NvimTreeFolderDirty                 NvimTreeFileDirty
-    NvimTreeFolderStaged                NvimTreeFileStaged
-    NvimTreeFolderMerge                 NvimTreeFileMerge
-    NvimTreeFolderRenamed               NvimTreeFileRenamed
-    NvimTreeFolderNew                   NvimTreeFileNew
-    NvimTreeFolderDeleted               NvimTreeFileDeleted
-    NvimTreeFolderIgnored               NvimTreeFileIgnored
+    NvimTreeFolderDirty         NvimTreeFileDirty
+    NvimTreeFolderStaged        NvimTreeFileStaged
+    NvimTreeFolderMerge         NvimTreeFileMerge
+    NvimTreeFolderRenamed       NvimTreeFileRenamed
+    NvimTreeFolderNew           NvimTreeFileNew
+    NvimTreeFolderDeleted       NvimTreeFileDeleted
+    NvimTreeFolderIgnored       NvimTreeFileIgnored
 <
 Diagnostics Icon: >
     NvimTreeDiagnosticErrorIcon         DiagnosticError
@@ -2361,9 +2360,10 @@ Diagnostics Folder Highlight: >
 
 2023/10/XX revision xxxxx made significant highlighting changes, some breaking:
 
-- Highlight groups named consistently
+- Full cterm support.
 - Standard vim highlight groups such |DiagnosticUnderlineError| are now the
   defaults.
+- Highlight groups named consistently.
 - All `highlight_xxx` e.g. |nvim-tree.renderer.highlight_git| are granular,
   allowing  `"none"`, `"icon"`, `"name"` or `"all"`
 - `highlight_xxx` has highlight groups for both File and Folder
