@@ -141,6 +141,7 @@ Api.fs.rename_node = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":
 Api.fs.rename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
 Api.fs.rename_sub = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":p:h")
 Api.fs.rename_basename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
+Api.fs.rename_full = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":p")
 Api.fs.cut = wrap_node(require("nvim-tree.actions.fs.copy-paste").cut)
 Api.fs.paste = wrap_node(require("nvim-tree.actions.fs.copy-paste").paste)
 Api.fs.clear_clipboard = wrap(require("nvim-tree.actions.fs.copy-paste").clear_clipboard)

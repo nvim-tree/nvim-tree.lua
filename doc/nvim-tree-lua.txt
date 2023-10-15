@@ -188,6 +188,7 @@ Show the mappings:  `g?`
 `R`               Refresh                    |nvim-tree-api.tree.reload()|
 `s`               Run System                 |nvim-tree-api.node.run.system()|
 `S`               Search                     |nvim-tree-api.tree.search_node()|
+`u`               Rename: Full Path          |nvim-tree-api.fs.rename_full()|
 `U`               Toggle Filter: Hidden      |nvim-tree-api.tree.toggle_custom_filter()|
 `W`               Collapse                   |nvim-tree-api.tree.collapse_all()|
 `x`               Cut                        |nvim-tree-api.fs.cut()|
@@ -1718,6 +1719,12 @@ fs.rename_sub({node})                          *nvim-tree-api.fs.rename_sub()*
     Parameters: ~
       • {node} (Node) file or folder
 
+fs.rename_full({node})                        *nvim-tree-api.fs.rename_full()*
+    Prompt to rename a file or folder by absolute path.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
 fs.cut({node})                                        *nvim-tree-api.fs.cut()*
     Cut a file or folder to the nvim-tree clipboard.
 
@@ -2113,6 +2120,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'R',       api.tree.reload,                        opts('Refresh'))
   vim.keymap.set('n', 's',       api.node.run.system,                    opts('Run System'))
   vim.keymap.set('n', 'S',       api.tree.search_node,                   opts('Search'))
+  vim.keymap.set('n', 'u',       api.fs.rename_full,                     opts('Rename: Full Path'))
   vim.keymap.set('n', 'U',       api.tree.toggle_custom_filter,          opts('Toggle Filter: Hidden'))
   vim.keymap.set('n', 'W',       api.tree.collapse_all,                  opts('Collapse'))
   vim.keymap.set('n', 'x',       api.fs.cut,                             opts('Cut'))
