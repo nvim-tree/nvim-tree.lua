@@ -13,6 +13,8 @@ body:
         * ensure that nvim-tree is updated to the latest version
 
         If you are experiencing performance issues, please [enable profiling](https://github.com/nvim-tree/nvim-tree.lua#performance-issues) and attach the logs.
+
+        Please note that nvim-tree team members do not have access to nor expertise with Windows. You will need to be an active participant during resolution.
   - type: textarea
     attributes:
       label: "Description"
@@ -36,6 +38,12 @@ body:
       placeholder: "Linux 5.16.11-arch1-1, macOS 11.5, Windows 10"
     validations:
       required: true
+  - type: input
+    attributes:
+      label: "Windows variant"
+      placeholder: "WSL, PowerShell, cygwin, msys"
+    validations:
+      required: false
   - type: input
     attributes:
       label: "nvim-tree version"

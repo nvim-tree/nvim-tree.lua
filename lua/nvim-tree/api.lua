@@ -2,13 +2,29 @@ local notify = require "nvim-tree.notify"
 
 local Api = {
   tree = {},
-  node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {} }, run = {}, open = {} },
+  node = {
+    navigate = {
+      sibling = {},
+      git = {},
+      diagnostics = {},
+      opened = {},
+    },
+    run = {},
+    open = {},
+  },
   events = {},
-  marks = { bulk = {}, navigate = {} },
-  fs = { copy = {} },
+  marks = {
+    bulk = {},
+    navigate = {},
+  },
+  fs = {
+    copy = {},
+  },
   git = {},
   live_filter = {},
-  config = { mappings = {} },
+  config = {
+    mappings = {},
+  },
   commands = {},
 }
 
@@ -125,6 +141,7 @@ Api.fs.rename_node = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":
 Api.fs.rename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t")
 Api.fs.rename_sub = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":p:h")
 Api.fs.rename_basename = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t:r")
+Api.fs.rename_full = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":p")
 Api.fs.cut = wrap_node(require("nvim-tree.actions.fs.copy-paste").cut)
 Api.fs.paste = wrap_node(require("nvim-tree.actions.fs.copy-paste").paste)
 Api.fs.clear_clipboard = wrap(require("nvim-tree.actions.fs.copy-paste").clear_clipboard)
@@ -154,16 +171,6 @@ local function open_or_expand_or_dir_up(mode)
   end
 end
 
-local function open_preview(node)
-  if node.name == ".." then
-    require("nvim-tree.actions.root.change-dir").fn ".."
-  elseif node.nodes then
-    require("nvim-tree.lib").expand_or_collapse(node)
-  else
-    edit("preview", node)
-  end
-end
-
 Api.node.open.edit = wrap_node(open_or_expand_or_dir_up "edit")
 Api.node.open.drop = wrap_node(open_or_expand_or_dir_up "drop")
 Api.node.open.tab_drop = wrap_node(open_or_expand_or_dir_up "tab_drop")
@@ -172,7 +179,8 @@ Api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up "edit_no_pic
 Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
 Api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up "split")
 Api.node.open.tab = wrap_node(open_or_expand_or_dir_up "tabnew")
-Api.node.open.preview = wrap_node(open_preview)
+Api.node.open.preview = wrap_node(open_or_expand_or_dir_up "preview")
+Api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up "preview_no_picker")
 
 Api.node.show_info_popup = wrap_node(require("nvim-tree.actions.node.file-popup").toggle_file_info)
 Api.node.run.cmd = wrap_node(require("nvim-tree.actions.node.run-command").run_file_command)

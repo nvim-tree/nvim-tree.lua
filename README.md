@@ -157,3 +157,9 @@ See [Showcases](https://github.com/nvim-tree/nvim-tree.lua/wiki/Showcases) wiki 
 
 Please add your own!
 
+## Team
+
+* [@alex-courtis](https://github.com/alex-courtis) Arch Linux
+* [@gegoune](https://github.com/gegoune) macOS
+* [@Akmadan23](https://github.com/Akmadan23) Linux
+* [@dependabot[bot]](https://github.com/apps/dependabot) Ubuntu Linux
