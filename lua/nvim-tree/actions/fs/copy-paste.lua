@@ -105,8 +105,14 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 
   if dest_stats then
+    local input_opts = {
+      prompt = "Rename to ",
+      default = dest,
+      completion = "dir",
+    }
+
     if source == dest then
-      vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
+      vim.ui.input(input_opts, function(new_dest)
         utils.clear_prompt()
         if new_dest then
           do_single_paste(source, new_dest, action_type, action_fn)
@@ -120,7 +126,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
         if item_short == "y" then
           on_process()
         elseif item_short == "" or item_short == "r" then
-          vim.ui.input({ prompt = "Rename to ", default = dest, completion = "dir" }, function(new_dest)
+          vim.ui.input(input_opts, function(new_dest)
             utils.clear_prompt()
             if new_dest then
               do_single_paste(source, new_dest, action_type, action_fn)

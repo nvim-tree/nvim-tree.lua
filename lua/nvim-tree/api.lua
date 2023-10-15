@@ -2,13 +2,29 @@ local notify = require "nvim-tree.notify"
 
 local Api = {
   tree = {},
-  node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {} }, run = {}, open = {} },
+  node = {
+    navigate = {
+      sibling = {},
+      git = {},
+      diagnostics = {},
+      opened = {},
+    },
+    run = {},
+    open = {},
+  },
   events = {},
-  marks = { bulk = {}, navigate = {} },
-  fs = { copy = {} },
+  marks = {
+    bulk = {},
+    navigate = {},
+  },
+  fs = {
+    copy = {},
+  },
   git = {},
   live_filter = {},
-  config = { mappings = {} },
+  config = {
+    mappings = {},
+  },
   commands = {},
 }
 
