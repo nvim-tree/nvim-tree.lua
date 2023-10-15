@@ -180,7 +180,7 @@ Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
 Api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up "split")
 Api.node.open.tab = wrap_node(open_or_expand_or_dir_up "tabnew")
 Api.node.open.preview = wrap_node(open_or_expand_or_dir_up "preview")
-Api.node.open.preview_no_window_picker = wrap_node(open_or_expand_or_dir_up "preview_no_picker")
+Api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up "preview_no_picker")
 
 Api.node.show_info_popup = wrap_node(require("nvim-tree.actions.node.file-popup").toggle_file_info)
 Api.node.run.cmd = wrap_node(require("nvim-tree.actions.node.run-command").run_file_command)
