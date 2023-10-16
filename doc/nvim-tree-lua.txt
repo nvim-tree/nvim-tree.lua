@@ -150,7 +150,6 @@ Show the mappings:  `g?`
 `<BS>`            Close Directory            |nvim-tree-api.node.navigate.parent_close()|
 `<CR>`            Open                       |nvim-tree-api.node.open.edit()|
 `<Tab>`           Open Preview               |nvim-tree-api.node.open.preview()|
-`<S-Tab>`         Open Preview: No Picker    |nvim-tree-api.node.open.preview_no_picker()|
 `>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
 `<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
 `.`               Run Command                |nvim-tree-api.node.run.cmd()|
@@ -2081,7 +2080,6 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', '<BS>',    api.node.navigate.parent_close,      opts('Close Directory'))
   vim.keymap.set('n', '<CR>',    api.node.open.edit,                  opts('Open'))
   vim.keymap.set('n', '<Tab>',   api.node.open.preview,               opts('Open Preview'))
-  vim.keymap.set('n', '<S-Tab>', api.node.open.preview_no_picker,     opts('Open Preview: No Picker'))
   vim.keymap.set('n', '>',       api.node.navigate.sibling.next,      opts('Next Sibling'))
   vim.keymap.set('n', '<',       api.node.navigate.sibling.prev,      opts('Previous Sibling'))
   vim.keymap.set('n', '.',       api.node.run.cmd,                    opts('Run Command'))
