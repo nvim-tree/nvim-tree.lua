@@ -41,10 +41,14 @@ function M.get_toplevel(cwd)
       if vim.v.shell_error ~= 0 then
         return nil, nil
       end
+      -- remove trailing newline(\n) character added by vim.fn.system
+      toplevel = toplevel:gsub("\n", "")
       git_dir = vim.fn.system("cygpath -w " .. vim.fn.shellescape(git_dir))
       if vim.v.shell_error ~= 0 then
         return nil, nil
       end
+      -- remove trailing newline(\n) character added by vim.fn.system
+      git_dir = git_dir:gsub("\n", "")
     end
     toplevel = toplevel:gsub("/", "\\")
     git_dir = git_dir:gsub("/", "\\")
