@@ -292,7 +292,7 @@ function M.format_bytes(bytes)
 
   pow = pow + 1
 
-  return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
+  return (units[pow] == nil) and (bytes .. units[1]) or (value .. units[pow] .. "i" .. units[1])
 end
 
 function M.key_by(tbl, key)
