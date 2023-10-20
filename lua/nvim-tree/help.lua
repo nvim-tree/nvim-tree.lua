@@ -91,10 +91,21 @@ local function compute()
     return { lhs = tidy_lhs(map.lhs), desc = tidy_desc(map.desc) }
   end, keymap.get_keymap())
 
-  -- sort roughly by lhs
-  table.sort(mappings, function(a, b)
-    return sort_lhs(a.lhs, b.lhs)
-  end)
+  -- sorter function for mappings
+  local sort_fn
+
+  if M.config.sort_by == "desc" then
+    sort_fn = function(a, b)
+      return a.desc:lower() < b.desc:lower()
+    end
+  else
+    -- by default sort roughly by lhs
+    sort_fn = function(a, b)
+      return sort_lhs(a.lhs, b.lhs)
+    end
+  end
+
+  table.sort(mappings, sort_fn)
 
   -- longest lhs and description
   local max_lhs = 0
@@ -202,6 +213,7 @@ end
 
 function M.setup(opts)
   M.config.cursorline = opts.view.cursorline
+  M.config.sort_by = opts.help.sort_by
 end
 
 return M
