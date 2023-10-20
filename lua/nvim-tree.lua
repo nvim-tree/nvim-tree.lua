@@ -670,7 +670,7 @@ local ACCEPTED_STRINGS = {
     },
   },
   help = {
-    sort_by = { "key", "desc" }
+    sort_by = { "key", "desc" },
   },
 }
 
