@@ -44,11 +44,12 @@ local function refactored(opts)
 
   -- 2023/10/08
   if type(opts.renderer) == "table" and type(opts.renderer.highlight_diagnostics) == "boolean" then
-    if opts.renderer.highlight_diagnostics then
-      opts.renderer.highlight_diagnostics = "name"
-    else
-      opts.renderer.highlight_diagnostics = "none"
-    end
+    opts.renderer.highlight_diagnostics = opts.renderer.highlight_diagnostics and "name" or "none"
+  end
+
+  -- 2023/10/21
+  if type(opts.renderer) == "table" and type(opts.renderer.highlight_git) == "boolean" then
+    opts.renderer.highlight_git = opts.renderer.highlight_git and "name" or "none"
   end
 end
 
