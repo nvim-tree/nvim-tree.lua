@@ -11,6 +11,10 @@ local function load_plugins()
       "wbthomason/packer.nvim",
       "nvim-tree/nvim-tree.lua",
       "nvim-tree/nvim-web-devicons",
+
+      -- UNCOMMENT for diagnostics issues
+      -- "neovim/nvim-lspconfig",
+
       -- ADD PLUGINS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
     },
     config = {
@@ -30,8 +34,16 @@ vim.cmd [[autocmd User PackerComplete ++once echo "Ready!" | lua setup()]]
 vim.opt.termguicolors = true
 vim.opt.cursorline = true
 
--- MODIFY NVIM-TREE SETTINGS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
 _G.setup = function()
-  require("nvim-tree").setup {}
-end
+  -- MODIFY NVIM-TREE SETTINGS THAT ARE _NECESSARY_ FOR REPRODUCING THE ISSUE
+  require("nvim-tree").setup {
+    diagnostics = {
+      -- ENABLE for diagnostics issues
+      enable = false,
+    },
+  }
 
+  -- SETUP your language server e.g. lua-language-server, see
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+  -- require("lspconfig").lua_ls.setup {}
+end
