@@ -7,7 +7,7 @@ local M = {
   hl_pos = HL_POSITION.none,
 }
 
----Bookmark highlight group and position when highlight_bookmark.
+---Bookmark highlight group and position when highlight_bookmark
 ---@param node table
 ---@return HL_POSITION position none when clipboard empty
 ---@return string|nil group only when node present in clipboard

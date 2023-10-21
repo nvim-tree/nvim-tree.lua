@@ -1,17 +1,22 @@
 local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
 
-local M = {}
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+
+local M = {
+  -- position for HL
+  HL_POS = HL_POSITION.none,
+}
 
 local function build_icons_table(i)
   local icons = {
-    staged = { str = i.staged, hl = { "NvimTreeGitStaged" }, ord = 1 },
-    unstaged = { str = i.unstaged, hl = { "NvimTreeGitDirty" }, ord = 2 },
-    renamed = { str = i.renamed, hl = { "NvimTreeGitRenamed" }, ord = 3 },
-    deleted = { str = i.deleted, hl = { "NvimTreeGitDeleted" }, ord = 4 },
-    unmerged = { str = i.unmerged, hl = { "NvimTreeGitMerge" }, ord = 5 },
-    untracked = { str = i.untracked, hl = { "NvimTreeGitNew" }, ord = 6 },
-    ignored = { str = i.ignored, hl = { "NvimTreeGitIgnored" }, ord = 7 },
+    staged = { str = i.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 },
+    unstaged = { str = i.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 },
+    renamed = { str = i.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 },
+    deleted = { str = i.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 },
+    unmerged = { str = i.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 },
+    untracked = { str = i.untracked, hl = { "NvimTreeGitNewIcon" }, ord = 6 },
+    ignored = { str = i.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 },
   }
   return {
     ["M "] = { icons.staged },
@@ -51,35 +56,35 @@ end
 
 local function build_hl_table()
   local file = {
-    ["M "] = "NvimTreeFileStaged",
-    ["C "] = "NvimTreeFileStaged",
-    ["AA"] = "NvimTreeFileStaged",
-    ["AD"] = "NvimTreeFileStaged",
-    ["MD"] = "NvimTreeFileStaged",
-    ["T "] = "NvimTreeFileStaged",
-    ["TT"] = "NvimTreeFileStaged",
-    [" M"] = "NvimTreeFileDirty",
-    ["CM"] = "NvimTreeFileDirty",
-    [" C"] = "NvimTreeFileDirty",
-    [" T"] = "NvimTreeFileDirty",
-    ["MM"] = "NvimTreeFileDirty",
-    ["AM"] = "NvimTreeFileDirty",
-    dirty = "NvimTreeFileDirty",
-    ["A "] = "NvimTreeFileNew",
-    ["??"] = "NvimTreeFileNew",
-    ["AU"] = "NvimTreeFileMerge",
-    ["UU"] = "NvimTreeFileMerge",
-    ["UD"] = "NvimTreeFileMerge",
-    ["DU"] = "NvimTreeFileMerge",
-    ["UA"] = "NvimTreeFileMerge",
-    [" D"] = "NvimTreeFileDeleted",
-    ["DD"] = "NvimTreeFileDeleted",
-    ["RD"] = "NvimTreeFileDeleted",
-    ["D "] = "NvimTreeFileDeleted",
-    ["R "] = "NvimTreeFileRenamed",
-    ["RM"] = "NvimTreeFileRenamed",
-    [" R"] = "NvimTreeFileRenamed",
-    ["!!"] = "NvimTreeFileIgnored",
+    ["M "] = "NvimTreeGitFileStagedHL",
+    ["C "] = "NvimTreeGitFileStagedHL",
+    ["AA"] = "NvimTreeGitFileStagedHL",
+    ["AD"] = "NvimTreeGitFileStagedHL",
+    ["MD"] = "NvimTreeGitFileStagedHL",
+    ["T "] = "NvimTreeGitFileStagedHL",
+    ["TT"] = "NvimTreeGitFileStagedHL",
+    [" M"] = "NvimTreeGitFileDirtyHL",
+    ["CM"] = "NvimTreeGitFileDirtyHL",
+    [" C"] = "NvimTreeGitFileDirtyHL",
+    [" T"] = "NvimTreeGitFileDirtyHL",
+    ["MM"] = "NvimTreeGitFileDirtyHL",
+    ["AM"] = "NvimTreeGitFileDirtyHL",
+    dirty = "NvimTreeGitFileDirtyHL",
+    ["A "] = "NvimTreeGitFileNewHL",
+    ["??"] = "NvimTreeGitFileNewHL",
+    ["AU"] = "NvimTreeGitFileMergeHL",
+    ["UU"] = "NvimTreeGitFileMergeHL",
+    ["UD"] = "NvimTreeGitFileMergeHL",
+    ["DU"] = "NvimTreeGitFileMergeHL",
+    ["UA"] = "NvimTreeGitFileMergeHL",
+    [" D"] = "NvimTreeGitFileDeletedHL",
+    ["DD"] = "NvimTreeGitFileDeletedHL",
+    ["RD"] = "NvimTreeGitFileDeletedHL",
+    ["D "] = "NvimTreeGitFileDeletedHL",
+    ["R "] = "NvimTreeGitFileRenamedHL",
+    ["RM"] = "NvimTreeGitFileRenamedHL",
+    [" R"] = "NvimTreeGitFileRenamedHL",
+    ["!!"] = "NvimTreeGitFileIgnoredHL",
     [" A"] = "none",
   }
 
@@ -91,7 +96,15 @@ local function build_hl_table()
   return file, folder
 end
 
-local function nil_() end
+local function setup_signs(i)
+  vim.fn.sign_define("NvimTreeGitDirtyIcon", { text = i.unstaged, texthl = "NvimTreeGitDirtyIcon" })
+  vim.fn.sign_define("NvimTreeGitStagedIcon", { text = i.staged, texthl = "NvimTreeGitStagedIcon" })
+  vim.fn.sign_define("NvimTreeGitMergeIcon", { text = i.unmerged, texthl = "NvimTreeGitMergeIcon" })
+  vim.fn.sign_define("NvimTreeGitRenamedIcon", { text = i.renamed, texthl = "NvimTreeGitRenamedIcon" })
+  vim.fn.sign_define("NvimTreeGitNewIcon", { text = i.untracked, texthl = "NvimTreeGitNewIcon" })
+  vim.fn.sign_define("NvimTreeGitDeletedIcon", { text = i.deleted, texthl = "NvimTreeGitDeletedIcon" })
+  vim.fn.sign_define("NvimTreeGitIgnoredIcon", { text = i.ignored, texthl = "NvimTreeGitIgnoredIcon" })
+end
 
 local function warn_status(git_status)
   notify.warn(string.format("Unrecognized git state '%s'", git_status))
@@ -99,7 +112,11 @@ end
 
 ---@param node table
 ---@return HighlightedString[]|nil
-local function get_icons_(node)
+function M.get_icons(node)
+  if not M.config.icons.show.git then
+    return nil
+  end
+
   local git_status = explorer_node.get_git_status(node)
   if git_status == nil then
     return nil
@@ -139,26 +156,24 @@ local function get_icons_(node)
   return iconss
 end
 
-function M.setup_signs(i)
-  vim.fn.sign_define("NvimTreeGitDirty", { text = i.unstaged, texthl = "NvimTreeGitDirty" })
-  vim.fn.sign_define("NvimTreeGitStaged", { text = i.staged, texthl = "NvimTreeGitStaged" })
-  vim.fn.sign_define("NvimTreeGitMerge", { text = i.unmerged, texthl = "NvimTreeGitMerge" })
-  vim.fn.sign_define("NvimTreeGitRenamed", { text = i.renamed, texthl = "NvimTreeGitRenamed" })
-  vim.fn.sign_define("NvimTreeGitNew", { text = i.untracked, texthl = "NvimTreeGitNew" })
-  vim.fn.sign_define("NvimTreeGitDeleted", { text = i.deleted, texthl = "NvimTreeGitDeleted" })
-  vim.fn.sign_define("NvimTreeGitIgnored", { text = i.ignored, texthl = "NvimTreeGitIgnored" })
-end
+---Git highlight group and position when highlight_git
+---@param node table
+---@return HL_POSITION position none when no status
+---@return string|nil group only when status
+function M.get_highlight(node)
+  if not node or M.HL_POS == HL_POSITION.none then
+    return HL_POSITION.none, nil
+  end
 
-local function get_highlight_(node)
   local git_status = explorer_node.get_git_status(node)
-  if git_status == nil then
-    return
+  if not git_status then
+    return HL_POSITION.none, nil
   end
 
   if node.nodes then
-    return M.folder_hl[git_status[1]]
+    return M.HL_POS, M.folder_hl[git_status[1]]
   else
-    return M.file_hl[git_status[1]]
+    return M.HL_POS, M.file_hl[git_status[1]]
   end
 end
 
@@ -169,23 +184,11 @@ function M.setup(opts)
 
   M.file_hl, M.folder_hl = build_hl_table()
 
-  if opts.renderer.icons.git_placement == "signcolumn" then
-    M.setup_signs(opts.renderer.icons.glyphs.git)
-  end
+  setup_signs(opts.renderer.icons.glyphs.git)
 
-  if opts.renderer.icons.show.git then
-    M.get_icons = get_icons_
-  else
-    M.get_icons = nil_
+  if opts.git.enable and opts.renderer.highlight_git then
+    M.HL_POS = HL_POSITION[opts.renderer.highlight_git]
   end
-
-  if opts.renderer.highlight_git then
-    M.get_highlight = get_highlight_
-  else
-    M.get_highlight = nil_
-  end
-
-  M.git_show_on_open_dirs = opts.git.show_on_open_dirs
 end
 
 return M
