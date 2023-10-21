@@ -252,15 +252,19 @@ function M.print_clipboard()
 end
 
 local function copy_to_clipboard(content)
+  local clipboard_name
   if M.config.actions.use_system_clipboard == true then
     vim.fn.setreg("+", content)
     vim.fn.setreg('"', content)
-    return notify.info(string.format("Copied %s to system clipboard!", content))
+    clipboard_name = "system"
   else
     vim.fn.setreg('"', content)
     vim.fn.setreg("1", content)
-    return notify.info(string.format("Copied %s to neovim clipboard!", content))
+    clipboard_name = "neovim"
   end
+
+  vim.api.nvim_exec_autocmds("TextYankPost")
+  return notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
 end
 
 function M.copy_filename(node)
