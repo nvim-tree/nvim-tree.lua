@@ -496,6 +496,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     show_on_open_dirs = true,
     disable_for_dirs = {},
     timeout = 400,
+    cygwin_support = false,
   },
   diagnostics = {
     enable = false,
@@ -795,6 +796,7 @@ function M.setup(conf)
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)
   require("nvim-tree.git").setup(opts)
+  require("nvim-tree.git.utils").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)

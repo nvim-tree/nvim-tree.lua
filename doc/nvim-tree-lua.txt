@@ -474,6 +474,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         show_on_open_dirs = true,
         disable_for_dirs = {},
         timeout = 400,
+        cygwin_support = false,
       },
       diagnostics = {
         enable = false,
@@ -1120,6 +1121,10 @@ May be relative, evaluated via |fnamemodify| `":p"`
 Kills the git process after some time if it takes too long.
 Git integration will be disabled after 10 git jobs exceed this timeout.
   Type: `number`, Default: `400` (ms)
+
+*nvim-tree.git.cygwin_support*
+Use `cygpath` if available to resolve paths for git.
+  Type: `boolean`, Default: `false`
 
 ==============================================================================
  5.8 OPTS: DIAGNOSTICS                            *nvim-tree-opts-diagnostics*
