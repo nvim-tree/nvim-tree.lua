@@ -85,7 +85,7 @@ end
 local function compute()
   local head_lhs = "nvim-tree mappings"
   local head_rhs1 = "exit: q"
-  local head_rhs2 = string.format("sort by %s: s", M.config.sort_by)
+  local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
 
   -- formatted lhs and desc from active keymap
   local mappings = vim.tbl_map(function(map)
