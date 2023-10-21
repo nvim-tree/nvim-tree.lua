@@ -303,12 +303,6 @@ end
 function Builder:_get_highlight_override(node, unloaded_bufnr)
   local name_hl, icon_hl
 
-  -- git
-  local git_highlight = git.get_highlight(node)
-  if git_highlight then
-    name_hl = git_highlight
-  end
-
   -- opened file
   if self.highlight_opened_files and vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr then
     if self.highlight_opened_files == "all" or self.highlight_opened_files == "name" then
@@ -445,6 +439,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
+  self:_append_highlight(node, git.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, bookmarks.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)

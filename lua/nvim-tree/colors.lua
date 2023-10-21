@@ -70,31 +70,31 @@ local DEFAULT_LINKS = {
   NvimTreeLiveFilterValue = "ModeMsg",
 
   -- Git Icon
-  NvimTreeGitDeleted = "Statement",
-  NvimTreeGitDirty = "Statement",
-  NvimTreeGitIgnored = "Comment",
-  NvimTreeGitMerge = "Constant",
-  NvimTreeGitNew = "PreProc",
-  NvimTreeGitRenamed = "PreProc",
-  NvimTreeGitStaged = "Constant",
+  NvimTreeGitDeletedIcon = "Statement",
+  NvimTreeGitDirtyIcon = "Statement",
+  NvimTreeGitIgnoredIcon = "Comment",
+  NvimTreeGitMergeIcon = "Constant",
+  NvimTreeGitNewIcon = "PreProc",
+  NvimTreeGitRenamedIcon = "PreProc",
+  NvimTreeGitStagedIcon = "Constant",
 
   -- Git File Text
-  NvimTreeFileDirty = "NvimTreeGitDirty",
-  NvimTreeFileStaged = "NvimTreeGitStaged",
-  NvimTreeFileMerge = "NvimTreeGitMerge",
-  NvimTreeFileRenamed = "NvimTreeGitRenamed",
-  NvimTreeFileNew = "NvimTreeGitNew",
-  NvimTreeFileDeleted = "NvimTreeGitDeleted",
-  NvimTreeFileIgnored = "NvimTreeGitIgnored",
+  NvimTreeGitFileDeletedHL = "NvimTreeGitDeletedIcon",
+  NvimTreeGitFileDirtyHL = "NvimTreeGitDirtyIcon",
+  NvimTreeGitFileIgnoredHL = "NvimTreeGitIgnoredIcon",
+  NvimTreeGitFileMergeHL = "NvimTreeGitMergeIcon",
+  NvimTreeGitFileNewHL = "NvimTreeGitNewIcon",
+  NvimTreeGitFileRenamedHL = "NvimTreeGitRenamedIcon",
+  NvimTreeGitFileStagedHL = "NvimTreeGitStagedIcon",
 
   -- Git Folder Text
-  NvimTreeFolderDirty = "NvimTreeFileDirty",
-  NvimTreeFolderStaged = "NvimTreeFileStaged",
-  NvimTreeFolderMerge = "NvimTreeFileMerge",
-  NvimTreeFolderRenamed = "NvimTreeFileRenamed",
-  NvimTreeFolderNew = "NvimTreeFileNew",
-  NvimTreeFolderDeleted = "NvimTreeFileDeleted",
-  NvimTreeFolderIgnored = "NvimTreeFileIgnored",
+  NvimTreeGitFolderDeletedHL = "NvimTreeGitFileDeletedHL",
+  NvimTreeGitFolderDirtyHL = "NvimTreeGitFileDirtyHL",
+  NvimTreeGitFolderIgnoredHL = "NvimTreeGitFileIgnoredHL",
+  NvimTreeGitFolderMergeHL = "NvimTreeGitFileMergeHL",
+  NvimTreeGitFolderNewHL = "NvimTreeGitFileNewHL",
+  NvimTreeGitFolderRenamedHL = "NvimTreeGitFileRenamedHL",
+  NvimTreeGitFolderStagedHL = "NvimTreeGitFileStagedHL",
 
   -- Diagnostics Icon
   NvimTreeDiagnosticErrorIcon = "DiagnosticError",
@@ -109,22 +109,48 @@ local DEFAULT_LINKS = {
   NvimTreeDiagnosticHintFileHL = "DiagnosticUnderlineHint",
 
   -- Diagnostics Folder Highlight
-  NvimTreeDiagnosticErrorFolderHL = "DiagnosticUnderlineError",
-  NvimTreeDiagnosticWarnFolderHL = "DiagnosticUnderlineWarn",
-  NvimTreeDiagnosticInfoFolderHL = "DiagnosticUnderlineInfo",
-  NvimTreeDiagnosticHintFolderHL = "DiagnosticUnderlineHint",
+  NvimTreeDiagnosticErrorFolderHL = "NvimTreeDiagnosticErrorFileHL",
+  NvimTreeDiagnosticWarnFolderHL = "NvimTreeDiagnosticWarnFileHL",
+  NvimTreeDiagnosticInfoFolderHL = "NvimTreeDiagnosticInfoFileHL",
+  NvimTreeDiagnosticHintFolderHL = "NvimTreeDiagnosticHintFileHL",
 }
 
 -- nvim-tree highlight groups to legacy
 local LEGACY_LINKS = {
+  NvimTreeGitDeletedIcon = "NvimTreeGitDeleted",
+  NvimTreeGitDirtyIcon = "NvimTreeGitDirty",
+  NvimTreeGitIgnoredIcon = "NvimTreeGitIgnored",
+  NvimTreeGitMergeIcon = "NvimTreeGitMerge",
+  NvimTreeGitNewIcon = "NvimTreeGitNew",
+  NvimTreeGitRenamedIcon = "NvimTreeGitRenamed",
+  NvimTreeGitStagedIcon = "NvimTreeGitStaged",
+
+  NvimTreeGitFileDeletedHL = "NvimTreeFileDeleted",
+  NvimTreeGitFileDirtyHL = "NvimTreeFileDirty",
+  NvimTreeGitFileIgnoredHL = "NvimTreeFileIgnored",
+  NvimTreeGitFileMergeHL = "NvimTreeFileMerge",
+  NvimTreeGitFileNewHL = "NvimTreeFileNew",
+  NvimTreeGitFileRenamedHL = "NvimTreeFileRenamed",
+  NvimTreeGitFileStagedHL = "NvimTreeFileStaged",
+
+  NvimTreeGitFolderDeletedHL = "NvimTreeFolderDeleted",
+  NvimTreeGitFolderDirtyHL = "NvimTreeFolderDirty",
+  NvimTreeGitFolderIgnoredHL = "NvimTreeFolderIgnored",
+  NvimTreeGitFolderMergeHL = "NvimTreeFolderMerge",
+  NvimTreeGitFolderNewHL = "NvimTreeFolderNew",
+  NvimTreeGitFolderRenamedHL = "NvimTreeFolderRenamed",
+  NvimTreeGitFolderStagedHL = "NvimTreeFolderStaged",
+
   NvimTreeDiagnosticErrorIcon = "NvimTreeLspDiagnosticsError",
   NvimTreeDiagnosticWarnIcon = "NvimTreeLspDiagnosticsWarning",
   NvimTreeDiagnosticInfoIcon = "NvimTreeLspDiagnosticsInformation",
   NvimTreeDiagnosticHintIcon = "NvimTreeLspDiagnosticsHint",
+
   NvimTreeDiagnosticErrorFileHL = "NvimTreeLspDiagnosticsErrorText",
   NvimTreeDiagnosticWarnFileHL = "NvimTreeLspDiagnosticsWarningText",
   NvimTreeDiagnosticInfoFileHL = "NvimTreeLspDiagnosticsInformationText",
   NvimTreeDiagnosticHintFileHL = "NvimTreeLspDiagnosticsHintText",
+
   NvimTreeDiagnosticErrorFolderHL = "NvimTreeLspDiagnosticsErrorFolderText",
   NvimTreeDiagnosticWarnFolderHL = "NvimTreeLspDiagnosticsWarningFolderText",
   NvimTreeDiagnosticInfoFolderHL = "NvimTreeLspDiagnosticsInformationFolderText",

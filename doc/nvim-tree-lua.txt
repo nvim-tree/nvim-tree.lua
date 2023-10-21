@@ -388,7 +388,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         indent_width = 2,
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
         symlink_destination = true,
-        highlight_git = false,
+        highlight_git = "none",
         highlight_diagnostics = "none",
         highlight_opened_files = "none",
         highlight_modified = "none",
@@ -833,12 +833,13 @@ Whether to show the destination of the symlink.
   Type: `boolean`, Default: `true`
 
 *nvim-tree.renderer.highlight_git*
-Enable highlight for git attributes using `NvimTreeGit*` highlight groups.
+Enable highlight for git attributes using `NvimTreeGit*HL` highlight groups.
 Requires |nvim-tree.git.enable|
-  Type: `boolean`, Default: `false`
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
+  Type: `string`, Default: `"none"`
 
 *nvim-tree.renderer.highlight_diagnostics*
-Enable highlight for diagnostics using `NvimTreeDiagnostic*HL` highlight groups. 
+Enable highlight for diagnostics using `NvimTreeDiagnostic*HL` highlight groups.
 Requires |nvim-tree.diagnostics.enable|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
   Type: `string`, Default: `"none"`
@@ -2280,7 +2281,7 @@ Folder Text: >
     NvimTreeSymlinkFolderName   Directory
 <
 Icon: >
-    NvimTreeFolderIcon          "guifg=#8094b4 ctermfg=Blue"
+    NvimTreeFolderIcon          guifg=#8094b4 ctermfg=Blue
     NvimTreeFileIcon            NvimTreeNormal
     NvimTreeSymlinkIcon         NvimTreeNormal
     NvimTreeOpenedFileIcon      NvimTreeOpenedFile
@@ -2303,38 +2304,38 @@ Bookmark Highlight: >
     NvimTreeBookmarkHL          SpellLocal
 <
 Picker: >
-    NvimTreeWindowPicker        "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan"
+    NvimTreeWindowPicker        guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan
 <
 Live Filter: >
     NvimTreeLiveFilterPrefix    PreProc
     NvimTreeLiveFilterValue     ModeMsg
 <
 Git Icon: >
-    NvimTreeGitDeleted          Statement
-    NvimTreeGitDirty            Statement
-    NvimTreeGitIgnored          Comment
-    NvimTreeGitMerge            Constant
-    NvimTreeGitNew              PreProc
-    NvimTreeGitRenamed          PreProc
-    NvimTreeGitStaged           Constant
+    NvimTreeGitDeletedIcon      Statement
+    NvimTreeGitDirtyIcon        Statement
+    NvimTreeGitIgnoredIcon      Comment
+    NvimTreeGitMergeIcon        Constant
+    NvimTreeGitNewIcon          PreProc
+    NvimTreeGitRenamedIcon      PreProc
+    NvimTreeGitStagedIcon       Constant
 <
 Git File Text: >
-    NvimTreeFileDirty           NvimTreeGitDirty
-    NvimTreeFileStaged          NvimTreeGitStaged
-    NvimTreeFileMerge           NvimTreeGitMerge
-    NvimTreeFileRenamed         NvimTreeGitRenamed
-    NvimTreeFileNew             NvimTreeGitNew
-    NvimTreeFileDeleted         NvimTreeGitDeleted
-    NvimTreeFileIgnored         NvimTreeGitIgnored
+    NvimTreeGitFileDeletedHL    NvimTreeGitDeletedIcon
+    NvimTreeGitFileDirtyHL      NvimTreeGitDirtyIcon
+    NvimTreeGitFileIgnoredHL    NvimTreeGitIgnoredIcon
+    NvimTreeGitFileMergeHL      NvimTreeGitMergeIcon
+    NvimTreeGitFileNewHL        NvimTreeGitNewIcon
+    NvimTreeGitFileRenamedHL    NvimTreeGitRenamedIcon
+    NvimTreeGitFileStagedHL     NvimTreeGitStagedIcon
 <
 Git Folder Text: >
-    NvimTreeFolderDirty         NvimTreeFileDirty
-    NvimTreeFolderStaged        NvimTreeFileStaged
-    NvimTreeFolderMerge         NvimTreeFileMerge
-    NvimTreeFolderRenamed       NvimTreeFileRenamed
-    NvimTreeFolderNew           NvimTreeFileNew
-    NvimTreeFolderDeleted       NvimTreeFileDeleted
-    NvimTreeFolderIgnored       NvimTreeFileIgnored
+    NvimTreeGitFolderDeletedHL  NvimTreeGitFileDeletedHL
+    NvimTreeGitFolderDirtyHL    NvimTreeGitFileDirtyHL
+    NvimTreeGitFolderIgnoredHL  NvimTreeGitFileIgnoredHL
+    NvimTreeGitFolderMergeHL    NvimTreeGitFileMergeHL
+    NvimTreeGitFolderNewHL      NvimTreeGitFileNewHL
+    NvimTreeGitFolderRenamedHL  NvimTreeGitFileRenamedHL
+    NvimTreeGitFolderStagedHL   NvimTreeGitFileStagedHL
 <
 Diagnostics Icon: >
     NvimTreeDiagnosticErrorIcon         DiagnosticError
@@ -2349,12 +2350,11 @@ Diagnostics File Highlight: >
     NvimTreeDiagnosticHintFileHL        DiagnosticUnderlineHint
 <
 Diagnostics Folder Highlight: >
-    NvimTreeDiagnosticErrorFolderHL     DiagnosticUnderlineError
-    NvimTreeDiagnosticWarnFolderHL      DiagnosticUnderlineWarn
-    NvimTreeDiagnosticInfoFolderHL      DiagnosticUnderlineInfo
-    NvimTreeDiagnosticHintFolderHL      DiagnosticUnderlineHint
+    NvimTreeDiagnosticErrorFolderHL     NvimTreeDiagnosticErrorFileHL
+    NvimTreeDiagnosticWarnFolderHL      NvimTreeDiagnosticWarnFileHL
+    NvimTreeDiagnosticInfoFolderHL      NvimTreeDiagnosticInfoFileHL
+    NvimTreeDiagnosticHintFolderHL      NvimTreeDiagnosticHintFileHL
 <
-
 ==============================================================================
  8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
 
@@ -2370,7 +2370,7 @@ Diagnostics Folder Highlight: >
 - `highlight_xxx` is additive instead of overwriting. See
   |nvim-tree-opts-renderer| for precedence.
 
-Legacy style may be applied: >
+Legacy diagnostic HL style may be applied: >
 
     :hi link NvimTreeDiagnosticErrorFileHL      DiagnosticError
     :hi link NvimTreeDiagnosticWarnFileHL       DiagnosticWarn
@@ -2384,6 +2384,30 @@ Legacy style may be applied: >
 <
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
+
+    NvimTreeGitDeletedIcon      NvimTreeGitDeleted
+    NvimTreeGitDirtyIcon        NvimTreeGitDirty
+    NvimTreeGitIgnoredIcon      NvimTreeGitIgnored
+    NvimTreeGitMergeIcon        NvimTreeGitMerge
+    NvimTreeGitNewIcon          NvimTreeGitNew
+    NvimTreeGitRenamedIcon      NvimTreeGitRenamed
+    NvimTreeGitStagedIcon       NvimTreeGitStaged
+
+    NvimTreeGitFileDeletedHL    NvimTreeFileDeleted
+    NvimTreeGitFileDirtyHL      NvimTreeFileDirty
+    NvimTreeGitFileIgnoredHL    NvimTreeFileIgnored
+    NvimTreeGitFileMergeHL      NvimTreeFileMerge
+    NvimTreeGitFileNewHL        NvimTreeFileNew
+    NvimTreeGitFileRenamedHL    NvimTreeFileRenamed
+    NvimTreeGitFileStagedHL     NvimTreeFileStaged
+
+    NvimTreeGitFolderDeletedHL  NvimTreeFolderDeleted
+    NvimTreeGitFolderDirtyHL    NvimTreeFolderDirty
+    NvimTreeGitFolderIgnoredHL  NvimTreeFolderIgnored
+    NvimTreeGitFolderMergeHL    NvimTreeFolderMerge
+    NvimTreeGitFolderNewHL      NvimTreeFolderNew
+    NvimTreeGitFolderRenamedHL  NvimTreeFolderRenamed
+    NvimTreeGitFolderStagedHL   NvimTreeFolderStaged
 
     NvimTreeLspDiagnosticsError                 NvimTreeDiagnosticErrorIcon
     NvimTreeLspDiagnosticsWarning               NvimTreeDiagnosticWarnIcon

@@ -13,7 +13,7 @@ local M = {
   HL_POS = HL_POSITION.none,
 }
 
----Diagnostics text highlight group when highlight_diagnostics.
+---Diagnostics highlight group and position when highlight_diagnostics.
 ---@param node table
 ---@return HL_POSITION position none when no status
 ---@return string|nil group only when status
