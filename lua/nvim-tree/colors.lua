@@ -31,7 +31,6 @@ local DEFAULT_LINKS = {
   -- File Text
   NvimTreeExecFile = "Constant",
   NvimTreeImageFile = "PreProc",
-  NvimTreeModifiedFile = "Constant",
   NvimTreeOpenedFile = "Constant",
   NvimTreeSpecialFile = "PreProc",
   NvimTreeSymlink = "Statement",
@@ -65,6 +64,11 @@ local DEFAULT_LINKS = {
   -- Bookmark Highlight
   NvimTreeBookmarkHL = "SpellLocal",
 
+  -- Modified
+  NvimTreeModifiedIcon = "Constant",
+  NvimTreeModifiedFileHL = "NvimTreeModifiedIcon",
+  NvimTreeModifiedFolderHL = "NvimTreeModifiedFileHL",
+
   -- LiveFilter
   NvimTreeLiveFilterPrefix = "PreProc",
   NvimTreeLiveFilterValue = "ModeMsg",
@@ -78,7 +82,7 @@ local DEFAULT_LINKS = {
   NvimTreeGitRenamedIcon = "PreProc",
   NvimTreeGitStagedIcon = "Constant",
 
-  -- Git File Text
+  -- Git File Highlight
   NvimTreeGitFileDeletedHL = "NvimTreeGitDeletedIcon",
   NvimTreeGitFileDirtyHL = "NvimTreeGitDirtyIcon",
   NvimTreeGitFileIgnoredHL = "NvimTreeGitIgnoredIcon",
@@ -87,7 +91,7 @@ local DEFAULT_LINKS = {
   NvimTreeGitFileRenamedHL = "NvimTreeGitRenamedIcon",
   NvimTreeGitFileStagedHL = "NvimTreeGitStagedIcon",
 
-  -- Git Folder Text
+  -- Git Folder Highlight
   NvimTreeGitFolderDeletedHL = "NvimTreeGitFileDeletedHL",
   NvimTreeGitFolderDirtyHL = "NvimTreeGitFileDirtyHL",
   NvimTreeGitFolderIgnoredHL = "NvimTreeGitFileIgnoredHL",
@@ -117,6 +121,8 @@ local DEFAULT_LINKS = {
 
 -- nvim-tree highlight groups to legacy
 local LEGACY_LINKS = {
+  NvimTreeModifiedIcon = "NvimTreeModifiedFile",
+
   NvimTreeGitDeletedIcon = "NvimTreeGitDeleted",
   NvimTreeGitDirtyIcon = "NvimTreeGitDirty",
   NvimTreeGitIgnoredIcon = "NvimTreeGitIgnored",

@@ -2268,7 +2268,6 @@ Standard: >
 File Text: >
     NvimTreeExecFile            Constant
     NvimTreeImageFile           PreProc
-    NvimTreeModifiedFile        Constant
     NvimTreeOpenedFile          Constant
     NvimTreeSpecialFile         PreProc
     NvimTreeSymlink             Statement
@@ -2297,11 +2296,14 @@ Clipboard: >
     NvimTreeCopiedHL            SpellRare
     NvimTreeCutHL               SpellBad
 <
-Bookmark Icon: >
+Bookmarks: >
     NvimTreeBookmark            Constant
-<
-Bookmark Highlight: >
     NvimTreeBookmarkHL          SpellLocal
+<
+Modified: >
+    NvimTreeModifiedIcon        Constant
+    NvimTreeModifiedFileHL      NvimTreeModifiedIcon
+    NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
 <
 Picker: >
     NvimTreeWindowPicker        guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan
@@ -2319,7 +2321,7 @@ Git Icon: >
     NvimTreeGitRenamedIcon      PreProc
     NvimTreeGitStagedIcon       Constant
 <
-Git File Text: >
+Git File File Highlight: >
     NvimTreeGitFileDeletedHL    NvimTreeGitDeletedIcon
     NvimTreeGitFileDirtyHL      NvimTreeGitDirtyIcon
     NvimTreeGitFileIgnoredHL    NvimTreeGitIgnoredIcon
@@ -2328,7 +2330,7 @@ Git File Text: >
     NvimTreeGitFileRenamedHL    NvimTreeGitRenamedIcon
     NvimTreeGitFileStagedHL     NvimTreeGitStagedIcon
 <
-Git Folder Text: >
+Git Folder Folder Highlight: >
     NvimTreeGitFolderDeletedHL  NvimTreeGitFileDeletedHL
     NvimTreeGitFolderDirtyHL    NvimTreeGitFileDirtyHL
     NvimTreeGitFolderIgnoredHL  NvimTreeGitFileIgnoredHL
@@ -2384,6 +2386,8 @@ Legacy diagnostic HL style may be applied: >
 <
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
+
+    NvimTreeModifiedIcon        NvimTreeModifiedFile
 
     NvimTreeGitDeletedIcon      NvimTreeGitDeleted
     NvimTreeGitDirtyIcon        NvimTreeGitDirty
