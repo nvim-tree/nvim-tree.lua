@@ -263,7 +263,7 @@ local function copy_to_clipboard(content)
     clipboard_name = "neovim"
   end
 
-  vim.api.nvim_exec_autocmds "TextYankPost"
+  vim.api.nvim_exec_autocmds("TextYankPost", {})
   return notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
 end
 
