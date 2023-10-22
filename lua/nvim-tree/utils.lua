@@ -281,7 +281,7 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remo
 end
 
 function M.format_bytes(bytes)
-  local units = { "B", "K", "M", "G", "T" }
+  local units = { "B", "K", "M", "G", "T", "P", "E", "Z", "Y" }
 
   bytes = math.max(bytes, 0)
   local pow = math.floor((bytes and math.log(bytes) or 0) / math.log(1024))
@@ -292,7 +292,7 @@ function M.format_bytes(bytes)
 
   pow = pow + 1
 
-  return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
+  return (units[pow] == nil) and (bytes .. units[1]) or (value .. units[pow] .. "i" .. units[1])
 end
 
 function M.key_by(tbl, key)
