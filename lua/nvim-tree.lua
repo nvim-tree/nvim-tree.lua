@@ -588,6 +588,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     threshold = vim.log.levels.INFO,
     absolute_path = true,
   },
+  help = {
+    sort_by = "key",
+  },
   ui = {
     confirm = {
       remove = true,
@@ -666,6 +669,9 @@ local ACCEPTED_STRINGS = {
       diagnostics_placement = { "before", "after", "signcolumn" },
       bookmarks_placement = { "before", "after", "signcolumn" },
     },
+  },
+  help = {
+    sort_by = { "key", "desc" },
   },
 }
 
