@@ -1,8 +1,9 @@
-local M = {}
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 
-local has_cygpath = vim.fn.executable "cygpath" == 1
+local M = {
+  use_cygpath = false,
+}
 
 --- Retrieve the git toplevel directory
 --- @param cwd string path
@@ -35,7 +36,7 @@ function M.get_toplevel(cwd)
   -- git always returns path with forward slashes
   if vim.fn.has "win32" == 1 then
     -- msys2 git support
-    if has_cygpath then
+    if M.use_cygpath then
       toplevel = vim.fn.system("cygpath -w " .. vim.fn.shellescape(toplevel))
       if vim.v.shell_error ~= 0 then
         return nil, nil
@@ -110,6 +111,12 @@ function M.file_status_to_dir_status(status, cwd)
     end
   end
   return r
+end
+
+function M.setup(opts)
+  if opts.git.cygwin_support then
+    M.use_cygpath = vim.fn.executable "cygpath" == 1
+  end
 end
 
 return M

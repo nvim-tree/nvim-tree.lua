@@ -2,6 +2,8 @@
 
 Thank you for contributing.
 
+See [Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) for environment setup, tips and tools.
+
 ## Styling and formatting
 
 Code is formatted using luacheck, and linted using stylua.
@@ -24,7 +26,7 @@ Once you did, you should run the `scripts/update-help.sh`.
 When adding new options, you should declare the defaults in the main `nvim-tree.lua` file.
 Once you did, you should run the `scripts/update-help.sh`.
 
-Documentation for options should also be added, see how this is done after `nvim-tree.disable_netrw` in the `nvim-tree-lua.txt` file.
+Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-tree-lua.txt`
 
 ## Pull Request
 
