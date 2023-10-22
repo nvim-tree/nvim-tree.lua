@@ -58,11 +58,6 @@ function Builder:configure_opened_file_highlighting(highlight_opened_files)
   return self
 end
 
-function Builder:configure_modified_highlighting(highlight_modified)
-  self.highlight_modified = highlight_modified
-  return self
-end
-
 function Builder:configure_icon_padding(padding)
   self.icon_padding = padding or " "
   return self
@@ -294,18 +289,6 @@ function Builder:_get_highlight_override(node, unloaded_bufnr)
       icon_hl = "NvimTreeOpenedFileIcon"
     end
   end
-
-  -- modified file
-  local modified_highlight = modified.get_highlight(node)
-  if modified_highlight then
-    if self.highlight_modified == "all" or self.highlight_modified == "name" then
-      name_hl = modified_highlight
-    end
-    if self.highlight_modified == "all" or self.highlight_modified == "icon" then
-      icon_hl = modified_highlight
-    end
-  end
-
   return icon_hl, name_hl
 end
 
@@ -422,6 +405,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
 
   -- extra highighting
   self:_append_highlight(node, git.get_highlight, icon.hl, name.hl)
+  -- TODO opened
+  self:_append_highlight(node, modified.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, bookmarks.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)

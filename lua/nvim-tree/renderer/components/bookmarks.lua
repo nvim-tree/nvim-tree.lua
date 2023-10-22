@@ -3,7 +3,7 @@ local marks = require "nvim-tree.marks"
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
 local M = {
-  ICON = {},
+  icon = nil,
   hl_pos = HL_POSITION.none,
 }
 
@@ -28,8 +28,8 @@ end
 ---@param node table
 ---@return HighlightedString|nil bookmark icon
 function M.get_icon(node)
-  if M.config.renderer.icons.show.bookmarks and marks.get_mark(node) then
-    return M.ICON
+  if M.icon and marks.get_mark(node) then
+    return M.icon
   end
 end
 
@@ -40,12 +40,16 @@ function M.setup(opts)
 
   M.hl_pos = HL_POSITION[opts.renderer.highlight_bookmarks] or HL_POSITION.none
 
-  M.ICON = {
-    str = opts.renderer.icons.glyphs.bookmark,
-    hl = { "NvimTreeBookmark" },
-  }
-
-  vim.fn.sign_define(M.ICON.hl[1], { text = M.ICON.str, texthl = M.ICON.hl[1] })
+  if opts.renderer.icons.show.bookmarks then
+    M.icon = {
+      str = opts.renderer.icons.glyphs.bookmark,
+      hl = { "NvimTreeBookmark" },
+    }
+    vim.fn.sign_define(M.icon.hl[1], {
+      text = M.icon.str,
+      texthl = M.icon.hl[1],
+    })
+  end
 end
 
 return M
