@@ -2,7 +2,6 @@ local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local events = require "nvim-tree.events"
-local modified = require "nvim-tree.renderer.components.modified"
 
 local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
@@ -11,10 +10,13 @@ local git = require "nvim-tree.renderer.components.git"
 local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
-local bookmarks = require "nvim-tree.renderer.components.bookmarks"
+
+local DecoratorBookmark = require "nvim-tree.renderer.decorator.bookmark"
+local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
 
 local M = {
   last_highlights = {},
+  decorators = {},
 }
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -66,7 +68,7 @@ function M.draw(unloaded_bufnr)
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl, signs = Builder.new(core.get_cwd())
+  local lines, hl, signs = Builder.new(core.get_cwd(), M.decorators)
     :configure_root_label(M.config.root_folder_label)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
@@ -75,8 +77,6 @@ function M.draw(unloaded_bufnr)
     :configure_icon_padding(M.config.icons.padding)
     :configure_git_icons_placement(M.config.icons.git_placement)
     :configure_diagnostics_icon_placement(M.config.icons.diagnostics_placement)
-    :configure_bookmark_icon_placement(M.config.icons.bookmarks_placement)
-    :configure_modified_placement(M.config.icons.modified_placement)
     :configure_symlink_destination(M.config.symlink_destination)
     :configure_filter(live_filter.filter, live_filter.prefix)
     :configure_group_name_modifier(M.config.group_empty)
@@ -101,15 +101,22 @@ end
 
 function M.setup(opts)
   M.config = opts.renderer
-  M.config.modified = opts.modified
 
   _padding.setup(opts)
   full_name.setup(opts)
   git.setup(opts)
-  modified.setup(opts)
   diagnostics.setup(opts)
-  bookmarks.setup(opts)
   icon_component.setup(opts)
+
+  -- TODO change to array: precedence should follow order
+  M.decorators = {
+    bookmark = DecoratorBookmark:new(opts),
+    modified = DecoratorModified:new(opts),
+  }
+
+  for _, d in pairs(M.decorators) do
+    log.line("dev", "d = %s", vim.inspect(d))
+  end
 end
 
 return M

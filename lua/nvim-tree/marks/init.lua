@@ -45,7 +45,7 @@ end
 ---@param node Node|MinimalNode
 ---@return table|nil
 function M.get_mark(node)
-  return NvimTreeMarks[node.absolute_path]
+  return node and NvimTreeMarks[node.absolute_path]
 end
 
 ---@return table

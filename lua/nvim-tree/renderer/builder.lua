@@ -5,18 +5,19 @@ local notify = require "nvim-tree.notify"
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
-local modified = require "nvim-tree.renderer.components.modified"
 local diagnostics = require "nvim-tree.renderer.components.diagnostics"
-local bookmarks = require "nvim-tree.renderer.components.bookmarks"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
+--- @class Builder
+--- @field decorators Decorator[]
 local Builder = {}
 Builder.__index = Builder
 
 local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
 
-function Builder.new(root_cwd)
+function Builder.new(root_cwd, decorators)
   return setmetatable({
     index = 0,
     depth = 0,
@@ -25,6 +26,7 @@ function Builder.new(root_cwd)
     markers = {},
     signs = {},
     root_cwd = root_cwd,
+    decorators = decorators,
   }, Builder)
 end
 
@@ -77,22 +79,6 @@ function Builder:configure_diagnostics_icon_placement(where)
     where = "before" -- default before
   end
   self.diagnostics_placement = where
-  return self
-end
-
-function Builder:configure_bookmark_icon_placement(where)
-  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
-    where = "before" -- default before
-  end
-  self.bookmarks_placement = where
-  return self
-end
-
-function Builder:configure_modified_placement(where)
-  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
-    where = "after" -- default after
-  end
-  self.modified_placement = where
   return self
 end
 
@@ -265,8 +251,8 @@ end
 ---@param node table
 ---@return HighlightedString|nil icon
 function Builder:_get_modified_icon(node)
-  local modified_icon = modified.get_icon(node)
-  if modified_icon and self.modified_placement == "signcolumn" then
+  local modified_icon = self.decorators.modified:get_icon(node)
+  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.signcolumn then
     table.insert(self.signs, {
       sign = modified_icon.hl[1],
       lnum = self.index + 1,
@@ -280,8 +266,8 @@ end
 ---@param node table
 ---@return HighlightedString[]|nil icon
 function Builder:_get_bookmark_icon(node)
-  local bookmark_icon = bookmarks.get_icon(node)
-  if bookmark_icon and self.bookmarks_placement == "signcolumn" then
+  local bookmark_icon = self.decorators.bookmark:get_icon(node)
+  if bookmark_icon and self.decorators.bookmark.icon_placement == ICON_PLACEMENT.signcolumn then
     table.insert(self.signs, {
       sign = bookmark_icon.hl[1],
       lnum = self.index + 1,
@@ -327,6 +313,23 @@ function Builder:_append_highlight(node, get_hl, icon_hl, name_hl)
   end
 end
 
+---Append optional highlighting to icon or name.
+---@param node table
+---@param decorator Decorator
+---@param icon_hl string[] icons to append to
+---@param name_hl string[] names to append to
+function Builder:_append_dec_highlight(node, decorator, icon_hl, name_hl)
+  local pos, hl = decorator:get_highlight(node)
+  if pos ~= HL_POSITION.none and hl then
+    if pos == HL_POSITION.all or pos == HL_POSITION.icon then
+      table.insert(icon_hl, hl)
+    end
+    if pos == HL_POSITION.all or pos == HL_POSITION.name then
+      table.insert(name_hl, hl)
+    end
+  end
+end
+
 ---@param indent_markers HighlightedString[]
 ---@param arrows HighlightedString[]|nil
 ---@param icon HighlightedString
@@ -359,13 +362,13 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
   if git_icons and self.git_placement == "before" then
     add_to_end(line, git_icons)
   end
-  if modified_icon and self.modified_placement == "before" then
+  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.before then
     add_to_end(line, { modified_icon })
   end
   if diagnostics_icon and self.diagnostics_placement == "before" then
     add_to_end(line, { diagnostics_icon })
   end
-  if bookmark_icon and self.bookmarks_placement == "before" then
+  if bookmark_icon and self.decorators.bookmark.icon_placement == ICON_PLACEMENT.before then
     add_to_end(line, { bookmark_icon })
   end
 
@@ -374,13 +377,13 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
   if git_icons and self.git_placement == "after" then
     add_to_end(line, git_icons)
   end
-  if modified_icon and self.modified_placement == "after" then
+  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.after then
     add_to_end(line, { modified_icon })
   end
   if diagnostics_icon and self.diagnostics_placement == "after" then
     add_to_end(line, { diagnostics_icon })
   end
-  if bookmark_icon and self.bookmarks_placement == "after" then
+  if bookmark_icon and self.decorators.bookmark.icon_placement == ICON_PLACEMENT.after then
     add_to_end(line, { bookmark_icon })
   end
 
@@ -423,9 +426,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
 
   -- extra highighting
   self:_append_highlight(node, git.get_highlight, icon.hl, name.hl)
-  -- TODO opened
-  self:_append_highlight(node, modified.get_highlight, icon.hl, name.hl)
-  self:_append_highlight(node, bookmarks.get_highlight, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.bookmark, icon.hl, name.hl)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
 
