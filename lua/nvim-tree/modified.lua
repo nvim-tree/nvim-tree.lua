@@ -26,7 +26,8 @@ end
 ---@param node table
 ---@return boolean
 function M.is_modified(node)
-  return M.config.enable
+  return node
+    and M.config.enable
     and M._record[node.absolute_path]
     and (not node.nodes or M.config.show_on_dirs)
     and (not node.open or M.config.show_on_open_dirs)

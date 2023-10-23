@@ -37,7 +37,7 @@ function M.clear_marks()
 end
 
 function M.get_mark(node)
-  return NvimTreeMarks[node.absolute_path]
+  return node and NvimTreeMarks[node.absolute_path]
 end
 
 function M.get_marks()
