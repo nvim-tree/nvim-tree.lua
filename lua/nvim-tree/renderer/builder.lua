@@ -1,7 +1,6 @@
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 
-local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
@@ -194,7 +193,7 @@ end
 ---@param node table
 ---@return HighlightedString[]|nil icon
 function Builder:_get_git_icons(node)
-  local git_icons = git.get_icons(node)
+  local git_icons = self.decorators.git:get_icons(node)
   if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
     table.insert(self.signs, {
       sign = git_icons[1].hl[1],
@@ -398,7 +397,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   end
 
   -- extra highighting
-  self:_append_highlight(node, git.get_highlight, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.git, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.bookmarks, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.diagnostics, icon.hl, name.hl)

@@ -2,11 +2,16 @@ local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
-local M = {
-  -- position for HL
-  HL_POS = HL_POSITION.none,
-}
+local Decorator = require "nvim-tree.renderer.decorator"
+
+--- @class DecoratorGit: Decorator
+--- @field enabled boolean
+--- @field file_hl string[]
+--- @field folder_hl string[]
+--- @field git_icons table
+local DecoratorGit = Decorator:new()
 
 local function build_icons_table(i)
   local icons = {
@@ -106,14 +111,37 @@ local function setup_signs(i)
   vim.fn.sign_define("NvimTreeGitIgnoredIcon", { text = i.ignored, texthl = "NvimTreeGitIgnoredIcon" })
 end
 
-local function warn_status(git_status)
-  notify.warn(string.format("Unrecognized git state '%s'", git_status))
+--- @param opts table
+--- @return DecoratorGit
+function DecoratorGit:new(opts)
+  local o = Decorator.new(self, {
+    hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
+    icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
+  })
+  ---@cast o DecoratorGit
+
+  o.enabled = opts.git.enable
+  if not o.enabled then
+    return o
+  end
+
+  if o.hl_pos ~= HL_POSITION.none then
+    o.file_hl, o.folder_hl = build_hl_table()
+  end
+
+  if opts.renderer.icons.show.git then
+    o.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
+    setup_signs(opts.renderer.icons.glyphs.git)
+  end
+
+  return o
 end
 
----@param node table
----@return HighlightedString[]|nil
-function M.get_icons(node)
-  if not M.config.icons.show.git then
+--- Git icons: git.enable, renderer.icons.show.git and node has status
+--- @param node table
+--- @return HighlightedString[]|nil modified icon
+function DecoratorGit:get_icons(node)
+  if not node or not self.enabled or not self.git_icons then
     return nil
   end
 
@@ -126,10 +154,10 @@ function M.get_icons(node)
   local iconss = {}
 
   for _, s in pairs(git_status) do
-    local icons = M.git_icons[s]
+    local icons = self.git_icons[s]
     if not icons then
-      if not M.config.highlight_git then
-        warn_status(s)
+      if self.hl_pos == HL_POSITION.none then
+        notify.warn(string.format("Unrecognized git state '%s'", git_status))
       end
       return nil
     end
@@ -156,39 +184,22 @@ function M.get_icons(node)
   return iconss
 end
 
----Git highlight group and position when highlight_git
----@param node table
----@return HL_POSITION position none when no status
----@return string|nil group only when status
-function M.get_highlight(node)
-  if not node or M.HL_POS == HL_POSITION.none then
-    return HL_POSITION.none, nil
+--- Git highlight: git.enable, renderer.highlight_git and node has status
+function DecoratorGit:get_highlight(node)
+  if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
+    return nil
   end
 
   local git_status = explorer_node.get_git_status(node)
   if not git_status then
-    return HL_POSITION.none, nil
+    return nil
   end
 
   if node.nodes then
-    return M.HL_POS, M.folder_hl[git_status[1]]
+    return self.folder_hl[git_status[1]]
   else
-    return M.HL_POS, M.file_hl[git_status[1]]
+    return self.file_hl[git_status[1]]
   end
 end
 
-function M.setup(opts)
-  M.config = opts.renderer
-
-  M.git_icons = build_icons_table(opts.renderer.icons.glyphs.git)
-
-  M.file_hl, M.folder_hl = build_hl_table()
-
-  setup_signs(opts.renderer.icons.glyphs.git)
-
-  if opts.git.enable and opts.renderer.highlight_git then
-    M.HL_POS = HL_POSITION[opts.renderer.highlight_git]
-  end
-end
-
-return M
+return DecoratorGit

@@ -6,12 +6,12 @@ local events = require "nvim-tree.events"
 local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
-local git = require "nvim-tree.renderer.components.git"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
 
 local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
 local DecoratorDiagnostics = require "nvim-tree.renderer.decorator.diagnostics"
+local DecoratorGit = require "nvim-tree.renderer.decorator.git"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
 
 local M = {
@@ -102,11 +102,11 @@ function M.setup(opts)
 
   _padding.setup(opts)
   full_name.setup(opts)
-  git.setup(opts)
   icon_component.setup(opts)
 
   -- TODO change to array: precedence should follow order
   M.decorators = {
+    git = DecoratorGit:new(opts),
     bookmarks = DecoratorBookmarks:new(opts),
     diagnostics = DecoratorDiagnostics:new(opts),
     modified = DecoratorModified:new(opts),
