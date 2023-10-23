@@ -63,14 +63,6 @@ function Builder:configure_icon_padding(padding)
   return self
 end
 
-function Builder:configure_git_icons_placement(where)
-  if where ~= "after" and where ~= "before" and where ~= "signcolumn" then
-    where = "before" -- default before
-  end
-  self.git_placement = where
-  return self
-end
-
 function Builder:configure_symlink_destination(show)
   self.symlink_destination = show
   return self
@@ -194,7 +186,7 @@ end
 ---@return HighlightedString[]|nil icon
 function Builder:_get_git_icons(node)
   local git_icons = self.decorators.git:get_icons(node)
-  if git_icons and #git_icons > 0 and self.git_placement == "signcolumn" then
+  if git_icons and #git_icons > 0 and self.decorators.git.icon_placement == ICON_PLACEMENT.signcolumn then
     table.insert(self.signs, {
       sign = git_icons[1].hl[1],
       lnum = self.index + 1,
@@ -331,7 +323,7 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
 
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
-  if git_icons and self.git_placement == "before" then
+  if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.before then
     add_to_end(line, git_icons)
   end
   if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.before then
@@ -346,7 +338,7 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
 
   add_to_end(line, { name })
 
-  if git_icons and self.git_placement == "after" then
+  if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.after then
     add_to_end(line, git_icons)
   end
   if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.after then
