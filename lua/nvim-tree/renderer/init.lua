@@ -7,11 +7,11 @@ local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
 local git = require "nvim-tree.renderer.components.git"
-local diagnostics = require "nvim-tree.renderer.components.diagnostics"
 local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
 
-local DecoratorBookmark = require "nvim-tree.renderer.decorator.bookmark"
+local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
+local DecoratorDiagnostics = require "nvim-tree.renderer.decorator.diagnostics"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
 
 local M = {
@@ -76,7 +76,6 @@ function M.draw(unloaded_bufnr)
     :configure_opened_file_highlighting(M.config.highlight_opened_files)
     :configure_icon_padding(M.config.icons.padding)
     :configure_git_icons_placement(M.config.icons.git_placement)
-    :configure_diagnostics_icon_placement(M.config.icons.diagnostics_placement)
     :configure_symlink_destination(M.config.symlink_destination)
     :configure_filter(live_filter.filter, live_filter.prefix)
     :configure_group_name_modifier(M.config.group_empty)
@@ -105,18 +104,14 @@ function M.setup(opts)
   _padding.setup(opts)
   full_name.setup(opts)
   git.setup(opts)
-  diagnostics.setup(opts)
   icon_component.setup(opts)
 
   -- TODO change to array: precedence should follow order
   M.decorators = {
-    bookmark = DecoratorBookmark:new(opts),
+    bookmarks = DecoratorBookmarks:new(opts),
+    diagnostics = DecoratorDiagnostics:new(opts),
     modified = DecoratorModified:new(opts),
   }
-
-  for _, d in pairs(M.decorators) do
-    log.line("dev", "d = %s", vim.inspect(d))
-  end
 end
 
 return M

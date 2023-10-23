@@ -20,15 +20,15 @@ end
 --- @return HighlightedString|nil modified icon
 function Decorator:get_icon(node) end
 
---- Node highlight
+--- Node highlight group
 --- @param node table
---- @return HL_POSITION|nil position
 --- @return string|nil group
 function Decorator:get_highlight(node) end
 
 ---@diagnostic enable: unused-local
 
 --- Define a sign
+--- @protected
 --- @param icon HighlightedString|nil
 function Decorator:define_sign(icon)
   if icon and #icon.hl > 0 then
