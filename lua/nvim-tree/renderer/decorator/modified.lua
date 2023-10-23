@@ -45,13 +45,13 @@ end
 --- Modified highlight: modified.enable, renderer.highlight_modified and node is modified
 function DecoratorModified:get_highlight(node)
   if not self.enabled or self.hl_pos == HL_POSITION.none or not modified.is_modified(node) then
-    return HL_POSITION.none, nil
+    return nil
   end
 
   if node.nodes then
-    return self.hl_pos, "NvimTreeModifiedFolderHL"
+    return "NvimTreeModifiedFolderHL"
   else
-    return self.hl_pos, "NvimTreeModifiedFileHL"
+    return "NvimTreeModifiedFileHL"
   end
 end
 
