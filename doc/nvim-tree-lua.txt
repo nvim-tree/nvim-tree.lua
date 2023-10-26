@@ -573,6 +573,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         confirm = {
           remove = true,
           trash = true,
+          default_yes = false,
         },
       },
       experimental = {},
@@ -1458,6 +1459,10 @@ Confirmation prompts.
     *nvim-tree.ui.confirm.trash*  (previously `trash.require_confirm`)
     Prompt before trashing.
       Type: `boolean`, Default: `true`
+
+    *nvim-tree.ui.confirm.default_yes*
+    If `true` the prompt will be `"Y/n"`, otherwise `"y/N"`.
+      Type: `boolean`, Default: `false`
 
 ==============================================================================
  5.19 OPTS: EXPERIMENTAL                         *nvim-tree-opts-experimental*
