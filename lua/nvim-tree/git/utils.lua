@@ -38,13 +38,13 @@ function M.get_toplevel(cwd)
     -- msys2 git support
     -- cygpath calls must in array format to avoid shell compatibility issues
     if M.use_cygpath then
-      toplevel = vim.fn.system({ "cygpath", "-w", toplevel })
+      toplevel = vim.fn.system { "cygpath", "-w", toplevel }
       if vim.v.shell_error ~= 0 then
         return nil, nil
       end
       -- remove trailing newline(\n) character added by vim.fn.system
       toplevel = toplevel:gsub("\n", "")
-      git_dir = vim.fn.system({ "cygpath", "-w", git_dir })
+      git_dir = vim.fn.system { "cygpath", "-w", git_dir }
       if vim.v.shell_error ~= 0 then
         return nil, nil
       end
