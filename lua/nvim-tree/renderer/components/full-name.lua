@@ -34,9 +34,6 @@ end
 
 local function show()
   local line_nr = vim.api.nvim_win_get_cursor(0)[1]
-  if line_nr == 1 and require("nvim-tree.view").is_root_folder_visible() then
-    return
-  end
   if vim.wo.wrap then
     return
   end
@@ -60,8 +57,9 @@ local function show()
   end
 
   M.popup_win = vim.api.nvim_open_win(vim.api.nvim_create_buf(false, false), false, {
-    relative = "win",
-    bufpos = { vim.fn.line "." - 2, 0 },
+    relative = "cursor",
+    row = 0,
+    col = 1 - vim.fn.getcursorcharpos()[3],
     width = math.min(text_width, vim.o.columns - 2),
     height = 1,
     noautocmd = true,
@@ -71,7 +69,7 @@ local function show()
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
   local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = 1 })
   vim.api.nvim_win_call(M.popup_win, function()
-    vim.fn.setbufline("%", 1, line)
+    vim.api.nvim_buf_set_lines(0, 0, -1, true, { line })
     for _, extmark in ipairs(extmarks) do
       local hl = extmark[4]
       vim.api.nvim_buf_add_highlight(0, ns_id, hl.hl_group, 0, extmark[3], hl.end_col)
