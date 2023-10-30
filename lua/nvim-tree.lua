@@ -595,6 +595,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     confirm = {
       remove = true,
       trash = true,
+      default_yes = false,
     },
   },
   experimental = {},
