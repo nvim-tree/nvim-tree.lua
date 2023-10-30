@@ -280,19 +280,38 @@ function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remo
   end
 end
 
+local function round(value)
+  -- Amount of digits to round to after floating point.
+  local digits = 2
+  local round_number = 10 ^ digits
+  return math.floor((value * round_number) + 0.5) / round_number
+end
+
 function M.format_bytes(bytes)
-  local units = { "B", "K", "M", "G", "T" }
+  local units = { "B", "K", "M", "G", "T", "P", "E", "Z", "Y" }
+  local i = "i" -- bInary
 
   bytes = math.max(bytes, 0)
   local pow = math.floor((bytes and math.log(bytes) or 0) / math.log(1024))
   pow = math.min(pow, #units)
 
-  local value = bytes / (1024 ^ pow)
-  value = math.floor((value * 10) + 0.5) / 10
+  local value = round(bytes / (1024 ^ pow))
 
   pow = pow + 1
 
-  return (units[pow] == nil) and (bytes .. "B") or (value .. units[pow])
+  -- units[pow] == nil when size == 0 B or size >= 1024 YiB
+  if units[pow] == nil or pow == 1 then
+    if bytes < 1024 then
+      return bytes .. " " .. units[1]
+    else
+      -- Use the biggest adopted multiple of 2 instead of bytes.
+      value = round(bytes / (1024 ^ (#units - 1)))
+      -- For big numbers decimal part is not useful.
+      return string.format("%.0f %s%s%s", value, units[#units], i, units[1])
+    end
+  else
+    return value .. " " .. units[pow] .. i .. units[1]
+  end
 end
 
 function M.key_by(tbl, key)

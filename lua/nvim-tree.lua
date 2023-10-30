@@ -496,6 +496,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     show_on_open_dirs = true,
     disable_for_dirs = {},
     timeout = 400,
+    cygwin_support = false,
   },
   diagnostics = {
     enable = false,
@@ -587,10 +588,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     threshold = vim.log.levels.INFO,
     absolute_path = true,
   },
+  help = {
+    sort_by = "key",
+  },
   ui = {
     confirm = {
       remove = true,
       trash = true,
+      default_yes = false,
     },
   },
   experimental = {},
@@ -665,6 +670,9 @@ local ACCEPTED_STRINGS = {
       diagnostics_placement = { "before", "after", "signcolumn" },
       bookmarks_placement = { "before", "after", "signcolumn" },
     },
+  },
+  help = {
+    sort_by = { "key", "desc" },
   },
 }
 
@@ -794,6 +802,7 @@ function M.setup(conf)
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)
   require("nvim-tree.git").setup(opts)
+  require("nvim-tree.git.utils").setup(opts)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
