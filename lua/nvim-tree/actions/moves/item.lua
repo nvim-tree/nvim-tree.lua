@@ -37,7 +37,7 @@ function M.fn(where, what)
 
       if node == node_cur then
         cur = line
-      elseif valid and cur and nex == nil then
+      elseif valid and cur then
         nex = line
         break
       end
