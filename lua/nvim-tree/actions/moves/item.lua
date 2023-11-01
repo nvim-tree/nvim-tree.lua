@@ -9,11 +9,20 @@ local M = {}
 function M.fn(where, what)
   return function()
     local node_cur = lib.get_node_at_cursor()
-    local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
+    local first_node_line = core.get_nodes_starting_line()
+    local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
+    local iter_start, iter_end, iter_step, cur, first, nex
 
-    local cur, first, prev, nex = nil, nil, nil, nil
-    for line, node in pairs(nodes_by_line) do
+    if where == "next" then
+      iter_start, iter_end, iter_step = first_node_line, #nodes_by_line, 1
+    elseif where == "prev" then
+      iter_start, iter_end, iter_step = #nodes_by_line, first_node_line, -1
+    end
+
+    for line = iter_start, iter_end, iter_step do
+      local node = nodes_by_line[line]
       local valid = false
+
       if what == "git" then
         valid = explorer_node.get_git_status(node) ~= nil
       elseif what == "diag" then
@@ -28,29 +37,16 @@ function M.fn(where, what)
 
       if node == node_cur then
         cur = line
-      elseif valid then
-        if not cur then
-          prev = line
-        end
-        if cur and not nex then
-          nex = line
-          break
-        end
+      elseif valid and cur and not nex then
+        nex = line
+        break
       end
     end
 
-    if where == "prev" then
-      if prev then
-        view.set_cursor { prev, 0 }
-      end
-    else
-      if cur then
-        if nex then
-          view.set_cursor { nex, 0 }
-        end
-      elseif first then
-        view.set_cursor { first, 0 }
-      end
+    if nex then
+      view.set_cursor { nex, 0 }
+    elseif first then
+      view.set_cursor { first, 0 }
     end
   end
 end
