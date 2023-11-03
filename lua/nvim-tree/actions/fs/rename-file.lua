@@ -1,7 +1,7 @@
-local lib = require "nvim-tree.lib"
-local utils = require "nvim-tree.utils"
-local events = require "nvim-tree.events"
-local notify = require "nvim-tree.notify"
+local lib = require("nvim-tree.lib")
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
+local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -34,7 +34,7 @@ function M.rename(node, to)
   if not success then
     return notify.warn(err_fmt(notify_from, notify_to, err))
   end
-  notify.info(notify_from .. "  " .. notify_to)
+  notify.info(notify_from .. " -> " .. notify_to)
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
@@ -53,7 +53,9 @@ function M.fn(default_modifier)
 
     -- support for only specific modifiers have been implemented
     if not ALLOWED_MODIFIERS[modifier] then
-      return notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
+      return notify.warn(
+        "Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ",")
+      )
     end
 
     node = lib.get_last_group_node(node)
