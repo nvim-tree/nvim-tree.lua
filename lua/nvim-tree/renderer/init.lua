@@ -26,14 +26,14 @@ local SIGN_GROUP = "NvimTreeRendererSigns"
 
 local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 
-local function _draw(bufnr, lines, hl, signs)
+local function _draw(bufnr, lines, hl, sign_names)
   vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   M.render_hl(bufnr, hl)
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
   vim.fn.sign_unplace(SIGN_GROUP)
-  for _, sign in pairs(signs) do
-    vim.fn.sign_place(0, SIGN_GROUP, sign.sign, bufnr, { lnum = sign.lnum, priority = sign.priority })
+  for i, sign_name in pairs(sign_names) do
+    vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1, })
   end
 end
 
@@ -71,7 +71,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl, signs = Builder.new(core.get_cwd(), M.decorators)
+  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.decorators)
     :configure_root_label(M.config.root_folder_label)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
@@ -83,7 +83,7 @@ function M.draw()
     :build(core.get_explorer())
     :unwrap()
 
-  _draw(bufnr, lines, hl, signs)
+  _draw(bufnr, lines, hl, sign_names)
 
   M.last_highlights = hl
 

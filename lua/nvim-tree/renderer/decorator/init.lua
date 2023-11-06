@@ -1,3 +1,5 @@
+local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
+
 --- @class Decorator
 --- @field hl_pos HL_POSITION
 --- @field icon_placement ICON_PLACEMENT
@@ -14,18 +16,34 @@ function Decorator:new(o)
 end
 
 ---@diagnostic disable: unused-local
+-- luacheck: push no unused args
 
 --- Node icon
---- @param _ table node
+--- @param node table
 --- @return HighlightedString|nil modified icon
-function Decorator:get_icon(_) end
+function Decorator:get_icon(node) end
 
 --- Node highlight group
---- @param _ table node
+--- @param node table
 --- @return string|nil group
-function Decorator:get_highlight(_) end
+function Decorator:get_highlight(node) end
+
+--- Get the icon as a sign if appropriate
+--- @param node table
+--- @return string|nil name
+function Decorator:sign_name(node)
+  if self.icon_placement ~= ICON_PLACEMENT.signcolumn then
+    return
+  end
+
+  local icon = self:get_icon(node)
+  if icon then
+    return icon.hl[1]
+  end
+end
 
 ---@diagnostic enable: unused-local
+-- luacheck: pop
 
 --- Define a sign
 --- @protected

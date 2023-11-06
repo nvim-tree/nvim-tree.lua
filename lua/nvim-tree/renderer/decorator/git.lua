@@ -184,6 +184,18 @@ function DecoratorGit:get_icons(node)
   return iconss
 end
 
+--- Get the first icon as the sign if appropriate
+function DecoratorGit:sign_name(node)
+  if self.icon_placement ~= ICON_PLACEMENT.signcolumn then
+    return
+  end
+
+  local icons = self:get_icons(node)
+  if icons and #icons > 0 then
+    return icons[1].hl[1]
+  end
+end
+
 --- Git highlight: git.enable, renderer.highlight_git and node has status
 function DecoratorGit:get_highlight(node)
   if not node or not self.enabled or self.hl_pos == HL_POSITION.none then

@@ -21,7 +21,7 @@ function Builder.new(root_cwd, decorators)
     highlights = {},
     lines = {},
     markers = {},
-    signs = {},
+    sign_names = {},
     root_cwd = root_cwd,
     decorators = decorators,
   }, Builder)
@@ -177,66 +177,6 @@ function Builder:_build_file(node)
   return icon, { str = node.name, hl = { hl } }
 end
 
----@param node table
----@return HighlightedString[]|nil icon
-function Builder:_get_git_icons(node)
-  local git_icons = self.decorators.git:get_icons(node)
-  if git_icons and #git_icons > 0 and self.decorators.git.icon_placement == ICON_PLACEMENT.signcolumn then
-    table.insert(self.signs, {
-      sign = git_icons[1].hl[1],
-      lnum = self.index + 1,
-      priority = 1,
-    })
-    git_icons = nil
-  end
-  return git_icons
-end
-
----@param node table
----@return HighlightedString[]|nil icon
-function Builder:_get_diagnostics_icon(node)
-  local diagnostics_icon = self.decorators.diagnostics:get_icon(node)
-  if diagnostics_icon and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.signcolumn then
-    table.insert(self.signs, {
-      sign = diagnostics_icon.hl[1],
-      lnum = self.index + 1,
-      priority = 2,
-    })
-    diagnostics_icon = nil
-  end
-  return diagnostics_icon
-end
-
----@param node table
----@return HighlightedString|nil icon
-function Builder:_get_modified_icon(node)
-  local modified_icon = self.decorators.modified:get_icon(node)
-  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.signcolumn then
-    table.insert(self.signs, {
-      sign = modified_icon.hl[1],
-      lnum = self.index + 1,
-      priority = 3,
-    })
-    modified_icon = nil
-  end
-  return modified_icon
-end
-
----@param node table
----@return HighlightedString[]|nil icon
-function Builder:_get_bookmark_icon(node)
-  local bookmark_icon = self.decorators.bookmarks:get_icon(node)
-  if bookmark_icon and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.signcolumn then
-    table.insert(self.signs, {
-      sign = bookmark_icon.hl[1],
-      lnum = self.index + 1,
-      priority = 4,
-    })
-    bookmark_icon = nil
-  end
-  return bookmark_icon
-end
-
 ---Append optional highlighting to icon or name.
 ---@param node table
 ---@param decorator Decorator
@@ -319,11 +259,12 @@ function Builder:_build_line(node, idx, num_children)
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
-  -- adds icons to signcolumn
-  local bookmark_icon = self:_get_bookmark_icon(node)
-  local git_icons = self:_get_git_icons(node)
-  local modified_icon = self:_get_modified_icon(node)
-  local diagnostics_icon = self:_get_diagnostics_icon(node)
+  -- signs
+  local sign_name = self.decorators.bookmarks:sign_name(node)
+  sign_name = self.decorators.git:sign_name(node) or sign_name
+  sign_name = self.decorators.diagnostics:sign_name(node) or sign_name
+  sign_name = self.decorators.modified:sign_name(node) or sign_name
+  self.sign_names[self.index] = sign_name
 
   -- main components
   local is_folder = node.nodes ~= nil
@@ -337,7 +278,7 @@ function Builder:_build_line(node, idx, num_children)
     icon, name = self:_build_file(node)
   end
 
-  -- extra highighting
+  -- highighting
   self:_append_dec_highlight(node, self.decorators.git, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.opened, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
@@ -346,7 +287,16 @@ function Builder:_build_line(node, idx, num_children)
   self:_append_dec_highlight(node, self.decorators.copied, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.cut, icon.hl, name.hl)
 
-  local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
+  local line = self:_format_line(
+    indent_markers,
+    arrows,
+    icon,
+    name,
+    self.decorators.git:get_icons(node),
+    self.decorators.diagnostics:get_icon(node),
+    self.decorators.modified:get_icon(node),
+    self.decorators.bookmarks:get_icon(node)
+  )
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1
@@ -420,7 +370,7 @@ function Builder:build_header(show_header)
 end
 
 function Builder:unwrap()
-  return self.lines, self.highlights, self.signs
+  return self.lines, self.highlights, self.sign_names
 end
 
 return Builder
