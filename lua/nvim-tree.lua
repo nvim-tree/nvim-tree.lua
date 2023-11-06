@@ -11,7 +11,7 @@ local core = require "nvim-tree.core"
 local reloaders = require "nvim-tree.actions.reloaders.reloaders"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
-local modified = require "nvim-tree.modified"
+local buffers = require "nvim-tree.buffers"
 local find_file = require "nvim-tree.actions.tree.find-file"
 local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
@@ -231,7 +231,9 @@ local function setup_autocommands(opts)
       -- update opened file buffers
       if (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          reloaders.reload_explorer(nil, data.buf)
+          buffers.set_unloaded_bufnr(data.buf)
+          reloaders.reload_explorer()
+          buffers.reset_unloaded_bufnr()
         end)
       end
     end,
@@ -335,7 +337,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
         utils.debounce("Buf:modified", opts.view.debounce_delay, function()
-          modified.reload()
+          buffers.reload_modified()
           reloaders.reload_explorer()
         end)
       end,
@@ -809,7 +811,7 @@ function M.setup(conf)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
-  require("nvim-tree.modified").setup(opts)
+  require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
