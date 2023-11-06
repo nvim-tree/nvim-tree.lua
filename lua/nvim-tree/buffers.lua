@@ -3,9 +3,6 @@ local M = {}
 ---@type table<string, boolean> record of which file is modified
 M._modified = {}
 
----@type number unloaded_bufnr for the duration of BufUnload
-M._unloaded_bufnr = nil
-
 ---refresh M._modified
 function M.reload_modified()
   M._modified = {}
@@ -36,22 +33,11 @@ function M.is_modified(node)
     and (not node.open or M.config.modified.show_on_open_dirs)
 end
 
----A buffer exists for the node's absolute path and it's not in the middle of a BufUnload handler.
+---A buffer exists for the node's absolute path
 ---@param node table
 ---@return boolean
 function M.is_opened(node)
-  return node and vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.bufnr(node.absolute_path) ~= M._unloaded_bufnr
-end
-
----Set the unloaded bufnr - at the start of the BufUnload handler.
----@param bufnr number
-function M.set_unloaded_bufnr(bufnr)
-  M._unloaded_bufnr = bufnr
-end
-
----Reset the unloaded bufnr - at the end of the BufUnload handler.
-function M.reset_unloaded_bufnr()
-  M._unloaded_bufnr = nil
+  return node and vim.fn.bufloaded(node.absolute_path) > 0
 end
 
 ---@param opts table
