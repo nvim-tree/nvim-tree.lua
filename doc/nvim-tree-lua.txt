@@ -791,7 +791,7 @@ Use nvim-tree in a floating window.
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
 Highlight precedence:
-  clipboard > diagnostics > bookmarked > modified > opened > git
+  cut > copied > diagnostics > bookmarked > modified > opened > git
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.

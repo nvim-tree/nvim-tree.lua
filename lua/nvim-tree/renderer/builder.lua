@@ -373,8 +373,6 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
 end
 
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
-  local copy_paste = require "nvim-tree.actions.fs.copy-paste"
-
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
@@ -411,7 +409,8 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.bookmarks, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.diagnostics, icon.hl, name.hl)
-  self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.copied, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.cut, icon.hl, name.hl)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
