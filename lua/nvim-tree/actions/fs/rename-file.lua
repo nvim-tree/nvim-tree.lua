@@ -34,7 +34,7 @@ function M.rename(node, to)
   if not success then
     return notify.warn(err_fmt(notify_from, notify_to, err))
   end
-  notify.info(notify_from .. "  " .. notify_to)
+  notify.info(string.format("%s -> %s", notify_from, notify_to))
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
