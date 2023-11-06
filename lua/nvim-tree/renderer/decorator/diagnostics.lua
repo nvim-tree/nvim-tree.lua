@@ -31,7 +31,6 @@ local ICON_KEYS = {
 }
 
 --- @class DecoratorDiagnostics: Decorator
---- @field enabled boolean
 --- @field icons HighlightedString[]
 local DecoratorDiagnostics = Decorator:new()
 
@@ -39,12 +38,12 @@ local DecoratorDiagnostics = Decorator:new()
 --- @return DecoratorDiagnostics
 function DecoratorDiagnostics:new(opts)
   local o = Decorator.new(self, {
+    enabled = opts.diagnostics.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
   })
   ---@cast o DecoratorDiagnostics
 
-  o.enabled = opts.diagnostics.enable
   if not o.enabled then
     return o
   end

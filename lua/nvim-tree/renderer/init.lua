@@ -20,6 +20,7 @@ local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
 local M = {
   last_highlights = {},
   decorators = {},
+  deco = {},
 }
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -33,7 +34,7 @@ local function _draw(bufnr, lines, hl, sign_names)
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
   vim.fn.sign_unplace(SIGN_GROUP)
   for i, sign_name in pairs(sign_names) do
-    vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1, })
+    vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1 })
   end
 end
 
@@ -71,7 +72,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.decorators)
+  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.decorators, M.deco)
     :configure_root_label(M.config.root_folder_label)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
@@ -116,6 +117,15 @@ function M.setup(opts)
     git = DecoratorGit:new(opts),
     modified = DecoratorModified:new(opts),
     opened = DecoratorOpened:new(opts),
+  }
+  M.deco = {
+    DecoratorCut:new(opts),
+    DecoratorCopied:new(opts),
+    DecoratorDiagnostics:new(opts),
+    DecoratorBookmarks:new(opts),
+    DecoratorModified:new(opts),
+    DecoratorOpened:new(opts),
+    DecoratorGit:new(opts),
   }
 end
 

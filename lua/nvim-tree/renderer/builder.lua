@@ -4,7 +4,6 @@ local core = require "nvim-tree.core"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 --- @class Builder
@@ -14,7 +13,7 @@ Builder.__index = Builder
 
 local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
 
-function Builder.new(root_cwd, decorators)
+function Builder.new(root_cwd, decorators, deco)
   return setmetatable({
     index = 0,
     depth = 0,
@@ -24,6 +23,7 @@ function Builder.new(root_cwd, decorators)
     sign_names = {},
     root_cwd = root_cwd,
     decorators = decorators,
+    deco = deco,
   }, Builder)
 end
 
@@ -177,23 +177,6 @@ function Builder:_build_file(node)
   return icon, { str = node.name, hl = { hl } }
 end
 
----Append optional highlighting to icon or name.
----@param node table
----@param decorator Decorator
----@param icon_hl string[] icons to append to
----@param name_hl string[] names to append to
-function Builder:_append_dec_highlight(node, decorator, icon_hl, name_hl)
-  local hl = decorator:get_highlight(node)
-  if hl then
-    if decorator.hl_pos == HL_POSITION.all or decorator.hl_pos == HL_POSITION.icon then
-      table.insert(icon_hl, hl)
-    end
-    if decorator.hl_pos == HL_POSITION.all or decorator.hl_pos == HL_POSITION.name then
-      table.insert(name_hl, hl)
-    end
-  end
-end
-
 ---@param indent_markers HighlightedString[]
 ---@param arrows HighlightedString[]|nil
 ---@param icon HighlightedString
@@ -260,11 +243,14 @@ function Builder:_build_line(node, idx, num_children)
   local arrows = pad.get_arrows(node)
 
   -- signs
-  local sign_name = self.decorators.bookmarks:sign_name(node)
-  sign_name = self.decorators.git:sign_name(node) or sign_name
-  sign_name = self.decorators.diagnostics:sign_name(node) or sign_name
-  sign_name = self.decorators.modified:sign_name(node) or sign_name
-  self.sign_names[self.index] = sign_name
+  local sign_name
+  for _, d in ipairs(self.deco) do
+    sign_name = d:sign_name(node)
+    if sign_name then
+      self.sign_names[self.index] = sign_name
+      break
+    end
+  end
 
   -- main components
   local is_folder = node.nodes ~= nil
@@ -279,13 +265,9 @@ function Builder:_build_line(node, idx, num_children)
   end
 
   -- highighting
-  self:_append_dec_highlight(node, self.decorators.git, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.opened, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.bookmarks, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.diagnostics, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.copied, icon.hl, name.hl)
-  self:_append_dec_highlight(node, self.decorators.cut, icon.hl, name.hl)
+  for _, d in ipairs(self.deco) do
+    d:apply_highlight(node, icon.hl, name.hl)
+  end
 
   local line = self:_format_line(
     indent_markers,

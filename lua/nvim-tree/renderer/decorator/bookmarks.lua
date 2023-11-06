@@ -13,6 +13,7 @@ local DecoratorBookmarks = Decorator:new()
 --- @return DecoratorBookmarks
 function DecoratorBookmarks:new(opts)
   local o = Decorator.new(self, {
+    enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_bookmarks] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.bookmarks_placement] or ICON_PLACEMENT.none,
   })

@@ -7,7 +7,6 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require "nvim-tree.renderer.decorator"
 
 --- @class DecoratorGit: Decorator
---- @field enabled boolean
 --- @field file_hl string[]
 --- @field folder_hl string[]
 --- @field git_icons table
@@ -115,12 +114,12 @@ end
 --- @return DecoratorGit
 function DecoratorGit:new(opts)
   local o = Decorator.new(self, {
+    enabled = opts.git.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
   })
   ---@cast o DecoratorGit
 
-  o.enabled = opts.git.enable
   if not o.enabled then
     return o
   end

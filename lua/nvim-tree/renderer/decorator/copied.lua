@@ -14,6 +14,7 @@ local DecoratorCopied = Decorator:new()
 --- @return DecoratorCopied
 function DecoratorCopied:new(opts)
   local o = Decorator.new(self, {
+    enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
   })

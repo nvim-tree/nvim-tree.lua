@@ -6,7 +6,6 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require "nvim-tree.renderer.decorator"
 
 --- @class DecoratorModified: Decorator
---- @field enabled boolean
 --- @field icon HighlightedString|nil
 local DecoratorModified = Decorator:new()
 
@@ -14,12 +13,12 @@ local DecoratorModified = Decorator:new()
 --- @return DecoratorModified
 function DecoratorModified:new(opts)
   local o = Decorator.new(self, {
+    enabled = opts.modified.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_modified] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.modified_placement] or ICON_PLACEMENT.none,
   })
   ---@cast o DecoratorModified
 
-  o.enabled = opts.modified.enable
   if not o.enabled then
     return o
   end
