@@ -10,6 +10,8 @@ local Builder = require "nvim-tree.renderer.builder"
 local live_filter = require "nvim-tree.live-filter"
 
 local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
+local DecoratorCopied = require "nvim-tree.renderer.decorator.copied"
+local DecoratorCut = require "nvim-tree.renderer.decorator.cut"
 local DecoratorDiagnostics = require "nvim-tree.renderer.decorator.diagnostics"
 local DecoratorGit = require "nvim-tree.renderer.decorator.git"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
@@ -105,9 +107,11 @@ function M.setup(opts)
 
   -- TODO change to array: precedence should follow order
   M.decorators = {
-    git = DecoratorGit:new(opts),
     bookmarks = DecoratorBookmarks:new(opts),
+    copied = DecoratorCopied:new(opts),
+    cut = DecoratorCut:new(opts),
     diagnostics = DecoratorDiagnostics:new(opts),
+    git = DecoratorGit:new(opts),
     modified = DecoratorModified:new(opts),
   }
 end
