@@ -58,7 +58,7 @@ local function update_parent_statuses(node, project, root)
   end
 end
 
-function M.reload(node, git_status, unloaded_bufnr)
+function M.reload(node, git_status)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -67,7 +67,7 @@ function M.reload(node, git_status, unloaded_bufnr)
 
   local profile = log.profile_start("reload %s", node.absolute_path)
 
-  local filter_status = filters.prepare(git_status, unloaded_bufnr)
+  local filter_status = filters.prepare(git_status)
 
   if node.group_next then
     node.nodes = { node.group_next }
