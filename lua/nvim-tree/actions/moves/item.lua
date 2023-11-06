@@ -45,7 +45,7 @@ function M.fn(where, what)
 
     if nex then
       view.set_cursor { nex, 0 }
-    elseif first then
+    elseif vim.o.wrapscan and first then
       view.set_cursor { first, 0 }
     end
   end
