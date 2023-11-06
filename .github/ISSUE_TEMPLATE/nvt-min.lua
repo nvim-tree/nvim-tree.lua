@@ -35,3 +35,13 @@ _G.setup = function()
   require("nvim-tree").setup {}
 end
 
+-- UNCOMMENT this block for diagnostics issues, substituting pattern and cmd as appropriate.
+-- Requires diagnostics.enable = true in setup.
+--[[
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
+  callback = function()
+    vim.lsp.start { cmd = { "lua-language-server" } }
+  end,
+})
+]]

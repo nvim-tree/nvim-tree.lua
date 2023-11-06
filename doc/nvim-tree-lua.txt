@@ -29,9 +29,10 @@ CONTENTS                                                           *nvim-tree*
   5.14 Opts: Trash                              |nvim-tree-opts-trash|
   5.15 Opts: Tab                                |nvim-tree-opts-tab|
   5.16 Opts: Notify                             |nvim-tree-opts-notify|
-  5.17 Opts: UI                                 |nvim-tree-opts-ui|
-  5.18 Opts: Experimental                       |nvim-tree-opts-experimental|
-  5.19 Opts: Log                                |nvim-tree-opts-log|
+  5.17 Opts: Help                               |nvim-tree-opts-help|
+  5.18 Opts: UI                                 |nvim-tree-opts-ui|
+  5.19 Opts: Experimental                       |nvim-tree-opts-experimental|
+  5.20 Opts: Log                                |nvim-tree-opts-log|
   6. API                                      |nvim-tree-api|
   6.1  API Tree                                 |nvim-tree-api.tree|
   6.2  API File System                          |nvim-tree-api.fs|
@@ -566,10 +567,14 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         threshold = vim.log.levels.INFO,
         absolute_path = true,
       },
+      help = {
+        sort_by = "key",
+      },
       ui = {
         confirm = {
           remove = true,
           trash = true,
+          default_yes = false,
         },
       },
       experimental = {},
@@ -1436,7 +1441,16 @@ Whether to use absolute paths or item names in fs action notifications.
   Type: `boolean`, Default: `true`
 
 ==============================================================================
- 5.17 OPTS: UI                                             *nvim-tree-opts-ui*
+ 5.17 OPTS: HELP                                        *nvim-tree-opts-help*
+
+*nvim-tree.help.sort_by*
+Defines how mappings are sorted in the help window.
+Can be `"key"` (sort alphabetically by keymap)
+or `"desc"` (sort alphabetically by description).
+  Type: `string`, Default: `"key"`
+
+==============================================================================
+ 5.18 OPTS: UI                                             *nvim-tree-opts-ui*
 
 *nvim-tree.ui.confirm*
 Confirmation prompts.
@@ -1449,15 +1463,19 @@ Confirmation prompts.
     Prompt before trashing.
       Type: `boolean`, Default: `true`
 
+    *nvim-tree.ui.confirm.default_yes*
+    If `true` the prompt will be `"Y/n"`, otherwise `"y/N"`.
+      Type: `boolean`, Default: `false`
+
 ==============================================================================
- 5.18 OPTS: EXPERIMENTAL                         *nvim-tree-opts-experimental*
+ 5.19 OPTS: EXPERIMENTAL                         *nvim-tree-opts-experimental*
 
 *nvim-tree.experimental*
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
 
 ==============================================================================
- 5.19 OPTS: LOG                                           *nvim-tree-opts-log*
+ 5.20 OPTS: LOG                                           *nvim-tree-opts-log*
 
 Configuration for diagnostic logging.
 

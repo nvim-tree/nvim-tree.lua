@@ -45,7 +45,9 @@ end
 local function wrap_node(f)
   return function(node, ...)
     node = node or require("nvim-tree.lib").get_node_at_cursor()
-    f(node, ...)
+    if node then
+      f(node, ...)
+    end
   end
 end
 

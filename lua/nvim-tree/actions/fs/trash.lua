@@ -86,11 +86,22 @@ function M.fn(node)
   end
 
   if M.config.ui.confirm.trash then
-    local prompt_select = "Trash " .. node.name .. " ?"
-    local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, function(item_short)
+    local prompt_select = "Trash " .. node.name .. "?"
+    local prompt_input, items_short, items_long
+
+    if M.config.ui.confirm.default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, function(item_short)
       utils.clear_prompt()
-      if item_short == "y" then
+      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
         do_trash()
       end
     end)
