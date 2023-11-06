@@ -54,11 +54,6 @@ function Builder:configure_filter(filter, prefix)
   return self
 end
 
-function Builder:configure_opened_file_highlighting(highlight_opened_files)
-  self.highlight_opened_files = highlight_opened_files
-  return self
-end
-
 function Builder:configure_icon_padding(padding)
   self.icon_padding = padding or " "
   return self
@@ -260,41 +255,6 @@ function Builder:_get_bookmark_icon(node)
   return bookmark_icon
 end
 
----@param node table
----@return string|nil icon_hl
----@return string|nil name_hl
-function Builder:_get_highlight_override(node, unloaded_bufnr)
-  local name_hl, icon_hl
-
-  -- opened file
-  if self.highlight_opened_files and vim.fn.bufloaded(node.absolute_path) > 0 and vim.fn.bufnr(node.absolute_path) ~= unloaded_bufnr then
-    if self.highlight_opened_files == "all" or self.highlight_opened_files == "name" then
-      name_hl = "NvimTreeOpenedFile"
-    end
-    if self.highlight_opened_files == "all" or self.highlight_opened_files == "icon" then
-      icon_hl = "NvimTreeOpenedFileIcon"
-    end
-  end
-  return icon_hl, name_hl
-end
-
----Append optional highlighting to icon or name.
----@param node table
----@param get_hl fun(node: table): HL_POSITION, string
----@param icon_hl string[] icons to append to
----@param name_hl string[] names to append to
-function Builder:_append_highlight(node, get_hl, icon_hl, name_hl)
-  local pos, hl = get_hl(node)
-  if pos ~= HL_POSITION.none and hl then
-    if pos == HL_POSITION.all or pos == HL_POSITION.icon then
-      table.insert(icon_hl, hl)
-    end
-    if pos == HL_POSITION.all or pos == HL_POSITION.name then
-      table.insert(name_hl, hl)
-    end
-  end
-end
-
 ---Append optional highlighting to icon or name.
 ---@param node table
 ---@param decorator Decorator
@@ -372,7 +332,7 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
   return line
 end
 
-function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
+function Builder:_build_line(node, idx, num_children)
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
@@ -395,17 +355,9 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
     icon, name = self:_build_file(node)
   end
 
-  -- highlight override
-  local icon_hl_override, name_hl_override = self:_get_highlight_override(node, unloaded_bufnr)
-  if icon_hl_override then
-    icon.hl = { icon_hl_override }
-  end
-  if name_hl_override then
-    name.hl = { name_hl_override }
-  end
-
   -- extra highighting
   self:_append_dec_highlight(node, self.decorators.git, icon.hl, name.hl)
+  self:_append_dec_highlight(node, self.decorators.opened, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.modified, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.bookmarks, icon.hl, name.hl)
   self:_append_dec_highlight(node, self.decorators.diagnostics, icon.hl, name.hl)
@@ -421,7 +373,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
 
   if node.open then
     self.depth = self.depth + 1
-    self:build(node, unloaded_bufnr)
+    self:build(node)
     self.depth = self.depth - 1
   end
 end
@@ -440,12 +392,12 @@ function Builder:_get_nodes_number(nodes)
   return i
 end
 
-function Builder:build(tree, unloaded_bufnr)
+function Builder:build(tree)
   local num_children = self:_get_nodes_number(tree.nodes)
   local idx = 1
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
-      self:_build_line(node, idx, num_children, unloaded_bufnr)
+      self:_build_line(node, idx, num_children)
       idx = idx + 1
     end
   end

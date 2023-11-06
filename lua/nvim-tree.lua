@@ -210,7 +210,7 @@ local function setup_autocommands(opts)
       -- update opened file buffers
       if (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          actions.reloaders.reload_explorer(nil, data.buf)
+          actions.reloaders.reload_explorer()
         end)
       end
     end,
@@ -797,7 +797,7 @@ function M.setup(conf)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
-  require("nvim-tree.modified").setup(opts)
+  require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then

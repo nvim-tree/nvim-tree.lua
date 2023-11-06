@@ -1,4 +1,4 @@
-local modified = require "nvim-tree.modified"
+local buffers = require "nvim-tree.buffers"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
@@ -37,14 +37,14 @@ end
 
 --- Modified icon: modified.enable, renderer.icons.show.modified and node is modified
 function DecoratorModified:get_icon(node)
-  if self.enabled and modified.is_modified(node) then
+  if self.enabled and buffers.is_modified(node) then
     return self.icon
   end
 end
 
 --- Modified highlight: modified.enable, renderer.highlight_modified and node is modified
 function DecoratorModified:get_highlight(node)
-  if not self.enabled or self.hl_pos == HL_POSITION.none or not modified.is_modified(node) then
+  if not self.enabled or self.hl_pos == HL_POSITION.none or not buffers.is_modified(node) then
     return nil
   end
 

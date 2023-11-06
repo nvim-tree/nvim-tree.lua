@@ -69,6 +69,9 @@ local DEFAULT_LINKS = {
   NvimTreeModifiedFileHL = "NvimTreeModifiedIcon",
   NvimTreeModifiedFolderHL = "NvimTreeModifiedFileHL",
 
+  -- Opened
+  NvimTreeOpenedHL = "Constant",
+
   -- LiveFilter
   NvimTreeLiveFilterPrefix = "PreProc",
   NvimTreeLiveFilterValue = "ModeMsg",
@@ -122,6 +125,8 @@ local DEFAULT_LINKS = {
 -- nvim-tree highlight groups to legacy
 local LEGACY_LINKS = {
   NvimTreeModifiedIcon = "NvimTreeModifiedFile",
+
+  NvimTreeOpenedHL = "NvimTreeOpenedFile",
 
   NvimTreeGitDeletedIcon = "NvimTreeGitDeleted",
   NvimTreeGitDirtyIcon = "NvimTreeGitDirty",

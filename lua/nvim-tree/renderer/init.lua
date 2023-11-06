@@ -15,6 +15,7 @@ local DecoratorCut = require "nvim-tree.renderer.decorator.cut"
 local DecoratorDiagnostics = require "nvim-tree.renderer.decorator.diagnostics"
 local DecoratorGit = require "nvim-tree.renderer.decorator.git"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
+local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
 
 local M = {
   last_highlights = {},
@@ -59,7 +60,7 @@ local picture_map = {
   jxl = true,
 }
 
-function M.draw(unloaded_bufnr)
+function M.draw()
   local bufnr = view.get_bufnr()
   if not core.get_explorer() or not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
@@ -75,13 +76,12 @@ function M.draw(unloaded_bufnr)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
     :configure_picture_map(picture_map)
-    :configure_opened_file_highlighting(M.config.highlight_opened_files)
     :configure_icon_padding(M.config.icons.padding)
     :configure_symlink_destination(M.config.symlink_destination)
     :configure_filter(live_filter.filter, live_filter.prefix)
     :configure_group_name_modifier(M.config.group_empty)
     :build_header(view.is_root_folder_visible(core.get_cwd()))
-    :build(core.get_explorer(), unloaded_bufnr)
+    :build(core.get_explorer())
     :unwrap()
 
   _draw(bufnr, lines, hl, signs)
@@ -107,6 +107,8 @@ function M.setup(opts)
   icon_component.setup(opts)
 
   -- TODO change to array: precedence should follow order
+  -- HL   cut > copied > diagnostics > bookmarked > modified > opened > git
+  -- Sign                diagnostics > modified > git > bookmarked
   M.decorators = {
     bookmarks = DecoratorBookmarks:new(opts),
     copied = DecoratorCopied:new(opts),
@@ -114,6 +116,7 @@ function M.setup(opts)
     diagnostics = DecoratorDiagnostics:new(opts),
     git = DecoratorGit:new(opts),
     modified = DecoratorModified:new(opts),
+    opened = DecoratorOpened:new(opts),
   }
 end
 

@@ -2305,6 +2305,9 @@ Modified: >
     NvimTreeModifiedFileHL      NvimTreeModifiedIcon
     NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
 <
+Opened: >
+    NvimTreeOpenedHL            Constant
+<
 Picker: >
     NvimTreeWindowPicker        guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan
 <
@@ -2388,6 +2391,7 @@ Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
 
     NvimTreeModifiedIcon        NvimTreeModifiedFile
+    NvimTreeOpenedHL            NvimTreeOpenedFile
 
     NvimTreeGitDeletedIcon      NvimTreeGitDeleted
     NvimTreeGitDirtyIcon        NvimTreeGitDirty

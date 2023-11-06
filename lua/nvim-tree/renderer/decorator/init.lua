@@ -16,14 +16,14 @@ end
 ---@diagnostic disable: unused-local
 
 --- Node icon
---- @param node table
+--- @param _ table node
 --- @return HighlightedString|nil modified icon
-function Decorator:get_icon(node) end
+function Decorator:get_icon(_) end
 
 --- Node highlight group
---- @param node table
+--- @param _ table node
 --- @return string|nil group
-function Decorator:get_highlight(node) end
+function Decorator:get_highlight(_) end
 
 ---@diagnostic enable: unused-local
 
@@ -32,7 +32,13 @@ function Decorator:get_highlight(node) end
 --- @param icon HighlightedString|nil
 function Decorator:define_sign(icon)
   if icon and #icon.hl > 0 then
-    vim.fn.sign_define(icon.hl[1], {
+    local name = icon.hl[1]
+
+    if not vim.tbl_isempty(vim.fn.sign_getdefined(name)) then
+      vim.fn.sign_undefine(name)
+    end
+
+    vim.fn.sign_define(name, {
       text = icon.str,
       texthl = icon.hl[1],
     })
