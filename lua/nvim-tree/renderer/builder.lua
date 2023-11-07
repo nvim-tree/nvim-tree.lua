@@ -242,7 +242,7 @@ function Builder:_build_line(node, idx, num_children)
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
-  -- signs
+  -- signs, use the highest priority
   local sign_name
   for _, d in ipairs(self.deco) do
     sign_name = d:sign_name(node)
@@ -266,7 +266,9 @@ function Builder:_build_line(node, idx, num_children)
 
   -- highighting
   for _, d in ipairs(self.deco) do
-    d:apply_highlight(node, icon.hl, name.hl)
+    local icon_group, name_group = d:groups_icon_name(node)
+    table.insert(icon.hl, icon_group)
+    table.insert(name.hl, name_group)
   end
 
   local line = self:_format_line(

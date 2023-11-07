@@ -2,9 +2,9 @@ local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 --- @class Decorator
---- @field enabled boolean
---- @field hl_pos HL_POSITION
---- @field icon_placement ICON_PLACEMENT
+--- @field protected enabled boolean
+--- @field protected hl_pos HL_POSITION
+--- @field protected icon_placement ICON_PLACEMENT
 local Decorator = {}
 
 --- @param o Decorator|nil
@@ -17,26 +17,28 @@ function Decorator:new(o)
   return o
 end
 
---- Icon and name highlight
+--- Maybe highlight groups
 --- @param node table
---- @param icon_hl string[] icon HL to append to
---- @param name_hl string[] name HL to append to
-function Decorator:apply_highlight(node, icon_hl, name_hl)
-  if not self.enabled or self.hl_pos == HL_POSITION.none then
-    return
+--- @return string|nil icon highlight group
+--- @return string|nil name highlight group
+function Decorator:groups_icon_name(node)
+  local icon_hl, name_hl
+
+  if self.enabled and self.hl_pos ~= HL_POSITION.none then
+    local hl = self:get_highlight(node)
+
+    if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.icon then
+      icon_hl = hl
+    end
+    if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.name then
+      name_hl = hl
+    end
   end
 
-  local hl = self:get_highlight(node)
-
-  if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.icon then
-    table.insert(icon_hl, hl)
-  end
-  if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.name then
-    table.insert(name_hl, hl)
-  end
+  return icon_hl, name_hl
 end
 
---- Get the icon as a sign if appropriate
+--- Maybe icon sign
 --- @param node table
 --- @return string|nil name
 function Decorator:sign_name(node)
@@ -53,12 +55,12 @@ end
 ---@diagnostic disable: unused-local
 -- luacheck: push no unused args
 
---- Node icon
+--- Maybe icon
 --- @param node table
 --- @return HighlightedString|nil modified icon
 function Decorator:get_icon(node) end
 
---- Node highlight group
+--- Maybe highlight group
 --- @protected
 --- @param node table
 --- @return string|nil group
