@@ -795,7 +795,10 @@ Appends a trailing slash to folder names.
 
 *nvim-tree.renderer.group_empty*
 Compact folders that only contain a single folder into one node.
-  Type: `boolean`, Default: `false`
+Can be a custom function that takes one argument (the relative path
+of the grouped folders) and returns a string (the newly elaborated name
+that will be shown in the tree)
+  Type: `boolean | function(relative_path):string`, Default: `false`
 
 *nvim-tree.renderer.full_name*
 Display node whose name length is wider than the width of nvim-tree window in
