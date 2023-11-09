@@ -640,6 +640,7 @@ local ACCEPTED_TYPES = {
     },
   },
   renderer = {
+    group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
   },
   actions = {
