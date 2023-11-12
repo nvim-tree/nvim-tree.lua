@@ -283,8 +283,8 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufEnter", {
     pattern = "NvimTree_*",
     callback = function()
-      if opts.reload_on_bufenter and not opts.filesystem_watchers.enable then
-        if utils.is_nvim_tree_buf(0) then
+      if utils.is_nvim_tree_buf(0) then
+        if vim.fn.getcwd() ~= core.get_cwd() or (opts.reload_on_bufenter and not opts.filesystem_watchers.enable) then
           reloaders.reload_explorer()
         end
       end
