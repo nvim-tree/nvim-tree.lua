@@ -37,7 +37,8 @@ local function remove_overlay()
     })
   end
 
-  vim.api.nvim_win_close(overlay_winnr, { force = true })
+  vim.api.nvim_win_close(overlay_winnr, true)
+  vim.api.nvim_buf_delete(overlay_bufnr, { force = true })
   overlay_bufnr = nil
   overlay_winnr = nil
 
