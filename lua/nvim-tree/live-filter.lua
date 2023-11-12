@@ -112,13 +112,7 @@ local function calculate_overlay_win_width()
     return wininfo.width - wininfo.textoff - #M.prefix
   end
 
-  local min_width = 20
-
-  if view.View.float.enable then
-    return min_width - 2
-  end
-
-  return min_width
+  return 20
 end
 
 local function create_overlay()
