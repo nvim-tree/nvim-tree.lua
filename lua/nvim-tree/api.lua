@@ -40,14 +40,23 @@ local function wrap(f)
   end
 end
 
---- Inject the node as the first argument if absent.
---- f function to invoke
-local function wrap_node(f)
+---Inject the node as the first argument if absent.
+---@param fn function function to invoke
+local function wrap_node(fn)
   return function(node, ...)
     node = node or require("nvim-tree.lib").get_node_at_cursor()
     if node then
-      f(node, ...)
+      fn(node, ...)
     end
+  end
+end
+
+---Inject the node or nil as the first argument if absent.
+---@param fn function function to invoke
+local function wrap_node_or_nil(fn)
+  return function(node, ...)
+    node = node or require("nvim-tree.lib").get_node_at_cursor()
+    fn(node, ...)
   end
 end
 
@@ -136,7 +145,7 @@ Api.tree.is_tree_buf = wrap(require("nvim-tree.utils").is_nvim_tree_buf)
 
 Api.tree.is_visible = wrap(require("nvim-tree.view").is_visible)
 
-Api.fs.create = wrap_node(require("nvim-tree.actions.fs.create-file").fn)
+Api.fs.create = wrap_node_or_nil(require("nvim-tree.actions.fs.create-file").fn)
 Api.fs.remove = wrap_node(require("nvim-tree.actions.fs.remove-file").fn)
 Api.fs.trash = wrap_node(require("nvim-tree.actions.fs.trash").fn)
 Api.fs.rename_node = wrap_node(require("nvim-tree.actions.fs.rename-file").fn ":t")

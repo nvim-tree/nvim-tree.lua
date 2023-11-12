@@ -1,5 +1,6 @@
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
+local notify = require "nvim-tree.notify"
 
 local git = require "nvim-tree.renderer.components.git"
 local pad = require "nvim-tree.renderer.components.padding"
@@ -105,6 +106,13 @@ function Builder:configure_symlink_destination(show)
   return self
 end
 
+function Builder:configure_group_name_modifier(group_name_modifier)
+  if type(group_name_modifier) == "function" then
+    self.group_name_modifier = group_name_modifier
+  end
+  return self
+end
+
 function Builder:_insert_highlight(group, start, end_)
   table.insert(self.highlights, { group, self.index, start, end_ or -1 })
 end
@@ -113,14 +121,24 @@ function Builder:_insert_line(line)
   table.insert(self.lines, line)
 end
 
-local function get_folder_name(node)
+function Builder:_get_folder_name(node)
   local name = node.name
   local next = node.group_next
   while next do
     name = name .. "/" .. next.name
     next = next.group_next
   end
-  return name
+
+  if node.group_next and self.group_name_modifier then
+    local new_name = self.group_name_modifier(name)
+    if type(new_name) == "string" then
+      name = new_name
+    else
+      notify.warn(string.format("Invalid return type for field renderer.group_empty. Expected string, got %s", type(new_name)))
+    end
+  end
+
+  return name .. self.trailing_slash
 end
 
 ---@class HighlightedString
@@ -152,7 +170,7 @@ end
 function Builder:_build_folder(node)
   local has_children = #node.nodes ~= 0 or node.has_children
   local icon, icon_hl = icons.get_folder_icon(node, has_children)
-  local foldername = get_folder_name(node) .. self.trailing_slash
+  local foldername = self:_get_folder_name(node)
 
   if #icon > 0 and icon_hl == nil then
     if node.open then
