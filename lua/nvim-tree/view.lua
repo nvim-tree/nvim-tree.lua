@@ -152,9 +152,10 @@ end
 
 local function open_window()
   if M.View.float.enable then
-    vim.api.nvim_open_win(0, true, open_win_config())
+    local winid = vim.api.nvim_open_win(M.get_bufnr(), false, open_win_config())
+    vim.api.nvim_set_current_win(winid)
   else
-    vim.api.nvim_command "vsp"
+    vim.api.nvim_command("vsp #" .. M.get_bufnr())
     M.reposition_window()
   end
   setup_tabpage(vim.api.nvim_get_current_tabpage())
