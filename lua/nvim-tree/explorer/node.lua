@@ -14,7 +14,7 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
     return { file = "!!" }
   end
 
-  if type(status) ~= nil and status ~= nil then
+  if status then
     return {
       file = status.files and status.files[absolute_path],
       dir = status.dirs and {
