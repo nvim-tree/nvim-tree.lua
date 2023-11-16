@@ -660,6 +660,7 @@ local ACCEPTED_STRINGS = {
     signcolumn = { "yes", "no", "auto" },
   },
   renderer = {
+    highlight_git = { "none", "icon", "name", "all" },
     highlight_opened_files = { "none", "icon", "name", "all" },
     highlight_modified = { "none", "icon", "name", "all" },
     highlight_bookmarks = { "none", "icon", "name", "all" },
