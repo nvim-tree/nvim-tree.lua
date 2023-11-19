@@ -14,6 +14,7 @@ local DecoratorCut = Decorator:new()
 --- @return DecoratorCut
 function DecoratorCut:new(opts)
   local o = Decorator.new(self, {
+    enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
   })
@@ -26,7 +27,7 @@ function DecoratorCut:new(opts)
 end
 
 --- Cut highlight: renderer.highlight_clipboard and node is cut
-function DecoratorCut:get_highlight(node)
+function DecoratorCut:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and copy_paste.is_cut(node) then
     return "NvimTreeCutHL"
   end

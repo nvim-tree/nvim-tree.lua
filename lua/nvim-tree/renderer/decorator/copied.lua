@@ -14,6 +14,7 @@ local DecoratorCopied = Decorator:new()
 --- @return DecoratorCopied
 function DecoratorCopied:new(opts)
   local o = Decorator.new(self, {
+    enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
   })
@@ -26,7 +27,7 @@ function DecoratorCopied:new(opts)
 end
 
 --- Cut highlight: renderer.highlight_clipboard and node is copied
-function DecoratorCopied:get_highlight(node)
+function DecoratorCopied:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and copy_paste.is_copied(node) then
     return "NvimTreeCopiedHL"
   end

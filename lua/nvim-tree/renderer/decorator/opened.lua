@@ -14,6 +14,7 @@ local DecoratorOpened = Decorator:new()
 --- @return DecoratorOpened
 function DecoratorOpened:new(opts)
   local o = Decorator.new(self, {
+    enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_opened_files] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
   })
@@ -24,7 +25,7 @@ end
 
 --- Opened highlight: renderer.highlight_opened_files and node has an open buffer
 --- @param node table
-function DecoratorOpened:get_highlight(node)
+function DecoratorOpened:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and buffers.is_opened(node) then
     return "NvimTreeOpenedHL"
   end
