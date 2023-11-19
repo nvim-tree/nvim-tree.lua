@@ -35,9 +35,9 @@ function DecoratorModified:new(opts)
 end
 
 --- Modified icon: modified.enable, renderer.icons.show.modified and node is modified
-function DecoratorModified:get_icon(node)
+function DecoratorModified:get_icons(node)
   if self.enabled and buffers.is_modified(node) then
-    return self.icon
+    return { self.icon }
   end
 end
 

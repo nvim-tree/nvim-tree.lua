@@ -63,9 +63,9 @@ function DecoratorDiagnostics:new(opts)
 end
 
 --- Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
-function DecoratorDiagnostics:get_icon(node)
+function DecoratorDiagnostics:get_icons(node)
   if node and self.enabled and self.icons then
-    return self.icons[node.diag_status]
+    return { self.icons[node.diag_status] }
   end
 end
 

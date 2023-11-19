@@ -46,9 +46,9 @@ function Decorator:sign_name(node)
     return
   end
 
-  local icon = self:get_icon(node)
-  if icon then
-    return icon.hl[1]
+  local icons = self:get_icons(node)
+  if icons and #icons > 0 then
+    return icons.hl[1]
   end
 end
 
@@ -57,8 +57,8 @@ end
 
 --- Maybe icon
 --- @param node table
---- @return HighlightedString|nil modified icon
-function Decorator:get_icon(node) end
+--- @return HighlightedString[]|nil icons
+function Decorator:get_icons(node) end
 
 --- Maybe highlight group
 --- @protected

@@ -31,9 +31,9 @@ function DecoratorBookmarks:new(opts)
 end
 
 --- Bookmark icon: renderer.icons.show.bookmarks and node is marked
-function DecoratorBookmarks:get_icon(node)
+function DecoratorBookmarks:get_icons(node)
   if marks.get_mark(node) then
-    return self.icon
+    return { self.icon }
   end
 end
 

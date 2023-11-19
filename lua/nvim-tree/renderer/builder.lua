@@ -200,11 +200,11 @@ end
 ---@param icon HighlightedString
 ---@param name HighlightedString
 ---@param git_icons HighlightedString[]|nil
----@param diagnostics_icon HighlightedString|nil
----@param modified_icon HighlightedString|nil
----@param bookmark_icon HighlightedString|nil
+---@param diagnostics_icons HighlightedString[]|nil
+---@param modified_icons HighlightedString[]|nil
+---@param bookmark_icons HighlightedString[]|nil
 ---@return HighlightedString[]
-function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
+function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icons, modified_icons, bookmark_icons)
   local added_len = 0
   local function add_to_end(t1, t2)
     for _, v in ipairs(t2) do
@@ -227,14 +227,14 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
   if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.before then
     add_to_end(line, git_icons)
   end
-  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, { modified_icon })
+  if modified_icons and self.decorators.modified.icon_placement == ICON_PLACEMENT.before then
+    add_to_end(line, modified_icons)
   end
-  if diagnostics_icon and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, { diagnostics_icon })
+  if diagnostics_icons and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.before then
+    add_to_end(line, diagnostics_icons)
   end
-  if bookmark_icon and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, { bookmark_icon })
+  if bookmark_icons and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.before then
+    add_to_end(line, bookmark_icons)
   end
 
   add_to_end(line, { name })
@@ -242,14 +242,14 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
   if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.after then
     add_to_end(line, git_icons)
   end
-  if modified_icon and self.decorators.modified.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, { modified_icon })
+  if modified_icons and self.decorators.modified.icon_placement == ICON_PLACEMENT.after then
+    add_to_end(line, modified_icons)
   end
-  if diagnostics_icon and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, { diagnostics_icon })
+  if diagnostics_icons and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.after then
+    add_to_end(line, diagnostics_icons)
   end
-  if bookmark_icon and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, { bookmark_icon })
+  if bookmark_icons and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.after then
+    add_to_end(line, bookmark_icons)
   end
 
   return line
@@ -295,9 +295,9 @@ function Builder:_build_line(node, idx, num_children)
     icon,
     name,
     self.decorators.git:get_icons(node),
-    self.decorators.diagnostics:get_icon(node),
-    self.decorators.modified:get_icon(node),
-    self.decorators.bookmarks:get_icon(node)
+    self.decorators.diagnostics:get_icons(node),
+    self.decorators.modified:get_icons(node),
+    self.decorators.bookmarks:get_icons(node)
   )
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
