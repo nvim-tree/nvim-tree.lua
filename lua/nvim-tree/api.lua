@@ -167,6 +167,24 @@ Api.fs.copy.absolute_path = wrap_node(require("nvim-tree.actions.fs.copy-paste")
 Api.fs.copy.filename = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_filename)
 Api.fs.copy.relative_path = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_path)
 
+-- Git actions
+Api.git.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_git)
+Api.git.cut = wrap_node(require("nvim-tree.actions.git").cut)
+Api.git.paste = wrap_node(require("nvim-tree.actions.git").paste)
+Api.git.delete = wrap_node(require("nvim-tree.actions.git").delete)
+Api.git.clear_clipboard = wrap(function()
+  require("nvim-tree.actions.git").clipboard:clear()
+end)
+Api.git.print_clipboard = wrap(function()
+  return require("nvim-tree.actions.git").clipboard:print()
+end)
+Api.git.clipboard = require("nvim-tree.actions.git").clipboard
+Api.git.rename = wrap_node(require("nvim-tree.actions.git").rename)
+Api.git.rename_sub = wrap_node(require("nvim-tree.actions.git").rename_sub)
+Api.git.rename_basename = wrap_node(require("nvim-tree.actions.git").rename_basename)
+Api.git.rename_absolute = wrap_node(require("nvim-tree.actions.git").rename_absolute)
+Api.git.rename_relative = wrap_node(require("nvim-tree.actions.git").rename_relative)
+
 local function edit(mode, node)
   local path = node.absolute_path
   if node.link_to and not node.nodes then
@@ -213,8 +231,6 @@ Api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions.moves.
 Api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
 Api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
 Api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
-
-Api.git.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_git)
 
 Api.events.subscribe = require("nvim-tree.events").subscribe
 Api.events.Event = require("nvim-tree.events").Event

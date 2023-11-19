@@ -603,6 +603,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       dev = false,
       diagnostics = false,
       git = false,
+      action_git = false,
       profile = false,
       watcher = false,
     },

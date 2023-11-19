@@ -587,6 +587,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
           dev = false,
           diagnostics = false,
           git = false,
+          action_git = false,
           profile = false,
           watcher = false,
         },
@@ -1919,8 +1920,77 @@ node.run.system()                            *nvim-tree-api.node.run.system()*
 ==============================================================================
  6.4 API GIT                                               *nvim-tree-api.git*
 
+This api provides set of functions for GIT integration.
+
+The following is a set of |nvim-tree-api.fs|.* like functions that use GIT cli
+for file cutting, pasting, renaming and deleting instead of system (|luv|)
+routines. When modifying untracked paths the git API automatically fallbacks
+to the corresponding |nvim-tree-api.fs| functions.
+
 git.reload()                                      *nvim-tree-api.git.reload()*
     Update the git status of the entire tree.
+
+ait.rename({node})                                  *nvim-tree-api.git.rename()*
+    Prompt to rename a file or folder by name.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+git.rename_basename({node})                *nvim-tree-api.git.rename_basename()*
+    Prompt to rename a file or folder by name with extension omitted.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+git.rename_sub({node})                          *nvim-tree-api.git.rename_sub()*
+    Prompt to rename a file or folder by absolute path with name omitted.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+git.rename_absolute({node})                    *nvim-tree-api.git.rename_full()*
+    Prompt to rename a file or folder by absolute path.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+git.rename_relative({node})                 *nvim-tree-api.fs.rename_relative()*
+    Prompt to rename a file or folder by relative path.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+
+git.cut({node})                                        *nvim-tree-api.git.cut()*
+    Cut a file or folder to the git actions nvim-tree clipboard.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
+git.paste({node})                                    *nvim-tree-api.git.paste()*
+    Paste a file or folder from the git actions nvim-tree clipboard.
+    The file is put into a clipboard by using |git.cut| comand.
+
+    Parameters: ~
+      • {node} (Node) destination folder, uses the parent of a file.
+
+git.delete({node})                                  *nvim-tree-api.git.delete()*
+    Delete a file or folder from the file system by using git.
+
+    Parameters: ~
+      • {node} (Node) destination folder, uses the parent of a file.
+
+git.clipboard                                      *nvim-tree-api.git.clipboard*
+    A table of nvim-tree nodes.
+
+git.clipboard:clear()                      *nvim-tree-api.git.clear_clipboard()*
+    Clear the git actions nvim-tree clipboard.
+
+git.clipboard:print ()                      *nvim-tree-api.git.print_clipboard()*
+    Print the contents of the git actions nvim-tree clipboard.
+
+git.clipboard:print ()                      *nvim-tree-api.git.print_clipboard()*
+    Print the contents of the git actions nvim-tree clipboard.
 
 ==============================================================================
  6.5 API EVENTS                                         *nvim-tree-api.events*

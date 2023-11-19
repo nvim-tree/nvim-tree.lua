@@ -412,6 +412,7 @@ end
 
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   local copy_paste = require "nvim-tree.actions.fs.copy-paste"
+  local actions_git = require "nvim-tree.actions.git"
 
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
@@ -448,6 +449,7 @@ function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   self:_append_highlight(node, bookmarks.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, diagnostics.get_highlight, icon.hl, name.hl)
   self:_append_highlight(node, copy_paste.get_highlight, icon.hl, name.hl)
+  self:_append_highlight(node, actions_git.get_highlight, icon.hl, name.hl)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icon, modified_icon, bookmark_icon)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
