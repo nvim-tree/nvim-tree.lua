@@ -72,7 +72,7 @@ function M.setup(opts)
   }
   M.ICON[vim.diagnostic.severity.INFO] = {
     str = M.config.diagnostics.icons.info,
-    hl = { "NvimTreeLspDiagnosticsInfo" },
+    hl = { "NvimTreeLspDiagnosticsInformation" },
   }
   M.ICON[vim.diagnostic.severity.HINT] = {
     str = M.config.diagnostics.icons.hint,
