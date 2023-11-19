@@ -25,7 +25,7 @@ function Decorator:groups_icon_name(node)
   local icon_hl, name_hl
 
   if self.enabled and self.hl_pos ~= HL_POSITION.none then
-    local hl = self:get_highlight(node)
+    local hl = self:calculate_highlight(node)
 
     if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.icon then
       icon_hl = hl
@@ -46,25 +46,48 @@ function Decorator:sign_name(node)
     return
   end
 
-  local icons = self:get_icons(node)
+  local icons = self:calculate_icons(node)
   if icons and #icons > 0 then
-    return icons.hl[1]
+    return icons[1].hl[1]
   end
+end
+
+--- Icons when ICON_PLACEMENT.before
+--- @param node table
+--- @return HighlightedString[]|nil icons
+function Decorator:icons_before(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.before then
+    return
+  end
+
+  return self:calculate_icons(node)
+end
+
+--- Icons when ICON_PLACEMENT.after
+--- @param node table
+--- @return HighlightedString[]|nil icons
+function Decorator:icons_after(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.after then
+    return
+  end
+
+  return self:calculate_icons(node)
 end
 
 ---@diagnostic disable: unused-local
 -- luacheck: push no unused args
 
---- Maybe icon
+--- Maybe icons - abstract
+--- @protected
 --- @param node table
 --- @return HighlightedString[]|nil icons
-function Decorator:get_icons(node) end
+function Decorator:calculate_icons(node) end
 
---- Maybe highlight group
+--- Maybe highlight group - abstract
 --- @protected
 --- @param node table
 --- @return string|nil group
-function Decorator:get_highlight(node) end
+function Decorator:calculate_highlight(node) end
 
 ---@diagnostic enable: unused-local
 -- luacheck: pop

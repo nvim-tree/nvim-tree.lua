@@ -5,16 +5,14 @@ local notify = require "nvim-tree.notify"
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 --- @class Builder
---- @field decorators Decorator[]
+--- @field deco Decorator[]
 local Builder = {}
 Builder.__index = Builder
 
 local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
 
-function Builder.new(root_cwd, decorators, deco)
+function Builder.new(root_cwd, deco)
   return setmetatable({
     index = 0,
     depth = 0,
@@ -23,7 +21,6 @@ function Builder.new(root_cwd, decorators, deco)
     markers = {},
     sign_names = {},
     root_cwd = root_cwd,
-    decorators = decorators,
     deco = deco,
   }, Builder)
 end
@@ -199,14 +196,14 @@ end
 ---@param arrows HighlightedString[]|nil
 ---@param icon HighlightedString
 ---@param name HighlightedString
----@param git_icons HighlightedString[]|nil
----@param diagnostics_icons HighlightedString[]|nil
----@param modified_icons HighlightedString[]|nil
----@param bookmark_icons HighlightedString[]|nil
+---@param node table
 ---@return HighlightedString[]
-function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, diagnostics_icons, modified_icons, bookmark_icons)
+function Builder:_format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
   local function add_to_end(t1, t2)
+    if not t2 then
+      return
+    end
     for _, v in ipairs(t2) do
       if added_len > 0 then
         table.insert(t1, { str = self.icon_padding })
@@ -224,32 +221,15 @@ function Builder:_format_line(indent_markers, arrows, icon, name, git_icons, dia
 
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
-  if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, git_icons)
-  end
-  if modified_icons and self.decorators.modified.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, modified_icons)
-  end
-  if diagnostics_icons and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, diagnostics_icons)
-  end
-  if bookmark_icons and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.before then
-    add_to_end(line, bookmark_icons)
+
+  for i = #self.deco, 1, -1 do
+    add_to_end(line, self.deco[i]:icons_before(node))
   end
 
   add_to_end(line, { name })
 
-  if git_icons and self.decorators.git.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, git_icons)
-  end
-  if modified_icons and self.decorators.modified.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, modified_icons)
-  end
-  if diagnostics_icons and self.decorators.diagnostics.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, diagnostics_icons)
-  end
-  if bookmark_icons and self.decorators.bookmarks.icon_placement == ICON_PLACEMENT.after then
-    add_to_end(line, bookmark_icons)
+  for i = #self.deco, 1, -1 do
+    add_to_end(line, self.deco[i]:icons_after(node))
   end
 
   return line
@@ -289,16 +269,7 @@ function Builder:_build_line(node, idx, num_children)
     table.insert(name.hl, name_group)
   end
 
-  local line = self:_format_line(
-    indent_markers,
-    arrows,
-    icon,
-    name,
-    self.decorators.git:get_icons(node),
-    self.decorators.diagnostics:get_icons(node),
-    self.decorators.modified:get_icons(node),
-    self.decorators.bookmarks:get_icons(node)
-  )
+  local line = self:_format_line(indent_markers, arrows, icon, name, node)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
 
   self.index = self.index + 1

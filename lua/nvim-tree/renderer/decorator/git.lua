@@ -139,7 +139,7 @@ end
 --- Git icons: git.enable, renderer.icons.show.git and node has status
 --- @param node table
 --- @return HighlightedString[]|nil modified icon
-function DecoratorGit:get_icons(node)
+function DecoratorGit:calculate_icons(node)
   if not node or not self.enabled or not self.git_icons then
     return nil
   end
@@ -189,14 +189,14 @@ function DecoratorGit:sign_name(node)
     return
   end
 
-  local icons = self:get_icons(node)
+  local icons = self:calculate_icons(node)
   if icons and #icons > 0 then
     return icons[1].hl[1]
   end
 end
 
 --- Git highlight: git.enable, renderer.highlight_git and node has status
-function DecoratorGit:get_highlight(node)
+function DecoratorGit:calculate_highlight(node)
   if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
     return nil
   end

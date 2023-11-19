@@ -72,7 +72,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.decorators, M.deco)
+  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.deco)
     :configure_root_label(M.config.root_folder_label)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
@@ -107,18 +107,7 @@ function M.setup(opts)
   full_name.setup(opts)
   icon_component.setup(opts)
 
-  -- TODO change to array: precedence should follow order
-  -- HL   cut > copied > diagnostics > bookmarked > modified > opened > git
-  -- Sign                diagnostics > modified > git > bookmarked
-  M.decorators = {
-    bookmarks = DecoratorBookmarks:new(opts),
-    copied = DecoratorCopied:new(opts),
-    cut = DecoratorCut:new(opts),
-    diagnostics = DecoratorDiagnostics:new(opts),
-    git = DecoratorGit:new(opts),
-    modified = DecoratorModified:new(opts),
-    opened = DecoratorOpened:new(opts),
-  }
+  -- priority order
   M.deco = {
     DecoratorCut:new(opts),
     DecoratorCopied:new(opts),

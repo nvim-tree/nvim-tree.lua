@@ -25,7 +25,7 @@ end
 
 --- Opened highlight: renderer.highlight_opened_files and node has an open buffer
 --- @param node table
-function DecoratorOpened:get_highlight(node)
+function DecoratorOpened:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and buffers.is_opened(node) then
     return "NvimTreeOpenedHL"
   end

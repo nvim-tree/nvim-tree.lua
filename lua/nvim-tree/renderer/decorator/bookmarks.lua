@@ -31,14 +31,14 @@ function DecoratorBookmarks:new(opts)
 end
 
 --- Bookmark icon: renderer.icons.show.bookmarks and node is marked
-function DecoratorBookmarks:get_icons(node)
+function DecoratorBookmarks:calculate_icons(node)
   if marks.get_mark(node) then
     return { self.icon }
   end
 end
 
 --- Bookmark highlight: renderer.highlight_bookmarks and node is marked
-function DecoratorBookmarks:get_highlight(node)
+function DecoratorBookmarks:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and marks.get_mark(node) then
     return "NvimTreeBookmarkHL"
   end

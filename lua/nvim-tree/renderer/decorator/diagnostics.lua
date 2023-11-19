@@ -63,14 +63,16 @@ function DecoratorDiagnostics:new(opts)
 end
 
 --- Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
-function DecoratorDiagnostics:get_icons(node)
+function DecoratorDiagnostics:calculate_icons(node)
   if node and self.enabled and self.icons then
-    return { self.icons[node.diag_status] }
+    if node.diag_status then
+      return { self.icons[node.diag_status] }
+    end
   end
 end
 
 --- Diagnostic highlight: diagnostics.enable, renderer.highlight_diagnostics and node has status
-function DecoratorDiagnostics:get_highlight(node)
+function DecoratorDiagnostics:calculate_highlight(node)
   if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
     return nil
   end

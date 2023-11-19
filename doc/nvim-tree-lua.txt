@@ -893,7 +893,7 @@ Configuration options for tree indent markers.
 Configuration options for icons.
 
 Icon sign column precedence:
-  diagnostics > modified > git > bookmarked
+  diagnostics > bookmarked > modified > git
 
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
