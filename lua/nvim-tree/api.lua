@@ -107,6 +107,11 @@ Api.tree.change_root_to_parent = wrap_node(require("nvim-tree.actions.root.dir-u
 
 Api.tree.get_node_under_cursor = wrap(require("nvim-tree.lib").get_node_at_cursor)
 
+Api.tree.inspect_node_under_cursor = wrap_node(function(node)
+  -- until wrap_node(vim.print) works correctly
+  vim.api.nvim_echo({ { vim.inspect(node) } }, false, {})
+end)
+
 Api.tree.get_nodes = wrap(require("nvim-tree.lib").get_nodes)
 
 ---@class ApiTreeFindFileOpts
