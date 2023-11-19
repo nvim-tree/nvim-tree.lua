@@ -1,6 +1,10 @@
+local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
+
 --- @class Decorator
---- @field hl_pos HL_POSITION
---- @field icon_placement ICON_PLACEMENT
+--- @field protected enabled boolean
+--- @field protected hl_pos HL_POSITION
+--- @field protected icon_placement ICON_PLACEMENT
 local Decorator = {}
 
 --- @param o Decorator|nil
@@ -13,19 +17,80 @@ function Decorator:new(o)
   return o
 end
 
+--- Maybe highlight groups
+--- @param node table
+--- @return string|nil icon highlight group
+--- @return string|nil name highlight group
+function Decorator:groups_icon_name(node)
+  local icon_hl, name_hl
+
+  if self.enabled and self.hl_pos ~= HL_POSITION.none then
+    local hl = self:calculate_highlight(node)
+
+    if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.icon then
+      icon_hl = hl
+    end
+    if self.hl_pos == HL_POSITION.all or self.hl_pos == HL_POSITION.name then
+      name_hl = hl
+    end
+  end
+
+  return icon_hl, name_hl
+end
+
+--- Maybe icon sign
+--- @param node table
+--- @return string|nil name
+function Decorator:sign_name(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.signcolumn then
+    return
+  end
+
+  local icons = self:calculate_icons(node)
+  if icons and #icons > 0 then
+    return icons[1].hl[1]
+  end
+end
+
+--- Icons when ICON_PLACEMENT.before
+--- @param node table
+--- @return HighlightedString[]|nil icons
+function Decorator:icons_before(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.before then
+    return
+  end
+
+  return self:calculate_icons(node)
+end
+
+--- Icons when ICON_PLACEMENT.after
+--- @param node table
+--- @return HighlightedString[]|nil icons
+function Decorator:icons_after(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.after then
+    return
+  end
+
+  return self:calculate_icons(node)
+end
+
 ---@diagnostic disable: unused-local
+-- luacheck: push no unused args
 
---- Node icon
---- @param _ table node
---- @return HighlightedString|nil modified icon
-function Decorator:get_icon(_) end
+--- Maybe icons - abstract
+--- @protected
+--- @param node table
+--- @return HighlightedString[]|nil icons
+function Decorator:calculate_icons(node) end
 
---- Node highlight group
---- @param _ table node
+--- Maybe highlight group - abstract
+--- @protected
+--- @param node table
 --- @return string|nil group
-function Decorator:get_highlight(_) end
+function Decorator:calculate_highlight(node) end
 
 ---@diagnostic enable: unused-local
+-- luacheck: pop
 
 --- Define a sign
 --- @protected
