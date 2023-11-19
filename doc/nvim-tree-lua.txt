@@ -1617,6 +1617,11 @@ tree.get_node_under_cursor()      *nvim-tree-api.tree.get_node_under_cursor()*
     Return: ~
       node or nil if tree is not visible
 
+                              *nvim-tree-api.tree.inspect_node_under_cursor()*
+tree.inspect_node_under_cursor()
+    Retrieve the currently focused node and display its contents.
+    Equivalent to `vim.print(require("nvim-tree-api").tree.get_node_under_cursor())`.
+
 tree.get_nodes()                              *nvim-tree-api.tree.get_nodes()*
     Retrieve a hierarchical list of all the nodes. This is a cloned list for
     reference purposes only and should not be passed into other API functions.
