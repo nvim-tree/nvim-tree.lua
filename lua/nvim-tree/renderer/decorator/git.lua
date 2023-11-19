@@ -74,7 +74,7 @@ local function build_hl_table()
     ["MM"] = "NvimTreeGitFileDirtyHL",
     ["AM"] = "NvimTreeGitFileDirtyHL",
     dirty = "NvimTreeGitFileDirtyHL",
-    ["A "] = "NvimTreeGitFileNewHL",
+    ["A "] = "NvimTreeGitFileStagedHL",
     ["??"] = "NvimTreeGitFileNewHL",
     ["AU"] = "NvimTreeGitFileMergeHL",
     ["UU"] = "NvimTreeGitFileMergeHL",
