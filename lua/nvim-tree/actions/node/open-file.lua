@@ -299,7 +299,7 @@ end
 
 local function edit_in_current_buf(filename)
   require("nvim-tree.view").abandon_current_window()
-  vim.cmd("keepjumps edit " .. vim.fn.fnameescape(filename))
+  vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
 function M.fn(mode, filename)
