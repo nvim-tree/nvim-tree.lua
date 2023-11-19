@@ -103,8 +103,12 @@ function Decorator:define_sign(icon)
       vim.fn.sign_undefine(name)
     end
 
+    if self.icon_placement ~= ICON_PLACEMENT.signcolumn or #icon.str < 1 then
+      return
+    end
+
     vim.fn.sign_define(name, {
-      text = icon.str,
+      text = string.sub(icon.str, 1, 1),
       texthl = icon.hl[1],
     })
   end
