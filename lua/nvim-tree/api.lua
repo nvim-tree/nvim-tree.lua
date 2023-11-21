@@ -145,6 +145,9 @@ Api.tree.is_tree_buf = wrap(require("nvim-tree.utils").is_nvim_tree_buf)
 
 Api.tree.is_visible = wrap(require("nvim-tree.view").is_visible)
 
+---@class ApiTreeWinIdOpts
+---@field tabpage number|nil default nil
+
 Api.tree.winid = wrap(require("nvim-tree.view").winid)
 
 Api.fs.create = wrap_node_or_nil(require("nvim-tree.actions.fs.create-file").fn)
