@@ -1705,7 +1705,7 @@ tree.winid({opts})                              *nvim-tree-api.tree.winid()*
       • {opts} (table) optional parameters
 
     Options: ~
-      • {tabpage}        (number)  tabpage, 0 for current, default 0
+      • {tabpage}        (number|nil)  tabpage, 0 or nil for current, default nil
 
     Return: ~
       (number) winid or nil if tree is not visible
