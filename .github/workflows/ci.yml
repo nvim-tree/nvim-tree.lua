@@ -15,7 +15,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: leafo/gh-actions-lua@v10
         with:
@@ -31,7 +31,7 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: stylua
         uses: JohnnyMorganz/stylua-action@v3
