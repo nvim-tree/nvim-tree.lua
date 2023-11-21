@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Performs a lua-language-server check on all files.
+# lls-check/check.json will be produced on any issues, returning 1.
+
+rm -rf lls-check
+mkdir lls-check
+
+OUT=$(lua-language-server --checklevel=Information --check . --logpath=lls-check --loglevel=error)
+echo "${OUT}"
+
+RC=$?
+if [ $RC -ne 0 ]; then
+	echo "failed with RC=$RC"
+	exit $RC
+fi
+
+case "${OUT}" in
+	*Diagnosis\ completed*)
+		if [ -f "lls-check/check.json" ]; then
+			exit 1
+		else
+			exit 0
+		fi
+		;;
+	*)
+		exit 1
+		;;
+esac
+
