@@ -432,6 +432,9 @@ end
 --- @return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
 function M.winid(opts)
   local tabpage = opts and opts.tabpage
+  if tabpage == 0 then
+    tabpage = vim.api.nvim_get_current_tabpage()
+  end
   if M.is_visible { tabpage = tabpage } then
     return M.get_winnr(tabpage)
   else
