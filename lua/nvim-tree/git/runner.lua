@@ -1,6 +1,7 @@
 local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
+local git = require "nvim-tree.git.cli"
 
 local Runner = {}
 Runner.__index = Runner
@@ -52,16 +53,6 @@ function Runner:_handle_incoming_data(prev_output, incoming)
   return ""
 end
 
-function Runner:_getopts(stdout_handle, stderr_handle)
-  local untracked = self.list_untracked and "-u" or nil
-  local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
-  return {
-    args = { "--no-optional-locks", "status", "--porcelain=v1", "-z", ignored, untracked, self.path },
-    cwd = self.toplevel,
-    stdio = { nil, stdout_handle, stderr_handle },
-  }
-end
-
 function Runner:_log_raw_output(output)
   if log.enabled "git" and output and type(output) == "string" then
     log.raw("git", "%s", output)
@@ -70,59 +61,8 @@ function Runner:_log_raw_output(output)
 end
 
 function Runner:_run_git_job(callback)
-  local handle, pid
-  local stdout = vim.loop.new_pipe(false)
-  local stderr = vim.loop.new_pipe(false)
-  local timer = vim.loop.new_timer()
-
-  local function on_finish(rc)
-    self.rc = rc or 0
-    if timer:is_closing() or stdout:is_closing() or stderr:is_closing() or (handle and handle:is_closing()) then
-      if callback then
-        callback()
-      end
-      return
-    end
-    timer:stop()
-    timer:close()
-    stdout:read_stop()
-    stderr:read_stop()
-    stdout:close()
-    stderr:close()
-
-    -- don't close the handle when killing as it will leave a zombie
-    if rc == -1 then
-      pcall(vim.loop.kill, pid, "sigkill")
-    elseif handle then
-      handle:close()
-    end
-
-    if callback then
-      callback()
-    end
-  end
-
-  local opts = self:_getopts(stdout, stderr)
-  log.line("git", "running job with timeout %dms", self.timeout)
-  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
-
-  handle, pid = vim.loop.spawn(
-    "git",
-    opts,
-    vim.schedule_wrap(function(rc)
-      on_finish(rc)
-    end)
-  )
-
-  timer:start(
-    self.timeout,
-    0,
-    vim.schedule_wrap(function()
-      on_finish(-1)
-    end)
-  )
-
   local output_leftover = ""
+
   local function manage_stdout(err, data)
     if err then
       return
@@ -138,8 +78,44 @@ function Runner:_run_git_job(callback)
     self:_log_raw_output(data)
   end
 
-  vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
-  vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
+  local untracked = self.list_untracked and "-u" or nil
+  local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
+  local opts = {
+    args = {
+      "--no-optional-locks",
+      "status",
+      "--porcelain=v1",
+      "-z",
+      ignored,
+      untracked,
+      self.path,
+      timeout = self.timeout,
+    },
+    cwd = self.toplevel,
+  }
+
+  log.line("git", "running job with timeout %dms", self.timeout)
+  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
+  git.cli(opts, function(err, data)
+    if err then
+      self.rc = 1
+      callback(self.rc)
+    elseif err and data then
+      manage_stderr(data)
+    elseif not err and data then
+      manage_stdout(err, data)
+    else
+      self.rc = 0
+      if callback then
+        callback(0)
+      end
+    end
+  end, function(code)
+    self.rc = type(code) == "number" and code or -1
+  end, function()
+    self.rc = -1
+    callback(self.rc)
+  end)
 end
 
 function Runner:_wait()
