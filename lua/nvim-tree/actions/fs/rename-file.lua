@@ -2,6 +2,7 @@ local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
+local utils_ui = require "nvim-tree.utils-ui"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -9,95 +10,93 @@ local M = {
   config = {},
 }
 
-local ALLOWED_MODIFIERS = {
-  [":p"] = true,
-  [":p:h"] = true,
-  [":t"] = true,
-  [":t:r"] = true,
-}
-
 local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
 
-function M.rename(node, to)
+--- note: this function is used elsewhere
+--- @param node table
+--- @param path string path destination
+function M.rename_node_to(node, path)
   local notify_from = notify.render_path(node.absolute_path)
-  local notify_to = notify.render_path(to)
+  local notify_to = notify.render_path(path)
 
-  if utils.file_exists(to) then
+  if utils.file_exists(path) then
     notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
     return
   end
 
-  events._dispatch_will_rename_node(node.absolute_path, to)
-  local success, err = vim.loop.fs_rename(node.absolute_path, to)
+  events._dispatch_will_rename_node(node.absolute_path, path)
+  local success, err = vim.loop.fs_rename(node.absolute_path, path)
   if not success then
     return notify.warn(err_fmt(notify_from, notify_to, err))
   end
   notify.info(string.format("%s -> %s", notify_from, notify_to))
-  utils.rename_loaded_buffers(node.absolute_path, to)
-  events._dispatch_node_renamed(node.absolute_path, to)
+  utils.rename_loaded_buffers(node.absolute_path, path)
+  events._dispatch_node_renamed(node.absolute_path, path)
 end
 
-function M.fn(default_modifier)
-  default_modifier = default_modifier or ":t"
+--- @class fsPromptForRenameOpts: InputPathEditorOpts
 
-  return function(node, modifier)
-    if type(node) ~= "table" then
-      node = lib.get_node_at_cursor()
-    end
+--- @param opts? fsPromptForRenameOpts
+function M.prompt_for_rename(node, opts)
+  if type(node) ~= "table" then
+    node = lib.get_node_at_cursor()
+  end
 
-    if type(modifier) ~= "string" then
-      modifier = default_modifier
-    end
+  local opts_default = { absolute = true }
+  if type(opts) ~= "table" then
+    opts = opts_default
+  end
 
-    -- support for only specific modifiers have been implemented
-    if not ALLOWED_MODIFIERS[modifier] then
-      return notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
-    end
+  node = lib.get_last_group_node(node)
+  if node.name == ".." then
+    return
+  end
 
-    node = lib.get_last_group_node(node)
-    if node.name == ".." then
+  local default_path = utils_ui.Input_path_editor:new(node.absolute_path, opts)
+
+  local input_opts = {
+    prompt = "Rename to ",
+    default = default_path:prepare(),
+    completion = "file",
+  }
+
+  vim.ui.input(input_opts, function(new_file_path)
+    utils.clear_prompt()
+    if not new_file_path then
       return
     end
 
-    local namelen = node.name:len()
-    local directory = node.absolute_path:sub(0, namelen * -1 - 1)
-    local default_path
-    local prepend = ""
-    local append = ""
-    default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
-    if modifier:sub(0, 2) == ":t" then
-      prepend = directory
-    end
-    if modifier == ":t:r" then
-      local extension = vim.fn.fnamemodify(node.name, ":e")
-      append = extension:len() == 0 and "" or "." .. extension
-    end
-    if modifier == ":p:h" then
-      default_path = default_path .. "/"
+    M.rename_node_to(node, default_path:restore(new_file_path))
+    if not M.config.filesystem_watchers.enable then
+      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
     end
 
-    local input_opts = {
-      prompt = "Rename to ",
-      default = default_path,
-      completion = "file",
-    }
+    find_file(utils.path_remove_trailing(new_file_path))
+  end)
+end -- M.prompt_for_rename
 
-    vim.ui.input(input_opts, function(new_file_path)
-      utils.clear_prompt()
-      if not new_file_path then
-        return
-      end
+function M.rename_basename(node)
+  return M.prompt_for_rename(node, { basename = true })
+end
+function M.rename_absolute(node)
+  return M.prompt_for_rename(node, { absolute = true })
+end
+function M.rename(node)
+  return M.prompt_for_rename(node, { filename = true })
+end
+function M.rename_sub(node)
+  return M.prompt_for_rename(node, { dirname = true })
+end
+function M.rename_relative(node)
+  return M.prompt_for_rename(node, { relative = true })
+end
 
-      M.rename(node, prepend .. new_file_path .. append)
-      if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
-      end
-
-      find_file(utils.path_remove_trailing(new_file_path))
-    end)
-  end
+--- @deprecated
+M.fn = function()
+  -- Warn if used in plugins directly
+  error("nvim-tree: method is deprecated, use rename_* instead; see nvim-tree.lua/lua/nvim-tree/actions/fs/rename-file.lua", 2)
 end
 
 function M.setup(opts)

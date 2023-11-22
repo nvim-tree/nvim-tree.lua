@@ -1756,6 +1756,13 @@ fs.rename_sub({node})                          *nvim-tree-api.fs.rename_sub()*
     Parameters: ~
       • {node} (Node) file or folder
 
+fs.rename_relative({node})                *nvim-tree-api.fs.rename_relative()*
+
+    Prompt to rename a file or folder by relative path.
+
+    Parameters: ~
+      • {node} (Node) file or folder
+
 fs.rename_full({node})                        *nvim-tree-api.fs.rename_full()*
     Prompt to rename a file or folder by absolute path.
 
