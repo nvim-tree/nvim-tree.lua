@@ -11,7 +11,7 @@ local M = {}
 local function refresh_nodes(node, projects, unloaded_bufnr)
   Iterator.builder({ node })
     :applier(function(n)
-      if n.open and n.nodes then
+      if n.nodes then
         local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
         explorer_module.reload(n, projects[toplevel] or {}, unloaded_bufnr)
       end

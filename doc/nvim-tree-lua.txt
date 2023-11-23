@@ -1698,6 +1698,18 @@ tree.is_visible({opts})                      *nvim-tree-api.tree.is_visible()*
     Return: ~
       (boolean) nvim-tree is visible
 
+tree.winid({opts})                              *nvim-tree-api.tree.winid()*
+    Retrieve the winid of the open tree.
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {tabpage}        (number|nil)  tabpage, 0 or nil for current, default nil
+
+    Return: ~
+      (number) winid or nil if tree is not visible
+
 ==============================================================================
  6.2 API FILE SYSTEM                                        *nvim-tree-api.fs*
 

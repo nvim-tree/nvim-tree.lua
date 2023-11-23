@@ -8,28 +8,35 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
-  luacheck:
-    name: luacheck
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.1"
+
+      - uses: leafo/gh-actions-luarocks@v4
+
+      - name: luacheck
         run: |
-          sudo apt-get update
-          sudo add-apt-repository universe
-          sudo apt install luarocks -y
-          sudo luarocks install luacheck
-      - name: Run luacheck
-        run: luacheck .
-  stylua:
-    name: stylua
+          luarocks install luacheck 1.1.1
+          luacheck lua
+
+  style:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@v3
+
+      - name: stylua
+        uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: latest
-          args: --color always --check lua/
+          version: "0.19"
+          args: --check lua
+
