@@ -23,7 +23,7 @@ function M.reload()
   end
 end
 
----@param node table
+---@param node Node
 ---@return boolean
 function M.is_modified(node)
   return M.config.enable

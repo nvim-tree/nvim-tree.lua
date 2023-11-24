@@ -8,6 +8,7 @@ local M = {
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 
+---@param absolute_path string
 local function clear_buffer(absolute_path)
   local bufs = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
   for _, buf in pairs(bufs) do
@@ -24,6 +25,7 @@ local function clear_buffer(absolute_path)
   end
 end
 
+---@param node Node
 function M.remove(node)
   local binary = M.config.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
@@ -76,6 +78,7 @@ function M.remove(node)
   end
 end
 
+---@param node Node
 function M.fn(node)
   if node.name == ".." then
     return

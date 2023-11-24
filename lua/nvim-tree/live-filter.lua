@@ -53,6 +53,7 @@ local function matches(node)
   return vim.regex(M.filter):match_str(name) ~= nil
 end
 
+---@param node_ Node|nil
 function M.apply_filter(node_)
   if not M.filter or M.filter == "" then
     reset_filter(node_)

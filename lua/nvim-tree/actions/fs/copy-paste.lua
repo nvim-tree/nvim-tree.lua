@@ -20,6 +20,10 @@ local clipboard = {
   copy = {},
 }
 
+---@param source string
+---@param destination string
+---@return boolean
+---@return string|nil
 local function do_copy(source, destination)
   local source_stats, handle
   local success, errmsg
@@ -81,6 +85,12 @@ local function do_copy(source, destination)
   return true
 end
 
+---@param source string
+---@param dest string
+---@param action_type string
+---@param action_fn fun(source: string, dest: string)
+---@return boolean|nil -- success
+---@return string|nil -- error message
 local function do_single_paste(source, dest, action_type, action_fn)
   local dest_stats
   local success, errmsg, errcode
@@ -140,6 +150,8 @@ local function do_single_paste(source, dest, action_type, action_fn)
   end
 end
 
+---@param node Node
+---@param clip table
 local function toggle(node, clip)
   if node.name == ".." then
     return
@@ -147,7 +159,8 @@ local function toggle(node, clip)
   local notify_node = notify.render_path(node.absolute_path)
 
   if utils.array_remove(clip, node) then
-    return notify.info(notify_node .. " removed from clipboard.")
+    notify.info(notify_node .. " removed from clipboard.")
+    return
   end
 
   table.insert(clip, node)
@@ -161,18 +174,23 @@ function M.clear_clipboard()
   renderer.draw()
 end
 
+---@param node Node
 function M.copy(node)
   utils.array_remove(clipboard.cut, node)
   toggle(node, clipboard.copy)
   renderer.draw()
 end
 
+---@param node Node
 function M.cut(node)
   utils.array_remove(clipboard.copy, node)
   toggle(node, clipboard.cut)
   renderer.draw()
 end
 
+---@param node Node
+---@param action_type string
+---@param action_fn fun(source: string, dest: string)
 local function do_paste(node, action_type, action_fn)
   node = lib.get_last_group_node(node)
   if node.name == ".." then
@@ -202,10 +220,14 @@ local function do_paste(node, action_type, action_fn)
 
   clipboard[action_type] = {}
   if not M.config.filesystem_watchers.enable then
-    return reloaders.reload_explorer()
+    reloaders.reload_explorer()
   end
 end
 
+---@param source string
+---@param destination string
+---@return boolean
+---@return string?
 local function do_cut(source, destination)
   log.line("copy_paste", "do_cut '%s' -> '%s'", source, destination)
 
@@ -225,12 +247,13 @@ local function do_cut(source, destination)
   return true
 end
 
+---@param node Node
 function M.paste(node)
   if clipboard.cut[1] ~= nil then
-    return do_paste(node, "cut", do_cut)
+    do_paste(node, "cut", do_cut)
+  else
+    do_paste(node, "copy", do_copy)
   end
-
-  return do_paste(node, "copy", do_copy)
 end
 
 function M.print_clipboard()
@@ -248,9 +271,10 @@ function M.print_clipboard()
     end
   end
 
-  return notify.info(table.concat(content, "\n") .. "\n")
+  notify.info(table.concat(content, "\n") .. "\n")
 end
 
+---@param content string
 local function copy_to_clipboard(content)
   local clipboard_name
   if M.config.actions.use_system_clipboard == true then
@@ -264,28 +288,30 @@ local function copy_to_clipboard(content)
   end
 
   vim.api.nvim_exec_autocmds("TextYankPost", {})
-  return notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
+  notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
 end
 
+---@param node Node
 function M.copy_filename(node)
-  return copy_to_clipboard(node.name)
+  copy_to_clipboard(node.name)
 end
 
+---@param node Node
 function M.copy_path(node)
   local absolute_path = node.absolute_path
   local relative_path = utils.path_relative(absolute_path, core.get_cwd())
   local content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
-  return copy_to_clipboard(content)
+  copy_to_clipboard(content)
 end
 
 function M.copy_absolute_path(node)
   local absolute_path = node.absolute_path
   local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
-  return copy_to_clipboard(content)
+  copy_to_clipboard(content)
 end
 
----Clipboard text highlight group and position when highlight_clipboard.
----@param node table
+--- Clipboard text highlight group and position when highlight_clipboard.
+---@param node Node
 ---@return HL_POSITION position none when clipboard empty
 ---@return string|nil group only when node present in clipboard
 function M.get_highlight(node)

@@ -17,6 +17,31 @@ local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
+---@class ParentNode
+---@field name string
+
+---@class BaseNode
+---@field absolute_path string
+---@field executable boolean
+---@field fs_stat uv_fs_t
+---@field git_status GitStatus|nil
+---@field hidden boolean
+---@field name string
+---@field parent DirNode
+---@field type string
+---@field watcher function|nil
+
+---@class DirNode: BaseNode
+---@field has_children boolean
+---@field group_next Node|nil
+---@field nodes Node[]
+---@field open boolean
+
+---@class FileNode: BaseNode
+---@field extension string
+
+---@alias Node ParentNode|DirNode|FileNode
+
 local _config = {}
 
 local M = {
@@ -79,6 +104,7 @@ function M.change_root(path, bufnr)
   change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
 end
 
+---@param cwd string|nil
 function M.open_replacing_current_buffer(cwd)
   if view.is_visible() then
     return
@@ -159,10 +185,13 @@ function M.place_cursor_on_node()
   end
 end
 
+---@return table
 function M.get_config()
   return M.config
 end
 
+---@param disable_netrw boolean
+---@param hijack_netrw boolean
 local function manage_netrw(disable_netrw, hijack_netrw)
   if hijack_netrw then
     vim.cmd "silent! autocmd! FileExplorer *"
@@ -174,6 +203,7 @@ local function manage_netrw(disable_netrw, hijack_netrw)
   end
 end
 
+---@param name string|nil
 function M.change_dir(name)
   change_dir.fn(name)
 
@@ -182,6 +212,7 @@ function M.change_dir(name)
   end
 end
 
+---@param opts table
 local function setup_autocommands(opts)
   local augroup_id = vim.api.nvim_create_augroup("NvimTree", { clear = true })
   local function create_nvim_tree_autocmd(name, custom_opts)
@@ -677,9 +708,15 @@ local ACCEPTED_STRINGS = {
   },
 }
 
+---@param conf table
 local function validate_options(conf)
   local msg
 
+  ---@param user any
+  ---@param def any
+  ---@param strs table
+  ---@param types table
+  ---@param prefix string
   local function validate(user, def, strs, types, prefix)
     -- if user's option is not a table there is nothing to do
     if type(user) ~= "table" then
@@ -762,6 +799,7 @@ function M.purge_all_state()
   end
 end
 
+---@param conf table|nil
 function M.setup(conf)
   if vim.fn.has "nvim-0.8" == 0 then
     notify.warn "nvim-tree.lua requires Neovim 0.8 or higher"

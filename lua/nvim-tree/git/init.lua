@@ -29,6 +29,10 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
+--- @param toplevel string|nil
+--- @param path string|nil
+--- @param project table
+--- @param git_status table|nil
 local function reload_git_status(toplevel, path, project, git_status)
   if path then
     for p in pairs(project.files) do
@@ -118,6 +122,7 @@ function M.reload_project(toplevel, path, callback)
 end
 
 --- Retrieve a known project
+--- @param toplevel string|nil
 --- @return table|nil project
 function M.get_project(toplevel)
   return M._projects_by_toplevel[toplevel]

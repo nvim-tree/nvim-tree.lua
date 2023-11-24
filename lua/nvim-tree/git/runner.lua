@@ -2,12 +2,16 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 
+---@class Runner
 local Runner = {}
 Runner.__index = Runner
 
 local timeouts = 0
 local MAX_TIMEOUTS = 5
 
+---@private
+---@param status string
+---@param path string|nil
 function Runner:_parse_status_output(status, path)
   -- replacing slashes if on windows
   if vim.fn.has "win32" == 1 then
@@ -18,6 +22,10 @@ function Runner:_parse_status_output(status, path)
   end
 end
 
+---@private
+---@param prev_output string
+---@param incoming string
+---@return string
 function Runner:_handle_incoming_data(prev_output, incoming)
   if incoming and utils.str_find(incoming, "\n") then
     local prev = prev_output .. incoming
@@ -46,12 +54,15 @@ function Runner:_handle_incoming_data(prev_output, incoming)
   end
 
   for line in prev_output:gmatch "[^\n]*\n" do
-    self._parse_status_output(line)
+    self:_parse_status_output(line)
   end
 
   return ""
 end
 
+---@param stdout_handle uv_pipe_t
+---@param stderr_handle uv_pipe_t
+---@return table
 function Runner:_getopts(stdout_handle, stderr_handle)
   local untracked = self.list_untracked and "-u" or nil
   local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
@@ -62,6 +73,7 @@ function Runner:_getopts(stdout_handle, stderr_handle)
   }
 end
 
+---@param output string
 function Runner:_log_raw_output(output)
   if log.enabled "git" and output and type(output) == "string" then
     log.raw("git", "%s", output)
@@ -69,11 +81,16 @@ function Runner:_log_raw_output(output)
   end
 end
 
+---@param callback function|nil
 function Runner:_run_git_job(callback)
   local handle, pid
   local stdout = vim.loop.new_pipe(false)
   local stderr = vim.loop.new_pipe(false)
   local timer = vim.loop.new_timer()
+
+  if stdout == nil or stderr == nil or timer == nil then
+    return
+  end
 
   local function on_finish(rc)
     self.rc = rc or 0
@@ -151,6 +168,7 @@ function Runner:_wait()
   end
 end
 
+---@param opts table
 function Runner:_finalise(opts)
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", opts.toplevel, opts.path)

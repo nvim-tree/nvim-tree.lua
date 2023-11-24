@@ -6,6 +6,7 @@ local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
+---@return fun(path: string): boolean
 local function buf_match()
   local buffer_paths = vim.tbl_map(function(buffer)
     return vim.api.nvim_buf_get_name(buffer)
@@ -22,6 +23,7 @@ local function buf_match()
   end
 end
 
+---@param keep_buffers boolean
 function M.fn(keep_buffers)
   local node = lib.get_node_at_cursor()
   local explorer = core.get_explorer()

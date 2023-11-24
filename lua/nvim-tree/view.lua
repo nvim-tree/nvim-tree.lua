@@ -236,6 +236,7 @@ function M.close()
   end
 end
 
+---@param options table|nil
 function M.open(options)
   if M.is_visible() then
     return
@@ -297,6 +298,7 @@ function M.grow_from_content()
   end
 end
 
+---@param size string|number|nil
 function M.resize(size)
   if M.View.float.enable and not M.View.adaptive_size then
     -- if the floating windows's adaptive size is not desired, then the
@@ -386,6 +388,7 @@ function M.abandon_all_windows()
   end
 end
 
+---@param opts table|nil
 function M.is_visible(opts)
   if opts and opts.tabpage then
     if M.View.tabpages[opts.tabpage] == nil then
@@ -407,12 +410,15 @@ function M.is_visible(opts)
   return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr())
 end
 
+---@param opts table|nil
 function M.set_cursor(opts)
   if M.is_visible() then
     pcall(vim.api.nvim_win_set_cursor, M.get_winnr(), opts)
   end
 end
 
+---@param winnr number|nil
+---@param open_if_closed boolean|nil
 function M.focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
 
@@ -450,6 +456,8 @@ function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
+---@param bufnr number
+---@return boolean
 function M.is_buf_valid(bufnr)
   return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
 end
@@ -497,6 +505,8 @@ function M._prevent_buffer_override()
   end)
 end
 
+---@param cwd string|nil
+---@return boolean
 function M.is_root_folder_visible(cwd)
   return cwd ~= "/" and not M.View.hide_root_folder
 end

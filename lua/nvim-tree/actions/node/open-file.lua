@@ -14,7 +14,7 @@ local function get_user_input_char()
   return vim.fn.nr2char(c)
 end
 
----Get all windows in the current tabpage that aren't NvimTree.
+--- Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
 local function usable_win_ids()
   local tabpage = vim.api.nvim_get_current_tabpage()
@@ -302,6 +302,8 @@ local function edit_in_current_buf(filename)
   vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
+---@param mode string
+---@param filename string
 function M.fn(mode, filename)
   if type(mode) ~= "string" then
     mode = ""

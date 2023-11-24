@@ -20,6 +20,8 @@ local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
 
+---@param node Node
+---@param to string
 function M.rename(node, to)
   local notify_from = notify.render_path(node.absolute_path)
   local notify_to = notify.render_path(to)
@@ -32,13 +34,16 @@ function M.rename(node, to)
   events._dispatch_will_rename_node(node.absolute_path, to)
   local success, err = vim.loop.fs_rename(node.absolute_path, to)
   if not success then
-    return notify.warn(err_fmt(notify_from, notify_to, err))
+    notify.warn(err_fmt(notify_from, notify_to, err))
+    return
   end
   notify.info(string.format("%s -> %s", notify_from, notify_to))
   utils.rename_loaded_buffers(node.absolute_path, to)
   events._dispatch_node_renamed(node.absolute_path, to)
 end
 
+---@param default_modifier string|nil
+---@return fun(node: Node, modifier: string)
 function M.fn(default_modifier)
   default_modifier = default_modifier or ":t"
 
@@ -53,7 +58,8 @@ function M.fn(default_modifier)
 
     -- support for only specific modifiers have been implemented
     if not ALLOWED_MODIFIERS[modifier] then
-      return notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
+      notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
+      return
     end
 
     node = lib.get_last_group_node(node)

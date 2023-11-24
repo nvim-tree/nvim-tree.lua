@@ -6,6 +6,8 @@ local M = {
   current_tab = vim.api.nvim_get_current_tabpage(),
 }
 
+---@param name string
+---@return string
 local function clean_input_cwd(name)
   name = vim.fn.fnameescape(name)
   local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h")
@@ -16,17 +18,23 @@ local function clean_input_cwd(name)
   end
 end
 
+---@param new_tabpage integer
+---@return boolean
 local function is_window_event(new_tabpage)
   local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window
   return is_event_scope_window and new_tabpage == M.current_tab
 end
 
+---@param foldername string
+---@return boolean
 local function prevent_cwd_change(foldername)
   local is_same_cwd = foldername == core.get_cwd()
   local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   return is_same_cwd or is_restricted_above
 end
 
+---@param input_cwd string
+---@param with_open boolean|nil
 function M.fn(input_cwd, with_open)
   if not core.get_explorer() then
     return
@@ -46,6 +54,8 @@ function M.fn(input_cwd, with_open)
   M.force_dirchange(foldername, with_open)
 end
 
+---@param global boolean
+---@param path string
 local function cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
@@ -54,6 +64,8 @@ local function should_change_dir()
   return M.options.enable and vim.tbl_isempty(vim.v.event)
 end
 
+---@param f function
+---@return fun(foldername: string, should_open_view: boolean|nil)
 local function add_profiling_to(f)
   return function(foldername, should_open_view)
     local profile = log.profile_start("change dir %s", foldername)

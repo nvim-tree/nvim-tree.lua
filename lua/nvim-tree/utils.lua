@@ -11,10 +11,15 @@ M.is_wsl = vim.fn.has "wsl" == 1
 -- false for WSL
 M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 
+---@param haystack string
+---@param needle string
+---@return boolean
 function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1
 end
 
+---@param path string
+---@return string|uv_fs_t
 function M.read_file(path)
   local fd = vim.loop.fs_open(path, "r", 438)
   if not fd then
@@ -30,15 +35,19 @@ function M.read_file(path)
 end
 
 local path_separator = package.config:sub(1, 1)
+---@param paths string[]
+---@return string
 function M.path_join(paths)
   return table.concat(vim.tbl_map(M.path_remove_trailing, paths), path_separator)
 end
 
+---@param path string
+---@return fun(): string
 function M.path_split(path)
   return path:gmatch("[^" .. path_separator .. "]+" .. path_separator .. "?")
 end
 
----Get the basename of the given path.
+--- Get the basename of the given path.
 ---@param path string
 ---@return string
 function M.path_basename(path)
@@ -50,7 +59,7 @@ function M.path_basename(path)
   return path:sub(i + 1, #path)
 end
 
----Get a path relative to another path.
+--- Get a path relative to another path.
 ---@param path string
 ---@param relative_to string
 ---@return string
@@ -66,6 +75,8 @@ function M.path_relative(path, relative_to)
   return p
 end
 
+---@param path string
+---@return string
 function M.path_add_trailing(path)
   if path:sub(-1) == path_separator then
     return path
@@ -74,6 +85,8 @@ function M.path_add_trailing(path)
   return path .. path_separator
 end
 
+---@param path string
+---@return string
 function M.path_remove_trailing(path)
   local p, _ = path:gsub(path_separator .. "$", "")
   return p
@@ -81,10 +94,12 @@ end
 
 M.path_separator = path_separator
 
--- get the node and index of the node from the tree that matches the predicate.
--- The explored nodes are those displayed on the view.
--- @param nodes list of node
--- @param fn    function(node): boolean
+--- Get the node and index of the node from the tree that matches the predicate.
+--- The explored nodes are those displayed on the view.
+---@param nodes Node[] 
+---@param fn fun(node: Node): boolean
+---@return table|nil
+---@return number
 function M.find_node(nodes, fn)
   local node, i = Iterator.builder(nodes)
     :matcher(fn)
@@ -99,6 +114,9 @@ end
 
 -- get the node in the tree state depending on the absolute path of the node
 -- (grouped or hidden too)
+---@param path string
+---@return Node|nil
+---@return number|nil
 function M.get_node_from_path(path)
   local explorer = require("nvim-tree.core").get_explorer()
 
@@ -127,7 +145,9 @@ function M.get_node_from_path(path)
     :iterate()
 end
 
--- get the highest parent of grouped nodes
+--- Get the highest parent of grouped nodes
+---@param node_ Node
+---@return table
 function M.get_parent_of_group(node_)
   local node = node_
   while node.parent and node.parent.group_next do
@@ -136,9 +156,9 @@ function M.get_parent_of_group(node_)
   return node
 end
 
--- return visible nodes indexed by line
--- @param nodes_all list of node
--- @param line_start first index
+--- Return visible nodes indexed by line
+---@param nodes_all Node[]
+---@param line_start number
 ---@return table
 function M.get_nodes_by_line(nodes_all, line_start)
   local nodes_by_line = {}
@@ -208,9 +228,9 @@ function M.canonical_path(path)
   return path
 end
 
--- Escapes special characters in string if windows else returns unmodified string.
--- @param path string
--- @return path
+--- Escapes special characters in string if windows else returns unmodified string.
+---@param path string
+---@return string|nil
 function M.escape_special_chars(path)
   if path == nil then
     return path
@@ -218,10 +238,10 @@ function M.escape_special_chars(path)
   return M.is_windows and path:gsub("%(", "\\("):gsub("%)", "\\)") or path
 end
 
--- Create empty sub-tables if not present
--- @param tbl to create empty inside of
--- @param path dot separated string of sub-tables
--- @return table deepest sub-table
+--- Create empty sub-tables if not present
+---@param tbl table to create empty inside of
+---@param path string dot separated string of sub-tables
+---@return table deepest sub-table
 function M.table_create_missing(tbl, path)
   local t = tbl
   for s in string.gmatch(path, "([^%.]+)%.*") do
@@ -395,7 +415,7 @@ end
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
 ---If none of the parents is visible focus root.
 ---If node is nil do nothing.
----@param node table|nil node to focus
+---@param node Node|nil node to focus
 function M.focus_node_or_parent(node)
   local explorer = require("nvim-tree.core").get_explorer()
 
@@ -417,6 +437,9 @@ function M.focus_node_or_parent(node)
   end
 end
 
+---@param path string
+---@return integer|nil
+---@return integer|nil
 function M.get_win_buf_from_path(path)
   for _, w in pairs(vim.api.nvim_tabpage_list_wins(0)) do
     local b = vim.api.nvim_win_get_buf(w)
@@ -433,7 +456,9 @@ function M.clear_prompt()
   end
 end
 
--- return a new table with values from array
+--- Return a new table with values from array
+---@param array table
+---@return table
 function M.array_shallow_clone(array)
   local to = {}
   for _, v in ipairs(array) do
@@ -443,9 +468,9 @@ function M.array_shallow_clone(array)
 end
 
 --- Remove and return item from array if present.
---- @param array table
---- @param item any
---- @return any|nil removed
+---@param array table
+---@param item any
+---@return any|nil removed
 function M.array_remove(array, item)
   if not array then
     return nil
@@ -458,20 +483,24 @@ function M.array_remove(array, item)
   end
 end
 
+---@param array table
+---@return table
 function M.array_remove_nils(array)
   return vim.tbl_filter(function(v)
     return v ~= nil
   end, array)
 end
 
+---@param f fun(node: Node|nil)
+---@return function
 function M.inject_node(f)
   return function()
     f(require("nvim-tree.lib").get_node_at_cursor())
   end
 end
 
----Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
----This is cheap, as the readable test should only ever be needed when resuming a vim session.
+--- Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
+--- This is cheap, as the readable test should only ever be needed when resuming a vim session.
 ---@param bufnr number|nil may be 0 or nil for current
 ---@return boolean
 function M.is_nvim_tree_buf(bufnr)

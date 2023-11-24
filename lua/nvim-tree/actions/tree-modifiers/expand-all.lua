@@ -57,6 +57,7 @@ local function gen_iterator()
   end
 end
 
+---@param base_node table
 function M.fn(base_node)
   local node = base_node.nodes and base_node or core.get_explorer()
   if gen_iterator()(node) then
