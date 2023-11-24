@@ -433,6 +433,21 @@ function M.focus(winnr, open_if_closed)
   vim.api.nvim_set_current_win(wnr)
 end
 
+--- Retrieve the winid of the open tree.
+--- @param opts ApiTreeWinIdOpts|nil
+--- @return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
+function M.winid(opts)
+  local tabpage = opts and opts.tabpage
+  if tabpage == 0 then
+    tabpage = vim.api.nvim_get_current_tabpage()
+  end
+  if M.is_visible { tabpage = tabpage } then
+    return M.get_winnr(tabpage)
+  else
+    return nil
+  end
+end
+
 --- Restores the state of a NvimTree window if it was initialized before.
 function M.restore_tab_state()
   local tabpage = vim.api.nvim_get_current_tabpage()
