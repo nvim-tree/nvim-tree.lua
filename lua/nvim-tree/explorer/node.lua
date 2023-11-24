@@ -4,7 +4,6 @@ local M = {}
 ---@field file string|nil
 ---@field dir table|nil
 
-
 ---@param parent_ignored boolean
 ---@param status table|nil
 ---@param absolute_path string

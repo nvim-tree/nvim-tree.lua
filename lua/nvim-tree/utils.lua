@@ -96,7 +96,7 @@ M.path_separator = path_separator
 
 --- Get the node and index of the node from the tree that matches the predicate.
 --- The explored nodes are those displayed on the view.
----@param nodes Node[] 
+---@param nodes Node[]
 ---@param fn fun(node: Node): boolean
 ---@return table|nil
 ---@return number
