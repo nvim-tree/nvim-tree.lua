@@ -21,11 +21,12 @@ if [ ! -d "${DIR_LLS}" ]; then
 fi
 
 # execute from within the lua-language-server directory as it expects specific file locations
-cd "${DIR_LLS}"
+cd "${DIR_LLS}" || exit
 OUT=$("${DIR_LLS}/bin/lua-language-server" --checklevel=Information --check "${DIR_SRC}" --logpath="${DIR_OUT}" --loglevel=error)
+RC=$?
+
 echo "${OUT}" >&2
 
-RC=$?
 if [ $RC -ne 0 ]; then
 	echo "failed with RC=$RC"
 	exit $RC
