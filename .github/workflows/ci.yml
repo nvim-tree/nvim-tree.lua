@@ -48,11 +48,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: deps
-      run: |
-        sudo add-apt-repository universe
-        sudo apt install lua-language-server -y
-
     - name: lls-check
       run: |
         scripts/lls-check
