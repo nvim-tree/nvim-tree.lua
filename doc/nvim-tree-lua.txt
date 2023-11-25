@@ -250,9 +250,9 @@ via |nvim-tree.on_attach| e.g. >
 
     Open the tree if it is closed, and then focus on the tree.
 
-    See |nvim-tree-api.tree.focus()|
+    See |nvim-tree-api.tree.open()|
 
-    Calls: `api.tree.focus()`
+    Calls: `api.tree.open()`
 
 *:NvimTreeRefresh*
 
@@ -1587,6 +1587,7 @@ tree.close_in_all_tabs()              *nvim-tree-api.tree.close_in_all_tabs()*
 
 tree.focus()                                      *nvim-tree-api.tree.focus()*
     Focus the tree, opening it if necessary.
+    Retained for compatibility, use |tree.open()| with no arguments instead.
 
 tree.reload()                                    *nvim-tree-api.tree.reload()*
     Refresh the tree. Does nothing if closed.
