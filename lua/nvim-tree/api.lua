@@ -86,7 +86,7 @@ Api.tree.close_in_this_tab = wrap(require("nvim-tree.view").close_this_tab_only)
 Api.tree.close_in_all_tabs = wrap(require("nvim-tree.view").close_all_tabs)
 
 Api.tree.focus = wrap(function()
-  require("nvim-tree").focus()
+  Api.tree.open()
 end)
 
 Api.tree.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_explorer)
