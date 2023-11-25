@@ -232,7 +232,7 @@ via |nvim-tree.on_attach| e.g. >
 
     Opens the tree. See |nvim-tree-api.tree.open()|
 
-    Calls: `api.tree.open({ path = "<arg>" })`
+    Calls: `api.tree.open({ path = "<args>" })`
 
 *:NvimTreeClose*
 
@@ -244,13 +244,13 @@ via |nvim-tree.on_attach| e.g. >
 
     Open or close the tree. See |nvim-tree-api.tree.toggle()|
 
-    Calls: `api.tree.toggle({ path = "<arg>" })`
+    Calls: `api.tree.toggle({ path = "<args>", find_file = false, update_root = false, focus = true, })`
 
 *:NvimTreeFocus*
 
     Open the tree if it is closed, and then focus on the tree.
 
-    See |nvim-tree-api.tree.toggle()|
+    See |nvim-tree-api.tree.focus()|
 
     Calls: `api.tree.focus()`
 
@@ -272,7 +272,7 @@ via |nvim-tree.on_attach| e.g. >
 
     See |nvim-tree-api.tree.find_file()|
 
-    Calls: `api.tree.find_file { open = true, update_root = <bang> }`
+    Calls: `api.tree.find_file({ update_root = <bang>, open = true, focus = true, })`
 
 *:NvimTreeFindFileToggle*
 
@@ -284,7 +284,7 @@ via |nvim-tree.on_attach| e.g. >
 
     See |nvim-tree-api.tree.toggle()|
 
-    Calls: `api.tree.toggle { find_file = true, focus = true, path = "<arg>", update_root = <bang> }`
+    Calls: `api.tree.toggle({ path = "<args>", update_root = <bang>, find_file = true, focus = true, })`
 
 *:NvimTreeClipboard*
 
