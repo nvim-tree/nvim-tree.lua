@@ -48,6 +48,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: lls-check
+    - name: lua-language-server --check
       run: |
         scripts/lls-check
