@@ -40,7 +40,14 @@ local notify = require "nvim-tree.notify"
 ---@class FileNode: BaseNode
 ---@field extension string
 
----@alias Node ParentNode|DirNode|FileNode
+---@class SymlinkDirNode: DirNode
+---@field links_to string
+
+---@class SymlinkFileNode: DirNode
+---@field links_to string
+
+---@alias SymlinkNode SymlinkDirNode|SymlinkFileNode
+---@alias Node ParentNode|DirNode|FileNode|SymlinkNode
 
 local _config = {}
 
