@@ -60,8 +60,8 @@ function Runner:_handle_incoming_data(prev_output, incoming)
   return ""
 end
 
----@param stdout_handle uv_pipe_t
----@param stderr_handle uv_pipe_t
+---@param stdout_handle uv.uv_pipe_t
+---@param stderr_handle uv.uv_pipe_t
 ---@return table
 function Runner:_getopts(stdout_handle, stderr_handle)
   local untracked = self.list_untracked and "-u" or nil

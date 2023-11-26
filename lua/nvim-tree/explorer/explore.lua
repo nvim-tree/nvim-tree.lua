@@ -18,7 +18,7 @@ local function get_type_from(type_, cwd)
   return type_ or (vim.loop.fs_stat(cwd) or {}).type
 end
 
----@param handle uv_fs_t
+---@param handle uv.uv_fs_t
 ---@param cwd string
 ---@param node Node
 ---@param git_status table

@@ -6,7 +6,7 @@
 ---@class BaseNode
 ---@field absolute_path string
 ---@field executable boolean
----@field fs_stat uv_fs_t
+---@field fs_stat uv.uv_fs_t
 ---@field git_status GitStatus|nil
 ---@field hidden boolean
 ---@field name string

@@ -19,7 +19,7 @@ function M.str_find(haystack, needle)
 end
 
 ---@param path string
----@return string|uv_fs_t
+---@return string|uv.uv_fs_t
 function M.read_file(path)
   local fd = vim.loop.fs_open(path, "r", 438)
   if not fd then
