@@ -284,7 +284,10 @@ local function open_in_new_window(filename, mode)
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
-  pcall(vim.cmd, cmd)
+  pcall(function()
+    vim.cmd(cmd)
+  end)
+
   lib.set_target_win()
 end
 

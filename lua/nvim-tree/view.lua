@@ -133,7 +133,10 @@ local function setup_tabpage(tabpage)
 end
 
 local function set_window_options_and_buffer()
-  pcall(vim.cmd, "buffer " .. M.get_bufnr())
+  pcall(function()
+    vim.cmd("buffer " .. M.get_bufnr())
+  end)
+
   local eventignore = vim.opt.eventignore:get()
   vim.opt.eventignore = "all"
   for k, v in pairs(M.View.winopts) do
