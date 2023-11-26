@@ -43,6 +43,7 @@ CONTENTS                                                           *nvim-tree*
   6.7  API Marks                                |nvim-tree-api.marks|
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
+  6.10 API Log                                  |nvim-tree-api.log|
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
@@ -318,6 +319,14 @@ via |nvim-tree.on_attach| e.g. >
     See |nvim-tree-api.tree.collapse_all()|
 
     Calls: `api.tree.collapse_all(true)`
+
+*:NvimTreeOpenLog*
+
+    Opens the nvim-tree log file in a new window.
+
+    See |nvim-tree-opts-log|
+
+    Calls: `api.log.open()`
 
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
@@ -2019,7 +2028,7 @@ config.mappings.get_keymap_default()
         (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
- 6.8 API COMMANDS                                     *nvim-tree-api.commands*
+ 6.9 API COMMANDS                                     *nvim-tree-api.commands*
 
 commands.get()                                  *nvim-tree-api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
@@ -2029,6 +2038,17 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {name}    (string)
         • {command} (function)
         • {opts}    (table)
+
+==============================================================================
+ 6.10 API LOG                                              *nvim-tree-api.log*
+
+log.get_path()                                       *nvim-tree-api.log.get()*
+    Get path to an nvim-tree log file.
+
+    Return: ~
+        • {path}  (string)
+log.open()                                          *nvim-tree-api.log.open()*
+    Open log file in new window. 
 
 ==============================================================================
  7. MAPPINGS                                              *nvim-tree-mappings*

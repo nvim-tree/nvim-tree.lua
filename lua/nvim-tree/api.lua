@@ -247,4 +247,8 @@ Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
 
+Api.log = {}
+Api.log.open = wrap(require("nvim-tree.log").open)
+Api.log.get_path = wrap(require("nvim-tree.log").get_path)
+
 return Api

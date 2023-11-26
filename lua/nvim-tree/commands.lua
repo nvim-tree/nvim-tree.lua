@@ -134,6 +134,16 @@ local CMDS = {
       api.tree.collapse_all(true)
     end,
   },
+  {
+    name = "NvimTreeOpenLog",
+    opts = {
+      desc = "nvim-tree: open log file",
+      bar = true,
+    },
+    command = function()
+      api.log.open()
+    end,
+  },
 }
 
 function M.get()

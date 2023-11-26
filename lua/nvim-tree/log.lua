@@ -1,3 +1,5 @@
+local notify = require "nvim-tree.notify"
+
 local M = {
   config = nil,
   path = nil,
@@ -95,7 +97,24 @@ function M.setup(opts)
     if M.config.truncate then
       os.remove(M.path)
     end
-    require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. M.path)
+    notify.debug("nvim-tree.lua logging to " .. M.path)
+  end
+end
+
+--- Returns path to the log file
+--- @return string|nil
+function M.get_path()
+  if M.path ~= nil then
+    return M.path
+  end
+end
+
+--- Opens ua the log file
+function M.open()
+  if M.path ~= nil then
+    vim.cmd("tab :drop" .. M.path)
+  else
+    notify.warn "nvim-tree: logging is not enabled. See `h nvim-tree-opts-log`"
   end
 end
 
