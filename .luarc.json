@@ -1,6 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
   "runtime.version" : "Lua 5.1",
+  "workspace": {
+    "library": [
+      "$VIMRUNTIME",
+      "${3rd}/luv/library"
+    ]
+  },
   "diagnostics": {
     "globals": [
       "vim"
