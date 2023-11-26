@@ -180,7 +180,9 @@ end
 
 ---@param name string|nil
 function M.change_dir(name)
-  change_dir.fn(name)
+  if name then
+    change_dir.fn(name)
+  end
 
   if _config.update_focused_file.enable then
     find_file.fn()
@@ -683,7 +685,7 @@ local ACCEPTED_STRINGS = {
   },
 }
 
----@param conf table
+---@param conf table|nil
 local function validate_options(conf)
   local msg
 
