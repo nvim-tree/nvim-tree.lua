@@ -24,10 +24,10 @@
 ---@field extension string
 
 ---@class SymlinkDirNode: DirNode
----@field links_to string
+---@field link_to string
 
----@class SymlinkFileNode: DirNode
----@field links_to string
+---@class SymlinkFileNode: FileNode
+---@field link_to string
 
 ---@alias SymlinkNode SymlinkDirNode|SymlinkFileNode
 ---@alias Node ParentNode|DirNode|FileNode|SymlinkNode
