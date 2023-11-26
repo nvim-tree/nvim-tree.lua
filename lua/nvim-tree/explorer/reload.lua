@@ -155,7 +155,7 @@ function M.reload(node, git_status, unloaded_bufnr)
         return child_names[n.absolute_path]
       else
         explorer_node.node_destroy(n)
-        return nil
+        return false
       end
     end, node.nodes)
   )
