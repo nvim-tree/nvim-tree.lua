@@ -10,7 +10,7 @@
   },
   "diagnostics": {
     "globals": [
-      "foo"
+      "vim"
     ],
     "neededFileStatus": {
       "ambiguity-1": "Any",
