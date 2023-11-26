@@ -50,4 +50,4 @@ jobs:
 
     - name: lua-language-server --check
       run: |
-        scripts/lls-check
+        scripts/luals-check
