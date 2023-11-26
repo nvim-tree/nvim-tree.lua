@@ -235,12 +235,8 @@ function Builder:_format_line(indent_markers, arrows, icon, name, node)
   return line
 end
 
-function Builder:_build_line(node, idx, num_children)
-  -- various components
-  local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
-  local arrows = pad.get_arrows(node)
-
-  -- signs, use the highest priority
+function Builder:_build_signs(node)
+  -- first in priority order
   local sign_name
   for _, d in ipairs(self.deco) do
     sign_name = d:sign_name(node)
@@ -249,6 +245,12 @@ function Builder:_build_line(node, idx, num_children)
       break
     end
   end
+end
+
+function Builder:_build_line(node, idx, num_children)
+  -- various components
+  local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
+  local arrows = pad.get_arrows(node)
 
   -- main components
   local is_folder = node.nodes ~= nil
@@ -302,6 +304,7 @@ function Builder:build(tree)
   local idx = 1
   for _, node in ipairs(tree.nodes) do
     if not node.hidden then
+      self:_build_signs(node)
       self:_build_line(node, idx, num_children)
       idx = idx + 1
     end

@@ -103,13 +103,20 @@ function Decorator:define_sign(icon)
       vim.fn.sign_undefine(name)
     end
 
-    if self.icon_placement ~= ICON_PLACEMENT.signcolumn or #icon.str < 1 then
+    -- don't use sign if not defined
+    if #icon.str < 1 then
+      self.icon_placement = ICON_PLACEMENT.none
       return
     end
 
+    -- byte index of the next character, allowing for wide
+    local bi = vim.fn.byteidx(icon.str, 1)
+
+    -- first (wide) character, falls back to empty string
+    local text = string.sub(icon.str, 1, bi)
     vim.fn.sign_define(name, {
-      text = string.sub(icon.str, 1, 1),
-      texthl = icon.hl[1],
+      text = text,
+      texthl = name,
     })
   end
 end
