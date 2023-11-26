@@ -4,6 +4,7 @@
   "workspace": {
     "library": [
       "$VIMRUNTIME",
+      "/home/runner/nvim-v0.9.4/share/nvim/runtime",
       "${3rd}/luv/library"
     ]
   },
