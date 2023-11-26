@@ -6,7 +6,7 @@ local M = {
 --- Write to log file
 --- @param typ string as per log.types config
 --- @param fmt string for string.format
---- @vararg any arguments for string.format
+--- @param ... any arguments for string.format
 function M.raw(typ, fmt, ...)
   if not M.enabled(typ) then
     return
@@ -28,7 +28,7 @@ end
 --- Write profile start to log file
 --- START is prefixed
 --- @param fmt string for string.format
---- @vararg any arguments for string.format
+--- @param ... any arguments for string.format
 --- @return Profile to pass to profile_end
 function M.profile_start(fmt, ...)
   local profile = {}
@@ -54,7 +54,7 @@ end
 --- time and typ are prefixed and a trailing newline is added
 --- @param typ string as per log.types config
 --- @param fmt string for string.format
---- @vararg any arguments for string.format
+--- @param ... any arguments for string.format
 function M.line(typ, fmt, ...)
   if M.enabled(typ) then
     M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, (fmt or "???")), ...)
