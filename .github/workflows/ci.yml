@@ -48,11 +48,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: rhysd/action-setup-vim@v1
-      with:
-        neovim: true
-        version: v0.9.4
-
     - name: lua-language-server --check
       run: |
         scripts/luals-check
