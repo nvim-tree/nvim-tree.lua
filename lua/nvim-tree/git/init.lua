@@ -257,12 +257,17 @@ function M.load_project_status(path)
     })
   end
 
-  M._projects_by_toplevel[toplevel] = {
-    files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
-    watcher = watcher,
-  }
-  return M._projects_by_toplevel[toplevel]
+  if git_status then
+    M._projects_by_toplevel[toplevel] = {
+      files = git_status,
+      dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
+      watcher = watcher,
+    }
+    return M._projects_by_toplevel[toplevel]
+  else
+    M._toplevels_by_path[path] = false
+    return {}
+  end
 end
 
 function M.purge_state()

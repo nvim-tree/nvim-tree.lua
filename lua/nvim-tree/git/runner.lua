@@ -13,6 +13,10 @@ local MAX_TIMEOUTS = 5
 ---@param status string
 ---@param path string|nil
 function Runner:_parse_status_output(status, path)
+  if not path then
+    return
+  end
+
   -- replacing slashes if on windows
   if vim.fn.has "win32" == 1 then
     path = path:gsub("/", "\\")
