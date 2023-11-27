@@ -28,7 +28,7 @@ function M.get_explorer()
 end
 
 function M.get_cwd()
-  return TreeExplorer.absolute_path
+  return TreeExplorer and TreeExplorer.absolute_path
 end
 
 function M.get_nodes_starting_line()
