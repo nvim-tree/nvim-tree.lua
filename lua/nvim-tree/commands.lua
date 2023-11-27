@@ -48,7 +48,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.focus()
+      api.tree.open()
     end,
   },
   {

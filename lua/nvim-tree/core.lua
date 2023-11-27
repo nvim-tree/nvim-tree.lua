@@ -31,7 +31,7 @@ end
 
 ---@return string
 function M.get_cwd()
-  return TreeExplorer.absolute_path
+  return TreeExplorer and TreeExplorer.absolute_path
 end
 
 ---@return integer

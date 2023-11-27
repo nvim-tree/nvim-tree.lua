@@ -13,7 +13,6 @@ local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local modified = require "nvim-tree.modified"
 local find_file = require "nvim-tree.actions.tree.find-file"
-local open = require "nvim-tree.actions.tree.open"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
@@ -22,11 +21,6 @@ local _config = {}
 local M = {
   init_root = "",
 }
-
-function M.focus()
-  open.fn()
-  view.focus()
-end
 
 --- Update the tree root to a directory or the directory containing
 --- @param path string relative or absolute
