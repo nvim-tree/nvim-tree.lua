@@ -7,7 +7,11 @@ local M = {}
 M.explore = require("nvim-tree.explorer.explore").explore
 M.reload = require("nvim-tree.explorer.reload").reload
 
----@class Explorer: BaseNode
+---@class Explorer
+---@field absolute_path string
+---@field nodes Node[]
+---@field open boolean
+
 local Explorer = {}
 Explorer.__index = Explorer
 

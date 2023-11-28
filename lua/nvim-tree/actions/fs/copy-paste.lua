@@ -193,8 +193,9 @@ end
 ---@param action_fn fun(source: string, dest: string)
 local function do_paste(node, action_type, action_fn)
   node = lib.get_last_group_node(node)
-  if node.name == ".." then
-    node = core.get_explorer()
+  local explorer = core.get_explorer()
+  if node.name == ".." and explorer then
+    node = explorer
   end
   local clip = clipboard[action_type]
   if #clip == 0 then

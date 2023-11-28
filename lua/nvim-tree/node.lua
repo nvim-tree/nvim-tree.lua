@@ -30,4 +30,4 @@
 ---@field link_to string
 
 ---@alias SymlinkNode SymlinkDirNode|SymlinkFileNode
----@alias Node ParentNode|DirNode|FileNode|SymlinkNode
+---@alias Node ParentNode|DirNode|FileNode|SymlinkNode|Explorer

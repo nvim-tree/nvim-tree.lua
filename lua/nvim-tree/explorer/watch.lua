@@ -56,13 +56,7 @@ function M.create_watcher(node)
     return nil
   end
 
-  local path
-  if node.type == "link" then
-    path = node.link_to
-  else
-    path = node.absolute_path
-  end
-
+  local path = node.link_to or node.absolute_path
   if is_git(path) or is_folder_ignored(path) then
     return nil
   end

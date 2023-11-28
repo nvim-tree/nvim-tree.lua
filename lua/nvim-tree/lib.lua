@@ -35,7 +35,7 @@ function M.get_node_at_cursor()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
----@param node Node
+---@param node Node|nil
 ---@return Node|nil cloned node
 local function clone_node(node)
   if not node then
