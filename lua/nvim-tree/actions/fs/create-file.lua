@@ -16,7 +16,7 @@ local function create_and_notify(file)
     notify.error("Couldn't create file " .. notify.render_path(file))
     return
   end
-  vim.loop.fs_close(fd)
+  vim.loop.fs_close(tonumber(fd) or error("This will never happen"))
   events._dispatch_file_created(file)
 end
 
@@ -46,6 +46,7 @@ function M.fn(node)
   if not node or node.name == ".." then
     node = {
       absolute_path = core.get_cwd(),
+      name = "",
       nodes = core.get_explorer().nodes,
       open = true,
     }

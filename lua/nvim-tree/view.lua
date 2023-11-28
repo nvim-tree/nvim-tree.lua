@@ -511,7 +511,7 @@ function M._prevent_buffer_override()
     vim.cmd "setlocal nowinfixheight"
     M.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
-    pcall(vim.api.nvim_win_close, curwin, { force = true })
+    pcall(vim.api.nvim_win_close, curwin, true)
 
     -- to handle opening a file using :e when nvim-tree is on floating mode
     -- falling back to the current window instead of creating a new one

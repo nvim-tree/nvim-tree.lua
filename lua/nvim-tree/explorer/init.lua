@@ -14,7 +14,7 @@ Explorer.__index = Explorer
 ---@param cwd string|nil
 ---@return Explorer
 function Explorer.new(cwd)
-  cwd = vim.loop.fs_realpath(cwd or vim.loop.cwd())
+  cwd = vim.loop.fs_realpath(cwd or vim.fn.getcwd())
 
   ---@class Explorer
   local explorer = setmetatable({
