@@ -16,7 +16,7 @@ local function create_and_notify(file)
     notify.error("Couldn't create file " .. notify.render_path(file))
     return
   end
-  vim.loop.fs_close(tonumber(fd) or error("This will never happen"))
+  vim.loop.fs_close(tonumber(fd) or error "This will never happen")
   events._dispatch_file_created(file)
 end
 
