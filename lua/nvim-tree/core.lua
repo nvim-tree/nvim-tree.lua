@@ -6,7 +6,7 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
-TreeExplorer = nil
+local TreeExplorer = nil
 local first_init_done = false
 
 ---@param foldername string
@@ -27,6 +27,10 @@ end
 ---@return table
 function M.get_explorer()
   return TreeExplorer
+end
+
+function M.reset_explorer()
+  TreeExplorer = nil
 end
 
 ---@return string

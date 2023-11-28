@@ -766,7 +766,7 @@ function M.purge_all_state()
   view.abandon_all_windows()
   if core.get_explorer() ~= nil then
     git.purge_state()
-    TreeExplorer = nil
+    core.reset_explorer()
   end
 end
 

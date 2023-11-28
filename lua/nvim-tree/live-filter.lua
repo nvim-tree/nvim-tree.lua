@@ -11,7 +11,7 @@ local function redraw()
 end
 
 local function reset_filter(node_)
-  node_ = node_ or TreeExplorer
+  node_ = node_ or require("nvim-tree.core").get_explorer()
   Iterator.builder(node_.nodes)
     :hidden()
     :applier(function(node)
@@ -80,7 +80,7 @@ function M.apply_filter(node_)
     node.hidden = not (has_nodes or (ok and is_match))
   end
 
-  iterate(node_ or TreeExplorer)
+  iterate(node_ or require("nvim-tree.core").get_explorer())
 end
 
 local function record_char()
