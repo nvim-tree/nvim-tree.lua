@@ -10,6 +10,7 @@ local function redraw()
   require("nvim-tree.renderer").draw()
 end
 
+---@param node_ Node|nil
 local function reset_filter(node_)
   node_ = node_ or require("nvim-tree.core").get_explorer()
   Iterator.builder(node_.nodes)
@@ -47,6 +48,8 @@ local function remove_overlay()
   end
 end
 
+---@param node Node
+---@return boolean
 local function matches(node)
   local path = node.absolute_path
   local name = vim.fn.fnamemodify(path, ":t")
@@ -106,6 +109,7 @@ local function configure_buffer_overlay()
   vim.api.nvim_buf_set_keymap(overlay_bufnr, "i", "<CR>", "<cmd>stopinsert<CR>", {})
 end
 
+---@return integer
 local function calculate_overlay_win_width()
   local wininfo = vim.fn.getwininfo(view.get_winnr())[1]
 
