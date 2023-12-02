@@ -2377,18 +2377,6 @@ Diagnostics Folder Highlight: >
 - `highlight_xxx` is additive instead of overwriting. See
   |nvim-tree-opts-renderer| for precedence.
 
-Legacy diagnostic HL style may be applied: >
-
-    :hi link NvimTreeDiagnosticErrorFileHL      DiagnosticError
-    :hi link NvimTreeDiagnosticWarnFileHL       DiagnosticWarn
-    :hi link NvimTreeDiagnosticInfoFileHL       DiagnosticInfo
-    :hi link NvimTreeDiagnosticHintFileHL       DiagnosticHint
-
-    :hi link NvimTreeDiagnosticErrorFolderHL    DiagnosticError
-    :hi link NvimTreeDiagnosticWarnFolderHL     DiagnosticWarn
-    :hi link NvimTreeDiagnosticInfoFolderHL     DiagnosticInfo
-    :hi link NvimTreeDiagnosticHintFolderHL     DiagnosticHint
-<
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
 
