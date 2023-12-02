@@ -20,7 +20,6 @@ local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
 local M = {
   last_highlights = {},
   decorators = {},
-  deco = {},
 }
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -72,7 +71,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
   icon_component.reset_config()
 
-  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.deco)
+  local lines, hl, sign_names = Builder.new(core.get_cwd(), M.decorators)
     :configure_root_label(M.config.root_folder_label)
     :configure_trailing_slash(M.config.add_trailing)
     :configure_special_files(M.config.special_files)
@@ -108,7 +107,7 @@ function M.setup(opts)
   icon_component.setup(opts)
 
   -- priority order
-  M.deco = {
+  M.decorators = {
     DecoratorCut:new(opts),
     DecoratorCopied:new(opts),
     DecoratorDiagnostics:new(opts),

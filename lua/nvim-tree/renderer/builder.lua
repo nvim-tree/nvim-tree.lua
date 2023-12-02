@@ -1,5 +1,4 @@
 local utils = require "nvim-tree.utils"
-local core = require "nvim-tree.core"
 local notify = require "nvim-tree.notify"
 
 local pad = require "nvim-tree.renderer.components.padding"
@@ -138,7 +137,7 @@ function Builder:_build_folder(node)
   local foldername_hl = "NvimTreeFolderName"
   if node.link_to and self.symlink_destination then
     local arrow = icons.i.symlink_arrow
-    local link_to = utils.path_relative(node.link_to, core.get_cwd())
+    local link_to = utils.path_relative(node.link_to, self.root_cwd)
     foldername = foldername .. arrow .. link_to
     foldername_hl = "NvimTreeSymlinkFolderName"
   elseif vim.tbl_contains(self.special_files, node.absolute_path) or vim.tbl_contains(self.special_files, node.name) then
@@ -160,7 +159,7 @@ function Builder:_build_symlink(node)
   local arrow = icons.i.symlink_arrow
   local symlink_formatted = node.name
   if self.symlink_destination then
-    local link_to = utils.path_relative(node.link_to, core.get_cwd())
+    local link_to = utils.path_relative(node.link_to, self.root_cwd)
     symlink_formatted = symlink_formatted .. arrow .. link_to
   end
 
