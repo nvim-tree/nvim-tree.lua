@@ -5,7 +5,7 @@ local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
 --- @class Builder
---- @field deco Decorator[]
+--- @field decorators Decorator[]
 local Builder = {}
 Builder.__index = Builder
 
@@ -221,14 +221,14 @@ function Builder:_format_line(indent_markers, arrows, icon, name, node)
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
-  for i = #self.deco, 1, -1 do
-    add_to_end(line, self.deco[i]:icons_before(node))
+  for i = #self.decorators, 1, -1 do
+    add_to_end(line, self.decorators[i]:icons_before(node))
   end
 
   add_to_end(line, { name })
 
-  for i = #self.deco, 1, -1 do
-    add_to_end(line, self.deco[i]:icons_after(node))
+  for i = #self.decorators, 1, -1 do
+    add_to_end(line, self.decorators[i]:icons_after(node))
   end
 
   return line
@@ -237,7 +237,7 @@ end
 function Builder:_build_signs(node)
   -- first in priority order
   local sign_name
-  for _, d in ipairs(self.deco) do
+  for _, d in ipairs(self.decorators) do
     sign_name = d:sign_name(node)
     if sign_name then
       self.sign_names[self.index] = sign_name
@@ -264,7 +264,7 @@ function Builder:_build_line(node, idx, num_children)
   end
 
   -- highighting
-  for _, d in ipairs(self.deco) do
+  for _, d in ipairs(self.decorators) do
     local icon_group, name_group = d:groups_icon_name(node)
     table.insert(icon.hl, icon_group)
     table.insert(name.hl, name_group)
