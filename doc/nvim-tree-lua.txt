@@ -2279,11 +2279,13 @@ Folder Text: >
     NvimTreeOpenedFolderName    Directory
     NvimTreeSymlinkFolderName   Directory
 <
-Icon: >
-    NvimTreeFolderIcon          guifg=#8094b4 ctermfg=Blue
+File Icons: >
     NvimTreeFileIcon            NvimTreeNormal
     NvimTreeSymlinkIcon         NvimTreeNormal
     NvimTreeOpenedFileIcon      NvimTreeOpenedFile
+<
+Folder Icons: >
+    NvimTreeFolderIcon          guifg=#8094b4 ctermfg=Blue
     NvimTreeOpenedFolderIcon    NvimTreeFolderIcon
     NvimTreeClosedFolderIcon    NvimTreeFolderIcon
     NvimTreeFolderArrowClosed   NvimTreeIndentMarker
@@ -2291,6 +2293,13 @@ Icon: >
 <
 Indent: >
     NvimTreeIndentMarker        NvimTreeFileIcon
+<
+Picker: >
+    NvimTreeWindowPicker        guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan
+<
+Live Filter: >
+    NvimTreeLiveFilterPrefix    PreProc
+    NvimTreeLiveFilterValue     ModeMsg
 <
 Clipboard: >
     NvimTreeCopiedHL            SpellRare
@@ -2307,13 +2316,6 @@ Modified: >
 <
 Opened: >
     NvimTreeOpenedHL            Constant
-<
-Picker: >
-    NvimTreeWindowPicker        guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan
-<
-Live Filter: >
-    NvimTreeLiveFilterPrefix    PreProc
-    NvimTreeLiveFilterValue     ModeMsg
 <
 Git Icon: >
     NvimTreeGitDeletedIcon      Statement

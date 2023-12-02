@@ -42,10 +42,12 @@ local DEFAULT_LINKS = {
   NvimTreeOpenedFolderName = "Directory",
   NvimTreeSymlinkFolderName = "Directory",
 
-  -- Icon
+  -- File Icons
   NvimTreeFileIcon = "NvimTreeNormal",
   NvimTreeSymlinkIcon = "NvimTreeNormal",
   NvimTreeOpenedFileIcon = "NvimTreeOpenedFile",
+
+  -- Folder Icons
   NvimTreeOpenedFolderIcon = "NvimTreeFolderIcon",
   NvimTreeClosedFolderIcon = "NvimTreeFolderIcon",
   NvimTreeFolderArrowClosed = "NvimTreeIndentMarker",
@@ -54,14 +56,16 @@ local DEFAULT_LINKS = {
   -- Indent
   NvimTreeIndentMarker = "NvimTreeFileIcon",
 
+  -- LiveFilter
+  NvimTreeLiveFilterPrefix = "PreProc",
+  NvimTreeLiveFilterValue = "ModeMsg",
+
   -- Clipboard
   NvimTreeCutHL = "SpellBad",
   NvimTreeCopiedHL = "SpellRare",
 
-  -- Bookmark Icon
+  -- Bookmark
   NvimTreeBookmarkIcon = "Constant",
-
-  -- Bookmark Highlight
   NvimTreeBookmarkHL = "SpellLocal",
 
   -- Modified
@@ -71,10 +75,6 @@ local DEFAULT_LINKS = {
 
   -- Opened
   NvimTreeOpenedHL = "Constant",
-
-  -- LiveFilter
-  NvimTreeLiveFilterPrefix = "PreProc",
-  NvimTreeLiveFilterValue = "ModeMsg",
 
   -- Git Icon
   NvimTreeGitDeletedIcon = "Statement",
