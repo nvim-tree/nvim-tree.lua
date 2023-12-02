@@ -5,13 +5,20 @@ local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
 
 --- @class Builder
---- @field decorators Decorator[]
+--- @field private index number
+--- @field private depth number
+--- @field private highlights table[] hl_group, line, col_start, col_end arguments for vim.api.nvim_buf_add_highlight
+--- @field private lines string[] includes icons etc.
+--- @field private markers boolean[] indent markers
+--- @field private sign_names string[] line signs
+--- @field private root_cwd string absolute path
+--- @field private decorators Decorator[] in priority order
 local Builder = {}
 Builder.__index = Builder
 
 local DEFAULT_ROOT_FOLDER_LABEL = ":~:s?$?/..?"
 
-function Builder.new(root_cwd, deco)
+function Builder.new(root_cwd, decorators)
   return setmetatable({
     index = 0,
     depth = 0,
@@ -20,7 +27,7 @@ function Builder.new(root_cwd, deco)
     markers = {},
     sign_names = {},
     root_cwd = root_cwd,
-    deco = deco,
+    decorators = decorators,
   }, Builder)
 end
 
