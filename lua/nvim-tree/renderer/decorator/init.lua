@@ -74,23 +74,21 @@ function Decorator:icons_after(node)
   return self:calculate_icons(node)
 end
 
----@diagnostic disable: unused-local
--- luacheck: push no unused args
-
---- Maybe icons - abstract
+--- Maybe icons, optionally implemented
 --- @protected
---- @param node table
+--- @param _ table node
 --- @return HighlightedString[]|nil icons
-function Decorator:calculate_icons(node) end
+function Decorator:calculate_icons(_)
+  return nil
+end
 
---- Maybe highlight group - abstract
+--- Maybe highlight group, optionally implemented
 --- @protected
---- @param node table
+--- @param _ table node
 --- @return string|nil group
-function Decorator:calculate_highlight(node) end
-
----@diagnostic enable: unused-local
--- luacheck: pop
+function Decorator:calculate_highlight(_)
+  return nil
+end
 
 --- Define a sign
 --- @protected
