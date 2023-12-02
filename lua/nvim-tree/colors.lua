@@ -59,7 +59,7 @@ local DEFAULT_LINKS = {
   NvimTreeCopiedHL = "SpellRare",
 
   -- Bookmark Icon
-  NvimTreeBookmark = "Constant",
+  NvimTreeBookmarkIcon = "Constant",
 
   -- Bookmark Highlight
   NvimTreeBookmarkHL = "SpellLocal",
@@ -127,6 +127,8 @@ local LEGACY_LINKS = {
   NvimTreeModifiedIcon = "NvimTreeModifiedFile",
 
   NvimTreeOpenedHL = "NvimTreeOpenedFile",
+
+  NvimTreeBookmarkIcon = "NvimTreeBookmark",
 
   NvimTreeGitDeletedIcon = "NvimTreeGitDeleted",
   NvimTreeGitDirtyIcon = "NvimTreeGitDirty",

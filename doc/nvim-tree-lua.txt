@@ -2297,7 +2297,7 @@ Clipboard: >
     NvimTreeCutHL               SpellBad
 <
 Bookmarks: >
-    NvimTreeBookmark            Constant
+    NvimTreeBookmarkIcon        Constant
     NvimTreeBookmarkHL          SpellLocal
 <
 Modified: >
@@ -2392,6 +2392,7 @@ highlight group is not, hard linking as follows: >
 
     NvimTreeModifiedIcon        NvimTreeModifiedFile
     NvimTreeOpenedHL            NvimTreeOpenedFile
+    NvimTreeBookmarkIcon        NvimTreeBookmark
 
     NvimTreeGitDeletedIcon      NvimTreeGitDeleted
     NvimTreeGitDirtyIcon        NvimTreeGitDirty

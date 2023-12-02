@@ -22,7 +22,7 @@ function DecoratorBookmarks:new(opts)
   if opts.renderer.icons.show.bookmarks then
     o.icon = {
       str = opts.renderer.icons.glyphs.bookmark,
-      hl = { "NvimTreeBookmark" },
+      hl = { "NvimTreeBookmarkIcon" },
     }
     o:define_sign(o.icon)
   end
