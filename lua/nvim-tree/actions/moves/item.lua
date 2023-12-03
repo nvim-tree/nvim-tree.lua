@@ -81,6 +81,7 @@ end
 local function move_next_recursive(what, skip_gitignored)
   -- If the current node:
   -- * is a directory
+  -- * and is not the root node
   -- * and has a git/diag status
   -- * and is not opened
   -- expand it.
@@ -88,7 +89,10 @@ local function move_next_recursive(what, skip_gitignored)
   if not node_init then
     return
   end
-  local valid = status_is_valid(node_init, what, skip_gitignored)
+  local valid = false
+  if node_init.name ~= ".." then -- root node cannot have a status
+    valid = status_is_valid(node_init, what, skip_gitignored)
+  end
   if node_init.nodes ~= nil and valid and not node_init.open then
     lib.expand_or_collapse(node_init)
   end
