@@ -1875,6 +1875,11 @@ node.open.preview_no_picker()    *nvim-tree-api.node.open.preview_no_picker()*
 node.navigate.git.next()              *nvim-tree-api.node.navigate.git.next()*
     Navigate to the next item showing git status.
 
+                      *nvim-tree-api.node.navigate.git.next_recursive()*
+node.navigate.git.next_recursive()
+    Same as |node.navigate.git.next()|, but navigates to next item showing git
+    status recursively. Needs `git.show_on_dirs` set to `true`.
+
                       *nvim-tree-api.node.navigate.git.next_skip_gitignored()*
 node.navigate.git.next_skip_gitignored()
     Same as |node.navigate.git.next()|, but skips gitignored files.
@@ -1889,6 +1894,12 @@ node.navigate.git.prev_skip_gitignored()
                               *nvim-tree-api.node.navigate.diagnostics.next()*
 node.navigate.diagnostics.next()
     Navigate to the next item showing diagnostic status.
+
+                              *nvim-tree-api.node.navigate.diagnostics.next_recursive()*
+node.navigate.diagnostics.next_recursive()
+    Same as |node.navigate.diagnostics.next()|, but navigates to next item
+    showing diagnostic status recursively. Needs `diagnostics.show_on_dirs`
+    and `diagnostics.show_on_open_dirs` set to `true`.
 
                               *nvim-tree-api.node.navigate.diagnostics.prev()*
 node.navigate.diagnostics.prev()
