@@ -149,12 +149,11 @@ function M.get_node_from_path(path)
     :iterate()
 end
 
---- Get the highest parent of grouped nodes
----@param node_ Node
----@return table
-function M.get_parent_of_group(node_)
-  local node = node_
-  while node.parent and node.parent.group_next do
+---Get the highest parent of grouped nodes
+---@param node Node
+---@return Node node or parent
+function M.get_parent_of_group(node)
+  while node and node.parent and node.parent.group_next do
     node = node.parent
   end
   return node
