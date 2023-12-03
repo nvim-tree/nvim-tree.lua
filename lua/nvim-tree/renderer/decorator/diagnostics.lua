@@ -30,12 +30,12 @@ local ICON_KEYS = {
   ["hint"] = vim.diagnostic.severity.HINT,
 }
 
---- @class DecoratorDiagnostics: Decorator
---- @field icons HighlightedString[]
+---@class DecoratorDiagnostics: Decorator
+---@field icons HighlightedString[]
 local DecoratorDiagnostics = Decorator:new()
 
---- @param opts table
---- @return DecoratorDiagnostics
+---@param opts table
+---@return DecoratorDiagnostics
 function DecoratorDiagnostics:new(opts)
   local o = Decorator.new(self, {
     enabled = opts.diagnostics.enable,

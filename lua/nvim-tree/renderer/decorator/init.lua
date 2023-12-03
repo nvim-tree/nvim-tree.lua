@@ -1,14 +1,14 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
---- @class Decorator
---- @field protected enabled boolean
---- @field protected hl_pos HL_POSITION
---- @field protected icon_placement ICON_PLACEMENT
+---@class Decorator
+---@field protected enabled boolean
+---@field protected hl_pos HL_POSITION
+---@field protected icon_placement ICON_PLACEMENT
 local Decorator = {}
 
---- @param o Decorator|nil
---- @return Decorator
+---@param o Decorator|nil
+---@return Decorator
 function Decorator:new(o)
   o = o or {}
   setmetatable(o, self)
@@ -18,9 +18,9 @@ function Decorator:new(o)
 end
 
 --- Maybe highlight groups
---- @param node table
---- @return string|nil icon highlight group
---- @return string|nil name highlight group
+---@param node table
+---@return string|nil icon highlight group
+---@return string|nil name highlight group
 function Decorator:groups_icon_name(node)
   local icon_hl, name_hl
 
@@ -39,8 +39,8 @@ function Decorator:groups_icon_name(node)
 end
 
 --- Maybe icon sign
---- @param node table
---- @return string|nil name
+---@param node table
+---@return string|nil name
 function Decorator:sign_name(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.signcolumn then
     return
@@ -53,8 +53,8 @@ function Decorator:sign_name(node)
 end
 
 --- Icons when ICON_PLACEMENT.before
---- @param node table
---- @return HighlightedString[]|nil icons
+---@param node table
+---@return HighlightedString[]|nil icons
 function Decorator:icons_before(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.before then
     return
@@ -64,8 +64,8 @@ function Decorator:icons_before(node)
 end
 
 --- Icons when ICON_PLACEMENT.after
---- @param node table
---- @return HighlightedString[]|nil icons
+---@param node table
+---@return HighlightedString[]|nil icons
 function Decorator:icons_after(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.after then
     return
@@ -75,24 +75,24 @@ function Decorator:icons_after(node)
 end
 
 --- Maybe icons, optionally implemented
---- @protected
---- @param _ table node
---- @return HighlightedString[]|nil icons
+---@protected
+---@param _ table node
+---@return HighlightedString[]|nil icons
 function Decorator:calculate_icons(_)
   return nil
 end
 
 --- Maybe highlight group, optionally implemented
---- @protected
---- @param _ table node
---- @return string|nil group
+---@protected
+---@param _ table node
+---@return string|nil group
 function Decorator:calculate_highlight(_)
   return nil
 end
 
 --- Define a sign
---- @protected
---- @param icon HighlightedString|nil
+---@protected
+---@param icon HighlightedString|nil
 function Decorator:define_sign(icon)
   if icon and #icon.hl > 0 then
     local name = icon.hl[1]

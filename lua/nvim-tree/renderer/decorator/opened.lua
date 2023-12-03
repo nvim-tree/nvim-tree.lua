@@ -5,13 +5,13 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 local Decorator = require "nvim-tree.renderer.decorator"
 
---- @class DecoratorOpened: Decorator
---- @field enabled boolean
---- @field icon HighlightedString|nil
+---@class DecoratorOpened: Decorator
+---@field enabled boolean
+---@field icon HighlightedString|nil
 local DecoratorOpened = Decorator:new()
 
---- @param opts table
---- @return DecoratorOpened
+---@param opts table
+---@return DecoratorOpened
 function DecoratorOpened:new(opts)
   local o = Decorator.new(self, {
     enabled = true,
@@ -24,7 +24,7 @@ function DecoratorOpened:new(opts)
 end
 
 --- Opened highlight: renderer.highlight_opened_files and node has an open buffer
---- @param node table
+---@param node table
 function DecoratorOpened:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and buffers.is_opened(node) then
     return "NvimTreeOpenedHL"

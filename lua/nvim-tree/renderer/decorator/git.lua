@@ -6,18 +6,18 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 local Decorator = require "nvim-tree.renderer.decorator"
 
---- @class HighlightedStringGit: HighlightedString
---- @field ord number decreasing priority
+---@class HighlightedStringGit: HighlightedString
+---@field ord number decreasing priority
 
---- @class DecoratorGit: Decorator
---- @field file_hl table<string, string> by porcelain status e.g. "AM"
---- @field folder_hl table<string, string> by porcelain status
---- @field icons_by_status HighlightedStringGit[] by human status
---- @field icons_by_xy table<string, HighlightedStringGit[]> by porcelain status
+---@class DecoratorGit: Decorator
+---@field file_hl table<string, string> by porcelain status e.g. "AM"
+---@field folder_hl table<string, string> by porcelain status
+---@field icons_by_status HighlightedStringGit[] by human status
+---@field icons_by_xy table<string, HighlightedStringGit[]> by porcelain status
 local DecoratorGit = Decorator:new()
 
---- @param opts table
---- @return DecoratorGit
+---@param opts table
+---@return DecoratorGit
 function DecoratorGit:new(opts)
   local o = Decorator.new(self, {
     enabled = opts.git.enable,
@@ -46,7 +46,7 @@ function DecoratorGit:new(opts)
   return o
 end
 
---- @param glyphs table<string, string> user glyps
+---@param glyphs table<string, string> user glyps
 function DecoratorGit:build_icons_by_status(glyphs)
   self.icons_by_status = {
     staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 },
@@ -138,8 +138,8 @@ function DecoratorGit:build_hl_table()
 end
 
 --- Git icons: git.enable, renderer.icons.show.git and node has status
---- @param node table
---- @return HighlightedString[]|nil modified icon
+---@param node table
+---@return HighlightedString[]|nil modified icon
 function DecoratorGit:calculate_icons(node)
   if not node or not self.enabled or not self.icons_by_xy then
     return nil
