@@ -67,9 +67,18 @@ local function move(where, what, skip_gitignored)
   end
 end
 
----@param opts NavigationItemOpts
+local function expand_node(node)
+  if not node.open then
+    -- Expand the node.
+    -- Should never collapse since we checked open.
+    lib.expand_or_collapse(node)
+  end
+end
+
+--- Move to the next node recursively.
+---@param what string type of status
 ---@param skip_gitignored boolean default false
-local function move_next_recursive(opts, skip_gitignored)
+local function move_next_recursive(what, skip_gitignored)
   -- If the current node:
   -- * is a directory
   -- * and has a git/diag status
@@ -79,12 +88,12 @@ local function move_next_recursive(opts, skip_gitignored)
   if not node_init then
     return
   end
-  local valid = status_is_valid(node_init, opts.what, skip_gitignored)
+  local valid = status_is_valid(node_init, what, skip_gitignored)
   if node_init.nodes ~= nil and valid and not node_init.open then
     lib.expand_or_collapse(node_init)
   end
 
-  move(opts.where, opts.what, skip_gitignored)
+  move("next", what, skip_gitignored)
 
   local node_cur = lib.get_node_at_cursor()
   if not node_cur then
@@ -100,13 +109,9 @@ local function move_next_recursive(opts, skip_gitignored)
   local i = 0
   local is_dir = node_cur.nodes ~= nil
   while is_dir and i < MAX_DEPTH do
-    if not node_cur.open then
-      -- Expand the node.
-      -- Should never collapse since we checked open.
-      lib.expand_or_collapse(node_cur)
-    end
+    expand_node(node_cur)
 
-    move(opts.where, opts.what, skip_gitignored)
+    move("next", what, skip_gitignored)
 
     -- Save current node.
     node_cur = lib.get_node_at_cursor()
@@ -121,6 +126,100 @@ local function move_next_recursive(opts, skip_gitignored)
   end
 end
 
+-- Find the line number of a node.
+-- Return -1 is node is nil or not found.
+---@param node Node|nil
+---@return integer
+local function find_node_line(node)
+  if not node then
+    return -1
+  end
+
+  local first_node_line = core.get_nodes_starting_line()
+  local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
+  local iter_start, iter_end = first_node_line, #nodes_by_line
+
+  for line = iter_start, iter_end, 1 do
+    if nodes_by_line[line] == node then
+      return line
+    end
+  end
+
+  return -1
+end
+
+--- Move to the previous node recursively.
+---
+--- move_prev_recursive:
+---
+--- 1) Save current as node_init.
+--  2) Call a non-recursive prev.
+--- 3) If current node is node_init's parent, call move_prev_recursive.
+--- 4) Else:
+--- 4.1) If current node is nil, is node_init (we didn't move), or is a file, return.
+--- 4.2) The current file is a directory, expand it.
+--- 4.3) Find node_init in current window, and move to it (if not found, return).
+---      If node_init is the root node (name = ".."), directly move to position 1.
+--- 4.4) Call a non-recursive prev.
+--- 4.5) Save the current node and start back from 4.1.
+---
+---@param what string type of status
+---@param skip_gitignored boolean default false
+local function move_prev_recursive(what, skip_gitignored)
+  local node_init, node_cur
+
+  -- 1)
+  node_init = lib.get_node_at_cursor()
+  if node_init == nil then
+    return
+  end
+
+  -- 2)
+  move("prev", what, skip_gitignored)
+
+  node_cur = lib.get_node_at_cursor()
+  if node_cur == node_init.parent then
+    -- 3)
+    move_prev_recursive(what, skip_gitignored)
+  else
+    -- i is used to limit iterations.
+    local i = 0
+    while i < MAX_DEPTH do
+      -- 4.1)
+      if
+        node_cur == nil
+        or node_cur == node_init -- we didn't move
+        or not node_cur.nodes -- node is a file
+      then
+        return
+      end
+
+      -- 4.2)
+      local node_dir = node_cur
+      expand_node(node_dir)
+
+      -- 4.3)
+      if node_init.name == ".." then -- root node
+        view.set_cursor { 1, 0 } -- move to root node (position 1)
+      else
+        local node_init_line = find_node_line(node_init)
+        if node_init_line < 0 then
+          return
+        end
+        view.set_cursor { node_init_line, 0 }
+      end
+
+      -- 4.4)
+      move("prev", what, skip_gitignored)
+
+      -- 4.5)
+      node_cur = lib.get_node_at_cursor()
+
+      i = i + 1
+    end
+  end
+end
+
 ---@class NavigationItemOpts
 ---@field where string
 ---@field what string
@@ -132,8 +231,8 @@ function M.fn(opts)
     local recurse = false
     local skip_gitignored = false
 
-    -- recurse only available for "next" git and diag moves.
-    if opts.where == "next" and (opts.what == "git" or opts.what == "diag") and opts.recurse ~= nil then
+    -- recurse only valid for git and diag moves.
+    if (opts.what == "git" or opts.what == "diag") and opts.recurse ~= nil then
       recurse = opts.recurse
     end
 
@@ -146,7 +245,11 @@ function M.fn(opts)
       return
     end
 
-    move_next_recursive(opts, skip_gitignored)
+    if opts.where == "next" then
+      move_next_recursive(opts.what, skip_gitignored)
+    elseif opts.where == "prev" then
+      move_prev_recursive(opts.what, skip_gitignored)
+    end
   end
 end
 
