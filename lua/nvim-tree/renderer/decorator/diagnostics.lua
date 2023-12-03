@@ -6,19 +6,19 @@ local Decorator = require "nvim-tree.renderer.decorator"
 -- highlight groups by severity
 local HG_ICON = {
   [vim.diagnostic.severity.ERROR] = "NvimTreeDiagnosticErrorIcon",
-  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarningIcon",
+  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarnIcon",
   [vim.diagnostic.severity.INFO] = "NvimTreeDiagnosticInfoIcon",
   [vim.diagnostic.severity.HINT] = "NvimTreeDiagnosticHintIcon",
 }
 local HG_FILE = {
   [vim.diagnostic.severity.ERROR] = "NvimTreeDiagnosticErrorFileHL",
-  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarningFileHL",
+  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarnFileHL",
   [vim.diagnostic.severity.INFO] = "NvimTreeDiagnosticInfoFileHL",
   [vim.diagnostic.severity.HINT] = "NvimTreeDiagnosticHintFileHL",
 }
 local HG_FOLDER = {
   [vim.diagnostic.severity.ERROR] = "NvimTreeDiagnosticErrorFolderHL",
-  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarningFolderHL",
+  [vim.diagnostic.severity.WARN] = "NvimTreeDiagnosticWarnFolderHL",
   [vim.diagnostic.severity.INFO] = "NvimTreeDiagnosticInfoFolderHL",
   [vim.diagnostic.severity.HINT] = "NvimTreeDiagnosticHintFolderHL",
 }
