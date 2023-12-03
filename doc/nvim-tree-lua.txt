@@ -170,14 +170,15 @@ Show the mappings:  `g?`
 `e`               Rename: Basename           |nvim-tree-api.fs.rename_basename()|
 `]e`              Next Diagnostic            |nvim-tree-api.node.navigate.diagnostics.next()|
 `[e`              Prev Diagnostic            |nvim-tree-api.node.navigate.diagnostics.prev()|
-`F`               Clean Filter               |nvim-tree-api.live_filter.clear()|
-`f`               Filter                     |nvim-tree-api.live_filter.start()|
+`F`               Live Filter: Clear         |nvim-tree-api.live_filter.clear()|
+`f`               Live Filter: Start         |nvim-tree-api.live_filter.start()|
 `g?`              Help                       |nvim-tree-api.tree.toggle_help()|
 `gy`              Copy Absolute Path         |nvim-tree-api.fs.copy.absolute_path()|
 `H`               Toggle Filter: Dotfiles    |nvim-tree-api.tree.toggle_hidden_filter()|
 `I`               Toggle Filter: Git Ignore  |nvim-tree-api.tree.toggle_gitignore_filter()|
 `J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
 `K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
+`M`               Toggle Filter: No Bookmark |nvim-tree-api.tree.toggle_no_bookmark_filter()|
 `m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
 `o`               Open                       |nvim-tree-api.node.open.edit()|
 `O`               Open: No Window Picker     |nvim-tree-api.node.open.no_window_picker()|
@@ -502,6 +503,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         dotfiles = false,
         git_clean = false,
         no_buffer = false,
+        no_bookmark = false,
         custom = {},
         exclude = {},
       },
@@ -1223,6 +1225,12 @@ For performance reasons this may not immediately update on buffer
 delete/wipe. A reload or filesystem event will result in an update.
   Type: `boolean`, Default: `false`
 
+*nvim-tree.filters.no_bookmark*
+Do not show files that are not bookarked.
+Toggle via |nvim-tree-api.tree.toggle_no_bookmark_filter()|, default `M`
+Enabling this is not useful as there is no means yet to persist bookmarks.
+  Type: `boolean`, Default: `false`
+
 *nvim-tree.filters.custom*
 Custom list of vim regex for file/directory names that will not be shown.
 Backslashes must be escaped e.g. "^\\.git". See |string-match|.
@@ -1665,6 +1673,10 @@ tree.toggle_git_clean_filter()
                                 *nvim-tree-api.tree.toggle_no_buffer_filter()*
 tree.toggle_no_buffer_filter()
     Toggle |nvim-tree.filters.no_buffer| filter.
+
+                              *nvim-tree-api.tree.toggle_no_bookmark_filter()*
+tree.toggle_no_bookmark_filter()
+    Toggle |nvim-tree.filters.no_bookmark| filter.
 
                                    *nvim-tree-api.tree.toggle_custom_filter()*
 tree.toggle_custom_filter()
@@ -2138,14 +2150,15 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'e',       api.fs.rename_basename,              opts('Rename: Basename'))
   vim.keymap.set('n', ']e',      api.node.navigate.diagnostics.next,  opts('Next Diagnostic'))
   vim.keymap.set('n', '[e',      api.node.navigate.diagnostics.prev,  opts('Prev Diagnostic'))
-  vim.keymap.set('n', 'F',       api.live_filter.clear,               opts('Clean Filter'))
-  vim.keymap.set('n', 'f',       api.live_filter.start,               opts('Filter'))
+  vim.keymap.set('n', 'F',       api.live_filter.clear,               opts('Live Filter: Clear'))
+  vim.keymap.set('n', 'f',       api.live_filter.start,               opts('Live Filter: Start'))
   vim.keymap.set('n', 'g?',      api.tree.toggle_help,                opts('Help'))
   vim.keymap.set('n', 'gy',      api.fs.copy.absolute_path,           opts('Copy Absolute Path'))
   vim.keymap.set('n', 'H',       api.tree.toggle_hidden_filter,       opts('Toggle Filter: Dotfiles'))
   vim.keymap.set('n', 'I',       api.tree.toggle_gitignore_filter,    opts('Toggle Filter: Git Ignore'))
   vim.keymap.set('n', 'J',       api.node.navigate.sibling.last,      opts('Last Sibling'))
   vim.keymap.set('n', 'K',       api.node.navigate.sibling.first,     opts('First Sibling'))
+  vim.keymap.set('n', 'M',       api.tree.toggle_no_bookmark_filter,  opts('Toggle Filter: No Bookmark'))
   vim.keymap.set('n', 'm',       api.marks.toggle,                    opts('Toggle Bookmark'))
   vim.keymap.set('n', 'o',       api.node.open.edit,                  opts('Open'))
   vim.keymap.set('n', 'O',       api.node.open.no_window_picker,      opts('Open: No Window Picker'))
