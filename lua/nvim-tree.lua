@@ -42,6 +42,10 @@ function M.change_root(path, bufnr)
   end
 
   local cwd = core.get_cwd()
+  if cwd == nil then
+    return
+  end
+
   local vim_cwd = vim.fn.getcwd()
 
   -- test if in vim_cwd

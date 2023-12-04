@@ -34,7 +34,7 @@ function M.reset_explorer()
   TreeExplorer = nil
 end
 
----@return string
+---@return string|nil
 function M.get_cwd()
   return TreeExplorer and TreeExplorer.absolute_path
 end

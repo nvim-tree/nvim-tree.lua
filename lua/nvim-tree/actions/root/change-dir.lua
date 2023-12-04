@@ -7,10 +7,14 @@ local M = {
 }
 
 ---@param name string
----@return string
+---@return string|nil
 local function clean_input_cwd(name)
   name = vim.fn.fnameescape(name)
-  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h")
+  local cwd = core.get_cwd()
+  if cwd == nil then
+    return
+  end
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
   if name == ".." and root_parent_cwd then
     return vim.fn.expand(root_parent_cwd)
   else
@@ -46,7 +50,7 @@ function M.fn(input_cwd, with_open)
   end
 
   local foldername = clean_input_cwd(input_cwd)
-  if prevent_cwd_change(foldername) then
+  if foldername == nil or prevent_cwd_change(foldername) then
     return
   end
 

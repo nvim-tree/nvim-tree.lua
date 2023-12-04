@@ -42,10 +42,15 @@ end
 
 ---@param node Node|nil
 function M.fn(node)
+  local cwd = core.get_cwd()
+  if cwd == nil then
+    return
+  end
+
   node = node and lib.get_last_group_node(node)
   if not node or node.name == ".." then
     node = {
-      absolute_path = core.get_cwd(),
+      absolute_path = cwd,
       name = "",
       nodes = core.get_explorer().nodes,
       open = true,

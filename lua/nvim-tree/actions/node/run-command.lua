@@ -9,8 +9,9 @@ local M = {}
 ---@param node Node
 ---@return string
 local function get_node_path(node)
-  if node.name == ".." then
-    return utils.path_remove_trailing(core.get_cwd())
+  local cwd = core.get_cwd()
+  if node.name == ".." and cwd then
+    return utils.path_remove_trailing(cwd)
   else
     return node.absolute_path
   end

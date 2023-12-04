@@ -61,9 +61,13 @@ end
 
 --- Get a path relative to another path.
 ---@param path string
----@param relative_to string
+---@param relative_to string|nil
 ---@return string
 function M.path_relative(path, relative_to)
+  if relative_to == nil then
+    return path
+  end
+
   local _, r = path:find(M.path_add_trailing(relative_to), 1, true)
   local p = path
   if r then

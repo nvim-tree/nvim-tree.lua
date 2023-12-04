@@ -13,6 +13,11 @@ end
 ---@param node_ Node|nil
 local function reset_filter(node_)
   node_ = node_ or require("nvim-tree.core").get_explorer()
+
+  if node_ == nil then
+    return
+  end
+
   Iterator.builder(node_.nodes)
     :hidden()
     :applier(function(node)

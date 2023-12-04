@@ -78,11 +78,12 @@ end
 ---@param node Node
 ---@return Node
 function M.get_last_group_node(node)
-  local next_node = node
-  while next_node.group_next do
-    next_node = next_node.group_next
+  while node and node.group_next do
+    node = node.group_next
   end
-  return next_node
+
+  ---@diagnostic disable-next-line: return-type-mismatch -- it can't be nil
+  return node
 end
 
 ---@param node Node

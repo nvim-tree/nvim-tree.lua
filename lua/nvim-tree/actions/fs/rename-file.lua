@@ -52,6 +52,10 @@ function M.fn(default_modifier)
       node = lib.get_node_at_cursor()
     end
 
+    if node == nil then
+      return
+    end
+
     if type(modifier) ~= "string" then
       modifier = default_modifier
     end
