@@ -48,7 +48,7 @@ end
 
 function M.close_popup()
   if current_popup ~= nil then
-    vim.api.nvim_win_close(current_popup.winnr, true)
+    vim.api.nvim_win_close(current_popup.winnr, { force = true })
     vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
 
     current_popup = nil

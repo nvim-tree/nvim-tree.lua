@@ -91,7 +91,7 @@ function M.reload(node, git_status, unloaded_bufnr)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle)
+    local name, t = vim.loop.fs_scandir_next(handle, cwd)
     if not name then
       break
     end

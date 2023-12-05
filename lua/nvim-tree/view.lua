@@ -133,10 +133,7 @@ local function setup_tabpage(tabpage)
 end
 
 local function set_window_options_and_buffer()
-  pcall(function()
-    vim.cmd("buffer " .. M.get_bufnr())
-  end)
-
+  pcall(vim.cmd, "buffer " .. M.get_bufnr())
   local eventignore = vim.opt.eventignore:get()
   vim.opt.eventignore = "all"
   for k, v in pairs(M.View.winopts) do
@@ -511,7 +508,7 @@ function M._prevent_buffer_override()
     vim.cmd "setlocal nowinfixheight"
     M.open { focus_tree = false }
     require("nvim-tree.renderer").draw()
-    pcall(vim.api.nvim_win_close, curwin, true)
+    pcall(vim.api.nvim_win_close, curwin, { force = true })
 
     -- to handle opening a file using :e when nvim-tree is on floating mode
     -- falling back to the current window instead of creating a new one

@@ -14,7 +14,7 @@ local function get_user_input_char()
   return vim.fn.nr2char(c)
 end
 
---- Get all windows in the current tabpage that aren't NvimTree.
+---Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
 local function usable_win_ids()
   local tabpage = vim.api.nvim_get_current_tabpage()
@@ -284,10 +284,7 @@ local function open_in_new_window(filename, mode)
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
-  pcall(function()
-    vim.cmd(cmd)
-  end)
-
+  pcall(vim.cmd, cmd)
   lib.set_target_win()
 end
 
