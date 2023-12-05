@@ -23,8 +23,8 @@ local M = {
 }
 
 --- Update the tree root to a directory or the directory containing
---- @param path string relative or absolute
---- @param bufnr number|nil
+---@param path string relative or absolute
+---@param bufnr number|nil
 function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then

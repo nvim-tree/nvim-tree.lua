@@ -216,15 +216,15 @@ function M.rename_loaded_buffers(old_path, new_path)
   end
 end
 
---- @param path string path to file or directory
---- @return boolean
+---@param path string path to file or directory
+---@return boolean
 function M.file_exists(path)
   local _, error = vim.loop.fs_stat(path)
   return error == nil
 end
 
---- @param path string
---- @return string
+---@param path string
+---@return string
 function M.canonical_path(path)
   if M.is_windows and path:match "^%a:" then
     return path:sub(1, 1):upper() .. path:sub(2)
@@ -260,13 +260,13 @@ end
 
 --- Move a value from src to dst if value is nil on dst.
 --- Remove value from src
---- @param src table to copy from
---- @param src_path string dot separated string of sub-tables
---- @param src_pos string value pos
---- @param dst table to copy to
---- @param dst_path string dot separated string of sub-tables, created when missing
---- @param dst_pos string value pos
---- @param remove boolean
+---@param src table to copy from
+---@param src_path string dot separated string of sub-tables
+---@param src_pos string value pos
+---@param dst table to copy to
+---@param dst_path string dot separated string of sub-tables, created when missing
+---@param dst_pos string value pos
+---@param remove boolean
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
   local ok, err = pcall(vim.validate, {
     src = { src, "table" },

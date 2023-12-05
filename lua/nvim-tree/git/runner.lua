@@ -194,9 +194,9 @@ function Runner:_finalise(opts)
 end
 
 --- Runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
---- @param opts table
---- @param callback function|nil executed passing return when complete
---- @return table|nil status by absolute path, nil if callback present
+---@param opts table
+---@param callback function|nil executed passing return when complete
+---@return table|nil status by absolute path, nil if callback present
 function Runner.run(opts, callback)
   local self = setmetatable({
     toplevel = opts.toplevel,
