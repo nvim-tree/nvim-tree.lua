@@ -20,6 +20,7 @@ local function generate_keymap(fn)
 end
 
 -- stylua: ignore start
+---@param bufnr integer
 function M.default_on_attach(bufnr)
   local api = require('nvim-tree.api')
 

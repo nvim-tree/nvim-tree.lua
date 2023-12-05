@@ -3,7 +3,7 @@ local watch = require "nvim-tree.explorer.watch"
 
 local M = {}
 
----@param parent table
+---@param parent Node
 ---@param absolute_path string
 ---@param name string
 ---@return Node
@@ -40,7 +40,7 @@ function M.is_executable(absolute_path)
   end
 end
 
----@param parent table
+---@param parent Node
 ---@param absolute_path string
 ---@param name string
 ---@return Node
@@ -63,7 +63,7 @@ end
 -- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
----@param parent table
+---@param parent Node
 ---@param absolute_path string
 ---@param name string
 ---@return Node

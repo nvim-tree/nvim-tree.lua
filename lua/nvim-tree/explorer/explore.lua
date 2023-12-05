@@ -60,7 +60,7 @@ local function populate_children(handle, cwd, node, git_status)
   end
 end
 
----@param node Node|Explorer
+---@param node Node
 ---@param status table
 ---@return Node[]|nil
 function M.explore(node, status)

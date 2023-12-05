@@ -8,7 +8,7 @@ local M = {
   config = {},
 }
 
----@param windows table
+---@param windows integer[]
 local function close_windows(windows)
   -- Prevent from closing when the win count equals 1 or 2,
   -- where the win to remove could be the last opened.

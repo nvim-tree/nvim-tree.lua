@@ -1,6 +1,5 @@
 local M = {}
 
----@type table[string, fun(a: node, b: node): boolean]
 local C = {}
 
 --- Predefined comparator, defaulting to name
@@ -25,8 +24,8 @@ local function tbl_slice(t, first, last)
 end
 
 ---Evaluate `sort.folders_first` and `sort.files_first`
----@param a table node
----@param b table node
+---@param a Node
+---@param b Node
 ---@return boolean|nil
 local function folders_or_files_first(a, b)
   if not (M.config.sort.folders_first or M.config.sort.files_first) then
@@ -46,7 +45,7 @@ end
 ---@param first number
 ---@param mid number
 ---@param last number
----@param comparator fun(a: table, b: table): boolean
+---@param comparator fun(a: Node, b: Node): boolean
 local function merge(t, first, mid, last, comparator)
   local n1 = mid - first + 1
   local n2 = last - mid
@@ -83,7 +82,7 @@ end
 ---@param t table
 ---@param first number
 ---@param last number
----@param comparator fun(a: table, b: table): boolean
+---@param comparator fun(a: Node, b: Node): boolean
 local function split_merge(t, first, last, comparator)
   if (last - first) < 1 then
     return
@@ -147,8 +146,8 @@ function M.sort(t)
   end
 end
 
----@param a table
----@param b table
+---@param a Node
+---@param b Node
 ---@param ignorecase boolean|nil
 ---@return boolean
 local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
