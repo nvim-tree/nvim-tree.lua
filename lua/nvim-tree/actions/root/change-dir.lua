@@ -64,6 +64,7 @@ local function cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
 
+---@return boolean
 local function should_change_dir()
   return M.options.enable and vim.tbl_isempty(vim.v.event)
 end

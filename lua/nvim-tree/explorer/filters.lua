@@ -5,6 +5,8 @@ local M = {
   exclude_list = {},
 }
 
+---@param path string
+---@return boolean
 local function is_excluded(path)
   for _, node in ipairs(M.exclude_list) do
     if path:match(node) then

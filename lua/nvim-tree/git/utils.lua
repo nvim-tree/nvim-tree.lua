@@ -81,6 +81,9 @@ function M.should_show_untracked(cwd)
   return untracked[cwd]
 end
 
+---@param t table|nil
+---@param k string
+---@return table
 local function nil_insert(t, k)
   t = t or {}
   t[k] = true

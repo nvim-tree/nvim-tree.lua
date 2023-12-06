@@ -310,6 +310,7 @@ function M.copy_path(node)
   copy_to_clipboard(content)
 end
 
+---@param node Node
 function M.copy_absolute_path(node)
   local absolute_path = node.absolute_path
   local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path

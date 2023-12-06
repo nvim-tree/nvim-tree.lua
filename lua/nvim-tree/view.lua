@@ -72,6 +72,8 @@ local BUFFER_OPTIONS = {
   buflisted = false,
 }
 
+---@param bufnr integer
+---@return boolean
 local function matches_bufnr(bufnr)
   for _, b in pairs(BUFNR_PER_TAB) do
     if b == bufnr then
@@ -89,6 +91,7 @@ local function wipe_rogue_buffer()
   end
 end
 
+---@param bufnr integer|boolean|nil
 local function create_buffer(bufnr)
   wipe_rogue_buffer()
 
@@ -105,6 +108,8 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
+---@param size number|fun():number
+---@return integer
 local function get_size(size)
   if type(size) == "number" then
     return size
@@ -116,6 +121,7 @@ local function get_size(size)
   return math.floor(vim.o.columns * percent_as_decimal)
 end
 
+---@param size number|function|nil
 local function get_width(size)
   size = size or M.View.width
   return get_size(size)
@@ -127,6 +133,7 @@ local move_tbl = {
 }
 
 -- setup_tabpage sets up the initial state of a tab
+---@param tabpage integer
 local function setup_tabpage(tabpage)
   local winnr = vim.api.nvim_get_current_win()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
@@ -142,6 +149,7 @@ local function set_window_options_and_buffer()
   vim.opt.eventignore = eventignore
 end
 
+---@return table
 local function open_win_config()
   if type(M.View.float.open_win_config) == "function" then
     return M.View.float.open_win_config()
@@ -161,10 +169,13 @@ local function open_window()
   set_window_options_and_buffer()
 end
 
+---@param buf integer
+---@return boolean
 local function is_buf_displayed(buf)
   return vim.api.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
 end
 
+---@return number|nil
 local function get_alt_or_next_buf()
   local alt_buf = vim.fn.bufnr "#"
   if is_buf_displayed(alt_buf) then
@@ -190,11 +201,13 @@ local function switch_buf_if_last_buf()
 end
 
 -- save_tab_state saves any state that should be preserved across redraws.
+---@param tabnr integer
 local function save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
   M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage))
 end
 
+---@param tabpage integer
 local function close(tabpage)
   if not M.is_visible { tabpage = tabpage } then
     return

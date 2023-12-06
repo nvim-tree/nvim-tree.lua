@@ -6,6 +6,8 @@ local view = require "nvim-tree.view"
 
 local M = {}
 
+---Get single char from user input
+---@return string
 local function get_user_input_char()
   local c = vim.fn.getchar()
   while type(c) ~= "number" do
