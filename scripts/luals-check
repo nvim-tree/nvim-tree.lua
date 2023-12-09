@@ -4,24 +4,15 @@
 # luals-out/check.json will be produced on any issues, returning 1.
 # Outputs only check.json to stdout, all other messages to stderr, to allow jq etc.
 
-VER_LLS="3.7.3"
-
-DIR_SRC="${PWD}"
-DIR_OUT="${DIR_SRC}/luals-out"
-DIR_LLS="/tmp/lls"
+DIR_SRC="lua"
+DIR_OUT="luals-out"
 
 # clear output
 rm -rf "${DIR_OUT}"
 mkdir "${DIR_OUT}"
 
-if [ ! -d "${DIR_LLS}" ]; then
-	# download lua-language-server binaries
-	mkdir -p "${DIR_LLS}"
-	curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${VER_LLS}/lua-language-server-${VER_LLS}-linux-x64.tar.gz" | tar zx --directory "${DIR_LLS}"
-fi
-
-# execute from within the lua-language-server directory as it expects specific file locations
-OUT=$("${DIR_LLS}/bin/lua-language-server" --checklevel=Information --check "${DIR_SRC}" --logpath="${DIR_OUT}" --loglevel=error)
+# execute inside lua to prevent luals itself from being checked
+OUT=$(lua-language-server --check "${DIR_SRC}" --configpath="${PWD}/.luarc.json" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error)
 RC=$?
 
 echo "${OUT}" >&2

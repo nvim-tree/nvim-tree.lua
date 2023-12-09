@@ -48,6 +48,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: install
+      run: |
+        mkdir -p luals
+        curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.7.3/lua-language-server-3.7.3-linux-x64.tar.gz" | tar zx --directory luals
+
     - name: lua-language-server --check
       run: |
-        scripts/luals-check
+        PATH=luals/bin scripts/luals-check
