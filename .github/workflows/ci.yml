@@ -40,3 +40,5 @@ jobs:
           version: "0.19"
           args: --check lua
 
+      - name: doc-comments
+        run: ./scripts/doc-comments.sh
