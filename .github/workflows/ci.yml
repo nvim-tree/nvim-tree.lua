@@ -55,4 +55,4 @@ jobs:
 
     - name: lua-language-server --check
       run: |
-        PATH=luals/bin scripts/luals-check
+        PATH="luals/bin:${PATH}" scripts/luals-check
