@@ -26,7 +26,9 @@ function DecoratorCut:new(opts)
   return o
 end
 
---- Cut highlight: renderer.highlight_clipboard and node is cut
+---Cut highlight: renderer.highlight_clipboard and node is cut
+---@param node Node
+---@return string|nil group
 function DecoratorCut:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and copy_paste.is_cut(node) then
     return "NvimTreeCutHL"

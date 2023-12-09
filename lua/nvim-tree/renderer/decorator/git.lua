@@ -137,8 +137,8 @@ function DecoratorGit:build_hl_table()
   end
 end
 
---- Git icons: git.enable, renderer.icons.show.git and node has status
----@param node table
+---Git icons: git.enable, renderer.icons.show.git and node has status
+---@param node Node
 ---@return HighlightedString[]|nil modified icon
 function DecoratorGit:calculate_icons(node)
   if not node or not self.enabled or not self.icons_by_xy then
@@ -184,7 +184,9 @@ function DecoratorGit:calculate_icons(node)
   return iconss
 end
 
---- Get the first icon as the sign if appropriate
+---Get the first icon as the sign if appropriate
+---@param node Node
+---@return string|nil name
 function DecoratorGit:sign_name(node)
   if self.icon_placement ~= ICON_PLACEMENT.signcolumn then
     return
@@ -196,7 +198,9 @@ function DecoratorGit:sign_name(node)
   end
 end
 
---- Git highlight: git.enable, renderer.highlight_git and node has status
+---Git highlight: git.enable, renderer.highlight_git and node has status
+---@param node Node
+---@return string|nil group
 function DecoratorGit:calculate_highlight(node)
   if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
     return nil

@@ -30,14 +30,18 @@ function DecoratorBookmarks:new(opts)
   return o
 end
 
---- Bookmark icon: renderer.icons.show.bookmarks and node is marked
+---Bookmark icon: renderer.icons.show.bookmarks and node is marked
+---@param node Node
+---@return HighlightedString[]|nil icons
 function DecoratorBookmarks:calculate_icons(node)
   if marks.get_mark(node) then
     return { self.icon }
   end
 end
 
---- Bookmark highlight: renderer.highlight_bookmarks and node is marked
+---Bookmark highlight: renderer.highlight_bookmarks and node is marked
+---@param node Node
+---@return string|nil group
 function DecoratorBookmarks:calculate_highlight(node)
   if self.hl_pos ~= HL_POSITION.none and marks.get_mark(node) then
     return "NvimTreeBookmarkHL"

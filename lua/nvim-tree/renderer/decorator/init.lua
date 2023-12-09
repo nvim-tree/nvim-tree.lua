@@ -17,8 +17,8 @@ function Decorator:new(o)
   return o
 end
 
---- Maybe highlight groups
----@param node table
+---Maybe highlight groups
+---@param node Node
 ---@return string|nil icon highlight group
 ---@return string|nil name highlight group
 function Decorator:groups_icon_name(node)
@@ -38,8 +38,8 @@ function Decorator:groups_icon_name(node)
   return icon_hl, name_hl
 end
 
---- Maybe icon sign
----@param node table
+---Maybe icon sign
+---@param node Node
 ---@return string|nil name
 function Decorator:sign_name(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.signcolumn then
@@ -52,8 +52,8 @@ function Decorator:sign_name(node)
   end
 end
 
---- Icons when ICON_PLACEMENT.before
----@param node table
+---Icons when ICON_PLACEMENT.before
+---@param node Node
 ---@return HighlightedString[]|nil icons
 function Decorator:icons_before(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.before then
@@ -63,8 +63,8 @@ function Decorator:icons_before(node)
   return self:calculate_icons(node)
 end
 
---- Icons when ICON_PLACEMENT.after
----@param node table
+---Icons when ICON_PLACEMENT.after
+---@param node Node
 ---@return HighlightedString[]|nil icons
 function Decorator:icons_after(node)
   if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.after then
@@ -74,23 +74,23 @@ function Decorator:icons_after(node)
   return self:calculate_icons(node)
 end
 
---- Maybe icons, optionally implemented
+---Maybe icons, optionally implemented
 ---@protected
----@param _ table node
+---@param _ Node
 ---@return HighlightedString[]|nil icons
 function Decorator:calculate_icons(_)
   return nil
 end
 
---- Maybe highlight group, optionally implemented
+---Maybe highlight group, optionally implemented
 ---@protected
----@param _ table node
+---@param _ Node
 ---@return string|nil group
 function Decorator:calculate_highlight(_)
   return nil
 end
 
---- Define a sign
+---Define a sign
 ---@protected
 ---@param icon HighlightedString|nil
 function Decorator:define_sign(icon)

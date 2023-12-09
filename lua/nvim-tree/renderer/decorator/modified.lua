@@ -34,14 +34,18 @@ function DecoratorModified:new(opts)
   return o
 end
 
---- Modified icon: modified.enable, renderer.icons.show.modified and node is modified
+---Modified icon: modified.enable, renderer.icons.show.modified and node is modified
+---@param node Node
+---@return HighlightedString[]|nil icons
 function DecoratorModified:calculate_icons(node)
   if self.enabled and buffers.is_modified(node) then
     return { self.icon }
   end
 end
 
---- Modified highlight: modified.enable, renderer.highlight_modified and node is modified
+---Modified highlight: modified.enable, renderer.highlight_modified and node is modified
+---@param node Node
+---@return string|nil group
 function DecoratorModified:calculate_highlight(node)
   if not self.enabled or self.hl_pos == HL_POSITION.none or not buffers.is_modified(node) then
     return nil
