@@ -8,8 +8,9 @@ local M = {}
 
 ---@param where string
 ---@param what string
+---@param opts table|nil
 ---@return fun()
-function M.fn(where, what)
+function M.fn(where, what, opts)
   return function()
     local node_cur = lib.get_node_at_cursor()
     local first_node_line = core.get_nodes_starting_line()
@@ -27,7 +28,8 @@ function M.fn(where, what)
       local valid = false
 
       if what == "git" then
-        valid = explorer_node.get_git_status(node) ~= nil
+        local git_status = explorer_node.get_git_status(node)
+        valid = git_status ~= nil and (not opts.skip_gitignored or git_status[1] ~= "!!")
       elseif what == "diag" then
         valid = node.diag_status ~= nil
       elseif what == "opened" then
