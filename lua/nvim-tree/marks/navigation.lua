@@ -5,6 +5,9 @@ local open_file = require "nvim-tree.actions.node.open-file"
 local utils = require "nvim-tree.utils"
 local lib = require "nvim-tree.lib"
 
+---@param node table
+---@param where string
+---@return Node|nil
 local function get_nearest(node, where)
   local first, prev, next, last = nil, nil, nil, nil
   local found = false
@@ -47,12 +50,16 @@ local function get_nearest(node, where)
   end
 end
 
+---@param where string
+---@param node table|nil
+---@return Node|nil
 local function get(where, node)
   if node then
     return get_nearest(node, where)
   end
 end
 
+---@param node table|nil
 local function open_or_focus(node)
   if node and not node.nodes and not utils.get_win_buf_from_path(node.absolute_path) then
     open_file.fn("edit", node.absolute_path)
@@ -61,6 +68,8 @@ local function open_or_focus(node)
   end
 end
 
+---@param where string
+---@return function
 local function navigate_to(where)
   return function()
     local node = lib.get_node_at_cursor()

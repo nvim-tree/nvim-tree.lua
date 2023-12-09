@@ -2,6 +2,8 @@ local utils = require "nvim-tree.utils"
 
 local M = {}
 
+---@param node Node
+---@return table
 local function get_formatted_lines(node)
   local stats = node.fs_stat
   local fpath = " fullpath: " .. node.absolute_path
@@ -21,6 +23,7 @@ end
 
 local current_popup = nil
 
+---@param node Node
 local function setup_window(node)
   local lines = get_formatted_lines(node)
 
@@ -52,6 +55,7 @@ function M.close_popup()
   end
 end
 
+---@param node Node
 function M.toggle_file_info(node)
   if node.name == ".." then
     return

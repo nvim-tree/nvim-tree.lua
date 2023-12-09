@@ -6,9 +6,9 @@ local M = {
 }
 
 --- Retrieve the git toplevel directory
---- @param cwd string path
---- @return string|nil toplevel absolute path
---- @return string|nil git_dir absolute path
+---@param cwd string path
+---@return string|nil toplevel absolute path
+---@return string|nil git_dir absolute path
 function M.get_toplevel(cwd)
   local profile = log.profile_start("git toplevel git_dir %s", cwd)
 
@@ -60,6 +60,8 @@ end
 
 local untracked = {}
 
+---@param cwd string
+---@return string|nil
 function M.should_show_untracked(cwd)
   if untracked[cwd] ~= nil then
     return untracked[cwd]
@@ -79,12 +81,18 @@ function M.should_show_untracked(cwd)
   return untracked[cwd]
 end
 
+---@param t table|nil
+---@param k string
+---@return table
 local function nil_insert(t, k)
   t = t or {}
   t[k] = true
   return t
 end
 
+---@param status table
+---@param cwd string|nil
+---@return table
 function M.file_status_to_dir_status(status, cwd)
   local direct = {}
   for p, s in pairs(status) do

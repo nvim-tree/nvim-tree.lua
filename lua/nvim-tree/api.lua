@@ -30,6 +30,7 @@ local Api = {
 
 --- Do nothing when setup not called.
 --- f function to invoke
+---@param f function
 local function wrap(f)
   return function(...)
     if vim.g.NvimTreeSetup == 1 then
@@ -167,6 +168,8 @@ Api.fs.copy.absolute_path = wrap_node(require("nvim-tree.actions.fs.copy-paste")
 Api.fs.copy.filename = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_filename)
 Api.fs.copy.relative_path = wrap_node(require("nvim-tree.actions.fs.copy-paste").copy_path)
 
+---@param mode string
+---@param node table
 local function edit(mode, node)
   local path = node.absolute_path
   if node.link_to and not node.nodes then
@@ -175,6 +178,8 @@ local function edit(mode, node)
   require("nvim-tree.actions.node.open-file").fn(mode, path)
 end
 
+---@param mode string
+---@return fun(node: table)
 local function open_or_expand_or_dir_up(mode)
   return function(node)
     if node.name == ".." then

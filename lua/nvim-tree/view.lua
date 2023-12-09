@@ -72,6 +72,8 @@ local BUFFER_OPTIONS = {
   buflisted = false,
 }
 
+---@param bufnr integer
+---@return boolean
 local function matches_bufnr(bufnr)
   for _, b in pairs(BUFNR_PER_TAB) do
     if b == bufnr then
@@ -89,6 +91,7 @@ local function wipe_rogue_buffer()
   end
 end
 
+---@param bufnr integer|boolean|nil
 local function create_buffer(bufnr)
   wipe_rogue_buffer()
 
@@ -105,6 +108,8 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
+---@param size number|fun():number
+---@return integer
 local function get_size(size)
   if type(size) == "number" then
     return size
@@ -116,6 +121,7 @@ local function get_size(size)
   return math.floor(vim.o.columns * percent_as_decimal)
 end
 
+---@param size number|function|nil
 local function get_width(size)
   size = size or M.View.width
   return get_size(size)
@@ -127,6 +133,7 @@ local move_tbl = {
 }
 
 -- setup_tabpage sets up the initial state of a tab
+---@param tabpage integer
 local function setup_tabpage(tabpage)
   local winnr = vim.api.nvim_get_current_win()
   M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
@@ -142,6 +149,7 @@ local function set_window_options_and_buffer()
   vim.opt.eventignore = eventignore
 end
 
+---@return table
 local function open_win_config()
   if type(M.View.float.open_win_config) == "function" then
     return M.View.float.open_win_config()
@@ -161,10 +169,13 @@ local function open_window()
   set_window_options_and_buffer()
 end
 
+---@param buf integer
+---@return boolean
 local function is_buf_displayed(buf)
   return vim.api.nvim_buf_is_valid(buf) and vim.fn.buflisted(buf) == 1
 end
 
+---@return number|nil
 local function get_alt_or_next_buf()
   local alt_buf = vim.fn.bufnr "#"
   if is_buf_displayed(alt_buf) then
@@ -190,11 +201,13 @@ local function switch_buf_if_last_buf()
 end
 
 -- save_tab_state saves any state that should be preserved across redraws.
+---@param tabnr integer
 local function save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
   M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage))
 end
 
+---@param tabpage integer
 local function close(tabpage)
   if not M.is_visible { tabpage = tabpage } then
     return
@@ -236,6 +249,7 @@ function M.close()
   end
 end
 
+---@param options table|nil
 function M.open(options)
   if M.is_visible() then
     return
@@ -297,6 +311,7 @@ function M.grow_from_content()
   end
 end
 
+---@param size string|number|nil
 function M.resize(size)
   if M.View.float.enable and not M.View.adaptive_size then
     -- if the floating windows's adaptive size is not desired, then the
@@ -386,6 +401,7 @@ function M.abandon_all_windows()
   end
 end
 
+---@param opts table|nil
 function M.is_visible(opts)
   if opts and opts.tabpage then
     if M.View.tabpages[opts.tabpage] == nil then
@@ -407,12 +423,15 @@ function M.is_visible(opts)
   return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr())
 end
 
+---@param opts table|nil
 function M.set_cursor(opts)
   if M.is_visible() then
     pcall(vim.api.nvim_win_set_cursor, M.get_winnr(), opts)
   end
 end
 
+---@param winnr number|nil
+---@param open_if_closed boolean|nil
 function M.focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
 
@@ -428,8 +447,8 @@ function M.focus(winnr, open_if_closed)
 end
 
 --- Retrieve the winid of the open tree.
---- @param opts ApiTreeWinIdOpts|nil
---- @return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
+---@param opts ApiTreeWinIdOpts|nil
+---@return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
 function M.winid(opts)
   local tabpage = opts and opts.tabpage
   if tabpage == 0 then
@@ -465,6 +484,8 @@ function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
+---@param bufnr number
+---@return boolean
 function M.is_buf_valid(bufnr)
   return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
 end
@@ -512,6 +533,8 @@ function M._prevent_buffer_override()
   end)
 end
 
+---@param cwd string|nil
+---@return boolean
 function M.is_root_folder_visible(cwd)
   return cwd ~= "/" and not M.View.hide_root_folder
 end

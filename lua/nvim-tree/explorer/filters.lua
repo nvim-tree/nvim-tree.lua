@@ -5,6 +5,8 @@ local M = {
   exclude_list = {},
 }
 
+---@param path string
+---@return boolean
 local function is_excluded(path)
   for _, node in ipairs(M.exclude_list) do
     if path:match(node) then
@@ -61,10 +63,14 @@ local function buf(path, bufinfo, unloaded_bufnr)
   return true
 end
 
+---@param path string
+---@return boolean
 local function dotfile(path)
   return M.config.filter_dotfiles and utils.path_basename(path):sub(1, 1) == "."
 end
 
+---@param path string
+---@return boolean
 local function custom(path)
   if not M.config.filter_custom then
     return false

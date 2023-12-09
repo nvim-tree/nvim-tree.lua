@@ -8,6 +8,7 @@ local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
 
+---@param file string
 local function create_and_notify(file)
   events._dispatch_will_create_file(file)
   local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
@@ -19,6 +20,8 @@ local function create_and_notify(file)
   events._dispatch_file_created(file)
 end
 
+---@param iter function iterable
+---@return integer
 local function get_num_nodes(iter)
   local i = 0
   for _ in iter do
@@ -27,6 +30,8 @@ local function get_num_nodes(iter)
   return i
 end
 
+---@param node Node
+---@return string
 local function get_containing_folder(node)
   if node.nodes ~= nil then
     return utils.path_add_trailing(node.absolute_path)
@@ -35,11 +40,18 @@ local function get_containing_folder(node)
   return node.absolute_path:sub(0, -node_name_size - 1)
 end
 
+---@param node Node|nil
 function M.fn(node)
+  local cwd = core.get_cwd()
+  if cwd == nil then
+    return
+  end
+
   node = node and lib.get_last_group_node(node)
   if not node or node.name == ".." then
     node = {
-      absolute_path = core.get_cwd(),
+      absolute_path = cwd,
+      name = "",
       nodes = core.get_explorer().nodes,
       open = true,
     }

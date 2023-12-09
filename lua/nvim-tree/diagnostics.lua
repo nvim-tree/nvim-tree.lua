@@ -12,6 +12,7 @@ local severity_levels = {
   Hint = 4,
 }
 
+---@return table
 local function from_nvim_lsp()
   local buffer_severity = {}
 
@@ -36,10 +37,14 @@ local function from_nvim_lsp()
   return buffer_severity
 end
 
+---@param severity integer
+---@param config table
+---@return boolean
 local function is_severity_in_range(severity, config)
   return config.max <= severity and severity <= config.min
 end
 
+---@return table
 local function from_coc()
   if vim.g.coc_service_initialized ~= 1 then
     return {}

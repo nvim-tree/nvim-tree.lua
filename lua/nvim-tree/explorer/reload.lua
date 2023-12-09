@@ -12,6 +12,10 @@ local Watcher = require "nvim-tree.watcher"
 
 local M = {}
 
+---@param nodes_by_path table
+---@param node_ignored boolean
+---@param status table
+---@return fun(node: Node): table
 local function update_status(nodes_by_path, node_ignored, status)
   return function(node)
     if nodes_by_path[node.absolute_path] then
@@ -21,6 +25,8 @@ local function update_status(nodes_by_path, node_ignored, status)
   end
 end
 
+---@param path string
+---@param callback fun(toplevel: string|nil, project: table|nil)
 local function reload_and_get_git_project(path, callback)
   local toplevel = git.get_toplevel(path)
 
@@ -29,6 +35,9 @@ local function reload_and_get_git_project(path, callback)
   end)
 end
 
+---@param node Node
+---@param project table|nil
+---@param root string|nil
 local function update_parent_statuses(node, project, root)
   while project and node do
     -- step up to the containing project
@@ -58,6 +67,9 @@ local function update_parent_statuses(node, project, root)
   end
 end
 
+---@param node Node
+---@param git_status table
+---@param unloaded_bufnr number|nil
 function M.reload(node, git_status, unloaded_bufnr)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
@@ -143,7 +155,7 @@ function M.reload(node, git_status, unloaded_bufnr)
         return child_names[n.absolute_path]
       else
         explorer_node.node_destroy(n)
-        return nil
+        return false
       end
     end, node.nodes)
   )
@@ -165,7 +177,7 @@ function M.reload(node, git_status, unloaded_bufnr)
 end
 
 ---Refresh contents and git status for a single node
----@param node table
+---@param node Node
 ---@param callback function
 function M.refresh_node(node, callback)
   if type(node) ~= "table" then

@@ -4,6 +4,8 @@ local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
+---@param direction string
+---@return fun(node: Node): nil
 function M.fn(direction)
   return function(node)
     if node.name == ".." or not direction then

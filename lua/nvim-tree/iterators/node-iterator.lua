@@ -1,6 +1,9 @@
+---@class NodeIterator
 local NodeIterator = {}
 NodeIterator.__index = NodeIterator
 
+---@param nodes Node[]
+---@return NodeIterator
 function NodeIterator.builder(nodes)
   return setmetatable({
     nodes = nodes,
@@ -15,6 +18,7 @@ function NodeIterator.builder(nodes)
   }, NodeIterator)
 end
 
+---@return NodeIterator
 function NodeIterator:hidden()
   self._filter_hidden = function(_)
     return true
@@ -22,21 +26,29 @@ function NodeIterator:hidden()
   return self
 end
 
+---@param f fun(node: Node): boolean
+---@return NodeIterator
 function NodeIterator:matcher(f)
   self._match = f
   return self
 end
 
+---@param f fun(node: Node, i: number)
+---@return NodeIterator
 function NodeIterator:applier(f)
   self._apply_fn_on_node = f
   return self
 end
 
+---@param f fun(node: Node): any
+---@return NodeIterator
 function NodeIterator:recursor(f)
   self._recurse_with = f
   return self
 end
 
+---@return Node|nil
+---@return number|nil
 function NodeIterator:iterate()
   local iteration_count = 0
   local function iter(nodes)

@@ -6,6 +6,8 @@ local view = require "nvim-tree.view"
 
 local M = {}
 
+---Get single char from user input
+---@return string
 local function get_user_input_char()
   local c = vim.fn.getchar()
   while type(c) ~= "number" do
@@ -302,6 +304,8 @@ local function edit_in_current_buf(filename)
   vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
+---@param mode string
+---@param filename string
 function M.fn(mode, filename)
   if type(mode) ~= "string" then
     mode = ""

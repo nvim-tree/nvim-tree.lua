@@ -19,8 +19,8 @@ local M = {
 }
 
 --- Shorten and normalise a vim command lhs
---- @param lhs string
---- @return string
+---@param lhs string
+---@return string
 local function tidy_lhs(lhs)
   -- nvim_buf_get_keymap replaces leading "<" with "<lt>" e.g. "<lt>CTRL-v>"
   lhs = lhs:gsub("^<lt>", "<")
@@ -43,15 +43,15 @@ end
 
 --- Remove prefix 'nvim-tree: '
 --- Hardcoded to keep default_on_attach simple
---- @param desc string
---- @return string
+---@param desc string
+---@return string
 local function tidy_desc(desc)
   return desc and desc:gsub("^nvim%-tree: ", "") or ""
 end
 
 --- sort vim command lhs roughly as per :help index
---- @param a string
---- @param b string
+---@param a string
+---@param b string
 local function sort_lhs(a, b)
   -- mouse first
   if a:match(PAT_MOUSE) and not b:match(PAT_MOUSE) then
@@ -79,9 +79,9 @@ local function sort_lhs(a, b)
 end
 
 --- Compute all lines for the buffer
---- @return table strings of text
---- @return table arrays of arguments 3-6 for nvim_buf_add_highlight()
---- @return number maximum length of text
+---@return table strings of text
+---@return table arrays of arguments 3-6 for nvim_buf_add_highlight()
+---@return number maximum length of text
 local function compute()
   local head_lhs = "nvim-tree mappings"
   local head_rhs1 = "exit: q"

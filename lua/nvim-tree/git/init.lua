@@ -29,6 +29,10 @@ local WATCHED_FILES = {
   "index", -- staging area
 }
 
+---@param toplevel string|nil
+---@param path string|nil
+---@param project table
+---@param git_status table|nil
 local function reload_git_status(toplevel, path, project, git_status)
   if path then
     for p in pairs(project.files) do
@@ -45,9 +49,9 @@ local function reload_git_status(toplevel, path, project, git_status)
 end
 
 --- Is this path in a known ignored directory?
---- @param path string
---- @param project table git status
---- @return boolean
+---@param path string
+---@param project table git status
+---@return boolean
 local function path_ignored_in_project(path, project)
   if not path or not project then
     return false
@@ -64,7 +68,7 @@ local function path_ignored_in_project(path, project)
 end
 
 --- Reload all projects
---- @return table projects maybe empty
+---@return table projects maybe empty
 function M.reload()
   if not M.config.git.enable then
     return {}
@@ -78,9 +82,9 @@ function M.reload()
 end
 
 --- Reload one project. Does nothing when no project or path is ignored
---- @param toplevel string|nil
---- @param path string|nil optional path to update only
---- @param callback function|nil
+---@param toplevel string|nil
+---@param path string|nil optional path to update only
+---@param callback function|nil
 function M.reload_project(toplevel, path, callback)
   local project = M._projects_by_toplevel[toplevel]
   if not toplevel or not project or not M.config.git.enable then
@@ -118,7 +122,8 @@ function M.reload_project(toplevel, path, callback)
 end
 
 --- Retrieve a known project
---- @return table|nil project
+---@param toplevel string|nil
+---@return table|nil project
 function M.get_project(toplevel)
   return M._projects_by_toplevel[toplevel]
 end
@@ -128,8 +133,8 @@ end
 ---  not part of a project
 ---  not a directory
 ---  path in git.disable_for_dirs
---- @param path string absolute
---- @return string|nil
+---@param path string absolute
+---@return string|nil
 function M.get_toplevel(path)
   if not M.config.git.enable then
     return nil
@@ -207,8 +212,8 @@ end
 
 --- Load the project status for a path. Does nothing when no toplevel for path.
 --- Only fetches project status when unknown, otherwise returns existing.
---- @param path string absolute
---- @return table project maybe empty
+---@param path string absolute
+---@return table project maybe empty
 function M.load_project_status(path)
   if not M.config.git.enable then
     return {}
@@ -252,12 +257,17 @@ function M.load_project_status(path)
     })
   end
 
-  M._projects_by_toplevel[toplevel] = {
-    files = git_status,
-    dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
-    watcher = watcher,
-  }
-  return M._projects_by_toplevel[toplevel]
+  if git_status then
+    M._projects_by_toplevel[toplevel] = {
+      files = git_status,
+      dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
+      watcher = watcher,
+    }
+    return M._projects_by_toplevel[toplevel]
+  else
+    M._toplevels_by_path[path] = false
+    return {}
+  end
 end
 
 function M.purge_state()

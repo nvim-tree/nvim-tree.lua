@@ -7,11 +7,20 @@ local M = {}
 M.explore = require("nvim-tree.explorer.explore").explore
 M.reload = require("nvim-tree.explorer.reload").reload
 
+---@class Explorer
+---@field absolute_path string
+---@field nodes Node[]
+---@field open boolean
+
 local Explorer = {}
 Explorer.__index = Explorer
 
+---@param cwd string|nil
+---@return Explorer
 function Explorer.new(cwd)
   cwd = vim.loop.fs_realpath(cwd or vim.loop.cwd())
+
+  ---@class Explorer
   local explorer = setmetatable({
     absolute_path = cwd,
     nodes = {},
@@ -22,12 +31,15 @@ function Explorer.new(cwd)
   return explorer
 end
 
+---@private
+---@param node Node
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
   local git_status = git.load_project_status(cwd)
   M.explore(node, git_status)
 end
 
+---@param node Node
 function Explorer:expand(node)
   self:_load(node)
 end

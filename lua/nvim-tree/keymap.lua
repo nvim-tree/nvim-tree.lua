@@ -1,8 +1,8 @@
 local M = {}
 
 --- Apply mappings to a scratch buffer and return buffer local mappings
---- @param fn function(bufnr) on_attach or default_on_attach
---- @return table as per vim.api.nvim_buf_get_keymap
+---@param fn function(bufnr) on_attach or default_on_attach
+---@return table as per vim.api.nvim_buf_get_keymap
 local function generate_keymap(fn)
   -- create an unlisted scratch buffer
   local scratch_bufnr = vim.api.nvim_create_buf(false, true)
@@ -20,6 +20,7 @@ local function generate_keymap(fn)
 end
 
 -- stylua: ignore start
+---@param bufnr integer
 function M.default_on_attach(bufnr)
   local api = require('nvim-tree.api')
 
@@ -93,10 +94,12 @@ function M.default_on_attach(bufnr)
 end
 -- stylua: ignore end
 
+---@return table
 function M.get_keymap()
   return generate_keymap(M.on_attach)
 end
 
+---@return table
 function M.get_keymap_default()
   return generate_keymap(M.default_on_attach)
 end

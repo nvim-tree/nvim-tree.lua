@@ -6,11 +6,13 @@ local M = {
   config = {},
 }
 
+---@class Event
 local Event = {
   _events = {},
 }
 Event.__index = Event
 
+---@class Watcher
 local Watcher = {
   _watchers = {},
 }
@@ -23,6 +25,8 @@ local FS_EVENT_FLAGS = {
   recursive = false,
 }
 
+---@param path string
+---@return Event|nil
 function Event:new(path)
   log.line("watcher", "Event:new '%s'", path)
 
@@ -40,6 +44,7 @@ function Event:new(path)
   end
 end
 
+---@return boolean
 function Event:start()
   log.line("watcher", "Event:start '%s'", self._path)
 
@@ -84,10 +89,12 @@ function Event:start()
   return true
 end
 
+---@param listener function
 function Event:add(listener)
   table.insert(self._listeners, listener)
 end
 
+---@param listener function
 function Event:remove(listener)
   utils.array_remove(self._listeners, listener)
   if #self._listeners == 0 then
@@ -95,6 +102,7 @@ function Event:remove(listener)
   end
 end
 
+---@param message string|nil
 function Event:destroy(message)
   log.line("watcher", "Event:destroy '%s'", self._path)
 
@@ -115,6 +123,11 @@ function Event:destroy(message)
   self.destroyed = true
 end
 
+---@param path string
+---@param files string[]|nil
+---@param callback function
+---@param data table
+---@return Watcher|nil
 function Watcher:new(path, files, callback, data)
   log.line("watcher", "Watcher:new '%s' %s", path, vim.inspect(files))
 
@@ -160,7 +173,7 @@ end
 M.Watcher = Watcher
 
 --- Permanently disable watchers and purge all state following a catastrophic error.
---- @param msg string
+---@param msg string
 function M.disable_watchers(msg)
   notify.warn(string.format("Disabling watchers: %s", msg))
   M.config.filesystem_watchers.enable = false
@@ -181,8 +194,8 @@ end
 
 --- Windows NT will present directories that cannot be enumerated.
 --- Detect these by attempting to start an event monitor.
---- @param path string
---- @return boolean
+---@param path string
+---@return boolean
 function M.is_fs_event_capable(path)
   if not utils.is_windows then
     return true
