@@ -48,6 +48,7 @@ jobs:
 
     env:
       LUALS_VERSION: 3.7.3
+      PATH: "./luals/bin:${PATH}"
 
     steps:
     - uses: actions/checkout@v3
@@ -59,4 +60,4 @@ jobs:
 
     - name: lua-language-server --check
       run: |
-        PATH="luals/bin:${PATH}" scripts/luals-check
+        scripts/luals-check
