@@ -1,14 +1,13 @@
 local M = {}
 
--- node.git_status structure:
--- {
---   file = string | nil,
---   dir = {
---     direct = { string } | nil,
---     indirect = { string } | nil,
---   } | nil,
--- }
+---@class GitStatus
+---@field file string|nil
+---@field dir table|nil
 
+---@param parent_ignored boolean
+---@param status table|nil
+---@param absolute_path string
+---@return GitStatus|nil
 local function get_dir_git_status(parent_ignored, status, absolute_path)
   if parent_ignored then
     return { file = "!!" }
@@ -25,15 +24,24 @@ local function get_dir_git_status(parent_ignored, status, absolute_path)
   end
 end
 
+---@param parent_ignored boolean
+---@param status table
+---@param absolute_path string
+---@return GitStatus
 local function get_git_status(parent_ignored, status, absolute_path)
   local file_status = parent_ignored and "!!" or status.files and status.files[absolute_path]
   return { file = file_status }
 end
 
+---@param node Node
+---@return boolean
 function M.has_one_child_folder(node)
-  return #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R")
+  return #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R") or false
 end
 
+---@param node Node
+---@param parent_ignored boolean
+---@param status table|nil
 function M.update_git_status(node, parent_ignored, status)
   local get_status
   if node.nodes then
@@ -51,6 +59,8 @@ function M.update_git_status(node, parent_ignored, status)
   end
 end
 
+---@param node Node
+---@return GitStatus|nil
 function M.get_git_status(node)
   local git_status = node and node.git_status
   if not git_status then
@@ -112,10 +122,13 @@ function M.get_git_status(node)
   end
 end
 
+---@param node Node
+---@return boolean
 function M.is_git_ignored(node)
-  return node and node.git_status and node.git_status.file == "!!"
+  return node and node.git_status ~= nil and node.git_status.file == "!!"
 end
 
+---@param node Node
 function M.node_destroy(node)
   if not node then
     return

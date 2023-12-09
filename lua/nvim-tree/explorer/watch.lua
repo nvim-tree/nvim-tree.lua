@@ -7,6 +7,8 @@ local M = {
   uid = 0,
 }
 
+---@param path string
+---@return boolean
 local function is_git(path)
   -- If $GIT_DIR is set, consider its value to be equivalent to '.git'.
   -- Expand $GIT_DIR (and `path`) to a full path (see :help filename-modifiers), since
@@ -29,6 +31,8 @@ local IGNORED_PATHS = {
   "/dev",
 }
 
+---@param path string
+---@return boolean
 local function is_folder_ignored(path)
   for _, folder in ipairs(IGNORED_PATHS) do
     if vim.startswith(path, folder) then
@@ -45,18 +49,14 @@ local function is_folder_ignored(path)
   return false
 end
 
+---@param node Node
+---@return Watcher|nil
 function M.create_watcher(node)
   if not M.config.filesystem_watchers.enable or type(node) ~= "table" then
     return nil
   end
 
-  local path
-  if node.type == "link" then
-    path = node.link_to
-  else
-    path = node.absolute_path
-  end
-
+  local path = node.link_to or node.absolute_path
   if is_git(path) or is_folder_ignored(path) then
     return nil
   end

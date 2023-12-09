@@ -6,6 +6,8 @@ local lib = require "nvim-tree.lib"
 
 local M = {}
 
+---@param list string[]
+---@return table
 local function to_lookup_table(list)
   local table = {}
   for _, element in ipairs(list) do
@@ -15,6 +17,7 @@ local function to_lookup_table(list)
   return table
 end
 
+---@param node Node
 local function expand(node)
   node = lib.get_last_group_node(node)
   node.open = true
@@ -23,6 +26,9 @@ local function expand(node)
   end
 end
 
+---@param expansion_count integer
+---@param node Node
+---@return boolean
 local function should_expand(expansion_count, node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
@@ -57,6 +63,7 @@ local function gen_iterator()
   end
 end
 
+---@param base_node table
 function M.fn(base_node)
   local node = base_node.nodes and base_node or core.get_explorer()
   if gen_iterator()(node) then

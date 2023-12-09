@@ -8,6 +8,7 @@ local M = {
   config = {},
 }
 
+---@param windows integer[]
 local function close_windows(windows)
   -- Prevent from closing when the win count equals 1 or 2,
   -- where the win to remove could be the last opened.
@@ -23,6 +24,7 @@ local function close_windows(windows)
   end
 end
 
+---@param absolute_path string
 local function clear_buffer(absolute_path)
   local bufs = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
   for _, buf in pairs(bufs) do
@@ -44,10 +46,13 @@ local function clear_buffer(absolute_path)
   end
 end
 
+---@param cwd string
+---@return boolean|nil
 local function remove_dir(cwd)
   local handle = vim.loop.fs_scandir(cwd)
   if type(handle) == "string" then
-    return notify.error(handle)
+    notify.error(handle)
+    return
   end
 
   while true do
@@ -75,20 +80,22 @@ local function remove_dir(cwd)
 end
 
 --- Remove a node, notify errors, dispatch events
---- @param node table
+---@param node Node
 function M.remove(node)
   local notify_node = notify.render_path(node.absolute_path)
   if node.nodes ~= nil and not node.link_to then
     local success = remove_dir(node.absolute_path)
     if not success then
-      return notify.error("Could not remove " .. notify_node)
+      notify.error("Could not remove " .. notify_node)
+      return
     end
     events._dispatch_folder_removed(node.absolute_path)
   else
     events._dispatch_will_remove_file(node.absolute_path)
     local success = vim.loop.fs_unlink(node.absolute_path)
     if not success then
-      return notify.error("Could not remove " .. notify_node)
+      notify.error("Could not remove " .. notify_node)
+      return
     end
     events._dispatch_file_removed(node.absolute_path)
     clear_buffer(node.absolute_path)
@@ -96,6 +103,7 @@ function M.remove(node)
   notify.info(notify_node .. " was properly removed.")
 end
 
+---@param node Node
 function M.fn(node)
   if node.name == ".." then
     return

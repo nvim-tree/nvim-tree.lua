@@ -4,18 +4,24 @@ local NvimTreeMarks = {}
 
 local M = {}
 
+---@class MinimalNode
+---@field absolute_path string
+
+---@param node Node|MinimalNode
 local function add_mark(node)
   NvimTreeMarks[node.absolute_path] = node
 
   renderer.draw()
 end
 
+---@param node Node|MinimalNode
 local function remove_mark(node)
   NvimTreeMarks[node.absolute_path] = nil
 
   renderer.draw()
 end
 
+---@param node Node|MinimalNode
 function M.toggle_mark(node)
   if node.absolute_path == nil then
     return
@@ -36,10 +42,13 @@ function M.clear_marks()
   renderer.draw()
 end
 
+---@param node Node|MinimalNode
+---@return table|nil
 function M.get_mark(node)
   return NvimTreeMarks[node.absolute_path]
 end
 
+---@return table
 function M.get_marks()
   local list = {}
   for _, node in pairs(NvimTreeMarks) do

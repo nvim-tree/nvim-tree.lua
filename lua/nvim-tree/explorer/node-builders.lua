@@ -3,6 +3,10 @@ local watch = require "nvim-tree.explorer.watch"
 
 local M = {}
 
+---@param parent Node
+---@param absolute_path string
+---@param name string
+---@return Node
 function M.folder(parent, absolute_path, name)
   local handle = vim.loop.fs_scandir(absolute_path)
   local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
@@ -25,8 +29,8 @@ function M.folder(parent, absolute_path, name)
 end
 
 --- path is an executable file or directory
---- @param absolute_path string
---- @return boolean
+---@param absolute_path string
+---@return boolean|nil
 function M.is_executable(absolute_path)
   if utils.is_windows or utils.is_wsl then
     --- executable detection on windows is buggy and not performant hence it is disabled
@@ -36,6 +40,10 @@ function M.is_executable(absolute_path)
   end
 end
 
+---@param parent Node
+---@param absolute_path string
+---@param name string
+---@return Node
 function M.file(parent, absolute_path, name)
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
 
@@ -55,6 +63,10 @@ end
 -- links (for instance libr2.so in /usr/lib) and thus even with a C program realpath fails
 -- when it has no real reason to. Maybe there is a reason, but errno is definitely wrong.
 -- So we need to check for link_to ~= nil when adding new links to the main tree
+---@param parent Node
+---@param absolute_path string
+---@param name string
+---@return Node
 function M.link(parent, absolute_path, name)
   --- I dont know if this is needed, because in my understanding, there isn't hard links in windows, but just to be sure i changed it.
   local link_to = vim.loop.fs_realpath(absolute_path)

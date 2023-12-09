@@ -6,6 +6,7 @@ local config = {
 }
 
 local title_support
+---@return boolean
 function M.supports_title()
   if title_support == nil then
     title_support = (package.loaded.notify and (vim.notify == require "notify" or vim.notify == require("notify").notify))
@@ -48,6 +49,8 @@ do
   end
 end
 
+---@param path string
+---@return string
 function M.render_path(path)
   if config.absolute_path then
     return path

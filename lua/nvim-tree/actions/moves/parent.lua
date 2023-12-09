@@ -6,6 +6,8 @@ local lib = require "nvim-tree.lib"
 
 local M = {}
 
+---@param should_close boolean|nil
+---@return fun(node: Node): boolean|nil
 function M.fn(should_close)
   should_close = should_close or false
 

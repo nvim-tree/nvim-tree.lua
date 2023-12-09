@@ -6,6 +6,9 @@ local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {}
 
+---@param where string
+---@param what string
+---@return fun()
 function M.fn(where, what)
   return function()
     local node_cur = lib.get_node_at_cursor()

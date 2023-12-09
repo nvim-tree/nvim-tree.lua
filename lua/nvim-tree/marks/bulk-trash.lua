@@ -9,7 +9,7 @@ local M = {
 }
 
 --- Delete nodes; each removal will be optionally notified
---- @param nodes table
+---@param nodes Node[]
 local function do_trash(nodes)
   for _, node in pairs(nodes) do
     remove_file.remove(node)

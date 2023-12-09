@@ -21,16 +21,22 @@ M.Event = {
   TreeRendered = "TreeRendered",
 }
 
+---@param event_name string
+---@return table
 local function get_handlers(event_name)
   return global_handlers[event_name] or {}
 end
 
+---@param event_name string
+---@param handler function
 function M.subscribe(event_name, handler)
   local handlers = get_handlers(event_name)
   table.insert(handlers, handler)
   global_handlers[event_name] = handlers
 end
 
+---@param event_name string
+---@param payload table|nil
 local function dispatch(event_name, payload)
   for _, handler in pairs(get_handlers(event_name)) do
     local success, error = pcall(handler, payload)
