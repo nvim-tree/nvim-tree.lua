@@ -25,7 +25,7 @@ local M = {
 --- Update the tree root to a directory or the directory containing
 ---@param path string relative or absolute
 ---@param bufnr number|nil
-function M.change_root(path, bufnr)
+fun ction M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then
     local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
