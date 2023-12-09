@@ -77,30 +77,6 @@ function M.change_root(path, bufnr)
   change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
 end
 
----@param cwd string|nil
-function M.open_replacing_current_buffer(cwd)
-  if view.is_visible() then
-    return
-  end
-
-  local buf = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(buf)
-  if bufname == "" or vim.loop.fs_stat(bufname) == nil then
-    return
-  end
-
-  if cwd == "" or cwd == nil then
-    cwd = vim.fn.fnamemodify(bufname, ":p:h")
-  end
-
-  if not core.get_explorer() or cwd ~= core.get_cwd() then
-    core.init(cwd)
-  end
-  view.open_in_win { hijack_current_buf = false, resize = false }
-  require("nvim-tree.renderer").draw()
-  require("nvim-tree.actions.finders.find-file").fn(bufname)
-end
-
 function M.tab_enter()
   if view.is_visible { any_tabpage = true } then
     local bufname = vim.api.nvim_buf_get_name(0)
