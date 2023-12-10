@@ -3,16 +3,15 @@ on:
     branches:
       - master
 name: release-please
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v4
         id: release
-        with:
-          release-type: simple
-          package-name: nvim-tree
-          command: github-release
       - uses: actions/checkout@v4
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created }}

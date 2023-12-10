@@ -212,12 +212,12 @@ Api.node.navigate.sibling.first = wrap_node(require("nvim-tree.actions.moves.sib
 Api.node.navigate.sibling.last = wrap_node(require("nvim-tree.actions.moves.sibling").fn "last")
 Api.node.navigate.parent = wrap_node(require("nvim-tree.actions.moves.parent").fn(false))
 Api.node.navigate.parent_close = wrap_node(require("nvim-tree.actions.moves.parent").fn(true))
-Api.node.navigate.git.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "git"))
-Api.node.navigate.git.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "git"))
-Api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "diag"))
-Api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "diag"))
-Api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions.moves.item").fn("next", "opened"))
-Api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions.moves.item").fn("prev", "opened"))
+Api.node.navigate.git.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "git" })
+Api.node.navigate.git.prev = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "git" })
+Api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "diag" })
+Api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "diag" })
+Api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "opened" })
+Api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "opened" })
 
 Api.git.reload = wrap(require("nvim-tree.actions.reloaders.reloaders").reload_git)
 
