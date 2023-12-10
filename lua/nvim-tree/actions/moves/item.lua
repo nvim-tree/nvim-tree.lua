@@ -6,11 +6,11 @@ local explorer_node = require "nvim-tree.explorer.node"
 
 local M = {}
 
----@class MoveOpts
+---@class NavigationItemOpts
 ---@field where string
 ---@field what string
 
----@param opts MoveOpts
+---@param opts NavigationItemOpts
 ---@return fun()
 function M.fn(opts)
   return function()
