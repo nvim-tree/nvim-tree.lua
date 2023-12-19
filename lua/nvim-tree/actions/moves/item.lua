@@ -30,7 +30,8 @@ function M.fn(opts)
       local valid = false
 
       if opts.what == "git" then
-        valid = explorer_node.get_git_status(node) ~= nil
+        local git_status = explorer_node.get_git_status(node)
+        valid = git_status ~= nil and (not opts.skip_gitignored or git_status[1] ~= "!!")
       elseif opts.what == "diag" then
         valid = node.diag_status ~= nil
       elseif opts.what == "opened" then

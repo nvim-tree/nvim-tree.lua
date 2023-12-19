@@ -1874,8 +1874,16 @@ node.open.preview_no_picker()    *nvim-tree-api.node.open.preview_no_picker()*
 node.navigate.git.next()              *nvim-tree-api.node.navigate.git.next()*
     Navigate to the next item showing git status.
 
+                      *nvim-tree-api.node.navigate.git.next_skip_gitignored()*
+node.navigate.git.next_skip_gitignored()
+    Same as |node.navigate.git.next()|, but skips gitignored files.
+
 node.navigate.git.prev()              *nvim-tree-api.node.navigate.git.prev()*
     Navigate to the previous item showing git status.
+
+                      *nvim-tree-api.node.navigate.git.prev_skip_gitignored()*
+node.navigate.git.prev_skip_gitignored()
+    Same as |node.navigate.git.prev()|, but skips gitignored files.
 
                               *nvim-tree-api.node.navigate.diagnostics.next()*
 node.navigate.diagnostics.next()
