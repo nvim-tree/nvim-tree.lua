@@ -136,6 +136,8 @@ Api.tree.toggle_custom_filter = wrap(require("nvim-tree.actions.tree-modifiers.t
 
 Api.tree.toggle_hidden_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").dotfiles)
 
+Api.tree.toggle_no_bookmark_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").no_bookmark)
+
 Api.tree.toggle_help = wrap(require("nvim-tree.help").toggle)
 
 Api.tree.is_tree_buf = wrap(require("nvim-tree.utils").is_nvim_tree_buf)
