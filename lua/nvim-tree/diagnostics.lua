@@ -1,6 +1,5 @@
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
-local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
 
 local M = {}
@@ -11,6 +10,16 @@ local severity_levels = {
   Information = 3,
   Hint = 4,
 }
+
+--- A dictionary tree containing buffer-severity mappings.
+---@type table
+local buffer_severity_dict = {}
+
+---@param path string
+---@return string
+local function uniformize_path(path)
+  return utils.canonical_path(path:gsub("\\", "/"))
+end
 
 ---@return table
 local function from_nvim_lsp()
@@ -25,7 +34,7 @@ local function from_nvim_lsp()
     for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
       local buf = diagnostic.bufnr
       if vim.api.nvim_buf_is_valid(buf) then
-        local bufname = vim.api.nvim_buf_get_name(buf)
+        local bufname = uniformize_path(vim.api.nvim_buf_get_name(buf))
         local lowest_severity = buffer_severity[bufname]
         if not lowest_severity or diagnostic.severity < lowest_severity then
           buffer_severity[bufname] = diagnostic.severity
@@ -67,7 +76,7 @@ local function from_coc()
   local buffer_severity = {}
   for bufname, severity in pairs(diagnostics) do
     if is_severity_in_range(severity, M.severity) then
-      buffer_severity[bufname] = severity
+      buffer_severity[uniformize_path(bufname)] = severity
     end
   end
 
@@ -79,47 +88,52 @@ local function is_using_coc()
 end
 
 function M.update()
-  if not M.enable or not core.get_explorer() or not view.is_buf_valid(view.get_bufnr()) then
+  if not M.enable then
     return
   end
   utils.debounce("diagnostics", M.debounce_delay, function()
     local profile = log.profile_start "diagnostics update"
-    log.line("diagnostics", "update")
-
-    local buffer_severity
     if is_using_coc() then
-      buffer_severity = from_coc()
+      buffer_severity_dict = from_coc()
     else
-      buffer_severity = from_nvim_lsp()
+      buffer_severity_dict = from_nvim_lsp()
     end
-
-    local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())
-    for _, node in pairs(nodes_by_line) do
-      node.diag_status = nil
+    log.node("diagnostics", buffer_severity_dict, "update")
+    log.profile_end(profile)
+    if view.is_buf_valid(view.get_bufnr()) then
+      require("nvim-tree.renderer").draw()
     end
+  end)
+end
 
-    for bufname, severity in pairs(buffer_severity) do
-      local bufpath = utils.canonical_path(bufname)
-      log.line("diagnostics", " bufpath '%s' severity %d", bufpath, severity)
-      if 0 < severity and severity < 5 then
-        for line, node in pairs(nodes_by_line) do
-          local nodepath = utils.canonical_path(node.absolute_path)
-          log.line("diagnostics", "  %d checking nodepath '%s'", line, nodepath)
+---@param node Node
+function M.update_node_severity_level(node)
+  if not M.enable then
+    return
+  end
 
-          local node_contains_buf = vim.startswith(bufpath:gsub("\\", "/"), nodepath:gsub("\\", "/") .. "/")
-          if M.show_on_dirs and node_contains_buf and (not node.open or M.show_on_open_dirs) then
-            log.line("diagnostics", " matched fold node '%s'", node.absolute_path)
-            node.diag_status = severity
-          elseif nodepath == bufpath then
-            log.line("diagnostics", " matched file node '%s'", node.absolute_path)
-            node.diag_status = severity
+  local is_folder = node.nodes ~= nil
+  local nodepath = uniformize_path(node.absolute_path)
+
+  if is_folder then
+    local max_severity = nil
+    if M.show_on_dirs and (not node.open or M.show_on_open_dirs) then
+      for bufname, severity in pairs(buffer_severity_dict) do
+        local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
+        if node_contains_buf then
+          if severity == M.severity.max then
+            max_severity = severity
+            break
+          else
+            max_severity = math.min(max_severity or severity, severity)
           end
         end
       end
     end
-    log.profile_end(profile)
-    require("nvim-tree.renderer").draw()
-  end)
+    node.diag_status = max_severity
+  else
+    node.diag_status = buffer_severity_dict[nodepath]
+  end
 end
 
 function M.setup(opts)

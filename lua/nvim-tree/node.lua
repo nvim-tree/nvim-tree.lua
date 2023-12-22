@@ -17,6 +17,7 @@
 ---@field parent DirNode
 ---@field type string
 ---@field watcher function|nil
+---@field diag_status integer|nil
 
 ---@class DirNode: BaseNode
 ---@field has_children boolean

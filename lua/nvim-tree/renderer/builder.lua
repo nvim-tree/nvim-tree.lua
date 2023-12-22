@@ -413,6 +413,8 @@ end
 function Builder:_build_line(node, idx, num_children, unloaded_bufnr)
   local copy_paste = require "nvim-tree.actions.fs.copy-paste"
 
+  require("nvim-tree.diagnostics").update_node_severity_level(node)
+
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
