@@ -35,10 +35,9 @@ local function from_nvim_lsp()
       local buf = diagnostic.bufnr
       if vim.api.nvim_buf_is_valid(buf) then
         local bufname = uniformize_path(vim.api.nvim_buf_get_name(buf))
-        local lowest_severity = buffer_severity[bufname]
-        if not lowest_severity or diagnostic.severity < lowest_severity then
-          buffer_severity[bufname] = diagnostic.severity
-        end
+        local severity = diagnostic.severity
+        local highest_severity = buffer_severity[bufname] or severity
+        buffer_severity[bufname] = math.min(highest_severity, severity)
       end
     end
   end
@@ -64,19 +63,13 @@ local function from_coc()
     return {}
   end
 
-  local diagnostics = {}
-  for _, diagnostic in ipairs(diagnostic_list) do
-    local bufname = diagnostic.file
-    local coc_severity = severity_levels[diagnostic.severity]
-
-    local serverity = diagnostics[bufname] or vim.diagnostic.severity.HINT
-    diagnostics[bufname] = math.min(coc_severity, serverity)
-  end
-
   local buffer_severity = {}
-  for bufname, severity in pairs(diagnostics) do
-    if is_severity_in_range(severity, M.severity) then
-      buffer_severity[uniformize_path(bufname)] = severity
+  for _, diagnostic in ipairs(diagnostic_list) do
+    local bufname = uniformize_path(diagnostic.file)
+    local coc_severity = severity_levels[diagnostic.severity]
+    local highest_severity = buffer_severity[bufname] or coc_severity
+    if is_severity_in_range(highest_severity, M.severity) then
+      buffer_severity[bufname] = math.min(highest_severity, coc_severity)
     end
   end
 
