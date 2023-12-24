@@ -15,9 +15,9 @@ local severity_levels = {
 ---@field value integer|nil
 ---@field cache_version integer
 
---- A dictionary tree containing buffer-severity mappings.
+--- The buffer-severity mappings derived during the last diagnostic list update.
 ---@type table
-local buffer_severity_dict = {}
+local BUFFER_SEVERITY = {}
 
 --- The cache version number of the buffer-severity mappings.
 ---@type integer
@@ -95,10 +95,10 @@ local function from_cache(node)
   local max_severity = nil
   if not node.nodes then
     -- direct cache hit for files
-    max_severity = buffer_severity_dict[nodepath]
+    max_severity = BUFFER_SEVERITY[nodepath]
   else
     -- dirs should be searched in the list of cached buffer names by prefix
-    for bufname, severity in pairs(buffer_severity_dict) do
+    for bufname, severity in pairs(BUFFER_SEVERITY) do
       local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
       if node_contains_buf then
         if severity == M.severity.max then
@@ -120,12 +120,12 @@ function M.update()
   utils.debounce("diagnostics", M.debounce_delay, function()
     local profile = log.profile_start "diagnostics update"
     if is_using_coc() then
-      buffer_severity_dict = from_coc()
+      BUFFER_SEVERITY = from_coc()
     else
-      buffer_severity_dict = from_nvim_lsp()
+      BUFFER_SEVERITY = from_nvim_lsp()
     end
     BUFFER_SEVERITY_VERSION = BUFFER_SEVERITY_VERSION + 1
-    log.node("diagnostics", buffer_severity_dict, "update")
+    log.node("diagnostics", BUFFER_SEVERITY, "update")
     log.profile_end(profile)
     if view.is_buf_valid(view.get_bufnr()) then
       require("nvim-tree.renderer").draw()
