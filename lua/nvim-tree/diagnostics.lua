@@ -1,6 +1,7 @@
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local log = require "nvim-tree.log"
+local renderer = require "nvim-tree.renderer"
 
 local M = {}
 
@@ -128,7 +129,7 @@ function M.update()
     log.node("diagnostics", buffer_severity_dict, "update")
     log.profile_end(profile)
     if view.is_buf_valid(view.get_bufnr()) then
-      require("nvim-tree.renderer").draw()
+      renderer.draw()
     end
   end)
 end
