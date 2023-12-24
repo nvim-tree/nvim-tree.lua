@@ -11,9 +11,17 @@ local severity_levels = {
   Hint = 4,
 }
 
+---@class DiagStatus
+---@field value integer|nil
+---@field cache_version integer
+
 --- A dictionary tree containing buffer-severity mappings.
 ---@type table
 local buffer_severity_dict = {}
+
+--- The cache version number of the buffer-severity mappings.
+---@type integer
+local BUFFER_SEVERITY_VERSION = 0
 
 ---@param path string
 ---@return string
@@ -80,6 +88,31 @@ local function is_using_coc()
   return vim.g.coc_service_initialized == 1
 end
 
+---@param node Node
+---@return DiagStatus
+local function from_cache(node)
+  local nodepath = uniformize_path(node.absolute_path)
+  local max_severity = nil
+  if not node.nodes then
+    -- direct cache hit for files
+    max_severity = buffer_severity_dict[nodepath]
+  else
+    -- dirs should be searched in the list of cached buffer names by prefix
+    for bufname, severity in pairs(buffer_severity_dict) do
+      local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
+      if node_contains_buf then
+        if severity == M.severity.max then
+          max_severity = severity
+          break
+        else
+          max_severity = math.min(max_severity or severity, severity)
+        end
+      end
+    end
+  end
+  return { value = max_severity, cache_version = BUFFER_SEVERITY_VERSION }
+end
+
 function M.update()
   if not M.enable then
     return
@@ -91,6 +124,7 @@ function M.update()
     else
       buffer_severity_dict = from_nvim_lsp()
     end
+    BUFFER_SEVERITY_VERSION = BUFFER_SEVERITY_VERSION + 1
     log.node("diagnostics", buffer_severity_dict, "update")
     log.profile_end(profile)
     if view.is_buf_valid(view.get_bufnr()) then
@@ -100,33 +134,34 @@ function M.update()
 end
 
 ---@param node Node
-function M.update_node_severity_level(node)
+---@return DiagStatus|nil
+function M.get_diag_status(node)
   if not M.enable then
-    return
+    return nil
   end
 
-  local is_folder = node.nodes ~= nil
-  local nodepath = uniformize_path(node.absolute_path)
-
-  if is_folder then
-    local max_severity = nil
-    if M.show_on_dirs and (not node.open or M.show_on_open_dirs) then
-      for bufname, severity in pairs(buffer_severity_dict) do
-        local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
-        if node_contains_buf then
-          if severity == M.severity.max then
-            max_severity = severity
-            break
-          else
-            max_severity = math.min(max_severity or severity, severity)
-          end
-        end
-      end
-    end
-    node.diag_status = max_severity
-  else
-    node.diag_status = buffer_severity_dict[nodepath]
+  -- dir but we shouldn't show on dirs at all
+  if node.nodes ~= nil and not M.show_on_dirs then
+    return nil
   end
+
+  -- here, we do a lazy update of the diagnostic status carried by the node.
+  -- This is by design, as diagnostics and nodes live in completely separate
+  -- worlds, and this module is the link between the two
+  if not node.diag_status or node.diag_status.cache_version < BUFFER_SEVERITY_VERSION then
+    node.diag_status = from_cache(node)
+  end
+
+  -- file
+  if not node.nodes then
+    return node.diag_status
+  end
+
+  -- dir is closed or we should show on open_dirs
+  if not node.open or M.show_on_open_dirs then
+    return node.diag_status
+  end
+  return nil
 end
 
 function M.setup(opts)

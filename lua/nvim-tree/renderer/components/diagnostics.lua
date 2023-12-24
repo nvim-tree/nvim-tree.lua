@@ -1,4 +1,5 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
+local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {
   HS_FILE = {},
@@ -17,10 +18,11 @@ function M.get_highlight(node)
   end
 
   local group
+  local diag_status = diagnostics.get_diag_status(node)
   if node.nodes then
-    group = M.HS_FOLDER[node.diag_status]
+    group = M.HS_FOLDER[diag_status and diag_status.value]
   else
-    group = M.HS_FILE[node.diag_status]
+    group = M.HS_FILE[diag_status and diag_status.value]
   end
 
   if group then
@@ -35,7 +37,8 @@ end
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
   if node and M.config.diagnostics.enable and M.config.renderer.icons.show.diagnostics then
-    return M.ICON[node.diag_status]
+    local diag_status = diagnostics.get_diag_status(node)
+    return M.ICON[diag_status and diag_status.value]
   end
 end
 
