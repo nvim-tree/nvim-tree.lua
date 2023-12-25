@@ -790,8 +790,8 @@ Use nvim-tree in a floating window.
 ==============================================================================
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
-Highlight precedence:
-  cut > copied > diagnostics > bookmarked > modified > opened > git
+Highlight precedence, additive:
+  git < opened < modified < bookmarked < diagnostics < copied < cut
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
@@ -895,8 +895,8 @@ Configuration options for tree indent markers.
 *nvim-tree.renderer.icons*
 Configuration options for icons.
 
-Icon sign column precedence:
-  diagnostics > bookmarked > modified > git
+Icon order and sign column precedence:
+  git < modified < bookmarked < diagnostics
 
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
@@ -2247,6 +2247,9 @@ as per |:highlight|
 
 Default linked group or definition follows name.
 
+neovim 0.9 has a limit of two highlight groups per range. The two highest
+priority groups as per |nvim-tree-opts-renderer| will be used.
+
 Standard: >
     NvimTreeNormal              Normal
     NvimTreeNormalFloat         NormalFloat
@@ -2365,7 +2368,7 @@ Diagnostics Folder Highlight: >
 ==============================================================================
  8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
 
-2023/10/XX revision xxxxx made significant highlighting changes, some breaking:
+2023-12: significant highlighting changes, some breaking:
 
 - Full cterm support.
 - Standard vim highlight groups such |DiagnosticUnderlineError| are now the

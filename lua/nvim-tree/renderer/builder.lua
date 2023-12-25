@@ -74,8 +74,16 @@ function Builder:configure_group_name_modifier(group_name_modifier)
   return self
 end
 
-function Builder:_insert_highlight(group, start, end_)
-  table.insert(self.highlights, { group, self.index, start, end_ or -1 })
+--- Insert ranged highlight groups into self.highlights
+--- neovim 0.9 is limited to two highlight groups for a range so choose the highest two
+--- @param groups string[]
+--- @param start number
+--- @param end_ number|nil
+function Builder:_insert_highlight(groups, start, end_)
+  local top_two_groups = {}
+  table.insert(top_two_groups, groups[#groups - 1])
+  table.insert(top_two_groups, groups[#groups])
+  table.insert(self.highlights, { top_two_groups, self.index, start, end_ or -1 })
 end
 
 function Builder:_insert_line(line)
@@ -271,7 +279,8 @@ function Builder:_build_line(node, idx, num_children)
   end
 
   -- highighting
-  for _, d in ipairs(self.decorators) do
+  for i = #self.decorators, 1, -1 do
+    local d = self.decorators[i]
     local icon_group, name_group = d:groups_icon_name(node)
     table.insert(icon.hl, icon_group)
     table.insert(name.hl, name_group)
