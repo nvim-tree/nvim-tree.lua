@@ -60,14 +60,31 @@ local function is_severity_in_range(severity, config)
   return config.max <= severity and severity <= config.min
 end
 
+---@param err string
+local function handle_coc_exception(err)
+  log.line("diagnostics", "handle_coc_exception: %s", vim.inspect(err))
+  local notify = true
+
+  -- avoid distractions on interrupts (CTRL-C)
+  if err:find("Vim:Interrupt") then
+    notify = false
+  end
+
+  if notify then
+    require("nvim-tree.notify").error("Diagnostics update from coc.nvim failed. " .. vim.inspect(err))
+  end
+end
+
 ---@return table
 local function from_coc()
   if vim.g.coc_service_initialized ~= 1 then
     return {}
   end
 
-  local diagnostic_list = vim.fn.CocAction "diagnosticList"
-  if type(diagnostic_list) ~= "table" or vim.tbl_isempty(diagnostic_list) then
+  local ok, diagnostic_list = xpcall(function()
+    return vim.fn.CocAction("diagnosticList")
+  end, handle_coc_exception)
+  if not ok or type(diagnostic_list) ~= "table" or vim.tbl_isempty(diagnostic_list) then
     return {}
   end
 
