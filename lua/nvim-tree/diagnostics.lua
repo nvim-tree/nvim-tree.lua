@@ -125,7 +125,11 @@ function M.update()
       BUFFER_SEVERITY = from_nvim_lsp()
     end
     BUFFER_SEVERITY_VERSION = BUFFER_SEVERITY_VERSION + 1
-    log.node("diagnostics", BUFFER_SEVERITY, "update")
+    if log.enabled("diagnostics") then
+      for bufname, severity in pairs(BUFFER_SEVERITY) do
+        log.line("diagnostics", "Indexing bufname '%s' with severity %d", bufname, severity)
+      end
+    end
     log.profile_end(profile)
     if view.is_buf_valid(view.get_bufnr()) then
       require("nvim-tree.renderer").draw()
