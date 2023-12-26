@@ -66,7 +66,7 @@ local function handle_coc_exception(err)
   local notify = true
 
   -- avoid distractions on interrupts (CTRL-C)
-  if err:find("Vim:Interrupt") then
+  if err:find "Vim:Interrupt" then
     notify = false
   end
 
@@ -82,7 +82,7 @@ local function from_coc()
   end
 
   local ok, diagnostic_list = xpcall(function()
-    return vim.fn.CocAction("diagnosticList")
+    return vim.fn.CocAction "diagnosticList"
   end, handle_coc_exception)
   if not ok or type(diagnostic_list) ~= "table" or vim.tbl_isempty(diagnostic_list) then
     return {}
@@ -142,7 +142,7 @@ function M.update()
       BUFFER_SEVERITY = from_nvim_lsp()
     end
     BUFFER_SEVERITY_VERSION = BUFFER_SEVERITY_VERSION + 1
-    if log.enabled("diagnostics") then
+    if log.enabled "diagnostics" then
       for bufname, severity in pairs(BUFFER_SEVERITY) do
         log.line("diagnostics", "Indexing bufname '%s' with severity %d", bufname, severity)
       end
