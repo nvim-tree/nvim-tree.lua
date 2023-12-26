@@ -2247,9 +2247,6 @@ as per |:highlight|
 
 Default linked group or definition follows name.
 
-neovim 0.9 has a limit of two highlight groups per range. The two highest
-priority groups as per |nvim-tree-opts-renderer| will be used.
-
 Standard: >
     NvimTreeNormal              Normal
     NvimTreeNormalFloat         NormalFloat

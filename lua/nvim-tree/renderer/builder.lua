@@ -8,6 +8,7 @@ local icons = require "nvim-tree.renderer.components.icons"
 ---@field private index number
 ---@field private depth number
 ---@field private highlights table[] hl_group, line, col_start, col_end arguments for vim.api.nvim_buf_add_highlight
+---@field private combined_groups boolean[] combined group names
 ---@field private lines string[] includes icons etc.
 ---@field private markers boolean[] indent markers
 ---@field private sign_names string[] line signs
@@ -23,6 +24,7 @@ function Builder.new(root_cwd, decorators)
     index = 0,
     depth = 0,
     highlights = {},
+    combined_groups = {},
     lines = {},
     markers = {},
     sign_names = {},
@@ -75,15 +77,11 @@ function Builder:configure_group_name_modifier(group_name_modifier)
 end
 
 ---Insert ranged highlight groups into self.highlights
----neovim 0.9 is limited to two highlight groups for a range so choose the highest two
 ---@param groups string[]
 ---@param start number
 ---@param end_ number|nil
 function Builder:_insert_highlight(groups, start, end_)
-  local top_two_groups = {}
-  table.insert(top_two_groups, groups[#groups - 1])
-  table.insert(top_two_groups, groups[#groups])
-  table.insert(self.highlights, { top_two_groups, self.index, start, end_ or -1 })
+  table.insert(self.highlights, { groups, self.index, start, end_ or -1 })
 end
 
 function Builder:_insert_line(line)
@@ -261,6 +259,70 @@ function Builder:_build_signs(node)
   end
 end
 
+function Builder:_combined_group_name(groups)
+  return table.concat(groups)
+end
+
+---Create a highlight group for groups with later groups overriding previous.
+---@param groups string[] highlight group names
+function Builder:_create_combined_group(groups)
+  local combined_name = self:_combined_group_name(groups)
+
+  -- only create if necessary
+  if not self.combined_groups[combined_name] then
+    local combined_hl = {}
+
+    -- build the highlight, overriding values
+    for _, group in ipairs(groups) do
+      local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+      combined_hl = vim.tbl_extend("force", combined_hl, hl)
+    end
+
+    -- create and note the name
+    vim.api.nvim_set_hl(0, combined_name, combined_hl)
+    self.combined_groups[combined_name] = true
+  end
+end
+
+---Calculate highlight group for icon and name. A combined highlight group will be created
+---when there is more than one highlight.
+---@param node Node
+---@return string|nil icon_hl_group
+---@return string|nil name_hl_group
+function Builder:_add_highlights(node)
+  -- result
+  local icon_hl_group, name_hl_group
+
+  -- calculate all groups
+  local icon_groups = {}
+  local name_groups = {}
+  local d, icon, name
+  for i = #self.decorators, 1, -1 do
+    d = self.decorators[i]
+    icon, name = d:groups_icon_name(node)
+    table.insert(icon_groups, icon)
+    table.insert(name_groups, name)
+  end
+
+  -- one or many icon groups
+  if #icon_groups > 1 then
+    icon_hl_group = self:_combined_group_name(icon_groups)
+    self:_create_combined_group(icon_groups)
+  else
+    icon_hl_group = icon_groups[1]
+  end
+
+  -- one or many name groups
+  if #name_groups > 1 then
+    name_hl_group = self:_combined_group_name(name_groups)
+    self:_create_combined_group(name_groups)
+  else
+    name_hl_group = name_groups[1]
+  end
+
+  return icon_hl_group, name_hl_group
+end
+
 function Builder:_build_line(node, idx, num_children)
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
@@ -279,12 +341,9 @@ function Builder:_build_line(node, idx, num_children)
   end
 
   -- highighting
-  for i = #self.decorators, 1, -1 do
-    local d = self.decorators[i]
-    local icon_group, name_group = d:groups_icon_name(node)
-    table.insert(icon.hl, icon_group)
-    table.insert(name.hl, name_group)
-  end
+  local icon_hl_group, name_hl_group = self:_add_highlights(node)
+  table.insert(icon.hl, icon_hl_group)
+  table.insert(name.hl, name_hl_group)
 
   local line = self:_format_line(indent_markers, arrows, icon, name, node)
   self:_insert_line(self:_unwrap_highlighted_strings(line))
