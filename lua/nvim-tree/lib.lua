@@ -157,8 +157,9 @@ end
 ---@param prompt_select string
 ---@param items_short string[]
 ---@param items_long string[]
+---@param kind string|nil
 ---@param callback fun(item_short: string)
-function M.prompt(prompt_input, prompt_select, items_short, items_long, callback)
+function M.prompt(prompt_input, prompt_select, items_short, items_long, kind, callback)
   local function format_item(short)
     for i, s in ipairs(items_short) do
       if short == s then
@@ -169,7 +170,7 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, callback
   end
 
   if M.select_prompts then
-    vim.ui.select(items_short, { prompt = prompt_select, format_item = format_item }, function(item_short)
+    vim.ui.select(items_short, { prompt = prompt_select, kind = kind, format_item = format_item }, function(item_short)
       callback(item_short)
     end)
   else
