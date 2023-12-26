@@ -289,6 +289,7 @@ end
 
 ---Calculate highlight group for icon and name. A combined highlight group will be created
 ---when there is more than one highlight.
+---A highlight group is always calculated and upserted for the case of highlights changing.
 ---@param node Node
 ---@return string|nil icon_hl_group
 ---@return string|nil name_hl_group
