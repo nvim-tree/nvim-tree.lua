@@ -259,8 +259,11 @@ function Builder:_build_signs(node)
   end
 end
 
+---Combined group name less than the 200 byte limit of highlight group names
+---@param groups string[] highlight group names
+---@return string name "NvimTreeCombinedHL" .. sha256
 function Builder:_combined_group_name(groups)
-  return table.concat(groups)
+  return string.format("NvimTreeCombinedHL%s", vim.fn.sha256(table.concat(groups)))
 end
 
 ---Create a highlight group for groups with later groups overriding previous.
