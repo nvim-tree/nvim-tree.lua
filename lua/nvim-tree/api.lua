@@ -2,6 +2,14 @@ local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
+local events = require "nvim-tree.events"
+local live_filter = require "nvim-tree.live-filter"
+local marks = require "nvim-tree.marks"
+local marks_navigation = require "nvim-tree.marks.navigation"
+local marks_bulk_delete = require "nvim-tree.marks.bulk-delete"
+local marks_bulk_trash = require "nvim-tree.marks.bulk-trash"
+local marks_bulk_move = require "nvim-tree.marks.bulk-move"
+local keymap = require "nvim-tree.keymap"
 local notify = require "nvim-tree.notify"
 
 local Api = {
@@ -210,21 +218,11 @@ Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn { where = "prev"
 
 Api.git.reload = wrap(actions.reloaders.reload_git)
 
-local events = require "nvim-tree.events"
-
-Api.events.subscribe = wrap(events.subscribe)
+Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
-
-local live_filter = require "nvim-tree.live-filter"
 
 Api.live_filter.start = wrap(live_filter.start_filtering)
 Api.live_filter.clear = wrap(live_filter.clear_filter)
-
-local marks = require "nvim-tree.marks"
-local marks_navigation = require "nvim-tree.marks.navigation"
-local marks_bulk_delete = require "nvim-tree.marks.bulk-delete"
-local marks_bulk_trash = require "nvim-tree.marks.bulk-trash"
-local marks_bulk_move = require "nvim-tree.marks.bulk-move"
 
 Api.marks.get = wrap_node(marks.get_mark)
 Api.marks.list = wrap(marks.get_marks)
@@ -237,11 +235,9 @@ Api.marks.navigate.next = wrap(marks_navigation.next)
 Api.marks.navigate.prev = wrap(marks_navigation.prev)
 Api.marks.navigate.select = wrap(marks_navigation.select)
 
-local keymap = require "nvim-tree.keymap"
-
 Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
-Api.config.mappings.default_on_attach = wrap(keymap.default_on_attach)
+Api.config.mappings.default_on_attach = keymap.default_on_attach
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
