@@ -40,7 +40,7 @@ function M.bulk_move()
     marks.clear_marks()
 
     if not M.config.filesystem_watchers.enable then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      require("nvim-tree.actions.reloaders").reload_explorer()
     end
   end)
 end

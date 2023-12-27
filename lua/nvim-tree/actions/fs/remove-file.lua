@@ -112,7 +112,7 @@ function M.fn(node)
   local function do_remove()
     M.remove(node)
     if not M.config.filesystem_watchers.enable then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      require("nvim-tree.actions.reloaders").reload_explorer()
     end
   end
 

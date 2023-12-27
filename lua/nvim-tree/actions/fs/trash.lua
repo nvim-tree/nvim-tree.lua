@@ -1,5 +1,6 @@
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
+local reloaders = require "nvim-tree.actions.reloaders"
 
 local M = {
   config = {},
@@ -59,7 +60,7 @@ function M.remove(node)
       end
       events._dispatch_folder_removed(node.absolute_path)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        reloaders.reload_explorer()
       end
     end)
   else
@@ -72,7 +73,7 @@ function M.remove(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        reloaders.reload_explorer()
       end
     end)
   end
