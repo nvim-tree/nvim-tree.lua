@@ -66,7 +66,7 @@ local function handle_coc_exception(err)
   local notify = true
 
   -- avoid distractions on interrupts (CTRL-C)
-  if err:find "Vim:Interrupt" then
+  if err:find "Vim:Interrupt" or err:find "Keyboard interrupt" then
     notify = false
   end
 
