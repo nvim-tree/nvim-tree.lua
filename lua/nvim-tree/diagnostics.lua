@@ -4,24 +4,32 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
-local severity_levels = {
+---TODO add "$VIMRUNTIME" to "workspace.library" and use the @enum instead of this integer
+---@alias lsp.DiagnosticSeverity integer
+
+---COC severity level strings to LSP severity levels
+---@enum COC_SEVERITY_LEVELS
+local COC_SEVERITY_LEVELS = {
   Error = 1,
   Warning = 2,
   Information = 3,
   Hint = 4,
 }
 
+---Absolute Node path to LSP severity level
+---@alias NodeSeverities table<string, lsp.DiagnosticSeverity>
+
 ---@class DiagStatus
----@field value integer|nil
+---@field value lsp.DiagnosticSeverity|nil
 ---@field cache_version integer
 
 --- The buffer-severity mappings derived during the last diagnostic list update.
----@type table
-local BUFFER_SEVERITY = {}
+---@type NodeSeverities
+local NODE_SEVERITIES = {}
 
---- The cache version number of the buffer-severity mappings.
+---The cache version number of the buffer-severity mappings.
 ---@type integer
-local BUFFER_SEVERITY_VERSION = 0
+local NODE_SEVERITIES_VERSION = 0
 
 ---@param path string
 ---@return string
@@ -29,7 +37,8 @@ local function uniformize_path(path)
   return utils.canonical_path(path:gsub("\\", "/"))
 end
 
----@return table
+---Marshal severities from LSP. Does nothing when LSP disabled.
+---@return NodeSeverities
 local function from_nvim_lsp()
   local buffer_severity = {}
 
@@ -53,13 +62,15 @@ local function from_nvim_lsp()
   return buffer_severity
 end
 
----@param severity integer
+---Severity is within diagnostics.severity.min, diagnostics.severity.max
+---@param severity lsp.DiagnosticSeverity
 ---@param config table
 ---@return boolean
 local function is_severity_in_range(severity, config)
   return config.max <= severity and severity <= config.min
 end
 
+---Handle any COC exceptions, preventing any propagation
 ---@param err string
 local function handle_coc_exception(err)
   log.line("diagnostics", "handle_coc_exception: %s", vim.inspect(err))
@@ -75,9 +86,16 @@ local function handle_coc_exception(err)
   end
 end
 
----@return table
+---COC service initialized
+---@return boolean
+local function is_using_coc()
+  return vim.g.coc_service_initialized == 1
+end
+
+---Marshal severities from COC. Does nothing when COC service not started.
+---@return NodeSeverities
 local function from_coc()
-  if vim.g.coc_service_initialized ~= 1 then
+  if not is_using_coc() then
     return {}
   end
 
@@ -91,7 +109,7 @@ local function from_coc()
   local buffer_severity = {}
   for _, diagnostic in ipairs(diagnostic_list) do
     local bufname = uniformize_path(diagnostic.file)
-    local coc_severity = severity_levels[diagnostic.severity]
+    local coc_severity = COC_SEVERITY_LEVELS[diagnostic.severity]
     local highest_severity = buffer_severity[bufname] or coc_severity
     if is_severity_in_range(highest_severity, M.severity) then
       buffer_severity[bufname] = math.min(highest_severity, coc_severity)
@@ -101,10 +119,7 @@ local function from_coc()
   return buffer_severity
 end
 
-local function is_using_coc()
-  return vim.g.coc_service_initialized == 1
-end
-
+---Maybe retrieve severity level from the cache
 ---@param node Node
 ---@return DiagStatus
 local function from_cache(node)
@@ -112,10 +127,10 @@ local function from_cache(node)
   local max_severity = nil
   if not node.nodes then
     -- direct cache hit for files
-    max_severity = BUFFER_SEVERITY[nodepath]
+    max_severity = NODE_SEVERITIES[nodepath]
   else
     -- dirs should be searched in the list of cached buffer names by prefix
-    for bufname, severity in pairs(BUFFER_SEVERITY) do
+    for bufname, severity in pairs(NODE_SEVERITIES) do
       local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
       if node_contains_buf then
         if severity == M.severity.max then
@@ -127,9 +142,11 @@ local function from_cache(node)
       end
     end
   end
-  return { value = max_severity, cache_version = BUFFER_SEVERITY_VERSION }
+  return { value = max_severity, cache_version = NODE_SEVERITIES_VERSION }
 end
 
+---Fired on DiagnosticChanged and CocDiagnosticChanged events:
+---debounced retrieval, cache update, version increment and draw
 function M.update()
   if not M.enable then
     return
@@ -137,13 +154,13 @@ function M.update()
   utils.debounce("diagnostics", M.debounce_delay, function()
     local profile = log.profile_start "diagnostics update"
     if is_using_coc() then
-      BUFFER_SEVERITY = from_coc()
+      NODE_SEVERITIES = from_coc()
     else
-      BUFFER_SEVERITY = from_nvim_lsp()
+      NODE_SEVERITIES = from_nvim_lsp()
     end
-    BUFFER_SEVERITY_VERSION = BUFFER_SEVERITY_VERSION + 1
+    NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
     if log.enabled "diagnostics" then
-      for bufname, severity in pairs(BUFFER_SEVERITY) do
+      for bufname, severity in pairs(NODE_SEVERITIES) do
         log.line("diagnostics", "Indexing bufname '%s' with severity %d", bufname, severity)
       end
     end
@@ -154,6 +171,8 @@ function M.update()
   end)
 end
 
+---Maybe retrieve diagnostic status for a node.
+---Returns cached value when node's version matches.
 ---@param node Node
 ---@return DiagStatus|nil
 function M.get_diag_status(node)
@@ -169,7 +188,7 @@ function M.get_diag_status(node)
   -- here, we do a lazy update of the diagnostic status carried by the node.
   -- This is by design, as diagnostics and nodes live in completely separate
   -- worlds, and this module is the link between the two
-  if not node.diag_status or node.diag_status.cache_version < BUFFER_SEVERITY_VERSION then
+  if not node.diag_status or node.diag_status.cache_version < NODE_SEVERITIES_VERSION then
     node.diag_status = from_cache(node)
   end
 
