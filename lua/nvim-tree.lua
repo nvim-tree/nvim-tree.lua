@@ -112,13 +112,11 @@ function M.reset_highlight()
   renderer.render_hl(view.get_bufnr())
 end
 
-local prev_line
 function M.place_cursor_on_node()
-  local l = vim.api.nvim_win_get_cursor(0)[1]
-  if l == prev_line then
+  local search = vim.fn.searchcount()
+  if search and search.exact_match == 1 then
     return
   end
-  prev_line = l
 
   local node = lib.get_node_at_cursor()
   if not node or node.name == ".." then
