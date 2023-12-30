@@ -3,6 +3,11 @@
 # Performs a lua-language-server check on all files.
 # luals-out/check.json will be produced on any issues, returning 1.
 # Outputs only check.json to stdout, all other messages to stderr, to allow jq etc.
+# $VIMRUNTIME specifies neovim runtime path, defaults to "/usr/share/nvim/runtime" if unset.
+
+if [ -z "${VIMRUNTIME}" ]; then
+	export VIMRUNTIME="/usr/share/nvim/runtime"
+fi
 
 DIR_SRC="lua"
 DIR_OUT="luals-out"
