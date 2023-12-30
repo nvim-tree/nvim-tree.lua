@@ -4,9 +4,6 @@ local log = require "nvim-tree.log"
 
 local M = {}
 
----TODO add "$VIMRUNTIME" to "workspace.library" and use the @enum instead of this integer
----@alias lsp.DiagnosticSeverity integer
-
 ---COC severity level strings to LSP severity levels
 ---@enum COC_SEVERITY_LEVELS
 local COC_SEVERITY_LEVELS = {

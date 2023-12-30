@@ -12,7 +12,7 @@ rm -rf "${DIR_OUT}"
 mkdir "${DIR_OUT}"
 
 # execute inside lua to prevent luals itself from being checked
-OUT=$(lua-language-server --check "${DIR_SRC}" --configpath="${PWD}/.luarc.json" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error)
+OUT=$(lua-language-server --check="${DIR_SRC}" --configpath="${PWD}/.luarc.json" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error)
 RC=$?
 
 echo "${OUT}" >&2
