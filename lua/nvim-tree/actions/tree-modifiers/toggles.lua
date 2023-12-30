@@ -31,6 +31,11 @@ function M.no_buffer()
   reload()
 end
 
+function M.no_bookmark()
+  filters.config.filter_no_bookmark = not filters.config.filter_no_bookmark
+  reload()
+end
+
 function M.dotfiles()
   filters.config.filter_dotfiles = not filters.config.filter_dotfiles
   reload()

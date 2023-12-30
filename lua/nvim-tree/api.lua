@@ -136,6 +136,8 @@ Api.tree.toggle_custom_filter = wrap(require("nvim-tree.actions.tree-modifiers.t
 
 Api.tree.toggle_hidden_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").dotfiles)
 
+Api.tree.toggle_no_bookmark_filter = wrap(require("nvim-tree.actions.tree-modifiers.toggles").no_bookmark)
+
 Api.tree.toggle_help = wrap(require("nvim-tree.help").toggle)
 
 Api.tree.is_tree_buf = wrap(require("nvim-tree.utils").is_nvim_tree_buf)
@@ -214,6 +216,10 @@ Api.node.navigate.parent = wrap_node(require("nvim-tree.actions.moves.parent").f
 Api.node.navigate.parent_close = wrap_node(require("nvim-tree.actions.moves.parent").fn(true))
 Api.node.navigate.git.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "git" })
 Api.node.navigate.git.prev = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "git" })
+-- stylua: ignore
+Api.node.navigate.git.next_skip_gitignored = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "git", skip_gitignored = true })
+-- stylua: ignore
+Api.node.navigate.git.prev_skip_gitignored = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "git", skip_gitignored = true })
 Api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "diag" })
 Api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "prev", what = "diag" })
 Api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions.moves.item").fn { where = "next", what = "opened" })

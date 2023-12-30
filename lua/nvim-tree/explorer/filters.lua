@@ -1,4 +1,5 @@
 local utils = require "nvim-tree.utils"
+local marks = require "nvim-tree.marks"
 
 local M = {
   ignore_list = {},
@@ -70,6 +71,12 @@ local function dotfile(path)
 end
 
 ---@param path string
+---@param bookmarks table<string, boolean> absolute paths bookmarked
+local function bookmark(path, bookmarks)
+  return M.config.filter_no_bookmark and not bookmarks[path]
+end
+
+---@param path string
 ---@return boolean
 local function custom(path)
   if not M.config.filter_custom then
@@ -103,15 +110,21 @@ end
 --- git_status: reference
 --- unloaded_bufnr: copy
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
+--- bookmarks: absolute paths to boolean
 function M.prepare(git_status, unloaded_bufnr)
   local status = {
     git_status = git_status or {},
     unloaded_bufnr = unloaded_bufnr,
     bufinfo = {},
+    bookmarks = {},
   }
 
   if M.config.filter_no_buffer then
     status.bufinfo = vim.fn.getbufinfo { buflisted = 1 }
+  end
+
+  for _, node in pairs(marks.get_marks()) do
+    status.bookmarks[node.absolute_path] = true
   end
 
   return status
@@ -127,7 +140,11 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status) or buf(path, status.bufinfo, status.unloaded_bufnr) or dotfile(path) or custom(path)
+  return git(path, status.git_status)
+    or buf(path, status.bufinfo, status.unloaded_bufnr)
+    or dotfile(path)
+    or custom(path)
+    or bookmark(path, status.bookmarks)
 end
 
 function M.setup(opts)
@@ -137,6 +154,7 @@ function M.setup(opts)
     filter_git_ignored = opts.filters.git_ignored,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
+    filter_no_bookmark = opts.filters.no_bookmark,
   }
 
   M.ignore_list = {}
