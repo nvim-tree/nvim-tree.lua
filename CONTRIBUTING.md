@@ -36,6 +36,11 @@ scripts/luals-check.sh
 
 Requires `lua-language-server` on your path.
 
+Assumes neovim's `$VIMRUNTIME` is `"/usr/share/nvim/runtime"`. Override with:
+```sh
+VIMRUNTIME="/my/path/to/runtime" scripts/luals-check.sh
+```
+
 # Adding new actions
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
