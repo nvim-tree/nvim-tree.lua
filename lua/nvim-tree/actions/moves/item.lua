@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local lib = require "nvim-tree.lib"
 local explorer_node = require "nvim-tree.explorer.node"
+local diagnostics = require "nvim-tree.diagnostics"
 
 local M = {}
 
@@ -33,7 +34,8 @@ function M.fn(opts)
         local git_status = explorer_node.get_git_status(node)
         valid = git_status ~= nil and (not opts.skip_gitignored or git_status[1] ~= "!!")
       elseif opts.what == "diag" then
-        valid = node.diag_status ~= nil
+        local diag_status = diagnostics.get_diag_status(node)
+        valid = diag_status ~= nil and diag_status.value ~= nil
       elseif opts.what == "opened" then
         valid = vim.fn.bufloaded(node.absolute_path) ~= 0
       end
