@@ -60,3 +60,4 @@ jobs:
     - name: lua-language-server --check
       run: |
         VIMRUNTIME=/home/runner/nvim-v0.9.4 PATH="luals/bin:${PATH}" scripts/luals-check.sh
+        find /home
