@@ -13,6 +13,7 @@ permissions:
 
 env:
   NVIM_VERSION: v0.9.4
+  STYLUA_VERSION: 0.19
   LUALS_VERSION: 3.7.3
 
 jobs:
@@ -41,7 +42,7 @@ jobs:
         uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: "0.19"
+          version: ${{ env.STYLUA_VERSION }}
           args: --check lua
 
   check:
@@ -53,7 +54,7 @@ jobs:
     - uses: rhysd/action-setup-vim@v1
       with:
         neovim: true
-        version: $NVIM_VERSION
+        version: ${{ env.NVIM_VERSION }}
 
     - name: install
       run: |
