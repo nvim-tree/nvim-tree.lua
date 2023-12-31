@@ -5,7 +5,7 @@ local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 local renderer = require "nvim-tree.renderer"
-local reloaders = require "nvim-tree.actions.reloaders.reloaders"
+local reloaders = require "nvim-tree.actions.reloaders"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 

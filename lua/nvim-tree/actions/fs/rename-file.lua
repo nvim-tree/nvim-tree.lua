@@ -102,7 +102,7 @@ function M.fn(default_modifier)
 
       M.rename(node, prepend .. new_file_path .. append)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        require("nvim-tree.actions.reloaders").reload_explorer()
       end
 
       find_file(utils.path_remove_trailing(new_file_path))
