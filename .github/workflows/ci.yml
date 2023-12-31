@@ -13,11 +13,13 @@ permissions:
 
 env:
   LUA_VERSION: "5.1"
-  NVIM_VERSION: "v0.9.4"
   STYLUA_VERSION: "0.19.1"
   LUALS_VERSION: "3.7.3"
 
 jobs:
+  strategy:
+    matrix:
+      NVIM_VERSION: [ "v0.8.3", "v0.9.4" ]
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +57,7 @@ jobs:
     - uses: rhysd/action-setup-vim@v1
       with:
         neovim: true
-        version: ${{ env.NVIM_VERSION }}
+        version: ${{ matrix.NVIM_VERSION }}
 
     - name: install
       run: |
@@ -64,5 +66,5 @@ jobs:
 
     - name: check
       run: |
-        VIMRUNTIME=/home/runner/nvim-${NVIM_VERSION}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
+        VIMRUNTIME=/home/runner/nvim-${{ matrix.NVIM_VERSION }}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
         make help-check
