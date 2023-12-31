@@ -13,7 +13,7 @@ permissions:
 
 env:
   LUA_VERSION: "5.1"
-  NVIM_VERSION: "v0.8.3 v0.9.4"
+  NVIM_VERSION: "[ v0.8.3 v0.9.4 ]"
   STYLUA_VERSION: "0.19.1"
   LUALS_VERSION: "3.7.3"
 
