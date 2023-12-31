@@ -28,8 +28,7 @@ help-update:
 #
 # CI
 #
-help-check:
-	scripts/help-update.sh
+help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
 .PHONY: all style lint check style-fix help-check help-update

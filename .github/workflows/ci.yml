@@ -68,4 +68,4 @@ jobs:
 
     - name: help
       run: |
-        make check-help
+        make help-check
