@@ -12,22 +12,20 @@ local MAX_DEPTH = 100
 ---status.
 ---@param node table node to inspect
 ---@param what string type of status
----@return any|nil
-local function get_status(node, what)
+---@param skip_gitignored boolean default false
+---@return boolean
+local function status_is_valid(node, what, skip_gitignored)
   if what == "git" then
-    return explorer_node.get_git_status(node)
+    local git_status = explorer_node.get_git_status(node)
+    return git_status ~= nil and (not skip_gitignored or git_status[1] ~= "!!")
   elseif what == "diag" then
-    return node.diag_status
+    local diag_status = diagnostics.get_diag_status(node)
+    return diag_status ~= nil and diag_status.value ~= nil
   elseif what == "opened" then
-    local opened_nb = vim.fn.bufloaded(node.absolute_path)
-    if opened_nb == 0 then
-      return nil
-    else
-      return opened_nb
-    end
+    return vim.fn.bufloaded(node.absolute_path) ~= 0
   end
 
-  return nil
+  return false
 end
 
 ---Move to the next node that has a valid status. If none found, don't move.
@@ -48,17 +46,7 @@ local function move(where, what, skip_gitignored)
 
   for line = iter_start, iter_end, iter_step do
     local node = nodes_by_line[line]
-    local valid = false
-
-    if what == "git" then
-      local git_status = explorer_node.get_git_status(node)
-      valid = git_status ~= nil and (not skip_gitignored or git_status[1] ~= "!!")
-    elseif what == "diag" then
-      local diag_status = diagnostics.get_diag_status(node)
-      valid = diag_status ~= nil and diag_status.value ~= nil
-    elseif what == "opened" then
-      valid = vim.fn.bufloaded(node.absolute_path) ~= 0
-    end
+    local valid = status_is_valid(node, what, skip_gitignored)
 
     if not first and valid then
       first = line
@@ -91,8 +79,8 @@ local function move_next_recursive(opts, skip_gitignored)
   if not node_init then
     return
   end
-  local status = get_status(node_init, opts.what)
-  if node_init.nodes ~= nil and status ~= nil and not node_init.open then
+  local valid = status_is_valid(node_init, opts.what, skip_gitignored)
+  if node_init.nodes ~= nil and valid and not node_init.open then
     lib.expand_or_collapse(node_init)
   end
 
