@@ -62,10 +62,7 @@ jobs:
         mkdir -p luals
         curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${LUALS_VERSION}/lua-language-server-${LUALS_VERSION}-linux-x64.tar.gz" | tar zx --directory luals
 
-    - name: language server
+    - name: check
       run: |
         VIMRUNTIME=/home/runner/nvim-${NVIM_VERSION}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
-
-    - name: help
-      run: |
         make help-check

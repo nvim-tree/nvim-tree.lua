@@ -18,7 +18,7 @@ You can install them via you OS package manager e.g. `pacman`, `brew` or other v
 
 # Quality
 
-The following quality checks are mandatory and are performed during CI. They run on the entire `lua` directory` return 1 on any failure.
+The following quality checks are mandatory and are performed during CI. They run on the entire `lua` directory and return 1 on any failure.
 
 You can run them all via `make` or `make all`
 
