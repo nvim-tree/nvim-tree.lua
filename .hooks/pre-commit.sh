@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-stylua . --check || exit 1
-luacheck . || exit 1
+make

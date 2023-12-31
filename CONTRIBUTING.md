@@ -4,52 +4,72 @@ Thank you for contributing.
 
 See [Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) for environment setup, tips and tools.
 
+# Tools
+
+Following are used during CI and strongly recommended during local development.
+
+Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
+
+Style: [stylua]
+
+Language server: [luals](https://luals.github.io)
+
+You can install them via you OS package manager e.g. `pacman`, `brew` or other via other package managers such as `cargo` or `luarocks`
+
 # Quality
 
-The following quality checks are mandatory and are performed during CI:
+The following quality checks are mandatory and are performed during CI. They run on the entire `lua` directory` return 1 on any failure.
 
-## Styling and formatting
+You can run them all via `make` or `make all`
 
-Code is formatted using luacheck, and linted using stylua.
-You may install these via your package manager or with:
+You can setup the git hooks by running `scripts/setup-hooks.sh`
 
-```bash
-luarocks install luacheck
-cargo install stylua
-```
-
-Run:
-```sh
-stylua lua
-luacheck lua
-```
-
-You can setup the git hooks by running `scripts/setup-hooks.sh`.
-
-## Check
-
-[luals](https://luals.github.io) check is run with:
+## lint
 
 ```sh
-scripts/luals-check.sh
+make lint
 ```
 
-Requires `lua-language-server` on your path.
+1. Runs luacheck quietly using `.luacheck` settings
+1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
-Assumes neovim's `$VIMRUNTIME` is `"/usr/share/nvim/runtime"`. Override with:
+## style
+
+Runs stylua using `.stylua.toml` settings:
+
 ```sh
-VIMRUNTIME="/my/path/to/runtime" scripts/luals-check.sh
+make style
 ```
 
-# Adding new actions
+You can automatically fix style issues via:
+
+```sh
+make style-fix
+```
+
+## check
+
+Runs the checks that the LSP lua language server runs inside nvim using `.luarc.json`
+
+```sh
+make check
+```
+
+Assumes `$VIMRUNTIME` is `/usr/share/nvim/runtime`. Adjust as necessary e.g.
+
+```sh
+VIMRUNTIME="/my/path/to/runtime" make check
+```
+
+# Adding New Actions
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
-Once you did, you should run the `scripts/update-help.sh`.
+
+Once you did, you should run `make update-help`
 
 # Documentation
 
 When adding new options, you should declare the defaults in the main `nvim-tree.lua` file.
-Once you did, you should run the `scripts/update-help.sh`.
 
 Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-tree-lua.txt`
 
