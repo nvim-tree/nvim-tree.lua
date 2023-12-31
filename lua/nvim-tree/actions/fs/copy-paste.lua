@@ -5,7 +5,7 @@ local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 local renderer = require "nvim-tree.renderer"
-local reloaders = require "nvim-tree.actions.reloaders.reloaders"
+local reloaders = require "nvim-tree.actions.reloaders"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 
@@ -131,7 +131,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
     else
       local prompt_select = "Overwrite " .. dest .. " ?"
       local prompt_input = prompt_select .. " R(ename)/y/n: "
-      lib.prompt(prompt_input, prompt_select, { "", "y", "n" }, { "Rename", "Yes", "No" }, function(item_short)
+      lib.prompt(prompt_input, prompt_select, { "", "y", "n" }, { "Rename", "Yes", "No" }, "nvimtree_overwrite_rename", function(item_short)
         utils.clear_prompt()
         if item_short == "y" then
           on_process()

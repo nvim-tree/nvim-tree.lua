@@ -1,5 +1,6 @@
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
+local reloaders = require "nvim-tree.actions.reloaders"
 
 local M = {
   config = {},
@@ -59,7 +60,7 @@ function M.remove(node)
       end
       events._dispatch_folder_removed(node.absolute_path)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        reloaders.reload_explorer()
       end
     end)
   else
@@ -72,7 +73,7 @@ function M.remove(node)
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+        reloaders.reload_explorer()
       end
     end)
   end
@@ -102,7 +103,7 @@ function M.fn(node)
       items_long = { "No", "Yes" }
     end
 
-    lib.prompt(prompt_input, prompt_select, items_short, items_long, function(item_short)
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_trash", function(item_short)
       utils.clear_prompt()
       if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
         do_trash()

@@ -1,18 +1,18 @@
 local M = {}
 
+M.finders = require "nvim-tree.actions.finders"
+M.fs = require "nvim-tree.actions.fs"
+M.moves = require "nvim-tree.actions.moves"
+M.node = require "nvim-tree.actions.node"
+M.reloaders = require "nvim-tree.actions.reloaders"
+M.root = require "nvim-tree.actions.root"
+M.tree = require "nvim-tree.actions.tree"
+
 function M.setup(opts)
-  require("nvim-tree.actions.fs.trash").setup(opts)
-  require("nvim-tree.actions.node.system-open").setup(opts)
-  require("nvim-tree.actions.node.file-popup").setup(opts)
-  require("nvim-tree.actions.node.open-file").setup(opts)
-  require("nvim-tree.actions.root.change-dir").setup(opts)
-  require("nvim-tree.actions.fs.rename-file").setup(opts)
-  require("nvim-tree.actions.fs.remove-file").setup(opts)
-  require("nvim-tree.actions.fs.copy-paste").setup(opts)
-  require("nvim-tree.actions.tree-modifiers.expand-all").setup(opts)
-  require("nvim-tree.actions.tree.find-file").setup(opts)
-  require("nvim-tree.actions.tree.open").setup(opts)
-  require("nvim-tree.actions.tree.toggle").setup(opts)
+  M.fs.setup(opts)
+  M.node.setup(opts)
+  M.root.setup(opts)
+  M.tree.setup(opts)
 end
 
 return M

@@ -112,7 +112,7 @@ function M.fn(node)
   local function do_remove()
     M.remove(node)
     if not M.config.filesystem_watchers.enable then
-      require("nvim-tree.actions.reloaders.reloaders").reload_explorer()
+      require("nvim-tree.actions.reloaders").reload_explorer()
     end
   end
 
@@ -130,7 +130,7 @@ function M.fn(node)
       items_long = { "No", "Yes" }
     end
 
-    lib.prompt(prompt_input, prompt_select, items_short, items_long, function(item_short)
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_remove", function(item_short)
       utils.clear_prompt()
       if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
         do_remove()

@@ -47,8 +47,9 @@ CONTENTS                                                           *nvim-tree*
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
   9. Events                                   |nvim-tree-events|
- 10. OS Specific Restrictions                 |nvim-tree-os-specific|
- 11. Netrw                                    |nvim-tree-netrw|
+ 10. Prompts                                  |nvim-tree-prompts|
+ 11. OS Specific Restrictions                 |nvim-tree-os-specific|
+ 12. Netrw                                    |nvim-tree-netrw|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -2442,7 +2443,32 @@ Example subscription: >
   })
 <
 ==============================================================================
- 10. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+ 10. PROMPTS                                               *nvim-tree-prompts*
+
+Some NvimTree actions use the builtin |vim.ui.select| prompt API for
+confirmations when the |nvim_tree.select_prompts| option is set.
+
+The API accepts the optional `kind` key as part of the {opts} parameter, which
+can can be used to identify the type of prompt, to allow user side
+configurations for different types of prompts.
+
+- `nvimtree_overwrite_rename`
+    overwrite or rename during |nvim-tree-api.fs.paste()|
+
+- `nvimtree_remove`
+    delete during |nvim-tree-api.fs.remove()|
+
+- `nvimtree_trash`
+    send to trash during |nvim-tree-api.fs.trash()|
+
+- `nvimtree_bulk_delete`
+    delete all bookmarked during |nvim-tree-api.marks.bulk.delete()|
+
+- `nvimtree_bulk_trash`
+    send all bookmarked to trash during |nvim-tree-api.marks.bulk.trash()|
+
+==============================================================================
+ 11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
 macOS
 - Rename to different case is not possible when using a case insensitive file
@@ -2455,7 +2481,7 @@ Windows WSL and PowerShell
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
- 11. NETRW                                                  *nvim-tree-netrw*
+ 12. NETRW                                                  *nvim-tree-netrw*
 
 |netrw| is a standard neovim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
