@@ -2445,23 +2445,27 @@ Example subscription: >
 ==============================================================================
  10. PROMPTS                                               *nvim-tree-prompts*
 
-Some of the NvimTree actions such as copy-paste, delete, trash etc. use the
-builtin |vim.ui.select| prompt API for confirmations, if
-`nvim_tree.select_prompts` option is set as true. The API accepts the optional
-`kind` key as part of the `opts` parameter, which can be used to identify the
-type of prompt, to allow user side configurations for different types of
-prompts.
+Some NvimTree actions use the builtin |vim.ui.select| prompt API for
+confirmations when the |nvim_tree.select_prompts| option is set.
 
-Defined prompt kinds in NvimTree:
-- `nvimtree_copypaste` - Prompt for confirmation to overwrite or rename during
-  copy-paste action
-- `nvimtree_remove` - Prompt for confirmation to delete during remove action
-- `nvimtree_trash` - Prompt for confirmation to send to trash during trash
-  action
-- `nvimtree_bulkdelete` - Prompt for confirmation to delete all bookmarked
-  during bulk-delete action
-- `nvimtree_bulktrash` - Prompt for confirmation to send all bookmarked to
-  trash during bulk-trash action
+The API accepts the optional `kind` key as part of the {opts} parameter, which
+can can be used to identify the type of prompt, to allow user side
+configurations for different types of prompts.
+
+- `nvimtree_overwrite_rename`
+    overwrite or rename during |nvim-tree-api.fs.paste()|
+
+- `nvimtree_remove`
+    delete during |nvim-tree-api.fs.remove()|
+
+- `nvimtree_trash`
+    send to trash during |nvim-tree-api.fs.trash()|
+
+- `nvimtree_bulk_delete`
+    delete all bookmarked during |nvim-tree-api.marks.bulk.delete()|
+
+- `nvimtree_bulk_trash`
+    send all bookmarked to trash during |nvim-tree-api.marks.bulk.trash()|
 
 ==============================================================================
  11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*

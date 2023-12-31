@@ -33,7 +33,7 @@ function M.bulk_delete()
   if M.config.ui.confirm.remove then
     local prompt_select = "Remove bookmarked ?"
     local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_bulkdelete", function(item_short)
+    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_bulk_delete", function(item_short)
       utils.clear_prompt()
       if item_short == "y" then
         do_delete(nodes)
