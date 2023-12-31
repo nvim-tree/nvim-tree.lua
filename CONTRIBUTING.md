@@ -10,7 +10,7 @@ Following are used during CI and strongly recommended during local development.
 
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-Style: [stylua]
+Style: [StyLua](https://github.com/JohnnyMorganz/StyLua)
 
 Language server: [luals](https://luals.github.io)
 
@@ -22,16 +22,16 @@ The following quality checks are mandatory and are performed during CI. They run
 
 You can run them all via `make` or `make all`
 
-You can setup the git hooks by running `scripts/setup-hooks.sh`
+You can setup git hooks to run all checks by running `scripts/setup-hooks.sh`
 
 ## lint
+
+1. Runs luacheck quietly using `.luacheck` settings
+1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ```sh
 make lint
 ```
-
-1. Runs luacheck quietly using `.luacheck` settings
-1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ## style
 
