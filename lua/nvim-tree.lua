@@ -567,7 +567,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   notify = {
     threshold = vim.log.levels.INFO,
     absolute_path = true,
-    absolute_path1 = true,
   },
   help = {
     sort_by = "key",
