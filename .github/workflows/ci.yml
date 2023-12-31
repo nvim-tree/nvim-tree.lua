@@ -14,7 +14,7 @@ permissions:
 env:
   LUA_VERSION: "5.1"
   NVIM_VERSION: "v0.9.4"
-  STYLUA_VERSION: "0.19"
+  STYLUA_VERSION: "0.19.1"
   LUALS_VERSION: "3.7.3"
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
 
       - uses: leafo/gh-actions-luarocks@v4
 
-      - name: luacheck
+      - name: lint
         run: |
           luarocks install luacheck 1.1.1
           make lint
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: stylua
+      - name: style
         uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -62,6 +62,6 @@ jobs:
         mkdir -p luals
         curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${LUALS_VERSION}/lua-language-server-${LUALS_VERSION}-linux-x64.tar.gz" | tar zx --directory luals
 
-    - name: lua-language-server --check
+    - name: check
       run: |
         VIMRUNTIME=/home/runner/nvim-${NVIM_VERSION}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
