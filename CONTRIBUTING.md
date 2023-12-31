@@ -65,7 +65,7 @@ VIMRUNTIME="/my/path/to/runtime" make check
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
 
-Once you did, you should run `make update-help`
+Once you did, you should run `make help-update`
 
 # Documentation
 

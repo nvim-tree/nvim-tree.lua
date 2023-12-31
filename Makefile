@@ -22,8 +22,15 @@ style-fix:
 #
 # utility
 #
-update-help:
-	scripts/update-help.sh
+help-update:
+	scripts/help-update.sh
 
-.PHONY: all style lint check style-fix update-help
+#
+# CI
+#
+help-check:
+	scripts/help-update.sh
+	git diff --exit-code doc/nvim-tree-lua.txt
+
+.PHONY: all style lint check style-fix help-check help-update
 

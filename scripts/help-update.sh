@@ -2,7 +2,7 @@
 
 # run after changing nvim-tree.lua DEFAULT_OPTS or keymap.lua M.default_on_attach
 # scrapes and updates nvim-tree-lua.txt
-# run from repository root: scripts/update-help.sh
+# run from repository root: scripts/help-update.sh  OR  make help-update
 
 
 #
