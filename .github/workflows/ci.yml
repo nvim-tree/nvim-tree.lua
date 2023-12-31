@@ -17,9 +17,6 @@ env:
   LUALS_VERSION: "3.7.3"
 
 jobs:
-  strategy:
-    matrix:
-      NVIM_VERSION: [ "v0.8.3", "v0.9.4" ]
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -49,6 +46,10 @@ jobs:
           args: --check lua
 
   check:
+    strategy:
+      matrix:
+        NVIM_VERSION: [ "v0.8.3", "v0.9.4" ]
+
     runs-on: ubuntu-latest
 
     steps:
