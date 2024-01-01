@@ -5,9 +5,8 @@ all: lint style check
 #
 lint:
 	luacheck -q lua
-	scripts/doc-comments.sh
 
-style:
+style: style-doc
 	stylua lua --check
 
 check:
@@ -31,5 +30,8 @@ help-update:
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
-.PHONY: all style lint check style-fix help-check help-update
+style-doc:
+	scripts/doc-comments.sh
+
+.PHONY: all style lint check style-fix help-check help-update style-doc
 
