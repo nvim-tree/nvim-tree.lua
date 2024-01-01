@@ -11,21 +11,20 @@ on:
 permissions:
   contents: read
 
-env:
-  LUA_VERSION: "5.1"
-  NVIM_VERSION: ("v0.8.3" "v0.9.4")
-  STYLUA_VERSION: "0.19.1"
-  LUALS_VERSION: "3.7.3"
-
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        lua_version: [ "5.1" ]
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: ${{ env.LUA_VERSION }}
+          luaVersion: ${{ matrix.lua_version }}
 
       - uses: leafo/gh-actions-luarocks@v4
 
@@ -36,6 +35,11 @@ jobs:
 
   style:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        stylua_version: [ "0.19.1" ]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -43,14 +47,16 @@ jobs:
         uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ env.STYLUA_VERSION }}
+          version: ${{ matrix.stylua_version }}
           args: --check lua
 
   check:
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        nvim_version: fromJson( ${{ env.NVIM_VERSION }} )
-    runs-on: ubuntu-latest
+        nvim_version: [ "v0.8.3" "v0.9.4" ]
+        luals_version: [ "3.7.3" ]
 
     steps:
     - uses: actions/checkout@v3
@@ -63,7 +69,7 @@ jobs:
     - name: install
       run: |
         mkdir -p luals
-        curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${LUALS_VERSION}/lua-language-server-${LUALS_VERSION}-linux-x64.tar.gz" | tar zx --directory luals
+        curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
 
     - name: check
       run: |
