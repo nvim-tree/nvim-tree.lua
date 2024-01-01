@@ -27,7 +27,6 @@ You can setup git hooks to run all checks by running `scripts/setup-hooks.sh`
 ## lint
 
 1. Runs luacheck quietly using `.luacheck` settings
-1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ```sh
 make lint
@@ -35,13 +34,14 @@ make lint
 
 ## style
 
-Runs stylua using `.stylua.toml` settings:
+1. Runs stylua using `.stylua.toml` settings
+1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ```sh
 make style
 ```
 
-You can automatically fix style issues via:
+You can automatically fix stylua issues via:
 
 ```sh
 make style-fix
@@ -49,7 +49,7 @@ make style-fix
 
 ## check
 
-Runs the checks that the LSP lua language server runs inside nvim using `.luarc.json`
+1. Runs the checks that the LSP lua language server runs inside nvim using `.luarc.json` via `scripts/luals-check.sh`
 
 ```sh
 make check

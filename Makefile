@@ -3,13 +3,25 @@ all: lint style check
 #
 # mandatory checks
 #
-lint:
+lint: luacheck
+
+style: stylua style-doc
+
+check: luals
+
+#
+# subtasks
+#
+luacheck:
 	luacheck -q lua
 
-style: style-doc
+stylua:
 	stylua lua --check
 
-check:
+style-doc:
+	scripts/doc-comments.sh
+
+luals:
 	scripts/luals-check.sh
 
 #
@@ -30,8 +42,6 @@ help-update:
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
-style-doc:
-	scripts/doc-comments.sh
 
-.PHONY: all style lint check style-fix help-check help-update style-doc
+.PHONY: all lint style check luacheck stylua style-doc luals style-fix help-update help-check
 
