@@ -55,7 +55,7 @@ jobs:
 
     strategy:
       matrix:
-        nvim_version: [ "v0.8.3" "v0.9.4" ]
+        nvim_version: [ "v0.8.3", "v0.9.4" ]
         luals_version: [ "3.7.3" ]
 
     steps:
