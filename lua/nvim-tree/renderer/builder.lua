@@ -74,11 +74,11 @@ function Builder:configure_group_name_modifier(group_name_modifier)
   return self
 end
 
---- Insert ranged highlight groups into self.highlights
---- neovim 0.9 is limited to two highlight groups for a range so choose the highest two
---- @param groups string[]
---- @param start number
---- @param end_ number|nil
+---Insert ranged highlight groups into self.highlights
+---neovim 0.9 is limited to two highlight groups for a range so choose the highest two
+---@param groups string[]
+---@param start number
+---@param end_ number|nil
 function Builder:_insert_highlight(groups, start, end_)
   local top_two_groups = {}
   table.insert(top_two_groups, groups[#groups - 1])
