@@ -2,6 +2,8 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+
 name: release-please
 permissions:
   contents: write

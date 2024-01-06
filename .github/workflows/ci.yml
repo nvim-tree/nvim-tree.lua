@@ -9,6 +9,8 @@ on:
       - master
         release-please--branches--master--components--nvim-tree
 
+  workflow_dispatch:
+
 permissions:
   contents: read
 
