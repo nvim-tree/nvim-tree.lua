@@ -1875,12 +1875,24 @@ node.open.preview_no_picker()    *nvim-tree-api.node.open.preview_no_picker()*
 node.navigate.git.next()              *nvim-tree-api.node.navigate.git.next()*
     Navigate to the next item showing git status.
 
+                            *nvim-tree-api.node.navigate.git.next_recursive()*
+node.navigate.git.next_recursive()
+    Alternative to |nvim-tree-api.node.navigate.git.next()| that navigates to
+    the next file showing git status, recursively.
+    Needs |nvim-tree.git.show_on_dirs| set.
+
                       *nvim-tree-api.node.navigate.git.next_skip_gitignored()*
 node.navigate.git.next_skip_gitignored()
     Same as |node.navigate.git.next()|, but skips gitignored files.
 
 node.navigate.git.prev()              *nvim-tree-api.node.navigate.git.prev()*
     Navigate to the previous item showing git status.
+
+                      *nvim-tree-api.node.navigate.git.prev_recursive()*
+node.navigate.git.prev_recursive()
+    Alternative to |nvim-tree-api.node.navigate.git.prev()| that navigates to
+    the previous file showing git status, recursively.
+    Needs |nvim-tree.git.show_on_dirs| set.
 
                       *nvim-tree-api.node.navigate.git.prev_skip_gitignored()*
 node.navigate.git.prev_skip_gitignored()
@@ -1890,9 +1902,21 @@ node.navigate.git.prev_skip_gitignored()
 node.navigate.diagnostics.next()
     Navigate to the next item showing diagnostic status.
 
+                    *nvim-tree-api.node.navigate.diagnostics.next_recursive()*
+node.navigate.diagnostics.next_recursive()
+    Alternative to |nvim-tree-api.node.navigate.diagnostics.next()| that
+    navigates to the next file showing diagnostic status, recursively.
+    Needs |nvim-tree.diagnostics.show_on_dirs| set.
+
                               *nvim-tree-api.node.navigate.diagnostics.prev()*
 node.navigate.diagnostics.prev()
     Navigate to the next item showing diagnostic status.
+
+                    *nvim-tree-api.node.navigate.diagnostics.prev_recursive()*
+node.navigate.diagnostics.prev_recursive()
+    Alternative to |nvim-tree-api.node.navigate.diagnostics.prev()| that
+    navigates to the previous file showing diagnostic status, recursively.
+    Needs |nvim-tree.diagnostics.show_on_dirs| set.
 
                                    *nvim-tree-api.node.navigate.opened.next()*
 node.navigate.opened.next()
