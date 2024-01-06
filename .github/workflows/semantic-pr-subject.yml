@@ -1,11 +1,7 @@
 name: Semantic Pull Request Subject
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
+
 jobs:
   semantic-pr-subject:
     runs-on: ubuntu-latest
