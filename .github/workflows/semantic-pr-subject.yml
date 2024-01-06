@@ -6,6 +6,8 @@ on:
       - reopened
       - edited
       - synchronize
+  workflow_dispatch:
+
 jobs:
   semantic-pr-subject:
     runs-on: ubuntu-latest
