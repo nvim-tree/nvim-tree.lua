@@ -1904,7 +1904,7 @@ node.navigate.diagnostics.next()
 node.navigate.diagnostics.next_recursive()
     Same as |node.navigate.diagnostics.next()|, but navigates to next item
     showing diagnostic status recursively. Needs `diagnostics.show_on_dirs`
-    and `diagnostics.show_on_open_dirs` set to `true`.
+    set to `true`.
 
                               *nvim-tree-api.node.navigate.diagnostics.prev()*
 node.navigate.diagnostics.prev()
@@ -1913,8 +1913,8 @@ node.navigate.diagnostics.prev()
                       *nvim-tree-api.node.navigate.diagnostics.prev_recursive()*
 node.navigate.diagnostics.prev_recursive()
     Same as |node.navigate.diagnostics.prev()|, but navigates to previous item
-    showing diagnostic status recursively.Needs `diagnostics.show_on_dirs` and
-    `diagnostics.show_on_open_dirs` set to `true`.
+    showing diagnostic status recursively. Needs `diagnostics.show_on_dirs` set
+    to `true`.
 
                                    *nvim-tree-api.node.navigate.opened.next()*
 node.navigate.opened.next()
