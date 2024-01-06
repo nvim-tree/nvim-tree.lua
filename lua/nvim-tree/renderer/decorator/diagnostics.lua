@@ -1,3 +1,5 @@
+local diagnostics = require "nvim-tree.diagnostics"
+
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
@@ -67,8 +69,11 @@ end
 ---@return HighlightedString[]|nil icons
 function DecoratorDiagnostics:calculate_icons(node)
   if node and self.enabled and self.icons then
-    if node.diag_status then
-      return { self.icons[node.diag_status] }
+    local diag_status = diagnostics.get_diag_status(node)
+    local diag_value = diag_status and diag_status.value
+
+    if diag_value then
+      return { self.icons[diag_value] }
     end
   end
 end
@@ -81,11 +86,18 @@ function DecoratorDiagnostics:calculate_highlight(node)
     return nil
   end
 
+  local diag_status = diagnostics.get_diag_status(node)
+  local diag_value = diag_status and diag_status.value
+
+  if not diag_value then
+    return nil
+  end
+
   local group
   if node.nodes then
-    group = HG_FOLDER[node.diag_status]
+    group = HG_FOLDER[diag_value]
   else
-    group = HG_FILE[node.diag_status]
+    group = HG_FILE[diag_value]
   end
 
   if group then
