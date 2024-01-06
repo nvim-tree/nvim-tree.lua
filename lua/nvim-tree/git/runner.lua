@@ -2,11 +2,6 @@ local log = require "nvim-tree.log"
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 
--- TODO add "${3rd}/luv/library" to "workspace.library"
----@class uv.uv_handle_t: table
----@class uv.uv_stream_t: uv.uv_handle_t
----@class uv.uv_pipe_t: uv.uv_stream_t
-
 ---@class Runner
 local Runner = {}
 Runner.__index = Runner

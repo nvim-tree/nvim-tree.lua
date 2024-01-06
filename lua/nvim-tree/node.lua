@@ -1,9 +1,5 @@
 ---@meta
 
--- TODO add "${3rd}/luv/library" to "workspace.library"
----@class uv.uv_req_t: table
----@class uv.uv_fs_t: uv.uv_req_t
-
 ---@class ParentNode
 ---@field name string
 

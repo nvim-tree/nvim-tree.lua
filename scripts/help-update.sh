@@ -2,7 +2,7 @@
 
 # run after changing nvim-tree.lua DEFAULT_OPTS or keymap.lua M.default_on_attach
 # scrapes and updates nvim-tree-lua.txt
-# run from repository root: scripts/update-help.sh
+# run from repository root: scripts/help-update.sh  OR  make help-update
 
 
 #
@@ -38,7 +38,7 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
 # help human
 echo > /tmp/DEFAULT_ON_ATTACH.help
 sed -E "s/^ *vim.keymap.set\('n', '(.*)',.*api(.*),.*opts\('(.*)'.*$/'\`\1\`' '\3' '|nvim-tree-api\2()|'/g
-" /tmp/DEFAULT_ON_ATTACH.lua | while read line
+" /tmp/DEFAULT_ON_ATTACH.lua | while read -r line
 do
 	eval "printf '%-17.17s %-26.26s %s\n' ${line}" >> /tmp/DEFAULT_ON_ATTACH.help
 done
