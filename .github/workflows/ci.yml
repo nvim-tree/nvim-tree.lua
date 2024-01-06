@@ -14,22 +14,31 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        lua_version: [ 5.1 ]
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: "5.1"
+          luaVersion: ${{ matrix.lua_version }}
 
       - uses: leafo/gh-actions-luarocks@v4
 
-      - name: luacheck
-        run: |
-          luarocks install luacheck 1.1.1
-          luacheck lua
+      - run: luarocks install luacheck 1.1.1
+
+      - run: make lint
 
   style:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        stylua_version: [ 0.19.1 ]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -37,8 +46,33 @@ jobs:
         uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: "0.19"
+          version: ${{ matrix.stylua_version }}
           args: --check lua
 
-      - name: doc-comments
-        run: ./scripts/doc-comments.sh
+      - run: make style-doc
+
+  check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        nvim_version: [ v0.9.4 ]
+        luals_version: [ 3.7.3 ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.nvim_version }}
+
+      - name: install luals
+        run: |
+          mkdir -p luals
+          curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
+
+      - name: make check
+        run: VIMRUNTIME=/home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
+
+      - run: make help-check
