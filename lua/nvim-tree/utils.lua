@@ -116,6 +116,28 @@ function M.find_node(nodes, fn)
   return node, i
 end
 
+-- Find the line number of a node.
+-- Return -1 is node is nil or not found.
+---@param node Node|nil
+---@return integer
+function M.find_node_line(node)
+  if not node then
+    return -1
+  end
+
+  local first_node_line = require("nvim-tree.core").get_nodes_starting_line()
+  local nodes_by_line = M.get_nodes_by_line(require("nvim-tree.core").get_explorer().nodes, first_node_line)
+  local iter_start, iter_end = first_node_line, #nodes_by_line
+
+  for line = iter_start, iter_end, 1 do
+    if nodes_by_line[line] == node then
+      return line
+    end
+  end
+
+  return -1
+end
+
 -- get the node in the tree state depending on the absolute path of the node
 -- (grouped or hidden too)
 ---@param path string

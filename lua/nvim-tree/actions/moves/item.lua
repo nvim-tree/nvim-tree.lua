@@ -130,28 +130,6 @@ local function move_next_recursive(what, skip_gitignored)
   end
 end
 
--- Find the line number of a node.
--- Return -1 is node is nil or not found.
----@param node Node|nil
----@return integer
-local function find_node_line(node)
-  if not node then
-    return -1
-  end
-
-  local first_node_line = core.get_nodes_starting_line()
-  local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
-  local iter_start, iter_end = first_node_line, #nodes_by_line
-
-  for line = iter_start, iter_end, 1 do
-    if nodes_by_line[line] == node then
-      return line
-    end
-  end
-
-  return -1
-end
-
 --- Move to the previous node recursively.
 ---
 --- move_prev_recursive:
@@ -206,7 +184,7 @@ local function move_prev_recursive(what, skip_gitignored)
       if node_init.name == ".." then -- root node
         view.set_cursor { 1, 0 } -- move to root node (position 1)
       else
-        local node_init_line = find_node_line(node_init)
+        local node_init_line = utils.find_node_line(node_init)
         if node_init_line < 0 then
           return
         end
