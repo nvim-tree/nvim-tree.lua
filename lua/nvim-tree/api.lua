@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
 local events = require "nvim-tree.events"
+local help = require "nvim-tree.help"
 local live_filter = require "nvim-tree.live-filter"
 local marks = require "nvim-tree.marks"
 local marks_navigation = require "nvim-tree.marks.navigation"
@@ -131,7 +132,7 @@ Api.tree.toggle_no_buffer_filter = wrap(actions.tree.modifiers.toggles.no_buffer
 Api.tree.toggle_custom_filter = wrap(actions.tree.modifiers.toggles.custom)
 Api.tree.toggle_hidden_filter = wrap(actions.tree.modifiers.toggles.dotfiles)
 Api.tree.toggle_no_bookmark_filter = wrap(actions.tree.modifiers.toggles.no_bookmark)
-Api.tree.toggle_help = wrap(actions.tree.modifiers.toggles.toggle)
+Api.tree.toggle_help = wrap(help.toggle)
 Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 
 ---@class ApiTreeIsVisibleOpts
