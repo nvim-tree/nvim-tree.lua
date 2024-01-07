@@ -315,14 +315,14 @@ function M.copy_absolute_path(node)
   copy_to_clipboard(content)
 end
 
----Node is cut. May also be copied.
+---Node is cut. Will not be copied.
 ---@param node Node
 ---@return boolean
 function M.is_cut(node)
   return vim.tbl_contains(clipboard.cut, node)
 end
 
----Node is copied. May also be cut.
+---Node is copied. Will not be cut.
 ---@param node Node
 ---@return boolean
 function M.is_copied(node)

@@ -9,7 +9,7 @@ local icons = require "nvim-tree.renderer.components.icons"
 ---@field private index number
 ---@field private depth number
 ---@field private highlights table[] hl_group, line, col_start, col_end arguments for vim.api.nvim_buf_add_highlight
----@field private combined_groups boolean[] combined group names
+---@field private combined_groups string[] combined group names
 ---@field private lines string[] includes icons etc.
 ---@field private markers boolean[] indent markers
 ---@field private sign_names string[] line signs
@@ -273,7 +273,7 @@ function Builder:_create_combined_group(groups)
   local combined_name = self:_combined_group_name(groups)
 
   -- only create if necessary
-  if not self.combined_groups[combined_name] then
+  if not vim.tbl_contains(self.combined_groups, combined_name) then
     local combined_hl = {}
 
     -- build the highlight, overriding values
@@ -286,7 +286,7 @@ function Builder:_create_combined_group(groups)
     vim.api.nvim_set_hl_ns_fast(colors.NS_ID)
     vim.api.nvim_set_hl(colors.NS_ID, combined_name, combined_hl)
 
-    self.combined_groups[combined_name] = true
+    table.insert(self.combined_groups, combined_name)
   end
 end
 
