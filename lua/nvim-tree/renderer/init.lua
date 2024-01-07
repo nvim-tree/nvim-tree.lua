@@ -1,3 +1,4 @@
+local colors = require "nvim-tree.colors"
 local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
@@ -24,8 +25,6 @@ local M = {
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
-local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
-
 local function _draw(bufnr, lines, hl, sign_names)
   vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
@@ -41,11 +40,11 @@ function M.render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
+  vim.api.nvim_buf_clear_namespace(bufnr, colors.NS_ID, 0, -1)
   for _, data in ipairs(hl or M.last_highlights) do
     if type(data[1]) == "table" then
       for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
+        vim.api.nvim_buf_add_highlight(bufnr, colors.NS_ID, group, data[2], data[3], data[4])
       end
     end
   end

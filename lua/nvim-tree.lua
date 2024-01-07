@@ -104,12 +104,6 @@ function M.open_on_directory()
   actions.root.change_dir.force_dirchange(bufname, true)
 end
 
-function M.reset_highlight()
-  colors.setup()
-  view.reset_winhl()
-  renderer.render_hl(view.get_bufnr())
-end
-
 function M.place_cursor_on_node()
   local search = vim.fn.searchcount()
   if search and search.exact_match == 1 then
@@ -168,8 +162,13 @@ local function setup_autocommands(opts)
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
-  -- reset highlights when colorscheme is changed
-  create_nvim_tree_autocmd("ColorScheme", { callback = M.reset_highlight })
+  -- reset and draw highlights when colorscheme is changed
+  create_nvim_tree_autocmd("ColorScheme", {
+    callback = function()
+      colors.setup()
+      renderer.render_hl(view.get_bufnr())
+    end,
+  })
 
   -- prevent new opened file from opening in the same window as nvim-tree
   create_nvim_tree_autocmd("BufWipeout", {
