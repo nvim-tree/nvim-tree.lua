@@ -1,4 +1,7 @@
-local M = {}
+local M = {
+  -- namespace for all tree window highlights
+  NS_ID = vim.api.nvim_create_namespace "nvim_tree",
+}
 
 -- directly defined groups, please keep these to an absolute minimum
 local DEFAULT_DEFS = {
@@ -122,6 +125,21 @@ local DEFAULT_LINKS = {
   NvimTreeDiagnosticHintFolderHL = "NvimTreeDiagnosticHintFileHL",
 }
 
+-- namespace standard links
+local NS_LINKS = {
+  EndOfBuffer = "NvimTreeEndOfBuffer",
+  CursorLine = "NvimTreeCursorLine",
+  CursorLineNr = "NvimTreeCursorLineNr",
+  LineNr = "NvimTreeLineNr",
+  WinSeparator = "NvimTreeWinSeparator",
+  StatusLine = "NvimTreeStatusLine",
+  StatusLineNC = "NvimTreeStatuslineNC",
+  SignColumn = "NvimTreeSignColumn",
+  Normal = "NvimTreeNormal",
+  NormalNC = "NvimTreeNormalNC",
+  NormalFloat = "NvimTreeNormalFloat",
+}
+
 -- nvim-tree highlight groups to legacy
 local LEGACY_LINKS = {
   NvimTreeModifiedIcon = "NvimTreeModifiedFile",
@@ -188,6 +206,11 @@ function M.setup()
   -- default links
   for from, to in pairs(DEFAULT_LINKS) do
     vim.api.nvim_command("hi def link " .. from .. " " .. to)
+  end
+
+  -- window namespace; these don't appear to be cleared on colorscheme however err on the side of caution
+  for from, to in pairs(NS_LINKS) do
+    vim.api.nvim_set_hl(M.NS_ID, from, { link = to })
   end
 end
 

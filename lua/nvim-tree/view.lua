@@ -1,3 +1,4 @@
+local colors = require "nvim-tree.colors"
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
@@ -38,19 +39,6 @@ M.View = {
     cursorlineopt = "both",
     colorcolumn = "0",
     wrap = false,
-    winhl = table.concat({
-      "EndOfBuffer:NvimTreeEndOfBuffer",
-      "CursorLine:NvimTreeCursorLine",
-      "CursorLineNr:NvimTreeCursorLineNr",
-      "LineNr:NvimTreeLineNr",
-      "WinSeparator:NvimTreeWinSeparator",
-      "StatusLine:NvimTreeStatusLine",
-      "StatusLineNC:NvimTreeStatuslineNC",
-      "SignColumn:NvimTreeSignColumn",
-      "Normal:NvimTreeNormal",
-      "NormalNC:NvimTreeNormalNC",
-      "NormalFloat:NvimTreeNormalFloat",
-    }, ","),
   },
 }
 
@@ -147,6 +135,7 @@ local function set_window_options_and_buffer()
     vim.opt_local[k] = v
   end
   vim.opt.eventignore = eventignore
+  vim.api.nvim_win_set_hl_ns(0, colors.NS_ID)
 end
 
 ---@return table
@@ -537,13 +526,6 @@ end
 ---@return boolean
 function M.is_root_folder_visible(cwd)
   return cwd ~= "/" and not M.View.hide_root_folder
-end
-
--- used on ColorScheme event
-function M.reset_winhl()
-  if M.get_winnr() and vim.api.nvim_win_is_valid(M.get_winnr()) then
-    vim.wo[M.get_winnr()].winhl = M.View.winopts.winhl
-  end
 end
 
 function M.setup(opts)
