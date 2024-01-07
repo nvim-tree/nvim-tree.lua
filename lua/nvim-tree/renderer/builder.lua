@@ -283,7 +283,6 @@ function Builder:_create_combined_group(groups)
     end
 
     -- highlight directly in the namespace
-    vim.api.nvim_set_hl_ns_fast(appearance.NS_ID)
     vim.api.nvim_set_hl(appearance.NS_ID, combined_name, combined_hl)
 
     table.insert(self.combined_groups, combined_name)

@@ -135,7 +135,9 @@ local function set_window_options_and_buffer()
     vim.opt_local[k] = v
   end
   vim.opt.eventignore = eventignore
-  vim.api.nvim_win_set_hl_ns(0, appearance.NS_ID)
+
+  -- use highlights from the nvim_tree namespace
+  vim.api.nvim_win_set_hl_ns(M.get_winnr(), appearance.NS_ID)
 end
 
 ---@return table

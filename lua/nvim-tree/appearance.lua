@@ -208,7 +208,7 @@ function M.setup()
     vim.api.nvim_command("hi def link " .. from .. " " .. to)
   end
 
-  -- window namespace; these don't appear to be cleared on colorscheme however err on the side of caution
+  -- window standard; this doesn't appear to clear on ColorScheme however we err on the side of caution
   for from, to in pairs(NS_LINKS) do
     vim.api.nvim_set_hl(M.NS_ID, from, { link = to })
   end
