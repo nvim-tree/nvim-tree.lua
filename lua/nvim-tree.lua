@@ -1,6 +1,6 @@
 local lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
-local colors = require "nvim-tree.colors"
+local appearance = require "nvim-tree.appearance"
 local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local commands = require "nvim-tree.commands"
@@ -162,10 +162,10 @@ local function setup_autocommands(opts)
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
-  -- reset and draw highlights when colorscheme is changed
-  create_nvim_tree_autocmd("ColorScheme", {
+  -- reset and draw highlights when appearancecheme is changed
+  create_nvim_tree_autocmd("appearancecheme", {
     callback = function()
-      colors.setup()
+      appearance.setup()
       renderer.render_hl(view.get_bufnr())
     end,
   })
@@ -787,7 +787,7 @@ function M.setup(conf)
 
   require("nvim-tree.actions").setup(opts)
   require("nvim-tree.keymap").setup(opts)
-  require("nvim-tree.colors").setup()
+  require("nvim-tree.appearance").setup()
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer").setup(opts)
   require("nvim-tree.git").setup(opts)

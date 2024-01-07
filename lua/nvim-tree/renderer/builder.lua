@@ -1,4 +1,4 @@
-local colors = require "nvim-tree.colors"
+local appearance = require "nvim-tree.appearance"
 local utils = require "nvim-tree.utils"
 local notify = require "nvim-tree.notify"
 
@@ -283,8 +283,8 @@ function Builder:_create_combined_group(groups)
     end
 
     -- highlight directly in the namespace
-    vim.api.nvim_set_hl_ns_fast(colors.NS_ID)
-    vim.api.nvim_set_hl(colors.NS_ID, combined_name, combined_hl)
+    vim.api.nvim_set_hl_ns_fast(appearance.NS_ID)
+    vim.api.nvim_set_hl(appearance.NS_ID, combined_name, combined_hl)
 
     table.insert(self.combined_groups, combined_name)
   end

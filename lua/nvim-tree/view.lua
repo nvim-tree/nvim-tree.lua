@@ -1,4 +1,4 @@
-local colors = require "nvim-tree.colors"
+local appearance = require "nvim-tree.appearance"
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
@@ -135,7 +135,7 @@ local function set_window_options_and_buffer()
     vim.opt_local[k] = v
   end
   vim.opt.eventignore = eventignore
-  vim.api.nvim_win_set_hl_ns(0, colors.NS_ID)
+  vim.api.nvim_win_set_hl_ns(0, appearance.NS_ID)
 end
 
 ---@return table
