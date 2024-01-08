@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - master
-        release-please--branches--master--components--nvim-tree
+      - release-please--branches--master--components--nvim-tree
 
   workflow_dispatch:
 
