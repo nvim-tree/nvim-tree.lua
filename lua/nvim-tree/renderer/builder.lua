@@ -87,7 +87,7 @@ function Builder:get_folder_name(node)
     next = next.group_next
   end
 
-  if node.group_next and type(M.opts.renderer.group_empty == "function") then
+  if node.group_next and type(M.opts.renderer.group_empty) == "function" then
     local new_name = M.opts.renderer.group_empty(name)
     if type(new_name) == "string" then
       name = new_name
