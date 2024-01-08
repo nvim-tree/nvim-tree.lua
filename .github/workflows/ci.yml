@@ -63,7 +63,7 @@ jobs:
         luals_version: [ 3.7.3 ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: rhysd/action-setup-vim@v1
         with:
