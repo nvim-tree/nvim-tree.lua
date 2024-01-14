@@ -24,7 +24,7 @@ function M.get_node_at_cursor()
     return
   end
 
-  local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
+  local cursor = vim.api.nvim_win_get_cursor(winnr)
   local line = cursor[1]
 
   if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
