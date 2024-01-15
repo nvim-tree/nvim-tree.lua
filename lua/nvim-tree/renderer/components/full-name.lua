@@ -57,9 +57,9 @@ local function show()
   end
 
   M.popup_win = vim.api.nvim_open_win(vim.api.nvim_create_buf(false, false), false, {
-    relative = "cursor",
+    relative = "win",
     row = 0,
-    col = 1 - vim.fn.getcursorcharpos()[3],
+    bufpos = { vim.api.nvim_win_get_cursor(0)[1] - 1, 0 },
     width = math.min(text_width, vim.o.columns - 2),
     height = 1,
     noautocmd = true,
