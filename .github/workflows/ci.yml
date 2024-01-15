@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - master
-        release-please--branches--master--components--nvim-tree
+      - release-please--branches--master--components--nvim-tree
 
   workflow_dispatch:
 
@@ -63,7 +63,7 @@ jobs:
         luals_version: [ 3.7.3 ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: rhysd/action-setup-vim@v1
         with:

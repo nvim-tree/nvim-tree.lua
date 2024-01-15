@@ -464,7 +464,7 @@ end
 function M.get_winnr(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = M.View.tabpages[tabpage]
-  if tabinfo ~= nil then
+  if tabinfo ~= nil and vim.api.nvim_win_is_valid(tabinfo.winnr) then
     return tabinfo.winnr
   end
 end
