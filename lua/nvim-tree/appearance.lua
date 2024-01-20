@@ -191,7 +191,7 @@ local LEGACY_LINKS = {
 function M.setup()
   -- non-linked
   for k, d in pairs(DEFAULT_DEFS) do
-    vim.api.nvim_command("hi " .. k .. " " .. d)
+    vim.api.nvim_command("hi def " .. k .. " " .. d)
   end
 
   -- hard link override when legacy only is present
