@@ -2365,7 +2365,7 @@ Diagnostics Folder Highlight: >
 ==============================================================================
  8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
 
-2023-12: significant highlighting changes, some breaking:
+2024-01-20: significant highlighting changes, some breaking:
 
 - Full cterm support.
 - Standard vim highlight groups such |DiagnosticUnderlineError| are now the
