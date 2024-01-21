@@ -10,7 +10,7 @@ local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
-local modified = require "nvim-tree.modified"
+local buffers = require "nvim-tree.buffers"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
@@ -313,7 +313,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
         utils.debounce("Buf:modified", opts.view.debounce_delay, function()
-          modified.reload()
+          buffers.reload_modified()
           actions.reloaders.reload_explorer()
         end)
       end,
