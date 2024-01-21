@@ -12,9 +12,10 @@ M.HL_POSITION = {
 ---Setup options for "*_placement"
 ---@enum ICON_PLACEMENT
 M.ICON_PLACEMENT = {
-  signcolumn = 0,
-  before = 1,
-  after = 2,
+  none = 0,
+  signcolumn = 1,
+  before = 2,
+  after = 3,
 }
 
 return M

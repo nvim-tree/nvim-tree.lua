@@ -7,8 +7,6 @@ local notify = require "nvim-tree.notify"
 local renderer = require "nvim-tree.renderer"
 local reloaders = require "nvim-tree.actions.reloaders"
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {
@@ -317,34 +315,23 @@ function M.copy_absolute_path(node)
   copy_to_clipboard(content)
 end
 
---- Clipboard text highlight group and position when highlight_clipboard.
+---Node is cut. Will not be copied.
 ---@param node Node
----@return HL_POSITION position none when clipboard empty
----@return string|nil group only when node present in clipboard
-function M.get_highlight(node)
-  if M.hl_pos == HL_POSITION.none then
-    return HL_POSITION.none, nil
-  end
+---@return boolean
+function M.is_cut(node)
+  return vim.tbl_contains(clipboard.cut, node)
+end
 
-  for _, n in ipairs(clipboard.cut) do
-    if node == n then
-      return M.hl_pos, "NvimTreeCutHL"
-    end
-  end
-
-  for _, n in ipairs(clipboard.copy) do
-    if node == n then
-      return M.hl_pos, "NvimTreeCopiedHL"
-    end
-  end
-
-  return HL_POSITION.none, nil
+---Node is copied. Will not be cut.
+---@param node Node
+---@return boolean
+function M.is_copied(node)
+  return vim.tbl_contains(clipboard.copy, node)
 end
 
 function M.setup(opts)
   M.config.filesystem_watchers = opts.filesystem_watchers
   M.config.actions = opts.actions
-  M.hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none
 end
 
 return M
