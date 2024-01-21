@@ -10,13 +10,12 @@ local M = {}
 
 ---@param node Explorer|nil
 ---@param projects table
----@param unloaded_bufnr number|nil
-local function refresh_nodes(node, projects, unloaded_bufnr)
+local function refresh_nodes(node, projects)
   Iterator.builder({ node })
     :applier(function(n)
       if n.nodes then
         local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
-        explorer_module.reload(n, projects[toplevel] or {}, unloaded_bufnr)
+        explorer_module.reload(n, projects[toplevel] or {})
       end
     end)
     :recursor(function(n)
@@ -43,18 +42,16 @@ function M.reload_node_status(parent_node, projects)
 end
 
 local event_running = false
----@param _ table|nil unused node passed by action
----@param unloaded_bufnr number|nil optional bufnr recently unloaded via BufUnload event
-function M.reload_explorer(_, unloaded_bufnr)
+function M.reload_explorer()
   if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
   local projects = git.reload()
-  refresh_nodes(core.get_explorer(), projects, unloaded_bufnr)
+  refresh_nodes(core.get_explorer(), projects)
   if view.is_visible() then
-    renderer.draw(unloaded_bufnr)
+    renderer.draw()
   end
   event_running = false
 end
