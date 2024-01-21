@@ -4,7 +4,6 @@ local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
-local log = require "nvim-tree.log"
 
 local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
 local DecoratorCopied = require "nvim-tree.renderer.decorator.copied"
@@ -230,7 +229,6 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     add_to_end(line, M.decorators[i]:icons_after(node))
   end
 
-  log.line("dev", "line = %s", vim.inspect(line))
   return line
 end
 
