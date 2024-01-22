@@ -46,7 +46,8 @@ CONTENTS                                                           *nvim-tree*
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
-  8.1  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
+  8.1  Highlight Default                        |nvim-tree-highlight-default|
+  8.2  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
  11. OS Specific Restrictions                 |nvim-tree-os-specific|
@@ -2253,7 +2254,16 @@ squigglies: >
     :hi NvimTreeOpenedHL       guifg=magenta guisp=red  gui=underline
     :hi NvimTreeModifiedFileHL               guisp=cyan gui=undercurl
 <
-Default linked group or definition follows name.
+To prevent usage of a highlight:
+- Before setup: link the group to `Normal` e.g.
+    `:hi NvimTreeExecFile Normal`
+- After setup: link it to `NONE`, to override the default link e.g.
+    `:hi! link NvimTreeExecFile NONE`
+
+==============================================================================
+ 8.1 HIGHLIGHT DEFAULT                           *nvim-tree-highlight-default*
+
+|:highlight-link| `default` or |:highlight-default| define the groups on setup:
 
 Standard: >
     NvimTreeNormal              Normal
