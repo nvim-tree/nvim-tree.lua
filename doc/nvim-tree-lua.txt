@@ -846,7 +846,7 @@ Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
 
 *nvim-tree.renderer.highlight_opened_files*
 Highlight icons and/or names for |bufloaded()| files using the
-`NvimTreeOpenedFile` highlight group.
+`NvimTreeOpenedHL` highlight group.
 See |nvim-tree-api.navigate.opened.next()| and |nvim-tree-api.navigate.opened.prev()|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
   Type: `string`, Default: `"none"`
@@ -2266,11 +2266,10 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 File Text: >
-    NvimTreeExecFile            Constant
-    NvimTreeImageFile           PreProc
-    NvimTreeOpenedFile          Constant
-    NvimTreeSpecialFile         PreProc
-    NvimTreeSymlink             Statement
+    NvimTreeExecFile            WinBar
+    NvimTreeImageFile           WinBar
+    NvimTreeSpecialFile         WinBar
+    NvimTreeSymlink             WinBar
 <
 Folder Text: >
     NvimTreeRootFolder          PreProc
@@ -2282,7 +2281,6 @@ Folder Text: >
 File Icons: >
     NvimTreeFileIcon            NvimTreeNormal
     NvimTreeSymlinkIcon         NvimTreeNormal
-    NvimTreeOpenedFileIcon      NvimTreeOpenedFile
 <
 Folder Icons: >
     NvimTreeFolderIcon          guifg=#8094b4 ctermfg=Blue
@@ -2306,16 +2304,16 @@ Clipboard: >
     NvimTreeCutHL               SpellBad
 <
 Bookmarks: >
-    NvimTreeBookmarkIcon        Constant
+    NvimTreeBookmarkIcon        SpecialKey
     NvimTreeBookmarkHL          SpellLocal
 <
 Modified: >
-    NvimTreeModifiedIcon        Constant
+    NvimTreeModifiedIcon        Type
     NvimTreeModifiedFileHL      NvimTreeModifiedIcon
     NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
 <
 Opened: >
-    NvimTreeOpenedHL            Constant
+    NvimTreeOpenedHL            Special
 <
 Git Icon: >
     NvimTreeGitDeletedIcon      Statement
@@ -2376,6 +2374,16 @@ Diagnostics Folder Highlight: >
 - `highlight_xxx` has highlight groups for both File and Folder
 - `highlight_xxx` is additive instead of overwriting. See
   |nvim-tree-opts-renderer| for precedence.
+
+2024-01-22: disambiguate highlights sharing groups:
+
+- NvimTreeModified*    Constant  -> Type
+- NvimTreeOpenedHL     Constant  -> Special
+- NvimTreeBookmarkIcon Constant  -> SpecialKey
+- NvimTreeExecFile     Constant  -> WinBar
+- NvimTreeImageFile    PreProc   -> WinBar
+- NvimTreeSpecialFile  PreProc   -> WinBar
+- NvimTreeSymlink      Statement -> WinBar
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
