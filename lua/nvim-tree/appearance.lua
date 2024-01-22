@@ -38,7 +38,7 @@ local DEFAULT_LINKS = {
   NvimTreeSymlink = "ModeMsg",
 
   -- Folder Text
-  NvimTreeRootFolder = "PreProc",
+  NvimTreeRootFolder = "Title",
   NvimTreeFolderName = "Directory",
   NvimTreeEmptyFolderName = "Directory",
   NvimTreeOpenedFolderName = "Directory",

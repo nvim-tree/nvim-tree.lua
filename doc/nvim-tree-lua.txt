@@ -2290,7 +2290,7 @@ File Text: >
     NvimTreeSymlink             ModeMsg
 <
 Folder Text: >
-    NvimTreeRootFolder          PreProc
+    NvimTreeRootFolder          Title
     NvimTreeFolderName          Directory
     NvimTreeEmptyFolderName     Directory
     NvimTreeOpenedFolderName    Directory
@@ -2395,6 +2395,7 @@ Diagnostics Folder Highlight: >
 
 2024-01-22: disambiguate highlights sharing groups:
 
+- NvimTreeRootFolder   PreProc   -> Title
 - NvimTreeModified*    Constant  -> Type
 - NvimTreeOpenedHL     Constant  -> Special
 - NvimTreeBookmarkIcon Constant  -> SpecialKey
