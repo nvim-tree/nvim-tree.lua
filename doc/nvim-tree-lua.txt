@@ -2266,10 +2266,10 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 File Text: >
-    NvimTreeExecFile            WinBar
-    NvimTreeImageFile           WinBar
-    NvimTreeSpecialFile         WinBar
-    NvimTreeSymlink             WinBar
+    NvimTreeExecFile            ModeMsg
+    NvimTreeImageFile           ModeMsg
+    NvimTreeSpecialFile         ModeMsg
+    NvimTreeSymlink             ModeMsg
 <
 Folder Text: >
     NvimTreeRootFolder          PreProc
@@ -2380,10 +2380,10 @@ Diagnostics Folder Highlight: >
 - NvimTreeModified*    Constant  -> Type
 - NvimTreeOpenedHL     Constant  -> Special
 - NvimTreeBookmarkIcon Constant  -> SpecialKey
-- NvimTreeExecFile     Constant  -> WinBar
-- NvimTreeImageFile    PreProc   -> WinBar
-- NvimTreeSpecialFile  PreProc   -> WinBar
-- NvimTreeSymlink      Statement -> WinBar
+- NvimTreeExecFile     Constant  -> ModeMsg
+- NvimTreeImageFile    PreProc   -> ModeMsg
+- NvimTreeSpecialFile  PreProc   -> ModeMsg
+- NvimTreeSymlink      Statement -> ModeMsg
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >

@@ -32,10 +32,10 @@ local DEFAULT_LINKS = {
   NvimTreeStatusLineNC = "StatusLineNC",
 
   -- File Text
-  NvimTreeExecFile = "WinBar",
-  NvimTreeImageFile = "WinBar",
-  NvimTreeSpecialFile = "WinBar",
-  NvimTreeSymlink = "WinBar",
+  NvimTreeExecFile = "ModeMsg",
+  NvimTreeImageFile = "ModeMsg",
+  NvimTreeSpecialFile = "ModeMsg",
+  NvimTreeSymlink = "ModeMsg",
 
   -- Folder Text
   NvimTreeRootFolder = "PreProc",
