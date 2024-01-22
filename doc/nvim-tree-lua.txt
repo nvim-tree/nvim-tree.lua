@@ -2240,11 +2240,19 @@ groups.
 Example |:highlight| >
     :hi NvimTreeSymlink guifg=blue gui=bold,underline
 <
-It is recommended to enable 'termguicolors' for the more pleasant 24-bit colours.
+It is recommended to enable 'termguicolors' for the more pleasant 24-bit
+colours.
 
 To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
+The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
+Only present attributes will clobber each other.
+In this example a modified, opened file will have magenta text, with cyan
+squigglies: >
+    :hi NvimTreeOpenedHL       guifg=magenta guisp=red  gui=underline
+    :hi NvimTreeModifiedFileHL               guisp=cyan gui=undercurl
+<
 Default linked group or definition follows name.
 
 Standard: >
