@@ -266,7 +266,15 @@ function Builder:create_combined_group(groups)
 
     -- build the highlight, overriding values
     for _, group in ipairs(groups) do
-      local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+      local hl
+      if vim.fn.has "nvim-0.8" == 1 then
+        hl = vim.api.nvim__get_hl_defs(0)[group] or {}
+        if hl["link"] then
+          hl["link"] = nil
+        end
+      else
+        hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+      end
       combined_hl = vim.tbl_extend("force", combined_hl, hl)
     end
 
