@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
+local explorer_node = require "nvim-tree.explorer.node"
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -86,6 +87,32 @@ function M.get_last_group_node(node)
   return node
 end
 
+---Group empty folders
+---@param node Node
+---@return Node[]
+function M.group_empty_folders(node)
+  local is_root = not node.parent
+  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
+  if M.group_empty and not is_root and child_folder_only then
+    node.group_next = child_folder_only
+    local ns = M.group_empty_folders(child_folder_only)
+    node.nodes = ns or {}
+    return ns
+  end
+  return node.nodes
+end
+
+---Group empty folders
+---@param node Node
+function M.ungroup_empty_folders(node)
+  local cur = node
+  while cur and cur.group_next do
+    cur.nodes = { cur.group_next }
+    cur.group_next = nil
+    cur = cur.nodes[1]
+  end
+end
+
 ---@param node Node
 ---@return Node[]
 function M.get_all_nodes_in_group(node)
@@ -108,9 +135,17 @@ function M.expand_or_collapse(node)
     core.get_explorer():expand(node)
   end
 
-  local open = not M.get_last_group_node(node).open
-  for _, n in ipairs(M.get_all_nodes_in_group(node)) do
-    n.open = open
+  local open = M.get_last_group_node(node).open
+  local head_node = utils.get_parent_of_group(node)
+  local is_grouped = head_node.group_next ~= nil
+
+  if open and is_grouped then
+    M.ungroup_empty_folders(head_node)
+  elseif open then
+    M.group_empty_folders(head_node)
+  end
+  for _, n in ipairs(M.get_all_nodes_in_group(head_node)) do
+    n.open = is_grouped or not open
   end
 
   renderer.draw()
@@ -213,6 +248,7 @@ function M.setup(opts)
   M.hijack_directories = opts.hijack_directories
   M.respect_buf_cwd = opts.respect_buf_cwd
   M.select_prompts = opts.select_prompts
+  M.group_empty = opts.renderer.group_empty
 end
 
 return M
