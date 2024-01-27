@@ -138,6 +138,9 @@ local NS_LINKS = {
   Normal = "NvimTreeNormal",
   NormalNC = "NvimTreeNormalNC",
   NormalFloat = "NvimTreeNormalFloat",
+  -- Not mapped to cyclic LineNr when relativenumber set.
+  LineNrAbove = "NvimTreeLineNr",
+  LineNrBelow = "NvimTreeLineNr",
 }
 
 -- nvim-tree highlight groups to legacy
