@@ -166,6 +166,7 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("ColorScheme", {
     callback = function()
       appearance.setup()
+      view.reset_winhl()
       renderer.render_hl(view.get_bufnr())
     end,
   })
