@@ -111,8 +111,14 @@ local function custom(path)
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
-    if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
-      return true
+    if type(pat) == "function" then
+      if pat(path) then
+        return true
+      end
+    else
+      if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
+        return true
+      end
     end
   end
 

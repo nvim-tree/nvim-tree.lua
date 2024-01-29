@@ -1240,7 +1240,7 @@ Enabling this is not useful as there is no means yet to persist bookmarks.
 Custom list of vim regex for file/directory names that will not be shown.
 Backslashes must be escaped e.g. "^\\.git". See |string-match|.
 Toggle via |nvim-tree-api.tree.toggle_custom_filter()|, default `U`
-  Type: {string}, Default: `{}`
+  Type: {string | function(path)}, Default: `{}`
 
 *nvim-tree.filters.exclude*
 List of directories or files to exclude from filtering: always show them.
