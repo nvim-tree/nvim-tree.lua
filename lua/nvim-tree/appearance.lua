@@ -29,14 +29,13 @@ local DEFAULT_LINKS = {
   NvimTreeStatusLineNC = "StatusLineNC",
 
   -- File Text
-  NvimTreeExecFile = "Constant",
-  NvimTreeImageFile = "PreProc",
-  NvimTreeOpenedFile = "Constant",
-  NvimTreeSpecialFile = "PreProc",
-  NvimTreeSymlink = "Statement",
+  NvimTreeExecFile = "SpellCap",
+  NvimTreeImageFile = "SpellCap",
+  NvimTreeSpecialFile = "SpellCap",
+  NvimTreeSymlink = "SpellCap",
 
   -- Folder Text
-  NvimTreeRootFolder = "PreProc",
+  NvimTreeRootFolder = "Title",
   NvimTreeFolderName = "Directory",
   NvimTreeEmptyFolderName = "Directory",
   NvimTreeOpenedFolderName = "Directory",
@@ -45,7 +44,6 @@ local DEFAULT_LINKS = {
   -- File Icons
   NvimTreeFileIcon = "NvimTreeNormal",
   NvimTreeSymlinkIcon = "NvimTreeNormal",
-  NvimTreeOpenedFileIcon = "NvimTreeOpenedFile",
 
   -- Folder Icons
   NvimTreeOpenedFolderIcon = "NvimTreeFolderIcon",
@@ -65,16 +63,16 @@ local DEFAULT_LINKS = {
   NvimTreeCopiedHL = "SpellRare",
 
   -- Bookmark
-  NvimTreeBookmarkIcon = "Constant",
+  NvimTreeBookmarkIcon = "NvimTreeFolderIcon",
   NvimTreeBookmarkHL = "SpellLocal",
 
   -- Modified
-  NvimTreeModifiedIcon = "Constant",
+  NvimTreeModifiedIcon = "Type",
   NvimTreeModifiedFileHL = "NvimTreeModifiedIcon",
   NvimTreeModifiedFolderHL = "NvimTreeModifiedFileHL",
 
   -- Opened
-  NvimTreeOpenedHL = "Constant",
+  NvimTreeOpenedHL = "Special",
 
   -- Git Icon
   NvimTreeGitDeletedIcon = "Statement",

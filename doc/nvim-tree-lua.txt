@@ -46,7 +46,8 @@ CONTENTS                                                           *nvim-tree*
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
-  8.1  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
+  8.1  Highlight Default                        |nvim-tree-highlight-default|
+  8.2  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
  11. OS Specific Restrictions                 |nvim-tree-os-specific|
@@ -846,7 +847,7 @@ Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
 
 *nvim-tree.renderer.highlight_opened_files*
 Highlight icons and/or names for |bufloaded()| files using the
-`NvimTreeOpenedFile` highlight group.
+`NvimTreeOpenedHL` highlight group.
 See |nvim-tree-api.navigate.opened.next()| and |nvim-tree-api.navigate.opened.prev()|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`.
   Type: `string`, Default: `"none"`
@@ -2240,12 +2241,29 @@ groups.
 Example |:highlight| >
     :hi NvimTreeSymlink guifg=blue gui=bold,underline
 <
-It is recommended to enable 'termguicolors' for the more pleasant 24-bit colours.
+It is recommended to enable 'termguicolors' for the more pleasant 24-bit
+colours.
 
 To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
-Default linked group or definition follows name.
+The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
+Only present attributes will clobber each other.
+In this example a modified, opened file will have magenta text, with cyan
+undercurl: >
+    :hi NvimTreeOpenedHL       guifg=magenta guisp=red  gui=underline
+    :hi NvimTreeModifiedFileHL               guisp=cyan gui=undercurl
+<
+To prevent usage of a highlight:
+- Before setup: link the group to `Normal` e.g.
+    `:hi NvimTreeExecFile Normal`
+- After setup: link it to `NONE`, to override the default link e.g.
+    `:hi! link NvimTreeExecFile NONE`
+
+==============================================================================
+ 8.1 HIGHLIGHT DEFAULT                           *nvim-tree-highlight-default*
+
+|:highlight-link| `default` or |:highlight-default| define the groups on setup:
 
 Standard: >
     NvimTreeNormal              Normal
@@ -2266,14 +2284,13 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 File Text: >
-    NvimTreeExecFile            Constant
-    NvimTreeImageFile           PreProc
-    NvimTreeOpenedFile          Constant
-    NvimTreeSpecialFile         PreProc
-    NvimTreeSymlink             Statement
+    NvimTreeExecFile            SpellCap
+    NvimTreeImageFile           SpellCap
+    NvimTreeSpecialFile         SpellCap
+    NvimTreeSymlink             SpellCap
 <
 Folder Text: >
-    NvimTreeRootFolder          PreProc
+    NvimTreeRootFolder          Title
     NvimTreeFolderName          Directory
     NvimTreeEmptyFolderName     Directory
     NvimTreeOpenedFolderName    Directory
@@ -2282,7 +2299,6 @@ Folder Text: >
 File Icons: >
     NvimTreeFileIcon            NvimTreeNormal
     NvimTreeSymlinkIcon         NvimTreeNormal
-    NvimTreeOpenedFileIcon      NvimTreeOpenedFile
 <
 Folder Icons: >
     NvimTreeFolderIcon          guifg=#8094b4 ctermfg=Blue
@@ -2306,16 +2322,16 @@ Clipboard: >
     NvimTreeCutHL               SpellBad
 <
 Bookmarks: >
-    NvimTreeBookmarkIcon        Constant
+    NvimTreeBookmarkIcon        NvimTreeFolderIcon
     NvimTreeBookmarkHL          SpellLocal
 <
 Modified: >
-    NvimTreeModifiedIcon        Constant
+    NvimTreeModifiedIcon        Type
     NvimTreeModifiedFileHL      NvimTreeModifiedIcon
     NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
 <
 Opened: >
-    NvimTreeOpenedHL            Constant
+    NvimTreeOpenedHL            Special
 <
 Git Icon: >
     NvimTreeGitDeletedIcon      Statement
@@ -2376,6 +2392,17 @@ Diagnostics Folder Highlight: >
 - `highlight_xxx` has highlight groups for both File and Folder
 - `highlight_xxx` is additive instead of overwriting. See
   |nvim-tree-opts-renderer| for precedence.
+
+2024-01-29: disambiguate default highlights sharing groups:
+
+- NvimTreeRootFolder   PreProc   -> Title
+- NvimTreeModified*    Constant  -> Type
+- NvimTreeOpenedHL     Constant  -> Special
+- NvimTreeBookmarkIcon Constant  -> NvimTreeFolderIcon
+- NvimTreeExecFile     Constant  -> SpellCap
+- NvimTreeImageFile    PreProc   -> SpellCap
+- NvimTreeSpecialFile  PreProc   -> SpellCap
+- NvimTreeSymlink      Statement -> SpellCap
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
