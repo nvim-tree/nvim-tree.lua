@@ -1,5 +1,3 @@
-local appearance = require "nvim-tree.appearance"
-
 local M = {}
 
 local utils = require "nvim-tree.utils"
@@ -68,12 +66,13 @@ local function show()
     style = "minimal",
   })
 
-  local extmarks = vim.api.nvim_buf_get_extmarks(0, appearance.NS_ID, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = 1 })
+  local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
+  local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = 1 })
   vim.api.nvim_win_call(M.popup_win, function()
     vim.api.nvim_buf_set_lines(0, 0, -1, true, { line })
     for _, extmark in ipairs(extmarks) do
       local hl = extmark[4]
-      vim.api.nvim_buf_add_highlight(0, appearance.NS_ID, hl.hl_group, 0, extmark[3], hl.end_col)
+      vim.api.nvim_buf_add_highlight(0, ns_id, hl.hl_group, 0, extmark[3], hl.end_col)
     end
     vim.cmd [[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=hide ]]
   end)

@@ -1,4 +1,3 @@
-local appearance = require "nvim-tree.appearance"
 local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
@@ -9,11 +8,11 @@ local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
 local Builder = require "nvim-tree.renderer.builder"
 
-local M = {
-  last_hl_args = {},
-}
+local M = {}
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
+
+local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 
 ---@param bufnr number
 ---@param lines string[]
@@ -34,11 +33,11 @@ function M.render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  vim.api.nvim_buf_clear_namespace(bufnr, appearance.NS_ID, 0, -1)
-  for _, data in ipairs(hl or M.last_hl_args) do
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
+  for _, data in ipairs(hl) do
     if type(data[1]) == "table" then
       for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, appearance.NS_ID, group, data[2], data[3], data[4])
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
       end
     end
   end
@@ -58,8 +57,6 @@ function M.draw()
   local builder = Builder:new():build()
 
   _draw(bufnr, builder.lines, builder.hl_args, builder.signs)
-
-  M.last_hl_args = builder.hl_args
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr(), cursor)

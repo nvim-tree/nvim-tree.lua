@@ -162,11 +162,12 @@ local function setup_autocommands(opts)
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
-  -- reset and draw highlights when colorscheme is changed
+  -- reset and draw (highlights) when colorscheme is changed
   create_nvim_tree_autocmd("ColorScheme", {
     callback = function()
       appearance.setup()
-      renderer.render_hl(view.get_bufnr())
+      view.reset_winhl()
+      renderer.draw()
     end,
   })
 
