@@ -1,4 +1,3 @@
-local appearance = require "nvim-tree.appearance"
 local core = require "nvim-tree.core"
 local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
@@ -46,7 +45,7 @@ local M = {
 ---@field private root_cwd string absolute path
 ---@field private index number
 ---@field private depth number
----@field private combined_groups string[] combined group names
+---@field private combined_groups table<string, boolean> combined group names
 ---@field private markers boolean[] indent markers
 local Builder = {}
 
@@ -246,22 +245,17 @@ function Builder:build_signs(node)
   end
 end
 
----Combined group name less than the 200 byte limit of highlight group names
----@private
----@param groups string[] highlight group names
----@return string name "NvimTreeCombinedHL" .. sha256
-function Builder:combined_group_name(groups)
-  return string.format("NvimTreeCombinedHL%s", vim.fn.sha256(table.concat(groups)))
-end
-
 ---Create a highlight group for groups with later groups overriding previous.
+---Combined group name is less than the 200 byte limit of highlight group names
 ---@private
 ---@param groups string[] highlight group names
+---@return string group_name "NvimTreeCombinedHL" .. sha256
 function Builder:create_combined_group(groups)
-  local combined_name = self:combined_group_name(groups)
+  local combined_name = string.format("NvimTreeCombinedHL%s", vim.fn.sha256(table.concat(groups)))
 
   -- only create if necessary
-  if not vim.tbl_contains(self.combined_groups, combined_name) then
+  if not self.combined_groups[combined_name] then
+    self.combined_groups[combined_name] = true
     local combined_hl = {}
 
     -- build the highlight, overriding values
@@ -270,11 +264,13 @@ function Builder:create_combined_group(groups)
       combined_hl = vim.tbl_extend("force", combined_hl, hl)
     end
 
-    -- highlight directly in the namespace
-    vim.api.nvim_set_hl(appearance.NS_ID, combined_name, combined_hl)
+    -- add highlights to the global namespace
+    vim.api.nvim_set_hl(0, combined_name, combined_hl)
 
     table.insert(self.combined_groups, combined_name)
   end
+
+  return combined_name
 end
 
 ---Calculate highlight group for icon and name. A combined highlight group will be created
@@ -301,16 +297,14 @@ function Builder:add_highlights(node)
 
   -- one or many icon groups
   if #icon_groups > 1 then
-    icon_hl_group = self:combined_group_name(icon_groups)
-    self:create_combined_group(icon_groups)
+    icon_hl_group = self:create_combined_group(icon_groups)
   else
     icon_hl_group = icon_groups[1]
   end
 
   -- one or many name groups
   if #name_groups > 1 then
-    name_hl_group = self:combined_group_name(name_groups)
-    self:create_combined_group(name_groups)
+    name_hl_group = self:create_combined_group(name_groups)
   else
     name_hl_group = name_groups[1]
   end
