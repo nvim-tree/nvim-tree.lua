@@ -295,16 +295,24 @@ function Builder:add_highlights(node)
     table.insert(name_groups, name)
   end
 
-  -- one or many icon groups
+  -- one or many icon groups; <= 0.8 always uses highest due to lack of a practical nvim_get_hl equivalent
   if #icon_groups > 1 then
-    icon_hl_group = self:create_combined_group(icon_groups)
+    if vim.fn.has "nvim-0.9" == 1 then
+      icon_hl_group = self:create_combined_group(icon_groups)
+    else
+      icon_hl_group = icon_groups[#icon_groups]
+    end
   else
     icon_hl_group = icon_groups[1]
   end
 
-  -- one or many name groups
+  -- one or many name groups; <= 0.8 always uses highest due to lack of a practical nvim_get_hl equivalent
   if #name_groups > 1 then
-    name_hl_group = self:create_combined_group(name_groups)
+    if vim.fn.has "nvim-0.9" == 1 then
+      name_hl_group = self:create_combined_group(name_groups)
+    else
+      name_hl_group = name_groups[#name_groups]
+    end
   else
     name_hl_group = name_groups[1]
   end
