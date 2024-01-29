@@ -32,10 +32,10 @@ local DEFAULT_LINKS = {
   NvimTreeStatusLineNC = "StatusLineNC",
 
   -- File Text
-  NvimTreeExecFile = "ModeMsg",
-  NvimTreeImageFile = "ModeMsg",
-  NvimTreeSpecialFile = "ModeMsg",
-  NvimTreeSymlink = "ModeMsg",
+  NvimTreeExecFile = "SpellCap",
+  NvimTreeImageFile = "SpellCap",
+  NvimTreeSpecialFile = "SpellCap",
+  NvimTreeSymlink = "SpellCap",
 
   -- Folder Text
   NvimTreeRootFolder = "Title",
@@ -66,7 +66,7 @@ local DEFAULT_LINKS = {
   NvimTreeCopiedHL = "SpellRare",
 
   -- Bookmark
-  NvimTreeBookmarkIcon = "SpecialKey",
+  NvimTreeBookmarkIcon = "NvimTreeFolderIcon",
   NvimTreeBookmarkHL = "SpellLocal",
 
   -- Modified

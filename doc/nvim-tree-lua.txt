@@ -2250,7 +2250,7 @@ as per |:highlight|
 The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
 Only present attributes will clobber each other.
 In this example a modified, opened file will have magenta text, with cyan
-squigglies: >
+undercurl: >
     :hi NvimTreeOpenedHL       guifg=magenta guisp=red  gui=underline
     :hi NvimTreeModifiedFileHL               guisp=cyan gui=undercurl
 <
@@ -2393,16 +2393,16 @@ Diagnostics Folder Highlight: >
 - `highlight_xxx` is additive instead of overwriting. See
   |nvim-tree-opts-renderer| for precedence.
 
-2024-01-22: disambiguate highlights sharing groups:
+2024-01-29: disambiguate default highlights sharing groups:
 
 - NvimTreeRootFolder   PreProc   -> Title
 - NvimTreeModified*    Constant  -> Type
 - NvimTreeOpenedHL     Constant  -> Special
-- NvimTreeBookmarkIcon Constant  -> SpecialKey
-- NvimTreeExecFile     Constant  -> ModeMsg
-- NvimTreeImageFile    PreProc   -> ModeMsg
-- NvimTreeSpecialFile  PreProc   -> ModeMsg
-- NvimTreeSymlink      Statement -> ModeMsg
+- NvimTreeBookmarkIcon Constant  -> NvimTreeFolderIcon
+- NvimTreeExecFile     Constant  -> SpellCap
+- NvimTreeImageFile    PreProc   -> SpellCap
+- NvimTreeSpecialFile  PreProc   -> SpellCap
+- NvimTreeSymlink      Statement -> SpellCap
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
