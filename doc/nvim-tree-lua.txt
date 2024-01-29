@@ -793,6 +793,7 @@ Use nvim-tree in a floating window.
 
 Highlight precedence, additive:
   git < opened < modified < bookmarked < diagnostics < copied < cut
+Neovim <= 0.8 will only show the highest.
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
