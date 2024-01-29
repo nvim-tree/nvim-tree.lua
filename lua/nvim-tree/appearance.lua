@@ -1,7 +1,4 @@
-local M = {
-  -- namespace for all tree window highlights
-  NS_ID = vim.api.nvim_create_namespace "nvim_tree",
-}
+local M = {}
 
 -- directly defined groups, please keep these to an absolute minimum
 local DEFAULT_DEFS = {
@@ -32,14 +29,13 @@ local DEFAULT_LINKS = {
   NvimTreeStatusLineNC = "StatusLineNC",
 
   -- File Text
-  NvimTreeExecFile = "Constant",
-  NvimTreeImageFile = "PreProc",
-  NvimTreeOpenedFile = "Constant",
-  NvimTreeSpecialFile = "PreProc",
-  NvimTreeSymlink = "Statement",
+  NvimTreeExecFile = "SpellCap",
+  NvimTreeImageFile = "SpellCap",
+  NvimTreeSpecialFile = "SpellCap",
+  NvimTreeSymlink = "SpellCap",
 
   -- Folder Text
-  NvimTreeRootFolder = "PreProc",
+  NvimTreeRootFolder = "Title",
   NvimTreeFolderName = "Directory",
   NvimTreeEmptyFolderName = "Directory",
   NvimTreeOpenedFolderName = "Directory",
@@ -48,7 +44,6 @@ local DEFAULT_LINKS = {
   -- File Icons
   NvimTreeFileIcon = "NvimTreeNormal",
   NvimTreeSymlinkIcon = "NvimTreeNormal",
-  NvimTreeOpenedFileIcon = "NvimTreeOpenedFile",
 
   -- Folder Icons
   NvimTreeOpenedFolderIcon = "NvimTreeFolderIcon",
@@ -57,7 +52,7 @@ local DEFAULT_LINKS = {
   NvimTreeFolderArrowOpen = "NvimTreeIndentMarker",
 
   -- Indent
-  NvimTreeIndentMarker = "NvimTreeFileIcon",
+  NvimTreeIndentMarker = "NvimTreeFolderIcon",
 
   -- LiveFilter
   NvimTreeLiveFilterPrefix = "PreProc",
@@ -68,16 +63,16 @@ local DEFAULT_LINKS = {
   NvimTreeCopiedHL = "SpellRare",
 
   -- Bookmark
-  NvimTreeBookmarkIcon = "Constant",
+  NvimTreeBookmarkIcon = "NvimTreeFolderIcon",
   NvimTreeBookmarkHL = "SpellLocal",
 
   -- Modified
-  NvimTreeModifiedIcon = "Constant",
+  NvimTreeModifiedIcon = "Type",
   NvimTreeModifiedFileHL = "NvimTreeModifiedIcon",
   NvimTreeModifiedFolderHL = "NvimTreeModifiedFileHL",
 
   -- Opened
-  NvimTreeOpenedHL = "Constant",
+  NvimTreeOpenedHL = "Special",
 
   -- Git Icon
   NvimTreeGitDeletedIcon = "Statement",
@@ -123,21 +118,6 @@ local DEFAULT_LINKS = {
   NvimTreeDiagnosticWarnFolderHL = "NvimTreeDiagnosticWarnFileHL",
   NvimTreeDiagnosticInfoFolderHL = "NvimTreeDiagnosticInfoFileHL",
   NvimTreeDiagnosticHintFolderHL = "NvimTreeDiagnosticHintFileHL",
-}
-
--- namespace standard links
-local NS_LINKS = {
-  EndOfBuffer = "NvimTreeEndOfBuffer",
-  CursorLine = "NvimTreeCursorLine",
-  CursorLineNr = "NvimTreeCursorLineNr",
-  LineNr = "NvimTreeLineNr",
-  WinSeparator = "NvimTreeWinSeparator",
-  StatusLine = "NvimTreeStatusLine",
-  StatusLineNC = "NvimTreeStatuslineNC",
-  SignColumn = "NvimTreeSignColumn",
-  Normal = "NvimTreeNormal",
-  NormalNC = "NvimTreeNormalNC",
-  NormalFloat = "NvimTreeNormalFloat",
 }
 
 -- nvim-tree highlight groups to legacy
@@ -213,11 +193,6 @@ function M.setup()
   -- default links
   for from, to in pairs(DEFAULT_LINKS) do
     vim.api.nvim_command("hi def link " .. from .. " " .. to)
-  end
-
-  -- window standard; this doesn't appear to clear on ColorScheme however we err on the side of caution
-  for from, to in pairs(NS_LINKS) do
-    vim.api.nvim_set_hl(M.NS_ID, from, { link = to })
   end
 end
 
