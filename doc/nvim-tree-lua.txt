@@ -2284,10 +2284,10 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 File Text: >
-    NvimTreeExecFile            ModeMsg
-    NvimTreeImageFile           ModeMsg
-    NvimTreeSpecialFile         ModeMsg
-    NvimTreeSymlink             ModeMsg
+    NvimTreeExecFile            SpellCap
+    NvimTreeImageFile           SpellCap
+    NvimTreeSpecialFile         SpellCap
+    NvimTreeSymlink             SpellCap
 <
 Folder Text: >
     NvimTreeRootFolder          Title
@@ -2322,7 +2322,7 @@ Clipboard: >
     NvimTreeCutHL               SpellBad
 <
 Bookmarks: >
-    NvimTreeBookmarkIcon        SpecialKey
+    NvimTreeBookmarkIcon        NvimTreeFolderIcon
     NvimTreeBookmarkHL          SpellLocal
 <
 Modified: >
