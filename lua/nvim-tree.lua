@@ -500,6 +500,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   filters = {
     git_ignored = true,
     dotfiles = false,
+    binaries = false,
     git_clean = false,
     no_buffer = false,
     no_bookmark = false,

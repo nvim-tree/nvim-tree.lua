@@ -131,6 +131,7 @@ Api.tree.toggle_git_clean_filter = wrap(actions.tree.modifiers.toggles.git_clean
 Api.tree.toggle_no_buffer_filter = wrap(actions.tree.modifiers.toggles.no_buffer)
 Api.tree.toggle_custom_filter = wrap(actions.tree.modifiers.toggles.custom)
 Api.tree.toggle_hidden_filter = wrap(actions.tree.modifiers.toggles.dotfiles)
+Api.tree.toggle_binaries_filter = wrap(actions.tree.modifiers.toggles.binaries)
 Api.tree.toggle_no_bookmark_filter = wrap(actions.tree.modifiers.toggles.no_bookmark)
 Api.tree.toggle_help = wrap(help.toggle)
 Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)

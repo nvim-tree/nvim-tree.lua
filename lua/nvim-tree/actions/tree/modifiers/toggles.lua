@@ -41,4 +41,9 @@ function M.dotfiles()
   reload()
 end
 
+function M.binaries()
+  filters.config.filter_binaries = not filters.config.filter_binaries
+  reload()
+end
+
 return M
