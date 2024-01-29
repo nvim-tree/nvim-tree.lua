@@ -52,7 +52,7 @@ local DEFAULT_LINKS = {
   NvimTreeFolderArrowOpen = "NvimTreeIndentMarker",
 
   -- Indent
-  NvimTreeIndentMarker = "NvimTreeFileIcon",
+  NvimTreeIndentMarker = "NvimTreeFolderIcon",
 
   -- LiveFilter
   NvimTreeLiveFilterPrefix = "PreProc",
