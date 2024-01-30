@@ -166,8 +166,12 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status) or buf(path, status.bufinfo) or dotfile(path) or binary(path) or custom(path) or
-      bookmark(path, status.bookmarks)
+  return git(path, status.git_status)
+    or buf(path, status.bufinfo)
+    or dotfile(path)
+    or binary(path)
+    or custom(path)
+    or bookmark(path, status.bookmarks)
 end
 
 function M.setup(opts)
