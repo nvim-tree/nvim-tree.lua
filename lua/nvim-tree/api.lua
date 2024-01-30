@@ -175,12 +175,12 @@ end
 
 ---@param mode string
 ---@return fun(node: table)
-local function open_or_expand_or_dir_up(mode)
+local function open_or_expand_or_dir_up(mode, toggle_group)
   return function(node)
     if node.name == ".." then
       actions.root.change_dir.fn ".."
     elseif node.nodes then
-      lib.expand_or_collapse(node)
+      lib.expand_or_collapse(node, toggle_group)
     else
       edit(mode, node)
     end
@@ -195,6 +195,7 @@ Api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up "edit_no_pic
 Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
 Api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up "split")
 Api.node.open.tab = wrap_node(open_or_expand_or_dir_up "tabnew")
+Api.node.open.toggle_grouped_folders = wrap_node(open_or_expand_or_dir_up("toggle_grouped_folders", true))
 Api.node.open.preview = wrap_node(open_or_expand_or_dir_up "preview")
 Api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up "preview_no_picker")
 

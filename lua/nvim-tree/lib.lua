@@ -88,6 +88,7 @@ function M.get_last_group_node(node)
 end
 
 ---Group empty folders
+-- Recursively group nodes
 ---@param node Node
 ---@return Node[]
 function M.group_empty_folders(node)
@@ -102,7 +103,8 @@ function M.group_empty_folders(node)
   return node.nodes
 end
 
----Group empty folders
+---Ungroup empty folders
+-- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
 ---@param node Node
 function M.ungroup_empty_folders(node)
   local cur = node
@@ -125,8 +127,26 @@ function M.get_all_nodes_in_group(node)
   return nodes
 end
 
+-- If a folder is grouped and closed -> group folder and open
+-- If a folder is grouped and opened -> ungroup folder and open
+-- If a folder is ungrouped and opened -> group folder and close
+---@param head_node Node
+---@param open boolean
+---@return boolean
+local function toggle_group_folders(head_node, open)
+  local is_grouped = head_node.group_next ~= nil
+
+  if open and is_grouped then
+    M.ungroup_empty_folders(head_node)
+  elseif open then
+    M.group_empty_folders(head_node)
+  end
+  return is_grouped or not open
+end
+
 ---@param node Node
-function M.expand_or_collapse(node)
+function M.expand_or_collapse(node, toggle_group)
+  toggle_group = toggle_group or false
   if node.has_children then
     node.has_children = false
   end
@@ -135,17 +155,16 @@ function M.expand_or_collapse(node)
     core.get_explorer():expand(node)
   end
 
-  local open = M.get_last_group_node(node).open
   local head_node = utils.get_parent_of_group(node)
-  local is_grouped = head_node.group_next ~= nil
-
-  if open and is_grouped then
-    M.ungroup_empty_folders(head_node)
-  elseif open then
-    M.group_empty_folders(head_node)
+  local open = M.get_last_group_node(node).open
+  if toggle_group then
+    open = toggle_group_folders(head_node, open)
+  else
+    open = not open
   end
+
   for _, n in ipairs(M.get_all_nodes_in_group(head_node)) do
-    n.open = is_grouped or not open
+    n.open = open
   end
 
   renderer.draw()
