@@ -29,10 +29,10 @@ local DEFAULT_LINKS = {
   NvimTreeStatusLineNC = "StatusLineNC",
 
   -- File Text
-  NvimTreeExecFile = "SpellCap",
-  NvimTreeImageFile = "SpellCap",
-  NvimTreeSpecialFile = "SpellCap",
-  NvimTreeSymlink = "SpellCap",
+  NvimTreeExecFile = "Title",
+  NvimTreeImageFile = "NvimTreeNormal",
+  NvimTreeSpecialFile = "NvimTreeNormal",
+  NvimTreeSymlink = "NvimTreeSpecialFile",
 
   -- Folder Text
   NvimTreeRootFolder = "Title",
@@ -178,7 +178,7 @@ function M.setup()
   for from, to in pairs(LEGACY_LINKS) do
     local hl_from
     local hl_to
-    if vim.fn.has "nvim-0.9" == 1 then
+    if vim.fn.has("nvim-0.9") == 1 then
       hl_from = vim.api.nvim_get_hl(0, { name = from })
       hl_to = vim.api.nvim_get_hl(0, { name = to })
     else

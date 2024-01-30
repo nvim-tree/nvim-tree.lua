@@ -2285,10 +2285,10 @@ Standard: >
     NvimTreeStatusLineNC        StatusLineNC
 <
 File Text: >
-    NvimTreeExecFile            SpellCap
-    NvimTreeImageFile           SpellCap
-    NvimTreeSpecialFile         SpellCap
-    NvimTreeSymlink             SpellCap
+    NvimTreeExecFile            Title
+    NvimTreeImageFile           NvimTreeNormal
+    NvimTreeSpecialFile         NvimTreeNormal
+    NvimTreeSymlink             NvimTreeSpecialFile
 <
 Folder Text: >
     NvimTreeRootFolder          Title
@@ -2381,6 +2381,12 @@ Diagnostics Folder Highlight: >
 <
 ==============================================================================
  8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
+2024-01-? Remove forced Spelling highlight by disabling SpellCap hl group
+
+- NvimTreeExecFile     SpellCap -> Title
+- NvimTreeImageFile    SpellCap -> NvimTreeNormal
+- NvimTreeSpecialFile  SpellCap -> NvimTreeNormal
+- NvimTreeSymlink      SpellCap -> NvimTreeSpecialFile
 
 2024-01-20: significant highlighting changes, some breaking:
 
