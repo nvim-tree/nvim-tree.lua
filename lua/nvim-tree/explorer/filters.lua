@@ -70,15 +70,6 @@ local function dotfile(path)
 end
 
 ---@param path string
----@return boolean
-local function binary(path)
-  if not M.config.filter_binaries then
-    return false
-  end
-  return vim.fn.executable(path) == 1
-end
-
----@param path string
 ---@param bookmarks table<string, boolean> absolute paths bookmarked
 local function bookmark(path, bookmarks)
   return M.config.filter_no_bookmark and not bookmarks[path]
@@ -151,19 +142,13 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status)
-      or buf(path, status.bufinfo)
-      or dotfile(path)
-      or binary(path)
-      or custom(path)
-      or bookmark(path, status.bookmarks)
+  return git(path, status.git_status) or buf(path, status.bufinfo) or dotfile(path) or custom(path) or bookmark(path, status.bookmarks)
 end
 
 function M.setup(opts)
   M.config = {
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
-    filter_binaries = opts.filters.binaries,
     filter_git_ignored = opts.filters.git_ignored,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
