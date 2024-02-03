@@ -75,22 +75,7 @@ local function binary(path)
   if not M.config.filter_binaries then
     return false
   end
-
-  -- 4-byte 'magic number' for ELF
-  local magic_number = string.char(0x7f) .. "ELF"
-
-  local fd = vim.loop.fs_open(path, "r", 438)
-  if not fd then
-    return false
-  end
-  local stat = vim.loop.fs_fstat(fd)
-  if not stat then
-    return false
-  end
-  local data = vim.loop.fs_read(fd, 4, 0)
-  vim.loop.fs_close(fd)
-
-  return data == magic_number
+  return vim.fn.executable(path) == 1
 end
 
 ---@param path string
@@ -167,11 +152,11 @@ function M.should_filter(path, status)
   end
 
   return git(path, status.git_status)
-    or buf(path, status.bufinfo)
-    or dotfile(path)
-    or binary(path)
-    or custom(path)
-    or bookmark(path, status.bookmarks)
+      or buf(path, status.bufinfo)
+      or dotfile(path)
+      or binary(path)
+      or custom(path)
+      or bookmark(path, status.bookmarks)
 end
 
 function M.setup(opts)
