@@ -127,21 +127,16 @@ function M.get_all_nodes_in_group(node)
   return nodes
 end
 
--- If a folder is grouped and closed -> group folder and open
--- If a folder is grouped and opened -> ungroup folder and open
--- If a folder is ungrouped and opened -> group folder and close
+-- Toggle group empty folders
 ---@param head_node Node
----@param open boolean
----@return boolean
-local function toggle_group_folders(head_node, open)
+local function toggle_group_folders(head_node)
   local is_grouped = head_node.group_next ~= nil
 
-  if open and is_grouped then
+  if is_grouped then
     M.ungroup_empty_folders(head_node)
-  elseif open then
+  else
     M.group_empty_folders(head_node)
   end
-  return is_grouped or not open
 end
 
 ---@param node Node
@@ -156,15 +151,19 @@ function M.expand_or_collapse(node, toggle_group)
   end
 
   local head_node = utils.get_parent_of_group(node)
-  local open = M.get_last_group_node(node).open
   if toggle_group then
-    open = toggle_group_folders(head_node, open)
-  else
-    open = not open
+    toggle_group_folders(head_node)
   end
 
+  local open = M.get_last_group_node(node).open
+  local next_open
+  if toggle_group then
+    next_open = open
+  else
+    next_open = not open
+  end
   for _, n in ipairs(M.get_all_nodes_in_group(head_node)) do
-    n.open = open
+    n.open = next_open
   end
 
   renderer.draw()
