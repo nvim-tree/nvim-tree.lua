@@ -623,6 +623,9 @@ local ACCEPTED_TYPES = {
     group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
   },
+  filters = {
+    custom = { { "string", "function" } },
+  },
   actions = {
     open_file = {
       window_picker = {
