@@ -147,6 +147,10 @@ function M.should_filter(path, status)
 end
 
 function M.setup(opts)
+  if type(opts.filters.custom) == "function" then
+    opts.filters.custom = { opts.filters.custom }
+  end
+
   M.config = {
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
