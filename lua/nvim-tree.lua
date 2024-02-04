@@ -624,7 +624,7 @@ local ACCEPTED_TYPES = {
     root_folder_label = { "function", "string", "boolean" },
   },
   filters = {
-    custom = { { "string", "function" }, "function" },
+    custom = { "table", "function" },
   },
   actions = {
     open_file = {
