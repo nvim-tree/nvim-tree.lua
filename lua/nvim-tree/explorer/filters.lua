@@ -83,12 +83,13 @@ local function custom(path)
   end
 
   local basename = utils.path_basename(path)
+  local node = utils.get_node_from_path(path)
 
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
     if type(pat) == "function" then
-      if pat(path) then
+      if pat(path, node) then
         return true
       end
     else
