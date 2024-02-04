@@ -1,123 +1,122 @@
 local M = {}
 
--- directly defined groups, please keep these to an absolute minimum
-local DEFAULT_DEFS = {
-
-  NvimTreeFolderIcon = "guifg=#8094b4 ctermfg=Blue",
-  NvimTreeWindowPicker = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan",
-}
-
--- nvim-tree default highlight group links, please attempt to keep in order with help
-local DEFAULT_LINKS = {
+-- All highlight groups: linked or directly defined.
+-- Please add new groups to help and preserve order.
+-- Please avoid directly defined groups to preserve accessibility for TUI.
+local HIGHLIGHT_GROUPS = {
 
   -- Standard
-  NvimTreeNormal = "Normal",
-  NvimTreeNormalFloat = "NormalFloat",
-  NvimTreeNormalNC = "NvimTreeNormal",
+  { group = "NvimTreeNormal", link = "Normal" },
+  { group = "NvimTreeNormalFloat", link = "NormalFloat" },
+  { group = "NvimTreeNormalNC", link = "NvimTreeNormal" },
 
-  NvimTreeLineNr = "LineNr",
-  NvimTreeWinSeparator = "WinSeparator",
-  NvimTreeEndOfBuffer = "EndOfBuffer",
-  NvimTreePopup = "Normal",
-  NvimTreeSignColumn = "NvimTreeNormal",
+  { group = "NvimTreeLineNr", link = "LineNr" },
+  { group = "NvimTreeWinSeparator", link = "WinSeparator" },
+  { group = "NvimTreeEndOfBuffer", link = "EndOfBuffer" },
+  { group = "NvimTreePopup", link = "Normal" },
+  { group = "NvimTreeSignColumn", link = "NvimTreeNormal" },
 
-  NvimTreeCursorColumn = "CursorColumn",
-  NvimTreeCursorLine = "CursorLine",
-  NvimTreeCursorLineNr = "CursorLineNr",
+  { group = "NvimTreeCursorColumn", link = "CursorColumn" },
+  { group = "NvimTreeCursorLine", link = "CursorLine" },
+  { group = "NvimTreeCursorLineNr", link = "CursorLineNr" },
 
-  NvimTreeStatusLine = "StatusLine",
-  NvimTreeStatusLineNC = "StatusLineNC",
+  { group = "NvimTreeStatusLine", link = "StatusLine" },
+  { group = "NvimTreeStatusLineNC", link = "StatusLineNC" },
 
   -- File Text
-  NvimTreeExecFile = "SpellCap",
-  NvimTreeImageFile = "SpellCap",
-  NvimTreeSpecialFile = "SpellCap",
-  NvimTreeSymlink = "SpellCap",
+  { group = "NvimTreeExecFile", link = "SpellCap" },
+  { group = "NvimTreeImageFile", link = "SpellCap" },
+  { group = "NvimTreeSpecialFile", link = "SpellCap" },
+  { group = "NvimTreeSymlink", link = "SpellCap" },
 
   -- Folder Text
-  NvimTreeRootFolder = "Title",
-  NvimTreeFolderName = "Directory",
-  NvimTreeEmptyFolderName = "Directory",
-  NvimTreeOpenedFolderName = "Directory",
-  NvimTreeSymlinkFolderName = "Directory",
+  { group = "NvimTreeRootFolder", link = "Title" },
+  { group = "NvimTreeFolderName", link = "Directory" },
+  { group = "NvimTreeEmptyFolderName", link = "Directory" },
+  { group = "NvimTreeOpenedFolderName", link = "Directory" },
+  { group = "NvimTreeSymlinkFolderName", link = "Directory" },
 
   -- File Icons
-  NvimTreeFileIcon = "NvimTreeNormal",
-  NvimTreeSymlinkIcon = "NvimTreeNormal",
+  { group = "NvimTreeFileIcon", link = "NvimTreeNormal" },
+  { group = "NvimTreeSymlinkIcon", link = "NvimTreeNormal" },
 
   -- Folder Icons
-  NvimTreeOpenedFolderIcon = "NvimTreeFolderIcon",
-  NvimTreeClosedFolderIcon = "NvimTreeFolderIcon",
-  NvimTreeFolderArrowClosed = "NvimTreeIndentMarker",
-  NvimTreeFolderArrowOpen = "NvimTreeIndentMarker",
+  { group = "NvimTreeFolderIcon", def = "guifg=#8094b4 ctermfg=Blue" },
+  { group = "NvimTreeOpenedFolderIcon", link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeClosedFolderIcon", link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeFolderArrowClosed", link = "NvimTreeIndentMarker" },
+  { group = "NvimTreeFolderArrowOpen", link = "NvimTreeIndentMarker" },
 
   -- Indent
-  NvimTreeIndentMarker = "NvimTreeFolderIcon",
+  { group = "NvimTreeIndentMarker", link = "NvimTreeFolderIcon" },
+
+  -- Picker
+  { group = "NvimTreeWindowPicker", def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan" },
 
   -- LiveFilter
-  NvimTreeLiveFilterPrefix = "PreProc",
-  NvimTreeLiveFilterValue = "ModeMsg",
+  { group = "NvimTreeLiveFilterPrefix", link = "PreProc" },
+  { group = "NvimTreeLiveFilterValue", link = "ModeMsg" },
 
   -- Clipboard
-  NvimTreeCutHL = "SpellBad",
-  NvimTreeCopiedHL = "SpellRare",
+  { group = "NvimTreeCutHL", link = "SpellBad" },
+  { group = "NvimTreeCopiedHL", link = "SpellRare" },
 
   -- Bookmark
-  NvimTreeBookmarkIcon = "NvimTreeFolderIcon",
-  NvimTreeBookmarkHL = "SpellLocal",
+  { group = "NvimTreeBookmarkIcon", link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeBookmarkHL", link = "SpellLocal" },
 
   -- Modified
-  NvimTreeModifiedIcon = "Type",
-  NvimTreeModifiedFileHL = "NvimTreeModifiedIcon",
-  NvimTreeModifiedFolderHL = "NvimTreeModifiedFileHL",
+  { group = "NvimTreeModifiedIcon", link = "Type" },
+  { group = "NvimTreeModifiedFileHL", link = "NvimTreeModifiedIcon" },
+  { group = "NvimTreeModifiedFolderHL", link = "NvimTreeModifiedFileHL" },
 
   -- Opened
-  NvimTreeOpenedHL = "Special",
+  { group = "NvimTreeOpenedHL", link = "Special" },
 
   -- Git Icon
-  NvimTreeGitDeletedIcon = "Statement",
-  NvimTreeGitDirtyIcon = "Statement",
-  NvimTreeGitIgnoredIcon = "Comment",
-  NvimTreeGitMergeIcon = "Constant",
-  NvimTreeGitNewIcon = "PreProc",
-  NvimTreeGitRenamedIcon = "PreProc",
-  NvimTreeGitStagedIcon = "Constant",
+  { group = "NvimTreeGitDeletedIcon", link = "Statement" },
+  { group = "NvimTreeGitDirtyIcon", link = "Statement" },
+  { group = "NvimTreeGitIgnoredIcon", link = "Comment" },
+  { group = "NvimTreeGitMergeIcon", link = "Constant" },
+  { group = "NvimTreeGitNewIcon", link = "PreProc" },
+  { group = "NvimTreeGitRenamedIcon", link = "PreProc" },
+  { group = "NvimTreeGitStagedIcon", link = "Constant" },
 
   -- Git File Highlight
-  NvimTreeGitFileDeletedHL = "NvimTreeGitDeletedIcon",
-  NvimTreeGitFileDirtyHL = "NvimTreeGitDirtyIcon",
-  NvimTreeGitFileIgnoredHL = "NvimTreeGitIgnoredIcon",
-  NvimTreeGitFileMergeHL = "NvimTreeGitMergeIcon",
-  NvimTreeGitFileNewHL = "NvimTreeGitNewIcon",
-  NvimTreeGitFileRenamedHL = "NvimTreeGitRenamedIcon",
-  NvimTreeGitFileStagedHL = "NvimTreeGitStagedIcon",
+  { group = "NvimTreeGitFileDeletedHL", link = "NvimTreeGitDeletedIcon" },
+  { group = "NvimTreeGitFileDirtyHL", link = "NvimTreeGitDirtyIcon" },
+  { group = "NvimTreeGitFileIgnoredHL", link = "NvimTreeGitIgnoredIcon" },
+  { group = "NvimTreeGitFileMergeHL", link = "NvimTreeGitMergeIcon" },
+  { group = "NvimTreeGitFileNewHL", link = "NvimTreeGitNewIcon" },
+  { group = "NvimTreeGitFileRenamedHL", link = "NvimTreeGitRenamedIcon" },
+  { group = "NvimTreeGitFileStagedHL", link = "NvimTreeGitStagedIcon" },
 
   -- Git Folder Highlight
-  NvimTreeGitFolderDeletedHL = "NvimTreeGitFileDeletedHL",
-  NvimTreeGitFolderDirtyHL = "NvimTreeGitFileDirtyHL",
-  NvimTreeGitFolderIgnoredHL = "NvimTreeGitFileIgnoredHL",
-  NvimTreeGitFolderMergeHL = "NvimTreeGitFileMergeHL",
-  NvimTreeGitFolderNewHL = "NvimTreeGitFileNewHL",
-  NvimTreeGitFolderRenamedHL = "NvimTreeGitFileRenamedHL",
-  NvimTreeGitFolderStagedHL = "NvimTreeGitFileStagedHL",
+  { group = "NvimTreeGitFolderDeletedHL", link = "NvimTreeGitFileDeletedHL" },
+  { group = "NvimTreeGitFolderDirtyHL", link = "NvimTreeGitFileDirtyHL" },
+  { group = "NvimTreeGitFolderIgnoredHL", link = "NvimTreeGitFileIgnoredHL" },
+  { group = "NvimTreeGitFolderMergeHL", link = "NvimTreeGitFileMergeHL" },
+  { group = "NvimTreeGitFolderNewHL", link = "NvimTreeGitFileNewHL" },
+  { group = "NvimTreeGitFolderRenamedHL", link = "NvimTreeGitFileRenamedHL" },
+  { group = "NvimTreeGitFolderStagedHL", link = "NvimTreeGitFileStagedHL" },
 
   -- Diagnostics Icon
-  NvimTreeDiagnosticErrorIcon = "DiagnosticError",
-  NvimTreeDiagnosticWarnIcon = "DiagnosticWarn",
-  NvimTreeDiagnosticInfoIcon = "DiagnosticInfo",
-  NvimTreeDiagnosticHintIcon = "DiagnosticHint",
+  { group = "NvimTreeDiagnosticErrorIcon", link = "DiagnosticError" },
+  { group = "NvimTreeDiagnosticWarnIcon", link = "DiagnosticWarn" },
+  { group = "NvimTreeDiagnosticInfoIcon", link = "DiagnosticInfo" },
+  { group = "NvimTreeDiagnosticHintIcon", link = "DiagnosticHint" },
 
   -- Diagnostics File Highlight
-  NvimTreeDiagnosticErrorFileHL = "DiagnosticUnderlineError",
-  NvimTreeDiagnosticWarnFileHL = "DiagnosticUnderlineWarn",
-  NvimTreeDiagnosticInfoFileHL = "DiagnosticUnderlineInfo",
-  NvimTreeDiagnosticHintFileHL = "DiagnosticUnderlineHint",
+  { group = "NvimTreeDiagnosticErrorFileHL", link = "DiagnosticUnderlineError" },
+  { group = "NvimTreeDiagnosticWarnFileHL", link = "DiagnosticUnderlineWarn" },
+  { group = "NvimTreeDiagnosticInfoFileHL", link = "DiagnosticUnderlineInfo" },
+  { group = "NvimTreeDiagnosticHintFileHL", link = "DiagnosticUnderlineHint" },
 
   -- Diagnostics Folder Highlight
-  NvimTreeDiagnosticErrorFolderHL = "NvimTreeDiagnosticErrorFileHL",
-  NvimTreeDiagnosticWarnFolderHL = "NvimTreeDiagnosticWarnFileHL",
-  NvimTreeDiagnosticInfoFolderHL = "NvimTreeDiagnosticInfoFileHL",
-  NvimTreeDiagnosticHintFolderHL = "NvimTreeDiagnosticHintFileHL",
+  { group = "NvimTreeDiagnosticErrorFolderHL", link = "NvimTreeDiagnosticErrorFileHL" },
+  { group = "NvimTreeDiagnosticWarnFolderHL", link = "NvimTreeDiagnosticWarnFileHL" },
+  { group = "NvimTreeDiagnosticInfoFolderHL", link = "NvimTreeDiagnosticInfoFileHL" },
+  { group = "NvimTreeDiagnosticHintFolderHL", link = "NvimTreeDiagnosticHintFileHL" },
 }
 
 -- nvim-tree highlight groups to legacy
@@ -168,10 +167,87 @@ local LEGACY_LINKS = {
   NvimTreeDiagnosticHintFolderHL = "NvimTreeLspDiagnosticsHintFolderText",
 }
 
+---@class HighlightDisplay for :NvimTreeHiTest
+---@field group string nvim-tree highlight group name
+---@field links string link chain to a concretely defined group
+---@field def string :hi concrete definition after following any links
+local HighlightDisplay = {}
+
+---@param group string nvim-tree highlight group
+---@return HighlightDisplay
+function HighlightDisplay:new(group)
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+
+  o.group = group
+  local concrete = o.group
+
+  -- maybe follow links
+  local links = {}
+  local link = vim.api.nvim_get_hl(0, { name = o.group }).link
+  while link do
+    table.insert(links, link)
+    concrete = link
+    link = vim.api.nvim_get_hl(0, { name = link }).link
+  end
+  o.links = table.concat(links, " ")
+
+  -- concrete definition
+  local ok, res = pcall(vim.api.nvim_cmd, { cmd = "highlight", args = { concrete } }, { output = true })
+  if ok and type(res) == "string" then
+    o.def = res:gsub(".*xxx *", "")
+  else
+    o.def = ""
+  end
+
+  return o
+end
+
+function HighlightDisplay:render(bufnr, fmt, l)
+  local text = string.format(fmt, self.group, self.links, self.def)
+
+  vim.api.nvim_buf_set_lines(bufnr, l, -1, true, { text })
+  vim.api.nvim_buf_add_highlight(bufnr, -1, self.group, l, 0, #self.group)
+end
+
+---Run a test similar to :so $VIMRUNTIME/syntax/hitest.vim
+---Display all nvim-tree highlight groups, their link chain and actual definition
+function M.hi_test()
+  local displays = {}
+  local max_group_len = 0
+  local max_links_len = 0
+
+  -- build all highlight groups, name only
+  for _, highlight_group in ipairs(HIGHLIGHT_GROUPS) do
+    local display = HighlightDisplay:new(highlight_group.group)
+    table.insert(displays, display)
+    max_group_len = math.max(max_group_len, #display.group)
+    max_links_len = math.max(max_links_len, #display.links)
+  end
+
+  -- create a buffer
+  local bufnr = vim.api.nvim_create_buf(false, true)
+
+  -- render and highlight
+  local l = 0
+  local fmt = string.format("%%-%d.%ds %%-%d.%ds %%s", max_group_len, max_group_len, max_links_len, max_links_len)
+  for _, display in ipairs(displays) do
+    display:render(bufnr, fmt, l)
+    l = l + 1
+  end
+
+  -- finalise and focus the buffer
+  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+  vim.cmd.buffer(bufnr)
+end
+
 function M.setup()
   -- non-linked
-  for k, d in pairs(DEFAULT_DEFS) do
-    vim.api.nvim_command("hi def " .. k .. " " .. d)
+  for _, g in ipairs(HIGHLIGHT_GROUPS) do
+    if g.def then
+      vim.api.nvim_command("hi def " .. g.group .. " " .. g.def)
+    end
   end
 
   -- hard link override when legacy only is present
@@ -191,8 +267,10 @@ function M.setup()
   end
 
   -- default links
-  for from, to in pairs(DEFAULT_LINKS) do
-    vim.api.nvim_command("hi def link " .. from .. " " .. to)
+  for _, g in ipairs(HIGHLIGHT_GROUPS) do
+    if g.link then
+      vim.api.nvim_command("hi def link " .. g.group .. " " .. g.link)
+    end
   end
 end
 
