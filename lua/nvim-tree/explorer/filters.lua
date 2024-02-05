@@ -164,9 +164,8 @@ function M.setup(opts)
   M.exclude_list = opts.filters.exclude
 
   local custom_filter = opts.filters.custom
-
   if type(custom_filter) == "function" then
-    M.config.filter_custom = custom_filter
+    M.ignore_list[custom_filter] = true
   else
     if custom_filter and #custom_filter > 0 then
       for _, filter_name in pairs(custom_filter) do
