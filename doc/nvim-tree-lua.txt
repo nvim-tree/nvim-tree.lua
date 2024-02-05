@@ -181,6 +181,7 @@ Show the mappings:  `g?`
 `I`               Toggle Filter: Git Ignore  |nvim-tree-api.tree.toggle_gitignore_filter()|
 `J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
 `K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
+`L`               Toggle Group Empty         |nvim-tree-api.node.open.toggle_group_empty()|
 `M`               Toggle Filter: No Bookmark |nvim-tree-api.tree.toggle_no_bookmark_filter()|
 `m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
 `o`               Open                       |nvim-tree-api.node.open.edit()|
@@ -1848,6 +1849,12 @@ node.open.vertical()                      *nvim-tree-api.node.open.vertical()*
 node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
     |nvim-tree-api.node.edit()|, file will be opened in a new horizontal split.
 
+                                *nvim-tree-api.node.open.toggle_group_empty()*
+node.open.toggle_group_empty()
+    Toggle |nvim-tree.renderer.group_empty| for a specific folder.
+    Does nothing on files.
+    Needs |nvim-tree.renderer.group_empty| set.
+
 node.open.drop()                              *nvim-tree-api.node.open.drop()*
     Switch to window with selected file if it exists.
     Open file otherwise.
@@ -2196,6 +2203,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'I',       api.tree.toggle_gitignore_filter,    opts('Toggle Filter: Git Ignore'))
   vim.keymap.set('n', 'J',       api.node.navigate.sibling.last,      opts('Last Sibling'))
   vim.keymap.set('n', 'K',       api.node.navigate.sibling.first,     opts('First Sibling'))
+  vim.keymap.set('n', 'L',       api.node.open.toggle_group_empty,    opts('Toggle Group Empty'))
   vim.keymap.set('n', 'M',       api.tree.toggle_no_bookmark_filter,  opts('Toggle Filter: No Bookmark'))
   vim.keymap.set('n', 'm',       api.marks.toggle,                    opts('Toggle Bookmark'))
   vim.keymap.set('n', 'o',       api.node.open.edit,                  opts('Open'))
