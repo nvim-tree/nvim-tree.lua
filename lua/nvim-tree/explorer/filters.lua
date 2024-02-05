@@ -83,13 +83,17 @@ local function custom(path)
   end
 
   local basename = utils.path_basename(path)
-  local node = utils.get_node_from_path(path)
+
+  -- single filter function
+  if type(M.config.filter_custom) == "function" then
+    return M.config.filter_custom(path)
+  end
 
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
     if type(pat) == "function" then
-      if pat(path, node) then
+      if pat(path) then
         return true
       end
     else
@@ -147,10 +151,6 @@ function M.should_filter(path, status)
 end
 
 function M.setup(opts)
-  if type(opts.filters.custom) == "function" then
-    opts.filters.custom = { opts.filters.custom }
-  end
-
   M.config = {
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
@@ -164,9 +164,14 @@ function M.setup(opts)
   M.exclude_list = opts.filters.exclude
 
   local custom_filter = opts.filters.custom
-  if custom_filter and #custom_filter > 0 then
-    for _, filter_name in pairs(custom_filter) do
-      M.ignore_list[filter_name] = true
+
+  if type(custom_filter) == "function" then
+    M.config.filter_custom = custom_filter
+  else
+    if custom_filter and #custom_filter > 0 then
+      for _, filter_name in pairs(custom_filter) do
+        M.ignore_list[filter_name] = true
+      end
     end
   end
 end
