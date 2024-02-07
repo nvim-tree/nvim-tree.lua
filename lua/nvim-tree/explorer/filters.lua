@@ -84,11 +84,6 @@ local function custom(path)
 
   local basename = utils.path_basename(path)
 
-  -- single filter function
-  if type(M.config.filter_custom) == "function" then
-    return M.config.filter_custom(path)
-  end
-
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
