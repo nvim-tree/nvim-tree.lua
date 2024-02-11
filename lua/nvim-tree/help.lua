@@ -119,13 +119,19 @@ local function compute()
   -- increase desc if lines are shorter than the header
   max_desc = math.max(max_desc, #head_lhs + #head_rhs1 - max_lhs)
 
-  -- header, not padded
-  local hl = { { "NvimTreeRootFolder", 0, 0, #head_lhs } }
+  -- header text, not padded
   local lines = {
     head_lhs .. string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs1 + 2) .. head_rhs1,
     string.rep(" ", max_desc + max_lhs - #head_rhs2 + 2) .. head_rhs2,
   }
   local width = #lines[1]
+
+  -- header highlight, assume one character keys
+  local hl = {
+    { "NvimTreeFolderName", 0, 0, #head_lhs },
+    { "NvimTreeFolderName", 0, width - 1, width },
+    { "NvimTreeFolderName", 1, width - 1, width },
+  }
 
   -- mappings, left padded 1
   local fmt = string.format(" %%-%ds %%-%ds", max_lhs, max_desc)
