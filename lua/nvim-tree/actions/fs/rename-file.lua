@@ -69,7 +69,6 @@ function M.rename(node, to)
         break
       end
       is_error = true
-      events._dispatch_folder_created(to)
     end
   end
 
