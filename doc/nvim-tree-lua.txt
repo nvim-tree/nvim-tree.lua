@@ -10,6 +10,7 @@ CONTENTS                                                           *nvim-tree*
   2.1  Quickstart: Setup                        |nvim-tree-quickstart-setup|
   2.2  Quickstart: Help                         |nvim-tree-quickstart-help|
   2.3  Quickstart: Custom Mappings              |nvim-tree-quickstart-custom-mappings|
+  2.4  Quickstart: Highlight                    |nvim-tree-quickstart-highlight|
   3. Commands                                 |nvim-tree-commands|
   4. Setup                                    |nvim-tree-setup|
   5. Opts                                     |nvim-tree-opts|
@@ -43,6 +44,7 @@ CONTENTS                                                           *nvim-tree*
   6.7  API Marks                                |nvim-tree-api.marks|
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
+  6.10 API Diagnostics                          |nvim-tree-api.diagnostics|
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
@@ -181,6 +183,7 @@ Show the mappings:  `g?`
 `I`               Toggle Filter: Git Ignore  |nvim-tree-api.tree.toggle_gitignore_filter()|
 `J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
 `K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
+`L`               Toggle Group Empty         |nvim-tree-api.node.open.toggle_group_empty()|
 `M`               Toggle Filter: No Bookmark |nvim-tree-api.tree.toggle_no_bookmark_filter()|
 `m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
 `o`               Open                       |nvim-tree-api.node.open.edit()|
@@ -229,6 +232,16 @@ via |nvim-tree.on_attach| e.g. >
     ---
   }
 <
+==============================================================================
+ 2.4 QUICKSTART: HIGHLIGHT                    *nvim-tree-quickstart-highlight*
+
+Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
+
+They can be customised before or after setup is called and will be immediately
+applied at runtime.
+
+See |nvim-tree-highlight| for details.
+
 ==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
@@ -322,6 +335,14 @@ via |nvim-tree.on_attach| e.g. >
     See |nvim-tree-api.tree.collapse_all()|
 
     Calls: `api.tree.collapse_all(true)`
+
+*:NvimTreeHiTest*
+
+    Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
+
+    See |nvim-tree-api.diagnostics.hi_test()|
+
+    Calls: `api.diagnostics.hi_test()`
 
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
@@ -793,6 +814,7 @@ Use nvim-tree in a floating window.
 
 Highlight precedence, additive:
   git < opened < modified < bookmarked < diagnostics < copied < cut
+Neovim <= 0.8 will only show the highest.
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
@@ -1240,7 +1262,7 @@ Enabling this is not useful as there is no means yet to persist bookmarks.
 Custom list of vim regex for file/directory names that will not be shown.
 Backslashes must be escaped e.g. "^\\.git". See |string-match|.
 Toggle via |nvim-tree-api.tree.toggle_custom_filter()|, default `U`
-  Type: {string}, Default: `{}`
+  Type: {string} | `function(absolute_path)`, Default: `{}`
 
 *nvim-tree.filters.exclude*
 List of directories or files to exclude from filtering: always show them.
@@ -1847,6 +1869,12 @@ node.open.vertical()                      *nvim-tree-api.node.open.vertical()*
 node.open.horizontal()                  *nvim-tree-api.node.open.horizontal()*
     |nvim-tree-api.node.edit()|, file will be opened in a new horizontal split.
 
+                                *nvim-tree-api.node.open.toggle_group_empty()*
+node.open.toggle_group_empty()
+    Toggle |nvim-tree.renderer.group_empty| for a specific folder.
+    Does nothing on files.
+    Needs |nvim-tree.renderer.group_empty| set.
+
 node.open.drop()                              *nvim-tree-api.node.open.drop()*
     Switch to window with selected file if it exists.
     Open file otherwise.
@@ -2069,7 +2097,7 @@ config.mappings.get_keymap_default()
         (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
- 6.8 API COMMANDS                                     *nvim-tree-api.commands*
+ 6.9 API COMMANDS                                     *nvim-tree-api.commands*
 
 commands.get()                                  *nvim-tree-api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
@@ -2079,6 +2107,15 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {name}    (string)
         • {command} (function)
         • {opts}    (table)
+
+==============================================================================
+ 6.10 DIAGNOSTICS                                  *nvim-tree-api.diagnostics*
+
+diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
+    Open a new buffer displaying all nvim-tree highlight groups, their link
+    chain and concrete definition.
+
+    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 ==============================================================================
  7. MAPPINGS                                              *nvim-tree-mappings*
@@ -2195,6 +2232,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', 'I',       api.tree.toggle_gitignore_filter,    opts('Toggle Filter: Git Ignore'))
   vim.keymap.set('n', 'J',       api.node.navigate.sibling.last,      opts('Last Sibling'))
   vim.keymap.set('n', 'K',       api.node.navigate.sibling.first,     opts('First Sibling'))
+  vim.keymap.set('n', 'L',       api.node.open.toggle_group_empty,    opts('Toggle Group Empty'))
   vim.keymap.set('n', 'M',       api.tree.toggle_no_bookmark_filter,  opts('Toggle Filter: No Bookmark'))
   vim.keymap.set('n', 'm',       api.marks.toggle,                    opts('Toggle Bookmark'))
   vim.keymap.set('n', 'o',       api.node.open.edit,                  opts('Open'))
@@ -2244,7 +2282,9 @@ Example |:highlight| >
 It is recommended to enable 'termguicolors' for the more pleasant 24-bit
 colours.
 
-To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
+To view the nvim-tree highlight groups run |:NvimTreeHiTest|
+
+To view all active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
 The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.

@@ -134,6 +134,13 @@ local CMDS = {
       api.tree.collapse_all(true)
     end,
   },
+  {
+    name = "NvimTreeHiTest",
+    opts = {
+      desc = "nvim-tree: highlight test",
+    },
+    command = api.diagnostics.hi_test,
+  },
 }
 
 function M.get()

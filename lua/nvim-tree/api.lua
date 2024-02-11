@@ -2,6 +2,7 @@ local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
+local appearance_diagnostics = require "nvim-tree.appearance.diagnostics"
 local events = require "nvim-tree.events"
 local help = require "nvim-tree.help"
 local live_filter = require "nvim-tree.live-filter"
@@ -39,6 +40,7 @@ local Api = {
     mappings = {},
   },
   commands = {},
+  diagnostics = {},
 }
 
 --- Do nothing when setup not called.
@@ -175,13 +177,13 @@ end
 
 ---@param mode string
 ---@return fun(node: table)
-local function open_or_expand_or_dir_up(mode)
+local function open_or_expand_or_dir_up(mode, toggle_group)
   return function(node)
     if node.name == ".." then
       actions.root.change_dir.fn ".."
     elseif node.nodes then
-      lib.expand_or_collapse(node)
-    else
+      lib.expand_or_collapse(node, toggle_group)
+    elseif not toggle_group then
       edit(mode, node)
     end
   end
@@ -195,6 +197,7 @@ Api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up "edit_no_pic
 Api.node.open.vertical = wrap_node(open_or_expand_or_dir_up "vsplit")
 Api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up "split")
 Api.node.open.tab = wrap_node(open_or_expand_or_dir_up "tabnew")
+Api.node.open.toggle_group_empty = wrap_node(open_or_expand_or_dir_up("toggle_group_empty", true))
 Api.node.open.preview = wrap_node(open_or_expand_or_dir_up "preview")
 Api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up "preview_no_picker")
 
@@ -243,6 +246,8 @@ Api.marks.navigate.select = wrap(marks_navigation.select)
 Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.config.mappings.default_on_attach = keymap.default_on_attach
+
+Api.diagnostics.hi_test = wrap(appearance_diagnostics.hi_test)
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()

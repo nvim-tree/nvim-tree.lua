@@ -4,6 +4,7 @@ local marks = require "nvim-tree.marks"
 local M = {
   ignore_list = {},
   exclude_list = {},
+  custom_function = nil,
 }
 
 ---@param path string
@@ -84,6 +85,11 @@ local function custom(path)
 
   local basename = utils.path_basename(path)
 
+  -- filter user's custom function
+  if M.custom_function and M.custom_function(path) then
+    return true
+  end
+
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
   for pat, _ in pairs(M.ignore_list) do
@@ -153,9 +159,13 @@ function M.setup(opts)
   M.exclude_list = opts.filters.exclude
 
   local custom_filter = opts.filters.custom
-  if custom_filter and #custom_filter > 0 then
-    for _, filter_name in pairs(custom_filter) do
-      M.ignore_list[filter_name] = true
+  if type(custom_filter) == "function" then
+    M.custom_function = custom_filter
+  else
+    if custom_filter and #custom_filter > 0 then
+      for _, filter_name in pairs(custom_filter) do
+        M.ignore_list[filter_name] = true
+      end
     end
   end
 end
