@@ -2,13 +2,6 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - '*'
-  push:
-    branches:
-      - master
-      - release-please--branches--master--components--nvim-tree
-
   workflow_dispatch:
 
 permissions:
@@ -59,7 +52,7 @@ jobs:
 
     strategy:
       matrix:
-        nvim_version: [ v0.9.4 ]
+        nvim_version: [ stable, nightly ]
         luals_version: [ 3.7.3 ]
 
     steps:
@@ -76,6 +69,9 @@ jobs:
           curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
 
       - name: make check
-        run: VIMRUNTIME=/home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime PATH="luals/bin:${PATH}" make check
+        env:
+          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
+          PATH: "luals/bin:${PATH}"
+        run: make check
 
       - run: make help-check
