@@ -44,7 +44,7 @@ CONTENTS                                                           *nvim-tree*
   6.7  API Marks                                |nvim-tree-api.marks|
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
-  6.10 API Appearance                           |nvim-tree-api.appearance|
+  6.10 API Diagnostics                          |nvim-tree-api.diagnostics|
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
@@ -340,9 +340,9 @@ See |nvim-tree-highlight| for details.
 
     Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
 
-    See |nvim-tree-api.appearance.hi_test()|
+    See |nvim-tree-api.diagnostics.hi_test()|
 
-    Calls: `api.appearance.hi_test()`
+    Calls: `api.diagnostics.hi_test()`
 
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
@@ -2109,9 +2109,9 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {opts}    (table)
 
 ==============================================================================
- 6.10 APPEARANCE                                    *nvim-tree-api.appearance*
+ 6.10 DIAGNOSTICS                                  *nvim-tree-api.diagnostics*
 
-appearance.hi_test()                      *nvim-tree-api.appearance.hi_test()*
+diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
     Open a new buffer displaying all nvim-tree highlight groups, their link
     chain and concrete definition.
 

@@ -2,7 +2,7 @@ local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
-local appearance = require "nvim-tree.appearance"
+local appearance_diagnostics = require "nvim-tree.appearance.diagnostics"
 local events = require "nvim-tree.events"
 local help = require "nvim-tree.help"
 local live_filter = require "nvim-tree.live-filter"
@@ -39,8 +39,8 @@ local Api = {
   config = {
     mappings = {},
   },
-  appearance = {},
   commands = {},
+  diagnostics = {},
 }
 
 --- Do nothing when setup not called.
@@ -247,7 +247,7 @@ Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.config.mappings.default_on_attach = keymap.default_on_attach
 
-Api.appearance.hi_test = wrap(appearance.hi_test)
+Api.diagnostics.hi_test = wrap(appearance_diagnostics.hi_test)
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()

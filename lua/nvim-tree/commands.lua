@@ -139,7 +139,7 @@ local CMDS = {
     opts = {
       desc = "nvim-tree: highlight test",
     },
-    command = api.appearance.hi_test,
+    command = api.diagnostics.hi_test,
   },
 }
 
