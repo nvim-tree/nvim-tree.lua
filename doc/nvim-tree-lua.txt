@@ -10,6 +10,7 @@ CONTENTS                                                           *nvim-tree*
   2.1  Quickstart: Setup                        |nvim-tree-quickstart-setup|
   2.2  Quickstart: Help                         |nvim-tree-quickstart-help|
   2.3  Quickstart: Custom Mappings              |nvim-tree-quickstart-custom-mappings|
+  2.4  Quickstart: Highlight                    |nvim-tree-quickstart-highlight|
   3. Commands                                 |nvim-tree-commands|
   4. Setup                                    |nvim-tree-setup|
   5. Opts                                     |nvim-tree-opts|
@@ -43,6 +44,7 @@ CONTENTS                                                           *nvim-tree*
   6.7  API Marks                                |nvim-tree-api.marks|
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
+  6.10 API Diagnostics                          |nvim-tree-api.diagnostics|
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
@@ -231,6 +233,16 @@ via |nvim-tree.on_attach| e.g. >
   }
 <
 ==============================================================================
+ 2.4 QUICKSTART: HIGHLIGHT                    *nvim-tree-quickstart-highlight*
+
+Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
+
+They can be customised before or after setup is called and will be immediately
+applied at runtime.
+
+See |nvim-tree-highlight| for details.
+
+==============================================================================
  3. COMMANDS                                              *nvim-tree-commands*
 
 *:NvimTreeOpen*
@@ -323,6 +335,14 @@ via |nvim-tree.on_attach| e.g. >
     See |nvim-tree-api.tree.collapse_all()|
 
     Calls: `api.tree.collapse_all(true)`
+
+*:NvimTreeHiTest*
+
+    Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
+
+    See |nvim-tree-api.diagnostics.hi_test()|
+
+    Calls: `api.diagnostics.hi_test()`
 
 ==============================================================================
  4. SETUP                                                    *nvim-tree-setup*
@@ -2077,7 +2097,7 @@ config.mappings.get_keymap_default()
         (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
- 6.8 API COMMANDS                                     *nvim-tree-api.commands*
+ 6.9 API COMMANDS                                     *nvim-tree-api.commands*
 
 commands.get()                                  *nvim-tree-api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
@@ -2087,6 +2107,15 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {name}    (string)
         • {command} (function)
         • {opts}    (table)
+
+==============================================================================
+ 6.10 DIAGNOSTICS                                  *nvim-tree-api.diagnostics*
+
+diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
+    Open a new buffer displaying all nvim-tree highlight groups, their link
+    chain and concrete definition.
+
+    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 ==============================================================================
  7. MAPPINGS                                              *nvim-tree-mappings*
@@ -2253,7 +2282,9 @@ Example |:highlight| >
 It is recommended to enable 'termguicolors' for the more pleasant 24-bit
 colours.
 
-To view the active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
+To view the nvim-tree highlight groups run |:NvimTreeHiTest|
+
+To view all active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
 The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
