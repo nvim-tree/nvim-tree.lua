@@ -487,8 +487,8 @@ Following is the default configuration. See |nvim-tree-opts| for details.
       update_focused_file = {
         enable = false,
         update_root = {
-            enable = false,
-            ignore_list = {},
+          enable = false,
+          ignore_list = {},
         },
         exclude = { "gitcommit" },
       },
