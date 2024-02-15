@@ -486,8 +486,11 @@ Following is the default configuration. See |nvim-tree-opts| for details.
       },
       update_focused_file = {
         enable = false,
-        update_root = false,
-        ignore_list = {},
+        update_root = {
+            enable = false,
+            ignore_list = {},
+        },
+        exclude = { "gitcommit" },
       },
       system_open = {
         cmd = "",
@@ -657,12 +660,12 @@ Opens in place of the unnamed buffer if it's empty.
 
 *nvim-tree.root_dirs*
 Preferred root directories.
-Only relevant when `update_focused_file.update_root` is `true`
+Only relevant when `update_focused_file.update_root` is `enabled`
   Type: `{string}`, Default: `{}`
 
 *nvim-tree.prefer_startup_root*
 Prefer startup root directory when updating root directory of the tree.
-Only relevant when `update_focused_file.update_root` is `true`
+Only relevant when `update_focused_file.update_root` is `enabled`
   Type: `boolean`, Default: `false`
 
 *nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
@@ -1091,14 +1094,20 @@ Update the root directory of the tree if the file is not under current
 root directory. It prefers vim's cwd and `root_dirs`.
 Otherwise it falls back to the folder containing the file.
 Only relevant when `update_focused_file.enable` is `true`
-  Type: `boolean`, Default: `false`
 
-*nvim-tree.update_focused_file.ignore_list*
-List of buffer names and filetypes that will not update the root dir
-of the tree if the file isn't found under the current root directory.
-Only relevant when `update_focused_file.update_root` and
-`update_focused_file.enable` are `true`.
-  Type: {string}, Default: `{}`
+    *nvim-tree.update_focused_file.update_root.enable*
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.update_focused_file.update_root.ignore_list*
+    List of buffer names and filetypes that will not update the root dir
+    of the tree if the file isn't found under the current root directory.
+    Only relevant when `update_focused_file.update_root.enable` and
+    `update_focused_file.enable` are `true`.
+      Type: {string}, Default: `{}`
+
+*nvim-tree.update_focused_file.exclude*
+List of buffer names and filetypes that will not update the focused file.
+  Type: {string}, Default: `{ "gitcommit" }`
 
 ==============================================================================
  5.6 OPTS: SYSTEM OPEN                            *nvim-tree-opts-system-open*

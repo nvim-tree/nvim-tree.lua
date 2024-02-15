@@ -27,7 +27,7 @@ function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then
     local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
-    for _, value in pairs(_config.update_focused_file.ignore_list) do
+    for _, value in pairs(_config.update_focused_file.update_root.ignore_list) do
       if utils.str_find(path, value) or utils.str_find(ft, value) then
         return
       end
@@ -149,7 +149,7 @@ function M.change_dir(name)
     actions.root.change_dir.fn(name)
   end
 
-  if _config.update_focused_file.enable then
+  if _config.update_focused_file.update_root.enable then
     actions.tree.find_file.fn()
   end
 end
@@ -248,6 +248,13 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
       callback = function()
+        for _, value in pairs(_config.update_focused_file.exclude) do
+          local ft = vim.api.nvim_buf_get_option(0, "filetype")
+          local path = vim.fn.expand("%:p")
+          if utils.str_find(path, value) or utils.str_find(ft, value) then
+            return
+          end
+        end
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
           actions.tree.find_file.fn()
         end)
@@ -462,8 +469,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   update_focused_file = {
     enable = false,
-    update_root = false,
-    ignore_list = {},
+    update_root = {
+      enable = false,
+      ignore_list = {},
+    },
+    exclude = { "gitcommit" },
   },
   system_open = {
     cmd = "",
