@@ -660,12 +660,12 @@ Opens in place of the unnamed buffer if it's empty.
 
 *nvim-tree.root_dirs*
 Preferred root directories.
-Only relevant when `update_focused_file.update_root` is `enabled`
+Only relevant when `update_focused_file.update_root` is `true`
   Type: `{string}`, Default: `{}`
 
 *nvim-tree.prefer_startup_root*
 Prefer startup root directory when updating root directory of the tree.
-Only relevant when `update_focused_file.update_root` is `enabled`
+Only relevant when `update_focused_file.update_root` is `true`
   Type: `boolean`, Default: `false`
 
 *nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
