@@ -250,7 +250,7 @@ local function setup_autocommands(opts)
       callback = function()
         for _, value in pairs(_config.update_focused_file.exclude) do
           local ft = vim.api.nvim_buf_get_option(0, "filetype")
-          local path = vim.fn.expand "%:p"
+          local path = vim.fn.expand "%:t"
           if utils.str_find(path, value) or utils.str_find(ft, value) then
             return
           end
