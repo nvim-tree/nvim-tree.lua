@@ -38,6 +38,8 @@ Please install via your preferred package manager. See [Installation](https://gi
 
 `nvim-tree/nvim-tree.lua`
 
+Major or minor versions may be specified via tags: `v<MAJOR>` e.g. `v1` or `v<MAJOR>.<MINOR>` e.g. `v1.23`
+
 `nvim-tree/nvim-web-devicons` optional, for file icons
 
 Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
