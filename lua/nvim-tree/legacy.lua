@@ -53,15 +53,12 @@ local function refactored(opts)
   end
 
   -- 2024/02/15
-  if type(opts.update_focused_file.update_root) == "boolean" then
-    opts.update_focused_file.update_root = {
-      enable = opts.update_focused_file.update_root,
-    }
-    if opts.update_focused_file.ignore_list then
-      opts.update_focused_file.update_root.ignore_list = opts.update_focused_file.ignore_list
-      opts.update_focused_file.ignore_list = nil
+  if type(opts.update_focused_file) == "table" then
+    if type(opts.update_focused_file.update_root) ~= "table" then
+      opts.update_focused_file.update_root = { enable = opts.update_focused_file.update_root }
     end
   end
+  utils.move_missing_val(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
 end
 
 local function deprecated(opts)
