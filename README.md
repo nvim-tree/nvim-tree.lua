@@ -112,6 +112,23 @@ require("nvim-tree").setup {
 }
 ```
 
+### Highlight
+
+Run `:NvimTreeHiTest` to show all the highlights that nvim-tree uses.
+
+They can be customised before or after setup is called and will be immediately
+applied at runtime. e.g.
+
+```lua
+vim.cmd([[
+    :hi      NvimTreeExecFile    guifg=#ffa0a0
+    :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+    :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+    :hi link NvimTreeImageFile   Title
+]])
+```
+See [:help nvim-tree-highlight](doc/nvim-tree-lua.txt) for details.
+
 ## Commands
 
 See [:help nvim-tree-commands](doc/nvim-tree-lua.txt)
