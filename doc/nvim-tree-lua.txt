@@ -238,8 +238,15 @@ via |nvim-tree.on_attach| e.g. >
 Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
 
 They can be customised before or after setup is called and will be immediately
-applied at runtime.
+applied at runtime. e.g. >
 
+    vim.cmd([[
+        :hi      NvimTreeExecFile    guifg=#ffa0a0
+        :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+        :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+        :hi link NvimTreeImageFile   Title
+    ]])
+<
 See |nvim-tree-highlight| for details.
 
 ==============================================================================
@@ -2444,6 +2451,12 @@ Diagnostics Folder Highlight: >
 - NvimTreeSpecialFile  PreProc   -> SpellCap
 - NvimTreeSymlink      Statement -> SpellCap
 
+Approximate pre-overhaul values for the `SpellCap` groups may be set via: >
+    :hi NvimTreeExecFile gui=bold guifg=#ffa0a0
+    :hi NvimTreeSymlink gui=bold guifg=#ffff60
+    :hi NvimTreeSpecialFile gui=bold,underline guifg=#ff80ff
+    :hi NvimTreeImageFile gui=bold guifg=#ff80ff
+<
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
 
