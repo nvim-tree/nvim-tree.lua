@@ -372,7 +372,8 @@ the configuration. Nothing happens until the tree is first opened.
 Subsequent setup() calls are expensive as they tear down the world before
 applying configuration.
 
-Following is the default configuration. See |nvim-tree-opts| for details.
+Following is the default configuration. See |nvim-tree-opts| or
+|nvim-tree-index-api| for details.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       on_attach = "default",
@@ -635,6 +636,8 @@ Following is the default configuration. See |nvim-tree-opts| for details.
 
 ==============================================================================
  5. OPTS                                                      *nvim-tree-opts*
+
+See |nvim-tree-index-api|
 
 *nvim-tree.on_attach*
 Runs when creating the nvim-tree buffer. Use this to set your nvim-tree
@@ -2720,6 +2723,162 @@ highlight group is not, hard linking as follows: >
 
 ==============================================================================
  14.1 INDEX: OPTS                                       *nvim-tree-index-opts*
+
+|nvim-tree.on_attach|
+|nvim-tree.hijack_cursor|
+|nvim-tree.auto_reload_on_write|
+|nvim-tree.disable_netrw|
+|nvim-tree.hijack_netrw|
+|nvim-tree.hijack_unnamed_buffer_when_opening|
+|nvim-tree.root_dirs|
+|nvim-tree.prefer_startup_root|
+|nvim-tree.sync_root_with_cwd|
+|nvim-tree.reload_on_bufenter|
+|nvim-tree.respect_buf_cwd|
+|nvim-tree.select_prompts|
+|nvim-tree.sort.sorter|
+|nvim-tree.sort.folders_first|
+|nvim-tree.sort.files_first|
+|nvim-tree.view.centralize_selection|
+|nvim-tree.view.cursorline|
+|nvim-tree.view.debounce_delay|
+|nvim-tree.view.side|
+|nvim-tree.view.preserve_window_proportions|
+|nvim-tree.view.number|
+|nvim-tree.view.relativenumber|
+|nvim-tree.view.signcolumn|
+|nvim-tree.view.width|
+|nvim-tree.view.width.min|
+|nvim-tree.view.width.max|
+|nvim-tree.view.width.padding|
+|nvim-tree.view.float|
+|nvim-tree.view.float.enable|
+|nvim-tree.view.float.quit_on_focus_loss|
+|nvim-tree.view.float.open_win_config|
+|nvim-tree.renderer.add_trailing|
+|nvim-tree.renderer.group_empty|
+|nvim-tree.renderer.full_name|
+|nvim-tree.renderer.root_folder_label|
+|nvim-tree.renderer.indent_width|
+|nvim-tree.renderer.special_files|
+|nvim-tree.renderer.symlink_destination|
+|nvim-tree.renderer.highlight_git|
+|nvim-tree.renderer.highlight_diagnostics|
+|nvim-tree.renderer.highlight_opened_files|
+|nvim-tree.renderer.highlight_modified|
+|nvim-tree.renderer.highlight_bookmarks|
+|nvim-tree.renderer.highlight_clipboard|
+|nvim-tree.renderer.indent_markers|
+|nvim-tree.renderer.indent_markers.enable|
+|nvim-tree.renderer.indent_markers.inline_arrows|
+|nvim-tree.renderer.indent_markers.icons|
+|nvim-tree.renderer.icons|
+|nvim-tree.renderer.icons.web_devicons|
+|nvim-tree.renderer.icons.web_devicons.file|
+|nvim-tree.renderer.icons.web_devicons.file.enable|
+|nvim-tree.renderer.icons.web_devicons.file.color|
+|nvim-tree.renderer.icons.web_devicons.folder|
+|nvim-tree.renderer.icons.web_devicons.folder.enable|
+|nvim-tree.renderer.icons.web_devicons.folder.color|
+|nvim-tree.renderer.icons.git_placement|
+|nvim-tree.renderer.icons.diagnostics_placement|
+|nvim-tree.renderer.icons.modified_placement|
+|nvim-tree.renderer.icons.bookmarks_placement|
+|nvim-tree.renderer.icons.padding|
+|nvim-tree.renderer.icons.symlink_arrow|
+|nvim-tree.renderer.icons.show|
+|nvim-tree.renderer.icons.show.file|
+|nvim-tree.renderer.icons.show.folder|
+|nvim-tree.renderer.icons.show.folder_arrow|
+|nvim-tree.renderer.icons.show.git|
+|nvim-tree.renderer.icons.show.modified|
+|nvim-tree.renderer.icons.show.diagnostics|
+|nvim-tree.renderer.icons.show.bookmarks|
+|nvim-tree.renderer.icons.glyphs|
+|nvim-tree.renderer.icons.glyphs.default|
+|nvim-tree.renderer.icons.glyphs.symlink|
+|nvim-tree.renderer.icons.glyphs.modified|
+|nvim-tree.renderer.icons.glyphs.folder|
+|nvim-tree.renderer.icons.glyphs.git|
+|nvim-tree.hijack_directories.enable|
+|nvim-tree.hijack_directories.auto_open|
+|nvim-tree.update_focused_file.enable|
+|nvim-tree.update_focused_file.update_root|
+|nvim-tree.update_focused_file.ignore_list|
+|nvim-tree.system_open.cmd|
+|nvim-tree.system_open.args|
+|nvim-tree.git.enable|
+|nvim-tree.git.show_on_dirs|
+|nvim-tree.git.show_on_open_dirs|
+|nvim-tree.git.disable_for_dirs|
+|nvim-tree.git.timeout|
+|nvim-tree.git.cygwin_support|
+|nvim-tree.diagnostics.enable|
+|nvim-tree.diagnostics.debounce_delay|
+|nvim-tree.diagnostics.show_on_dirs|
+|nvim-tree.diagnostics.show_on_open_dirs|
+|nvim-tree.diagnostics.severity|
+|nvim-tree.diagnostics.severity.min|
+|nvim-tree.diagnostics.severity.max|
+|nvim-tree.diagnostics.icons|
+|nvim-tree.modified.enable|
+|nvim-tree.modified.show_on_dirs|
+|nvim-tree.modified.show_on_open_dirs|
+|nvim-tree.filters.git_ignored|
+|nvim-tree.filters.dotfiles|
+|nvim-tree.filters.git_clean|
+|nvim-tree.filters.no_buffer|
+|nvim-tree.filters.no_bookmark|
+|nvim-tree.filters.custom|
+|nvim-tree.filters.exclude|
+|nvim-tree.live_filter.prefix|
+|nvim-tree.live_filter.always_show_folders|
+|nvim-tree.filesystem_watchers.enable|
+|nvim-tree.filesystem_watchers.debounce_delay|
+|nvim-tree.filesystem_watchers.ignore_dirs|
+|nvim-tree.actions.use_system_clipboard|
+|nvim-tree.actions.change_dir|
+|nvim-tree.actions.change_dir.enable|
+|nvim-tree.actions.change_dir.global|
+|nvim-tree.actions.change_dir.restrict_above_cwd|
+|nvim-tree.actions.expand_all|
+|nvim-tree.actions.expand_all.max_folder_discovery|
+|nvim-tree.actions.expand_all.exclude|
+|nvim-tree.actions.file_popup|
+|nvim-tree.actions.file_popup.open_win_config|
+|nvim-tree.actions.open_file|
+|nvim-tree.actions.open_file.quit_on_open|
+|nvim-tree.actions.open_file.eject|
+|nvim-tree.actions.open_file.resize_window|
+|nvim-tree.actions.open_file.window_picker|
+|nvim-tree.actions.open_file.window_picker.enable|
+|nvim-tree.actions.open_file.window_picker.picker|
+|nvim-tree.actions.open_file.window_picker.chars|
+|nvim-tree.actions.open_file.window_picker.exclude|
+|nvim-tree.actions.remove_file.close_window|
+|nvim-tree.trash.cmd|
+|nvim-tree.tab.sync|
+|nvim-tree.tab.sync.open|
+|nvim-tree.tab.sync.close|
+|nvim-tree.tab.sync.ignore|
+|nvim-tree.notify.threshold|
+|nvim-tree.help.sort_by|
+|nvim-tree.ui.confirm|
+|nvim-tree.ui.confirm.remove|
+|nvim-tree.ui.confirm.trash|
+|nvim-tree.ui.confirm.default_yes|
+|nvim-tree.experimental|
+|nvim-tree.log.enable|
+|nvim-tree.log.truncate|
+|nvim-tree.log.types|
+|nvim-tree.log.types.all|
+|nvim-tree.log.types.profile|
+|nvim-tree.log.types.config|
+|nvim-tree.log.types.copy_paste|
+|nvim-tree.log.types.dev|
+|nvim-tree.log.types.diagnostics|
+|nvim-tree.log.types.git|
+|nvim-tree.log.types.watcher|
 
 ==============================================================================
  14.2 INDEX: API                                         *nvim-tree-index-api*
