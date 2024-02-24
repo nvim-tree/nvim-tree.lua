@@ -48,12 +48,15 @@ CONTENTS                                                           *nvim-tree*
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
-  8.1  Highlight Default                        |nvim-tree-highlight-default|
-  8.2  Highlight Overhaul                       |nvim-tree-highlight-overhaul|
+  8.1  Highlight: Default                       |nvim-tree-highlight-default|
+  8.2  Highlight: Overhaul                      |nvim-tree-highlight-overhaul|
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
  11. OS Specific Restrictions                 |nvim-tree-os-specific|
  12. Netrw                                    |nvim-tree-netrw|
+ 13. Legacy                                   |nvim-tree-legacy|
+ 13.1  Legacy: Opts                             |nvim-tree-legacy-opts|
+ 13.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -672,7 +675,7 @@ Prefer startup root directory when updating root directory of the tree.
 Only relevant when `update_focused_file.update_root` is `true`
   Type: `boolean`, Default: `false`
 
-*nvim-tree.sync_root_with_cwd*  (previously `update_cwd`)
+*nvim-tree.sync_root_with_cwd*
 Changes the tree root directory on `DirChanged` and refreshes the tree.
   Type: `boolean`, Default: `false`
 
@@ -694,7 +697,7 @@ Type: `boolean`, Default: `false`
 
 File and folder sorting options.
 
-*nvim-tree.sort.sorter*  (previously `sort_by`)
+*nvim-tree.sort.sorter*
 Changes how files within the same directory are sorted.
 Can be one of `"name"`, `"case_sensitive"`, `"modification_time"`, `"extension"`,
 `"suffix"`, `"filetype"` or a function.
@@ -773,7 +776,7 @@ Show |signcolumn|. Value can be `"yes"`, `"auto"`, `"no"`.
 Width of the window: can be a `%` string, a number representing columns, a
 function or a table.
 A table indicates that the view should be dynamically sized based on the
-longest line (previously `view.adaptive_size`).
+longest line.
   Type: `string | number | table | function()` returning a number
   Default: `30`
 
@@ -1093,7 +1096,6 @@ Enable this feature.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.update_focused_file.update_root*
-(previously `update_focused_file.update_cwd`)
 Update the root directory of the tree if the file is not under current
 root directory. It prefers vim's cwd and `root_dirs`.
 Otherwise it falls back to the folder containing the file.
@@ -1236,7 +1238,7 @@ Only relevant when |modified.show_on_dirs| is `true`.
 
 File / folder filters that may be toggled.
 
-*nvim-tree.filters.git_ignored*  (previously `git.ignore`)
+*nvim-tree.filters.git_ignored*
 Ignore files based on `.gitignore`. Requires |git.enable| `= true`
 Toggle via |nvim-tree-api.tree.toggle_gitignore_filter()|, default `I`
   Type: `boolean`, Default: `true`
@@ -1383,7 +1385,7 @@ Configuration options for opening a file from nvim-tree.
     Prevent new opened file from opening in the same window as the tree.
       Type: `boolean`, Default: `true`
 
-    *nvim-tree.actions.open_file.resize_window*  (previously `view.auto_resize`)
+    *nvim-tree.actions.open_file.resize_window*
     Resizes the tree when opening a file.
       Type: `boolean`, Default: `true`
 
@@ -1451,7 +1453,7 @@ Windows default `"trash"`     requires `trash-cli` or similar
 *nvim-tree.tab.sync*
 Configuration for syncing nvim-tree across tabs.
 
-    *nvim-tree.tab.sync.open*  (previously `nvim-tree.open_on_tab`)
+    *nvim-tree.tab.sync.open*
     Opens the tree automatically when switching tabpage or opening a new
     tabpage if the tree was previously open.
       Type: `boolean`, Default: `false`
@@ -1460,7 +1462,7 @@ Configuration for syncing nvim-tree across tabs.
     Closes the tree across all tabpages when the tree is closed.
       Type: `boolean`, Default: `false`
 
-    *nvim-tree.tab.sync.ignore*  (previously `nvim-tree.ignore_buf_on_tab_change`)
+    *nvim-tree.tab.sync.ignore*
     List of filetypes or buffer names on new tab that will prevent
     |nvim-tree.tab.sync.open| and |nvim-tree.tab.sync.close|
       Type: {string}, Default: `{}`
@@ -1500,7 +1502,7 @@ Confirmation prompts.
     Prompt before removing.
       Type: `boolean`, Default: `true`
 
-    *nvim-tree.ui.confirm.trash*  (previously `trash.require_confirm`)
+    *nvim-tree.ui.confirm.trash*
     Prompt before trashing.
       Type: `boolean`, Default: `true`
 
@@ -2308,7 +2310,7 @@ To prevent usage of a highlight:
     `:hi! link NvimTreeExecFile NONE`
 
 ==============================================================================
- 8.1 HIGHLIGHT DEFAULT                           *nvim-tree-highlight-default*
+ 8.1 HIGHLIGHT: DEFAULT                          *nvim-tree-highlight-default*
 
 |:highlight-link| `default` or |:highlight-default| define the groups on setup:
 
@@ -2426,7 +2428,9 @@ Diagnostics Folder Highlight: >
     NvimTreeDiagnosticHintFolderHL      NvimTreeDiagnosticHintFileHL
 <
 ==============================================================================
- 8.1 HIGHLIGHT OVERHAUL                         *nvim-tree-highlight-overhaul*
+ 8.2 HIGHLIGHT: OVERHAUL                        *nvim-tree-highlight-overhaul*
+
+See |nvim-tree-legacy-highlight| for old highlight group compatibility.
 
 2024-01-20: significant highlighting changes, some breaking:
 
@@ -2459,52 +2463,6 @@ Approximate pre-overhaul values for the `SpellCap` groups may be set via: >
         :hi NvimTreeSpecialFile gui=bold,underline guifg=#ff80ff
         :hi NvimTreeImageFile   gui=bold           guifg=#ff80ff
     ]])
-<
-Legacy highlight group are still obeyed when they are defined and the current
-highlight group is not, hard linking as follows: >
-
-    NvimTreeModifiedIcon        NvimTreeModifiedFile
-    NvimTreeOpenedHL            NvimTreeOpenedFile
-    NvimTreeBookmarkIcon        NvimTreeBookmark
-
-    NvimTreeGitDeletedIcon      NvimTreeGitDeleted
-    NvimTreeGitDirtyIcon        NvimTreeGitDirty
-    NvimTreeGitIgnoredIcon      NvimTreeGitIgnored
-    NvimTreeGitMergeIcon        NvimTreeGitMerge
-    NvimTreeGitNewIcon          NvimTreeGitNew
-    NvimTreeGitRenamedIcon      NvimTreeGitRenamed
-    NvimTreeGitStagedIcon       NvimTreeGitStaged
-
-    NvimTreeGitFileDeletedHL    NvimTreeFileDeleted
-    NvimTreeGitFileDirtyHL      NvimTreeFileDirty
-    NvimTreeGitFileIgnoredHL    NvimTreeFileIgnored
-    NvimTreeGitFileMergeHL      NvimTreeFileMerge
-    NvimTreeGitFileNewHL        NvimTreeFileNew
-    NvimTreeGitFileRenamedHL    NvimTreeFileRenamed
-    NvimTreeGitFileStagedHL     NvimTreeFileStaged
-
-    NvimTreeGitFolderDeletedHL  NvimTreeFolderDeleted
-    NvimTreeGitFolderDirtyHL    NvimTreeFolderDirty
-    NvimTreeGitFolderIgnoredHL  NvimTreeFolderIgnored
-    NvimTreeGitFolderMergeHL    NvimTreeFolderMerge
-    NvimTreeGitFolderNewHL      NvimTreeFolderNew
-    NvimTreeGitFolderRenamedHL  NvimTreeFolderRenamed
-    NvimTreeGitFolderStagedHL   NvimTreeFolderStaged
-
-    NvimTreeLspDiagnosticsError                 NvimTreeDiagnosticErrorIcon
-    NvimTreeLspDiagnosticsWarning               NvimTreeDiagnosticWarnIcon
-    NvimTreeLspDiagnosticsInformation           NvimTreeDiagnosticInfoIcon
-    NvimTreeLspDiagnosticsHint                  NvimTreeDiagnosticHintIcon
-
-    NvimTreeLspDiagnosticsErrorText             NvimTreeDiagnosticErrorFileHL
-    NvimTreeLspDiagnosticsWarningText           NvimTreeDiagnosticWarnFileHL
-    NvimTreeLspDiagnosticsInformationText       NvimTreeDiagnosticInfoFileHL
-    NvimTreeLspDiagnosticsHintText              NvimTreeDiagnosticHintFileHL
-
-    NvimTreeLspDiagnosticsErrorFolderText       NvimTreeDiagnosticErrorFolderHL 
-    NvimTreeLspDiagnosticsWarningFolderText     NvimTreeDiagnosticWarnFolderHL
-    NvimTreeLspDiagnosticsInformationFolderText NvimTreeDiagnosticInfoFolderHL
-    NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
 <
 ==============================================================================
  9. EVENTS                                                  *nvim-tree-events*
@@ -2658,7 +2616,7 @@ Windows WSL and PowerShell
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
- 12. NETRW                                                  *nvim-tree-netrw*
+ 12. NETRW                                                   *nvim-tree-netrw*
 
 |netrw| is a standard neovim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
@@ -2678,4 +2636,78 @@ keep using |netrw| without its browser features please ensure:
 |nvim-tree.disable_netrw| `= false`
 |nvim-tree.hijack_netrw| ` = true`
 
+==============================================================================
+ 13. LEGACY                                                 *nvim-tree-legacy*
+
+Breaking refactors have been made however the legacy versions will be silently
+migrated and used.
+There are no plans to remove this migration.
+
+==============================================================================
+ 13.1 LEGACY: OPTS                                     *nvim-tree-legacy-opts*
+
+Legacy options are translated to the current, making type and value changes as
+needed.
+
+`update_cwd`                         |nvim-tree.sync_root_with_cwd|
+`update_focused_file.update_cwd`     |nvim-tree.update_focused_file.update_root|
+`open_on_tab`                        |nvim-tree.tab.sync.open|
+`ignore_buf_on_tab_change`           |nvim-tree.tab.sync.ignore|
+`renderer.root_folder_modifier`      |nvim-tree.renderer.root_folder_label|
+`update_focused_file.debounce_delay` |nvim-tree.view.debounce_delay|
+`trash.require_confirm`              |nvim-tree.ui.confirm.trash|
+`view.adaptive_size`                 |nvim-tree.view.width|
+`sort_by`                            |nvim-tree.sort.sorter|
+`git.ignore`                         |nvim-tree.filters.git_ignored|
+`renderer.icons.webdev_colors`       |nvim-tree.renderer.icons.web_devicons.file.color|
+
+==============================================================================
+ 13.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
+
+Legacy highlight group are still obeyed when they are defined and the current
+highlight group is not, hard linking as follows: >
+
+    NvimTreeModifiedIcon        NvimTreeModifiedFile
+    NvimTreeOpenedHL            NvimTreeOpenedFile
+    NvimTreeBookmarkIcon        NvimTreeBookmark
+
+    NvimTreeGitDeletedIcon      NvimTreeGitDeleted
+    NvimTreeGitDirtyIcon        NvimTreeGitDirty
+    NvimTreeGitIgnoredIcon      NvimTreeGitIgnored
+    NvimTreeGitMergeIcon        NvimTreeGitMerge
+    NvimTreeGitNewIcon          NvimTreeGitNew
+    NvimTreeGitRenamedIcon      NvimTreeGitRenamed
+    NvimTreeGitStagedIcon       NvimTreeGitStaged
+
+    NvimTreeGitFileDeletedHL    NvimTreeFileDeleted
+    NvimTreeGitFileDirtyHL      NvimTreeFileDirty
+    NvimTreeGitFileIgnoredHL    NvimTreeFileIgnored
+    NvimTreeGitFileMergeHL      NvimTreeFileMerge
+    NvimTreeGitFileNewHL        NvimTreeFileNew
+    NvimTreeGitFileRenamedHL    NvimTreeFileRenamed
+    NvimTreeGitFileStagedHL     NvimTreeFileStaged
+
+    NvimTreeGitFolderDeletedHL  NvimTreeFolderDeleted
+    NvimTreeGitFolderDirtyHL    NvimTreeFolderDirty
+    NvimTreeGitFolderIgnoredHL  NvimTreeFolderIgnored
+    NvimTreeGitFolderMergeHL    NvimTreeFolderMerge
+    NvimTreeGitFolderNewHL      NvimTreeFolderNew
+    NvimTreeGitFolderRenamedHL  NvimTreeFolderRenamed
+    NvimTreeGitFolderStagedHL   NvimTreeFolderStaged
+
+    NvimTreeLspDiagnosticsError                 NvimTreeDiagnosticErrorIcon
+    NvimTreeLspDiagnosticsWarning               NvimTreeDiagnosticWarnIcon
+    NvimTreeLspDiagnosticsInformation           NvimTreeDiagnosticInfoIcon
+    NvimTreeLspDiagnosticsHint                  NvimTreeDiagnosticHintIcon
+
+    NvimTreeLspDiagnosticsErrorText             NvimTreeDiagnosticErrorFileHL
+    NvimTreeLspDiagnosticsWarningText           NvimTreeDiagnosticWarnFileHL
+    NvimTreeLspDiagnosticsInformationText       NvimTreeDiagnosticInfoFileHL
+    NvimTreeLspDiagnosticsHintText              NvimTreeDiagnosticHintFileHL
+
+    NvimTreeLspDiagnosticsErrorFolderText       NvimTreeDiagnosticErrorFolderHL
+    NvimTreeLspDiagnosticsWarningFolderText     NvimTreeDiagnosticWarnFolderHL
+    NvimTreeLspDiagnosticsInformationFolderText NvimTreeDiagnosticInfoFolderHL
+    NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
+<
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
