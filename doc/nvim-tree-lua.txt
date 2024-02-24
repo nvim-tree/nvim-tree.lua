@@ -57,6 +57,9 @@ CONTENTS                                                           *nvim-tree*
  13. Legacy                                   |nvim-tree-legacy|
  13.1  Legacy: Opts                             |nvim-tree-legacy-opts|
  13.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
+ 14. Index                                    |nvim-tree-index|
+ 14.1  Index: Opts                              |nvim-tree-index-opts|
+ 14.2  Index: API                               |nvim-tree-index-api|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -1586,6 +1589,8 @@ that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
 
+See |nvim-tree-index-api|
+
 ==============================================================================
  6.1 API TREE                                             *nvim-tree-api.tree*
 
@@ -2710,4 +2715,130 @@ highlight group is not, hard linking as follows: >
     NvimTreeLspDiagnosticsInformationFolderText NvimTreeDiagnosticInfoFolderHL
     NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
 <
+==============================================================================
+ 14 INDEX                                                    *nvim-tree-index*
+
+==============================================================================
+ 14.1 INDEX: OPTS                                       *nvim-tree-index-opts*
+
+==============================================================================
+ 14.2 INDEX: API                                         *nvim-tree-index-api*
+
+|nvim-tree-api|
+
+|nvim-tree-api.tree|
+|nvim-tree-api.tree.open()|
+|nvim-tree-api.tree.toggle()|
+|nvim-tree-api.tree.close()|
+|nvim-tree-api.tree.close_in_this_tab()|
+|nvim-tree-api.tree.close_in_all_tabs()|
+|nvim-tree-api.tree.focus()|
+|nvim-tree-api.tree.reload()|
+|nvim-tree-api.tree.change_root()|
+|nvim-tree-api.tree.change_root_to_node()|
+|nvim-tree-api.tree.change_root_to_parent()|
+|nvim-tree-api.tree.get_node_under_cursor()|
+|nvim-tree-api.tree.get_nodes()|
+|nvim-tree-api.tree.find_file()|
+|nvim-tree-api.tree.search_node()|
+|nvim-tree-api.tree.collapse_all()|
+|nvim-tree-api.tree.expand_all()|
+|nvim-tree-api.tree.toggle_gitignore_filter()|
+|nvim-tree-api.tree.toggle_git_clean_filter()|
+|nvim-tree-api.tree.toggle_no_buffer_filter()|
+|nvim-tree-api.tree.toggle_no_bookmark_filter()|
+|nvim-tree-api.tree.toggle_custom_filter()|
+|nvim-tree-api.tree.toggle_hidden_filter()|
+|nvim-tree-api.tree.toggle_help()|
+|nvim-tree-api.tree.is_tree_buf()|
+|nvim-tree-api.tree.is_visible()|
+|nvim-tree-api.tree.winid()|
+
+|nvim-tree-api.fs|
+|nvim-tree-api.fs.create()|
+|nvim-tree-api.fs.remove()|
+|nvim-tree-api.fs.trash()|
+|nvim-tree-api.fs.rename_node()|
+|nvim-tree-api.fs.rename()|
+|nvim-tree-api.fs.rename_basename()|
+|nvim-tree-api.fs.rename_sub()|
+|nvim-tree-api.fs.rename_full()|
+|nvim-tree-api.fs.cut()|
+|nvim-tree-api.fs.paste()|
+|nvim-tree-api.fs.copy.node()|
+|nvim-tree-api.fs.copy.absolute_path()|
+|nvim-tree-api.fs.copy.filename()|
+|nvim-tree-api.fs.copy.relative_path()|
+|nvim-tree-api.fs.clear_clipboard()|
+|nvim-tree-api.fs.print_clipboard()|
+
+|nvim-tree-api.node|
+|nvim-tree-api.node.open.edit()|
+|nvim-tree-api.node.open.replace_tree_buffer()|
+|nvim-tree-api.node.open.no_window_picker()|
+|nvim-tree-api.node.open.vertical()|
+|nvim-tree-api.node.open.horizontal()|
+|nvim-tree-api.node.open.toggle_group_empty()|
+|nvim-tree-api.node.open.drop()|
+|nvim-tree-api.node.open.tab()|
+|nvim-tree-api.node.open.tab_drop()|
+|nvim-tree-api.node.open.preview()|
+|nvim-tree-api.node.open.preview_no_picker()|
+|nvim-tree-api.node.navigate.git.next()|
+|nvim-tree-api.node.navigate.git.next_recursive()|
+|nvim-tree-api.node.navigate.git.next_skip_gitignored()|
+|nvim-tree-api.node.navigate.git.prev()|
+|nvim-tree-api.node.navigate.git.prev_recursive()|
+|nvim-tree-api.node.navigate.git.prev_skip_gitignored()|
+|nvim-tree-api.node.navigate.diagnostics.next()|
+|nvim-tree-api.node.navigate.diagnostics.next_recursive()|
+|nvim-tree-api.node.navigate.diagnostics.prev()|
+|nvim-tree-api.node.navigate.diagnostics.prev_recursive()|
+|nvim-tree-api.node.navigate.opened.next()|
+|nvim-tree-api.node.navigate.opened.prev()|
+|nvim-tree-api.node.navigate.sibling.next()|
+|nvim-tree-api.node.navigate.sibling.prev()|
+|nvim-tree-api.node.navigate.sibling.first()|
+|nvim-tree-api.node.navigate.sibling.last()|
+|nvim-tree-api.node.navigate.parent()|
+|nvim-tree-api.node.navigate.parent_close()|
+|nvim-tree-api.node.show_info_popup()|
+|nvim-tree-api.node.run.cmd()|
+|nvim-tree-api.node.run.system()|
+
+|nvim-tree-api.git|
+|nvim-tree-api.git.reload()|
+
+|nvim-tree-api.events|
+|nvim-tree-api.events.subscribe()|
+
+|nvim-tree-api.events.Event|
+
+|nvim-tree-api.live_filter|
+|nvim-tree-api.live_filter.start()|
+|nvim-tree-api.live_filter.clear()|
+
+|nvim-tree-api.marks|
+|nvim-tree-api.marks.get()|
+|nvim-tree-api.marks.list()|
+|nvim-tree-api.marks.toggle()|
+|nvim-tree-api.marks.clear()|
+|nvim-tree-api.marks.bulk.delete()|
+|nvim-tree-api.marks.bulk.trash()|
+|nvim-tree-api.marks.bulk.move()|
+|nvim-tree-api.marks.navigate.next()|
+|nvim-tree-api.marks.navigate.prev()|
+|nvim-tree-api.marks.navigate.select()|
+
+|nvim-tree-api.config|
+|nvim-tree-api.config.mappings.default_on_attach()|
+|nvim-tree-api.config.mappings.get_keymap()|
+|nvim-tree-api.config.mappings.get_keymap_default()|
+
+|nvim-tree-api.commands|
+|nvim-tree-api.commands.get()|
+
+|nvim-tree-api.diagnostics|
+|nvim-tree-api.diagnostics.hi_test()|
+
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:

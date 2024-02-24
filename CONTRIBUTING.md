@@ -69,9 +69,15 @@ Once you did, you should run `make help-update`
 
 # Documentation
 
+## Opts
+
 When adding new options, you should declare the defaults in the main `nvim-tree.lua` file.
 
 Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-tree-lua.txt`
+
+## API
+
+When adding or changing API please update :help nvim-tree-api and generate the index via `scripts/help-index-api.sh`
 
 # Pull Request
 
