@@ -372,8 +372,7 @@ the configuration. Nothing happens until the tree is first opened.
 Subsequent setup() calls are expensive as they tear down the world before
 applying configuration.
 
-Following is the default configuration. See |nvim-tree-opts| or
-|nvim-tree-index-opts| for details.
+Following is the default configuration. See |nvim-tree-opts| for details.
 >
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       on_attach = "default",
@@ -636,8 +635,6 @@ Following is the default configuration. See |nvim-tree-opts| or
 
 ==============================================================================
  5. OPTS                                                      *nvim-tree-opts*
-
-See |nvim-tree-index-opts|
 
 *nvim-tree.on_attach*
 Runs when creating the nvim-tree buffer. Use this to set your nvim-tree
@@ -1576,8 +1573,6 @@ Specify which information to log.
  6. API                                                        *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features.
-
-See |nvim-tree-index-api|
 >
 e.g. >
     local api = require("nvim-tree.api")
@@ -1593,8 +1588,6 @@ Functions that needs a tree node parameter are exposed with an abstraction
 that injects the node from the cursor position in the tree when calling
 the function. It will use the node you pass as an argument in priority if it
 exists.
-
-See |nvim-tree-index-api|
 
 ==============================================================================
  6.1 API TREE                                             *nvim-tree-api.tree*
