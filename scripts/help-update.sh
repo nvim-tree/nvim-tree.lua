@@ -32,7 +32,7 @@ printf '\n' > /tmp/index-opts.txt
 sed -E "
 /^ *\*(nvim-tree\..*)\*$/! d ;
 s/^.*\*(.*)\*/|\1|/g
-" doc/nvim-tree-lua.txt | sort >> /tmp/index-opts.txt
+" doc/nvim-tree-lua.txt | sort -d >> /tmp/index-opts.txt
 printf '\n' >> /tmp/index-opts.txt
 
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/index-opts.txt
@@ -48,7 +48,7 @@ printf '\n' > /tmp/index-api.txt
 sed -E "
 /\*(nvim-tree-api.*\(\))\*/! d ;
 s/^.*\*(.*)\*/|\1|/g
-" doc/nvim-tree-lua.txt | sort >> /tmp/index-api.txt
+" doc/nvim-tree-lua.txt | sort -d >> /tmp/index-api.txt
 printf '\n' >> /tmp/index-api.txt
 
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/index-api.txt
