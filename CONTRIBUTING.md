@@ -77,7 +77,7 @@ Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-
 
 ## API
 
-When adding or changing API please update :help nvim-tree-api and generate the index via `scripts/help-index-api.sh`
+When adding or changing API please update :help nvim-tree-api
 
 # Pull Request
 

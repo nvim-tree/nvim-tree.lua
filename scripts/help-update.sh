@@ -28,7 +28,6 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_OPTS.6.lua
 begin="nvim-tree-index-opts\*"
 end="====================="
 
-# generate
 printf '\n' > /tmp/index-opts.txt
 sed -E "
 /^ *\*(nvim-tree\..*)\*$/! d ;
@@ -37,6 +36,22 @@ s/^.*\*(.*)\*/|\1|/g
 printf '\n' >> /tmp/index-opts.txt
 
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/index-opts.txt
+           }; /${end}/p; d; }" doc/nvim-tree-lua.txt
+
+#
+# api index
+#
+begin="nvim-tree-index-api\*"
+end="====================="
+
+printf '\n' > /tmp/index-api.txt
+sed -E "
+/\*(nvim-tree-api.*\(\))\*/! d ;
+s/^.*\*(.*)\*/|\1|/g
+" doc/nvim-tree-lua.txt >> /tmp/index-api.txt
+printf '\n' >> /tmp/index-api.txt
+
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/index-api.txt
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
 #

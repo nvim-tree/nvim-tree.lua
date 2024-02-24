@@ -2883,9 +2883,6 @@ highlight group is not, hard linking as follows: >
 ==============================================================================
  14.2 INDEX: API                                         *nvim-tree-index-api*
 
-|nvim-tree-api|
-
-|nvim-tree-api.tree|
 |nvim-tree-api.tree.open()|
 |nvim-tree-api.tree.toggle()|
 |nvim-tree-api.tree.close()|
@@ -2912,8 +2909,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.is_tree_buf()|
 |nvim-tree-api.tree.is_visible()|
 |nvim-tree-api.tree.winid()|
-
-|nvim-tree-api.fs|
 |nvim-tree-api.fs.create()|
 |nvim-tree-api.fs.remove()|
 |nvim-tree-api.fs.trash()|
@@ -2930,8 +2925,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.fs.copy.relative_path()|
 |nvim-tree-api.fs.clear_clipboard()|
 |nvim-tree-api.fs.print_clipboard()|
-
-|nvim-tree-api.node|
 |nvim-tree-api.node.open.edit()|
 |nvim-tree-api.node.open.replace_tree_buffer()|
 |nvim-tree-api.node.open.no_window_picker()|
@@ -2964,20 +2957,10 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.node.show_info_popup()|
 |nvim-tree-api.node.run.cmd()|
 |nvim-tree-api.node.run.system()|
-
-|nvim-tree-api.git|
 |nvim-tree-api.git.reload()|
-
-|nvim-tree-api.events|
 |nvim-tree-api.events.subscribe()|
-
-|nvim-tree-api.events.Event|
-
-|nvim-tree-api.live_filter|
 |nvim-tree-api.live_filter.start()|
 |nvim-tree-api.live_filter.clear()|
-
-|nvim-tree-api.marks|
 |nvim-tree-api.marks.get()|
 |nvim-tree-api.marks.list()|
 |nvim-tree-api.marks.toggle()|
@@ -2988,16 +2971,12 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.marks.navigate.next()|
 |nvim-tree-api.marks.navigate.prev()|
 |nvim-tree-api.marks.navigate.select()|
-
-|nvim-tree-api.config|
 |nvim-tree-api.config.mappings.default_on_attach()|
 |nvim-tree-api.config.mappings.get_keymap()|
 |nvim-tree-api.config.mappings.get_keymap_default()|
-
-|nvim-tree-api.commands|
 |nvim-tree-api.commands.get()|
-
-|nvim-tree-api.diagnostics|
 |nvim-tree-api.diagnostics.hi_test()|
+
+==============================================================================
 
  vim:tw=78:ts=4:sw=4:et:ft=help:norl:
