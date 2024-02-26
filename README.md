@@ -38,6 +38,8 @@ Please install via your preferred package manager. See [Installation](https://gi
 
 `nvim-tree/nvim-tree.lua`
 
+Major or minor versions may be specified via tags: `v<MAJOR>` e.g. `v1` or `v<MAJOR>.<MINOR>` e.g. `v1.23`
+
 `nvim-tree/nvim-web-devicons` optional, for file icons
 
 Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
@@ -109,6 +111,23 @@ require("nvim-tree").setup {
   ---
 }
 ```
+
+### Highlight
+
+Run `:NvimTreeHiTest` to show all the highlights that nvim-tree uses.
+
+They can be customised before or after setup is called and will be immediately
+applied at runtime. e.g.
+
+```lua
+vim.cmd([[
+    :hi      NvimTreeExecFile    guifg=#ffa0a0
+    :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+    :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+    :hi link NvimTreeImageFile   Title
+]])
+```
+See [:help nvim-tree-highlight](doc/nvim-tree-lua.txt) for details.
 
 ## Commands
 
