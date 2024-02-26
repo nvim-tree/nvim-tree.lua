@@ -36,10 +36,14 @@ function M.rename(node, to)
   local notify_from = notify.render_path(node.absolute_path)
   local notify_to = notify.render_path(to)
 
+  if utils.file_exists(to) then
+    notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
+    return
+  end
+
   -- create a folder for each path element if the folder does not exist
   local idx = 0
   local path_to_create = ""
-  local is_last_path_file = not to:match(utils.path_remove_trailing(to))
 
   local num_nodes = get_num_nodes(utils.path_split(utils.path_remove_trailing(to)))
   local is_error = false
@@ -53,12 +57,7 @@ function M.rename(node, to)
       path_to_create = utils.path_join { path_to_create, p }
     end
 
-    if is_last_path_file and idx == num_nodes then
-      if utils.file_exists(to) then
-        notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
-        return
-      end
-
+    if idx == num_nodes then
       events._dispatch_will_rename_node(node.absolute_path, to)
       local success, err = vim.loop.fs_rename(node.absolute_path, to)
 
