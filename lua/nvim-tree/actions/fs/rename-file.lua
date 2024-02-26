@@ -54,21 +54,26 @@ function M.rename(node, to)
     end
 
     if is_last_path_file and idx == num_nodes then
+      if utils.file_exists(to) then
+        notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
+        return
+      end
+
       events._dispatch_will_rename_node(node.absolute_path, to)
       local success, err = vim.loop.fs_rename(node.absolute_path, to)
 
       if not success then
         notify.warn(err_fmt(notify_from, notify_to, err))
-        is_error = true
-        break
+        return
       end
     elseif not utils.file_exists(path_to_create) then
       local success = vim.loop.fs_mkdir(path_to_create, 493)
       if not success then
         notify.error("Could not create folder " .. notify.render_path(path_to_create))
+        is_error = true
         break
       end
-      is_error = true
+      is_error = false
     end
   end
 
