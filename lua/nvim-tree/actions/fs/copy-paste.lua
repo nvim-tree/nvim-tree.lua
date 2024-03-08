@@ -296,6 +296,12 @@ function M.copy_filename(node)
 end
 
 ---@param node Node
+function M.copy_basename(node)
+  local basename = vim.fn.fnamemodify(node.name, ':r')
+  copy_to_clipboard(basename)
+end
+
+---@param node Node
 function M.copy_path(node)
   local absolute_path = node.absolute_path
   local cwd = core.get_cwd()
