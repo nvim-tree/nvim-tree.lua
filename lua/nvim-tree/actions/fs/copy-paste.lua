@@ -297,7 +297,7 @@ end
 
 ---@param node Node
 function M.copy_basename(node)
-  local basename = vim.fn.fnamemodify(node.name, ':r')
+  local basename = vim.fn.fnamemodify(node.name, ":r")
   copy_to_clipboard(basename)
 end
 
