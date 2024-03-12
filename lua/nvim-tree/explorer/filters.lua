@@ -77,8 +77,11 @@ local function bookmark(path, bookmarks)
     return false
   end
 
-  for p, _ in pairs(bookmarks) do
-    if path == p or utils.str_find(p, path) then
+  -- add trailing slash to make it match only mark's parent directory
+  -- not it's siblings
+  local dict = utils.path_add_trailing(path)
+  for mark, _ in pairs(bookmarks) do
+    if path == mark or utils.str_find(mark, dict) then
       return false
     end
   end
