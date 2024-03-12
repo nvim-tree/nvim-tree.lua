@@ -73,7 +73,17 @@ end
 ---@param path string
 ---@param bookmarks table<string, boolean> absolute paths bookmarked
 local function bookmark(path, bookmarks)
-  return M.config.filter_no_bookmark and not bookmarks[path]
+  if not M.config.filter_no_bookmark then
+    return false
+  end
+
+  for p, _ in pairs(bookmarks) do
+    if path == p or utils.str_find(p, path) then
+      return false
+    end
+  end
+
+  return true
 end
 
 ---@param path string
