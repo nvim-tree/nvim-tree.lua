@@ -165,6 +165,7 @@ Show the mappings:  `g?`
 `>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
 `<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
 `.`               Run Command                |nvim-tree-api.node.run.cmd()|
+`,`               Toggle All Filters         |nvim-tree-api.tree.toggle_filters()|
 `-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
 `a`               Create File Or Directory   |nvim-tree-api.fs.create()|
 `bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
@@ -537,6 +538,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         show_on_open_dirs = true,
       },
       filters = {
+        disabled = false,
         git_ignored = true,
         dotfiles = false,
         git_clean = false,
@@ -1241,6 +1243,11 @@ Only relevant when |modified.show_on_dirs| is `true`.
  5.10 OPTS: FILTERS                                   *nvim-tree-opts-filters*
 
 File / folder filters that may be toggled.
+
+*nvim-tree.filters.disabled*
+Ignores all enabled filters.
+Toggle via |nvim-tree-api.tree.toggle_filters()|, default `,`
+  Type: `boolean`, Default: `false`
 
 *nvim-tree.filters.git_ignored*
 Ignore files based on `.gitignore`. Requires |git.enable| `= true`
@@ -2221,6 +2228,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', '>',       api.node.navigate.sibling.next,      opts('Next Sibling'))
   vim.keymap.set('n', '<',       api.node.navigate.sibling.prev,      opts('Previous Sibling'))
   vim.keymap.set('n', '.',       api.node.run.cmd,                    opts('Run Command'))
+  vim.keymap.set('n', ',',       api.tree.toggle_filters,             opts('Toggle All Filters'))
   vim.keymap.set('n', '-',       api.tree.change_root_to_parent,      opts('Up'))
   vim.keymap.set('n', 'a',       api.fs.create,                       opts('Create File Or Directory'))
   vim.keymap.set('n', 'bd',      api.marks.bulk.delete,               opts('Delete Bookmarked'))
@@ -2756,6 +2764,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.filesystem_watchers.enable|
 |nvim-tree.filesystem_watchers.ignore_dirs|
 |nvim-tree.filters.custom|
+|nvim-tree.filters.disabled|
 |nvim-tree.filters.dotfiles|
 |nvim-tree.filters.exclude|
 |nvim-tree.filters.git_clean|

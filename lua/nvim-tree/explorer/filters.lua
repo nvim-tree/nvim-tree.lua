@@ -137,6 +137,10 @@ end
 ---@param status table from prepare
 ---@return boolean
 function M.should_filter(path, status)
+  if M.config.filters_disabled then
+    return false
+  end
+
   -- exclusions override all filters
   if is_excluded(path) then
     return false
@@ -153,6 +157,7 @@ function M.setup(opts)
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
     filter_no_bookmark = opts.filters.no_bookmark,
+    filters_disabled = opts.filters.disabled,
   }
 
   M.ignore_list = {}
