@@ -79,9 +79,9 @@ local function bookmark(path, bookmarks)
 
   -- add trailing slash to make it match only mark's parent directory
   -- not it's siblings
-  local dict = utils.path_add_trailing(path)
+  local parent = utils.path_add_trailing(path)
   for mark, _ in pairs(bookmarks) do
-    if path == mark or utils.str_find(mark, dict) then
+    if path == mark or vim.fn.stridx(mark, parent) == 0 then
       return false
     end
   end
