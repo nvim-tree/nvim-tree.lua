@@ -165,7 +165,7 @@ Show the mappings:  `g?`
 `>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
 `<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
 `.`               Run Command                |nvim-tree-api.node.run.cmd()|
-`,`               Toggle Filters Disabled    |nvim-tree-api.tree.toggle_filters_disabled()|
+`,`               Toggle Enable Filters      |nvim-tree-api.tree.toggle_enable_filters()|
 `-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
 `a`               Create File Or Directory   |nvim-tree-api.fs.create()|
 `bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
@@ -538,7 +538,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         show_on_open_dirs = true,
       },
       filters = {
-        disabled = false,
+        enable = true,
         git_ignored = true,
         dotfiles = false,
         git_clean = false,
