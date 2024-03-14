@@ -41,8 +41,8 @@ function M.dotfiles()
   reload()
 end
 
-function M.disabled()
-  filters.config.filters_disabled = not filters.config.filters_disabled
+function M.enable()
+  filters.config.enable = not filters.config.enable
   reload()
 end
 

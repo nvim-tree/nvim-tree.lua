@@ -137,7 +137,7 @@ end
 ---@param status table from prepare
 ---@return boolean
 function M.should_filter(path, status)
-  if M.config.filters_disabled then
+  if not M.config.enable then
     return false
   end
 
@@ -151,13 +151,13 @@ end
 
 function M.setup(opts)
   M.config = {
+    enable = opts.filters.enable,
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
     filter_git_ignored = opts.filters.git_ignored,
     filter_git_clean = opts.filters.git_clean,
     filter_no_buffer = opts.filters.no_buffer,
     filter_no_bookmark = opts.filters.no_bookmark,
-    filters_disabled = opts.filters.disabled,
   }
 
   M.ignore_list = {}
