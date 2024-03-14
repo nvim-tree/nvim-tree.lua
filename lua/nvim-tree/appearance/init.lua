@@ -51,7 +51,7 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeIndentMarker", link = "NvimTreeFolderIcon" },
 
   -- Picker
-  { group = "NvimTreeWindowPicker", def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=Cyan" },
+  { group = "NvimTreeWindowPicker", def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=DarkBlue" },
 
   -- LiveFilter
   { group = "NvimTreeLiveFilterPrefix", link = "PreProc" },
