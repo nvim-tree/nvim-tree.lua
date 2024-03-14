@@ -163,6 +163,7 @@ Api.fs.print_clipboard = wrap(actions.fs.copy_paste.print_clipboard)
 Api.fs.copy.node = wrap_node(actions.fs.copy_paste.copy)
 Api.fs.copy.absolute_path = wrap_node(actions.fs.copy_paste.copy_absolute_path)
 Api.fs.copy.filename = wrap_node(actions.fs.copy_paste.copy_filename)
+Api.fs.copy.basename = wrap_node(actions.fs.copy_paste.copy_basename)
 Api.fs.copy.relative_path = wrap_node(actions.fs.copy_paste.copy_path)
 
 ---@param mode string

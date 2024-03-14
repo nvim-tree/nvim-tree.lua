@@ -105,8 +105,8 @@ function M.open_on_directory()
 end
 
 function M.place_cursor_on_node()
-  local search = vim.fn.searchcount()
-  if search and search.exact_match == 1 then
+  local ok, search = pcall(vim.fn.searchcount)
+  if ok and search and search.exact_match == 1 then
     return
   end
 
