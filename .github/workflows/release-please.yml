@@ -3,7 +3,9 @@ on:
     branches:
       - master
   workflow_dispatch:
-
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 name: release-please
 permissions:
   contents: write
