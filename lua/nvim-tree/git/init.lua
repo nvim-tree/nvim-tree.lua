@@ -136,6 +136,10 @@ end
 ---@param path string absolute
 ---@return string|nil
 function M.get_toplevel(path)
+  if not path then
+    return nil
+  end
+
   if not M.config.git.enable then
     return nil
   end
