@@ -165,7 +165,6 @@ Show the mappings:  `g?`
 `>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
 `<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
 `.`               Run Command                |nvim-tree-api.node.run.cmd()|
-`,`               Toggle Enable Filters      |nvim-tree-api.tree.toggle_enable_filters()|
 `-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
 `a`               Create File Or Directory   |nvim-tree-api.fs.create()|
 `bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
@@ -1245,8 +1244,8 @@ Only relevant when |modified.show_on_dirs| is `true`.
 File / folder filters that may be toggled.
 
 *nvim-tree.filters.enable*
-Enable / disable filters.
-Toggle via |nvim-tree-api.tree.toggle_enable_filters()|, default `,`
+Enable / disable all filters including live filter.
+Toggle via |nvim-tree-api.tree.toggle_enable_filters()|
   Type: `boolean`, Default: `true`
 
 *nvim-tree.filters.git_ignored*
@@ -2228,7 +2227,6 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   vim.keymap.set('n', '>',       api.node.navigate.sibling.next,      opts('Next Sibling'))
   vim.keymap.set('n', '<',       api.node.navigate.sibling.prev,      opts('Previous Sibling'))
   vim.keymap.set('n', '.',       api.node.run.cmd,                    opts('Run Command'))
-  vim.keymap.set('n', ',',       api.tree.toggle_enable_filters,      opts('Toggle Enable Filters'))
   vim.keymap.set('n', '-',       api.tree.change_root_to_parent,      opts('Up'))
   vim.keymap.set('n', 'a',       api.fs.create,                       opts('Create File Or Directory'))
   vim.keymap.set('n', 'bd',      api.marks.bulk.delete,               opts('Delete Bookmarked'))
@@ -2974,6 +2972,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.reload()|
 |nvim-tree-api.tree.search_node()|
 |nvim-tree-api.tree.toggle()|
+|nvim-tree-api.tree.toggle_enable_filters()|
 |nvim-tree-api.tree.toggle_custom_filter()|
 |nvim-tree-api.tree.toggle_git_clean_filter()|
 |nvim-tree-api.tree.toggle_gitignore_filter()|
