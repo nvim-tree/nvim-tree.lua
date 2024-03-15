@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.1.0...nvim-tree-v1.1.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* **#2395:** marks.bulk.move defaults to directory at cursor ([#2688](https://github.com/nvim-tree/nvim-tree.lua/issues/2688)) ([cfea5bd](https://github.com/nvim-tree/nvim-tree.lua/commit/cfea5bd0806aab41bef6014c6cf5a510910ddbdb))
+* **#2705:** change NvimTreeWindowPicker cterm background from Cyan to more visible DarkBlue ([#2708](https://github.com/nvim-tree/nvim-tree.lua/issues/2708)) ([1fd9c98](https://github.com/nvim-tree/nvim-tree.lua/commit/1fd9c98960463d2d5d400916c0633b2df016941d))
+* **#2705:** change NvimTreeWindowPicker from Cyan to the more visible DarkBlue ([1fd9c98](https://github.com/nvim-tree/nvim-tree.lua/commit/1fd9c98960463d2d5d400916c0633b2df016941d))
+* bookmark filter should include parent directory ([#2704](https://github.com/nvim-tree/nvim-tree.lua/issues/2704)) ([76b9810](https://github.com/nvim-tree/nvim-tree.lua/commit/76b98109f62caa12b2f1dff472060b2233ea2e90))
+
 ## [1.1.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.0.0...nvim-tree-v1.1.0) (2024-03-14)
 
 
