@@ -369,6 +369,37 @@ function M.key_by(tbl, key)
   return keyed
 end
 
+function M.group_by(tbl, key)
+  local grouped = {}
+  for _, val in ipairs(tbl) do
+    if not grouped[val[key]] then
+      grouped[val[key]] = {}
+    end
+
+    table.insert(grouped[val[key]], val)
+  end
+  return grouped
+end
+
+function M.pad_end(str, width, fill_char)
+  fill_char = fill_char or " "
+
+  if #str >= width then
+    return str
+  end
+
+  return str .. string.rep(fill_char, width - #str)
+end
+
+-- Works like vim.tbl_flatten, but flattens one level only
+function M.flatten(tbl)
+  local result = {}
+  for _, value in ipairs(tbl) do
+    vim.list_extend(result, value)
+  end
+  return result
+end
+
 function M.bool_record(tbl, key)
   local keyed = {}
   for _, val in ipairs(tbl) do

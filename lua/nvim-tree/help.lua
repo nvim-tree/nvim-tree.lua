@@ -1,3 +1,4 @@
+local utils = require "nvim-tree.utils"
 local keymap = require "nvim-tree.keymap"
 
 local PAT_MOUSE = "^<.*Mouse"
@@ -85,65 +86,115 @@ end
 local function compute()
   local head_lhs = "nvim-tree mappings"
   local head_rhs1 = "exit: q"
-  local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
 
-  -- formatted lhs and desc from active keymap
-  local mappings = vim.tbl_map(function(map)
-    return { lhs = tidy_lhs(map.lhs), desc = tidy_desc(map.desc) }
-  end, keymap.get_keymap())
+  local api = require "nvim-tree.api"
+  local map = keymap.get_keymap()
+  local exposed_apis = api.meta.get_exposed_apis()
 
-  -- sorter function for mappings
-  local sort_fn
 
-  if M.config.sort_by == "desc" then
-    sort_fn = function(a, b)
-      return a.desc:lower() < b.desc:lower()
+  local mappings = vim.tbl_map(function(exposed_api)
+    -- find all keybindings this api entry
+    local assigned_keys = vim.tbl_filter(function(key)
+      return key.callback == exposed_api.fn
+    end, map)
+
+    -- if no keybindings, we still want to show api entry
+    if #assigned_keys == 0 then
+      return { {
+        lhs = " ",
+        desc = exposed_api.description,
+        group = exposed_api.group,
+        api_path = exposed_api.api_path
+      } }
     end
-  else
-    -- by default sort roughly by lhs
-    sort_fn = function(a, b)
-      return sort_lhs(a.lhs, b.lhs)
-    end
+
+    -- show all keybindings for api entry
+    return vim.tbl_map(function(key)
+      return {
+        lhs = tidy_lhs(key.lhs),
+        desc = exposed_api.description,
+        group = exposed_api.group,
+        api_path = exposed_api.api_path,
+      }
+    end, assigned_keys)
+  end, exposed_apis)
+
+  -- since 1 api entry might have a few keybindings assigned, it needs to be flattened
+  mappings = utils.flatten(mappings)
+  local groups = utils.group_by(mappings, "group")
+
+  -- transform dict into array
+  local group_list = {}
+  for group_name, group in pairs(groups) do
+    table.insert(group_list, { name = group_name, group = group })
   end
 
-  table.sort(mappings, sort_fn)
+  -- sort groups by group name
+  table.sort(group_list, function (a, b)
+    return a.name:lower() < b.name:lower()
+  end)
 
-  -- longest lhs and description
+  -- sort keybindings by description
+  for _, group_item in ipairs(group_list) do
+    table.sort(group_item.group, function(a, b)
+      return a.desc:lower() < b.desc:lower()
+    end)
+  end
+
+  -- longest lhs, description and api path
   local max_lhs = 0
   local max_desc = 0
+  local max_api_path = 0
   for _, l in pairs(mappings) do
     max_lhs = math.max(#l.lhs, max_lhs)
     max_desc = math.max(#l.desc, max_desc)
+    max_api_path = math.max(#l.api_path, max_api_path)
   end
 
-  -- increase desc if lines are shorter than the header
-  max_desc = math.max(max_desc, #head_lhs + #head_rhs1 - max_lhs)
+  local width = max_lhs + max_desc + max_api_path + 3
 
-  -- header text, not padded
+  -- header text
   local lines = {
-    head_lhs .. string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs1 + 2) .. head_rhs1,
-    string.rep(" ", max_desc + max_lhs - #head_rhs2 + 2) .. head_rhs2,
+    utils.pad_end(head_lhs .. string.rep(" ", width - #head_lhs - #head_rhs1) .. head_rhs1, width),
+    string.rep(" ", width),
   }
-  local width = #lines[1]
 
   -- header highlight, assume one character keys
   local hl = {
-    { "NvimTreeFolderName", 0, 0, #head_lhs },
+    { "NvimTreeFolderName", 0, 0,         #head_lhs },
     { "NvimTreeFolderName", 0, width - 1, width },
     { "NvimTreeFolderName", 1, width - 1, width },
   }
 
   -- mappings, left padded 1
-  local fmt = string.format(" %%-%ds %%-%ds", max_lhs, max_desc)
-  for i, l in ipairs(mappings) do
-    -- format in left aligned columns
-    local line = string.format(fmt, l.lhs, l.desc)
-    table.insert(lines, line)
-    width = math.max(#line, width)
+  local i = 1
+  for _, group_item in ipairs(group_list) do
+    -- group name
+    table.insert(lines, utils.pad_end(" " .. group_item.name, width))
+    table.insert(hl, { "NvimTreeSymlink", i + 1, 1, #group_item.name + 1 })
+    i = i + 1
 
-    -- highlight lhs
-    table.insert(hl, { "NvimTreeFolderName", i + 1, 1, #l.lhs + 1 })
+    local fmt = string.format(" %%-%ds %%-%ds %%-%ds", max_lhs, max_desc, max_api_path)
+    for _, l in ipairs(group_item.group) do
+      -- format in left aligned columns
+      local line = string.format(fmt, l.lhs, l.desc, l.api_path)
+      table.insert(lines, line)
+
+      -- highlight lhs
+      table.insert(hl, { "NvimTreeFolderName", i + 1, 1, #l.lhs + 1 })
+
+      -- highlight api path
+      table.insert(hl, { "NvimTreeFolderName", i + 1, max_lhs + max_desc + 3, max_lhs + max_desc + #l.api_path + 3 })
+      i = i + 1
+    end
+
+    -- empty line between groups
+    table.insert(lines, string.rep(" ", width))
+    i = i + 1
   end
+
+  -- remove last empty line
+  table.remove(lines, nil)
 
   return lines, hl, width
 end
@@ -196,14 +247,8 @@ local function open()
   vim.wo[M.winnr].winhl = WIN_HL
   vim.wo[M.winnr].cursorline = M.config.cursorline
 
-  local function toggle_sort()
-    M.config.sort_by = (M.config.sort_by == "desc") and "key" or "desc"
-    open()
-  end
-
   local keymaps = {
     q = { fn = close, desc = "nvim-tree: exit help" },
-    s = { fn = toggle_sort, desc = "nvim-tree: toggle sorting method" },
   }
 
   for k, v in pairs(keymaps) do
