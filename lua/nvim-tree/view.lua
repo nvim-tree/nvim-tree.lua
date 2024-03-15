@@ -151,11 +151,17 @@ end
 
 ---@return table
 local function open_win_config()
+  local win_conf
   if type(M.View.float.open_win_config) == "function" then
-    return M.View.float.open_win_config()
+    win_conf = M.View.float.open_win_config()
   else
-    return M.View.float.open_win_config
+    win_conf = M.View.float.open_win_config
   end
+
+  if (win_conf.col == 1 and M.View.side == "right") and M.View.float.enable then
+    win_conf.col = vim.api.nvim_win_get_width(0) - (win_conf.width+1)
+  end
+  return win_conf
 end
 
 local function open_window()
