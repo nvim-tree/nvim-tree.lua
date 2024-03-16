@@ -1708,6 +1708,10 @@ tree.expand_all()                            *nvim-tree-api.tree.expand_all()*
     Recursively expand all nodes in the tree.
     Folder: only the nodes underneath that folder.
 
+                                  *nvim-tree-api.tree.toggle_enable_filters()*
+tree.toggle_enable_filters()
+    Toggle |nvim-tree.filters.enable| all filters.
+
                                 *nvim-tree-api.tree.toggle_gitignore_filter()*
 tree.toggle_gitignore_filter()
     Toggle |nvim-tree.filters.git_ignored| filter.
@@ -2972,8 +2976,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.reload()|
 |nvim-tree-api.tree.search_node()|
 |nvim-tree-api.tree.toggle()|
-|nvim-tree-api.tree.toggle_enable_filters()|
 |nvim-tree-api.tree.toggle_custom_filter()|
+|nvim-tree-api.tree.toggle_enable_filters()|
 |nvim-tree-api.tree.toggle_git_clean_filter()|
 |nvim-tree-api.tree.toggle_gitignore_filter()|
 |nvim-tree-api.tree.toggle_help()|
