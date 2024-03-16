@@ -499,6 +499,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     show_on_open_dirs = true,
   },
   filters = {
+    enable = true,
     git_ignored = true,
     dotfiles = false,
     git_clean = false,
