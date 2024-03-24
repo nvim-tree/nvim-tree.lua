@@ -71,8 +71,8 @@ local function dotfile(path)
 end
 
 ---@param path string
----@param path_type uv.aliases.fs_types|nil filetype of path
----@param bookmarks table<string, uv.aliases.fs_types|nil> path, filetype table of bookmarked files
+---@param path_type string|nil filetype of path
+---@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
 local function bookmark(path, path_type, bookmarks)
   if not M.config.filter_no_bookmark then
     return false
@@ -160,7 +160,7 @@ end
 
 ---Check if the given path should be filtered.
 ---@param path string Absolute path
----@param path_type uv.aliases.fs_types|nil File type
+---@param path_type string|nil File type
 ---@param status table from prepare
 ---@return boolean
 function M.should_filter(path, path_type, status)
