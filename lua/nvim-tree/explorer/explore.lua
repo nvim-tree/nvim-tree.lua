@@ -37,7 +37,7 @@ local function populate_children(handle, cwd, node, git_status)
     local profile = log.profile_start("explore populate_children %s", abs)
 
     t = get_type_from(t, abs)
-    if not filters.should_filter(abs, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
+    if not filters.should_filter(abs, t, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name)

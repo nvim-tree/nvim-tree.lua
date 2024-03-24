@@ -71,27 +71,31 @@ local function dotfile(path)
 end
 
 ---@param path string
----@param bookmarks table<string, boolean> absolute paths bookmarked
-local function bookmark(path, bookmarks)
+---@param path_type uv.aliases.fs_types|nil filetype of path
+---@param bookmarks table<string, uv.aliases.fs_types|nil> path, filetype table of bookmarked files
+local function bookmark(path, path_type, bookmarks)
   if not M.config.filter_no_bookmark then
     return false
   end
 
-  -- add trailing slash to make it match only mark's parent directory
-  -- not it's siblings
-  local markParent = utils.path_add_trailing(path)
-  for mark, _ in pairs(bookmarks) do
+  local mark_parent = utils.path_add_trailing(path)
+  for mark, mark_type in pairs(bookmarks) do
     if path == mark then
       return false
     end
-    -- check if path is mark's parent (assume path is a directory)
-    if vim.fn.stridx(mark, markParent) == 0 then
-      return false
+
+    if path_type == "directory" then
+      -- check if path is mark's parent
+      if vim.fn.stridx(mark, mark_parent) == 0 then
+        return false
+      end
     end
-    -- check if mark is path's parent (assume mark is a directory)
-    local pathParent = utils.path_add_trailing(mark)
-    if vim.fn.stridx(path, pathParent) == 0 then
-      return false
+    if mark_type == "directory" then
+      -- check if mark is path's parent
+      local path_parent = utils.path_add_trailing(mark)
+      if vim.fn.stridx(path, path_parent) == 0 then
+        return false
+      end
     end
   end
 
@@ -148,7 +152,7 @@ function M.prepare(git_status)
   end
 
   for _, node in pairs(marks.get_marks()) do
-    status.bookmarks[node.absolute_path] = true
+    status.bookmarks[node.absolute_path] = node.type
   end
 
   return status
@@ -156,9 +160,10 @@ end
 
 ---Check if the given path should be filtered.
 ---@param path string Absolute path
+---@param path_type uv.aliases.fs_types|nil File type
 ---@param status table from prepare
 ---@return boolean
-function M.should_filter(path, status)
+function M.should_filter(path, path_type, status)
   if not M.config.enable then
     return false
   end
@@ -168,7 +173,11 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status) or buf(path, status.bufinfo) or dotfile(path) or custom(path) or bookmark(path, status.bookmarks)
+  return git(path, status.git_status)
+    or buf(path, status.bufinfo)
+    or dotfile(path)
+    or custom(path)
+    or bookmark(path, path_type, status.bookmarks)
 end
 
 function M.setup(opts)

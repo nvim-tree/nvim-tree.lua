@@ -107,7 +107,7 @@ function M.reload(node, git_status)
 
     local abs = utils.path_join { cwd, name }
     t = t or (fs_stat_cached(abs) or {}).type
-    if not filters.should_filter(abs, filter_status) then
+    if not filters.should_filter(abs, t, filter_status) then
       child_names[abs] = true
 
       -- Recreate node if type changes.

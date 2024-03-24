@@ -41,7 +41,7 @@ local function search(search_dir, input_path)
         break
       end
 
-      if not filters.should_filter(path, filter_status) then
+      if not filters.should_filter(path, stat.type, filter_status) then
         if string.find(path, "/" .. input_path .. "$") then
           return path
         end
