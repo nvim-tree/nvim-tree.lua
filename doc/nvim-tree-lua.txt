@@ -504,7 +504,9 @@ Following is the default configuration. See |nvim-tree-opts| for details.
           enable = false,
           ignore_list = {},
         },
-        exclude = { "gitcommit" },
+        exclude = function()
+          return false
+        end,
       },
       system_open = {
         cmd = "",
@@ -2879,8 +2881,10 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.ui.confirm.remove|
 |nvim-tree.ui.confirm.trash|
 |nvim-tree.update_focused_file.enable|
-|nvim-tree.update_focused_file.ignore_list|
+|nvim-tree.update_focused_file.exclude|
 |nvim-tree.update_focused_file.update_root|
+|nvim-tree.update_focused_file.update_root.enable|
+|nvim-tree.update_focused_file.update_root.ignore_list|
 |nvim-tree.view.centralize_selection|
 |nvim-tree.view.cursorline|
 |nvim-tree.view.debounce_delay|
