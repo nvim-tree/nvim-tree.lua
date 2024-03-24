@@ -247,13 +247,9 @@ local function setup_autocommands(opts)
   end
   if opts.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
-      callback = function()
-        for _, value in pairs(_config.update_focused_file.exclude) do
-          local ft = vim.api.nvim_buf_get_option(0, "filetype")
-          local path = vim.fn.expand "%:t"
-          if utils.str_find(path, value) or utils.str_find(ft, value) then
-            return
-          end
+      callback = function(event)
+        if opts.update_focused_file.exclude(event) then
+          return
         end
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
           actions.tree.find_file.fn()
@@ -473,7 +469,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       enable = false,
       ignore_list = {},
     },
-    exclude = { "gitcommit" },
+    exclude = function()
+      return false
+    end,
   },
   system_open = {
     cmd = "",

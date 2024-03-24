@@ -1106,8 +1106,9 @@ Only relevant when `update_focused_file.enable` is `true`
       Type: {string}, Default: `{}`
 
 *nvim-tree.update_focused_file.exclude*
-List of buffer names and filetypes that will not update the focused file.
-  Type: {string}, Default: `{ "gitcommit" }`
+A function that returns true if the file should not be focused when opening.
+Takes the `BufEnter` event as an argument. see |autocmd-events|
+  Type: {function}, Default: `function() return false end`
 
 ==============================================================================
  5.6 OPTS: SYSTEM OPEN                            *nvim-tree-opts-system-open*
