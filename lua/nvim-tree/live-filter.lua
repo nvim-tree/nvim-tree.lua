@@ -1,6 +1,7 @@
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
+local filters = require "nvim-tree.explorer.filters"
 
 local M = {
   filter = nil,
@@ -56,6 +57,10 @@ end
 ---@param node Node
 ---@return boolean
 local function matches(node)
+  if not filters.config.enable then
+    return true
+  end
+
   local path = node.absolute_path
   local name = vim.fn.fnamemodify(path, ":t")
   return vim.regex(M.filter):match_str(name) ~= nil

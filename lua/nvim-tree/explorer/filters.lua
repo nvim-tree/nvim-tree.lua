@@ -73,7 +73,20 @@ end
 ---@param path string
 ---@param bookmarks table<string, boolean> absolute paths bookmarked
 local function bookmark(path, bookmarks)
-  return M.config.filter_no_bookmark and not bookmarks[path]
+  if not M.config.filter_no_bookmark then
+    return false
+  end
+
+  -- add trailing slash to make it match only mark's parent directory
+  -- not it's siblings
+  local parent = utils.path_add_trailing(path)
+  for mark, _ in pairs(bookmarks) do
+    if path == mark or vim.fn.stridx(mark, parent) == 0 then
+      return false
+    end
+  end
+
+  return true
 end
 
 ---@param path string
@@ -137,6 +150,10 @@ end
 ---@param status table from prepare
 ---@return boolean
 function M.should_filter(path, status)
+  if not M.config.enable then
+    return false
+  end
+
   -- exclusions override all filters
   if is_excluded(path) then
     return false
@@ -147,6 +164,7 @@ end
 
 function M.setup(opts)
   M.config = {
+    enable = opts.filters.enable,
     filter_custom = true,
     filter_dotfiles = opts.filters.dotfiles,
     filter_git_ignored = opts.filters.git_ignored,

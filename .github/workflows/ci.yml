@@ -2,6 +2,8 @@ name: CI
 
 on:
   pull_request:
+  push:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -10,6 +12,10 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.lua_version }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
 
     strategy:
       matrix:
@@ -31,6 +37,10 @@ jobs:
   style:
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.stylua_version }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+
     strategy:
       matrix:
         stylua_version: [ 0.19.1 ]
@@ -49,6 +59,10 @@ jobs:
 
   check:
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ matrix.luals_version }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
 
     strategy:
       matrix:

@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.2.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.1.1...nvim-tree-v1.2.0) (2024-03-24)
+
+
+### Features
+
+* add api.tree.toggle_enable_filters ([#2706](https://github.com/nvim-tree/nvim-tree.lua/issues/2706)) ([f7c09bd](https://github.com/nvim-tree/nvim-tree.lua/commit/f7c09bd72e50e1795bd3afb9e2a2b157b4bfb3c3))
+
+## [1.1.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.1.0...nvim-tree-v1.1.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* **#2395:** marks.bulk.move defaults to directory at cursor ([#2688](https://github.com/nvim-tree/nvim-tree.lua/issues/2688)) ([cfea5bd](https://github.com/nvim-tree/nvim-tree.lua/commit/cfea5bd0806aab41bef6014c6cf5a510910ddbdb))
+* **#2705:** change NvimTreeWindowPicker cterm background from Cyan to more visible DarkBlue ([#2708](https://github.com/nvim-tree/nvim-tree.lua/issues/2708)) ([1fd9c98](https://github.com/nvim-tree/nvim-tree.lua/commit/1fd9c98960463d2d5d400916c0633b2df016941d))
+* bookmark filter should include parent directory ([#2704](https://github.com/nvim-tree/nvim-tree.lua/issues/2704)) ([76b9810](https://github.com/nvim-tree/nvim-tree.lua/commit/76b98109f62caa12b2f1dff472060b2233ea2e90))
+
+## [1.1.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.0.0...nvim-tree-v1.1.0) (2024-03-14)
+
+
+### Features
+
+* **#2630:** file renames can now create directories ([#2657](https://github.com/nvim-tree/nvim-tree.lua/issues/2657)) ([efafd73](https://github.com/nvim-tree/nvim-tree.lua/commit/efafd73efa9bc8c26282aed563ba0f01c7465b06))
+* add api.fs.copy.basename, default mapping ge ([#2698](https://github.com/nvim-tree/nvim-tree.lua/issues/2698)) ([8f2a50f](https://github.com/nvim-tree/nvim-tree.lua/commit/8f2a50f1cd0c64003042364cf317c8788eaa6c8c))
+
+
+### Bug Fixes
+
+* **#2695:** git toplevel guard against missing paths ([#2696](https://github.com/nvim-tree/nvim-tree.lua/issues/2696)) ([3c4267e](https://github.com/nvim-tree/nvim-tree.lua/commit/3c4267eb5045fa86b67fe40c0c63d31efc801e77))
+* searchcount exception on invalid search regex ([#2693](https://github.com/nvim-tree/nvim-tree.lua/issues/2693)) ([041dbd1](https://github.com/nvim-tree/nvim-tree.lua/commit/041dbd18f440207ad161503a384e7c82d575db66))
+
+## [1.0.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v0.100.0...nvim-tree-v1.0.0) (2024-02-18)
+
+
+### Features
+
+* **#2654:** filters.custom may be a function ([#2655](https://github.com/nvim-tree/nvim-tree.lua/issues/2655)) ([4a87b8b](https://github.com/nvim-tree/nvim-tree.lua/commit/4a87b8b46b4a30107971871df3cb7f4c30fdd5d0))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([#2678](https://github.com/nvim-tree/nvim-tree.lua/issues/2678)) ([d16246a](https://github.com/nvim-tree/nvim-tree.lua/commit/d16246a7575538f77e9246520449b99333c469f7))
+
 ## [0.100.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v0.99.0...nvim-tree-v0.100.0) (2024-02-11)
 
 
