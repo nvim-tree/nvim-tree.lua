@@ -55,7 +55,7 @@ function M.fn(opts)
   end
 
   -- update root
-  if opts.update_root or M.config.update_focused_file.update_root then
+  if opts.update_root or M.config.update_focused_file.update_root.enable then
     require("nvim-tree").change_root(path, bufnr)
   end
 
