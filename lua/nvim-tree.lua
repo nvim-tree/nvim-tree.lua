@@ -248,7 +248,8 @@ local function setup_autocommands(opts)
   if opts.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
       callback = function(event)
-        if opts.update_focused_file.exclude(event) then
+        local exclude = opts.update_focused_file.exclude
+        if type(exclude) == "function" and exclude(event) then
           return
         end
         utils.debounce("BufEnter:find_file", opts.view.debounce_delay, function()
@@ -469,9 +470,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       enable = false,
       ignore_list = {},
     },
-    exclude = function()
-      return false
-    end,
+    exclude = false,
   },
   system_open = {
     cmd = "",
@@ -631,6 +630,9 @@ local ACCEPTED_TYPES = {
   renderer = {
     group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
+  },
+  update_focused_file = {
+    exclude = { "function" },
   },
   filters = {
     custom = { "function" },

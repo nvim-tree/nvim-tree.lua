@@ -504,9 +504,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
           enable = false,
           ignore_list = {},
         },
-        exclude = function()
-          return false
-        end,
+        exclude = false,
       },
       system_open = {
         cmd = "",
@@ -1124,7 +1122,7 @@ Only relevant when `update_focused_file.enable` is `true`
 *nvim-tree.update_focused_file.exclude*
 A function that returns true if the file should not be focused when opening.
 Takes the `BufEnter` event as an argument. see |autocmd-events|
-  Type: {function}, Default: `function() return false end`
+  Type: {function}, Default: `false`
 
 ==============================================================================
  5.6 OPTS: SYSTEM OPEN                            *nvim-tree-opts-system-open*
