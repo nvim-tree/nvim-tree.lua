@@ -6,15 +6,16 @@ local M = {}
 ---@param parent Node
 ---@param absolute_path string
 ---@param name string
+---@param fs_stat uv.fs_stat.result|nil
 ---@return Node
-function M.folder(parent, absolute_path, name)
+function M.folder(parent, absolute_path, name, fs_stat)
   local handle = vim.loop.fs_scandir(absolute_path)
   local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
 
   local node = {
     type = "directory",
     absolute_path = absolute_path,
-    fs_stat = vim.loop.fs_stat(absolute_path),
+    fs_stat = fs_stat,
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     name = name,
@@ -43,8 +44,9 @@ end
 ---@param parent Node
 ---@param absolute_path string
 ---@param name string
+---@param fs_stat uv.fs_stat.result|nil
 ---@return Node
-function M.file(parent, absolute_path, name)
+function M.file(parent, absolute_path, name, fs_stat)
   local ext = string.match(name, ".?[^.]+%.(.*)") or ""
 
   return {
@@ -52,7 +54,7 @@ function M.file(parent, absolute_path, name)
     absolute_path = absolute_path,
     executable = M.is_executable(absolute_path),
     extension = ext,
-    fs_stat = vim.loop.fs_stat(absolute_path),
+    fs_stat = fs_stat,
     name = name,
     parent = parent,
   }
@@ -66,8 +68,9 @@ end
 ---@param parent Node
 ---@param absolute_path string
 ---@param name string
+---@param fs_stat uv.fs_stat.result|nil
 ---@return Node
-function M.link(parent, absolute_path, name)
+function M.link(parent, absolute_path, name, fs_stat)
   --- I dont know if this is needed, because in my understanding, there isn't hard links in windows, but just to be sure i changed it.
   local link_to = vim.loop.fs_realpath(absolute_path)
   local open, nodes, has_children
@@ -84,7 +87,7 @@ function M.link(parent, absolute_path, name)
   local node = {
     type = "link",
     absolute_path = absolute_path,
-    fs_stat = vim.loop.fs_stat(absolute_path),
+    fs_stat = fs_stat,
     group_next = nil, -- If node is grouped, this points to the next child dir/link node
     has_children = has_children,
     link_to = link_to,
