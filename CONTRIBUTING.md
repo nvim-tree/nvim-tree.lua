@@ -108,3 +108,4 @@ Available types:
 
 If in doubt, look at previous commits.
 
+See also [The Conventional Commits ultimate cheatsheet](https://gist.github.com/gabrielecanepa/fa6cca1a8ae96f77896fe70ddee65527)
