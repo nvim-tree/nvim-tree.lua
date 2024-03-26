@@ -57,6 +57,7 @@ local function clone_node(node)
     name = node.name,
     open = node.open,
     type = node.type,
+    fs_stat = node.fs_stat,
   }
 
   if type(node.nodes) == "table" then
