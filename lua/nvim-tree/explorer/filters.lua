@@ -160,10 +160,10 @@ end
 
 ---Check if the given path should be filtered.
 ---@param path string Absolute path
----@param path_type string|nil File type
+---@param fs_stat uv.fs_stat.result|nil fs_stat of file
 ---@param status table from prepare
 ---@return boolean
-function M.should_filter(path, path_type, status)
+function M.should_filter(path, fs_stat, status)
   if not M.config.enable then
     return false
   end
@@ -177,7 +177,7 @@ function M.should_filter(path, path_type, status)
     or buf(path, status.bufinfo)
     or dotfile(path)
     or custom(path)
-    or bookmark(path, path_type, status.bookmarks)
+    or bookmark(path, fs_stat and fs_stat.type, status.bookmarks)
 end
 
 function M.setup(opts)
