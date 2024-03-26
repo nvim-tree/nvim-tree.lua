@@ -81,9 +81,30 @@ When adding or changing API please update :help nvim-tree-api
 
 # Pull Request
 
-Please reference any issues in the description e.g. "resolves #1234".
+Please reference any issues in the description e.g. "resolves #1234", which will be closed upon merge.
 
 Please check "allow edits by maintainers" to allow nvim-tree developers to make small changes such as documentation tweaks.
 
-A test case to reproduce the issue is required. A ["Clean Room" Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) is preferred.
+## Subject
+
+The merge commit message will be the subject of the PR.
+
+A [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0) subject will be validated by the Semantic Pull Request Subject CI job. Reference the issue to be used in the release notes e.g.
+
+`fix(#2395): marks.bulk.move defaults to directory at cursor`
+
+Available types:
+* feat: A new feature
+* fix: A bug fix
+* docs: Documentation only changes
+* style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* refactor: A code change that neither fixes a bug nor adds a feature
+* perf: A code change that improves performance
+* test: Adding missing tests or correcting existing tests
+* build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+* ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+* chore: Other changes that don't modify src or test files
+* revert: Reverts a previous commit
+
+If in doubt, look at previous commits.
 
