@@ -77,6 +77,10 @@ local function bookmark(path, path_type, bookmarks)
   if not M.config.filter_no_bookmark then
     return false
   end
+  -- if bookmark is empty, we should see a empty filetree
+  if next(bookmarks) == nil then
+    return true
+  end
 
   local mark_parent = utils.path_add_trailing(path)
   for mark, mark_type in pairs(bookmarks) do
