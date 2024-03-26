@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.2.0...nvim-tree-v1.3.0) (2024-03-26)
+
+
+### Features
+
+* add update_focused_file.exclude  ([#2673](https://github.com/nvim-tree/nvim-tree.lua/issues/2673)) ([e20966a](https://github.com/nvim-tree/nvim-tree.lua/commit/e20966ae558524f8d6f93dc37f5d2a8605f893e2))
+
 ## [1.2.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.1.1...nvim-tree-v1.2.0) (2024-03-24)
 
 
