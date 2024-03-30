@@ -1,5 +1,11 @@
 local M = {}
 
+---@class HighlightGroup
+---@field group string
+---@field link string|nil
+---@field def string|nil
+
+---@type HighlightGroup[]
 -- All highlight groups: linked or directly defined.
 -- Please add new groups to help and preserve order.
 -- Please avoid directly defined groups to preserve accessibility for TUI.
@@ -24,10 +30,10 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeStatusLineNC", link = "StatusLineNC" },
 
   -- File Text
-  { group = "NvimTreeExecFile", link = "SpellCap" },
-  { group = "NvimTreeImageFile", link = "SpellCap" },
-  { group = "NvimTreeSpecialFile", link = "SpellCap" },
-  { group = "NvimTreeSymlink", link = "SpellCap" },
+  { group = "NvimTreeExecFile", link = "Question" },
+  { group = "NvimTreeImageFile", link = "Question" },
+  { group = "NvimTreeSpecialFile", link = "Title" },
+  { group = "NvimTreeSymlink", link = "Underlined" },
 
   -- Folder Text
   { group = "NvimTreeRootFolder", link = "Title" },
