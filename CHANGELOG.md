@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.2.0...nvim-tree-v1.3.0) (2024-03-30)
+
+
+### Features
+
+* add update_focused_file.exclude  ([#2673](https://github.com/nvim-tree/nvim-tree.lua/issues/2673)) ([e20966a](https://github.com/nvim-tree/nvim-tree.lua/commit/e20966ae558524f8d6f93dc37f5d2a8605f893e2))
+
+
+### Bug Fixes
+
+* **#2658:** change SpellCap groups to reduce confusion: ExecFile-&gt;Question, ImageFile->Question, SpecialFile->Title, Symlink->Underlined; add all other highlight groups to :NvimTreeHiTest ([#2732](https://github.com/nvim-tree/nvim-tree.lua/issues/2732)) ([0aca092](https://github.com/nvim-tree/nvim-tree.lua/commit/0aca0920f44b12a8383134bcb52da9faec123608))
+* bookmark filter shows marked directory children ([#2719](https://github.com/nvim-tree/nvim-tree.lua/issues/2719)) ([2d97059](https://github.com/nvim-tree/nvim-tree.lua/commit/2d97059661c83787372c8c003e743c984ba3ac50))
+
 ## [1.2.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.1.1...nvim-tree-v1.2.0) (2024-03-24)
 
 
