@@ -30,10 +30,10 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeStatusLineNC", link = "StatusLineNC" },
 
   -- File Text
-  { group = "NvimTreeExecFile", link = "SpellCap" },
-  { group = "NvimTreeImageFile", link = "SpellCap" },
-  { group = "NvimTreeSpecialFile", link = "SpellCap" },
-  { group = "NvimTreeSymlink", link = "SpellCap" },
+  { group = "NvimTreeExecFile", link = "Question" },
+  { group = "NvimTreeImageFile", link = "Question" },
+  { group = "NvimTreeSpecialFile", link = "Title" },
+  { group = "NvimTreeSymlink", link = "Underlined" },
 
   -- Folder Text
   { group = "NvimTreeRootFolder", link = "Title" },

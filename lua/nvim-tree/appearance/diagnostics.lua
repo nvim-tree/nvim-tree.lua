@@ -126,7 +126,7 @@ function M.hi_test()
   l = l + 1
 
   -- long
-  l = render_displays("other, long", displays_long, bufnr, l)
+  render_displays("other, long", displays_long, bufnr, l)
 
   -- finalise and focus the buffer
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
