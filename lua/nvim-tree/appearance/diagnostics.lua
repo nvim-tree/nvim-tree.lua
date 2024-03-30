@@ -1,5 +1,8 @@
 local appearance = require "nvim-tree.appearance"
 
+-- others with name and links less than this arbitrary value are short
+local SHORT_LEN = 50
+
 local M = {}
 
 ---@class HighlightDisplay for :NvimTreeHiTest
@@ -55,21 +58,16 @@ end
 
 ---Render many groups.
 ---@param header string before with underline line
----@param groups string[] highlight group names
+---@param displays HighlightDisplay[] highlight group
 ---@param bufnr number to render in
 ---@param l number line number to start at
 ---@return number l next line number
-local function render_groups(header, groups, bufnr, l)
+local function render_displays(header, displays, bufnr, l)
   local max_group_len = 0
   local max_links_len = 0
 
-  ---@type HighlightDisplay[]
-  local displays = {}
-
   -- build all highlight groups, using name only
-  for _, group in ipairs(groups) do
-    local display = HighlightDisplay:new(group)
-    table.insert(displays, display)
+  for _, display in ipairs(displays) do
     max_group_len = math.max(max_group_len, #display.group)
     max_links_len = math.max(max_links_len, #display.links)
   end
@@ -96,26 +94,39 @@ function M.hi_test()
   local l = 0
 
   -- nvim-tree groups, ordered
-  local groups = {}
+  local displays = {}
   for _, highlight_group in ipairs(appearance.HIGHLIGHT_GROUPS) do
-    table.insert(groups, highlight_group.group)
+    local display = HighlightDisplay:new(highlight_group.group)
+    table.insert(displays, display)
   end
-  l = render_groups("nvim-tree", groups, bufnr, l)
+  l = render_displays("nvim-tree", displays, bufnr, l)
 
   vim.api.nvim_buf_set_lines(bufnr, l, -1, true, { "" })
   l = l + 1
 
   -- built in groups, ordered opaquely by nvim
-  groups = {}
+  local displays_short, displays_long = {}, {}
   local ok, out = pcall(vim.api.nvim_cmd, { cmd = "highlight" }, { output = true })
   if ok then
     for group in string.gmatch(out, "(%w*)%s+xxx") do
       if group:find("NvimTree", 1, true) ~= 1 then
-        table.insert(groups, group)
+        local display = HighlightDisplay:new(group)
+        if #display.group + #display.links > SHORT_LEN then
+          table.insert(displays_long, display)
+        else
+          table.insert(displays_short, display)
+        end
       end
     end
   end
-  l = render_groups("neovim", groups, bufnr, l)
+
+  -- short ones first
+  l = render_displays("other, short", displays_short, bufnr, l)
+  vim.api.nvim_buf_set_lines(bufnr, l, -1, true, { "" })
+  l = l + 1
+
+  -- long
+  l = render_displays("other, long", displays_long, bufnr, l)
 
   -- finalise and focus the buffer
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
