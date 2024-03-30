@@ -1,5 +1,11 @@
 local M = {}
 
+---@class HighlightGroup
+---@field group string
+---@field link string|nil
+---@field def string|nil
+
+---@type HighlightGroup[]
 -- All highlight groups: linked or directly defined.
 -- Please add new groups to help and preserve order.
 -- Please avoid directly defined groups to preserve accessibility for TUI.
