@@ -24,7 +24,7 @@
 
 Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for Showcases, Tips, Recipes and more.
 
-Community support: [matrix](https://matrix.to/#/#nvim-tree:matrix.org)
+Questions and general support: [Discussions](https://github.com/nvim-tree/nvim-tree.lua/discussions)
 
 ## Requirements
 
