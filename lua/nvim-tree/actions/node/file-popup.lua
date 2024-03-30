@@ -6,6 +6,14 @@ local M = {}
 ---@return table
 local function get_formatted_lines(node)
   local stats = node.fs_stat
+  if stats == nil then
+    return {
+      "",
+      "  Can't retrieve file information",
+      "",
+    }
+  end
+
   local fpath = " fullpath: " .. node.absolute_path
   local created_at = " created:  " .. os.date("%x %X", stats.birthtime.sec)
   local modified_at = " modified: " .. os.date("%x %X", stats.mtime.sec)

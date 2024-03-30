@@ -71,18 +71,35 @@ local function dotfile(path)
 end
 
 ---@param path string
----@param bookmarks table<string, boolean> absolute paths bookmarked
-local function bookmark(path, bookmarks)
+---@param path_type string|nil filetype of path
+---@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
+local function bookmark(path, path_type, bookmarks)
   if not M.config.filter_no_bookmark then
     return false
   end
+  -- if bookmark is empty, we should see a empty filetree
+  if next(bookmarks) == nil then
+    return true
+  end
 
-  -- add trailing slash to make it match only mark's parent directory
-  -- not it's siblings
-  local parent = utils.path_add_trailing(path)
-  for mark, _ in pairs(bookmarks) do
-    if path == mark or vim.fn.stridx(mark, parent) == 0 then
+  local mark_parent = utils.path_add_trailing(path)
+  for mark, mark_type in pairs(bookmarks) do
+    if path == mark then
       return false
+    end
+
+    if path_type == "directory" then
+      -- check if path is mark's parent
+      if vim.fn.stridx(mark, mark_parent) == 0 then
+        return false
+      end
+    end
+    if mark_type == "directory" then
+      -- check if mark is path's parent
+      local path_parent = utils.path_add_trailing(mark)
+      if vim.fn.stridx(path, path_parent) == 0 then
+        return false
+      end
     end
   end
 
@@ -139,7 +156,7 @@ function M.prepare(git_status)
   end
 
   for _, node in pairs(marks.get_marks()) do
-    status.bookmarks[node.absolute_path] = true
+    status.bookmarks[node.absolute_path] = node.type
   end
 
   return status
@@ -147,9 +164,10 @@ end
 
 ---Check if the given path should be filtered.
 ---@param path string Absolute path
+---@param fs_stat uv.fs_stat.result|nil fs_stat of file
 ---@param status table from prepare
 ---@return boolean
-function M.should_filter(path, status)
+function M.should_filter(path, fs_stat, status)
   if not M.config.enable then
     return false
   end
@@ -159,7 +177,11 @@ function M.should_filter(path, status)
     return false
   end
 
-  return git(path, status.git_status) or buf(path, status.bufinfo) or dotfile(path) or custom(path) or bookmark(path, status.bookmarks)
+  return git(path, status.git_status)
+    or buf(path, status.bufinfo)
+    or dotfile(path)
+    or custom(path)
+    or bookmark(path, fs_stat and fs_stat.type, status.bookmarks)
 end
 
 function M.setup(opts)

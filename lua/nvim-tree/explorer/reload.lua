@@ -85,9 +85,10 @@ function M.reload(node, git_status)
     node.group_next = nil
   end
 
-  local child_names = {}
+  local remain_childs = {}
 
   local node_ignored = explorer_node.is_git_ignored(node)
+  ---@type table<string, Node>
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
     local name, t = vim.loop.fs_scandir_next(handle, cwd)
@@ -95,20 +96,12 @@ function M.reload(node, git_status)
       break
     end
 
-    local stat
-    local function fs_stat_cached(path)
-      if stat ~= nil then
-        return stat
-      end
-
-      stat = vim.loop.fs_stat(path)
-      return stat
-    end
-
     local abs = utils.path_join { cwd, name }
-    t = t or (fs_stat_cached(abs) or {}).type
-    if not filters.should_filter(abs, filter_status) then
-      child_names[abs] = true
+    ---@type uv.fs_stat.result|nil
+    local stat = vim.loop.fs_stat(abs)
+
+    if not filters.should_filter(abs, stat, filter_status) then
+      remain_childs[abs] = true
 
       -- Recreate node if type changes.
       if nodes_by_path[abs] then
@@ -122,26 +115,26 @@ function M.reload(node, git_status)
       end
 
       if not nodes_by_path[abs] then
+        local new_child = nil
         if t == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
-          local folder = builders.folder(node, abs, name)
-          nodes_by_path[abs] = folder
-          table.insert(node.nodes, folder)
+          new_child = builders.folder(node, abs, name, stat)
         elseif t == "file" then
-          local file = builders.file(node, abs, name)
-          nodes_by_path[abs] = file
-          table.insert(node.nodes, file)
+          new_child = builders.file(node, abs, name, stat)
         elseif t == "link" then
-          local link = builders.link(node, abs, name)
+          local link = builders.link(node, abs, name, stat)
           if link.link_to ~= nil then
-            nodes_by_path[abs] = link
-            table.insert(node.nodes, link)
+            new_child = link
           end
+        end
+        if new_child then
+          table.insert(node.nodes, new_child)
+          nodes_by_path[abs] = new_child
         end
       else
         local n = nodes_by_path[abs]
         if n then
-          n.executable = builders.is_executable(abs)
-          n.fs_stat = fs_stat_cached(abs)
+          n.executable = builders.is_executable(abs) or false
+          n.fs_stat = stat
         end
       end
     end
@@ -150,8 +143,8 @@ function M.reload(node, git_status)
   node.nodes = vim.tbl_map(
     update_status(nodes_by_path, node_ignored, git_status),
     vim.tbl_filter(function(n)
-      if child_names[n.absolute_path] then
-        return child_names[n.absolute_path]
+      if remain_childs[n.absolute_path] then
+        return remain_childs[n.absolute_path]
       else
         explorer_node.node_destroy(n)
         return false

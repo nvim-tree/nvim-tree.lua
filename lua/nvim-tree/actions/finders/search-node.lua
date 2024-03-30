@@ -36,12 +36,13 @@ local function search(search_dir, input_path)
     while name do
       path = dir .. "/" .. name
 
+      ---@type uv.fs_stat.result|nil
       stat, _ = vim.loop.fs_stat(path)
       if not stat then
         break
       end
 
-      if not filters.should_filter(path, filter_status) then
+      if not filters.should_filter(path, stat, filter_status) then
         if string.find(path, "/" .. input_path .. "$") then
           return path
         end

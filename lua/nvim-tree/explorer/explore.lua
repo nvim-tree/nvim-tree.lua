@@ -11,13 +11,6 @@ local Watcher = require "nvim-tree.watcher"
 
 local M = {}
 
----@param type_ string|nil
----@param cwd string
----@return any
-local function get_type_from(type_, cwd)
-  return type_ or (vim.loop.fs_stat(cwd) or {}).type
-end
-
 ---@param handle uv.uv_fs_t
 ---@param cwd string
 ---@param node Node
@@ -33,18 +26,19 @@ local function populate_children(handle, cwd, node, git_status)
     end
 
     local abs = utils.path_join { cwd, name }
-
     local profile = log.profile_start("explore populate_children %s", abs)
 
-    t = get_type_from(t, abs)
-    if not filters.should_filter(abs, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
+    ---@type uv.fs_stat.result|nil
+    local stat = vim.loop.fs_stat(abs)
+
+    if not filters.should_filter(abs, stat, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
-        child = builders.folder(node, abs, name)
+        child = builders.folder(node, abs, name, stat)
       elseif t == "file" then
-        child = builders.file(node, abs, name)
+        child = builders.file(node, abs, name, stat)
       elseif t == "link" then
-        local link = builders.link(node, abs, name)
+        local link = builders.link(node, abs, name, stat)
         if link.link_to ~= nil then
           child = link
         end
