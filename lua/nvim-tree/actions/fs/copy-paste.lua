@@ -276,17 +276,24 @@ end
 ---@param content string
 local function copy_to_clipboard(content)
   local clipboard_name
+  local reg
   if M.config.actions.use_system_clipboard == true then
-    vim.fn.setreg("+", content)
-    vim.fn.setreg('"', content)
     clipboard_name = "system"
+    reg = "+"
   else
-    vim.fn.setreg('"', content)
-    vim.fn.setreg("1", content)
     clipboard_name = "neovim"
+    reg = "1"
   end
 
-  vim.api.nvim_exec_autocmds("TextYankPost", {})
+  -- manually firing TextYankPost does not set vim.v.event
+  -- workaround: create a scratch buffer with the clipboard contents and send a yank command
+  local temp_buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_text(temp_buf, 0, 0, 0, 0, { content })
+  vim.api.nvim_buf_call(temp_buf, function()
+    vim.cmd(string.format('normal! "%sy$', reg))
+  end)
+  vim.api.nvim_buf_delete(temp_buf, {})
+
   notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
 end
 
