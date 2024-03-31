@@ -285,6 +285,8 @@ local function copy_to_clipboard(content)
     reg = '1'
   end
 
+  -- manually firing TextYankPost does not set vim.v.event
+  -- workaround: create a scratch buffer with the clipboard contents and send a yank command
   local temp_buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_text(temp_buf, 0, 0, 0, 0, { content })
   vim.api.nvim_buf_call(temp_buf, function ()
