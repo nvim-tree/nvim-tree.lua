@@ -572,6 +572,10 @@ function M.setup(opts)
   end
 
   M.View.initial_width = get_width()
+
+  if vim.fn.has("nvim-0.10") == 1 then
+    M.View.winopts.winfixbuf = true
+  end
 end
 
 return M
