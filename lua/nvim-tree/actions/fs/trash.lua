@@ -42,7 +42,7 @@ function M.remove(node)
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
     local need_sync_wait = utils.is_windows
-    local job = vim.fn.jobstart(M.config.trash.cmd .. ' "' .. node.absolute_path .. '"', {
+    local job = vim.fn.jobstart(M.config.trash.cmd .. " " .. vim.fn.shellescape(node.absolute_path), {
       detach = not need_sync_wait,
       on_exit = on_exit,
       on_stderr = on_stderr,
