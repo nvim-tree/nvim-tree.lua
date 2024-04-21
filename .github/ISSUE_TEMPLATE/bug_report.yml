@@ -59,9 +59,9 @@ body:
 
         If not provided it is very unlikely that the nvim-tree team will be able to address your issue.
 
-        See [wiki: Clean Room Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions.
+        See [wiki: Clean Room Replication](https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting#clean-room-replication) for instructions and paste the contents of your `/tmp/nvt-min.lua` here.
 
-        Please paste the contents of your `/tmp/nvt-min.lua` here."
+        Please do NOT post a configuration that uses other plugin managers such as lazy, see [wiki: Lazy Loading](https://github.com/nvim-tree/nvim-tree.lua/wiki/Installation#lazy-loading)"
       render: lua
     validations:
       required: true
