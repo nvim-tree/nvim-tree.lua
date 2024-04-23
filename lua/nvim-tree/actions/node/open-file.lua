@@ -268,13 +268,14 @@ local function open_in_new_window(filename, mode)
   local fname = vim.fn.fnameescape(filename)
   fname = utils.escape_special_chars(fname)
 
-  local cmd
+  local command
   if create_new_window then
-    cmd = string.format("%s vsplit %s", new_window_side, fname)
+    -- generated from vim.api.nvim_parse_cmd("belowright vsplit foo", {})
+    command = { cmd = "vsplit", mods = { split = new_window_side }, args = { fname } }
   elseif mode:match "split$" then
-    cmd = string.format("%s %s", mode, fname)
+    command = { cmd = mode, args = { fname } }
   else
-    cmd = string.format("edit %s", fname)
+    command = { cmd = "edit", args = { fname } }
   end
 
   if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
@@ -286,7 +287,7 @@ local function open_in_new_window(filename, mode)
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
-  pcall(vim.cmd, cmd)
+  pcall(vim.cmd, command)
   lib.set_target_win()
 end
 
