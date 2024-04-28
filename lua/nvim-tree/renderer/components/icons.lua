@@ -65,7 +65,12 @@ local function get_file_icon_webdev(fname, extension)
     -- If there are more extensions to the file, try to grab the icon for them recursively
     return get_file_icon_webdev(fname, string.match(extension, "%.(.*)"))
   else
-    return get_file_icon_default()
+    local devicons_default = M.devicons.get_default_icon()
+    if devicons_default and type(devicons_default.icon) == "string" and type(devicons_default.name) == "string" then
+      return devicons_default.icon, "DevIcon" .. devicons_default.name
+    else
+      return get_file_icon_default()
+    end
   end
 end
 
