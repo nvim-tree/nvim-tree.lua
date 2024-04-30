@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.0...nvim-tree-v1.3.1) (2024-04-25)
+
+
+### Bug Fixes
+
+* **#2535:** TextYankPost event sends vim.v.event ([#2734](https://github.com/nvim-tree/nvim-tree.lua/issues/2734)) ([d8d3a15](https://github.com/nvim-tree/nvim-tree.lua/commit/d8d3a1590a05b2d8b5eb26e2ed1c6052b1b47a77))
+* **#2733:** escape trash path ([#2735](https://github.com/nvim-tree/nvim-tree.lua/issues/2735)) ([81eb8d5](https://github.com/nvim-tree/nvim-tree.lua/commit/81eb8d519233c105f30dc0a278607e62b20502fd))
+
 ## [1.3.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.2.0...nvim-tree-v1.3.0) (2024-03-30)
 
 
