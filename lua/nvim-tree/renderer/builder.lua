@@ -422,11 +422,21 @@ function Builder:build_header()
   end
 end
 
+---Sanitize lines for rendering.
+---Replace newlines with literal \n
+---@private
+function Builder:sanitize_lines()
+  self.lines = vim.tbl_map(function(line)
+    return line and line:gsub("\n", "\\n") or ""
+  end, self.lines)
+end
+
 ---Build all lines with highlights and signs
 ---@return Builder
 function Builder:build()
   self:build_header()
   self:build_lines()
+  self:sanitize_lines()
   return self
 end
 
