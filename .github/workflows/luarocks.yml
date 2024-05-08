@@ -1,29 +1,28 @@
-name: Push to Luarocks
+name: Release
 on:
   push:
     tags:
-      - '*'
-  release:
-    types:
-      - created
-    tags:
-      - '*'
+      - 'v*'
   workflow_dispatch:
-  pull_request: # Will test the luarocks installation on PR, without uploading
+  pull_request: # Will test luarocks installation on PR, without uploading
 jobs:
   luarocks-upload:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Required to count the commits
-      - name: Get Version
-        run: echo "LUAROCKS_VERSION=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
       - name: LuaRocks Upload
         uses: nvim-neorocks/luarocks-tag-release@v5
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
-          version: ${{ env.LUAROCKS_VERSION }}
+          summary: A file explorer tree for neovim written in lua
+          detailed_description: |
+            Customisable file tree explorer for neovim
+
+            Git, LSP Diagnostics, Auto-Update, Live Filtering, File Icons
+
+            ...and more
+          license: "GPL-3.0"
+          labels: neovim
           dependencies: |
             nvim-web-devicons
