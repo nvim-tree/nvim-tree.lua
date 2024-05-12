@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.2](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.1...nvim-tree-v1.3.2) (2024-05-12)
+
+
+### Bug Fixes
+
+* **#2758:** use nvim-webdevicons default file icon, not renderer.icons.glyphs.default, as per :help ([#2759](https://github.com/nvim-tree/nvim-tree.lua/issues/2759)) ([347e1eb](https://github.com/nvim-tree/nvim-tree.lua/commit/347e1eb35264677f66a79466bb5e3d111968e12c))
+* **#2758:** use nvim-webdevicons default for default files ([347e1eb](https://github.com/nvim-tree/nvim-tree.lua/commit/347e1eb35264677f66a79466bb5e3d111968e12c))
+* **#925:** handle newlines in file names ([#2754](https://github.com/nvim-tree/nvim-tree.lua/issues/2754)) ([64f61e4](https://github.com/nvim-tree/nvim-tree.lua/commit/64f61e4c913047a045ff90bd188dd3b54ee443cf))
+
 ## [1.3.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.0...nvim-tree-v1.3.1) (2024-04-25)
 
 
