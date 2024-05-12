@@ -15,13 +15,23 @@ jobs:
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
-          summary: A file explorer tree for neovim written in lua
+          summary: A File Explorer For Neovim
           detailed_description: |
-            Customisable file tree explorer for neovim
+            Automatic updates
 
-            Git, LSP Diagnostics, Auto-Update, Live Filtering, File Icons
+            File type icons
 
-            ...and more
+            Git integration
+
+            Diagnostics integration - LSP and COC
+
+            (Live) filtering
+
+            Cut, copy, paste, rename, delete, create etc.
+
+            Highly customisable
+
+            Rich API
           license: "GPL-3.0"
           labels: neovim
           dependencies: |
