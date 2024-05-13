@@ -29,7 +29,7 @@ end
 ---@param absolute_path string
 ---@return GitStatus
 local function get_git_status(parent_ignored, status, absolute_path)
-  local file_status = parent_ignored and "!!" or status.files and status.files[absolute_path]
+  local file_status = parent_ignored and "!!" or (status and status.files and status.files[absolute_path])
   return { file = file_status }
 end
 
