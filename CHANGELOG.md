@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.2...nvim-tree-v1.3.3) (2024-05-14)
+
+
+### Bug Fixes
+
+* nil access exception with git integration when changing branches ([#2774](https://github.com/nvim-tree/nvim-tree.lua/issues/2774)) ([340d3a9](https://github.com/nvim-tree/nvim-tree.lua/commit/340d3a9795e06bdd1814228de398cd510f9bfbb0))
+
 ## [1.3.2](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.1...nvim-tree-v1.3.2) (2024-05-12)
 
 
