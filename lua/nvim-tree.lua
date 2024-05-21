@@ -35,7 +35,7 @@ function M.change_root(path, bufnr)
   end
 
   -- don't find inexistent
-  if vim.fn.filereadable(path) == 0 then
+  if vim.fn.filereadable(path) == 0 and vim.fn.isdirectory(path) == 0 then
     return
   end
 
