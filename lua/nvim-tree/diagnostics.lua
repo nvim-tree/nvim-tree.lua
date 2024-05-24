@@ -39,12 +39,14 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  local is_disabled = false
-  if vim.fn.has "nvim-0.9" == 1 then
-    is_disabled = vim.diagnostic.is_disabled()
+  local is_enabled = false
+  if vim.fn.has "nvim-0.10" == 1 then
+    is_enabled = vim.diagnostic.is_enabled()
+  else
+    is_enabled = not vim.diagnostic.is_disabled()
   end
 
-  if not is_disabled then
+  if is_enabled then
     for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
       local buf = diagnostic.bufnr
       if vim.api.nvim_buf_is_valid(buf) then
