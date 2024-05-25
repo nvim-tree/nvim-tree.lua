@@ -67,7 +67,7 @@ jobs:
     strategy:
       matrix:
         nvim_version: [ stable, nightly ]
-        luals_version: [ 3.7.3 ]
+        luals_version: [ 3.9.1 ]
 
     steps:
       - uses: actions/checkout@v4
