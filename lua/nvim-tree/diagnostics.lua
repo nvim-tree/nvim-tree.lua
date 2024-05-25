@@ -39,7 +39,7 @@ end
 local function from_nvim_lsp()
   local buffer_severity = {}
 
-  local is_enabled = false
+  local is_enabled
   if vim.fn.has "nvim-0.10" == 1 then
     is_enabled = vim.diagnostic.is_enabled()
   else
