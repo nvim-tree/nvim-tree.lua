@@ -108,7 +108,7 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
----@param size number|fun():number
+---@param size (fun():integer)|integer|string
 ---@return integer
 local function get_size(size)
   if type(size) == "number" then
@@ -121,10 +121,13 @@ local function get_size(size)
   return math.floor(vim.o.columns * percent_as_decimal)
 end
 
----@param size number|function|nil
+---@param size (fun():integer)|integer|nil
 local function get_width(size)
-  size = size or M.View.width
-  return get_size(size)
+  if size then
+    return get_size(size)
+  else
+    return get_size(M.View.width)
+  end
 end
 
 local move_tbl = {
