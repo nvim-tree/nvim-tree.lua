@@ -3,6 +3,7 @@ local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
+local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
 
 ---@class LibOpenOpts
@@ -243,7 +244,16 @@ function M.open(opts)
 
   M.set_target_win()
   if not core.get_explorer() or opts.path then
-    core.init(opts.path or vim.loop.cwd())
+    if opts.path then
+      core.init(opts.path)
+    else
+      local cwd, err = vim.loop.cwd()
+      if not cwd then
+        notify.error(string.format("current working directory unavailable: %s", err))
+        return
+      end
+      core.init(cwd)
+    end
   end
   if should_hijack_current_buf() then
     view.close_this_tab_only()
