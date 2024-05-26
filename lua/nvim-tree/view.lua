@@ -204,7 +204,7 @@ end
 ---@param tabnr integer
 local function save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
-  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage))
+  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage) or 0)
 end
 
 ---@param tabpage integer
@@ -222,8 +222,8 @@ local function close(tabpage)
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      if vim.api.nvim_win_is_valid(tree_win) then
-        vim.api.nvim_win_close(tree_win, true)
+      if vim.api.nvim_win_is_valid(tree_win or 0) then
+        vim.api.nvim_win_close(tree_win or 0, true)
       end
       events._dispatch_on_tree_close()
       return
@@ -343,7 +343,7 @@ function M.resize(size)
   end
 
   local new_size = get_width()
-  vim.api.nvim_win_set_width(M.get_winnr(), new_size)
+  vim.api.nvim_win_set_width(M.get_winnr() or 0, new_size)
 
   -- TODO #1545 remove similar check from setup_autocommands
   -- We let nvim handle sending resize events after 0.9
@@ -420,7 +420,7 @@ function M.is_visible(opts)
     return false
   end
 
-  return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr())
+  return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr() or 0)
 end
 
 ---@param opts table|nil
@@ -443,7 +443,9 @@ function M.focus(winnr, open_if_closed)
     M.open()
   end
 
-  vim.api.nvim_set_current_win(wnr)
+  if wnr then
+    vim.api.nvim_set_current_win(wnr)
+  end
 end
 
 --- Retrieve the winid of the open tree.
@@ -541,7 +543,8 @@ end
 
 -- used on ColorScheme event
 function M.reset_winhl()
-  if M.get_winnr() and vim.api.nvim_win_is_valid(M.get_winnr()) then
+  local winnr = M.get_winnr()
+  if winnr and vim.api.nvim_win_is_valid(winnr) then
     vim.wo[M.get_winnr()].winhl = M.View.winopts.winhl
   end
 end
