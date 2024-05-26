@@ -71,8 +71,7 @@ local function show()
   vim.api.nvim_win_call(M.popup_win, function()
     vim.api.nvim_buf_set_lines(0, 0, -1, true, { line })
     for _, extmark in ipairs(extmarks) do
-
-      ---nvim 0.10 luadoc is incorrect: vim.api.keyset.get_extmark_item is missing the extmark_id at the start
+      -- nvim 0.10 luadoc is incorrect: vim.api.keyset.get_extmark_item is missing the extmark_id at the start
 
       ---@cast extmark table
       ---@type integer
