@@ -51,7 +51,7 @@ function M.draw()
 
   local profile = log.profile_start "draw"
 
-  local cursor = vim.api.nvim_win_get_cursor(view.get_winnr())
+  local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
   icon_component.reset_config()
 
   local builder = Builder:new():build()
@@ -59,7 +59,7 @@ function M.draw()
   _draw(bufnr, builder.lines, builder.hl_args, builder.signs)
 
   if cursor and #builder.lines >= cursor[1] then
-    vim.api.nvim_win_set_cursor(view.get_winnr(), cursor)
+    vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
   end
 
   view.grow_from_content()
