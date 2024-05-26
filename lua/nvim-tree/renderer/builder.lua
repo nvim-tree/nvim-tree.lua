@@ -396,11 +396,11 @@ function Builder:format_root_name(root_label)
     local label = root_label(self.root_cwd)
     if type(label) == "string" then
       return label
-    else
-      return "???"
     end
+  elseif type(root_label) == "string" then
+    return utils.path_remove_trailing(vim.fn.fnamemodify(self.root_cwd, root_label))
   end
-  return utils.path_remove_trailing(vim.fn.fnamemodify(self.root_cwd, root_label))
+  return "???"
 end
 
 ---@private
