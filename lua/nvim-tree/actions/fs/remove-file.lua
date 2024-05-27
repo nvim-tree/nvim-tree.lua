@@ -49,9 +49,9 @@ end
 ---@param cwd string
 ---@return boolean|nil
 local function remove_dir(cwd)
-  local handle = vim.loop.fs_scandir(cwd)
-  if type(handle) == "string" then
-    notify.error(handle)
+  local handle, err = vim.loop.fs_scandir(cwd)
+  if not handle then
+    notify.error(err)
     return
   end
 
