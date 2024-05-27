@@ -9,9 +9,6 @@
   },
   "diagnostics": {
     "libraryFiles": "Disable",
-    "globals": [
-      "vim"
-    ],
     "severity": {
       "deprecated": "Hint"
     },
