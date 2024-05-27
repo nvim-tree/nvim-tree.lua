@@ -3,12 +3,12 @@
   "runtime.version": "Lua 5.1",
   "workspace": {
     "library": [
-      "$VIMRUNTIME/lua/vim/_meta",
-      "$VIMRUNTIME/lua/vim/lsp",
+      "$VIMRUNTIME/lua/vim",
       "${3rd}/luv/library"
     ]
   },
   "diagnostics": {
+    "libraryFiles": "Disable",
     "globals": [
       "vim"
     ],
