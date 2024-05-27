@@ -50,7 +50,7 @@ local function from_nvim_lsp()
         local bufname = uniformize_path(vim.api.nvim_buf_get_name(diagnostic.bufnr))
         if not buffer_severity[bufname] or diagnostic.severity < buffer_severity[bufname] then
           buffer_severity[bufname] = diagnostic.severity
-       end
+        end
       end
     end
   end
