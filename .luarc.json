@@ -23,7 +23,7 @@
       "code-after-break": "Any",
       "codestyle-check": "None",
       "count-down-loop": "Any",
-      "deprecated": "Any",
+      "deprecated": "None",
       "different-requires": "Any",
       "discard-returns": "Any",
       "doc-field-no-class": "Any",
