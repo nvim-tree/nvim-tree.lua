@@ -12,7 +12,7 @@ local M = {}
 local function create_and_notify(file)
   events._dispatch_will_create_file(file)
   local ok, fd = pcall(vim.loop.fs_open, file, "w", 420)
-  if not ok then
+  if not ok or type(fd) ~= "number" then
     notify.error("Couldn't create file " .. notify.render_path(file))
     return
   end
