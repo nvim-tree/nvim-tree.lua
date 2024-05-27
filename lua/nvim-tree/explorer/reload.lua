@@ -91,7 +91,7 @@ function M.reload(node, git_status)
   ---@type table<string, Node>
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle, cwd)
+    local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
