@@ -29,15 +29,11 @@ fi
 
 # any output is a fail
 case "${OUT}" in
-	*Diagnosis\ complete*)
-		if [ -f "${DIR_OUT}/check.json" ]; then
-			cat "${DIR_OUT}/check.json"
-			exit 1
-		else
-			exit 0
-		fi
+	*Diagnosis\ completed,\ no\ problems\ found*)
+		exit 0
 		;;
 	*)
+		cat "${DIR_OUT}/check.json"
 		exit 1
 		;;
 esac
