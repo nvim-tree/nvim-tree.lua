@@ -19,10 +19,23 @@ local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
 local function _draw(bufnr, lines, hl_args, signs)
-  vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+  if vim.fn.has "nvim-0.10" == 1 then
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
+  else
+    ---@diagnostic disable-next-line: deprecated
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+  end
+
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   M.render_hl(bufnr, hl_args)
-  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+
+  if vim.fn.has "nvim-0.10" == 1 then
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+  else
+    ---@diagnostic disable-next-line: deprecated
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+  end
+
   vim.fn.sign_unplace(SIGN_GROUP)
   for i, sign_name in pairs(signs) do
     vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1 })
