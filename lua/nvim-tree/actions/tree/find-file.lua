@@ -24,18 +24,19 @@ function M.fn(opts)
   local bufnr, path
 
   -- (optional) buffer number and path
-  if type(opts.buf) == "nil" then
+  local opts_buf = opts.buf
+  if type(opts_buf) == "nil" then
     bufnr = vim.api.nvim_get_current_buf()
     path = vim.api.nvim_buf_get_name(bufnr)
-  elseif type(opts.buf) == "number" then
-    if not vim.api.nvim_buf_is_valid(opts.buf) then
+  elseif type(opts_buf) == "number" then
+    if not vim.api.nvim_buf_is_valid(opts_buf) then
       return
     end
-    bufnr = tonumber(opts.buf)
+    bufnr = opts_buf
     path = vim.api.nvim_buf_get_name(bufnr)
-  elseif type(opts.buf) == "string" then
+  elseif type(opts_buf) == "string" then
     bufnr = nil
-    path = tostring(opts.buf)
+    path = tostring(opts_buf)
   else
     return
   end

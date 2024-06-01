@@ -77,7 +77,7 @@ function M.link(parent, absolute_path, name, fs_stat)
 
   local is_dir_link = (link_to ~= nil) and vim.loop.fs_stat(link_to).type == "directory"
 
-  if is_dir_link then
+  if is_dir_link and link_to then
     local handle = vim.loop.fs_scandir(link_to)
     has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil
     open = false

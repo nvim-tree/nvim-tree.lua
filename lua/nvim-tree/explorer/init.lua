@@ -1,4 +1,5 @@
 local git = require "nvim-tree.git"
+local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 
@@ -15,14 +16,24 @@ M.reload = require("nvim-tree.explorer.reload").reload
 local Explorer = {}
 Explorer.__index = Explorer
 
----@param cwd string|nil
----@return Explorer
-function Explorer.new(cwd)
-  cwd = vim.loop.fs_realpath(cwd or vim.loop.cwd())
+---@param path string|nil
+---@return Explorer|nil
+function Explorer.new(path)
+  local err
+
+  if path then
+    path, err = vim.loop.fs_realpath(path)
+  else
+    path, err = vim.loop.cwd()
+  end
+  if not path then
+    notify.error(err)
+    return
+  end
 
   ---@class Explorer
   local explorer = setmetatable({
-    absolute_path = cwd,
+    absolute_path = path,
     nodes = {},
     open = true,
   }, Explorer)

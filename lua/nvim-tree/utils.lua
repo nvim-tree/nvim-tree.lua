@@ -406,6 +406,9 @@ function M.debounce(context, timeout, callback)
   end
 
   local timer = vim.loop.new_timer()
+  if not timer then
+    return
+  end
   debouncer.timer = timer
   timer:start(timeout, 0, function()
     timer_stop_close(timer)

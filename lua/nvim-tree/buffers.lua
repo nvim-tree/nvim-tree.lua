@@ -6,7 +6,7 @@ M._modified = {}
 ---refresh M._modified
 function M.reload_modified()
   M._modified = {}
-  local bufs = vim.fn.getbufinfo { bufmodified = true, buflisted = true }
+  local bufs = vim.fn.getbufinfo { bufmodified = 1, buflisted = 1 }
   for _, buf in pairs(bufs) do
     local path = buf.name
     if path ~= "" then -- not a [No Name] buffer

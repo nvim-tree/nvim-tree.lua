@@ -1,17 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-  "runtime.version" : "Lua 5.1",
+  "runtime.version": "Lua 5.1",
   "workspace": {
     "library": [
-      "$VIMRUNTIME/lua/vim/lsp",
+      "$VIMRUNTIME/lua/vim",
       "${3rd}/luv/library"
     ]
   },
   "diagnostics": {
     "libraryFiles": "Disable",
-    "globals": [
-      "vim"
-    ],
+    "severity": {
+      "deprecated": "Hint"
+    },
     "neededFileStatus": {
       "ambiguity-1": "Any",
       "assign-type-mismatch": "Any",
@@ -23,7 +23,7 @@
       "code-after-break": "Any",
       "codestyle-check": "None",
       "count-down-loop": "Any",
-      "deprecated": "Any",
+      "deprecated": "None",
       "different-requires": "Any",
       "discard-returns": "Any",
       "doc-field-no-class": "Any",
@@ -33,11 +33,19 @@
       "duplicate-index": "Any",
       "duplicate-set-field": "Any",
       "empty-block": "Any",
+      "global-element": "Any",
       "global-in-nil-env": "Any",
+      "incomplete-signature-doc": "None",
+      "inject-field": "Any",
+      "invisible": "Any",
       "lowercase-global": "Any",
+      "missing-fields": "Any",
+      "missing-global-doc": "Any",
+      "missing-local-export-doc": "None",
       "missing-parameter": "Any",
       "missing-return": "Any",
       "missing-return-value": "Any",
+      "name-style-check": "None",
       "need-check-nil": "Any",
       "newfield-call": "Any",
       "newline-call": "Any",
@@ -70,4 +78,3 @@
     }
   }
 }
-

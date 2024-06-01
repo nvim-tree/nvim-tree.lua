@@ -61,6 +61,15 @@ Assumes `$VIMRUNTIME` is `/usr/share/nvim/runtime`. Adjust as necessary e.g.
 VIMRUNTIME="/my/path/to/runtime" make check
 ```
 
+If `lua-language-server` is not available or `--check` doesn't function (e.g. Arch Linux 3.9.1-1) you can manually install it as per `ci.yml` e.g.
+
+```sh
+mkdir luals
+curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.9.1/lua-language-server-3.9.1-linux-x64.tar.gz" | tar zx --directory luals
+
+PATH="luals/bin:${PATH}" make check
+```
+
 # Adding New Actions
 
 To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.

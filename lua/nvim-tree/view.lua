@@ -108,7 +108,7 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
----@param size number|fun():number
+---@param size (fun():integer)|integer|string
 ---@return integer
 local function get_size(size)
   if type(size) == "number" then
@@ -121,10 +121,13 @@ local function get_size(size)
   return math.floor(vim.o.columns * percent_as_decimal)
 end
 
----@param size number|function|nil
+---@param size (fun():integer)|integer|nil
 local function get_width(size)
-  size = size or M.View.width
-  return get_size(size)
+  if size then
+    return get_size(size)
+  else
+    return get_size(M.View.width)
+  end
 end
 
 local move_tbl = {
@@ -140,7 +143,7 @@ local function setup_tabpage(tabpage)
 end
 
 local function set_window_options_and_buffer()
-  pcall(vim.cmd, "buffer " .. M.get_bufnr())
+  pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
   local eventignore = vim.opt.eventignore:get()
   vim.opt.eventignore = "all"
   for k, v in pairs(M.View.winopts) do
@@ -204,7 +207,7 @@ end
 ---@param tabnr integer
 local function save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
-  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage))
+  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage) or 0)
 end
 
 ---@param tabpage integer
@@ -222,8 +225,8 @@ local function close(tabpage)
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      if vim.api.nvim_win_is_valid(tree_win) then
-        vim.api.nvim_win_close(tree_win, true)
+      if vim.api.nvim_win_is_valid(tree_win or 0) then
+        vim.api.nvim_win_close(tree_win or 0, true)
       end
       events._dispatch_on_tree_close()
       return
@@ -343,7 +346,7 @@ function M.resize(size)
   end
 
   local new_size = get_width()
-  vim.api.nvim_win_set_width(M.get_winnr(), new_size)
+  vim.api.nvim_win_set_width(M.get_winnr() or 0, new_size)
 
   -- TODO #1545 remove similar check from setup_autocommands
   -- We let nvim handle sending resize events after 0.9
@@ -420,7 +423,7 @@ function M.is_visible(opts)
     return false
   end
 
-  return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr())
+  return M.get_winnr() ~= nil and vim.api.nvim_win_is_valid(M.get_winnr() or 0)
 end
 
 ---@param opts table|nil
@@ -443,7 +446,9 @@ function M.focus(winnr, open_if_closed)
     M.open()
   end
 
-  vim.api.nvim_set_current_win(wnr)
+  if wnr then
+    vim.api.nvim_set_current_win(wnr)
+  end
 end
 
 --- Retrieve the winid of the open tree.
@@ -541,7 +546,8 @@ end
 
 -- used on ColorScheme event
 function M.reset_winhl()
-  if M.get_winnr() and vim.api.nvim_win_is_valid(M.get_winnr()) then
+  local winnr = M.get_winnr()
+  if winnr and vim.api.nvim_win_is_valid(winnr) then
     vim.wo[M.get_winnr()].winhl = M.View.winopts.winhl
   end
 end

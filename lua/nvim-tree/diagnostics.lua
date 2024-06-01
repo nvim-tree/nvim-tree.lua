@@ -46,12 +46,11 @@ local function from_nvim_lsp()
 
   if not is_disabled then
     for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
-      local buf = diagnostic.bufnr
-      if vim.api.nvim_buf_is_valid(buf) then
-        local bufname = uniformize_path(vim.api.nvim_buf_get_name(buf))
-        local severity = diagnostic.severity
-        local highest_severity = buffer_severity[bufname] or severity
-        buffer_severity[bufname] = math.min(highest_severity, severity)
+      if diagnostic.severity and diagnostic.bufnr and vim.api.nvim_buf_is_valid(diagnostic.bufnr) then
+        local bufname = uniformize_path(vim.api.nvim_buf_get_name(diagnostic.bufnr))
+        if not buffer_severity[bufname] or diagnostic.severity < buffer_severity[bufname] then
+          buffer_severity[bufname] = diagnostic.severity
+        end
       end
     end
   end

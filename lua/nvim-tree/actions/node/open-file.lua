@@ -33,7 +33,7 @@ local function usable_win_ids()
     end
 
     local win_config = vim.api.nvim_win_get_config(id)
-    return id ~= tree_winid and win_config.focusable and not win_config.external
+    return id ~= tree_winid and win_config.focusable and not win_config.external or false
   end, win_ids)
 end
 
@@ -265,8 +265,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  local fname = vim.fn.fnameescape(filename)
-  fname = utils.escape_special_chars(fname)
+  local fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
 
   local command
   if create_new_window then
@@ -287,7 +286,7 @@ local function open_in_new_window(filename, mode)
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
-  pcall(vim.cmd, command)
+  pcall(vim.api.nvim_cmd, command, { output = false })
   lib.set_target_win()
 end
 
