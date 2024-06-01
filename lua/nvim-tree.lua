@@ -26,7 +26,15 @@ local M = {
 function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then
-    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+    local ft
+
+    if vim.fn.has "nvim-0.10" == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
+    else
+      ---@diagnostic disable-next-line: deprecated
+      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+    end
+
     for _, value in pairs(_config.update_focused_file.update_root.ignore_list) do
       if utils.str_find(path, value) or utils.str_find(ft, value) then
         return
@@ -78,7 +86,15 @@ end
 function M.tab_enter()
   if view.is_visible { any_tabpage = true } then
     local bufname = vim.api.nvim_buf_get_name(0)
-    local ft = vim.api.nvim_buf_get_option(0, "ft")
+
+    local ft
+    if vim.fn.has "nvim-0.10" == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
+    else
+      ---@diagnostic disable-next-line: deprecated
+      ft = vim.api.nvim_buf_get_option(0, "ft")
+    end
+
     for _, filter in ipairs(M.config.tab.sync.ignore) do
       if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
         return
