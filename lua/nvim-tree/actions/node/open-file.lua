@@ -258,7 +258,15 @@ local function open_in_new_window(filename, mode)
     -- If `hidden` is not enabled, check if buffer in target window is
     -- modified, and create new split if it is.
     local target_bufid = vim.api.nvim_win_get_buf(target_winid)
-    if vim.api.nvim_buf_get_option(target_bufid, "modified") then
+
+    local modified
+    if vim.fn.has "nvim-0.10" == 1 then
+      modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
+    else
+      modified = vim.api.nvim_buf_get_option(target_bufid, "modified") ---@diagnostic disable-line: deprecated
+    end
+
+    if modified then
       if not mode:match "split$" then
         mode = "vsplit"
       end
