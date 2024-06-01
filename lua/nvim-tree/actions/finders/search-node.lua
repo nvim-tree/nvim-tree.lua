@@ -69,8 +69,15 @@ function M.fn()
 
   -- temporarily set &path
   local bufnr = vim.api.nvim_get_current_buf()
-  local path_existed, path_opt = pcall(vim.api.nvim_buf_get_option, bufnr, "path")
-  vim.api.nvim_buf_set_option(bufnr, "path", core.get_cwd() .. "/**")
+
+  local path_existed, path_opt
+  if vim.fn.has "nvim-0.10" == 1 then
+    path_existed, path_opt = pcall(vim.api.nvim_get_option_value, "path", { buf = bufnr })
+    vim.api.nvim_set_option_value("path", core.get_cwd() .. "/**", { buf = bufnr })
+  else
+    path_existed, path_opt = pcall(vim.api.nvim_buf_get_option, bufnr, "path") ---@diagnostic disable-line: deprecated
+    vim.api.nvim_buf_set_option(bufnr, "path", core.get_cwd() .. "/**") ---@diagnostic disable-line: deprecated
+  end
 
   vim.ui.input({ prompt = "Search: ", completion = "file_in_path" }, function(input_path)
     if not input_path or input_path == "" then
