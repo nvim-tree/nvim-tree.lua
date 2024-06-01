@@ -26,7 +26,13 @@ local function usable_win_ids()
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
     for option, v in pairs(M.window_picker.exclude) do
-      local ok, option_value = pcall(vim.api.nvim_buf_get_option, bufid, option)
+      local ok, option_value
+      if vim.fn.has "nvim-0.10" == 1 then
+        ok, option_value = pcall(vim.api.nvim_get_option_value, option, { buf = bufid })
+      else
+        ok, option_value = pcall(vim.api.nvim_buf_get_option, bufid, option) ---@diagnostic disable-line: deprecated
+      end
+
       if ok and vim.tbl_contains(v, option_value) then
         return false
       end
