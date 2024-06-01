@@ -150,7 +150,14 @@ local function create_overlay()
     border = "none",
     style = "minimal",
   })
-  vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true)
+
+  if vim.fn.has "nvim-0.10" == 1 then
+    vim.api.nvim_set_option_value("modifiable", true, { buf = overlay_bufnr })
+  else
+    ---@diagnostic disable-next-line: deprecated
+    vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true)
+  end
+
   vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { M.filter })
   vim.cmd "startinsert"
   vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #M.filter + 1 })
