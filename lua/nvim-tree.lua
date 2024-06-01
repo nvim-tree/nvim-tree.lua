@@ -31,8 +31,7 @@ function M.change_root(path, bufnr)
     if vim.fn.has "nvim-0.10" == 1 then
       ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
     else
-      ---@diagnostic disable-next-line: deprecated
-      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
     end
 
     for _, value in pairs(_config.update_focused_file.update_root.ignore_list) do
@@ -91,8 +90,7 @@ function M.tab_enter()
     if vim.fn.has "nvim-0.10" == 1 then
       ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
     else
-      ---@diagnostic disable-next-line: deprecated
-      ft = vim.api.nvim_buf_get_option(0, "ft")
+      ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
     end
 
     for _, filter in ipairs(M.config.tab.sync.ignore) do

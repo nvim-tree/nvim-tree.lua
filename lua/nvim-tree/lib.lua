@@ -85,8 +85,7 @@ function M.get_last_group_node(node)
     node = node.group_next
   end
 
-  ---@diagnostic disable-next-line: return-type-mismatch -- it can't be nil
-  return node
+  return node ---@diagnostic disable-line: return-type-mismatch -- it can't be nil
 end
 
 ---Group empty folders

@@ -22,8 +22,7 @@ local function _draw(bufnr, lines, hl_args, signs)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
-    ---@diagnostic disable-next-line: deprecated
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
   end
 
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
@@ -32,8 +31,7 @@ local function _draw(bufnr, lines, hl_args, signs)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
   else
-    ---@diagnostic disable-next-line: deprecated
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
   end
 
   vim.fn.sign_unplace(SIGN_GROUP)

@@ -177,8 +177,7 @@ local function open()
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = M.bufnr })
   else
-    ---@diagnostic disable-next-line: deprecated
-    vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false)
+    vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
   end
 
   -- highlight it
