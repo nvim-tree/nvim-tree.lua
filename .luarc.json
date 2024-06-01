@@ -9,9 +9,6 @@
   },
   "diagnostics": {
     "libraryFiles": "Disable",
-    "severity": {
-      "deprecated": "Hint"
-    },
     "neededFileStatus": {
       "ambiguity-1": "Any",
       "assign-type-mismatch": "Any",
