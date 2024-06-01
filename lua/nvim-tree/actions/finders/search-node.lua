@@ -85,9 +85,17 @@ function M.fn()
     end
     -- reset &path
     if path_existed then
-      vim.api.nvim_buf_set_option(bufnr, "path", path_opt)
+      if vim.fn.has "nvim-0.10" == 1 then
+        vim.api.nvim_set_option_value("path", path_opt, { buf = bufnr })
+      else
+        vim.api.nvim_buf_set_option(bufnr, "path", path_opt) ---@diagnostic disable-line: deprecated
+      end
     else
-      vim.api.nvim_buf_set_option(bufnr, "path", nil)
+      if vim.fn.has "nvim-0.10" == 1 then
+        vim.api.nvim_set_option_value("path", nil, { buf = bufnr })
+      else
+        vim.api.nvim_buf_set_option(bufnr, "path", nil) ---@diagnostic disable-line: deprecated
+      end
     end
 
     -- strip trailing slash
