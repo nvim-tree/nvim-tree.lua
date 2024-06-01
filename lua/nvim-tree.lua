@@ -780,8 +780,8 @@ end
 
 ---@param conf table|nil
 function M.setup(conf)
-  if vim.fn.has "nvim-0.8" == 0 then
-    notify.warn "nvim-tree.lua requires Neovim 0.8 or higher"
+  if vim.fn.has "nvim-0.9" == 0 then
+    notify.warn "nvim-tree.lua requires Neovim 0.9 or higher"
     return
   end
 
