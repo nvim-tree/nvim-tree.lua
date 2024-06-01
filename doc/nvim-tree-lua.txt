@@ -103,7 +103,7 @@ Git Integration
 
 Requirements
 
-    This file explorer requires `neovim >= 0.8.0`
+    This file explorer requires `neovim >= 0.9.0`
 
 ==============================================================================
  2. QUICKSTART                                          *nvim-tree-quickstart*
@@ -832,7 +832,6 @@ Use nvim-tree in a floating window.
 
 Highlight precedence, additive:
   git < opened < modified < bookmarked < diagnostics < copied < cut
-Neovim <= 0.8 will only show the highest.
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.

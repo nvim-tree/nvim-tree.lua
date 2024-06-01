@@ -11,7 +11,6 @@ local core = require "nvim-tree.core"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local buffers = require "nvim-tree.buffers"
-local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
 local _config = {}
@@ -335,21 +334,6 @@ local function setup_autocommands(opts)
           buffers.reload_modified()
           actions.reloaders.reload_explorer()
         end)
-      end,
-    })
-  end
-
-  -- TODO #1545 remove similar check from view.resize
-  if vim.fn.has "nvim-0.9" == 1 then
-    create_nvim_tree_autocmd("WinResized", {
-      callback = function()
-        if vim.v.event and vim.v.event.windows then
-          for _, winid in ipairs(vim.v.event.windows) do
-            if vim.api.nvim_win_is_valid(winid) and utils.is_nvim_tree_buf(vim.api.nvim_win_get_buf(winid)) then
-              events._dispatch_on_tree_resize(vim.api.nvim_win_get_width(winid))
-            end
-          end
-        end
       end,
     })
   end

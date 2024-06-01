@@ -183,15 +183,8 @@ function M.setup()
 
   -- hard link override when legacy only is present
   for from, to in pairs(M.LEGACY_LINKS) do
-    local hl_from
-    local hl_to
-    if vim.fn.has "nvim-0.9" == 1 then
-      hl_from = vim.api.nvim_get_hl(0, { name = from })
-      hl_to = vim.api.nvim_get_hl(0, { name = to })
-    else
-      hl_from = vim.api.nvim__get_hl_defs(0)[from] or {}
-      hl_to = vim.api.nvim__get_hl_defs(0)[to] or {}
-    end
+    local hl_from = vim.api.nvim_get_hl(0, { name = from })
+    local hl_to = vim.api.nvim_get_hl(0, { name = to })
     if vim.tbl_isempty(hl_from) and not vim.tbl_isempty(hl_to) then
       vim.api.nvim_command("hi link " .. from .. " " .. to)
     end
