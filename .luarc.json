@@ -9,6 +9,7 @@
   },
   "diagnostics": {
     "libraryFiles": "Disable",
+    "globals": [],
     "neededFileStatus": {
       "ambiguity-1": "Any",
       "assign-type-mismatch": "Any",
