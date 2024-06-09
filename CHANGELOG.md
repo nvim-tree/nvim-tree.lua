@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.3...nvim-tree-v1.4.0) (2024-06-09)
+
+### Notice
+
+* Neovim 0.9 is now the minimum supported version; please upgrade to neovim release version 0.9 or 0.10.
+
+### Reverts
+
+* **#2781:** "refactor: replace deprecated use of vim.diagnostic.is_disabled()" ([#2784](https://github.com/nvim-tree/nvim-tree.lua/issues/2784)) ([517e4fb](https://github.com/nvim-tree/nvim-tree.lua/commit/517e4fbb9ef3c0986da7047f44b4b91a2400f93c))
+
+
+### Miscellaneous Chores
+
+* release 1.4.0 ([1cac800](https://github.com/nvim-tree/nvim-tree.lua/commit/1cac8005df6da484c97499247754afa59fef92db))
+
 ## [1.3.3](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.2...nvim-tree-v1.3.3) (2024-05-14)
 
 
