@@ -11,7 +11,6 @@ local core = require "nvim-tree.core"
 local git = require "nvim-tree.git"
 local filters = require "nvim-tree.explorer.filters"
 local buffers = require "nvim-tree.buffers"
-local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 
 local _config = {}
@@ -26,7 +25,14 @@ local M = {
 function M.change_root(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then
-    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or ""
+    local ft
+
+    if vim.fn.has "nvim-0.10" == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
+    else
+      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
+    end
+
     for _, value in pairs(_config.update_focused_file.update_root.ignore_list) do
       if utils.str_find(path, value) or utils.str_find(ft, value) then
         return
@@ -78,7 +84,14 @@ end
 function M.tab_enter()
   if view.is_visible { any_tabpage = true } then
     local bufname = vim.api.nvim_buf_get_name(0)
-    local ft = vim.api.nvim_buf_get_option(0, "ft")
+
+    local ft
+    if vim.fn.has "nvim-0.10" == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
+    else
+      ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
+    end
+
     for _, filter in ipairs(M.config.tab.sync.ignore) do
       if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
         return
@@ -321,21 +334,6 @@ local function setup_autocommands(opts)
           buffers.reload_modified()
           actions.reloaders.reload_explorer()
         end)
-      end,
-    })
-  end
-
-  -- TODO #1545 remove similar check from view.resize
-  if vim.fn.has "nvim-0.9" == 1 then
-    create_nvim_tree_autocmd("WinResized", {
-      callback = function()
-        if vim.v.event and vim.v.event.windows then
-          for _, winid in ipairs(vim.v.event.windows) do
-            if vim.api.nvim_win_is_valid(winid) and utils.is_nvim_tree_buf(vim.api.nvim_win_get_buf(winid)) then
-              events._dispatch_on_tree_resize(vim.api.nvim_win_get_width(winid))
-            end
-          end
-        end
       end,
     })
   end
@@ -766,8 +764,8 @@ end
 
 ---@param conf table|nil
 function M.setup(conf)
-  if vim.fn.has "nvim-0.8" == 0 then
-    notify.warn "nvim-tree.lua requires Neovim 0.8 or higher"
+  if vim.fn.has "nvim-0.9" == 0 then
+    notify.warn "nvim-tree.lua requires Neovim 0.9 or higher"
     return
   end
 

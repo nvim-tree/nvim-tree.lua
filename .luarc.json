@@ -9,9 +9,7 @@
   },
   "diagnostics": {
     "libraryFiles": "Disable",
-    "severity": {
-      "deprecated": "Hint"
-    },
+    "globals": [],
     "neededFileStatus": {
       "ambiguity-1": "Any",
       "assign-type-mismatch": "Any",
@@ -23,7 +21,7 @@
       "code-after-break": "Any",
       "codestyle-check": "None",
       "count-down-loop": "Any",
-      "deprecated": "None",
+      "deprecated": "Any",
       "different-requires": "Any",
       "discard-returns": "Any",
       "doc-field-no-class": "Any",

@@ -22,7 +22,7 @@ style-doc:
 	scripts/doc-comments.sh
 
 luals:
-	scripts/luals-check.sh
+	@scripts/luals-check.sh
 
 #
 # fixes
