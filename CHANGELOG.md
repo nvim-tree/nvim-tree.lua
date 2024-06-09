@@ -2,6 +2,9 @@
 
 ## [1.4.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.3...nvim-tree-v1.4.0) (2024-06-09)
 
+### Notice
+
+* Neovim 0.9 is now the minimum supported version; please upgrade to neovim release version 0.9 or 0.10.
 
 ### Reverts
 
