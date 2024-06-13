@@ -310,7 +310,8 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  local fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
+  -- TODO: nvim-tree 会改变当前目录, 调用结束前恢复
+  local fname = utils.escape_special_chars(vim.fn.fnameescape(vim.fn.fnamemodify(filename, ':.')))
 
   local command
   if create_new_window then
