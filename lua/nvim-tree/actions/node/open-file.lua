@@ -190,6 +190,9 @@ local function open_file_in_tab(filename)
   if M.quit_on_open then
     view.close()
   end
+  if require('nvim-tree').config.experimental.open.relative_path then
+    filename = utils.path_relative(filename, vim.fn.getcwd())
+  end
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
 end
 
@@ -197,12 +200,18 @@ local function drop(filename)
   if M.quit_on_open then
     view.close()
   end
+  if require('nvim-tree').config.experimental.open.relative_path then
+    filename = utils.path_relative(filename, vim.fn.getcwd())
+  end
   vim.cmd("drop " .. vim.fn.fnameescape(filename))
 end
 
 local function tab_drop(filename)
   if M.quit_on_open then
     view.close()
+  end
+  if require('nvim-tree').config.experimental.open.relative_path then
+    filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd("tab :drop " .. vim.fn.fnameescape(filename))
 end
@@ -310,8 +319,12 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  -- TODO: nvim-tree 会改变当前目录, 调用结束前恢复
-  local fname = utils.escape_special_chars(vim.fn.fnameescape(vim.fn.fnamemodify(filename, ':.')))
+  local fname
+  if require('nvim-tree').config.experimental.open.relative_path then
+    fname = utils.escape_special_chars(vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd())))
+  else
+    fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
+  end
 
   local command
   if create_new_window then
@@ -347,6 +360,9 @@ end
 
 local function edit_in_current_buf(filename)
   require("nvim-tree.view").abandon_current_window()
+  if require('nvim-tree').config.experimental.open.relative_path then
+    filename = utils.path_relative(filename, vim.fn.getcwd())
+  end
   vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
