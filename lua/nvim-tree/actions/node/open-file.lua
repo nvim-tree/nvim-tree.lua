@@ -190,7 +190,7 @@ local function open_file_in_tab(filename)
   if M.quit_on_open then
     view.close()
   end
-  if require('nvim-tree').config.experimental.open.relative_path then
+  if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd("tabe " .. vim.fn.fnameescape(filename))
@@ -200,7 +200,7 @@ local function drop(filename)
   if M.quit_on_open then
     view.close()
   end
-  if require('nvim-tree').config.experimental.open.relative_path then
+  if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd("drop " .. vim.fn.fnameescape(filename))
@@ -210,7 +210,7 @@ local function tab_drop(filename)
   if M.quit_on_open then
     view.close()
   end
-  if require('nvim-tree').config.experimental.open.relative_path then
+  if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd("tab :drop " .. vim.fn.fnameescape(filename))
@@ -320,7 +320,7 @@ local function open_in_new_window(filename, mode)
   end
 
   local fname
-  if require('nvim-tree').config.experimental.open.relative_path then
+  if M.relative_path then
     fname = utils.escape_special_chars(vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd())))
   else
     fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
@@ -360,7 +360,7 @@ end
 
 local function edit_in_current_buf(filename)
   require("nvim-tree.view").abandon_current_window()
-  if require('nvim-tree').config.experimental.open.relative_path then
+  if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
@@ -419,6 +419,7 @@ end
 function M.setup(opts)
   M.quit_on_open = opts.actions.open_file.quit_on_open
   M.resize_window = opts.actions.open_file.resize_window
+  M.relative_path = opts.experimental.open.relative_path
   if opts.actions.open_file.window_picker.chars then
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end
