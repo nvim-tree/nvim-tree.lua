@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.4.0...nvim-tree-v1.5.0) (2024-06-23)
+
+
+### Features
+
+* **#2799:** `filesystem_watchers.ignore_dirs` and `git.disable_for_dirs` may be functions ([#2800](https://github.com/nvim-tree/nvim-tree.lua/issues/2800)) ([8b2c5c6](https://github.com/nvim-tree/nvim-tree.lua/commit/8b2c5c678be4b49dff6a2df794877000113fd77b))
+* **#2799:** filesystem_watchers.ignore_dirs and git.disable_for_dirs may be functions ([8b2c5c6](https://github.com/nvim-tree/nvim-tree.lua/commit/8b2c5c678be4b49dff6a2df794877000113fd77b))
+
 ## [1.4.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.3...nvim-tree-v1.4.0) (2024-06-09)
 
 ### Notice
