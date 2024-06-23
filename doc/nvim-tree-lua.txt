@@ -1170,8 +1170,9 @@ Only relevant when `git.show_on_dirs` is `true`.
 
 *nvim-tree.git.disable_for_dirs*
 Disable git integration when git top-level matches these paths.
-May be relative, evaluated via |fnamemodify| `":p"`
-  Type: `table`, Default: `{}`
+Strings may be relative, evaluated via |fnamemodify| `":p"`
+Function is passed an absolute path and returns true for disable.
+  Type: `string[] | fun(path: string): boolean`, Default: `{}`
 
 *nvim-tree.git.timeout*
 Kills the git process after some time if it takes too long.
@@ -1333,10 +1334,12 @@ Idle milliseconds between filesystem change and action.
   Type: `number`, Default: `50` (ms)
 
 *nvim-tree.filesystem_watchers.ignore_dirs*
-List of vim regex for absolute directory paths that will not be watched.
-Backslashes must be escaped e.g. `"my-project/\\.build$"`. See |string-match|.
+List of vim regex for absolute directory paths that will not be watched or
+function returning whether a path should be ignored.
+Strings must be backslash escaped e.g. `"my-proj/\\.build$"`. See |string-match|.
+Function is passed an absolute path.
 Useful when path is not in `.gitignore` or git integration is disabled.
-  Type: {string}, Default: `{}`
+  Type: `string[] | fun(path: string): boolean`, Default: `{}`
 
 ==============================================================================
  5.13 OPTS: ACTIONS                                   *nvim-tree-opts-actions*

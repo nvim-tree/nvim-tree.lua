@@ -632,8 +632,14 @@ local ACCEPTED_TYPES = {
   update_focused_file = {
     exclude = { "function" },
   },
+  git = {
+    disable_for_dirs = { "function" },
+  },
   filters = {
     custom = { "function" },
+  },
+  filesystem_watchers = {
+    ignore_dirs = { "function" },
   },
   actions = {
     open_file = {
