@@ -1658,6 +1658,22 @@ tree.focus()                                      *nvim-tree-api.tree.focus()*
 tree.reload()                                    *nvim-tree-api.tree.reload()*
     Refresh the tree. Does nothing if closed.
 
+tree.resize({opts})                              *nvim-tree-api.tree.resize()*
+    Resize the tree, persisting the new size.
+    Resets to |nvim-tree.view.width| when no {opts} provided.
+    See |:NvimTreeResize|
+
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {width}    (table)  new |nvim-tree.view.width| value
+      • {absolute} (number) set the width
+      • {relative} (number) increase or decrease the width
+
+    Only one option is supported, in the priority order above.
+    {absolute} and {relative} do nothing when {width} is a function.
+
 tree.change_root({path})                    *nvim-tree-api.tree.change_root()*
     Change the tree's root to a path.
 
