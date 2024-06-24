@@ -34,8 +34,12 @@ function M.fn(opts)
 
   local relative = options.relative
   if type(relative) == "number" then
-    local new_size = view.get_width() + relative
-    view.resize(new_size)
+    local relative_size = tostring(relative)
+    if relative > 0 then
+      relative_size = "+" .. relative_size
+    end
+
+    view.resize(relative_size)
     return
   end
 end
