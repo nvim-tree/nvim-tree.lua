@@ -584,7 +584,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       default_yes = false,
     },
   },
-  experimental = {},
+  experimental = {
+    actions = {
+      open_file = {
+        relative_path = false,
+      },
+    },
+  },
   log = {
     enable = false,
     truncate = false,
