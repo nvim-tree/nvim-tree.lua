@@ -170,12 +170,18 @@ function M.get_toplevel(path)
   if not toplevel or not git_dir then
     return nil
   end
+  local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
 
   -- ignore disabled paths
-  for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
-    local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
-    local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
-    if toplevel_norm == disabled_norm then
+  if type(M.config.git.disable_for_dirs) == "table" then
+    for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
+      local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
+      if toplevel_norm == disabled_norm then
+        return nil
+      end
+    end
+  elseif type(M.config.git.disable_for_dirs) == "function" then
+    if M.config.git.disable_for_dirs(toplevel_norm) then
       return nil
     end
   end

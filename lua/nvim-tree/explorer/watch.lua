@@ -40,10 +40,14 @@ local function is_folder_ignored(path)
     end
   end
 
-  for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
-    if vim.fn.match(path, ignore_dir) ~= -1 then
-      return true
+  if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
+    for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
+      if vim.fn.match(path, ignore_dir) ~= -1 then
+        return true
+      end
     end
+  elseif type(M.config.filesystem_watchers.ignore_dirs) == "function" then
+    return M.config.filesystem_watchers.ignore_dirs(path)
   end
 
   return false
