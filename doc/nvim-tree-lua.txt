@@ -621,8 +621,10 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         },
       },
       experimental = {
-        open = {
-          relative_path = false,
+        actions = {
+          open_file = {
+            relative_path = false,
+          },
         },
       },
       log = {
@@ -1540,7 +1542,7 @@ Confirmation prompts.
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
 
-    *nvim-tree.open.relative_path*
+    *nvim-tree.actions.open_file.relative_path*
     Buffers opened by nvim-tree will use with relative paths instead of
     absolute.
     Execute |:ls| to see the paths of all open buffers.
@@ -2762,6 +2764,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.open_file|
 |nvim-tree.actions.open_file.eject|
 |nvim-tree.actions.open_file.quit_on_open|
+|nvim-tree.actions.open_file.relative_path|
 |nvim-tree.actions.open_file.resize_window|
 |nvim-tree.actions.open_file.window_picker|
 |nvim-tree.actions.open_file.window_picker.chars|
@@ -2822,7 +2825,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.modified.show_on_open_dirs|
 |nvim-tree.notify.threshold|
 |nvim-tree.on_attach|
-|nvim-tree.open.relative_path|
 |nvim-tree.prefer_startup_root|
 |nvim-tree.reload_on_bufenter|
 |nvim-tree.renderer.add_trailing|
