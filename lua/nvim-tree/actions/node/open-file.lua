@@ -319,6 +319,15 @@ local function open_in_new_window(filename, mode)
     end
   end
 
+  if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
+    -- ignore "WinLeave" autocmd on preview
+    -- because the registered "WinLeave"
+    -- will kill the floating window immediately
+    set_current_win_no_autocmd(target_winid, { "WinLeave", "BufEnter" })
+  else
+    set_current_win_no_autocmd(target_winid, { "BufEnter" })
+  end
+
   local fname
   if M.relative_path then
     fname = utils.escape_special_chars(vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd())))
@@ -334,15 +343,6 @@ local function open_in_new_window(filename, mode)
     command = { cmd = mode, args = { fname } }
   else
     command = { cmd = "edit", args = { fname } }
-  end
-
-  if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
-    -- ignore "WinLeave" autocmd on preview
-    -- because the registered "WinLeave"
-    -- will kill the floating window immediately
-    set_current_win_no_autocmd(target_winid, { "WinLeave", "BufEnter" })
-  else
-    set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
   pcall(vim.api.nvim_cmd, command, { output = false })
