@@ -3017,6 +3017,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.is_visible()|
 |nvim-tree-api.tree.open()|
 |nvim-tree-api.tree.reload()|
+|nvim-tree-api.tree.resize()|
 |nvim-tree-api.tree.search_node()|
 |nvim-tree-api.tree.toggle()|
 |nvim-tree-api.tree.toggle_custom_filter()|
