@@ -1542,7 +1542,7 @@ Confirmation prompts.
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
 
-    *nvim-tree.actions.open_file.relative_path*
+    *nvim-tree.experimental.actions.open_file.relative_path*
     Buffers opened by nvim-tree will use with relative paths instead of
     absolute.
     Execute |:ls| to see the paths of all open buffers.
@@ -2764,7 +2764,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.open_file|
 |nvim-tree.actions.open_file.eject|
 |nvim-tree.actions.open_file.quit_on_open|
-|nvim-tree.actions.open_file.relative_path|
 |nvim-tree.actions.open_file.resize_window|
 |nvim-tree.actions.open_file.window_picker|
 |nvim-tree.actions.open_file.window_picker.chars|
@@ -2784,6 +2783,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.diagnostics.show_on_open_dirs|
 |nvim-tree.disable_netrw|
 |nvim-tree.experimental|
+|nvim-tree.experimental.actions.open_file.relative_path|
 |nvim-tree.filesystem_watchers.debounce_delay|
 |nvim-tree.filesystem_watchers.enable|
 |nvim-tree.filesystem_watchers.ignore_dirs|
