@@ -31,6 +31,10 @@ local function err_fmt(from, to, reason)
 end
 
 local function rename_file_exists(node, to)
+  if not utils.is_macos then
+    return utils.file_exists(to)
+  end
+
   if string.lower(node) == string.lower(to) then
     return false
   end
