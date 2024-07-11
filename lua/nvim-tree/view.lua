@@ -548,6 +548,34 @@ function M.reset_winhl()
   end
 end
 
+---Check if width determined or calculated on-fly
+---@return boolean
+function M.is_width_determined()
+  return type(M.View.width) ~= "function"
+end
+
+---Configure width-related config
+---@param width string|function|number|table|nil
+function M.configure_width(width)
+  if type(width) == "table" then
+    M.View.adaptive_size = true
+    M.View.width = width.min or DEFAULT_MIN_WIDTH
+    M.View.max_width = width.max or DEFAULT_MAX_WIDTH
+    M.View.padding = width.padding or DEFAULT_PADDING
+  elseif width == nil then
+    if M.config.width ~= nil then
+      -- if we had input config - fallback to it
+      M.configure_width(M.config.width)
+    else
+      -- otherwise - restore initial width
+      M.View.width = M.View.initial_width
+    end
+  else
+    M.View.adaptive_size = false
+    M.View.width = width
+  end
+end
+
 function M.setup(opts)
   local options = opts.view or {}
   M.View.centralize_selection = options.centralize_selection
@@ -563,15 +591,8 @@ function M.setup(opts)
   M.View.float = options.float
   M.on_attach = opts.on_attach
 
-  if type(options.width) == "table" then
-    M.View.adaptive_size = true
-    M.View.width = options.width.min or DEFAULT_MIN_WIDTH
-    M.View.max_width = options.width.max or DEFAULT_MAX_WIDTH
-    M.View.padding = options.width.padding or DEFAULT_PADDING
-  else
-    M.View.adaptive_size = false
-    M.View.width = options.width
-  end
+  M.config = options
+  M.configure_width(options.width)
 
   M.View.initial_width = get_width()
 end
