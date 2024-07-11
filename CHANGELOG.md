@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.5.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.4.0...nvim-tree-v1.5.0) (2024-07-11)
+
+
+### Features
+
+* **#2127:** add experimental.actions.open_file.relative_path to open files with a relative path rather than absolute ([#2805](https://github.com/nvim-tree/nvim-tree.lua/issues/2805)) ([869c064](https://github.com/nvim-tree/nvim-tree.lua/commit/869c064721a6c2091f22c3541e8f0ff958361771))
+* **#2598:** add api.tree.resize ([#2811](https://github.com/nvim-tree/nvim-tree.lua/issues/2811)) ([2ede0de](https://github.com/nvim-tree/nvim-tree.lua/commit/2ede0de67b47e89e2b4cb488ea3f58b8f5a8c90a))
+* **#2799:** `filesystem_watchers.ignore_dirs` and `git.disable_for_dirs` may be functions ([#2800](https://github.com/nvim-tree/nvim-tree.lua/issues/2800)) ([8b2c5c6](https://github.com/nvim-tree/nvim-tree.lua/commit/8b2c5c678be4b49dff6a2df794877000113fd77b))
+* **#2799:** filesystem_watchers.ignore_dirs and git.disable_for_dirs may be functions ([8b2c5c6](https://github.com/nvim-tree/nvim-tree.lua/commit/8b2c5c678be4b49dff6a2df794877000113fd77b))
+
+
+### Bug Fixes
+
+* **#2813:** macos: enable file renaming with changed capitalization ([#2814](https://github.com/nvim-tree/nvim-tree.lua/issues/2814)) ([abfd1d1](https://github.com/nvim-tree/nvim-tree.lua/commit/abfd1d1b6772540364743531cc0331e08a0027a9))
+* **#2819:** experimental.actions.open_file.relative_path issue following change directory ([#2820](https://github.com/nvim-tree/nvim-tree.lua/issues/2820)) ([12a9a99](https://github.com/nvim-tree/nvim-tree.lua/commit/12a9a995a455d2c2466e47140663275365a5d2fc))
+
 ## [1.4.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.3.3...nvim-tree-v1.4.0) (2024-06-09)
 
 ### Notice
