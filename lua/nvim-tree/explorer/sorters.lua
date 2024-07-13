@@ -1,6 +1,5 @@
 local C = {}
 
-
 ---Create a shallow copy of a portion of a list.
 ---@param t table
 ---@param first integer First index, inclusive
@@ -87,7 +86,6 @@ local function split_merge(t, first, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
-
 ---@param a Node
 ---@param b Node
 ---@param ignorecase boolean|nil
@@ -108,7 +106,6 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
     return a.name <= b.name
   end
 end
-
 
 function C.case_sensitive(a, b, cfg)
   return node_comparator_name_ignorecase_or_not(a, b, false, cfg)
@@ -241,12 +238,11 @@ function C.filetype(a, b, cfg)
   return a_ft < b_ft
 end
 
-
 ---@class Sorter
 local Sorter = {}
 
-function Sorter:new (opts)
-  local o = {}   -- create object if user does not provide one
+function Sorter:new(opts)
+  local o = {} -- create object if user does not provide one
   setmetatable(o, self)
   self.__index = self
   o.config = opts.sort
