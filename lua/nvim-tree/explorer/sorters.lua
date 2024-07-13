@@ -1,5 +1,3 @@
-local M = {}
-
 local C = {}
 
 --- Predefined comparator, defaulting to name
@@ -27,17 +25,17 @@ end
 ---@param a Node
 ---@param b Node
 ---@return boolean|nil
-local function folders_or_files_first(a, b)
-  if not (M.config.sort.folders_first or M.config.sort.files_first) then
+local function folders_or_files_first(a, b, cfg)
+  if not (cfg.folders_first or cfg.files_first) then
     return
   end
 
   if not a.nodes and b.nodes then
     -- file <> folder
-    return M.config.sort.files_first
+    return cfg.files_first
   elseif a.nodes and not b.nodes then
     -- folder <> file
-    return not M.config.sort.files_first
+    return not cfg.files_first
   end
 end
 
@@ -95,67 +93,17 @@ local function split_merge(t, first, last, comparator)
   merge(t, first, mid, last, comparator)
 end
 
----Perform a merge sort using sorter option.
----@param t table nodes
-function M.sort(t)
-  if C.user then
-    local t_user = {}
-    local origin_index = {}
-
-    for _, n in ipairs(t) do
-      table.insert(t_user, {
-        absolute_path = n.absolute_path,
-        executable = n.executable,
-        extension = n.extension,
-        filetype = vim.filetype.match { filename = n.name },
-        link_to = n.link_to,
-        name = n.name,
-        type = n.type,
-      })
-      table.insert(origin_index, n)
-    end
-
-    local predefined = C.user(t_user)
-    if predefined then
-      split_merge(t, 1, #t, get_comparator(predefined))
-      return
-    end
-
-    -- do merge sort for prevent memory exceed
-    local user_index = {}
-    for i, v in ipairs(t_user) do
-      if type(v.absolute_path) == "string" and user_index[v.absolute_path] == nil then
-        user_index[v.absolute_path] = i
-      end
-    end
-
-    -- if missing value found, then using origin_index
-    local mini_comparator = function(a, b)
-      local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
-      local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
-
-      if type(a_index) == "number" and type(b_index) == "number" then
-        return a_index <= b_index
-      end
-      return (a_index or 0) <= (b_index or 0)
-    end
-
-    split_merge(t, 1, #t, mini_comparator) -- sort by user order
-  else
-    split_merge(t, 1, #t, get_comparator(M.config.sort.sorter))
-  end
-end
 
 ---@param a Node
 ---@param b Node
 ---@param ignorecase boolean|nil
 ---@return boolean
-local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
+local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -167,15 +115,16 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   end
 end
 
-function C.case_sensitive(a, b)
-  return node_comparator_name_ignorecase_or_not(a, b, false)
+
+function C.case_sensitive(a, b, cfg)
+  return node_comparator_name_ignorecase_or_not(a, b, false, cfg)
 end
 
-function C.name(a, b)
-  return node_comparator_name_ignorecase_or_not(a, b, true)
+function C.name(a, b, cfg)
+  return node_comparator_name_ignorecase_or_not(a, b, true, cfg)
 end
 
-function C.modification_time(a, b)
+function C.modification_time(a, b, cfg)
   if not (a and b) then
     return true
   end
@@ -199,13 +148,13 @@ function C.modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
-function C.suffix(a, b)
+function C.suffix(a, b, cfg)
   if not (a and b) then
     return true
   end
 
   -- directories go first
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   elseif a.nodes and b.nodes then
@@ -248,7 +197,7 @@ function C.suffix(a, b)
   return a_suffix:lower() < b_suffix:lower()
 end
 
-function C.extension(a, b)
+function C.extension(a, b, cfg)
   if not (a and b) then
     return true
   end
@@ -273,12 +222,12 @@ function C.extension(a, b)
   return a_ext < b_ext
 end
 
-function C.filetype(a, b)
+function C.filetype(a, b, cfg)
   local a_ft = vim.filetype.match { filename = a.name }
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -298,13 +247,77 @@ function C.filetype(a, b)
   return a_ft < b_ft
 end
 
-function M.setup(opts)
-  M.config = {}
-  M.config.sort = opts.sort
 
-  if type(M.config.sort.sorter) == "function" then
-    C.user = M.config.sort.sorter
+---@class Sorter 
+local Sorter = {}
+
+function Sorter:new (opts)
+  local o = {}   -- create object if user does not provide one
+  setmetatable(o, self)
+  self.__index = self
+  o.config = opts.sort
+
+  if type(o.config.sorter) == "function" then
+    o.user = o.config.sorter
+  end
+  return o
+end
+
+function Sorter:get_comparator(sorter)
+  return function(a, b)
+    return (C[sorter] or C.name)(a, b, self.config)
   end
 end
 
-return M
+---Perform a merge sort using sorter option.
+---@param t table nodes
+function Sorter:sort(t)
+  if self.user then
+    local t_user = {}
+    local origin_index = {}
+
+    for _, n in ipairs(t) do
+      table.insert(t_user, {
+        absolute_path = n.absolute_path,
+        executable = n.executable,
+        extension = n.extension,
+        filetype = vim.filetype.match { filename = n.name },
+        link_to = n.link_to,
+        name = n.name,
+        type = n.type,
+      })
+      table.insert(origin_index, n)
+    end
+
+    local predefined = self.user(t_user)
+    if predefined then
+      split_merge(t, 1, #t, self:get_comparator(predefined))
+      return
+    end
+
+    -- do merge sort for prevent memory exceed
+    local user_index = {}
+    for i, v in ipairs(t_user) do
+      if type(v.absolute_path) == "string" and user_index[v.absolute_path] == nil then
+        user_index[v.absolute_path] = i
+      end
+    end
+
+    -- if missing value found, then using origin_index
+    local mini_comparator = function(a, b)
+      local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
+      local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
+
+      if type(a_index) == "number" and type(b_index) == "number" then
+        return a_index <= b_index
+      end
+      return (a_index or 0) <= (b_index or 0)
+    end
+
+    split_merge(t, 1, #t, mini_comparator) -- sort by user order
+  else
+    split_merge(t, 1, #t, self:get_comparator(self.config.sorter))
+  end
+end
+
+return Sorter
