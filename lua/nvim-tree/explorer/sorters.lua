@@ -1,11 +1,5 @@
 local C = {}
 
---- Predefined comparator, defaulting to name
----@param sorter string as per options
----@return function
-local function get_comparator(sorter)
-  return C[sorter] or C.name
-end
 
 ---Create a shallow copy of a portion of a list.
 ---@param t table
@@ -124,7 +118,7 @@ function C.name(a, b, cfg)
   return node_comparator_name_ignorecase_or_not(a, b, true, cfg)
 end
 
-function C.modification_time(a, b, cfg)
+function C.modification_time(a, b)
   if not (a and b) then
     return true
   end
@@ -197,7 +191,7 @@ function C.suffix(a, b, cfg)
   return a_suffix:lower() < b_suffix:lower()
 end
 
-function C.extension(a, b, cfg)
+function C.extension(a, b)
   if not (a and b) then
     return true
   end
@@ -248,7 +242,7 @@ function C.filetype(a, b, cfg)
 end
 
 
----@class Sorter 
+---@class Sorter
 local Sorter = {}
 
 function Sorter:new (opts)
@@ -263,6 +257,9 @@ function Sorter:new (opts)
   return o
 end
 
+--- Predefined comparator, defaulting to name
+---@param sorter string as per options
+---@return function
 function Sorter:get_comparator(sorter)
   return function(a, b)
     return (C[sorter] or C.name)(a, b, self.config)
