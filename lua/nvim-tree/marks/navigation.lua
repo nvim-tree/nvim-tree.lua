@@ -1,6 +1,5 @@
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local core = require "nvim-tree.core"
-local Marks = require "nvim-tree.marks"
 local open_file = require "nvim-tree.actions.node.open-file"
 local utils = require "nvim-tree.utils"
 local lib = require "nvim-tree.lib"
@@ -9,10 +8,15 @@ local lib = require "nvim-tree.lib"
 ---@param where string
 ---@return Node|nil
 local function get_nearest(node, where)
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
   local first, prev, next, last = nil, nil, nil, nil
   local found = false
 
-  Iterator.builder(core.get_explorer().nodes)
+  Iterator.builder(explorer.nodes)
     :recursor(function(n)
       return n.open and n.nodes
     end)
@@ -22,7 +26,7 @@ local function get_nearest(node, where)
         return
       end
 
-      if not Marks.get_mark(n) then
+      if not explorer.marks:get_mark(n) then
         return
       end
 
@@ -84,9 +88,14 @@ M.next = navigate_to "next"
 M.prev = navigate_to "prev"
 
 function M.select()
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
   local list = vim.tbl_map(function(n)
     return n.absolute_path
-  end, Marks.get_marks())
+  end, explorer.marks:get_marks())
 
   vim.ui.select(list, {
     prompt = "Select a file to open or a folder to focus",
@@ -94,7 +103,7 @@ function M.select()
     if not choice or choice == "" then
       return
     end
-    local node = Marks.get_mark { absolute_path = choice }
+    local node = explorer.marks:get_mark { absolute_path = choice }
     open_or_focus(node)
   end)
 end

@@ -1,5 +1,4 @@
 local utils = require "nvim-tree.utils"
-local marks = require "nvim-tree.marks"
 
 local M = {
   ignore_list = {},
@@ -155,8 +154,11 @@ function M.prepare(git_status)
     status.bufinfo = vim.fn.getbufinfo { buflisted = 1 }
   end
 
-  for _, node in pairs(marks.get_marks()) do
-    status.bookmarks[node.absolute_path] = node.type
+  local explorer = require("nvim-tree.core").get_explorer()
+  if explorer then
+    for _, node in pairs(explorer.marks:get_marks()) do
+      status.bookmarks[node.absolute_path] = node.type
+    end
   end
 
   return status
