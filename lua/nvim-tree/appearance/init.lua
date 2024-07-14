@@ -17,7 +17,7 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeNormalNC", link = "NvimTreeNormal" },
 
   { group = "NvimTreeLineNr", link = "LineNr" },
-  { group = "NvimTreeWinSeparator", link = "WinSeparator" },
+  { group = "NvimTreeWineparator", link = "WinSeparator" },
   { group = "NvimTreeEndOfBuffer", link = "EndOfBuffer" },
   { group = "NvimTreePopup", link = "Normal" },
   { group = "NvimTreeSignColumn", link = "NvimTreeNormal" },
@@ -75,6 +75,11 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeModifiedIcon", link = "Type" },
   { group = "NvimTreeModifiedFileHL", link = "NvimTreeModifiedIcon" },
   { group = "NvimTreeModifiedFolderHL", link = "NvimTreeModifiedFileHL" },
+
+  -- Hidden
+  { group = "NvimTreeHiddenIcon", link = "NvimTreeSignColumn" },
+  { group = "NvimTreeHiddenFileHL", link = "NvimTreeFileName" },
+  { group = "NvimTreeHiddenFolderHL", link = "NvimTreeFolderName" },
 
   -- Opened
   { group = "NvimTreeOpenedHL", link = "Special" },
