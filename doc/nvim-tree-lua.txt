@@ -974,25 +974,29 @@ Icon order and sign column precedence:
     *nvim-tree.renderer.icons.git_placement*
     Place where the git icons will be rendered.
     Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled) or
+    `"right_align"` (requires |nvim_buf_set_extmark|).
       Type: `string`, Default: `"before"`
 
     *nvim-tree.renderer.icons.diagnostics_placement*
     Place where the diagnostics icon will be rendered.
     Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled) or
+    `"right_align"` (requires |nvim_buf_set_extmark|).
       Type: `string`, Default: `"signcolumn"`
 
     *nvim-tree.renderer.icons.modified_placement*
     Place where the modified icon will be rendered.
     Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled) or
+    `"right_align"` (requires |nvim_buf_set_extmark|).
       Type: `string`, Default: `"after"`
 
     *nvim-tree.renderer.icons.bookmarks_placement*
     Place where the bookmarks icon will be rendered.
     Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled) or
+    `"right_align"` (requires |nvim_buf_set_extmark|).
       Type: `string`, Default: `signcolumn`
 
     *nvim-tree.renderer.icons.padding*

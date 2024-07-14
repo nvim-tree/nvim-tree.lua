@@ -18,7 +18,7 @@ local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
-local function _draw(bufnr, lines, hl_args, signs)
+local function _draw(bufnr, lines, hl_args, signs, extmarks)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
@@ -37,6 +37,15 @@ local function _draw(bufnr, lines, hl_args, signs)
   vim.fn.sign_unplace(SIGN_GROUP)
   for i, sign_name in pairs(signs) do
     vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1 })
+  end
+  for i, extname in pairs(extmarks) do
+    for _, mark in ipairs(extname) do
+      vim.api.nvim_buf_set_extmark(bufnr, namespace_id, i, -1, {
+        virt_text = { { mark.str, mark.hl } },
+        virt_text_pos = "right_align",
+        hl_mode = "combine",
+      })
+    end
   end
 end
 
@@ -67,7 +76,7 @@ function M.draw()
 
   local builder = Builder:new():build()
 
-  _draw(bufnr, builder.lines, builder.hl_args, builder.signs)
+  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
