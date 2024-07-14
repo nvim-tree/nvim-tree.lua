@@ -4,7 +4,7 @@ local C = {}
 local Sorter = {}
 
 function Sorter:new(opts)
-  local o = {} -- create object if user does not provide one
+  local o = {}
   setmetatable(o, self)
   self.__index = self
   o.config = vim.deepcopy(opts.sort)
