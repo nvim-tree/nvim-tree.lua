@@ -1,5 +1,29 @@
 local C = {}
 
+---@class Sorter
+local Sorter = {}
+
+function Sorter:new(opts)
+  local o = {} -- create object if user does not provide one
+  setmetatable(o, self)
+  self.__index = self
+  o.config = vim.deepcopy(opts.sort)
+
+  if type(o.config.sorter) == "function" then
+    o.user = o.config.sorter
+  end
+  return o
+end
+
+--- Predefined comparator, defaulting to name
+---@param sorter string as per options
+---@return function
+function Sorter:get_comparator(sorter)
+  return function(a, b)
+    return (C[sorter] or C.name)(a, b, self.config)
+  end
+end
+
 ---Create a shallow copy of a portion of a list.
 ---@param t table
 ---@param first integer First index, inclusive
@@ -84,6 +108,57 @@ local function split_merge(t, first, last, comparator)
   split_merge(t, first, mid, comparator)
   split_merge(t, mid + 1, last, comparator)
   merge(t, first, mid, last, comparator)
+end
+
+---Perform a merge sort using sorter option.
+---@param t table nodes
+function Sorter:sort(t)
+  if self.user then
+    local t_user = {}
+    local origin_index = {}
+
+    for _, n in ipairs(t) do
+      table.insert(t_user, {
+        absolute_path = n.absolute_path,
+        executable = n.executable,
+        extension = n.extension,
+        filetype = vim.filetype.match { filename = n.name },
+        link_to = n.link_to,
+        name = n.name,
+        type = n.type,
+      })
+      table.insert(origin_index, n)
+    end
+
+    local predefined = self.user(t_user)
+    if predefined then
+      split_merge(t, 1, #t, self:get_comparator(predefined))
+      return
+    end
+
+    -- do merge sort for prevent memory exceed
+    local user_index = {}
+    for i, v in ipairs(t_user) do
+      if type(v.absolute_path) == "string" and user_index[v.absolute_path] == nil then
+        user_index[v.absolute_path] = i
+      end
+    end
+
+    -- if missing value found, then using origin_index
+    local mini_comparator = function(a, b)
+      local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
+      local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
+
+      if type(a_index) == "number" and type(b_index) == "number" then
+        return a_index <= b_index
+      end
+      return (a_index or 0) <= (b_index or 0)
+    end
+
+    split_merge(t, 1, #t, mini_comparator) -- sort by user order
+  else
+    split_merge(t, 1, #t, self:get_comparator(self.config.sorter))
+  end
 end
 
 ---@param a Node
@@ -236,81 +311,6 @@ function C.filetype(a, b, cfg)
   end
 
   return a_ft < b_ft
-end
-
----@class Sorter
-local Sorter = {}
-
-function Sorter:new(opts)
-  local o = {} -- create object if user does not provide one
-  setmetatable(o, self)
-  self.__index = self
-  o.config = opts.sort
-
-  if type(o.config.sorter) == "function" then
-    o.user = o.config.sorter
-  end
-  return o
-end
-
---- Predefined comparator, defaulting to name
----@param sorter string as per options
----@return function
-function Sorter:get_comparator(sorter)
-  return function(a, b)
-    return (C[sorter] or C.name)(a, b, self.config)
-  end
-end
-
----Perform a merge sort using sorter option.
----@param t table nodes
-function Sorter:sort(t)
-  if self.user then
-    local t_user = {}
-    local origin_index = {}
-
-    for _, n in ipairs(t) do
-      table.insert(t_user, {
-        absolute_path = n.absolute_path,
-        executable = n.executable,
-        extension = n.extension,
-        filetype = vim.filetype.match { filename = n.name },
-        link_to = n.link_to,
-        name = n.name,
-        type = n.type,
-      })
-      table.insert(origin_index, n)
-    end
-
-    local predefined = self.user(t_user)
-    if predefined then
-      split_merge(t, 1, #t, self:get_comparator(predefined))
-      return
-    end
-
-    -- do merge sort for prevent memory exceed
-    local user_index = {}
-    for i, v in ipairs(t_user) do
-      if type(v.absolute_path) == "string" and user_index[v.absolute_path] == nil then
-        user_index[v.absolute_path] = i
-      end
-    end
-
-    -- if missing value found, then using origin_index
-    local mini_comparator = function(a, b)
-      local a_index = user_index[a.absolute_path] or origin_index[a.absolute_path]
-      local b_index = user_index[b.absolute_path] or origin_index[b.absolute_path]
-
-      if type(a_index) == "number" and type(b_index) == "number" then
-        return a_index <= b_index
-      end
-      return (a_index or 0) <= (b_index or 0)
-    end
-
-    split_merge(t, 1, #t, mini_comparator) -- sort by user order
-  else
-    split_merge(t, 1, #t, self:get_comparator(self.config.sorter))
-  end
 end
 
 return Sorter

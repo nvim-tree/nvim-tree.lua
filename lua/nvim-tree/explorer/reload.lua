@@ -165,7 +165,10 @@ function M.reload(node, git_status)
     return ns
   end
 
-  M.sorters:sort(node.nodes)
+  local explorer = require("nvim-tree.core").get_explorer()
+  if explorer then
+    explorer.sorters:sort(node.nodes)
+  end
   live_filter.apply_filter(node)
   log.profile_end(profile)
   return node.nodes
@@ -229,7 +232,6 @@ function M.refresh_parent_nodes_for_path(path)
 end
 
 function M.setup(opts)
-  M.sorters = Sorters:new(opts)
   M.config = opts.renderer
 end
 

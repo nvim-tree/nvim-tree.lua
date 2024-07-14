@@ -82,7 +82,7 @@ function M.explore(node, status, parent)
     return ns
   end
 
-  M.sorters:sort(node.nodes)
+  parent.sorters:sort(node.nodes)
   live_filter.apply_filter(node)
 
   log.profile_end(profile)
@@ -90,7 +90,6 @@ function M.explore(node, status, parent)
 end
 
 function M.setup(opts)
-  M.sorters = Sorters:new(opts)
   M.config = opts.renderer
 end
 
