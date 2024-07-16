@@ -17,7 +17,7 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeNormalNC", link = "NvimTreeNormal" },
 
   { group = "NvimTreeLineNr", link = "LineNr" },
-  { group = "NvimTreeWineparator", link = "WinSeparator" },
+  { group = "NvimTreeWinSeparator", link = "WinSeparator" },
   { group = "NvimTreeEndOfBuffer", link = "EndOfBuffer" },
   { group = "NvimTreePopup", link = "Normal" },
   { group = "NvimTreeSignColumn", link = "NvimTreeNormal" },
