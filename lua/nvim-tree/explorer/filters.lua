@@ -17,7 +17,7 @@ function Filters:new(opts, explorer)
       filter_git_clean = opts.filters.git_clean,
       filter_no_buffer = opts.filters.no_buffer,
       filter_no_bookmark = opts.filters.no_bookmark,
-    }
+    },
   }
 
   local custom_filter = opts.filters.custom

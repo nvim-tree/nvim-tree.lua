@@ -213,7 +213,9 @@ local function setup_autocommands(opts)
       if not explorer then
         return
       end
-      if (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if
+        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+      then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           actions.reloaders.reload_explorer()
         end)
@@ -228,7 +230,9 @@ local function setup_autocommands(opts)
       if not explorer then
         return
       end
-      if (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if
+        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+      then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           actions.reloaders.reload_explorer()
         end)

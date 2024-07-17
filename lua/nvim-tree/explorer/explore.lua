@@ -56,6 +56,7 @@ end
 
 ---@param node Node
 ---@param status table
+---@param parent Explorer
 ---@return Node[]|nil
 function M.explore(node, status, parent)
   local cwd = node.link_to or node.absolute_path
