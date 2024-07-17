@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local filters = require "nvim-tree.explorer.filters"
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
@@ -9,6 +8,11 @@ local M = {}
 ---@return string|nil
 local function search(search_dir, input_path)
   local realpaths_searched = {}
+  local explorer = core.get_explorer()
+
+  if not explorer then
+    return
+  end
 
   if not search_dir then
     return
@@ -19,7 +23,7 @@ local function search(search_dir, input_path)
   local function iter(dir)
     local realpath, path, name, stat, handle, _
 
-    local filter_status = filters.prepare()
+    local filter_status = explorer.filters:prepare()
 
     handle, _ = vim.loop.fs_scandir(dir)
     if not handle then
@@ -42,7 +46,7 @@ local function search(search_dir, input_path)
         break
       end
 
-      if not filters.should_filter(path, stat, filter_status) then
+      if not explorer.filters:should_filter(path, stat, filter_status) then
         if string.find(path, "/" .. input_path .. "$") then
           return path
         end

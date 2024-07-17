@@ -1,8 +1,7 @@
 local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
-local filters = require "nvim-tree.explorer.filters"
 local reloaders = require "nvim-tree.actions.reloaders"
-
+local core = require "nvim-tree.core"
 local M = {}
 
 local function reload()
@@ -11,39 +10,56 @@ local function reload()
   utils.focus_node_or_parent(node)
 end
 
-function M.custom()
-  filters.config.filter_custom = not filters.config.filter_custom
+local function wrap_explorer(fn)
+  return function(...)
+    local explorer = core.get_explorer()
+    if explorer then
+      return fn(explorer, ...)
+    end
+  end
+end
+
+local function custom(explorer)
+  explorer.filters.config.filter_custom = not explorer.filters.config.filter_custom
   reload()
 end
 
-function M.git_ignored()
-  filters.config.filter_git_ignored = not filters.config.filter_git_ignored
+local function git_ignored(explorer)
+  explorer.filters.config.filter_git_ignored = not explorer.filters.config.filter_git_ignored
   reload()
 end
 
-function M.git_clean()
-  filters.config.filter_git_clean = not filters.config.filter_git_clean
+local function git_clean(explorer)
+  explorer.filters.config.filter_git_clean = not explorer.filters.config.filter_git_clean
   reload()
 end
 
-function M.no_buffer()
-  filters.config.filter_no_buffer = not filters.config.filter_no_buffer
+local function no_buffer(explorer)
+  explorer.filters.config.filter_no_buffer = not explorer.filters.config.filter_no_buffer
   reload()
 end
 
-function M.no_bookmark()
-  filters.config.filter_no_bookmark = not filters.config.filter_no_bookmark
+local function no_bookmark(explorer)
+  explorer.filters.config.filter_no_bookmark = not explorer.filters.config.filter_no_bookmark
   reload()
 end
 
-function M.dotfiles()
-  filters.config.filter_dotfiles = not filters.config.filter_dotfiles
+local function dotfiles(explorer)
+  explorer.filters.config.filter_dotfiles = not explorer.filters.config.filter_dotfiles
   reload()
 end
 
-function M.enable()
-  filters.config.enable = not filters.config.enable
+local function enable(explorer)
+  explorer.filters.config.enable = not explorer.filters.config.enable
   reload()
 end
+
+M.custom = wrap_explorer(custom)
+M.git_ignored = wrap_explorer(git_ignored)
+M.git_clean = wrap_explorer(git_clean)
+M.no_buffer = wrap_explorer(no_buffer)
+M.no_bookmark = wrap_explorer(no_bookmark)
+M.dotfiles = wrap_explorer(dotfiles)
+M.enable = wrap_explorer(enable)
 
 return M
