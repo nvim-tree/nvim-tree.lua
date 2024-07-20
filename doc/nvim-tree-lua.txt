@@ -953,7 +953,7 @@ Configuration options for tree indent markers.
 Configuration options for icons.
 
 Icon order and sign column precedence:
-  git < modified < bookmarked < diagnostics
+  git < hidden < modified < bookmarked < diagnostics
 
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
@@ -2459,6 +2459,11 @@ Modified: >
     NvimTreeModifiedIcon        Type
     NvimTreeModifiedFileHL      NvimTreeModifiedIcon
     NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
+
+Hidden: >
+    NvimTreeModifiedIcon        Conceal
+    NvimTreeModifiedFileHL      NvimTreeHiddenIcon
+    NvimTreeModifiedFolderHL    NvimTreeHiddenFileHL
 <
 Opened: >
     NvimTreeOpenedHL            Special
@@ -2879,6 +2884,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.highlight_clipboard|
 |nvim-tree.renderer.highlight_diagnostics|
 |nvim-tree.renderer.highlight_git|
+|nvim-tree.renderer.highlight_hidden|
 |nvim-tree.renderer.highlight_modified|
 |nvim-tree.renderer.highlight_opened_files|
 |nvim-tree.renderer.icons|
@@ -2889,8 +2895,10 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.glyphs.default|
 |nvim-tree.renderer.icons.glyphs.folder|
 |nvim-tree.renderer.icons.glyphs.git|
+|nvim-tree.renderer.icons.glyphs.hidden|
 |nvim-tree.renderer.icons.glyphs.modified|
 |nvim-tree.renderer.icons.glyphs.symlink|
+|nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
 |nvim-tree.renderer.icons.padding|
 |nvim-tree.renderer.icons.show|
@@ -2900,6 +2908,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.show.folder|
 |nvim-tree.renderer.icons.show.folder_arrow|
 |nvim-tree.renderer.icons.show.git|
+|nvim-tree.renderer.icons.show.hidden|
 |nvim-tree.renderer.icons.show.modified|
 |nvim-tree.renderer.icons.symlink_arrow|
 |nvim-tree.renderer.icons.web_devicons|

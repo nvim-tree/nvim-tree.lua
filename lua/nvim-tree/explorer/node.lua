@@ -134,7 +134,6 @@ function M.is_dotfile(node)
   if node == nil then
     return false
   end
-  -- Inspect(node)
   if node.is_dot or (node.name and (node.name:sub(1, 1) == ".")) or M.is_dotfile(node.parent) then
     node.is_dot = true
     return true
