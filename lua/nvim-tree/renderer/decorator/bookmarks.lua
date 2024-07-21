@@ -1,4 +1,4 @@
-local marks = require "nvim-tree.marks"
+local core = require "nvim-tree.core"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
@@ -34,7 +34,7 @@ end
 ---@param node Node
 ---@return HighlightedString[]|nil icons
 function DecoratorBookmarks:calculate_icons(node)
-  if marks.get_mark(node) then
+  if core.get_explorer() and core.get_explorer().marks:get_mark(node) then
     return { self.icon }
   end
 end
@@ -43,7 +43,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorBookmarks:calculate_highlight(node)
-  if self.hl_pos ~= HL_POSITION.none and marks.get_mark(node) then
+  if self.hl_pos ~= HL_POSITION.none and core.get_explorer() and core.get_explorer().marks:get_mark(node) then
     return "NvimTreeBookmarkHL"
   end
 end

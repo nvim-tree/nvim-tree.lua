@@ -1,4 +1,5 @@
 local lib = require "nvim-tree.lib"
+local core = require "nvim-tree.core"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
@@ -6,7 +7,6 @@ local appearance_diagnostics = require "nvim-tree.appearance.diagnostics"
 local events = require "nvim-tree.events"
 local help = require "nvim-tree.help"
 local live_filter = require "nvim-tree.live-filter"
-local marks = require "nvim-tree.marks"
 local marks_navigation = require "nvim-tree.marks.navigation"
 local marks_bulk_delete = require "nvim-tree.marks.bulk-delete"
 local marks_bulk_trash = require "nvim-tree.marks.bulk-trash"
@@ -43,9 +43,10 @@ local Api = {
   diagnostics = {},
 }
 
---- Do nothing when setup not called.
+--- Print error when setup not called.
 --- f function to invoke
 ---@param f function
+---@return fun(...) : any
 local function wrap(f)
   return function(...)
     if vim.g.NvimTreeSetup == 1 then
@@ -56,13 +57,13 @@ local function wrap(f)
   end
 end
 
----Inject the node as the first argument if absent.
+---Inject the node as the first argument if present otherwise do nothing.
 ---@param fn function function to invoke
 local function wrap_node(fn)
   return function(node, ...)
     node = node or lib.get_node_at_cursor()
     if node then
-      fn(node, ...)
+      return fn(node, ...)
     end
   end
 end
@@ -72,8 +73,34 @@ end
 local function wrap_node_or_nil(fn)
   return function(node, ...)
     node = node or lib.get_node_at_cursor()
-    fn(node, ...)
+    return fn(node, ...)
   end
+end
+
+---Inject the explorer as the first argument if present otherwise do nothing.
+---@param fn function function to invoke
+---@return fun(...) : any
+local function wrap_explorer(fn)
+  return function(...)
+    local explorer = core.get_explorer()
+    if explorer then
+      return fn(explorer, ...)
+    end
+  end
+end
+
+---Invoke a member's method on the singleton explorer.
+---Print error when setup not called.
+---@param explorer_member string explorer member name
+---@param member_method string method name to invoke on member
+---@return fun(...) : any
+local function wrap_explorer_member(explorer_member, member_method)
+  return wrap(function(...)
+    local explorer = core.get_explorer()
+    if explorer then
+      return explorer[explorer_member][member_method](explorer[explorer_member], ...)
+    end
+  end)
 end
 
 ---@class ApiTreeOpenOpts
@@ -241,13 +268,13 @@ Api.events.Event = events.Event
 Api.live_filter.start = wrap(live_filter.start_filtering)
 Api.live_filter.clear = wrap(live_filter.clear_filter)
 
-Api.marks.get = wrap_node(marks.get_mark)
-Api.marks.list = wrap(marks.get_marks)
-Api.marks.toggle = wrap_node(marks.toggle_mark)
-Api.marks.clear = wrap(marks.clear_marks)
-Api.marks.bulk.delete = wrap(marks_bulk_delete.bulk_delete)
-Api.marks.bulk.trash = wrap(marks_bulk_trash.bulk_trash)
-Api.marks.bulk.move = wrap(marks_bulk_move.bulk_move)
+Api.marks.get = wrap_node(wrap_explorer_member("marks", "get_mark"))
+Api.marks.list = wrap_explorer_member("marks", "get_marks")
+Api.marks.toggle = wrap_node(wrap_explorer_member("marks", "toggle_mark"))
+Api.marks.clear = wrap_explorer_member("marks", "clear_marks")
+Api.marks.bulk.delete = wrap_explorer(marks_bulk_delete.bulk_delete)
+Api.marks.bulk.trash = wrap_explorer(marks_bulk_trash.bulk_trash)
+Api.marks.bulk.move = wrap_explorer(marks_bulk_move.bulk_move)
 Api.marks.navigate.next = wrap(marks_navigation.next)
 Api.marks.navigate.prev = wrap(marks_navigation.prev)
 Api.marks.navigate.select = wrap(marks_navigation.select)
