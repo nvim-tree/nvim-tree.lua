@@ -9,6 +9,7 @@
 ---@field fs_stat uv.fs_stat.result|nil
 ---@field git_status GitStatus|nil
 ---@field hidden boolean
+---@field is_dot boolean
 ---@field name string
 ---@field parent DirNode
 ---@field type string
