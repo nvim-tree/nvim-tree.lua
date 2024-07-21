@@ -1,4 +1,3 @@
-local marks = require "nvim-tree.marks"
 local utils = require "nvim-tree.utils"
 local remove_file = require "nvim-tree.actions.fs.remove-file"
 local notify = require "nvim-tree.notify"
@@ -10,12 +9,13 @@ local M = {
 
 --- Delete nodes; each removal will be optionally notified
 ---@param nodes Node[]
-local function do_delete(nodes)
+---@param marks Marks
+local function do_delete(marks, nodes)
   for _, node in pairs(nodes) do
     remove_file.remove(node)
   end
 
-  marks.clear_marks()
+  marks:clear_marks()
 
   if not M.config.filesystem_watchers.enable then
     require("nvim-tree.actions.reloaders").reload_explorer()
@@ -23,8 +23,15 @@ local function do_delete(nodes)
 end
 
 --- Delete marked nodes, optionally prompting
-function M.bulk_delete()
-  local nodes = marks.get_marks()
+---@param explorer Explorer
+function M.bulk_delete(explorer)
+  if not explorer then
+    return
+  end
+
+  local marks = explorer.marks
+
+  local nodes = marks:get_marks()
   if not nodes or #nodes == 0 then
     notify.warn "No bookmarksed to delete."
     return
@@ -36,11 +43,11 @@ function M.bulk_delete()
     lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_bulk_delete", function(item_short)
       utils.clear_prompt()
       if item_short == "y" then
-        do_delete(nodes)
+        do_delete(marks, nodes)
       end
     end)
   else
-    do_delete(nodes)
+    do_delete(marks, nodes)
   end
 end
 

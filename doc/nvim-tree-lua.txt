@@ -428,6 +428,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         highlight_diagnostics = "none",
         highlight_opened_files = "none",
         highlight_modified = "none",
+        highlight_hidden = "none",
         highlight_bookmarks = "none",
         highlight_clipboard = "name",
         indent_markers = {
@@ -454,6 +455,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
           },
           git_placement = "before",
           modified_placement = "after",
+          hidden_placement = "after",
           diagnostics_placement = "signcolumn",
           bookmarks_placement = "signcolumn",
           padding = " ",
@@ -464,6 +466,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             folder_arrow = true,
             git = true,
             modified = true,
+            hidden = false,
             diagnostics = true,
             bookmarks = true,
           },
@@ -472,6 +475,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             symlink = "",
             bookmark = "󰆤",
             modified = "●",
+            hidden = "󰜌",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -904,6 +908,13 @@ Requires |nvim-tree.modified.enable|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`
   Type: `string`, Default `"none"`
 
+*nvim-tree.renderer.highlight_hidden*
+Highlight icons and/or names for hidden files (dotfiles) using the
+`NvimTreeHiddenFileHL` highlight group.
+Requires |nvim-tree.hidden.enable|
+Value can be `"none"`, `"icon"`, `"name"` or `"all"`
+  Type: `string`, Default `"none"`
+
 *nvim-tree.renderer.highlight_bookmarks*
 Highlight bookmarked using the `NvimTreeBookmarkHL` group.
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`
@@ -942,7 +953,7 @@ Configuration options for tree indent markers.
 Configuration options for icons.
 
 Icon order and sign column precedence:
-  git < modified < bookmarked < diagnostics
+  git < hidden < modified < bookmarked < diagnostics
 
 `renderer.icons.*_placement` options may be:
 - `"before"` : before file/folder, after the file/folders icons
@@ -989,6 +1000,12 @@ Icon order and sign column precedence:
     Modified icon placement.
       Type: `string`, Default: `"after"`
 
+    *nvim-tree.renderer.icons.hidden_placement*
+    Place where the hidden (dotfile) icon will be rendered.
+    Can be `"after"` or `"before"` filename (after the file/folders icons)
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+      Type: `string`, Default: `"after"`
+
     *nvim-tree.renderer.icons.bookmarks_placement*
     Bookmark icon placement.
       Type: `string`, Default: `signcolumn`
@@ -1003,7 +1020,7 @@ Icon order and sign column precedence:
 
     *nvim-tree.renderer.icons.show*
     Configuration options for showing icon types.
-    Left to right order: file/folder, git, modified, diagnostics, bookmarked.
+    Left to right order: file/folder, git, modified, hidden, diagnostics, bookmarked.
 
         *nvim-tree.renderer.icons.show.file*
         Show an icon before the file name.
@@ -1026,6 +1043,11 @@ Icon order and sign column precedence:
         *nvim-tree.renderer.icons.show.modified*
         Show a modified icon, see |renderer.icons.modified_placement|
         Requires |modified.enable| `= true`
+          Type: `boolean`, Default: `true`
+
+        *nvim-tree.renderer.icons.show.hidden*
+        Show a hidden icon, see |renderer.icons.hidden_placement|
+        Requires |hidden.enable| `= true`
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.diagnostics*
@@ -1054,6 +1076,10 @@ Icon order and sign column precedence:
         *nvim-tree.renderer.icons.glyphs.modified*
         Icon to display for modified files.
           Type: `string`, Default: `"●"`
+
+        *nvim-tree.renderer.icons.glyphs.hidden*
+        Icon to display for hidden files.
+          Type: `string`, Default: `"󰜌""`
 
         *nvim-tree.renderer.icons.glyphs.folder*
         Glyphs for directories.
@@ -2431,6 +2457,11 @@ Modified: >
     NvimTreeModifiedIcon        Type
     NvimTreeModifiedFileHL      NvimTreeModifiedIcon
     NvimTreeModifiedFolderHL    NvimTreeModifiedIcon
+
+Hidden: >
+    NvimTreeModifiedIcon        Conceal
+    NvimTreeModifiedFileHL      NvimTreeHiddenIcon
+    NvimTreeModifiedFolderHL    NvimTreeHiddenFileHL
 <
 Opened: >
     NvimTreeOpenedHL            Special
@@ -2851,6 +2882,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.highlight_clipboard|
 |nvim-tree.renderer.highlight_diagnostics|
 |nvim-tree.renderer.highlight_git|
+|nvim-tree.renderer.highlight_hidden|
 |nvim-tree.renderer.highlight_modified|
 |nvim-tree.renderer.highlight_opened_files|
 |nvim-tree.renderer.icons|
@@ -2861,8 +2893,10 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.glyphs.default|
 |nvim-tree.renderer.icons.glyphs.folder|
 |nvim-tree.renderer.icons.glyphs.git|
+|nvim-tree.renderer.icons.glyphs.hidden|
 |nvim-tree.renderer.icons.glyphs.modified|
 |nvim-tree.renderer.icons.glyphs.symlink|
+|nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
 |nvim-tree.renderer.icons.padding|
 |nvim-tree.renderer.icons.show|
@@ -2872,6 +2906,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.show.folder|
 |nvim-tree.renderer.icons.show.folder_arrow|
 |nvim-tree.renderer.icons.show.git|
+|nvim-tree.renderer.icons.show.hidden|
 |nvim-tree.renderer.icons.show.modified|
 |nvim-tree.renderer.icons.symlink_arrow|
 |nvim-tree.renderer.icons.web_devicons|

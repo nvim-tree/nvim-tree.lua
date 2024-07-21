@@ -76,6 +76,11 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeModifiedFileHL", link = "NvimTreeModifiedIcon" },
   { group = "NvimTreeModifiedFolderHL", link = "NvimTreeModifiedFileHL" },
 
+  -- Hidden
+  { group = "NvimTreeHiddenIcon", link = "Conceal" },
+  { group = "NvimTreeHiddenFileHL", link = "NvimTreeHiddenIcon" },
+  { group = "NvimTreeHiddenFolderHL", link = "NvimTreeHiddenFileHL" },
+
   -- Opened
   { group = "NvimTreeOpenedHL", link = "Special" },
 

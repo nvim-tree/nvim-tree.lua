@@ -2,6 +2,7 @@ local git = require "nvim-tree.git"
 local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
+local Marks = require "nvim-tree.marks"
 
 local M = {}
 
@@ -12,6 +13,7 @@ M.reload = require("nvim-tree.explorer.reload").reload
 ---@field absolute_path string
 ---@field nodes Node[]
 ---@field open boolean
+---@field marks Marks
 
 local Explorer = {}
 Explorer.__index = Explorer
@@ -36,6 +38,7 @@ function Explorer.new(path)
     absolute_path = path,
     nodes = {},
     open = true,
+    marks = Marks:new(),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
   explorer:_load(explorer)
