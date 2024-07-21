@@ -672,10 +672,10 @@ local ACCEPTED_STRINGS = {
     highlight_diagnostics = { "none", "icon", "name", "all" },
     highlight_clipboard = { "none", "icon", "name", "all" },
     icons = {
-      git_placement = { "before", "after", "signcolumn" },
-      modified_placement = { "before", "after", "signcolumn" },
-      diagnostics_placement = { "before", "after", "signcolumn" },
-      bookmarks_placement = { "before", "after", "signcolumn" },
+      git_placement = { "before", "after", "signcolumn", "right_align" },
+      modified_placement = { "before", "after", "signcolumn", "right_align" },
+      diagnostics_placement = { "before", "after", "signcolumn", "right_align" },
+      bookmarks_placement = { "before", "after", "signcolumn", "right_align" },
     },
   },
   help = {

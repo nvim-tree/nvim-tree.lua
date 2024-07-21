@@ -74,6 +74,17 @@ function Decorator:icons_after(node)
   return self:calculate_icons(node)
 end
 
+---Icons when ICON_PLACEMENT.right_align
+---@param node Node
+---@return HighlightedString[]|nil icons
+function Decorator:icons_right_align(node)
+  if not self.enabled or self.icon_placement ~= ICON_PLACEMENT.right_align then
+    return
+  end
+
+  return self:calculate_icons(node)
+end
+
 ---Maybe icons, optionally implemented
 ---@protected
 ---@param _ Node
