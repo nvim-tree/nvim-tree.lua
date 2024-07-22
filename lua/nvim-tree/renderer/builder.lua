@@ -381,6 +381,7 @@ function Builder:build_lines(node)
   end
   local num_children = self:get_nodes_number(node.nodes)
   local idx = 1
+  -- table.insert(node.nodes, { name = "cock", path = "cock" })
   for _, n in ipairs(node.nodes) do
     if not n.hidden then
       self:build_signs(n)

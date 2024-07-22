@@ -14,6 +14,7 @@ M.HIGHLIGHT_GROUPS = {
   -- Standard
   { group = "NvimTreeNormal", link = "Normal" },
   { group = "NvimTreeNormalFloat", link = "NormalFloat" },
+  { group = "NvimTreeNormalFloatBorder", link = "FloatBorder" },
   { group = "NvimTreeNormalNC", link = "NvimTreeNormal" },
 
   { group = "NvimTreeLineNr", link = "LineNr" },

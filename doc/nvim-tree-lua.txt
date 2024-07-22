@@ -1004,6 +1004,12 @@ Icon order and sign column precedence:
     Hidden icon placement.
       Type: `string`, Default: `"after"`
 
+    *nvim-tree.renderer.icons.hidden_placement*
+    Place where the hidden (dotfile) icon will be rendered.
+    Can be `"after"` or `"before"` filename (after the file/folders icons)
+    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+      Type: `string`, Default: `"after"`
+
     *nvim-tree.renderer.icons.bookmarks_placement*
     Bookmark icon placement.
       Type: `string`, Default: `signcolumn`

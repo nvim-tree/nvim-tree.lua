@@ -15,9 +15,11 @@ local M = {}
 ---@param cwd string
 ---@param node Node
 ---@param git_status table
+---@return integer filtered_count
 local function populate_children(handle, cwd, node, git_status)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
+
   local filter_status = filters.prepare(git_status)
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
@@ -68,6 +70,13 @@ function M.explore(node, status)
 
   populate_children(handle, cwd, node, status)
 
+  local child_hidden_count = 0
+  for _, child_node in ipairs(node.nodes) do
+    if child_node then
+      child_hidden_count = child_hidden_count + 1
+    end
+  end
+
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
@@ -83,6 +92,21 @@ function M.explore(node, status)
 
   sorters.sort(node.nodes)
   live_filter.apply_filter(node)
+
+  if true or child_hidden_count ~= 0 then
+    table.insert(node.nodes, {
+      absolute_path = "",
+      git_status = {},
+
+      has_children = false,
+      name = "(" .. tostring(child_hidden_count) .. " hidden items)",
+      nodes = {},
+      open = false,
+
+      parent = node,
+      type = "file",
+    })
+  end
 
   log.profile_end(profile)
   return node.nodes
