@@ -13,6 +13,7 @@ local M = {}
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
 local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
+local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 
 ---@param bufnr number
 ---@param lines string[]
@@ -38,9 +39,11 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks)
   for i, sign_name in pairs(signs) do
     vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1 })
   end
+
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_extmarks_id, 0, -1)
   for i, extname in pairs(extmarks) do
     for _, mark in ipairs(extname) do
-      vim.api.nvim_buf_set_extmark(bufnr, namespace_id, i, -1, {
+      vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, i, -1, {
         virt_text = { { mark.str, mark.hl } },
         virt_text_pos = "right_align",
         hl_mode = "combine",
