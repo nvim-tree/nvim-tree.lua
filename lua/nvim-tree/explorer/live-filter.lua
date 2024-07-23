@@ -3,9 +3,16 @@ local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local filters = require "nvim-tree.explorer.filters"
 
-local M = {
-  filter = nil,
-}
+local LiveFilter = {}
+
+function LiveFilter:new(opts)
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+  o.config = vim.deepcopy(opts.live_filter)
+  o.filter = nil
+  return o
+end
 
 local function redraw()
   require("nvim-tree.renderer").draw()
@@ -49,26 +56,27 @@ local function remove_overlay()
   overlay_bufnr = 0
   overlay_winnr = 0
 
-  if M.filter == "" then
-    M.clear_filter()
+  local explorer = require("nvim-tree.core").get_explorer()
+  if explorer and explorer.live_filter.filter == "" then
+    explorer.live_filter.clear_filter()
   end
 end
 
 ---@param node Node
 ---@return boolean
-local function matches(node)
+local function matches(self, node)
   if not filters.config.enable then
     return true
   end
 
   local path = node.absolute_path
   local name = vim.fn.fnamemodify(path, ":t")
-  return vim.regex(M.filter):match_str(name) ~= nil
+  return vim.regex(self.filter):match_str(name) ~= nil
 end
 
 ---@param node_ Node|nil
-function M.apply_filter(node_)
-  if not M.filter or M.filter == "" then
+function LiveFilter:apply_filter(node_)
+  if not self.filter or self.filter == "" then
     reset_filter(node_)
     return
   end
@@ -88,7 +96,7 @@ function M.apply_filter(node_)
       end
     end
 
-    local has_nodes = nodes and (M.always_show_folders or #nodes > filtered_nodes)
+    local has_nodes = nodes and (self.config.always_show_folders or #nodes > filtered_nodes)
     local ok, is_match = pcall(matches, node)
     node.hidden = not (has_nodes or (ok and is_match))
   end
@@ -98,9 +106,12 @@ end
 
 local function record_char()
   vim.schedule(function()
-    M.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
-    M.apply_filter()
-    redraw()
+    local explorer = require("nvim-tree.core").get_explorer()
+    if explorer then
+      explorer.live_filter.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
+      explorer.live_filter.apply_filter()
+      redraw()
+    end
   end)
 end
 
@@ -120,17 +131,21 @@ local function configure_buffer_overlay()
 end
 
 ---@return integer
-local function calculate_overlay_win_width()
+local function calculate_overlay_win_width(explorer)
   local wininfo = vim.fn.getwininfo(view.get_winnr())[1]
 
   if wininfo then
-    return wininfo.width - wininfo.textoff - #M.prefix
+    return wininfo.width - wininfo.textoff - #explorer.live_filter.prefix
   end
 
   return 20
 end
 
 local function create_overlay()
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer then
+    return
+  end
   if view.View.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
     vim.api.nvim_clear_autocmds {
@@ -145,7 +160,7 @@ local function create_overlay()
     col = 1,
     row = 0,
     relative = "cursor",
-    width = calculate_overlay_win_width(),
+    width = calculate_overlay_win_width(explorer),
     height = 1,
     border = "none",
     style = "minimal",
@@ -157,28 +172,28 @@ local function create_overlay()
     vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
   end
 
-  vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { M.filter })
+  vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { explorer.live_filter.filter })
   vim.cmd "startinsert"
-  vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #M.filter + 1 })
+  vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #explorer.live_filter.filter + 1 })
 end
 
-function M.start_filtering()
+function LiveFilter:start_filtering()
   view.View.live_filter.prev_focused_node = require("nvim-tree.lib").get_node_at_cursor()
-  M.filter = M.filter or ""
+  self.filter = self.filter or ""
 
   redraw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
-  local col = #M.prefix > 0 and #M.prefix - 1 or 1
+  local col = #self.prefix > 0 and #self.prefix - 1 or 1
   view.set_cursor { row, col }
   -- needs scheduling to let the cursor move before initializing the window
   vim.schedule(create_overlay)
 end
 
-function M.clear_filter()
+function LiveFilter:clear_filter()
   local node = require("nvim-tree.lib").get_node_at_cursor()
   local last_node = view.View.live_filter.prev_focused_node
 
-  M.filter = nil
+  self.filter = nil
   reset_filter()
   redraw()
 
@@ -189,9 +204,4 @@ function M.clear_filter()
   end
 end
 
-function M.setup(opts)
-  M.prefix = opts.live_filter.prefix
-  M.always_show_folders = opts.live_filter.always_show_folders
-end
-
-return M
+return LiveFilter

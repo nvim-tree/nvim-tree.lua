@@ -3,6 +3,7 @@ local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 local Marks = require "nvim-tree.marks"
+local LiveFilter = require "nvim-tree.live-filter"
 
 local M = {}
 
@@ -38,6 +39,7 @@ function Explorer.new(path)
     absolute_path = path,
     nodes = {},
     open = true,
+    live_filter = LiveFilter:new(M.config),
     marks = Marks:new(),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
