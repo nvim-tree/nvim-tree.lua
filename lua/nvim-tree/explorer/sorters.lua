@@ -190,12 +190,12 @@ function C.name(a, b, cfg)
   return node_comparator_name_ignorecase_or_not(a, b, true, cfg)
 end
 
-function C.modification_time(a, b)
+function C.modification_time(a, b, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -224,7 +224,7 @@ function C.suffix(a, b, cfg)
   if early_return ~= nil then
     return early_return
   elseif a.nodes and b.nodes then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- dotfiles go second
@@ -233,7 +233,7 @@ function C.suffix(a, b, cfg)
   elseif a.name:sub(1, 1) ~= "." and b.name:sub(1, 1) == "." then
     return false
   elseif a.name:sub(1, 1) == "." and b.name:sub(1, 1) == "." then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- unsuffixed go third
@@ -245,7 +245,7 @@ function C.suffix(a, b, cfg)
   elseif a_suffix_ndx and not b_suffix_ndx then
     return false
   elseif not (a_suffix_ndx and b_suffix_ndx) then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- finally, compare by suffixes
@@ -257,18 +257,18 @@ function C.suffix(a, b, cfg)
   elseif not a_suffix and b_suffix then
     return false
   elseif a_suffix:lower() == b_suffix:lower() then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_suffix:lower() < b_suffix:lower()
 end
 
-function C.extension(a, b)
+function C.extension(a, b, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -282,7 +282,7 @@ function C.extension(a, b)
   local a_ext = (a.extension or ""):lower()
   local b_ext = (b.extension or ""):lower()
   if a_ext == b_ext then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_ext < b_ext
@@ -307,7 +307,7 @@ function C.filetype(a, b, cfg)
 
   -- same filetype or both nil, sort by name
   if a_ft == b_ft then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_ft < b_ft
