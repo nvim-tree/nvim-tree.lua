@@ -1,4 +1,3 @@
-local marks = require "nvim-tree.marks"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local rename_file = require "nvim-tree.actions.fs.rename-file"
@@ -9,8 +8,14 @@ local M = {
   config = {},
 }
 
-function M.bulk_move()
-  if #marks.get_marks() == 0 then
+---@param explorer Explorer
+function M.bulk_move(explorer)
+  if not explorer then
+    return
+  end
+  local marks = explorer.marks
+
+  if #marks:get_marks() == 0 then
     notify.warn "No bookmarks to move."
     return
   end
@@ -40,14 +45,14 @@ function M.bulk_move()
       return
     end
 
-    local nodes = marks.get_marks()
+    local nodes = marks:get_marks()
     for _, node in pairs(nodes) do
       local head = vim.fn.fnamemodify(node.absolute_path, ":t")
       local to = utils.path_join { location, head }
       rename_file.rename(node, to)
     end
 
-    marks.clear_marks()
+    marks:clear_marks()
 
     if not M.config.filesystem_watchers.enable then
       require("nvim-tree.actions.reloaders").reload_explorer()
