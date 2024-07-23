@@ -1,8 +1,17 @@
 local utils = require "nvim-tree.utils"
 local marks = require "nvim-tree.marks"
 
+---@class Filters to handle all opts.filters and related API
+---@field config table hydrated user opts.filters
+---@field private explorer Explorer
+---@field private exclude_list string[] filters.exclude
+---@field private ignore_list string[] filters.custom string table
+---@field private custom_function (fun(absolute_path: string): boolean)|nil filters.custom function
 local Filters = {}
 
+---@param opts table user options
+---@param explorer Explorer
+---@return Filters
 function Filters:new(opts, explorer)
   local o = {
     explorer = explorer,
@@ -144,7 +153,7 @@ local function custom(self, path)
   local basename = utils.path_basename(path)
 
   -- filter user's custom function
-  if self.custom_function and self:custom_function(path) then
+  if self.custom_function and self.custom_function(path) then
     return true
   end
 
