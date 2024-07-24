@@ -3,6 +3,8 @@ local explorer = require "nvim-tree.explorer"
 local live_filter = require "nvim-tree.live-filter"
 local view = require "nvim-tree.view"
 local log = require "nvim-tree.log"
+local Iterator = require "nvim-tree.iterators.node-iterator"
+local utils = require "nvim-tree.utils"
 
 local M = {}
 
@@ -23,6 +25,49 @@ function M.init(foldername)
     first_init_done = true
   end
   log.profile_end(profile)
+end
+
+---@param path string
+function M.change_root(path)
+  if TreeExplorer == nil then
+    return
+  end
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(TreeExplorer.absolute_path), ":h")
+  if root_parent_cwd == path then
+    local newTreeExplorer = explorer.Explorer.new(path)
+    if newTreeExplorer == nil then
+      return
+    end
+    for _, node in ipairs(newTreeExplorer.nodes) do
+      if node.absolute_path == TreeExplorer.absolute_path then
+        node.nodes = TreeExplorer.nodes
+      end
+    end
+    TreeExplorer:destroy()
+    TreeExplorer = newTreeExplorer
+  else
+    local newTreeExplorer = explorer.Explorer.new(path)
+    if newTreeExplorer == nil then
+      return
+    end
+    local child_node
+    Iterator.builder(TreeExplorer.nodes)
+      :hidden()
+      :applier(function(n)
+        if n.absolute_path == path then
+          child_node = n
+        end
+      end)
+      :recursor(function(n)
+        return n.group_next and { n.group_next } or n.nodes
+      end)
+      :iterate()
+    if #child_node.nodes ~= 0 then
+      newTreeExplorer.nodes = child_node.nodes;
+    end
+    TreeExplorer:destroy()
+    TreeExplorer = newTreeExplorer
+  end
 end
 
 ---@return Explorer|nil

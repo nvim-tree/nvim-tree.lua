@@ -532,6 +532,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       enable = true,
       global = false,
       restrict_above_cwd = false,
+      explorer_node_unchanged = false,
     },
     expand_all = {
       max_folder_discovery = 300,
