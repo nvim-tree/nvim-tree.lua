@@ -1,5 +1,7 @@
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
+-- local git = require "nvim-tree.git"
+-- local filters = require "nvim-tree.explorer.filters"
 
 local M = {
   debouncers = {},
@@ -16,6 +18,49 @@ M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
 ---@return boolean
 function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1
+end
+local uv = vim.loop
+
+local function is_dotfile(name)
+  return name:sub(1, 1) == "."
+end
+
+M.count_hidden_files = function(node)
+  if true then
+    return 2
+  end
+  local count = 0
+
+  local handle = uv.fs_scandir(node.absolute_path)
+  if not handle then
+    return {}
+  end
+
+  if not handle then
+    print "Error: Unable to scan directory."
+    return count
+  end
+
+  local cwd = node.link_to or node.absolute_path
+  local git_status = git.load_project_status(cwd)
+
+  local filter_status = filters.prepare(git_status)
+  while true do
+    local name, type = uv.fs_scandir_next(handle)
+    if not name then
+      break
+    end
+    local abs = M.path_join { cwd, name }
+
+    local abs = node.absolute_path
+    ---@type uv.fs_stat.result|nil
+    local stat = vim.loop.fs_stat(abs)
+    if not filters.should_filter(abs, stat, filter_status) then
+      count = count + 1
+    end
+  end
+
+  return count
 end
 
 ---@param path string
@@ -179,6 +224,26 @@ function M.get_parent_of_group(node)
     node = node.parent
   end
   return node
+end
+
+M.default_format_hidden_count = function(hidden_count, simple)
+  local parts = {}
+  local total_count = 0
+  for reason, count in pairs(hidden_count) do
+    total_count = total_count + count
+    if count > 0 then
+      table.insert(parts, reason .. ": " .. tostring(count))
+    end
+  end
+
+  local hidden_count_string = table.concat(parts, ", ") -- if empty then is "" (empty string)
+  if simple then
+    hidden_count_string = ""
+  end
+  if total_count > 0 then
+    return "(" .. tostring(total_count) .. (simple and " hidden" or " total ") .. hidden_count_string .. ")"
+  end
+  return nil
 end
 
 --- Return visible nodes indexed by line
@@ -532,6 +597,17 @@ function M.inject_node(f)
   return function()
     f(require("nvim-tree.lib").get_node_at_cursor())
   end
+end
+
+---@param tbl table
+---@return table
+M.reverse_table = function(tbl)
+  local size = #tbl
+  local reversed = {}
+  for i = size, 1, -1 do
+    table.insert(reversed, tbl[i])
+  end
+  return reversed
 end
 
 --- Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.

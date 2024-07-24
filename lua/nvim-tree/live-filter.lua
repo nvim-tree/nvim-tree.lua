@@ -15,6 +15,10 @@ end
 local function reset_filter(node_)
   node_ = node_ or require("nvim-tree.core").get_explorer()
 
+  node_.hidden_count = vim.tbl_deep_extend("force", node_.hidden_count or {}, {
+    live_filter = 0,
+  })
+
   if node_ == nil then
     return
   end
@@ -23,6 +27,9 @@ local function reset_filter(node_)
     :hidden()
     :applier(function(node)
       node.hidden = false
+      node.hidden_count = vim.tbl_deep_extend("force", node.hidden_count or {}, {
+        live_filter = 0,
+      })
     end)
     :iterate()
 end
@@ -79,6 +86,10 @@ function M.apply_filter(node_)
     local filtered_nodes = 0
     local nodes = node.group_next and { node.group_next } or node.nodes
 
+    node.hidden_count = vim.tbl_deep_extend("force", node.hidden_count or {}, {
+      live_filter = 0,
+    })
+
     if nodes then
       for _, n in pairs(nodes) do
         iterate(n)
@@ -87,6 +98,8 @@ function M.apply_filter(node_)
         end
       end
     end
+
+    node.hidden_count.live_filter = filtered_nodes
 
     local has_nodes = nodes and (M.always_show_folders or #nodes > filtered_nodes)
     local ok, is_match = pcall(matches, node)

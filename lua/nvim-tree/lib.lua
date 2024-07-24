@@ -5,6 +5,7 @@ local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
 local explorer_node = require "nvim-tree.explorer.node"
+local actions_reloaders = require "nvim-tree.actions.reloaders"
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -146,6 +147,10 @@ function M.expand_or_collapse(node, toggle_group)
   if node.has_children then
     node.has_children = false
   end
+  -- TODO: Inspect(node)
+
+  -- node.hidden_count = utils.count_hidden_files(node.absolute_path)
+  -- node.hidden_count = 79
 
   if #node.nodes == 0 then
     core.get_explorer():expand(node)

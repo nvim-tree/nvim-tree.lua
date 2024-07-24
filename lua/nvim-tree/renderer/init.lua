@@ -19,7 +19,7 @@ local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
-local function _draw(bufnr, lines, hl_args, signs, extmarks)
+local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
@@ -30,9 +30,9 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks)
   M.render_hl(bufnr, hl_args)
 
   if vim.fn.has "nvim-0.10" == 1 then
-    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
   end
 
   vim.fn.sign_unplace(SIGN_GROUP)
@@ -49,6 +49,14 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks)
         hl_mode = "combine",
       })
     end
+  end
+
+  for _, vline in ipairs(virtual_lines) do
+    vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, vline.line_nr, 0, {
+      virt_lines = { { { vline.indent_string or "", "NvimTreeIndentMarker" }, { vline.text, "NvimTreeHiddenDisplay" } } },
+      virt_lines_above = false,
+      virt_lines_leftcol = true,
+    })
   end
 end
 
@@ -79,7 +87,8 @@ function M.draw()
 
   local builder = Builder:new():build()
 
-  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
+  -- _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
+  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)

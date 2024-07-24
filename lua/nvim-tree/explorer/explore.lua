@@ -6,7 +6,9 @@ local sorters = require "nvim-tree.explorer.sorters"
 local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
+-- local explorer_module = require "nvim-tree.explorer"
 
+local FILTER_REASON = filters.FILTER_REASON
 local Watcher = require "nvim-tree.watcher"
 
 local M = {}
@@ -21,21 +23,31 @@ local function populate_children(handle, cwd, node, git_status)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
 
   local filter_status = filters.prepare(git_status)
+
+  node.hidden_count = vim.tbl_deep_extend("force", node.hidden_count or {}, {
+    git = 0,
+    buf = 0,
+    dotfile = 0,
+    custom = 0,
+    bookmark = 0,
+  })
+
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
+    local is_dir = t == "directory"
 
     local abs = utils.path_join { cwd, name }
     local profile = log.profile_start("explore populate_children %s", abs)
 
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_stat(abs)
-
-    if not filters.should_filter(abs, stat, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
+    local filter_reason = filters.should_filter_as_reason(abs, stat, filter_status)
+    if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
-      if t == "directory" and vim.loop.fs_access(abs, "R") then
+      if is_dir and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name, stat)
       elseif t == "file" then
         child = builders.file(node, abs, name, stat)
@@ -50,10 +62,18 @@ local function populate_children(handle, cwd, node, git_status)
         nodes_by_path[child.absolute_path] = true
         explorer_node.update_git_status(child, node_ignored, git_status)
       end
+    else
+      for reason, value in pairs(FILTER_REASON) do
+        if filter_reason == value then
+          node.hidden_count[reason] = node.hidden_count[reason] + 1
+        end
+      end
     end
 
     log.profile_end(profile)
   end
+
+  -- explorer_module.reload(node)
 end
 
 ---@param node Node
@@ -70,13 +90,6 @@ function M.explore(node, status)
 
   populate_children(handle, cwd, node, status)
 
-  local child_hidden_count = 0
-  for _, child_node in ipairs(node.nodes) do
-    if child_node then
-      child_hidden_count = child_hidden_count + 1
-    end
-  end
-
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
   if M.config.group_empty and not is_root and child_folder_only then
@@ -89,26 +102,13 @@ function M.explore(node, status)
     log.profile_end(profile)
     return ns
   end
-
+  local old_num = #node.nodes
   sorters.sort(node.nodes)
   live_filter.apply_filter(node)
 
-  if true or child_hidden_count ~= 0 then
-    table.insert(node.nodes, {
-      absolute_path = "",
-      git_status = {},
-
-      has_children = false,
-      name = "(" .. tostring(child_hidden_count) .. " hidden items)",
-      nodes = {},
-      open = false,
-
-      parent = node,
-      type = "file",
-    })
-  end
-
   log.profile_end(profile)
+  local new_num = #node.nodes
+  assert(old_num == new_num, vim.inspect { old_num = old_num, new_num = new_num })
   return node.nodes
 end
 

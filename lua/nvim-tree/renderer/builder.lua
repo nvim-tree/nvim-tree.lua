@@ -43,6 +43,8 @@ local M = {
 ---@field lines string[] includes icons etc.
 ---@field hl_args AddHighlightArgs[] line highlights
 ---@field signs string[] line signs
+---@field extmarks table[] extra marks for right icon placement
+---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private root_cwd string absolute path
 ---@field private index number
 ---@field private depth number
@@ -62,6 +64,7 @@ function Builder:new()
     markers = {},
     signs = {},
     extmarks = {},
+    virtual_lines = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -220,6 +223,11 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
+  if node == nil then
+    add_to_end(line, { name })
+    return line
+  end
+
   for i = #M.decorators, 1, -1 do
     add_to_end(line, M.decorators[i]:icons_before(node))
   end
@@ -351,11 +359,25 @@ function Builder:build_line(node, idx, num_children)
   self.index = self.index + 1
 
   node = require("nvim-tree.lib").get_last_group_node(node)
-
   if node.open then
     self.depth = self.depth + 1
     self:build_lines(node)
     self.depth = self.depth - 1
+    self:add_hidden_count_string(node, idx, num_children)
+  end
+end
+
+---@private
+function Builder:add_hidden_count_string(node, idx, num_children)
+  local hidden_count_string = M.opts.renderer.hidden_display_function(node.hidden_count)
+  if hidden_count_string and hidden_count_string ~= "" then
+    local indent_markers = pad.get_indent_markers(math.max(self.depth, 0), idx or 0, num_children or 0, node, self.markers)
+    local indent_width = M.opts.renderer.indent_width
+    local indent_string = string.rep(" ", indent_width) .. (indent_markers.str or "")
+    table.insert(
+      self.virtual_lines,
+      { indent_string = indent_string, depth = self.depth, line_nr = #self.lines - 1, text = hidden_count_string }
+    )
   end
 end
 
@@ -381,7 +403,6 @@ function Builder:build_lines(node)
   end
   local num_children = self:get_nodes_number(node.nodes)
   local idx = 1
-  -- table.insert(node.nodes, { name = "cock", path = "cock" })
   for _, n in ipairs(node.nodes) do
     if not n.hidden then
       self:build_signs(n)
@@ -439,11 +460,68 @@ end
 function Builder:build()
   self:build_header()
   self:build_lines()
+  self:build_root_hidden_count()
   self:sanitize_lines()
   return self
 end
 
+--- Add the hidden_count for root, since root dir is treated differently
+--- from normal directories we need to do it again for root.
+--- Also need to sort my depth
+---@private
+function Builder:build_root_hidden_count()
+  local root = core.get_explorer()
+  self:add_hidden_count_string(root)
+  -- Now that we're done, we must sort by depth, to ensure proper rendering
+  table.sort(self.virtual_lines, function(a, b)
+    return a.depth < b.depth
+  end)
+end
+
+---@param opts table
+local setup_hidden_display_function = function(opts)
+  local hidden_display = opts.renderer.hidden_display_function
+  -- options are already validated, so ´hidden_display_function´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
+  if type(hidden_display) == "string" then
+    if hidden_display == "none" then
+      opts.renderer.hidden_display_function = function()
+        return nil
+      end
+    elseif hidden_display == "simple" then
+      opts.renderer.hidden_display_function = function(hidden_count)
+        return utils.default_format_hidden_count(hidden_count, true)
+      end
+    elseif hidden_display == "all" then
+      opts.renderer.hidden_display_function = function(hidden_count)
+        return utils.default_format_hidden_count(hidden_count, false)
+      end
+    end
+  elseif type(hidden_display) == "function" then
+    local safe_render = function(hidden_count)
+      -- In case of missing field such as live_filter we zero it, otherwise keep field as is
+      hidden_count = vim.tbl_deep_extend("force", {
+        live_filter = 0,
+        git = 0,
+        buf = 0,
+        dotfile = 0,
+        custom = 0,
+        bookmark = 0,
+      }, hidden_count or {})
+
+      local ok, result = pcall(hidden_display, hidden_count)
+      if not ok then
+        notify.warn "Problem occurred in ``opts.renderer.hidden_display_function`` see "
+        return nil
+      end
+      return result
+    end
+
+    opts.renderer.hidden_display_function = safe_render
+  end
+end
+
 function Builder.setup(opts)
+  setup_hidden_display_function(opts)
   M.opts = opts
 
   -- priority order
