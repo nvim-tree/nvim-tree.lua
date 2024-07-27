@@ -3,7 +3,6 @@ local builders = require "nvim-tree.explorer.node-builders"
 local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
 local sorters = require "nvim-tree.explorer.sorters"
-local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 
@@ -15,10 +14,11 @@ local M = {}
 ---@param cwd string
 ---@param node Node
 ---@param git_status table
-local function populate_children(handle, cwd, node, git_status)
+---@param parent Explorer
+local function populate_children(handle, cwd, node, git_status, parent)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
-  local filter_status = filters.prepare(git_status)
+  local filter_status = parent.filters:prepare(git_status)
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
@@ -31,7 +31,7 @@ local function populate_children(handle, cwd, node, git_status)
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_stat(abs)
 
-    if not filters.should_filter(abs, stat, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
+    if not parent.filters:should_filter(abs, stat, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name, stat)
@@ -56,8 +56,9 @@ end
 
 ---@param node Node
 ---@param status table
+---@param parent Explorer
 ---@return Node[]|nil
-function M.explore(node, status)
+function M.explore(node, status, parent)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -66,7 +67,7 @@ function M.explore(node, status)
 
   local profile = log.profile_start("explore init %s", node.absolute_path)
 
-  populate_children(handle, cwd, node, status)
+  populate_children(handle, cwd, node, status, parent)
 
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
@@ -74,7 +75,7 @@ function M.explore(node, status)
     local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
     local child_status = git.load_project_status(child_cwd)
     node.group_next = child_folder_only
-    local ns = M.explore(child_folder_only, child_status)
+    local ns = M.explore(child_folder_only, child_status, parent)
     node.nodes = ns or {}
 
     log.profile_end(profile)
