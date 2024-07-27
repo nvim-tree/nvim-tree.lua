@@ -1,12 +1,27 @@
-local M = {}
-
 local C = {}
+
+---@class Sorter
+local Sorter = {}
+
+function Sorter:new(opts)
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+  o.config = vim.deepcopy(opts.sort)
+
+  if type(o.config.sorter) == "function" then
+    o.user = o.config.sorter
+  end
+  return o
+end
 
 --- Predefined comparator, defaulting to name
 ---@param sorter string as per options
 ---@return function
-local function get_comparator(sorter)
-  return C[sorter] or C.name
+function Sorter:get_comparator(sorter)
+  return function(a, b)
+    return (C[sorter] or C.name)(a, b, self.config)
+  end
 end
 
 ---Create a shallow copy of a portion of a list.
@@ -27,17 +42,17 @@ end
 ---@param a Node
 ---@param b Node
 ---@return boolean|nil
-local function folders_or_files_first(a, b)
-  if not (M.config.sort.folders_first or M.config.sort.files_first) then
+local function folders_or_files_first(a, b, cfg)
+  if not (cfg.folders_first or cfg.files_first) then
     return
   end
 
   if not a.nodes and b.nodes then
     -- file <> folder
-    return M.config.sort.files_first
+    return cfg.files_first
   elseif a.nodes and not b.nodes then
     -- folder <> file
-    return not M.config.sort.files_first
+    return not cfg.files_first
   end
 end
 
@@ -97,8 +112,8 @@ end
 
 ---Perform a merge sort using sorter option.
 ---@param t table nodes
-function M.sort(t)
-  if C.user then
+function Sorter:sort(t)
+  if self.user then
     local t_user = {}
     local origin_index = {}
 
@@ -115,9 +130,9 @@ function M.sort(t)
       table.insert(origin_index, n)
     end
 
-    local predefined = C.user(t_user)
+    local predefined = self.user(t_user)
     if predefined then
-      split_merge(t, 1, #t, get_comparator(predefined))
+      split_merge(t, 1, #t, self:get_comparator(predefined))
       return
     end
 
@@ -142,7 +157,7 @@ function M.sort(t)
 
     split_merge(t, 1, #t, mini_comparator) -- sort by user order
   else
-    split_merge(t, 1, #t, get_comparator(M.config.sort.sorter))
+    split_merge(t, 1, #t, self:get_comparator(self.config.sorter))
   end
 end
 
@@ -150,12 +165,12 @@ end
 ---@param b Node
 ---@param ignorecase boolean|nil
 ---@return boolean
-local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
+local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -167,20 +182,20 @@ local function node_comparator_name_ignorecase_or_not(a, b, ignorecase)
   end
 end
 
-function C.case_sensitive(a, b)
-  return node_comparator_name_ignorecase_or_not(a, b, false)
+function C.case_sensitive(a, b, cfg)
+  return node_comparator_name_ignorecase_or_not(a, b, false, cfg)
 end
 
-function C.name(a, b)
-  return node_comparator_name_ignorecase_or_not(a, b, true)
+function C.name(a, b, cfg)
+  return node_comparator_name_ignorecase_or_not(a, b, true, cfg)
 end
 
-function C.modification_time(a, b)
+function C.modification_time(a, b, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -199,17 +214,17 @@ function C.modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
-function C.suffix(a, b)
+function C.suffix(a, b, cfg)
   if not (a and b) then
     return true
   end
 
   -- directories go first
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   elseif a.nodes and b.nodes then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- dotfiles go second
@@ -218,7 +233,7 @@ function C.suffix(a, b)
   elseif a.name:sub(1, 1) ~= "." and b.name:sub(1, 1) == "." then
     return false
   elseif a.name:sub(1, 1) == "." and b.name:sub(1, 1) == "." then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- unsuffixed go third
@@ -230,7 +245,7 @@ function C.suffix(a, b)
   elseif a_suffix_ndx and not b_suffix_ndx then
     return false
   elseif not (a_suffix_ndx and b_suffix_ndx) then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   -- finally, compare by suffixes
@@ -242,18 +257,18 @@ function C.suffix(a, b)
   elseif not a_suffix and b_suffix then
     return false
   elseif a_suffix:lower() == b_suffix:lower() then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_suffix:lower() < b_suffix:lower()
 end
 
-function C.extension(a, b)
+function C.extension(a, b, cfg)
   if not (a and b) then
     return true
   end
 
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -267,18 +282,18 @@ function C.extension(a, b)
   local a_ext = (a.extension or ""):lower()
   local b_ext = (b.extension or ""):lower()
   if a_ext == b_ext then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_ext < b_ext
 end
 
-function C.filetype(a, b)
+function C.filetype(a, b, cfg)
   local a_ft = vim.filetype.match { filename = a.name }
   local b_ft = vim.filetype.match { filename = b.name }
 
   -- directories first
-  local early_return = folders_or_files_first(a, b)
+  local early_return = folders_or_files_first(a, b, cfg)
   if early_return ~= nil then
     return early_return
   end
@@ -292,19 +307,10 @@ function C.filetype(a, b)
 
   -- same filetype or both nil, sort by name
   if a_ft == b_ft then
-    return C.name(a, b)
+    return C.name(a, b, cfg)
   end
 
   return a_ft < b_ft
 end
 
-function M.setup(opts)
-  M.config = {}
-  M.config.sort = opts.sort
-
-  if type(M.config.sort.sorter) == "function" then
-    C.user = M.config.sort.sorter
-  end
-end
-
-return M
+return Sorter
