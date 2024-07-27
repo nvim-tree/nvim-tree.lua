@@ -9,7 +9,6 @@ local actions = require "nvim-tree.actions"
 local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
 local git = require "nvim-tree.git"
-local filters = require "nvim-tree.explorer.filters"
 local buffers = require "nvim-tree.buffers"
 local notify = require "nvim-tree.notify"
 
@@ -210,7 +209,13 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufReadPost", {
     callback = function(data)
       -- update opened file buffers
-      if (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      local explorer = core.get_explorer()
+      if not explorer then
+        return
+      end
+      if
+        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+      then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           actions.reloaders.reload_explorer()
         end)
@@ -221,7 +226,13 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufUnload", {
     callback = function(data)
       -- update opened file buffers
-      if (filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      local explorer = core.get_explorer()
+      if not explorer then
+        return
+      end
+      if
+        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+      then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           actions.reloaders.reload_explorer()
         end)
