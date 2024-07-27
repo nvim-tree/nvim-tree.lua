@@ -78,7 +78,6 @@ function M.setup(opts)
   M.config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
-  require("nvim-tree.explorer.sorters").setup(opts)
   require("nvim-tree.explorer.reload").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
 end

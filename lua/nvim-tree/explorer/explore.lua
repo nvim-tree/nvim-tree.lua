@@ -2,7 +2,6 @@ local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
 local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
-local Sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 
