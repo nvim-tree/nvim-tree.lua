@@ -12,7 +12,7 @@ local M = {}
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
-local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
+local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 
 ---@param bufnr number
@@ -56,11 +56,11 @@ function M.render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
   for _, data in ipairs(hl) do
     if type(data[1]) == "table" then
       for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
       end
     end
   end
