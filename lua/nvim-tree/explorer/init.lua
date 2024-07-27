@@ -41,7 +41,7 @@ function Explorer.new(path)
     nodes = {},
     open = true,
     marks = Marks:new(),
-    sorters = Sorters:new(M.config)
+    sorters = Sorters:new(M.config),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
   explorer.filters = Filters:new(M.config, explorer)
