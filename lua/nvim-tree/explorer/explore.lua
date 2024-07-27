@@ -2,7 +2,6 @@ local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
 local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
-local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 
@@ -82,7 +81,7 @@ function M.explore(node, status, parent)
     return ns
   end
 
-  sorters.sort(node.nodes)
+  parent.sorters:sort(node.nodes)
   live_filter.apply_filter(node)
 
   log.profile_end(profile)
