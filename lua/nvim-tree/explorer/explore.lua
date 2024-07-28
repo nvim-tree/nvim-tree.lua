@@ -6,7 +6,7 @@ local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 -- local explorer_module = require "nvim-tree.explorer"
 
-local FILTER_REASON = filters.FILTER_REASON
+local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local Watcher = require "nvim-tree.watcher"
 
 local M = {}
@@ -16,11 +16,11 @@ local M = {}
 ---@param node Node
 ---@param git_status table
 ---@return integer filtered_count
-local function populate_children(handle, cwd, node, git_status)
+local function populate_children(handle, cwd, node, git_status, parent)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
 
-  local filter_status = filters.prepare(git_status)
+  local filter_status = parent.filters:prepare(git_status)
 
   node.hidden_count = vim.tbl_deep_extend("force", node.hidden_count or {}, {
     git = 0,
@@ -42,7 +42,7 @@ local function populate_children(handle, cwd, node, git_status)
 
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_stat(abs)
-    local filter_reason = filters.should_filter_as_reason(abs, stat, filter_status)
+    local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
       if is_dir and vim.loop.fs_access(abs, "R") then
@@ -101,13 +101,11 @@ function M.explore(node, status, parent)
     log.profile_end(profile)
     return ns
   end
-  local old_num = #node.nodes
-  sorters.sort(node.nodes)
+
+  parent.sorters:sort(node.nodes)
   live_filter.apply_filter(node)
 
   log.profile_end(profile)
-  local new_num = #node.nodes
-  assert(old_num == new_num, vim.inspect { old_num = old_num, new_num = new_num })
   return node.nodes
 end
 

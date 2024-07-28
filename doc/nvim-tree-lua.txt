@@ -423,7 +423,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         root_folder_label = ":~:s?$?/..?",
         indent_width = 2,
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
-        hidden_display_function = nil,
+        hidden_display = "none",
         symlink_destination = true,
         highlight_git = "none",
         highlight_diagnostics = "none",
@@ -879,7 +879,7 @@ Number of spaces for an each tree nesting level. Minimum 1.
 A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
   Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
 
-*nvim-tree.renderer.hidden_display_function
+*nvim-tree.renderer.hidden_display
 Determines the rendering of hidden files in a folder.
     Type: function | string, Default: "none"
 Possible string values are:

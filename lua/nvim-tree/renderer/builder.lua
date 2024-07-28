@@ -369,15 +369,18 @@ end
 
 ---@private
 function Builder:add_hidden_count_string(node, idx, num_children)
-  local hidden_count_string = M.opts.renderer.hidden_display_function(node.hidden_count)
+  local hidden_count_string = M.opts.renderer.hidden_display(node.hidden_count)
   if hidden_count_string and hidden_count_string ~= "" then
     local indent_markers = pad.get_indent_markers(math.max(self.depth, 0), idx or 0, num_children or 0, node, self.markers)
     local indent_width = M.opts.renderer.indent_width
     local indent_string = string.rep(" ", indent_width) .. (indent_markers.str or "")
-    table.insert(
-      self.virtual_lines,
-      { indent_string = indent_string, depth = self.depth, line_nr = #self.lines - 1, text = hidden_count_string }
-    )
+    table.insert(self.virtual_lines, {
+      indent_string = indent_string,
+      depth = self.depth,
+      line_nr = #self.lines - 1,
+      -- Remove padding if we're in root
+      text = (node.parent == nil and "" or string.rep(" ", indent_width)) .. hidden_count_string,
+    })
   end
 end
 
@@ -480,19 +483,19 @@ end
 
 ---@param opts table
 local setup_hidden_display_function = function(opts)
-  local hidden_display = opts.renderer.hidden_display_function
-  -- options are already validated, so ´hidden_display_function´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
+  local hidden_display = opts.renderer.hidden_display
+  -- options are already validated, so ´hidden_display´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
   if type(hidden_display) == "string" then
     if hidden_display == "none" then
-      opts.renderer.hidden_display_function = function()
+      opts.renderer.hidden_display = function()
         return nil
       end
     elseif hidden_display == "simple" then
-      opts.renderer.hidden_display_function = function(hidden_count)
+      opts.renderer.hidden_display = function(hidden_count)
         return utils.default_format_hidden_count(hidden_count, true)
       end
     elseif hidden_display == "all" then
-      opts.renderer.hidden_display_function = function(hidden_count)
+      opts.renderer.hidden_display = function(hidden_count)
         return utils.default_format_hidden_count(hidden_count, false)
       end
     end
@@ -510,13 +513,13 @@ local setup_hidden_display_function = function(opts)
 
       local ok, result = pcall(hidden_display, hidden_count)
       if not ok then
-        notify.warn "Problem occurred in ``opts.renderer.hidden_display_function`` see "
+        notify.warn "Problem occurred in ``opts.renderer.hidden_display_function`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
         return nil
       end
       return result
     end
 
-    opts.renderer.hidden_display_function = safe_render
+    opts.renderer.hidden_display = safe_render
   end
 end
 
