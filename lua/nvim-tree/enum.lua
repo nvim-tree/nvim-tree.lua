@@ -16,6 +16,7 @@ M.ICON_PLACEMENT = {
   signcolumn = 1,
   before = 2,
   after = 3,
+  right_align = 4,
 }
 
 return M

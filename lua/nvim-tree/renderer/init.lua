@@ -12,13 +12,14 @@ local M = {}
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
-local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
+local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
+local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 
 ---@param bufnr number
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
-local function _draw(bufnr, lines, hl_args, signs)
+local function _draw(bufnr, lines, hl_args, signs, extmarks)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
@@ -38,17 +39,28 @@ local function _draw(bufnr, lines, hl_args, signs)
   for i, sign_name in pairs(signs) do
     vim.fn.sign_place(0, SIGN_GROUP, sign_name, bufnr, { lnum = i + 1 })
   end
+
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_extmarks_id, 0, -1)
+  for i, extname in pairs(extmarks) do
+    for _, mark in ipairs(extname) do
+      vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, i, -1, {
+        virt_text = { { mark.str, mark.hl } },
+        virt_text_pos = "right_align",
+        hl_mode = "combine",
+      })
+    end
+  end
 end
 
 function M.render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
   for _, data in ipairs(hl) do
     if type(data[1]) == "table" then
       for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
       end
     end
   end
@@ -67,7 +79,7 @@ function M.draw()
 
   local builder = Builder:new():build()
 
-  _draw(bufnr, builder.lines, builder.hl_args, builder.signs)
+  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
