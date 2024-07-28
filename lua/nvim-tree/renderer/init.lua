@@ -12,7 +12,7 @@ local M = {}
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
-local namespace_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
+local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 
 ---@param bufnr number
@@ -30,9 +30,9 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   M.render_hl(bufnr, hl_args)
 
   if vim.fn.has "nvim-0.10" == 1 then
-    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
   else
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
   end
 
   vim.fn.sign_unplace(SIGN_GROUP)
@@ -64,11 +64,11 @@ function M.render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_id, 0, -1)
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
   for _, data in ipairs(hl) do
     if type(data[1]) == "table" then
       for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_id, group, data[2], data[3], data[4])
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
       end
     end
   end
@@ -87,7 +87,6 @@ function M.draw()
 
   local builder = Builder:new():build()
 
-  -- _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
   _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then

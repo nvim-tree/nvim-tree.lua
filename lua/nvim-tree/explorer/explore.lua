@@ -15,7 +15,7 @@ local M = {}
 ---@param cwd string
 ---@param node Node
 ---@param git_status table
----@return integer filtered_count
+---@param parent Explorer
 local function populate_children(handle, cwd, node, git_status, parent)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
@@ -35,7 +35,6 @@ local function populate_children(handle, cwd, node, git_status, parent)
     if not name then
       break
     end
-    local is_dir = t == "directory"
 
     local abs = utils.path_join { cwd, name }
     local profile = log.profile_start("explore populate_children %s", abs)
@@ -45,7 +44,7 @@ local function populate_children(handle, cwd, node, git_status, parent)
     local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
-      if is_dir and vim.loop.fs_access(abs, "R") then
+      if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name, stat)
       elseif t == "file" then
         child = builders.file(node, abs, name, stat)

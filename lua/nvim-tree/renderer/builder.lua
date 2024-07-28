@@ -223,11 +223,6 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
-  if node == nil then
-    add_to_end(line, { name })
-    return line
-  end
-
   for i = #M.decorators, 1, -1 do
     add_to_end(line, M.decorators[i]:icons_before(node))
   end
@@ -470,7 +465,7 @@ end
 
 --- Add the hidden_count for root, since root dir is treated differently
 --- from normal directories we need to do it again for root.
---- Also need to sort my depth
+--- Also need to sort by depth
 ---@private
 function Builder:build_root_hidden_count()
   local root = core.get_explorer()
