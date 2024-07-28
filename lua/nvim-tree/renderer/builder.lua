@@ -61,6 +61,7 @@ function Builder:new()
     lines = {},
     markers = {},
     signs = {},
+    extmarks = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -227,6 +228,14 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
 
   for i = #M.decorators, 1, -1 do
     add_to_end(line, M.decorators[i]:icons_after(node))
+  end
+
+  local rights = {}
+  for i = #M.decorators, 1, -1 do
+    add_to_end(rights, M.decorators[i]:icons_right_align(node))
+  end
+  if #rights > 0 then
+    self.extmarks[self.index] = rights
   end
 
   return line
