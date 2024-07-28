@@ -117,11 +117,15 @@ local function configure_buffer_overlay(self)
   overlay_bufnr = vim.api.nvim_create_buf(false, true)
 
   vim.api.nvim_buf_attach(overlay_bufnr, true, {
-    on_lines = function() return record_char(self) end,
+    on_lines = function()
+      return record_char(self)
+    end,
   })
 
   vim.api.nvim_create_autocmd("InsertLeave", {
-    callback = function() return remove_overlay(self) end,
+    callback = function()
+      return remove_overlay(self)
+    end,
     once = true,
   })
 
@@ -180,7 +184,9 @@ function LiveFilter:start_filtering()
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
   view.set_cursor { row, col }
   -- needs scheduling to let the cursor move before initializing the window
-  vim.schedule(function() return create_overlay(self) end)
+  vim.schedule(function()
+    return create_overlay(self)
+  end)
 end
 
 function LiveFilter:clear_filter()
