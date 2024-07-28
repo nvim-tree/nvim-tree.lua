@@ -51,9 +51,9 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
     end
   end
 
-  for _, vline in ipairs(virtual_lines) do
-    vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, vline.line_nr, 0, {
-      virt_lines = { { { vline.indent_string or "", "NvimTreeIndentMarker" }, { vline.text, "NvimTreeHiddenDisplay" } } },
+  for line_nr, vlines in pairs(virtual_lines) do
+    vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, line_nr, 0, {
+      virt_lines = vlines,
       virt_lines_above = false,
       virt_lines_leftcol = true,
     })

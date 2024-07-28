@@ -358,23 +358,31 @@ function Builder:build_line(node, idx, num_children)
     self.depth = self.depth + 1
     self:build_lines(node)
     self.depth = self.depth - 1
-    self:add_hidden_count_string(node, idx, num_children)
   end
 end
 
+---Add virtual lines for rendering hidden count information per node
 ---@private
 function Builder:add_hidden_count_string(node, idx, num_children)
+  if not node.open then
+    return
+  end
   local hidden_count_string = M.opts.renderer.hidden_display(node.hidden_count)
   if hidden_count_string and hidden_count_string ~= "" then
-    local indent_markers = pad.get_indent_markers(math.max(self.depth, 0), idx or 0, num_children or 0, node, self.markers)
+    local indent_markers = pad.get_indent_markers(self.depth, idx or 0, num_children or 0, node, self.markers, 1)
     local indent_width = M.opts.renderer.indent_width
-    local indent_string = string.rep(" ", indent_width) .. (indent_markers.str or "")
-    table.insert(self.virtual_lines, {
-      indent_string = indent_string,
-      depth = self.depth,
-      line_nr = #self.lines - 1,
-      -- Remove padding if we're in root
-      text = (node.parent == nil and "" or string.rep(" ", indent_width)) .. hidden_count_string,
+
+    local indent_padding = string.rep(" ", indent_width)
+    local indent_string = indent_padding .. indent_markers.str
+    local line_nr = #self.lines - 1
+    self.virtual_lines[line_nr] = self.virtual_lines[line_nr] or {}
+
+    -- NOTE: We are inserting in depth order because of current traversal
+    -- if we change the traversal, we might need to sort by depth before rendering `self.virtual_lines`
+    -- to maintain proper ordering of parent and child folder hidden count info.
+    table.insert(self.virtual_lines[line_nr], {
+      { indent_string, indent_markers.hl },
+      { string.rep(indent_padding, (node.parent == nil and 0 or 1)) .. hidden_count_string, "NvimTreeHiddenDisplay" },
     })
   end
 end
@@ -408,6 +416,7 @@ function Builder:build_lines(node)
       idx = idx + 1
     end
   end
+  self:add_hidden_count_string(node)
 end
 
 ---@private
@@ -458,22 +467,8 @@ end
 function Builder:build()
   self:build_header()
   self:build_lines()
-  self:build_root_hidden_count()
   self:sanitize_lines()
   return self
-end
-
---- Add the hidden_count for root, since root dir is treated differently
---- from normal directories we need to do it again for root.
---- Also need to sort by depth
----@private
-function Builder:build_root_hidden_count()
-  local root = core.get_explorer()
-  self:add_hidden_count_string(root)
-  -- Now that we're done, we must sort by depth, to ensure proper rendering
-  table.sort(self.virtual_lines, function(a, b)
-    return a.depth < b.depth
-  end)
 end
 
 ---@param opts table
