@@ -6,7 +6,6 @@ local actions = require "nvim-tree.actions"
 local appearance_diagnostics = require "nvim-tree.appearance.diagnostics"
 local events = require "nvim-tree.events"
 local help = require "nvim-tree.help"
-local live_filter = require "nvim-tree.live-filter"
 local marks_navigation = require "nvim-tree.marks.navigation"
 local marks_bulk_delete = require "nvim-tree.marks.bulk-delete"
 local marks_bulk_trash = require "nvim-tree.marks.bulk-trash"
@@ -265,8 +264,16 @@ Api.git.reload = wrap(actions.reloaders.reload_git)
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
 
-Api.live_filter.start = wrap(live_filter.start_filtering)
-Api.live_filter.clear = wrap(live_filter.clear_filter)
+Api.live_filter.start = wrap_explorer(function(explorer)
+  return wrap(function(...)
+    return explorer.live_filter:start_filtering(...)
+  end)
+end)
+Api.live_filter.clear = wrap_explorer(function(explorer)
+  return wrap(function(...)
+    return explorer.live_filter:clear_filter(...)
+  end)
+end)
 
 Api.marks.get = wrap_node(wrap_explorer_member("marks", "get_mark"))
 Api.marks.list = wrap_explorer_member("marks", "get_marks")
