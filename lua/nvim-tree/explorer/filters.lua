@@ -212,6 +212,7 @@ function Filters:should_filter(path, fs_stat, status)
     return false
   end
 
+  -- exclusions override all filters
   if is_excluded(self, path) then
     return false
   end

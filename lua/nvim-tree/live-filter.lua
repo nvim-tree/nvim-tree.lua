@@ -14,13 +14,13 @@ end
 local function reset_filter(node_)
   node_ = node_ or require("nvim-tree.core").get_explorer()
 
-  node_.hidden_count = vim.tbl_deep_extend("force", node_.hidden_count or {}, {
-    live_filter = 0,
-  })
-
   if node_ == nil then
     return
   end
+
+  node_.hidden_count = vim.tbl_deep_extend("force", node_.hidden_count or {}, {
+    live_filter = 0,
+  })
 
   Iterator.builder(node_.nodes)
     :hidden()

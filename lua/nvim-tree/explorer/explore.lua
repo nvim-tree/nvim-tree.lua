@@ -4,7 +4,6 @@ local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
--- local explorer_module = require "nvim-tree.explorer"
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local Watcher = require "nvim-tree.watcher"
@@ -69,8 +68,6 @@ local function populate_children(handle, cwd, node, git_status, parent)
 
     log.profile_end(profile)
   end
-
-  -- explorer_module.reload(node)
 end
 
 ---@param node Node

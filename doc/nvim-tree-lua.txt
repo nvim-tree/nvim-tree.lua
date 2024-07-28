@@ -2932,7 +2932,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.glyphs.modified|
 |nvim-tree.renderer.icons.glyphs.symlink|
 |nvim-tree.renderer.icons.hidden_placement|
-|nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
 |nvim-tree.renderer.icons.padding|
 |nvim-tree.renderer.icons.show|
