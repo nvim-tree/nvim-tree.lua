@@ -1,8 +1,6 @@
 local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
 local explorer_node = require "nvim-tree.explorer.node"
-local filters = require "nvim-tree.explorer.filters"
-local sorters = require "nvim-tree.explorer.sorters"
 local live_filter = require "nvim-tree.live-filter"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
@@ -71,6 +69,10 @@ end
 ---@param node Node
 ---@param git_status table
 function M.reload(node, git_status)
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer then
+    return
+  end
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -181,7 +183,7 @@ function M.reload(node, git_status)
     return ns
   end
 
-  sorters.sort(node.nodes)
+  explorer.sorters:sort(node.nodes)
   live_filter.apply_filter(node)
   log.profile_end(profile)
   return node.nodes

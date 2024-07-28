@@ -2,7 +2,9 @@ local git = require "nvim-tree.git"
 local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
+local Filters = require "nvim-tree.explorer.filters"
 local Marks = require "nvim-tree.marks"
+local Sorters = require "nvim-tree.explorer.sorters"
 
 local M = {}
 
@@ -39,8 +41,10 @@ function Explorer.new(path)
     nodes = {},
     open = true,
     marks = Marks:new(),
+    sorters = Sorters:new(M.config),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
+  explorer.filters = Filters:new(M.config, explorer)
   explorer:_load(explorer)
   return explorer
 end
@@ -50,7 +54,7 @@ end
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
   local git_status = git.load_project_status(cwd)
-  M.explore(node, git_status)
+  M.explore(node, git_status, self)
 end
 
 ---@param node Node
@@ -71,10 +75,9 @@ function Explorer:destroy()
 end
 
 function M.setup(opts)
+  M.config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
-  require("nvim-tree.explorer.filters").setup(opts)
-  require("nvim-tree.explorer.sorters").setup(opts)
   require("nvim-tree.explorer.reload").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
 end

@@ -2734,10 +2734,6 @@ configurations for different types of prompts.
 ==============================================================================
  11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
-macOS
-- Rename to different case is not possible when using a case insensitive file
-  system.
-
 Windows WSL and PowerShell
 - Trash is synchronized
 - Executable file detection is disabled as this is non-performant and can

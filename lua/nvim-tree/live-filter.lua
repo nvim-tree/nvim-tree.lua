@@ -1,7 +1,6 @@
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
-local filters = require "nvim-tree.explorer.filters"
 
 local M = {
   filter = nil,
@@ -64,7 +63,8 @@ end
 ---@param node Node
 ---@return boolean
 local function matches(node)
-  if not filters.config.enable then
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer or not explorer.filters.config.enable then
     return true
   end
 

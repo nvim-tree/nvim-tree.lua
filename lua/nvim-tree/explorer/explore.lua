@@ -2,8 +2,6 @@ local utils = require "nvim-tree.utils"
 local builders = require "nvim-tree.explorer.node-builders"
 local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
-local sorters = require "nvim-tree.explorer.sorters"
-local filters = require "nvim-tree.explorer.filters"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 -- local explorer_module = require "nvim-tree.explorer"
@@ -78,8 +76,9 @@ end
 
 ---@param node Node
 ---@param status table
+---@param parent Explorer
 ---@return Node[]|nil
-function M.explore(node, status)
+function M.explore(node, status, parent)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -88,7 +87,7 @@ function M.explore(node, status)
 
   local profile = log.profile_start("explore init %s", node.absolute_path)
 
-  populate_children(handle, cwd, node, status)
+  populate_children(handle, cwd, node, status, parent)
 
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
@@ -96,7 +95,7 @@ function M.explore(node, status)
     local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
     local child_status = git.load_project_status(child_cwd)
     node.group_next = child_folder_only
-    local ns = M.explore(child_folder_only, child_status)
+    local ns = M.explore(child_folder_only, child_status, parent)
     node.nodes = ns or {}
 
     log.profile_end(profile)
