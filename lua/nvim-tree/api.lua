@@ -264,15 +264,17 @@ Api.git.reload = wrap(actions.reloaders.reload_git)
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
 
-Api.live_filter.start = wrap_explorer(function(explorer)
-  return wrap(function(...)
+Api.live_filter.start = wrap(function(...)
+  local explorer = core.get_explorer()
+  if explorer then
     return explorer.live_filter:start_filtering(...)
-  end)
+  end
 end)
-Api.live_filter.clear = wrap_explorer(function(explorer)
-  return wrap(function(...)
+Api.live_filter.clear = wrap(function(...)
+  local explorer = core.get_explorer()
+  if explorer then
     return explorer.live_filter:clear_filter(...)
-  end)
+  end
 end)
 
 Api.marks.get = wrap_node(wrap_explorer_member("marks", "get_mark"))

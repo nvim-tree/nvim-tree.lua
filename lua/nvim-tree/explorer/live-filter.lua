@@ -7,7 +7,8 @@ local LiveFilter = {}
 function LiveFilter:new(opts, explorer)
   local o = {
     explorer = explorer,
-    config = vim.deepcopy(opts.live_filter),
+    prefix = opts.live_filter.prefix,
+    always_show_folders = opts.live_filter.always_show_folders,
     filter = nil,
   }
   setmetatable(o, self)
@@ -57,8 +58,8 @@ local function remove_overlay(self)
   overlay_bufnr = 0
   overlay_winnr = 0
 
-  if self.explorer.live_filter.filter == "" then
-    self.explorer.live_filter.clear_filter()
+  if self.filter == "" then
+    self:clear_filter()
   end
 end
 
@@ -96,7 +97,7 @@ function LiveFilter:apply_filter(node_)
       end
     end
 
-    local has_nodes = nodes and (self.config.always_show_folders or #nodes > filtered_nodes)
+    local has_nodes = nodes and (self.always_show_folders or #nodes > filtered_nodes)
     local ok, is_match = pcall(matches, self, node)
     node.hidden = not (has_nodes or (ok and is_match))
   end
@@ -106,8 +107,8 @@ end
 
 local function record_char(self)
   vim.schedule(function()
-    self.explorer.live_filter.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
-    self.explorer.live_filter.apply_filter()
+    self.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
+    self:apply_filter()
     redraw()
   end)
 end
@@ -132,7 +133,7 @@ local function calculate_overlay_win_width(self)
   local wininfo = vim.fn.getwininfo(view.get_winnr())[1]
 
   if wininfo then
-    return wininfo.width - wininfo.textoff - #self.explorer.live_filter.prefix
+    return wininfo.width - wininfo.textoff - #self.prefix
   end
 
   return 20
@@ -153,7 +154,7 @@ local function create_overlay(self)
     col = 1,
     row = 0,
     relative = "cursor",
-    width = calculate_overlay_win_width(self.explorer),
+    width = calculate_overlay_win_width(self),
     height = 1,
     border = "none",
     style = "minimal",
@@ -165,9 +166,9 @@ local function create_overlay(self)
     vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
   end
 
-  vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { self.explorer.live_filter.filter })
+  vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { self.filter })
   vim.cmd "startinsert"
-  vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #self.explorer.live_filter.filter + 1 })
+  vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #self.filter + 1 })
 end
 
 function LiveFilter:start_filtering()
