@@ -341,7 +341,15 @@ See |nvim-tree-highlight| for details.
 
     See |nvim-tree-api.tree.collapse_all()|
 
-    Calls: `api.tree.collapse_all(false)`
+    Calls: api.tree.collapse_all({ under_cursor = false, keep_buffers = false, })
+
+*:NvimTreeCollapseFolder*
+
+    Collapses the folder under cursor
+
+    See |nvim-tree-api.tree.collapse_all()|
+
+    Calls: api.tree.collapse_all({ under_cursor = true, keep_buffers = false, })
 
 *:NvimTreeCollapseKeepBuffers*
 
@@ -1829,10 +1837,14 @@ tree.find_file({opts})                        *nvim-tree-api.tree.find_file()*
 tree.search_node()                          *nvim-tree-api.tree.search_node()*
     Open the search dialogue as per the search_node action.
 
-tree.collapse_all({keep_buffers})          *nvim-tree-api.tree.collapse_all()*
+tree.collapse_all({opts})          *nvim-tree-api.tree.collapse_all()*
     Collapse the tree.
 
     Parameters: ~
+      • {opts} (table) optional parameters
+
+    Parameters: ~
+      • {under_cursor} (boolean) only collapse the node under cursor
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
 tree.expand_all({node})                      *nvim-tree-api.tree.expand_all()*
@@ -3340,6 +3352,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.close_in_all_tabs()|
 |nvim-tree-api.tree.close_in_this_tab()|
 |nvim-tree-api.tree.collapse_all()|
+|nvim-tree-api.tree.collapse
 |nvim-tree-api.tree.expand_all()|
 |nvim-tree-api.tree.find_file()|
 |nvim-tree-api.tree.focus()|
