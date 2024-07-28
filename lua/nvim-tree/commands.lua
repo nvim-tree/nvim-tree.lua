@@ -1,5 +1,6 @@
 local api = require "nvim-tree.api"
 local view = require "nvim-tree.view"
+local lib = require "nvim-tree.lib"
 
 local M = {}
 
@@ -121,7 +122,17 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all(false)
+      api.tree.collapse_all({ under_cursor = false, keep_buffers = false})
+    end,
+  },
+  {
+    name = "NvimTreeCollapseFolder",
+    opts = {
+      desc = "nvim-tree: collapse the folder under cursor",
+      bar = true,
+    },
+    command = function()
+      api.tree.collapse_all({ under_cursor = true, keep_buffers = false})
     end,
   },
   {

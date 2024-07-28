@@ -160,6 +160,11 @@ Api.tree.get_nodes = wrap(lib.get_nodes)
 
 Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
+
+---@class ApiTreeCollapseOpts
+---@field under_cursor boolean
+---@field keep_buffers boolean
+
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
 Api.tree.toggle_enable_filters = wrap(actions.tree.modifiers.toggles.enable)
