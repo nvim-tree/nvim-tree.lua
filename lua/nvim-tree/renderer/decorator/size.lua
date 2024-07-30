@@ -10,10 +10,11 @@ local DecoratorSize = Decorator:new()
 ---@return DecoratorSize
 function DecoratorSize:new(opts)
   local o = Decorator.new(self, {
-    enabled = opts.size.enable,
-    column_width = opts.size.column_width,
-    show_folder_size = opts.size.show_folder_size,
-    format_unit = opts.size.format_unit, -- Assumed to be a function
+    enabled = opts.renderer.size.enable,
+    noshow_folder_size_glyph = opts.renderer.size.noshow_folder_size_glyph or "",
+    column_width = opts.renderer.size.column_width,
+    show_folder_size = opts.renderer.size.show_folder_size,
+    format_unit = opts.renderer.size.format_unit, -- Assumed to be a function
     units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" },
     icon_placement = ICON_PLACEMENT.right_align,
   })
@@ -32,7 +33,7 @@ function DecoratorSize:new(opts)
 end
 
 ---@param node Node
----@return string|nil group
+---@return nil
 function DecoratorSize:calculate_highlight(_)
   return nil
 end
@@ -41,14 +42,15 @@ end
 ---@private
 ---@param size number size in bytes
 ---@return string
----NOTE: This function tries it's best to minified the string
+---NOTE: This function still try it's best to minified the string
 --- generated, but this implies that we have more than 3 branchs
 --- to determined how much bytes can we shave from the string to
---- comply to self.max_lengh. Since we know self.max_length doesn't
---- change, a better way would be decide a version of human_readable_size based
---- on self.max_lenght once at this object's construction.
+--- comply to self.column_width. Since we know self.column_width doesn't
+--- change, a better way could be to decide a version of 'human_readable_size' based
+--- on self.column_width once at this object's construction.
 --- Basically, instead of this method, we would baking all ifs first to decide which function to bind to possible field `self.human_readable_size`
---- I don't actually know if it would be faster without test, but most likely it would be faster.
+--- I don't actually know if it would be faster without test.
+--- edit: Since then I've moved a lot of ifs around getting down to only three, but I'll keep the comment just in case.
 function DecoratorSize:human_readable_size(size)
   -- Check for nan, negative, etc.
   if type(size) ~= "number" or size ~= size or size < 0 then
@@ -77,7 +79,6 @@ function DecoratorSize:human_readable_size(size)
 
   if #result > max_length then
     if (index + 1) < #self.units then
-      vim.fn.confirm(result)
       size = size / 1024
       index = index + 1
       size_str = self.format_size(size)
@@ -106,7 +107,7 @@ end
 ---@return HighlightedString[]|nil icons
 function DecoratorSize:calculate_icons(node)
   local size = node and node.fs_stat and node.fs_stat.size or 0
-  local folder_size_str = self.column_width > 0 and string.rep(" ", self.column_width - 1) .. "-" or ""
+  local folder_size_str = self.column_width > 0 and string.rep(" ", self.column_width - 1) .. self.noshow_folder_size_glyph or ""
   local icon = {
     str = (self.show_folder_size or node.nodes == nil) and self:human_readable_size(size) or folder_size_str,
     hl = { "NvimTreeFileSize" },

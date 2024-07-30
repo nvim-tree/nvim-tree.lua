@@ -442,6 +442,13 @@ Following is the default configuration. See |nvim-tree-opts| for details.
             none = " ",
           },
         },
+        size = {
+          enable = false,
+          column_width = 12,
+          show_folder_size = false,
+          format_unit = "double",
+          noshow_folder_size_glyph = "•",
+        },
         icons = {
           web_devicons = {
             file = {
@@ -513,12 +520,6 @@ Following is the default configuration. See |nvim-tree-opts| for details.
       system_open = {
         cmd = "",
         args = {},
-      },
-      size = {
-        enable = true,
-        column_width = 12,
-        show_folder_size = false,
-        format_unit = "double",
       },
       git = {
         enable = true,
@@ -847,7 +848,7 @@ Use nvim-tree in a floating window.
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
 Highlight precedence, additive:
-  git < opened < modified < bookmarked < diagnostics < copied < cut
+  git < opened < modified < bookmarked < diagnostics < copied < cut < size
 
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
@@ -955,6 +956,37 @@ Configuration options for tree indent markers.
           none = " ",
         }
 <
+*nvim-tree.renderer.size*
+Configuration for file size display column
+
+    *nvim-tree.renderer.size.enable*
+    Determine if we should render file size information.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.size.column_width*
+    Determines the amount of space (in characters) the
+    file size information will take.
+      Type: `integer`, Default: `12`
+
+    *nvim-tree.renderer.size.show_folder_size*
+    Whether to show the size for folder as well.
+      Type: `boolean`, Default: `false`
+
+    *nvim-tree.renderer.size.format_unit*
+    Determines how format unit is displayed.
+    If a string is passed we have the options:
+    - `"single"` : Show only 1 character for unit. Ex: for 10.4 Megabytes we render "10.4M"
+    - `"double"` : Show only 2 character for unit and add a space in between. Ex: "10.4 MB"
+
+    If more controle we needed, such as lowercase unit, a function can be
+    passed by the user that takes one of the possible units as string.
+    units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" }
+      Type: `string | fun(unit: string): string`, Default: `"double"`
+
+    *nvim-tree.renderer.size.noshow_folder_size_glyph*
+    Glyph to be shown when `nvim-tree.renderer.size.show_folder_size` is disabled.
+      Type: `string`, Default: `"•"`
+
 *nvim-tree.renderer.icons*
 Configuration options for icons.
 
@@ -2922,6 +2954,12 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.indent_markers.inline_arrows|
 |nvim-tree.renderer.indent_width|
 |nvim-tree.renderer.root_folder_label|
+|nvim-tree.renderer.size|
+|nvim-tree.renderer.size.column_width|
+|nvim-tree.renderer.size.enable|
+|nvim-tree.renderer.size.format_unit|
+|nvim-tree.renderer.size.noshow_folder_size_glyph|
+|nvim-tree.renderer.size.show_folder_size|
 |nvim-tree.renderer.special_files|
 |nvim-tree.renderer.symlink_destination|
 |nvim-tree.respect_buf_cwd|

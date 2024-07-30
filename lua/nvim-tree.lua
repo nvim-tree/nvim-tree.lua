@@ -417,6 +417,13 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         none = " ",
       },
     },
+    size = {
+      enable = false,
+      column_width = 12,
+      show_folder_size = false,
+      format_unit = "double",
+      noshow_folder_size_glyph = "•",
+    },
     icons = {
       web_devicons = {
         file = {
@@ -488,12 +495,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   system_open = {
     cmd = "",
     args = {},
-  },
-  size = {
-    enable = true,
-    column_width = 12,
-    show_folder_size = false,
-    format_unit = "double",
   },
   git = {
     enable = true,
@@ -653,17 +654,18 @@ local ACCEPTED_TYPES = {
     },
   },
   renderer = {
+    size = {
+      enable = { "boolean" },
+      column_width = { "integer" },
+      show_folder_size = { "boolean" },
+      format_unit = { "function", "string" },
+      noshow_folder_size_glyph = { "string" },
+    },
     group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
   },
   update_focused_file = {
     exclude = { "function" },
-  },
-  size = {
-    enable = { "boolean" },
-    column_width = { "integer" },
-    show_folder_size = { "boolean" },
-    format_unit = { "function", "string" },
   },
   git = {
     disable_for_dirs = { "function" },
@@ -699,6 +701,9 @@ local ACCEPTED_STRINGS = {
     highlight_bookmarks = { "none", "icon", "name", "all" },
     highlight_diagnostics = { "none", "icon", "name", "all" },
     highlight_clipboard = { "none", "icon", "name", "all" },
+    size = {
+      format_unit = { "single", "double" },
+    },
     icons = {
       git_placement = { "before", "after", "signcolumn", "right_align" },
       modified_placement = { "before", "after", "signcolumn", "right_align" },
@@ -709,9 +714,6 @@ local ACCEPTED_STRINGS = {
   },
   help = {
     sort_by = { "key", "desc" },
-  },
-  size = {
-    format_unit = { "single", "double" },
   },
 }
 
@@ -842,18 +844,18 @@ function M.setup(conf)
     log.raw("config", "%s\n", vim.inspect(opts))
   end
 
-  if M.config.size.column_width < 6 then
+  if M.config.renderer.size.column_width < 6 then
     notify.warn "`size.right_padding` is a small number, problably won't show any size numbers, try using 12."
   end
 
-  if M.config.size.format_unit == "single" then
+  if M.config.renderer.size.format_unit == "single" then
     -- The unit. Ex: 10.12M
-    M.config.size.format_unit = function(unit)
+    M.config.renderer.size.format_unit = function(unit)
       return string.format("%1s", unit:sub(1, 1))
     end
-  elseif M.config.size.format_unit == "double" then
+  elseif M.config.renderer.size.format_unit == "double" then
     -- The unit. Ex: 10.12 MB
-    M.config.size.format_unit = function(unit)
+    M.config.renderer.size.format_unit = function(unit)
       return string.format(" %2s", unit)
     end
   end
