@@ -12,6 +12,7 @@ local DecoratorGit = require "nvim-tree.renderer.decorator.git"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
 local DecoratorHidden = require "nvim-tree.renderer.decorator.hidden"
 local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
+local DecoratorSize = require "nvim-tree.renderer.decorator.size"
 
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
@@ -447,6 +448,7 @@ function Builder.setup(opts)
 
   -- priority order
   M.decorators = {
+    DecoratorSize:new(opts),
     DecoratorCut:new(opts),
     DecoratorCopied:new(opts),
     DecoratorDiagnostics:new(opts),

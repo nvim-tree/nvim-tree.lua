@@ -514,6 +514,12 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         cmd = "",
         args = {},
       },
+      size = {
+        enable = true,
+        column_width = 12,
+        show_folder_size = false,
+        format_unit = "double",
+      },
       git = {
         enable = true,
         show_on_dirs = true,

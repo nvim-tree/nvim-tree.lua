@@ -489,6 +489,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     cmd = "",
     args = {},
   },
+  size = {
+    enable = true,
+    column_width = 12,
+    show_folder_size = false,
+    format_unit = "double",
+  },
   git = {
     enable = true,
     show_on_dirs = true,
@@ -653,6 +659,12 @@ local ACCEPTED_TYPES = {
   update_focused_file = {
     exclude = { "function" },
   },
+  size = {
+    enable = { "boolean" },
+    column_width = { "integer" },
+    show_folder_size = { "boolean" },
+    format_unit = { "function", "string" },
+  },
   git = {
     disable_for_dirs = { "function" },
   },
@@ -697,6 +709,9 @@ local ACCEPTED_STRINGS = {
   },
   help = {
     sort_by = { "key", "desc" },
+  },
+  size = {
+    format_unit = { "single", "double" },
   },
 }
 
@@ -825,6 +840,22 @@ function M.setup(conf)
   if log.enabled "config" then
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(opts))
+  end
+
+  if M.config.size.column_width < 6 then
+    notify.warn "`size.right_padding` is a small number, problably won't show any size numbers, try using 12."
+  end
+
+  if M.config.size.format_unit == "single" then
+    -- The unit. Ex: 10.12M
+    M.config.size.format_unit = function(unit)
+      return string.format("%1s", unit:sub(1, 1))
+    end
+  elseif M.config.size.format_unit == "double" then
+    -- The unit. Ex: 10.12 MB
+    M.config.size.format_unit = function(unit)
+      return string.format(" %2s", unit)
+    end
   end
 
   require("nvim-tree.actions").setup(opts)
