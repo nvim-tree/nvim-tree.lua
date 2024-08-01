@@ -123,7 +123,7 @@ function DecoratorSize:calculate_icons(node)
   end
 
   local size = node and node.fs_stat and node.fs_stat.size or 0
-  local folder_size_str = self.column_width > 0 and string.rep(" ", self.column_width - 1) .. self.noshow_folder_size_glyph or ""
+  local folder_size_str = self.column_width > 0 and (string.rep(" ", self.column_width - 1) .. self.noshow_folder_size_glyph) or ""
   local icon = {
     str = (self.show_folder_size or node.nodes == nil) and self:human_readable_size(size) or folder_size_str,
     hl = { "NvimTreeFileSize" },

@@ -235,17 +235,17 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     add_to_end(line, M.decorators[i]:icons_after(node))
   end
 
+  local size_extmarks = add_to_end({}, M.decorator_size:icons_right_align(node))
+  if #size_extmarks > 0 then
+    self.size_extmarks[self.index] = size_extmarks
+  end
+
   local rights = {}
   for i = #M.decorators, 1, -1 do
     add_to_end(rights, M.decorators[i]:icons_right_align(node))
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
-  end
-
-  local size_extmarks = add_to_end({}, M.decorator_size:icons_right_align(node))
-  if #size_extmarks > 0 then
-    self.size_extmarks[self.index] = size_extmarks
   end
 
   return line
