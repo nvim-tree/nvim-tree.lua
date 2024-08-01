@@ -59,6 +59,9 @@ M.HIGHLIGHT_GROUPS = {
   -- Picker
   { group = "NvimTreeWindowPicker", def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=DarkBlue" },
 
+  -- File Size
+  { group = "NvimTreeFileSize", link = "Conceal" },
+
   -- LiveFilter
   { group = "NvimTreeLiveFilterPrefix", link = "PreProc" },
   { group = "NvimTreeLiveFilterValue", link = "ModeMsg" },

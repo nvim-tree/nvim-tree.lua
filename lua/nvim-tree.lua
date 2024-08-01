@@ -338,6 +338,19 @@ local function setup_autocommands(opts)
     })
   end
 
+  if opts.renderer.size.enable then
+    create_nvim_tree_autocmd({ "WinResized", "VimResized" }, {
+      -- NOTE: for some reason WinResized doesn't work with pattern
+      -- I don't really know why
+      -- pattern = "NvimTree_*",
+      callback = function(event)
+        if view.is_visible() and utils.is_nvim_tree_buf(event.buf) then
+          renderer.on_resize()
+        end
+      end,
+    })
+  end
+
   if opts.modified.enable then
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
@@ -416,6 +429,14 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         bottom = "─",
         none = " ",
       },
+    },
+    size = {
+      enable = false,
+      width_cutoff = 18,
+      column_width = 10,
+      show_folder_size = false,
+      format_unit = "double",
+      noshow_folder_size_glyph = "•",
     },
     icons = {
       web_devicons = {
@@ -647,6 +668,14 @@ local ACCEPTED_TYPES = {
     },
   },
   renderer = {
+    size = {
+      enable = { "boolean" },
+      width_cutoff = { "integer" },
+      column_width = { "integer" },
+      show_folder_size = { "boolean" },
+      format_unit = { "function", "string" },
+      noshow_folder_size_glyph = { "string" },
+    },
     group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
   },
@@ -687,6 +716,9 @@ local ACCEPTED_STRINGS = {
     highlight_bookmarks = { "none", "icon", "name", "all" },
     highlight_diagnostics = { "none", "icon", "name", "all" },
     highlight_clipboard = { "none", "icon", "name", "all" },
+    size = {
+      format_unit = { "single", "double" },
+    },
     icons = {
       git_placement = { "before", "after", "signcolumn", "right_align" },
       modified_placement = { "before", "after", "signcolumn", "right_align" },
@@ -825,6 +857,22 @@ function M.setup(conf)
   if log.enabled "config" then
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(opts))
+  end
+
+  if M.config.renderer.size.column_width < 6 then
+    notify.warn "`size.right_padding` is a small number, problably won't show any size numbers, try using 10."
+  end
+
+  if M.config.renderer.size.format_unit == "single" then
+    -- The unit. Ex: 10.12M
+    M.config.renderer.size.format_unit = function(unit)
+      return string.format("%1s", unit:sub(1, 1))
+    end
+  elseif M.config.renderer.size.format_unit == "double" then
+    -- The unit. Ex: 10.12 MB
+    M.config.renderer.size.format_unit = function(unit)
+      return string.format(" %2s", unit)
+    end
   end
 
   require("nvim-tree.actions").setup(opts)

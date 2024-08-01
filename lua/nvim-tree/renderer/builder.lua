@@ -12,6 +12,7 @@ local DecoratorGit = require "nvim-tree.renderer.decorator.git"
 local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
 local DecoratorHidden = require "nvim-tree.renderer.decorator.hidden"
 local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
+local DecoratorSize = require "nvim-tree.renderer.decorator.size"
 
 local pad = require "nvim-tree.renderer.components.padding"
 local icons = require "nvim-tree.renderer.components.icons"
@@ -43,6 +44,8 @@ local M = {
 ---@field lines string[] includes icons etc.
 ---@field hl_args AddHighlightArgs[] line highlights
 ---@field signs string[] line signs
+---@field extmarks table<integer, HighlightedString[]>
+---@field size_extmarks table<integer, HighlightedString[]>
 ---@field private root_cwd string absolute path
 ---@field private index number
 ---@field private depth number
@@ -62,6 +65,7 @@ function Builder:new()
     markers = {},
     signs = {},
     extmarks = {},
+    size_extmarks = {}, -- Need to be separate from `extmarks` because of resize feature
   }
   setmetatable(o, self)
   self.__index = self
@@ -200,7 +204,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
   local function add_to_end(t1, t2)
     if not t2 then
-      return
+      return t1
     end
     for _, v in ipairs(t2) do
       if added_len > 0 then
@@ -215,6 +219,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     for _, v in ipairs(t2) do
       added_len = added_len + #v.str
     end
+    return t1
   end
 
   local line = { indent_markers, arrows }
@@ -228,6 +233,11 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
 
   for i = #M.decorators, 1, -1 do
     add_to_end(line, M.decorators[i]:icons_after(node))
+  end
+
+  local size_extmarks = add_to_end({}, M.decorator_size:icons_right_align(node))
+  if #size_extmarks > 0 then
+    self.size_extmarks[self.index] = size_extmarks
   end
 
   local rights = {}
@@ -445,7 +455,8 @@ end
 function Builder.setup(opts)
   M.opts = opts
 
-  -- priority order
+  -- Still follows this priorty order
+  M.decorator_size = DecoratorSize:new(opts)
   M.decorators = {
     DecoratorCut:new(opts),
     DecoratorCopied:new(opts),
