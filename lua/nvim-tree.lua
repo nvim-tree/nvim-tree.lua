@@ -338,6 +338,19 @@ local function setup_autocommands(opts)
     })
   end
 
+  if opts.renderer.size.enable then
+    create_nvim_tree_autocmd({ "WinResized", "VimResized" }, {
+      -- NOTE: for some reason WinResized doesn't work with pattern
+      -- I don't really know why
+      -- pattern = "NvimTree_*",
+      callback = function(event)
+        if view.is_visible() and utils.is_nvim_tree_buf(event.buf) then
+          renderer.on_resize()
+        end
+      end,
+    })
+  end
+
   if opts.modified.enable then
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
@@ -419,7 +432,8 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
     size = {
       enable = false,
-      column_width = 12,
+      width_cutoff = 18,
+      column_width = 10,
       show_folder_size = false,
       format_unit = "double",
       noshow_folder_size_glyph = "•",
@@ -656,6 +670,7 @@ local ACCEPTED_TYPES = {
   renderer = {
     size = {
       enable = { "boolean" },
+      width_cutoff = { "integer" },
       column_width = { "integer" },
       show_folder_size = { "boolean" },
       format_unit = { "function", "string" },
@@ -845,7 +860,7 @@ function M.setup(conf)
   end
 
   if M.config.renderer.size.column_width < 6 then
-    notify.warn "`size.right_padding` is a small number, problably won't show any size numbers, try using 12."
+    notify.warn "`size.right_padding` is a small number, problably won't show any size numbers, try using 10."
   end
 
   if M.config.renderer.size.format_unit == "single" then

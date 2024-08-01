@@ -444,7 +444,8 @@ Following is the default configuration. See |nvim-tree-opts| for details.
         },
         size = {
           enable = false,
-          column_width = 12,
+          width_cutoff = 18,
+          column_width = 10,
           show_folder_size = false,
           format_unit = "double",
           noshow_folder_size_glyph = "•",
@@ -963,10 +964,16 @@ Configuration for file size display column
     Determine if we should render file size information.
       Type: `boolean`, Default: `false`
 
+    *nvim-tree.renderer.size.width_cutoff*
+    Whenever nvim-tree window has less width than this cutoff the
+    size information is hidden. If it goes back to having bigger width
+    then the cutoff, the information is shown again.
+      Type: `integer`, Default: `18`
+
     *nvim-tree.renderer.size.column_width*
     Determines the amount of space (in characters) the
     file size information will take.
-      Type: `integer`, Default: `12`
+      Type: `integer`, Default: `10`
 
     *nvim-tree.renderer.size.show_folder_size*
     Whether to show the size for folder as well.
@@ -2960,6 +2967,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.size.format_unit|
 |nvim-tree.renderer.size.noshow_folder_size_glyph|
 |nvim-tree.renderer.size.show_folder_size|
+|nvim-tree.renderer.size.width_cutoff|
 |nvim-tree.renderer.special_files|
 |nvim-tree.renderer.symlink_destination|
 |nvim-tree.respect_buf_cwd|
