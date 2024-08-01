@@ -33,7 +33,9 @@ function DecoratorSize:new(opts)
   o.column_width = opts.renderer.size.column_width
   o.show_folder_size = opts.renderer.size.show_folder_size
   o.units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" }
-  o.format_unit = opts.renderer.size.format_unit -- guaranteed to be a function
+
+  -- Guaranteed to be a function from previous setup
+  o.format_unit = opts.renderer.size.format_unit
   o.format_size = function(size)
     local formatted = string
       .format("%.2f", size)
@@ -51,15 +53,16 @@ end
 ---@private
 ---@param size number size in bytes
 ---@return string
---- edit: Since then I've moved a lot of ifs around getting down to only three, but I'll keep the comment just in case.
+--- edit: Since then I've moved a lot of ifs around getting down to only three, but I'll keep the comment bellow just in case.
 ---NOTE: This function still try it's best to minified the string
---- generated, but this implies that we have more than 3 branchs
+--- generated, but this implies that we have some branches
 --- to determined how much bytes can we shave from the string to
---- comply to self.column_width. Since we know self.column_width doesn't
---- change, a better way could be to decide a version of 'human_readable_size' based
---- on self.column_width once at this object's construction.
---- Basically, instead of this method, we would baking all ifs first to decide which function to bind to possible field `self.human_readable_size`
---- I don't actually know if it would be faster without test.
+--- comply to `self.column_width`.
+--- Since we know `self.column_width` doesn't change, a better way could be
+--- decide a version of 'human_readable_size' a priori, based
+--- on `self.column_width` *once* at this object's construction.
+--- Basically, instead of this method, we would "baking" all ifs first
+--- to decide which function to bind to possible field `self.human_readable_size`.
 function DecoratorSize:human_readable_size(size)
   -- Check for nan, negative, etc.
   if type(size) ~= "number" or size ~= size or size < 0 then

@@ -455,8 +455,8 @@ end
 function Builder.setup(opts)
   M.opts = opts
 
+  -- Still follows this priorty order
   M.decorator_size = DecoratorSize:new(opts)
-
   M.decorators = {
     DecoratorCut:new(opts),
     DecoratorCopied:new(opts),
