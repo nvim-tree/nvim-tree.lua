@@ -955,6 +955,12 @@ Configuration options for icons.
 Icon order and sign column precedence:
   git < hidden < modified < bookmarked < diagnostics
 
+`renderer.icons.*_placement` options may be:
+- `"before"` : before file/folder, after the file/folders icons
+- `"after"` : after file/folder
+- `"signcolumn"` : far left, requires |nvim-tree.view.signcolumn| enabled
+- `"right_align"` : far right
+
     *nvim-tree.renderer.icons.web_devicons*
     Configure optional plugin `"nvim-tree/nvim-web-devicons"`
 
@@ -983,33 +989,23 @@ Icon order and sign column precedence:
               Type: `boolean`, Default: `true`
 
     *nvim-tree.renderer.icons.git_placement*
-    Place where the git icons will be rendered.
-    Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    Git icons placement.
       Type: `string`, Default: `"before"`
 
     *nvim-tree.renderer.icons.diagnostics_placement*
-    Place where the diagnostics icon will be rendered.
-    Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    Diganostic icon placement.
       Type: `string`, Default: `"signcolumn"`
 
     *nvim-tree.renderer.icons.modified_placement*
-    Place where the modified icon will be rendered.
-    Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    Modified icon placement.
       Type: `string`, Default: `"after"`
 
     *nvim-tree.renderer.icons.hidden_placement*
-    Place where the hidden (dotfile) icon will be rendered.
-    Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    Hidden icon placement.
       Type: `string`, Default: `"after"`
 
     *nvim-tree.renderer.icons.bookmarks_placement*
-    Place where the bookmarks icon will be rendered.
-    Can be `"after"` or `"before"` filename (after the file/folders icons)
-    or `"signcolumn"` (requires |nvim-tree.view.signcolumn| enabled).
+    Bookmark icon placement.
       Type: `string`, Default: `signcolumn`
 
     *nvim-tree.renderer.icons.padding*
