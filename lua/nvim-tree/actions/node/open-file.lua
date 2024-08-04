@@ -167,11 +167,14 @@ local function pick_win_id()
 
   if laststatus == 3 then
     for _, id in ipairs(not_selectable) do
-      for opt, value in pairs(win_opts[id]) do
-        if vim.fn.has "nvim-0.10" == 1 then
-          vim.api.nvim_set_option_value(opt, value, { win = id })
-        else
-          vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
+      -- Ensure window still exists at this point
+      if vim.api.nvim_win_is_valid(id) then
+        for opt, value in pairs(win_opts[id]) do
+          if vim.fn.has "nvim-0.10" == 1 then
+            vim.api.nvim_set_option_value(opt, value, { win = id })
+          else
+            vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
+          end
         end
       end
     end
