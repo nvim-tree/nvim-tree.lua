@@ -16,6 +16,9 @@ M.reload = require("nvim-tree.explorer.reload").reload
 ---@field absolute_path string
 ---@field nodes Node[]
 ---@field open boolean
+---@field filters Filters
+---@field live_filter LiveFilter
+---@field sorters Sorter
 ---@field marks Marks
 
 local Explorer = {}

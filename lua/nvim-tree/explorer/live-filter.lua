@@ -2,8 +2,15 @@ local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
+---@class LiveFilter
+---@field explorer Explorer
+---@field prefix string
+---@field always_show_folders boolean
+---@field filter string
 local LiveFilter = {}
 
+---@param opts table
+---@param explorer Explorer
 function LiveFilter:new(opts, explorer)
   local o = {
     explorer = explorer,
