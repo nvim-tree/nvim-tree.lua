@@ -1,5 +1,4 @@
 local renderer = require "nvim-tree.renderer"
-local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
@@ -17,11 +16,12 @@ local M = {
 
 ---@return Node|nil
 function M.get_node_at_cursor()
-  if not core.get_explorer() then
+  local explorer = core.get_explorer()
+  if not explorer then
     return
   end
 
-  local winnr = view.get_winnr()
+  local winnr = explorer.view:get_winnr()
   if not winnr then
     return
   end
@@ -29,7 +29,7 @@ function M.get_node_at_cursor()
   local cursor = vim.api.nvim_win_get_cursor(winnr)
   local line = cursor[1]
 
-  if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
+  if line == 1 and explorer.view:is_root_folder_visible(core.get_cwd()) then
     return { name = ".." }
   end
 
@@ -189,8 +189,12 @@ local function handle_buf_cwd(cwd)
 end
 
 local function open_view_and_draw()
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
   local cwd = vim.fn.getcwd()
-  view.open()
+  explorer.view:open()
   handle_buf_cwd(cwd)
   renderer.draw()
 end
@@ -261,20 +265,24 @@ function M.open(opts)
       core.init(cwd)
     end
   end
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
   if should_hijack_current_buf() then
-    view.close_this_tab_only()
-    view.open_in_win()
+    explorer.view:close_this_tab_only()
+    explorer.view:open_in_win()
     renderer.draw()
   elseif opts.winid then
-    view.open_in_win { hijack_current_buf = false, resize = false, winid = opts.winid }
+    explorer.view:open_in_win { hijack_current_buf = false, resize = false, winid = opts.winid }
     renderer.draw()
   elseif opts.current_window then
-    view.open_in_win { hijack_current_buf = false, resize = false }
+    explorer.view:open_in_win { hijack_current_buf = false, resize = false }
     renderer.draw()
   else
     open_view_and_draw()
   end
-  view.restore_tab_state()
+  explorer.view:restore_tab_state()
   events._dispatch_on_tree_open()
 end
 

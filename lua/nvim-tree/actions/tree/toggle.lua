@@ -1,5 +1,4 @@
 local lib = require "nvim-tree.lib"
-local view = require "nvim-tree.view"
 local finders_find_file = require "nvim-tree.actions.finders.find-file"
 
 local M = {}
@@ -40,9 +39,14 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.path = nil
   end
 
-  if view.is_visible() then
+  local explorer = require"nvim-tree.core".get_explorer()
+  if not explorer then
+    return
+  end
+
+  if explorer.view:is_visible() then
     -- close
-    view.close()
+    explorer.view:close()
   else
     -- open
     lib.open {

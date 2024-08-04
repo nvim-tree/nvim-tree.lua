@@ -6,6 +6,7 @@ local Filters = require "nvim-tree.explorer.filters"
 local Marks = require "nvim-tree.marks"
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
+local View = require "nvim-tree.explorer.view"
 
 local M = {}
 
@@ -46,6 +47,7 @@ function Explorer.new(path)
     open = true,
     marks = Marks:new(),
     sorters = Sorters:new(M.config),
+    view = View:new(M.config),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
   explorer.filters = Filters:new(M.config, explorer)
