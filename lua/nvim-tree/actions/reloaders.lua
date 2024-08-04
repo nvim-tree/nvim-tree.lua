@@ -1,5 +1,4 @@
 local git = require "nvim-tree.git"
-local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
 local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
@@ -43,14 +42,15 @@ end
 
 local event_running = false
 function M.reload_explorer()
-  if event_running or not core.get_explorer() or vim.v.exiting ~= vim.NIL then
+  local explorer = core.get_explorer()
+  if event_running or not explorer or vim.v.exiting ~= vim.NIL then
     return
   end
   event_running = true
 
   local projects = git.reload()
   refresh_nodes(core.get_explorer(), projects)
-  if view.is_visible() then
+  if explorer.view:is_visible() then
     renderer.draw()
   end
   event_running = false

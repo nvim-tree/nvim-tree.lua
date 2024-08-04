@@ -1,6 +1,5 @@
 local events = require "nvim-tree.events"
 local explorer = require "nvim-tree.explorer"
-local view = require "nvim-tree.view"
 local log = require "nvim-tree.log"
 
 local M = {}
@@ -41,7 +40,7 @@ end
 ---@return integer
 function M.get_nodes_starting_line()
   local offset = 1
-  if view.is_root_folder_visible(M.get_cwd()) then
+  if TreeExplorer and TreeExplorer.view:is_root_folder_visible(M.get_cwd()) then
     offset = offset + 1
   end
   if TreeExplorer and TreeExplorer.live_filter.filter then

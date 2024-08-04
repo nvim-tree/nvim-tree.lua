@@ -1,7 +1,6 @@
 local core = require "nvim-tree.core"
 local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
 
 local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
 local DecoratorCopied = require "nvim-tree.renderer.decorator.copied"
@@ -408,14 +407,17 @@ end
 ---@private
 function Builder:build_header()
   local explorer = core.get_explorer()
-  if view.is_root_folder_visible(core.get_cwd()) then
+  if not explorer then
+    return
+  end
+  if explorer.view:is_root_folder_visible(core.get_cwd()) then
     local root_name = self:format_root_name(M.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
     self:insert_highlight({ "NvimTreeRootFolder" }, 0, string.len(root_name))
     self.index = 1
   end
 
-  if explorer and explorer.live_filter.filter then
+  if explorer.live_filter.filter then
     local filter_line = string.format("%s/%s/", M.opts.live_filter.prefix, explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
     local prefix_length = string.len(M.opts.live_filter.prefix)
