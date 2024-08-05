@@ -894,12 +894,12 @@ Determines the rendering of hidden files in a folder.
     show: >
     (14 total git: 5, dotfile: 9)
 <
-  If a function is provided, it receives a table `hidden_count` where keys are
+  If a function is provided, it receives a table `hidden_stats` where keys are
   reasons and values are the count of hidden files for that reason.
 
-  The `hidden_count` argument is structured as follows, where <num> is the
+  The `hidden_stats` argument is structured as follows, where <num> is the
   number of hidden files related to the field: >
-    hidden_count = {
+    hidden_stats = {
       bookmark = <num>,
       buf = <num>,
       custom = <num>,
@@ -909,14 +909,14 @@ Determines the rendering of hidden files in a folder.
     }
 <
   Example of function that can be passed: >
-    function(hidden_count)
+    function(hidden_stats)
       local total_count = 0
-      for reason, count in pairs(hidden_count) do
+      for reason, count in pairs(hidden_stats) do
         total_count = total_count + count
       end
 
       if total_count > 0 then
-        return "(" .. tostring(total_count) .. " hidden")"
+        return "(" .. tostring(total_count) .. " hidden)"
       end
       return nil
     end
