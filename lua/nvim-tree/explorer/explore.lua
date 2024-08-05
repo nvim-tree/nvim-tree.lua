@@ -21,7 +21,7 @@ local function populate_children(handle, cwd, node, git_status, parent)
 
   local filter_status = parent.filters:prepare(git_status)
 
-  node.hidden_count = vim.tbl_deep_extend("force", node.hidden_count or {}, {
+  node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
     git = 0,
     buf = 0,
     dotfile = 0,
@@ -61,7 +61,7 @@ local function populate_children(handle, cwd, node, git_status, parent)
     else
       for reason, value in pairs(FILTER_REASON) do
         if filter_reason == value then
-          node.hidden_count[reason] = node.hidden_count[reason] + 1
+          node.hidden_stats[reason] = node.hidden_stats[reason] + 1
         end
       end
     end

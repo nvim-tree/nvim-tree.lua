@@ -367,7 +367,7 @@ function Builder:add_hidden_count_string(node, idx, num_children)
   if not node.open then
     return
   end
-  local hidden_count_string = M.opts.renderer.hidden_display(node.hidden_count)
+  local hidden_count_string = M.opts.renderer.hidden_display(node.hidden_stats)
   if hidden_count_string and hidden_count_string ~= "" then
     local indent_markers = pad.get_indent_markers(self.depth, idx or 0, num_children or 0, node, self.markers, 1)
     local indent_width = M.opts.renderer.indent_width
@@ -481,29 +481,29 @@ local setup_hidden_display_function = function(opts)
         return nil
       end
     elseif hidden_display == "simple" then
-      opts.renderer.hidden_display = function(hidden_count)
-        return utils.default_format_hidden_count(hidden_count, true)
+      opts.renderer.hidden_display = function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, true)
       end
     elseif hidden_display == "all" then
-      opts.renderer.hidden_display = function(hidden_count)
-        return utils.default_format_hidden_count(hidden_count, false)
+      opts.renderer.hidden_display = function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, false)
       end
     end
   elseif type(hidden_display) == "function" then
-    local safe_render = function(hidden_count)
+    local safe_render = function(hidden_stats)
       -- In case of missing field such as live_filter we zero it, otherwise keep field as is
-      hidden_count = vim.tbl_deep_extend("force", {
+      hidden_stats = vim.tbl_deep_extend("force", {
         live_filter = 0,
         git = 0,
         buf = 0,
         dotfile = 0,
         custom = 0,
         bookmark = 0,
-      }, hidden_count or {})
+      }, hidden_stats or {})
 
-      local ok, result = pcall(hidden_display, hidden_count)
+      local ok, result = pcall(hidden_display, hidden_stats)
       if not ok then
-        notify.warn "Problem occurred in ``opts.renderer.hidden_display_function`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
+        notify.warn "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
         return nil
       end
       return result
