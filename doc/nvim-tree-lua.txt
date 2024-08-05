@@ -879,45 +879,48 @@ Number of spaces for an each tree nesting level. Minimum 1.
 A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
   Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
 
-*nvim-tree.renderer.hidden_display
+*nvim-tree.renderer.hidden_display*
 Determines the rendering of hidden files in a folder.
-    Type: function | string, Default: "none"
-Possible string values are:
-    - "none": Doesn't inform anything about hidden files.
-    - "simple": Shows how many hidden files are in a folder.
-    - "all": Shows how many files are hidden and the number of hidden files per reason why they're hidden.
+  Type: `function | string`, Default: `"none"`
 
-Example "all":
-If a folder has 14 hidden items for various reasons, the display might show:
-``(14 total git: 5, dotfile: 9)``.
+  Possible string values are:
+    - `"none"`:   Doesn't inform anything about hidden files.
+    - `"simple"`: Shows how many hidden files are in a folder.
+    - `"all"`:    Shows how many files are hidden and the number of hidden
+                files per reason why they're hidden.
 
-If a function is provided, it receives a table `hidden_count` where keys are reasons and values are the count of hidden files for that reason.
-The `hidden_count` argument is structured as follows, where <num> is the number
-of hidden files related to the field.
+  Example `"all"`:
+    If a folder has 14 hidden items for various reasons, the display might
+    show: >
+    (14 total git: 5, dotfile: 9)
+<
+  If a function is provided, it receives a table `hidden_count` where keys are
+  reasons and values are the count of hidden files for that reason.
 
-hidden_count = {
-  bookmark = <num>,
-  buf = <num>,
-  custom = <num>,
-  dotfile = <num>,
-  git = <num>,
-  live_filter = <num>,
-}
+  The `hidden_count` argument is structured as follows, where <num> is the
+  number of hidden files related to the field: >
+    hidden_count = {
+      bookmark = <num>,
+      buf = <num>,
+      custom = <num>,
+      dotfile = <num>,
+      git = <num>,
+      live_filter = <num>,
+    }
+<
+  Example of function that can be passed: >
+    function(hidden_count)
+      local total_count = 0
+      for reason, count in pairs(hidden_count) do
+        total_count = total_count + count
+      end
 
-Example of function that can be passed:
-
-function(hidden_count)
-  local total_count = 0
-  for reason, count in pairs(hidden_count) do
-    total_count = total_count + count
-  end
-
-  if total_count > 0 then
-    return "(" .. tostring(total_count) .. " hidden")"
-  end
-  return nil
-end
-
+      if total_count > 0 then
+        return "(" .. tostring(total_count) .. " hidden")"
+      end
+      return nil
+    end
+<
 
 *nvim-tree.renderer.symlink_destination*
 Whether to show the destination of the symlink.
