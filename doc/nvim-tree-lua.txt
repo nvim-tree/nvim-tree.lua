@@ -2916,6 +2916,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.add_trailing|
 |nvim-tree.renderer.full_name|
 |nvim-tree.renderer.group_empty|
+|nvim-tree.renderer.hidden_display|
 |nvim-tree.renderer.highlight_bookmarks|
 |nvim-tree.renderer.highlight_clipboard|
 |nvim-tree.renderer.highlight_diagnostics|

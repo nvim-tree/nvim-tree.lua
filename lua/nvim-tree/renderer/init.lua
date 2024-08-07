@@ -14,6 +14,7 @@ local SIGN_GROUP = "NvimTreeRendererSigns"
 
 local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
+local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
 
 ---@param bufnr number
 ---@param lines string[]
@@ -51,8 +52,9 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
     end
   end
 
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_virtual_lines_id, 0, -1)
   for line_nr, vlines in pairs(virtual_lines) do
-    vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, line_nr, 0, {
+    vim.api.nvim_buf_set_extmark(bufnr, namespace_virtual_lines_id, line_nr, 0, {
       virt_lines = vlines,
       virt_lines_above = false,
       virt_lines_leftcol = true,
