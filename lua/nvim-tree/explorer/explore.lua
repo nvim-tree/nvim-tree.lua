@@ -5,6 +5,7 @@ local git = require "nvim-tree.git"
 local live_filter = require "nvim-tree.live-filter"
 local log = require "nvim-tree.log"
 
+local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local Watcher = require "nvim-tree.watcher"
 
 local M = {}
@@ -17,7 +18,17 @@ local M = {}
 local function populate_children(handle, cwd, node, git_status, parent)
   local node_ignored = explorer_node.is_git_ignored(node)
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
+
   local filter_status = parent.filters:prepare(git_status)
+
+  node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
+    git = 0,
+    buf = 0,
+    dotfile = 0,
+    custom = 0,
+    bookmark = 0,
+  })
+
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
@@ -29,8 +40,8 @@ local function populate_children(handle, cwd, node, git_status, parent)
 
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_stat(abs)
-
-    if not parent.filters:should_filter(abs, stat, filter_status) and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
+    local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
+    if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
       local child = nil
       if t == "directory" and vim.loop.fs_access(abs, "R") then
         child = builders.folder(node, abs, name, stat)
@@ -46,6 +57,12 @@ local function populate_children(handle, cwd, node, git_status, parent)
         table.insert(node.nodes, child)
         nodes_by_path[child.absolute_path] = true
         explorer_node.update_git_status(child, node_ignored, git_status)
+      end
+    else
+      for reason, value in pairs(FILTER_REASON) do
+        if filter_reason == value then
+          node.hidden_stats[reason] = node.hidden_stats[reason] + 1
+        end
       end
     end
 

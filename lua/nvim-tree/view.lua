@@ -50,6 +50,7 @@ M.View = {
       "Normal:NvimTreeNormal",
       "NormalNC:NvimTreeNormalNC",
       "NormalFloat:NvimTreeNormalFloat",
+      "FloatBorder:NvimTreeNormalFloatBorder",
     }, ","),
   },
 }

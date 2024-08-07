@@ -181,6 +181,26 @@ function M.get_parent_of_group(node)
   return node
 end
 
+M.default_format_hidden_count = function(hidden_count, simple)
+  local parts = {}
+  local total_count = 0
+  for reason, count in pairs(hidden_count) do
+    total_count = total_count + count
+    if count > 0 then
+      table.insert(parts, reason .. ": " .. tostring(count))
+    end
+  end
+
+  local hidden_count_string = table.concat(parts, ", ") -- if empty then is "" (empty string)
+  if simple then
+    hidden_count_string = ""
+  end
+  if total_count > 0 then
+    return "(" .. tostring(total_count) .. (simple and " hidden" or " total ") .. hidden_count_string .. ")"
+  end
+  return nil
+end
+
 --- Return visible nodes indexed by line
 ---@param nodes_all Node[]
 ---@param line_start number
