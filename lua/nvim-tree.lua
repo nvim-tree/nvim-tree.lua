@@ -398,6 +398,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     root_folder_label = ":~:s?$?/..?",
     indent_width = 2,
     special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
+    hidden_display = "none",
     symlink_destination = true,
     highlight_git = "none",
     highlight_diagnostics = "none",
@@ -647,6 +648,7 @@ local ACCEPTED_TYPES = {
     },
   },
   renderer = {
+    hidden_display = { "function", "string" },
     group_empty = { "boolean", "function" },
     root_folder_label = { "function", "string", "boolean" },
   },
@@ -680,6 +682,7 @@ local ACCEPTED_STRINGS = {
     signcolumn = { "yes", "no", "auto" },
   },
   renderer = {
+    hidden_display = { "none", "simple", "all" },
     highlight_git = { "none", "icon", "name", "all" },
     highlight_opened_files = { "none", "icon", "name", "all" },
     highlight_modified = { "none", "icon", "name", "all" },
@@ -837,7 +840,6 @@ function M.setup(conf)
   require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
-  require("nvim-tree.live-filter").setup(opts)
   require("nvim-tree.marks").setup(opts)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)

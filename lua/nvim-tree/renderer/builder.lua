@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
@@ -43,6 +42,8 @@ local M = {
 ---@field lines string[] includes icons etc.
 ---@field hl_args AddHighlightArgs[] line highlights
 ---@field signs string[] line signs
+---@field extmarks table[] extra marks for right icon placement
+---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private root_cwd string absolute path
 ---@field private index number
 ---@field private depth number
@@ -62,6 +63,7 @@ function Builder:new()
     markers = {},
     signs = {},
     extmarks = {},
+    virtual_lines = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -351,7 +353,6 @@ function Builder:build_line(node, idx, num_children)
   self.index = self.index + 1
 
   node = require("nvim-tree.lib").get_last_group_node(node)
-
   if node.open then
     self.depth = self.depth + 1
     self:build_lines(node)
@@ -359,9 +360,36 @@ function Builder:build_line(node, idx, num_children)
   end
 end
 
+---Add virtual lines for rendering hidden count information per node
+---@private
+function Builder:add_hidden_count_string(node, idx, num_children)
+  if not node.open then
+    return
+  end
+  local hidden_count_string = M.opts.renderer.hidden_display(node.hidden_stats)
+  if hidden_count_string and hidden_count_string ~= "" then
+    local indent_markers = pad.get_indent_markers(self.depth, idx or 0, num_children or 0, node, self.markers, 1)
+    local indent_width = M.opts.renderer.indent_width
+
+    local indent_padding = string.rep(" ", indent_width)
+    local indent_string = indent_padding .. indent_markers.str
+    local line_nr = #self.lines - 1
+    self.virtual_lines[line_nr] = self.virtual_lines[line_nr] or {}
+
+    -- NOTE: We are inserting in depth order because of current traversal
+    -- if we change the traversal, we might need to sort by depth before rendering `self.virtual_lines`
+    -- to maintain proper ordering of parent and child folder hidden count info.
+    table.insert(self.virtual_lines[line_nr], {
+      { indent_string, indent_markers.hl },
+      { string.rep(indent_padding, (node.parent == nil and 0 or 1)) .. hidden_count_string, "NvimTreeHiddenDisplay" },
+    })
+  end
+end
+
 ---@private
 function Builder:get_nodes_number(nodes)
-  if not live_filter.filter then
+  local explorer = core.get_explorer()
+  if not explorer or not explorer.live_filter.filter then
     return #nodes
   end
 
@@ -388,6 +416,7 @@ function Builder:build_lines(node)
       idx = idx + 1
     end
   end
+  self:add_hidden_count_string(node)
 end
 
 ---@private
@@ -407,6 +436,7 @@ end
 
 ---@private
 function Builder:build_header()
+  local explorer = core.get_explorer()
   if view.is_root_folder_visible(core.get_cwd()) then
     local root_name = self:format_root_name(M.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
@@ -414,8 +444,8 @@ function Builder:build_header()
     self.index = 1
   end
 
-  if live_filter.filter then
-    local filter_line = string.format("%s/%s/", M.opts.live_filter.prefix, live_filter.filter)
+  if explorer and explorer.live_filter.filter then
+    local filter_line = string.format("%s/%s/", M.opts.live_filter.prefix, explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
     local prefix_length = string.len(M.opts.live_filter.prefix)
     self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0, prefix_length)
@@ -442,7 +472,50 @@ function Builder:build()
   return self
 end
 
+---@param opts table
+local setup_hidden_display_function = function(opts)
+  local hidden_display = opts.renderer.hidden_display
+  -- options are already validated, so ´hidden_display´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
+  if type(hidden_display) == "string" then
+    if hidden_display == "none" then
+      opts.renderer.hidden_display = function()
+        return nil
+      end
+    elseif hidden_display == "simple" then
+      opts.renderer.hidden_display = function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, true)
+      end
+    elseif hidden_display == "all" then
+      opts.renderer.hidden_display = function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, false)
+      end
+    end
+  elseif type(hidden_display) == "function" then
+    local safe_render = function(hidden_stats)
+      -- In case of missing field such as live_filter we zero it, otherwise keep field as is
+      hidden_stats = vim.tbl_deep_extend("force", {
+        live_filter = 0,
+        git = 0,
+        buf = 0,
+        dotfile = 0,
+        custom = 0,
+        bookmark = 0,
+      }, hidden_stats or {})
+
+      local ok, result = pcall(hidden_display, hidden_stats)
+      if not ok then
+        notify.warn "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
+        return nil
+      end
+      return result
+    end
+
+    opts.renderer.hidden_display = safe_render
+  end
+end
+
 function Builder.setup(opts)
+  setup_hidden_display_function(opts)
   M.opts = opts
 
   -- priority order
