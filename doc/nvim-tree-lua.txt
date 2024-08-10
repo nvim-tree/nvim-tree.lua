@@ -880,7 +880,7 @@ A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
   Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
 
 *nvim-tree.renderer.hidden_display*
-Determines the rendering of hidden files in a folder.
+Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay
   Type: `function | string`, Default: `"none"`
 
   Possible string values are:
@@ -2504,6 +2504,9 @@ Hidden: >
     NvimTreeModifiedIcon        Conceal
     NvimTreeModifiedFileHL      NvimTreeHiddenIcon
     NvimTreeModifiedFolderHL    NvimTreeHiddenFileHL
+<
+Hidden Display: >
+    NvimTreeHiddenDisplay       Conceal
 <
 Opened: >
     NvimTreeOpenedHL            Special
