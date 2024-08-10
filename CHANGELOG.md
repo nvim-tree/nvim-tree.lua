@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.5.0...nvim-tree-v1.6.0) (2024-08-10)
+
+
+### Features
+
+* **#2225:** add renderer.hidden_display to show a summary of hidden files below the tree ([#2856](https://github.com/nvim-tree/nvim-tree.lua/issues/2856)) ([e25eb7f](https://github.com/nvim-tree/nvim-tree.lua/commit/e25eb7fa83f7614bb23d762e91d2de44fcd7103b))
+* **#2349:** add "right_align" option for renderer.icons.*_placement ([#2839](https://github.com/nvim-tree/nvim-tree.lua/issues/2839)) ([1d629a5](https://github.com/nvim-tree/nvim-tree.lua/commit/1d629a5d3f7d83d516494c221a2cfc079f43bc47))
+* **#2349:** add "right_align" option for renderer.icons.*_placement ([#2846](https://github.com/nvim-tree/nvim-tree.lua/issues/2846)) ([48d0e82](https://github.com/nvim-tree/nvim-tree.lua/commit/48d0e82f9434691cc50d970898142a8c084a49d6))
+* add renderer.highlight_hidden, renderer.icons.show.hidden and renderer.icons.hidden_placement for dotfile icons/highlights ([#2840](https://github.com/nvim-tree/nvim-tree.lua/issues/2840)) ([48a9290](https://github.com/nvim-tree/nvim-tree.lua/commit/48a92907575df1dbd7242975a04e98169cb3a115))
+
+
+### Bug Fixes
+
+* **#2859:** make sure window still exists when restoring options ([#2863](https://github.com/nvim-tree/nvim-tree.lua/issues/2863)) ([466fbed](https://github.com/nvim-tree/nvim-tree.lua/commit/466fbed3e4b61fcc23a48fe99de7bfa264a9fee8))
+
 ## [1.5.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.4.0...nvim-tree-v1.5.0) (2024-07-11)
 
 
