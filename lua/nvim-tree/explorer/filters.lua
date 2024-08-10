@@ -1,4 +1,5 @@
 local utils = require "nvim-tree.utils"
+local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 ---@class Filters to handle all opts.filters and related API
 ---@field config table hydrated user opts.filters
@@ -221,6 +222,35 @@ function Filters:should_filter(path, fs_stat, status)
     or dotfile(self, path)
     or custom(self, path)
     or bookmark(self, path, fs_stat and fs_stat.type, status.bookmarks)
+end
+
+--- Check if the given path should be filtered, and provide the reason why it was
+---@param path string Absolute path
+---@param fs_stat uv.fs_stat.result|nil fs_stat of file
+---@param status table from prepare
+---@return FILTER_REASON
+function Filters:should_filter_as_reason(path, fs_stat, status)
+  if not self.config.enable then
+    return FILTER_REASON.none
+  end
+
+  if is_excluded(self, path) then
+    return FILTER_REASON.none
+  end
+
+  if git(self, path, status.git_status) then
+    return FILTER_REASON.git
+  elseif buf(self, path, status.bufinfo) then
+    return FILTER_REASON.buf
+  elseif dotfile(self, path) then
+    return FILTER_REASON.dotfile
+  elseif custom(self, path) then
+    return FILTER_REASON.custom
+  elseif bookmark(self, path, fs_stat and fs_stat.type, status.bookmarks) then
+    return FILTER_REASON.bookmark
+  else
+    return FILTER_REASON.none
+  end
 end
 
 return Filters

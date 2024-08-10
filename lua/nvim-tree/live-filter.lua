@@ -18,10 +18,17 @@ local function reset_filter(node_)
     return
   end
 
+  node_.hidden_stats = vim.tbl_deep_extend("force", node_.hidden_stats or {}, {
+    live_filter = 0,
+  })
+
   Iterator.builder(node_.nodes)
     :hidden()
     :applier(function(node)
       node.hidden = false
+      node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
+        live_filter = 0,
+      })
     end)
     :iterate()
 end
@@ -79,6 +86,10 @@ function M.apply_filter(node_)
     local filtered_nodes = 0
     local nodes = node.group_next and { node.group_next } or node.nodes
 
+    node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
+      live_filter = 0,
+    })
+
     if nodes then
       for _, n in pairs(nodes) do
         iterate(n)
@@ -87,6 +98,8 @@ function M.apply_filter(node_)
         end
       end
     end
+
+    node.hidden_stats.live_filter = filtered_nodes
 
     local has_nodes = nodes and (M.always_show_folders or #nodes > filtered_nodes)
     local ok, is_match = pcall(matches, node)
