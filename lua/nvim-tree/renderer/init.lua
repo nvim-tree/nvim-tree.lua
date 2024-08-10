@@ -14,12 +14,13 @@ local SIGN_GROUP = "NvimTreeRendererSigns"
 
 local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
+local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
 
 ---@param bufnr number
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
-local function _draw(bufnr, lines, hl_args, signs, extmarks)
+local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
@@ -50,6 +51,15 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks)
       })
     end
   end
+
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_virtual_lines_id, 0, -1)
+  for line_nr, vlines in pairs(virtual_lines) do
+    vim.api.nvim_buf_set_extmark(bufnr, namespace_virtual_lines_id, line_nr, 0, {
+      virt_lines = vlines,
+      virt_lines_above = false,
+      virt_lines_leftcol = true,
+    })
+  end
 end
 
 function M.render_hl(bufnr, hl)
@@ -79,7 +89,7 @@ function M.draw()
 
   local builder = Builder:new():build()
 
-  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks)
+  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)

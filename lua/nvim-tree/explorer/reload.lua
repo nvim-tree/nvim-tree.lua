@@ -4,6 +4,7 @@ local explorer_node = require "nvim-tree.explorer.node"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 
+local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
@@ -91,6 +92,16 @@ function M.reload(node, git_status)
   local node_ignored = explorer_node.is_git_ignored(node)
   ---@type table<string, Node>
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
+
+  -- To reset we must 'zero' everything that we use
+  node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
+    git = 0,
+    buf = 0,
+    dotfile = 0,
+    custom = 0,
+    bookmark = 0,
+  })
+
   while true do
     local name, t = vim.loop.fs_scandir_next(handle)
     if not name then
@@ -101,7 +112,8 @@ function M.reload(node, git_status)
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_stat(abs)
 
-    if not explorer.filters:should_filter(abs, stat, filter_status) then
+    local filter_reason = explorer.filters:should_filter_as_reason(abs, stat, filter_status)
+    if filter_reason == FILTER_REASON.none then
       remain_childs[abs] = true
 
       -- Recreate node if type changes.
@@ -136,6 +148,12 @@ function M.reload(node, git_status)
         if n then
           n.executable = builders.is_executable(abs) or false
           n.fs_stat = stat
+        end
+      end
+    else
+      for reason, value in pairs(FILTER_REASON) do
+        if filter_reason == value then
+          node.hidden_stats[reason] = node.hidden_stats[reason] + 1
         end
       end
     end
