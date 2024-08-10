@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local live_filter = require "nvim-tree.live-filter"
 local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
@@ -389,7 +388,8 @@ end
 
 ---@private
 function Builder:get_nodes_number(nodes)
-  if not live_filter.filter then
+  local explorer = core.get_explorer()
+  if not explorer or not explorer.live_filter.filter then
     return #nodes
   end
 
@@ -436,6 +436,7 @@ end
 
 ---@private
 function Builder:build_header()
+  local explorer = core.get_explorer()
   if view.is_root_folder_visible(core.get_cwd()) then
     local root_name = self:format_root_name(M.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
@@ -443,8 +444,8 @@ function Builder:build_header()
     self.index = 1
   end
 
-  if live_filter.filter then
-    local filter_line = string.format("%s/%s/", M.opts.live_filter.prefix, live_filter.filter)
+  if explorer and explorer.live_filter.filter then
+    local filter_line = string.format("%s/%s/", M.opts.live_filter.prefix, explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
     local prefix_length = string.len(M.opts.live_filter.prefix)
     self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0, prefix_length)
