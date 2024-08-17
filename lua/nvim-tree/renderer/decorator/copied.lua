@@ -1,4 +1,4 @@
-local copy_paste
+local core = require "nvim-tree.core"
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
@@ -20,9 +20,6 @@ function DecoratorCopied:new(opts)
   })
   ---@cast o DecoratorCopied
 
-  -- cyclic
-  copy_paste = copy_paste or require "nvim-tree.actions.fs.copy-paste"
-
   return o
 end
 
@@ -30,7 +27,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorCopied:calculate_highlight(node)
-  if self.hl_pos ~= HL_POSITION.none and copy_paste.is_copied(node) then
+  if self.hl_pos ~= HL_POSITION.none and core.get_explorer() and core.get_explorer().clipboard:is_copied(node) then
     return "NvimTreeCopiedHL"
   end
 end
