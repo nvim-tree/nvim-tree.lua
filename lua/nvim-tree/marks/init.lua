@@ -67,12 +67,8 @@ function Marks:get_marks()
   return list
 end
 
-function Marks.setup(opts)
+function Marks.setup()
   renderer = require "nvim-tree.renderer"
-
-  require("nvim-tree.marks.bulk-delete").setup(opts)
-  require("nvim-tree.marks.bulk-trash").setup(opts)
-  require("nvim-tree.marks.bulk-move").setup(opts)
 end
 
 return Marks

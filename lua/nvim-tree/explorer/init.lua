@@ -4,6 +4,9 @@ local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 local Filters = require "nvim-tree.explorer.filters"
 local Marks = require "nvim-tree.marks"
+local BulkDelete -- cyclic
+local BulkMove -- cyclic
+local BulkTrash -- cyclic
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
 
@@ -18,6 +21,9 @@ M.reload = require("nvim-tree.explorer.reload").reload
 ---@field open boolean
 ---@field filters Filters
 ---@field live_filter LiveFilter
+---@field bulk_delete BulkDelete
+---@field bulk_move BulkMove
+---@field bulk_trash BulkTrash
 ---@field sorters Sorter
 ---@field marks Marks
 
@@ -50,6 +56,9 @@ function Explorer.new(path)
   explorer.watcher = watch.create_watcher(explorer)
   explorer.filters = Filters:new(M.config, explorer)
   explorer.live_filter = LiveFilter:new(M.config, explorer)
+  explorer.bulk_delete = BulkDelete:new(M.config, explorer)
+  explorer.bulk_move = BulkMove:new(M.config, explorer)
+  explorer.bulk_trash = BulkTrash:new(M.config, explorer)
   explorer:_load(explorer)
   return explorer
 end
@@ -85,6 +94,11 @@ function M.setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
   require("nvim-tree.explorer.reload").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
+
+  -- cyclic
+  BulkDelete = require "nvim-tree.marks.bulk-delete"
+  BulkMove = require "nvim-tree.marks.bulk-move"
+  BulkTrash = require "nvim-tree.marks.bulk-trash"
 end
 
 M.Explorer = Explorer

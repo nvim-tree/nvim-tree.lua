@@ -4,16 +4,29 @@ local rename_file = require "nvim-tree.actions.fs.rename-file"
 local notify = require "nvim-tree.notify"
 local lib = require "nvim-tree.lib"
 
-local M = {
-  config = {},
-}
+---@class BulkMove
+---@field private explorer Explorer
+---@field private config table hydrated user opts.filters
+local BulkMove = {}
 
+---@param opts table user options
 ---@param explorer Explorer
-function M.bulk_move(explorer)
-  if not explorer then
-    return
-  end
-  local marks = explorer.marks
+---@return Filters
+function BulkMove:new(opts, explorer)
+  local o = {
+    config = {
+      filesystem_watchers = opts.filesystem_watchers,
+    },
+    explorer = explorer,
+  }
+
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+function BulkMove:bulk_move()
+  local marks = self.explorer.marks
 
   if #marks:get_marks() == 0 then
     notify.warn "No bookmarks to move."
@@ -54,14 +67,10 @@ function M.bulk_move(explorer)
 
     marks:clear_marks()
 
-    if not M.config.filesystem_watchers.enable then
+    if not self.config.filesystem_watchers.enable then
       require("nvim-tree.actions.reloaders").reload_explorer()
     end
   end)
 end
 
-function M.setup(opts)
-  M.config.filesystem_watchers = opts.filesystem_watchers
-end
-
-return M
+return BulkMove
