@@ -109,11 +109,11 @@ end
 
 ---@param source string
 ---@param dest string
----@param action_type string
+---@param action ACTION
 ---@param action_fn fun(source: string, dest: string)
 ---@return boolean|nil -- success
 ---@return string|nil -- error message
-local function do_single_paste(source, dest, action_type, action_fn)
+local function do_single_paste(source, dest, action, action_fn)
   local dest_stats
   local success, errmsg, errcode
   local notify_source = notify.render_path(source)
@@ -122,14 +122,14 @@ local function do_single_paste(source, dest, action_type, action_fn)
 
   dest_stats, errmsg, errcode = vim.loop.fs_stat(dest)
   if not dest_stats and errcode ~= "ENOENT" then
-    notify.error("Could not " .. action_type .. " " .. notify_source .. " - " .. (errmsg or "???"))
+    notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (errmsg or "???"))
     return false, errmsg
   end
 
   local function on_process()
     success, errmsg = action_fn(source, dest)
     if not success then
-      notify.error("Could not " .. action_type .. " " .. notify_source .. " - " .. (errmsg or "???"))
+      notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (errmsg or "???"))
       return false, errmsg
     end
 
@@ -147,7 +147,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
       vim.ui.input(input_opts, function(new_dest)
         utils.clear_prompt()
         if new_dest then
-          do_single_paste(source, new_dest, action_type, action_fn)
+          do_single_paste(source, new_dest, action, action_fn)
         end
       end)
     else
@@ -161,7 +161,7 @@ local function do_single_paste(source, dest, action_type, action_fn)
           vim.ui.input(input_opts, function(new_dest)
             utils.clear_prompt()
             if new_dest then
-              do_single_paste(source, new_dest, action_type, action_fn)
+              do_single_paste(source, new_dest, action, action_fn)
             end
           end)
         end
