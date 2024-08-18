@@ -26,7 +26,7 @@ local function get_nearest(node, where)
         return
       end
 
-      if not explorer.marks:get_mark(n) then
+      if not explorer.marks:get(n) then
         return
       end
 
@@ -95,7 +95,7 @@ function M.select()
 
   local list = vim.tbl_map(function(n)
     return n.absolute_path
-  end, explorer.marks:get_marks())
+  end, explorer.marks:list())
 
   vim.ui.select(list, {
     prompt = "Select a file to open or a folder to focus",
@@ -103,7 +103,7 @@ function M.select()
     if not choice or choice == "" then
       return
     end
-    local node = explorer.marks:get_mark { absolute_path = choice }
+    local node = explorer.marks:get { absolute_path = choice }
     open_or_focus(node)
   end)
 end

@@ -34,7 +34,7 @@ end
 ---@param node Node
 ---@return HighlightedString[]|nil icons
 function DecoratorBookmarks:calculate_icons(node)
-  if core.get_explorer() and core.get_explorer().marks:get_mark(node) then
+  if core.get_explorer() and core.get_explorer().marks:get(node) then
     return { self.icon }
   end
 end
@@ -43,7 +43,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorBookmarks:calculate_highlight(node)
-  if self.hl_pos ~= HL_POSITION.none and core.get_explorer() and core.get_explorer().marks:get_mark(node) then
+  if self.hl_pos ~= HL_POSITION.none and core.get_explorer() and core.get_explorer().marks:get(node) then
     return "NvimTreeBookmarkHL"
   end
 end

@@ -44,12 +44,12 @@ function Explorer.new(path)
     absolute_path = path,
     nodes = {},
     open = true,
-    marks = Marks:new(),
     sorters = Sorters:new(M.config),
   }, Explorer)
   explorer.watcher = watch.create_watcher(explorer)
   explorer.filters = Filters:new(M.config, explorer)
   explorer.live_filter = LiveFilter:new(M.config, explorer)
+  explorer.marks = Marks:new(M.config, explorer)
   explorer:_load(explorer)
   return explorer
 end
