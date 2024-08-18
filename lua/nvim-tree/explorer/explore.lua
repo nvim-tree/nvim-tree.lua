@@ -35,37 +35,40 @@ local function populate_children(handle, cwd, node, git_status, parent)
     end
 
     local abs = utils.path_join { cwd, name }
-    local profile = log.profile_start("explore populate_children %s", abs)
 
-    ---@type uv.fs_stat.result|nil
-    local stat = vim.loop.fs_stat(abs)
-    local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
-    if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] and Watcher.is_fs_event_capable(abs) then
-      local child = nil
-      if t == "directory" and vim.loop.fs_access(abs, "R") then
-        child = builders.folder(node, abs, name, stat)
-      elseif t == "file" then
-        child = builders.file(node, abs, name, stat)
-      elseif t == "link" then
-        local link = builders.link(node, abs, name, stat)
-        if link.link_to ~= nil then
-          child = link
+    if Watcher.is_fs_event_capable(abs) then
+      local profile = log.profile_start("explore populate_children %s", abs)
+
+      ---@type uv.fs_stat.result|nil
+      local stat = vim.loop.fs_stat(abs)
+      local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
+      if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
+        local child = nil
+        if t == "directory" and vim.loop.fs_access(abs, "R") then
+          child = builders.folder(node, abs, name, stat)
+        elseif t == "file" then
+          child = builders.file(node, abs, name, stat)
+        elseif t == "link" then
+          local link = builders.link(node, abs, name, stat)
+          if link.link_to ~= nil then
+            child = link
+          end
+        end
+        if child then
+          table.insert(node.nodes, child)
+          nodes_by_path[child.absolute_path] = true
+          explorer_node.update_git_status(child, node_ignored, git_status)
+        end
+      else
+        for reason, value in pairs(FILTER_REASON) do
+          if filter_reason == value then
+            node.hidden_stats[reason] = node.hidden_stats[reason] + 1
+          end
         end
       end
-      if child then
-        table.insert(node.nodes, child)
-        nodes_by_path[child.absolute_path] = true
-        explorer_node.update_git_status(child, node_ignored, git_status)
-      end
-    else
-      for reason, value in pairs(FILTER_REASON) do
-        if filter_reason == value then
-          node.hidden_stats[reason] = node.hidden_stats[reason] + 1
-        end
-      end
+
+      log.profile_end(profile)
     end
-
-    log.profile_end(profile)
   end
 end
 
