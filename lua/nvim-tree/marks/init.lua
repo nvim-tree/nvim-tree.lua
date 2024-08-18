@@ -1,10 +1,12 @@
-local core = {} -- circular dependency
-local lib = {} -- circular dependency
+local Iterator = require "nvim-tree.iterators.node-iterator"
+local core = require "nvim-tree.core"
+local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
-local remove_file = {} -- circular dependency
-local rename_file = {} -- circular dependency
-local trash = {} -- circular dependency
-local renderer = {} -- circular dependency
+local open_file = require "nvim-tree.actions.node.open-file"
+local remove_file = require "nvim-tree.actions.fs.remove-file"
+local rename_file = require "nvim-tree.actions.fs.rename-file"
+local renderer = require "nvim-tree.renderer"
+local trash = require "nvim-tree.actions.fs.trash"
 local utils = require "nvim-tree.utils"
 
 ---@class Marks
@@ -84,7 +86,7 @@ end
 
 ---Delete marked; each removal will be optionally notified
 ---@public
-function Marks:delete()
+function Marks:bulk_delete()
   if not next(self.marks) then
     notify.warn "No bookmarks to delete."
     return
@@ -113,7 +115,7 @@ end
 
 ---Trash marked; each removal will be optionally notified
 ---@public
-function Marks:trash()
+function Marks:bulk_trash()
   if not next(self.marks) then
     notify.warn "No bookmarks to trash."
     return
@@ -142,7 +144,7 @@ end
 
 ---Move marked
 ---@public
-function Marks:move()
+function Marks:bulk_move()
   if not next(self.marks) then
     notify.warn "No bookmarks to move."
     return
@@ -183,13 +185,89 @@ function Marks:move()
   end)
 end
 
-function Marks.setup()
-  core = require "nvim-tree.core"
-  lib = require "nvim-tree.lib"
-  remove_file = require "nvim-tree.actions.fs.remove-file"
-  rename_file = require "nvim-tree.actions.fs.rename-file"
-  renderer = require "nvim-tree.renderer"
-  trash = require "nvim-tree.actions.fs.trash"
+---Focus nearest marked node in direction.
+---@private
+---@param up boolean
+function Marks:navigate(up)
+  local node = lib.get_node_at_cursor()
+  if not node then
+    return
+  end
+
+  local first, prev, next, last = nil, nil, nil, nil
+  local found = false
+
+  Iterator.builder(self.explorer.nodes)
+    :recursor(function(n)
+      return n.open and n.nodes
+    end)
+    :applier(function(n)
+      if n.absolute_path == node.absolute_path then
+        found = true
+        return
+      end
+
+      if not self:get(n) then
+        return
+      end
+
+      last = n
+      first = first or n
+
+      if found and not next then
+        next = n
+      end
+
+      if not found then
+        prev = n
+      end
+    end)
+    :iterate()
+
+  if not found then
+    return
+  end
+
+  if up then
+    utils.focus_node_or_parent(prev or last)
+  else
+    utils.focus_node_or_parent(next or first)
+  end
+end
+
+---@public
+function Marks:navigate_prev()
+  self:navigate(true)
+end
+
+---@public
+function Marks:navigate_next()
+  self:navigate(false)
+end
+
+---Prompts for selection of a marked node, sorted by absolute paths.
+---A folder will be focused, a file will be opened.
+---@public
+function Marks:navigate_select()
+  local list = vim.tbl_map(function(n)
+    return n.absolute_path
+  end, self:list())
+
+  table.sort(list)
+
+  vim.ui.select(list, {
+    prompt = "Select a file to open or a folder to focus",
+  }, function(choice)
+    if not choice or choice == "" then
+      return
+    end
+    local node = self:get { absolute_path = choice }
+    if node and not node.nodes and not utils.get_win_buf_from_path(node.absolute_path) then
+      open_file.fn("edit", node.absolute_path)
+    elseif node then
+      utils.focus_file(node.absolute_path)
+    end
+  end)
 end
 
 return Marks

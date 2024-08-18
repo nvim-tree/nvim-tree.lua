@@ -3,7 +3,7 @@ local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 local Filters = require "nvim-tree.explorer.filters"
-local Marks = require "nvim-tree.marks"
+local Marks = {} -- circular dependencies
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
 
@@ -85,6 +85,8 @@ function M.setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
   require("nvim-tree.explorer.reload").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
+
+  Marks = require "nvim-tree.marks"
 end
 
 M.Explorer = Explorer
