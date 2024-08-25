@@ -33,7 +33,6 @@ end
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
 local function move(where, what, skip_gitignored)
-  local node_cur = lib.get_node_at_cursor()
   local first_node_line = core.get_nodes_starting_line()
   local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
   local iter_start, iter_end, iter_step, cur, first, nex
@@ -57,7 +56,7 @@ local function move(where, what, skip_gitignored)
       first = line
     end
 
-    if node == node_cur then
+    if cursor and line == cursor[1] then
       cur = line
     elseif valid and cur then
       nex = line
