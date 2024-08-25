@@ -15,25 +15,33 @@ local M = {
   target_winid = nil,
 }
 
----@return Node|nil
-function M.get_node_at_cursor()
+---Cursor position as per vim.api.nvim_win_get_cursor
+---@return integer[]|nil
+function M.get_cursor_position()
   if not core.get_explorer() then
     return
   end
 
   local winnr = view.get_winnr()
-  if not winnr then
+  if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end
 
-  local cursor = vim.api.nvim_win_get_cursor(winnr)
-  local line = cursor[1]
+  return vim.api.nvim_win_get_cursor(winnr)
+end
 
-  if line == 1 and view.is_root_folder_visible(core.get_cwd()) then
+---@return Node|nil
+function M.get_node_at_cursor()
+  local cursor = M.get_cursor_position()
+  if not cursor then
+    return
+  end
+
+  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
     return { name = ".." }
   end
 
-  return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[line]
+  return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
