@@ -6,6 +6,7 @@ local Filters = require "nvim-tree.explorer.filters"
 local Marks = {} -- circular dependencies
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
+local Clipboard = {} -- circular dependencies
 
 local M = {}
 
@@ -20,6 +21,7 @@ M.reload = require("nvim-tree.explorer.reload").reload
 ---@field live_filter LiveFilter
 ---@field sorters Sorter
 ---@field marks Marks
+---@field clipboard Clipboard
 
 local Explorer = {}
 Explorer.__index = Explorer
@@ -50,6 +52,7 @@ function Explorer.new(path)
   explorer.filters = Filters:new(M.config, explorer)
   explorer.live_filter = LiveFilter:new(M.config, explorer)
   explorer.marks = Marks:new(M.config, explorer)
+  explorer.clipboard = Clipboard:new(M.config, explorer)
   explorer:_load(explorer)
   return explorer
 end
@@ -87,6 +90,7 @@ function M.setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
 
   Marks = require "nvim-tree.marks"
+  Clipboard = require "nvim-tree.actions.fs.clipboard"
 end
 
 M.Explorer = Explorer
