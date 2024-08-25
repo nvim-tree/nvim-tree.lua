@@ -2195,8 +2195,8 @@ marks.navigate.prev()                    *nvim-tree-api.marks.navigate.prev()*
     As per |nvim-tree-api.marks.navigate.next()|
 
 marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
-    Prompts for selection of a marked node as per
-    |nvim-tree-api.marks.navigate.next()|
+    Prompts for selection of a marked node, sorted by absolute paths.
+    A folder will be focused, a file will be opened.
 
 ==============================================================================
  6.8 API CONFIG                                         *nvim-tree-api.config*

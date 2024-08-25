@@ -194,7 +194,7 @@ function Filters:prepare(git_status)
 
   local explorer = require("nvim-tree.core").get_explorer()
   if explorer then
-    for _, node in pairs(explorer.marks:get_marks()) do
+    for _, node in pairs(explorer.marks:list()) do
       status.bookmarks[node.absolute_path] = node.type
     end
   end
