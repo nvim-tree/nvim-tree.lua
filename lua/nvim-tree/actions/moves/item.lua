@@ -38,6 +38,11 @@ local function move(where, what, skip_gitignored)
   local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
   local iter_start, iter_end, iter_step, cur, first, nex
 
+  local cursor = lib.get_cursor_position()
+  if cursor and cursor[1] < first_node_line then
+    cur = cursor[1]
+  end
+
   if where == "next" then
     iter_start, iter_end, iter_step = first_node_line, #nodes_by_line, 1
   elseif where == "prev" then
