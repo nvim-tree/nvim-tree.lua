@@ -1,21 +1,22 @@
 local git = require "nvim-tree.git"
 local view = require "nvim-tree.view"
 local renderer = require "nvim-tree.renderer"
-local explorer_module = require "nvim-tree.explorer"
 local core = require "nvim-tree.core"
 local explorer_node = require "nvim-tree.explorer.node"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
 local M = {}
 
----@param node Explorer|nil
+---@param explorer Explorer|nil
 ---@param projects table
-local function refresh_nodes(node, projects)
-  Iterator.builder({ node })
+local function refresh_nodes(explorer, projects)
+  Iterator.builder({ explorer })
     :applier(function(n)
       if n.nodes then
         local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
-        explorer_module.reload(n, projects[toplevel] or {})
+        if explorer then
+          explorer:reload(n, projects[toplevel] or {})
+        end
       end
     end)
     :recursor(function(n)
