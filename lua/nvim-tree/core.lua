@@ -16,7 +16,7 @@ function M.init(foldername)
   if TreeExplorer then
     TreeExplorer:destroy()
   end
-  TreeExplorer = explorer.Explorer.new(foldername)
+  TreeExplorer = explorer:new(foldername)
   if not first_init_done then
     events._dispatch_ready()
     first_init_done = true

@@ -2,16 +2,14 @@ local git = require "nvim-tree.git"
 local notify = require "nvim-tree.notify"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
+
 local Filters = require "nvim-tree.explorer.filters"
 local Marks = {} -- circular dependencies
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
 local Clipboard = {} -- circular dependencies
 
-local M = {}
-
-M.explore = require("nvim-tree.explorer.explore").explore
-M.reload = require("nvim-tree.explorer.reload").reload
+local config
 
 ---@class Explorer
 ---@field absolute_path string
@@ -22,13 +20,14 @@ M.reload = require("nvim-tree.explorer.reload").reload
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-
 local Explorer = {}
-Explorer.__index = Explorer
+
+Explorer.explore = require("nvim-tree.explorer.explore").explore
+Explorer.reload = require("nvim-tree.explorer.reload").reload
 
 ---@param path string|nil
 ---@return Explorer|nil
-function Explorer.new(path)
+function Explorer:new(path)
   local err
 
   if path then
@@ -42,19 +41,24 @@ function Explorer.new(path)
   end
 
   ---@class Explorer
-  local explorer = setmetatable({
+  local o = setmetatable({
     absolute_path = path,
     nodes = {},
     open = true,
-    sorters = Sorters:new(M.config),
+    sorters = Sorters:new(config),
   }, Explorer)
-  explorer.watcher = watch.create_watcher(explorer)
-  explorer.filters = Filters:new(M.config, explorer)
-  explorer.live_filter = LiveFilter:new(M.config, explorer)
-  explorer.marks = Marks:new(M.config, explorer)
-  explorer.clipboard = Clipboard:new(M.config, explorer)
-  explorer:_load(explorer)
-  return explorer
+  setmetatable(o, self)
+  self.__index = self
+
+  o.watcher = watch.create_watcher(o)
+  o.filters = Filters:new(config, o)
+  o.live_filter = LiveFilter:new(config, o)
+  o.marks = Marks:new(config, o)
+  o.clipboard = Clipboard:new(config, o)
+
+  o:_load(o)
+
+  return o
 end
 
 ---@private
@@ -62,7 +66,7 @@ end
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
   local git_status = git.load_project_status(cwd)
-  M.explore(node, git_status, self)
+  Explorer.explore(node, git_status, self)
 end
 
 ---@param node Node
@@ -82,8 +86,8 @@ function Explorer:destroy()
   iterate(self)
 end
 
-function M.setup(opts)
-  M.config = opts
+function Explorer.setup(opts)
+  config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.explore").setup(opts)
   require("nvim-tree.explorer.reload").setup(opts)
@@ -93,6 +97,4 @@ function M.setup(opts)
   Clipboard = require "nvim-tree.actions.fs.clipboard"
 end
 
-M.Explorer = Explorer
-
-return M
+return Explorer
