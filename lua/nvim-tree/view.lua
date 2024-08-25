@@ -346,14 +346,18 @@ function M.resize(size)
     return
   end
 
+  local winnr = M.get_winnr() or 0
+
   local new_size = get_width()
-  vim.api.nvim_win_set_width(M.get_winnr() or 0, new_size)
+
+  if new_size ~= vim.api.nvim_win_get_width(winnr) then
+    vim.api.nvim_win_set_width(winnr, new_size)
+    if not M.View.preserve_window_proportions then
+      vim.cmd ":wincmd ="
+    end
+  end
 
   events._dispatch_on_tree_resize(new_size)
-
-  if not M.View.preserve_window_proportions then
-    vim.cmd ":wincmd ="
-  end
 end
 
 function M.reposition_window()
