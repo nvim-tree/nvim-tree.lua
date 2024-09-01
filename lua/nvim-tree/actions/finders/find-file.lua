@@ -2,7 +2,6 @@ local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
 local renderer = require "nvim-tree.renderer"
-local reload = require "nvim-tree.explorer.reload"
 local core = require "nvim-tree.core"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
@@ -13,7 +12,8 @@ local running = {}
 ---Find a path in the tree, expand it and focus it
 ---@param path string relative or absolute
 function M.fn(path)
-  if not core.get_explorer() or not view.is_visible() then
+  local explorer = core.get_explorer()
+  if not explorer or not view.is_visible() then
     return
   end
 
@@ -32,7 +32,7 @@ function M.fn(path)
 
   -- refresh the contents of all parents, expanding groups as needed
   if utils.get_node_from_path(path_real) == nil then
-    reload.refresh_parent_nodes_for_path(vim.fn.fnamemodify(path_real, ":h"))
+    explorer:refresh_parent_nodes_for_path(vim.fn.fnamemodify(path_real, ":h"))
   end
 
   local line = core.get_nodes_starting_line()
