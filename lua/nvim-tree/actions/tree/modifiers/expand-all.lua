@@ -3,6 +3,7 @@ local renderer = require "nvim-tree.renderer"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
 local lib = require "nvim-tree.lib"
+local git = require "nvim-tree.git"
 
 local M = {}
 
@@ -18,18 +19,28 @@ local function to_lookup_table(list)
 end
 
 ---@param node Node
-local function expand(node)
-  node = lib.get_last_group_node(node)
-  node.open = true
+local function populate_node(node)
+  -- noop if it is a file
+  if node.nodes == nil then
+    return
+  end
+  local cwd = node.link_to or node.absolute_path
+  local handle = vim.loop.fs_scandir(cwd)
+  if not handle then
+      return
+  end
+  local status = git.load_project_status(cwd)
+
   if #node.nodes == 0 then
-    core.get_explorer():expand(node)
+      core.get_explorer():expand(node, status)
   end
 end
 
 ---@param expansion_count integer
 ---@param node Node
+---@param populate_node function
 ---@return boolean, function
-local function expand_until_max_or_empty(expansion_count, node)
+local function expand_until_max_or_empty(expansion_count, node, populate_node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
   local result = not should_halt and node.nodes and not node.open and not should_exclude
@@ -40,16 +51,17 @@ local function gen_iterator(should_expand_fn)
   local expansion_count = 0
 
   return function(parent)
-    expand(parent)
+    parent.open = true
 
-    Iterator.builder({parent})
+    Iterator.builder({ parent })
       :hidden()
       :applier(function(node)
-        local should_expand, should_expand_next_fn = should_expand_fn(expansion_count, node)
+        local should_expand, should_expand_next_fn = should_expand_fn(expansion_count, node, populate_node)
         should_expand_fn = should_expand_next_fn
         if should_expand then
           expansion_count = expansion_count + 1
-          expand(node)
+          node = lib.get_last_group_node(node)
+          node.open = true
         end
       end)
       :recursor(function(node)
