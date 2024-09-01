@@ -40,10 +40,6 @@ local function gen_iterator(should_expand_fn)
   local expansion_count = 0
 
   return function(parent)
-    -- if parent.parent and parent.nodes and not parent.open then
-    --   expansion_count = expansion_count + 1
-    --   expand(parent)
-    -- end
     expand(parent)
 
     Iterator.builder({parent})
@@ -55,14 +51,8 @@ local function gen_iterator(should_expand_fn)
           expansion_count = expansion_count + 1
           expand(node)
         end
-        -- print("iterator " .. node.name  .. " " .. vim.inspect(should_expand))
       end)
       :recursor(function(node)
-        -- print(vim.inspect(expansion_count < M.MAX_FOLDER_DISCOVERY))
-        -- print(vim.inspect(node.group_next and { node.group_next }))
-        -- print(vim.inspect((node.open and node.nodes)))
-
-        -- print("recursor " .. node.name .. " " .. vim.inspect(expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))))
         return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
       end)
       :iterate()
