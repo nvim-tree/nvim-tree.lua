@@ -955,7 +955,6 @@ Value can be `"none"`, `"icon"`, `"name"` or `"all"`
 *nvim-tree.renderer.highlight_hidden*
 Highlight icons and/or names for hidden files (dotfiles) using the
 `NvimTreeHiddenFileHL` highlight group.
-Requires |nvim-tree.hidden.enable|
 Value can be `"none"`, `"icon"`, `"name"` or `"all"`
   Type: `string`, Default `"none"`
 
@@ -1089,8 +1088,7 @@ Icon order and sign column precedence:
 
         *nvim-tree.renderer.icons.show.hidden*
         Show a hidden icon, see |renderer.icons.hidden_placement|
-        Requires |hidden.enable| `= true`
-          Type: `boolean`, Default: `true`
+          Type: `boolean`, Default: `false`
 
         *nvim-tree.renderer.icons.show.diagnostics*
         Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|

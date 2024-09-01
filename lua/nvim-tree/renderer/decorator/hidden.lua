@@ -28,7 +28,7 @@ function DecoratorHidden:new(opts)
   return o
 end
 
----Hidden icon: hidden.enable, renderer.icons.show.hidden and node starts with `.` (dotfile).
+---Hidden icon: renderer.icons.show.hidden and node starts with `.` (dotfile).
 ---@param node Node
 ---@return HighlightedString[]|nil icons
 function DecoratorHidden:calculate_icons(node)
@@ -37,7 +37,7 @@ function DecoratorHidden:calculate_icons(node)
   end
 end
 
----Hidden highlight: hidden.enable, renderer.highlight_hidden and node starts with `.` (dotfile).
+---Hidden highlight: renderer.highlight_hidden and node starts with `.` (dotfile).
 ---@param node Node
 ---@return string|nil group
 function DecoratorHidden:calculate_highlight(node)
