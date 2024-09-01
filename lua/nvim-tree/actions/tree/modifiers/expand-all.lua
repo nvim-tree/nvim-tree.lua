@@ -27,12 +27,12 @@ local function populate_node(node)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
-      return
+    return
   end
   local status = git.load_project_status(cwd)
 
   if #node.nodes == 0 then
-      core.get_explorer():expand(node, status)
+    core.get_explorer():expand(node, status)
   end
 end
 
