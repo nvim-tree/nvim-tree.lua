@@ -35,6 +35,7 @@ local function populate_children(handle, cwd, node, git_status, parent)
     end
 
     local abs = utils.path_join { cwd, name }
+    t = t or (vim.loop.fs_stat(abs) or {}).type
 
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("explore populate_children %s", abs)
