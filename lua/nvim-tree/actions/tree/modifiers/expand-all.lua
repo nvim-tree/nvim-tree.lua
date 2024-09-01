@@ -38,13 +38,13 @@ end
 ---@param expansion_count integer
 ---@param node Node
 ---@param populate_node function
----@return boolean, function
+---@return boolean
 -- luacheck: push ignore populate_node
 local function expand_until_max_or_empty(expansion_count, node, populate_node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
   local result = not should_halt and node.nodes and not node.open and not should_exclude
-  return result, expand_until_max_or_empty
+  return result
 end
 -- luacheck: pop
 
@@ -58,8 +58,7 @@ local function gen_iterator(should_expand_fn)
     Iterator.builder({ parent })
       :hidden()
       :applier(function(node)
-        local should_expand, should_expand_next_fn = should_expand_fn(expansion_count, node, populate_node)
-        should_expand_fn = should_expand_next_fn
+        local should_expand = should_expand_fn(expansion_count, node, populate_node)
         if should_expand then
           expansion_count = expansion_count + 1
           populate_node(node)
@@ -68,7 +67,8 @@ local function gen_iterator(should_expand_fn)
         end
       end)
       :recursor(function(node)
-        return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
+        local should_recurse = should_expand_fn(expansion_count - 1, node, populate_node)
+        return expansion_count < M.MAX_FOLDER_DISCOVERY and (should_recurse and node.open and node.nodes)
       end)
       :iterate()
 
