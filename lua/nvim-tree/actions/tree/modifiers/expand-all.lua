@@ -39,12 +39,14 @@ end
 ---@param node Node
 ---@param populate_node function
 ---@return boolean, function
+-- luacheck: push ignore populate_node
 local function expand_until_max_or_empty(expansion_count, node, populate_node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
   local result = not should_halt and node.nodes and not node.open and not should_exclude
   return result, expand_until_max_or_empty
 end
+-- luacheck: pop
 
 local function gen_iterator(should_expand_fn)
   local expansion_count = 0
