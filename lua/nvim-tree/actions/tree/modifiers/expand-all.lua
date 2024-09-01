@@ -24,14 +24,13 @@ local function populate_node(node)
   if node.nodes == nil then
     return
   end
-  local cwd = node.link_to or node.absolute_path
-  local handle = vim.loop.fs_scandir(cwd)
-  if not handle then
-    return
-  end
-  local status = git.load_project_status(cwd)
-
   if #node.nodes == 0 then
+    local cwd = node.link_to or node.absolute_path
+    local handle = vim.loop.fs_scandir(cwd)
+    if not handle then
+      return
+    end
+    local status = git.load_project_status(cwd)
     core.get_explorer():expand(node, status)
   end
 end
@@ -51,6 +50,7 @@ local function gen_iterator(should_expand_fn)
   local expansion_count = 0
 
   return function(parent)
+    populate_node(parent)
     parent.open = true
 
     Iterator.builder({ parent })
@@ -60,6 +60,7 @@ local function gen_iterator(should_expand_fn)
         should_expand_fn = should_expand_next_fn
         if should_expand then
           expansion_count = expansion_count + 1
+          populate_node(node)
           node = lib.get_last_group_node(node)
           node.open = true
         end
