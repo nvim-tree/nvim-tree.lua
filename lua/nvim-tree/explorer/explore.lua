@@ -29,27 +29,30 @@ local function populate_children(handle, cwd, node, git_status, parent)
   })
 
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
 
     local abs = utils.path_join { cwd, name }
-    t = t or (vim.loop.fs_stat(abs) or {}).type
 
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("explore populate_children %s", abs)
 
       ---@type uv.fs_stat.result|nil
       local stat = vim.loop.fs_stat(abs)
+
+      -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
+      local type = (vim.loop.fs_stat(abs) or {}).type
+
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
         local child = nil
-        if t == "directory" and vim.loop.fs_access(abs, "R") then
+        if type == "directory" and vim.loop.fs_access(abs, "R") then
           child = builders.folder(node, abs, name, stat)
-        elseif t == "file" then
+        elseif type == "file" then
           child = builders.file(node, abs, name, stat)
-        elseif t == "link" then
+        elseif type == "link" then
           local link = builders.link(node, abs, name, stat)
           if link.link_to ~= nil then
             child = link
