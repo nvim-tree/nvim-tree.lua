@@ -39,8 +39,7 @@ end
 local function expand_until_max_or_empty(expansion_count, node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
-  local result = not should_halt and node.nodes and not node.open and not should_exclude
-  return result
+  return not should_halt and node.nodes and not node.open and not should_exclude
 end
 
 local function gen_iterator(should_expand_fn)
@@ -74,8 +73,9 @@ local function gen_iterator(should_expand_fn)
 end
 
 ---@param base_node table
-function M.fn(base_node, expand_until)
-  expand_until = expand_until or expand_until_max_or_empty
+---@param expand_opts ApiTreeExpandAllOpts|nil
+function M.fn(base_node, expand_opts)
+  local expand_until = (expand_opts and expand_opts.expand_until) or expand_until_max_or_empty
   local node = base_node.nodes and base_node or core.get_explorer()
   if gen_iterator(expand_until)(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
