@@ -44,19 +44,24 @@ end
 
 local function gen_iterator(should_expand)
   local expansion_count = 0
+  local function expand(node)
+    populate_node(node)
+    node = lib.get_last_group_node(node)
+    node.open = true
+  end
 
   return function(parent)
-    populate_node(parent)
-    parent.open = true
+    if parent.parent and parent.nodes and not parent.open then
+      expansion_count = expansion_count + 1
+      expand(parent)
+    end
 
-    Iterator.builder({ parent })
+    Iterator.builder(parent.nodes)
       :hidden()
       :applier(function(node)
         if should_expand(expansion_count, node, populate_node) then
           expansion_count = expansion_count + 1
-          populate_node(node)
-          node = lib.get_last_group_node(node)
-          node.open = true
+          expand(node)
         end
       end)
       :recursor(function(node)
