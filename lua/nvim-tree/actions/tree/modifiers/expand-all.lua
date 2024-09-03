@@ -3,7 +3,6 @@ local renderer = require "nvim-tree.renderer"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
 local lib = require "nvim-tree.lib"
-local git = require "nvim-tree.git"
 
 local M = {}
 
@@ -30,23 +29,19 @@ local function populate_node(node)
     if not handle then
       return
     end
-    local status = git.load_project_status(cwd)
-    core.get_explorer():expand(node, status)
+    core.get_explorer():expand(node)
   end
 end
 
 ---@param expansion_count integer
 ---@param node Node
----@param populate_node function
 ---@return boolean
--- luacheck: push ignore populate_node
-local function expand_until_max_or_empty(expansion_count, node, populate_node)
+local function expand_until_max_or_empty(expansion_count, node)
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[node.name]
   local result = not should_halt and node.nodes and not node.open and not should_exclude
   return result
 end
--- luacheck: pop
 
 local function gen_iterator(should_expand_fn)
   local expansion_count = 0
