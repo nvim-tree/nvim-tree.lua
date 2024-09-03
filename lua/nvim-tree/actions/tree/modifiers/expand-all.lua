@@ -66,7 +66,7 @@ local function gen_iterator(should_expand)
       end)
       :recursor(function(node)
         local should_recurse = should_expand(expansion_count - 1, node, populate_node)
-        return expansion_count < M.MAX_FOLDER_DISCOVERY and (should_recurse and node.open and node.nodes)
+        return expansion_count < M.MAX_FOLDER_DISCOVERY and should_recurse and node.nodes
       end)
       :iterate()
 
