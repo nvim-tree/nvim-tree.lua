@@ -43,7 +43,7 @@ local function populate_children(handle, cwd, node, git_status, parent)
       local stat = vim.loop.fs_stat(abs)
 
       -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-      local type = (vim.loop.fs_stat(abs) or {}).type
+      local type = stat and stat.type or nil
 
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
