@@ -1816,7 +1816,8 @@ tree.expand_all({opts})                      *nvim-tree-api.tree.expand_all()*
       • {opts} (table) optional parameters
 
     Options: ~
-      • {expand_until} (function) A function returning boolean that 
+      • {expand_until} (fun(expansion_count: integer, node: Node): boolean)
+        A function returning boolean that 
         specifies terminating condition for node/tree expansion. If not
         provided the function that expands recursively entire node/tree will be
         used.

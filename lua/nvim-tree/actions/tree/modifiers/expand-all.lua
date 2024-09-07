@@ -42,7 +42,8 @@ local function expand_until_max_or_empty(expansion_count, node)
   return not should_halt and node.nodes and not node.open and not should_exclude
 end
 
-local function gen_iterator(should_expand)
+---@param expand_until fun(expansion_count: integer, node: Node): boolean
+local function gen_iterator(expand_until)
   local expansion_count = 0
   local function expand(node)
     populate_node(node)
@@ -59,13 +60,13 @@ local function gen_iterator(should_expand)
     Iterator.builder(parent.nodes)
       :hidden()
       :applier(function(node)
-        if should_expand(expansion_count, node, populate_node) then
+        if expand_until(expansion_count, node, populate_node) then
           expansion_count = expansion_count + 1
           expand(node)
         end
       end)
       :recursor(function(node)
-        local should_recurse = should_expand(expansion_count - 1, node, populate_node)
+        local should_recurse = expand_until(expansion_count - 1, node, populate_node)
         return expansion_count < M.MAX_FOLDER_DISCOVERY and should_recurse and node.nodes
       end)
       :iterate()
