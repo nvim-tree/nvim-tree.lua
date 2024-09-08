@@ -2300,7 +2300,8 @@ Single left mouse mappings can be achieved via `<LeftRelease>`.
 
 Single right / middle mouse mappings will require changes to |mousemodel| or |mouse|.
 
-You may execute your own functions as well as |nvim-tree-api| functions e.g. >
+|vim.keymap.set()| {rhs} is a `(function|string)` thus it may be necessary to
+define your own function to map complex functionality e.g. >
 
   local function print_node_path()
     local api = require('nvim-tree.api')
