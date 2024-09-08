@@ -121,7 +121,7 @@ Api.tree.toggle = wrap(actions.tree.toggle.fn)
 Api.tree.close = wrap(view.close)
 Api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
 Api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
-Api.tree.reload = wrap_explorer("reload_explorer")
+Api.tree.reload = wrap_explorer "reload_explorer"
 
 ---@class ApiTreeResizeOpts
 ---@field width string|function|number|table|nil
@@ -256,7 +256,7 @@ Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn {
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn { where = "next", what = "opened" })
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn { where = "prev", what = "opened" })
 
-Api.git.reload = wrap_explorer("reload_git")
+Api.git.reload = wrap_explorer "reload_git"
 
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
