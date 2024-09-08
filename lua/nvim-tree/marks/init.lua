@@ -261,7 +261,7 @@ function Marks:navigate_select()
     if not choice or choice == "" then
       return
     end
-    local node = self:get { absolute_path = choice }
+    local node = self.marks[choice]
     if node and not node.nodes and not utils.get_win_buf_from_path(node.absolute_path) then
       open_file.fn("edit", node.absolute_path)
     elseif node then
