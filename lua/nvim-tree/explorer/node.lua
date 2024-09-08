@@ -36,7 +36,7 @@ end
 ---@param node Node
 ---@return boolean
 function M.has_one_child_folder(node)
-  return #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R") or false
+  return node.nodes ~= nil and #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R") or false
 end
 
 ---@param node Node

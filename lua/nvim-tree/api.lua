@@ -144,7 +144,12 @@ Api.tree.get_nodes = wrap(lib.get_nodes)
 Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
+
+---@class ApiTreeExpandAllOpts
+---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
+
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
+
 Api.tree.toggle_enable_filters = wrap(actions.tree.modifiers.toggles.enable)
 Api.tree.toggle_gitignore_filter = wrap(actions.tree.modifiers.toggles.git_ignored)
 Api.tree.toggle_git_clean_filter = wrap(actions.tree.modifiers.toggles.git_clean)

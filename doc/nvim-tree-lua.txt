@@ -1808,10 +1808,35 @@ tree.collapse_all({keep_buffers})          *nvim-tree-api.tree.collapse_all()*
     Parameters: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
-tree.expand_all()                            *nvim-tree-api.tree.expand_all()*
+tree.expand_all({opts})                      *nvim-tree-api.tree.expand_all()*
     Recursively expand all nodes in the tree.
     Folder: only the nodes underneath that folder.
 
+    Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {expand_until} (fun(expansion_count: integer, node: Node): boolean)
+
+            A function returning boolean that specifies terminating condition
+            for node/tree expansion. If not provided the function that expands
+            recursively entire node/tree will be used.
+
+        Example: >
+          -- expand only 5 levels deep
+          local function my_expand_until(expansion_count, node)
+            print("my_expand_until " .. expansion_count .. " " .. tostring(node and node.absolute_path))
+            local should_halt = expansion_count >= 5
+            return not should_halt
+          end
+  
+          local function my_expand_all()
+            api.tree.expand_all(nil, { expand_until = my_expand_until })
+          end
+  
+          -- on_attach
+          vim.keymap.set("n", "Z", my_expand_all, opts("My Expand All"))
+<
                                   *nvim-tree-api.tree.toggle_enable_filters()*
 tree.toggle_enable_filters()
     Toggle |nvim-tree.filters.enable| all filters.
