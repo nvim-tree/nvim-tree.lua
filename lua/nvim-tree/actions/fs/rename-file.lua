@@ -1,3 +1,4 @@
+local core = require "nvim-tree.core"
 local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
@@ -155,7 +156,10 @@ function M.fn(default_modifier)
 
       M.rename(node, prepend .. new_file_path .. append)
       if not M.config.filesystem_watchers.enable then
-        require("nvim-tree.actions.reloaders").reload_explorer()
+        local explorer = core.get_explorer()
+        if explorer then
+          explorer:reload_explorer()
+        end
       end
 
       find_file(utils.path_remove_trailing(new_file_path))

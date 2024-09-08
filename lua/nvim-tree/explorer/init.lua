@@ -2,10 +2,13 @@ local builders = require "nvim-tree.explorer.node-builders"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 local notify = require "nvim-tree.notify"
+local renderer = {} -- circular dependency, will become a member
 local utils = require "nvim-tree.utils"
+local view = require "nvim-tree.view"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 
+local Iterator = require "nvim-tree.iterators.node-iterator"
 local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
@@ -425,10 +428,55 @@ function Explorer:explore(node, status, parent)
   return node.nodes
 end
 
+---@private
+---@param projects table
+function Explorer:refresh_nodes(projects)
+  Iterator.builder({ self })
+    :applier(function(n)
+      if n.nodes then
+        local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
+        self:reload(n, projects[toplevel] or {})
+      end
+    end)
+    :recursor(function(n)
+      return n.group_next and { n.group_next } or (n.open and n.nodes)
+    end)
+    :iterate()
+end
+
+local event_running = false
+function Explorer:reload_explorer()
+  if event_running or vim.v.exiting ~= vim.NIL then
+    return
+  end
+  event_running = true
+
+  local projects = git.reload()
+  self:refresh_nodes(projects)
+  if view.is_visible() then
+    renderer.draw()
+  end
+  event_running = false
+end
+
+function Explorer:reload_git()
+  if not git.config.git.enable or event_running then
+    return
+  end
+  event_running = true
+
+  local projects = git.reload()
+  explorer_node.reload_node_status(self, projects)
+  renderer.draw()
+  event_running = false
+end
+
 function Explorer.setup(opts)
   config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
+
+  renderer = require "nvim-tree.renderer"
 
   Marks = require "nvim-tree.marks"
   Clipboard = require "nvim-tree.actions.fs.clipboard"

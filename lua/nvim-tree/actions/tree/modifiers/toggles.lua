@@ -1,12 +1,12 @@
 local lib = require "nvim-tree.lib"
 local utils = require "nvim-tree.utils"
-local reloaders = require "nvim-tree.actions.reloaders"
 local core = require "nvim-tree.core"
 local M = {}
 
-local function reload()
+---@param explorer Explorer
+local function reload(explorer)
   local node = lib.get_node_at_cursor()
-  reloaders.reload_explorer()
+  explorer:reload_explorer()
   utils.focus_node_or_parent(node)
 end
 
@@ -19,39 +19,46 @@ local function wrap_explorer(fn)
   end
 end
 
+---@param explorer Explorer
 local function custom(explorer)
   explorer.filters.config.filter_custom = not explorer.filters.config.filter_custom
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function git_ignored(explorer)
   explorer.filters.config.filter_git_ignored = not explorer.filters.config.filter_git_ignored
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function git_clean(explorer)
   explorer.filters.config.filter_git_clean = not explorer.filters.config.filter_git_clean
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function no_buffer(explorer)
   explorer.filters.config.filter_no_buffer = not explorer.filters.config.filter_no_buffer
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function no_bookmark(explorer)
   explorer.filters.config.filter_no_bookmark = not explorer.filters.config.filter_no_bookmark
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function dotfiles(explorer)
   explorer.filters.config.filter_dotfiles = not explorer.filters.config.filter_dotfiles
-  reload()
+  reload(explorer)
 end
 
+---@param explorer Explorer
 local function enable(explorer)
   explorer.filters.config.enable = not explorer.filters.config.enable
-  reload()
+  reload(explorer)
 end
 
 M.custom = wrap_explorer(custom)
