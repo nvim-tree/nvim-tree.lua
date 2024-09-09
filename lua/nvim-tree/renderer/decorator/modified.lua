@@ -5,14 +5,16 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 local Decorator = require "nvim-tree.renderer.decorator"
 
----@class DecoratorModified: Decorator
+---@class (exact) DecoratorModified: Decorator
 ---@field icon HighlightedString|nil
 local DecoratorModified = Decorator:new()
 
 ---@param opts table
+---@param explorer Explorer
 ---@return DecoratorModified
-function DecoratorModified:new(opts)
+function DecoratorModified:new(opts, explorer)
   local o = Decorator.new(self, {
+    explorer = explorer,
     enabled = opts.modified.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_modified] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.modified_placement] or ICON_PLACEMENT.none,

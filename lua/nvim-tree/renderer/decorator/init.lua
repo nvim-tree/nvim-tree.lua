@@ -1,7 +1,8 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
----@class Decorator
+---@class (exact) Decorator
+---@field protected explorer Explorer
 ---@field protected enabled boolean
 ---@field protected hl_pos HL_POSITION
 ---@field protected icon_placement ICON_PLACEMENT
@@ -11,8 +12,8 @@ local Decorator = {}
 ---@return Decorator
 function Decorator:new(o)
   o = o or {}
-  setmetatable(o, self)
-  self.__index = self
+
+  setmetatable(o, { __index = self })
 
   return o
 end
