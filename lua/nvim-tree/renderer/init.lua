@@ -12,7 +12,7 @@ local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlight
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
 
----@class Renderer
+---@class (exact) Renderer
 ---@field private opts table user options
 ---@field private explorer Explorer
 ---@field private builder Builder
@@ -118,13 +118,6 @@ function Renderer:draw()
   log.profile_end(profile)
 
   events._dispatch_on_tree_rendered(bufnr, view.get_winnr())
-end
-
-function Renderer.setup(opts)
-  icon_component.setup(opts)
-
-  require "nvim-tree.renderer.components.padding".setup(opts)
-  require "nvim-tree.renderer.components.full-name".setup(opts)
 end
 
 return Renderer
