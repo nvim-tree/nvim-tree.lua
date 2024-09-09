@@ -16,6 +16,20 @@ local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlight
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
 
+local function render_hl(bufnr, hl)
+  if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
+    return
+  end
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
+  for _, data in ipairs(hl) do
+    if type(data[1]) == "table" then
+      for _, group in ipairs(data[1]) do
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
+      end
+    end
+  end
+end
+
 ---@param bufnr number
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
@@ -28,7 +42,7 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   end
 
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-  M.render_hl(bufnr, hl_args)
+  render_hl(bufnr, hl_args)
 
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
@@ -59,20 +73,6 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
       virt_lines_above = false,
       virt_lines_leftcol = true,
     })
-  end
-end
-
-function M.render_hl(bufnr, hl)
-  if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
-    return
-  end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
-  for _, data in ipairs(hl) do
-    if type(data[1]) == "table" then
-      for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
-      end
-    end
   end
 end
 
