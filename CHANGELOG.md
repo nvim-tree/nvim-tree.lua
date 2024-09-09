@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.6.0...nvim-tree-v1.6.1) (2024-09-09)
+
+
+### Bug Fixes
+
+* **#2794:** sshfs compatibility ([#2893](https://github.com/nvim-tree/nvim-tree.lua/issues/2893)) ([2d6e64d](https://github.com/nvim-tree/nvim-tree.lua/commit/2d6e64dd8c45a86f312552b7a47eef2c8623a25c))
+* **#2868:** windows: do not visit unenumerable directories such as Application Data ([#2874](https://github.com/nvim-tree/nvim-tree.lua/issues/2874)) ([2104786](https://github.com/nvim-tree/nvim-tree.lua/commit/210478677cb9d672c4265deb0e9b59d58b675bd4))
+* **#2878:** nowrapscan prevents move from root ([#2880](https://github.com/nvim-tree/nvim-tree.lua/issues/2880)) ([4234095](https://github.com/nvim-tree/nvim-tree.lua/commit/42340952af598a08ab80579d067b6da72a9e6d29))
+* **#2879:** remove unnecessary tree window width setting to prevent unnecessary :wincmd = ([#2881](https://github.com/nvim-tree/nvim-tree.lua/issues/2881)) ([d43ab67](https://github.com/nvim-tree/nvim-tree.lua/commit/d43ab67d0eb4317961c5e9d15fffe908519debe0))
+
 ## [1.6.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.5.0...nvim-tree-v1.6.0) (2024-08-10)
 
 
