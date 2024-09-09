@@ -1,7 +1,6 @@
 local lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
 local appearance = require "nvim-tree.appearance"
-local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local commands = require "nvim-tree.commands"
 local utils = require "nvim-tree.utils"
@@ -97,7 +96,11 @@ function M.tab_enter()
       end
     end
     view.open { focus_tree = false }
-    renderer.draw()
+
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
   end
 end
 
@@ -179,7 +182,11 @@ local function setup_autocommands(opts)
     callback = function()
       appearance.setup()
       view.reset_winhl()
-      renderer.draw()
+
+      local explorer = core.get_explorer()
+      if explorer then
+        explorer.renderer:draw()
+      end
     end,
   })
 
@@ -217,7 +224,7 @@ local function setup_autocommands(opts)
         return
       end
       if
-        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+        (explorer.filters.config.filter_no_buffer or explorer.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           explorer:reload_explorer()
@@ -234,7 +241,7 @@ local function setup_autocommands(opts)
         return
       end
       if
-        (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
+        (explorer.filters.config.filter_no_buffer or explorer.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
           explorer:reload_explorer()

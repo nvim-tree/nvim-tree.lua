@@ -91,7 +91,10 @@ M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
   if should_open_view then
     require("nvim-tree.lib").open()
   else
-    require("nvim-tree.renderer").draw()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
   end
 end)
 

@@ -23,10 +23,6 @@ function LiveFilter:new(opts, explorer)
   return o
 end
 
-local function redraw()
-  require("nvim-tree.renderer").draw()
-end
-
 ---@param node_ Node|nil
 local function reset_filter(self, node_)
   node_ = node_ or self.explorer
@@ -129,7 +125,7 @@ local function record_char(self)
   vim.schedule(function()
     self.filter = vim.api.nvim_buf_get_lines(overlay_bufnr, 0, -1, false)[1]
     self:apply_filter()
-    redraw()
+    self.explorer.renderer:draw()
   end)
 end
 
@@ -199,7 +195,7 @@ function LiveFilter:start_filtering()
   view.View.live_filter.prev_focused_node = require("nvim-tree.lib").get_node_at_cursor()
   self.filter = self.filter or ""
 
-  redraw()
+  self.explorer.renderer:draw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
   view.set_cursor { row, col }
@@ -215,7 +211,7 @@ function LiveFilter:clear_filter()
 
   self.filter = nil
   reset_filter(self)
-  redraw()
+  self.explorer.renderer:draw()
 
   if node then
     utils.focus_file(node.absolute_path)

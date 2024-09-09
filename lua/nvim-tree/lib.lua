@@ -1,4 +1,3 @@
-local renderer = require "nvim-tree.renderer"
 local view = require "nvim-tree.view"
 local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
@@ -150,13 +149,15 @@ end
 
 ---@param node Node
 function M.expand_or_collapse(node, toggle_group)
+  local explorer = core.get_explorer()
+
   toggle_group = toggle_group or false
   if node.has_children then
     node.has_children = false
   end
 
-  if #node.nodes == 0 then
-    core.get_explorer():expand(node)
+  if #node.nodes == 0 and explorer then
+    explorer:expand(node)
   end
 
   local head_node = utils.get_parent_of_group(node)
@@ -175,7 +176,9 @@ function M.expand_or_collapse(node, toggle_group)
     n.open = next_open
   end
 
-  renderer.draw()
+  if explorer then
+    explorer.renderer:draw()
+  end
 end
 
 function M.set_target_win()
@@ -200,7 +203,11 @@ local function open_view_and_draw()
   local cwd = vim.fn.getcwd()
   view.open()
   handle_buf_cwd(cwd)
-  renderer.draw()
+
+  local explorer = core.get_explorer()
+  if explorer then
+    explorer.renderer:draw()
+  end
 end
 
 local function should_hijack_current_buf()
@@ -256,6 +263,8 @@ end
 function M.open(opts)
   opts = opts or {}
 
+  local explorer = core.get_explorer()
+
   M.set_target_win()
   if not core.get_explorer() or opts.path then
     if opts.path then
@@ -272,13 +281,19 @@ function M.open(opts)
   if should_hijack_current_buf() then
     view.close_this_tab_only()
     view.open_in_win()
-    renderer.draw()
+    if explorer then
+      explorer.renderer:draw()
+    end
   elseif opts.winid then
     view.open_in_win { hijack_current_buf = false, resize = false, winid = opts.winid }
-    renderer.draw()
+    if explorer then
+      explorer.renderer:draw()
+    end
   elseif opts.current_window then
     view.open_in_win { hijack_current_buf = false, resize = false }
-    renderer.draw()
+    if explorer then
+      explorer.renderer:draw()
+    end
   else
     open_view_and_draw()
   end

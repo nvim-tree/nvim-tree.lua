@@ -216,7 +216,10 @@ local function reload_tree_at(toplevel)
       end)
       :iterate()
 
-    require("nvim-tree.renderer").draw()
+    local explorer = require("nvim-tree.core").get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
   end)
 end
 

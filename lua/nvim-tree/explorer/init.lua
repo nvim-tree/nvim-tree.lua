@@ -13,19 +13,26 @@ local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
 local Filters = require "nvim-tree.explorer.filters"
-local Marks = {} -- circular dependencies
+---@type Marks
+local Marks -- circular dependencies
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
-local Clipboard = {} -- circular dependencies
+---@type Clipboard
+local Clipboard -- circular dependencies
+---@type Renderer
+local Renderer -- circular dependencies
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local config
 
 ---@class Explorer
+---@field opts table user options
 ---@field absolute_path string
 ---@field nodes Node[]
 ---@field open boolean
+---@field watcher Watcher|nil
+---@field renderer Renderer
 ---@field filters Filters
 ---@field live_filter LiveFilter
 ---@field sorters Sorter
@@ -48,17 +55,18 @@ function Explorer:new(path)
     return
   end
 
-  ---@class Explorer
+  ---@type Explorer
   local o = setmetatable({
+    opts = config,
     absolute_path = path,
     nodes = {},
     open = true,
     sorters = Sorters:new(config),
   }, Explorer)
-  setmetatable(o, self)
-  self.__index = self
+  setmetatable(o, { __index = self })
 
   o.watcher = watch.create_watcher(o)
+  o.renderer = Renderer:new(o.opts, o)
   o.filters = Filters:new(config, o)
   o.live_filter = LiveFilter:new(config, o)
   o.marks = Marks:new(config, o)

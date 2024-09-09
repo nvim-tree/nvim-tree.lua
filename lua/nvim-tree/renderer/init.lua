@@ -1,4 +1,3 @@
-local core = require "nvim-tree.core"
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local events = require "nvim-tree.events"
@@ -8,13 +7,33 @@ local icon_component = require "nvim-tree.renderer.components.icons"
 local full_name = require "nvim-tree.renderer.components.full-name"
 local Builder = require "nvim-tree.renderer.builder"
 
-local M = {}
-
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
 local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
 local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
+
+---@class Renderer
+---@field private opts table user options
+---@field private explorer Explorer
+---@field private builder Builder
+local Renderer = {}
+
+---@param opts table user options
+---@param explorer Explorer
+---@return Renderer
+function Renderer:new(opts, explorer)
+  ---@type Renderer
+  local o = {
+    opts = opts,
+    explorer = explorer,
+    builder = Builder:new(opts, explorer),
+  }
+
+  setmetatable(o, { __index = self })
+
+  return o
+end
 
 local function render_hl(bufnr, hl)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -76,11 +95,9 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   end
 end
 
-function M.draw()
-  local explorer = core.get_explorer()
-
+function Renderer:draw()
   local bufnr = view.get_bufnr()
-  if not explorer or not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
+  if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
 
@@ -89,7 +106,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
   icon_component.reset_config()
 
-  local builder = Builder:new(M.opts, explorer):build()
+  local builder = Builder:new(self.opts, self.explorer):build()
 
   _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
@@ -104,12 +121,10 @@ function M.draw()
   events._dispatch_on_tree_rendered(bufnr, view.get_winnr())
 end
 
-function M.setup(opts)
-  M.opts = opts
-
+function Renderer.setup(opts)
   _padding.setup(opts)
   full_name.setup(opts)
   icon_component.setup(opts)
 end
 
-return M
+return Renderer

@@ -1,4 +1,3 @@
-local renderer = require "nvim-tree.renderer"
 local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local lib = require "nvim-tree.lib"
@@ -46,7 +45,7 @@ function M.fn(keep_buffers)
     end)
     :iterate()
 
-  renderer.draw()
+  explorer.renderer:draw()
   utils.focus_node_or_parent(node)
 end
 
