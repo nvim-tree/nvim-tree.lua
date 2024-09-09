@@ -2,9 +2,8 @@ local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local events = require "nvim-tree.events"
 
-local _padding = require "nvim-tree.renderer.components.padding"
 local icon_component = require "nvim-tree.renderer.components.icons"
-local full_name = require "nvim-tree.renderer.components.full-name"
+
 local Builder = require "nvim-tree.renderer.builder"
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -122,9 +121,10 @@ function Renderer:draw()
 end
 
 function Renderer.setup(opts)
-  _padding.setup(opts)
-  full_name.setup(opts)
   icon_component.setup(opts)
+
+  require "nvim-tree.renderer.components.padding".setup(opts)
+  require "nvim-tree.renderer.components.full-name".setup(opts)
 end
 
 return Renderer

@@ -13,14 +13,11 @@ local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
 local Filters = require "nvim-tree.explorer.filters"
----@type Marks
-local Marks -- circular dependencies
+local Marks = require "nvim-tree.marks"
 local LiveFilter = require "nvim-tree.explorer.live-filter"
 local Sorters = require "nvim-tree.explorer.sorters"
----@type Clipboard
-local Clipboard -- circular dependencies
----@type Renderer
-local Renderer -- circular dependencies
+local Clipboard = require "nvim-tree.actions.fs.clipboard"
+local Renderer = require "nvim-tree.renderer"
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
