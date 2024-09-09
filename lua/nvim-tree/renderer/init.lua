@@ -77,8 +77,10 @@ function M.render_hl(bufnr, hl)
 end
 
 function M.draw()
+  local explorer = core.get_explorer()
+
   local bufnr = view.get_bufnr()
-  if not core.get_explorer() or not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
+  if not explorer or not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
 
@@ -87,7 +89,7 @@ function M.draw()
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
   icon_component.reset_config()
 
-  local builder = Builder:new():build()
+  local builder = Builder:new(M.opts, explorer):build()
 
   _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
@@ -103,13 +105,11 @@ function M.draw()
 end
 
 function M.setup(opts)
-  M.config = opts.renderer
+  M.opts = opts
 
   _padding.setup(opts)
   full_name.setup(opts)
   icon_component.setup(opts)
-
-  Builder.setup(opts)
 end
 
 return M
