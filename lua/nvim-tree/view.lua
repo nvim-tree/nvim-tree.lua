@@ -226,8 +226,8 @@ local function close(tabpage)
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
-      if vim.api.nvim_win_is_valid(tree_win or 0) then
-        vim.api.nvim_win_close(tree_win or 0, true)
+      if tree_win and vim.api.nvim_win_is_valid(tree_win) then
+        vim.api.nvim_win_close(tree_win, true)
       end
       events._dispatch_on_tree_close()
       return
