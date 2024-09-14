@@ -34,25 +34,12 @@ function Renderer:new(opts, explorer)
   return o
 end
 
-local function render_hl(bufnr, hl)
-  if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
-    return
-  end
-  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
-  for _, data in ipairs(hl) do
-    if type(data[1]) == "table" then
-      for _, group in ipairs(data[1]) do
-        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
-      end
-    end
-  end
-end
-
+---@private
 ---@param bufnr number
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
-local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
+function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
@@ -60,7 +47,7 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   end
 
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-  render_hl(bufnr, hl_args)
+  self:render_hl(bufnr, hl_args)
 
   if vim.fn.has "nvim-0.10" == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
@@ -94,6 +81,21 @@ local function _draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   end
 end
 
+---@private
+function Renderer:render_hl(bufnr, hl)
+  if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
+    return
+  end
+  vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
+  for _, data in ipairs(hl) do
+    if type(data[1]) == "table" then
+      for _, group in ipairs(data[1]) do
+        vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, group, data[2], data[3], data[4])
+      end
+    end
+  end
+end
+
 function Renderer:draw()
   local bufnr = view.get_bufnr()
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -107,7 +109,7 @@ function Renderer:draw()
 
   local builder = Builder:new(self.opts, self.explorer):build()
 
-  _draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
+  self:_draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
