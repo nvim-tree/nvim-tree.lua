@@ -2,7 +2,6 @@ local builders = require "nvim-tree.explorer.node-builders"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 local notify = require "nvim-tree.notify"
-local renderer = {} -- circular dependency, will become a member
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local watch = require "nvim-tree.explorer.watch"
@@ -459,7 +458,7 @@ function Explorer:reload_explorer()
   local projects = git.reload()
   self:refresh_nodes(projects)
   if view.is_visible() then
-    renderer.draw()
+    self.renderer:draw()
   end
   event_running = false
 end
@@ -472,7 +471,7 @@ function Explorer:reload_git()
 
   local projects = git.reload()
   explorer_node.reload_node_status(self, projects)
-  renderer.draw()
+  self.renderer:draw()
   event_running = false
 end
 
@@ -480,8 +479,6 @@ function Explorer.setup(opts)
   config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
-
-  renderer = require "nvim-tree.renderer"
 
   Marks = require "nvim-tree.marks"
   Clipboard = require "nvim-tree.actions.fs.clipboard"
