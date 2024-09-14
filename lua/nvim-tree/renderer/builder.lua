@@ -1,4 +1,3 @@
-local core = require "nvim-tree.core"
 local notify = require "nvim-tree.notify"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
@@ -41,7 +40,6 @@ local PICTURE_MAP = {
 ---@field extmarks table[] extra marks for right icon placement
 ---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private explorer Explorer
----@field private root_cwd string|nil absolute path
 ---@field private index number
 ---@field private depth number
 ---@field private combined_groups table<string, boolean> combined group names
@@ -58,7 +56,6 @@ function Builder:new(opts, explorer)
   local o = {
     opts = opts,
     explorer = explorer,
-    root_cwd = core.get_cwd(),
     index = 0,
     depth = 0,
     hl_args = {},
@@ -157,7 +154,7 @@ function Builder:build_folder(node)
   local foldername_hl = "NvimTreeFolderName"
   if node.link_to and self.opts.renderer.symlink_destination then
     local arrow = icons.i.symlink_arrow
-    local link_to = utils.path_relative(node.link_to, self.root_cwd)
+    local link_to = utils.path_relative(node.link_to, self.explorer.absolute_path)
     foldername = string.format("%s%s%s", foldername, arrow, link_to)
     foldername_hl = "NvimTreeSymlinkFolderName"
   elseif
@@ -182,7 +179,7 @@ function Builder:build_symlink(node)
   local arrow = icons.i.symlink_arrow
   local symlink_formatted = node.name
   if self.opts.renderer.symlink_destination then
-    local link_to = utils.path_relative(node.link_to, self.root_cwd)
+    local link_to = utils.path_relative(node.link_to, self.explorer.absolute_path)
     symlink_formatted = string.format("%s%s%s", symlink_formatted, arrow, link_to)
   end
 
@@ -406,8 +403,7 @@ end
 
 ---@private
 function Builder:get_nodes_number(nodes)
-  local explorer = core.get_explorer()
-  if not explorer or not explorer.live_filter.filter then
+  if not self.explorer.live_filter.filter then
     return #nodes
   end
 
@@ -423,7 +419,7 @@ end
 ---@private
 function Builder:build_lines(node)
   if not node then
-    node = core.get_explorer()
+    node = self.explorer
   end
   local num_children = self:get_nodes_number(node.nodes)
   local idx = 1
@@ -442,28 +438,27 @@ end
 ---@return string
 function Builder:format_root_name(root_label)
   if type(root_label) == "function" then
-    local label = root_label(self.root_cwd)
+    local label = root_label(self.explorer.absolute_path)
     if type(label) == "string" then
       return label
     end
   elseif type(root_label) == "string" then
-    return utils.path_remove_trailing(vim.fn.fnamemodify(self.root_cwd, root_label))
+    return utils.path_remove_trailing(vim.fn.fnamemodify(self.explorer.absolute_path, root_label))
   end
   return "???"
 end
 
 ---@private
 function Builder:build_header()
-  local explorer = core.get_explorer()
-  if view.is_root_folder_visible(core.get_cwd()) then
+  if view.is_root_folder_visible(self.explorer.absolute_path) then
     local root_name = self:format_root_name(self.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
     self:insert_highlight({ "NvimTreeRootFolder" }, 0, string.len(root_name))
     self.index = 1
   end
 
-  if explorer and explorer.live_filter.filter then
-    local filter_line = string.format("%s/%s/", self.opts.live_filter.prefix, explorer.live_filter.filter)
+  if self.explorer.live_filter.filter then
+    local filter_line = string.format("%s/%s/", self.opts.live_filter.prefix, self.explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
     local prefix_length = string.len(self.opts.live_filter.prefix)
     self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0, prefix_length)
