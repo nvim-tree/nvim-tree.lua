@@ -1,3 +1,4 @@
+local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local events = require "nvim-tree.events"
 local view = require "nvim-tree.view"
@@ -116,8 +117,9 @@ function M.fn(node)
 
   local function do_remove()
     M.remove(node)
-    if not M.config.filesystem_watchers.enable then
-      require("nvim-tree.actions.reloaders").reload_explorer()
+    local explorer = core.get_explorer()
+    if not M.config.filesystem_watchers.enable and explorer then
+      explorer:reload_explorer()
     end
   end
 

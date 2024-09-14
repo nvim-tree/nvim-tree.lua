@@ -38,7 +38,7 @@ end
 function Marks:clear_reload()
   self:clear()
   if not self.config.filesystem_watchers.enable then
-    require("nvim-tree.actions.reloaders").reload_explorer()
+    self.explorer:reload_explorer()
   end
 end
 

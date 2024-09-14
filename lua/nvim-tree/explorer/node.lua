@@ -1,3 +1,5 @@
+local git = {} -- circular dependencies
+
 local M = {}
 
 ---@class GitStatus
@@ -122,6 +124,23 @@ function M.get_git_status(node)
   end
 end
 
+---@param parent_node Node|nil
+---@param projects table
+function M.reload_node_status(parent_node, projects)
+  if parent_node == nil then
+    return
+  end
+
+  local toplevel = git.get_toplevel(parent_node.absolute_path)
+  local status = projects[toplevel] or {}
+  for _, node in ipairs(parent_node.nodes) do
+    M.update_git_status(node, M.is_git_ignored(parent_node), status)
+    if node.nodes and #node.nodes > 0 then
+      M.reload_node_status(node, projects)
+    end
+  end
+end
+
 ---@param node Node
 ---@return boolean
 function M.is_git_ignored(node)
@@ -157,6 +176,8 @@ function M.setup(opts)
   M.config = {
     git = opts.git,
   }
+
+  git = require "nvim-tree.git"
 end
 
 return M
