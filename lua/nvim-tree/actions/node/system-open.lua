@@ -4,7 +4,7 @@ local utils = require "nvim-tree.utils"
 local M = {}
 
 ---@param node Node
-function M.fn(node)
+local function user(node)
   if #M.config.system_open.cmd == 0 then
     require("nvim-tree.utils").notify.warn "Cannot open file with system application. Unrecognized platform."
     return
@@ -49,20 +49,43 @@ function M.fn(node)
   vim.loop.unref(process.handle)
 end
 
+---@param node Node
+local function native(node)
+  local path = node.link_to or node.absolute_path
+
+  local _, err = vim.ui.open(path)
+
+  -- err only provided on opener executable not found; path not useful in that case
+  if err then
+    notify.warn(err)
+  end
+end
+
+---@param node Node
+function M.fn(node)
+  M.open(node)
+end
+
+-- TODO always use native once 0.10 is the minimum neovim version
 function M.setup(opts)
   M.config = {}
   M.config.system_open = opts.system_open or {}
 
-  if #M.config.system_open.cmd == 0 then
-    if utils.is_windows then
-      M.config.system_open = {
-        cmd = "cmd",
-        args = { "/c", "start", '""' },
-      }
-    elseif utils.is_macos then
-      M.config.system_open.cmd = "open"
-    elseif utils.is_unix then
-      M.config.system_open.cmd = "xdg-open"
+  if vim.fn.has "nvim-0.10" == 1 and #M.config.system_open.cmd == 0 then
+    M.open = native
+  else
+    M.open = user
+    if #M.config.system_open.cmd == 0 then
+      if utils.is_windows then
+        M.config.system_open = {
+          cmd = "cmd",
+          args = { "/c", "start", '""' },
+        }
+      elseif utils.is_macos then
+        M.config.system_open.cmd = "open"
+      elseif utils.is_unix then
+        M.config.system_open.cmd = "xdg-open"
+      end
     end
   end
 end
