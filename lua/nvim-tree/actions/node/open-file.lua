@@ -395,7 +395,7 @@ function M.fn(mode, filename)
 
   local buf_loaded = is_already_loaded(fname)
 
-  local found_win = utils.get_win_buf_from_path(fname)
+  local found_win = utils.get_win_buf_from_path(filename)
   if found_win and (mode == "preview" or mode == "preview_no_picker") then
     return
   end
