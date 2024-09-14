@@ -1,4 +1,5 @@
 local keymap = require "nvim-tree.keymap"
+local api = {} -- circular dependency
 
 local PAT_MOUSE = "^<.*Mouse"
 local PAT_CTRL = "^<C%-"
@@ -206,10 +207,19 @@ local function open()
     open()
   end
 
+  -- hardcoded
   local keymaps = {
     q = { fn = close, desc = "nvim-tree: exit help" },
+    ["<Esc>"] = { fn = close, desc = "nvim-tree: exit help" }, -- hidden
     s = { fn = toggle_sort, desc = "nvim-tree: toggle sorting method" },
   }
+
+  -- api help binding closes
+  for _, map in ipairs(keymap.get_keymap()) do
+    if map.callback == api.tree.toggle_help then
+      keymaps[map.lhs] = { fn = close, desc = "nvim-tree: exit help" }
+    end
+  end
 
   for k, v in pairs(keymaps) do
     vim.keymap.set("n", k, v.fn, {
@@ -240,6 +250,8 @@ end
 function M.setup(opts)
   M.config.cursorline = opts.view.cursorline
   M.config.sort_by = opts.help.sort_by
+
+  api = require "nvim-tree.api"
 end
 
 return M
