@@ -51,11 +51,9 @@ end
 
 ---@param node Node
 local function native(node)
-  local path = node.link_to or node.absolute_path
+  local _, err = vim.ui.open(node.link_to or node.absolute_path)
 
-  local _, err = vim.ui.open(path)
-
-  -- err only provided on opener executable not found; path not useful in that case
+  -- err only provided on opener executable not found hence logging path is not useful
   if err then
     notify.warn(err)
   end
