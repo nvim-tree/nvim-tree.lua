@@ -80,18 +80,19 @@ local function sort_lhs(a, b)
 end
 
 --- Compute all lines for the buffer
+---@param map table keymap.get_keymap
 ---@return table strings of text
 ---@return table arrays of arguments 3-6 for nvim_buf_add_highlight()
 ---@return number maximum length of text
-local function compute()
+local function compute(map)
   local head_lhs = "nvim-tree mappings"
   local head_rhs1 = "exit: q"
   local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
 
   -- formatted lhs and desc from active keymap
-  local mappings = vim.tbl_map(function(map)
-    return { lhs = tidy_lhs(map.lhs), desc = tidy_desc(map.desc) }
-  end, keymap.get_keymap())
+  local mappings = vim.tbl_map(function(m)
+    return { lhs = tidy_lhs(m.lhs), desc = tidy_desc(m.desc) }
+  end, map)
 
   -- sorter function for mappings
   local sort_fn
@@ -166,8 +167,11 @@ local function open()
   -- close existing, shouldn't be necessary
   close()
 
+  -- fetch all mappings
+  local map = keymap.get_keymap()
+
   -- text and highlight
-  local lines, hl, width = compute()
+  local lines, hl, width = compute(map)
 
   -- create the buffer
   M.bufnr = vim.api.nvim_create_buf(false, true)
@@ -208,20 +212,20 @@ local function open()
   end
 
   -- hardcoded
-  local keymaps = {
+  local help_keymaps = {
     q = { fn = close, desc = "nvim-tree: exit help" },
     ["<Esc>"] = { fn = close, desc = "nvim-tree: exit help" }, -- hidden
     s = { fn = toggle_sort, desc = "nvim-tree: toggle sorting method" },
   }
 
   -- api help binding closes
-  for _, map in ipairs(keymap.get_keymap()) do
-    if map.callback == api.tree.toggle_help then
-      keymaps[map.lhs] = { fn = close, desc = "nvim-tree: exit help" }
+  for _, m in ipairs(map) do
+    if m.callback == api.tree.toggle_help then
+      help_keymaps[m.lhs] = { fn = close, desc = "nvim-tree: exit help" }
     end
   end
 
-  for k, v in pairs(keymaps) do
+  for k, v in pairs(help_keymaps) do
     vim.keymap.set("n", k, v.fn, {
       desc = v.desc,
       buffer = M.bufnr,
