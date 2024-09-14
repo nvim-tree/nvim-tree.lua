@@ -50,47 +50,6 @@ local PICTURE_MAP = {
 ---@field private hidden_display fun(node: Node): string|nil
 local Builder = {}
 
----@param opts table
----@return fun(node: Node): string|nil
-local setup_hidden_display_function = function(opts)
-  local hidden_display = opts.renderer.hidden_display
-  -- options are already validated, so ´hidden_display´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
-  if type(hidden_display) == "string" then
-    if hidden_display == "none" then
-      return function()
-        return nil
-      end
-    elseif hidden_display == "simple" then
-      return function(hidden_stats)
-        return utils.default_format_hidden_count(hidden_stats, true)
-      end
-    else -- "all"
-      return function(hidden_stats)
-        return utils.default_format_hidden_count(hidden_stats, false)
-      end
-    end
-  else -- "function
-    return function(hidden_stats)
-      -- In case of missing field such as live_filter we zero it, otherwise keep field as is
-      hidden_stats = vim.tbl_deep_extend("force", {
-        live_filter = 0,
-        git = 0,
-        buf = 0,
-        dotfile = 0,
-        custom = 0,
-        bookmark = 0,
-      }, hidden_stats or {})
-
-      local ok, result = pcall(hidden_display, hidden_stats)
-      if not ok then
-        notify.warn "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
-        return nil
-      end
-      return result
-    end
-  end
-end
-
 ---@param opts table user options
 ---@param explorer Explorer
 ---@return Builder
@@ -120,7 +79,7 @@ function Builder:new(opts, explorer)
       DecoratorOpened:new(opts, explorer),
       DecoratorGit:new(opts, explorer),
     },
-    hidden_display = setup_hidden_display_function(opts),
+    hidden_display = Builder:setup_hidden_display_function(opts),
   }
 
   setmetatable(o, { __index = self })
@@ -529,6 +488,48 @@ function Builder:build()
   self:build_lines()
   self:sanitize_lines()
   return self
+end
+
+---TODO refactor back to function; this was left here to reduce PR noise
+---@param opts table
+---@return fun(node: Node): string|nil
+function Builder:setup_hidden_display_function(opts)
+  local hidden_display = opts.renderer.hidden_display
+  -- options are already validated, so ´hidden_display´ can ONLY be `string` or `function` if type(hidden_display) == "string" then
+  if type(hidden_display) == "string" then
+    if hidden_display == "none" then
+      return function()
+        return nil
+      end
+    elseif hidden_display == "simple" then
+      return function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, true)
+      end
+    else -- "all"
+      return function(hidden_stats)
+        return utils.default_format_hidden_count(hidden_stats, false)
+      end
+    end
+  else -- "function
+    return function(hidden_stats)
+      -- In case of missing field such as live_filter we zero it, otherwise keep field as is
+      hidden_stats = vim.tbl_deep_extend("force", {
+        live_filter = 0,
+        git = 0,
+        buf = 0,
+        dotfile = 0,
+        custom = 0,
+        bookmark = 0,
+      }, hidden_stats or {})
+
+      local ok, result = pcall(hidden_display, hidden_stats)
+      if not ok then
+        notify.warn "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
+        return nil
+      end
+      return result
+    end
+  end
 end
 
 return Builder
