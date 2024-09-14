@@ -72,6 +72,19 @@ local function wrap_node_or_nil(fn)
   end
 end
 
+---Invoke a method on the singleton explorer.
+---Print error when setup not called.
+---@param explorer_method string explorer method name
+---@return fun(...) : any
+local function wrap_explorer(explorer_method)
+  return wrap(function(...)
+    local explorer = core.get_explorer()
+    if explorer then
+      return explorer[explorer_method](explorer, ...)
+    end
+  end)
+end
+
 ---Invoke a member's method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
@@ -108,7 +121,7 @@ Api.tree.toggle = wrap(actions.tree.toggle.fn)
 Api.tree.close = wrap(view.close)
 Api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
 Api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
-Api.tree.reload = wrap(actions.reloaders.reload_explorer)
+Api.tree.reload = wrap_explorer "reload_explorer"
 
 ---@class ApiTreeResizeOpts
 ---@field width string|function|number|table|nil
@@ -243,7 +256,7 @@ Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn {
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn { where = "next", what = "opened" })
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn { where = "prev", what = "opened" })
 
-Api.git.reload = wrap(actions.reloaders.reload_git)
+Api.git.reload = wrap_explorer "reload_git"
 
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event

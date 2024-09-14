@@ -4,7 +4,6 @@ M.finders = require "nvim-tree.actions.finders"
 M.fs = require "nvim-tree.actions.fs"
 M.moves = require "nvim-tree.actions.moves"
 M.node = require "nvim-tree.actions.node"
-M.reloaders = require "nvim-tree.actions.reloaders"
 M.root = require "nvim-tree.actions.root"
 M.tree = require "nvim-tree.actions.tree"
 
