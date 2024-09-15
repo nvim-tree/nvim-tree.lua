@@ -62,7 +62,7 @@ function Explorer:new(path)
   setmetatable(o, { __index = self })
 
   o.watcher = watch.create_watcher(o)
-  o.renderer = Renderer:new(o.opts, o)
+  o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
   o.live_filter = LiveFilter:new(config, o)
   o.marks = Marks:new(config, o)
