@@ -479,9 +479,6 @@ function Explorer.setup(opts)
   config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
-
-  Marks = require "nvim-tree.marks"
-  Clipboard = require "nvim-tree.actions.fs.clipboard"
 end
 
 return Explorer
