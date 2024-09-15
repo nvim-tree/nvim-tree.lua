@@ -1198,11 +1198,18 @@ Takes the `BufEnter` event as an argument. see |autocmd-events|
 
 Open a file or directory in your preferred application.
 
+|vim.ui.open| was introduced in neovim 0.10 and is the default.
+
+Once nvim-tree minimum neovim version is updated to 0.10, these options will
+no longer be necessary and will be removed.
+
 *nvim-tree.system_open.cmd*
 The open command itself.
   Type: `string`, Default: `""`
 
-Leave empty for OS specific default:
+neovim >= 0.10 defaults to |vim.ui.open|
+
+neovim <  0.10 defaults to:
   UNIX:    `"xdg-open"`
   macOS:   `"open"`
   Windows: `"cmd"`
@@ -1569,7 +1576,7 @@ Specify minimum notification level, uses the values from |vim.log.levels|
 `ERROR`:   hard errors e.g. failure to read from the file system.
 `WARNING`: non-fatal errors e.g. unable to system open a file.
 `INFO:`    information only e.g. file copy path confirmation.
-`DEBUG:`   not used.
+`DEBUG:`   information for troubleshooting, e.g. failures in some window closing operations.
 
 *nvim-tree.notify.absolute_path* 
 Whether to use absolute paths or item names in fs action notifications. 

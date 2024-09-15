@@ -2,10 +2,13 @@ local builders = require "nvim-tree.explorer.node-builders"
 local git = require "nvim-tree.git"
 local log = require "nvim-tree.log"
 local notify = require "nvim-tree.notify"
+local renderer = {} -- circular dependency, will become a member
 local utils = require "nvim-tree.utils"
+local view = require "nvim-tree.view"
 local watch = require "nvim-tree.explorer.watch"
 local explorer_node = require "nvim-tree.explorer.node"
 
+local Iterator = require "nvim-tree.iterators.node-iterator"
 local NodeIterator = require "nvim-tree.iterators.node-iterator"
 local Watcher = require "nvim-tree.watcher"
 
@@ -29,8 +32,6 @@ local config
 ---@field marks Marks
 ---@field clipboard Clipboard
 local Explorer = {}
-
-Explorer.explore = require("nvim-tree.explorer.explore").explore
 
 ---@param path string|nil
 ---@return Explorer|nil
@@ -264,17 +265,7 @@ end
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
   local git_status = git.load_project_status(cwd)
-  Explorer.explore(node, git_status, self)
-end
-
-function Explorer.setup(opts)
-  config = opts
-  require("nvim-tree.explorer.node").setup(opts)
-  require("nvim-tree.explorer.explore").setup(opts)
-  require("nvim-tree.explorer.watch").setup(opts)
-
-  Marks = require "nvim-tree.marks"
-  Clipboard = require "nvim-tree.actions.fs.clipboard"
+  self:explore(node, git_status, self)
 end
 
 ---@private
@@ -335,6 +326,160 @@ function Explorer:update_parent_statuses(node, project, root)
     -- maybe parent
     node = node.parent
   end
+end
+
+---@private
+---@param handle uv.uv_fs_t
+---@param cwd string
+---@param node Node
+---@param git_status table
+---@param parent Explorer
+function Explorer:populate_children(handle, cwd, node, git_status, parent)
+  local node_ignored = explorer_node.is_git_ignored(node)
+  local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
+
+  local filter_status = parent.filters:prepare(git_status)
+
+  node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
+    git = 0,
+    buf = 0,
+    dotfile = 0,
+    custom = 0,
+    bookmark = 0,
+  })
+
+  while true do
+    local name, t = vim.loop.fs_scandir_next(handle)
+    if not name then
+      break
+    end
+
+    local abs = utils.path_join { cwd, name }
+
+    if Watcher.is_fs_event_capable(abs) then
+      local profile = log.profile_start("populate_children %s", abs)
+
+      ---@type uv.fs_stat.result|nil
+      local stat = vim.loop.fs_stat(abs)
+      local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
+      if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
+        local child = nil
+        if t == "directory" and vim.loop.fs_access(abs, "R") then
+          child = builders.folder(node, abs, name, stat)
+        elseif t == "file" then
+          child = builders.file(node, abs, name, stat)
+        elseif t == "link" then
+          local link = builders.link(node, abs, name, stat)
+          if link.link_to ~= nil then
+            child = link
+          end
+        end
+        if child then
+          table.insert(node.nodes, child)
+          nodes_by_path[child.absolute_path] = true
+          explorer_node.update_git_status(child, node_ignored, git_status)
+        end
+      else
+        for reason, value in pairs(FILTER_REASON) do
+          if filter_reason == value then
+            node.hidden_stats[reason] = node.hidden_stats[reason] + 1
+          end
+        end
+      end
+
+      log.profile_end(profile)
+    end
+  end
+end
+
+---@private
+---@param node Node
+---@param status table
+---@param parent Explorer
+---@return Node[]|nil
+function Explorer:explore(node, status, parent)
+  local cwd = node.link_to or node.absolute_path
+  local handle = vim.loop.fs_scandir(cwd)
+  if not handle then
+    return
+  end
+
+  local profile = log.profile_start("explore %s", node.absolute_path)
+
+  self:populate_children(handle, cwd, node, status, parent)
+
+  local is_root = not node.parent
+  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
+  if config.renderer.group_empty and not is_root and child_folder_only then
+    local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
+    local child_status = git.load_project_status(child_cwd)
+    node.group_next = child_folder_only
+    local ns = self:explore(child_folder_only, child_status, parent)
+    node.nodes = ns or {}
+
+    log.profile_end(profile)
+    return ns
+  end
+
+  parent.sorters:sort(node.nodes)
+  parent.live_filter:apply_filter(node)
+
+  log.profile_end(profile)
+  return node.nodes
+end
+
+---@private
+---@param projects table
+function Explorer:refresh_nodes(projects)
+  Iterator.builder({ self })
+    :applier(function(n)
+      if n.nodes then
+        local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
+        self:reload(n, projects[toplevel] or {})
+      end
+    end)
+    :recursor(function(n)
+      return n.group_next and { n.group_next } or (n.open and n.nodes)
+    end)
+    :iterate()
+end
+
+local event_running = false
+function Explorer:reload_explorer()
+  if event_running or vim.v.exiting ~= vim.NIL then
+    return
+  end
+  event_running = true
+
+  local projects = git.reload()
+  self:refresh_nodes(projects)
+  if view.is_visible() then
+    renderer.draw()
+  end
+  event_running = false
+end
+
+function Explorer:reload_git()
+  if not git.config.git.enable or event_running then
+    return
+  end
+  event_running = true
+
+  local projects = git.reload()
+  explorer_node.reload_node_status(self, projects)
+  renderer.draw()
+  event_running = false
+end
+
+function Explorer.setup(opts)
+  config = opts
+  require("nvim-tree.explorer.node").setup(opts)
+  require("nvim-tree.explorer.watch").setup(opts)
+
+  renderer = require "nvim-tree.renderer"
+
+  Marks = require "nvim-tree.marks"
+  Clipboard = require "nvim-tree.actions.fs.clipboard"
 end
 
 return Explorer

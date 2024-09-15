@@ -46,22 +46,24 @@ local function populate_children(handle, cwd, node, git_status, parent)
       local type = stat and stat.type or nil
 
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
-      if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
-        local child = nil
-        if type == "directory" and vim.loop.fs_access(abs, "R") then
-          child = builders.folder(node, abs, name, stat)
-        elseif type == "file" then
-          child = builders.file(node, abs, name, stat)
-        elseif type == "link" then
-          local link = builders.link(node, abs, name, stat)
-          if link.link_to ~= nil then
-            child = link
+      if filter_reason == FILTER_REASON.none then
+        if not nodes_by_path[abs] then
+          local child = nil
+          if type == "directory" and vim.loop.fs_access(abs, "R") then
+            child = builders.folder(node, abs, name, stat)
+          elseif type == "file" then
+            child = builders.file(node, abs, name, stat)
+          elseif type == "link" then
+            local link = builders.link(node, abs, name, stat)
+            if link.link_to ~= nil then
+              child = link
+            end
           end
-        end
-        if child then
-          table.insert(node.nodes, child)
-          nodes_by_path[child.absolute_path] = true
-          explorer_node.update_git_status(child, node_ignored, git_status)
+          if child then
+            table.insert(node.nodes, child)
+            nodes_by_path[child.absolute_path] = true
+            explorer_node.update_git_status(child, node_ignored, git_status)
+          end
         end
       else
         for reason, value in pairs(FILTER_REASON) do

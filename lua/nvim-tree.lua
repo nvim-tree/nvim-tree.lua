@@ -201,7 +201,10 @@ local function setup_autocommands(opts)
   create_nvim_tree_autocmd("BufWritePost", {
     callback = function()
       if opts.auto_reload_on_write and not opts.filesystem_watchers.enable then
-        actions.reloaders.reload_explorer()
+        local explorer = core.get_explorer()
+        if explorer then
+          explorer:reload_explorer()
+        end
       end
     end,
   })
@@ -217,7 +220,7 @@ local function setup_autocommands(opts)
         (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          actions.reloaders.reload_explorer()
+          explorer:reload_explorer()
         end)
       end
     end,
@@ -234,7 +237,7 @@ local function setup_autocommands(opts)
         (explorer.filters.config.filter_no_buffer or renderer.config.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
       then
         utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          actions.reloaders.reload_explorer()
+          explorer:reload_explorer()
         end)
       end
     end,
@@ -244,7 +247,10 @@ local function setup_autocommands(opts)
     pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
     callback = function()
       if not opts.filesystem_watchers.enable and opts.git.enable then
-        actions.reloaders.reload_git()
+        local explorer = core.get_explorer()
+        if explorer then
+          explorer:reload_git()
+        end
       end
     end,
   })
@@ -292,7 +298,10 @@ local function setup_autocommands(opts)
     callback = function()
       if utils.is_nvim_tree_buf(0) then
         if vim.fn.getcwd() ~= core.get_cwd() or (opts.reload_on_bufenter and not opts.filesystem_watchers.enable) then
-          actions.reloaders.reload_explorer()
+          local explorer = core.get_explorer()
+          if explorer then
+            explorer:reload_explorer()
+          end
         end
       end
     end,
@@ -343,7 +352,10 @@ local function setup_autocommands(opts)
       callback = function()
         utils.debounce("Buf:modified", opts.view.debounce_delay, function()
           buffers.reload_modified()
-          actions.reloaders.reload_explorer()
+          local explorer = core.get_explorer()
+          if explorer then
+            explorer:reload_explorer()
+          end
         end)
       end,
     })

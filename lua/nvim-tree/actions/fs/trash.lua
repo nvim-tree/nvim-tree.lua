@@ -1,6 +1,6 @@
+local core = require "nvim-tree.core"
 local lib = require "nvim-tree.lib"
 local notify = require "nvim-tree.notify"
-local reloaders = require "nvim-tree.actions.reloaders"
 
 local M = {
   config = {},
@@ -52,6 +52,8 @@ function M.remove(node)
     end
   end
 
+  local explorer = core.get_explorer()
+
   if node.nodes ~= nil and not node.link_to then
     trash_path(function(_, rc)
       if rc ~= 0 then
@@ -59,8 +61,8 @@ function M.remove(node)
         return
       end
       events._dispatch_folder_removed(node.absolute_path)
-      if not M.config.filesystem_watchers.enable then
-        reloaders.reload_explorer()
+      if not M.config.filesystem_watchers.enable and explorer then
+        explorer:reload_explorer()
       end
     end)
   else
@@ -72,8 +74,8 @@ function M.remove(node)
       end
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
-      if not M.config.filesystem_watchers.enable then
-        reloaders.reload_explorer()
+      if not M.config.filesystem_watchers.enable and explorer then
+        explorer:reload_explorer()
       end
     end)
   end
