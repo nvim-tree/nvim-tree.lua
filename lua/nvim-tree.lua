@@ -2,13 +2,9 @@ local lib = require "nvim-tree.lib"
 local log = require "nvim-tree.log"
 local appearance = require "nvim-tree.appearance"
 local view = require "nvim-tree.view"
-local commands = require "nvim-tree.commands"
 local utils = require "nvim-tree.utils"
 local actions = require "nvim-tree.actions"
-local legacy = require "nvim-tree.legacy"
 local core = require "nvim-tree.core"
-local git = require "nvim-tree.git"
-local buffers = require "nvim-tree.buffers"
 local notify = require "nvim-tree.notify"
 
 local _config = {}
@@ -358,7 +354,7 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
       callback = function()
         utils.debounce("Buf:modified", opts.view.debounce_delay, function()
-          buffers.reload_modified()
+          require("nvim-tree.buffers").reload_modified()
           local explorer = core.get_explorer()
           if explorer then
             explorer:reload_explorer()
@@ -808,7 +804,7 @@ function M.purge_all_state()
   view.close_all_tabs()
   view.abandon_all_windows()
   if core.get_explorer() ~= nil then
-    git.purge_state()
+    require("nvim-tree.git").purge_state()
     core.reset_explorer()
   end
 end
@@ -824,7 +820,7 @@ function M.setup(conf)
 
   localise_default_opts()
 
-  legacy.migrate_legacy_options(conf or {})
+  require("nvim-tree.legacy").migrate_legacy_options(conf or {})
 
   validate_options(conf)
 
@@ -870,7 +866,7 @@ function M.setup(conf)
 
   if vim.g.NvimTreeSetup ~= 1 then
     -- first call to setup
-    commands.setup()
+    require("nvim-tree.commands").setup()
   else
     -- subsequent calls to setup
     M.purge_all_state()
