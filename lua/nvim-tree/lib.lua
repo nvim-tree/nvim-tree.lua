@@ -3,7 +3,6 @@ local core = require("nvim-tree.core")
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
-local explorer_node = require("nvim-tree.explorer.node")
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -101,7 +100,7 @@ end
 ---@return Node[]
 function M.group_empty_folders(node)
   local is_root = not node.parent
-  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
+  local child_folder_only = node:has_one_child_folder() and node.nodes[1]
   if M.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = M.group_empty_folders(child_folder_only)

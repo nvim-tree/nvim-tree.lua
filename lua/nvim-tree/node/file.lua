@@ -1,6 +1,6 @@
 local utils = require("nvim-tree.utils")
 
-local BaseNode = require("nvim-tree.node.init")
+local BaseNode = require("nvim-tree.node")
 
 ---@class (exact) FileNode: BaseNode
 ---@field extension string

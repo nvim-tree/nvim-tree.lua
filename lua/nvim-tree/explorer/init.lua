@@ -6,6 +6,7 @@ local view = require("nvim-tree.view")
 local watch = require("nvim-tree.explorer.watch")
 local explorer_node = require("nvim-tree.explorer.node")
 
+local BaseNode = require("nvim-tree.node")
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileNode = require("nvim-tree.node.file")
 local LinkNode = require("nvim-tree.node.link")
@@ -25,7 +26,7 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local config
 
----@class Explorer
+---@class Explorer: BaseNode
 ---@field opts table user options
 ---@field absolute_path string
 ---@field nodes Node[]
@@ -37,7 +38,7 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-local Explorer = {}
+local Explorer = BaseNode:new()
 
 ---@param path string|nil
 ---@return Explorer|nil
@@ -84,7 +85,7 @@ end
 
 function Explorer:destroy()
   local function iterate(node)
-    explorer_node.node_destroy(node)
+    node:destroy()
     if node.nodes then
       for _, child in pairs(node.nodes) do
         iterate(child)
@@ -114,7 +115,7 @@ function Explorer:reload(node, git_status)
 
   local remain_childs = {}
 
-  local node_ignored = explorer_node.is_git_ignored(node)
+  local node_ignored = node:is_git_ignored()
   ---@type table<string, Node>
   local nodes_by_path = utils.key_by(node.nodes, "absolute_path")
 
@@ -150,7 +151,7 @@ function Explorer:reload(node, git_status)
 
         if n.type ~= t then
           utils.array_remove(node.nodes, n)
-          explorer_node.node_destroy(n)
+          n:destroy()
           nodes_by_path[abs] = nil
         end
       end
@@ -193,14 +194,14 @@ function Explorer:reload(node, git_status)
       if remain_childs[n.absolute_path] then
         return remain_childs[n.absolute_path]
       else
-        explorer_node.node_destroy(n)
+        n:destroy()
         return false
       end
     end, node.nodes)
   )
 
   local is_root = not node.parent
-  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
+  local child_folder_only = node:has_one_child_folder() and node.nodes[1]
   if config.renderer.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = self:reload(child_folder_only, git_status)
@@ -329,7 +330,7 @@ function Explorer:update_parent_statuses(node, project, root)
     end
 
     -- update status
-    explorer_node.update_git_status(node, explorer_node.is_git_ignored(node.parent), project)
+    explorer_node.update_git_status(node, node.parent and node.parent:is_git_ignored(), project)
 
     -- maybe parent
     node = node.parent
@@ -343,7 +344,7 @@ end
 ---@param git_status table
 ---@param parent Explorer
 function Explorer:populate_children(handle, cwd, node, git_status, parent)
-  local node_ignored = explorer_node.is_git_ignored(node)
+  local node_ignored = node:is_git_ignored()
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
 
   local filter_status = parent.filters:prepare(git_status)
@@ -419,7 +420,7 @@ function Explorer:explore(node, status, parent)
   self:populate_children(handle, cwd, node, status, parent)
 
   local is_root = not node.parent
-  local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
+  local child_folder_only = node:has_one_child_folder() and node.nodes[1]
   if config.renderer.group_empty and not is_root and child_folder_only then
     local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
     local child_status = git.load_project_status(child_cwd)

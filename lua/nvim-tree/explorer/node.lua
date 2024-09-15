@@ -36,12 +36,6 @@ local function get_git_status(parent_ignored, status, absolute_path)
 end
 
 ---@param node Node
----@return boolean
-function M.has_one_child_folder(node)
-  return #node.nodes == 1 and node.nodes[1].nodes and vim.loop.fs_access(node.nodes[1].absolute_path, "R") or false
-end
-
----@param node Node
 ---@param parent_ignored boolean
 ---@param status table|nil
 function M.update_git_status(node, parent_ignored, status)
@@ -139,25 +133,6 @@ function M.reload_node_status(parent_node, projects)
       M.reload_node_status(node, projects)
     end
   end
-end
-
----@param node Node
----@return boolean
-function M.is_git_ignored(node)
-  return node and node.git_status ~= nil and node.git_status.file == "!!"
-end
-
----@param node Node
----@return boolean
-function M.is_dotfile(node)
-  if node == nil then
-    return false
-  end
-  if node.is_dot or (node.name and (node.name:sub(1, 1) == ".")) or M.is_dotfile(node.parent) then
-    node.is_dot = true
-    return true
-  end
-  return false
 end
 
 ---@param node Node

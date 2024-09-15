@@ -1,6 +1,6 @@
 local watch = require("nvim-tree.explorer.watch")
 
-local BaseNode = require("nvim-tree.node.init")
+local BaseNode = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: BaseNode
 ---@field has_children boolean
