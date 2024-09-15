@@ -30,14 +30,16 @@ local function get_num_nodes(iter)
   return i
 end
 
----@param node Node
+---@param has_children boolean
+---@param absolute_path string
+---@param name string
 ---@return string
-local function get_containing_folder(node)
-  if node.nodes ~= nil then
-    return utils.path_add_trailing(node.absolute_path)
+local function get_containing_folder(has_children, absolute_path, name)
+  if has_children then
+    return utils.path_add_trailing(absolute_path)
   end
-  local node_name_size = #(node.name or "")
-  return node.absolute_path:sub(0, -node_name_size - 1)
+  local node_name_size = #(name or "")
+  return absolute_path:sub(0, -node_name_size - 1)
 end
 
 ---@param node Node|nil
@@ -48,16 +50,13 @@ function M.fn(node)
   end
 
   node = node and lib.get_last_group_node(node)
-  if not node or node.name == ".." then
-    node = {
-      absolute_path = cwd,
-      name = "",
-      nodes = core.get_explorer().nodes,
-      open = true,
-    }
-  end
 
-  local containing_folder = get_containing_folder(node)
+  local containing_folder
+  if not node or node.name == ".." then
+    containing_folder = get_containing_folder(core.get_explorer().nodes ~= nil, cwd, "")
+  else
+    containing_folder = get_containing_folder(node.nodes ~= nil, node.absolute_path, node.name)
+  end
 
   local input_opts = {
     prompt = "Create file ",

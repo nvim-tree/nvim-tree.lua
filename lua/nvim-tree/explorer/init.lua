@@ -1,4 +1,3 @@
-local builders = require("nvim-tree.explorer.node-builders")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
@@ -7,9 +6,13 @@ local view = require("nvim-tree.view")
 local watch = require("nvim-tree.explorer.watch")
 local explorer_node = require("nvim-tree.explorer.node")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+local FileNode = require("nvim-tree.node.file")
+local LinkNode = require("nvim-tree.node.link")
+local Watcher = require("nvim-tree.watcher")
+
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local NodeIterator = require("nvim-tree.iterators.node-iterator")
-local Watcher = require("nvim-tree.watcher")
 
 local Filters = require("nvim-tree.explorer.filters")
 local Marks = require("nvim-tree.marks")
@@ -155,11 +158,11 @@ function Explorer:reload(node, git_status)
       if not nodes_by_path[abs] then
         local new_child = nil
         if t == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
-          new_child = builders.folder(node, abs, name, stat)
+          new_child = DirectoryNode:new(self, node, abs, name, stat)
         elseif t == "file" then
-          new_child = builders.file(node, abs, name, stat)
+          new_child = FileNode:new(self, node, abs, name, stat)
         elseif t == "link" then
-          local link = builders.link(node, abs, name, stat)
+          local link = LinkNode:new(self, node, abs, name, stat)
           if link.link_to ~= nil then
             new_child = link
           end
@@ -171,7 +174,7 @@ function Explorer:reload(node, git_status)
       else
         local n = nodes_by_path[abs]
         if n then
-          n.executable = builders.is_executable(abs) or false
+          n.executable = utils.is_executable(abs) or false
           n.fs_stat = stat
         end
       end
@@ -372,11 +375,11 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
         local t = stat and stat.type or nil
         local child = nil
         if t == "directory" and vim.loop.fs_access(abs, "R") then
-          child = builders.folder(node, abs, name, stat)
+          child = DirectoryNode:new(self, node, abs, name, stat)
         elseif t == "file" then
-          child = builders.file(node, abs, name, stat)
+          child = FileNode:new(self, node, abs, name, stat)
         elseif t == "link" then
-          local link = builders.link(node, abs, name, stat)
+          local link = LinkNode:new(self, node, abs, name, stat)
           if link.link_to ~= nil then
             child = link
           end

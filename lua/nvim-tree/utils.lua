@@ -578,4 +578,16 @@ function M.is_nvim_tree_buf(bufnr)
   return false
 end
 
+--- path is an executable file or directory
+---@param absolute_path string
+---@return boolean
+function M.is_executable(absolute_path)
+  if M.is_windows or M.is_wsl then
+    --- executable detection on windows is buggy and not performant hence it is disabled
+    return false
+  else
+    return vim.loop.fs_access(absolute_path, "X") or false
+  end
+end
+
 return M
