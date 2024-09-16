@@ -2,7 +2,6 @@ local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
-local explorer_node = require("nvim-tree.explorer.node")
 local diagnostics = require("nvim-tree.diagnostics")
 
 local M = {}
@@ -16,7 +15,7 @@ local MAX_DEPTH = 100
 ---@return boolean
 local function status_is_valid(node, what, skip_gitignored)
   if what == "git" then
-    local git_status = explorer_node.get_git_status(node)
+    local git_status = node:get_git_status()
     return git_status ~= nil and (not skip_gitignored or git_status[1] ~= "!!")
   elseif what == "diag" then
     local diag_status = diagnostics.get_diag_status(node)

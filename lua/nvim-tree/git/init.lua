@@ -290,7 +290,7 @@ end
 ---@param status table|nil
 ---@param absolute_path string
 ---@return GitStatus|nil
-function M.get_dir_git_status(parent_ignored, status, absolute_path)
+function M.git_status_dir(parent_ignored, status, absolute_path)
   if parent_ignored then
     return { file = "!!" }
   end
@@ -310,7 +310,7 @@ end
 ---@param status table
 ---@param absolute_path string
 ---@return GitStatus
-function M.get_git_status(parent_ignored, status, absolute_path)
+function M.git_status_file(parent_ignored, status, absolute_path)
   local file_status = parent_ignored and "!!" or (status and status.files and status.files[absolute_path])
   return { file = file_status }
 end

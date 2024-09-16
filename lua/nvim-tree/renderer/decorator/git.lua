@@ -1,5 +1,4 @@
 local notify = require("nvim-tree.notify")
-local explorer_node = require("nvim-tree.explorer.node")
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
@@ -147,7 +146,7 @@ function DecoratorGit:calculate_icons(node)
     return nil
   end
 
-  local git_status = explorer_node.get_git_status(node)
+  local git_status = node:get_git_status()
   if git_status == nil then
     return nil
   end
@@ -208,7 +207,7 @@ function DecoratorGit:calculate_highlight(node)
     return nil
   end
 
-  local git_status = explorer_node.get_git_status(node)
+  local git_status = node:get_git_status()
   if not git_status then
     return nil
   end

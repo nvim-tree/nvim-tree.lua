@@ -3,7 +3,6 @@ local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
-local explorer_node = require("nvim-tree.explorer.node")
 
 local BaseNode = require("nvim-tree.node")
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -471,14 +470,13 @@ function Explorer:reload_git()
   event_running = true
 
   local projects = git.reload()
-  explorer_node.reload_node_status(self, projects)
+  self:reload_node_status(projects)
   self.renderer:draw()
   event_running = false
 end
 
 function Explorer:setup(opts)
   config = opts
-  require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)
 end
 
