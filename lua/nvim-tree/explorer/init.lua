@@ -279,7 +279,7 @@ end
 function Explorer:update_status(nodes_by_path, node_ignored, status)
   return function(node)
     if nodes_by_path[node.absolute_path] then
-      explorer_node.update_git_status(node, node_ignored, status)
+      node:update_git_status(node_ignored, status)
     end
     return node
   end
@@ -324,7 +324,7 @@ function Explorer:update_parent_statuses(node, project, root)
     end
 
     -- update status
-    explorer_node.update_git_status(node, node.parent and node.parent:is_git_ignored() or false, project)
+    node:update_git_status(node.parent and node.parent:is_git_ignored() or false, project)
 
     -- maybe parent
     node = node.parent
@@ -382,7 +382,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true
-          explorer_node.update_git_status(child, node_ignored, git_status)
+          child:update_git_status(node_ignored, git_status)
         end
       else
         for reason, value in pairs(FILTER_REASON) do

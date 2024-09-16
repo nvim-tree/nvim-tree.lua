@@ -2,59 +2,6 @@ local git = {} -- circular dependencies
 
 local M = {}
 
----@class GitStatus
----@field file string|nil
----@field dir table|nil
-
----@param parent_ignored boolean
----@param status table|nil
----@param absolute_path string
----@return GitStatus|nil
-local function get_dir_git_status(parent_ignored, status, absolute_path)
-  if parent_ignored then
-    return { file = "!!" }
-  end
-
-  if status then
-    return {
-      file = status.files and status.files[absolute_path],
-      dir = status.dirs and {
-        direct = status.dirs.direct[absolute_path],
-        indirect = status.dirs.indirect[absolute_path],
-      },
-    }
-  end
-end
-
----@param parent_ignored boolean
----@param status table
----@param absolute_path string
----@return GitStatus
-local function get_git_status(parent_ignored, status, absolute_path)
-  local file_status = parent_ignored and "!!" or (status and status.files and status.files[absolute_path])
-  return { file = file_status }
-end
-
----@param node Node
----@param parent_ignored boolean
----@param status table|nil
-function M.update_git_status(node, parent_ignored, status)
-  local get_status
-  if node.nodes then
-    get_status = get_dir_git_status
-  else
-    get_status = get_git_status
-  end
-
-  -- status of the node's absolute path
-  node.git_status = get_status(parent_ignored, status, node.absolute_path)
-
-  -- status of the link target, if the link itself is not dirty
-  if node.link_to and not node.git_status then
-    node.git_status = get_status(parent_ignored, status, node.link_to)
-  end
-end
-
 ---@param node Node
 ---@return GitStatus|nil
 function M.get_git_status(node)
@@ -128,7 +75,7 @@ function M.reload_node_status(parent_node, projects)
   local toplevel = git.get_toplevel(parent_node.absolute_path)
   local status = projects[toplevel] or {}
   for _, node in ipairs(parent_node.nodes) do
-    M.update_git_status(node, M.is_git_ignored(parent_node), status)
+    node:update_git_status(M.is_git_ignored(parent_node), status)
     if node.nodes and #node.nodes > 0 then
       M.reload_node_status(node, projects)
     end
