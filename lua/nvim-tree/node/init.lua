@@ -1,4 +1,5 @@
 ---@class (exact) BaseNode
+---@field private __index? table
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -7,8 +8,8 @@
 ---@field git_status GitStatus|nil
 ---@field hidden boolean
 ---@field is_dot boolean
----@field name string
----@field parent DirectoryNode
+---@field name string|nil
+---@field parent DirectoryNode|nil
 ---@field watcher Watcher|nil
 ---@field diag_status DiagStatus|nil
 local BaseNode = {}
@@ -20,7 +21,8 @@ local BaseNode = {}
 function BaseNode:new(o)
   o = o or {}
 
-  setmetatable(o, { __index = self })
+  setmetatable(o, self)
+  self.__index = self
 
   return o
 end

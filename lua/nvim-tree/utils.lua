@@ -179,7 +179,7 @@ end
 ---@return Node node or parent
 function M.get_parent_of_group(node)
   while node and node.parent and node.parent.group_next do
-    node = node.parent
+    node = node.parent or node
   end
   return node
 end

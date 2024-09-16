@@ -55,17 +55,27 @@ function Explorer:new(path)
     return
   end
 
-  local o = {
-    opts = config,
+  ---@type Explorer
+  local placeholder
+
+  local o = BaseNode.new(self, {
+    type = "directory",
+    explorer = placeholder,
     absolute_path = path,
+    executable = false,
+    hidden = false,
+    is_dot = false,
+
+    has_children = false,
+    group_next = nil,
     nodes = {},
     open = true,
-    sorters = Sorters:new(config),
-  }
+  })
+  ---@cast o Explorer
 
-  setmetatable(o, self)
-  self.__index = self
-
+  o.explorer = self
+  o.opts = config
+  o.sorters = Sorters:new(config)
   o.watcher = watch.create_watcher(o)
   o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
@@ -216,7 +226,7 @@ function Explorer:reload(node, git_status)
   return node.nodes
 end
 
----TODO #2837 #2871 move this and similar to node
+---TODO #2837 #2871 #2886 move this and similar to node
 ---Refresh contents and git status for a single node
 ---@param node Node
 ---@param callback function
@@ -291,7 +301,7 @@ function Explorer:update_status(nodes_by_path, node_ignored, status)
   end
 end
 
----TODO #2837 #2871 move this and similar to node
+---TODO #2837 #2871 #2886 move this and similar to node
 ---@private
 ---@param path string
 ---@param callback fun(toplevel: string|nil, project: table|nil)
@@ -303,7 +313,7 @@ function Explorer:reload_and_get_git_project(path, callback)
   end)
 end
 
----TODO #2837 #2871 move this and similar to node
+---TODO #2837 #2871 #2886 move this and similar to node
 ---@private
 ---@param node Node
 ---@param project table|nil
@@ -330,7 +340,7 @@ function Explorer:update_parent_statuses(node, project, root)
     end
 
     -- update status
-    explorer_node.update_git_status(node, node.parent and node.parent:is_git_ignored(), project)
+    explorer_node.update_git_status(node, node.parent and node.parent:is_git_ignored() or false, project)
 
     -- maybe parent
     node = node.parent
