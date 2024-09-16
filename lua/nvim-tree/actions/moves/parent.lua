@@ -1,7 +1,6 @@
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
-local lib = require("nvim-tree.lib")
 
 local M = {}
 
@@ -12,7 +11,7 @@ function M.fn(should_close)
 
   return function(node)
     local explorer = core.get_explorer()
-    node = lib.get_last_group_node(node)
+    node = node:last_group_node()
     if should_close and node.open then
       node.open = false
       if explorer then

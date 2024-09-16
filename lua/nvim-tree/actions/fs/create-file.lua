@@ -1,6 +1,5 @@
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
-local lib = require("nvim-tree.lib")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 
@@ -49,7 +48,7 @@ function M.fn(node)
     return
   end
 
-  node = node and lib.get_last_group_node(node)
+  node = node and node:last_group_node()
 
   local containing_folder
   if not node or node.name == ".." then

@@ -138,7 +138,7 @@ Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." then
     actions.root.change_dir.fn("..")
   elseif node.nodes ~= nil then
-    actions.root.change_dir.fn(lib.get_last_group_node(node).absolute_path)
+    actions.root.change_dir.fn(node:last_group_node().absolute_path)
   end
 end)
 

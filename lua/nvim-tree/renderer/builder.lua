@@ -137,7 +137,7 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
 end
 
 ---@private
----@param node table
+---@param node Node
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:build_folder(node)
@@ -369,7 +369,7 @@ function Builder:build_line(node, idx, num_children)
 
   self.index = self.index + 1
 
-  node = require("nvim-tree.lib").get_last_group_node(node)
+  node = node:last_group_node()
   if node.open then
     self.depth = self.depth + 1
     self:build_lines(node)

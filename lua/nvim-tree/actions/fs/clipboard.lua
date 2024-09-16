@@ -217,7 +217,7 @@ end
 ---@param action ACTION
 ---@param action_fn fun(source: string, dest: string)
 function Clipboard:do_paste(node, action, action_fn)
-  node = lib.get_last_group_node(node)
+  node = node:last_group_node()
   local explorer = core.get_explorer()
   if node.name == ".." and explorer then
     node = explorer

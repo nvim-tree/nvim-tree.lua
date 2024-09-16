@@ -78,7 +78,7 @@ function BaseNode:get_git_status()
   end
 
   local status = {}
-  if not require("nvim-tree.lib").get_last_group_node(self).open or self.explorer.opts.git.show_on_open_dirs then
+  if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
     -- dir is closed or we should show on open_dirs
     if self.git_status.file ~= nil then
       table.insert(status, self.git_status.file)
@@ -149,6 +149,18 @@ function BaseNode:is_dotfile()
     return true
   end
   return false
+end
+
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
+---@return Node
+function BaseNode:last_group_node()
+  local node = self
+
+  while node.group_next do
+    node = node.group_next
+  end
+
+  return node
 end
 
 return BaseNode

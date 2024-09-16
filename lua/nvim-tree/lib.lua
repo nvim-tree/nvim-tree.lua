@@ -83,17 +83,6 @@ function M.get_nodes()
   return clone_node(core.get_explorer())
 end
 
--- If node is grouped, return the last node in the group. Otherwise, return the given node.
----@param node Node
----@return Node
-function M.get_last_group_node(node)
-  while node and node.group_next do
-    node = node.group_next
-  end
-
-  return node ---@diagnostic disable-line: return-type-mismatch -- it can't be nil
-end
-
 ---Group empty folders
 -- Recursively group nodes
 ---@param node Node
@@ -164,7 +153,7 @@ function M.expand_or_collapse(node, toggle_group)
     toggle_group_folders(head_node)
   end
 
-  local open = M.get_last_group_node(node).open
+  local open = node:last_group_node().open
   local next_open
   if toggle_group then
     next_open = open

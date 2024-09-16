@@ -1,7 +1,6 @@
 local core = require("nvim-tree.core")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local notify = require("nvim-tree.notify")
-local lib = require("nvim-tree.lib")
 
 local M = {}
 
@@ -18,7 +17,7 @@ end
 
 ---@param node Node
 local function expand(node)
-  node = lib.get_last_group_node(node)
+  node = node:last_group_node()
   node.open = true
   if #node.nodes == 0 then
     core.get_explorer():expand(node)
