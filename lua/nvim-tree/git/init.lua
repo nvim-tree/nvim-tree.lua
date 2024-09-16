@@ -307,7 +307,7 @@ function M.git_status_dir(parent_ignored, status, absolute_path)
 end
 
 ---@param parent_ignored boolean
----@param status table
+---@param status table|nil
 ---@param absolute_path string
 ---@return GitStatus
 function M.git_status_file(parent_ignored, status, absolute_path)
