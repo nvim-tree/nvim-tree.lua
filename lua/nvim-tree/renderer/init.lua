@@ -13,6 +13,7 @@ local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
 
 ---@class (exact) Renderer
+---@field private __index? table
 ---@field private opts table user options
 ---@field private explorer Explorer
 ---@field private builder Builder
@@ -29,7 +30,8 @@ function Renderer:new(opts, explorer)
     builder = Builder:new(opts, explorer),
   }
 
-  setmetatable(o, { __index = self })
+  setmetatable(o, self)
+  self.__index = self
 
   return o
 end

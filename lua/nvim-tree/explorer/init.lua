@@ -51,15 +51,16 @@ function Explorer:new(path)
     return
   end
 
-  ---@type Explorer
-  local o = setmetatable({
+  local o = {
     opts = config,
     absolute_path = path,
     nodes = {},
     open = true,
     sorters = Sorters:new(config),
-  }, Explorer)
-  setmetatable(o, { __index = self })
+  }
+
+  setmetatable(o, self)
+  self.__index = self
 
   o.watcher = watch.create_watcher(o)
   o.renderer = Renderer:new(config, o)

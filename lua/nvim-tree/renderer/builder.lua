@@ -34,6 +34,7 @@ local PICTURE_MAP = {
 ---@field col_end number
 
 ---@class (exact) Builder
+---@field private __index? table
 ---@field lines string[] includes icons etc.
 ---@field hl_args AddHighlightArgs[] line highlights
 ---@field signs string[] line signs
@@ -79,7 +80,8 @@ function Builder:new(opts, explorer)
     hidden_display = Builder:setup_hidden_display_function(opts),
   }
 
-  setmetatable(o, { __index = self })
+  setmetatable(o, self)
+  self.__index = self
 
   return o
 end
