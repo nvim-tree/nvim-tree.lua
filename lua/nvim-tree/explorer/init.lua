@@ -3,7 +3,6 @@ local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
-local watch = require("nvim-tree.explorer.watch")
 local explorer_node = require("nvim-tree.explorer.node")
 
 local BaseNode = require("nvim-tree.node")
@@ -26,19 +25,15 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local config
 
----@class Explorer: BaseNode
+---@class (exact) Explorer: DirectoryNode
 ---@field opts table user options
----@field absolute_path string
----@field nodes Node[]
----@field open boolean
----@field watcher Watcher|nil
 ---@field renderer Renderer
 ---@field filters Filters
 ---@field live_filter LiveFilter
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-local Explorer = BaseNode:new()
+local Explorer = BaseNode.new(DirectoryNode) -- TODO do not inherit, add a root node to separate Explorer and Node
 
 ---@param path string|nil
 ---@return Explorer|nil
@@ -56,27 +51,16 @@ function Explorer:new(path)
   end
 
   ---@type Explorer
-  local placeholder
+  local placeholder = nil
 
-  local o = BaseNode.new(self, {
-    type = "directory",
-    explorer = placeholder,
-    absolute_path = path,
-    executable = false,
-    hidden = false,
-    is_dot = false,
-
-    has_children = false,
-    group_next = nil,
-    nodes = {},
-    open = true,
-  })
+  local o = DirectoryNode.new(self, placeholder, nil, path, nil, nil)
   ---@cast o Explorer
 
   o.explorer = self
+  o.open = true
+
   o.opts = config
   o.sorters = Sorters:new(config)
-  o.watcher = watch.create_watcher(o)
   o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
   o.live_filter = LiveFilter:new(config, o)
@@ -492,7 +476,7 @@ function Explorer:reload_git()
   event_running = false
 end
 
-function Explorer.setup(opts)
+function Explorer:setup(opts)
   config = opts
   require("nvim-tree.explorer.node").setup(opts)
   require("nvim-tree.explorer.watch").setup(opts)

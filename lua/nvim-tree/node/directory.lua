@@ -3,8 +3,8 @@ local watch = require("nvim-tree.explorer.watch")
 local BaseNode = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: BaseNode
----@field has_children boolean
----@field group_next Node|nil
+---@field has_children boolean -- TODO remove this and just test nodes
+---@field group_next Node|nil -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
 ---@field hidden_stats table -- Each field of this table is a key for source and value for count
@@ -13,7 +13,7 @@ local DirectoryNode = BaseNode:new()
 ---@param explorer Explorer
 -----@param parent DirectoryNode    -- TODO  #2871 #2886
 ---@param absolute_path string
----@param name string
+---@param name string|nil
 ---@param fs_stat uv.fs_stat.result|nil
 ---@return DirectoryNode
 function DirectoryNode:new(explorer, parent, absolute_path, name, fs_stat)
@@ -32,7 +32,7 @@ function DirectoryNode:new(explorer, parent, absolute_path, name, fs_stat)
     parent = parent,
 
     has_children = has_children,
-    group_next = nil, -- If node is grouped, this points to the next child dir/link node
+    group_next = nil,
     nodes = {},
     open = false,
   })

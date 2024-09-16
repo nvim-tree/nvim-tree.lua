@@ -3,6 +3,8 @@ local watch = require("nvim-tree.explorer.watch")
 local BaseNode = require("nvim-tree.node")
 
 ---@class (exact) LinkNode: BaseNode
+---@field has_children boolean -- TODO remove this and just test nodes
+---@field group_next Node|nil -- If node is grouped, this points to the next child dir/link node
 ---@field link_to string absolute path
 local LinkNode = BaseNode:new()
 
@@ -44,7 +46,7 @@ function LinkNode:new(explorer, parent, absolute_path, name, fs_stat)
     link_to = link_to,
 
     has_children = has_children,
-    group_next = nil, -- If node is grouped, this points to the next child dir/link node
+    group_next = nil,
     nodes = nodes,
     open = open,
   })

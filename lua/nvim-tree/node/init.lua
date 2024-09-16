@@ -14,7 +14,7 @@
 ---@field diag_status DiagStatus|nil
 local BaseNode = {}
 
----@alias Node DirectoryNode|FileNode|LinkNode|Explorer
+---@alias Node DirectoryNode|FileNode|LinkNode
 
 ---@param o BaseNode|nil
 ---@return BaseNode
