@@ -10,7 +10,7 @@ local git = require("nvim-tree.git")
 ---@field git_status GitStatus|nil
 ---@field hidden boolean
 ---@field is_dot boolean
----@field name string|nil
+---@field name string
 ---@field parent DirectoryNode|nil
 ---@field watcher Watcher|nil
 ---@field diag_status DiagStatus|nil

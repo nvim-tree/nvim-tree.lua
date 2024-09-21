@@ -13,7 +13,7 @@ local DirectoryNode = BaseNode:new()
 ---@param explorer Explorer
 -----@param parent DirectoryNode    -- TODO  #2871 #2886
 ---@param absolute_path string
----@param name string|nil
+---@param name string
 ---@param fs_stat uv.fs_stat.result|nil
 ---@return DirectoryNode
 function DirectoryNode:new(explorer, parent, absolute_path, name, fs_stat)

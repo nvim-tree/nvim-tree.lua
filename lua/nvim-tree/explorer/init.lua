@@ -52,7 +52,7 @@ function Explorer:new(path)
   ---@type Explorer
   local placeholder = nil
 
-  local o = DirectoryNode.new(self, placeholder, nil, path, nil, nil)
+  local o = DirectoryNode.new(self, placeholder, nil, path, "..", nil)
   ---@cast o Explorer
 
   o.explorer = self
