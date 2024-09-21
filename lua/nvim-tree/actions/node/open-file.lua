@@ -333,9 +333,9 @@ local function open_in_new_window(filename, mode)
 
   local fname
   if M.relative_path then
-    fname = utils.escape_special_chars(vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd())))
+    fname = vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd()))
   else
-    fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
+    fname = vim.fn.fnameescape(filename)
   end
 
   local command
@@ -372,27 +372,28 @@ end
 ---@param mode string
 ---@param filename string
 function M.fn(mode, filename)
+  local fname = utils.escape_special_chars(filename)
   if type(mode) ~= "string" then
     mode = ""
   end
 
   if mode == "tabnew" then
-    return open_file_in_tab(filename)
+    return open_file_in_tab(fname)
   end
 
   if mode == "drop" then
-    return drop(filename)
+    return drop(fname)
   end
 
   if mode == "tab_drop" then
-    return tab_drop(filename)
+    return tab_drop(fname)
   end
 
   if mode == "edit_in_place" then
-    return edit_in_current_buf(filename)
+    return edit_in_current_buf(fname)
   end
 
-  local buf_loaded = is_already_loaded(filename)
+  local buf_loaded = is_already_loaded(fname)
 
   local found_win = utils.get_win_buf_from_path(filename)
   if found_win and (mode == "preview" or mode == "preview_no_picker") then
@@ -400,7 +401,7 @@ function M.fn(mode, filename)
   end
 
   if not found_win then
-    open_in_new_window(filename, mode)
+    open_in_new_window(fname, mode)
   else
     vim.api.nvim_set_current_win(found_win)
     vim.bo.bufhidden = ""

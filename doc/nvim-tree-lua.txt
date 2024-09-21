@@ -1576,7 +1576,7 @@ Specify minimum notification level, uses the values from |vim.log.levels|
 `ERROR`:   hard errors e.g. failure to read from the file system.
 `WARNING`: non-fatal errors e.g. unable to system open a file.
 `INFO:`    information only e.g. file copy path confirmation.
-`DEBUG:`   not used.
+`DEBUG:`   information for troubleshooting, e.g. failures in some window closing operations.
 
 *nvim-tree.notify.absolute_path* 
 Whether to use absolute paths or item names in fs action notifications. 

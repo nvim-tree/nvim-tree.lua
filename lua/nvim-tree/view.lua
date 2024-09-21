@@ -1,6 +1,7 @@
 local events = require "nvim-tree.events"
 local utils = require "nvim-tree.utils"
 local log = require "nvim-tree.log"
+local notify = require "nvim-tree.notify"
 
 ---@class OpenInWinOpts
 ---@field hijack_current_buf boolean|nil default true
@@ -227,7 +228,11 @@ local function close(tabpage)
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
       if vim.api.nvim_win_is_valid(tree_win or 0) then
-        vim.api.nvim_win_close(tree_win or 0, true)
+        local success, error = pcall(vim.api.nvim_win_close, tree_win or 0, true)
+        if not success then
+          notify.debug("Failed to close window: " .. error)
+          return
+        end
       end
       events._dispatch_on_tree_close()
       return
