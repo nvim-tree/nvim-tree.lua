@@ -1960,6 +1960,13 @@ fs.copy.absolute_path({node})          *nvim-tree-api.fs.copy.absolute_path()*
     Parameters: ~
       • {node} (Node|nil) file or folder
 
+fs.copy.basename({node})                    *nvim-tree-api.fs.copy.basename()*
+    Copy the name of a file or folder with extension omitted to the system
+    clipboard.
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+
 fs.copy.filename({node})                    *nvim-tree-api.fs.copy.filename()*
     Copy the name of a file or folder to the system clipboard.
 
@@ -3027,6 +3034,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.events.subscribe()|
 |nvim-tree-api.fs.clear_clipboard()|
 |nvim-tree-api.fs.copy.absolute_path()|
+|nvim-tree-api.fs.copy.basename()|
 |nvim-tree-api.fs.copy.filename()|
 |nvim-tree-api.fs.copy.node()|
 |nvim-tree-api.fs.copy.relative_path()|

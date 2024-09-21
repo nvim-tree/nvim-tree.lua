@@ -327,30 +327,62 @@ end
 
 ---@param node Node
 function Clipboard:copy_filename(node)
-  self:copy_to_reg(node.name)
+  local content
+
+  if node.name == ".." then
+    -- root
+    content = vim.fn.fnamemodify(self.explorer.absolute_path, ":t")
+  else
+    -- node
+    content = node.name
+  end
+
+  self:copy_to_reg(content)
 end
 
 ---@param node Node
 function Clipboard:copy_basename(node)
-  local basename = vim.fn.fnamemodify(node.name, ":r")
-  self:copy_to_reg(basename)
+  local content
+
+  if node.name == ".." then
+    -- root
+    content = vim.fn.fnamemodify(self.explorer.absolute_path, ":t:r")
+  else
+    -- node
+    content = vim.fn.fnamemodify(node.name, ":r")
+  end
+
+  self:copy_to_reg(content)
 end
 
 ---@param node Node
 function Clipboard:copy_path(node)
-  local absolute_path = node.absolute_path
-  local cwd = core.get_cwd()
-  if cwd == nil then
-    return
+  local content
+
+  if node.name == ".." then
+    -- root
+    content = utils.path_add_trailing ""
+  else
+    -- node
+    local absolute_path = node.absolute_path
+    local cwd = core.get_cwd()
+    if cwd == nil then
+      return
+    end
+
+    local relative_path = utils.path_relative(absolute_path, cwd)
+    content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
   end
 
-  local relative_path = utils.path_relative(absolute_path, cwd)
-  local content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
   self:copy_to_reg(content)
 end
 
 ---@param node Node
 function Clipboard:copy_absolute_path(node)
+  if node.name == ".." then
+    node = self.explorer
+  end
+
   local absolute_path = node.absolute_path
   local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
   self:copy_to_reg(content)
