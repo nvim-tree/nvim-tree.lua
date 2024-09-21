@@ -531,7 +531,12 @@ function M._prevent_buffer_override()
     vim.cmd "setlocal nowinfixwidth"
     vim.cmd "setlocal nowinfixheight"
     M.open { focus_tree = false }
-    require("nvim-tree.renderer").draw()
+
+    local explorer = require("nvim-tree.core").get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
+
     pcall(vim.api.nvim_win_close, curwin, { force = true })
 
     -- to handle opening a file using :e when nvim-tree is on floating mode

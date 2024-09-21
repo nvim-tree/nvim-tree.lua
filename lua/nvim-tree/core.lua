@@ -1,5 +1,4 @@
 local events = require "nvim-tree.events"
-local explorer = require "nvim-tree.explorer"
 local view = require "nvim-tree.view"
 local log = require "nvim-tree.log"
 
@@ -16,7 +15,7 @@ function M.init(foldername)
   if TreeExplorer then
     TreeExplorer:destroy()
   end
-  TreeExplorer = explorer:new(foldername)
+  TreeExplorer = require("nvim-tree.explorer"):new(foldername)
   if not first_init_done then
     events._dispatch_ready()
     first_init_done = true

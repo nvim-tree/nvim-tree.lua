@@ -1,7 +1,6 @@
 local log = require "nvim-tree.log"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
-local renderer = require "nvim-tree.renderer"
 local core = require "nvim-tree.core"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 
@@ -76,7 +75,7 @@ function M.fn(path)
     :iterate()
 
   if found and view.is_visible() then
-    renderer.draw()
+    explorer.renderer:draw()
     view.set_cursor { line, 0 }
   end
 

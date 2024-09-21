@@ -5,7 +5,6 @@ local notify = require "nvim-tree.notify"
 local open_file = require "nvim-tree.actions.node.open-file"
 local remove_file = require "nvim-tree.actions.fs.remove-file"
 local rename_file = require "nvim-tree.actions.fs.rename-file"
-local renderer = require "nvim-tree.renderer"
 local trash = require "nvim-tree.actions.fs.trash"
 local utils = require "nvim-tree.utils"
 
@@ -46,7 +45,7 @@ end
 ---@public
 function Marks:clear()
   self.marks = {}
-  renderer.draw()
+  self.explorer.renderer:draw()
 end
 
 ---@public
@@ -62,7 +61,7 @@ function Marks:toggle(node)
     self.marks[node.absolute_path] = node
   end
 
-  renderer.draw()
+  self.explorer.renderer:draw()
 end
 
 ---Return node if marked

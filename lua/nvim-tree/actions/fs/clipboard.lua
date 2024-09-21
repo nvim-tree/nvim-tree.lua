@@ -4,7 +4,6 @@ local utils = require "nvim-tree.utils"
 local core = require "nvim-tree.core"
 local events = require "nvim-tree.events"
 local notify = require "nvim-tree.notify"
-local renderer = require "nvim-tree.renderer"
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -193,7 +192,7 @@ function Clipboard:clear_clipboard()
   self.data[ACTION.copy] = {}
   self.data[ACTION.cut] = {}
   notify.info "Clipboard has been emptied."
-  renderer.draw()
+  self.explorer.renderer:draw()
 end
 
 ---Copy one node
@@ -201,7 +200,7 @@ end
 function Clipboard:copy(node)
   utils.array_remove(self.data[ACTION.cut], node)
   toggle(node, self.data[ACTION.copy])
-  renderer.draw()
+  self.explorer.renderer:draw()
 end
 
 ---Cut one node
@@ -209,7 +208,7 @@ end
 function Clipboard:cut(node)
   utils.array_remove(self.data[ACTION.copy], node)
   toggle(node, self.data[ACTION.cut])
-  renderer.draw()
+  self.explorer.renderer:draw()
 end
 
 ---Paste cut or cop

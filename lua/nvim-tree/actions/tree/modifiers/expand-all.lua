@@ -1,5 +1,4 @@
 local core = require "nvim-tree.core"
-local renderer = require "nvim-tree.renderer"
 local Iterator = require "nvim-tree.iterators.node-iterator"
 local notify = require "nvim-tree.notify"
 local lib = require "nvim-tree.lib"
@@ -65,11 +64,14 @@ end
 
 ---@param base_node table
 function M.fn(base_node)
-  local node = base_node.nodes and base_node or core.get_explorer()
+  local explorer = core.get_explorer()
+  local node = base_node.nodes and base_node or explorer
   if gen_iterator()(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end
-  renderer.draw()
+  if explorer then
+    explorer.renderer:draw()
+  end
 end
 
 function M.setup(opts)

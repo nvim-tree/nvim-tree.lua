@@ -1,3 +1,4 @@
+local core = require "nvim-tree.core"
 local utils = require "nvim-tree.utils"
 local view = require "nvim-tree.view"
 local log = require "nvim-tree.log"
@@ -165,7 +166,10 @@ function M.update()
     end
     log.profile_end(profile)
     if view.is_buf_valid(view.get_bufnr()) then
-      require("nvim-tree.renderer").draw()
+      local explorer = core.get_explorer()
+      if explorer then
+        explorer.renderer:draw()
+      end
     end
   end)
 end

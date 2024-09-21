@@ -79,7 +79,7 @@ function M.create_watcher(node)
       local explorer = require("nvim-tree.core").get_explorer()
       if explorer then
         explorer:refresh_node(node, function()
-          require("nvim-tree.renderer").draw()
+          explorer.renderer:draw()
         end)
       end
     end)

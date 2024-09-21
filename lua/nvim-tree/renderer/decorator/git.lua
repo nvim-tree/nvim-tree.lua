@@ -9,7 +9,7 @@ local Decorator = require "nvim-tree.renderer.decorator"
 ---@class HighlightedStringGit: HighlightedString
 ---@field ord number decreasing priority
 
----@class DecoratorGit: Decorator
+---@class (exact) DecoratorGit: Decorator
 ---@field file_hl table<string, string> by porcelain status e.g. "AM"
 ---@field folder_hl table<string, string> by porcelain status
 ---@field icons_by_status HighlightedStringGit[] by human status
@@ -17,9 +17,11 @@ local Decorator = require "nvim-tree.renderer.decorator"
 local DecoratorGit = Decorator:new()
 
 ---@param opts table
+---@param explorer Explorer
 ---@return DecoratorGit
-function DecoratorGit:new(opts)
+function DecoratorGit:new(opts, explorer)
   local o = Decorator.new(self, {
+    explorer = explorer,
     enabled = opts.git.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,

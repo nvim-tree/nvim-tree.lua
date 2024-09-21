@@ -32,14 +32,16 @@ local ICON_KEYS = {
   ["hint"] = vim.diagnostic.severity.HINT,
 }
 
----@class DecoratorDiagnostics: Decorator
+---@class (exact) DecoratorDiagnostics: Decorator
 ---@field icons HighlightedString[]
 local DecoratorDiagnostics = Decorator:new()
 
 ---@param opts table
+---@param explorer Explorer
 ---@return DecoratorDiagnostics
-function DecoratorDiagnostics:new(opts)
+function DecoratorDiagnostics:new(opts, explorer)
   local o = Decorator.new(self, {
+    explorer = explorer,
     enabled = opts.diagnostics.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
