@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.7.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.6.1...nvim-tree-v1.7.0) (2024-09-21)
+
+
+### Features
+
+* **#2430:** use vim.ui.open as default system_open, for neovim 0.10+ ([#2912](https://github.com/nvim-tree/nvim-tree.lua/issues/2912)) ([03f737e](https://github.com/nvim-tree/nvim-tree.lua/commit/03f737e5744a2b3ebb4b086f7636a3399224ec0c))
+* help closes on &lt;Esc&gt; and api.tree.toggle_help mappings ([#2909](https://github.com/nvim-tree/nvim-tree.lua/issues/2909)) ([b652dbd](https://github.com/nvim-tree/nvim-tree.lua/commit/b652dbd0e0489c5fbb81fbededf0d99029cd2f38))
+
+
+### Bug Fixes
+
+* **#2862:** windows path replaces backslashes with forward slashes ([#2903](https://github.com/nvim-tree/nvim-tree.lua/issues/2903)) ([45a93d9](https://github.com/nvim-tree/nvim-tree.lua/commit/45a93d99794fff3064141d5b3a50db98ce352697))
+* **#2906:** resource leak on populate children ([#2907](https://github.com/nvim-tree/nvim-tree.lua/issues/2907)) ([a4dd5ad](https://github.com/nvim-tree/nvim-tree.lua/commit/a4dd5ad5c8f9349142291d24e0e6466995594b9a))
+* **#2917:** fix root copy paths: Y, ge, gy, y ([#2918](https://github.com/nvim-tree/nvim-tree.lua/issues/2918)) ([b18ce8b](https://github.com/nvim-tree/nvim-tree.lua/commit/b18ce8be8f162eee0bc37addcfe17d7d019fcec7))
+* safely close last tree window ([#2913](https://github.com/nvim-tree/nvim-tree.lua/issues/2913)) ([bd48816](https://github.com/nvim-tree/nvim-tree.lua/commit/bd4881660bf0ddfa6acb21259f856ba3dcb26a93))
+* safely close tree window with pcall and debug logging ([bd48816](https://github.com/nvim-tree/nvim-tree.lua/commit/bd4881660bf0ddfa6acb21259f856ba3dcb26a93))
+
 ## [1.6.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.6.0...nvim-tree-v1.6.1) (2024-09-09)
 
 
