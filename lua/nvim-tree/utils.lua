@@ -112,8 +112,7 @@ function M.find_node(nodes, fn)
     end)
     :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
-  local explorer = require("nvim-tree.core").get_explorer()
-  if explorer and explorer.live_filter.filter then
+  if node and node.explorer.live_filter.filter then
     i = i + 1
   end
   return node, i

@@ -55,7 +55,7 @@ function Explorer:new(path)
   local o = DirectoryNode.new(self, placeholder, nil, path, "..", nil)
   ---@cast o Explorer
 
-  o.explorer = self
+  o.explorer = o
   o.open = true
 
   o.opts = config
