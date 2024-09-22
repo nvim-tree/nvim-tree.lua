@@ -1,22 +1,24 @@
 local git = require("nvim-tree.git")
 
+---Abstract Node class.
+---Uses the abstract factory pattern to instantiate child instances.
 ---@class (exact) BaseNode
 ---@field private __index? table
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
 ---@field executable boolean
----@field fs_stat uv.fs_stat.result|nil
----@field git_status GitStatus|nil
+---@field fs_stat uv.fs_stat.result?
+---@field git_status GitStatus?
 ---@field hidden boolean
 ---@field is_dot boolean
 ---@field name string
----@field parent DirectoryNode|nil
----@field watcher Watcher|nil
----@field diag_status DiagStatus|nil
+---@field parent Node?
+---@field watcher Watcher?
+---@field diag_status DiagStatus?
 local BaseNode = {}
 
----@alias Node BaseNode|DirectoryNode|FileNode|LinkNode
+---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
 
 ---@param o BaseNode|nil
 ---@return BaseNode

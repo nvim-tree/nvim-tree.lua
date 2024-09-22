@@ -1,13 +1,12 @@
-local git = require "nvim-tree.git"
-local log = require "nvim-tree.log"
-local notify = require "nvim-tree.notify"
-local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
-local node_factory = require "nvim-tree.node.factory"
+local git = require("nvim-tree.git")
+local log = require("nvim-tree.log")
+local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
+local node_factory = require("nvim-tree.node.factory")
 
-local BaseNode = require "nvim-tree.node"
-local DirectoryNode = require "nvim-tree.node.directory"
-local Watcher = require "nvim-tree.watcher"
+local RootNode = require("nvim-tree.node.root")
+local Watcher = require("nvim-tree.watcher")
 
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local NodeIterator = require("nvim-tree.iterators.node-iterator")
@@ -23,7 +22,7 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local config
 
----@class (exact) Explorer: DirectoryNode
+---@class (exact) Explorer: RootNode
 ---@field opts table user options
 ---@field renderer Renderer
 ---@field filters Filters
@@ -31,11 +30,12 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-local Explorer = BaseNode.new(DirectoryNode) -- TODO do not inherit, add a root node to separate Explorer and Node
+local Explorer = RootNode:new()
 
----@param path string|nil
----@return Explorer|nil
-function Explorer:new(path)
+---Static factory method
+---@param path string?
+---@return Explorer?
+function Explorer:create(path)
   local err
 
   if path then
@@ -45,19 +45,19 @@ function Explorer:new(path)
   end
   if not path then
     notify.error(err)
-    return
+    return nil
   end
 
   ---@type Explorer
-  local placeholder = nil
+  local explorer_placeholder
 
-  local o = DirectoryNode.new(self, placeholder, nil, path, "..", nil)
-  ---@cast o Explorer
+  local o = RootNode.create(self, explorer_placeholder, path, "..", nil) --[[@as Explorer]]
 
   o.explorer = o
-  o.open = true
 
+  o.open = true
   o.opts = config
+
   o.sorters = Sorters:new(config)
   o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
@@ -149,7 +149,7 @@ function Explorer:reload(node, git_status)
       end
 
       if not nodes_by_path[abs] then
-        local new_child = node_factory.create_node(self, node, abs, stat, name)
+        local new_child = node_factory.create_node(self, node, abs, t, stat, name)
         if new_child then
           table.insert(node.nodes, new_child)
           nodes_by_path[abs] = new_child
@@ -348,29 +348,15 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
     local abs = utils.path_join({ cwd, name })
 
     if Watcher.is_fs_event_capable(abs) then
-      local profile = log.profile_start("populate_children %s", abs)
+      local profile = log.profile_start("explore populate_children %s", abs)
 
       ---@type uv.fs_stat.result|nil
       local stat = vim.loop.fs_lstat(abs)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
-<<<<<<< HEAD
         -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
         local t = stat and stat.type or nil
-        local child = nil
-        if t == "directory" and vim.loop.fs_access(abs, "R") then
-          child = DirectoryNode:new(self, node, abs, name, stat)
-        elseif t == "file" then
-          child = FileNode:new(self, node, abs, name, stat)
-        elseif t == "link" then
-          local link = LinkNode:new(self, node, abs, name, stat)
-          if link.link_to ~= nil then
-            child = link
-          end
-        end
-=======
-        local child = node_factory.create_node(self, node, abs, stat, name)
->>>>>>> c02c98b (extract node factory, remove unused code)
+        local child = node_factory.create_node(self, node, abs, t, stat, name)
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true
