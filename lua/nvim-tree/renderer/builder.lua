@@ -68,14 +68,14 @@ function Builder:new(opts, explorer)
     virtual_lines = {},
     decorators = {
       -- priority order
-      DecoratorCut:new(opts, explorer),
-      DecoratorCopied:new(opts, explorer),
-      DecoratorDiagnostics:new(opts, explorer),
-      DecoratorBookmarks:new(opts, explorer),
-      DecoratorModified:new(opts, explorer),
-      DecoratorHidden:new(opts, explorer),
-      DecoratorOpened:new(opts, explorer),
-      DecoratorGit:new(opts, explorer),
+      DecoratorCut:create(opts, explorer),
+      DecoratorCopied:create(opts, explorer),
+      DecoratorDiagnostics:create(opts, explorer),
+      DecoratorBookmarks:create(opts, explorer),
+      DecoratorModified:create(opts, explorer),
+      DecoratorHidden:create(opts, explorer),
+      DecoratorOpened:create(opts, explorer),
+      DecoratorGit:create(opts, explorer),
     },
     hidden_display = Builder:setup_hidden_display_function(opts),
   }

@@ -4,20 +4,22 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorBookmarks: Decorator
----@field icon HighlightedString
+---@field icon HighlightedString?
 local DecoratorBookmarks = Decorator:new()
 
+---Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorBookmarks
-function DecoratorBookmarks:new(opts, explorer)
-  local o = Decorator.new(self, {
+function DecoratorBookmarks:create(opts, explorer)
+  ---@type DecoratorBookmarks
+  local o = {
     explorer = explorer,
     enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_bookmarks] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.bookmarks_placement] or ICON_PLACEMENT.none,
-  })
-  ---@cast o DecoratorBookmarks
+  }
+  o = self:new(o) --[[@as DecoratorBookmarks]]
 
   if opts.renderer.icons.show.bookmarks then
     o.icon = {

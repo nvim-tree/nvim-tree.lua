@@ -9,23 +9,25 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field ord number decreasing priority
 
 ---@class (exact) DecoratorGit: Decorator
----@field file_hl table<string, string> by porcelain status e.g. "AM"
----@field folder_hl table<string, string> by porcelain status
----@field icons_by_status HighlightedStringGit[] by human status
----@field icons_by_xy table<string, HighlightedStringGit[]> by porcelain status
+---@field file_hl table<string, string>? by porcelain status e.g. "AM"
+---@field folder_hl table<string, string>? by porcelain status
+---@field icons_by_status HighlightedStringGit[]? by human status
+---@field icons_by_xy table<string, HighlightedStringGit[]>? by porcelain status
 local DecoratorGit = Decorator:new()
 
+---Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorGit
-function DecoratorGit:new(opts, explorer)
-  local o = Decorator.new(self, {
+function DecoratorGit:create(opts, explorer)
+  ---@type DecoratorGit
+  local o = {
     explorer = explorer,
     enabled = opts.git.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
-  })
-  ---@cast o DecoratorGit
+  }
+  o = self:new(o) --[[@as DecoratorGit]]
 
   if not o.enabled then
     return o

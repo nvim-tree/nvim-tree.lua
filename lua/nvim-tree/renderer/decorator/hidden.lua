@@ -3,20 +3,22 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorHidden: Decorator
----@field icon HighlightedString|nil
+---@field icon HighlightedString?
 local DecoratorHidden = Decorator:new()
 
+---Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorHidden
-function DecoratorHidden:new(opts, explorer)
-  local o = Decorator.new(self, {
+function DecoratorHidden:create(opts, explorer)
+  ---@type DecoratorHidden
+  local o = {
     explorer = explorer,
     enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_hidden] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.hidden_placement] or ICON_PLACEMENT.none,
-  })
-  ---@cast o DecoratorHidden
+  }
+  o = self:new(o) --[[@as DecoratorHidden]]
 
   if opts.renderer.icons.show.hidden then
     o.icon = {

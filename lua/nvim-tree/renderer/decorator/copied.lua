@@ -5,20 +5,22 @@ local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorCopied: Decorator
 ---@field enabled boolean
----@field icon HighlightedString|nil
+---@field icon HighlightedString?
 local DecoratorCopied = Decorator:new()
 
+---Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorCopied
-function DecoratorCopied:new(opts, explorer)
-  local o = Decorator.new(self, {
+function DecoratorCopied:create(opts, explorer)
+  ---@type DecoratorCopied
+  local o = {
     explorer = explorer,
     enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
-  })
-  ---@cast o DecoratorCopied
+  }
+  o = self:new(o) --[[@as DecoratorCopied]]
 
   return o
 end
