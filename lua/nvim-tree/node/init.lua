@@ -62,6 +62,7 @@ function BaseNode:update_git_status(parent_ignored, status)
   end
 end
 
+---TODO this broke git parent status at ddc1d5f1c12847fce19a8f23d9d742b1bbf0ed31
 ---@return GitStatus|nil
 function BaseNode:get_git_status()
   if not self.git_status then
