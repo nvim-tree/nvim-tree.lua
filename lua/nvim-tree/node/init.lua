@@ -21,7 +21,7 @@ local BaseNode = {}
 
 ---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
 
----@param o BaseNode|nil
+---@param o BaseNode?
 ---@return BaseNode
 function BaseNode:new(o)
   o = o or {}

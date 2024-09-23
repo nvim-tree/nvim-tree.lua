@@ -42,8 +42,9 @@ function M.get_node_at_cursor()
   return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
+---TODO move to node
 ---Create a sanitized partial copy of a node, populating children recursively.
----@param node Node|nil
+---@param node Node?
 ---@return Node|nil cloned node
 local function clone_node(node)
   if not node then
@@ -83,6 +84,7 @@ function M.get_nodes()
   return clone_node(core.get_explorer())
 end
 
+---TODO move to node
 ---Group empty folders
 -- Recursively group nodes
 ---@param node Node
@@ -99,6 +101,7 @@ function M.group_empty_folders(node)
   return node.nodes
 end
 
+---TODO move to node
 ---Ungroup empty folders
 -- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
 ---@param node Node
@@ -111,6 +114,7 @@ function M.ungroup_empty_folders(node)
   end
 end
 
+---TODO move to node
 ---@param node Node
 ---@return Node[]
 function M.get_all_nodes_in_group(node)
@@ -123,6 +127,7 @@ function M.get_all_nodes_in_group(node)
   return nodes
 end
 
+---TODO move to node
 -- Toggle group empty folders
 ---@param head_node Node
 local function toggle_group_folders(head_node)
@@ -135,6 +140,7 @@ local function toggle_group_folders(head_node)
   end
 end
 
+---TODO move to node
 ---@param node Node
 function M.expand_or_collapse(node, toggle_group)
   local explorer = core.get_explorer()

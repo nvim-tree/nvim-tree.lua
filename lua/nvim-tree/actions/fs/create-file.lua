@@ -39,7 +39,7 @@ local function get_containing_folder(node)
   return node.absolute_path:sub(0, -node_name_size - 1)
 end
 
----@param node Node|nil
+---@param node Node?
 function M.fn(node)
   local cwd = core.get_cwd()
   if cwd == nil then

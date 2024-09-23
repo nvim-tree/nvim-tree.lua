@@ -189,7 +189,7 @@ function Builder:build_symlink(node)
 end
 
 ---@private
----@param node table
+---@param node Node
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:build_file(node)

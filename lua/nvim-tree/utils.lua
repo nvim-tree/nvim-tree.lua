@@ -120,7 +120,7 @@ end
 
 -- Find the line number of a node.
 -- Return -1 is node is nil or not found.
----@param node Node|nil
+---@param node Node?
 ---@return integer
 function M.find_node_line(node)
   if not node then
@@ -472,7 +472,7 @@ end
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
 ---If none of the parents is visible focus root.
 ---If node is nil do nothing.
----@param node Node|nil node to focus
+---@param node Node? node to focus
 function M.focus_node_or_parent(node)
   local explorer = require("nvim-tree.core").get_explorer()
 
@@ -548,7 +548,7 @@ function M.array_remove_nils(array)
   end, array)
 end
 
----@param f fun(node: Node|nil)
+---@param f fun(node: Node?)
 ---@return function
 function M.inject_node(f)
   return function()

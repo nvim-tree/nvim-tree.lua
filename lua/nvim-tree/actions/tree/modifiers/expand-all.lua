@@ -61,10 +61,10 @@ local function gen_iterator()
   end
 end
 
----@param base_node table
-function M.fn(base_node)
+---@param node Node
+function M.fn(node)
   local explorer = core.get_explorer()
-  local node = base_node.nodes and base_node or explorer
+  node = node.nodes and node or explorer
   if gen_iterator()(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end

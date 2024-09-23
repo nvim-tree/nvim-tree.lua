@@ -228,7 +228,7 @@ function Explorer:_load(node)
 end
 
 ---@private
----@param nodes_by_path table
+---@param nodes_by_path Node[]
 ---@param node_ignored boolean
 ---@param status table|nil
 ---@return fun(node: Node): table

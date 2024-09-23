@@ -198,7 +198,7 @@ Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basenam
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
 
 ---@param mode string
----@param node table
+---@param node Node
 local function edit(mode, node)
   local path = node.absolute_path
   if node.link_to and not node.nodes then
