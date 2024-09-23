@@ -125,7 +125,7 @@ function M.place_cursor_on_node()
   if not node or node.name == ".." then
     return
   end
-  node = utils.get_parent_of_group(node)
+  node = node:get_parent_of_group()
 
   local line = vim.api.nvim_get_current_line()
   local cursor = vim.api.nvim_win_get_cursor(0)

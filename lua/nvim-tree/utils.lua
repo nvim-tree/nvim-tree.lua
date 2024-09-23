@@ -173,16 +173,6 @@ function M.get_node_from_path(path)
     :iterate()
 end
 
----Get the highest parent of grouped nodes
----@param node Node
----@return Node node or parent
-function M.get_parent_of_group(node)
-  while node and node.parent and node.parent.group_next do
-    node = node.parent or node
-  end
-  return node
-end
-
 M.default_format_hidden_count = function(hidden_count, simple)
   local parts = {}
   local total_count = 0

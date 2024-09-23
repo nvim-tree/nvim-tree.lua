@@ -80,19 +80,6 @@ function M.ungroup_empty_folders(node)
 end
 
 ---TODO move to node
----@param node Node
----@return Node[]
-function M.get_all_nodes_in_group(node)
-  local next_node = utils.get_parent_of_group(node)
-  local nodes = {}
-  while next_node do
-    table.insert(nodes, next_node)
-    next_node = next_node.group_next
-  end
-  return nodes
-end
-
----TODO move to node
 -- Toggle group empty folders
 ---@param head_node Node
 local function toggle_group_folders(head_node)
@@ -119,7 +106,7 @@ function M.expand_or_collapse(node, toggle_group)
     explorer:expand(node)
   end
 
-  local head_node = utils.get_parent_of_group(node)
+  local head_node = node:get_parent_of_group()
   if toggle_group then
     toggle_group_folders(head_node)
   end
@@ -131,7 +118,7 @@ function M.expand_or_collapse(node, toggle_group)
   else
     next_open = not open
   end
-  for _, n in ipairs(M.get_all_nodes_in_group(head_node)) do
+  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
     n.open = next_open
   end
 

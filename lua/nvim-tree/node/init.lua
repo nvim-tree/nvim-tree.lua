@@ -1,5 +1,4 @@
 local git = require("nvim-tree.git")
-local utils = require("nvim-tree.utils")
 
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
@@ -217,7 +216,7 @@ end
 
 ---Refresh contents and git status for a single node
 function BaseNode:refresh()
-  local parent_node = utils.get_parent_of_group(self)
+  local parent_node = self:get_parent_of_group()
   local toplevel = git.get_toplevel(self.absolute_path)
 
   git.reload_project(toplevel, self.absolute_path, function()
@@ -231,10 +230,30 @@ function BaseNode:refresh()
   end)
 end
 
+---Get the highest parent of grouped nodes
+---@return Node node or parent
+function BaseNode:get_parent_of_group()
+  local node = self
+  while node and node.parent and node.parent.group_next do
+    node = node.parent or node
+  end
+  return node
+end
+
+---@return Node[]
+function BaseNode:get_all_nodes_in_group()
+  local next_node = self:get_parent_of_group()
+  local nodes = {}
+  while next_node do
+    table.insert(nodes, next_node)
+    next_node = next_node.group_next
+  end
+  return nodes
+end
+
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return BaseNode cloned
 function BaseNode:clone()
-
   ---@type Explorer
   local placeholder
 

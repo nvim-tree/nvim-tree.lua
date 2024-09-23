@@ -20,7 +20,7 @@ function M.fn(should_close)
       return
     end
 
-    local parent = utils.get_parent_of_group(node).parent
+    local parent = node:get_parent_of_group().parent
 
     if not parent or not parent.parent then
       return view.set_cursor({ 1, 0 })
