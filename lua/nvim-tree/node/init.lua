@@ -1,4 +1,5 @@
 local git = require("nvim-tree.git")
+local utils = require("nvim-tree.utils")
 
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
@@ -180,6 +181,61 @@ function BaseNode:last_group_node()
   end
 
   return node
+end
+
+---@param path string
+---@param callback fun(toplevel: string|nil, project: table|nil)
+function BaseNode:reload_and_get_git_project(path, callback)
+  local toplevel = git.get_toplevel(path)
+
+  git.reload_project(toplevel, path, function()
+    callback(toplevel, git.get_project(toplevel) or {})
+  end)
+end
+
+---@param project table|nil
+---@param root string|nil
+function BaseNode:update_parent_statuses(project, root)
+  local node = self
+  while project and node do
+    -- step up to the containing project
+    if node.absolute_path == root then
+      -- stop at the top of the tree
+      if not node.parent then
+        break
+      end
+
+      root = git.get_toplevel(node.parent.absolute_path)
+
+      -- stop when no more projects
+      if not root then
+        break
+      end
+
+      -- update the containing project
+      project = git.get_project(root)
+      git.reload_project(root, node.absolute_path, nil)
+    end
+
+    -- update status
+    node:update_git_status(node.parent and node.parent:is_git_ignored() or false, project)
+
+    -- maybe parent
+    node = node.parent
+  end
+end
+
+---Refresh contents and git status for a single node
+function BaseNode:refresh()
+  local parent_node = utils.get_parent_of_group(self)
+
+  self:reload_and_get_git_project(self.absolute_path, function(toplevel, project)
+    self.explorer:reload(parent_node, project)
+
+    parent_node:update_parent_statuses(project, toplevel)
+
+    self.explorer.renderer:draw()
+  end)
 end
 
 return BaseNode

@@ -76,9 +76,7 @@ function M.create_watcher(node)
       else
         log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
       end
-      node.explorer:refresh_node(node, function()
-        node.explorer.renderer:draw()
-      end)
+      node:refresh()
     end)
   end
 

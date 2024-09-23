@@ -186,26 +186,6 @@ function Explorer:reload(node, git_status)
   return node.nodes
 end
 
----TODO #2837 #2871 #2886 move this and similar to node
----Refresh contents and git status for a single node
----@param node Node
----@param callback function
-function Explorer:refresh_node(node, callback)
-  if type(node) ~= "table" then
-    callback()
-  end
-
-  local parent_node = utils.get_parent_of_group(node)
-
-  self:reload_and_get_git_project(node.absolute_path, function(toplevel, project)
-    self:reload(parent_node, project)
-
-    self:update_parent_statuses(parent_node, project, toplevel)
-
-    callback()
-  end)
-end
-
 ---Refresh contents of all nodes to a path: actual directory and links.
 ---Groups will be expanded if needed.
 ---@param path string absolute path
@@ -233,7 +213,7 @@ function Explorer:refresh_parent_nodes_for_path(path)
     local project = git.get_project(toplevel) or {}
 
     self:reload(node, project)
-    self:update_parent_statuses(node, project, toplevel)
+    node:update_parent_statuses(project, toplevel)
   end
 
   log.profile_end(profile)
@@ -258,52 +238,6 @@ function Explorer:update_status(nodes_by_path, node_ignored, status)
       node:update_git_status(node_ignored, status)
     end
     return node
-  end
-end
-
----TODO #2837 #2871 #2886 move this and similar to node
----@private
----@param path string
----@param callback fun(toplevel: string|nil, project: table|nil)
-function Explorer:reload_and_get_git_project(path, callback)
-  local toplevel = git.get_toplevel(path)
-
-  git.reload_project(toplevel, path, function()
-    callback(toplevel, git.get_project(toplevel) or {})
-  end)
-end
-
----TODO #2837 #2871 #2886 move this and similar to node
----@private
----@param node Node
----@param project table|nil
----@param root string|nil
-function Explorer:update_parent_statuses(node, project, root)
-  while project and node do
-    -- step up to the containing project
-    if node.absolute_path == root then
-      -- stop at the top of the tree
-      if not node.parent then
-        break
-      end
-
-      root = git.get_toplevel(node.parent.absolute_path)
-
-      -- stop when no more projects
-      if not root then
-        break
-      end
-
-      -- update the containing project
-      project = git.get_project(root)
-      git.reload_project(root, node.absolute_path, nil)
-    end
-
-    -- update status
-    node:update_git_status(node.parent and node.parent:is_git_ignored() or false, project)
-
-    -- maybe parent
-    node = node.parent
   end
 end
 

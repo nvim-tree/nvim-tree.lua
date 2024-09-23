@@ -8,7 +8,7 @@ local rename_file = require("nvim-tree.actions.fs.rename-file")
 local trash = require("nvim-tree.actions.fs.trash")
 local utils = require("nvim-tree.utils")
 
-local DirectoryNode = require "nvim-tree.node.directory"
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class Marks
 ---@field config table hydrated user opts.filters
