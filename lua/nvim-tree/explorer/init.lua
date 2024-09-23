@@ -241,17 +241,17 @@ function Explorer:refresh_parent_nodes_for_path(path)
   -- collect parent nodes from the top down
   local parent_nodes = {}
   NodeIterator.builder({ self })
-      :recursor(function(node)
-        return node.nodes
-      end)
-      :applier(function(node)
-        local abs_contains = node.absolute_path and path:find(node.absolute_path, 1, true) == 1
-        local link_contains = node.link_to and path:find(node.link_to, 1, true) == 1
-        if abs_contains or link_contains then
-          table.insert(parent_nodes, node)
-        end
-      end)
-      :iterate()
+    :recursor(function(node)
+      return node.nodes
+    end)
+    :applier(function(node)
+      local abs_contains = node.absolute_path and path:find(node.absolute_path, 1, true) == 1
+      local link_contains = node.link_to and path:find(node.link_to, 1, true) == 1
+      if abs_contains or link_contains then
+        table.insert(parent_nodes, node)
+      end
+    end)
+    :iterate()
 
   -- refresh in order; this will expand groups as needed
   for _, node in ipairs(parent_nodes) do
@@ -369,13 +369,13 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
         -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-        local type = stat and stat.type or nil
+        local t = stat and stat.type or nil
         local child = nil
-        if type == "directory" and vim.loop.fs_access(abs, "R") then
+        if t == "directory" and vim.loop.fs_access(abs, "R") then
           child = builders.folder(node, abs, name, stat)
-        elseif type == "file" then
+        elseif t == "file" then
           child = builders.file(node, abs, name, stat)
-        elseif type == "link" then
+        elseif t == "link" then
           local link = builders.link(node, abs, name, stat)
           if link.link_to ~= nil then
             child = link
@@ -439,16 +439,16 @@ end
 ---@param projects table
 function Explorer:refresh_nodes(projects)
   Iterator.builder({ self })
-      :applier(function(n)
-        if n.nodes then
-          local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
-          self:reload(n, projects[toplevel] or {})
-        end
-      end)
-      :recursor(function(n)
-        return n.group_next and { n.group_next } or (n.open and n.nodes)
-      end)
-      :iterate()
+    :applier(function(n)
+      if n.nodes then
+        local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
+        self:reload(n, projects[toplevel] or {})
+      end
+    end)
+    :recursor(function(n)
+      return n.group_next and { n.group_next } or (n.open and n.nodes)
+    end)
+    :iterate()
 end
 
 local event_running = false
