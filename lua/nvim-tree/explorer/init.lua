@@ -75,18 +75,6 @@ function Explorer:expand(node)
   self:_load(node)
 end
 
-function Explorer:destroy()
-  local function iterate(node)
-    node:destroy()
-    if node.nodes then
-      for _, child in pairs(node.nodes) do
-        iterate(child)
-      end
-    end
-  end
-  iterate(self)
-end
-
 ---@param node Node
 ---@param git_status table|nil
 function Explorer:reload(node, git_status)

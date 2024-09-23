@@ -49,4 +49,13 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
+function DirectoryNode:destroy()
+  BaseNode.destroy(self)
+  if self.nodes then
+    for _, node in pairs(self.nodes) do
+      node:destroy()
+    end
+  end
+end
+
 return DirectoryNode
