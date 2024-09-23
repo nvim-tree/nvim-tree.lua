@@ -1,6 +1,6 @@
 local M = {}
 
----Roughly synced with uv.fs_stat.result
+---Must be synced with uv.fs_stat.result as it is compared with it
 ---@enum (key) NODE_TYPE
 M.NODE_TYPE = {
   directory = 1,
