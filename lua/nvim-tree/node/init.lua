@@ -231,4 +231,30 @@ function BaseNode:refresh()
   end)
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@return BaseNode cloned
+function BaseNode:clone()
+
+  ---@type Explorer
+  local placeholder
+
+  ---@type BaseNode
+  local clone = {
+    type = self.type,
+    explorer = placeholder,
+    absolute_path = self.absolute_path,
+    executable = self.executable,
+    fs_stat = self.fs_stat,
+    git_status = self.git_status,
+    hidden = self.hidden,
+    is_dot = self.is_dot,
+    name = self.name,
+    parent = nil,
+    watcher = nil,
+    diag_status = nil,
+  }
+
+  return clone
+end
+
 return BaseNode

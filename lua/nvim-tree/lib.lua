@@ -42,46 +42,11 @@ function M.get_node_at_cursor()
   return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
----TODO move to node
----Create a sanitized partial copy of a node, populating children recursively.
----@param node Node?
----@return Node|nil cloned node
-local function clone_node(node)
-  if not node then
-    node = core.get_explorer()
-    if not node then
-      return nil
-    end
-  end
-
-  local n = {
-    absolute_path = node.absolute_path,
-    executable = node.executable,
-    extension = node.extension,
-    git_status = node.git_status,
-    has_children = node.has_children,
-    hidden = node.hidden,
-    link_to = node.link_to,
-    name = node.name,
-    open = node.open,
-    type = node.type,
-    fs_stat = node.fs_stat,
-  }
-
-  if type(node.nodes) == "table" then
-    n.nodes = {}
-    for _, child in ipairs(node.nodes) do
-      table.insert(n.nodes, clone_node(child))
-    end
-  end
-
-  return n
-end
-
 ---Api.tree.get_nodes
----@return Node[]|nil
+---@return Node[]?
 function M.get_nodes()
-  return clone_node(core.get_explorer())
+  local explorer = core.get_explorer()
+  return explorer and explorer:clone()
 end
 
 ---TODO move to node

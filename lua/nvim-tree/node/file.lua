@@ -36,4 +36,14 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@return FileNode cloned
+function FileNode:clone()
+  local clone = BaseNode.clone(self) --[[@as FileNode]]
+
+  clone.extension = self.extension
+
+  return clone
+end
+
 return FileNode

@@ -66,4 +66,24 @@ function LinkNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@return LinkNode cloned
+function LinkNode:clone()
+  local clone = BaseNode.clone(self) --[[@as LinkNode]]
+
+  clone.has_children = self.has_children
+  clone.group_next = nil
+  clone.link_to = self.link_to
+  clone.nodes = {}
+  clone.open = self.open
+
+  if self.nodes then
+    for _, child in ipairs(self.nodes) do
+      table.insert(clone.nodes, child:clone())
+    end
+  end
+
+  return clone
+end
+
 return LinkNode

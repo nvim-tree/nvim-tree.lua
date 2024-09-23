@@ -58,4 +58,22 @@ function DirectoryNode:destroy()
   end
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@return DirectoryNode cloned
+function DirectoryNode:clone()
+  local clone = BaseNode.clone(self) --[[@as DirectoryNode]]
+
+  clone.has_children = self.has_children
+  clone.group_next = nil
+  clone.nodes = {}
+  clone.open = self.open
+  clone.hidden_stats = nil
+
+  for _, child in ipairs(self.nodes) do
+    table.insert(clone.nodes, child:clone())
+  end
+
+  return clone
+end
+
 return DirectoryNode
