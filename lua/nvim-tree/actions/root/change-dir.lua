@@ -85,7 +85,11 @@ M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
     if should_change_dir() then
       cd(M.options.global, foldername)
     end
-    core.init(foldername)
+    if M.options.explorer_node_unchanged then
+      core.change_root(foldername)
+    else
+      core.init(foldername)
+    end
   end
 
   if should_open_view then
