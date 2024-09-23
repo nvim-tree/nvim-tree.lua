@@ -5,6 +5,8 @@ local Watcher = require("nvim-tree.watcher")
 
 local M = {}
 
+--- TODO merge #2922 and pass just stat, as stat.type from lstat is correct
+
 ---Factory function to create the appropriate Node
 ---@param explorer Explorer
 ---@param parent Node

@@ -38,6 +38,23 @@ function BaseNode:destroy()
   end
 end
 
+---From plenary
+---Checks if the object is an instance
+---This will start with the lowest class and loop over all the superclasses.
+---@param self BaseNode
+---@param T BaseNode
+---@return boolean
+function BaseNode:is(T)
+  local mt = getmetatable(self)
+  while mt do
+    if mt == T then
+      return true
+    end
+    mt = getmetatable(mt)
+  end
+  return false
+end
+
 ---@return boolean
 function BaseNode:has_one_child_folder()
   return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
