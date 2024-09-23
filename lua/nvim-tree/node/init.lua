@@ -183,16 +183,6 @@ function BaseNode:last_group_node()
   return node
 end
 
----@param path string
----@param callback fun(toplevel: string|nil, project: table|nil)
-function BaseNode:reload_and_get_git_project(path, callback)
-  local toplevel = git.get_toplevel(path)
-
-  git.reload_project(toplevel, path, function()
-    callback(toplevel, git.get_project(toplevel) or {})
-  end)
-end
-
 ---@param project table|nil
 ---@param root string|nil
 function BaseNode:update_parent_statuses(project, root)
@@ -228,8 +218,11 @@ end
 ---Refresh contents and git status for a single node
 function BaseNode:refresh()
   local parent_node = utils.get_parent_of_group(self)
+  local toplevel = git.get_toplevel(self.absolute_path)
 
-  self:reload_and_get_git_project(self.absolute_path, function(toplevel, project)
+  git.reload_project(toplevel, self.absolute_path, function()
+    local project = git.get_project(toplevel) or {}
+
     self.explorer:reload(parent_node, project)
 
     parent_node:update_parent_statuses(project, toplevel)
