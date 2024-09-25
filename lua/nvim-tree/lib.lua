@@ -276,9 +276,9 @@ function M.open(opts)
       core.init(cwd)
     end
   end
-  
+
   local explorer = core.get_explorer()
-  
+
   if should_hijack_current_buf() then
     view.close_this_tab_only()
     view.open_in_win()
