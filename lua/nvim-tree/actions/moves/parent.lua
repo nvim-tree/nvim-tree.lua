@@ -10,9 +10,8 @@ local M = {}
 function M.fn(should_close)
   should_close = should_close or false
 
-  local explorer = core.get_explorer()
-
   return function(node)
+    local explorer = core.get_explorer()
     node = lib.get_last_group_node(node)
     if should_close and node.open then
       node.open = false
