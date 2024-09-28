@@ -17,7 +17,7 @@ luacheck:
 
 # --diagnosis-as-error does not function for workspace, hence we post-process the output
 style-check:
-	CodeFormat check --config .editorconfig --diagnosis-as-error --workspace lua 2>&1 | tee /tmp/CodeFormat.out ; ! grep -qE "warning|error" /tmp/CodeFormat.out
+	CodeFormat check --config .editorconfig --diagnosis-as-error --workspace lua
 
 style-doc:
 	scripts/doc-comments.sh
