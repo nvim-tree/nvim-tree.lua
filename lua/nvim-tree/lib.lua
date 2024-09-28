@@ -263,8 +263,6 @@ end
 function M.open(opts)
   opts = opts or {}
 
-  local explorer = core.get_explorer()
-
   M.set_target_win()
   if not core.get_explorer() or opts.path then
     if opts.path then
@@ -278,6 +276,9 @@ function M.open(opts)
       core.init(cwd)
     end
   end
+
+  local explorer = core.get_explorer()
+
   if should_hijack_current_buf() then
     view.close_this_tab_only()
     view.open_in_win()
