@@ -4,9 +4,17 @@ root = true
 insert_final_newline = true
 end_of_line = lf
 
-[*.lua]
-indent_style = space
-indent_size = 2
-
 [nvim-tree-lua.txt]
 max_line_length = 78
+
+[*.lua]
+indent_style = space
+max_line_length = 140
+indent_size = 2
+
+# EmmyLuaCodeStyle specific, see
+# https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/lua.template.editorconfig
+continuation_indent = 2
+quote_style = double
+call_arg_parentheses = always
+space_before_closure_open_parenthesis = false
