@@ -43,7 +43,7 @@ jobs:
 
     strategy:
       matrix:
-        emmy_lua_code_style_version: [ 1.5.4 ]
+        emmy_lua_code_style_version: [ 1.5.5 ]
 
     steps:
       - uses: actions/checkout@v4
