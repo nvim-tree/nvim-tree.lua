@@ -125,18 +125,21 @@ function Explorer:reload(node, git_status)
   })
 
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
 
     local abs = utils.path_join { cwd, name }
     ---@type uv.fs_stat.result|nil
-    local stat = vim.loop.fs_stat(abs)
+    local stat = vim.loop.fs_lstat(abs)
 
     local filter_reason = self.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none then
       remain_childs[abs] = true
+
+      -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
+      local t = stat and stat.type or nil
 
       -- Recreate node if type changes.
       if nodes_by_path[abs] then
@@ -351,7 +354,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
   })
 
   while true do
-    local name, t = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.loop.fs_scandir_next(handle)
     if not name then
       break
     end
@@ -362,9 +365,11 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
       local profile = log.profile_start("populate_children %s", abs)
 
       ---@type uv.fs_stat.result|nil
-      local stat = vim.loop.fs_stat(abs)
+      local stat = vim.loop.fs_lstat(abs)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
+        -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
+        local t = stat and stat.type or nil
         local child = nil
         if t == "directory" and vim.loop.fs_access(abs, "R") then
           child = builders.folder(node, abs, name, stat)
