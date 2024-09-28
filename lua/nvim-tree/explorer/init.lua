@@ -139,13 +139,13 @@ function Explorer:reload(node, git_status)
       remain_childs[abs] = true
 
       -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-      local type = stat and stat.type or nil
+      local t = stat and stat.type or nil
 
       -- Recreate node if type changes.
       if nodes_by_path[abs] then
         local n = nodes_by_path[abs]
 
-        if n.type ~= type then
+        if n.type ~= t then
           utils.array_remove(node.nodes, n)
           explorer_node.node_destroy(n)
           nodes_by_path[abs] = nil
@@ -154,11 +154,11 @@ function Explorer:reload(node, git_status)
 
       if not nodes_by_path[abs] then
         local new_child = nil
-        if type == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
+        if t == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
           new_child = builders.folder(node, abs, name, stat)
-        elseif type == "file" then
+        elseif t == "file" then
           new_child = builders.file(node, abs, name, stat)
-        elseif type == "link" then
+        elseif t == "link" then
           local link = builders.link(node, abs, name, stat)
           if link.link_to ~= nil then
             new_child = link
