@@ -21,8 +21,8 @@ end
 local modes = {
   { name = "trace", level = vim.log.levels.TRACE },
   { name = "debug", level = vim.log.levels.DEBUG },
-  { name = "info", level = vim.log.levels.INFO },
-  { name = "warn", level = vim.log.levels.WARN },
+  { name = "info",  level = vim.log.levels.INFO },
+  { name = "warn",  level = vim.log.levels.WARN },
   { name = "error", level = vim.log.levels.ERROR },
 }
 

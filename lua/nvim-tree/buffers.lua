@@ -11,11 +11,9 @@ function M.reload_modified()
     local path = buf.name
     if path ~= "" then -- not a [No Name] buffer
       -- mark all the parent as modified as well
-      while
-        M._modified[path] ~= true
+      while M._modified[path] ~= true do
         -- no need to keep going if already recorded
         -- This also prevents an infinite loop
-      do
         M._modified[path] = true
         path = vim.fn.fnamemodify(path, ":h")
       end

@@ -397,7 +397,7 @@ function Builder:add_hidden_count_string(node, idx, num_children)
     -- if we change the traversal, we might need to sort by depth before rendering `self.virtual_lines`
     -- to maintain proper ordering of parent and child folder hidden count info.
     table.insert(self.virtual_lines[line_nr], {
-      { indent_string, indent_markers.hl },
+      { indent_string,                                                                      indent_markers.hl },
       { string.rep(indent_padding, (node.parent == nil and 0 or 1)) .. hidden_count_string, "NvimTreeHiddenDisplay" },
     })
   end

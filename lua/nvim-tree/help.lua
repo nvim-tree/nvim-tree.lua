@@ -130,7 +130,7 @@ local function compute(map)
 
   -- header highlight, assume one character keys
   local hl = {
-    { "NvimTreeFolderName", 0, 0, #head_lhs },
+    { "NvimTreeFolderName", 0, 0,         #head_lhs },
     { "NvimTreeFolderName", 0, width - 1, width },
     { "NvimTreeFolderName", 1, width - 1, width },
   }

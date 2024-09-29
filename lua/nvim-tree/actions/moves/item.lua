@@ -175,7 +175,7 @@ local function move_prev_recursive(what, skip_gitignored)
       if
         node_cur == nil
         or node_cur == node_init -- we didn't move
-        or not node_cur.nodes -- node is a file
+        or not node_cur.nodes    -- node is a file
       then
         return
       end
@@ -186,7 +186,7 @@ local function move_prev_recursive(what, skip_gitignored)
 
       -- 4.3)
       if node_init.name == ".." then -- root node
-        view.set_cursor { 1, 0 } -- move to root node (position 1)
+        view.set_cursor { 1, 0 }     -- move to root node (position 1)
       else
         local node_init_line = utils.find_node_line(node_init)
         if node_init_line < 0 then
