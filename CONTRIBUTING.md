@@ -8,11 +8,13 @@ See [Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) f
 
 Following are used during CI and strongly recommended during local development.
 
+Language server: [luals](https://luals.github.io)
+
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-Style: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle) (`CodeCheck`)
+Style: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
 
-Language server: [luals](https://luals.github.io)
+nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals
 
 You can install them via you OS package manager e.g. `pacman`, `brew` or other via other package managers such as `cargo` or `luarocks`
 
