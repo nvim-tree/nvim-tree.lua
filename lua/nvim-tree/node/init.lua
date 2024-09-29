@@ -255,12 +255,12 @@ end
 ---@return BaseNode cloned
 function BaseNode:clone()
   ---@type Explorer
-  local placeholder
+  local explorer_placeholder = nil
 
   ---@type BaseNode
   local clone = {
     type = self.type,
-    explorer = placeholder,
+    explorer = explorer_placeholder,
     absolute_path = self.absolute_path,
     executable = self.executable,
     fs_stat = self.fs_stat,
