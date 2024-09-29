@@ -1,6 +1,6 @@
-local lib = require "nvim-tree.lib"
-local view = require "nvim-tree.view"
-local finders_find_file = require "nvim-tree.actions.finders.find-file"
+local lib = require("nvim-tree.lib")
+local view = require("nvim-tree.view")
+local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
 
@@ -29,11 +29,11 @@ function M.fn(opts)
     view.focus()
   else
     -- open
-    lib.open {
+    lib.open({
       path = opts.path,
       current_window = opts.current_window,
       winid = opts.winid,
-    }
+    })
   end
 
   -- find file

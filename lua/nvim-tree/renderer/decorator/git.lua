@@ -1,10 +1,10 @@
-local notify = require "nvim-tree.notify"
-local explorer_node = require "nvim-tree.explorer.node"
+local notify = require("nvim-tree.notify")
+local explorer_node = require("nvim-tree.explorer.node")
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
-local Decorator = require "nvim-tree.renderer.decorator"
+local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class HighlightedStringGit: HighlightedString
 ---@field ord number decreasing priority

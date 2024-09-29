@@ -1,5 +1,5 @@
-local utils = require "nvim-tree.utils"
-local core = require "nvim-tree.core"
+local utils = require("nvim-tree.utils")
+local core = require("nvim-tree.core")
 
 local M = {}
 

@@ -1,5 +1,5 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local diagnostics = require "nvim-tree.diagnostics"
+local diagnostics = require("nvim-tree.diagnostics")
 
 local M = {
   -- highlight strings for the icons

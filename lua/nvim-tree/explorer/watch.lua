@@ -1,5 +1,5 @@
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
+local log = require("nvim-tree.log")
+local utils = require("nvim-tree.utils")
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {

@@ -1,4 +1,4 @@
-local appearance = require "nvim-tree.appearance"
+local appearance = require("nvim-tree.appearance")
 
 -- others with name and links less than this arbitrary value are short
 local SHORT_LEN = 50
@@ -129,7 +129,7 @@ function M.hi_test()
   render_displays("other, long", displays_long, bufnr, l)
 
   -- finalise and focus the buffer
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
   else
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated

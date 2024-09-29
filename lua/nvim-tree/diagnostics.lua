@@ -1,7 +1,7 @@
-local core = require "nvim-tree.core"
-local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
-local log = require "nvim-tree.log"
+local core = require("nvim-tree.core")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
+local log = require("nvim-tree.log")
 
 local M = {}
 
@@ -42,7 +42,7 @@ local function from_nvim_lsp()
 
   -- is_enabled is not present in all 0.10 builds/releases, see #2781
   local is_enabled = false
-  if vim.fn.has "nvim-0.10" == 1 and type(vim.diagnostic.is_enabled) == "function" then
+  if vim.fn.has("nvim-0.10") == 1 and type(vim.diagnostic.is_enabled) == "function" then
     is_enabled = vim.diagnostic.is_enabled()
   elseif type(vim.diagnostic.is_disabled) == "function" then ---@diagnostic disable-line: deprecated
     is_enabled = not vim.diagnostic.is_disabled() ---@diagnostic disable-line: deprecated
@@ -77,7 +77,7 @@ local function handle_coc_exception(err)
   local notify = true
 
   -- avoid distractions on interrupts (CTRL-C)
-  if err:find "Vim:Interrupt" or err:find "Keyboard interrupt" then
+  if err:find("Vim:Interrupt") or err:find("Keyboard interrupt") then
     notify = false
   end
 
@@ -100,7 +100,7 @@ local function from_coc()
   end
 
   local ok, diagnostic_list = xpcall(function()
-    return vim.fn.CocAction "diagnosticList"
+    return vim.fn.CocAction("diagnosticList")
   end, handle_coc_exception)
   if not ok or type(diagnostic_list) ~= "table" or vim.tbl_isempty(diagnostic_list) then
     return {}
@@ -152,14 +152,14 @@ function M.update()
     return
   end
   utils.debounce("diagnostics", M.debounce_delay, function()
-    local profile = log.profile_start "diagnostics update"
+    local profile = log.profile_start("diagnostics update")
     if is_using_coc() then
       NODE_SEVERITIES = from_coc()
     else
       NODE_SEVERITIES = from_nvim_lsp()
     end
     NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
-    if log.enabled "diagnostics" then
+    if log.enabled("diagnostics") then
       for bufname, severity in pairs(NODE_SEVERITIES) do
         log.line("diagnostics", "Indexing bufname '%s' with severity %d", bufname, severity)
       end

@@ -1,4 +1,4 @@
-local utils = require "nvim-tree.utils"
+local utils = require("nvim-tree.utils")
 
 local M = {}
 
@@ -57,7 +57,7 @@ end
 function M.close_popup()
   if current_popup ~= nil then
     vim.api.nvim_win_close(current_popup.winnr, true)
-    vim.cmd "augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END"
+    vim.cmd("augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END")
 
     current_popup = nil
   end

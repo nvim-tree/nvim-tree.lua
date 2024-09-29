@@ -1,12 +1,12 @@
-local utils = require "nvim-tree.utils"
-local core = require "nvim-tree.core"
+local utils = require("nvim-tree.utils")
+local core = require("nvim-tree.core")
 
 local M = {}
 
 ---@param node Node
 function M.fn(node)
   if not node or node.name == ".." then
-    require("nvim-tree.actions.root.change-dir").fn ".."
+    require("nvim-tree.actions.root.change-dir").fn("..")
   else
     local cwd = core.get_cwd()
     if cwd == nil then

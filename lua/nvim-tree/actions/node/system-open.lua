@@ -1,12 +1,12 @@
-local notify = require "nvim-tree.notify"
-local utils = require "nvim-tree.utils"
+local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
 
 local M = {}
 
 ---@param node Node
 local function user(node)
   if #M.config.system_open.cmd == 0 then
-    require("nvim-tree.utils").notify.warn "Cannot open file with system application. Unrecognized platform."
+    require("nvim-tree.utils").notify.warn("Cannot open file with system application. Unrecognized platform.")
     return
   end
 
@@ -69,7 +69,7 @@ function M.setup(opts)
   M.config = {}
   M.config.system_open = opts.system_open or {}
 
-  if vim.fn.has "nvim-0.10" == 1 and #M.config.system_open.cmd == 0 then
+  if vim.fn.has("nvim-0.10") == 1 and #M.config.system_open.cmd == 0 then
     M.open = native
   else
     M.open = user

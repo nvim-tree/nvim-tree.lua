@@ -1,4 +1,4 @@
-local notify = require "nvim-tree.notify"
+local notify = require("nvim-tree.notify")
 
 local M = {}
 

@@ -1,18 +1,18 @@
-local notify = require "nvim-tree.notify"
-local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
+local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
-local DecoratorBookmarks = require "nvim-tree.renderer.decorator.bookmarks"
-local DecoratorCopied = require "nvim-tree.renderer.decorator.copied"
-local DecoratorCut = require "nvim-tree.renderer.decorator.cut"
-local DecoratorDiagnostics = require "nvim-tree.renderer.decorator.diagnostics"
-local DecoratorGit = require "nvim-tree.renderer.decorator.git"
-local DecoratorModified = require "nvim-tree.renderer.decorator.modified"
-local DecoratorHidden = require "nvim-tree.renderer.decorator.hidden"
-local DecoratorOpened = require "nvim-tree.renderer.decorator.opened"
+local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
+local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
+local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
+local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
+local DecoratorGit = require("nvim-tree.renderer.decorator.git")
+local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
+local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
+local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 
-local pad = require "nvim-tree.renderer.components.padding"
-local icons = require "nvim-tree.renderer.components.icons"
+local pad = require("nvim-tree.renderer.components.padding")
+local icons = require("nvim-tree.renderer.components.icons")
 
 local PICTURE_MAP = {
   jpg = true,
@@ -397,7 +397,7 @@ function Builder:add_hidden_count_string(node, idx, num_children)
     -- if we change the traversal, we might need to sort by depth before rendering `self.virtual_lines`
     -- to maintain proper ordering of parent and child folder hidden count info.
     table.insert(self.virtual_lines[line_nr], {
-      { indent_string, indent_markers.hl },
+      { indent_string,                                                                      indent_markers.hl },
       { string.rep(indent_padding, (node.parent == nil and 0 or 1)) .. hidden_count_string, "NvimTreeHiddenDisplay" },
     })
   end
@@ -521,7 +521,8 @@ function Builder:setup_hidden_display_function(opts)
 
       local ok, result = pcall(hidden_display, hidden_stats)
       if not ok then
-        notify.warn "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree"
+        notify.warn(
+          "Problem occurred in the function ``opts.renderer.hidden_display`` see nvim-tree.renderer.hidden_display on :h nvim-tree")
         return nil
       end
       return result

@@ -1,9 +1,9 @@
-local core = require "nvim-tree.core"
-local utils = require "nvim-tree.utils"
-local events = require "nvim-tree.events"
-local view = require "nvim-tree.view"
-local lib = require "nvim-tree.lib"
-local notify = require "nvim-tree.notify"
+local core = require("nvim-tree.core")
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
+local view = require("nvim-tree.view")
+local lib = require("nvim-tree.lib")
+local notify = require("nvim-tree.notify")
 
 local M = {
   config = {},
@@ -27,13 +27,13 @@ end
 
 ---@param absolute_path string
 local function clear_buffer(absolute_path)
-  local bufs = vim.fn.getbufinfo { bufloaded = 1, buflisted = 1 }
+  local bufs = vim.fn.getbufinfo({ bufloaded = 1, buflisted = 1 })
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       local tree_winnr = vim.api.nvim_get_current_win()
       if buf.hidden == 0 and (#bufs > 1 or view.View.float.enable) then
         vim.api.nvim_set_current_win(buf.windows[1])
-        vim.cmd ":bn"
+        vim.cmd(":bn")
       end
       vim.api.nvim_buf_delete(buf.bufnr, { force = true })
       if not view.View.float.quit_on_focus_loss then
@@ -62,7 +62,7 @@ local function remove_dir(cwd)
       break
     end
 
-    local new_cwd = utils.path_join { cwd, name }
+    local new_cwd = utils.path_join({ cwd, name })
 
     -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
     local stat = vim.loop.fs_stat(new_cwd)

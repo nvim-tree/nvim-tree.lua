@@ -1,5 +1,5 @@
-local utils = require "nvim-tree.utils"
-local watch = require "nvim-tree.explorer.watch"
+local utils = require("nvim-tree.utils")
+local watch = require("nvim-tree.explorer.watch")
 
 local M = {}
 

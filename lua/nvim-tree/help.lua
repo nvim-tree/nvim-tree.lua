@@ -1,4 +1,4 @@
-local keymap = require "nvim-tree.keymap"
+local keymap = require("nvim-tree.keymap")
 local api = {} -- circular dependency
 
 local PAT_MOUSE = "^<.*Mouse"
@@ -27,12 +27,12 @@ local function tidy_lhs(lhs)
   lhs = lhs:gsub("^<lt>", "<")
 
   -- shorten ctrls
-  if lhs:lower():match "^<ctrl%-" then
+  if lhs:lower():match("^<ctrl%-") then
     lhs = lhs:lower():gsub("^<ctrl%-", "<C%-")
   end
 
   -- uppercase ctrls
-  if lhs:lower():match "^<c%-" then
+  if lhs:lower():match("^<c%-") then
     lhs = lhs:upper()
   end
 
@@ -130,7 +130,7 @@ local function compute(map)
 
   -- header highlight, assume one character keys
   local hl = {
-    { "NvimTreeFolderName", 0, 0, #head_lhs },
+    { "NvimTreeFolderName", 0, 0,         #head_lhs },
     { "NvimTreeFolderName", 0, width - 1, width },
     { "NvimTreeFolderName", 1, width - 1, width },
   }
@@ -179,7 +179,7 @@ local function open()
   -- populate it
   vim.api.nvim_buf_set_lines(M.bufnr, 0, -1, false, lines)
 
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = M.bufnr })
   else
     vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
@@ -255,7 +255,7 @@ function M.setup(opts)
   M.config.cursorline = opts.view.cursorline
   M.config.sort_by = opts.help.sort_by
 
-  api = require "nvim-tree.api"
+  api = require("nvim-tree.api")
 end
 
 return M

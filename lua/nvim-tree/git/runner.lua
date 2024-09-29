@@ -1,6 +1,6 @@
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
-local notify = require "nvim-tree.notify"
+local log = require("nvim-tree.log")
+local utils = require("nvim-tree.utils")
+local notify = require("nvim-tree.notify")
 
 ---@class Runner
 local Runner = {}
@@ -18,11 +18,11 @@ function Runner:_parse_status_output(status, path)
   end
 
   -- replacing slashes if on windows
-  if vim.fn.has "win32" == 1 then
+  if vim.fn.has("win32") == 1 then
     path = path:gsub("/", "\\")
   end
   if #status > 0 and #path > 0 then
-    self.output[utils.path_remove_trailing(utils.path_join { self.toplevel, path })] = status
+    self.output[utils.path_remove_trailing(utils.path_join({ self.toplevel, path }))] = status
   end
 end
 
@@ -35,7 +35,7 @@ function Runner:_handle_incoming_data(prev_output, incoming)
     local prev = prev_output .. incoming
     local i = 1
     local skip_next_line = false
-    for line in prev:gmatch "[^\n]*\n" do
+    for line in prev:gmatch("[^\n]*\n") do
       if skip_next_line then
         skip_next_line = false
       else
@@ -57,7 +57,7 @@ function Runner:_handle_incoming_data(prev_output, incoming)
     return prev_output .. incoming
   end
 
-  for line in prev_output:gmatch "[^\n]*\n" do
+  for line in prev_output:gmatch("[^\n]*\n") do
     self:_parse_status_output(line)
   end
 
@@ -79,7 +79,7 @@ end
 
 ---@param output string
 function Runner:_log_raw_output(output)
-  if log.enabled "git" and output and type(output) == "string" then
+  if log.enabled("git") and output and type(output) == "string" then
     log.raw("git", "%s", output)
     log.line("git", "done")
   end

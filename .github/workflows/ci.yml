@@ -38,22 +38,24 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: ${{ github.workflow }}-${{ matrix.stylua_version }}-${{ github.head_ref || github.ref_name }}
+      group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
       cancel-in-progress: true
 
     strategy:
       matrix:
-        stylua_version: [ 0.19.1 ]
+        emmy_lua_code_style_version: [ 1.5.6 ]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: stylua
-        uses: JohnnyMorganz/stylua-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ matrix.stylua_version }}
-          args: --check lua
+      - name: install emmy_lua_code_style
+        run: |
+          mkdir -p CodeFormat
+          curl -L "https://github.com/CppCXY/EmmyLuaCodeStyle/releases/download/${{ matrix.emmy_lua_code_style_version }}/linux-x64.tar.gz" | tar zx --directory CodeFormat
+
+      - run: echo "CodeFormat/linux-x64/bin" >> "$GITHUB_PATH"
+
+      - run: make style
 
       - run: make style-doc
 

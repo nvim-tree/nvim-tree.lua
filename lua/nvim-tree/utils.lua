@@ -1,15 +1,15 @@
-local Iterator = require "nvim-tree.iterators.node-iterator"
-local notify = require "nvim-tree.notify"
+local Iterator = require("nvim-tree.iterators.node-iterator")
+local notify = require("nvim-tree.notify")
 
 local M = {
   debouncers = {},
 }
 
-M.is_unix = vim.fn.has "unix" == 1
-M.is_macos = vim.fn.has "mac" == 1 or vim.fn.has "macunix" == 1
-M.is_wsl = vim.fn.has "wsl" == 1
+M.is_unix = vim.fn.has("unix") == 1
+M.is_macos = vim.fn.has("mac") == 1 or vim.fn.has("macunix") == 1
+M.is_wsl = vim.fn.has("wsl") == 1
 -- false for WSL
-M.is_windows = vim.fn.has "win32" == 1 or vim.fn.has "win32unix" == 1
+M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
 
 ---@param haystack string
 ---@param needle string
@@ -250,7 +250,7 @@ function M.rename_loaded_buffers(old_path, new_path)
         -- to avoid the 'overwrite existing file' error message on write for
         -- normal files
         local buftype
-        if vim.fn.has "nvim-0.10" == 1 then
+        if vim.fn.has("nvim-0.10") == 1 then
           buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
         else
           buftype = vim.api.nvim_buf_get_option(buf, "buftype") ---@diagnostic disable-line: deprecated
@@ -258,8 +258,8 @@ function M.rename_loaded_buffers(old_path, new_path)
 
         if buftype == "" then
           vim.api.nvim_buf_call(buf, function()
-            vim.cmd "silent! write!"
-            vim.cmd "edit"
+            vim.cmd("silent! write!")
+            vim.cmd("edit")
           end)
         end
       end
@@ -277,7 +277,7 @@ end
 ---@param path string
 ---@return string
 function M.canonical_path(path)
-  if M.is_windows and path:match "^%a:" then
+  if M.is_windows and path:match("^%a:") then
     return path:sub(1, 1):upper() .. path:sub(2)
   end
   return path
@@ -467,7 +467,7 @@ function M.focus_file(path)
   local _, i = M.find_node(require("nvim-tree.core").get_explorer().nodes, function(node)
     return node.absolute_path == path
   end)
-  require("nvim-tree.view").set_cursor { i + 1, 1 }
+  require("nvim-tree.view").set_cursor({ i + 1, 1 })
 end
 
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
@@ -487,7 +487,7 @@ function M.focus_node_or_parent(node)
     end)
 
     if found_node or node.parent == nil then
-      require("nvim-tree.view").set_cursor { i + 1, 1 }
+      require("nvim-tree.view").set_cursor({ i + 1, 1 })
       break
     end
 
@@ -510,7 +510,7 @@ end
 
 function M.clear_prompt()
   if vim.opt.cmdheight._value ~= 0 then
-    vim.cmd "normal! :"
+    vim.cmd("normal! :")
   end
 end
 
@@ -567,7 +567,7 @@ function M.is_nvim_tree_buf(bufnr)
   end
   if vim.api.nvim_buf_is_valid(bufnr) then
     local bufname = vim.api.nvim_buf_get_name(bufnr)
-    if vim.fn.fnamemodify(bufname, ":t"):match "^NvimTree_[0-9]+$" then
+    if vim.fn.fnamemodify(bufname, ":t"):match("^NvimTree_[0-9]+$") then
       if vim.bo[bufnr].filetype == "NvimTree" then
         return true
       elseif vim.fn.filereadable(bufname) == 0 then

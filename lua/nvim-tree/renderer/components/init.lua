@@ -1,9 +1,9 @@
 local M = {}
 
-M.diagnostics = require "nvim-tree.renderer.components.diagnostics"
-M.full_name = require "nvim-tree.renderer.components.full-name"
-M.icons = require "nvim-tree.renderer.components.icons"
-M.padding = require "nvim-tree.renderer.components.padding"
+M.diagnostics = require("nvim-tree.renderer.components.diagnostics")
+M.full_name = require("nvim-tree.renderer.components.full-name")
+M.icons = require("nvim-tree.renderer.components.icons")
+M.padding = require("nvim-tree.renderer.components.padding")
 
 function M.setup(opts)
   M.diagnostics.setup(opts)

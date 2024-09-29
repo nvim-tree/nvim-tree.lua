@@ -8,11 +8,13 @@ See [Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) f
 
 Following are used during CI and strongly recommended during local development.
 
+Language server: [luals](https://luals.github.io)
+
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-Style: [StyLua](https://github.com/JohnnyMorganz/StyLua)
+Style: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
 
-Language server: [luals](https://luals.github.io)
+nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals
 
 You can install them via you OS package manager e.g. `pacman`, `brew` or other via other package managers such as `cargo` or `luarocks`
 
@@ -34,14 +36,14 @@ make lint
 
 ## style
 
-1. Runs stylua using `.stylua.toml` settings
+1. Runs CodeCheck using `.editorconfig` settings
 1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ```sh
 make style
 ```
 
-You can automatically fix stylua issues via:
+You can automatically fix `CodeCheck` issues via:
 
 ```sh
 make style-fix

@@ -1,6 +1,6 @@
 local M = {}
 
-local utils = require "nvim-tree.utils"
+local utils = require("nvim-tree.utils")
 
 local function hide(win)
   if win then
@@ -42,7 +42,7 @@ local function show()
     return
   end
 
-  local line = vim.fn.getline "."
+  local line = vim.fn.getline(".")
   local leftcol = vim.fn.winsaveview().leftcol
   -- hide full name if left column of node in nvim-tree win is not zero
   if leftcol ~= 0 then
@@ -81,7 +81,7 @@ local function show()
 
       vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col)
     end
-    vim.cmd [[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=hide ]]
+    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=hide ]])
   end)
 end
 

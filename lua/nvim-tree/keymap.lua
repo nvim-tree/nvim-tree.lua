@@ -19,21 +19,40 @@ local function generate_keymap(fn)
   return keymap
 end
 
--- stylua: ignore start
+---@return table
+function M.get_keymap()
+  return generate_keymap(M.on_attach)
+end
+
+---@return table
+function M.get_keymap_default()
+  return generate_keymap(M.default_on_attach)
+end
+
+function M.setup(opts)
+  if type(opts.on_attach) ~= "function" then
+    M.on_attach = M.default_on_attach
+  else
+    M.on_attach = opts.on_attach
+  end
+end
+
 ---@param bufnr integer
 function M.default_on_attach(bufnr)
-  local api = require('nvim-tree.api')
+  local api = require("nvim-tree.api")
 
   local function opts(desc)
     return {
-      desc = 'nvim-tree: ' .. desc,
+      desc = "nvim-tree: " .. desc,
       buffer = bufnr,
       noremap = true,
       silent = true,
       nowait = true,
-  }
+    }
   end
 
+  -- formatting cannot be re-enabled, hence this is at the end
+  ---@format disable
   -- BEGIN_DEFAULT_ON_ATTACH
   vim.keymap.set('n', '<C-]>',   api.tree.change_root_to_node,        opts('CD'))
   vim.keymap.set('n', '<C-e>',   api.node.open.replace_tree_buffer,   opts('Open: In Place'))
@@ -94,25 +113,6 @@ function M.default_on_attach(bufnr)
   vim.keymap.set('n', '<2-LeftMouse>',  api.node.open.edit,           opts('Open'))
   vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, opts('CD'))
   -- END_DEFAULT_ON_ATTACH
-end
--- stylua: ignore end
-
----@return table
-function M.get_keymap()
-  return generate_keymap(M.on_attach)
-end
-
----@return table
-function M.get_keymap_default()
-  return generate_keymap(M.default_on_attach)
-end
-
-function M.setup(opts)
-  if type(opts.on_attach) ~= "function" then
-    M.on_attach = M.default_on_attach
-  else
-    M.on_attach = opts.on_attach
-  end
 end
 
 return M

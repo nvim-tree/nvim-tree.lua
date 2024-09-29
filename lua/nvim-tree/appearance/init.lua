@@ -12,126 +12,126 @@ local M = {}
 M.HIGHLIGHT_GROUPS = {
 
   -- Standard
-  { group = "NvimTreeNormal", link = "Normal" },
-  { group = "NvimTreeNormalFloat", link = "NormalFloat" },
-  { group = "NvimTreeNormalFloatBorder", link = "FloatBorder" },
-  { group = "NvimTreeNormalNC", link = "NvimTreeNormal" },
+  { group = "NvimTreeNormal",                  link = "Normal" },
+  { group = "NvimTreeNormalFloat",             link = "NormalFloat" },
+  { group = "NvimTreeNormalFloatBorder",       link = "FloatBorder" },
+  { group = "NvimTreeNormalNC",                link = "NvimTreeNormal" },
 
-  { group = "NvimTreeLineNr", link = "LineNr" },
-  { group = "NvimTreeWinSeparator", link = "WinSeparator" },
-  { group = "NvimTreeEndOfBuffer", link = "EndOfBuffer" },
-  { group = "NvimTreePopup", link = "Normal" },
-  { group = "NvimTreeSignColumn", link = "NvimTreeNormal" },
+  { group = "NvimTreeLineNr",                  link = "LineNr" },
+  { group = "NvimTreeWinSeparator",            link = "WinSeparator" },
+  { group = "NvimTreeEndOfBuffer",             link = "EndOfBuffer" },
+  { group = "NvimTreePopup",                   link = "Normal" },
+  { group = "NvimTreeSignColumn",              link = "NvimTreeNormal" },
 
-  { group = "NvimTreeCursorColumn", link = "CursorColumn" },
-  { group = "NvimTreeCursorLine", link = "CursorLine" },
-  { group = "NvimTreeCursorLineNr", link = "CursorLineNr" },
+  { group = "NvimTreeCursorColumn",            link = "CursorColumn" },
+  { group = "NvimTreeCursorLine",              link = "CursorLine" },
+  { group = "NvimTreeCursorLineNr",            link = "CursorLineNr" },
 
-  { group = "NvimTreeStatusLine", link = "StatusLine" },
-  { group = "NvimTreeStatusLineNC", link = "StatusLineNC" },
+  { group = "NvimTreeStatusLine",              link = "StatusLine" },
+  { group = "NvimTreeStatusLineNC",            link = "StatusLineNC" },
 
   -- File Text
-  { group = "NvimTreeExecFile", link = "Question" },
-  { group = "NvimTreeImageFile", link = "Question" },
-  { group = "NvimTreeSpecialFile", link = "Title" },
-  { group = "NvimTreeSymlink", link = "Underlined" },
+  { group = "NvimTreeExecFile",                link = "Question" },
+  { group = "NvimTreeImageFile",               link = "Question" },
+  { group = "NvimTreeSpecialFile",             link = "Title" },
+  { group = "NvimTreeSymlink",                 link = "Underlined" },
 
   -- Folder Text
-  { group = "NvimTreeRootFolder", link = "Title" },
-  { group = "NvimTreeFolderName", link = "Directory" },
-  { group = "NvimTreeEmptyFolderName", link = "Directory" },
-  { group = "NvimTreeOpenedFolderName", link = "Directory" },
-  { group = "NvimTreeSymlinkFolderName", link = "Directory" },
+  { group = "NvimTreeRootFolder",              link = "Title" },
+  { group = "NvimTreeFolderName",              link = "Directory" },
+  { group = "NvimTreeEmptyFolderName",         link = "Directory" },
+  { group = "NvimTreeOpenedFolderName",        link = "Directory" },
+  { group = "NvimTreeSymlinkFolderName",       link = "Directory" },
 
   -- File Icons
-  { group = "NvimTreeFileIcon", link = "NvimTreeNormal" },
-  { group = "NvimTreeSymlinkIcon", link = "NvimTreeNormal" },
+  { group = "NvimTreeFileIcon",                link = "NvimTreeNormal" },
+  { group = "NvimTreeSymlinkIcon",             link = "NvimTreeNormal" },
 
   -- Folder Icons
-  { group = "NvimTreeFolderIcon", def = "guifg=#8094b4 ctermfg=Blue" },
-  { group = "NvimTreeOpenedFolderIcon", link = "NvimTreeFolderIcon" },
-  { group = "NvimTreeClosedFolderIcon", link = "NvimTreeFolderIcon" },
-  { group = "NvimTreeFolderArrowClosed", link = "NvimTreeIndentMarker" },
-  { group = "NvimTreeFolderArrowOpen", link = "NvimTreeIndentMarker" },
+  { group = "NvimTreeFolderIcon",              def = "guifg=#8094b4 ctermfg=Blue" },
+  { group = "NvimTreeOpenedFolderIcon",        link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeClosedFolderIcon",        link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeFolderArrowClosed",       link = "NvimTreeIndentMarker" },
+  { group = "NvimTreeFolderArrowOpen",         link = "NvimTreeIndentMarker" },
 
   -- Indent
-  { group = "NvimTreeIndentMarker", link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeIndentMarker",            link = "NvimTreeFolderIcon" },
 
   -- Picker
-  { group = "NvimTreeWindowPicker", def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=DarkBlue" },
+  { group = "NvimTreeWindowPicker",            def = "guifg=#ededed guibg=#4493c8 gui=bold ctermfg=White ctermbg=DarkBlue" },
 
   -- LiveFilter
-  { group = "NvimTreeLiveFilterPrefix", link = "PreProc" },
-  { group = "NvimTreeLiveFilterValue", link = "ModeMsg" },
+  { group = "NvimTreeLiveFilterPrefix",        link = "PreProc" },
+  { group = "NvimTreeLiveFilterValue",         link = "ModeMsg" },
 
   -- Clipboard
-  { group = "NvimTreeCutHL", link = "SpellBad" },
-  { group = "NvimTreeCopiedHL", link = "SpellRare" },
+  { group = "NvimTreeCutHL",                   link = "SpellBad" },
+  { group = "NvimTreeCopiedHL",                link = "SpellRare" },
 
   -- Bookmark
-  { group = "NvimTreeBookmarkIcon", link = "NvimTreeFolderIcon" },
-  { group = "NvimTreeBookmarkHL", link = "SpellLocal" },
+  { group = "NvimTreeBookmarkIcon",            link = "NvimTreeFolderIcon" },
+  { group = "NvimTreeBookmarkHL",              link = "SpellLocal" },
 
   -- Modified
-  { group = "NvimTreeModifiedIcon", link = "Type" },
-  { group = "NvimTreeModifiedFileHL", link = "NvimTreeModifiedIcon" },
-  { group = "NvimTreeModifiedFolderHL", link = "NvimTreeModifiedFileHL" },
+  { group = "NvimTreeModifiedIcon",            link = "Type" },
+  { group = "NvimTreeModifiedFileHL",          link = "NvimTreeModifiedIcon" },
+  { group = "NvimTreeModifiedFolderHL",        link = "NvimTreeModifiedFileHL" },
 
   -- Hidden
-  { group = "NvimTreeHiddenIcon", link = "Conceal" },
-  { group = "NvimTreeHiddenFileHL", link = "NvimTreeHiddenIcon" },
-  { group = "NvimTreeHiddenFolderHL", link = "NvimTreeHiddenFileHL" },
+  { group = "NvimTreeHiddenIcon",              link = "Conceal" },
+  { group = "NvimTreeHiddenFileHL",            link = "NvimTreeHiddenIcon" },
+  { group = "NvimTreeHiddenFolderHL",          link = "NvimTreeHiddenFileHL" },
 
   -- Hidden Display
-  { group = "NvimTreeHiddenDisplay", link = "Conceal" },
+  { group = "NvimTreeHiddenDisplay",           link = "Conceal" },
 
   -- Opened
-  { group = "NvimTreeOpenedHL", link = "Special" },
+  { group = "NvimTreeOpenedHL",                link = "Special" },
 
   -- Git Icon
-  { group = "NvimTreeGitDeletedIcon", link = "Statement" },
-  { group = "NvimTreeGitDirtyIcon", link = "Statement" },
-  { group = "NvimTreeGitIgnoredIcon", link = "Comment" },
-  { group = "NvimTreeGitMergeIcon", link = "Constant" },
-  { group = "NvimTreeGitNewIcon", link = "PreProc" },
-  { group = "NvimTreeGitRenamedIcon", link = "PreProc" },
-  { group = "NvimTreeGitStagedIcon", link = "Constant" },
+  { group = "NvimTreeGitDeletedIcon",          link = "Statement" },
+  { group = "NvimTreeGitDirtyIcon",            link = "Statement" },
+  { group = "NvimTreeGitIgnoredIcon",          link = "Comment" },
+  { group = "NvimTreeGitMergeIcon",            link = "Constant" },
+  { group = "NvimTreeGitNewIcon",              link = "PreProc" },
+  { group = "NvimTreeGitRenamedIcon",          link = "PreProc" },
+  { group = "NvimTreeGitStagedIcon",           link = "Constant" },
 
   -- Git File Highlight
-  { group = "NvimTreeGitFileDeletedHL", link = "NvimTreeGitDeletedIcon" },
-  { group = "NvimTreeGitFileDirtyHL", link = "NvimTreeGitDirtyIcon" },
-  { group = "NvimTreeGitFileIgnoredHL", link = "NvimTreeGitIgnoredIcon" },
-  { group = "NvimTreeGitFileMergeHL", link = "NvimTreeGitMergeIcon" },
-  { group = "NvimTreeGitFileNewHL", link = "NvimTreeGitNewIcon" },
-  { group = "NvimTreeGitFileRenamedHL", link = "NvimTreeGitRenamedIcon" },
-  { group = "NvimTreeGitFileStagedHL", link = "NvimTreeGitStagedIcon" },
+  { group = "NvimTreeGitFileDeletedHL",        link = "NvimTreeGitDeletedIcon" },
+  { group = "NvimTreeGitFileDirtyHL",          link = "NvimTreeGitDirtyIcon" },
+  { group = "NvimTreeGitFileIgnoredHL",        link = "NvimTreeGitIgnoredIcon" },
+  { group = "NvimTreeGitFileMergeHL",          link = "NvimTreeGitMergeIcon" },
+  { group = "NvimTreeGitFileNewHL",            link = "NvimTreeGitNewIcon" },
+  { group = "NvimTreeGitFileRenamedHL",        link = "NvimTreeGitRenamedIcon" },
+  { group = "NvimTreeGitFileStagedHL",         link = "NvimTreeGitStagedIcon" },
 
   -- Git Folder Highlight
-  { group = "NvimTreeGitFolderDeletedHL", link = "NvimTreeGitFileDeletedHL" },
-  { group = "NvimTreeGitFolderDirtyHL", link = "NvimTreeGitFileDirtyHL" },
-  { group = "NvimTreeGitFolderIgnoredHL", link = "NvimTreeGitFileIgnoredHL" },
-  { group = "NvimTreeGitFolderMergeHL", link = "NvimTreeGitFileMergeHL" },
-  { group = "NvimTreeGitFolderNewHL", link = "NvimTreeGitFileNewHL" },
-  { group = "NvimTreeGitFolderRenamedHL", link = "NvimTreeGitFileRenamedHL" },
-  { group = "NvimTreeGitFolderStagedHL", link = "NvimTreeGitFileStagedHL" },
+  { group = "NvimTreeGitFolderDeletedHL",      link = "NvimTreeGitFileDeletedHL" },
+  { group = "NvimTreeGitFolderDirtyHL",        link = "NvimTreeGitFileDirtyHL" },
+  { group = "NvimTreeGitFolderIgnoredHL",      link = "NvimTreeGitFileIgnoredHL" },
+  { group = "NvimTreeGitFolderMergeHL",        link = "NvimTreeGitFileMergeHL" },
+  { group = "NvimTreeGitFolderNewHL",          link = "NvimTreeGitFileNewHL" },
+  { group = "NvimTreeGitFolderRenamedHL",      link = "NvimTreeGitFileRenamedHL" },
+  { group = "NvimTreeGitFolderStagedHL",       link = "NvimTreeGitFileStagedHL" },
 
   -- Diagnostics Icon
-  { group = "NvimTreeDiagnosticErrorIcon", link = "DiagnosticError" },
-  { group = "NvimTreeDiagnosticWarnIcon", link = "DiagnosticWarn" },
-  { group = "NvimTreeDiagnosticInfoIcon", link = "DiagnosticInfo" },
-  { group = "NvimTreeDiagnosticHintIcon", link = "DiagnosticHint" },
+  { group = "NvimTreeDiagnosticErrorIcon",     link = "DiagnosticError" },
+  { group = "NvimTreeDiagnosticWarnIcon",      link = "DiagnosticWarn" },
+  { group = "NvimTreeDiagnosticInfoIcon",      link = "DiagnosticInfo" },
+  { group = "NvimTreeDiagnosticHintIcon",      link = "DiagnosticHint" },
 
   -- Diagnostics File Highlight
-  { group = "NvimTreeDiagnosticErrorFileHL", link = "DiagnosticUnderlineError" },
-  { group = "NvimTreeDiagnosticWarnFileHL", link = "DiagnosticUnderlineWarn" },
-  { group = "NvimTreeDiagnosticInfoFileHL", link = "DiagnosticUnderlineInfo" },
-  { group = "NvimTreeDiagnosticHintFileHL", link = "DiagnosticUnderlineHint" },
+  { group = "NvimTreeDiagnosticErrorFileHL",   link = "DiagnosticUnderlineError" },
+  { group = "NvimTreeDiagnosticWarnFileHL",    link = "DiagnosticUnderlineWarn" },
+  { group = "NvimTreeDiagnosticInfoFileHL",    link = "DiagnosticUnderlineInfo" },
+  { group = "NvimTreeDiagnosticHintFileHL",    link = "DiagnosticUnderlineHint" },
 
   -- Diagnostics Folder Highlight
   { group = "NvimTreeDiagnosticErrorFolderHL", link = "NvimTreeDiagnosticErrorFileHL" },
-  { group = "NvimTreeDiagnosticWarnFolderHL", link = "NvimTreeDiagnosticWarnFileHL" },
-  { group = "NvimTreeDiagnosticInfoFolderHL", link = "NvimTreeDiagnosticInfoFileHL" },
-  { group = "NvimTreeDiagnosticHintFolderHL", link = "NvimTreeDiagnosticHintFileHL" },
+  { group = "NvimTreeDiagnosticWarnFolderHL",  link = "NvimTreeDiagnosticWarnFileHL" },
+  { group = "NvimTreeDiagnosticInfoFolderHL",  link = "NvimTreeDiagnosticInfoFileHL" },
+  { group = "NvimTreeDiagnosticHintFolderHL",  link = "NvimTreeDiagnosticHintFileHL" },
 }
 
 -- nvim-tree highlight groups to legacy

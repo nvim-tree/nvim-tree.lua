@@ -1,9 +1,9 @@
-local diagnostics = require "nvim-tree.diagnostics"
+local diagnostics = require("nvim-tree.diagnostics")
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
-local Decorator = require "nvim-tree.renderer.decorator"
+local Decorator = require("nvim-tree.renderer.decorator")
 
 -- highlight groups by severity
 local HG_ICON = {

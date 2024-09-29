@@ -1,12 +1,12 @@
-local Iterator = require "nvim-tree.iterators.node-iterator"
-local core = require "nvim-tree.core"
-local lib = require "nvim-tree.lib"
-local notify = require "nvim-tree.notify"
-local open_file = require "nvim-tree.actions.node.open-file"
-local remove_file = require "nvim-tree.actions.fs.remove-file"
-local rename_file = require "nvim-tree.actions.fs.rename-file"
-local trash = require "nvim-tree.actions.fs.trash"
-local utils = require "nvim-tree.utils"
+local Iterator = require("nvim-tree.iterators.node-iterator")
+local core = require("nvim-tree.core")
+local lib = require("nvim-tree.lib")
+local notify = require("nvim-tree.notify")
+local open_file = require("nvim-tree.actions.node.open-file")
+local remove_file = require("nvim-tree.actions.fs.remove-file")
+local rename_file = require("nvim-tree.actions.fs.rename-file")
+local trash = require("nvim-tree.actions.fs.trash")
+local utils = require("nvim-tree.utils")
 
 ---@class Marks
 ---@field config table hydrated user opts.filters
@@ -87,7 +87,7 @@ end
 ---@public
 function Marks:bulk_delete()
   if not next(self.marks) then
-    notify.warn "No bookmarks to delete."
+    notify.warn("No bookmarks to delete.")
     return
   end
 
@@ -116,7 +116,7 @@ end
 ---@public
 function Marks:bulk_trash()
   if not next(self.marks) then
-    notify.warn "No bookmarks to trash."
+    notify.warn("No bookmarks to trash.")
     return
   end
 
@@ -145,7 +145,7 @@ end
 ---@public
 function Marks:bulk_move()
   if not next(self.marks) then
-    notify.warn "No bookmarks to move."
+    notify.warn("No bookmarks to move.")
     return
   end
 
@@ -176,7 +176,7 @@ function Marks:bulk_move()
 
     for _, node in pairs(self.marks) do
       local head = vim.fn.fnamemodify(node.absolute_path, ":t")
-      local to = utils.path_join { location, head }
+      local to = utils.path_join({ location, head })
       rename_file.rename(node, to)
     end
 

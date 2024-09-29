@@ -117,7 +117,7 @@ function M.setup(opts)
       return " "
     end
     -- return the first character from the UTF-8 encoded string; we may use utf8.codes from Lua 5.3 when available
-    return symbol:match "[%z\1-\127\194-\244][\128-\191]*"
+    return symbol:match("[%z\1-\127\194-\244][\128-\191]*")
   end
 
   for k, v in pairs(M.config.indent_markers.icons) do
