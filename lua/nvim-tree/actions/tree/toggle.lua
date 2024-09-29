@@ -1,6 +1,6 @@
-local lib = require "nvim-tree.lib"
-local view = require "nvim-tree.view"
-local finders_find_file = require "nvim-tree.actions.finders.find-file"
+local lib = require("nvim-tree.lib")
+local view = require("nvim-tree.view")
+local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
 
@@ -45,11 +45,11 @@ function M.fn(opts, no_focus, cwd, bang)
     view.close()
   else
     -- open
-    lib.open {
+    lib.open({
       path = opts.path,
       current_window = opts.current_window,
       winid = opts.winid,
-    }
+    })
 
     -- find file
     if M.config.update_focused_file.enable or opts.find_file then
@@ -64,7 +64,7 @@ function M.fn(opts, no_focus, cwd, bang)
 
     -- restore focus
     if not opts.focus then
-      vim.cmd "noautocmd wincmd p"
+      vim.cmd("noautocmd wincmd p")
     end
   end
 end

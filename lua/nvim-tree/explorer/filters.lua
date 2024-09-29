@@ -1,4 +1,4 @@
-local utils = require "nvim-tree.utils"
+local utils = require("nvim-tree.utils")
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 ---@class Filters to handle all opts.filters and related API
@@ -165,7 +165,7 @@ local function custom(self, path)
     end
   end
 
-  local idx = path:match ".+()%.[^.]+$"
+  local idx = path:match(".+()%.[^.]+$")
   if idx then
     if self.ignore_list["*" .. string.sub(path, idx)] == true then
       return true
@@ -189,7 +189,7 @@ function Filters:prepare(git_status)
   }
 
   if self.config.filter_no_buffer then
-    status.bufinfo = vim.fn.getbufinfo { buflisted = 1 }
+    status.bufinfo = vim.fn.getbufinfo({ buflisted = 1 })
   end
 
   local explorer = require("nvim-tree.core").get_explorer()

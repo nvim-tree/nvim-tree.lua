@@ -1,9 +1,9 @@
-local buffers = require "nvim-tree.buffers"
+local buffers = require("nvim-tree.buffers")
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
-local Decorator = require "nvim-tree.renderer.decorator"
+local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorModified: Decorator
 ---@field icon HighlightedString|nil

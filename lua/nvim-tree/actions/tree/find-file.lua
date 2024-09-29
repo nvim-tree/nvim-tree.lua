@@ -1,7 +1,7 @@
-local core = require "nvim-tree.core"
-local lib = require "nvim-tree.lib"
-local view = require "nvim-tree.view"
-local finders_find_file = require "nvim-tree.actions.finders.find-file"
+local core = require("nvim-tree.core")
+local lib = require("nvim-tree.lib")
+local view = require("nvim-tree.view")
+local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
 
@@ -49,9 +49,9 @@ function M.fn(opts)
     end
   elseif opts.open then
     -- open
-    lib.open { current_window = opts.current_window, winid = opts.winid }
+    lib.open({ current_window = opts.current_window, winid = opts.winid })
     if not opts.focus then
-      vim.cmd "noautocmd wincmd p"
+      vim.cmd("noautocmd wincmd p")
     end
   end
 

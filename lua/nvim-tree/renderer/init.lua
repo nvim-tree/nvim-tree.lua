@@ -1,16 +1,16 @@
-local log = require "nvim-tree.log"
-local view = require "nvim-tree.view"
-local events = require "nvim-tree.events"
+local log = require("nvim-tree.log")
+local view = require("nvim-tree.view")
+local events = require("nvim-tree.events")
 
-local icon_component = require "nvim-tree.renderer.components.icons"
+local icon_component = require("nvim-tree.renderer.components.icons")
 
-local Builder = require "nvim-tree.renderer.builder"
+local Builder = require("nvim-tree.renderer.builder")
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
 
-local namespace_highlights_id = vim.api.nvim_create_namespace "NvimTreeHighlights"
-local namespace_extmarks_id = vim.api.nvim_create_namespace "NvimTreeExtmarks"
-local namespace_virtual_lines_id = vim.api.nvim_create_namespace "NvimTreeVirtualLines"
+local namespace_highlights_id = vim.api.nvim_create_namespace("NvimTreeHighlights")
+local namespace_extmarks_id = vim.api.nvim_create_namespace("NvimTreeExtmarks")
+local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtualLines")
 
 ---@class (exact) Renderer
 ---@field private __index? table
@@ -42,7 +42,7 @@ end
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
 function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
   else
     vim.api.nvim_buf_set_option(bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
@@ -51,7 +51,7 @@ function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   self:render_hl(bufnr, hl_args)
 
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
   else
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
@@ -104,7 +104,7 @@ function Renderer:draw()
     return
   end
 
-  local profile = log.profile_start "draw"
+  local profile = log.profile_start("draw")
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
   icon_component.reset_config()

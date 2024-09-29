@@ -1,6 +1,6 @@
-local view = require "nvim-tree.view"
-local utils = require "nvim-tree.utils"
-local Iterator = require "nvim-tree.iterators.node-iterator"
+local view = require("nvim-tree.view")
+local utils = require("nvim-tree.utils")
+local Iterator = require("nvim-tree.iterators.node-iterator")
 
 ---@class LiveFilter
 ---@field explorer Explorer
@@ -162,11 +162,11 @@ end
 local function create_overlay(self)
   if view.View.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
-    vim.api.nvim_clear_autocmds {
+    vim.api.nvim_clear_autocmds({
       event = "WinLeave",
       pattern = "NvimTree_*",
       group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
-    }
+    })
   end
 
   configure_buffer_overlay(self)
@@ -180,14 +180,14 @@ local function create_overlay(self)
     style = "minimal",
   })
 
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = overlay_bufnr })
   else
     vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
   end
 
   vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { self.filter })
-  vim.cmd "startinsert"
+  vim.cmd("startinsert")
   vim.api.nvim_win_set_cursor(overlay_winnr, { 1, #self.filter + 1 })
 end
 
@@ -198,7 +198,7 @@ function LiveFilter:start_filtering()
   self.explorer.renderer:draw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
-  view.set_cursor { row, col }
+  view.set_cursor({ row, col })
   -- needs scheduling to let the cursor move before initializing the window
   vim.schedule(function()
     return create_overlay(self)

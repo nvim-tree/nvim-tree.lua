@@ -1,11 +1,11 @@
-local lib = require "nvim-tree.lib"
-local log = require "nvim-tree.log"
-local appearance = require "nvim-tree.appearance"
-local view = require "nvim-tree.view"
-local utils = require "nvim-tree.utils"
-local actions = require "nvim-tree.actions"
-local core = require "nvim-tree.core"
-local notify = require "nvim-tree.notify"
+local lib = require("nvim-tree.lib")
+local log = require("nvim-tree.log")
+local appearance = require("nvim-tree.appearance")
+local view = require("nvim-tree.view")
+local utils = require("nvim-tree.utils")
+local actions = require("nvim-tree.actions")
+local core = require("nvim-tree.core")
+local notify = require("nvim-tree.notify")
 
 local _config = {}
 
@@ -21,7 +21,7 @@ function M.change_root(path, bufnr)
   if type(bufnr) == "number" then
     local ft
 
-    if vim.fn.has "nvim-0.10" == 1 then
+    if vim.fn.has("nvim-0.10") == 1 then
       ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
     else
       ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
@@ -76,11 +76,11 @@ function M.change_root(path, bufnr)
 end
 
 function M.tab_enter()
-  if view.is_visible { any_tabpage = true } then
+  if view.is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
-    if vim.fn.has "nvim-0.10" == 1 then
+    if vim.fn.has("nvim-0.10") == 1 then
       ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
     else
       ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
@@ -91,7 +91,7 @@ function M.tab_enter()
         return
       end
     end
-    view.open { focus_tree = false }
+    view.open({ focus_tree = false })
 
     local explorer = core.get_explorer()
     if explorer then
@@ -145,8 +145,8 @@ end
 ---@param hijack_netrw boolean
 local function manage_netrw(disable_netrw, hijack_netrw)
   if hijack_netrw then
-    vim.cmd "silent! autocmd! FileExplorer *"
-    vim.cmd "autocmd VimEnter * ++once silent! autocmd! FileExplorer *"
+    vim.cmd("silent! autocmd! FileExplorer *")
+    vim.cmd("autocmd VimEnter * ++once silent! autocmd! FileExplorer *")
   end
   if disable_netrw then
     vim.g.loaded_netrw = 1
@@ -316,7 +316,7 @@ local function setup_autocommands(opts)
       callback = function()
         vim.schedule(function()
           vim.api.nvim_buf_call(0, function()
-            vim.cmd [[norm! zz]]
+            vim.cmd([[norm! zz]])
           end)
         end)
       end,
@@ -811,8 +811,8 @@ end
 
 ---@param conf table|nil
 function M.setup(conf)
-  if vim.fn.has "nvim-0.9" == 0 then
-    notify.warn "nvim-tree.lua requires Neovim 0.9 or higher"
+  if vim.fn.has("nvim-0.9") == 0 then
+    notify.warn("nvim-tree.lua requires Neovim 0.9 or higher")
     return
   end
 
@@ -840,7 +840,7 @@ function M.setup(conf)
   require("nvim-tree.notify").setup(opts)
   require("nvim-tree.log").setup(opts)
 
-  if log.enabled "config" then
+  if log.enabled("config") then
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(opts))
   end

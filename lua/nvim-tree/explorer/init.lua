@@ -1,22 +1,22 @@
-local builders = require "nvim-tree.explorer.node-builders"
-local git = require "nvim-tree.git"
-local log = require "nvim-tree.log"
-local notify = require "nvim-tree.notify"
-local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
-local watch = require "nvim-tree.explorer.watch"
-local explorer_node = require "nvim-tree.explorer.node"
+local builders = require("nvim-tree.explorer.node-builders")
+local git = require("nvim-tree.git")
+local log = require("nvim-tree.log")
+local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
+local watch = require("nvim-tree.explorer.watch")
+local explorer_node = require("nvim-tree.explorer.node")
 
-local Iterator = require "nvim-tree.iterators.node-iterator"
-local NodeIterator = require "nvim-tree.iterators.node-iterator"
-local Watcher = require "nvim-tree.watcher"
+local Iterator = require("nvim-tree.iterators.node-iterator")
+local NodeIterator = require("nvim-tree.iterators.node-iterator")
+local Watcher = require("nvim-tree.watcher")
 
-local Filters = require "nvim-tree.explorer.filters"
-local Marks = require "nvim-tree.marks"
-local LiveFilter = require "nvim-tree.explorer.live-filter"
-local Sorters = require "nvim-tree.explorer.sorters"
-local Clipboard = require "nvim-tree.actions.fs.clipboard"
-local Renderer = require "nvim-tree.renderer"
+local Filters = require("nvim-tree.explorer.filters")
+local Marks = require("nvim-tree.marks")
+local LiveFilter = require("nvim-tree.explorer.live-filter")
+local Sorters = require("nvim-tree.explorer.sorters")
+local Clipboard = require("nvim-tree.actions.fs.clipboard")
+local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
@@ -130,7 +130,7 @@ function Explorer:reload(node, git_status)
       break
     end
 
-    local abs = utils.path_join { cwd, name }
+    local abs = utils.path_join({ cwd, name })
     ---@type uv.fs_stat.result|nil
     local stat = vim.loop.fs_lstat(abs)
 
@@ -359,7 +359,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
       break
     end
 
-    local abs = utils.path_join { cwd, name }
+    local abs = utils.path_join({ cwd, name })
 
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("populate_children %s", abs)

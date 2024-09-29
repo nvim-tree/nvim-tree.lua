@@ -1,4 +1,4 @@
-local view = require "nvim-tree.view"
+local view = require("nvim-tree.view")
 
 local M = {}
 

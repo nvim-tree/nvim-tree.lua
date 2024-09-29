@@ -1,9 +1,9 @@
-local lib = require "nvim-tree.lib"
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
-local core = require "nvim-tree.core"
-local events = require "nvim-tree.events"
-local notify = require "nvim-tree.notify"
+local lib = require("nvim-tree.lib")
+local log = require("nvim-tree.log")
+local utils = require("nvim-tree.utils")
+local core = require("nvim-tree.core")
+local events = require("nvim-tree.events")
+local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -89,8 +89,8 @@ local function do_copy(source, destination)
         break
       end
 
-      local new_name = utils.path_join { source, name }
-      local new_destination = utils.path_join { destination, name }
+      local new_name = utils.path_join({ source, name })
+      local new_destination = utils.path_join({ destination, name })
       success, errmsg = do_copy(new_name, new_destination)
       if not success then
         return false, errmsg
@@ -191,7 +191,7 @@ end
 function Clipboard:clear_clipboard()
   self.data[ACTION.copy] = {}
   self.data[ACTION.cut] = {}
-  notify.info "Clipboard has been emptied."
+  notify.info("Clipboard has been emptied.")
   self.explorer.renderer:draw()
 end
 
@@ -240,7 +240,7 @@ function Clipboard:do_paste(node, action, action_fn)
   end
 
   for _, _node in ipairs(clip) do
-    local dest = utils.path_join { destination, _node.name }
+    local dest = utils.path_join({ destination, _node.name })
     do_single_paste(_node.absolute_path, dest, action, action_fn)
   end
 
@@ -361,7 +361,7 @@ function Clipboard:copy_path(node)
 
   if node.name == ".." then
     -- root
-    content = utils.path_add_trailing ""
+    content = utils.path_add_trailing("")
   else
     -- node
     local absolute_path = node.absolute_path

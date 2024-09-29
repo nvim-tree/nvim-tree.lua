@@ -32,7 +32,7 @@ end
 ---@return Profile to pass to profile_end
 function M.profile_start(fmt, ...)
   local profile = {}
-  if M.enabled "profile" then
+  if M.enabled("profile") then
     profile.start = vim.loop.hrtime()
     profile.tag = string.format((fmt or "???"), ...)
     M.line("profile", "START %s", profile.tag)
@@ -44,7 +44,7 @@ end
 --- END is prefixed and duration in seconds is suffixed
 ---@param profile Profile returned from profile_start
 function M.profile_end(profile)
-  if M.enabled "profile" and type(profile) == "table" then
+  if M.enabled("profile") and type(profile) == "table" then
     local millis = profile.start and math.modf((vim.loop.hrtime() - profile.start) / 1000000) or -1
     M.line("profile", "END   %s %dms", profile.tag or "", millis)
   end
@@ -57,7 +57,7 @@ end
 ---@param ... any arguments for string.format
 function M.line(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n", os.date "%Y-%m-%d %H:%M:%S", typ, (fmt or "???")), ...)
+    M.raw(typ, string.format("[%s] [%s] %s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???")), ...)
   end
 end
 
@@ -77,7 +77,7 @@ end
 function M.node(typ, node, fmt, ...)
   if M.enabled(typ) then
     node = node or require("nvim-tree.lib").get_node_at_cursor()
-    M.raw(typ, string.format("[%s] [%s] %s\n%s\n", os.date "%Y-%m-%d %H:%M:%S", typ, (fmt or "???"), vim.inspect(node, inspect_opts)), ...)
+    M.raw(typ, string.format("[%s] [%s] %s\n%s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???"), vim.inspect(node, inspect_opts)), ...)
   end
 end
 
@@ -91,7 +91,7 @@ end
 function M.setup(opts)
   M.config = opts.log
   if M.config and M.config.enable and M.config.types then
-    M.path = string.format("%s/nvim-tree.log", vim.fn.stdpath "log", os.date "%H:%M:%S", vim.env.USER)
+    M.path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"), os.date("%H:%M:%S"), vim.env.USER)
     if M.config.truncate then
       os.remove(M.path)
     end

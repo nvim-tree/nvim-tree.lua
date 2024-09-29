@@ -122,7 +122,7 @@ function Sorter:sort(t)
         absolute_path = n.absolute_path,
         executable = n.executable,
         extension = n.extension,
-        filetype = vim.filetype.match { filename = n.name },
+        filetype = vim.filetype.match({ filename = n.name }),
         link_to = n.link_to,
         name = n.name,
         type = n.type,
@@ -237,8 +237,8 @@ function C.suffix(a, b, cfg)
   end
 
   -- unsuffixed go third
-  local a_suffix_ndx = a.name:find "%.%w+$"
-  local b_suffix_ndx = b.name:find "%.%w+$"
+  local a_suffix_ndx = a.name:find("%.%w+$")
+  local b_suffix_ndx = b.name:find("%.%w+$")
 
   if not a_suffix_ndx and b_suffix_ndx then
     return true
@@ -289,8 +289,8 @@ function C.extension(a, b, cfg)
 end
 
 function C.filetype(a, b, cfg)
-  local a_ft = vim.filetype.match { filename = a.name }
-  local b_ft = vim.filetype.match { filename = b.name }
+  local a_ft = vim.filetype.match({ filename = a.name })
+  local b_ft = vim.filetype.match({ filename = b.name })
 
   -- directories first
   local early_return = folders_or_files_first(a, b, cfg)

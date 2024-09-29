@@ -1,7 +1,7 @@
-local core = require "nvim-tree.core"
-local Iterator = require "nvim-tree.iterators.node-iterator"
-local notify = require "nvim-tree.notify"
-local lib = require "nvim-tree.lib"
+local core = require("nvim-tree.core")
+local Iterator = require("nvim-tree.iterators.node-iterator")
+local notify = require("nvim-tree.notify")
+local lib = require("nvim-tree.lib")
 
 local M = {}
 

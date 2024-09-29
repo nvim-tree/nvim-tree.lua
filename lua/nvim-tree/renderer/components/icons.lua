@@ -107,7 +107,7 @@ end
 function M.setup(opts)
   M.config = opts.renderer.icons
 
-  M.devicons = pcall(require, "nvim-web-devicons") and require "nvim-web-devicons" or nil
+  M.devicons = pcall(require, "nvim-web-devicons") and require("nvim-web-devicons") or nil
 end
 
 return M

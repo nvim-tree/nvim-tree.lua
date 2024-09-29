@@ -1,6 +1,6 @@
-local events = require "nvim-tree.events"
-local view = require "nvim-tree.view"
-local log = require "nvim-tree.log"
+local events = require("nvim-tree.events")
+local view = require("nvim-tree.view")
+local log = require("nvim-tree.log")
 
 local M = {}
 

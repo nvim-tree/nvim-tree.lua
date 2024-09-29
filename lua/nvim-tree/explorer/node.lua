@@ -177,7 +177,7 @@ function M.setup(opts)
     git = opts.git,
   }
 
-  git = require "nvim-tree.git"
+  git = require("nvim-tree.git")
 end
 
 return M

@@ -1,5 +1,5 @@
-local api = require "nvim-tree.api"
-local view = require "nvim-tree.view"
+local api = require("nvim-tree.api")
+local view = require("nvim-tree.view")
 
 local M = {}
 
@@ -12,7 +12,7 @@ local CMDS = {
       complete = "dir",
     },
     command = function(c)
-      api.tree.open { path = c.args }
+      api.tree.open({ path = c.args })
     end,
   },
   {
@@ -33,12 +33,12 @@ local CMDS = {
       complete = "dir",
     },
     command = function(c)
-      api.tree.toggle {
+      api.tree.toggle({
         find_file = false,
         focus = true,
         path = c.args,
         update_root = false,
-      }
+      })
     end,
   },
   {
@@ -79,11 +79,11 @@ local CMDS = {
       bar = true,
     },
     command = function(c)
-      api.tree.find_file {
+      api.tree.find_file({
         open = true,
         focus = true,
         update_root = c.bang,
-      }
+      })
     end,
   },
   {
@@ -95,12 +95,12 @@ local CMDS = {
       complete = "dir",
     },
     command = function(c)
-      api.tree.toggle {
+      api.tree.toggle({
         find_file = true,
         focus = true,
         path = c.args,
         update_root = c.bang,
-      }
+      })
     end,
   },
   {

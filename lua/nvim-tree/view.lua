@@ -1,7 +1,7 @@
-local events = require "nvim-tree.events"
-local utils = require "nvim-tree.utils"
-local log = require "nvim-tree.log"
-local notify = require "nvim-tree.notify"
+local events = require("nvim-tree.events")
+local utils = require("nvim-tree.utils")
+local log = require("nvim-tree.log")
+local notify = require("nvim-tree.notify")
 
 ---@class OpenInWinOpts
 ---@field hijack_current_buf boolean|nil default true
@@ -167,7 +167,7 @@ local function open_window()
   if M.View.float.enable then
     vim.api.nvim_open_win(0, true, open_win_config())
   else
-    vim.api.nvim_command "vsp"
+    vim.api.nvim_command("vsp")
     M.reposition_window()
   end
   setup_tabpage(vim.api.nvim_get_current_tabpage())
@@ -182,7 +182,7 @@ end
 
 ---@return number|nil
 local function get_alt_or_next_buf()
-  local alt_buf = vim.fn.bufnr "#"
+  local alt_buf = vim.fn.bufnr("#")
   if is_buf_displayed(alt_buf) then
     return alt_buf
   end
@@ -200,7 +200,7 @@ local function switch_buf_if_last_buf()
     if buf then
       vim.cmd("sb" .. buf)
     else
-      vim.cmd "new"
+      vim.cmd("new")
     end
   end
 end
@@ -214,7 +214,7 @@ end
 
 ---@param tabpage integer
 local function close(tabpage)
-  if not M.is_visible { tabpage = tabpage } then
+  if not M.is_visible({ tabpage = tabpage }) then
     return
   end
   save_tab_state(tabpage)
@@ -223,7 +223,7 @@ local function close(tabpage)
   local current_win = vim.api.nvim_get_current_win()
   for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
     if vim.api.nvim_win_get_config(win).relative == "" then
-      local prev_win = vim.fn.winnr "#" -- this tab only
+      local prev_win = vim.fn.winnr("#") -- this tab only
       if tree_win == current_win and prev_win > 0 then
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
@@ -264,7 +264,7 @@ function M.open(options)
     return
   end
 
-  local profile = log.profile_start "view open"
+  local profile = log.profile_start("view open")
 
   create_buffer()
   open_window()
@@ -272,7 +272,7 @@ function M.open(options)
 
   local opts = options or { focus_tree = true }
   if not opts.focus_tree then
-    vim.cmd "wincmd p"
+    vim.cmd("wincmd p")
   end
   events._dispatch_on_tree_open()
 
@@ -358,7 +358,7 @@ function M.resize(size)
   if new_size ~= vim.api.nvim_win_get_width(winnr) then
     vim.api.nvim_win_set_width(winnr, new_size)
     if not M.View.preserve_window_proportions then
-      vim.cmd ":wincmd ="
+      vim.cmd(":wincmd =")
     end
   end
 
@@ -465,7 +465,7 @@ function M.winid(opts)
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
   end
-  if M.is_visible { tabpage = tabpage } then
+  if M.is_visible({ tabpage = tabpage }) then
     return M.get_winnr(tabpage)
   else
     return nil
@@ -514,7 +514,7 @@ function M._prevent_buffer_override()
     local curbuf = vim.api.nvim_win_get_buf(curwin)
     local bufname = vim.api.nvim_buf_get_name(curbuf)
 
-    if not bufname:match "NvimTree" then
+    if not bufname:match("NvimTree") then
       for i, tabpage in ipairs(M.View.tabpages) do
         if tabpage.winnr == view_winnr then
           M.View.tabpages[i] = nil
@@ -528,9 +528,9 @@ function M._prevent_buffer_override()
 
     -- patch to avoid the overriding window to be fixed in size
     -- might need a better patch
-    vim.cmd "setlocal nowinfixwidth"
-    vim.cmd "setlocal nowinfixheight"
-    M.open { focus_tree = false }
+    vim.cmd("setlocal nowinfixwidth")
+    vim.cmd("setlocal nowinfixheight")
+    M.open({ focus_tree = false })
 
     local explorer = require("nvim-tree.core").get_explorer()
     if explorer then

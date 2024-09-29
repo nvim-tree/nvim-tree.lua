@@ -1,9 +1,9 @@
-local view = require "nvim-tree.view"
-local core = require "nvim-tree.core"
-local utils = require "nvim-tree.utils"
-local events = require "nvim-tree.events"
-local notify = require "nvim-tree.notify"
-local explorer_node = require "nvim-tree.explorer.node"
+local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
+local notify = require("nvim-tree.notify")
+local explorer_node = require("nvim-tree.explorer.node")
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -215,7 +215,7 @@ local function should_hijack_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
 
   local bufmodified, ft
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     bufmodified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
     ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
   else
@@ -286,12 +286,12 @@ function M.open(opts)
       explorer.renderer:draw()
     end
   elseif opts.winid then
-    view.open_in_win { hijack_current_buf = false, resize = false, winid = opts.winid }
+    view.open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
     if explorer then
       explorer.renderer:draw()
     end
   elseif opts.current_window then
-    view.open_in_win { hijack_current_buf = false, resize = false }
+    view.open_in_win({ hijack_current_buf = false, resize = false })
     if explorer then
       explorer.renderer:draw()
     end

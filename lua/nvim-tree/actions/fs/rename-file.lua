@@ -1,8 +1,8 @@
-local core = require "nvim-tree.core"
-local lib = require "nvim-tree.lib"
-local utils = require "nvim-tree.utils"
-local events = require "nvim-tree.events"
-local notify = require "nvim-tree.notify"
+local core = require("nvim-tree.core")
+local lib = require("nvim-tree.lib")
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
+local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -64,10 +64,10 @@ function M.rename(node, to)
     idx = idx + 1
 
     local p = utils.path_remove_trailing(path)
-    if #path_to_create == 0 and vim.fn.has "win32" == 1 then
-      path_to_create = utils.path_join { p, path_to_create }
+    if #path_to_create == 0 and vim.fn.has("win32") == 1 then
+      path_to_create = utils.path_join({ p, path_to_create })
     else
-      path_to_create = utils.path_join { path_to_create, p }
+      path_to_create = utils.path_join({ path_to_create, p })
     end
 
     if idx == num_nodes then

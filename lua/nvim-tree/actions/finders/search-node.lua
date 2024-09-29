@@ -1,4 +1,4 @@
-local core = require "nvim-tree.core"
+local core = require("nvim-tree.core")
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local M = {}
@@ -75,7 +75,7 @@ function M.fn()
   local bufnr = vim.api.nvim_get_current_buf()
 
   local path_existed, path_opt
-  if vim.fn.has "nvim-0.10" == 1 then
+  if vim.fn.has("nvim-0.10") == 1 then
     path_existed, path_opt = pcall(vim.api.nvim_get_option_value, "path", { buf = bufnr })
     vim.api.nvim_set_option_value("path", core.get_cwd() .. "/**", { buf = bufnr })
   else
@@ -89,13 +89,13 @@ function M.fn()
     end
     -- reset &path
     if path_existed then
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         vim.api.nvim_set_option_value("path", path_opt, { buf = bufnr })
       else
         vim.api.nvim_buf_set_option(bufnr, "path", path_opt) ---@diagnostic disable-line: deprecated
       end
     else
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         vim.api.nvim_set_option_value("path", nil, { buf = bufnr })
       else
         vim.api.nvim_buf_set_option(bufnr, "path", nil) ---@diagnostic disable-line: deprecated

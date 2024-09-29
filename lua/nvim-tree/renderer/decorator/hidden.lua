@@ -1,7 +1,7 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-local explorer_node = require "nvim-tree.explorer.node"
-local Decorator = require "nvim-tree.renderer.decorator"
+local explorer_node = require("nvim-tree.explorer.node")
+local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorHidden: Decorator
 ---@field icon HighlightedString|nil

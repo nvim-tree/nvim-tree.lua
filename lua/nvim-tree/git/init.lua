@@ -1,10 +1,10 @@
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
-local git_utils = require "nvim-tree.git.utils"
-local Runner = require "nvim-tree.git.runner"
+local log = require("nvim-tree.log")
+local utils = require("nvim-tree.utils")
+local git_utils = require("nvim-tree.git.utils")
+local Runner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
-local Iterator = require "nvim-tree.iterators.node-iterator"
-local explorer_node = require "nvim-tree.explorer.node"
+local Iterator = require("nvim-tree.iterators.node-iterator")
+local explorer_node = require("nvim-tree.explorer.node")
 
 local M = {
   config = {},
@@ -243,12 +243,12 @@ function M.load_project_status(path)
     return status
   end
 
-  local git_status = Runner.run {
+  local git_status = Runner.run({
     toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
     timeout = M.config.git.timeout,
-  }
+  })
 
   local watcher = nil
   if M.config.filesystem_watchers.enable then
@@ -264,7 +264,7 @@ function M.load_project_status(path)
       end)
     end
 
-    local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join { toplevel, ".git" }
+    local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
     watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
       toplevel = toplevel,
     })

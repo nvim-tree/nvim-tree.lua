@@ -1,6 +1,6 @@
-local notify = require "nvim-tree.notify"
-local log = require "nvim-tree.log"
-local utils = require "nvim-tree.utils"
+local notify = require("nvim-tree.notify")
+local log = require("nvim-tree.log")
+local utils = require("nvim-tree.utils")
 
 local M = {
   config = {},
@@ -79,7 +79,7 @@ function Event:start()
   rc, _, name = self._fs_event:start(self._path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
     if name == "EMFILE" then
-      M.disable_watchers "fs.inotify.max_user_watches exceeded, see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting"
+      M.disable_watchers("fs.inotify.max_user_watches exceeded, see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting")
     else
       notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self._path, name))
     end

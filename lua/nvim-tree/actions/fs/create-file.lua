@@ -1,8 +1,8 @@
-local utils = require "nvim-tree.utils"
-local events = require "nvim-tree.events"
-local lib = require "nvim-tree.lib"
-local core = require "nvim-tree.core"
-local notify = require "nvim-tree.notify"
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
+local lib = require("nvim-tree.lib")
+local core = require("nvim-tree.core")
+local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -72,7 +72,7 @@ function M.fn(node)
     end
 
     if utils.file_exists(new_file_path) then
-      notify.warn "Cannot create: file already exists"
+      notify.warn("Cannot create: file already exists")
       return
     end
 
@@ -87,10 +87,10 @@ function M.fn(node)
     for path in utils.path_split(new_file_path) do
       idx = idx + 1
       local p = utils.path_remove_trailing(path)
-      if #path_to_create == 0 and vim.fn.has "win32" == 1 then
-        path_to_create = utils.path_join { p, path_to_create }
+      if #path_to_create == 0 and vim.fn.has("win32") == 1 then
+        path_to_create = utils.path_join({ p, path_to_create })
       else
-        path_to_create = utils.path_join { path_to_create, p }
+        path_to_create = utils.path_join({ path_to_create, p })
       end
       if is_last_path_file and idx == num_nodes then
         create_and_notify(path_to_create)

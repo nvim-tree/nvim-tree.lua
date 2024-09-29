@@ -1,6 +1,6 @@
-local lib = require "nvim-tree.lib"
-local utils = require "nvim-tree.utils"
-local core = require "nvim-tree.core"
+local lib = require("nvim-tree.lib")
+local utils = require("nvim-tree.utils")
+local core = require("nvim-tree.core")
 local M = {}
 
 ---@param explorer Explorer

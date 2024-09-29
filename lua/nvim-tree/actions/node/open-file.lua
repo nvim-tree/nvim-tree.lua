@@ -1,8 +1,8 @@
 -- Copyright 2019 Yazdani Kiyan under MIT License
-local lib = require "nvim-tree.lib"
-local notify = require "nvim-tree.notify"
-local utils = require "nvim-tree.utils"
-local view = require "nvim-tree.view"
+local lib = require("nvim-tree.lib")
+local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
 local M = {}
 
@@ -27,7 +27,7 @@ local function usable_win_ids()
     local bufid = vim.api.nvim_win_get_buf(id)
     for option, v in pairs(M.window_picker.exclude) do
       local ok, option_value
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         ok, option_value = pcall(vim.api.nvim_get_option_value, option, { buf = bufid })
       else
         ok, option_value = pcall(vim.api.nvim_buf_get_option, bufid, option) ---@diagnostic disable-line: deprecated
@@ -91,7 +91,7 @@ local function pick_win_id()
     for _, win_id in ipairs(not_selectable) do
       local ok_status, statusline, ok_hl, winhl
 
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = win_id })
         ok_hl, winhl = pcall(vim.api.nvim_get_option_value, "winhl", { win = win_id })
       else
@@ -105,7 +105,7 @@ local function pick_win_id()
       }
 
       -- Clear statusline for windows not selectable
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         vim.api.nvim_set_option_value("statusline", " ", { win = win_id })
       else
         vim.api.nvim_win_set_option(win_id, "statusline", " ") ---@diagnostic disable-line: deprecated
@@ -118,7 +118,7 @@ local function pick_win_id()
     local char = M.window_picker.chars:sub(i, i)
 
     local ok_status, statusline, ok_hl, winhl
-    if vim.fn.has "nvim-0.10" == 1 then
+    if vim.fn.has("nvim-0.10") == 1 then
       ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = id })
       ok_hl, winhl = pcall(vim.api.nvim_get_option_value, "winhl", { win = id })
     else
@@ -132,7 +132,7 @@ local function pick_win_id()
     }
     win_map[char] = id
 
-    if vim.fn.has "nvim-0.10" == 1 then
+    if vim.fn.has("nvim-0.10") == 1 then
       vim.api.nvim_set_option_value("statusline", "%=" .. char .. "%=", { win = id })
       vim.api.nvim_set_option_value("winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker", { win = id })
     else
@@ -146,9 +146,9 @@ local function pick_win_id()
     end
   end
 
-  vim.cmd "redraw"
+  vim.cmd("redraw")
   if vim.opt.cmdheight._value ~= 0 then
-    print "Pick window: "
+    print("Pick window: ")
   end
   local _, resp = pcall(get_user_input_char)
   resp = (resp or ""):upper()
@@ -157,7 +157,7 @@ local function pick_win_id()
   -- Restore window options
   for _, id in ipairs(selectable) do
     for opt, value in pairs(win_opts[id]) do
-      if vim.fn.has "nvim-0.10" == 1 then
+      if vim.fn.has("nvim-0.10") == 1 then
         vim.api.nvim_set_option_value(opt, value, { win = id })
       else
         vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
@@ -170,7 +170,7 @@ local function pick_win_id()
       -- Ensure window still exists at this point
       if vim.api.nvim_win_is_valid(id) then
         for opt, value in pairs(win_opts[id]) do
-          if vim.fn.has "nvim-0.10" == 1 then
+          if vim.fn.has("nvim-0.10") == 1 then
             vim.api.nvim_set_option_value(opt, value, { win = id })
           else
             vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
@@ -300,7 +300,7 @@ local function open_in_new_window(filename, mode)
 
     -- No need to split, as we created a new window.
     create_new_window = false
-    if mode:match "split$" then
+    if mode:match("split$") then
       mode = "edit"
     end
   elseif not vim.o.hidden then
@@ -309,14 +309,14 @@ local function open_in_new_window(filename, mode)
     local target_bufid = vim.api.nvim_win_get_buf(target_winid)
 
     local modified
-    if vim.fn.has "nvim-0.10" == 1 then
+    if vim.fn.has("nvim-0.10") == 1 then
       modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
     else
       modified = vim.api.nvim_buf_get_option(target_bufid, "modified") ---@diagnostic disable-line: deprecated
     end
 
     if modified then
-      if not mode:match "split$" then
+      if not mode:match("split$") then
         mode = "vsplit"
       end
     end
@@ -342,7 +342,7 @@ local function open_in_new_window(filename, mode)
   if create_new_window then
     -- generated from vim.api.nvim_parse_cmd("belowright vsplit foo", {})
     command = { cmd = "vsplit", mods = { split = new_window_side }, args = { fname } }
-  elseif mode:match "split$" then
+  elseif mode:match("split$") then
     command = { cmd = mode, args = { fname } }
   else
     command = { cmd = "edit", args = { fname } }
