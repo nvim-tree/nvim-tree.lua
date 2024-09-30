@@ -228,8 +228,8 @@ via |nvim-tree.on_attach| e.g. >
     api.config.mappings.default_on_attach(bufnr)
 
     -- custom mappings
-    vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
-    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+    vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent,        opts("Up"))
+    vim.keymap.set("n", "?",     api.tree.toggle_help,                  opts("Help"))
   end
 
   -- pass to setup along with your other options
@@ -1505,7 +1505,7 @@ Configuration options for opening a file from nvim-tree.
           e.g. s1n7ax/nvim-window-picker plugin: >
             window_picker = {
               enable = true,
-              picker = require('window-picker').pick_window,
+              picker = require("window-picker").pick_window,
 <
         *nvim-tree.actions.open_file.window_picker.chars*
         A string of chars used as identifiers by the window picker.
@@ -2278,27 +2278,27 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
 |vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g. >
 
   local function my_on_attach(bufnr)
-    local api = require('nvim-tree.api')
+    local api = require("nvim-tree.api")
 
     local function opts(desc)
-      return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
     -- copy default mappings here from defaults in next section
-    vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
-    vim.keymap.set('n', '<C-e>', api.node.open.replace_tree_buffer,     opts('Open: In Place'))
+    vim.keymap.set("n", "<C-]>", api.tree.change_root_to_node,          opts("CD"))
+    vim.keymap.set("n", "<C-e>", api.node.open.replace_tree_buffer,     opts("Open: In Place"))
     ---
     -- OR use all default mappings
     api.config.mappings.default_on_attach(bufnr)
 
     -- remove a default
-    vim.keymap.del('n', '<C-]>', { buffer = bufnr })
+    vim.keymap.del("n", "<C-]>", { buffer = bufnr })
 
     -- override a default
-    vim.keymap.set('n', '<C-e>', api.tree.reload,                       opts('Refresh'))
+    vim.keymap.set("n", "<C-e>", api.tree.reload,                       opts("Refresh"))
 
     -- add your mappings
-    vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+    vim.keymap.set("n", "?",     api.tree.toggle_help,                  opts("Help"))
     ---
   end
 
@@ -2318,13 +2318,13 @@ Single right / middle mouse mappings will require changes to |mousemodel| or |mo
 define your own function to map complex functionality e.g. >
 
   local function print_node_path()
-    local api = require('nvim-tree.api')
+    local api = require("nvim-tree.api")
     local node = api.tree.get_node_under_cursor()
     print(node.absolute_path)
   end
 
   -- on_attach
-  vim.keymap.set('n', '<C-P>', print_node_path, opts('Print Path'))
+  vim.keymap.set("n", "<C-P>", print_node_path, opts("Print Path"))
 <
 ==============================================================================
  7.1 MAPPINGS: DEFAULT                            *nvim-tree-mappings-default*
@@ -2334,10 +2334,10 @@ will be applied.
 
 You are encouraged to copy these to your own |nvim-tree.on_attach| function.
 >
-  local api = require('nvim-tree.api')
+  local api = require("nvim-tree.api")
 
   local function opts(desc)
-    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
 
   -- BEGIN_DEFAULT_ON_ATTACH
@@ -2405,10 +2405,10 @@ Alternatively, you may apply these default mappings from your |nvim-tree.on_atta
 |nvim-tree-api.config.mappings.default_on_attach()| e.g.
 >
   local function my_on_attach(bufnr)
-    local api = require('nvim-tree.api')
+    local api = require("nvim-tree.api")
 
     local function opts(desc)
-      return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
     api.config.mappings.default_on_attach(bufnr)
