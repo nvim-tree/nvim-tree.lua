@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.0...nvim-tree-v1.7.1) (2024-09-30)
+
+
+### Bug Fixes
+
+* **#2794:** sshfs compatibility ([#2922](https://github.com/nvim-tree/nvim-tree.lua/issues/2922)) ([9650e73](https://github.com/nvim-tree/nvim-tree.lua/commit/9650e735baad0d39505f4cb4867a60f02858536a))
+* **#2928:** nil explorer in parent move action ([#2929](https://github.com/nvim-tree/nvim-tree.lua/issues/2929)) ([0429f28](https://github.com/nvim-tree/nvim-tree.lua/commit/0429f286b350c65118d66b646775bf187936fa47))
+* **#2930:** empty groups expanded on reload ([#2935](https://github.com/nvim-tree/nvim-tree.lua/issues/2935)) ([4520c03](https://github.com/nvim-tree/nvim-tree.lua/commit/4520c0355cc561830ee2cf90dc37a2a75abf7995))
+* invalid explorer on open ([#2927](https://github.com/nvim-tree/nvim-tree.lua/issues/2927)) ([59a8a6a](https://github.com/nvim-tree/nvim-tree.lua/commit/59a8a6ae5e9d3eae99d08ab655d12fd51d5d17f3))
+
+
+### Reverts
+
+* **#2794:** sshfs compatibility ([#2920](https://github.com/nvim-tree/nvim-tree.lua/issues/2920)) ([8405ecf](https://github.com/nvim-tree/nvim-tree.lua/commit/8405ecfbd6bb08a94ffc9c68fef211eea56e8a3b))
+
 ## [1.7.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.6.1...nvim-tree-v1.7.0) (2024-09-21)
 
 
