@@ -198,7 +198,7 @@ function Explorer:reload(node, git_status)
 
   local is_root = not node.parent
   local child_folder_only = explorer_node.has_one_child_folder(node) and node.nodes[1]
-  if config.group_empty and not is_root and child_folder_only then
+  if config.renderer.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = self:reload(child_folder_only, git_status)
     node.nodes = ns or {}
