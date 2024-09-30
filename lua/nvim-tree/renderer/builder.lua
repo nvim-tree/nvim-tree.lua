@@ -463,8 +463,8 @@ function Builder:build_header()
     local filter_line = string.format("%s/%s/", self.opts.live_filter.prefix, self.explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
     local prefix_length = string.len(self.opts.live_filter.prefix)
-    self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0, prefix_length)
-    self:insert_highlight({ "NvimTreeLiveFilterValue" }, prefix_length, string.len(filter_line))
+    self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0,             prefix_length)
+    self:insert_highlight({ "NvimTreeLiveFilterValue" },  prefix_length, string.len(filter_line))
     self.index = self.index + 1
   end
 end

@@ -105,7 +105,7 @@ local function split_merge(t, first, last, comparator)
 
   local mid = math.floor((first + last) / 2)
 
-  split_merge(t, first, mid, comparator)
+  split_merge(t, first,   mid,  comparator)
   split_merge(t, mid + 1, last, comparator)
   merge(t, first, mid, last, comparator)
 end

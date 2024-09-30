@@ -125,7 +125,7 @@ function Runner:_run_git_job(callback)
 
   local opts = self:_getopts(stdout, stderr)
   log.line("git", "running job with timeout %dms", self.timeout)
-  log.line("git", "git %s", table.concat(utils.array_remove_nils(opts.args), " "))
+  log.line("git", "git %s",                        table.concat(utils.array_remove_nils(opts.args), " "))
 
   handle, pid = vim.loop.spawn(
     "git",
