@@ -5,26 +5,23 @@ local Watcher = require("nvim-tree.watcher")
 
 local M = {}
 
---- TODO merge #2922 and pass just stat, as stat.type from lstat is correct
-
 ---Factory function to create the appropriate Node
 ---@param explorer Explorer
 ---@param parent Node
 ---@param abs string
----@param t string? type from vim.loop.fs_scandir_next as stat.type is incorrectly reported as a file for links
----@param stat uv.fs_stat.result?
+---@param stat uv.fs_stat.result? -- on nil stat return nil Node
 ---@param name string
 ---@return Node?
-function M.create_node(explorer, parent, abs, t, stat, name)
+function M.create_node(explorer, parent, abs, stat, name)
   if not stat then
     return nil
   end
 
-  if t == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
+  if stat.type == "directory" and vim.loop.fs_access(abs, "R") and Watcher.is_fs_event_capable(abs) then
     return DirectoryNode:create(explorer, parent, abs, name, stat)
-  elseif t == "file" then
+  elseif stat.type == "file" then
     return FileNode:create(explorer, parent, abs, name, stat)
-  elseif t == "link" then
+  elseif stat.type == "link" then
     return LinkNode:create(explorer, parent, abs, name, stat)
   end
 

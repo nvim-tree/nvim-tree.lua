@@ -122,14 +122,11 @@ function Explorer:reload(node, git_status)
     if filter_reason == FILTER_REASON.none then
       remain_childs[abs] = true
 
-      -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-      local t = stat and stat.type or nil
-
       -- Recreate node if type changes.
       if nodes_by_path[abs] then
         local n = nodes_by_path[abs]
 
-        if n.type ~= t then
+        if not stat or n.type ~= stat.type then
           utils.array_remove(node.nodes, n)
           n:destroy()
           nodes_by_path[abs] = nil
@@ -137,7 +134,7 @@ function Explorer:reload(node, git_status)
       end
 
       if not nodes_by_path[abs] then
-        local new_child = node_factory.create_node(self, node, abs, t, stat, name)
+        local new_child = node_factory.create_node(self, node, abs, stat, name)
         if new_child then
           table.insert(node.nodes, new_child)
           nodes_by_path[abs] = new_child
@@ -276,9 +273,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
       local stat = vim.loop.fs_lstat(abs)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
-        -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-        local t = stat and stat.type or nil
-        local child = node_factory.create_node(self, node, abs, t, stat, name)
+        local child = node_factory.create_node(self, node, abs, stat, name)
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true
