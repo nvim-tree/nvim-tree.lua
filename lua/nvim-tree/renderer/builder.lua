@@ -487,7 +487,7 @@ function Builder:build()
   return self
 end
 
----TODO refactor back to function; this was left here to reduce PR noise
+---@private
 ---@param opts table
 ---@return fun(node: Node): string|nil
 function Builder:setup_hidden_display_function(opts)

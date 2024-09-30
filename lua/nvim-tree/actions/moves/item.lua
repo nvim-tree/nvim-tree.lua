@@ -74,7 +74,7 @@ local function expand_node(node)
   if not node.open then
     -- Expand the node.
     -- Should never collapse since we checked open.
-    lib.expand_or_collapse(node)
+    node:expand_or_collapse()
   end
 end
 
@@ -97,7 +97,7 @@ local function move_next_recursive(what, skip_gitignored)
     valid = status_is_valid(node_init, what, skip_gitignored)
   end
   if node_init.nodes ~= nil and valid and not node_init.open then
-    lib.expand_or_collapse(node_init)
+    node_init:expand_or_collapse()
   end
 
   move("next", what, skip_gitignored)

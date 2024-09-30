@@ -251,6 +251,72 @@ function BaseNode:get_all_nodes_in_group()
   return nodes
 end
 
+-- Toggle group empty folders
+function BaseNode:toggle_group_folders()
+  local is_grouped = self.group_next ~= nil
+
+  if is_grouped then
+    self:ungroup_empty_folders()
+  else
+    self:group_empty_folders()
+  end
+end
+
+---Group empty folders
+-- Recursively group nodes
+---@return Node[]
+function BaseNode:group_empty_folders()
+  local is_root = not self.parent
+  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
+  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
+    self.group_next = child_folder_only
+    local ns = child_folder_only:group_empty_folders()
+    self.nodes = ns or {}
+    return ns
+  end
+  return self.nodes
+end
+
+---Ungroup empty folders
+-- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
+function BaseNode:ungroup_empty_folders()
+  local cur = self
+  while cur and cur.group_next do
+    cur.nodes = { cur.group_next }
+    cur.group_next = nil
+    cur = cur.nodes[1]
+  end
+end
+
+function BaseNode:expand_or_collapse(toggle_group)
+  toggle_group = toggle_group or false
+  if self.has_children then
+    self.has_children = false
+  end
+
+  if #self.nodes == 0 then
+    self.explorer:expand(self)
+  end
+
+  local head_node = self:get_parent_of_group()
+  if toggle_group then
+    head_node:toggle_group_folders()
+  end
+
+  local open = self:last_group_node().open
+  local next_open
+  if toggle_group then
+    next_open = open
+  else
+    next_open = not open
+  end
+  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
+    n.open = next_open
+  end
+
+  self.explorer.renderer:draw()
+end
+
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return BaseNode cloned
 function BaseNode:clone()
