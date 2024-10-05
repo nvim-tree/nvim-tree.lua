@@ -173,7 +173,7 @@ end
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return Node
 function BaseNode:last_group_node()
-  local node = self
+  local node = self --[[@as BaseNode]]
 
   while node.group_next do
     node = node.group_next
@@ -269,6 +269,7 @@ function BaseNode:group_empty_folders()
   local is_root = not self.parent
   local child_folder_only = self:has_one_child_folder() and self.nodes[1]
   if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
+    ---@cast self DirectoryNode -- TODO move this to the class
     self.group_next = child_folder_only
     local ns = child_folder_only:group_empty_folders()
     self.nodes = ns or {}
@@ -291,6 +292,7 @@ end
 function BaseNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
   if self.has_children then
+    ---@cast self DirectoryNode -- TODO move this to the class
     self.has_children = false
   end
 
