@@ -561,7 +561,7 @@ Following is the default configuration. See |nvim-tree-opts| for details.
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
-        ignore_dirs = {},
+        ignore_dirs = { "node_modules" },
       },
       actions = {
         use_system_clipboard = true,
@@ -1416,7 +1416,7 @@ function returning whether a path should be ignored.
 Strings must be backslash escaped e.g. `"my-proj/\\.build$"`. See |string-match|.
 Function is passed an absolute path.
 Useful when path is not in `.gitignore` or git integration is disabled.
-  Type: `string[] | fun(path: string): boolean`, Default: `{}`
+  Type: `string[] | fun(path: string): boolean`, Default: `{ "node_modules" }`
 
 ==============================================================================
  5.13 OPTS: ACTIONS                                   *nvim-tree-opts-actions*
