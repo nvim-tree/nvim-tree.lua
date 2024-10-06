@@ -538,14 +538,6 @@ function M.array_remove_nils(array)
   end, array)
 end
 
----@param f fun(node: Node?)
----@return function
-function M.inject_node(f)
-  return function()
-    f(require("nvim-tree.lib").get_node_at_cursor())
-  end
-end
-
 --- Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
 --- This is cheap, as the readable test should only ever be needed when resuming a vim session.
 ---@param bufnr number|nil may be 0 or nil for current
