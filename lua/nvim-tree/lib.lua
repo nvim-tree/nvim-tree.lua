@@ -14,6 +14,7 @@ local M = {
 }
 
 ---Cursor position as per vim.api.nvim_win_get_cursor
+---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function M.get_cursor_position()
   if not core.get_explorer() then
@@ -30,16 +31,21 @@ end
 
 ---@return Node|nil
 function M.get_node_at_cursor()
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
   local cursor = M.get_cursor_position()
   if not cursor then
     return
   end
 
   if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
-    return { name = ".." }
+    return explorer
   end
 
-  return utils.get_nodes_by_line(core.get_explorer().nodes, core.get_nodes_starting_line())[cursor[1]]
+  return utils.get_nodes_by_line(explorer.nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
 ---Api.tree.get_nodes
