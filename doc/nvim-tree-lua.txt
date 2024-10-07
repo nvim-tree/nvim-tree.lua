@@ -1416,8 +1416,14 @@ function returning whether a path should be ignored.
 Strings must be backslash escaped e.g. `"my-proj/\\.build$"`. See |string-match|.
 Function is passed an absolute path.
 Useful when path is not in `.gitignore` or git integration is disabled.
-  Type: `string[] | fun(path: string): boolean`, Default: `{ "node_modules" }`
-
+  Type: `string[] | fun(path: string): boolean`, Default: >
+    {
+      "/.ccls-cache",
+      "/build",
+      "/node_modules",
+      "/target",
+    }
+<
 ==============================================================================
  5.13 OPTS: ACTIONS                                   *nvim-tree-opts-actions*
 
