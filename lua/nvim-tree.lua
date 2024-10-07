@@ -551,7 +551,12 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
-    ignore_dirs = {},
+    ignore_dirs = {
+      "/.ccls-cache",
+      "/build",
+      "/node_modules",
+      "/target",
+    },
   },
   actions = {
     use_system_clipboard = true,
