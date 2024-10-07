@@ -1,12 +1,7 @@
 local git = require("nvim-tree.git")
 
----TODO remove all @cast, @as
+---TODO remove all @cast
 ---TODO remove all references to directory fields:
-------@field has_children boolean
-------@field group_next Node? -- If node is grouped, this points to the next child dir/link node
-------@field nodes Node[]
-------@field open boolean
-------@field hidden_stats table? -- Each field of this table is a key for source and value for count
 
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
@@ -111,7 +106,8 @@ end
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return Node
 function BaseNode:last_group_node()
-  local node = self --[[@as BaseNode]]
+  local node = self
+  --- @cast node BaseNode
 
   while node.group_next do
     node = node.group_next
@@ -239,7 +235,6 @@ function BaseNode:expand_or_collapse(toggle_group)
   end
 
   local head_node = self:get_parent_of_group()
-  ---@cast head_node DirectoryNode -- TODO move this to the class
   if toggle_group then
     head_node:toggle_group_folders()
   end
