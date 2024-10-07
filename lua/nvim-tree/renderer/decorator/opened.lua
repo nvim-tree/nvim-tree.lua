@@ -6,7 +6,6 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorOpened: Decorator
----@field enabled boolean
 ---@field icon HighlightedString|nil
 local DecoratorOpened = Decorator:new()
 

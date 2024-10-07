@@ -51,7 +51,7 @@ function Explorer:create(path)
   ---@type Explorer
   local explorer_placeholder = nil
 
-  local o = RootNode.create(self, explorer_placeholder, path, "..", nil)
+  local o = RootNode:create(explorer_placeholder, path, "..", nil)
 
   o = self:new(o) --[[@as Explorer]]
 
