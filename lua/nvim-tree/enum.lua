@@ -1,5 +1,13 @@
 local M = {}
 
+---Must be synced with uv.fs_stat.result as it is compared with it
+---@enum (key) NODE_TYPE
+M.NODE_TYPE = {
+  directory = 1,
+  file = 2,
+  link = 4,
+}
+
 ---Setup options for "highlight_*"
 ---@enum HL_POSITION
 M.HL_POSITION = {
