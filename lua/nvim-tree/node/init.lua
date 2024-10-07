@@ -1,5 +1,12 @@
 local git = require("nvim-tree.git")
 
+---TODO remove all references to directory fields:
+------@field has_children boolean
+------@field group_next Node? -- If node is grouped, this points to the next child dir/link node
+------@field nodes Node[]
+------@field open boolean
+------@field hidden_stats table? -- Each field of this table is a key for source and value for count
+
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
 ---@class (exact) BaseNode
@@ -18,7 +25,7 @@ local git = require("nvim-tree.git")
 ---@field diag_status DiagStatus?
 local BaseNode = {}
 
----@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
+---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|DirectoryLinkNode|FileLinkNode
 
 ---@param o BaseNode?
 ---@return BaseNode
@@ -57,99 +64,38 @@ end
 
 ---@return boolean
 function BaseNode:has_one_child_folder()
-  return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
+  return false
 end
 
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
+---@return Node
+function BaseNode:last_group_node()
+  return self
+end
+
+---Group empty folders
+-- Recursively group nodes
+---@return Node[]
+function BaseNode:group_empty_folders()
+  return {}
+end
+
+---Ungroup empty folders
+function BaseNode:ungroup_empty_folders()
+end
+
+---Update the GitStatus of the node
 ---@param parent_ignored boolean
----@param status table|nil
-function BaseNode:update_git_status(parent_ignored, status)
-  local get_status
-  if self.nodes then
-    get_status = git.git_status_dir
-  else
-    get_status = git.git_status_file
-  end
-
-  -- status of the node's absolute path
-  self.git_status = get_status(parent_ignored, status, self.absolute_path)
-
-  -- status of the link target, if the link itself is not dirty
-  if self.link_to and not self.git_status then
-    self.git_status = get_status(parent_ignored, status, self.link_to)
-  end
+---@param status table?
+function BaseNode:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
 end
 
----@return GitStatus|nil
+---@return GitStatus?
 function BaseNode:get_git_status()
-  if not self.git_status then
-    -- status doesn't exist
-    return nil
-  end
-
-  if not self.nodes then
-    -- file
-    return self.git_status.file and { self.git_status.file }
-  end
-
-  -- dir
-  if not self.explorer.opts.git.show_on_dirs then
-    return nil
-  end
-
-  local status = {}
-  if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
-    -- dir is closed or we should show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil then
-      if self.git_status.dir.direct ~= nil then
-        for _, s in pairs(self.git_status.dir.direct) do
-          table.insert(status, s)
-        end
-      end
-      if self.git_status.dir.indirect ~= nil then
-        for _, s in pairs(self.git_status.dir.indirect) do
-          table.insert(status, s)
-        end
-      end
-    end
-  else
-    -- dir is open and we shouldn't show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
-      local deleted = {
-        [" D"] = true,
-        ["D "] = true,
-        ["RD"] = true,
-        ["DD"] = true,
-      }
-      for _, s in pairs(self.git_status.dir.direct) do
-        if deleted[s] then
-          table.insert(status, s)
-        end
-      end
-    end
-  end
-  if #status == 0 then
-    return nil
-  else
-    return status
-  end
 end
 
----@param projects table
-function BaseNode:reload_node_status(projects)
-  local toplevel = git.get_toplevel(self.absolute_path)
-  local status = projects[toplevel] or {}
-  for _, node in ipairs(self.nodes) do
-    node:update_git_status(self:is_git_ignored(), status)
-    if node.nodes and #node.nodes > 0 then
-      self:reload_node_status(projects)
-    end
-  end
+---@param _ table projects
+function BaseNode:reload_node_status(_)
 end
 
 ---@return boolean
@@ -170,20 +116,8 @@ function BaseNode:is_dotfile()
   return false
 end
 
--- If node is grouped, return the last node in the group. Otherwise, return the given node.
----@return Node
-function BaseNode:last_group_node()
-  local node = self --[[@as BaseNode]]
-
-  while node.group_next do
-    node = node.group_next
-  end
-
-  return node
-end
-
----@param project table|nil
----@param root string|nil
+---@param project table?
+---@param root string?
 function BaseNode:update_parent_statuses(project, root)
   local node = self
   while project and node do
@@ -259,33 +193,6 @@ function BaseNode:toggle_group_folders()
     self:ungroup_empty_folders()
   else
     self:group_empty_folders()
-  end
-end
-
----Group empty folders
--- Recursively group nodes
----@return Node[]
-function BaseNode:group_empty_folders()
-  local is_root = not self.parent
-  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
-  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
-    ---@cast self DirectoryNode -- TODO move this to the class
-    self.group_next = child_folder_only
-    local ns = child_folder_only:group_empty_folders()
-    self.nodes = ns or {}
-    return ns
-  end
-  return self.nodes
-end
-
----Ungroup empty folders
--- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
-function BaseNode:ungroup_empty_folders()
-  local cur = self
-  while cur and cur.group_next do
-    cur.nodes = { cur.group_next }
-    cur.group_next = nil
-    cur = cur.nodes[1]
   end
 end
 
