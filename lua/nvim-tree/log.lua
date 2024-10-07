@@ -21,6 +21,25 @@ function M.raw(typ, fmt, ...)
   end
 end
 
+--- Write to a new file
+---@param typ string as per log.types config
+---@param path string absolute path
+---@param fmt string for string.format
+---@param ... any arguments for string.format
+function M.file(typ, path, fmt, ...)
+  if not M.enabled(typ) then
+    return
+  end
+
+  local line = string.format(fmt, ...)
+  local file = io.open(path, "w")
+  if file then
+    io.output(file)
+    io.write(line)
+    io.close(file)
+  end
+end
+
 ---@class Profile
 ---@field start number nanos
 ---@field tag string

@@ -1,3 +1,4 @@
+local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
 
 local BaseNode = require("nvim-tree.node")
@@ -36,7 +37,23 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
----Create a sanitized partial copy of a node, populating children recursively.
+---Update the GitStatus of absolute path of the file
+---@param parent_ignored boolean
+---@param status table|nil
+function FileNode:update_git_status(parent_ignored, status)
+  self.git_status = git.git_status_file(parent_ignored, status, self.absolute_path)
+end
+
+---@return GitStatus|nil
+function FileNode:get_git_status()
+  if not self.git_status then
+    return nil
+  end
+
+  return self.git_status.file and { self.git_status.file }
+end
+
+---Create a sanitized partial copy of a node
 ---@return FileNode cloned
 function FileNode:clone()
   local clone = BaseNode.clone(self) --[[@as FileNode]]
