@@ -51,7 +51,9 @@ function Explorer:create(path)
   ---@type Explorer
   local explorer_placeholder = nil
 
-  local o = RootNode.create(self, explorer_placeholder, path, "..", nil) --[[@as Explorer]]
+  local o = RootNode.create(self, explorer_placeholder, path, "..", nil)
+
+  o = self:new(o) --[[@as Explorer]]
 
   o.explorer = o
 
@@ -267,7 +269,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
     local abs = utils.path_join({ cwd, name })
 
     if Watcher.is_fs_event_capable(abs) then
-      local profile = log.profile_start("explore populate_children %s", abs)
+      local profile = log.profile_start("populate_children %s", abs)
 
       ---@type uv.fs_stat.result|nil
       local stat = vim.loop.fs_lstat(abs)
