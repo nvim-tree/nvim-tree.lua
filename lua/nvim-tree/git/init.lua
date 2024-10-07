@@ -4,7 +4,10 @@ local git_utils = require("nvim-tree.git.utils")
 local Runner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
-local explorer_node = require("nvim-tree.explorer.node")
+
+---@class GitStatus
+---@field file string|nil
+---@field dir table|nil
 
 local M = {
   config = {},
@@ -208,18 +211,15 @@ local function reload_tree_at(toplevel)
     Iterator.builder(root_node.nodes)
       :hidden()
       :applier(function(node)
-        local parent_ignored = explorer_node.is_git_ignored(node.parent)
-        explorer_node.update_git_status(node, parent_ignored, git_status)
+        local parent_ignored = node.parent and node.parent:is_git_ignored() or false
+        node:update_git_status(parent_ignored, git_status)
       end)
       :recursor(function(node)
         return node.nodes and #node.nodes > 0 and node.nodes
       end)
       :iterate()
 
-    local explorer = require("nvim-tree.core").get_explorer()
-    if explorer then
-      explorer.renderer:draw()
-    end
+    root_node.explorer.renderer:draw()
   end)
 end
 
@@ -281,6 +281,35 @@ function M.load_project_status(path)
     M._toplevels_by_path[path] = false
     return {}
   end
+end
+
+---@param parent_ignored boolean
+---@param status table|nil
+---@param absolute_path string
+---@return GitStatus|nil
+function M.git_status_dir(parent_ignored, status, absolute_path)
+  if parent_ignored then
+    return { file = "!!" }
+  end
+
+  if status then
+    return {
+      file = status.files and status.files[absolute_path],
+      dir = status.dirs and {
+        direct = status.dirs.direct[absolute_path],
+        indirect = status.dirs.indirect[absolute_path],
+      },
+    }
+  end
+end
+
+---@param parent_ignored boolean
+---@param status table|nil
+---@param absolute_path string
+---@return GitStatus
+function M.git_status_file(parent_ignored, status, absolute_path)
+  local file_status = parent_ignored and "!!" or (status and status.files and status.files[absolute_path])
+  return { file = file_status }
 end
 
 function M.purge_state()

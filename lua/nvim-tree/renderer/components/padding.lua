@@ -59,7 +59,7 @@ end
 ---@param depth integer
 ---@param idx integer
 ---@param nodes_number integer
----@param node table
+---@param node Node
 ---@param markers table
 ---@return HighlightedString[]
 function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_stop)
@@ -79,7 +79,7 @@ function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_sto
   return { str = str, hl = { "NvimTreeIndentMarker" } }
 end
 
----@param node table
+---@param node Node
 ---@return HighlightedString[]|nil
 function M.get_arrows(node)
   if not M.config.icons.show.folder_arrow then

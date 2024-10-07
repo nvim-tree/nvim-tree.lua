@@ -120,7 +120,7 @@ function M.fn(default_modifier)
       return
     end
 
-    node = lib.get_last_group_node(node)
+    node = node:last_group_node()
     if node.name == ".." then
       return
     end

@@ -15,7 +15,7 @@ function M.init(foldername)
   if TreeExplorer then
     TreeExplorer:destroy()
   end
-  TreeExplorer = require("nvim-tree.explorer"):new(foldername)
+  TreeExplorer = require("nvim-tree.explorer"):create(foldername)
   if not first_init_done then
     events._dispatch_ready()
     first_init_done = true

@@ -68,14 +68,14 @@ function Builder:new(opts, explorer)
     virtual_lines = {},
     decorators = {
       -- priority order
-      DecoratorCut:new(opts, explorer),
-      DecoratorCopied:new(opts, explorer),
-      DecoratorDiagnostics:new(opts, explorer),
-      DecoratorBookmarks:new(opts, explorer),
-      DecoratorModified:new(opts, explorer),
-      DecoratorHidden:new(opts, explorer),
-      DecoratorOpened:new(opts, explorer),
-      DecoratorGit:new(opts, explorer),
+      DecoratorCut:create(opts, explorer),
+      DecoratorCopied:create(opts, explorer),
+      DecoratorDiagnostics:create(opts, explorer),
+      DecoratorBookmarks:create(opts, explorer),
+      DecoratorModified:create(opts, explorer),
+      DecoratorHidden:create(opts, explorer),
+      DecoratorOpened:create(opts, explorer),
+      DecoratorGit:create(opts, explorer),
     },
     hidden_display = Builder:setup_hidden_display_function(opts),
   }
@@ -137,7 +137,7 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
 end
 
 ---@private
----@param node table
+---@param node Node
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:build_folder(node)
@@ -189,7 +189,7 @@ function Builder:build_symlink(node)
 end
 
 ---@private
----@param node table
+---@param node Node
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:build_file(node)
@@ -369,7 +369,7 @@ function Builder:build_line(node, idx, num_children)
 
   self.index = self.index + 1
 
-  node = require("nvim-tree.lib").get_last_group_node(node)
+  node = node:last_group_node()
   if node.open then
     self.depth = self.depth + 1
     self:build_lines(node)
@@ -487,7 +487,7 @@ function Builder:build()
   return self
 end
 
----TODO refactor back to function; this was left here to reduce PR noise
+---@private
 ---@param opts table
 ---@return fun(node: Node): string|nil
 function Builder:setup_hidden_display_function(opts)

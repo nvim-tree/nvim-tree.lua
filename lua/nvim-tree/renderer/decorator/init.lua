@@ -1,6 +1,8 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
+---Abstract Decorator
+---Uses the factory pattern to instantiate child instances.
 ---@class (exact) Decorator
 ---@field private __index? table
 ---@field protected explorer Explorer
