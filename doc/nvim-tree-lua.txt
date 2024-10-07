@@ -561,7 +561,12 @@ Following is the default configuration. See |nvim-tree-opts| for details.
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
-        ignore_dirs = { "node_modules" },
+        ignore_dirs = {
+          "/.ccls-cache",
+          "/build",
+          "/node_modules",
+          "/target",
+        },
       },
       actions = {
         use_system_clipboard = true,
