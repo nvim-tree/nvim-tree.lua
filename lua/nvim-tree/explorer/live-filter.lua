@@ -23,7 +23,7 @@ function LiveFilter:new(opts, explorer)
   return o
 end
 
----@param node_ Node?
+---@param node_ Node|nil
 local function reset_filter(self, node_)
   node_ = node_ or self.explorer
 
@@ -85,7 +85,7 @@ local function matches(self, node)
   return vim.regex(self.filter):match_str(name) ~= nil
 end
 
----@param node_ Node?
+---@param node_ Node|nil
 function LiveFilter:apply_filter(node_)
   if not self.filter or self.filter == "" then
     reset_filter(self, node_)

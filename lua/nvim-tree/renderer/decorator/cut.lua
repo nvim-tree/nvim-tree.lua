@@ -4,21 +4,21 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorCut: Decorator
+---@field enabled boolean
+---@field icon HighlightedString|nil
 local DecoratorCut = Decorator:new()
 
----Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorCut
-function DecoratorCut:create(opts, explorer)
-  ---@type DecoratorCut
-  local o = {
+function DecoratorCut:new(opts, explorer)
+  local o = Decorator.new(self, {
     explorer = explorer,
     enabled = true,
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
-  }
-  o = self:new(o) --[[@as DecoratorCut]]
+  })
+  ---@cast o DecoratorCut
 
   return o
 end

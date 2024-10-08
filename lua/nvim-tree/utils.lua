@@ -112,7 +112,8 @@ function M.find_node(nodes, fn)
     end)
     :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
-  if node and node.explorer.live_filter.filter then
+  local explorer = require("nvim-tree.core").get_explorer()
+  if explorer and explorer.live_filter.filter then
     i = i + 1
   end
   return node, i
@@ -120,7 +121,7 @@ end
 
 -- Find the line number of a node.
 -- Return -1 is node is nil or not found.
----@param node Node?
+---@param node Node|nil
 ---@return integer
 function M.find_node_line(node)
   if not node then
@@ -171,6 +172,16 @@ function M.get_node_from_path(path)
       end
     end)
     :iterate()
+end
+
+---Get the highest parent of grouped nodes
+---@param node Node
+---@return Node node or parent
+function M.get_parent_of_group(node)
+  while node and node.parent and node.parent.group_next do
+    node = node.parent
+  end
+  return node
 end
 
 M.default_format_hidden_count = function(hidden_count, simple)
@@ -462,7 +473,7 @@ end
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
 ---If none of the parents is visible focus root.
 ---If node is nil do nothing.
----@param node Node? node to focus
+---@param node Node|nil node to focus
 function M.focus_node_or_parent(node)
   local explorer = require("nvim-tree.core").get_explorer()
 
@@ -538,6 +549,14 @@ function M.array_remove_nils(array)
   end, array)
 end
 
+---@param f fun(node: Node|nil)
+---@return function
+function M.inject_node(f)
+  return function()
+    f(require("nvim-tree.lib").get_node_at_cursor())
+  end
+end
+
 --- Is the buffer named NvimTree_[0-9]+ a tree? filetype is "NvimTree" or not readable file.
 --- This is cheap, as the readable test should only ever be needed when resuming a vim session.
 ---@param bufnr number|nil may be 0 or nil for current
@@ -557,18 +576,6 @@ function M.is_nvim_tree_buf(bufnr)
     end
   end
   return false
-end
-
---- path is an executable file or directory
----@param absolute_path string
----@return boolean
-function M.is_executable(absolute_path)
-  if M.is_windows or M.is_wsl then
-    --- executable detection on windows is buggy and not performant hence it is disabled
-    return false
-  else
-    return vim.loop.fs_access(absolute_path, "X") or false
-  end
 end
 
 return M

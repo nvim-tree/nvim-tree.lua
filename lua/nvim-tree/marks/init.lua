@@ -8,8 +8,6 @@ local rename_file = require("nvim-tree.actions.fs.rename-file")
 local trash = require("nvim-tree.actions.fs.trash")
 local utils = require("nvim-tree.utils")
 
-local DirectoryNode = require("nvim-tree.node.directory")
-
 ---@class Marks
 ---@field config table hydrated user opts.filters
 ---@field private explorer Explorer
@@ -154,7 +152,7 @@ function Marks:bulk_move()
   local node_at_cursor = lib.get_node_at_cursor()
   local default_path = core.get_cwd()
 
-  if node_at_cursor and node_at_cursor:is(DirectoryNode) then
+  if node_at_cursor and node_at_cursor.type == "directory" then
     default_path = node_at_cursor.absolute_path
   elseif node_at_cursor and node_at_cursor.parent then
     default_path = node_at_cursor.parent.absolute_path

@@ -14,7 +14,7 @@ local M = {
 }
 
 ---Diagnostics highlight group and position when highlight_diagnostics.
----@param node Node
+---@param node table
 ---@return HL_POSITION position none when no status
 ---@return string|nil group only when status
 function M.get_highlight(node)
@@ -38,7 +38,7 @@ function M.get_highlight(node)
 end
 
 ---diagnostics icon if there is a status
----@param node Node
+---@param node table
 ---@return HighlightedString|nil modified icon
 function M.get_icon(node)
   if node and M.config.diagnostics.enable and M.config.renderer.icons.show.diagnostics then

@@ -71,7 +71,7 @@ end
 --- Write to log file the inspection of a node
 --- defaults to the node under cursor if none is provided
 ---@param typ string as per log.types config
----@param node Node? node to be inspected
+---@param node table|nil node to be inspected
 ---@param fmt string for string.format
 ---@vararg any arguments for string.format
 function M.node(typ, node, fmt, ...)

@@ -21,7 +21,7 @@ function M.reload_modified()
   end
 end
 
----@param node Node
+---@param node table
 ---@return boolean
 function M.is_modified(node)
   return node
@@ -32,7 +32,7 @@ function M.is_modified(node)
 end
 
 ---A buffer exists for the node's absolute path
----@param node Node
+---@param node table
 ---@return boolean
 function M.is_opened(node)
   return node and vim.fn.bufloaded(node.absolute_path) > 0

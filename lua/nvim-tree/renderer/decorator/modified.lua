@@ -9,19 +9,17 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field icon HighlightedString|nil
 local DecoratorModified = Decorator:new()
 
----Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorModified
-function DecoratorModified:create(opts, explorer)
-  ---@type DecoratorModified
-  local o = {
+function DecoratorModified:new(opts, explorer)
+  local o = Decorator.new(self, {
     explorer = explorer,
     enabled = opts.modified.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_modified] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.modified_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o) --[[@as DecoratorModified]]
+  })
+  ---@cast o DecoratorModified
 
   if not o.enabled then
     return o
