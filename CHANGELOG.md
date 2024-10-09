@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.1...nvim-tree-v1.8.0) (2024-10-08)
+
+
+### Features
+
+* **#2938:** add default filesystem_watchers.ignore_dirs = { "/.ccls-cache", "/build", "/node_modules", "/target", } ([#2940](https://github.com/nvim-tree/nvim-tree.lua/issues/2940)) ([010ae03](https://github.com/nvim-tree/nvim-tree.lua/commit/010ae0365aafd6275c478d932515d2e8e897b7bb))
+
 ## [1.7.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.0...nvim-tree-v1.7.1) (2024-09-30)
 
 
