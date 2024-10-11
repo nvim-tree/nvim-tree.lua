@@ -80,7 +80,7 @@ function BaseNode:reload_node_status(projects)
   for _, node in ipairs(self.nodes) do
     node:update_git_status(self:is_git_ignored(), status)
     if node.nodes and #node.nodes > 0 then
-      self:reload_node_status(projects)
+      node:reload_node_status(projects)
     end
   end
 end
