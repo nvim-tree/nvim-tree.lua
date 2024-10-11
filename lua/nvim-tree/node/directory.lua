@@ -59,11 +59,11 @@ function DirectoryNode:destroy()
   end
 end
 
----Update the GitStatus of absolute path of the directory
+---Update the GitStatus of the directory
 ---@param parent_ignored boolean
 ---@param status table|nil
 function DirectoryNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_dir(parent_ignored, status, self.absolute_path)
+  self.git_status = git.git_status_dir(parent_ignored, status, self.absolute_path, nil)
 end
 
 ---@return GitStatus|nil

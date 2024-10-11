@@ -41,7 +41,7 @@ end
 ---@param parent_ignored boolean
 ---@param status table|nil
 function FileNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_file(parent_ignored, status, { self.absolute_path })
+  self.git_status = git.git_status_file(parent_ignored, status, self.absolute_path, nil)
 end
 
 ---@return GitStatus|nil

@@ -283,32 +283,35 @@ function M.load_project_status(path)
   end
 end
 
+---Git file and directory status for an absolute path with optional file fallback
 ---@param parent_ignored boolean
 ---@param status table|nil
----@param absolute_path string
+---@param path string
+---@param path_file string? alternative file path when no other file status
 ---@return GitStatus|nil
-function M.git_status_dir(parent_ignored, status, absolute_path)
+function M.git_status_dir(parent_ignored, status, path, path_file)
   if parent_ignored then
     return { file = "!!" }
   end
 
   if status then
     return {
-      file = status.files and status.files[absolute_path],
+      file = status.files and status.files[path] or path_file and status.files[path_file],
       dir = status.dirs and {
-        direct = status.dirs.direct[absolute_path],
-        indirect = status.dirs.indirect[absolute_path],
+        direct = status.dirs.direct[path],
+        indirect = status.dirs.indirect[path],
       },
     }
   end
 end
 
----Git file status for an absolute path
+---Git file status for an absolute path with optional fallback
 ---@param parent_ignored boolean
 ---@param status table|nil
----@param absolute_paths string[] status for first match is returned
+---@param path string
+---@param path_fallback string?
 ---@return GitStatus
-function M.git_status_file(parent_ignored, status, absolute_paths)
+function M.git_status_file(parent_ignored, status, path, path_fallback)
   if parent_ignored then
     return { file = "!!" }
   end
@@ -317,14 +320,9 @@ function M.git_status_file(parent_ignored, status, absolute_paths)
     return {}
   end
 
-  for _, p in ipairs(absolute_paths) do
-    local s = status.files[p]
-    if s then
-      return { file = s }
-    end
-  end
-
-  return {}
+  return {
+    file = status.files[path] or status.files[path_fallback]
+  }
 end
 
 function M.purge_state()

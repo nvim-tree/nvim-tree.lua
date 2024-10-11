@@ -32,7 +32,7 @@ end
 -----@param parent_ignored boolean
 -----@param status table|nil
 function FileLinkNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_file(parent_ignored, status, { self.link_to, self.absolute_path, })
+  self.git_status = git.git_status_file(parent_ignored, status, self.link_to, self.absolute_path)
 end
 
 ---Create a sanitized partial copy of a node
