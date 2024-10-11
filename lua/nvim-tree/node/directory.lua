@@ -1,3 +1,4 @@
+local git = require("nvim-tree.git")
 local watch = require("nvim-tree.explorer.watch")
 
 local BaseNode = require("nvim-tree.node")
@@ -55,6 +56,63 @@ function DirectoryNode:destroy()
     for _, node in pairs(self.nodes) do
       node:destroy()
     end
+  end
+end
+
+---Update the GitStatus of the directory
+---@param parent_ignored boolean
+---@param status table|nil
+function DirectoryNode:update_git_status(parent_ignored, status)
+  self.git_status = git.git_status_dir(parent_ignored, status, self.absolute_path, nil)
+end
+
+---@return GitStatus|nil
+function DirectoryNode:get_git_status()
+  if not self.git_status or not self.explorer.opts.git.show_on_dirs then
+    return nil
+  end
+
+  local status = {}
+  if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
+    -- dir is closed or we should show on open_dirs
+    if self.git_status.file ~= nil then
+      table.insert(status, self.git_status.file)
+    end
+    if self.git_status.dir ~= nil then
+      if self.git_status.dir.direct ~= nil then
+        for _, s in pairs(self.git_status.dir.direct) do
+          table.insert(status, s)
+        end
+      end
+      if self.git_status.dir.indirect ~= nil then
+        for _, s in pairs(self.git_status.dir.indirect) do
+          table.insert(status, s)
+        end
+      end
+    end
+  else
+    -- dir is open and we shouldn't show on open_dirs
+    if self.git_status.file ~= nil then
+      table.insert(status, self.git_status.file)
+    end
+    if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
+      local deleted = {
+        [" D"] = true,
+        ["D "] = true,
+        ["RD"] = true,
+        ["DD"] = true,
+      }
+      for _, s in pairs(self.git_status.dir.direct) do
+        if deleted[s] then
+          table.insert(status, s)
+        end
+      end
+    end
+  end
+  if #status == 0 then
+    return nil
+  else
+    return status
   end
 end
 

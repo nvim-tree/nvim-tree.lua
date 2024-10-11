@@ -21,7 +21,7 @@ local git = require("nvim-tree.git")
 ---@field diag_status DiagStatus?
 local BaseNode = {}
 
----@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
+---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|DirectoryLinkNode|FileLinkNode
 
 ---@param o BaseNode?
 ---@return BaseNode
@@ -63,84 +63,16 @@ function BaseNode:has_one_child_folder()
   return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
 end
 
+--luacheck: push ignore 212
+---Update the GitStatus of the node
 ---@param parent_ignored boolean
----@param status table|nil
-function BaseNode:update_git_status(parent_ignored, status)
-  local get_status
-  if self.nodes then
-    get_status = git.git_status_dir
-  else
-    get_status = git.git_status_file
-  end
-
-  -- status of the node's absolute path
-  self.git_status = get_status(parent_ignored, status, self.absolute_path)
-
-  -- status of the link target, if the link itself is not dirty
-  if self.link_to and not self.git_status then
-    self.git_status = get_status(parent_ignored, status, self.link_to)
-  end
+---@param status table?
+function BaseNode:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
 end
+--luacheck: pop
 
----@return GitStatus|nil
+---@return GitStatus?
 function BaseNode:get_git_status()
-  if not self.git_status then
-    -- status doesn't exist
-    return nil
-  end
-
-  if not self.nodes then
-    -- file
-    return self.git_status.file and { self.git_status.file }
-  end
-
-  -- dir
-  if not self.explorer.opts.git.show_on_dirs then
-    return nil
-  end
-
-  local status = {}
-  if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
-    -- dir is closed or we should show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil then
-      if self.git_status.dir.direct ~= nil then
-        for _, s in pairs(self.git_status.dir.direct) do
-          table.insert(status, s)
-        end
-      end
-      if self.git_status.dir.indirect ~= nil then
-        for _, s in pairs(self.git_status.dir.indirect) do
-          table.insert(status, s)
-        end
-      end
-    end
-  else
-    -- dir is open and we shouldn't show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
-      local deleted = {
-        [" D"] = true,
-        ["D "] = true,
-        ["RD"] = true,
-        ["DD"] = true,
-      }
-      for _, s in pairs(self.git_status.dir.direct) do
-        if deleted[s] then
-          table.insert(status, s)
-        end
-      end
-    end
-  end
-  if #status == 0 then
-    return nil
-  else
-    return status
-  end
 end
 
 ---@param projects table
@@ -176,7 +108,8 @@ end
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return Node
 function BaseNode:last_group_node()
-  local node = self --[[@as BaseNode]]
+  local node = self
+  --- @cast node BaseNode
 
   while node.group_next do
     node = node.group_next
@@ -185,8 +118,8 @@ function BaseNode:last_group_node()
   return node
 end
 
----@param project table|nil
----@param root string|nil
+---@param project table?
+---@param root string?
 function BaseNode:update_parent_statuses(project, root)
   local node = self
   while project and node do
