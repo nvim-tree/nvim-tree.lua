@@ -296,10 +296,10 @@ function M.git_status_dir(parent_ignored, status, path, path_file)
 
   if status then
     return {
-      file = status.files and status.files[path] or path_file and status.files[path_file],
+      file = status.files and (status.files[path] or status.files[path_file]),
       dir = status.dirs and {
-        direct = status.dirs.direct[path],
-        indirect = status.dirs.indirect[path],
+        direct = status.dirs.direct and status.dirs.direct[path],
+        indirect = status.dirs.indirect and status.dirs.indirect[path],
       },
     }
   end
