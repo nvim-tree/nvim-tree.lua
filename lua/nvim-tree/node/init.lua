@@ -63,11 +63,13 @@ function BaseNode:has_one_child_folder()
   return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
 end
 
+--luacheck: push ignore 212
 ---Update the GitStatus of the node
 ---@param parent_ignored boolean
 ---@param status table?
 function BaseNode:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
 end
+--luacheck: pop
 
 ---@return GitStatus?
 function BaseNode:get_git_status()
