@@ -1,6 +1,5 @@
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
-local lib = require("nvim-tree.lib")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 
@@ -40,14 +39,13 @@ local function get_containing_folder(node)
   return node.absolute_path:sub(0, -node_name_size - 1)
 end
 
----@param node Node|nil
+---@param node Node?
 function M.fn(node)
   local cwd = core.get_cwd()
   if cwd == nil then
     return
   end
 
-  node = node and lib.get_last_group_node(node)
   if not node or node.name == ".." then
     node = {
       absolute_path = cwd,
@@ -55,6 +53,8 @@ function M.fn(node)
       nodes = core.get_explorer().nodes,
       open = true,
     }
+  else
+    node = node:last_group_node()
   end
 
   local containing_folder = get_containing_folder(node)
