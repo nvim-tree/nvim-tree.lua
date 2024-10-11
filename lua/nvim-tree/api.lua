@@ -138,7 +138,7 @@ Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." then
     actions.root.change_dir.fn("..")
   elseif node.nodes ~= nil then
-    actions.root.change_dir.fn(lib.get_last_group_node(node).absolute_path)
+    actions.root.change_dir.fn(node:last_group_node().absolute_path)
   end
 end)
 
@@ -198,7 +198,7 @@ Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basenam
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
 
 ---@param mode string
----@param node table
+---@param node Node
 local function edit(mode, node)
   local path = node.absolute_path
   if node.link_to and not node.nodes then
@@ -214,7 +214,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     if node.name == ".." then
       actions.root.change_dir.fn("..")
     elseif node.nodes then
-      lib.expand_or_collapse(node, toggle_group)
+      node:expand_or_collapse(toggle_group)
     elseif not toggle_group then
       edit(mode, node)
     end

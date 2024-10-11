@@ -2,7 +2,6 @@ local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
-local explorer_node = require("nvim-tree.explorer.node")
 local diagnostics = require("nvim-tree.diagnostics")
 
 local M = {}
@@ -16,7 +15,7 @@ local MAX_DEPTH = 100
 ---@return boolean
 local function status_is_valid(node, what, skip_gitignored)
   if what == "git" then
-    local git_status = explorer_node.get_git_status(node)
+    local git_status = node:get_git_status()
     return git_status ~= nil and (not skip_gitignored or git_status[1] ~= "!!")
   elseif what == "diag" then
     local diag_status = diagnostics.get_diag_status(node)
@@ -75,7 +74,7 @@ local function expand_node(node)
   if not node.open then
     -- Expand the node.
     -- Should never collapse since we checked open.
-    lib.expand_or_collapse(node)
+    node:expand_or_collapse()
   end
 end
 
@@ -98,7 +97,7 @@ local function move_next_recursive(what, skip_gitignored)
     valid = status_is_valid(node_init, what, skip_gitignored)
   end
   if node_init.nodes ~= nil and valid and not node_init.open then
-    lib.expand_or_collapse(node_init)
+    node_init:expand_or_collapse()
   end
 
   move("next", what, skip_gitignored)

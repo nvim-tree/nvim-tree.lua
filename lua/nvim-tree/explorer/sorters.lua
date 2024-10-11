@@ -111,7 +111,7 @@ local function split_merge(t, first, last, comparator)
 end
 
 ---Perform a merge sort using sorter option.
----@param t table nodes
+---@param t Node[]
 function Sorter:sort(t)
   if self.user then
     local t_user = {}

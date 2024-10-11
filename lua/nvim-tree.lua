@@ -125,7 +125,7 @@ function M.place_cursor_on_node()
   if not node or node.name == ".." then
     return
   end
-  node = utils.get_parent_of_group(node)
+  node = node:get_parent_of_group()
 
   local line = vim.api.nvim_get_current_line()
   local cursor = vim.api.nvim_win_get_cursor(0)
@@ -854,7 +854,7 @@ function M.setup(conf)
   require("nvim-tree.keymap").setup(opts)
   require("nvim-tree.appearance").setup()
   require("nvim-tree.diagnostics").setup(opts)
-  require("nvim-tree.explorer").setup(opts)
+  require("nvim-tree.explorer"):setup(opts)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.git.utils").setup(opts)
   require("nvim-tree.view").setup(opts)

@@ -33,20 +33,22 @@ local ICON_KEYS = {
 }
 
 ---@class (exact) DecoratorDiagnostics: Decorator
----@field icons HighlightedString[]
+---@field icons HighlightedString[]?
 local DecoratorDiagnostics = Decorator:new()
 
+---Static factory method
 ---@param opts table
 ---@param explorer Explorer
 ---@return DecoratorDiagnostics
-function DecoratorDiagnostics:new(opts, explorer)
-  local o = Decorator.new(self, {
+function DecoratorDiagnostics:create(opts, explorer)
+  ---@type DecoratorDiagnostics
+  local o = {
     explorer = explorer,
     enabled = opts.diagnostics.enable,
     hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
-  })
-  ---@cast o DecoratorDiagnostics
+  }
+  o = self:new(o) --[[@as DecoratorDiagnostics]]
 
   if not o.enabled then
     return o

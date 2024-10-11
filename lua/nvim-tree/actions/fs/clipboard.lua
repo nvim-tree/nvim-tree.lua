@@ -217,10 +217,10 @@ end
 ---@param action ACTION
 ---@param action_fn fun(source: string, dest: string)
 function Clipboard:do_paste(node, action, action_fn)
-  node = lib.get_last_group_node(node)
-  local explorer = core.get_explorer()
-  if node.name == ".." and explorer then
-    node = explorer
+  if node.name == ".." then
+    node = self.explorer
+  else
+    node = node:last_group_node()
   end
   local clip = self.data[action]
   if #clip == 0 then
