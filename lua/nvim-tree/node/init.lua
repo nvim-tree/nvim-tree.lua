@@ -1,5 +1,8 @@
 local git = require("nvim-tree.git")
 
+---TODO remove all @cast
+---TODO remove all references to directory fields:
+
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
 ---@class (exact) BaseNode
