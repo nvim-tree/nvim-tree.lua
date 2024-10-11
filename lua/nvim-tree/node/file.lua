@@ -37,11 +37,11 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
----Update the GitStatus of absolute path of the file
+---Update the GitStatus of the file
 ---@param parent_ignored boolean
 ---@param status table|nil
 function FileNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_file(parent_ignored, status, self.absolute_path)
+  self.git_status = git.git_status_file(parent_ignored, status, { self.absolute_path })
 end
 
 ---@return GitStatus|nil

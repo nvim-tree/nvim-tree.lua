@@ -28,11 +28,11 @@ function FileLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_
   return o
 end
 
------Update the GitStatus of link target
+-----Update the GitStatus of the target otherwise the link itself
 -----@param parent_ignored boolean
 -----@param status table|nil
 function FileLinkNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_file(parent_ignored, status, self.link_to)
+  self.git_status = git.git_status_file(parent_ignored, status, { self.link_to, self.absolute_path, })
 end
 
 ---Create a sanitized partial copy of a node

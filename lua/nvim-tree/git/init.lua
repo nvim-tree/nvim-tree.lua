@@ -303,13 +303,28 @@ function M.git_status_dir(parent_ignored, status, absolute_path)
   end
 end
 
+---Git file status for an absolute path
 ---@param parent_ignored boolean
 ---@param status table|nil
----@param absolute_path string
+---@param absolute_paths string[] status for first match is returned
 ---@return GitStatus
-function M.git_status_file(parent_ignored, status, absolute_path)
-  local file_status = parent_ignored and "!!" or (status and status.files and status.files[absolute_path])
-  return { file = file_status }
+function M.git_status_file(parent_ignored, status, absolute_paths)
+  if parent_ignored then
+    return { file = "!!" }
+  end
+
+  if not status or not status.files then
+    return {}
+  end
+
+  for _, p in ipairs(absolute_paths) do
+    local s = status.files[p]
+    if s then
+      return { file = s }
+    end
+  end
+
+  return {}
 end
 
 function M.purge_state()
