@@ -116,6 +116,35 @@ function DirectoryNode:get_git_status()
   end
 end
 
+function DirectoryNode:expand_or_collapse(toggle_group)
+  toggle_group = toggle_group or false
+  if self.has_children then
+    self.has_children = false
+  end
+
+  if #self.nodes == 0 then
+    self.explorer:expand(self)
+  end
+
+  local head_node = self:get_parent_of_group()
+  if toggle_group then
+    head_node:toggle_group_folders()
+  end
+
+  local open = self:last_group_node().open
+  local next_open
+  if toggle_group then
+    next_open = open
+  else
+    next_open = not open
+  end
+  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
+    n.open = next_open
+  end
+
+  self.explorer.renderer:draw()
+end
+
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
