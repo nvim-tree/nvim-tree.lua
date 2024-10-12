@@ -75,7 +75,8 @@ local function pick_win_id()
   end
 
   local i = 1
-  local win_opts = {}
+  local win_opts_selectable = {}
+  local win_opts_unselectable = {}
   local win_map = {}
   local laststatus = vim.o.laststatus
   vim.o.laststatus = 2
@@ -89,19 +90,16 @@ local function pick_win_id()
 
   if laststatus == 3 then
     for _, win_id in ipairs(not_selectable) do
-      local ok_status, statusline, ok_hl, winhl
+      local ok_status, statusline
 
       if vim.fn.has("nvim-0.10") == 1 then
         ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = win_id })
-        ok_hl, winhl = pcall(vim.api.nvim_get_option_value, "winhl", { win = win_id })
       else
         ok_status, statusline = pcall(vim.api.nvim_win_get_option, win_id, "statusline") ---@diagnostic disable-line: deprecated
-        ok_hl, winhl = pcall(vim.api.nvim_win_get_option, win_id, "winhl") ---@diagnostic disable-line: deprecated
       end
 
-      win_opts[win_id] = {
+      win_opts_unselectable[win_id] = {
         statusline = ok_status and statusline or "",
-        winhl = ok_hl and winhl or "",
       }
 
       -- Clear statusline for windows not selectable
@@ -126,7 +124,7 @@ local function pick_win_id()
       ok_hl, winhl = pcall(vim.api.nvim_win_get_option, id, "winhl") ---@diagnostic disable-line: deprecated
     end
 
-    win_opts[id] = {
+    win_opts_selectable[id] = {
       statusline = ok_status and statusline or "",
       winhl = ok_hl and winhl or "",
     }
@@ -156,7 +154,7 @@ local function pick_win_id()
 
   -- Restore window options
   for _, id in ipairs(selectable) do
-    for opt, value in pairs(win_opts[id]) do
+    for opt, value in pairs(win_opts_selectable[id]) do
       if vim.fn.has("nvim-0.10") == 1 then
         vim.api.nvim_set_option_value(opt, value, { win = id })
       else
@@ -169,7 +167,7 @@ local function pick_win_id()
     for _, id in ipairs(not_selectable) do
       -- Ensure window still exists at this point
       if vim.api.nvim_win_is_valid(id) then
-        for opt, value in pairs(win_opts[id]) do
+        for opt, value in pairs(win_opts_unselectable[id]) do
           if vim.fn.has("nvim-0.10") == 1 then
             vim.api.nvim_set_option_value(opt, value, { win = id })
           else
