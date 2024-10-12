@@ -571,4 +571,32 @@ function M.is_executable(absolute_path)
   end
 end
 
+---List of all option info/values
+---@param opts vim.api.keyset.option passed directly to vim.api.nvim_get_option_info2 and vim.api.nvim_get_option_value
+---@param was_set boolean filter was_set
+---@return { info: vim.api.keyset.get_option_info, val: any }[]
+function M.enumerate_options(opts, was_set)
+  local res = {}
+
+  local infos = vim.tbl_filter(function(info)
+    if opts.buf and info.scope ~= "buf" then
+      return false
+    elseif opts.win and info.scope ~= "win" then
+      return false
+    else
+      return true
+    end
+  end, vim.api.nvim_get_all_options_info())
+
+  for _, info in vim.spairs(infos) do
+    local _, info2 = pcall(vim.api.nvim_get_option_info2, info.name, opts)
+    if not was_set or info2.was_set then
+      local val = pcall(vim.api.nvim_get_option_value, info.name, opts)
+      table.insert(res, { info = info2, val = val })
+    end
+  end
+
+  return res
+end
+
 return M
