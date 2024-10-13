@@ -41,7 +41,11 @@ end
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "lua",
   callback = function()
-    vim.lsp.start { cmd = { "lua-language-server" } }
+    vim.lsp.start {
+      name = "my-luals",
+      cmd = { "lua-language-server" },
+      root_dir = vim.loop.cwd(),
+    }
   end,
 })
 ]]
