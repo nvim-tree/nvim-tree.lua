@@ -64,7 +64,7 @@ function M.fn(node)
   M.open(node)
 end
 
--- TODO always use native once 0.10 is the minimum neovim version
+-- TODO #2430 always use native once 0.10 is the minimum neovim version
 function M.setup(opts)
   M.config = {}
   M.config.system_open = opts.system_open or {}

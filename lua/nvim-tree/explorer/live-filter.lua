@@ -92,7 +92,7 @@ function LiveFilter:apply_filter(node_)
     return
   end
 
-  -- TODO(kiyan): this iterator cannot yet be refactored with the Iterator module
+  -- this iterator cannot yet be refactored with the Iterator module
   -- since the node mapper is based on its children
   local function iterate(node)
     local filtered_nodes = 0
