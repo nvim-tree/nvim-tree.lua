@@ -1,5 +1,6 @@
 local git = require("nvim-tree.git")
 
+---TODO #2886
 ---TODO remove all @cast
 ---TODO remove all references to directory fields:
 
@@ -106,17 +107,12 @@ function BaseNode:is_dotfile()
   return false
 end
 
--- If node is grouped, return the last node in the group. Otherwise, return the given node.
+---Return self, should only be called on a DirectoryNode
+---TODO #2886 remove method or leave in place, warn if practical and non too intrusive
 ---@return Node
 function BaseNode:last_group_node()
-  local node = self
-  --- @cast node BaseNode
-
-  while node.group_next do
-    node = node.group_next
-  end
-
-  return node
+  error(string.format("\nBaseNode:last_group_node called for '%s'", self.absolute_path))
+  return self
 end
 
 ---@param project table?

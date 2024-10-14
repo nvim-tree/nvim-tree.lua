@@ -2,6 +2,8 @@ local core = require("nvim-tree.core")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local notify = require("nvim-tree.notify")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 ---@param list string[]
@@ -17,7 +19,9 @@ end
 
 ---@param node Node
 local function expand(node)
-  node = node:last_group_node()
+  if node:is(DirectoryNode) then
+    node = node:last_group_node()
+  end
   node.open = true
   if #node.nodes == 0 then
     core.get_explorer():expand(node)

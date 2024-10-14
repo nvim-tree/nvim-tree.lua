@@ -5,6 +5,8 @@ local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 ---@param file string
@@ -53,7 +55,7 @@ function M.fn(node)
       nodes = core.get_explorer().nodes,
       open = true,
     }
-  else
+  elseif node:is(DirectoryNode) then
     node = node:last_group_node()
   end
 

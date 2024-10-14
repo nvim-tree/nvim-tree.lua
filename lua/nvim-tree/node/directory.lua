@@ -5,7 +5,7 @@ local BaseNode = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: BaseNode
 ---@field has_children boolean
----@field group_next Node? -- If node is grouped, this points to the next child dir/link node
+---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
@@ -114,6 +114,18 @@ function DirectoryNode:get_git_status()
   else
     return status
   end
+end
+
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
+---@return Node
+function DirectoryNode:last_group_node()
+  local node = self
+
+  while node.group_next do
+    node = node.group_next or node
+  end
+
+  return node
 end
 
 function DirectoryNode:expand_or_collapse(toggle_group)

@@ -7,6 +7,8 @@ local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 ---@enum ACTION
 local ACTION = {
   copy = "copy",
@@ -219,7 +221,7 @@ end
 function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
     node = self.explorer
-  else
+  elseif node:is(DirectoryNode) then
     node = node:last_group_node()
   end
   local clip = self.data[action]
