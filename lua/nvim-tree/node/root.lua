@@ -17,4 +17,10 @@ function RootNode:create(explorer, absolute_path, name, fs_stat)
   return o
 end
 
+---Root is never a dotfile
+---@return boolean
+function RootNode:is_dotfile()
+  return false
+end
+
 return RootNode
