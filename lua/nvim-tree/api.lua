@@ -9,6 +9,8 @@ local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local Api = {
   tree = {},
   node = {
@@ -213,7 +215,8 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
   return function(node)
     if node.name == ".." then
       actions.root.change_dir.fn("..")
-    elseif node.nodes then
+    elseif node:is(DirectoryNode) then
+      ---@cast node DirectoryNode
       node:expand_or_collapse(toggle_group)
     elseif not toggle_group then
       edit(mode, node)

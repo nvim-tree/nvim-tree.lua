@@ -4,6 +4,8 @@ local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
 local diagnostics = require("nvim-tree.diagnostics")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 local MAX_DEPTH = 100
 
@@ -70,8 +72,10 @@ local function move(where, what, skip_gitignored)
   end
 end
 
+---@param node Node
 local function expand_node(node)
-  if not node.open then
+  if node:is(DirectoryNode) and not node.open then
+    ---@cast node DirectoryNode
     -- Expand the node.
     -- Should never collapse since we checked open.
     node:expand_or_collapse()
@@ -96,7 +100,8 @@ local function move_next_recursive(what, skip_gitignored)
   if node_init.name ~= ".." then -- root node cannot have a status
     valid = status_is_valid(node_init, what, skip_gitignored)
   end
-  if node_init.nodes ~= nil and valid and not node_init.open then
+  if node_init:is(DirectoryNode) and valid and not node_init.open then
+    ---@cast node_init DirectoryNode
     node_init:expand_or_collapse()
   end
 
