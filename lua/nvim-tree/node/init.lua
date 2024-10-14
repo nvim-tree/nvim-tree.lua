@@ -11,11 +11,11 @@ local git = require("nvim-tree.git")
 ---@field fs_stat uv.fs_stat.result?
 ---@field git_status GitStatus?
 ---@field hidden boolean
----@field is_dot boolean
 ---@field name string
 ---@field parent Node?
 ---@field watcher Watcher?
 ---@field diag_status DiagStatus?
+---@field is_dot boolean cached is_dotfile
 local BaseNode = {}
 
 ---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
@@ -157,11 +157,12 @@ function BaseNode:is_git_ignored()
   return self.git_status ~= nil and self.git_status.file == "!!"
 end
 
+---Node or one of its parents begins with a dot
 ---@return boolean
 function BaseNode:is_dotfile()
   if
-    self.is_dot                                     --
-    or (self.name and (self.name:sub(1, 1) == ".")) --
+    self.is_dot
+    or (self.name and (self.name:sub(1, 1) == "."))
     or (self.parent and self.parent:is_dotfile())
   then
     self.is_dot = true
