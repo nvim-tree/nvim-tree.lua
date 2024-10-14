@@ -42,21 +42,27 @@ function BaseNode:destroy()
   end
 end
 
----From plenary
----Checks if the object is an instance
+---Object is an instance of class
 ---This will start with the lowest class and loop over all the superclasses.
----@param self BaseNode
----@param T BaseNode
+---@param class table
 ---@return boolean
-function BaseNode:is(T)
+function BaseNode:is(class)
   local mt = getmetatable(self)
   while mt do
-    if mt == T then
+    if mt == class then
       return true
     end
     mt = getmetatable(mt)
   end
   return false
+end
+
+---Return object if it is an instance of class, otherwise nil
+---@generic T
+---@param class T
+---@return `T`|nil
+function BaseNode:as(class)
+  return self:is(class) and self or nil
 end
 
 ---@return boolean
@@ -202,7 +208,6 @@ function BaseNode:group_empty_folders()
   local is_root = not self.parent
   local child_folder_only = self:has_one_child_folder() and self.nodes[1]
   if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
-    ---@cast self DirectoryNode -- TODO #2886 move this to the class
     self.group_next = child_folder_only
     local ns = child_folder_only:group_empty_folders()
     self.nodes = ns or {}

@@ -128,6 +128,7 @@ function DirectoryNode:last_group_node()
   return node
 end
 
+---@param toggle_group boolean
 function DirectoryNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
   if self.has_children then

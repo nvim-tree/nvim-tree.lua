@@ -78,7 +78,7 @@ local function expand_node(node)
     ---@cast node DirectoryNode
     -- Expand the node.
     -- Should never collapse since we checked open.
-    node:expand_or_collapse()
+    node:expand_or_collapse(false)
   end
 end
 
@@ -102,7 +102,7 @@ local function move_next_recursive(what, skip_gitignored)
   end
   if node_init:is(DirectoryNode) and valid and not node_init.open then
     ---@cast node_init DirectoryNode
-    node_init:expand_or_collapse()
+    node_init:expand_or_collapse(false)
   end
 
   move("next", what, skip_gitignored)
