@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.1...nvim-tree-v1.8.0) (2024-10-18)
+
+
+### Features
+
+* **#2938:** add default filesystem_watchers.ignore_dirs = { "/.ccls-cache", "/build", "/node_modules", "/target", } ([#2940](https://github.com/nvim-tree/nvim-tree.lua/issues/2940)) ([010ae03](https://github.com/nvim-tree/nvim-tree.lua/commit/010ae0365aafd6275c478d932515d2e8e897b7bb))
+
+
+### Bug Fixes
+
+* **#2945:** stack overflow on api.git.reload or fugitive event with watchers disabled ([#2949](https://github.com/nvim-tree/nvim-tree.lua/issues/2949)) ([5ad8762](https://github.com/nvim-tree/nvim-tree.lua/commit/5ad87620ec9d1190d15c88171a3f0122bc16b0fe))
+* **#2947:** root is never a dotfile, so that it doesn't propagate to children ([#2958](https://github.com/nvim-tree/nvim-tree.lua/issues/2958)) ([f5f6789](https://github.com/nvim-tree/nvim-tree.lua/commit/f5f67892996b280ae78b1b0a2d07c4fa29ae0905))
+* **#2951:** highlights incorrect following cancelled pick ([#2952](https://github.com/nvim-tree/nvim-tree.lua/issues/2952)) ([1c9553a](https://github.com/nvim-tree/nvim-tree.lua/commit/1c9553a19f70df3dcb171546a3d5e034531ef093))
+
 ## [1.7.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.0...nvim-tree-v1.7.1) (2024-09-30)
 
 
