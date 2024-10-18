@@ -117,7 +117,7 @@ Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
 ==============================================================================
  2.1 QUICKSTART: SETUP                            *nvim-tree-quickstart-setup*
 
-Setup the plugin in your `init.lua` >
+Setup the plugin in your `init.lua` e.g. >lua
 
   -- disable netrw at the very start of your init.lua
   vim.g.loaded_netrw = 1
@@ -215,7 +215,7 @@ Show the mappings:  `g?`
  2.3 QUICKSTART: CUSTOM MAPPINGS        *nvim-tree-quickstart-custom-mappings*
 
 |nvim-tree-mappings-default| are applied by default however you may customise
-via |nvim-tree.on_attach| e.g. >
+via |nvim-tree.on_attach| e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require "nvim-tree.api"
@@ -245,7 +245,7 @@ via |nvim-tree.on_attach| e.g. >
 Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
 
 They can be customised before or after setup is called and will be immediately
-applied at runtime. e.g. >
+applied at runtime. e.g. >lua
 
     vim.cmd([[
         :hi      NvimTreeExecFile    guifg=#ffa0a0
@@ -366,15 +366,15 @@ again to apply a change in configuration without restarting nvim.
 
 setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
->
+
 The first setup() call is cheap: it does nothing more than validate / apply
 the configuration. Nothing happens until the tree is first opened.
 
 Subsequent setup() calls are expensive as they tear down the world before
 applying configuration.
 
-Following is the default configuration. See |nvim-tree-opts| for details.
->
+Following is the default configuration. See |nvim-tree-opts| for details. >lua
+
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       on_attach = "default",
       hijack_cursor = false,
@@ -677,7 +677,7 @@ Completely disable netrw
 
 It is strongly advised to eagerly disable netrw, due to race conditions at vim
 startup.
-Set the following at the very beginning of your `init.lua` / `init.vim`: >
+Set the following at the very beginning of your `init.lua` / `init.vim`: >lua
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
 <
@@ -739,7 +739,7 @@ Can be one of `"name"`, `"case_sensitive"`, `"modification_time"`, `"extension"`
   - `name`:          `string`
   - `type`:          `"directory"` | `"file"` | `"link"`
 
-  Example: sort by name length: >
+  Example: sort by name length: >lua
     local sorter = function(nodes)
       table.sort(nodes, function(a, b)
         return #a.name < #b.name
@@ -871,7 +871,7 @@ Set to `false` to hide the root folder.
   Type: `string` or `boolean` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
 
   Function is passed the absolute path of the root folder and should
-  return a string. e.g. >
+  return a string. e.g. >lua
     my_root_folder_label = function(path)
       return ".../" .. vim.fn.fnamemodify(path, ":t")
     end
@@ -903,7 +903,7 @@ Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay
   reasons and values are the count of hidden files for that reason.
 
   The `hidden_stats` argument is structured as follows, where <num> is the
-  number of hidden files related to the field: >
+  number of hidden files related to the field: >lua
     hidden_stats = {
       bookmark = <num>,
       buf = <num>,
@@ -913,7 +913,7 @@ Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay
       live_filter = <num>,
     }
 <
-  Example of function that can be passed: >
+  Example of function that can be passed: >lua
     function(hidden_stats)
       local total_count = 0
       for reason, count in pairs(hidden_stats) do
@@ -988,7 +988,7 @@ Configuration options for tree indent markers.
 
     *nvim-tree.renderer.indent_markers.icons*
     Icons shown before the file/directory. Length 1.
-      Type: `table`, Default: >
+      Type: `table`, Default: >lua
         {
           corner = "└",
           edge = "│",
@@ -1300,7 +1300,7 @@ Severity for which the diagnostics will be displayed. See |diagnostic-severity|
 
 *nvim-tree.diagnostics.icons*
 Icons for diagnostic severity.
-  Type: `table`, Default: >
+  Type: `table`, Default: >lua
     {
       hint = "",
       info = "",
@@ -1421,7 +1421,7 @@ function returning whether a path should be ignored.
 Strings must be backslash escaped e.g. `"my-proj/\\.build$"`. See |string-match|.
 Function is passed an absolute path.
 Useful when path is not in `.gitignore` or git integration is disabled.
-  Type: `string[] | fun(path: string): boolean`, Default: >
+  Type: `string[] | fun(path: string): boolean`, Default: >lua
     {
       "/.ccls-cache",
       "/build",
@@ -1513,7 +1513,7 @@ Configuration options for opening a file from nvim-tree.
         or `nil` if an invalid window is picked or user cancelled the action.
         The picker may create a new window.
           Type: `string` | `function`, Default: `"default"`
-          e.g. s1n7ax/nvim-window-picker plugin: >
+          e.g. s1n7ax/nvim-window-picker plugin: >lua
             window_picker = {
               enable = true,
               picker = require("window-picker").pick_window,
@@ -1526,7 +1526,7 @@ Configuration options for opening a file from nvim-tree.
         Table of buffer option names mapped to a list of option values that
         indicates to the picker that the buffer's window should not be
         selectable.
-          Type: `table`, Default: >
+          Type: `table`, Default: >lua
             {
               filetype = {
                 "notify",
@@ -1685,9 +1685,7 @@ Specify which information to log.
 ==============================================================================
  6. API                                                        *nvim-tree-api*
 
-Nvim-tree's public API can be used to access features.
->
-e.g. >
+Nvim-tree's public API can be used to access features. e.g. >lua
     local api = require("nvim-tree.api")
     api.tree.toggle()
 <
@@ -2286,7 +2284,7 @@ Active mappings may be viewed via HELP, default `g?`. The mapping's description
 is used when displaying HELP.
 
 The `on_attach` function is passed the `bufnr` of nvim-tree. Use
-|vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g. >
+|vim.keymap.set()| or |nvim_set_keymap()| to define mappings as usual. e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require("nvim-tree.api")
@@ -2326,7 +2324,7 @@ Single left mouse mappings can be achieved via `<LeftRelease>`.
 Single right / middle mouse mappings will require changes to |mousemodel| or |mouse|.
 
 |vim.keymap.set()| {rhs} is a `(function|string)` thus it may be necessary to
-define your own function to map complex functionality e.g. >
+define your own function to map complex functionality e.g. >lua
 
   local function print_node_path()
     local api = require("nvim-tree.api")
@@ -2343,8 +2341,8 @@ define your own function to map complex functionality e.g. >
 In the absence of an |nvim-tree.on_attach| function, the following defaults
 will be applied.
 
-You are encouraged to copy these to your own |nvim-tree.on_attach| function.
->
+You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lua
+
   local api = require("nvim-tree.api")
 
   local function opts(desc)
@@ -2413,8 +2411,8 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function.
   -- END_DEFAULT_ON_ATTACH
 <
 Alternatively, you may apply these default mappings from your |nvim-tree.on_attach| via
-|nvim-tree-api.config.mappings.default_on_attach()| e.g.
->
+|nvim-tree-api.config.mappings.default_on_attach()| e.g. >lua
+
   local function my_on_attach(bufnr)
     local api = require("nvim-tree.api")
 
@@ -2434,10 +2432,10 @@ All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
 groups.
 
-Example |:highlight| >
+Example |:highlight| >vim
     :hi NvimTreeSymlink guifg=blue gui=bold,underline
 <
-It is recommended to enable 'termguicolors' for the more pleasant 24-bit
+It is recommended to enable |termguicolors| for the more pleasant 24-bit
 colours.
 
 To view the nvim-tree highlight groups run |:NvimTreeHiTest|
@@ -2448,16 +2446,18 @@ as per |:highlight|
 The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
 Only present attributes will clobber each other.
 In this example a modified, opened file will have magenta text, with cyan
-undercurl: >
+undercurl: >vim
     :hi NvimTreeOpenedHL       guifg=magenta guisp=red  gui=underline
     :hi NvimTreeModifiedFileHL               guisp=cyan gui=undercurl
 <
 To prevent usage of a highlight:
-- Before setup: link the group to `Normal` e.g.
-    `:hi NvimTreeExecFile Normal`
-- After setup: link it to `NONE`, to override the default link e.g.
-    `:hi! link NvimTreeExecFile NONE`
 
+- Before setup: link the group to `Normal` e.g. >vim
+    :hi NvimTreeExecFile Normal
+<
+- After setup: link it to `NONE`, to override the default link e.g. >lua
+    :hi! link NvimTreeExecFile NONE
+<
 ==============================================================================
  8.1 HIGHLIGHT: DEFAULT                          *nvim-tree-highlight-default*
 
@@ -2612,7 +2612,7 @@ See |nvim-tree-legacy-highlight| for old highlight group compatibility.
 - NvimTreeSpecialFile  PreProc   -> SpellCap
 - NvimTreeSymlink      Statement -> SpellCap
 
-Approximate pre-overhaul values for the `SpellCap` groups may be set via: >
+Approximate pre-overhaul values for the `SpellCap` groups may be set via: >lua
 
     vim.cmd([[
         :hi NvimTreeExecFile    gui=bold           guifg=#ffa0a0
@@ -2639,7 +2639,8 @@ to |nvim_tree_registering_handlers| for more information.
 Handlers are registered by calling |nvim-tree-api.events.subscribe()|
 function with an |nvim-tree-api.events.Event|
 
-e.g. handler for node renamed: >
+e.g. handler for node renamed: >lua
+
     local api = require("nvim-tree.api")
     local Event = api.events.Event
 
@@ -2726,7 +2727,8 @@ There are two special startup events in the form of User autocommands:
 Immediately before firing: a global variable of the same name will be set to a
 value of 1.
 
-Example subscription: >
+Example subscription: >lua
+
   vim.api.nvim_create_autocmd("User", {
     pattern = "NvimTreeRequired",
     callback = function(data)
@@ -2778,7 +2780,7 @@ It interferes with nvim-tree and the intended user experience is nvim-tree
 replacing the |netrw| browser.
 
 It is strongly recommended to disable |netrw|. As it is a bundled plugin it
-must be disabled manually at the start of your `init.lua` as per |netrw-noload|: >
+must be disabled manually at the start of your `init.lua` as per |netrw-noload|: >lua
 
   vim.g.loaded_netrw       = 1
   vim.g.loaded_netrwPlugin = 1
