@@ -118,7 +118,7 @@ end
 
 ---Refresh contents and git status for a single node
 function DirectoryNode:refresh()
-  local node = self:group_parent_or_node()
+  local node = self:get_parent_of_group() or self
   local toplevel = git.get_toplevel(self.absolute_path)
 
   git.reload_project(toplevel, self.absolute_path, function()
@@ -195,7 +195,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
     self.explorer:expand(self)
   end
 
-  local head_node = self:group_parent_or_node()
+  local head_node = self:get_parent_of_group() or self
   if toggle_group then
     head_node:toggle_group_folders()
   end

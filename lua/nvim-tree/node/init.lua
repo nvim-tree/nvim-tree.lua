@@ -116,13 +116,20 @@ function BaseNode:update_parent_statuses(project, root)
   end
 end
 
----Get the highest parent of grouped nodes or the node itself
----@return Node
-function BaseNode:group_parent_or_node()
-  if self.parent and self.parent.group_next then
-    return self.parent:group_parent_or_node()
-  else
-    return self
+---Get the highest parent of grouped nodes, nil when not grouped
+---@return DirectoryNode?
+function BaseNode:get_parent_of_group()
+  if not self.parent or not self.parent.group_next then
+    return nil
+  end
+
+  local node = self.parent
+  while node do
+    if node.parent and node.parent.group_next then
+      node = node.parent
+    else
+      return node
+    end
   end
 end
 
