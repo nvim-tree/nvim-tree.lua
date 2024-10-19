@@ -8,7 +8,7 @@ local M = {}
 
 ---Factory function to create the appropriate Node
 ---@param explorer Explorer
----@param parent Node
+---@param parent DirectoryNode
 ---@param absolute_path string
 ---@param stat uv.fs_stat.result? -- on nil stat return nil Node
 ---@param name string

@@ -243,7 +243,7 @@ end
 ---@private
 ---@param handle uv.uv_fs_t
 ---@param cwd string
----@param node Node
+---@param node DirectoryNode
 ---@param git_status table
 ---@param parent Explorer
 function Explorer:populate_children(handle, cwd, node, git_status, parent)

@@ -17,7 +17,7 @@ local Class = require("nvim-tree.class")
 ---@field git_status GitStatus?
 ---@field hidden boolean
 ---@field name string
----@field parent Node?
+---@field parent DirectoryNode?
 ---@field watcher Watcher?
 ---@field diag_status DiagStatus?
 ---@field is_dot boolean cached is_dotfile

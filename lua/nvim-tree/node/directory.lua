@@ -13,7 +13,7 @@ local DirectoryNode = BaseNode:new()
 
 ---Static factory method
 ---@param explorer Explorer
----@param parent Node?
+---@param parent DirectoryNode?
 ---@param absolute_path string
 ---@param name string
 ---@param fs_stat uv.fs_stat.result|nil
