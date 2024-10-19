@@ -217,9 +217,6 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     if node.name == ".." then
       actions.root.change_dir.fn("..")
     elseif node:is(DirectoryNode) then
-      ---
-      ---@cast node DirectoryNode
-      ---
       node:expand_or_collapse(toggle_group)
     elseif not toggle_group then
       edit(mode, node)

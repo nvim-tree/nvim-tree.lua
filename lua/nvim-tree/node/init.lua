@@ -18,16 +18,11 @@ local Class = require("nvim-tree.class")
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
----@field watcher Watcher?
 ---@field diag_status DiagStatus?
 ---@field is_dot boolean cached is_dotfile
 local Node = Class:new()
 
 function Node:destroy()
-  if self.watcher then
-    self.watcher:destroy()
-    self.watcher = nil
-  end
 end
 
 --luacheck: push ignore 212
@@ -35,6 +30,7 @@ end
 ---@param parent_ignored boolean
 ---@param status table?
 function Node:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
+  ---TODO find a way to declare abstract methods
 end
 
 --luacheck: pop
@@ -149,7 +145,6 @@ function Node:clone()
     is_dot = self.is_dot,
     name = self.name,
     parent = nil,
-    watcher = nil,
     diag_status = nil,
   }
 

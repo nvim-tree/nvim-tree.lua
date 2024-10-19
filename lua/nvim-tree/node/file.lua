@@ -27,7 +27,6 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
     is_dot = false,
     name = name,
     parent = parent,
-    watcher = nil,
     diag_status = nil,
 
     extension = string.match(name, ".?[^.]+%.(.*)") or "",

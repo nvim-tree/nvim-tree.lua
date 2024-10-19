@@ -8,6 +8,7 @@ local Node = require("nvim-tree.node")
 ---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
+---@field watcher Watcher?
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
 local DirectoryNode = Node:new()
 
@@ -51,12 +52,18 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
 end
 
 function DirectoryNode:destroy()
-  Node.destroy(self)
+  if self.watcher then
+    self.watcher:destroy()
+    self.watcher = nil
+  end
+
   if self.nodes then
     for _, node in pairs(self.nodes) do
       node:destroy()
     end
   end
+
+  Node.destroy(self)
 end
 
 ---Update the GitStatus of the directory
