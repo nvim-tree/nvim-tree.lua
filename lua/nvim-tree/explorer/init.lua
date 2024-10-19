@@ -170,7 +170,13 @@ function Explorer:reload(node, git_status)
   )
 
   local is_root = not node.parent
+  ---
+  --- @cast node DirectoryNode
+  ---
   local child_folder_only = node:has_one_child_folder() and node.nodes[1]
+  ---
+  --- @cast child_folder_only DirectoryNode
+  ---
   if config.renderer.group_empty and not is_root and child_folder_only then
     node.group_next = child_folder_only
     local ns = self:reload(child_folder_only, git_status)
@@ -311,7 +317,13 @@ function Explorer:explore(node, status, parent)
   self:populate_children(handle, cwd, node, status, parent)
 
   local is_root = not node.parent
+  ---
+  --- @cast node DirectoryNode
+  ---
   local child_folder_only = node:has_one_child_folder() and node.nodes[1]
+  ---
+  --- @cast child_folder_only DirectoryNode
+  ---
   if config.renderer.group_empty and not is_root and child_folder_only then
     local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
     local child_status = git.load_project_status(child_cwd)

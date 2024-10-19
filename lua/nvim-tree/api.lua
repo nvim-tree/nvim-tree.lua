@@ -210,13 +210,16 @@ local function edit(mode, node)
 end
 
 ---@param mode string
----@return fun(node: table)
+---@return fun(node: Node)
 local function open_or_expand_or_dir_up(mode, toggle_group)
+  ---@param node Node
   return function(node)
     if node.name == ".." then
       actions.root.change_dir.fn("..")
     elseif node:is(DirectoryNode) then
+      ---
       ---@cast node DirectoryNode
+      ---
       node:expand_or_collapse(toggle_group)
     elseif not toggle_group then
       edit(mode, node)

@@ -32,11 +32,6 @@ function BaseNode:destroy()
   end
 end
 
----@return boolean
-function BaseNode:has_one_child_folder()
-  return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
-end
-
 --luacheck: push ignore 212
 ---Update the GitStatus of the node
 ---@param parent_ignored boolean
@@ -144,54 +139,6 @@ function BaseNode:get_parent_of_group()
     node = node.parent or node
   end
   return node
-end
-
----@return Node[]
-function BaseNode:get_all_nodes_in_group()
-  local next_node = self:get_parent_of_group()
-  local nodes = {}
-  while next_node do
-    table.insert(nodes, next_node)
-    next_node = next_node.group_next
-  end
-  return nodes
-end
-
--- Toggle group empty folders
-function BaseNode:toggle_group_folders()
-  local is_grouped = self.group_next ~= nil
-
-  if is_grouped then
-    self:ungroup_empty_folders()
-  else
-    self:group_empty_folders()
-  end
-end
-
----Group empty folders
--- Recursively group nodes
----@return Node[]
-function BaseNode:group_empty_folders()
-  local is_root = not self.parent
-  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
-  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
-    self.group_next = child_folder_only
-    local ns = child_folder_only:group_empty_folders()
-    self.nodes = ns or {}
-    return ns
-  end
-  return self.nodes
-end
-
----Ungroup empty folders
--- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
-function BaseNode:ungroup_empty_folders()
-  local cur = self
-  while cur and cur.group_next do
-    cur.nodes = { cur.group_next }
-    cur.group_next = nil
-    cur = cur.nodes[1]
-  end
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

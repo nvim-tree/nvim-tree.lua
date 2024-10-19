@@ -128,6 +128,66 @@ function DirectoryNode:last_group_node()
   return node
 end
 
+---@return boolean
+function DirectoryNode:has_one_child_folder()
+  return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
+end
+
+---@private
+---@return Node[]
+function DirectoryNode:get_all_nodes_in_group()
+  local next_node = self:get_parent_of_group()
+  local nodes = {}
+  while next_node do
+    table.insert(nodes, next_node)
+    next_node = next_node.group_next
+  end
+  return nodes
+end
+
+---@private
+-- Toggle group empty folders
+function DirectoryNode:toggle_group_folders()
+  local is_grouped = self.group_next ~= nil
+
+  if is_grouped then
+    self:ungroup_empty_folders()
+  else
+    self:group_empty_folders()
+  end
+end
+
+---Group empty folders
+-- Recursively group nodes
+---@private
+---@return Node[]
+function DirectoryNode:group_empty_folders()
+  local is_root = not self.parent
+  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
+  ---
+  --- @cast child_folder_only DirectoryNode
+  ---
+  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
+    self.group_next = child_folder_only
+    local ns = child_folder_only:group_empty_folders()
+    self.nodes = ns or {}
+    return ns
+  end
+  return self.nodes
+end
+
+---Ungroup empty folders
+-- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
+---@private
+function DirectoryNode:ungroup_empty_folders()
+  local cur = self
+  while cur and cur.group_next do
+    cur.nodes = { cur.group_next }
+    cur.group_next = nil
+    cur = cur.nodes[1]
+  end
+end
+
 ---@param toggle_group boolean
 function DirectoryNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
@@ -140,6 +200,9 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   end
 
   local head_node = self:get_parent_of_group()
+  ---
+  --- @cast head_node DirectoryNode
+  ---
   if toggle_group then
     head_node:toggle_group_folders()
   end
