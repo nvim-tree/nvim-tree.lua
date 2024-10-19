@@ -147,18 +147,6 @@ function DirectoryNode:single_child_directory()
 end
 
 ---@private
----@return Node[]
-function DirectoryNode:get_all_nodes_in_group()
-  local next_node = self:group_parent_or_node()
-  local nodes = {}
-  while next_node do
-    table.insert(nodes, next_node)
-    next_node = next_node.group_next
-  end
-  return nodes
-end
-
----@private
 -- Toggle group empty folders
 function DirectoryNode:toggle_group_folders()
   local is_grouped = self.group_next ~= nil
@@ -219,8 +207,11 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   else
     next_open = not open
   end
-  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
-    n.open = next_open
+
+  local node = self
+  while node do
+    node.open = next_open
+    node = node.group_next
   end
 
   self.explorer.renderer:draw()
