@@ -329,14 +329,12 @@ local function open_in_new_window(filename, mode)
     set_current_win_no_autocmd(target_winid, { "BufEnter" })
   end
 
-  print("filename: " .. filename)
   local fname
   if M.relative_path then
     fname = utils.escape_special_chars(vim.fn.fnameescape(utils.path_relative(filename, vim.fn.getcwd())))
   else
     fname = utils.escape_special_chars(vim.fn.fnameescape(filename))
   end
-  print("fname: " .. fname)
 
   local command
   if create_new_window then
