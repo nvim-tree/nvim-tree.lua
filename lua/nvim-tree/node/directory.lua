@@ -133,7 +133,7 @@ function DirectoryNode:refresh()
 end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
----@return Node
+---@return DirectoryNode
 function DirectoryNode:last_group_node()
   return self.group_next and self.group_next:last_group_node() or self
 end
