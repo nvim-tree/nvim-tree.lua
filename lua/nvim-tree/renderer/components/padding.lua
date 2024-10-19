@@ -19,17 +19,17 @@ local function check_siblings_for_folder(node, with_arrows)
   return false
 end
 
-local function get_padding_indent_markers(depth, idx, siblings, markers, with_arrows, inline_arrows, node, early_stop)
+local function get_padding_indent_markers(depth, idx, num_children, markers, with_arrows, inline_arrows, node, early_stop)
   local base_padding = with_arrows and (not node.nodes or depth > 0) and "  " or ""
   local padding = (inline_arrows or depth == 0) and base_padding or ""
 
   if depth > 0 then
     local has_folder_sibling = check_siblings_for_folder(node, with_arrows)
     local indent = string.rep(" ", M.config.indent_width - 1)
-    markers[depth] = idx ~= siblings
+    markers[depth] = idx ~= num_children
     for i = 1, depth - early_stop do
       local glyph
-      if idx == siblings and i == depth then
+      if idx == num_children and i == depth then
         local bottom_width = M.config.indent_width - 2 + (with_arrows and not inline_arrows and has_folder_sibling and 2 or 0)
         glyph = M.config.indent_markers.icons.corner
           .. string.rep(M.config.indent_markers.icons.bottom, bottom_width)
@@ -46,7 +46,7 @@ local function get_padding_indent_markers(depth, idx, siblings, markers, with_ar
         padding = padding .. glyph
       elseif inline_arrows then
         padding = padding
-      elseif idx ~= siblings and depth == i and not node.nodes and has_folder_sibling then
+      elseif idx ~= num_children and depth == i and not node.nodes and has_folder_sibling then
         padding = padding .. base_padding .. glyph .. base_padding
       else
         padding = padding .. base_padding .. glyph
@@ -58,11 +58,11 @@ end
 
 ---@param depth integer
 ---@param idx integer
----@param siblings integer
+---@param num_children integer
 ---@param node Node
 ---@param markers table
 ---@return HighlightedString[]
-function M.get_indent_markers(depth, idx, siblings, node, markers, early_stop)
+function M.get_indent_markers(depth, idx, num_children, node, markers, early_stop)
   local str = ""
 
   local show_arrows = M.config.icons.show.folder_arrow
@@ -71,7 +71,7 @@ function M.get_indent_markers(depth, idx, siblings, node, markers, early_stop)
   local indent_width = M.config.indent_width
 
   if show_markers then
-    str = str .. get_padding_indent_markers(depth, idx, siblings, markers, show_arrows, inline_arrows, node, early_stop or 0)
+    str = str .. get_padding_indent_markers(depth, idx, num_children, markers, show_arrows, inline_arrows, node, early_stop or 0)
   else
     str = str .. string.rep(" ", depth * indent_width)
   end

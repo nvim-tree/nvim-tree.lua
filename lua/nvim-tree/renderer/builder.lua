@@ -349,10 +349,10 @@ end
 ---@private
 ---@param node Node
 ---@param idx integer line number starting at 1
----@param siblings integer of node
-function Builder:build_line(node, idx, siblings)
+---@param num_children integer of node
+function Builder:build_line(node, idx, num_children)
   -- various components
-  local indent_markers = pad.get_indent_markers(self.depth, idx, siblings, node, self.markers)
+  local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
   -- main components
@@ -434,12 +434,12 @@ function Builder:build_lines(node)
   if not node then
     node = self.explorer
   end
-  local siblings = self:num_visible(node.nodes)
+  local num_children = self:num_visible(node.nodes)
   local idx = 1
   for _, n in ipairs(node.nodes) do
     if not n.hidden then
       self:build_signs(n)
-      self:build_line(n, idx, siblings)
+      self:build_line(n, idx, num_children)
       idx = idx + 1
     end
   end
