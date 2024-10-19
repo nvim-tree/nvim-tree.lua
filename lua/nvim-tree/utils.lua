@@ -303,7 +303,6 @@ function M.escape_special_chars(path)
   if path == nil then
     return path
   end
-  -- return M.is_windows and path:gsub("%(", "\\("):gsub("%)", "\\)") or path
   return M.is_windows and escape_special_char_for_windows(path) or path
 end
 
