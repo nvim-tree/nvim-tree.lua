@@ -135,13 +135,7 @@ end
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return Node
 function DirectoryNode:last_group_node()
-  local node = self
-
-  while node.group_next do
-    node = node.group_next or node
-  end
-
-  return node
+  return self.group_next and self.group_next:last_group_node() or self
 end
 
 ---Return the one and only one child directory
