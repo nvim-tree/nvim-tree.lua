@@ -1,13 +1,14 @@
 local git = require("nvim-tree.git")
 
+local Class = require("nvim-tree.class")
+
 ---TODO #2886
 ---TODO remove all @cast
 ---TODO remove all references to directory fields:
 
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
----@class (exact) BaseNode
----@field private __index? table
+---@class (exact) BaseNode: Class
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -20,49 +21,15 @@ local git = require("nvim-tree.git")
 ---@field watcher Watcher?
 ---@field diag_status DiagStatus?
 ---@field is_dot boolean cached is_dotfile
-local BaseNode = {}
+local BaseNode = Class:new()
 
 ---@alias Node RootNode|BaseNode|DirectoryNode|FileNode|DirectoryLinkNode|FileLinkNode
-
----@param o BaseNode?
----@return BaseNode
-function BaseNode:new(o)
-  o = o or {}
-
-  setmetatable(o, self)
-  self.__index = self
-
-  return o
-end
 
 function BaseNode:destroy()
   if self.watcher then
     self.watcher:destroy()
     self.watcher = nil
   end
-end
-
----Object is an instance of class
----This will start with the lowest class and loop over all the superclasses.
----@param class table
----@return boolean
-function BaseNode:is(class)
-  local mt = getmetatable(self)
-  while mt do
-    if mt == class then
-      return true
-    end
-    mt = getmetatable(mt)
-  end
-  return false
-end
-
----Return object if it is an instance of class, otherwise nil
----@generic T
----@param class T
----@return `T`|nil
-function BaseNode:as(class)
-  return self:is(class) and self or nil
 end
 
 ---@return boolean
