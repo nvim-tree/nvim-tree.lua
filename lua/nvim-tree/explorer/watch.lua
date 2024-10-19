@@ -53,7 +53,7 @@ local function is_folder_ignored(path)
   return false
 end
 
----@param node Node
+---@param node DirectoryNode
 ---@return Watcher|nil
 function M.create_watcher(node)
   if not M.config.filesystem_watchers.enable or type(node) ~= "table" then

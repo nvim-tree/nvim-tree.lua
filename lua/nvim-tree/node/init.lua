@@ -38,6 +38,7 @@ end
 ---@param status table?
 function BaseNode:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
 end
+
 --luacheck: pop
 
 ---@return GitStatus?
@@ -115,30 +116,14 @@ function BaseNode:update_parent_statuses(project, root)
   end
 end
 
----Refresh contents and git status for a single node
-function BaseNode:refresh()
-  local parent_node = self:get_parent_of_group()
-  local toplevel = git.get_toplevel(self.absolute_path)
-
-  git.reload_project(toplevel, self.absolute_path, function()
-    local project = git.get_project(toplevel) or {}
-
-    self.explorer:reload(parent_node, project)
-
-    parent_node:update_parent_statuses(project, toplevel)
-
-    self.explorer.renderer:draw()
-  end)
-end
-
----Get the highest parent of grouped nodes
----@return Node node or parent
-function BaseNode:get_parent_of_group()
-  local node = self
-  while node and node.parent and node.parent.group_next do
-    node = node.parent or node
+---Get the highest parent of grouped nodes or the node itself
+---@return Node
+function BaseNode:group_parent_or_node()
+  if self.parent and self.parent.group_next then
+    return self.parent:group_parent_or_node()
+  else
+    return self
   end
-  return node
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

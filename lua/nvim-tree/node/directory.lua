@@ -116,6 +116,22 @@ function DirectoryNode:get_git_status()
   end
 end
 
+---Refresh contents and git status for a single node
+function DirectoryNode:refresh()
+  local node = self:group_parent_or_node()
+  local toplevel = git.get_toplevel(self.absolute_path)
+
+  git.reload_project(toplevel, self.absolute_path, function()
+    local project = git.get_project(toplevel) or {}
+
+    self.explorer:reload(node, project)
+
+    node:update_parent_statuses(project, toplevel)
+
+    self.explorer.renderer:draw()
+  end)
+end
+
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return Node
 function DirectoryNode:last_group_node()
@@ -128,15 +144,18 @@ function DirectoryNode:last_group_node()
   return node
 end
 
----@return boolean
-function DirectoryNode:has_one_child_folder()
-  return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
+---Return the one and only one child directory
+---@return DirectoryNode?
+function DirectoryNode:single_child_directory()
+  if #self.nodes == 1 then
+    return self.nodes[1]:as(DirectoryNode)
+  end
 end
 
 ---@private
 ---@return Node[]
 function DirectoryNode:get_all_nodes_in_group()
-  local next_node = self:get_parent_of_group()
+  local next_node = self:group_parent_or_node()
   local nodes = {}
   while next_node do
     table.insert(nodes, next_node)
@@ -162,14 +181,10 @@ end
 ---@private
 ---@return Node[]
 function DirectoryNode:group_empty_folders()
-  local is_root = not self.parent
-  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
-  ---
-  --- @cast child_folder_only DirectoryNode
-  ---
-  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
-    self.group_next = child_folder_only
-    local ns = child_folder_only:group_empty_folders()
+  local single_child = self:single_child_directory()
+  if self.explorer.opts.renderer.group_empty and self.parent and single_child then
+    self.group_next = single_child
+    local ns = single_child:group_empty_folders()
     self.nodes = ns or {}
     return ns
   end
@@ -180,11 +195,10 @@ end
 -- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
 ---@private
 function DirectoryNode:ungroup_empty_folders()
-  local cur = self
-  while cur and cur.group_next do
-    cur.nodes = { cur.group_next }
-    cur.group_next = nil
-    cur = cur.nodes[1]
+  if self.group_next then
+    self.group_next:ungroup_empty_folders()
+    self.nodes = { self.group_next }
+    self.group_next = nil
   end
 end
 
@@ -199,10 +213,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
     self.explorer:expand(self)
   end
 
-  local head_node = self:get_parent_of_group()
-  ---
-  --- @cast head_node DirectoryNode
-  ---
+  local head_node = self:group_parent_or_node()
   if toggle_group then
     head_node:toggle_group_folders()
   end
