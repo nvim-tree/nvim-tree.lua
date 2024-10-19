@@ -1,15 +1,15 @@
 local git = require("nvim-tree.git")
 local watch = require("nvim-tree.explorer.watch")
 
-local BaseNode = require("nvim-tree.node")
+local Node = require("nvim-tree.node")
 
----@class (exact) DirectoryNode: BaseNode
+---@class (exact) DirectoryNode: Node
 ---@field has_children boolean
 ---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
-local DirectoryNode = BaseNode:new()
+local DirectoryNode = Node:new()
 
 ---Static factory method
 ---@param explorer Explorer
@@ -51,7 +51,7 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
 end
 
 function DirectoryNode:destroy()
-  BaseNode.destroy(self)
+  Node.destroy(self)
   if self.nodes then
     for _, node in pairs(self.nodes) do
       node:destroy()
@@ -220,7 +220,7 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
-  local clone = BaseNode.clone(self) --[[@as DirectoryNode]]
+  local clone = Node.clone(self) --[[@as DirectoryNode]]
 
   clone.has_children = self.has_children
   clone.group_next = nil

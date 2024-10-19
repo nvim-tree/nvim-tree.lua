@@ -1,11 +1,11 @@
 local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
 
-local BaseNode = require("nvim-tree.node")
+local Node = require("nvim-tree.node")
 
----@class (exact) FileNode: BaseNode
+---@class (exact) FileNode: Node
 ---@field extension string
-local FileNode = BaseNode:new()
+local FileNode = Node:new()
 
 ---Static factory method
 ---@param explorer Explorer
@@ -56,7 +56,7 @@ end
 ---Create a sanitized partial copy of a node
 ---@return FileNode cloned
 function FileNode:clone()
-  local clone = BaseNode.clone(self) --[[@as FileNode]]
+  local clone = Node.clone(self) --[[@as FileNode]]
 
   clone.extension = self.extension
 

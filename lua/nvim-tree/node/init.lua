@@ -8,7 +8,7 @@ local Class = require("nvim-tree.class")
 
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
----@class (exact) BaseNode: Class
+---@class (exact) Node: Class
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -21,11 +21,9 @@ local Class = require("nvim-tree.class")
 ---@field watcher Watcher?
 ---@field diag_status DiagStatus?
 ---@field is_dot boolean cached is_dotfile
-local BaseNode = Class:new()
+local Node = Class:new()
 
----@alias Node RootNode|BaseNode|DirectoryNode|FileNode|DirectoryLinkNode|FileLinkNode
-
-function BaseNode:destroy()
+function Node:destroy()
   if self.watcher then
     self.watcher:destroy()
     self.watcher = nil
@@ -36,17 +34,17 @@ end
 ---Update the GitStatus of the node
 ---@param parent_ignored boolean
 ---@param status table?
-function BaseNode:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
+function Node:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
 end
 
 --luacheck: pop
 
 ---@return GitStatus?
-function BaseNode:get_git_status()
+function Node:get_git_status()
 end
 
 ---@param projects table
-function BaseNode:reload_node_status(projects)
+function Node:reload_node_status(projects)
   local toplevel = git.get_toplevel(self.absolute_path)
   local status = projects[toplevel] or {}
   for _, node in ipairs(self.nodes) do
@@ -58,13 +56,13 @@ function BaseNode:reload_node_status(projects)
 end
 
 ---@return boolean
-function BaseNode:is_git_ignored()
+function Node:is_git_ignored()
   return self.git_status ~= nil and self.git_status.file == "!!"
 end
 
 ---Node or one of its parents begins with a dot
 ---@return boolean
-function BaseNode:is_dotfile()
+function Node:is_dotfile()
   if
     self.is_dot
     or (self.name and (self.name:sub(1, 1) == "."))
@@ -79,14 +77,14 @@ end
 ---Return self, should only be called on a DirectoryNode
 ---TODO #2886 remove method or leave in place, warn if practical and non too intrusive
 ---@return Node
-function BaseNode:last_group_node()
-  error(string.format("\nBaseNode:last_group_node called for '%s'", self.absolute_path))
+function Node:last_group_node()
+  error(string.format("\nNode:last_group_node called for '%s'", self.absolute_path))
   return self
 end
 
 ---@param project table?
 ---@param root string?
-function BaseNode:update_parent_statuses(project, root)
+function Node:update_parent_statuses(project, root)
   local node = self
   while project and node do
     -- step up to the containing project
@@ -118,7 +116,7 @@ end
 
 ---Get the highest parent of grouped nodes, nil when not grouped
 ---@return DirectoryNode?
-function BaseNode:get_parent_of_group()
+function Node:get_parent_of_group()
   if not self.parent or not self.parent.group_next then
     return nil
   end
@@ -134,12 +132,12 @@ function BaseNode:get_parent_of_group()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
----@return BaseNode cloned
-function BaseNode:clone()
+---@return Node cloned
+function Node:clone()
   ---@type Explorer
   local explorer_placeholder = nil
 
-  ---@type BaseNode
+  ---@type Node
   local clone = {
     type = self.type,
     explorer = explorer_placeholder,
@@ -158,4 +156,4 @@ function BaseNode:clone()
   return clone
 end
 
-return BaseNode
+return Node
