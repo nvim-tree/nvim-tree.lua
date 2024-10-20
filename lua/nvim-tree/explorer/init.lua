@@ -5,6 +5,7 @@ local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local node_factory = require("nvim-tree.node.factory")
 
+local DirectoryNode = require("nvim-tree.node.directory")
 local RootNode = require("nvim-tree.node.root")
 local Watcher = require("nvim-tree.watcher")
 
@@ -72,12 +73,12 @@ function Explorer:create(path)
   return o
 end
 
----@param node Node
+---@param node DirectoryNode
 function Explorer:expand(node)
   self:_load(node)
 end
 
----@param node Node
+---@param node DirectoryNode
 ---@param git_status table|nil
 function Explorer:reload(node, git_status)
   local cwd = node.link_to or node.absolute_path
@@ -169,11 +170,10 @@ function Explorer:reload(node, git_status)
     end, node.nodes)
   )
 
-  local is_root = not node.parent
-  local child_folder_only = node:has_one_child_folder() and node.nodes[1]
-  if config.renderer.group_empty and not is_root and child_folder_only then
-    node.group_next = child_folder_only
-    local ns = self:reload(child_folder_only, git_status)
+  local single_child = node:single_child_directory()
+  if config.renderer.group_empty and node.parent and single_child then
+    node.group_next = single_child
+    local ns = self:reload(single_child, git_status)
     node.nodes = ns or {}
     log.profile_end(profile)
     return ns
@@ -219,7 +219,7 @@ function Explorer:refresh_parent_nodes_for_path(path)
 end
 
 ---@private
----@param node Node
+---@param node DirectoryNode
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
   local git_status = git.load_project_status(cwd)
@@ -243,7 +243,7 @@ end
 ---@private
 ---@param handle uv.uv_fs_t
 ---@param cwd string
----@param node Node
+---@param node DirectoryNode
 ---@param git_status table
 ---@param parent Explorer
 function Explorer:populate_children(handle, cwd, node, git_status, parent)
@@ -295,7 +295,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
 end
 
 ---@private
----@param node Node
+---@param node DirectoryNode
 ---@param status table
 ---@param parent Explorer
 ---@return Node[]|nil
@@ -311,12 +311,12 @@ function Explorer:explore(node, status, parent)
   self:populate_children(handle, cwd, node, status, parent)
 
   local is_root = not node.parent
-  local child_folder_only = node:has_one_child_folder() and node.nodes[1]
-  if config.renderer.group_empty and not is_root and child_folder_only then
-    local child_cwd = child_folder_only.link_to or child_folder_only.absolute_path
+  local single_child = node:single_child_directory()
+  if config.renderer.group_empty and not is_root and single_child then
+    local child_cwd = single_child.link_to or single_child.absolute_path
     local child_status = git.load_project_status(child_cwd)
-    node.group_next = child_folder_only
-    local ns = self:explore(child_folder_only, child_status, parent)
+    node.group_next = single_child
+    local ns = self:explore(single_child, child_status, parent)
     node.nodes = ns or {}
 
     log.profile_end(profile)
@@ -335,9 +335,10 @@ end
 function Explorer:refresh_nodes(projects)
   Iterator.builder({ self })
     :applier(function(n)
-      if n.nodes then
-        local toplevel = git.get_toplevel(n.cwd or n.link_to or n.absolute_path)
-        self:reload(n, projects[toplevel] or {})
+      local dir = n:as(DirectoryNode)
+      if dir then
+        local toplevel = git.get_toplevel(dir.cwd or dir.link_to or dir.absolute_path)
+        self:reload(dir, projects[toplevel] or {})
       end
     end)
     :recursor(function(n)

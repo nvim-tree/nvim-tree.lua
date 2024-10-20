@@ -6,6 +6,8 @@ local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {
   config = {},
 }
@@ -120,7 +122,9 @@ function M.fn(default_modifier)
       return
     end
 
-    node = node:last_group_node()
+    if node:is(DirectoryNode) then
+      node = node:last_group_node()
+    end
     if node.name == ".." then
       return
     end

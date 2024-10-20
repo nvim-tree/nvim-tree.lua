@@ -2,6 +2,10 @@ local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
+local DirectoryLinkNode = require("nvim-tree.node.directory-link")
+local DirectoryNode = require("nvim-tree.node.directory")
+local FileLinkNode = require("nvim-tree.node.file-link")
+
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
 local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
 local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
@@ -341,19 +345,21 @@ function Builder:add_highlights(node)
   return icon_hl_group, name_hl_group
 end
 
+---Insert node line into self.lines, calling Builder:build_lines for each directory
 ---@private
+---@param node Node
+---@param idx integer line number starting at 1
+---@param num_children integer of node
 function Builder:build_line(node, idx, num_children)
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
   -- main components
-  local is_folder = node.nodes ~= nil
-  local is_symlink = node.link_to ~= nil
   local icon, name
-  if is_folder then
+  if node:is(DirectoryNode) then
     icon, name = self:build_folder(node)
-  elseif is_symlink then
+  elseif node:is(DirectoryLinkNode) or node:is(FileLinkNode) then
     icon, name = self:build_symlink(node)
   else
     icon, name = self:build_file(node)
@@ -369,11 +375,13 @@ function Builder:build_line(node, idx, num_children)
 
   self.index = self.index + 1
 
-  node = node:last_group_node()
-  if node.open then
-    self.depth = self.depth + 1
-    self:build_lines(node)
-    self.depth = self.depth - 1
+  if node:is(DirectoryNode) then
+    node = node:last_group_node()
+    if node.open then
+      self.depth = self.depth + 1
+      self:build_lines(node)
+      self.depth = self.depth - 1
+    end
   end
 end
 
@@ -403,8 +411,11 @@ function Builder:add_hidden_count_string(node, idx, num_children)
   end
 end
 
+---Number of visible nodes
 ---@private
-function Builder:get_nodes_number(nodes)
+---@param nodes Node[]
+---@return integer
+function Builder:num_visible(nodes)
   if not self.explorer.live_filter.filter then
     return #nodes
   end
@@ -423,7 +434,7 @@ function Builder:build_lines(node)
   if not node then
     node = self.explorer
   end
-  local num_children = self:get_nodes_number(node.nodes)
+  local num_children = self:num_visible(node.nodes)
   local idx = 1
   for _, n in ipairs(node.nodes) do
     if not n.hidden then

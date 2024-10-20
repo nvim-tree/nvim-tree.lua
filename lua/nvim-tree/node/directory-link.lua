@@ -9,7 +9,7 @@ local DirectoryLinkNode = DirectoryNode:new()
 
 ---Static factory method
 ---@param explorer Explorer
----@param parent Node
+---@param parent DirectoryNode
 ---@param absolute_path string
 ---@param link_to string
 ---@param name string

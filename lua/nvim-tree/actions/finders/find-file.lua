@@ -43,6 +43,7 @@ function M.fn(path)
       return node.absolute_path == path_real or node.link_to == path_real
     end)
     :applier(function(node)
+      ---@cast node DirectoryNode
       local incremented_line = false
       if not node.group_next then
         line = line + 1

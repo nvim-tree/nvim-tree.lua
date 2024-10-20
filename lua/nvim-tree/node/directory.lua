@@ -1,19 +1,20 @@
 local git = require("nvim-tree.git")
 local watch = require("nvim-tree.explorer.watch")
 
-local BaseNode = require("nvim-tree.node")
+local Node = require("nvim-tree.node")
 
----@class (exact) DirectoryNode: BaseNode
+---@class (exact) DirectoryNode: Node
 ---@field has_children boolean
----@field group_next Node? -- If node is grouped, this points to the next child dir/link node
+---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
+---@field watcher Watcher?
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
-local DirectoryNode = BaseNode:new()
+local DirectoryNode = Node:new()
 
 ---Static factory method
 ---@param explorer Explorer
----@param parent Node?
+---@param parent DirectoryNode?
 ---@param absolute_path string
 ---@param name string
 ---@param fs_stat uv.fs_stat.result|nil
@@ -51,12 +52,18 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
 end
 
 function DirectoryNode:destroy()
-  BaseNode.destroy(self)
+  if self.watcher then
+    self.watcher:destroy()
+    self.watcher = nil
+  end
+
   if self.nodes then
     for _, node in pairs(self.nodes) do
       node:destroy()
     end
   end
+
+  Node.destroy(self)
 end
 
 ---Update the GitStatus of the directory
@@ -116,6 +123,75 @@ function DirectoryNode:get_git_status()
   end
 end
 
+---Refresh contents and git status for a single node
+function DirectoryNode:refresh()
+  local node = self:get_parent_of_group() or self
+  local toplevel = git.get_toplevel(self.absolute_path)
+
+  git.reload_project(toplevel, self.absolute_path, function()
+    local project = git.get_project(toplevel) or {}
+
+    self.explorer:reload(node, project)
+
+    node:update_parent_statuses(project, toplevel)
+
+    self.explorer.renderer:draw()
+  end)
+end
+
+-- If node is grouped, return the last node in the group. Otherwise, return the given node.
+---@return DirectoryNode
+function DirectoryNode:last_group_node()
+  return self.group_next and self.group_next:last_group_node() or self
+end
+
+---Return the one and only one child directory
+---@return DirectoryNode?
+function DirectoryNode:single_child_directory()
+  if #self.nodes == 1 then
+    return self.nodes[1]:as(DirectoryNode)
+  end
+end
+
+---@private
+-- Toggle group empty folders
+function DirectoryNode:toggle_group_folders()
+  local is_grouped = self.group_next ~= nil
+
+  if is_grouped then
+    self:ungroup_empty_folders()
+  else
+    self:group_empty_folders()
+  end
+end
+
+---Group empty folders
+-- Recursively group nodes
+---@private
+---@return Node[]
+function DirectoryNode:group_empty_folders()
+  local single_child = self:single_child_directory()
+  if self.explorer.opts.renderer.group_empty and self.parent and single_child then
+    self.group_next = single_child
+    local ns = single_child:group_empty_folders()
+    self.nodes = ns or {}
+    return ns
+  end
+  return self.nodes
+end
+
+---Ungroup empty folders
+-- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
+---@private
+function DirectoryNode:ungroup_empty_folders()
+  if self.group_next then
+    self.group_next:ungroup_empty_folders()
+    self.nodes = { self.group_next }
+    self.group_next = nil
+  end
+end
+
+---@param toggle_group boolean
 function DirectoryNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
   if self.has_children then
@@ -126,7 +202,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
     self.explorer:expand(self)
   end
 
-  local head_node = self:get_parent_of_group()
+  local head_node = self:get_parent_of_group() or self
   if toggle_group then
     head_node:toggle_group_folders()
   end
@@ -138,8 +214,11 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   else
     next_open = not open
   end
-  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
-    n.open = next_open
+
+  local node = self
+  while node do
+    node.open = next_open
+    node = node.group_next
   end
 
   self.explorer.renderer:draw()
@@ -148,7 +227,7 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
-  local clone = BaseNode.clone(self) --[[@as DirectoryNode]]
+  local clone = Node.clone(self) --[[@as DirectoryNode]]
 
   clone.has_children = self.has_children
   clone.group_next = nil
