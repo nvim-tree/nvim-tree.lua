@@ -3,6 +3,8 @@ local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 ---@return fun(path: string): boolean
@@ -36,8 +38,9 @@ function M.fn(keep_buffers)
   Iterator.builder(explorer.nodes)
     :hidden()
     :applier(function(n)
-      if n.nodes ~= nil then
-        n.open = keep_buffers == true and matches(n.absolute_path)
+      local dir = n:as(DirectoryNode)
+      if dir then
+        dir.open = keep_buffers and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
