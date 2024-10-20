@@ -5,6 +5,7 @@ local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
+local FileNode = require("nvim-tree.node.file")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -31,35 +32,21 @@ local function get_num_nodes(iter)
   return i
 end
 
----@param node Node
----@return string
-local function get_containing_folder(node)
-  if node.nodes ~= nil then
-    return utils.path_add_trailing(node.absolute_path)
-  end
-  local node_name_size = #(node.name or "")
-  return node.absolute_path:sub(0, -node_name_size - 1)
-end
-
 ---@param node Node?
 function M.fn(node)
-  local cwd = core.get_cwd()
-  if cwd == nil then
+  node = node or core.get_explorer() --[[@as Node]]
+  if not node then
     return
   end
 
-  if not node or node.name == ".." then
-    node = {
-      absolute_path = cwd,
-      name = "",
-      nodes = core.get_explorer().nodes,
-      open = true,
-    }
-  elseif node:is(DirectoryNode) then
-    node = node:last_group_node()
+  local dir = node:is(FileNode) and node.parent or node:as(DirectoryNode)
+  if not dir then
+    return
   end
 
-  local containing_folder = get_containing_folder(node)
+  dir = dir:last_group_node()
+
+  local containing_folder = utils.path_add_trailing(dir.absolute_path)
 
   local input_opts = {
     prompt = "Create file ",
