@@ -165,7 +165,13 @@ function M.update()
       end
     end
     log.profile_end(profile)
-    if view.is_buf_valid(view.get_bufnr()) then
+
+    local bufnr = view.get_bufnr()
+    local should_draw = bufnr
+      and vim.api.nvim_buf_is_valid(bufnr)
+      and vim.api.nvim_buf_is_loaded(bufnr)
+      and vim.api.nvim_get_option_value("buflisted", { buf = bufnr })
+    if should_draw then
       local explorer = core.get_explorer()
       if explorer then
         explorer.renderer:draw()

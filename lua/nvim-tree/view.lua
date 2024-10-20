@@ -500,12 +500,6 @@ function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
----@param bufnr number
----@return boolean
-function M.is_buf_valid(bufnr)
-  return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
-end
-
 function M._prevent_buffer_override()
   local view_winnr = M.get_winnr()
   local view_bufnr = M.get_bufnr()
