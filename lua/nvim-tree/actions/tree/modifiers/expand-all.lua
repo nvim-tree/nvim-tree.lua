@@ -47,14 +47,14 @@ local function gen_iterator()
 
     Iterator.builder(parent.nodes)
       :hidden()
-      ---@param node DirectoryNode
+    ---@param node DirectoryNode
       :applier(function(node)
         if should_expand(expansion_count, node) then
           expansion_count = expansion_count + 1
           expand(node)
         end
       end)
-      ---@param node DirectoryNode
+    ---@param node DirectoryNode
       :recursor(function(node)
         return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
       end)
