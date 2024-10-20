@@ -10,6 +10,7 @@ local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local RootNode = require("nvim-tree.node.root")
 
 local Api = {
   tree = {},
@@ -137,9 +138,9 @@ Api.tree.change_root = wrap(function(...)
 end)
 
 Api.tree.change_root_to_node = wrap_node(function(node)
-  if node.name == ".." then
+  if node.name == ".." or node:is(RootNode) then
     actions.root.change_dir.fn("..")
-  elseif node.nodes ~= nil then
+  elseif node:is(DirectoryNode) then
     actions.root.change_dir.fn(node:last_group_node().absolute_path)
   end
 end)

@@ -70,14 +70,6 @@ function Node:is_dotfile()
   return false
 end
 
----Return self, should only be called on a DirectoryNode
----TODO #2886 remove method or leave in place, warn if practical and non too intrusive
----@return Node
-function Node:last_group_node()
-  error(string.format("\nNode:last_group_node called for '%s'", self.absolute_path))
-  return self
-end
-
 ---@param project table?
 ---@param root string?
 function Node:update_parent_statuses(project, root)
