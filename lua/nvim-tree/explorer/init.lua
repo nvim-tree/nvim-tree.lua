@@ -374,6 +374,19 @@ function Explorer:reload_git()
   event_running = false
 end
 
+---Cursor position as per vim.api.nvim_win_get_cursor
+---nil on no explorer or invalid view win
+---@return integer[]|nil
+function Explorer:get_cursor_position()
+  local winnr = view.get_winnr()
+  if not winnr or not vim.api.nvim_win_is_valid(winnr) then
+    return
+  end
+
+  return vim.api.nvim_win_get_cursor(winnr)
+end
+
+
 function Explorer:setup(opts)
   config = opts
   require("nvim-tree.explorer.watch").setup(opts)

@@ -13,22 +13,6 @@ local M = {
   target_winid = nil,
 }
 
----Cursor position as per vim.api.nvim_win_get_cursor
----nil on no explorer or invalid view win
----@return integer[]|nil
-function M.get_cursor_position()
-  if not core.get_explorer() then
-    return
-  end
-
-  local winnr = view.get_winnr()
-  if not winnr or not vim.api.nvim_win_is_valid(winnr) then
-    return
-  end
-
-  return vim.api.nvim_win_get_cursor(winnr)
-end
-
 ---@return Node|nil
 function M.get_node_at_cursor()
   local explorer = core.get_explorer()
@@ -36,7 +20,7 @@ function M.get_node_at_cursor()
     return
   end
 
-  local cursor = M.get_cursor_position()
+  local cursor = explorer:get_cursor_position()
   if not cursor then
     return
   end

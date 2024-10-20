@@ -34,11 +34,16 @@ end
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
 local function move(where, what, skip_gitignored)
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
   local first_node_line = core.get_nodes_starting_line()
-  local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
+  local nodes_by_line = utils.get_nodes_by_line(explorer.nodes, first_node_line)
   local iter_start, iter_end, iter_step, cur, first, nex
 
-  local cursor = lib.get_cursor_position()
+  local cursor = explorer:get_cursor_position()
   if cursor and cursor[1] < first_node_line then
     cur = cursor[1]
   end
