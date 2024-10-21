@@ -80,7 +80,7 @@ function M.path_relative(path, relative_to)
   end
 
   local norm_path = path
-  if has_parentheses_and_brackets(path) then
+  if M.is_windows and has_parentheses_and_brackets(path) then
     norm_path = path:gsub("/", "\\")
   end
 
