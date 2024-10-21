@@ -32,6 +32,10 @@ function DirectoryLinkNode:create(explorer, parent, absolute_path, link_to, name
   return o
 end
 
+function DirectoryLinkNode:destroy()
+  DirectoryNode.destroy(self)
+end
+
 -----Update the directory GitStatus of link target and the file status of the link itself
 -----@param parent_ignored boolean
 -----@param status table|nil

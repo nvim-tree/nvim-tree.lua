@@ -1,3 +1,5 @@
+local appearance = require("nvim-tree.appearance")
+local buffers = require("nvim-tree.buffers")
 local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
@@ -25,7 +27,9 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local config
 
 ---@class (exact) Explorer: RootNode
+---@field uid_explorer number vim.uv.hrtime() at construction time
 ---@field opts table user options
+---@field augroup_id integer
 ---@field renderer Renderer
 ---@field filters Filters
 ---@field live_filter LiveFilter
@@ -59,6 +63,9 @@ function Explorer:create(path)
 
   o.explorer = o
 
+  o.uid_explorer = vim.uv.hrtime()
+  o.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. o.uid_explorer, {})
+
   o.open = true
   o.opts = config
 
@@ -69,9 +76,109 @@ function Explorer:create(path)
   o.marks = Marks:new(config, o)
   o.clipboard = Clipboard:new(config, o)
 
+  o:create_autocmds()
+
   o:_load(o)
 
   return o
+end
+
+function Explorer:destroy()
+  log.line("dev", "Explorer:destroy")
+
+  vim.api.nvim_del_augroup_by_id(self.augroup_id)
+
+  RootNode.destroy(self)
+end
+
+function Explorer:create_autocmds()
+  -- reset and draw (highlights) when colorscheme is changed
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    group = self.augroup_id,
+    callback = function()
+      appearance.setup()
+      view.reset_winhl()
+      self:draw()
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    group = self.augroup_id,
+    callback = function()
+      if self.opts.auto_reload_on_write and not self.opts.filesystem_watchers.enable then
+        self:reload_explorer()
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    group = self.augroup_id,
+    callback = function(data)
+      if (self.filters.config.filter_no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+        utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
+          self:reload_explorer()
+        end)
+      end
+    end,
+  })
+
+  -- update opened file buffers
+  vim.api.nvim_create_autocmd("BufUnload", {
+    group = self.augroup_id,
+    callback = function(data)
+      if (self.filters.config.filter_no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+        utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
+          self:reload_explorer()
+        end)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufEnter", {
+    group = self.augroup_id,
+    pattern = "NvimTree_*",
+    callback = function()
+      if utils.is_nvim_tree_buf(0) then
+        if vim.fn.getcwd() ~= core.get_cwd() or (self.opts.reload_on_bufenter and not self.opts.filesystem_watchers.enable) then
+          self:reload_explorer()
+        end
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("User", {
+    group = self.augroup_id,
+    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
+    callback = function()
+      if not self.opts.filesystem_watchers.enable and self.opts.git.enable then
+        self:reload_git()
+      end
+    end,
+  })
+
+  if self.opts.hijack_cursor then
+    vim.api.nvim_create_autocmd("CursorMoved", {
+      group = self.augroup_id,
+      pattern = "NvimTree_*",
+      callback = function()
+        if utils.is_nvim_tree_buf(0) then
+          self:place_cursor_on_node()
+        end
+      end,
+    })
+  end
+
+  if self.opts.modified.enable then
+    vim.api.nvim_create_autocmd({ "BufModifiedSet", "BufWritePost" }, {
+      group = self.augroup_id,
+      callback = function()
+        utils.debounce("Buf:modified_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
+          buffers.reload_modified()
+          self:reload_explorer()
+        end)
+      end,
+    })
+  end
 end
 
 ---@param node DirectoryNode
@@ -430,7 +537,6 @@ end
 
 function Explorer:setup(opts)
   config = opts
-  require("nvim-tree.explorer.watch").setup(opts)
 end
 
 return Explorer
