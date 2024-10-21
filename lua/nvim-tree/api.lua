@@ -1,4 +1,3 @@
-local lib = require("nvim-tree.lib")
 local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
@@ -147,7 +146,7 @@ end)
 
 Api.tree.change_root_to_parent = wrap_node(actions.root.dir_up.fn)
 Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
-Api.tree.get_nodes = wrap(lib.get_nodes)
+Api.tree.get_nodes = wrap_explorer("get_nodes")
 
 ---@class ApiTreeFindFileOpts
 ---@field buf string|number|nil

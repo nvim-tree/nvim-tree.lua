@@ -401,6 +401,12 @@ function Explorer:get_node_at_cursor()
   return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
+---Api.tree.get_nodes
+---@return Node
+function Explorer:get_nodes()
+  return self:clone()
+end
+
 function Explorer:setup(opts)
   config = opts
   require("nvim-tree.explorer.watch").setup(opts)

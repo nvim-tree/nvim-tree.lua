@@ -12,13 +12,6 @@ local M = {
   target_winid = nil,
 }
 
----Api.tree.get_nodes
----@return Node[]?
-function M.get_nodes()
-  local explorer = core.get_explorer()
-  return explorer and explorer:clone()
-end
-
 function M.set_target_win()
   local id = vim.api.nvim_get_current_win()
   local tree_id = view.get_winnr()
