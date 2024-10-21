@@ -786,13 +786,16 @@ local function localise_default_opts()
 end
 
 function M.purge_all_state()
-  require("nvim-tree.watcher").purge_watchers()
   view.close_all_tabs()
   view.abandon_all_windows()
-  if core.get_explorer() ~= nil then
+  local explorer = core.get_explorer()
+  if explorer then
     require("nvim-tree.git").purge_state()
+    explorer:destroy()
     core.reset_explorer()
   end
+  -- purge orphaned that were not destroyed by their nodes
+  require("nvim-tree.watcher").purge_watchers()
 end
 
 ---@param conf table|nil
