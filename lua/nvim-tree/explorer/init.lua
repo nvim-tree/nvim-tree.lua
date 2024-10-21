@@ -401,6 +401,27 @@ function Explorer:get_node_at_cursor()
   return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
 end
 
+function Explorer:place_cursor_on_node()
+  local ok, search = pcall(vim.fn.searchcount)
+  if ok and search and search.exact_match == 1 then
+    return
+  end
+
+  local node = self:get_node_at_cursor()
+  if not node or node.name == ".." then
+    return
+  end
+  node = node:get_parent_of_group() or node
+
+  local line = vim.api.nvim_get_current_line()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local idx = vim.fn.stridx(line, node.name)
+
+  if idx >= 0 then
+    vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
+  end
+end
+
 ---Api.tree.get_nodes
 ---@return Node
 function Explorer:get_nodes()

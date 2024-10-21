@@ -114,32 +114,6 @@ function M.open_on_directory()
   actions.root.change_dir.force_dirchange(bufname, true)
 end
 
-function M.place_cursor_on_node()
-  local ok, search = pcall(vim.fn.searchcount)
-  if ok and search and search.exact_match == 1 then
-    return
-  end
-
-  local explorer = core.get_explorer()
-  if not explorer then
-    return
-  end
-
-  local node = explorer:get_node_at_cursor()
-  if not node or node.name == ".." then
-    return
-  end
-  node = node:get_parent_of_group() or node
-
-  local line = vim.api.nvim_get_current_line()
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local idx = vim.fn.stridx(line, node.name)
-
-  if idx >= 0 then
-    vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
-  end
-end
-
 ---@return table
 function M.get_config()
   return M.config
@@ -270,7 +244,10 @@ local function setup_autocommands(opts)
       pattern = "NvimTree_*",
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          M.place_cursor_on_node()
+          local explorer = core.get_explorer()
+          if explorer then
+            explorer:place_cursor_on_node()
+          end
         end
       end,
     })
