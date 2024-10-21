@@ -151,7 +151,7 @@ function Marks:bulk_move()
     return
   end
 
-  local node_at_cursor = lib.get_node_at_cursor()
+  local node_at_cursor = self.explorer:get_node_at_cursor()
   local default_path = core.get_cwd()
 
   if node_at_cursor and node_at_cursor:is(DirectoryNode) then
@@ -190,7 +190,7 @@ end
 ---@private
 ---@param up boolean
 function Marks:navigate(up)
-  local node = lib.get_node_at_cursor()
+  local node = self.explorer:get_node_at_cursor()
   if not node then
     return
   end

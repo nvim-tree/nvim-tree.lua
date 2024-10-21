@@ -1,3 +1,4 @@
+local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
@@ -386,6 +387,19 @@ function Explorer:get_cursor_position()
   return vim.api.nvim_win_get_cursor(winnr)
 end
 
+---@return Node|nil
+function Explorer:get_node_at_cursor()
+  local cursor = self:get_cursor_position()
+  if not cursor then
+    return
+  end
+
+  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
+    return self
+  end
+
+  return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
+end
 
 function Explorer:setup(opts)
   config = opts

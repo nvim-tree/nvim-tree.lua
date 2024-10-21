@@ -1,4 +1,3 @@
-local lib = require("nvim-tree.lib")
 local log = require("nvim-tree.log")
 local appearance = require("nvim-tree.appearance")
 local view = require("nvim-tree.view")
@@ -121,7 +120,12 @@ function M.place_cursor_on_node()
     return
   end
 
-  local node = lib.get_node_at_cursor()
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
+  local node = explorer:get_node_at_cursor()
   if not node or node.name == ".." then
     return
   end

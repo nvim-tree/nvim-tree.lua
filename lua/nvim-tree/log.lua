@@ -88,14 +88,12 @@ function M.set_inspect_opts(opts)
 end
 
 --- Write to log file the inspection of a node
---- defaults to the node under cursor if none is provided
 ---@param typ string as per log.types config
----@param node Node? node to be inspected
+---@param node Node node to be inspected
 ---@param fmt string for string.format
 ---@vararg any arguments for string.format
 function M.node(typ, node, fmt, ...)
   if M.enabled(typ) then
-    node = node or require("nvim-tree.lib").get_node_at_cursor()
     M.raw(typ, string.format("[%s] [%s] %s\n%s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???"), vim.inspect(node, inspect_opts)), ...)
   end
 end

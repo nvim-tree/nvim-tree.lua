@@ -1,6 +1,5 @@
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
-local lib = require("nvim-tree.lib")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -26,10 +25,13 @@ end
 
 ---@param keep_buffers boolean
 function M.fn(keep_buffers)
-  local node = lib.get_node_at_cursor()
   local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
 
-  if explorer == nil then
+  local node = explorer:get_node_at_cursor()
+  if not node then
     return
   end
 

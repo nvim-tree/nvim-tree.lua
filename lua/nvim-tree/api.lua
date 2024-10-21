@@ -55,26 +55,6 @@ local function wrap(f)
   end
 end
 
----Inject the node as the first argument if present otherwise do nothing.
----@param fn function function to invoke
-local function wrap_node(fn)
-  return function(node, ...)
-    node = node or lib.get_node_at_cursor()
-    if node then
-      return fn(node, ...)
-    end
-  end
-end
-
----Inject the node or nil as the first argument if absent.
----@param fn function function to invoke
-local function wrap_node_or_nil(fn)
-  return function(node, ...)
-    node = node or lib.get_node_at_cursor()
-    return fn(node, ...)
-  end
-end
-
 ---Invoke a method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_method string explorer method name
@@ -86,6 +66,26 @@ local function wrap_explorer(explorer_method)
       return explorer[explorer_method](explorer, ...)
     end
   end)
+end
+
+---Inject the node as the first argument if present otherwise do nothing.
+---@param fn function function to invoke
+local function wrap_node(fn)
+  return function(node, ...)
+    node = node or wrap_explorer("get_node_at_cursor")()
+    if node then
+      return fn(node, ...)
+    end
+  end
+end
+
+---Inject the node or nil as the first argument if absent.
+---@param fn function function to invoke
+local function wrap_node_or_nil(fn)
+  return function(node, ...)
+    node = node or wrap_explorer("get_node_at_cursor")()
+    return fn(node, ...)
+  end
 end
 
 ---Invoke a member's method on the singleton explorer.
@@ -146,7 +146,7 @@ Api.tree.change_root_to_node = wrap_node(function(node)
 end)
 
 Api.tree.change_root_to_parent = wrap_node(actions.root.dir_up.fn)
-Api.tree.get_node_under_cursor = wrap(lib.get_node_at_cursor)
+Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
 Api.tree.get_nodes = wrap(lib.get_nodes)
 
 ---@class ApiTreeFindFileOpts
