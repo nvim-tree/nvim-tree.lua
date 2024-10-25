@@ -1,6 +1,8 @@
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
+
 local Iterator = require("nvim-tree.iterators.node-iterator")
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class LiveFilter
 ---@field explorer Explorer
@@ -31,17 +33,19 @@ local function reset_filter(self, node_)
     return
   end
 
-  node_.hidden_stats = vim.tbl_deep_extend("force", node_.hidden_stats or {}, {
-    live_filter = 0,
-  })
+  local dir_ = node_:as(DirectoryNode)
+  if dir_ then
+    dir_.hidden_stats = vim.tbl_deep_extend("force", dir_.hidden_stats or {}, { live_filter = 0, })
+  end
 
   Iterator.builder(node_.nodes)
     :hidden()
     :applier(function(node)
       node.hidden = false
-      node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-        live_filter = 0,
-      })
+      local dir = node:as(DirectoryNode)
+      if dir then
+        dir.hidden_stats = vim.tbl_deep_extend("force", dir.hidden_stats or {}, { live_filter = 0, })
+      end
     end)
     :iterate()
 end
@@ -85,7 +89,7 @@ local function matches(self, node)
   return vim.regex(self.filter):match_str(name) ~= nil
 end
 
----@param node_ Node?
+---@param node_ DirectoryNode?
 function LiveFilter:apply_filter(node_)
   if not self.filter or self.filter == "" then
     reset_filter(self, node_)

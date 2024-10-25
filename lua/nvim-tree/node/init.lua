@@ -1,9 +1,10 @@
 local git = require("nvim-tree.git")
 
+local Class = require("nvim-tree.class")
+
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
----@class (exact) BaseNode
----@field private __index? table
+---@class (exact) Node: Class
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -12,136 +13,30 @@ local git = require("nvim-tree.git")
 ---@field git_status GitStatus?
 ---@field hidden boolean
 ---@field name string
----@field parent Node?
----@field watcher Watcher?
+---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
 ---@field is_dot boolean cached is_dotfile
-local BaseNode = {}
+local Node = Class:new()
 
----@alias Node RootNode|BaseNode|DirectoryNode|FileNode|LinkNode
-
----@param o BaseNode?
----@return BaseNode
-function BaseNode:new(o)
-  o = o or {}
-
-  setmetatable(o, self)
-  self.__index = self
-
-  return o
+function Node:destroy()
 end
 
-function BaseNode:destroy()
-  if self.watcher then
-    self.watcher:destroy()
-    self.watcher = nil
-  end
-end
-
----From plenary
----Checks if the object is an instance
----This will start with the lowest class and loop over all the superclasses.
----@param self BaseNode
----@param T BaseNode
----@return boolean
-function BaseNode:is(T)
-  local mt = getmetatable(self)
-  while mt do
-    if mt == T then
-      return true
-    end
-    mt = getmetatable(mt)
-  end
-  return false
-end
-
----@return boolean
-function BaseNode:has_one_child_folder()
-  return #self.nodes == 1 and self.nodes[1].nodes and vim.loop.fs_access(self.nodes[1].absolute_path, "R") or false
-end
-
+--luacheck: push ignore 212
+---Update the GitStatus of the node
 ---@param parent_ignored boolean
----@param status table|nil
-function BaseNode:update_git_status(parent_ignored, status)
-  local get_status
-  if self.nodes then
-    get_status = git.git_status_dir
-  else
-    get_status = git.git_status_file
-  end
-
-  -- status of the node's absolute path
-  self.git_status = get_status(parent_ignored, status, self.absolute_path)
-
-  -- status of the link target, if the link itself is not dirty
-  if self.link_to and not self.git_status then
-    self.git_status = get_status(parent_ignored, status, self.link_to)
-  end
+---@param status table?
+function Node:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
+  ---TODO find a way to declare abstract methods
 end
 
----@return GitStatus|nil
-function BaseNode:get_git_status()
-  if not self.git_status then
-    -- status doesn't exist
-    return nil
-  end
+--luacheck: pop
 
-  if not self.nodes then
-    -- file
-    return self.git_status.file and { self.git_status.file }
-  end
-
-  -- dir
-  if not self.explorer.opts.git.show_on_dirs then
-    return nil
-  end
-
-  local status = {}
-  if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
-    -- dir is closed or we should show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil then
-      if self.git_status.dir.direct ~= nil then
-        for _, s in pairs(self.git_status.dir.direct) do
-          table.insert(status, s)
-        end
-      end
-      if self.git_status.dir.indirect ~= nil then
-        for _, s in pairs(self.git_status.dir.indirect) do
-          table.insert(status, s)
-        end
-      end
-    end
-  else
-    -- dir is open and we shouldn't show on open_dirs
-    if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
-    end
-    if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
-      local deleted = {
-        [" D"] = true,
-        ["D "] = true,
-        ["RD"] = true,
-        ["DD"] = true,
-      }
-      for _, s in pairs(self.git_status.dir.direct) do
-        if deleted[s] then
-          table.insert(status, s)
-        end
-      end
-    end
-  end
-  if #status == 0 then
-    return nil
-  else
-    return status
-  end
+---@return GitStatus?
+function Node:get_git_status()
 end
 
 ---@param projects table
-function BaseNode:reload_node_status(projects)
+function Node:reload_node_status(projects)
   local toplevel = git.get_toplevel(self.absolute_path)
   local status = projects[toplevel] or {}
   for _, node in ipairs(self.nodes) do
@@ -153,13 +48,13 @@ function BaseNode:reload_node_status(projects)
 end
 
 ---@return boolean
-function BaseNode:is_git_ignored()
+function Node:is_git_ignored()
   return self.git_status ~= nil and self.git_status.file == "!!"
 end
 
 ---Node or one of its parents begins with a dot
 ---@return boolean
-function BaseNode:is_dotfile()
+function Node:is_dotfile()
   if
     self.is_dot
     or (self.name and (self.name:sub(1, 1) == "."))
@@ -171,21 +66,9 @@ function BaseNode:is_dotfile()
   return false
 end
 
--- If node is grouped, return the last node in the group. Otherwise, return the given node.
----@return Node
-function BaseNode:last_group_node()
-  local node = self --[[@as BaseNode]]
-
-  while node.group_next do
-    node = node.group_next
-  end
-
-  return node
-end
-
----@param project table|nil
----@param root string|nil
-function BaseNode:update_parent_statuses(project, root)
+---@param project table?
+---@param root string?
+function Node:update_parent_statuses(project, root)
   local node = self
   while project and node do
     -- step up to the containing project
@@ -215,118 +98,30 @@ function BaseNode:update_parent_statuses(project, root)
   end
 end
 
----Refresh contents and git status for a single node
-function BaseNode:refresh()
-  local parent_node = self:get_parent_of_group()
-  local toplevel = git.get_toplevel(self.absolute_path)
-
-  git.reload_project(toplevel, self.absolute_path, function()
-    local project = git.get_project(toplevel) or {}
-
-    self.explorer:reload(parent_node, project)
-
-    parent_node:update_parent_statuses(project, toplevel)
-
-    self.explorer.renderer:draw()
-  end)
-end
-
----Get the highest parent of grouped nodes
----@return Node node or parent
-function BaseNode:get_parent_of_group()
-  local node = self
-  while node and node.parent and node.parent.group_next do
-    node = node.parent or node
-  end
-  return node
-end
-
----@return Node[]
-function BaseNode:get_all_nodes_in_group()
-  local next_node = self:get_parent_of_group()
-  local nodes = {}
-  while next_node do
-    table.insert(nodes, next_node)
-    next_node = next_node.group_next
-  end
-  return nodes
-end
-
--- Toggle group empty folders
-function BaseNode:toggle_group_folders()
-  local is_grouped = self.group_next ~= nil
-
-  if is_grouped then
-    self:ungroup_empty_folders()
-  else
-    self:group_empty_folders()
-  end
-end
-
----Group empty folders
--- Recursively group nodes
----@return Node[]
-function BaseNode:group_empty_folders()
-  local is_root = not self.parent
-  local child_folder_only = self:has_one_child_folder() and self.nodes[1]
-  if self.explorer.opts.renderer.group_empty and not is_root and child_folder_only then
-    ---@cast self DirectoryNode -- TODO #2886 move this to the class
-    self.group_next = child_folder_only
-    local ns = child_folder_only:group_empty_folders()
-    self.nodes = ns or {}
-    return ns
-  end
-  return self.nodes
-end
-
----Ungroup empty folders
--- If a node is grouped, ungroup it: put node.group_next to the node.nodes and set node.group_next to nil
-function BaseNode:ungroup_empty_folders()
-  local cur = self
-  while cur and cur.group_next do
-    cur.nodes = { cur.group_next }
-    cur.group_next = nil
-    cur = cur.nodes[1]
-  end
-end
-
-function BaseNode:expand_or_collapse(toggle_group)
-  toggle_group = toggle_group or false
-  if self.has_children then
-    ---@cast self DirectoryNode -- TODO #2886 move this to the class
-    self.has_children = false
+---Get the highest parent of grouped nodes, nil when not grouped
+---@return DirectoryNode?
+function Node:get_parent_of_group()
+  if not self.parent or not self.parent.group_next then
+    return nil
   end
 
-  if #self.nodes == 0 then
-    self.explorer:expand(self)
+  local node = self.parent
+  while node do
+    if node.parent and node.parent.group_next then
+      node = node.parent
+    else
+      return node
+    end
   end
-
-  local head_node = self:get_parent_of_group()
-  if toggle_group then
-    head_node:toggle_group_folders()
-  end
-
-  local open = self:last_group_node().open
-  local next_open
-  if toggle_group then
-    next_open = open
-  else
-    next_open = not open
-  end
-  for _, n in ipairs(head_node:get_all_nodes_in_group()) do
-    n.open = next_open
-  end
-
-  self.explorer.renderer:draw()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
----@return BaseNode cloned
-function BaseNode:clone()
+---@return Node cloned
+function Node:clone()
   ---@type Explorer
   local explorer_placeholder = nil
 
-  ---@type BaseNode
+  ---@type Node
   local clone = {
     type = self.type,
     explorer = explorer_placeholder,
@@ -338,11 +133,10 @@ function BaseNode:clone()
     is_dot = self.is_dot,
     name = self.name,
     parent = nil,
-    watcher = nil,
     diag_status = nil,
   }
 
   return clone
 end
 
-return BaseNode
+return Node

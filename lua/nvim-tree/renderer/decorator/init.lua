@@ -1,26 +1,16 @@
+local Class = require("nvim-tree.class")
+
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 ---Abstract Decorator
 ---Uses the factory pattern to instantiate child instances.
----@class (exact) Decorator
----@field private __index? table
+---@class (exact) Decorator: Class
 ---@field protected explorer Explorer
 ---@field protected enabled boolean
 ---@field protected hl_pos HL_POSITION
 ---@field protected icon_placement ICON_PLACEMENT
-local Decorator = {}
-
----@param o Decorator|nil
----@return Decorator
-function Decorator:new(o)
-  o = o or {}
-
-  setmetatable(o, self)
-  self.__index = self
-
-  return o
-end
+local Decorator = Class:new()
 
 ---Maybe highlight groups
 ---@param node Node
