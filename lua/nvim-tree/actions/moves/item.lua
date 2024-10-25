@@ -74,8 +74,7 @@ end
 
 ---@param node DirectoryNode
 local function expand_node(node)
-  if node:is(DirectoryNode) and not node.open then
-    ---@cast node DirectoryNode
+  if not node.open then
     -- Expand the node.
     -- Should never collapse since we checked open.
     node:expand_or_collapse(false)
