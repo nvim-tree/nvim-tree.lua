@@ -39,7 +39,7 @@
       "lowercase-global": "Any",
       "missing-fields": "Any",
       "missing-global-doc": "Any",
-      "missing-local-export-doc": "None",
+      "missing-local-export-doc": "Any",
       "missing-parameter": "Any",
       "missing-return": "Any",
       "missing-return-value": "Any",
