@@ -45,6 +45,7 @@ local PICTURE_MAP = {
 ---@field extmarks table[] extra marks for right icon placement
 ---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private explorer Explorer
+---@field private opts table
 ---@field private index number
 ---@field private depth number
 ---@field private combined_groups table<string, boolean> combined group names

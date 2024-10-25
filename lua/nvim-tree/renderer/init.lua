@@ -16,7 +16,6 @@ local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtua
 ---@field private __index? table
 ---@field private opts table user options
 ---@field private explorer Explorer
----@field private builder Builder
 local Renderer = {}
 
 ---@param opts table user options
@@ -27,7 +26,6 @@ function Renderer:new(opts, explorer)
   local o = {
     opts = opts,
     explorer = explorer,
-    builder = Builder:new(opts, explorer),
   }
 
   setmetatable(o, self)
