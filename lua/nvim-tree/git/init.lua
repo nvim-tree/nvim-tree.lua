@@ -1,7 +1,8 @@
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
 local git_utils = require("nvim-tree.git.utils")
-local runner = require("nvim-tree.git.runner")
+
+local GitRunner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = nil -- circular dependency
@@ -36,7 +37,7 @@ local WATCHED_FILES = {
 ---@param toplevel string|nil
 ---@param path string|nil
 ---@param project table
----@param statuses GitStatusesXYByPath?
+---@param statuses GitXYByPath?
 local function reload_git_statuses(toplevel, path, project, statuses)
   if path then
     for p in pairs(project.files) do
@@ -105,7 +106,7 @@ function M.reload_project(toplevel, path, callback)
     return
   end
 
-  ---@type RunnerOpts
+  ---@type GitRunnerOpts
   local runner_opts = {
     toplevel = toplevel,
     path = path,
@@ -115,15 +116,15 @@ function M.reload_project(toplevel, path, callback)
   }
 
   if callback then
-    ---@param statuses GitStatusesXYByPath
+    ---@param statuses GitXYByPath
     runner_opts.callback = function(statuses)
       reload_git_statuses(toplevel, path, project, statuses)
       callback()
     end
-    runner(runner_opts)
+    GitRunner:run(runner_opts)
   else
     -- TODO #1974 use callback once async/await is available
-    reload_git_statuses(toplevel, path, project, runner(runner_opts))
+    reload_git_statuses(toplevel, path, project, GitRunner:run(runner_opts))
   end
 end
 
@@ -203,16 +204,16 @@ local function reload_tree_at(toplevel)
   end
 
   log.line("watcher", "git event executing '%s'", toplevel)
-  local root_node = utils.get_node_from_path(toplevel)
-  root_node = root_node and root_node:as(DirectoryNode)
-  if not root_node then
+  local base = utils.get_node_from_path(toplevel)
+  base = base and base:as(DirectoryNode)
+  if not base then
     return
   end
 
   M.reload_project(toplevel, nil, function()
     local git_status = M.get_project(toplevel)
 
-    Iterator.builder(root_node.nodes)
+    Iterator.builder(base.nodes)
       :hidden()
       :applier(function(node)
         local parent_ignored = node.parent and node.parent:is_git_ignored() or false
@@ -224,7 +225,7 @@ local function reload_tree_at(toplevel)
       end)
       :iterate()
 
-    root_node.explorer.renderer:draw()
+    base.explorer.renderer:draw()
   end)
 end
 
@@ -248,7 +249,7 @@ function M.load_project_status(path)
     return status
   end
 
-  local statuses = runner({
+  local statuses = GitRunner:run({
     toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,

@@ -4,21 +4,21 @@ local notify = require("nvim-tree.notify")
 
 local Class = require("nvim-tree.class")
 
----@alias GitStatusesXYByPath table<string, string>
+---@alias GitXYByPath table<string, string> -- short-format statuses
 
----@class (exact) RunnerOpts
+---@class (exact) GitRunnerOpts
 ---@field toplevel string absolute path
 ---@field path string? absolute path
 ---@field list_untracked boolean
 ---@field list_ignored boolean
 ---@field timeout integer
----@field callback fun(statuses: GitStatusesXYByPath)?
+---@field callback fun(statuses: GitXYByPath)?
 
----@class (exact) Runner: Class
----@field opts RunnerOpts
----@field statuses GitStatusesXYByPath
----@field rc integer? -- -1 indicates timeout
-local Runner = Class:new()
+---@class (exact) GitRunner: Class
+---@field private opts GitRunnerOpts
+---@field private statuses GitXYByPath
+---@field private rc integer? -- -1 indicates timeout
+local GitRunner = Class:new()
 
 local timeouts = 0
 local MAX_TIMEOUTS = 5
@@ -26,7 +26,7 @@ local MAX_TIMEOUTS = 5
 ---@private
 ---@param status string
 ---@param path string|nil
-function Runner:parse_status_output(status, path)
+function GitRunner:parse_status_output(status, path)
   if not path then
     return
   end
@@ -44,7 +44,7 @@ end
 ---@param prev_output string
 ---@param incoming string
 ---@return string
-function Runner:handle_incoming_data(prev_output, incoming)
+function GitRunner:handle_incoming_data(prev_output, incoming)
   if incoming and utils.str_find(incoming, "\n") then
     local prev = prev_output .. incoming
     local i = 1
@@ -82,7 +82,7 @@ end
 ---@param stdout_handle uv.uv_pipe_t
 ---@param stderr_handle uv.uv_pipe_t
 ---@return uv.spawn.options
-function Runner:get_spawn_options(stdout_handle, stderr_handle)
+function GitRunner:get_spawn_options(stdout_handle, stderr_handle)
   local untracked = self.opts.list_untracked and "-u" or nil
   local ignored = (self.opts.list_untracked and self.opts.list_ignored) and "--ignored=matching" or "--ignored=no"
   return {
@@ -94,7 +94,7 @@ end
 
 ---@private
 ---@param output string
-function Runner:log_raw_output(output)
+function GitRunner:log_raw_output(output)
   if log.enabled("git") and output and type(output) == "string" then
     log.raw("git", "%s", output)
     log.line("git", "done")
@@ -103,7 +103,7 @@ end
 
 ---@private
 ---@param callback function|nil
-function Runner:run_git_job(callback)
+function GitRunner:run_git_job(callback)
   local handle, pid
   local stdout = vim.loop.new_pipe(false)
   local stderr = vim.loop.new_pipe(false)
@@ -181,7 +181,7 @@ function Runner:run_git_job(callback)
 end
 
 ---@private
-function Runner:wait()
+function GitRunner:wait()
   local function is_done()
     return self.rc ~= nil
   end
@@ -191,7 +191,7 @@ function Runner:wait()
 end
 
 ---@private
-function Runner:finalise()
+function GitRunner:finalise()
   if self.rc == -1 then
     log.line("git", "job timed out  %s %s", self.opts.toplevel, self.opts.path)
     timeouts = timeouts + 1
@@ -207,8 +207,8 @@ function Runner:finalise()
   end
 end
 
----@return GitStatusesXYByPath? statuses nil if callback present
-function Runner:run()
+---@return GitXYByPath? statuses nil if callback present
+function GitRunner:execute()
   local async = self.opts.callback ~= nil
   local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", self.opts.toplevel, self.opts.path)
 
@@ -238,16 +238,18 @@ function Runner:run()
   end
 end
 
----Runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
----@param opts RunnerOpts
----@return GitStatusesXYByPath? statuses nil if callback present
-return function(opts)
-  ---@type Runner
+---Static method to run a git process, which will be killed if it takes more than timeout
+---@param opts GitRunnerOpts
+---@return GitXYByPath? statuses nil if callback present
+function GitRunner:run(opts)
+  ---@type GitRunner
   local runner = {
     opts = opts,
     statuses = {},
   }
-  runner = Runner:new(runner) --[[@as Runner]]
+  runner = GitRunner:new(runner) --[[@as GitRunner]]
 
-  return runner:run()
+  return runner:execute()
 end
+
+return GitRunner
