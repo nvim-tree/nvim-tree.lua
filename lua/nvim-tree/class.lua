@@ -39,7 +39,7 @@ end
 
 -- avoid unused param warnings in abstract methods
 ---@param ... any
-function Class:nop(...)
+function Class:nop(...) --luacheck: ignore 212
 end
 
 return Class
