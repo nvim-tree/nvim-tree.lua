@@ -4,6 +4,7 @@ local git_utils = require("nvim-tree.git.utils")
 local Runner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class GitStatus
 ---@field file string|nil
@@ -201,6 +202,7 @@ local function reload_tree_at(toplevel)
 
   log.line("watcher", "git event executing '%s'", toplevel)
   local root_node = utils.get_node_from_path(toplevel)
+  root_node = root_node and root_node:as(DirectoryNode)
   if not root_node then
     return
   end
@@ -215,7 +217,8 @@ local function reload_tree_at(toplevel)
         node:update_git_status(parent_ignored, git_status)
       end)
       :recursor(function(node)
-        return node.nodes and #node.nodes > 0 and node.nodes
+        local dir = node:as(DirectoryNode)
+        return dir and #dir.nodes > 0 and dir.nodes
       end)
       :iterate()
 
