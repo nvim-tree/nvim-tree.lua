@@ -80,11 +80,12 @@ end
 
 ---@param node DirectoryNode
 ---@param git_status table|nil
+---@return Node[]?
 function Explorer:reload(node, git_status)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
-    return
+    return nil
   end
 
   local profile = log.profile_start("reload %s", node.absolute_path)
@@ -173,10 +174,10 @@ function Explorer:reload(node, git_status)
   local single_child = node:single_child_directory()
   if config.renderer.group_empty and node.parent and single_child then
     node.group_next = single_child
-    local ns = self:reload(single_child, git_status)
-    node.nodes = ns or {}
+    local nodes = self:reload(single_child, git_status)
+    node.nodes = nodes or {}
     log.profile_end(profile)
-    return ns
+    return nodes
   end
 
   self.sorters:sort(node.nodes)

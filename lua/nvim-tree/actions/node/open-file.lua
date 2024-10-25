@@ -375,19 +375,23 @@ function M.fn(mode, filename)
   end
 
   if mode == "tabnew" then
-    return open_file_in_tab(filename)
+    open_file_in_tab(filename)
+    return
   end
 
   if mode == "drop" then
-    return drop(filename)
+    drop(filename)
+    return
   end
 
   if mode == "tab_drop" then
-    return tab_drop(filename)
+    tab_drop(filename)
+    return
   end
 
   if mode == "edit_in_place" then
-    return edit_in_current_buf(filename)
+    edit_in_current_buf(filename)
+    return
   end
 
   local buf_loaded = is_already_loaded(filename)
@@ -409,7 +413,8 @@ function M.fn(mode, filename)
   end
 
   if mode == "preview" or mode == "preview_no_picker" then
-    return on_preview(buf_loaded)
+    on_preview(buf_loaded)
+    return
   end
 
   if M.quit_on_open then
