@@ -369,29 +369,26 @@ end
 
 ---@param mode string
 ---@param filename string
+---@return nil
 function M.fn(mode, filename)
   if type(mode) ~= "string" then
     mode = ""
   end
 
   if mode == "tabnew" then
-    open_file_in_tab(filename)
-    return
+    return open_file_in_tab(filename)
   end
 
   if mode == "drop" then
-    drop(filename)
-    return
+    return drop(filename)
   end
 
   if mode == "tab_drop" then
-    tab_drop(filename)
-    return
+    return tab_drop(filename)
   end
 
   if mode == "edit_in_place" then
-    edit_in_current_buf(filename)
-    return
+    return edit_in_current_buf(filename)
   end
 
   local buf_loaded = is_already_loaded(filename)
@@ -413,8 +410,7 @@ function M.fn(mode, filename)
   end
 
   if mode == "preview" or mode == "preview_no_picker" then
-    on_preview(buf_loaded)
-    return
+    return on_preview(buf_loaded)
   end
 
   if M.quit_on_open then
