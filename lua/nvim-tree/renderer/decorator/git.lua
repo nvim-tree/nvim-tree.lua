@@ -4,15 +4,19 @@ local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 local Decorator = require("nvim-tree.renderer.decorator")
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class HighlightedStringGit: HighlightedString
 ---@field ord number decreasing priority
 
+---@alias IconsByStatus table<string, HighlightedStringGit[]> by human status
+---@alias IconsByXY table<string, HighlightedStringGit[]> by porcelain status
+
 ---@class (exact) DecoratorGit: Decorator
 ---@field file_hl table<string, string>? by porcelain status e.g. "AM"
 ---@field folder_hl table<string, string>? by porcelain status
----@field icons_by_status HighlightedStringGit[]? by human status
----@field icons_by_xy table<string, HighlightedStringGit[]>? by porcelain status
+---@field icons_by_status IconsByStatus?
+---@field icons_by_xy IconsByXY?
 local DecoratorGit = Decorator:new()
 
 ---Static factory method
@@ -49,7 +53,7 @@ function DecoratorGit:create(opts, explorer)
   return o
 end
 
----@param glyphs table<string, string> user glyps
+---@param glyphs IconsByStatus user glyps
 function DecoratorGit:build_icons_by_status(glyphs)
   self.icons_by_status = {
     staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 },
@@ -62,7 +66,7 @@ function DecoratorGit:build_icons_by_status(glyphs)
   }
 end
 
----@param icons HighlightedStringGit[]
+---@param icons IconsByXY
 function DecoratorGit:build_icons_by_xy(icons)
   self.icons_by_xy = {
     ["M "] = { icons.staged },
@@ -214,7 +218,7 @@ function DecoratorGit:calculate_highlight(node)
     return nil
   end
 
-  if node.nodes then
+  if node:is(DirectoryNode) then
     return self.folder_hl[git_status[1]]
   else
     return self.file_hl[git_status[1]]
