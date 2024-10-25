@@ -13,6 +13,7 @@ local LiveFilter = {}
 
 ---@param opts table
 ---@param explorer Explorer
+---@return LiveFilter
 function LiveFilter:new(opts, explorer)
   local o = {
     explorer = explorer,

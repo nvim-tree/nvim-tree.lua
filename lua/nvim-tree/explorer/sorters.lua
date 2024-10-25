@@ -17,7 +17,7 @@ end
 
 --- Predefined comparator, defaulting to name
 ---@param sorter string as per options
----@return function
+---@return fun(a: Node, b: Node): boolean
 function Sorter:get_comparator(sorter)
   return function(a, b)
     return (C[sorter] or C.name)(a, b, self.config)
@@ -41,6 +41,7 @@ end
 ---Evaluate `sort.folders_first` and `sort.files_first`
 ---@param a Node
 ---@param b Node
+---@param cfg table
 ---@return boolean|nil
 local function folders_or_files_first(a, b, cfg)
   if not (cfg.folders_first or cfg.files_first) then
@@ -164,6 +165,7 @@ end
 ---@param a Node
 ---@param b Node
 ---@param ignorecase boolean|nil
+---@param cfg table
 ---@return boolean
 local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
   if not (a and b) then

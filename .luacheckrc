@@ -1,14 +1,15 @@
--- vim: ft=lua tw=80
+local M = {}
 
 -- Don't report unused self arguments of methods.
-self = false
+M.self = false
 
-ignore = {
+M.ignore = {
   "631",  -- max_line_length
 }
 
 -- Global objects defined by the C code
-globals = {
+M.globals = {
   "vim",
-  "TreeExplorer"
 }
+
+return M
