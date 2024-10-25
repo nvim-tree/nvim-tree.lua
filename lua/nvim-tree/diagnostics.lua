@@ -3,6 +3,8 @@ local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local log = require("nvim-tree.log")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 ---COC severity level strings to LSP severity levels
@@ -125,7 +127,7 @@ end
 local function from_cache(node)
   local nodepath = uniformize_path(node.absolute_path)
   local max_severity = nil
-  if not node.nodes then
+  if not node:is(DirectoryNode) then
     -- direct cache hit for files
     max_severity = NODE_SEVERITIES[nodepath]
   else
@@ -184,7 +186,7 @@ function M.get_diag_status(node)
   end
 
   -- dir but we shouldn't show on dirs at all
-  if node.nodes ~= nil and not M.show_on_dirs then
+  if node:is(DirectoryNode) and not M.show_on_dirs then
     return nil
   end
 
@@ -195,13 +197,15 @@ function M.get_diag_status(node)
     node.diag_status = from_cache(node)
   end
 
+  local dir = node:as(DirectoryNode)
+
   -- file
-  if not node.nodes then
+  if not dir then
     return node.diag_status
   end
 
   -- dir is closed or we should show on open_dirs
-  if not node.open or M.show_on_open_dirs then
+  if not dir.open or M.show_on_open_dirs then
     return node.diag_status
   end
   return nil
