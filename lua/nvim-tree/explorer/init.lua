@@ -188,6 +188,7 @@ end
 
 ---@param node DirectoryNode
 ---@param git_status table|nil
+---@return Node[]?
 function Explorer:reload(node, git_status)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)

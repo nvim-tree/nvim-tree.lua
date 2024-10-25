@@ -53,6 +53,7 @@ end
 --- sort vim command lhs roughly as per :help index
 ---@param a string
 ---@param b string
+---@return boolean
 local function sort_lhs(a, b)
   -- mouse first
   if a:match(PAT_MOUSE) and not b:match(PAT_MOUSE) then

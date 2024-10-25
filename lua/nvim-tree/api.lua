@@ -40,14 +40,13 @@ local Api = {
   diagnostics = {},
 }
 
---- Print error when setup not called.
---- f function to invoke
----@param f function
----@return fun(...) : any
-local function wrap(f)
+---Print error when setup not called.
+---@param fn fun(...): any
+---@return fun(...): any
+local function wrap(fn)
   return function(...)
     if vim.g.NvimTreeSetup == 1 then
-      return f(...)
+      return fn(...)
     else
       notify.error("nvim-tree setup not called")
     end
@@ -57,7 +56,7 @@ end
 ---Invoke a method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_method string explorer method name
----@return fun(...) : any
+---@return fun(...): any
 local function wrap_explorer(explorer_method)
   return wrap(function(...)
     local explorer = core.get_explorer()
@@ -68,7 +67,8 @@ local function wrap_explorer(explorer_method)
 end
 
 ---Inject the node as the first argument if present otherwise do nothing.
----@param fn function function to invoke
+---@param fn fun(node: Node, ...): any
+---@return fun(node: Node, ...): any
 local function wrap_node(fn)
   return function(node, ...)
     node = node or wrap_explorer("get_node_at_cursor")()
@@ -79,7 +79,8 @@ local function wrap_node(fn)
 end
 
 ---Inject the node or nil as the first argument if absent.
----@param fn function function to invoke
+---@param fn fun(node: Node, ...): any
+---@return fun(node: Node, ...): any
 local function wrap_node_or_nil(fn)
   return function(node, ...)
     node = node or wrap_explorer("get_node_at_cursor")()
@@ -91,7 +92,7 @@ end
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
----@return fun(...) : any
+---@return fun(...): any
 local function wrap_explorer_member(explorer_member, member_method)
   return wrap(function(...)
     local explorer = core.get_explorer()
@@ -210,6 +211,7 @@ local function edit(mode, node)
 end
 
 ---@param mode string
+---@param toggle_group boolean?
 ---@return fun(node: Node)
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node

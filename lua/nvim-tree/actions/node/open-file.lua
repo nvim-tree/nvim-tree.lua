@@ -369,6 +369,7 @@ end
 
 ---@param mode string
 ---@param filename string
+---@return nil
 function M.fn(mode, filename)
   if type(mode) ~= "string" then
     mode = ""

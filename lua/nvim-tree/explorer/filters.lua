@@ -107,9 +107,11 @@ local function dotfile(self, path)
   return self.config.filter_dotfiles and utils.path_basename(path):sub(1, 1) == "."
 end
 
+---Bookmark is present
 ---@param path string
 ---@param path_type string|nil filetype of path
 ---@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
+---@return boolean
 local function bookmark(self, path, path_type, bookmarks)
   if not self.config.filter_no_bookmark then
     return false

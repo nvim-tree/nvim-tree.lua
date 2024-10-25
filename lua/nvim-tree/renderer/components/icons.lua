@@ -5,10 +5,16 @@ local function config_symlinks()
   M.i.symlink_arrow = M.config.symlink_arrow
 end
 
+---@return string icon
+---@return string? name
 local function empty()
-  return ""
+  return "", nil
 end
 
+---@param node Node
+---@param has_children boolean
+---@return string icon
+---@return string? name
 local function get_folder_icon_default(node, has_children)
   local is_symlink = node.links_to ~= nil
   local n
@@ -32,6 +38,10 @@ local function get_folder_icon_default(node, has_children)
   return n, nil
 end
 
+---@param node Node
+---@param has_children boolean
+---@return string icon
+---@return string? name
 local function get_folder_icon_webdev(node, has_children)
   local icon, hl_group = M.devicons.get_icon(node.name, node.extension)
   if not M.config.web_devicons.folder.color then
@@ -44,16 +54,22 @@ local function get_folder_icon_webdev(node, has_children)
   end
 end
 
+---@return string icon
+---@return string? name
 local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
   local icon = M.config.glyphs.default
   if #icon > 0 then
     return icon, hl_group
   else
-    return ""
+    return "", nil
   end
 end
 
+---@param fname string
+---@param extension string
+---@return string icon
+---@return string? name
 local function get_file_icon_webdev(fname, extension)
   local icon, hl_group = M.devicons.get_icon(fname, extension)
   if not M.config.web_devicons.file.color then

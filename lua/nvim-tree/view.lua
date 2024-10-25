@@ -124,6 +124,7 @@ local function get_size(size)
 end
 
 ---@param size (fun():integer)|integer|nil
+---@return integer
 local function get_width(size)
   if size then
     return get_size(size)
@@ -411,6 +412,7 @@ function M.abandon_all_windows()
 end
 
 ---@param opts table|nil
+---@return boolean
 function M.is_visible(opts)
   if opts and opts.tabpage then
     if M.View.tabpages[opts.tabpage] == nil then

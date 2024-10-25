@@ -41,6 +41,8 @@ end
 ---@param lines string[]
 ---@param hl_args AddHighlightArgs[]
 ---@param signs string[]
+---@param extmarks table[] extra marks for right icon placement
+---@param virtual_lines table[] virtual lines for hidden count display
 function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
