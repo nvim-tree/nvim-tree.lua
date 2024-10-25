@@ -42,13 +42,12 @@ local Api = {
 }
 
 --- Print error when setup not called.
---- f function to invoke
----@param f function
----@return fun(...) : any
-local function wrap(f)
+---@param fn fun(...)
+---@return fun(...)
+local function wrap(fn)
   return function(...)
     if vim.g.NvimTreeSetup == 1 then
-      return f(...)
+      return fn(...)
     else
       notify.error("nvim-tree setup not called")
     end
@@ -56,7 +55,8 @@ local function wrap(f)
 end
 
 ---Inject the node as the first argument if present otherwise do nothing.
----@param fn function function to invoke
+---@param fn fun(node: Node, ...)
+---@return fun(node: Node, ...)
 local function wrap_node(fn)
   return function(node, ...)
     node = node or lib.get_node_at_cursor()
@@ -67,7 +67,8 @@ local function wrap_node(fn)
 end
 
 ---Inject the node or nil as the first argument if absent.
----@param fn function function to invoke
+---@param fn fun(node: Node, ...)
+---@return fun(node: Node, ...)
 local function wrap_node_or_nil(fn)
   return function(node, ...)
     node = node or lib.get_node_at_cursor()
@@ -211,6 +212,7 @@ local function edit(mode, node)
 end
 
 ---@param mode string
+---@param toggle_group boolean?
 ---@return fun(node: Node)
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
@@ -286,7 +288,7 @@ Api.config.mappings.default_on_attach = keymap.default_on_attach
 Api.diagnostics.hi_test = wrap(appearance_diagnostics.hi_test)
 
 Api.commands.get = wrap(function()
-  return require("nvim-tree.commands").get()
+  require("nvim-tree.commands").get()
 end)
 
 return Api

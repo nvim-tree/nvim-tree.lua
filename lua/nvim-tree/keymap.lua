@@ -1,7 +1,7 @@
 local M = {}
 
 --- Apply mappings to a scratch buffer and return buffer local mappings
----@param fn function(bufnr) on_attach or default_on_attach
+---@param fn fun(bufnr: integer) on_attach or default_on_attach
 ---@return table as per vim.api.nvim_buf_get_keymap
 local function generate_keymap(fn)
   -- create an unlisted scratch buffer

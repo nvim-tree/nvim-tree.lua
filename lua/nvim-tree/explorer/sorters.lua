@@ -17,7 +17,7 @@ end
 
 --- Predefined comparator, defaulting to name
 ---@param sorter string as per options
----@return function
+---@return fun(a: Node, b: Node): boolean
 function Sorter:get_comparator(sorter)
   return function(a, b)
     return (C[sorter] or C.name)(a, b, self.config)
