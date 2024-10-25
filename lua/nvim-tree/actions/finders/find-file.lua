@@ -2,6 +2,8 @@ local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
+
+local DirectoryNode = require("nvim-tree.node.directory")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 
 local M = {}
@@ -43,7 +45,6 @@ function M.fn(path)
       return node.absolute_path == path_real or node.link_to == path_real
     end)
     :applier(function(node)
-      ---@cast node DirectoryNode
       local incremented_line = false
       if not node.group_next then
         line = line + 1
@@ -59,19 +60,27 @@ function M.fn(path)
       local link_match = node.link_to and vim.startswith(path_real, node.link_to .. utils.path_separator)
 
       if abs_match or link_match then
-        if not node.group_next then
-          node.open = true
-        end
-        if #node.nodes == 0 then
-          core.get_explorer():expand(node)
-          if node.group_next and incremented_line then
-            line = line - 1
+        local dir = node:as(DirectoryNode)
+        if dir then
+          if not dir.group_next then
+            dir.open = true
+          end
+          if #dir.nodes == 0 then
+            core.get_explorer():expand(dir)
+            if dir.group_next and incremented_line then
+              line = line - 1
+            end
           end
         end
       end
     end)
     :recursor(function(node)
-      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+      node = node and node:as(DirectoryNode)
+      if node then
+        return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+      else
+        return nil
+      end
     end)
     :iterate()
 
