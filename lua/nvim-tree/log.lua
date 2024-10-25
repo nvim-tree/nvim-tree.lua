@@ -92,7 +92,7 @@ end
 ---@param typ string as per log.types config
 ---@param node Node? node to be inspected
 ---@param fmt string for string.format
----@vararg any arguments for string.format
+---@param ... any arguments for string.format
 function M.node(typ, node, fmt, ...)
   if M.enabled(typ) then
     node = node or require("nvim-tree.lib").get_node_at_cursor()

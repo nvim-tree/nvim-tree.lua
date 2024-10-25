@@ -61,6 +61,7 @@ end
 ---@param nodes_number integer
 ---@param node Node
 ---@param markers table
+---@param early_stop integer?
 ---@return HighlightedString[]
 function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_stop)
   local str = ""
