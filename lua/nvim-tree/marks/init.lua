@@ -200,7 +200,8 @@ function Marks:navigate(up)
 
   Iterator.builder(self.explorer.nodes)
     :recursor(function(n)
-      return n.open and n.nodes
+      local dir = n:as(DirectoryNode)
+      return dir and dir.open and dir.nodes
     end)
     :applier(function(n)
       if n.absolute_path == node.absolute_path then
@@ -263,7 +264,7 @@ function Marks:navigate_select()
       return
     end
     local node = self.marks[choice]
-    if node and not node.nodes and not utils.get_win_buf_from_path(node.absolute_path) then
+    if node and not node:is(DirectoryNode) and not utils.get_win_buf_from_path(node.absolute_path) then
       open_file.fn("edit", node.absolute_path)
     elseif node then
       utils.focus_file(node.absolute_path)
