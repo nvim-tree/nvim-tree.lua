@@ -1,6 +1,8 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
+
 local Decorator = require("nvim-tree.renderer.decorator")
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) DecoratorHidden: Decorator
 ---@field icon HighlightedString?
@@ -48,7 +50,7 @@ function DecoratorHidden:calculate_highlight(node)
     return nil
   end
 
-  if node.nodes then
+  if node:is(DirectoryNode) then
     return "NvimTreeHiddenFolderHL"
   else
     return "NvimTreeHiddenFileHL"

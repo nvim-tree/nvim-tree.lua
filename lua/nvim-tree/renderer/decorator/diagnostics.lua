@@ -4,6 +4,7 @@ local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 
 local Decorator = require("nvim-tree.renderer.decorator")
+local DirectoryNode = require("nvim-tree.node.directory")
 
 -- highlight groups by severity
 local HG_ICON = {
@@ -98,7 +99,7 @@ function DecoratorDiagnostics:calculate_highlight(node)
   end
 
   local group
-  if node.nodes then
+  if node:is(DirectoryNode) then
     group = HG_FOLDER[diag_value]
   else
     group = HG_FILE[diag_value]
