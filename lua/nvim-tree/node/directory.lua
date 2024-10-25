@@ -139,6 +139,19 @@ function DirectoryNode:refresh()
   end)
 end
 
+---@param projects table
+function DirectoryNode:reload_node_status(projects)
+  local toplevel = git.get_toplevel(self.absolute_path)
+  local status = projects[toplevel] or {}
+  for _, node in ipairs(self.nodes) do
+    node:update_git_status(self:is_git_ignored(), status)
+    local dir = node:as(DirectoryNode)
+    if dir and #dir.nodes > 0 then
+      dir:reload_node_status(projects)
+    end
+  end
+end
+
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
 ---@return DirectoryNode
 function DirectoryNode:last_group_node()

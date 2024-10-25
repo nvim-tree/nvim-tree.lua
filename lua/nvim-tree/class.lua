@@ -37,4 +37,9 @@ function Class:as(class)
   return self:is(class) and self or nil
 end
 
+-- avoid unused param warnings in abstract methods
+---@param ... any
+function Class:nop(...)
+end
+
 return Class

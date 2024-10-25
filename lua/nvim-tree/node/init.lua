@@ -21,30 +21,16 @@ local Node = Class:new()
 function Node:destroy()
 end
 
---luacheck: push ignore 212
 ---Update the GitStatus of the node
+---Abstract
 ---@param parent_ignored boolean
 ---@param status table?
-function Node:update_git_status(parent_ignored, status) ---@diagnostic disable-line: unused-local
-  ---TODO find a way to declare abstract methods
+function Node:update_git_status(parent_ignored, status)
+  self:nop(parent_ignored, status)
 end
-
---luacheck: pop
 
 ---@return GitStatus?
 function Node:get_git_status()
-end
-
----@param projects table
-function Node:reload_node_status(projects)
-  local toplevel = git.get_toplevel(self.absolute_path)
-  local status = projects[toplevel] or {}
-  for _, node in ipairs(self.nodes) do
-    node:update_git_status(self:is_git_ignored(), status)
-    if node.nodes and #node.nodes > 0 then
-      node:reload_node_status(projects)
-    end
-  end
 end
 
 ---@return boolean
