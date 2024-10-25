@@ -58,10 +58,11 @@ function M.get_toplevel(cwd)
   return toplevel, git_dir
 end
 
+---@type table<string, boolean>
 local untracked = {}
 
 ---@param cwd string
----@return string|nil
+---@return boolean
 function M.should_show_untracked(cwd)
   if untracked[cwd] ~= nil then
     return untracked[cwd]

@@ -1,7 +1,7 @@
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
 local git_utils = require("nvim-tree.git.utils")
-local Runner = require("nvim-tree.git.runner")
+local runner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = nil -- circular dependency
@@ -36,17 +36,17 @@ local WATCHED_FILES = {
 ---@param toplevel string|nil
 ---@param path string|nil
 ---@param project table
----@param git_status table|nil
-local function reload_git_status(toplevel, path, project, git_status)
+---@param statuses GitStatusesXYByPath?
+local function reload_git_statuses(toplevel, path, project, statuses)
   if path then
     for p in pairs(project.files) do
       if p:find(path, 1, true) == 1 then
         project.files[p] = nil
       end
     end
-    project.files = vim.tbl_deep_extend("force", project.files, git_status)
+    project.files = vim.tbl_deep_extend("force", project.files, statuses)
   else
-    project.files = git_status
+    project.files = statuses
   end
 
   project.dirs = git_utils.file_status_to_dir_status(project.files, toplevel)
@@ -105,7 +105,8 @@ function M.reload_project(toplevel, path, callback)
     return
   end
 
-  local opts = {
+  ---@type RunnerOpts
+  local runner_opts = {
     toplevel = toplevel,
     path = path,
     list_untracked = git_utils.should_show_untracked(toplevel),
@@ -114,14 +115,15 @@ function M.reload_project(toplevel, path, callback)
   }
 
   if callback then
-    Runner.run(opts, function(git_status)
-      reload_git_status(toplevel, path, project, git_status)
+    ---@param statuses GitStatusesXYByPath
+    runner_opts.callback = function(statuses)
+      reload_git_statuses(toplevel, path, project, statuses)
       callback()
-    end)
+    end
+    runner(runner_opts)
   else
     -- TODO #1974 use callback once async/await is available
-    local git_status = Runner.run(opts)
-    reload_git_status(toplevel, path, project, git_status)
+    reload_git_statuses(toplevel, path, project, runner(runner_opts))
   end
 end
 
@@ -246,7 +248,7 @@ function M.load_project_status(path)
     return status
   end
 
-  local git_status = Runner.run({
+  local statuses = runner({
     toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
@@ -273,10 +275,10 @@ function M.load_project_status(path)
     })
   end
 
-  if git_status then
+  if statuses then
     M._projects_by_toplevel[toplevel] = {
-      files = git_status,
-      dirs = git_utils.file_status_to_dir_status(git_status, toplevel),
+      files = statuses,
+      dirs = git_utils.file_status_to_dir_status(statuses, toplevel),
       watcher = watcher,
     }
     return M._projects_by_toplevel[toplevel]
