@@ -4,7 +4,7 @@ local git_utils = require("nvim-tree.git.utils")
 local Runner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
-local DirectoryNode = require("nvim-tree.node.directory")
+local DirectoryNode = nil -- circular dependency
 
 ---@class GitStatus
 ---@field file string|nil
@@ -352,6 +352,7 @@ end
 function M.setup(opts)
   M.config.git = opts.git
   M.config.filesystem_watchers = opts.filesystem_watchers
+  DirectoryNode = require("nvim-tree.node.directory")
 end
 
 return M
