@@ -30,15 +30,18 @@ end
 ---@param node Node
 ---@return boolean
 local function should_expand(expansion_count, node)
+  local dir = node:as(DirectoryNode)
+  if not dir then
+    return false
+  end
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
-  local should_exclude = M.EXCLUDE[node.name]
-  return not should_halt and node.nodes and not node.open and not should_exclude
+  local should_exclude = M.EXCLUDE[dir.name]
+  return not should_halt and not dir.open and not should_exclude
 end
 
 local function gen_iterator()
   local expansion_count = 0
 
-  ---@param parent DirectoryNode
   return function(parent)
     if parent.parent and parent.nodes and not parent.open then
       expansion_count = expansion_count + 1
@@ -47,14 +50,15 @@ local function gen_iterator()
 
     Iterator.builder(parent.nodes)
       :hidden()
-    ---@param node DirectoryNode
       :applier(function(node)
         if should_expand(expansion_count, node) then
           expansion_count = expansion_count + 1
-          expand(node)
+          node = node:as(DirectoryNode)
+          if node then
+            expand(node)
+          end
         end
       end)
-    ---@param node DirectoryNode
       :recursor(function(node)
         return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
       end)
