@@ -59,6 +59,17 @@ function M.path_basename(path)
   return path:sub(i + 1, #path)
 end
 
+--- Check if there are parentheses before brackets, it causes problems for windows.
+--- Refer to issue #2862 and #2961 for more details.
+local function has_parentheses_and_brackets(path)
+  local _, i_parentheses = path:find("(", 1, true)
+  local _, i_brackets = path:find("[", 1, true)
+  if i_parentheses and i_brackets then
+    return true
+  end
+  return false
+end
+
 --- Get a path relative to another path.
 ---@param path string
 ---@param relative_to string|nil
@@ -68,13 +79,18 @@ function M.path_relative(path, relative_to)
     return path
   end
 
-  local _, r = path:find(M.path_add_trailing(relative_to), 1, true)
-  local p = path
+  local norm_path = path
+  if M.is_windows and has_parentheses_and_brackets(path) then
+    norm_path = path:gsub("/", "\\")
+  end
+
+  local _, r = norm_path:find(M.path_add_trailing(relative_to), 1, true)
+  local p = norm_path
   if r then
     -- take the relative path starting after '/'
     -- if somehow given a completely matching path,
     -- returns ""
-    p = path:sub(r + 1)
+    p = norm_path:sub(r + 1)
   end
   return p
 end
@@ -272,6 +288,14 @@ function M.canonical_path(path)
   return path
 end
 
+--- Escapes special characters in string for windows, refer to issue #2862 and #2961 for more details.
+local function escape_special_char_for_windows(path)
+  if has_parentheses_and_brackets(path) then
+    return path:gsub("\\", "/"):gsub("/ ", "\\ ")
+  end
+  return path:gsub("%(", "\\("):gsub("%)", "\\)")
+end
+
 --- Escapes special characters in string if windows else returns unmodified string.
 ---@param path string
 ---@return string|nil
@@ -279,7 +303,7 @@ function M.escape_special_chars(path)
   if path == nil then
     return path
   end
-  return M.is_windows and path:gsub("\\", "/") or path
+  return M.is_windows and escape_special_char_for_windows(path) or path
 end
 
 --- Create empty sub-tables if not present

@@ -2,10 +2,6 @@ local git = require("nvim-tree.git")
 
 local Class = require("nvim-tree.class")
 
----TODO #2886
----TODO remove all @cast
----TODO remove all references to directory fields:
-
 ---Abstract Node class.
 ---Uses the abstract factory pattern to instantiate child instances.
 ---@class (exact) Node: Class

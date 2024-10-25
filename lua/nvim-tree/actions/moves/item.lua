@@ -72,7 +72,7 @@ local function move(explorer, where, what, skip_gitignored)
   end
 end
 
----@param node Node
+---@param node DirectoryNode
 local function expand_node(node)
   if node:is(DirectoryNode) and not node.open then
     ---@cast node DirectoryNode
@@ -101,9 +101,9 @@ local function move_next_recursive(explorer, what, skip_gitignored)
   if node_init.name ~= ".." then -- root node cannot have a status
     valid = status_is_valid(node_init, what, skip_gitignored)
   end
-  if node_init:is(DirectoryNode) and valid and not node_init.open then
-    ---@cast node_init DirectoryNode
-    node_init:expand_or_collapse(false)
+  local node_dir = node_init:as(DirectoryNode)
+  if node_dir and valid and not node_dir.open then
+    node_dir:expand_or_collapse(false)
   end
 
   move(explorer, "next", what, skip_gitignored)
@@ -120,20 +120,15 @@ local function move_next_recursive(explorer, what, skip_gitignored)
 
   -- i is used to limit iterations.
   local i = 0
-  local is_dir = node_cur.nodes ~= nil
-  while is_dir and i < MAX_DEPTH do
-    expand_node(node_cur)
+  local dir_cur = node_cur:as(DirectoryNode)
+  while dir_cur and i < MAX_DEPTH do
+    expand_node(dir_cur)
 
     move(explorer, "next", what, skip_gitignored)
 
     -- Save current node.
     node_cur = explorer:get_node_at_cursor()
-    -- Update is_dir.
-    if node_cur then
-      is_dir = node_cur.nodes ~= nil
-    else
-      is_dir = false
-    end
+    dir_cur = node_cur and node_cur:as(DirectoryNode)
 
     i = i + 1
   end
@@ -187,8 +182,10 @@ local function move_prev_recursive(explorer, what, skip_gitignored)
       end
 
       -- 4.2)
-      local node_dir = node_cur
-      expand_node(node_dir)
+      local node_dir = node_cur:as(DirectoryNode)
+      if node_dir then
+        expand_node(node_dir)
+      end
 
       -- 4.3)
       if node_init.name == ".." then -- root node
