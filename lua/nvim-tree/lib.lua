@@ -108,7 +108,7 @@ end
 ---@param items_short string[]
 ---@param items_long string[]
 ---@param kind string|nil
----@param callback fun(item_short: string)
+---@param callback fun(item_short: string|nil)
 function M.prompt(prompt_input, prompt_select, items_short, items_long, kind, callback)
   local function format_item(short)
     for i, s in ipairs(items_short) do
