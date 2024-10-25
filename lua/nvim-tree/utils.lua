@@ -1,8 +1,6 @@
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local notify = require("nvim-tree.notify")
 
-local DirectoryNode = require("nvim-tree.node.directory")
-
 local M = {
   debouncers = {},
 }
@@ -126,12 +124,7 @@ function M.find_node(nodes, fn)
   local node, i = Iterator.builder(nodes)
     :matcher(fn)
     :recursor(function(node)
-      local dir = node:as(DirectoryNode)
-      if dir then
-        return dir.group_next and { dir.group_next } or (dir.open and #dir.nodes > 0 and dir.nodes)
-      else
-        return false
-      end
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
   i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
@@ -186,12 +179,11 @@ function M.get_node_from_path(path)
       return node.absolute_path == path or node.link_to == path
     end)
     :recursor(function(node)
-      local dir = node:as(DirectoryNode)
-      if dir and dir.group_next then
-        return { dir.group_next }
+      if node.group_next then
+        return { node.group_next }
       end
-      if dir then
-        return dir.nodes
+      if node.nodes then
+        return node.nodes
       end
     end)
     :iterate()
@@ -227,20 +219,14 @@ function M.get_nodes_by_line(nodes_all, line_start)
 
   Iterator.builder(nodes_all)
     :applier(function(node)
-      local dir = node:as(DirectoryNode)
-      if dir and dir.group_next then
+      if node.group_next then
         return
       end
       nodes_by_line[line] = node
       line = line + 1
     end)
     :recursor(function(node)
-      local dir = node:as(DirectoryNode)
-      if dir then
-        return dir.group_next and { dir.group_next } or (dir.open and #dir.nodes > 0 and dir.nodes)
-      else
-        return false
-      end
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
 
