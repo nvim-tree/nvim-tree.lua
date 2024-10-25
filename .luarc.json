@@ -33,7 +33,7 @@
       "empty-block": "Any",
       "global-element": "Any",
       "global-in-nil-env": "Any",
-      "incomplete-signature-doc": "None",
+      "incomplete-signature-doc": "Any",
       "inject-field": "Any",
       "invisible": "Any",
       "lowercase-global": "Any",
