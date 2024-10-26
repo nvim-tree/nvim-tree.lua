@@ -37,18 +37,18 @@ local function reset_filter(self, node_)
   local dir_ = node_:as(DirectoryNode)
   if dir_ then
     dir_.hidden_stats = vim.tbl_deep_extend("force", dir_.hidden_stats or {}, { live_filter = 0, })
-  end
 
-  Iterator.builder(node_.nodes)
-    :hidden()
-    :applier(function(node)
-      node.hidden = false
-      local dir = node:as(DirectoryNode)
-      if dir then
-        dir.hidden_stats = vim.tbl_deep_extend("force", dir.hidden_stats or {}, { live_filter = 0, })
-      end
-    end)
-    :iterate()
+    Iterator.builder(dir_.nodes)
+      :hidden()
+      :applier(function(node)
+        node.hidden = false
+        local dir = node:as(DirectoryNode)
+        if dir then
+          dir.hidden_stats = vim.tbl_deep_extend("force", dir.hidden_stats or {}, { live_filter = 0, })
+        end
+      end)
+      :iterate()
+  end
 end
 
 local overlay_bufnr = 0
