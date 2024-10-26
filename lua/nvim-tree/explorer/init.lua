@@ -321,7 +321,7 @@ function Explorer:refresh_parent_nodes_for_path(path)
     local project = git.get_project(toplevel) or {}
 
     self:reload(node, project)
-    node:update_parent_statuses(project, toplevel)
+    git.update_parent_statuses(node, project, toplevel)
   end
 
   log.profile_end(profile)
