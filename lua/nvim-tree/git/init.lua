@@ -338,17 +338,19 @@ function M.refresh_dir(dir)
   end)
 end
 
----@param n DirectoryNode
+---@param dir DirectoryNode?
 ---@param projects table
-function M.reload_node_status(n, projects)
-  local toplevel = M.get_toplevel(n.absolute_path)
+function M.reload_node_status(dir, projects)
+  dir = dir and dir:as(DirectoryNode)
+  if not dir or #dir.nodes == 0 then
+    return
+  end
+
+  local toplevel = M.get_toplevel(dir.absolute_path)
   local status = projects[toplevel] or {}
-  for _, node in ipairs(n.nodes) do
-    node:update_git_status(n:is_git_ignored(), status)
-    local dir = node:as(DirectoryNode)
-    if dir and #dir.nodes > 0 then
-      dir:reload_node_status(projects)
-    end
+  for _, node in ipairs(dir.nodes) do
+    node:update_git_status(dir:is_git_ignored(), status)
+    M.reload_node_status(node:as(DirectoryNode), projects)
   end
 end
 
