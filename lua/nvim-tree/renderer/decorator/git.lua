@@ -9,10 +9,11 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@class (exact) GitHighlightedString: HighlightedString
 ---@field ord number decreasing priority
 
----@alias GitStatuses "deleted"|"ignored"|"renamed"|"staged"|"unmerged"|"unstaged"|"untracked"
----@alias GitIconsByStatus table<GitStatuses, GitHighlightedString> human status
+---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"
+
+---@alias GitIconsByStatus table<GitStatusStrings, GitHighlightedString> human status
 ---@alias GitIconsByXY table<string, GitHighlightedString[]> porcelain status
----@alias GitGlyphs table<GitStatuses, string> from opts
+---@alias GitGlyphs table<GitStatusStrings, string> from opts
 
 ---@class (exact) DecoratorGit: Decorator
 ---@field file_hl_by_xy table<string, string>?
