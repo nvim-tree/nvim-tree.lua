@@ -478,7 +478,7 @@ function Explorer:reload_git()
   event_running = true
 
   local projects = git.reload()
-  self:reload_node_status(projects)
+  git.reload_node_status(self, projects)
   self.renderer:draw()
   event_running = false
 end

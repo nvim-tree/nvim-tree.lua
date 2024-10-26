@@ -5,7 +5,7 @@ local git_utils = require("nvim-tree.git.utils")
 local GitRunner = require("nvim-tree.git.runner")
 local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
-local DirectoryNode = nil -- circular dependency
+local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class GitStatus -- xy short-format statuses
 ---@field file string?
@@ -289,46 +289,67 @@ function M.load_project_status(path)
   end
 end
 
----Git file and directory status for an absolute path with optional file fallback
----@param parent_ignored boolean
----@param status table|nil
----@param path string
----@param path_file string? alternative file path when no other file status
----@return GitStatus|nil
-function M.git_status_dir(parent_ignored, status, path, path_file)
-  if parent_ignored then
-    return { file = "!!" }
-  end
+---@param dir DirectoryNode
+---@param project table?
+---@param root string?
+function M.update_parent_statuses(dir, project, root)
+  while project and dir do
+    -- step up to the containing project
+    if dir.absolute_path == root then
+      -- stop at the top of the tree
+      if not dir.parent then
+        break
+      end
 
-  if status then
-    return {
-      file = status.files and (status.files[path] or status.files[path_file]),
-      dir = status.dirs and {
-        direct = status.dirs.direct and status.dirs.direct[path],
-        indirect = status.dirs.indirect and status.dirs.indirect[path],
-      },
-    }
+      root = M.get_toplevel(dir.parent.absolute_path)
+
+      -- stop when no more projects
+      if not root then
+        break
+      end
+
+      -- update the containing project
+      project = M.get_project(root)
+      M.reload_project(root, dir.absolute_path, nil)
+    end
+
+    -- update status
+    dir:update_git_status(dir.parent and dir.parent:is_git_ignored() or false, project)
+
+    -- maybe parent
+    dir = dir.parent
   end
 end
 
----Git file status for an absolute path with optional fallback
----@param parent_ignored boolean
----@param status table|nil
----@param path string
----@param path_fallback string?
----@return GitStatus
-function M.git_status_file(parent_ignored, status, path, path_fallback)
-  if parent_ignored then
-    return { file = "!!" }
-  end
+---Refresh contents and git status for a single directory
+---@param dir DirectoryNode
+function M.refresh_dir(dir)
+  local node = dir:get_parent_of_group() or dir
+  local toplevel = M.get_toplevel(dir.absolute_path)
 
-  if not status or not status.files then
-    return {}
-  end
+  M.reload_project(toplevel, dir.absolute_path, function()
+    local project = M.get_project(toplevel) or {}
 
-  return {
-    file = status.files[path] or status.files[path_fallback]
-  }
+    dir.explorer:reload(node, project)
+
+    M.update_parent_statuses(dir, project, toplevel)
+
+    dir.explorer.renderer:draw()
+  end)
+end
+
+---@param n DirectoryNode
+---@param projects table
+function M.reload_node_status(n, projects)
+  local toplevel = M.get_toplevel(n.absolute_path)
+  local status = projects[toplevel] or {}
+  for _, node in ipairs(n.nodes) do
+    node:update_git_status(n:is_git_ignored(), status)
+    local dir = node:as(DirectoryNode)
+    if dir and #dir.nodes > 0 then
+      dir:reload_node_status(projects)
+    end
+  end
 end
 
 function M.purge_state()
@@ -355,7 +376,6 @@ end
 function M.setup(opts)
   M.config.git = opts.git
   M.config.filesystem_watchers = opts.filesystem_watchers
-  DirectoryNode = require("nvim-tree.node.directory")
 end
 
 return M

@@ -1,4 +1,5 @@
 local log = require("nvim-tree.log")
+local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
 local Watcher = require("nvim-tree.watcher").Watcher
 
@@ -76,7 +77,7 @@ function M.create_watcher(node)
       else
         log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
       end
-      node:refresh()
+      git.refresh_dir(node)
     end)
   end
 

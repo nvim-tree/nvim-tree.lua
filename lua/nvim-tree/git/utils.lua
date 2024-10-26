@@ -127,6 +127,48 @@ function M.file_status_to_dir_status(status, cwd)
   return r
 end
 
+---Git file status for an absolute path with optional fallback
+---@param parent_ignored boolean
+---@param status table|nil
+---@param path string
+---@param path_fallback string?
+---@return GitStatus
+function M.git_status_file(parent_ignored, status, path, path_fallback)
+  if parent_ignored then
+    return { file = "!!" }
+  end
+
+  if not status or not status.files then
+    return {}
+  end
+
+  return {
+    file = status.files[path] or status.files[path_fallback]
+  }
+end
+
+---Git file and directory status for an absolute path with optional file fallback
+---@param parent_ignored boolean
+---@param status table|nil
+---@param path string
+---@param path_file string? alternative file path when no other file status
+---@return GitStatus|nil
+function M.git_status_dir(parent_ignored, status, path, path_file)
+  if parent_ignored then
+    return { file = "!!" }
+  end
+
+  if status then
+    return {
+      file = status.files and (status.files[path] or status.files[path_file]),
+      dir = status.dirs and {
+        direct = status.dirs.direct and status.dirs.direct[path],
+        indirect = status.dirs.indirect and status.dirs.indirect[path],
+      },
+    }
+  end
+end
+
 function M.setup(opts)
   if opts.git.cygwin_support then
     M.use_cygpath = vim.fn.executable("cygpath") == 1

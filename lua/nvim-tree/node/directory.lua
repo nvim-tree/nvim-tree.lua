@@ -1,5 +1,4 @@
-local git = require("nvim-tree.git")
-local watch = require("nvim-tree.explorer.watch")
+local git_utils = require("nvim-tree.git.utils")
 
 local Node = require("nvim-tree.node")
 
@@ -46,7 +45,7 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
   }
   o = self:new(o) --[[@as DirectoryNode]]
 
-  o.watcher = watch.create_watcher(o)
+  o.watcher = require("nvim-tree.explorer.watch").create_watcher(o)
 
   return o
 end
@@ -70,7 +69,7 @@ end
 ---@param parent_ignored boolean
 ---@param status table|nil
 function DirectoryNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_dir(parent_ignored, status, self.absolute_path, nil)
+  self.git_status = git_utils.git_status_dir(parent_ignored, status, self.absolute_path, nil)
 end
 
 ---@return string[]? xy short-format statuses
@@ -120,35 +119,6 @@ function DirectoryNode:get_git_status()
     return nil
   else
     return status
-  end
-end
-
----Refresh contents and git status for a single node
-function DirectoryNode:refresh()
-  local node = self:get_parent_of_group() or self
-  local toplevel = git.get_toplevel(self.absolute_path)
-
-  git.reload_project(toplevel, self.absolute_path, function()
-    local project = git.get_project(toplevel) or {}
-
-    self.explorer:reload(node, project)
-
-    node:update_parent_statuses(project, toplevel)
-
-    self.explorer.renderer:draw()
-  end)
-end
-
----@param projects table
-function DirectoryNode:reload_node_status(projects)
-  local toplevel = git.get_toplevel(self.absolute_path)
-  local status = projects[toplevel] or {}
-  for _, node in ipairs(self.nodes) do
-    node:update_git_status(self:is_git_ignored(), status)
-    local dir = node:as(DirectoryNode)
-    if dir and #dir.nodes > 0 then
-      dir:reload_node_status(projects)
-    end
   end
 end
 

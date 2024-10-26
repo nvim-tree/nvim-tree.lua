@@ -1,4 +1,4 @@
-local git = require("nvim-tree.git")
+local git_utils = require("nvim-tree.git.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -40,7 +40,7 @@ end
 -----@param parent_ignored boolean
 -----@param status table|nil
 function DirectoryLinkNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_dir(parent_ignored, status, self.link_to, self.absolute_path)
+  self.git_status = git_utils.git_status_dir(parent_ignored, status, self.link_to, self.absolute_path)
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

@@ -1,5 +1,3 @@
-local git = require("nvim-tree.git")
-
 local Class = require("nvim-tree.class")
 
 ---Abstract Node class.
@@ -50,38 +48,6 @@ function Node:is_dotfile()
     return true
   end
   return false
-end
-
----@param project table?
----@param root string?
-function Node:update_parent_statuses(project, root)
-  local node = self
-  while project and node do
-    -- step up to the containing project
-    if node.absolute_path == root then
-      -- stop at the top of the tree
-      if not node.parent then
-        break
-      end
-
-      root = git.get_toplevel(node.parent.absolute_path)
-
-      -- stop when no more projects
-      if not root then
-        break
-      end
-
-      -- update the containing project
-      project = git.get_project(root)
-      git.reload_project(root, node.absolute_path, nil)
-    end
-
-    -- update status
-    node:update_git_status(node.parent and node.parent:is_git_ignored() or false, project)
-
-    -- maybe parent
-    node = node.parent
-  end
 end
 
 ---Get the highest parent of grouped nodes, nil when not grouped
