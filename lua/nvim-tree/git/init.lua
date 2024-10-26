@@ -9,7 +9,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class GitStatus -- xy short-format statuses
 ---@field file string?
----@field dir string[]?
+---@field dir table<"direct" | "indirect", string[]>?
 
 local M = {
   config = {},
