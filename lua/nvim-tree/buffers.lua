@@ -26,11 +26,12 @@ end
 ---@param node Node
 ---@return boolean
 function M.is_modified(node)
+  local dir = node:as(DirectoryNode)
   return node
     and M.config.modified.enable
     and M._modified[node.absolute_path]
-    and (not node:is(DirectoryNode) or M.config.modified.show_on_dirs)
-    and (not (node:is(DirectoryNode) and node.open) or M.config.modified.show_on_open_dirs)
+    and (not dir or M.config.modified.show_on_dirs)
+    and (not (dir and dir.open) or M.config.modified.show_on_open_dirs)
 end
 
 ---A buffer exists for the node's absolute path
