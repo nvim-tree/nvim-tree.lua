@@ -2,7 +2,7 @@
 
 Thank you for contributing.
 
-See [Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) for environment setup, tips and tools.
+See [wiki: Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) for environment setup, tips and tools.
 
 # Tools
 
@@ -89,6 +89,14 @@ Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-
 ## API
 
 When adding or changing API please update :help nvim-tree-api
+
+# Windows
+
+Please note that nvim-tree team members do not have access to nor expertise with Windows.
+
+You will need to be an active participant during development and raise a PR to resolve any issues that may arise.
+
+Please ensure that windows specific features and fixes are behind the appropriate feature flag, see [wiki: OS Feature Flags](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development#os-feature-flags)
 
 # Pull Request
 
