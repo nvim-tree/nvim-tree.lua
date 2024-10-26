@@ -221,8 +221,11 @@ end
 function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
     node = self.explorer
-  elseif node:is(DirectoryNode) then
-    node = node:last_group_node()
+  else
+    local dir = node:as(DirectoryNode)
+    if dir then
+      node = dir:last_group_node()
+    end
   end
   local clip = self.data[action]
   if #clip == 0 then
@@ -373,7 +376,7 @@ function Clipboard:copy_path(node)
     end
 
     local relative_path = utils.path_relative(absolute_path, cwd)
-    content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
+    content = node:is(DirectoryNode) and utils.path_add_trailing(relative_path) or relative_path
   end
 
   self:copy_to_reg(content)
