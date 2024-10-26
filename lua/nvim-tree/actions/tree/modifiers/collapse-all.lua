@@ -46,7 +46,8 @@ function M.fn(keep_buffers)
       end
     end)
     :recursor(function(n)
-      return n.group_next and { n.group_next } or n.nodes
+      n = n and n:as(DirectoryNode)
+      return n and (n.group_next and { n.group_next } or n.nodes)
     end)
     :iterate()
 
