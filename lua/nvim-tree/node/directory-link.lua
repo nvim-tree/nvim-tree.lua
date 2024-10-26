@@ -4,7 +4,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) DirectoryLinkNode: DirectoryNode
 ---@field link_to string absolute path
----@field fs_stat_target uv.fs_stat.result
+---@field private fs_stat_target uv.fs_stat.result
 local DirectoryLinkNode = DirectoryNode:new()
 
 ---Static factory method

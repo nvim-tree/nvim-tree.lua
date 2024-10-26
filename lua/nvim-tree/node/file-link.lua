@@ -4,7 +4,7 @@ local FileNode = require("nvim-tree.node.file")
 
 ---@class (exact) FileLinkNode: FileNode
 ---@field link_to string absolute path
----@field fs_stat_target uv.fs_stat.result
+---@field private fs_stat_target uv.fs_stat.result
 local FileLinkNode = FileNode:new()
 
 ---Static factory method

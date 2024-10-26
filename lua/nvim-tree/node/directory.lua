@@ -7,8 +7,8 @@ local Node = require("nvim-tree.node")
 ---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
----@field watcher Watcher?
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
+---@field private watcher Watcher?
 local DirectoryNode = Node:new()
 
 ---Static factory method
@@ -31,11 +31,11 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
     fs_stat = fs_stat,
     git_status = nil,
     hidden = false,
-    is_dot = false,
     name = name,
     parent = parent,
     watcher = nil,
     diag_status = nil,
+    is_dot = false,
 
     has_children = has_children,
     group_next = nil,

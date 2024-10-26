@@ -13,7 +13,7 @@ local Class = require("nvim-tree.class")
 ---@field name string
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
----@field is_dot boolean cached is_dotfile
+---@field private is_dot boolean cached is_dotfile
 local Node = Class:new()
 
 function Node:destroy()
@@ -82,10 +82,10 @@ function Node:clone()
     fs_stat = self.fs_stat,
     git_status = self.git_status,
     hidden = self.hidden,
-    is_dot = self.is_dot,
     name = self.name,
     parent = nil,
     diag_status = nil,
+    is_dot = self.is_dot,
   }
 
   return clone

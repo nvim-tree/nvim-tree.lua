@@ -24,10 +24,10 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
     fs_stat = fs_stat,
     git_status = nil,
     hidden = false,
-    is_dot = false,
     name = name,
     parent = parent,
     diag_status = nil,
+    is_dot = false,
 
     extension = string.match(name, ".?[^.]+%.(.*)") or "",
   }
