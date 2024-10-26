@@ -192,7 +192,10 @@ function Watcher:destroy()
 
   self.event:remove(self.listener)
 
-  utils.array_remove(watchers,       self)
+  utils.array_remove(
+    watchers,
+    self
+  )
 
   self.destroyed = true
 end
