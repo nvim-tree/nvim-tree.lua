@@ -60,7 +60,8 @@ local function gen_iterator()
         end
       end)
       :recursor(function(node)
-        return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
+        node = node and node:as(DirectoryNode)
+        return expansion_count < M.MAX_FOLDER_DISCOVERY and node and (node.group_next and { node.group_next } or (node.open and node.nodes))
       end)
       :iterate()
 
