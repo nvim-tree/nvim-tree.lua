@@ -1,6 +1,5 @@
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
-local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
 
@@ -12,48 +11,6 @@ local notify = require("nvim-tree.notify")
 local M = {
   target_winid = nil,
 }
-
----Cursor position as per vim.api.nvim_win_get_cursor
----nil on no explorer or invalid view win
----@return integer[]|nil
-function M.get_cursor_position()
-  if not core.get_explorer() then
-    return
-  end
-
-  local winnr = view.get_winnr()
-  if not winnr or not vim.api.nvim_win_is_valid(winnr) then
-    return
-  end
-
-  return vim.api.nvim_win_get_cursor(winnr)
-end
-
----@return Node|nil
-function M.get_node_at_cursor()
-  local explorer = core.get_explorer()
-  if not explorer then
-    return
-  end
-
-  local cursor = M.get_cursor_position()
-  if not cursor then
-    return
-  end
-
-  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
-    return explorer
-  end
-
-  return utils.get_nodes_by_line(explorer.nodes, core.get_nodes_starting_line())[cursor[1]]
-end
-
----Api.tree.get_nodes
----@return Node[]?
-function M.get_nodes()
-  local explorer = core.get_explorer()
-  return explorer and explorer:clone()
-end
 
 function M.set_target_win()
   local id = vim.api.nvim_get_current_win()

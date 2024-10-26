@@ -1,4 +1,3 @@
-local lib = require("nvim-tree.lib")
 local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
@@ -41,7 +40,7 @@ local Api = {
   diagnostics = {},
 }
 
---- Print error when setup not called.
+---Print error when setup not called.
 ---@param fn fun(...): any
 ---@return fun(...): any
 local function wrap(fn)
@@ -51,28 +50,6 @@ local function wrap(fn)
     else
       notify.error("nvim-tree setup not called")
     end
-  end
-end
-
----Inject the node as the first argument if present otherwise do nothing.
----@param fn fun(node: Node, ...): any
----@return fun(node: Node, ...): any
-local function wrap_node(fn)
-  return function(node, ...)
-    node = node or lib.get_node_at_cursor()
-    if node then
-      return fn(node, ...)
-    end
-  end
-end
-
----Inject the node or nil as the first argument if absent.
----@param fn fun(node: Node, ...): any
----@return fun(node: Node, ...): any
-local function wrap_node_or_nil(fn)
-  return function(node, ...)
-    node = node or lib.get_node_at_cursor()
-    return fn(node, ...)
   end
 end
 
@@ -87,6 +64,28 @@ local function wrap_explorer(explorer_method)
       return explorer[explorer_method](explorer, ...)
     end
   end)
+end
+
+---Inject the node as the first argument if present otherwise do nothing.
+---@param fn fun(node: Node, ...): any
+---@return fun(node: Node, ...): any
+local function wrap_node(fn)
+  return function(node, ...)
+    node = node or wrap_explorer("get_node_at_cursor")()
+    if node then
+      return fn(node, ...)
+    end
+  end
+end
+
+---Inject the node or nil as the first argument if absent.
+---@param fn fun(node: Node, ...): any
+---@return fun(node: Node, ...): any
+local function wrap_node_or_nil(fn)
+  return function(node, ...)
+    node = node or wrap_explorer("get_node_at_cursor")()
+    return fn(node, ...)
+  end
 end
 
 ---Invoke a member's method on the singleton explorer.
@@ -147,8 +146,8 @@ Api.tree.change_root_to_node = wrap_node(function(node)
 end)
 
 Api.tree.change_root_to_parent = wrap_node(actions.root.dir_up.fn)
-Api.tree.get_node_under_cursor = wrap(lib.get_node_at_cursor)
-Api.tree.get_nodes = wrap(lib.get_nodes)
+Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
+Api.tree.get_nodes = wrap_explorer("get_nodes")
 
 ---@class ApiTreeFindFileOpts
 ---@field buf string|number|nil

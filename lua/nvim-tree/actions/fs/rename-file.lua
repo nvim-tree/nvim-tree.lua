@@ -1,5 +1,4 @@
 local core = require("nvim-tree.core")
-local lib = require("nvim-tree.lib")
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
@@ -104,11 +103,15 @@ function M.fn(default_modifier)
   default_modifier = default_modifier or ":t"
 
   return function(node, modifier)
-    if type(node) ~= "table" then
-      node = lib.get_node_at_cursor()
+    local explorer = core.get_explorer()
+    if not explorer then
+      return
     end
 
-    if node == nil then
+    if type(node) ~= "table" then
+      node = explorer:get_node_at_cursor()
+    end
+    if not node then
       return
     end
 
@@ -160,10 +163,7 @@ function M.fn(default_modifier)
 
       M.rename(node, prepend .. new_file_path .. append)
       if not M.config.filesystem_watchers.enable then
-        local explorer = core.get_explorer()
-        if explorer then
-          explorer:reload_explorer()
-        end
+        explorer:reload_explorer()
       end
 
       find_file(utils.path_remove_trailing(new_file_path))

@@ -1,13 +1,14 @@
-local lib = require("nvim-tree.lib")
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
 local M = {}
 
 ---@param explorer Explorer
 local function reload(explorer)
-  local node = lib.get_node_at_cursor()
+  local node = explorer:get_node_at_cursor()
   explorer:reload_explorer()
-  utils.focus_node_or_parent(node)
+  if node then
+    utils.focus_node_or_parent(node)
+  end
 end
 
 local function wrap_explorer(fn)

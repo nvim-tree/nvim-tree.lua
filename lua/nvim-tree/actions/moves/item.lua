@@ -1,7 +1,6 @@
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
-local lib = require("nvim-tree.lib")
 local diagnostics = require("nvim-tree.diagnostics")
 
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -30,15 +29,16 @@ local function status_is_valid(node, what, skip_gitignored)
 end
 
 ---Move to the next node that has a valid status. If none found, don't move.
+---@param explorer Explorer
 ---@param where string where to move (forwards or backwards)
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
-local function move(where, what, skip_gitignored)
+local function move(explorer, where, what, skip_gitignored)
   local first_node_line = core.get_nodes_starting_line()
-  local nodes_by_line = utils.get_nodes_by_line(core.get_explorer().nodes, first_node_line)
+  local nodes_by_line = utils.get_nodes_by_line(explorer.nodes, first_node_line)
   local iter_start, iter_end, iter_step, cur, first, nex
 
-  local cursor = lib.get_cursor_position()
+  local cursor = explorer:get_cursor_position()
   if cursor and cursor[1] < first_node_line then
     cur = cursor[1]
   end
@@ -82,16 +82,17 @@ local function expand_node(node)
 end
 
 --- Move to the next node recursively.
+---@param explorer Explorer
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
-local function move_next_recursive(what, skip_gitignored)
+local function move_next_recursive(explorer, what, skip_gitignored)
   -- If the current node:
   -- * is a directory
   -- * and is not the root node
   -- * and has a git/diag status
   -- * and is not opened
   -- expand it.
-  local node_init = lib.get_node_at_cursor()
+  local node_init = explorer:get_node_at_cursor()
   if not node_init then
     return
   end
@@ -104,9 +105,9 @@ local function move_next_recursive(what, skip_gitignored)
     node_dir:expand_or_collapse(false)
   end
 
-  move("next", what, skip_gitignored)
+  move(explorer, "next", what, skip_gitignored)
 
-  local node_cur = lib.get_node_at_cursor()
+  local node_cur = explorer:get_node_at_cursor()
   if not node_cur then
     return
   end
@@ -122,10 +123,10 @@ local function move_next_recursive(what, skip_gitignored)
   while dir_cur and i < MAX_DEPTH do
     expand_node(dir_cur)
 
-    move("next", what, skip_gitignored)
+    move(explorer, "next", what, skip_gitignored)
 
     -- Save current node.
-    node_cur = lib.get_node_at_cursor()
+    node_cur = explorer:get_node_at_cursor()
     dir_cur = node_cur and node_cur:as(DirectoryNode)
 
     i = i + 1
@@ -147,24 +148,25 @@ end
 --- 4.4) Call a non-recursive prev.
 --- 4.5) Save the current node and start back from 4.1.
 ---
+---@param explorer Explorer
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
-local function move_prev_recursive(what, skip_gitignored)
+local function move_prev_recursive(explorer, what, skip_gitignored)
   local node_init, node_cur
 
   -- 1)
-  node_init = lib.get_node_at_cursor()
+  node_init = explorer:get_node_at_cursor()
   if node_init == nil then
     return
   end
 
   -- 2)
-  move("prev", what, skip_gitignored)
+  move(explorer, "prev", what, skip_gitignored)
 
-  node_cur = lib.get_node_at_cursor()
+  node_cur = explorer:get_node_at_cursor()
   if node_cur == node_init.parent then
     -- 3)
-    move_prev_recursive(what, skip_gitignored)
+    move_prev_recursive(explorer, what, skip_gitignored)
   else
     -- i is used to limit iterations.
     local i = 0
@@ -196,10 +198,10 @@ local function move_prev_recursive(what, skip_gitignored)
       end
 
       -- 4.4)
-      move("prev", what, skip_gitignored)
+      move(explorer, "prev", what, skip_gitignored)
 
       -- 4.5)
-      node_cur = lib.get_node_at_cursor()
+      node_cur = explorer:get_node_at_cursor()
 
       i = i + 1
     end
@@ -214,6 +216,11 @@ end
 ---@return fun()
 function M.fn(opts)
   return function()
+    local explorer = core.get_explorer()
+    if not explorer then
+      return
+    end
+
     local recurse = false
     local skip_gitignored = false
 
@@ -227,14 +234,14 @@ function M.fn(opts)
     end
 
     if not recurse then
-      move(opts.where, opts.what, skip_gitignored)
+      move(explorer, opts.where, opts.what, skip_gitignored)
       return
     end
 
     if opts.where == "next" then
-      move_next_recursive(opts.what, skip_gitignored)
+      move_next_recursive(explorer, opts.what, skip_gitignored)
     elseif opts.where == "prev" then
-      move_prev_recursive(opts.what, skip_gitignored)
+      move_prev_recursive(explorer, opts.what, skip_gitignored)
     end
   end
 end

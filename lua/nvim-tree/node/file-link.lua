@@ -28,6 +28,10 @@ function FileLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_
   return o
 end
 
+function FileLinkNode:destroy()
+  FileNode.destroy(self)
+end
+
 -----Update the GitStatus of the target otherwise the link itself
 -----@param parent_ignored boolean
 -----@param status table|nil

@@ -197,7 +197,7 @@ local function create_overlay(self)
 end
 
 function LiveFilter:start_filtering()
-  view.View.live_filter.prev_focused_node = require("nvim-tree.lib").get_node_at_cursor()
+  view.View.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
   self.filter = self.filter or ""
 
   self.explorer.renderer:draw()
@@ -211,7 +211,7 @@ function LiveFilter:start_filtering()
 end
 
 function LiveFilter:clear_filter()
-  local node = require("nvim-tree.lib").get_node_at_cursor()
+  local node = self.explorer:get_node_at_cursor()
   local last_node = view.View.live_filter.prev_focused_node
 
   self.filter = nil

@@ -1,6 +1,4 @@
-local lib = require("nvim-tree.lib")
 local log = require("nvim-tree.log")
-local appearance = require("nvim-tree.appearance")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
@@ -115,27 +113,6 @@ function M.open_on_directory()
   actions.root.change_dir.force_dirchange(bufname, true)
 end
 
-function M.place_cursor_on_node()
-  local ok, search = pcall(vim.fn.searchcount)
-  if ok and search and search.exact_match == 1 then
-    return
-  end
-
-  local node = lib.get_node_at_cursor()
-  if not node or node.name == ".." then
-    return
-  end
-  node = node:get_parent_of_group() or node
-
-  local line = vim.api.nvim_get_current_line()
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local idx = vim.fn.stridx(line, node.name)
-
-  if idx >= 0 then
-    vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
-  end
-end
-
 ---@return table
 function M.get_config()
   return M.config
@@ -173,19 +150,6 @@ local function setup_autocommands(opts)
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
-  -- reset and draw (highlights) when colorscheme is changed
-  create_nvim_tree_autocmd("ColorScheme", {
-    callback = function()
-      appearance.setup()
-      view.reset_winhl()
-
-      local explorer = core.get_explorer()
-      if explorer then
-        explorer.renderer:draw()
-      end
-    end,
-  })
-
   -- prevent new opened file from opening in the same window as nvim-tree
   create_nvim_tree_autocmd("BufWipeout", {
     pattern = "NvimTree_*",
@@ -201,75 +165,8 @@ local function setup_autocommands(opts)
     end,
   })
 
-  create_nvim_tree_autocmd("BufWritePost", {
-    callback = function()
-      if opts.auto_reload_on_write and not opts.filesystem_watchers.enable then
-        local explorer = core.get_explorer()
-        if explorer then
-          explorer:reload_explorer()
-        end
-      end
-    end,
-  })
-
-  create_nvim_tree_autocmd("BufReadPost", {
-    callback = function(data)
-      -- update opened file buffers
-      local explorer = core.get_explorer()
-      if not explorer then
-        return
-      end
-      if
-        (explorer.filters.config.filter_no_buffer or explorer.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
-      then
-        utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          explorer:reload_explorer()
-        end)
-      end
-    end,
-  })
-
-  create_nvim_tree_autocmd("BufUnload", {
-    callback = function(data)
-      -- update opened file buffers
-      local explorer = core.get_explorer()
-      if not explorer then
-        return
-      end
-      if
-        (explorer.filters.config.filter_no_buffer or explorer.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == ""
-      then
-        utils.debounce("Buf:filter_buffer", opts.view.debounce_delay, function()
-          explorer:reload_explorer()
-        end)
-      end
-    end,
-  })
-
-  create_nvim_tree_autocmd("User", {
-    pattern = { "FugitiveChanged", "NeogitStatusRefreshed" },
-    callback = function()
-      if not opts.filesystem_watchers.enable and opts.git.enable then
-        local explorer = core.get_explorer()
-        if explorer then
-          explorer:reload_git()
-        end
-      end
-    end,
-  })
-
   if opts.tab.sync.open then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
-  end
-  if opts.hijack_cursor then
-    create_nvim_tree_autocmd("CursorMoved", {
-      pattern = "NvimTree_*",
-      callback = function()
-        if utils.is_nvim_tree_buf(0) then
-          M.place_cursor_on_node()
-        end
-      end,
-    })
   end
   if opts.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
@@ -295,20 +192,6 @@ local function setup_autocommands(opts)
   if opts.hijack_directories.enable then
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
   end
-
-  create_nvim_tree_autocmd("BufEnter", {
-    pattern = "NvimTree_*",
-    callback = function()
-      if utils.is_nvim_tree_buf(0) then
-        if vim.fn.getcwd() ~= core.get_cwd() or (opts.reload_on_bufenter and not opts.filesystem_watchers.enable) then
-          local explorer = core.get_explorer()
-          if explorer then
-            explorer:reload_explorer()
-          end
-        end
-      end
-    end,
-  })
 
   if opts.view.centralize_selection then
     create_nvim_tree_autocmd("BufEnter", {
@@ -346,20 +229,6 @@ local function setup_autocommands(opts)
         if utils.is_nvim_tree_buf(0) then
           view.close()
         end
-      end,
-    })
-  end
-
-  if opts.modified.enable then
-    create_nvim_tree_autocmd({ "BufModifiedSet", "BufWritePost" }, {
-      callback = function()
-        utils.debounce("Buf:modified", opts.view.debounce_delay, function()
-          require("nvim-tree.buffers").reload_modified()
-          local explorer = core.get_explorer()
-          if explorer then
-            explorer:reload_explorer()
-          end
-        end)
       end,
     })
   end
@@ -805,13 +674,16 @@ local function localise_default_opts()
 end
 
 function M.purge_all_state()
-  require("nvim-tree.watcher").purge_watchers()
   view.close_all_tabs()
   view.abandon_all_windows()
-  if core.get_explorer() ~= nil then
+  local explorer = core.get_explorer()
+  if explorer then
     require("nvim-tree.git").purge_state()
+    explorer:destroy()
     core.reset_explorer()
   end
+  -- purge orphaned that were not destroyed by their nodes
+  require("nvim-tree.watcher").purge_watchers()
 end
 
 ---@param conf table|nil
@@ -855,6 +727,7 @@ function M.setup(conf)
   require("nvim-tree.appearance").setup()
   require("nvim-tree.diagnostics").setup(opts)
   require("nvim-tree.explorer"):setup(opts)
+  require("nvim-tree.explorer.watch").setup(opts)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.git.utils").setup(opts)
   require("nvim-tree.view").setup(opts)

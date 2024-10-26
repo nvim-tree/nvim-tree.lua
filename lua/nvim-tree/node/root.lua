@@ -23,4 +23,8 @@ function RootNode:is_dotfile()
   return false
 end
 
+function RootNode:destroy()
+  DirectoryNode.destroy(self)
+end
+
 return RootNode

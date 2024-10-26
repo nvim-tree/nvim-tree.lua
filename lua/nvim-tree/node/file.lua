@@ -36,6 +36,10 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
   return o
 end
 
+function FileNode:destroy()
+  Node.destroy(self)
+end
+
 ---Update the GitStatus of the file
 ---@param parent_ignored boolean
 ---@param status table|nil
