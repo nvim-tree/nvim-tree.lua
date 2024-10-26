@@ -140,8 +140,11 @@ end)
 Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." or node:is(RootNode) then
     actions.root.change_dir.fn("..")
-  elseif node:is(DirectoryNode) then
-    actions.root.change_dir.fn(node:last_group_node().absolute_path)
+  else
+    node = node:as(DirectoryNode)
+    if node then
+      actions.root.change_dir.fn(node:last_group_node().absolute_path)
+    end
   end
 end)
 
