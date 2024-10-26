@@ -29,7 +29,7 @@ function Node:update_git_status(parent_ignored, status)
   self:nop(parent_ignored, status)
 end
 
----@return GitStatus?
+---@return string[]? xy short-format statuses
 function Node:get_git_status()
 end
 
