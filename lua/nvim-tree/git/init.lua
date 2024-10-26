@@ -7,9 +7,9 @@ local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = nil -- circular dependency
 
----@class GitStatus
----@field file string|nil
----@field dir table|nil
+---@class GitStatus -- xy short-format statuses
+---@field file string?
+---@field dir string[]?
 
 local M = {
   config = {},
