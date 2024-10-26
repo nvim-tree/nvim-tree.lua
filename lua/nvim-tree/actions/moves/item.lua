@@ -3,6 +3,7 @@ local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local diagnostics = require("nvim-tree.diagnostics")
 
+local FileNode = require("nvim-tree.node.file")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -175,7 +176,7 @@ local function move_prev_recursive(explorer, what, skip_gitignored)
       if
         node_cur == nil
         or node_cur == node_init -- we didn't move
-        or not node_cur.nodes    -- node is a file
+        or node_cur:is(FileNode) -- node is a file
       then
         return
       end
