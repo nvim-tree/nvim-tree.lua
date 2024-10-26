@@ -98,7 +98,7 @@ function Explorer:create_autocmds()
     callback = function()
       appearance.setup()
       view.reset_winhl()
-      self:draw()
+      self.renderer:draw()
     end,
   })
 
