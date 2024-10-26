@@ -6,17 +6,19 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class HighlightedStringGit: HighlightedString
+---@class (exact) GitHighlightedString: HighlightedString
 ---@field ord number decreasing priority
 
----@alias IconsByStatus table<string, HighlightedStringGit[]> by human status
----@alias IconsByXY table<string, HighlightedStringGit[]> by porcelain status
+---@alias GitStatuses "deleted"|"ignored"|"renamed"|"staged"|"unmerged"|"unstaged"|"untracked"
+---@alias GitIconsByStatus table<GitStatuses, GitHighlightedString> human status
+---@alias GitIconsByXY table<string, GitHighlightedString[]> porcelain status
+---@alias GitGlyphs table<GitStatuses, string> from opts
 
 ---@class (exact) DecoratorGit: Decorator
----@field file_hl table<string, string>? by porcelain status e.g. "AM"
----@field folder_hl table<string, string>? by porcelain status
----@field icons_by_status IconsByStatus?
----@field icons_by_xy IconsByXY?
+---@field file_hl_by_xy table<string, string>?
+---@field folder_hl_by_xy table<string, string>?
+---@field icons_by_status GitIconsByStatus?
+---@field icons_by_xy GitIconsByXY?
 local DecoratorGit = Decorator:new()
 
 ---Static factory method
@@ -38,7 +40,7 @@ function DecoratorGit:create(opts, explorer)
   end
 
   if o.hl_pos ~= HL_POSITION.none then
-    o:build_hl_table()
+    o:build_file_folder_hl_by_xy()
   end
 
   if opts.renderer.icons.show.git then
@@ -53,20 +55,19 @@ function DecoratorGit:create(opts, explorer)
   return o
 end
 
----@param glyphs IconsByStatus user glyps
+---@param glyphs GitGlyphs
 function DecoratorGit:build_icons_by_status(glyphs)
-  self.icons_by_status = {
-    staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 },
-    unstaged = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 },
-    renamed = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 },
-    deleted = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 },
-    unmerged = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 },
-    untracked = { str = glyphs.untracked, hl = { "NvimTreeGitNewIcon" }, ord = 6 },
-    ignored = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 },
-  }
+  self.icons_by_status = {}
+  self.icons_by_status.staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
+  self.icons_by_status.unstaged = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
+  self.icons_by_status.renamed = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 }
+  self.icons_by_status.deleted = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 }
+  self.icons_by_status.unmerged = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 }
+  self.icons_by_status.untracked = { str = glyphs.untracked, hl = { "NvimTreeGitNewIcon" }, ord = 6 }
+  self.icons_by_status.ignored = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
 end
 
----@param icons IconsByXY
+---@param icons GitIconsByXY
 function DecoratorGit:build_icons_by_xy(icons)
   self.icons_by_xy = {
     ["M "] = { icons.staged },
@@ -104,8 +105,8 @@ function DecoratorGit:build_icons_by_xy(icons)
   }
 end
 
-function DecoratorGit:build_hl_table()
-  self.file_hl = {
+function DecoratorGit:build_file_folder_hl_by_xy()
+  self.file_hl_by_xy = {
     ["M "] = "NvimTreeGitFileStagedHL",
     ["C "] = "NvimTreeGitFileStagedHL",
     ["AA"] = "NvimTreeGitFileStagedHL",
@@ -138,9 +139,9 @@ function DecoratorGit:build_hl_table()
     [" A"] = "none",
   }
 
-  self.folder_hl = {}
-  for k, v in pairs(self.file_hl) do
-    self.folder_hl[k] = v:gsub("File", "Folder")
+  self.folder_hl_by_xy = {}
+  for k, v in pairs(self.file_hl_by_xy) do
+    self.folder_hl_by_xy[k] = v:gsub("File", "Folder")
   end
 end
 
@@ -219,9 +220,9 @@ function DecoratorGit:calculate_highlight(node)
   end
 
   if node:is(DirectoryNode) then
-    return self.folder_hl[git_status[1]]
+    return self.folder_hl_by_xy[git_status[1]]
   else
-    return self.file_hl[git_status[1]]
+    return self.file_hl_by_xy[git_status[1]]
   end
 end
 
