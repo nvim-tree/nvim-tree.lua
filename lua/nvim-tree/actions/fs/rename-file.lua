@@ -125,8 +125,9 @@ function M.fn(default_modifier)
       return
     end
 
-    if node:is(DirectoryNode) then
-      node = node:last_group_node()
+    local dir = node:as(DirectoryNode)
+    if dir then
+      node = dir:last_group_node()
     end
     if node.name == ".." then
       return
