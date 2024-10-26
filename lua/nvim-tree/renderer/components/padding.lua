@@ -1,3 +1,5 @@
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 local function check_siblings_for_folder(node, with_arrows)
@@ -90,8 +92,9 @@ function M.get_arrows(node)
   local str
   local hl = "NvimTreeFolderArrowClosed"
 
-  if node.nodes then
-    if node.open then
+  local dir = node:as(DirectoryNode)
+  if dir then
+    if dir.open then
       str = M.config.icons.glyphs.folder["arrow_open"] .. " "
       hl = "NvimTreeFolderArrowOpen"
     else
