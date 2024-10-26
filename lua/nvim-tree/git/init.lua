@@ -204,28 +204,26 @@ local function reload_tree_at(toplevel)
   end
 
   log.line("watcher", "git event executing '%s'", toplevel)
-  local base = utils.get_node_from_path(toplevel)
-  base = base and base:as(DirectoryNode)
-  if not base then
+  local root_node = utils.get_node_from_path(toplevel)
+  if not root_node then
     return
   end
 
   M.reload_project(toplevel, nil, function()
     local git_status = M.get_project(toplevel)
 
-    Iterator.builder(base.nodes)
+    Iterator.builder(root_node.nodes)
       :hidden()
       :applier(function(node)
         local parent_ignored = node.parent and node.parent:is_git_ignored() or false
         node:update_git_status(parent_ignored, git_status)
       end)
       :recursor(function(node)
-        local dir = node:as(DirectoryNode)
-        return dir and #dir.nodes > 0 and dir.nodes
+        return node.nodes and #node.nodes > 0 and node.nodes
       end)
       :iterate()
 
-    base.explorer.renderer:draw()
+    root_node.explorer.renderer:draw()
   end)
 end
 
