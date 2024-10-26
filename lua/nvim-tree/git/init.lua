@@ -260,18 +260,19 @@ function M.load_project_status(path)
   if M.config.filesystem_watchers.enable then
     log.line("watcher", "git start")
 
+    ---@param w Watcher
     local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.toplevel)
-      utils.debounce("git:watcher:" .. w.toplevel, M.config.filesystem_watchers.debounce_delay, function()
+      log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
+      utils.debounce("git:watcher:" .. w.data.toplevel, M.config.filesystem_watchers.debounce_delay, function()
         if w.destroyed then
           return
         end
-        reload_tree_at(w.toplevel)
+        reload_tree_at(w.data.toplevel)
       end)
     end
 
     local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
-    watcher = Watcher:new(git_dir, WATCHED_FILES, callback, {
+    watcher = Watcher:create(git_dir, WATCHED_FILES, callback, {
       toplevel = toplevel,
     })
   end
