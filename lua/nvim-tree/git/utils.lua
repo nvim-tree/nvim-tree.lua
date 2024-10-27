@@ -129,44 +129,47 @@ end
 
 ---Git file status for an absolute path with optional fallback
 ---@param parent_ignored boolean
----@param status table|nil
+---@param status table?
 ---@param path string
 ---@param path_fallback string?
 ---@return GitStatus
 function M.git_status_file(parent_ignored, status, path, path_fallback)
+  ---@type GitStatus
+  local st = {}
+
   if parent_ignored then
-    return { file = "!!" }
+    st.file = "!!"
+  elseif status and status.files then
+    st.file = status.files[path] or status.files[path_fallback]
   end
 
-  if not status or not status.files then
-    return {}
-  end
-
-  return {
-    file = status.files[path] or status.files[path_fallback]
-  }
+  return st
 end
 
 ---Git file and directory status for an absolute path with optional file fallback
 ---@param parent_ignored boolean
----@param status table|nil
+---@param status table?
 ---@param path string
 ---@param path_file string? alternative file path when no other file status
----@return GitStatus|nil
+---@return GitStatus?
 function M.git_status_dir(parent_ignored, status, path, path_file)
+  ---@type GitStatus?
+  local st
+
   if parent_ignored then
-    return { file = "!!" }
+    st = {}
+    st.file = "!!"
+  elseif status then
+    st = {}
+    st.file = status.files and (status.files[path] or status.files[path_file])
+    if status.dirs then
+      st.dir = {}
+      st.dir.direct = status.dirs.direct and status.dirs.direct[path]
+      st.dir.indirect = status.dirs.indirect and status.dirs.indirect[path]
+    end
   end
 
-  if status then
-    return {
-      file = status.files and (status.files[path] or status.files[path_file]),
-      dir = status.dirs and {
-        direct = status.dirs.direct and status.dirs.direct[path],
-        indirect = status.dirs.indirect and status.dirs.indirect[path],
-      },
-    }
-  end
+  return st
 end
 
 function M.setup(opts)

@@ -7,7 +7,7 @@ local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class GitStatus -- xy short-format statuses
+---@class (exact) GitStatus -- xy short-format statuses
 ---@field file string?
 ---@field dir table<"direct" | "indirect", string[]>?
 
