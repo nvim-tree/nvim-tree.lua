@@ -1,4 +1,3 @@
-local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
 local Node = require("nvim-tree.node")
@@ -44,7 +43,12 @@ end
 ---@param parent_ignored boolean
 ---@param status table|nil
 function FileNode:update_git_status(parent_ignored, status)
-  self.git_status = git_utils.git_status_file(parent_ignored, status, self.absolute_path, nil)
+  self.git_status = {}
+  if parent_ignored then
+    self.git_status.file = "!!"
+  elseif status and status.files then
+    self.git_status.file = status.files[self.absolute_path]
+  end
 end
 
 ---@return string[]? xy short-format statuses
