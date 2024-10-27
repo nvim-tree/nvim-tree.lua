@@ -162,12 +162,14 @@ function M.fn(default_modifier)
         return
       end
 
-      M.rename(node, prepend .. new_file_path .. append)
+      local full_new_path = prepend .. new_file_path .. append
+
+      M.rename(node, full_new_path)
       if not M.config.filesystem_watchers.enable then
         explorer:reload_explorer()
       end
 
-      find_file(utils.path_remove_trailing(new_file_path))
+      find_file(utils.path_remove_trailing(full_new_path))
     end)
   end
 end

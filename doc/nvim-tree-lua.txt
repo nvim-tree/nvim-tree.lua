@@ -1447,8 +1447,6 @@ vim |current-directory| behaviour.
 
     *nvim-tree.actions.change_dir.global*
     Use `:cd` instead of `:lcd` when changing directories.
-    Consider that this might cause issues with the
-    |nvim-tree.sync_root_with_cwd| option.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.actions.change_dir.restrict_above_cwd*
