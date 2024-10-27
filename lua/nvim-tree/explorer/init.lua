@@ -321,7 +321,7 @@ function Explorer:refresh_parent_nodes_for_path(path)
     local project = git.get_project(toplevel) or {}
 
     self:reload(node, project)
-    git.update_parent_statuses(node, project, toplevel)
+    git.update_parent_projects(node, project, toplevel)
   end
 
   log.profile_end(profile)
@@ -331,7 +331,7 @@ end
 ---@param node DirectoryNode
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
-  local git_status = git.load_project_status(cwd)
+  local git_status = git.load_project(cwd)
   self:explore(node, git_status, self)
 end
 
@@ -423,7 +423,7 @@ function Explorer:explore(node, status, parent)
   local single_child = node:single_child_directory()
   if config.renderer.group_empty and not is_root and single_child then
     local child_cwd = single_child.link_to or single_child.absolute_path
-    local child_status = git.load_project_status(child_cwd)
+    local child_status = git.load_project(child_cwd)
     node.group_next = single_child
     local ns = self:explore(single_child, child_status, parent)
     node.nodes = ns or {}
@@ -463,7 +463,7 @@ function Explorer:reload_explorer()
   end
   event_running = true
 
-  local projects = git.reload()
+  local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
   if view.is_visible() then
     self.renderer:draw()
@@ -477,7 +477,7 @@ function Explorer:reload_git()
   end
   event_running = true
 
-  local projects = git.reload()
+  local projects = git.reload_all_projects()
   git.reload_node_status(self, projects)
   self.renderer:draw()
   event_running = false

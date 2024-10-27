@@ -178,7 +178,7 @@ local function custom(self, path)
 end
 
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
----@param git_status table|nil optional results of git.load_project_status(...)
+---@param git_status table|nil optional results of git.load_project(...)
 ---@return table
 --- git_status: reference
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }

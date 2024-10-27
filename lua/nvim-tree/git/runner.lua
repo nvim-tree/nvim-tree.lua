@@ -4,19 +4,17 @@ local notify = require("nvim-tree.notify")
 
 local Class = require("nvim-tree.class")
 
----@alias GitXYByPath table<string, string> -- short-format statuses
-
 ---@class (exact) GitRunnerOpts
 ---@field toplevel string absolute path
 ---@field path string? absolute path
 ---@field list_untracked boolean
 ---@field list_ignored boolean
 ---@field timeout integer
----@field callback fun(statuses: GitXYByPath)?
+---@field callback fun(statuses: GitPathXY)?
 
 ---@class (exact) GitRunner: Class
 ---@field private opts GitRunnerOpts
----@field private statuses GitXYByPath
+---@field private statuses GitPathXY
 ---@field private rc integer? -- -1 indicates timeout
 local GitRunner = Class:new()
 
@@ -207,7 +205,8 @@ function GitRunner:finalise()
   end
 end
 
----@return GitXYByPath? statuses nil if callback present
+---@private
+---@return GitPathXY? statuses nil if callback present
 function GitRunner:execute()
   local async = self.opts.callback ~= nil
   local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", self.opts.toplevel, self.opts.path)
@@ -240,7 +239,7 @@ end
 
 ---Static method to run a git process, which will be killed if it takes more than timeout
 ---@param opts GitRunnerOpts
----@return GitXYByPath? statuses nil if callback present
+---@return GitPathXY? statuses nil if callback present
 function GitRunner:run(opts)
   ---@type GitRunner
   local runner = {

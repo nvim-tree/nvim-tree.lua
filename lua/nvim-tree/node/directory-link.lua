@@ -36,9 +36,9 @@ function DirectoryLinkNode:destroy()
   DirectoryNode.destroy(self)
 end
 
------Update the directory GitStatus of link target and the file status of the link itself
------@param parent_ignored boolean
------@param status table|nil
+---Update the directory GitStatus of link target and the file status of the link itself
+---@param parent_ignored boolean
+---@param status table|nil
 function DirectoryLinkNode:update_git_status(parent_ignored, status)
   self.git_status = git_utils.git_status_dir(parent_ignored, status, self.link_to, self.absolute_path)
 end

@@ -7,20 +7,39 @@ local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) GitStatus -- xy short-format statuses
+---Git xy short-format statuses for a single node
+---@class (exact) GitStatus
 ---@field file string?
 ---@field dir table<"direct" | "indirect", string[]>?
+
+-- Git xy short-format status
+---@alias GitPathXY table<string, string>
+
+-- Git xy short-format statuses
+---@alias GitPathXYs table<string, string[]>
+
+---@alias GitProjectFiles GitPathXY
+---@alias GitProjectDirs table<"direct" | "indirect", GitPathXYs>
+
+---Git state for an entire repo
+---@class (exact) GitProject
+---@field files GitProjectFiles?
+---@field dirs GitProjectDirs?
+---@field watcher Watcher?
 
 local M = {
   config = {},
 
-  -- all projects keyed by toplevel
+  ---all projects keyed by toplevel
+  ---@type table<string, GitProject>
   _projects_by_toplevel = {},
 
-  -- index of paths inside toplevels, false when not inside a project
+  ---index of paths inside toplevels, false when not inside a project
+  ---@type table<string, string|false>
   _toplevels_by_path = {},
 
   -- git dirs by toplevel
+  ---@type table<string, string>
   _git_dirs_by_toplevel = {},
 }
 
@@ -36,33 +55,33 @@ local WATCHED_FILES = {
 
 ---@param toplevel string|nil
 ---@param path string|nil
----@param project table
----@param statuses GitXYByPath?
-local function reload_git_statuses(toplevel, path, project, statuses)
+---@param project GitProject
+---@param project_files GitProjectFiles?
+local function reload_git_project(toplevel, path, project, project_files)
   if path then
     for p in pairs(project.files) do
       if p:find(path, 1, true) == 1 then
         project.files[p] = nil
       end
     end
-    project.files = vim.tbl_deep_extend("force", project.files, statuses)
+    project.files = vim.tbl_deep_extend("force", project.files, project_files)
   else
-    project.files = statuses
+    project.files = project_files or {}
   end
 
-  project.dirs = git_utils.file_status_to_dir_status(project.files, toplevel)
+  project.dirs = git_utils.project_files_to_project_dirs(project.files, toplevel)
 end
 
 --- Is this path in a known ignored directory?
 ---@param path string
----@param project table git status
+---@param project GitProject
 ---@return boolean
 local function path_ignored_in_project(path, project)
   if not path or not project then
     return false
   end
 
-  if project and project.files then
+  if project.files then
     for file, status in pairs(project.files) do
       if status == "!!" and vim.startswith(path, file) then
         return true
@@ -72,9 +91,8 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
---- Reload all projects
----@return table projects maybe empty
-function M.reload()
+---@return GitProject[] maybe empty
+function M.reload_all_projects()
   if not M.config.git.enable then
     return {}
   end
@@ -87,11 +105,12 @@ function M.reload()
 end
 
 --- Reload one project. Does nothing when no project or path is ignored
----@param toplevel string|nil
----@param path string|nil optional path to update only
----@param callback function|nil
+---@param toplevel string?
+---@param path string? optional path to update only
+---@param callback function?
 function M.reload_project(toplevel, path, callback)
-  local project = M._projects_by_toplevel[toplevel]
+  local project = M._projects_by_toplevel[toplevel] --[[@as GitProject]]
+
   if not toplevel or not project or not M.config.git.enable then
     if callback then
       callback()
@@ -116,21 +135,21 @@ function M.reload_project(toplevel, path, callback)
   }
 
   if callback then
-    ---@param statuses GitXYByPath
+    ---@param statuses GitPathXY
     runner_opts.callback = function(statuses)
-      reload_git_statuses(toplevel, path, project, statuses)
+      reload_git_project(toplevel, path, project, statuses)
       callback()
     end
     GitRunner:run(runner_opts)
   else
     -- TODO #1974 use callback once async/await is available
-    reload_git_statuses(toplevel, path, project, GitRunner:run(runner_opts))
+    reload_git_project(toplevel, path, project, GitRunner:run(runner_opts))
   end
 end
 
 --- Retrieve a known project
----@param toplevel string|nil
----@return table|nil project
+---@param toplevel string?
+---@return GitProject? project
 function M.get_project(toplevel)
   return M._projects_by_toplevel[toplevel]
 end
@@ -151,11 +170,10 @@ function M.get_toplevel(path)
     return nil
   end
 
-  if M._toplevels_by_path[path] then
-    return M._toplevels_by_path[path]
-  end
-
-  if M._toplevels_by_path[path] == false then
+  local tl = M._toplevels_by_path[path]
+  if tl then
+    return tl
+  elseif tl == false then
     return nil
   end
 
@@ -194,8 +212,15 @@ function M.get_toplevel(path)
   end
 
   M._toplevels_by_path[path] = toplevel
+
   M._git_dirs_by_toplevel[toplevel] = git_dir
-  return M._toplevels_by_path[path]
+
+  toplevel = M._toplevels_by_path[path]
+  if toplevel == false then
+    return nil
+  else
+    return toplevel
+  end
 end
 
 local function reload_tree_at(toplevel)
@@ -230,8 +255,8 @@ end
 --- Load the project status for a path. Does nothing when no toplevel for path.
 --- Only fetches project status when unknown, otherwise returns existing.
 ---@param path string absolute
----@return table project maybe empty
-function M.load_project_status(path)
+---@return GitProject maybe empty
+function M.load_project(path)
   if not M.config.git.enable then
     return {}
   end
@@ -242,12 +267,12 @@ function M.load_project_status(path)
     return {}
   end
 
-  local status = M._projects_by_toplevel[toplevel]
-  if status then
-    return status
+  local project = M._projects_by_toplevel[toplevel]
+  if project then
+    return project
   end
 
-  local statuses = GitRunner:run({
+  local path_xys = GitRunner:run({
     toplevel = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored = true,
@@ -275,10 +300,10 @@ function M.load_project_status(path)
     })
   end
 
-  if statuses then
+  if path_xys then
     M._projects_by_toplevel[toplevel] = {
-      files = statuses,
-      dirs = git_utils.file_status_to_dir_status(statuses, toplevel),
+      files = path_xys,
+      dirs = git_utils.project_files_to_project_dirs(path_xys, toplevel),
       watcher = watcher,
     }
     return M._projects_by_toplevel[toplevel]
@@ -289,9 +314,9 @@ function M.load_project_status(path)
 end
 
 ---@param dir DirectoryNode
----@param project table?
+---@param project GitProject?
 ---@param root string?
-function M.update_parent_statuses(dir, project, root)
+function M.update_parent_projects(dir, project, root)
   while project and dir do
     -- step up to the containing project
     if dir.absolute_path == root then
@@ -331,14 +356,14 @@ function M.refresh_dir(dir)
 
     dir.explorer:reload(node, project)
 
-    M.update_parent_statuses(dir, project, toplevel)
+    M.update_parent_projects(dir, project, toplevel)
 
     dir.explorer.renderer:draw()
   end)
 end
 
 ---@param dir DirectoryNode?
----@param projects table
+---@param projects GitProject[]
 function M.reload_node_status(dir, projects)
   dir = dir and dir:as(DirectoryNode)
   if not dir or #dir.nodes == 0 then
