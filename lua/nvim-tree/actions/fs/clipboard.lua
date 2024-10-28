@@ -9,27 +9,25 @@ local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@enum ACTION
-local ACTION = {
-  copy = "copy",
-  cut = "cut",
-}
+---@alias ClipboardAction "copy" | "cut"
+---@alias ClipboardData table<ClipboardAction, Node[]>
 
 ---@class Clipboard to handle all actions.fs clipboard API
 ---@field config table hydrated user opts.filters
 ---@field private explorer Explorer
----@field private data table<ACTION, Node[]>
+---@field private data ClipboardData
 local Clipboard = {}
 
 ---@param opts table user options
 ---@param explorer Explorer
 ---@return Clipboard
 function Clipboard:new(opts, explorer)
+  ---@type Clipboard
   local o = {
     explorer = explorer,
     data = {
-      [ACTION.copy] = {},
-      [ACTION.cut] = {},
+      copy = {},
+      cut = {},
     },
     config = {
       filesystem_watchers = opts.filesystem_watchers,
@@ -109,7 +107,7 @@ end
 
 ---@param source string
 ---@param dest string
----@param action ACTION
+---@param action ClipboardAction
 ---@param action_fn fun(source: string, dest: string)
 ---@return boolean|nil -- success
 ---@return string|nil -- error message
@@ -173,7 +171,7 @@ local function do_single_paste(source, dest, action, action_fn)
 end
 
 ---@param node Node
----@param clip table
+---@param clip ClipboardData
 local function toggle(node, clip)
   if node.name == ".." then
     return
@@ -191,8 +189,8 @@ end
 
 ---Clear copied and cut
 function Clipboard:clear_clipboard()
-  self.data[ACTION.copy] = {}
-  self.data[ACTION.cut] = {}
+  self.data.copy = {}
+  self.data.cut = {}
   notify.info("Clipboard has been emptied.")
   self.explorer.renderer:draw()
 end
@@ -200,23 +198,23 @@ end
 ---Copy one node
 ---@param node Node
 function Clipboard:copy(node)
-  utils.array_remove(self.data[ACTION.cut], node)
-  toggle(node, self.data[ACTION.copy])
+  utils.array_remove(self.data.cut, node)
+  toggle(node, self.data.copy)
   self.explorer.renderer:draw()
 end
 
 ---Cut one node
 ---@param node Node
 function Clipboard:cut(node)
-  utils.array_remove(self.data[ACTION.copy], node)
-  toggle(node, self.data[ACTION.cut])
+  utils.array_remove(self.data.copy, node)
+  toggle(node, self.data.cut)
   self.explorer.renderer:draw()
 end
 
 ---Paste cut or cop
 ---@private
 ---@param node Node
----@param action ACTION
+---@param action ClipboardAction
 ---@param action_fn fun(source: string, dest: string)
 function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
@@ -281,24 +279,24 @@ end
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
 function Clipboard:paste(node)
-  if self.data[ACTION.cut][1] ~= nil then
-    self:do_paste(node, ACTION.cut, do_cut)
-  elseif self.data[ACTION.copy][1] ~= nil then
-    self:do_paste(node, ACTION.copy, do_copy)
+  if self.data.cut[1] ~= nil then
+    self:do_paste(node, "cut", do_cut)
+  elseif self.data.copy[1] ~= nil then
+    self:do_paste(node, "copy", do_copy)
   end
 end
 
 function Clipboard:print_clipboard()
   local content = {}
-  if #self.data[ACTION.cut] > 0 then
+  if #self.data.cut > 0 then
     table.insert(content, "Cut")
-    for _, node in pairs(self.data[ACTION.cut]) do
+    for _, node in pairs(self.data.cut) do
       table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
-  if #self.data[ACTION.copy] > 0 then
+  if #self.data.copy > 0 then
     table.insert(content, "Copy")
-    for _, node in pairs(self.data[ACTION.copy]) do
+    for _, node in pairs(self.data.copy) do
       table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
@@ -397,14 +395,14 @@ end
 ---@param node Node
 ---@return boolean
 function Clipboard:is_cut(node)
-  return vim.tbl_contains(self.data[ACTION.cut], node)
+  return vim.tbl_contains(self.data.cut, node)
 end
 
 ---Node is copied. Will not be cut.
 ---@param node Node
 ---@return boolean
 function Clipboard:is_copied(node)
-  return vim.tbl_contains(self.data[ACTION.copy], node)
+  return vim.tbl_contains(self.data.copy, node)
 end
 
 return Clipboard
