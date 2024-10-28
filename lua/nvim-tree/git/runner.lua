@@ -205,8 +205,9 @@ function GitRunner:finalise()
   end
 end
 
+---Return nil when callback present
 ---@private
----@return GitPathXY? statuses nil if callback present
+---@return GitPathXY?
 function GitRunner:execute()
   local async = self.opts.callback ~= nil
   local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", self.opts.toplevel, self.opts.path)
@@ -238,8 +239,9 @@ function GitRunner:execute()
 end
 
 ---Static method to run a git process, which will be killed if it takes more than timeout
+---Return nil when callback present
 ---@param opts GitRunnerOpts
----@return GitPathXY? statuses nil if callback present
+---@return GitPathXY?
 function GitRunner:run(opts)
   ---@type GitRunner
   local runner = {

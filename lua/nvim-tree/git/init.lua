@@ -82,8 +82,8 @@ local function path_ignored_in_project(path, project)
   end
 
   if project.files then
-    for file, status in pairs(project.files) do
-      if status == "!!" and vim.startswith(path, file) then
+    for p, xy in pairs(project.files) do
+      if xy == "!!" and vim.startswith(path, p) then
         return true
       end
     end
@@ -235,13 +235,13 @@ local function reload_tree_at(toplevel)
   end
 
   M.reload_project(toplevel, nil, function()
-    local git_status = M.get_project(toplevel)
+    local project = M.get_project(toplevel)
 
     Iterator.builder(root_node.nodes)
       :hidden()
       :applier(function(node)
         local parent_ignored = node.parent and node.parent:is_git_ignored() or false
-        node:update_git_status(parent_ignored, git_status)
+        node:update_git_status(parent_ignored, project)
       end)
       :recursor(function(node)
         return node.nodes and #node.nodes > 0 and node.nodes
@@ -371,9 +371,9 @@ function M.reload_node_status(dir, projects)
   end
 
   local toplevel = M.get_toplevel(dir.absolute_path)
-  local status = projects[toplevel] or {}
+  local project = projects[toplevel] or {}
   for _, node in ipairs(dir.nodes) do
-    node:update_git_status(dir:is_git_ignored(), status)
+    node:update_git_status(dir:is_git_ignored(), project)
     M.reload_node_status(node:as(DirectoryNode), projects)
   end
 end
