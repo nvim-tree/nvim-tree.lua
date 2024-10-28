@@ -45,10 +45,8 @@ end
 ---@return boolean
 ---@return string|nil
 local function do_copy(source, destination)
-  local source_stats, handle
-  local success, errmsg
+  local source_stats, errmsg = vim.loop.fs_stat(source)
 
-  source_stats, errmsg = vim.loop.fs_stat(source)
   if not source_stats then
     log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, errmsg)
     return false, errmsg
@@ -62,6 +60,7 @@ local function do_copy(source, destination)
   end
 
   if source_stats.type == "file" then
+    local success
     success, errmsg = vim.loop.fs_copyfile(source, destination)
     if not success then
       log.line("copy_paste", "do_copy fs_copyfile failed '%s'", errmsg)
@@ -69,6 +68,7 @@ local function do_copy(source, destination)
     end
     return true
   elseif source_stats.type == "directory" then
+    local handle
     handle, errmsg = vim.loop.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
@@ -77,6 +77,7 @@ local function do_copy(source, destination)
       return false, errmsg
     end
 
+    local success
     success, errmsg = vim.loop.fs_mkdir(destination, source_stats.mode)
     if not success then
       log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, errmsg)
