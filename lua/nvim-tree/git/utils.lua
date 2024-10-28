@@ -132,11 +132,11 @@ end
 
 ---Git file status for an absolute path
 ---@param parent_ignored boolean
----@param status table?
+---@param project GitProject?
 ---@param path string
 ---@param path_fallback string? alternative file path when no other file status
 ---@return GitNodeStatus
-function M.git_status_file(parent_ignored, status, path, path_fallback)
+function M.git_status_file(parent_ignored, project, path, path_fallback)
   ---@type GitNodeStatus
   local ns
 
@@ -144,9 +144,9 @@ function M.git_status_file(parent_ignored, status, path, path_fallback)
     ns = {
       file = "!!"
     }
-  elseif status and status.files then
+  elseif project and project.files then
     ns = {
-      file = status.files[path] or status.files[path_fallback]
+      file = project.files[path] or project.files[path_fallback]
     }
   else
     ns = {}
@@ -157,11 +157,11 @@ end
 
 ---Git file and directory status for an absolute path
 ---@param parent_ignored boolean
----@param status table?
+---@param project GitProject?
 ---@param path string
 ---@param path_fallback string? alternative file path when no other file status
 ---@return GitNodeStatus?
-function M.git_status_dir(parent_ignored, status, path, path_fallback)
+function M.git_status_dir(parent_ignored, project, path, path_fallback)
   ---@type GitNodeStatus?
   local ns
 
@@ -169,12 +169,12 @@ function M.git_status_dir(parent_ignored, status, path, path_fallback)
     ns = {
       file = "!!"
     }
-  elseif status then
+  elseif project then
     ns = {
-      file = status.files and (status.files[path] or status.files[path_fallback]),
-      dir = status.dirs and {
-        direct = status.dirs.direct and status.dirs.direct[path],
-        indirect = status.dirs.indirect and status.dirs.indirect[path],
+      file = project.files and (project.files[path] or project.files[path_fallback]),
+      dir = project.dirs and {
+        direct = project.dirs.direct and project.dirs.direct[path],
+        indirect = project.dirs.indirect and project.dirs.indirect[path],
       },
     }
   end

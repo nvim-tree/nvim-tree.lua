@@ -339,7 +339,7 @@ end
 ---@param nodes_by_path Node[]
 ---@param node_ignored boolean
 ---@param project GitProject?
----@return fun(node: Node): table
+---@return fun(node: Node): Node
 function Explorer:update_git_statuses(nodes_by_path, node_ignored, project)
   return function(node)
     if nodes_by_path[node.absolute_path] then
