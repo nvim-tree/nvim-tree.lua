@@ -27,7 +27,7 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local config
 
 ---@class (exact) Explorer: RootNode
----@field uid_explorer number vim.uv.hrtime() at construction time
+---@field uid_explorer number vim.loop.hrtime() at construction time
 ---@field opts table user options
 ---@field augroup_id integer
 ---@field renderer Renderer
@@ -63,7 +63,7 @@ function Explorer:create(path)
 
   o.explorer = o
 
-  o.uid_explorer = vim.uv.hrtime()
+  o.uid_explorer = vim.loop.hrtime()
   o.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. o.uid_explorer, {})
 
   o.open = true
