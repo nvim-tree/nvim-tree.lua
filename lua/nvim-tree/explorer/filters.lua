@@ -57,25 +57,25 @@ end
 
 ---Check if the given path is git clean/ignored
 ---@param path string Absolute path
----@param git_status table from prepare
+---@param project GitProject from prepare
 ---@return boolean
-local function git(self, path, git_status)
-  if type(git_status) ~= "table" or type(git_status.files) ~= "table" or type(git_status.dirs) ~= "table" then
+local function git(self, path, project)
+  if type(project) ~= "table" or type(project.files) ~= "table" or type(project.dirs) ~= "table" then
     return false
   end
 
   -- default status to clean
-  local status = git_status.files[path]
-  status = status or git_status.dirs.direct[path] and git_status.dirs.direct[path][1]
-  status = status or git_status.dirs.indirect[path] and git_status.dirs.indirect[path][1]
+  local xy = project.files[path]
+  xy = xy or project.dirs.direct[path] and project.dirs.direct[path][1]
+  xy = xy or project.dirs.indirect[path] and project.dirs.indirect[path][1]
 
   -- filter ignored; overrides clean as they are effectively dirty
-  if self.config.filter_git_ignored and status == "!!" then
+  if self.config.filter_git_ignored and xy == "!!" then
     return true
   end
 
   -- filter clean
-  if self.config.filter_git_clean and not status then
+  if self.config.filter_git_clean and not xy then
     return true
   end
 
@@ -180,12 +180,12 @@ end
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
 ---@param project GitProject? optional results of git.load_projects(...)
 ---@return table
---- git_status: reference
+--- project: reference
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
 --- bookmarks: absolute paths to boolean
 function Filters:prepare(project)
   local status = {
-    git_status = project or {},
+    project = project or {},
     bufinfo = {},
     bookmarks = {},
   }
@@ -219,7 +219,7 @@ function Filters:should_filter(path, fs_stat, status)
     return false
   end
 
-  return git(self, path, status.git_status)
+  return git(self, path, status.project)
     or buf(self, path, status.bufinfo)
     or dotfile(self, path)
     or custom(self, path)
@@ -240,7 +240,7 @@ function Filters:should_filter_as_reason(path, fs_stat, status)
     return FILTER_REASON.none
   end
 
-  if git(self, path, status.git_status) then
+  if git(self, path, status.project) then
     return FILTER_REASON.git
   elseif buf(self, path, status.bufinfo) then
     return FILTER_REASON.buf
