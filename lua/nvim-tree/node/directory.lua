@@ -67,9 +67,9 @@ end
 
 ---Update the git_status of the directory
 ---@param parent_ignored boolean
----@param status table|nil
-function DirectoryNode:update_git_status(parent_ignored, status)
-  self.git_status = git_utils.git_status_dir(parent_ignored, status, self.absolute_path, nil)
+---@param project GitProject?
+function DirectoryNode:update_git_status(parent_ignored, project)
+  self.git_status = git_utils.git_status_dir(parent_ignored, project, self.absolute_path, nil)
 end
 
 ---@return GitXY[]?

@@ -34,9 +34,9 @@ end
 
 ---Update the git_status of the target otherwise the link itself
 ---@param parent_ignored boolean
----@param status table|nil
-function FileLinkNode:update_git_status(parent_ignored, status)
-  self.git_status = git_utils.git_status_file(parent_ignored, status, self.link_to, self.absolute_path)
+---@param project GitProject?
+function FileLinkNode:update_git_status(parent_ignored, project)
+  self.git_status = git_utils.git_status_file(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
 ---Create a sanitized partial copy of a node

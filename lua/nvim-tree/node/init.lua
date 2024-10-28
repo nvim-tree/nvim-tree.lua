@@ -22,9 +22,9 @@ end
 ---Update the git_status of the node
 ---Abstract
 ---@param parent_ignored boolean
----@param status table?
-function Node:update_git_status(parent_ignored, status)
-  self:nop(parent_ignored, status)
+---@param project GitProject?
+function Node:update_git_status(parent_ignored, project)
+  self:nop(parent_ignored, project)
 end
 
 ---Short-format statuses

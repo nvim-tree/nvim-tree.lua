@@ -42,9 +42,9 @@ end
 
 ---Update the GitStatus of the file
 ---@param parent_ignored boolean
----@param status table|nil
-function FileNode:update_git_status(parent_ignored, status)
-  self.git_status = git_utils.git_status_file(parent_ignored, status, self.absolute_path, nil)
+---@param project GitProject?
+function FileNode:update_git_status(parent_ignored, project)
+  self.git_status = git_utils.git_status_file(parent_ignored, project, self.absolute_path, nil)
 end
 
 ---@return GitXY[]?

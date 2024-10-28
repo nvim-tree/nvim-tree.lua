@@ -178,14 +178,14 @@ local function custom(self, path)
 end
 
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
----@param git_status table|nil optional results of git.load_project(...)
+---@param project GitProject? optional results of git.load_projects(...)
 ---@return table
 --- git_status: reference
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
 --- bookmarks: absolute paths to boolean
-function Filters:prepare(git_status)
+function Filters:prepare(project)
   local status = {
-    git_status = git_status or {},
+    git_status = project or {},
     bufinfo = {},
     bookmarks = {},
   }
