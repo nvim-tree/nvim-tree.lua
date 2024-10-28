@@ -12,8 +12,8 @@ local MAX_DEPTH = 100
 ---Return the status of the node or nil if no status, depending on the type of
 ---status.
 ---@param node Node to inspect
----@param what string type of status
----@param skip_gitignored boolean default false
+---@param what string? type of status
+---@param skip_gitignored boolean? default false
 ---@return boolean
 local function status_is_valid(node, what, skip_gitignored)
   if what == "git" then
@@ -31,9 +31,9 @@ end
 
 ---Move to the next node that has a valid status. If none found, don't move.
 ---@param explorer Explorer
----@param where string where to move (forwards or backwards)
----@param what string type of status
----@param skip_gitignored boolean default false
+---@param where string? where to move (forwards or backwards)
+---@param what string? type of status
+---@param skip_gitignored boolean? default false
 local function move(explorer, where, what, skip_gitignored)
   local first_node_line = core.get_nodes_starting_line()
   local nodes_by_line = utils.get_nodes_by_line(explorer.nodes, first_node_line)
@@ -84,8 +84,8 @@ end
 
 --- Move to the next node recursively.
 ---@param explorer Explorer
----@param what string type of status
----@param skip_gitignored boolean default false
+---@param what string? type of status
+---@param skip_gitignored? boolean default false
 local function move_next_recursive(explorer, what, skip_gitignored)
   -- If the current node:
   -- * is a directory
@@ -150,8 +150,8 @@ end
 --- 4.5) Save the current node and start back from 4.1.
 ---
 ---@param explorer Explorer
----@param what string type of status
----@param skip_gitignored boolean default false
+---@param what string? type of status
+---@param skip_gitignored boolean? default false
 local function move_prev_recursive(explorer, what, skip_gitignored)
   local node_init, node_cur
 
@@ -210,8 +210,10 @@ local function move_prev_recursive(explorer, what, skip_gitignored)
 end
 
 ---@class NavigationItemOpts
----@field where string
----@field what string
+---@field where string?
+---@field what string?
+---@field skip_gitignored boolean?
+---@field recurse boolean?
 
 ---@param opts NavigationItemOpts
 ---@return fun()
@@ -223,26 +225,21 @@ function M.fn(opts)
     end
 
     local recurse = false
-    local skip_gitignored = false
 
     -- recurse only valid for git and diag moves.
     if (opts.what == "git" or opts.what == "diag") and opts.recurse ~= nil then
       recurse = opts.recurse
     end
 
-    if opts.skip_gitignored ~= nil then
-      skip_gitignored = opts.skip_gitignored
-    end
-
     if not recurse then
-      move(explorer, opts.where, opts.what, skip_gitignored)
+      move(explorer, opts.where, opts.what, opts.skip_gitignored)
       return
     end
 
     if opts.where == "next" then
-      move_next_recursive(explorer, opts.what, skip_gitignored)
+      move_next_recursive(explorer, opts.what, opts.skip_gitignored)
     elseif opts.where == "prev" then
-      move_prev_recursive(explorer, opts.what, skip_gitignored)
+      move_prev_recursive(explorer, opts.what, opts.skip_gitignored)
     end
   end
 end
