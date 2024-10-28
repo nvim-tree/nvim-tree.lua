@@ -138,12 +138,18 @@ end
 ---@return GitNodeStatus
 function M.git_status_file(parent_ignored, status, path, path_fallback)
   ---@type GitNodeStatus
-  local ns = {}
+  local ns
 
   if parent_ignored then
-    ns.file = "!!"
+    ns = {
+      file = "!!"
+    }
   elseif status and status.files then
-    ns.file = status.files[path] or status.files[path_fallback]
+    ns = {
+      file = status.files[path] or status.files[path_fallback]
+    }
+  else
+    ns = {}
   end
 
   return ns
@@ -160,16 +166,17 @@ function M.git_status_dir(parent_ignored, status, path, path_fallback)
   local ns
 
   if parent_ignored then
-    ns = {}
-    ns.file = "!!"
+    ns = {
+      file = "!!"
+    }
   elseif status then
-    ns = {}
-    ns.file = status.files and (status.files[path] or status.files[path_fallback])
-    if status.dirs then
-      ns.dir = {}
-      ns.dir.direct = status.dirs.direct and status.dirs.direct[path]
-      ns.dir.indirect = status.dirs.indirect and status.dirs.indirect[path]
-    end
+    ns = {
+      file = status.files and (status.files[path] or status.files[path_fallback]),
+      dir = status.dirs and {
+        direct = status.dirs.direct and status.dirs.direct[path],
+        indirect = status.dirs.indirect and status.dirs.indirect[path],
+      },
+    }
   end
 
   return ns

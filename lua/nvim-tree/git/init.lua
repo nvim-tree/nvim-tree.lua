@@ -18,7 +18,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---Git short-format statuses for a single node
 ---@class (exact) GitNodeStatus
----@field file GitXY
+---@field file GitXY?
 ---@field dir table<"direct" | "indirect", GitXY[]>?
 
 ---Git state for an entire repo
