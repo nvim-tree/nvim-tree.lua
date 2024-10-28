@@ -19,7 +19,7 @@ local Node = Class:new()
 function Node:destroy()
 end
 
----Update the GitStatus of the node
+---Update the git_status of the node
 ---Abstract
 ---@param parent_ignored boolean
 ---@param status table?
@@ -27,8 +27,9 @@ function Node:update_git_status(parent_ignored, status)
   self:nop(parent_ignored, status)
 end
 
----@return string[]? xy short-format statuses
-function Node:get_git_status()
+---Short-format statuses
+---@return GitXY[]?
+function Node:get_git_xy()
 end
 
 ---@return boolean

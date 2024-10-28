@@ -11,14 +11,14 @@ local MAX_DEPTH = 100
 
 ---Return the status of the node or nil if no status, depending on the type of
 ---status.
----@param node table node to inspect
+---@param node Node to inspect
 ---@param what string type of status
 ---@param skip_gitignored boolean default false
 ---@return boolean
 local function status_is_valid(node, what, skip_gitignored)
   if what == "git" then
-    local git_status = node:get_git_status()
-    return git_status ~= nil and (not skip_gitignored or git_status[1] ~= "!!")
+    local git_xy = node:get_git_xy()
+    return git_xy ~= nil and (not skip_gitignored or git_xy[1] ~= "!!")
   elseif what == "diag" then
     local diag_status = diagnostics.get_diag_status(node)
     return diag_status ~= nil and diag_status.value ~= nil

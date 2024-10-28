@@ -32,7 +32,7 @@ function FileLinkNode:destroy()
   FileNode.destroy(self)
 end
 
----Update the GitStatus of the target otherwise the link itself
+---Update the git_status of the target otherwise the link itself
 ---@param parent_ignored boolean
 ---@param status table|nil
 function FileLinkNode:update_git_status(parent_ignored, status)

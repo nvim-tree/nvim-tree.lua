@@ -65,41 +65,41 @@ function DirectoryNode:destroy()
   Node.destroy(self)
 end
 
----Update the GitStatus of the directory
+---Update the git_status of the directory
 ---@param parent_ignored boolean
 ---@param status table|nil
 function DirectoryNode:update_git_status(parent_ignored, status)
   self.git_status = git_utils.git_status_dir(parent_ignored, status, self.absolute_path, nil)
 end
 
----@return string[]? xy short-format statuses
-function DirectoryNode:get_git_status()
+---@return GitXY[]?
+function DirectoryNode:get_git_xy()
   if not self.git_status or not self.explorer.opts.git.show_on_dirs then
     return nil
   end
 
-  local status = {}
+  local xys = {}
   if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
     -- dir is closed or we should show on open_dirs
     if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
+      table.insert(xys, self.git_status.file)
     end
     if self.git_status.dir ~= nil then
       if self.git_status.dir.direct ~= nil then
         for _, s in pairs(self.git_status.dir.direct) do
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
       if self.git_status.dir.indirect ~= nil then
         for _, s in pairs(self.git_status.dir.indirect) do
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
     end
   else
     -- dir is open and we shouldn't show on open_dirs
     if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
+      table.insert(xys, self.git_status.file)
     end
     if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
       local deleted = {
@@ -110,15 +110,15 @@ function DirectoryNode:get_git_status()
       }
       for _, s in pairs(self.git_status.dir.direct) do
         if deleted[s] then
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
     end
   end
-  if #status == 0 then
+  if #xys == 0 then
     return nil
   else
-    return status
+    return xys
   end
 end
 

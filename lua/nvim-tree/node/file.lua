@@ -47,8 +47,8 @@ function FileNode:update_git_status(parent_ignored, status)
   self.git_status = git_utils.git_status_file(parent_ignored, status, self.absolute_path, nil)
 end
 
----@return string[]? xy short-format statuses
-function FileNode:get_git_status()
+---@return GitXY[]?
+function FileNode:get_git_xy()
   if not self.git_status then
     return nil
   end

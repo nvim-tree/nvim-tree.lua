@@ -12,12 +12,12 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"
 
 ---@alias GitIconsByStatus table<GitStatusStrings, GitHighlightedString> human status
----@alias GitIconsByXY table<string, GitHighlightedString[]> porcelain status
----@alias GitGlyphs table<GitStatusStrings, string> from opts
+---@alias GitIconsByXY table<GitXY, GitHighlightedString[]> porcelain status
+---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
 ---@class (exact) DecoratorGit: Decorator
----@field file_hl_by_xy table<string, string>?
----@field folder_hl_by_xy table<string, string>?
+---@field file_hl_by_xy table<GitXY, string>?
+---@field folder_hl_by_xy table<GitXY, string>?
 ---@field icons_by_status GitIconsByStatus?
 ---@field icons_by_xy GitIconsByXY?
 local DecoratorGit = Decorator:new()
@@ -56,7 +56,7 @@ function DecoratorGit:create(opts, explorer)
   return o
 end
 
----@param glyphs GitGlyphs
+---@param glyphs GitGlyphsByStatus
 function DecoratorGit:build_icons_by_status(glyphs)
   self.icons_by_status = {}
   self.icons_by_status.staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
@@ -154,19 +154,19 @@ function DecoratorGit:calculate_icons(node)
     return nil
   end
 
-  local git_status = node:get_git_status()
-  if git_status == nil then
+  local git_xy = node:get_git_xy()
+  if git_xy == nil then
     return nil
   end
 
   local inserted = {}
   local iconss = {}
 
-  for _, s in pairs(git_status) do
+  for _, s in pairs(git_xy) do
     local icons = self.icons_by_xy[s]
     if not icons then
       if self.hl_pos == HL_POSITION.none then
-        notify.warn(string.format("Unrecognized git state '%s'", git_status))
+        notify.warn(string.format("Unrecognized git state '%s'", git_xy))
       end
       return nil
     end
@@ -215,15 +215,15 @@ function DecoratorGit:calculate_highlight(node)
     return nil
   end
 
-  local git_status = node:get_git_status()
-  if not git_status then
+  local git_xy = node:get_git_xy()
+  if not git_xy then
     return nil
   end
 
   if node:is(DirectoryNode) then
-    return self.folder_hl_by_xy[git_status[1]]
+    return self.folder_hl_by_xy[git_xy[1]]
   else
-    return self.file_hl_by_xy[git_status[1]]
+    return self.file_hl_by_xy[git_xy[1]]
   end
 end
 

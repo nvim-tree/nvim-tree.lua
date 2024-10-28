@@ -7,25 +7,28 @@ local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----Git xy short-format statuses for a single node
+---Git short format status xy
+---@alias GitXY string
+
+-- Git short-format status
+---@alias GitPathXY table<string, GitXY>
+
+-- Git short-format statuses
+---@alias GitPathXYs table<string, GitXY[]>
+
+---Git short-format statuses for a single node
 ---@class (exact) GitNodeStatus
----@field file string?
----@field dir table<"direct" | "indirect", string[]>?
-
--- Git xy short-format status
----@alias GitPathXY table<string, string>
-
--- Git xy short-format statuses
----@alias GitPathXYs table<string, string[]>
-
----@alias GitProjectFiles GitPathXY
----@alias GitProjectDirs table<"direct" | "indirect", GitPathXYs>
+---@field file GitXY
+---@field dir table<"direct" | "indirect", GitXY[]>?
 
 ---Git state for an entire repo
 ---@class (exact) GitProject
 ---@field files GitProjectFiles?
 ---@field dirs GitProjectDirs?
 ---@field watcher Watcher?
+
+---@alias GitProjectFiles GitPathXY
+---@alias GitProjectDirs table<"direct" | "indirect", GitPathXYs>
 
 local M = {
   config = {},
