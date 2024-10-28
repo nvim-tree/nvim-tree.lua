@@ -1,3 +1,5 @@
+local DirectoryLinkNode = require("nvim-tree.node.directory-link")
+
 local M = { i = {} }
 
 local function config_symlinks()
@@ -11,39 +13,40 @@ local function empty()
   return "", nil
 end
 
----@param node Node
+---@param dir DirectoryNode
 ---@param has_children boolean
 ---@return string icon
 ---@return string? name
-local function get_folder_icon_default(node, has_children)
-  local is_symlink = node.links_to ~= nil
-  local n
-  if is_symlink and node.open then
-    n = M.config.glyphs.folder.symlink_open
-  elseif is_symlink then
-    n = M.config.glyphs.folder.symlink
-  elseif node.open then
-    if has_children then
-      n = M.config.glyphs.folder.open
+local function get_folder_icon_default(dir, has_children)
+  local icon
+  if dir:is(DirectoryLinkNode) then
+    if dir.open then
+      icon = M.config.glyphs.folder.symlink_open
     else
-      n = M.config.glyphs.folder.empty_open
+      icon = M.config.glyphs.folder.symlink
+    end
+  elseif dir.open then
+    if has_children then
+      icon = M.config.glyphs.folder.open
+    else
+      icon = M.config.glyphs.folder.empty_open
     end
   else
     if has_children then
-      n = M.config.glyphs.folder.default
+      icon = M.config.glyphs.folder.default
     else
-      n = M.config.glyphs.folder.empty
+      icon = M.config.glyphs.folder.empty
     end
   end
-  return n, nil
+  return icon, nil
 end
 
----@param node Node
+---@param node DirectoryNode
 ---@param has_children boolean
 ---@return string icon
 ---@return string? name
 local function get_folder_icon_webdev(node, has_children)
-  local icon, hl_group = M.devicons.get_icon(node.name, node.extension)
+  local icon, hl_group = M.devicons.get_icon(node.name, nil)
   if not M.config.web_devicons.folder.color then
     hl_group = nil
   end
