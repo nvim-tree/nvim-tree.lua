@@ -43,7 +43,7 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
     open = false,
     hidden_stats = nil,
   }
-  o = self:new(o) --[[@as DirectoryNode]]
+  o = self:new(o)
 
   o.watcher = require("nvim-tree.explorer.watch").create_watcher(o)
 

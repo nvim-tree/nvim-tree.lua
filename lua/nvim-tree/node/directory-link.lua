@@ -20,7 +20,7 @@ function DirectoryLinkNode:create(explorer, parent, absolute_path, link_to, name
   -- create DirectoryNode with the target path for the watcher
   local o = DirectoryNode:create(explorer, parent, link_to, name, fs_stat)
 
-  o = self:new(o) --[[@as DirectoryLinkNode]]
+  o = self:new(o)
 
   -- reset absolute path to the link itself
   o.absolute_path = absolute_path

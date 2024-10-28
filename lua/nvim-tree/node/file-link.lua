@@ -19,7 +19,7 @@ local FileLinkNode = FileNode:new()
 function FileLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
   local o = FileNode:create(explorer, parent, absolute_path, name, fs_stat)
 
-  o = self:new(o) --[[@as FileLinkNode]]
+  o = self:new(o)
 
   o.type = "link"
   o.link_to = link_to

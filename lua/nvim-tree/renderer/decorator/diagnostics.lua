@@ -49,7 +49,7 @@ function DecoratorDiagnostics:create(opts, explorer)
     hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
   }
-  o = self:new(o) --[[@as DecoratorDiagnostics]]
+  o = self:new(o)
 
   if not o.enabled then
     return o

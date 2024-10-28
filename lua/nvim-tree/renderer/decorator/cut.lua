@@ -18,7 +18,7 @@ function DecoratorCut:create(opts, explorer)
     hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
   }
-  o = self:new(o) --[[@as DecoratorCut]]
+  o = self:new(o)
 
   return o
 end

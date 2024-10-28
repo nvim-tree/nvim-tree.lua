@@ -246,7 +246,7 @@ function GitRunner:run(opts)
     opts = opts,
     statuses = {},
   }
-  runner = GitRunner:new(runner) --[[@as GitRunner]]
+  runner = GitRunner:new(runner)
 
   return runner:execute()
 end

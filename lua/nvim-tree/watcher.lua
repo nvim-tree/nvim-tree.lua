@@ -40,7 +40,7 @@ function Event:create(path)
     fs_event = nil,
     listeners = {},
   }
-  o = self:new(o) --[[@as Event]]
+  o = self:new(o)
 
   if o:start() then
     events[path] = o
@@ -168,7 +168,7 @@ function Watcher:create(path, files, callback, data)
     listener = nil,
     event = event,
   }
-  o = self:new(o) --[[@as Watcher]]
+  o = self:new(o)
 
   o:start()
 

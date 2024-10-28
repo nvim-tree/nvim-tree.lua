@@ -34,7 +34,7 @@ function DecoratorGit:create(opts, explorer)
     hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
   }
-  o = self:new(o) --[[@as DecoratorGit]]
+  o = self:new(o)
 
   if not o.enabled then
     return o

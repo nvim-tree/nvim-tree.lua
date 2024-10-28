@@ -31,7 +31,7 @@ function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
 
     extension = string.match(name, ".?[^.]+%.(.*)") or "",
   }
-  o = self:new(o) --[[@as FileNode]]
+  o = self:new(o)
 
   return o
 end
