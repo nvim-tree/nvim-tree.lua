@@ -1,5 +1,3 @@
-local _ = table.pack({})
-
 local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
