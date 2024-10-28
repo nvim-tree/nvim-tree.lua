@@ -8,7 +8,7 @@ local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---Git xy short-format statuses for a single node
----@class (exact) GitStatus
+---@class (exact) GitNodeStatus
 ---@field file string?
 ---@field dir table<"direct" | "indirect", string[]>?
 
@@ -135,9 +135,9 @@ function M.reload_project(toplevel, path, callback)
   }
 
   if callback then
-    ---@param statuses GitPathXY
-    runner_opts.callback = function(statuses)
-      reload_git_project(toplevel, path, project, statuses)
+    ---@param path_xy GitPathXY
+    runner_opts.callback = function(path_xy)
+      reload_git_project(toplevel, path, project, path_xy)
       callback()
     end
     GitRunner:run(runner_opts)

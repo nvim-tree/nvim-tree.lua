@@ -8,7 +8,7 @@ local Class = require("nvim-tree.class")
 ---@field absolute_path string
 ---@field executable boolean
 ---@field fs_stat uv.fs_stat.result?
----@field git_status GitStatus?
+---@field git_status GitNodeStatus?
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?

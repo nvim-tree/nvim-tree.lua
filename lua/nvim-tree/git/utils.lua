@@ -130,49 +130,49 @@ function M.project_files_to_project_dirs(project_files, cwd)
   return project_dirs
 end
 
----Git file status for an absolute path with optional fallback
+---Git file status for an absolute path
 ---@param parent_ignored boolean
 ---@param status table?
 ---@param path string
----@param path_fallback string?
----@return GitStatus
+---@param path_fallback string? alternative file path when no other file status
+---@return GitNodeStatus
 function M.git_status_file(parent_ignored, status, path, path_fallback)
-  ---@type GitStatus
-  local st = {}
+  ---@type GitNodeStatus
+  local ns = {}
 
   if parent_ignored then
-    st.file = "!!"
+    ns.file = "!!"
   elseif status and status.files then
-    st.file = status.files[path] or status.files[path_fallback]
+    ns.file = status.files[path] or status.files[path_fallback]
   end
 
-  return st
+  return ns
 end
 
----Git file and directory status for an absolute path with optional file fallback
+---Git file and directory status for an absolute path
 ---@param parent_ignored boolean
 ---@param status table?
 ---@param path string
----@param path_file string? alternative file path when no other file status
----@return GitStatus?
-function M.git_status_dir(parent_ignored, status, path, path_file)
-  ---@type GitStatus?
-  local st
+---@param path_fallback string? alternative file path when no other file status
+---@return GitNodeStatus?
+function M.git_status_dir(parent_ignored, status, path, path_fallback)
+  ---@type GitNodeStatus?
+  local ns
 
   if parent_ignored then
-    st = {}
-    st.file = "!!"
+    ns = {}
+    ns.file = "!!"
   elseif status then
-    st = {}
-    st.file = status.files and (status.files[path] or status.files[path_file])
+    ns = {}
+    ns.file = status.files and (status.files[path] or status.files[path_fallback])
     if status.dirs then
-      st.dir = {}
-      st.dir.direct = status.dirs.direct and status.dirs.direct[path]
-      st.dir.indirect = status.dirs.indirect and status.dirs.indirect[path]
+      ns.dir = {}
+      ns.dir.direct = status.dirs.direct and status.dirs.direct[path]
+      ns.dir.indirect = status.dirs.indirect and status.dirs.indirect[path]
     end
   end
 
-  return st
+  return ns
 end
 
 function M.setup(opts)

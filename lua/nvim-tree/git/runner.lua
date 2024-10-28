@@ -10,11 +10,11 @@ local Class = require("nvim-tree.class")
 ---@field list_untracked boolean
 ---@field list_ignored boolean
 ---@field timeout integer
----@field callback fun(statuses: GitPathXY)?
+---@field callback fun(path_xy: GitPathXY)?
 
 ---@class (exact) GitRunner: Class
 ---@field private opts GitRunnerOpts
----@field private statuses GitPathXY
+---@field private path_xy GitPathXY
 ---@field private rc integer? -- -1 indicates timeout
 local GitRunner = Class:new()
 
@@ -34,7 +34,7 @@ function GitRunner:parse_status_output(status, path)
     path = path:gsub("/", "\\")
   end
   if #status > 0 and #path > 0 then
-    self.statuses[utils.path_remove_trailing(utils.path_join({ self.opts.toplevel, path }))] = status
+    self.path_xy[utils.path_remove_trailing(utils.path_join({ self.opts.toplevel, path }))] = status
   end
 end
 
@@ -218,7 +218,7 @@ function GitRunner:execute()
 
       self:finalise()
 
-      self.opts.callback(self.statuses)
+      self.opts.callback(self.path_xy)
     end)
   else
     -- sync, maybe call back
@@ -230,9 +230,9 @@ function GitRunner:execute()
     self:finalise()
 
     if self.opts.callback then
-      self.opts.callback(self.statuses)
+      self.opts.callback(self.path_xy)
     else
-      return self.statuses
+      return self.path_xy
     end
   end
 end
@@ -244,7 +244,7 @@ function GitRunner:run(opts)
   ---@type GitRunner
   local runner = {
     opts = opts,
-    statuses = {},
+    path_xy = {},
   }
   runner = GitRunner:new(runner)
 
