@@ -198,7 +198,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
     next_open = not open
   end
 
-  local node = self
+  local node = head_node
   while node do
     node.open = next_open
     node = node.group_next
