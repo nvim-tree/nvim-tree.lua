@@ -1,7 +1,6 @@
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.icons")
 local notify = require("nvim-tree.notify")
-
 local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: Node
@@ -209,21 +208,52 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   self.explorer.renderer:draw()
 end
 
----Icon and name for the directory
+---@private
 ---@return HighlightedString icon
----@return HighlightedString name
-function DirectoryNode:icon_name()
-  local has_children = #self.nodes ~= 0 or self.has_children
+function DirectoryNode:highlighted_icon()
+  local str, hl
 
-  local icon_str, icon_hl = icons.get_folder_icon(self, has_children)
-
-  if #icon_str > 0 and icon_hl == nil then
-    if self.open then
-      icon_hl = "NvimTreeOpenedFolderIcon"
-    else
-      icon_hl = "NvimTreeClosedFolderIcon"
+  -- devicon if enabled and available
+  if self.explorer.opts.renderer.icons.show.folder and self.explorer.opts.renderer.icons.web_devicons.folder.enable then
+    str, hl = icons.get_icon(self.name, nil)
+    if not self.explorer.opts.renderer.icons.web_devicons.folder.color then
+      hl = nil
     end
   end
+
+  -- default icon
+  if not str then
+    if #self.nodes ~= 0 or self.has_children then
+      if self.open then
+        str = self.explorer.opts.renderer.icons.glyphs.folder.open
+      else
+        str = self.explorer.opts.renderer.icons.glyphs.folder.default
+      end
+    else
+      if self.open then
+        str = self.explorer.opts.renderer.icons.glyphs.folder.empty_open
+      else
+        str = self.explorer.opts.renderer.icons.glyphs.folder.empty
+      end
+    end
+  end
+
+  -- default color
+  if #str > 0 and hl == nil then
+    if self.open then
+      hl = "NvimTreeOpenedFolderIcon"
+    else
+      hl = "NvimTreeClosedFolderIcon"
+    end
+  end
+
+  return { str = str, hl = { hl } }
+end
+
+---@private
+---@return HighlightedString icon
+function DirectoryNode:highlighted_name()
+  local str, hl
 
   local name = self.name
   local next = self.group_next
@@ -240,18 +270,26 @@ function DirectoryNode:icon_name()
       notify.warn(string.format("Invalid return type for field renderer.group_empty. Expected string, got %s", type(new_name)))
     end
   end
-  local name_str = string.format("%s%s", name, self.explorer.opts.renderer.add_trailing and "/" or "")
+  str = string.format("%s%s", name, self.explorer.opts.renderer.add_trailing and "/" or "")
 
-  local name_hl = "NvimTreeFolderName"
+  hl = "NvimTreeFolderName"
   if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
-    name_hl = "NvimTreeSpecialFolderName"
+    hl = "NvimTreeSpecialFolderName"
   elseif self.open then
-    name_hl = "NvimTreeOpenedFolderName"
-  elseif not has_children then
-    name_hl = "NvimTreeEmptyFolderName"
+    hl = "NvimTreeOpenedFolderName"
+  elseif #self.nodes == 0 and not self.has_children then
+    hl = "NvimTreeEmptyFolderName"
   end
 
-  return { str = icon_str, hl = { icon_hl } }, { str = name_str, hl = { name_hl } }
+  return { str = str, hl = { hl } }
+end
+
+---TODO builder call highlighted_name and highlighted_icon separately
+---Highlighted icon and name for the directory
+---@return HighlightedString icon
+---@return HighlightedString name
+function DirectoryNode:icon_name()
+  return self:highlighted_icon(), self:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

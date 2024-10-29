@@ -1,5 +1,3 @@
-local DirectoryLinkNode = nil --circular dependency
-
 ---@class DevIcon
 ---@field icon string
 ---@field color string
@@ -25,50 +23,6 @@ end
 ---@return string? hl_group
 local function empty()
   return "", nil
-end
-
----@param dir DirectoryNode
----@param has_children boolean
----@return string icon
----@return string? hl_group
-local function get_folder_icon_default(dir, has_children)
-  local icon
-  if dir:is(DirectoryLinkNode) then
-    if dir.open then
-      icon = M.config.glyphs.folder.symlink_open
-    else
-      icon = M.config.glyphs.folder.symlink
-    end
-  elseif dir.open then
-    if has_children then
-      icon = M.config.glyphs.folder.open
-    else
-      icon = M.config.glyphs.folder.empty_open
-    end
-  else
-    if has_children then
-      icon = M.config.glyphs.folder.default
-    else
-      icon = M.config.glyphs.folder.empty
-    end
-  end
-  return icon, nil
-end
-
----@param node DirectoryNode
----@param has_children boolean
----@return string icon
----@return string? hl_group
-local function get_folder_icon_webdev(node, has_children)
-  local icon, hl_group = M.devicons.get_icon(node.name, nil)
-  if not M.config.web_devicons.folder.color then
-    hl_group = nil
-  end
-  if icon ~= nil then
-    return icon, hl_group
-  else
-    return get_folder_icon_default(node, has_children)
-  end
 end
 
 ---@return string icon
@@ -119,29 +73,26 @@ local function config_file_icon()
   end
 end
 
-local function config_folder_icon()
-  if M.config.show.folder then
-    if M.devicons and M.config.web_devicons.folder.enable then
-      M.get_folder_icon = get_folder_icon_webdev
-    else
-      M.get_folder_icon = get_folder_icon_default
-    end
-  else
-    M.get_folder_icon = empty
+---Wrapper around nvim-web-devicons, nil if not present
+---@param name string
+---@param ext string?
+---@return string? icon
+---@return string? hl_group
+function M.get_icon(name, ext)
+  if M.devicons then
+    return M.devicons.get_icon(name, ext)
   end
 end
 
 function M.reset_config()
   config_symlinks()
   config_file_icon()
-  config_folder_icon()
 end
 
 function M.setup(opts)
   M.config = opts.renderer.icons
 
   M.devicons = pcall(require, "nvim-web-devicons") and require("nvim-web-devicons") or nil
-  DirectoryLinkNode = require("nvim-tree.node.directory-link")
 end
 
 return M
