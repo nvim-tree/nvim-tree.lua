@@ -142,7 +142,7 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
 end
 
 ---@private
----@param node DirectoryNode
+---@param node Node
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:build_folder(node)
@@ -352,19 +352,15 @@ end
 ---@param idx integer line number starting at 1
 ---@param num_children integer of node
 function Builder:build_line(node, idx, num_children)
-  local dir = node:as(DirectoryNode)
-  local dir_link = node:as(FileLinkNode)
-  local file_link = node:as(DirectoryLinkNode)
-
   -- various components
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
   -- main components
   local icon, name
-  if dir then
-    icon, name = self:build_folder(dir)
-  elseif dir_link or file_link then
+  if node:is(DirectoryNode) then
+    icon, name = self:build_folder(node)
+  elseif node:is(DirectoryLinkNode) or node:is(FileLinkNode) then
     icon, name = self:build_symlink(node)
   else
     icon, name = self:build_file(node)
