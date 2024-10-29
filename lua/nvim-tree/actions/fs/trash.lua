@@ -2,6 +2,9 @@ local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 
+local DirectoryLinkNode = require("nvim-tree.node.directory-link")
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {
   config = {},
 }
@@ -54,7 +57,7 @@ function M.remove(node)
 
   local explorer = core.get_explorer()
 
-  if node.nodes ~= nil and not node.link_to then
+  if node:is(DirectoryNode) and not node:is(DirectoryLinkNode) then
     trash_path(function(_, rc)
       if rc ~= 0 then
         notify.warn("trash failed: " .. err_msg .. "; please see :help nvim-tree.trash")
