@@ -1,6 +1,20 @@
 local DirectoryLinkNode = nil --circular dependency
 
-local M = { i = {} }
+---@class DevIcon
+---@field icon string
+---@field color string
+---@field cterm_color string
+---@field name string
+
+---@class DevIcons
+---@field get_icon fun(name: string, ext: string?): string?, string?
+---@field get_default_icon fun(): DevIcon
+
+local M = {
+  i = {},
+  ---@type DevIcons?
+  devicons = nil,
+}
 
 local function config_symlinks()
   M.i.symlink = #M.config.glyphs.symlink > 0 and M.config.glyphs.symlink or ""
