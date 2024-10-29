@@ -174,7 +174,7 @@ function DirectoryNode:ungroup_empty_folders()
   end
 end
 
----@param toggle_group boolean
+---@param toggle_group boolean?
 function DirectoryNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
   if self.has_children then
