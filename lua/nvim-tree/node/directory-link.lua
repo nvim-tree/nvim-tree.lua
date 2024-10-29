@@ -45,7 +45,7 @@ function DirectoryLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_dir(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
----Icon and name for the directory link
+---Maybe overrides name
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function DirectoryLinkNode:icon_name()
@@ -53,7 +53,7 @@ function DirectoryLinkNode:icon_name()
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    icon.hl = { string.format("%s%s%s", name.str, icons.i.symlink_arrow, link_to) }
+    name.str = string.format("%s%s%s", name.str, icons.i.symlink_arrow, link_to)
     name.hl = { "NvimTreeSymlinkFolderName" }
   end
 
