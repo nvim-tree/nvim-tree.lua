@@ -1,4 +1,6 @@
 local git_utils = require("nvim-tree.git.utils")
+local icons = require("nvim-tree.renderer.components.icons")
+local utils = require("nvim-tree.utils")
 
 local FileNode = require("nvim-tree.node.file")
 
@@ -37,6 +39,21 @@ end
 ---@param project GitProject?
 function FileLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_file(parent_ignored, project, self.link_to, self.absolute_path)
+end
+
+---Icon and name for the file link
+---@return HighlightedString icon
+---@return HighlightedString name
+function FileLinkNode:icon_name()
+  local icon = icons.i.symlink
+  local arrow = icons.i.symlink_arrow
+  local symlink_formatted = self.name
+  if self.explorer.opts.renderer.symlink_destination then
+    local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
+    symlink_formatted = string.format("%s%s%s", symlink_formatted, arrow, link_to)
+  end
+
+  return { str = icon, hl = { "NvimTreeSymlinkIcon" } }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
 end
 
 ---Create a sanitized partial copy of a node

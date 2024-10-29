@@ -1,4 +1,4 @@
-local DirectoryLinkNode = require("nvim-tree.node.directory-link")
+local DirectoryLinkNode = nil --circular dependency
 
 local M = { i = {} }
 
@@ -127,6 +127,7 @@ function M.setup(opts)
   M.config = opts.renderer.icons
 
   M.devicons = pcall(require, "nvim-web-devicons") and require("nvim-web-devicons") or nil
+  DirectoryLinkNode = require("nvim-tree.node.directory-link")
 end
 
 return M

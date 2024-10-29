@@ -68,6 +68,14 @@ function Node:get_parent_of_group()
   end
 end
 
+---Icon and name for the node
+---Empty for base Node
+---@return HighlightedString icon
+---@return HighlightedString name
+function Node:icon_name()
+  return { str = "", hl = {} }, { str = self.name, hl = {} }
+end
+
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return Node cloned
 function Node:clone()

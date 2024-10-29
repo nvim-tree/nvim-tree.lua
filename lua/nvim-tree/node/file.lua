@@ -1,7 +1,17 @@
 local git_utils = require("nvim-tree.git.utils")
+local icons = require("nvim-tree.renderer.components.icons")
 local utils = require("nvim-tree.utils")
 
 local Node = require("nvim-tree.node")
+
+local PICTURE_MAP = {
+  jpg = true,
+  jpeg = true,
+  png = true,
+  gif = true,
+  webp = true,
+  jxl = true,
+}
 
 ---@class (exact) FileNode: Node
 ---@field extension string
@@ -54,6 +64,23 @@ function FileNode:get_git_xy()
   end
 
   return self.git_status.file and { self.git_status.file }
+end
+
+---Icon and name for the file
+---@return HighlightedString icon
+---@return HighlightedString name
+function FileNode:icon_name()
+  local hl
+  if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
+    hl = "NvimTreeSpecialFile"
+  elseif self.executable then
+    hl = "NvimTreeExecFile"
+  elseif PICTURE_MAP[self.extension] then
+    hl = "NvimTreeImageFile"
+  end
+
+  local icon, hl_group = icons.get_file_icon(self.name, self.extension)
+  return { str = icon, hl = { hl_group } }, { str = self.name, hl = { hl } }
 end
 
 ---Create a sanitized partial copy of a node

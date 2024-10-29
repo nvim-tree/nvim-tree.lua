@@ -1,4 +1,6 @@
 local git_utils = require("nvim-tree.git.utils")
+local icons = require("nvim-tree.renderer.components.icons")
+local notify = require("nvim-tree.notify")
 
 local Node = require("nvim-tree.node")
 
@@ -205,6 +207,52 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   end
 
   self.explorer.renderer:draw()
+end
+
+---Icon and name for the directory
+---@return HighlightedString icon
+---@return HighlightedString name
+function DirectoryNode:icon_name()
+  local has_children = #self.nodes ~= 0 or self.has_children
+  local icon, icon_hl = icons.get_folder_icon(self, has_children)
+
+  local name = self.name
+  local next = self.group_next
+  while next do
+    name = string.format("%s/%s", name, next.name)
+    next = next.group_next
+  end
+
+  if self.group_next and type(self.explorer.opts.renderer.group_empty) == "function" then
+    local new_name = self.explorer.opts.renderer.group_empty(name)
+    if type(new_name) == "string" then
+      name = new_name
+    else
+      notify.warn(string.format("Invalid return type for field renderer.group_empty. Expected string, got %s", type(new_name)))
+    end
+  end
+
+  local foldername = string.format("%s%s", name, self.explorer.opts.renderer.add_trailing and "/" or "")
+  foldername = name
+
+  if #icon > 0 and icon_hl == nil then
+    if self.open then
+      icon_hl = "NvimTreeOpenedFolderIcon"
+    else
+      icon_hl = "NvimTreeClosedFolderIcon"
+    end
+  end
+
+  local foldername_hl = "NvimTreeFolderName"
+  if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
+    foldername_hl = "NvimTreeSpecialFolderName"
+  elseif self.open then
+    foldername_hl = "NvimTreeOpenedFolderName"
+  elseif not has_children then
+    foldername_hl = "NvimTreeEmptyFolderName"
+  end
+
+  return { str = icon, hl = { icon_hl } }, { str = foldername, hl = { foldername_hl } }
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
