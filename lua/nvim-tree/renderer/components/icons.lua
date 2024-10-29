@@ -8,7 +8,7 @@ local function config_symlinks()
 end
 
 ---@return string icon
----@return string? name
+---@return string? hl_group
 local function empty()
   return "", nil
 end
@@ -16,7 +16,7 @@ end
 ---@param dir DirectoryNode
 ---@param has_children boolean
 ---@return string icon
----@return string? name
+---@return string? hl_group
 local function get_folder_icon_default(dir, has_children)
   local icon
   if dir:is(DirectoryLinkNode) then
@@ -44,7 +44,7 @@ end
 ---@param node DirectoryNode
 ---@param has_children boolean
 ---@return string icon
----@return string? name
+---@return string? hl_group
 local function get_folder_icon_webdev(node, has_children)
   local icon, hl_group = M.devicons.get_icon(node.name, nil)
   if not M.config.web_devicons.folder.color then
@@ -58,7 +58,7 @@ local function get_folder_icon_webdev(node, has_children)
 end
 
 ---@return string icon
----@return string? name
+---@return string? hl_group
 local function get_file_icon_default()
   local hl_group = "NvimTreeFileIcon"
   local icon = M.config.glyphs.default
@@ -69,20 +69,20 @@ local function get_file_icon_default()
   end
 end
 
----@param fname string
----@param extension string
+---@param name string
+---@param ext string
 ---@return string icon
----@return string? name
-local function get_file_icon_webdev(fname, extension)
-  local icon, hl_group = M.devicons.get_icon(fname, extension)
+---@return string? hl_group
+local function get_file_icon_webdev(name, ext)
+  local icon, hl_group = M.devicons.get_icon(name, ext)
   if not M.config.web_devicons.file.color then
     hl_group = "NvimTreeFileIcon"
   end
   if icon and hl_group ~= "DevIconDefault" then
     return icon, hl_group
-  elseif string.match(extension, "%.(.*)") then
+  elseif string.match(ext, "%.(.*)") then
     -- If there are more extensions to the file, try to grab the icon for them recursively
-    return get_file_icon_webdev(fname, string.match(extension, "%.(.*)"))
+    return get_file_icon_webdev(name, string.match(ext, "%.(.*)"))
   else
     local devicons_default = M.devicons.get_default_icon()
     if devicons_default and type(devicons_default.icon) == "string" and type(devicons_default.name) == "string" then

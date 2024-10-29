@@ -45,15 +45,15 @@ end
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function FileLinkNode:icon_name()
-  local icon = icons.i.symlink
-  local arrow = icons.i.symlink_arrow
-  local symlink_formatted = self.name
+  local icon_str = icons.i.symlink
+
+  local name_str = self.name
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    symlink_formatted = string.format("%s%s%s", symlink_formatted, arrow, link_to)
+    name_str = string.format("%s%s%s", name_str, icons.i.symlink_arrow, link_to)
   end
 
-  return { str = icon, hl = { "NvimTreeSymlinkIcon" } }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
+  return { str = icon_str, hl = { "NvimTreeSymlinkIcon" } }, { str = name_str, hl = { "NvimTreeSymlink" } }
 end
 
 ---Create a sanitized partial copy of a node

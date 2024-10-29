@@ -70,17 +70,18 @@ end
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function FileNode:icon_name()
-  local hl
+  local name_hl
   if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
-    hl = "NvimTreeSpecialFile"
+    name_hl = "NvimTreeSpecialFile"
   elseif self.executable then
-    hl = "NvimTreeExecFile"
+    name_hl = "NvimTreeExecFile"
   elseif PICTURE_MAP[self.extension] then
-    hl = "NvimTreeImageFile"
+    name_hl = "NvimTreeImageFile"
   end
 
-  local icon, hl_group = icons.get_file_icon(self.name, self.extension)
-  return { str = icon, hl = { hl_group } }, { str = self.name, hl = { hl } }
+  local icon_str, icon_hl = icons.get_file_icon(self.name, self.extension)
+
+  return { str = icon_str, hl = { icon_hl } }, { str = self.name, hl = { name_hl } }
 end
 
 ---Create a sanitized partial copy of a node
