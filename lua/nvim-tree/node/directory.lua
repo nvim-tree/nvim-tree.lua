@@ -233,7 +233,6 @@ function DirectoryNode:icon_name()
   end
 
   local foldername = string.format("%s%s", name, self.explorer.opts.renderer.add_trailing and "/" or "")
-  foldername = name
 
   if #icon > 0 and icon_hl == nil then
     if self.open then
