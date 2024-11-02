@@ -1,16 +1,32 @@
+local Class = require("nvim-tree.class")
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local C = {}
 
----@class Sorter
-local Sorter = {}
+---@class (exact) SorterCfg
+---@field sorter string|fun(nodes: Node[])
+---@field folders_first boolean
+---@field files_first boolean
 
-function Sorter:new(opts)
-  local o = {}
-  setmetatable(o, self)
-  self.__index = self
-  o.config = vim.deepcopy(opts.sort)
+---@class (exact) Sorter: Class
+---@field cfg SorterCfg
+---@field user fun(nodes: Node[])?
+---@field pre string?
+local Sorter = Class:new()
 
-  if type(o.config.sorter) == "function" then
-    o.user = o.config.sorter
+---@param opts table user options
+---@return Sorter
+function Sorter:create(opts)
+  ---@type Sorter
+  local o = {
+    cfg = vim.deepcopy(opts.sort),
+  }
+  o = self:new(o)
+
+  if type(o.cfg.sorter) == "function" then
+    o.user = o.cfg.sorter --[[@as fun(nodes: Node[])]]
+  elseif type(o.cfg.sorter) == "string" then
+    o.pre = o.cfg.sorter --[[@as string]]
   end
   return o
 end
@@ -20,7 +36,7 @@ end
 ---@return fun(a: Node, b: Node): boolean
 function Sorter:get_comparator(sorter)
   return function(a, b)
-    return (C[sorter] or C.name)(a, b, self.config)
+    return (C[sorter] or C.name)(a, b, self.cfg)
   end
 end
 
@@ -41,17 +57,17 @@ end
 ---Evaluate `sort.folders_first` and `sort.files_first`
 ---@param a Node
 ---@param b Node
----@param cfg table
+---@param cfg SorterCfg
 ---@return boolean|nil
 local function folders_or_files_first(a, b, cfg)
   if not (cfg.folders_first or cfg.files_first) then
     return
   end
 
-  if not a.nodes and b.nodes then
+  if not a:is(DirectoryNode) and b:is(DirectoryNode) then
     -- file <> folder
     return cfg.files_first
-  elseif a.nodes and not b.nodes then
+  elseif a:is(DirectoryNode) and not b:is(DirectoryNode) then
     -- folder <> file
     return not cfg.files_first
   end
@@ -157,15 +173,15 @@ function Sorter:sort(t)
     end
 
     split_merge(t, 1, #t, mini_comparator) -- sort by user order
-  else
-    split_merge(t, 1, #t, self:get_comparator(self.config.sorter))
+  elseif self.pre then
+    split_merge(t, 1, #t, self:get_comparator(self.pre))
   end
 end
 
 ---@param a Node
 ---@param b Node
 ---@param ignorecase boolean|nil
----@param cfg table
+---@param cfg SorterCfg
 ---@return boolean
 local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
   if not (a and b) then

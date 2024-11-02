@@ -69,7 +69,7 @@ function Explorer:create(path)
   o.open = true
   o.opts = config
 
-  o.sorters = Sorters:new(config)
+  o.sorters = Sorters:create(config)
   o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
   o.live_filter = LiveFilter:new(config, o)
