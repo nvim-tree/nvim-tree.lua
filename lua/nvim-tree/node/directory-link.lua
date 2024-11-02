@@ -45,11 +45,10 @@ function DirectoryLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_dir(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
----Maybe overrides name
----@return HighlightedString icon
+---Maybe override name
 ---@return HighlightedString name
-function DirectoryLinkNode:icon_name()
-  local icon, name = DirectoryNode.icon_name(self)
+function DirectoryLinkNode:highlighted_name()
+  local name = DirectoryNode.highlighted_name(self)
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
@@ -57,7 +56,22 @@ function DirectoryLinkNode:icon_name()
     name.hl = { "NvimTreeSymlinkFolderName" }
   end
 
-  return icon, name
+  return name
+end
+
+---@return HighlightedString name
+function DirectoryLinkNode:highlighted_icon()
+  local str, hl
+
+  if self.open then
+    str = self.explorer.opts.renderer.icons.glyphs.folder.symlink_open
+    hl = "NvimTreeOpenedFolderIcon"
+  else
+    str = self.explorer.opts.renderer.icons.glyphs.folder.symlink
+    hl = "NvimTreeClosedFolderIcon"
+  end
+
+  return { str = str, hl = { hl } }
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

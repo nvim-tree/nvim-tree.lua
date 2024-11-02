@@ -211,6 +211,10 @@ end
 ---@private
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_icon()
+  if not self.explorer.opts.renderer.icons.show.folder then
+    return { str = "", hl = {}, }
+  end
+
   local str, hl
 
   -- devicon if enabled and available
@@ -250,7 +254,7 @@ function DirectoryNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@private
+---@protected
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_name()
   local str, hl
