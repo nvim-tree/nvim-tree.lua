@@ -208,24 +208,23 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   self.explorer.renderer:draw()
 end
 
----@private
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
-    return { str = "", hl = {}, }
+    return Node.highlighted_icon(self)
   end
 
   local str, hl
 
   -- devicon if enabled and available
-  if self.explorer.opts.renderer.icons.show.folder and self.explorer.opts.renderer.icons.web_devicons.folder.enable then
+  if self.explorer.opts.renderer.icons.web_devicons.folder.enable then
     str, hl = icons.get_icon(self.name, nil)
     if not self.explorer.opts.renderer.icons.web_devicons.folder.color then
       hl = nil
     end
   end
 
-  -- default icon
+  -- icon from opts
   if not str then
     if #self.nodes ~= 0 or self.has_children then
       if self.open then
@@ -242,7 +241,7 @@ function DirectoryNode:highlighted_icon()
     end
   end
 
-  -- default color
+  -- hl
   if #str > 0 and hl == nil then
     if self.open then
       hl = "NvimTreeOpenedFolderIcon"
@@ -254,7 +253,6 @@ function DirectoryNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@protected
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_name()
   local str, hl
@@ -286,14 +284,6 @@ function DirectoryNode:highlighted_name()
   end
 
   return { str = str, hl = { hl } }
-end
-
----TODO builder call highlighted_name and highlighted_icon separately
----Highlighted icon and name for the directory
----@return HighlightedString icon
----@return HighlightedString name
-function DirectoryNode:icon_name()
-  return self:highlighted_icon(), self:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

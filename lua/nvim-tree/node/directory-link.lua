@@ -3,6 +3,7 @@ local icons = require("nvim-tree.renderer.components.icons")
 local utils = require("nvim-tree.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryLinkNode: DirectoryNode
 ---@field link_to string absolute path
@@ -45,22 +46,12 @@ function DirectoryLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_dir(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
----Maybe override name
----@return HighlightedString name
-function DirectoryLinkNode:highlighted_name()
-  local name = DirectoryNode.highlighted_name(self)
-
-  if self.explorer.opts.renderer.symlink_destination then
-    local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    name.str = string.format("%s%s%s", name.str, icons.i.symlink_arrow, link_to)
-    name.hl = { "NvimTreeSymlinkFolderName" }
-  end
-
-  return name
-end
-
 ---@return HighlightedString name
 function DirectoryLinkNode:highlighted_icon()
+  if not self.explorer.opts.renderer.icons.show.folder then
+    return Node.highlighted_icon(self)
+  end
+
   local str, hl
 
   if self.open then
@@ -72,6 +63,20 @@ function DirectoryLinkNode:highlighted_icon()
   end
 
   return { str = str, hl = { hl } }
+end
+
+---Maybe override name with arrow
+---@return HighlightedString name
+function DirectoryLinkNode:highlighted_name()
+  local name = DirectoryNode.highlighted_name(self)
+
+  if self.explorer.opts.renderer.symlink_destination then
+    local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
+    name.str = string.format("%s%s%s", name.str, icons.i.symlink_arrow, link_to)
+    name.hl = { "NvimTreeSymlinkFolderName" }
+  end
+
+  return name
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
