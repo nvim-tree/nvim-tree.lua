@@ -65,13 +65,15 @@ local tabinitial = {
 }
 
 local BUFNR_PER_TAB = {}
+
+---@type { name: string, value: any }[]
 local BUFFER_OPTIONS = {
-  swapfile = false,
-  buftype = "nofile",
-  modifiable = false,
-  filetype = "NvimTree",
-  bufhidden = "wipe",
-  buflisted = false,
+  { name = "bufhidden",  value = "wipe" },
+  { name = "buflisted",  value = false },
+  { name = "buftype",    value = "nofile" },
+  { name = "filetype",   value = "NvimTree" },
+  { name = "modifiable", value = false },
+  { name = "swapfile",   value = false },
 }
 
 ---@param bufnr integer
@@ -101,8 +103,9 @@ local function create_buffer(bufnr)
   BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
   vim.api.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
 
-  for option, value in pairs(BUFFER_OPTIONS) do
-    vim.bo[M.get_bufnr()][option] = value
+  bufnr = M.get_bufnr()
+  for _, option in ipairs(BUFFER_OPTIONS) do
+    vim.api.nvim_set_option_value(option.name, option.value, { buf = bufnr })
   end
 
   require("nvim-tree.keymap").on_attach(M.get_bufnr())
@@ -495,12 +498,6 @@ end
 ---@return number
 function M.get_bufnr()
   return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
-end
-
----@param bufnr number
----@return boolean
-function M.is_buf_valid(bufnr)
-  return bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
 end
 
 function M._prevent_buffer_override()
