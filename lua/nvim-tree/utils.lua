@@ -72,13 +72,18 @@ end
 
 --- Path normalizations for windows only
 local function win_norm_path(path)
+  if path == nil then
+    return path
+  end
   local norm_path = path
   -- Normalize for issue #2862 and #2961
   if has_parentheses_and_brackets(norm_path) then
     norm_path = norm_path:gsub("/", "\\")
   end
   -- Normalize the drive letter
-  norm_path = string.upper(string.sub(norm_path, 1, 1)) .. string.sub(norm_path, 2)
+  norm_path = norm_path:gsub("^%l:", function(drive)
+    return drive:upper()
+  end)
   return norm_path
 end
 
