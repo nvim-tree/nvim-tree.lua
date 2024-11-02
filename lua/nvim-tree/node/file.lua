@@ -68,9 +68,31 @@ end
 
 ---@return HighlightedString icon
 function FileNode:highlighted_icon()
-  local icon_str, icon_hl = icons.get_file_icon(self.name, self.extension)
+  if not self.explorer.opts.renderer.icons.show.file then
+    return Node.highlighted_icon(self)
+  end
 
-  return { str = icon_str, hl = { icon_hl } }
+  local str, hl
+
+  -- devicon if enabled and available
+  if self.explorer.opts.renderer.icons.web_devicons.file.enable then
+    str, hl = icons.get_icon(self.name)
+    if not self.explorer.opts.renderer.icons.web_devicons.file.color then
+      hl = nil
+    end
+  end
+
+  -- default icon from opts
+  if not str then
+    str = self.explorer.opts.renderer.icons.glyphs.default
+  end
+
+  -- default hl
+  if not hl then
+    hl = "NvimTreeFileIcon"
+  end
+
+  return { str = str, hl = { hl } }
 end
 
 ---@return HighlightedString name

@@ -3,6 +3,7 @@ local icons = require("nvim-tree.renderer.components.icons")
 local utils = require("nvim-tree.utils")
 
 local FileNode = require("nvim-tree.node.file")
+local Node = require("nvim-tree.node")
 
 ---@class (exact) FileLinkNode: FileNode
 ---@field link_to string absolute path
@@ -43,7 +44,17 @@ end
 
 ---@return HighlightedString icon
 function FileLinkNode:highlighted_icon()
-  return { str = icons.i.symlink, hl = { "NvimTreeSymlinkIcon" } }
+  if not self.explorer.opts.renderer.icons.show.folder then
+    return Node.highlighted_icon(self)
+  end
+
+  local str, hl
+
+  -- default icon from opts
+  str = self.explorer.opts.renderer.icons.glyphs.symlink
+  hl = "NvimTreeSymlinkIcon"
+
+  return { str = str, hl = { hl } }
 end
 
 ---@return HighlightedString name
@@ -51,7 +62,7 @@ function FileLinkNode:highlighted_name()
   local str = self.name
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    str = string.format("%s%s%s", str, icons.i.symlink_arrow, link_to)
+    str = string.format("%s%s%s", str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
   end
 
   return { str = str, hl = { "NvimTreeSymlink" } }

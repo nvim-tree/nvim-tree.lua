@@ -218,13 +218,13 @@ function DirectoryNode:highlighted_icon()
 
   -- devicon if enabled and available
   if self.explorer.opts.renderer.icons.web_devicons.folder.enable then
-    str, hl = icons.get_icon(self.name, nil)
+    str, hl = icons.get_icon(self.name)
     if not self.explorer.opts.renderer.icons.web_devicons.folder.color then
       hl = nil
     end
   end
 
-  -- icon from opts
+  -- default icon from opts
   if not str then
     if #self.nodes ~= 0 or self.has_children then
       if self.open then
@@ -241,8 +241,8 @@ function DirectoryNode:highlighted_icon()
     end
   end
 
-  -- hl
-  if #str > 0 and hl == nil then
+  -- default hl
+  if not hl then
     if self.open then
       hl = "NvimTreeOpenedFolderIcon"
     else

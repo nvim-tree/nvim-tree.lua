@@ -2,8 +2,6 @@ local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local events = require("nvim-tree.events")
 
-local icon_component = require("nvim-tree.renderer.components.icons")
-
 local Builder = require("nvim-tree.renderer.builder")
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -107,7 +105,6 @@ function Renderer:draw()
   local profile = log.profile_start("draw")
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
-  icon_component.reset_config()
 
   local builder = Builder:new(self.opts, self.explorer):build()
 
