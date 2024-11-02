@@ -41,6 +41,22 @@ function FileLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_file(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
+---@return HighlightedString icon
+function FileLinkNode:highlighted_icon()
+  return { str = icons.i.symlink, hl = { "NvimTreeSymlinkIcon" } }
+end
+
+---@return HighlightedString name
+function FileLinkNode:highlighted_name()
+  local str = self.name
+  if self.explorer.opts.renderer.symlink_destination then
+    local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
+    str = string.format("%s%s%s", str, icons.i.symlink_arrow, link_to)
+  end
+
+  return { str = str, hl = { "NvimTreeSymlink" } }
+end
+
 ---Icon and name for the file link
 ---@return HighlightedString icon
 ---@return HighlightedString name

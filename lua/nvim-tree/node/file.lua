@@ -66,22 +66,25 @@ function FileNode:get_git_xy()
   return self.git_status.file and { self.git_status.file }
 end
 
----Icon and name for the file
 ---@return HighlightedString icon
----@return HighlightedString name
-function FileNode:icon_name()
-  local name_hl
-  if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
-    name_hl = "NvimTreeSpecialFile"
-  elseif self.executable then
-    name_hl = "NvimTreeExecFile"
-  elseif PICTURE_MAP[self.extension] then
-    name_hl = "NvimTreeImageFile"
-  end
-
+function FileNode:highlighted_icon()
   local icon_str, icon_hl = icons.get_file_icon(self.name, self.extension)
 
-  return { str = icon_str, hl = { icon_hl } }, { str = self.name, hl = { name_hl } }
+  return { str = icon_str, hl = { icon_hl } }
+end
+
+---@return HighlightedString name
+function FileNode:highlighted_name()
+  local hl
+  if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
+    hl = "NvimTreeSpecialFile"
+  elseif self.executable then
+    hl = "NvimTreeExecFile"
+  elseif PICTURE_MAP[self.extension] then
+    hl = "NvimTreeImageFile"
+  end
+
+  return { str = self.name, hl = { hl } }
 end
 
 ---Create a sanitized partial copy of a node

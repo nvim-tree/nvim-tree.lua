@@ -252,7 +252,7 @@ function Builder:build_line(node, idx, num_children)
   local arrows = pad.get_arrows(node)
 
   -- main components
-  local icon, name = node:icon_name()
+  local icon, name = node:highlighted_icon(), node:highlighted_name()
 
   -- highighting
   local icon_hl_group, name_hl_group = self:add_highlights(node)
