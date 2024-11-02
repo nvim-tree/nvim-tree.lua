@@ -70,6 +70,18 @@ local function has_parentheses_and_brackets(path)
   return false
 end
 
+--- Path normalizations for windows only
+local function win_norm_path(path)
+  local norm_path = path
+  -- Normalize for issue #2862 and #2961
+  if has_parentheses_and_brackets(norm_path) then
+    norm_path = norm_path:gsub("/", "\\")
+  end
+  -- Normalize the drive letter
+  norm_path = string.upper(string.sub(norm_path, 1, 1)) .. string.sub(norm_path, 2)
+  return norm_path
+end
+
 --- Get a path relative to another path.
 ---@param path string
 ---@param relative_to string|nil
@@ -80,8 +92,8 @@ function M.path_relative(path, relative_to)
   end
 
   local norm_path = path
-  if M.is_windows and has_parentheses_and_brackets(path) then
-    norm_path = path:gsub("/", "\\")
+  if M.is_windows then
+    norm_path = win_norm_path(norm_path)
   end
 
   local _, r = norm_path:find(M.path_add_trailing(relative_to), 1, true)
