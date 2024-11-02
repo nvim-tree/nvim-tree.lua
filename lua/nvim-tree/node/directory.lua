@@ -211,7 +211,7 @@ end
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
-    return Node.highlighted_icon(self)
+    return self:highlighted_icon_empty()
   end
 
   local str, hl

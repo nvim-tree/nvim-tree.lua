@@ -1,9 +1,7 @@
 local git_utils = require("nvim-tree.git.utils")
-local icons = require("nvim-tree.renderer.components.icons")
 local utils = require("nvim-tree.utils")
 
 local FileNode = require("nvim-tree.node.file")
-local Node = require("nvim-tree.node")
 
 ---@class (exact) FileLinkNode: FileNode
 ---@field link_to string absolute path
@@ -44,8 +42,8 @@ end
 
 ---@return HighlightedString icon
 function FileLinkNode:highlighted_icon()
-  if not self.explorer.opts.renderer.icons.show.folder then
-    return Node.highlighted_icon(self)
+  if not self.explorer.opts.renderer.icons.show.file then
+    return self:highlighted_icon_empty()
   end
 
   local str, hl
@@ -66,21 +64,6 @@ function FileLinkNode:highlighted_name()
   end
 
   return { str = str, hl = { "NvimTreeSymlink" } }
-end
-
----Icon and name for the file link
----@return HighlightedString icon
----@return HighlightedString name
-function FileLinkNode:icon_name()
-  local icon_str = icons.i.symlink
-
-  local name_str = self.name
-  if self.explorer.opts.renderer.symlink_destination then
-    local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    name_str = string.format("%s%s%s", name_str, icons.i.symlink_arrow, link_to)
-  end
-
-  return { str = icon_str, hl = { "NvimTreeSymlinkIcon" } }, { str = name_str, hl = { "NvimTreeSymlink" } }
 end
 
 ---Create a sanitized partial copy of a node

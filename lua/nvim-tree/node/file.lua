@@ -69,7 +69,7 @@ end
 ---@return HighlightedString icon
 function FileNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.file then
-    return Node.highlighted_icon(self)
+    return self:highlighted_icon_empty()
   end
 
   local str, hl
@@ -77,6 +77,13 @@ function FileNode:highlighted_icon()
   -- devicon if enabled and available
   if self.explorer.opts.renderer.icons.web_devicons.file.enable then
     str, hl = icons.get_icon(self.name)
+    if not str then
+      local default_icon = icons.get_default_icon()
+      if default_icon then
+        str = default_icon.icon
+        hl = "DevIcon" .. default_icon.name
+      end
+    end
     if not self.explorer.opts.renderer.icons.web_devicons.file.color then
       hl = nil
     end

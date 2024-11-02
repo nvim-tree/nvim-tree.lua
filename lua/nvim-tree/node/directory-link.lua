@@ -1,9 +1,7 @@
 local git_utils = require("nvim-tree.git.utils")
-local icons = require("nvim-tree.renderer.components.icons")
 local utils = require("nvim-tree.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
-local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryLinkNode: DirectoryNode
 ---@field link_to string absolute path
@@ -49,7 +47,7 @@ end
 ---@return HighlightedString name
 function DirectoryLinkNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
-    return Node.highlighted_icon(self)
+    return self:highlighted_icon_empty()
   end
 
   local str, hl
@@ -72,7 +70,7 @@ function DirectoryLinkNode:highlighted_name()
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    name.str = string.format("%s%s%s", name.str, icons.i.symlink_arrow, link_to)
+    name.str = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
     name.hl = { "NvimTreeSymlinkFolderName" }
   end
 

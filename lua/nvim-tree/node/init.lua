@@ -68,10 +68,24 @@ function Node:get_parent_of_group()
   end
 end
 
+---Empty highlighted icon
+---@protected
+---@return HighlightedString icon
+function Node:highlighted_icon_empty()
+  return { str = "", hl = {} }
+end
+
 ---Highlighted icon for the node
 ---Empty for base Node
 ---@return HighlightedString icon
 function Node:highlighted_icon()
+  return self:highlighted_icon_empty()
+end
+
+---Empty highlighted name
+---@protected
+---@return HighlightedString name
+function Node:highlighted_name_empty()
   return { str = "", hl = {} }
 end
 
@@ -79,7 +93,7 @@ end
 ---Empty for base Node
 ---@return HighlightedString icon
 function Node:highlighted_name()
-  return { str = "", hl = {} }
+  return self:highlighted_name_empty()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
