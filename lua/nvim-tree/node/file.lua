@@ -74,16 +74,9 @@ function FileNode:highlighted_icon()
 
   local str, hl
 
-  -- devicon if enabled and available
+  -- devicon if enabled and available, fallback to default
   if self.explorer.opts.renderer.icons.web_devicons.file.enable then
-    str, hl = icons.get_icon(self.name)
-    if not str then
-      local default_icon = icons.get_default_icon()
-      if default_icon then
-        str = default_icon.icon
-        hl = "DevIcon" .. default_icon.name
-      end
-    end
+    str, hl = icons.get_icon(self.name, nil, { default = true })
     if not self.explorer.opts.renderer.icons.web_devicons.file.color then
       hl = nil
     end
