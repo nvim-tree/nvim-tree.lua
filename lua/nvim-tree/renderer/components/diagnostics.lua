@@ -1,6 +1,8 @@
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local diagnostics = require("nvim-tree.diagnostics")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {
   -- highlight strings for the icons
   HS_ICON = {},
@@ -24,7 +26,7 @@ function M.get_highlight(node)
 
   local group
   local diag_status = diagnostics.get_diag_status(node)
-  if node.nodes then
+  if node:is(DirectoryNode) then
     group = M.HS_FOLDER[diag_status and diag_status.value]
   else
     group = M.HS_FILE[diag_status and diag_status.value]

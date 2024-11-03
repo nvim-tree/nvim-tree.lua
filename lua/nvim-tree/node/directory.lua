@@ -1,6 +1,6 @@
-local git = require("nvim-tree.git")
-local watch = require("nvim-tree.explorer.watch")
-
+local git_utils = require("nvim-tree.git.utils")
+local icons = require("nvim-tree.renderer.components.devicons")
+local notify = require("nvim-tree.notify")
 local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: Node
@@ -8,8 +8,8 @@ local Node = require("nvim-tree.node")
 ---@field group_next DirectoryNode? -- If node is grouped, this points to the next child dir/link node
 ---@field nodes Node[]
 ---@field open boolean
----@field watcher Watcher?
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
+---@field private watcher Watcher?
 local DirectoryNode = Node:new()
 
 ---Static factory method
@@ -32,11 +32,11 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
     fs_stat = fs_stat,
     git_status = nil,
     hidden = false,
-    is_dot = false,
     name = name,
     parent = parent,
     watcher = nil,
     diag_status = nil,
+    is_dot = false,
 
     has_children = has_children,
     group_next = nil,
@@ -44,9 +44,9 @@ function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
     open = false,
     hidden_stats = nil,
   }
-  o = self:new(o) --[[@as DirectoryNode]]
+  o = self:new(o)
 
-  o.watcher = watch.create_watcher(o)
+  o.watcher = require("nvim-tree.explorer.watch").create_watcher(o)
 
   return o
 end
@@ -66,41 +66,41 @@ function DirectoryNode:destroy()
   Node.destroy(self)
 end
 
----Update the GitStatus of the directory
+---Update the git_status of the directory
 ---@param parent_ignored boolean
----@param status table|nil
-function DirectoryNode:update_git_status(parent_ignored, status)
-  self.git_status = git.git_status_dir(parent_ignored, status, self.absolute_path, nil)
+---@param project GitProject?
+function DirectoryNode:update_git_status(parent_ignored, project)
+  self.git_status = git_utils.git_status_dir(parent_ignored, project, self.absolute_path, nil)
 end
 
----@return GitStatus|nil
-function DirectoryNode:get_git_status()
+---@return GitXY[]?
+function DirectoryNode:get_git_xy()
   if not self.git_status or not self.explorer.opts.git.show_on_dirs then
     return nil
   end
 
-  local status = {}
+  local xys = {}
   if not self:last_group_node().open or self.explorer.opts.git.show_on_open_dirs then
     -- dir is closed or we should show on open_dirs
     if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
+      table.insert(xys, self.git_status.file)
     end
     if self.git_status.dir ~= nil then
       if self.git_status.dir.direct ~= nil then
         for _, s in pairs(self.git_status.dir.direct) do
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
       if self.git_status.dir.indirect ~= nil then
         for _, s in pairs(self.git_status.dir.indirect) do
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
     end
   else
     -- dir is open and we shouldn't show on open_dirs
     if self.git_status.file ~= nil then
-      table.insert(status, self.git_status.file)
+      table.insert(xys, self.git_status.file)
     end
     if self.git_status.dir ~= nil and self.git_status.dir.direct ~= nil then
       local deleted = {
@@ -111,32 +111,16 @@ function DirectoryNode:get_git_status()
       }
       for _, s in pairs(self.git_status.dir.direct) do
         if deleted[s] then
-          table.insert(status, s)
+          table.insert(xys, s)
         end
       end
     end
   end
-  if #status == 0 then
+  if #xys == 0 then
     return nil
   else
-    return status
+    return xys
   end
-end
-
----Refresh contents and git status for a single node
-function DirectoryNode:refresh()
-  local node = self:get_parent_of_group() or self
-  local toplevel = git.get_toplevel(self.absolute_path)
-
-  git.reload_project(toplevel, self.absolute_path, function()
-    local project = git.get_project(toplevel) or {}
-
-    self.explorer:reload(node, project)
-
-    node:update_parent_statuses(project, toplevel)
-
-    self.explorer.renderer:draw()
-  end)
 end
 
 -- If node is grouped, return the last node in the group. Otherwise, return the given node.
@@ -191,7 +175,7 @@ function DirectoryNode:ungroup_empty_folders()
   end
 end
 
----@param toggle_group boolean
+---@param toggle_group boolean?
 function DirectoryNode:expand_or_collapse(toggle_group)
   toggle_group = toggle_group or false
   if self.has_children then
@@ -222,6 +206,84 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   end
 
   self.explorer.renderer:draw()
+end
+
+---@return HighlightedString icon
+function DirectoryNode:highlighted_icon()
+  if not self.explorer.opts.renderer.icons.show.folder then
+    return self:highlighted_icon_empty()
+  end
+
+  local str, hl
+
+  -- devicon if enabled and available
+  if self.explorer.opts.renderer.icons.web_devicons.folder.enable then
+    str, hl = icons.get_icon(self.name)
+    if not self.explorer.opts.renderer.icons.web_devicons.folder.color then
+      hl = nil
+    end
+  end
+
+  -- default icon from opts
+  if not str then
+    if #self.nodes ~= 0 or self.has_children then
+      if self.open then
+        str = self.explorer.opts.renderer.icons.glyphs.folder.open
+      else
+        str = self.explorer.opts.renderer.icons.glyphs.folder.default
+      end
+    else
+      if self.open then
+        str = self.explorer.opts.renderer.icons.glyphs.folder.empty_open
+      else
+        str = self.explorer.opts.renderer.icons.glyphs.folder.empty
+      end
+    end
+  end
+
+  -- default hl
+  if not hl then
+    if self.open then
+      hl = "NvimTreeOpenedFolderIcon"
+    else
+      hl = "NvimTreeClosedFolderIcon"
+    end
+  end
+
+  return { str = str, hl = { hl } }
+end
+
+---@return HighlightedString icon
+function DirectoryNode:highlighted_name()
+  local str, hl
+
+  local name = self.name
+  local next = self.group_next
+  while next do
+    name = string.format("%s/%s", name, next.name)
+    next = next.group_next
+  end
+
+  if self.group_next and type(self.explorer.opts.renderer.group_empty) == "function" then
+    local new_name = self.explorer.opts.renderer.group_empty(name)
+    if type(new_name) == "string" then
+      name = new_name
+    else
+      notify.warn(string.format("Invalid return type for field renderer.group_empty. Expected string, got %s", type(new_name)))
+    end
+  end
+  str = string.format("%s%s", name, self.explorer.opts.renderer.add_trailing and "/" or "")
+
+  hl = "NvimTreeFolderName"
+  if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
+    hl = "NvimTreeSpecialFolderName"
+  elseif self.open then
+    hl = "NvimTreeOpenedFolderName"
+  elseif #self.nodes == 0 and not self.has_children then
+    hl = "NvimTreeEmptyFolderName"
+  end
+
+  return { str = str, hl = { hl } }
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.

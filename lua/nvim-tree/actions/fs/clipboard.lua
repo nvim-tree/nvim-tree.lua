@@ -9,31 +9,34 @@ local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@enum ACTION
-local ACTION = {
-  copy = "copy",
-  cut = "cut",
-}
+---@alias ClipboardAction "copy" | "cut"
+---@alias ClipboardData table<ClipboardAction, Node[]>
+
+---@alias ClipboardActionFn fun(source: string, dest: string): boolean, string?
 
 ---@class Clipboard to handle all actions.fs clipboard API
 ---@field config table hydrated user opts.filters
 ---@field private explorer Explorer
----@field private data table<ACTION, Node[]>
+---@field private data ClipboardData
+---@field private clipboard_name string
+---@field private reg string
 local Clipboard = {}
 
 ---@param opts table user options
 ---@param explorer Explorer
 ---@return Clipboard
 function Clipboard:new(opts, explorer)
+  ---@type Clipboard
   local o = {
     explorer = explorer,
     data = {
-      [ACTION.copy] = {},
-      [ACTION.cut] = {},
+      copy = {},
+      cut = {},
     },
+    clipboard_name = opts.actions.use_system_clipboard and "system" or "neovim",
+    reg = opts.actions.use_system_clipboard and "+" or "1",
     config = {
       filesystem_watchers = opts.filesystem_watchers,
-      actions = opts.actions,
     },
   }
 
@@ -47,13 +50,11 @@ end
 ---@return boolean
 ---@return string|nil
 local function do_copy(source, destination)
-  local source_stats, handle
-  local success, errmsg
+  local source_stats, err = vim.loop.fs_stat(source)
 
-  source_stats, errmsg = vim.loop.fs_stat(source)
   if not source_stats then
-    log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, errmsg)
-    return false, errmsg
+    log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, err)
+    return false, err
   end
 
   log.line("copy_paste", "do_copy %s '%s' -> '%s'", source_stats.type, source, destination)
@@ -64,25 +65,28 @@ local function do_copy(source, destination)
   end
 
   if source_stats.type == "file" then
-    success, errmsg = vim.loop.fs_copyfile(source, destination)
+    local success
+    success, err = vim.loop.fs_copyfile(source, destination)
     if not success then
-      log.line("copy_paste", "do_copy fs_copyfile failed '%s'", errmsg)
-      return false, errmsg
+      log.line("copy_paste", "do_copy fs_copyfile failed '%s'", err)
+      return false, err
     end
     return true
   elseif source_stats.type == "directory" then
-    handle, errmsg = vim.loop.fs_scandir(source)
+    local handle
+    handle, err = vim.loop.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
     elseif not handle then
-      log.line("copy_paste", "do_copy fs_scandir '%s' failed '%s'", source, errmsg)
-      return false, errmsg
+      log.line("copy_paste", "do_copy fs_scandir '%s' failed '%s'", source, err)
+      return false, err
     end
 
-    success, errmsg = vim.loop.fs_mkdir(destination, source_stats.mode)
+    local success
+    success, err = vim.loop.fs_mkdir(destination, source_stats.mode)
     if not success then
-      log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, errmsg)
-      return false, errmsg
+      log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, err)
+      return false, err
     end
 
     while true do
@@ -93,15 +97,15 @@ local function do_copy(source, destination)
 
       local new_name = utils.path_join({ source, name })
       local new_destination = utils.path_join({ destination, name })
-      success, errmsg = do_copy(new_name, new_destination)
+      success, err = do_copy(new_name, new_destination)
       if not success then
-        return false, errmsg
+        return false, err
       end
     end
   else
-    errmsg = string.format("'%s' illegal file type '%s'", source, source_stats.type)
-    log.line("copy_paste", "do_copy %s", errmsg)
-    return false, errmsg
+    err = string.format("'%s' illegal file type '%s'", source, source_stats.type)
+    log.line("copy_paste", "do_copy %s", err)
+    return false, err
   end
 
   return true
@@ -109,28 +113,26 @@ end
 
 ---@param source string
 ---@param dest string
----@param action ACTION
----@param action_fn fun(source: string, dest: string)
+---@param action ClipboardAction
+---@param action_fn ClipboardActionFn
 ---@return boolean|nil -- success
 ---@return string|nil -- error message
 local function do_single_paste(source, dest, action, action_fn)
-  local dest_stats
-  local success, errmsg, errcode
   local notify_source = notify.render_path(source)
 
   log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
 
-  dest_stats, errmsg, errcode = vim.loop.fs_stat(dest)
-  if not dest_stats and errcode ~= "ENOENT" then
-    notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (errmsg or "???"))
-    return false, errmsg
+  local dest_stats, err, err_name = vim.loop.fs_stat(dest)
+  if not dest_stats and err_name ~= "ENOENT" then
+    notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (err or "???"))
+    return false, err
   end
 
   local function on_process()
-    success, errmsg = action_fn(source, dest)
+    local success, error = action_fn(source, dest)
     if not success then
-      notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (errmsg or "???"))
-      return false, errmsg
+      notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (error or "???"))
+      return false, error
     end
 
     find_file(utils.path_remove_trailing(dest))
@@ -173,7 +175,7 @@ local function do_single_paste(source, dest, action, action_fn)
 end
 
 ---@param node Node
----@param clip table
+---@param clip ClipboardData
 local function toggle(node, clip)
   if node.name == ".." then
     return
@@ -191,8 +193,8 @@ end
 
 ---Clear copied and cut
 function Clipboard:clear_clipboard()
-  self.data[ACTION.copy] = {}
-  self.data[ACTION.cut] = {}
+  self.data.copy = {}
+  self.data.cut = {}
   notify.info("Clipboard has been emptied.")
   self.explorer.renderer:draw()
 end
@@ -200,29 +202,32 @@ end
 ---Copy one node
 ---@param node Node
 function Clipboard:copy(node)
-  utils.array_remove(self.data[ACTION.cut], node)
-  toggle(node, self.data[ACTION.copy])
+  utils.array_remove(self.data.cut, node)
+  toggle(node, self.data.copy)
   self.explorer.renderer:draw()
 end
 
 ---Cut one node
 ---@param node Node
 function Clipboard:cut(node)
-  utils.array_remove(self.data[ACTION.copy], node)
-  toggle(node, self.data[ACTION.cut])
+  utils.array_remove(self.data.copy, node)
+  toggle(node, self.data.cut)
   self.explorer.renderer:draw()
 end
 
 ---Paste cut or cop
 ---@private
 ---@param node Node
----@param action ACTION
----@param action_fn fun(source: string, dest: string)
+---@param action ClipboardAction
+---@param action_fn ClipboardActionFn
 function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
     node = self.explorer
-  elseif node:is(DirectoryNode) then
-    node = node:last_group_node()
+  else
+    local dir = node:as(DirectoryNode)
+    if dir then
+      node = dir:last_group_node()
+    end
   end
   local clip = self.data[action]
   if #clip == 0 then
@@ -230,10 +235,10 @@ function Clipboard:do_paste(node, action, action_fn)
   end
 
   local destination = node.absolute_path
-  local stats, errmsg, errcode = vim.loop.fs_stat(destination)
-  if not stats and errcode ~= "ENOENT" then
-    log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, errmsg)
-    notify.error("Could not " .. action .. " " .. notify.render_path(destination) .. " - " .. (errmsg or "???"))
+  local stats, err, err_name = vim.loop.fs_stat(destination)
+  if not stats and err_name ~= "ENOENT" then
+    log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, err)
+    notify.error("Could not " .. action .. " " .. notify.render_path(destination) .. " - " .. (err or "???"))
     return
   end
   local is_dir = stats and stats.type == "directory"
@@ -278,24 +283,24 @@ end
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
 function Clipboard:paste(node)
-  if self.data[ACTION.cut][1] ~= nil then
-    self:do_paste(node, ACTION.cut, do_cut)
-  elseif self.data[ACTION.copy][1] ~= nil then
-    self:do_paste(node, ACTION.copy, do_copy)
+  if self.data.cut[1] ~= nil then
+    self:do_paste(node, "cut", do_cut)
+  elseif self.data.copy[1] ~= nil then
+    self:do_paste(node, "copy", do_copy)
   end
 end
 
 function Clipboard:print_clipboard()
   local content = {}
-  if #self.data[ACTION.cut] > 0 then
+  if #self.data.cut > 0 then
     table.insert(content, "Cut")
-    for _, node in pairs(self.data[ACTION.cut]) do
+    for _, node in pairs(self.data.cut) do
       table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
-  if #self.data[ACTION.copy] > 0 then
+  if #self.data.copy > 0 then
     table.insert(content, "Copy")
-    for _, node in pairs(self.data[ACTION.copy]) do
+    for _, node in pairs(self.data.copy) do
       table.insert(content, " * " .. (notify.render_path(node.absolute_path)))
     end
   end
@@ -305,65 +310,45 @@ end
 
 ---@param content string
 function Clipboard:copy_to_reg(content)
-  local clipboard_name
-  local reg
-  if self.config.actions.use_system_clipboard == true then
-    clipboard_name = "system"
-    reg = "+"
-  else
-    clipboard_name = "neovim"
-    reg = "1"
-  end
-
   -- manually firing TextYankPost does not set vim.v.event
   -- workaround: create a scratch buffer with the clipboard contents and send a yank command
   local temp_buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_text(temp_buf, 0, 0, 0, 0, { content })
   vim.api.nvim_buf_call(temp_buf, function()
-    vim.cmd(string.format('normal! "%sy$', reg))
+    vim.cmd(string.format('normal! "%sy$', self.reg))
   end)
   vim.api.nvim_buf_delete(temp_buf, {})
 
-  notify.info(string.format("Copied %s to %s clipboard!", content, clipboard_name))
+  notify.info(string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
 end
 
 ---@param node Node
 function Clipboard:copy_filename(node)
-  local content
-
   if node.name == ".." then
     -- root
-    content = vim.fn.fnamemodify(self.explorer.absolute_path, ":t")
+    self:copy_to_reg(vim.fn.fnamemodify(self.explorer.absolute_path, ":t"))
   else
     -- node
-    content = node.name
+    self:copy_to_reg(node.name)
   end
-
-  self:copy_to_reg(content)
 end
 
 ---@param node Node
 function Clipboard:copy_basename(node)
-  local content
-
   if node.name == ".." then
     -- root
-    content = vim.fn.fnamemodify(self.explorer.absolute_path, ":t:r")
+    self:copy_to_reg(vim.fn.fnamemodify(self.explorer.absolute_path, ":t:r"))
   else
     -- node
-    content = vim.fn.fnamemodify(node.name, ":r")
+    self:copy_to_reg(vim.fn.fnamemodify(node.name, ":r"))
   end
-
-  self:copy_to_reg(content)
 end
 
 ---@param node Node
 function Clipboard:copy_path(node)
-  local content
-
   if node.name == ".." then
     -- root
-    content = utils.path_add_trailing("")
+    self:copy_to_reg(utils.path_add_trailing(""))
   else
     -- node
     local absolute_path = node.absolute_path
@@ -373,10 +358,12 @@ function Clipboard:copy_path(node)
     end
 
     local relative_path = utils.path_relative(absolute_path, cwd)
-    content = node.nodes ~= nil and utils.path_add_trailing(relative_path) or relative_path
+    if node:is(DirectoryNode) then
+      self:copy_to_reg(utils.path_add_trailing(relative_path))
+    else
+      self:copy_to_reg(relative_path)
+    end
   end
-
-  self:copy_to_reg(content)
 end
 
 ---@param node Node
@@ -394,14 +381,14 @@ end
 ---@param node Node
 ---@return boolean
 function Clipboard:is_cut(node)
-  return vim.tbl_contains(self.data[ACTION.cut], node)
+  return vim.tbl_contains(self.data.cut, node)
 end
 
 ---Node is copied. Will not be cut.
 ---@param node Node
 ---@return boolean
 function Clipboard:is_copied(node)
-  return vim.tbl_contains(self.data[ACTION.copy], node)
+  return vim.tbl_contains(self.data.copy, node)
 end
 
 return Clipboard

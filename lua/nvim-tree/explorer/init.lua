@@ -59,7 +59,7 @@ function Explorer:create(path)
 
   local o = RootNode:create(explorer_placeholder, path, "..", nil)
 
-  o = self:new(o) --[[@as Explorer]]
+  o = self:new(o)
 
   o.explorer = o
 
@@ -69,7 +69,7 @@ function Explorer:create(path)
   o.open = true
   o.opts = config
 
-  o.sorters = Sorters:new(config)
+  o.sorters = Sorters:create(config)
   o.renderer = Renderer:new(config, o)
   o.filters = Filters:new(config, o)
   o.live_filter = LiveFilter:new(config, o)
@@ -187,9 +187,9 @@ function Explorer:expand(node)
 end
 
 ---@param node DirectoryNode
----@param git_status table|nil
+---@param project GitProject?
 ---@return Node[]?
-function Explorer:reload(node, git_status)
+function Explorer:reload(node, project)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -198,7 +198,7 @@ function Explorer:reload(node, git_status)
 
   local profile = log.profile_start("reload %s", node.absolute_path)
 
-  local filter_status = self.filters:prepare(git_status)
+  local filter_status = self.filters:prepare(project)
 
   if node.group_next then
     node.nodes = { node.group_next }
@@ -268,7 +268,7 @@ function Explorer:reload(node, git_status)
   end
 
   node.nodes = vim.tbl_map(
-    self:update_status(nodes_by_path, node_ignored, git_status),
+    self:update_git_statuses(nodes_by_path, node_ignored, project),
     vim.tbl_filter(function(n)
       if remain_childs[n.absolute_path] then
         return remain_childs[n.absolute_path]
@@ -282,7 +282,7 @@ function Explorer:reload(node, git_status)
   local single_child = node:single_child_directory()
   if config.renderer.group_empty and node.parent and single_child then
     node.group_next = single_child
-    local ns = self:reload(single_child, git_status)
+    local ns = self:reload(single_child, project)
     node.nodes = ns or {}
     log.profile_end(profile)
     return ns
@@ -321,7 +321,7 @@ function Explorer:refresh_parent_nodes_for_path(path)
     local project = git.get_project(toplevel) or {}
 
     self:reload(node, project)
-    node:update_parent_statuses(project, toplevel)
+    git.update_parent_projects(node, project, toplevel)
   end
 
   log.profile_end(profile)
@@ -331,19 +331,19 @@ end
 ---@param node DirectoryNode
 function Explorer:_load(node)
   local cwd = node.link_to or node.absolute_path
-  local git_status = git.load_project_status(cwd)
-  self:explore(node, git_status, self)
+  local project = git.load_project(cwd)
+  self:explore(node, project, self)
 end
 
 ---@private
 ---@param nodes_by_path Node[]
 ---@param node_ignored boolean
----@param status table|nil
----@return fun(node: Node): table
-function Explorer:update_status(nodes_by_path, node_ignored, status)
+---@param project GitProject?
+---@return fun(node: Node): Node
+function Explorer:update_git_statuses(nodes_by_path, node_ignored, project)
   return function(node)
     if nodes_by_path[node.absolute_path] then
-      node:update_git_status(node_ignored, status)
+      node:update_git_status(node_ignored, project)
     end
     return node
   end
@@ -353,13 +353,13 @@ end
 ---@param handle uv.uv_fs_t
 ---@param cwd string
 ---@param node DirectoryNode
----@param git_status table
+---@param project GitProject
 ---@param parent Explorer
-function Explorer:populate_children(handle, cwd, node, git_status, parent)
+function Explorer:populate_children(handle, cwd, node, project, parent)
   local node_ignored = node:is_git_ignored()
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
 
-  local filter_status = parent.filters:prepare(git_status)
+  local filter_status = parent.filters:prepare(project)
 
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
     git = 0,
@@ -388,7 +388,7 @@ function Explorer:populate_children(handle, cwd, node, git_status, parent)
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true
-          child:update_git_status(node_ignored, git_status)
+          child:update_git_status(node_ignored, project)
         end
       else
         for reason, value in pairs(FILTER_REASON) do
@@ -405,10 +405,10 @@ end
 
 ---@private
 ---@param node DirectoryNode
----@param status table
+---@param project GitProject
 ---@param parent Explorer
 ---@return Node[]|nil
-function Explorer:explore(node, status, parent)
+function Explorer:explore(node, project, parent)
   local cwd = node.link_to or node.absolute_path
   local handle = vim.loop.fs_scandir(cwd)
   if not handle then
@@ -417,15 +417,15 @@ function Explorer:explore(node, status, parent)
 
   local profile = log.profile_start("explore %s", node.absolute_path)
 
-  self:populate_children(handle, cwd, node, status, parent)
+  self:populate_children(handle, cwd, node, project, parent)
 
   local is_root = not node.parent
   local single_child = node:single_child_directory()
   if config.renderer.group_empty and not is_root and single_child then
     local child_cwd = single_child.link_to or single_child.absolute_path
-    local child_status = git.load_project_status(child_cwd)
+    local child_project = git.load_project(child_cwd)
     node.group_next = single_child
-    local ns = self:explore(single_child, child_status, parent)
+    local ns = self:explore(single_child, child_project, parent)
     node.nodes = ns or {}
 
     log.profile_end(profile)
@@ -440,7 +440,7 @@ function Explorer:explore(node, status, parent)
 end
 
 ---@private
----@param projects table
+---@param projects GitProject[]
 function Explorer:refresh_nodes(projects)
   Iterator.builder({ self })
     :applier(function(n)
@@ -463,7 +463,7 @@ function Explorer:reload_explorer()
   end
   event_running = true
 
-  local projects = git.reload()
+  local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
   if view.is_visible() then
     self.renderer:draw()
@@ -477,8 +477,8 @@ function Explorer:reload_git()
   end
   event_running = true
 
-  local projects = git.reload()
-  self:reload_node_status(projects)
+  local projects = git.reload_all_projects()
+  git.reload_node_status(self, projects)
   self.renderer:draw()
   event_running = false
 end

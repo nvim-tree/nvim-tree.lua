@@ -1,3 +1,5 @@
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {}
 
 ---@type table<string, boolean> record of which file is modified
@@ -24,11 +26,26 @@ end
 ---@param node Node
 ---@return boolean
 function M.is_modified(node)
-  return node
-    and M.config.modified.enable
-    and M._modified[node.absolute_path]
-    and (not node.nodes or M.config.modified.show_on_dirs)
-    and (not node.open or M.config.modified.show_on_open_dirs)
+  if not M.config.modified.enable then
+    return false
+  end
+
+  if not M._modified[node.absolute_path] then
+    return false
+  end
+
+  local dir = node:as(DirectoryNode)
+  if dir then
+    if not M.config.modified.show_on_dirs then
+      return false
+    end
+
+    if dir.open and not M.config.modified.show_on_open_dirs then
+      return false
+    end
+  end
+
+  return true
 end
 
 ---A buffer exists for the node's absolute path

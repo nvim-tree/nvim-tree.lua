@@ -12,7 +12,7 @@ local RootNode = DirectoryNode:new()
 function RootNode:create(explorer, absolute_path, name, fs_stat)
   local o = DirectoryNode:create(explorer, nil, absolute_path, name, fs_stat)
 
-  o = self:new(o) --[[@as RootNode]]
+  o = self:new(o)
 
   return o
 end

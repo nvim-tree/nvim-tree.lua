@@ -2,8 +2,6 @@ local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local events = require("nvim-tree.events")
 
-local icon_component = require("nvim-tree.renderer.components.icons")
-
 local Builder = require("nvim-tree.renderer.builder")
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -16,7 +14,6 @@ local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtua
 ---@field private __index? table
 ---@field private opts table user options
 ---@field private explorer Explorer
----@field private builder Builder
 local Renderer = {}
 
 ---@param opts table user options
@@ -27,7 +24,6 @@ function Renderer:new(opts, explorer)
   local o = {
     opts = opts,
     explorer = explorer,
-    builder = Builder:new(opts, explorer),
   }
 
   setmetatable(o, self)
@@ -109,7 +105,6 @@ function Renderer:draw()
   local profile = log.profile_start("draw")
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
-  icon_component.reset_config()
 
   local builder = Builder:new(self.opts, self.explorer):build()
 

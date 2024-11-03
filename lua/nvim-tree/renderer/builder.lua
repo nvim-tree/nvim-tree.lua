@@ -2,9 +2,7 @@ local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
-local DirectoryLinkNode = require("nvim-tree.node.directory-link")
 local DirectoryNode = require("nvim-tree.node.directory")
-local FileLinkNode = require("nvim-tree.node.file-link")
 
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
 local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
@@ -16,16 +14,6 @@ local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
 local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 
 local pad = require("nvim-tree.renderer.components.padding")
-local icons = require("nvim-tree.renderer.components.icons")
-
-local PICTURE_MAP = {
-  jpg = true,
-  jpeg = true,
-  png = true,
-  gif = true,
-  webp = true,
-  jxl = true,
-}
 
 ---@class (exact) HighlightedString
 ---@field str string
@@ -45,6 +33,7 @@ local PICTURE_MAP = {
 ---@field extmarks table[] extra marks for right icon placement
 ---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private explorer Explorer
+---@field private opts table
 ---@field private index number
 ---@field private depth number
 ---@field private combined_groups table<string, boolean> combined group names
@@ -100,27 +89,6 @@ function Builder:insert_highlight(groups, start, end_)
 end
 
 ---@private
-function Builder:get_folder_name(node)
-  local name = node.name
-  local next = node.group_next
-  while next do
-    name = string.format("%s/%s", name, next.name)
-    next = next.group_next
-  end
-
-  if node.group_next and type(self.opts.renderer.group_empty) == "function" then
-    local new_name = self.opts.renderer.group_empty(name)
-    if type(new_name) == "string" then
-      name = new_name
-    else
-      notify.warn(string.format("Invalid return type for field renderer.group_empty. Expected string, got %s", type(new_name)))
-    end
-  end
-
-  return string.format("%s%s", name, self.opts.renderer.add_trailing and "/" or "")
-end
-
----@private
 ---@param highlighted_strings HighlightedString[]
 ---@return string
 function Builder:unwrap_highlighted_strings(highlighted_strings)
@@ -138,82 +106,6 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
     end
   end
   return string
-end
-
----@private
----@param node Node
----@return HighlightedString icon
----@return HighlightedString name
-function Builder:build_folder(node)
-  local has_children = #node.nodes ~= 0 or node.has_children
-  local icon, icon_hl = icons.get_folder_icon(node, has_children)
-  local foldername = self:get_folder_name(node)
-
-  if #icon > 0 and icon_hl == nil then
-    if node.open then
-      icon_hl = "NvimTreeOpenedFolderIcon"
-    else
-      icon_hl = "NvimTreeClosedFolderIcon"
-    end
-  end
-
-  local foldername_hl = "NvimTreeFolderName"
-  if node.link_to and self.opts.renderer.symlink_destination then
-    local arrow = icons.i.symlink_arrow
-    local link_to = utils.path_relative(node.link_to, self.explorer.absolute_path)
-    foldername = string.format("%s%s%s", foldername, arrow, link_to)
-    foldername_hl = "NvimTreeSymlinkFolderName"
-  elseif
-    vim.tbl_contains(self.opts.renderer.special_files, node.absolute_path) or vim.tbl_contains(self.opts.renderer.special_files, node.name)
-  then
-    foldername_hl = "NvimTreeSpecialFolderName"
-  elseif node.open then
-    foldername_hl = "NvimTreeOpenedFolderName"
-  elseif not has_children then
-    foldername_hl = "NvimTreeEmptyFolderName"
-  end
-
-  return { str = icon, hl = { icon_hl } }, { str = foldername, hl = { foldername_hl } }
-end
-
----@private
----@param node table
----@return HighlightedString icon
----@return HighlightedString name
-function Builder:build_symlink(node)
-  local icon = icons.i.symlink
-  local arrow = icons.i.symlink_arrow
-  local symlink_formatted = node.name
-  if self.opts.renderer.symlink_destination then
-    local link_to = utils.path_relative(node.link_to, self.explorer.absolute_path)
-    symlink_formatted = string.format("%s%s%s", symlink_formatted, arrow, link_to)
-  end
-
-  if self.opts.renderer.icons.show.file then
-    return { str = icon, hl = { "NvimTreeSymlinkIcon" } }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
-  else
-    return { str = "", hl = {} }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
-  end
-end
-
----@private
----@param node Node
----@return HighlightedString icon
----@return HighlightedString name
-function Builder:build_file(node)
-  local hl
-  if
-    vim.tbl_contains(self.opts.renderer.special_files, node.absolute_path) or vim.tbl_contains(self.opts.renderer.special_files, node.name)
-  then
-    hl = "NvimTreeSpecialFile"
-  elseif node.executable then
-    hl = "NvimTreeExecFile"
-  elseif PICTURE_MAP[node.extension] then
-    hl = "NvimTreeImageFile"
-  end
-
-  local icon, hl_group = icons.get_file_icon(node.name, node.extension)
-  return { str = icon, hl = { hl_group } }, { str = node.name, hl = { hl } }
 end
 
 ---@private
@@ -360,14 +252,7 @@ function Builder:build_line(node, idx, num_children)
   local arrows = pad.get_arrows(node)
 
   -- main components
-  local icon, name
-  if node:is(DirectoryNode) then
-    icon, name = self:build_folder(node)
-  elseif node:is(DirectoryLinkNode) or node:is(FileLinkNode) then
-    icon, name = self:build_symlink(node)
-  else
-    icon, name = self:build_file(node)
-  end
+  local icon, name = node:highlighted_icon(), node:highlighted_name()
 
   -- highighting
   local icon_hl_group, name_hl_group = self:add_highlights(node)
@@ -379,11 +264,12 @@ function Builder:build_line(node, idx, num_children)
 
   self.index = self.index + 1
 
-  if node:is(DirectoryNode) then
-    node = node:last_group_node()
-    if node.open then
+  local dir = node:as(DirectoryNode)
+  if dir then
+    dir = dir:last_group_node()
+    if dir.open then
       self.depth = self.depth + 1
-      self:build_lines(node)
+      self:build_lines(dir)
       self.depth = self.depth - 1
     end
   end

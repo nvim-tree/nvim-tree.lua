@@ -736,9 +736,6 @@ function M.setup(conf)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
-  if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
-    require("nvim-web-devicons").setup()
-  end
 
   setup_autocommands(opts)
 

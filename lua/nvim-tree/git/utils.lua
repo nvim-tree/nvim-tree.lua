@@ -58,10 +58,11 @@ function M.get_toplevel(cwd)
   return toplevel, git_dir
 end
 
+---@type table<string, boolean>
 local untracked = {}
 
 ---@param cwd string
----@return string|nil
+---@return boolean
 function M.should_show_untracked(cwd)
   if untracked[cwd] ~= nil then
     return untracked[cwd]
@@ -81,8 +82,8 @@ function M.should_show_untracked(cwd)
   return untracked[cwd]
 end
 
----@param t table|nil
----@param k string
+---@param t table<string|integer, boolean>?
+---@param k string|integer
 ---@return table
 local function nil_insert(t, k)
   t = t or {}
@@ -90,31 +91,33 @@ local function nil_insert(t, k)
   return t
 end
 
----@param status table
+---@param project_files GitProjectFiles
 ---@param cwd string|nil
----@return table
-function M.file_status_to_dir_status(status, cwd)
-  local direct = {}
-  for p, s in pairs(status) do
+---@return GitProjectDirs
+function M.project_files_to_project_dirs(project_files, cwd)
+  ---@type GitProjectDirs
+  local project_dirs = {}
+
+  project_dirs.direct = {}
+  for p, s in pairs(project_files) do
     if s ~= "!!" then
       local modified = vim.fn.fnamemodify(p, ":h")
-      direct[modified] = nil_insert(direct[modified], s)
+      project_dirs.direct[modified] = nil_insert(project_dirs.direct[modified], s)
     end
   end
 
-  local indirect = {}
-  for dirname, statuses in pairs(direct) do
+  project_dirs.indirect = {}
+  for dirname, statuses in pairs(project_dirs.direct) do
     for s, _ in pairs(statuses) do
       local modified = dirname
       while modified ~= cwd and modified ~= "/" do
         modified = vim.fn.fnamemodify(modified, ":h")
-        indirect[modified] = nil_insert(indirect[modified], s)
+        project_dirs.indirect[modified] = nil_insert(project_dirs.indirect[modified], s)
       end
     end
   end
 
-  local r = { indirect = indirect, direct = direct }
-  for _, d in pairs(r) do
+  for _, d in pairs(project_dirs) do
     for dirname, statuses in pairs(d) do
       local new_statuses = {}
       for s, _ in pairs(statuses) do
@@ -123,7 +126,60 @@ function M.file_status_to_dir_status(status, cwd)
       d[dirname] = new_statuses
     end
   end
-  return r
+
+  return project_dirs
+end
+
+---Git file status for an absolute path
+---@param parent_ignored boolean
+---@param project GitProject?
+---@param path string
+---@param path_fallback string? alternative file path when no other file status
+---@return GitNodeStatus
+function M.git_status_file(parent_ignored, project, path, path_fallback)
+  ---@type GitNodeStatus
+  local ns
+
+  if parent_ignored then
+    ns = {
+      file = "!!"
+    }
+  elseif project and project.files then
+    ns = {
+      file = project.files[path] or project.files[path_fallback]
+    }
+  else
+    ns = {}
+  end
+
+  return ns
+end
+
+---Git file and directory status for an absolute path
+---@param parent_ignored boolean
+---@param project GitProject?
+---@param path string
+---@param path_fallback string? alternative file path when no other file status
+---@return GitNodeStatus?
+function M.git_status_dir(parent_ignored, project, path, path_fallback)
+  ---@type GitNodeStatus?
+  local ns
+
+  if parent_ignored then
+    ns = {
+      file = "!!"
+    }
+  elseif project then
+    ns = {
+      file = project.files and (project.files[path] or project.files[path_fallback]),
+      dir = project.dirs and {
+        direct = project.dirs.direct and project.dirs.direct[path],
+        indirect = project.dirs.indirect and project.dirs.indirect[path],
+      },
+    }
+  end
+
+  return ns
 end
 
 function M.setup(opts)

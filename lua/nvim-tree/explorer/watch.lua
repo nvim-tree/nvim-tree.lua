@@ -1,4 +1,5 @@
 local log = require("nvim-tree.log")
+local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
 local Watcher = require("nvim-tree.watcher").Watcher
 
@@ -65,9 +66,10 @@ function M.create_watcher(node)
     return nil
   end
 
+  ---@param watcher Watcher
   local function callback(watcher)
-    log.line("watcher", "node event scheduled refresh %s", watcher.context)
-    utils.debounce(watcher.context, M.config.filesystem_watchers.debounce_delay, function()
+    log.line("watcher", "node event scheduled refresh %s", watcher.data.context)
+    utils.debounce(watcher.data.context, M.config.filesystem_watchers.debounce_delay, function()
       if watcher.destroyed then
         return
       end
@@ -76,12 +78,12 @@ function M.create_watcher(node)
       else
         log.line("watcher", "node event executing refresh '%s'", node.absolute_path)
       end
-      node:refresh()
+      git.refresh_dir(node)
     end)
   end
 
   M.uid = M.uid + 1
-  return Watcher:new(path, nil, callback, {
+  return Watcher:create(path, nil, callback, {
     context = "explorer:watch:" .. path .. ":" .. M.uid,
   })
 end

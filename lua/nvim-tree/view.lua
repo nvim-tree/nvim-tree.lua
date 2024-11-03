@@ -150,12 +150,30 @@ end
 
 local function set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
-  local eventignore = vim.opt.eventignore:get()
-  vim.opt.eventignore = "all"
-  for k, v in pairs(M.View.winopts) do
-    vim.opt_local[k] = v
+
+  if vim.fn.has("nvim-0.10") == 1 then
+
+    local eventignore = vim.api.nvim_get_option_value("eventignore", {})
+    vim.api.nvim_set_option_value("eventignore", "all", {})
+
+    for k, v in pairs(M.View.winopts) do
+      vim.api.nvim_set_option_value(k, v, { scope = "local" })
+    end
+
+    vim.api.nvim_set_option_value("eventignore", eventignore, {})
+
+  else
+
+    local eventignore = vim.api.nvim_get_option("eventignore") ---@diagnostic disable-line: deprecated
+    vim.api.nvim_set_option("eventignore", "all") ---@diagnostic disable-line: deprecated
+
+    for k, v in pairs(M.View.winopts) do
+      vim.api.nvim_win_set_option(0, k, v) ---@diagnostic disable-line: deprecated
+    end
+
+    vim.api.nvim_set_option("eventignore", eventignore) ---@diagnostic disable-line: deprecated
+
   end
-  vim.opt.eventignore = eventignore
 end
 
 ---@return table

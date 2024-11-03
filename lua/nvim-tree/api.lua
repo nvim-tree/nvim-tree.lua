@@ -9,6 +9,7 @@ local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 
 local Api = {
@@ -140,8 +141,11 @@ end)
 Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." or node:is(RootNode) then
     actions.root.change_dir.fn("..")
-  elseif node:is(DirectoryNode) then
-    actions.root.change_dir.fn(node:last_group_node().absolute_path)
+  else
+    node = node:as(DirectoryNode)
+    if node then
+      actions.root.change_dir.fn(node:last_group_node().absolute_path)
+    end
   end
 end)
 
@@ -203,10 +207,8 @@ Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_pa
 ---@param mode string
 ---@param node Node
 local function edit(mode, node)
-  local path = node.absolute_path
-  if node.link_to and not node.nodes then
-    path = node.link_to
-  end
+  local file_link = node:as(FileLinkNode)
+  local path = file_link and file_link.link_to or node.absolute_path
   actions.node.open_file.fn(mode, path)
 end
 
@@ -216,10 +218,13 @@ end
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
   return function(node)
-    if node.name == ".." then
+    local root = node:as(RootNode)
+    local dir = node:as(DirectoryNode)
+
+    if root or node.name == ".." then
       actions.root.change_dir.fn("..")
-    elseif node:is(DirectoryNode) then
-      node:expand_or_collapse(toggle_group)
+    elseif dir then
+      dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
       edit(mode, node)
     end

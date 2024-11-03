@@ -2,9 +2,21 @@ local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
 local notify = require("nvim-tree.notify")
 
----@class Runner
-local Runner = {}
-Runner.__index = Runner
+local Class = require("nvim-tree.class")
+
+---@class (exact) GitRunnerOpts
+---@field toplevel string absolute path
+---@field path string? absolute path
+---@field list_untracked boolean
+---@field list_ignored boolean
+---@field timeout integer
+---@field callback fun(path_xy: GitPathXY)?
+
+---@class (exact) GitRunner: Class
+---@field private opts GitRunnerOpts
+---@field private path_xy GitPathXY
+---@field private rc integer? -- -1 indicates timeout
+local GitRunner = Class:new()
 
 local timeouts = 0
 local MAX_TIMEOUTS = 5
@@ -12,7 +24,7 @@ local MAX_TIMEOUTS = 5
 ---@private
 ---@param status string
 ---@param path string|nil
-function Runner:_parse_status_output(status, path)
+function GitRunner:parse_status_output(status, path)
   if not path then
     return
   end
@@ -22,7 +34,7 @@ function Runner:_parse_status_output(status, path)
     path = path:gsub("/", "\\")
   end
   if #status > 0 and #path > 0 then
-    self.output[utils.path_remove_trailing(utils.path_join({ self.toplevel, path }))] = status
+    self.path_xy[utils.path_remove_trailing(utils.path_join({ self.opts.toplevel, path }))] = status
   end
 end
 
@@ -30,7 +42,7 @@ end
 ---@param prev_output string
 ---@param incoming string
 ---@return string
-function Runner:_handle_incoming_data(prev_output, incoming)
+function GitRunner:handle_incoming_data(prev_output, incoming)
   if incoming and utils.str_find(incoming, "\n") then
     local prev = prev_output .. incoming
     local i = 1
@@ -45,7 +57,7 @@ function Runner:_handle_incoming_data(prev_output, incoming)
           -- skip next line if it is a rename entry
           skip_next_line = true
         end
-        self:_parse_status_output(status, path)
+        self:parse_status_output(status, path)
       end
       i = i + #line
     end
@@ -58,35 +70,38 @@ function Runner:_handle_incoming_data(prev_output, incoming)
   end
 
   for line in prev_output:gmatch("[^\n]*\n") do
-    self:_parse_status_output(line)
+    self:parse_status_output(line)
   end
 
   return ""
 end
 
+---@private
 ---@param stdout_handle uv.uv_pipe_t
 ---@param stderr_handle uv.uv_pipe_t
----@return table
-function Runner:_getopts(stdout_handle, stderr_handle)
-  local untracked = self.list_untracked and "-u" or nil
-  local ignored = (self.list_untracked and self.list_ignored) and "--ignored=matching" or "--ignored=no"
+---@return uv.spawn.options
+function GitRunner:get_spawn_options(stdout_handle, stderr_handle)
+  local untracked = self.opts.list_untracked and "-u" or nil
+  local ignored = (self.opts.list_untracked and self.opts.list_ignored) and "--ignored=matching" or "--ignored=no"
   return {
-    args = { "--no-optional-locks", "status", "--porcelain=v1", "-z", ignored, untracked, self.path },
-    cwd = self.toplevel,
+    args = { "--no-optional-locks", "status", "--porcelain=v1", "-z", ignored, untracked, self.opts.path },
+    cwd = self.opts.toplevel,
     stdio = { nil, stdout_handle, stderr_handle },
   }
 end
 
+---@private
 ---@param output string
-function Runner:_log_raw_output(output)
+function GitRunner:log_raw_output(output)
   if log.enabled("git") and output and type(output) == "string" then
     log.raw("git", "%s", output)
     log.line("git", "done")
   end
 end
 
+---@private
 ---@param callback function|nil
-function Runner:_run_git_job(callback)
+function GitRunner:run_git_job(callback)
   local handle, pid
   local stdout = vim.loop.new_pipe(false)
   local stderr = vim.loop.new_pipe(false)
@@ -123,20 +138,20 @@ function Runner:_run_git_job(callback)
     end
   end
 
-  local opts = self:_getopts(stdout, stderr)
-  log.line("git", "running job with timeout %dms", self.timeout)
-  log.line("git", "git %s",                        table.concat(utils.array_remove_nils(opts.args), " "))
+  local spawn_options = self:get_spawn_options(stdout, stderr)
+  log.line("git", "running job with timeout %dms", self.opts.timeout)
+  log.line("git", "git %s",                        table.concat(utils.array_remove_nils(spawn_options.args), " "))
 
   handle, pid = vim.loop.spawn(
     "git",
-    opts,
+    spawn_options,
     vim.schedule_wrap(function(rc)
       on_finish(rc)
     end)
   )
 
   timer:start(
-    self.timeout,
+    self.opts.timeout,
     0,
     vim.schedule_wrap(function()
       on_finish(-1)
@@ -151,19 +166,20 @@ function Runner:_run_git_job(callback)
     if data then
       data = data:gsub("%z", "\n")
     end
-    self:_log_raw_output(data)
-    output_leftover = self:_handle_incoming_data(output_leftover, data)
+    self:log_raw_output(data)
+    output_leftover = self:handle_incoming_data(output_leftover, data)
   end
 
   local function manage_stderr(_, data)
-    self:_log_raw_output(data)
+    self:log_raw_output(data)
   end
 
   vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
   vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
 end
 
-function Runner:_wait()
+---@private
+function GitRunner:wait()
   local function is_done()
     return self.rc ~= nil
   end
@@ -172,64 +188,69 @@ function Runner:_wait()
   end
 end
 
----@param opts table
-function Runner:_finalise(opts)
+---@private
+function GitRunner:finalise()
   if self.rc == -1 then
-    log.line("git", "job timed out  %s %s", opts.toplevel, opts.path)
+    log.line("git", "job timed out  %s %s", self.opts.toplevel, self.opts.path)
     timeouts = timeouts + 1
     if timeouts == MAX_TIMEOUTS then
-      notify.warn(string.format("%d git jobs have timed out after git.timeout %dms, disabling git integration.", timeouts, opts.timeout))
+      notify.warn(string.format("%d git jobs have timed out after git.timeout %dms, disabling git integration.", timeouts,
+        self.opts.timeout))
       require("nvim-tree.git").disable_git_integration()
     end
   elseif self.rc ~= 0 then
-    log.line("git", "job fail rc %d %s %s", self.rc, opts.toplevel, opts.path)
+    log.line("git", "job fail rc %d %s %s", self.rc, self.opts.toplevel, self.opts.path)
   else
-    log.line("git", "job success    %s %s", opts.toplevel, opts.path)
+    log.line("git", "job success    %s %s", self.opts.toplevel, self.opts.path)
   end
 end
 
---- Runs a git process, which will be killed if it takes more than timeout which defaults to 400ms
----@param opts table
----@param callback function|nil executed passing return when complete
----@return table|nil status by absolute path, nil if callback present
-function Runner.run(opts, callback)
-  local self = setmetatable({
-    toplevel = opts.toplevel,
-    path = opts.path,
-    list_untracked = opts.list_untracked,
-    list_ignored = opts.list_ignored,
-    timeout = opts.timeout or 400,
-    output = {},
-    rc = nil, -- -1 indicates timeout
-  }, Runner)
+---Return nil when callback present
+---@private
+---@return GitPathXY?
+function GitRunner:execute()
+  local async = self.opts.callback ~= nil
+  local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", self.opts.toplevel, self.opts.path)
 
-  local async = callback ~= nil
-  local profile = log.profile_start("git %s job %s %s", async and "async" or "sync", opts.toplevel, opts.path)
-
-  if async and callback then
+  if async and self.opts.callback then
     -- async, always call back
-    self:_run_git_job(function()
+    self:run_git_job(function()
       log.profile_end(profile)
 
-      self:_finalise(opts)
+      self:finalise()
 
-      callback(self.output)
+      self.opts.callback(self.path_xy)
     end)
   else
     -- sync, maybe call back
-    self:_run_git_job()
-    self:_wait()
+    self:run_git_job()
+    self:wait()
 
     log.profile_end(profile)
 
-    self:_finalise(opts)
+    self:finalise()
 
-    if callback then
-      callback(self.output)
+    if self.opts.callback then
+      self.opts.callback(self.path_xy)
     else
-      return self.output
+      return self.path_xy
     end
   end
 end
 
-return Runner
+---Static method to run a git process, which will be killed if it takes more than timeout
+---Return nil when callback present
+---@param opts GitRunnerOpts
+---@return GitPathXY?
+function GitRunner:run(opts)
+  ---@type GitRunner
+  local runner = {
+    opts = opts,
+    path_xy = {},
+  }
+  runner = GitRunner:new(runner)
+
+  return runner:execute()
+end
+
+return GitRunner

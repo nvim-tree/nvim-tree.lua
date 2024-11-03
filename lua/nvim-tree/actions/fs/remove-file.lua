@@ -5,6 +5,9 @@ local view = require("nvim-tree.view")
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 
+local DirectoryLinkNode = require("nvim-tree.node.directory-link")
+local DirectoryNode = require("nvim-tree.node.directory")
+
 local M = {
   config = {},
 }
@@ -89,7 +92,7 @@ end
 ---@param node Node
 function M.remove(node)
   local notify_node = notify.render_path(node.absolute_path)
-  if node.nodes ~= nil and not node.link_to then
+  if node:is(DirectoryNode) and not node:is(DirectoryLinkNode) then
     local success = remove_dir(node.absolute_path)
     if not success then
       notify.error("Could not remove " .. notify_node)

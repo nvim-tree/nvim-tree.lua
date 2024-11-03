@@ -34,7 +34,7 @@ end
 
 ---@param node Node?
 function M.fn(node)
-  node = node or core.get_explorer() --[[@as Node]]
+  node = node or core.get_explorer()
   if not node then
     return
   end
