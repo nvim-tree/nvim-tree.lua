@@ -189,7 +189,11 @@ function Builder:build_symlink(node)
     symlink_formatted = string.format("%s%s%s", symlink_formatted, arrow, link_to)
   end
 
-  return { str = icon, hl = { "NvimTreeSymlinkIcon" } }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
+  if self.opts.renderer.icons.show.file then
+    return { str = icon, hl = { "NvimTreeSymlinkIcon" } }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
+  else
+    return { str = "", hl = {} }, { str = symlink_formatted, hl = { "NvimTreeSymlink" } }
+  end
 end
 
 ---@private

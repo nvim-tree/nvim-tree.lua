@@ -16,7 +16,7 @@ end
 ---@return string icon
 ---@return string? name
 local function get_folder_icon_default(node, has_children)
-  local is_symlink = node.links_to ~= nil
+  local is_symlink = node.link_to ~= nil
   local n
   if is_symlink and node.open then
     n = M.config.glyphs.folder.symlink_open
