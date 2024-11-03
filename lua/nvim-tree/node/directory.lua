@@ -1,5 +1,5 @@
 local git_utils = require("nvim-tree.git.utils")
-local icons = require("nvim-tree.renderer.components.icons")
+local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
 local Node = require("nvim-tree.node")
 
