@@ -1,7 +1,7 @@
 ---@alias devicons_get_icon fun(name: string, ext: string?, opts: table?): string?, string?
 ---@alias devicons_setup fun(opts: table?)
 
----@class DevIcons?
+---@class (strict) DevIcons?
 ---@field setup devicons_setup
 ---@field get_icon devicons_get_icon
 local devicons
@@ -24,9 +24,9 @@ function M.setup(opts)
   if opts.renderer.icons.show.file or opts.renderer.icons.show.folder then
     local ok, di = pcall(require, "nvim-web-devicons")
     if ok then
-      devicons = di
+      devicons = di --[[@as DevIcons]]
 
-      -- does nothing if already called i.e. don't clobber previous user setup
+      -- does nothing if already called i.e. doesn't clobber previous user setup
       devicons.setup()
     end
   end
