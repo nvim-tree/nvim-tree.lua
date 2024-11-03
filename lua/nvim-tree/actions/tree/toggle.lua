@@ -1,3 +1,4 @@
+local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
 local view = require("nvim-tree.view")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
@@ -55,7 +56,10 @@ function M.fn(opts, no_focus, cwd, bang)
     if M.config.update_focused_file.enable or opts.find_file then
       -- update root
       if opts.update_root then
-        require("nvim-tree").change_root(previous_path, previous_buf)
+        local explorer = core.get_explorer()
+        if explorer then
+          explorer:change_root(previous_path, previous_buf)
+        end
       end
 
       -- find

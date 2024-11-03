@@ -161,7 +161,7 @@ Api.tree.get_nodes = wrap_explorer("get_nodes")
 ---@field update_root boolean|nil default false
 ---@field focus boolean|nil default false
 
-Api.tree.find_file = wrap(actions.tree.find_file.fn)
+Api.tree.find_file = wrap_explorer("find_file")
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)

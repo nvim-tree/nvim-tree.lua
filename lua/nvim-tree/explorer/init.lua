@@ -1,8 +1,10 @@
+local actions = require("nvim-tree.actions")
 local appearance = require("nvim-tree.appearance")
 local buffers = require("nvim-tree.buffers")
 local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
+local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
@@ -23,6 +25,9 @@ local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
+
+-- set once and only once for prefer_startup_root
+local init_root = vim.fn.getcwd()
 
 local config
 
@@ -528,6 +533,124 @@ function Explorer:place_cursor_on_node()
   if idx >= 0 then
     vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
   end
+end
+
+--- Update the tree root to a directory or the directory containing
+---@param path string relative or absolute
+---@param bufnr number|nil
+function Explorer:change_root(path, bufnr)
+  -- error("Explorer:change_root")
+
+  -- skip if current file is in ignore_list
+  if type(bufnr) == "number" then
+    local ft
+
+    if vim.fn.has("nvim-0.10") == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
+    else
+      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
+    end
+
+    for _, value in pairs(self.opts.update_focused_file.update_root.ignore_list) do
+      if utils.str_find(path, value) or utils.str_find(ft, value) then
+        return
+      end
+    end
+  end
+
+  -- don't find inexistent
+  if vim.fn.filereadable(path) == 0 then
+    return
+  end
+
+  local vim_cwd = vim.fn.getcwd()
+
+  -- test if in vim_cwd
+  if utils.path_relative(path, vim_cwd) ~= path then
+    if vim_cwd ~= self.absolute_path then
+      actions.root.change_dir.fn(vim_cwd)
+    end
+    return
+  end
+  -- test if in cwd
+  if utils.path_relative(path, self.absolute_path) ~= path then
+    return
+  end
+
+  -- otherwise test init_root
+  if self.opts.prefer_startup_root and utils.path_relative(path, init_root) ~= path then
+    actions.root.change_dir.fn(init_root)
+    return
+  end
+  -- otherwise root_dirs
+  for _, dir in pairs(self.opts.root_dirs) do
+    dir = vim.fn.fnamemodify(dir, ":p")
+    if utils.path_relative(path, dir) ~= path then
+      actions.root.change_dir.fn(dir)
+      return
+    end
+  end
+  -- finally fall back to the folder containing the file
+  actions.root.change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
+end
+
+--- Find file or buffer
+---@param opts ApiTreeFindFileOpts|nil|boolean legacy -> opts.buf
+function Explorer:find_file(opts)
+  -- legacy arguments
+  if type(opts) == "string" then
+    opts = {
+      buf = opts,
+    }
+  end
+  opts = opts or {}
+
+  -- do nothing if closed and open not requested
+  if not opts.open then
+    return
+  end
+
+  local bufnr, path
+
+  -- (optional) buffer number and path
+  local opts_buf = opts.buf
+  if type(opts_buf) == "nil" then
+    bufnr = vim.api.nvim_get_current_buf()
+    path = vim.api.nvim_buf_get_name(bufnr)
+  elseif type(opts_buf) == "number" then
+    if not vim.api.nvim_buf_is_valid(opts_buf) then
+      return
+    end
+    bufnr = opts_buf
+    path = vim.api.nvim_buf_get_name(bufnr)
+  elseif type(opts_buf) == "string" then
+    bufnr = nil
+    path = tostring(opts_buf)
+  else
+    return
+  end
+
+  if view.is_visible() then
+    -- focus
+    if opts.focus then
+      lib.set_target_win()
+      view.focus()
+    end
+  elseif opts.open then
+    -- open
+    lib.open({ current_window = opts.current_window, winid = opts.winid })
+    if not opts.focus then
+      vim.cmd("noautocmd wincmd p")
+    end
+  end
+
+  -- update root
+  if opts.update_root or self.opts.update_focused_file.update_root.enable then
+    self:change_root(path, bufnr)
+  end
+
+  -- find
+  actions.finders.find_file.fn(path)
 end
 
 ---Api.tree.get_nodes
