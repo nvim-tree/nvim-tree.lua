@@ -2,9 +2,11 @@ local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local LinkNode = require("nvim-tree.node.link")
 
 ---@class (exact) DirectoryLinkNode: DirectoryNode, LinkNode
 local DirectoryLinkNode = DirectoryNode:extend()
+DirectoryLinkNode:implement(LinkNode)
 
 ---@param explorer Explorer
 ---@param parent DirectoryNode

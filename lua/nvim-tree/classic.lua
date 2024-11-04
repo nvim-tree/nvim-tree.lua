@@ -6,16 +6,24 @@
 -- This module is free software; you can redistribute it and/or modify it under
 -- the terms of the MIT license. See LICENSE for details.
 --
+-- https://github.com/rxi/classic
+--
 
-
+---@class (exact) Object
+---@field super Object
+---@field private implements table<Object, boolean>
 local Object = {}
-Object.__index = Object
+Object.__index = Object ---@diagnostic disable-line: inject-field
 
-
-function Object:new()
+---Default constructor
+function Object:new(...)
 end
 
-
+---Extend a class T
+---super will be set to T
+---@generic T
+---@param self T
+---@return T
 function Object:extend()
   local cls = {}
   for k, v in pairs(self) do
@@ -29,22 +37,32 @@ function Object:extend()
   return cls
 end
 
-
-function Object:implement(...)
-  for _, cls in pairs({...}) do
-    for k, v in pairs(cls) do
-      if self[k] == nil and type(v) == "function" then
-        self[k] = v
-      end
+---Implement the functions of a mixin
+---Add the mixin to the implements table
+---@param class Object
+function Object:implement(class)
+  if not rawget(self, "implements") then
+    rawset(self, "implements", {})
+  end
+  self.implements[class] = true
+  for k, v in pairs(class) do
+    if self[k] == nil and type(v) == "function" then
+      self[k] = v
     end
   end
 end
 
-
-function Object:is(T)
+---Object is an instance of class or implements a mixin
+---@generic T
+---@param class T
+---@return boolean
+function Object:is(class)
   local mt = getmetatable(self)
   while mt do
-    if mt == T then
+    if mt == class then
+      return true
+    end
+    if mt.implements and mt.implements[class] then
       return true
     end
     mt = getmetatable(mt)
@@ -52,26 +70,28 @@ function Object:is(T)
   return false
 end
 
-
----Return object if it is an instance of class, otherwise nil
+---Return object if :is otherwise nil
 ---@generic T
----@param cls T
+---@param class T
 ---@return T|nil
-function Object:as(cls)
-  return self:is(cls) and self or nil
+function Object:as(class)
+  return self:is(class) and self or nil
 end
 
-
-function Object:__tostring()
-  return "Object"
-end
-
-
+---Constructor that invokes :new on a new instance
+---@generic T
+---@param self T
+---@param ... any
+---@return T
 function Object:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)
   return obj
 end
 
+-- avoid unused param warnings in abstract methods
+---@param ... any
+function Object:nop(...) --luacheck: ignore 212
+end
 
 return Object
