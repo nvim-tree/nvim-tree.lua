@@ -3,7 +3,6 @@ local buffers = require("nvim-tree.buffers")
 local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
-local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local node_factory = require("nvim-tree.node.factory")
@@ -36,51 +35,28 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-local Explorer = RootNode:new()
+local Explorer = RootNode:extend()
 
----Static factory method
----@param path string?
----@return Explorer?
-function Explorer:create(path)
-  local err
+---@param path string
+function Explorer:new(path)
+  Explorer.super.new(self, self, path, "..", nil)
 
-  if path then
-    path, err = vim.loop.fs_realpath(path)
-  else
-    path, err = vim.loop.cwd()
-  end
-  if not path then
-    notify.error(err)
-    return nil
-  end
+  self.uid_explorer = vim.loop.hrtime()
+  self.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
-  ---@type Explorer
-  local explorer_placeholder = nil
+  self.open = true
+  self.opts = config
 
-  local o = RootNode:create(explorer_placeholder, path, "..", nil)
+  self.sorters = Sorters:create(config)
+  self.renderer = Renderer:new(config, self)
+  self.filters = Filters:new(config, self)
+  self.live_filter = LiveFilter:new(config, self)
+  self.marks = Marks:new(config, self)
+  self.clipboard = Clipboard:new(config, self)
 
-  o = self:new(o)
+  self:create_autocmds()
 
-  o.explorer = o
-
-  o.uid_explorer = vim.loop.hrtime()
-  o.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. o.uid_explorer, {})
-
-  o.open = true
-  o.opts = config
-
-  o.sorters = Sorters:create(config)
-  o.renderer = Renderer:new(config, o)
-  o.filters = Filters:new(config, o)
-  o.live_filter = LiveFilter:new(config, o)
-  o.marks = Marks:new(config, o)
-  o.clipboard = Clipboard:new(config, o)
-
-  o:create_autocmds()
-
-  o:_load(o)
-
-  return o
+  self:_load(self)
 end
 
 function Explorer:destroy()

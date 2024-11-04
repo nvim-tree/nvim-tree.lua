@@ -3,12 +3,9 @@ local utils = require("nvim-tree.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) DirectoryLinkNode: DirectoryNode
----@field link_to string absolute path
----@field private fs_stat_target uv.fs_stat.result
-local DirectoryLinkNode = DirectoryNode:new()
+---@class (exact) DirectoryLinkNode: DirectoryNode, LinkNode
+local DirectoryLinkNode = DirectoryNode:extend()
 
----Static factory method
 ---@param explorer Explorer
 ---@param parent DirectoryNode
 ---@param absolute_path string
@@ -16,21 +13,16 @@ local DirectoryLinkNode = DirectoryNode:new()
 ---@param name string
 ---@param fs_stat uv.fs_stat.result?
 ---@param fs_stat_target uv.fs_stat.result
----@return DirectoryLinkNode? nil on vim.loop.fs_realpath failure
-function DirectoryLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
+function DirectoryLinkNode:new(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
   -- create DirectoryNode with the target path for the watcher
-  local o = DirectoryNode:create(explorer, parent, link_to, name, fs_stat)
-
-  o = self:new(o)
+  DirectoryLinkNode.super.new(self, explorer, parent, link_to, name, fs_stat)
 
   -- reset absolute path to the link itself
-  o.absolute_path = absolute_path
+  self.absolute_path = absolute_path
 
-  o.type = "link"
-  o.link_to = link_to
-  o.fs_stat_target = fs_stat_target
-
-  return o
+  self.type = "link"
+  self.link_to = link_to
+  self.fs_stat_target = fs_stat_target
 end
 
 function DirectoryLinkNode:destroy()

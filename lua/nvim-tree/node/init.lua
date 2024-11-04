@@ -1,8 +1,7 @@
-local Class = require("nvim-tree.class")
+local Object = require("nvim-tree.classic")
 
 ---Abstract Node class.
----Uses the abstract factory pattern to instantiate child instances.
----@class (exact) Node: Class
+---@class (exact) Node: Object
 ---@field type NODE_TYPE
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -14,7 +13,11 @@ local Class = require("nvim-tree.class")
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
 ---@field private is_dot boolean cached is_dotfile
-local Node = Class:new()
+local Node = Object:extend()
+
+function Node:new()
+  self.is_dot = false
+end
 
 function Node:destroy()
 end

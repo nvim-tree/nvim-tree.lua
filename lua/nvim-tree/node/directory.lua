@@ -10,45 +10,38 @@ local Node = require("nvim-tree.node")
 ---@field open boolean
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
 ---@field private watcher Watcher?
-local DirectoryNode = Node:new()
+local DirectoryNode = Node:extend()
 
----Static factory method
 ---@param explorer Explorer
 ---@param parent DirectoryNode?
 ---@param absolute_path string
 ---@param name string
 ---@param fs_stat uv.fs_stat.result|nil
----@return DirectoryNode
-function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
+function DirectoryNode:new(explorer, parent, absolute_path, name, fs_stat)
+  DirectoryNode.super.new(self)
+
   local handle = vim.loop.fs_scandir(absolute_path)
   local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil or false
 
-  ---@type DirectoryNode
-  local o = {
-    type = "directory",
-    explorer = explorer,
-    absolute_path = absolute_path,
-    executable = false,
-    fs_stat = fs_stat,
-    git_status = nil,
-    hidden = false,
-    name = name,
-    parent = parent,
-    watcher = nil,
-    diag_status = nil,
-    is_dot = false,
+  self.type = "directory"
+  self.explorer = explorer
+  self.absolute_path = absolute_path
+  self.executable = false
+  self.fs_stat = fs_stat
+  self.git_status = nil
+  self.hidden = false
+  self.name = name
+  self.parent = parent
+  self.watcher = nil
+  self.diag_status = nil
 
-    has_children = has_children,
-    group_next = nil,
-    nodes = {},
-    open = false,
-    hidden_stats = nil,
-  }
-  o = self:new(o)
+  self.has_children = has_children
+  self.group_next = nil
+  self.nodes = {}
+  self.open = false
+  self.hidden_stats = nil
 
-  o.watcher = require("nvim-tree.explorer.watch").create_watcher(o)
-
-  return o
+  self.watcher = require("nvim-tree.explorer.watch").create_watcher(self)
 end
 
 function DirectoryNode:destroy()

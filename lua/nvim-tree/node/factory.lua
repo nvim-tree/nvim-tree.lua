@@ -21,11 +21,11 @@ function M.create_node(explorer, parent, absolute_path, stat, name)
   if stat.type == "directory" then
     -- directory must be readable and enumerable
     if vim.loop.fs_access(absolute_path, "R") and Watcher.is_fs_event_capable(absolute_path) then
-      return DirectoryNode:create(explorer, parent, absolute_path, name, stat)
+      return DirectoryNode(explorer, parent, absolute_path, name, stat)
     end
   elseif stat.type == "file" then
     -- any file
-    return FileNode:create(explorer, parent, absolute_path, name, stat)
+    return FileNode(explorer, parent, absolute_path, name, stat)
   elseif stat.type == "link" then
     -- link target path and stat must resolve
     local link_to = vim.loop.fs_realpath(absolute_path)
@@ -36,9 +36,9 @@ function M.create_node(explorer, parent, absolute_path, stat, name)
 
     -- choose directory or file
     if link_to_stat.type == "directory" then
-      return DirectoryLinkNode:create(explorer, parent, absolute_path, link_to, name, stat, link_to_stat)
+      return DirectoryLinkNode(explorer, parent, absolute_path, link_to, name, stat, link_to_stat)
     else
-      return FileLinkNode:create(explorer, parent, absolute_path, link_to, name, stat, link_to_stat)
+      return FileLinkNode(explorer, parent, absolute_path, link_to, name, stat, link_to_stat)
     end
   end
 

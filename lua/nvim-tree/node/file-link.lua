@@ -3,12 +3,9 @@ local utils = require("nvim-tree.utils")
 
 local FileNode = require("nvim-tree.node.file")
 
----@class (exact) FileLinkNode: FileNode
----@field link_to string absolute path
----@field private fs_stat_target uv.fs_stat.result
-local FileLinkNode = FileNode:new()
+---@class (exact) FileLinkNode: FileNode, LinkNode
+local FileLinkNode = FileNode:extend()
 
----Static factory method
 ---@param explorer Explorer
 ---@param parent DirectoryNode
 ---@param absolute_path string
@@ -16,17 +13,12 @@ local FileLinkNode = FileNode:new()
 ---@param name string
 ---@param fs_stat uv.fs_stat.result?
 ---@param fs_stat_target uv.fs_stat.result
----@return FileLinkNode? nil on vim.loop.fs_realpath failure
-function FileLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
-  local o = FileNode:create(explorer, parent, absolute_path, name, fs_stat)
+function FileLinkNode:new(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
+  FileLinkNode.super.new(self, explorer, parent, absolute_path, name, fs_stat)
 
-  o = self:new(o)
-
-  o.type = "link"
-  o.link_to = link_to
-  o.fs_stat_target = fs_stat_target
-
-  return o
+  self.type = "link"
+  self.link_to = link_to
+  self.fs_stat_target = fs_stat_target
 end
 
 function FileLinkNode:destroy()
