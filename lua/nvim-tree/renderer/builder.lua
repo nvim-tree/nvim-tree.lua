@@ -7,11 +7,11 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
 local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
 local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
-local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
+-- local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
 local DecoratorGit = require("nvim-tree.renderer.decorator.git")
-local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
-local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
-local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
+-- local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
+-- local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
+-- local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
@@ -61,14 +61,14 @@ function Builder:new(opts, explorer)
     virtual_lines = {},
     decorators = {
       -- priority order
-      DecoratorCut:create(opts, explorer),
-      DecoratorCopied:create(opts, explorer),
-      DecoratorDiagnostics:create(opts, explorer),
-      DecoratorBookmarks:create(opts, explorer),
-      DecoratorModified:create(opts, explorer),
-      DecoratorHidden:create(opts, explorer),
-      DecoratorOpened:create(opts, explorer),
-      DecoratorGit:create(opts, explorer),
+      DecoratorCut({ explorer = explorer }),
+      DecoratorCopied({ explorer = explorer }),
+      -- DecoratorDiagnostics({ explorer = explorer }),
+      DecoratorBookmarks({ explorer = explorer }),
+      -- DecoratorModified({ explorer = explorer }),
+      -- DecoratorHidden({ explorer = explorer }),
+      -- DecoratorOpened({ explorer = explorer }),
+      DecoratorGit({ explorer = explorer })
     },
     hidden_display = Builder:setup_hidden_display_function(opts),
   }

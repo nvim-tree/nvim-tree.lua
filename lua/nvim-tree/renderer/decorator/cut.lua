@@ -4,23 +4,20 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorCut: Decorator
-local DecoratorCut = Decorator:new()
+local DecoratorCut = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorCut
-function DecoratorCut:create(opts, explorer)
-  ---@type DecoratorCut
-  local o = {
-    explorer = explorer,
-    enabled = true,
-    hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
+---@class DecoratorCut
+---@overload fun(explorer: DecoratorArgs): DecoratorCut
+
+---@private
+---@param args DecoratorArgs
+function DecoratorCut:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = true,
+    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
-
-  return o
+  })
 end
 
 ---Cut highlight: renderer.highlight_clipboard and node is cut

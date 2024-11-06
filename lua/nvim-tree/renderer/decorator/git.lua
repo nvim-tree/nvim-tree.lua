@@ -20,40 +20,37 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field folder_hl_by_xy table<GitXY, string>?
 ---@field icons_by_status GitIconsByStatus?
 ---@field icons_by_xy GitIconsByXY?
-local DecoratorGit = Decorator:new()
+local DecoratorGit = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorGit
-function DecoratorGit:create(opts, explorer)
-  ---@type DecoratorGit
-  local o = {
-    explorer = explorer,
-    enabled = opts.git.enable,
-    hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
+---@class DecoratorGit
+---@overload fun(explorer: DecoratorArgs): DecoratorGit
 
-  if not o.enabled then
-    return o
+---@private
+---@param args DecoratorArgs
+function DecoratorGit:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = args.explorer.opts.git.enable,
+    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_git] or HL_POSITION.none,
+    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
+  })
+
+  if not self.enabled then
+    return
   end
 
-  if o.hl_pos ~= HL_POSITION.none then
-    o:build_file_folder_hl_by_xy()
+  if self.hl_pos ~= HL_POSITION.none then
+    self:build_file_folder_hl_by_xy()
   end
 
-  if opts.renderer.icons.show.git then
-    o:build_icons_by_status(opts.renderer.icons.glyphs.git)
-    o:build_icons_by_xy(o.icons_by_status)
+  if self.explorer.opts.renderer.icons.show.git then
+    self:build_icons_by_status(self.explorer.opts.renderer.icons.glyphs.git)
+    self:build_icons_by_xy(self.icons_by_status)
 
-    for _, icon in pairs(o.icons_by_status) do
+    for _, icon in pairs(self.icons_by_status) do
       self:define_sign(icon)
     end
   end
-
-  return o
 end
 
 ---@param glyphs GitGlyphsByStatus

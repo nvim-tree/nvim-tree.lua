@@ -4,24 +4,20 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorCopied: Decorator
----@field icon HighlightedString?
-local DecoratorCopied = Decorator:new()
+local DecoratorCopied = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorCopied
-function DecoratorCopied:create(opts, explorer)
-  ---@type DecoratorCopied
-  local o = {
-    explorer = explorer,
-    enabled = true,
-    hl_pos = HL_POSITION[opts.renderer.highlight_clipboard] or HL_POSITION.none,
+---@class DecoratorCopied
+---@overload fun(explorer: DecoratorArgs): DecoratorCopied
+
+---@private
+---@param args DecoratorArgs
+function DecoratorCopied:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = true,
+    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_clipboard] or HL_POSITION.none,
     icon_placement = ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
-
-  return o
+  })
 end
 
 ---Copied highlight: renderer.highlight_clipboard and node is copied

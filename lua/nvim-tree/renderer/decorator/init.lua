@@ -1,4 +1,4 @@
-local Class = require("nvim-tree.class")
+local Class = require("nvim-tree.classic")
 
 local HL_POSITION = require("nvim-tree.enum").HL_POSITION
 local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
@@ -10,7 +10,24 @@ local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
 ---@field protected enabled boolean
 ---@field protected hl_pos HL_POSITION
 ---@field protected icon_placement ICON_PLACEMENT
-local Decorator = Class:new()
+local Decorator = Class:extend()
+
+---@class (exact) DecoratorArgs
+---@field explorer Explorer
+
+---@class (exact) AbstractDecoratorArgs: DecoratorArgs
+---@field enabled boolean
+---@field hl_pos HL_POSITION
+---@field icon_placement ICON_PLACEMENT
+
+---@protected
+---@param args AbstractDecoratorArgs
+function Decorator:new(args)
+  self.explorer       = args.explorer
+  self.enabled        = args.enabled
+  self.hl_pos         = args.hl_pos
+  self.icon_placement = args.icon_placement
+end
 
 ---Maybe highlight groups
 ---@param node Node
