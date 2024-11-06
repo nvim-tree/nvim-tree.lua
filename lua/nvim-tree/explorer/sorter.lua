@@ -1,4 +1,4 @@
-local Class = require("nvim-tree.class")
+local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local C = {}
@@ -12,23 +12,20 @@ local C = {}
 ---@field cfg SorterCfg
 ---@field user fun(nodes: Node[])?
 ---@field pre string?
-local Sorter = Class:new()
+local Sorter = Class:extend()
+
+---@class Sorter
+---@overload fun(opts: table): Sorter
 
 ---@param opts table user options
----@return Sorter
-function Sorter:create(opts)
-  ---@type Sorter
-  local o = {
-    cfg = vim.deepcopy(opts.sort),
-  }
-  o = self:new(o)
+function Sorter:new(opts)
+  self.cfg = vim.deepcopy(opts.sort)
 
-  if type(o.cfg.sorter) == "function" then
-    o.user = o.cfg.sorter --[[@as fun(nodes: Node[])]]
-  elseif type(o.cfg.sorter) == "string" then
-    o.pre = o.cfg.sorter --[[@as string]]
+  if type(self.cfg.sorter) == "function" then
+    self.user = self.cfg.sorter --[[@as fun(nodes: Node[])]]
+  elseif type(self.cfg.sorter) == "string" then
+    self.pre = self.cfg.sorter --[[@as string]]
   end
-  return o
 end
 
 --- Predefined comparator, defaulting to name

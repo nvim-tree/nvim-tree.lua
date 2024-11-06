@@ -9,18 +9,18 @@
 -- https://github.com/rxi/classic
 --
 
----@class (exact) Object
----@field super Object
----@field private implements table<Object, boolean>
-local Object = {}
-Object.__index = Object ---@diagnostic disable-line: inject-field
+---@class (exact) Class
+---@field super Class
+---@field private implements table<Class, boolean>
+local Class = {}
+Class.__index = Class ---@diagnostic disable-line: inject-field
 
 ---Default constructor
-function Object:new(...) --luacheck: ignore 212
+function Class:new(...) --luacheck: ignore 212
 end
 
 ---Extend a class, setting .super
-function Object:extend()
+function Class:extend()
   local cls = {}
   for k, v in pairs(self) do
     if k:find("__") == 1 then
@@ -35,14 +35,14 @@ end
 
 ---Implement the functions of a mixin
 ---Add the mixin to .implements
----@param class Object
-function Object:implement(class)
+---@param mixin Class
+function Class:implement(mixin)
   if not rawget(self, "implements") then
     -- set on the class itself instead of parents
     rawset(self, "implements", {})
   end
-  self.implements[class] = true
-  for k, v in pairs(class) do
+  self.implements[mixin] = true
+  for k, v in pairs(mixin) do
     if self[k] == nil and type(v) == "function" then
       self[k] = v
     end
@@ -53,7 +53,7 @@ end
 ---@generic T
 ---@param class T
 ---@return boolean
-function Object:is(class)
+function Class:is(class)
   local mt = getmetatable(self)
   while mt do
     if mt == class then
@@ -71,12 +71,12 @@ end
 ---@generic T
 ---@param class T
 ---@return T|nil
-function Object:as(class)
+function Class:as(class)
   return self:is(class) and self or nil
 end
 
 ---Constructor to create instance, call :new and return
-function Object:__call(...)
+function Class:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)
   return obj
@@ -84,7 +84,7 @@ end
 
 -- avoid unused param warnings in abstract methods
 ---@param ... any
-function Object:nop(...) --luacheck: ignore 212
+function Class:nop(...) --luacheck: ignore 212
 end
 
-return Object
+return Class

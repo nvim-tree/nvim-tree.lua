@@ -17,7 +17,7 @@ local NodeIterator = require("nvim-tree.iterators.node-iterator")
 local Filters = require("nvim-tree.explorer.filters")
 local Marks = require("nvim-tree.marks")
 local LiveFilter = require("nvim-tree.explorer.live-filter")
-local Sorters = require("nvim-tree.explorer.sorters")
+local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
@@ -57,7 +57,7 @@ function Explorer:new(args)
   self.open = true
   self.opts = config
 
-  self.sorters = Sorters:create(config)
+  self.sorters = Sorter(config)
   self.renderer = Renderer:new(config, self)
   self.filters = Filters:new(config, self)
   self.live_filter = LiveFilter:new(config, self)
