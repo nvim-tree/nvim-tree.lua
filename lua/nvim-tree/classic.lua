@@ -16,7 +16,7 @@ local Object = {}
 Object.__index = Object ---@diagnostic disable-line: inject-field
 
 ---Default constructor
-function Object:new(...)
+function Object:new(...) --luacheck: ignore 212
 end
 
 ---Extend a class, setting .super
