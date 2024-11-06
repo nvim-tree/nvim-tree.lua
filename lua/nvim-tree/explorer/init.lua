@@ -38,7 +38,7 @@ local config
 local Explorer = RootNode:extend()
 
 ---@class Explorer
----@overload fun(opts: ExplorerArgs): Explorer
+---@overload fun(args: ExplorerArgs): Explorer
 
 ---@class (exact) ExplorerArgs
 ---@field path string

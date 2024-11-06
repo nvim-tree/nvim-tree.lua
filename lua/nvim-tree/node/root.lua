@@ -4,7 +4,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local RootNode = DirectoryNode:extend()
 
 ---@class RootNode
----@overload fun(opts: NodeArgs): RootNode
+---@overload fun(args: NodeArgs): RootNode
 
 ---@protected
 ---@param args NodeArgs

@@ -9,7 +9,7 @@ local DirectoryLinkNode = DirectoryNode:extend()
 DirectoryLinkNode:implement(LinkNode)
 
 ---@class DirectoryLinkNode
----@overload fun(opts: LinkNodeArgs): DirectoryLinkNode
+---@overload fun(args: LinkNodeArgs): DirectoryLinkNode
 
 ---@protected
 ---@param args LinkNodeArgs

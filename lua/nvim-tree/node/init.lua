@@ -1,7 +1,7 @@
-local Object = require("nvim-tree.classic")
+local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
----@class (exact) Node: Object
+---@class (exact) Node: Class
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -13,7 +13,7 @@ local Object = require("nvim-tree.classic")
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
 ---@field private is_dot boolean cached is_dotfile
-local Node = Object:extend()
+local Node = Class:extend()
 
 ---@class (exact) NodeArgs
 ---@field explorer Explorer

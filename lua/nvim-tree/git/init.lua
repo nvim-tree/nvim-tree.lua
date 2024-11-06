@@ -298,8 +298,13 @@ function M.load_project(path)
     end
 
     local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
-    watcher = Watcher:create(git_dir, WATCHED_FILES, callback, {
-      toplevel = toplevel,
+    watcher = Watcher:create({
+      path = git_dir,
+      files = WATCHED_FILES,
+      callback = callback,
+      data = {
+        toplevel = toplevel,
+      }
     })
   end
 

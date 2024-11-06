@@ -18,7 +18,7 @@ local PICTURE_MAP = {
 local FileNode = Node:extend()
 
 ---@class FileNode
----@overload fun(opts: NodeArgs): FileNode
+---@overload fun(args: NodeArgs): FileNode
 
 ---@protected
 ---@param args NodeArgs

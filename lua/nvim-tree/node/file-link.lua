@@ -9,7 +9,7 @@ local FileLinkNode = FileNode:extend()
 FileLinkNode:implement(LinkNode)
 
 ---@class FileLinkNode
----@overload fun(opts: LinkNodeArgs): FileLinkNode
+---@overload fun(args: LinkNodeArgs): FileLinkNode
 
 ---@protected
 ---@param args LinkNodeArgs
