@@ -37,9 +37,19 @@ local config
 ---@field clipboard Clipboard
 local Explorer = RootNode:extend()
 
----@param path string
-function Explorer:new(path)
-  Explorer.super.new(self, self, path, "..", nil)
+---@class Explorer
+---@overload fun(opts: ExplorerArgs): Explorer
+
+---@class (exact) ExplorerArgs
+---@field path string
+
+---@param args ExplorerArgs
+function Explorer:new(args)
+  Explorer.super.new(self, {
+    explorer      = self,
+    absolute_path = args.path,
+    name          = "..",
+  })
 
   self.uid_explorer = vim.loop.hrtime()
   self.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
@@ -222,7 +232,13 @@ function Explorer:reload(node, project)
       end
 
       if not nodes_by_path[abs] then
-        local new_child = node_factory.create_node(self, node, abs, stat, name)
+        local new_child = node_factory.create({
+          explorer = self,
+          parent = node,
+          absolute_path = abs,
+          name = name,
+          fs_stat = stat
+        })
         if new_child then
           table.insert(node.nodes, new_child)
           nodes_by_path[abs] = new_child
@@ -360,7 +376,13 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
       local stat = vim.loop.fs_lstat(abs)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
-        local child = node_factory.create_node(self, node, abs, stat, name)
+        local child = node_factory.create({
+          explorer = self,
+          parent = node,
+          absolute_path = abs,
+          name = name,
+          fs_stat = stat
+        })
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true

@@ -12,36 +12,26 @@ local Node = require("nvim-tree.node")
 ---@field private watcher Watcher?
 local DirectoryNode = Node:extend()
 
----@param explorer Explorer
----@param parent DirectoryNode?
----@param absolute_path string
----@param name string
----@param fs_stat uv.fs_stat.result|nil
-function DirectoryNode:new(explorer, parent, absolute_path, name, fs_stat)
-  DirectoryNode.super.new(self)
+---@class DirectoryNode
+---@overload fun(opts: NodeArgs): DirectoryNode
 
-  local handle = vim.loop.fs_scandir(absolute_path)
+---@protected
+---@param args NodeArgs
+function DirectoryNode:new(args)
+  DirectoryNode.super.new(self, args)
+
+  local handle       = vim.loop.fs_scandir(args.absolute_path)
   local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil or false
 
-  self.type = "directory"
-  self.explorer = explorer
-  self.absolute_path = absolute_path
-  self.executable = false
-  self.fs_stat = fs_stat
-  self.git_status = nil
-  self.hidden = false
-  self.name = name
-  self.parent = parent
-  self.watcher = nil
-  self.diag_status = nil
+  self.type          = "directory"
 
-  self.has_children = has_children
-  self.group_next = nil
-  self.nodes = {}
-  self.open = false
-  self.hidden_stats = nil
+  self.has_children  = has_children
+  self.group_next    = nil
+  self.nodes         = {}
+  self.open          = false
+  self.hidden_stats  = nil
 
-  self.watcher = require("nvim-tree.explorer.watch").create_watcher(self)
+  self.watcher       = require("nvim-tree.explorer.watch").create_watcher(self)
 end
 
 function DirectoryNode:destroy()

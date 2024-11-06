@@ -19,11 +19,7 @@ Object.__index = Object ---@diagnostic disable-line: inject-field
 function Object:new(...)
 end
 
----Extend a class T
----super will be set to T
----@generic T
----@param self T
----@return T
+---Extend a class, setting .super
 function Object:extend()
   local cls = {}
   for k, v in pairs(self) do
@@ -38,10 +34,11 @@ function Object:extend()
 end
 
 ---Implement the functions of a mixin
----Add the mixin to the implements table
+---Add the mixin to .implements
 ---@param class Object
 function Object:implement(class)
   if not rawget(self, "implements") then
+    -- set on the class itself instead of parents
     rawset(self, "implements", {})
   end
   self.implements[class] = true
@@ -78,11 +75,7 @@ function Object:as(class)
   return self:is(class) and self or nil
 end
 
----Constructor that invokes :new on a new instance
----@generic T
----@param self T
----@param ... any
----@return T
+---Constructor to create instance, call :new and return
 function Object:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)

@@ -17,26 +17,17 @@ local PICTURE_MAP = {
 ---@field extension string
 local FileNode = Node:extend()
 
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param name string
----@param fs_stat uv.fs_stat.result?
-function FileNode:new(explorer, parent, absolute_path, name, fs_stat)
-  FileNode.super.new(self)
+---@class FileNode
+---@overload fun(opts: NodeArgs): FileNode
 
-  self.type = "file"
-  self.explorer = explorer
-  self.absolute_path = absolute_path
-  self.executable = utils.is_executable(absolute_path)
-  self.fs_stat = fs_stat
-  self.git_status = nil
-  self.hidden = false
-  self.name = name
-  self.parent = parent
-  self.diag_status = nil
+---@protected
+---@param args NodeArgs
+function FileNode:new(args)
+  FileNode.super.new(self, args)
 
-  self.extension = string.match(name, ".?[^.]+%.(.*)") or ""
+  self.type       = "file"
+  self.extension  = string.match(args.name, ".?[^.]+%.(.*)") or ""
+  self.executable = utils.is_executable(args.absolute_path)
 end
 
 function FileNode:destroy()

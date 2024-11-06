@@ -25,7 +25,7 @@ function M.init(foldername)
     path, err = vim.loop.cwd()
   end
   if path then
-    TreeExplorer = require("nvim-tree.explorer")(path)
+    TreeExplorer = require("nvim-tree.explorer")({ path = path })
   else
     notify.error(err)
     TreeExplorer = nil

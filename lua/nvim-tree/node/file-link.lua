@@ -8,19 +8,16 @@ local LinkNode = require("nvim-tree.node.link")
 local FileLinkNode = FileNode:extend()
 FileLinkNode:implement(LinkNode)
 
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param link_to string
----@param name string
----@param fs_stat uv.fs_stat.result?
----@param fs_stat_target uv.fs_stat.result
-function FileLinkNode:new(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
-  FileLinkNode.super.new(self, explorer, parent, absolute_path, name, fs_stat)
+---@class FileLinkNode
+---@overload fun(opts: LinkNodeArgs): FileLinkNode
+
+---@protected
+---@param args LinkNodeArgs
+function FileLinkNode:new(args)
+  LinkNode.new(self, args)
+  FileLinkNode.super.new(self, args)
 
   self.type = "link"
-  self.link_to = link_to
-  self.fs_stat_target = fs_stat_target
 end
 
 function FileLinkNode:destroy()
@@ -65,7 +62,6 @@ end
 function FileLinkNode:clone()
   local clone = FileNode.clone(self) --[[@as FileLinkNode]]
 
-  clone.type = self.type
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target
 

@@ -8,23 +8,23 @@ local LinkNode = require("nvim-tree.node.link")
 local DirectoryLinkNode = DirectoryNode:extend()
 DirectoryLinkNode:implement(LinkNode)
 
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param link_to string
----@param name string
----@param fs_stat uv.fs_stat.result?
----@param fs_stat_target uv.fs_stat.result
-function DirectoryLinkNode:new(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
-  -- create DirectoryNode with the target path for the watcher
-  DirectoryLinkNode.super.new(self, explorer, parent, link_to, name, fs_stat)
+---@class DirectoryLinkNode
+---@overload fun(opts: LinkNodeArgs): DirectoryLinkNode
+
+---@protected
+---@param args LinkNodeArgs
+function DirectoryLinkNode:new(args)
+  LinkNode.new(self, args)
+
+  -- create DirectoryNode with watcher on link_to
+  local absolute_path = args.absolute_path
+  args.absolute_path = args.link_to
+  DirectoryLinkNode.super.new(self, args)
+
+  self.type          = "link"
 
   -- reset absolute path to the link itself
   self.absolute_path = absolute_path
-
-  self.type = "link"
-  self.link_to = link_to
-  self.fs_stat_target = fs_stat_target
 end
 
 function DirectoryLinkNode:destroy()
@@ -76,7 +76,6 @@ end
 function DirectoryLinkNode:clone()
   local clone = DirectoryNode.clone(self) --[[@as DirectoryLinkNode]]
 
-  clone.type = self.type
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target
 

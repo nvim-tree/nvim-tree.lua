@@ -3,12 +3,13 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@class (exact) RootNode: DirectoryNode
 local RootNode = DirectoryNode:extend()
 
----@param explorer Explorer
----@param absolute_path string
----@param name string
----@param fs_stat uv.fs_stat.result|nil
-function RootNode:new(explorer, absolute_path, name, fs_stat)
-  RootNode.super.new(self, explorer, nil, absolute_path, name, fs_stat)
+---@class RootNode
+---@overload fun(opts: NodeArgs): RootNode
+
+---@protected
+---@param args NodeArgs
+function RootNode:new(args)
+  RootNode.super.new(self, args)
 end
 
 ---Root is never a dotfile

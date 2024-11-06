@@ -2,7 +2,7 @@ local Object = require("nvim-tree.classic")
 
 ---Abstract Node class.
 ---@class (exact) Node: Object
----@field type NODE_TYPE
+---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
 ---@field executable boolean
@@ -15,8 +15,26 @@ local Object = require("nvim-tree.classic")
 ---@field private is_dot boolean cached is_dotfile
 local Node = Object:extend()
 
-function Node:new()
-  self.is_dot = false
+---@class (exact) NodeArgs
+---@field explorer Explorer
+---@field parent DirectoryNode?
+---@field absolute_path string
+---@field name string
+---@field fs_stat uv.fs_stat.result?
+
+---@protected
+---@param args NodeArgs
+function Node:new(args)
+  self.explorer      = args.explorer
+  self.absolute_path = args.absolute_path
+  self.executable    = false
+  self.fs_stat       = args.fs_stat
+  self.git_status    = nil
+  self.hidden        = false
+  self.name          = args.name
+  self.parent        = args.parent
+  self.diag_status   = nil
+  self.is_dot        = false
 end
 
 function Node:destroy()
