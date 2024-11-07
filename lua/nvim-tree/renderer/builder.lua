@@ -7,7 +7,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
 local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
 local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
--- local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
+local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
 local DecoratorGit = require("nvim-tree.renderer.decorator.git")
 -- local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
 -- local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
@@ -63,7 +63,7 @@ function Builder:new(opts, explorer)
       -- priority order
       DecoratorCut({ explorer = explorer }),
       DecoratorCopied({ explorer = explorer }),
-      -- DecoratorDiagnostics({ explorer = explorer }),
+      DecoratorDiagnostics({ explorer = explorer }),
       DecoratorBookmarks({ explorer = explorer }),
       -- DecoratorModified({ explorer = explorer }),
       -- DecoratorHidden({ explorer = explorer }),

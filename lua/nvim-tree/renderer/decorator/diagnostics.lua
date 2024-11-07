@@ -35,38 +35,35 @@ local ICON_KEYS = {
 
 ---@class (exact) DecoratorDiagnostics: Decorator
 ---@field icons HighlightedString[]?
-local DecoratorDiagnostics = Decorator:new()
+local DecoratorDiagnostics = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorDiagnostics
-function DecoratorDiagnostics:create(opts, explorer)
-  ---@type DecoratorDiagnostics
-  local o = {
-    explorer = explorer,
-    enabled = opts.diagnostics.enable,
-    hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
+---@class DecoratorDiagnostics
+---@overload fun(explorer: DecoratorArgs): DecoratorDiagnostics
 
-  if not o.enabled then
-    return o
+---@private
+---@param args DecoratorArgs
+function DecoratorDiagnostics:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = true,
+    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_diagnostics] or HL_POSITION.none,
+    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
+  })
+
+  if not self.enabled then
+    return
   end
 
-  if opts.renderer.icons.show.diagnostics then
-    o.icons = {}
+  if self.explorer.opts.renderer.icons.show.diagnostics then
+    self.icons = {}
     for name, sev in pairs(ICON_KEYS) do
-      o.icons[sev] = {
-        str = opts.diagnostics.icons[name],
+      self.icons[sev] = {
+        str = self.explorer.opts.diagnostics.icons[name],
         hl = { HG_ICON[sev] },
       }
-      o:define_sign(o.icons[sev])
+      self:define_sign(self.icons[sev])
     end
   end
-
-  return o
 end
 
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
