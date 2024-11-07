@@ -6,31 +6,28 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) DecoratorHidden: Decorator
 ---@field icon HighlightedString?
-local DecoratorHidden = Decorator:new()
+local DecoratorHidden = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorHidden
-function DecoratorHidden:create(opts, explorer)
-  ---@type DecoratorHidden
-  local o = {
-    explorer = explorer,
-    enabled = true,
-    hl_pos = HL_POSITION[opts.renderer.highlight_hidden] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[opts.renderer.icons.hidden_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
+---@class DecoratorHidden
+---@overload fun(explorer: DecoratorArgs): DecoratorHidden
 
-  if opts.renderer.icons.show.hidden then
-    o.icon = {
-      str = opts.renderer.icons.glyphs.hidden,
+---@private
+---@param args DecoratorArgs
+function DecoratorHidden:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = true,
+    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_hidden] or HL_POSITION.none,
+    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.hidden_placement] or ICON_PLACEMENT.none,
+  })
+
+  if self.explorer.opts.renderer.icons.show.hidden then
+    self.icon = {
+      str = self.explorer.opts.renderer.icons.glyphs.hidden,
       hl = { "NvimTreeHiddenIcon" },
     }
-    o:define_sign(o.icon)
+    self:define_sign(self.icon)
   end
-
-  return o
 end
 
 ---Hidden icon: renderer.icons.show.hidden and node starts with `.` (dotfile).
