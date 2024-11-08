@@ -52,17 +52,17 @@ function Explorer:new(args)
   })
 
   self.uid_explorer = vim.loop.hrtime()
-  self.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
+  self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
-  self.open = true
-  self.opts = config
+  self.open         = true
+  self.opts         = config
 
-  self.sorters = Sorter({ explorer = self })
-  self.renderer = Renderer({ explorer = self })
-  self.filters = Filters({ explorer = self })
-  self.live_filter = LiveFilter({ explorer = self })
-  self.marks = Marks({ explorer = self })
-  self.clipboard = Clipboard:new(config, self)
+  self.sorters      = Sorter({ explorer = self })
+  self.renderer     = Renderer({ explorer = self })
+  self.filters      = Filters({ explorer = self })
+  self.live_filter  = LiveFilter({ explorer = self })
+  self.marks        = Marks({ explorer = self })
+  self.clipboard    = Clipboard({ explorer = self })
 
   self:create_autocmds()
 
