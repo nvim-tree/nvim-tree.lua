@@ -21,8 +21,8 @@ local LiveFilter = Class:extend()
 ---@param args LiveFilterArgs
 function LiveFilter:new(args)
   self.explorer = args.explorer
-  self.prefix = args.explorer.opts.live_filter.prefix
-  self.always_show_folders = args.explorer.opts.live_filter.always_show_folders
+  self.prefix = self.explorer.opts.live_filter.prefix
+  self.always_show_folders = self.explorer.opts.live_filter.always_show_folders
   self.filter = nil
 end
 

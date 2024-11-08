@@ -71,7 +71,7 @@ function Builder:new(args)
     DecoratorOpened({ explorer = args.explorer }),
     DecoratorGit({ explorer = args.explorer })
   }
-  self.hidden_display = Builder:setup_hidden_display_function(args.explorer.opts)
+  self.hidden_display = Builder:setup_hidden_display_function(self.explorer.opts)
 end
 
 ---Insert ranged highlight groups into self.highlights

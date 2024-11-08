@@ -59,7 +59,7 @@ function Explorer:new(args)
 
   self.sorters = Sorter(config)
   self.renderer = Renderer({ explorer = self })
-  self.filters = Filters:new(config, self)
+  self.filters = Filters({ explorer = self })
   self.live_filter = LiveFilter({ explorer = self })
   self.marks = Marks:new(config, self)
   self.clipboard = Clipboard:new(config, self)

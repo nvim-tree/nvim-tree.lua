@@ -1,47 +1,48 @@
 local utils = require("nvim-tree.utils")
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
----@class Filters to handle all opts.filters and related API
+local Class = require("nvim-tree.classic")
+
+---@class (exact) Filters: Class
 ---@field config table hydrated user opts.filters
 ---@field private explorer Explorer
 ---@field private exclude_list string[] filters.exclude
----@field private ignore_list string[] filters.custom string table
+---@field private ignore_list table<string, boolean> filters.custom string table
 ---@field private custom_function (fun(absolute_path: string): boolean)|nil filters.custom function
-local Filters = {}
+local Filters = Class:extend()
 
----@param opts table user options
----@param explorer Explorer
----@return Filters
-function Filters:new(opts, explorer)
-  local o = {
-    explorer = explorer,
-    ignore_list = {},
-    exclude_list = opts.filters.exclude,
-    custom_function = nil,
-    config = {
-      enable = opts.filters.enable,
-      filter_custom = true,
-      filter_dotfiles = opts.filters.dotfiles,
-      filter_git_ignored = opts.filters.git_ignored,
-      filter_git_clean = opts.filters.git_clean,
-      filter_no_buffer = opts.filters.no_buffer,
-      filter_no_bookmark = opts.filters.no_bookmark,
-    },
+---@class Filters
+---@overload fun(args: FiltersArgs): Filters
+
+---@class (exact) FiltersArgs
+---@field explorer Explorer
+
+---@param args FiltersArgs
+function Filters:new(args)
+  self.explorer = args.explorer
+  self.ignore_list = {}
+  self.exclude_list = self.explorer.opts.filters.exclude
+  self.custom_function = nil
+  self.config = {
+    enable = self.explorer.opts.filters.enable,
+    filter_custom = true,
+    filter_dotfiles = self.explorer.opts.filters.dotfiles,
+    filter_git_ignored = self.explorer.opts.filters.git_ignored,
+    filter_git_clean = self.explorer.opts.filters.git_clean,
+    filter_no_buffer = self.explorer.opts.filters.no_buffer,
+    filter_no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 
-  local custom_filter = opts.filters.custom
+  local custom_filter = self.explorer.opts.filters.custom
   if type(custom_filter) == "function" then
-    o.custom_function = custom_filter
+    self.custom_function = custom_filter
   else
     if custom_filter and #custom_filter > 0 then
       for _, filter_name in pairs(custom_filter) do
-        o.ignore_list[filter_name] = true
+        self.ignore_list[filter_name] = true
       end
     end
   end
-  setmetatable(o, self)
-  self.__index = self
-  return o
 end
 
 ---@param path string
