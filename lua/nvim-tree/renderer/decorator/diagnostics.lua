@@ -1,8 +1,5 @@
 local diagnostics = require("nvim-tree.diagnostics")
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -46,8 +43,8 @@ function DecoratorDiagnostics:new(args)
   Decorator.new(self, {
     explorer       = args.explorer,
     enabled        = true,
-    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_diagnostics] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
+    hl_pos         = args.explorer.opts.renderer.highlight_diagnostics or "none",
+    icon_placement = args.explorer.opts.renderer.icons.diagnostics_placement or "none",
   })
 
   if not self.enabled then
@@ -84,7 +81,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorDiagnostics:calculate_highlight(node)
-  if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
+  if not node or not self.enabled or self.range == "none" then
     return nil
   end
 

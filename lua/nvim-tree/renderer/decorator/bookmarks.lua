@@ -1,6 +1,3 @@
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorBookmarks: Decorator
@@ -16,8 +13,8 @@ function DecoratorBookmarks:new(args)
   Decorator.new(self, {
     explorer       = args.explorer,
     enabled        = true,
-    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_bookmarks] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.bookmarks_placement] or ICON_PLACEMENT.none,
+    hl_pos         = args.explorer.opts.renderer.highlight_bookmarks or "none",
+    icon_placement = args.explorer.opts.renderer.icons.bookmarks_placement or "none",
   })
 
   if self.explorer.opts.renderer.icons.show.bookmarks then
@@ -42,7 +39,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorBookmarks:calculate_highlight(node)
-  if self.hl_pos ~= HL_POSITION.none and self.explorer.marks:get(node) then
+  if self.range ~= "none" and self.explorer.marks:get(node) then
     return "NvimTreeBookmarkHL"
   end
 end

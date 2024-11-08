@@ -1,8 +1,5 @@
 local notify = require("nvim-tree.notify")
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -31,15 +28,15 @@ function DecoratorGit:new(args)
   Decorator.new(self, {
     explorer       = args.explorer,
     enabled        = args.explorer.opts.git.enable,
-    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_git] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
+    hl_pos         = args.explorer.opts.renderer.highlight_git or "none",
+    icon_placement = args.explorer.opts.renderer.icons.git_placement or "none",
   })
 
   if not self.enabled then
     return
   end
 
-  if self.hl_pos ~= HL_POSITION.none then
+  if self.range ~= "none" then
     self:build_file_folder_hl_by_xy()
   end
 
@@ -162,7 +159,7 @@ function DecoratorGit:calculate_icons(node)
   for _, s in pairs(git_xy) do
     local icons = self.icons_by_xy[s]
     if not icons then
-      if self.hl_pos == HL_POSITION.none then
+      if self.range == "none" then
         notify.warn(string.format("Unrecognized git state '%s'", git_xy))
       end
       return nil
@@ -194,7 +191,7 @@ end
 ---@param node Node
 ---@return string|nil name
 function DecoratorGit:sign_name(node)
-  if self.icon_placement ~= ICON_PLACEMENT.signcolumn then
+  if self.icon_placement ~= "signcolumn" then
     return
   end
 
@@ -208,7 +205,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorGit:calculate_highlight(node)
-  if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
+  if not node or not self.enabled or self.range == "none" then
     return nil
   end
 

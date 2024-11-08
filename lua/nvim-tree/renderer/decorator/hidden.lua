@@ -1,6 +1,3 @@
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -17,8 +14,8 @@ function DecoratorHidden:new(args)
   Decorator.new(self, {
     explorer       = args.explorer,
     enabled        = true,
-    hl_pos         = HL_POSITION[args.explorer.opts.renderer.highlight_hidden] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[args.explorer.opts.renderer.icons.hidden_placement] or ICON_PLACEMENT.none,
+    hl_pos         = args.explorer.opts.renderer.highlight_hidden or "none",
+    icon_placement = args.explorer.opts.renderer.icons.hidden_placement or "none",
   })
 
   if self.explorer.opts.renderer.icons.show.hidden then
@@ -43,7 +40,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorHidden:calculate_highlight(node)
-  if not self.enabled or self.hl_pos == HL_POSITION.none or not node:is_dotfile() then
+  if not self.enabled or self.range == "none" or not node:is_dotfile() then
     return nil
   end
 
