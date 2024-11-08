@@ -3,15 +3,15 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 local C = {}
 
+---@alias SorterType "name" | "case_sensitive" | "modification_time" | "extension" | "suffix" | "filetype"
+
 ---@class (exact) SorterState
----@field sorter string|fun(nodes: Node[])
+---@field sorter SorterType|fun(nodes: Node[])
 ---@field folders_first boolean
 ---@field files_first boolean
 
 ---@class (exact) Sorter: Class
----@field state SorterState
----@field user fun(nodes: Node[])?
----@field pre string?
+---@field private state SorterState
 local Sorter = Class:extend()
 
 ---@class Sorter
@@ -23,21 +23,19 @@ local Sorter = Class:extend()
 ---@protected
 ---@param args SorterArgs
 function Sorter:new(args)
-  self.state = vim.deepcopy(args.explorer.opts.sort)
-
-  if type(self.state.sorter) == "function" then
-    self.user = self.state.sorter --[[@as fun(nodes: Node[])]]
-  elseif type(self.state.sorter) == "string" then
-    self.pre = self.state.sorter --[[@as string]]
-  end
+  self.state = {
+    sorter = args.explorer.opts.sort.sorter,
+    folders_first = args.explorer.opts.sort.folders_first,
+    files_first = args.explorer.opts.sort.files_first,
+  }
 end
 
---- Predefined comparator, defaulting to name
----@param sorter string as per options
+---Predefined comparator
+---@param type SorterType
 ---@return fun(a: Node, b: Node): boolean
-function Sorter:get_comparator(sorter)
+function Sorter:get_comparator(type)
   return function(a, b)
-    return (C[sorter] or C.name)(a, b, self.state)
+    return (C[type] or C.name)(a, b, self.state)
   end
 end
 
@@ -131,7 +129,7 @@ end
 ---Perform a merge sort using sorter option.
 ---@param t Node[]
 function Sorter:sort(t)
-  if self.user then
+  if type(self.state.sorter) == "function" then
     local t_user = {}
     local origin_index = {}
 
@@ -148,7 +146,7 @@ function Sorter:sort(t)
       table.insert(origin_index, n)
     end
 
-    local predefined = self.user(t_user)
+    local predefined = self.state.sorter(t_user)
     if predefined then
       split_merge(t, 1, #t, self:get_comparator(predefined))
       return
@@ -174,7 +172,7 @@ function Sorter:sort(t)
     end
 
     split_merge(t, 1, #t, mini_comparator) -- sort by user order
-  elseif self.pre then
+  elseif type(self.state.sorter) == "string" then
     split_merge(t, 1, #t, self:get_comparator(self.pre))
   end
 end
