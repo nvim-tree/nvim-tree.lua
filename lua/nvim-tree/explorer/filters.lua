@@ -23,13 +23,13 @@ local Filters = Class:extend()
 ---@protected
 ---@param args FiltersArgs
 function Filters:new(args)
-  self.explorer = args.explorer
-  self.ignore_list = {}
-  self.exclude_list = self.explorer.opts.filters.exclude
+  self.explorer        = args.explorer
+  self.ignore_list     = {}
+  self.exclude_list    = self.explorer.opts.filters.exclude
   self.custom_function = nil
 
-  self.enabled = self.explorer.opts.filters.enable
-  self.state = {
+  self.enabled         = self.explorer.opts.filters.enable
+  self.state           = {
     custom      = true,
     dotfiles    = self.explorer.opts.filters.dotfiles,
     git_ignored = self.explorer.opts.filters.git_ignored,
@@ -38,7 +38,7 @@ function Filters:new(args)
     no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 
-  local custom_filter = self.explorer.opts.filters.custom
+  local custom_filter  = self.explorer.opts.filters.custom
   if type(custom_filter) == "function" then
     self.custom_function = custom_filter
   else
