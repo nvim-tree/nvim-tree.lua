@@ -1,29 +1,29 @@
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 
+local Class = require("nvim-tree.classic")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class LiveFilter
+---@class (exact) LiveFilter: Class
 ---@field explorer Explorer
 ---@field prefix string
 ---@field always_show_folders boolean
 ---@field filter string
-local LiveFilter = {}
+local LiveFilter = Class:extend()
 
----@param opts table
----@param explorer Explorer
----@return LiveFilter
-function LiveFilter:new(opts, explorer)
-  local o = {
-    explorer = explorer,
-    prefix = opts.live_filter.prefix,
-    always_show_folders = opts.live_filter.always_show_folders,
-    filter = nil,
-  }
-  setmetatable(o, self)
-  self.__index = self
-  return o
+---@class LiveFilter
+---@overload fun(args: LiveFilterArgs): LiveFilter
+
+---@class (exact) LiveFilterArgs
+---@field explorer Explorer
+
+---@param args LiveFilterArgs
+function LiveFilter:new(args)
+  self.explorer = args.explorer
+  self.prefix = args.explorer.opts.live_filter.prefix
+  self.always_show_folders = args.explorer.opts.live_filter.always_show_folders
+  self.filter = nil
 end
 
 ---@param node_ Node?
