@@ -3,11 +3,11 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local Class = require("nvim-tree.classic")
 
----@alias FilterTypes "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
+---@alias FilterType "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
 
 ---@class (exact) Filters: Class
 ---@field enabled boolean
----@field states table<FilterTypes, boolean>
+---@field states table<FilterType, boolean>
 ---@field private explorer Explorer
 ---@field private exclude_list string[] filters.exclude
 ---@field private ignore_list table<string, boolean> filters.custom string table
@@ -257,6 +257,22 @@ function Filters:should_filter_as_reason(path, fs_stat, status)
     return FILTER_REASON.bookmark
   else
     return FILTER_REASON.none
+  end
+end
+
+---Toggle a type and refresh
+---@param type FilterType? nil to disable all
+function Filters:toggle(type)
+  if not type or self.states[type] == nil then
+    self.enabled = not self.enabled
+  else
+    self.states[type] = not self.states[type]
+  end
+
+  local node = self.explorer:get_node_at_cursor()
+  self.explorer:reload_explorer()
+  if node then
+    utils.focus_node_or_parent(node)
   end
 end
 
