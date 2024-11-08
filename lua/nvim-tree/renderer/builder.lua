@@ -2,6 +2,7 @@ local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
+local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
@@ -33,50 +34,44 @@ local pad = require("nvim-tree.renderer.components.padding")
 ---@field extmarks table[] extra marks for right icon placement
 ---@field virtual_lines table[] virtual lines for hidden count display
 ---@field private explorer Explorer
----@field private opts table
 ---@field private index number
 ---@field private depth number
 ---@field private combined_groups table<string, boolean> combined group names
 ---@field private markers boolean[] indent markers
 ---@field private decorators Decorator[]
 ---@field private hidden_display fun(node: Node): string|nil
-local Builder = {}
+local Builder = Class:extend()
 
----@param opts table user options
----@param explorer Explorer
----@return Builder
-function Builder:new(opts, explorer)
-  ---@type Builder
-  local o = {
-    opts = opts,
-    explorer = explorer,
-    index = 0,
-    depth = 0,
-    hl_args = {},
-    combined_groups = {},
-    lines = {},
-    markers = {},
-    signs = {},
-    extmarks = {},
-    virtual_lines = {},
-    decorators = {
-      -- priority order
-      DecoratorCut({ explorer = explorer }),
-      DecoratorCopied({ explorer = explorer }),
-      DecoratorDiagnostics({ explorer = explorer }),
-      DecoratorBookmarks({ explorer = explorer }),
-      DecoratorModified({ explorer = explorer }),
-      DecoratorHidden({ explorer = explorer }),
-      DecoratorOpened({ explorer = explorer }),
-      DecoratorGit({ explorer = explorer })
-    },
-    hidden_display = Builder:setup_hidden_display_function(opts),
+---@class Builder
+---@overload fun(args: BuilderArgs): Builder
+
+---@class (exact) BuilderArgs
+---@field explorer Explorer
+
+---@param args BuilderArgs
+function Builder:new(args)
+  self.explorer = args.explorer
+  self.index = 0
+  self.depth = 0
+  self.hl_args = {}
+  self.combined_groups = {}
+  self.lines = {}
+  self.markers = {}
+  self.signs = {}
+  self.extmarks = {}
+  self.virtual_lines = {}
+  self.decorators = {
+    -- priority order
+    DecoratorCut({ explorer = args.explorer }),
+    DecoratorCopied({ explorer = args.explorer }),
+    DecoratorDiagnostics({ explorer = args.explorer }),
+    DecoratorBookmarks({ explorer = args.explorer }),
+    DecoratorModified({ explorer = args.explorer }),
+    DecoratorHidden({ explorer = args.explorer }),
+    DecoratorOpened({ explorer = args.explorer }),
+    DecoratorGit({ explorer = args.explorer })
   }
-
-  setmetatable(o, self)
-  self.__index = self
-
-  return o
+  self.hidden_display = Builder:setup_hidden_display_function(args.explorer.opts)
 end
 
 ---Insert ranged highlight groups into self.highlights
@@ -123,7 +118,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
     for _, v in ipairs(t2) do
       if added_len > 0 then
-        table.insert(t1, { str = self.opts.renderer.icons.padding })
+        table.insert(t1, { str = self.explorer.opts.renderer.icons.padding })
       end
       table.insert(t1, v)
     end
@@ -284,7 +279,7 @@ function Builder:add_hidden_count_string(node, idx, num_children)
   local hidden_count_string = self.hidden_display(node.hidden_stats)
   if hidden_count_string and hidden_count_string ~= "" then
     local indent_markers = pad.get_indent_markers(self.depth, idx or 0, num_children or 0, node, self.markers, 1)
-    local indent_width = self.opts.renderer.indent_width
+    local indent_width = self.explorer.opts.renderer.indent_width
 
     local indent_padding = string.rep(" ", indent_width)
     local indent_string = indent_padding .. indent_markers.str
@@ -354,16 +349,16 @@ end
 ---@private
 function Builder:build_header()
   if view.is_root_folder_visible(self.explorer.absolute_path) then
-    local root_name = self:format_root_name(self.opts.renderer.root_folder_label)
+    local root_name = self:format_root_name(self.explorer.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
     self:insert_highlight({ "NvimTreeRootFolder" }, 0, string.len(root_name))
     self.index = 1
   end
 
   if self.explorer.live_filter.filter then
-    local filter_line = string.format("%s/%s/", self.opts.live_filter.prefix, self.explorer.live_filter.filter)
+    local filter_line = string.format("%s/%s/", self.explorer.opts.live_filter.prefix, self.explorer.live_filter.filter)
     table.insert(self.lines, filter_line)
-    local prefix_length = string.len(self.opts.live_filter.prefix)
+    local prefix_length = string.len(self.explorer.opts.live_filter.prefix)
     self:insert_highlight({ "NvimTreeLiveFilterPrefix" }, 0,             prefix_length)
     self:insert_highlight({ "NvimTreeLiveFilterValue" },  prefix_length, string.len(filter_line))
     self.index = self.index + 1

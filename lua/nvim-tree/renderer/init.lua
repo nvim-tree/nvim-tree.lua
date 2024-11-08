@@ -2,6 +2,7 @@ local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local events = require("nvim-tree.events")
 
+local Class = require("nvim-tree.classic")
 local Builder = require("nvim-tree.renderer.builder")
 
 local SIGN_GROUP = "NvimTreeRendererSigns"
@@ -10,26 +11,19 @@ local namespace_highlights_id = vim.api.nvim_create_namespace("NvimTreeHighlight
 local namespace_extmarks_id = vim.api.nvim_create_namespace("NvimTreeExtmarks")
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtualLines")
 
----@class (exact) Renderer
----@field private __index? table
----@field private opts table user options
----@field private explorer Explorer
-local Renderer = {}
+---@class (exact) Renderer: Class
+---@field explorer Explorer
+local Renderer = Class:extend()
 
----@param opts table user options
----@param explorer Explorer
----@return Renderer
-function Renderer:new(opts, explorer)
-  ---@type Renderer
-  local o = {
-    opts = opts,
-    explorer = explorer,
-  }
+---@class Renderer
+---@overload fun(args: RendererArgs): Renderer
 
-  setmetatable(o, self)
-  self.__index = self
+---@class (exact) RendererArgs
+---@field explorer Explorer
 
-  return o
+---@param args RendererArgs
+function Renderer:new(args)
+  self.explorer = args.explorer
 end
 
 ---@private
@@ -106,7 +100,7 @@ function Renderer:draw()
 
   local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
 
-  local builder = Builder:new(self.opts, self.explorer):build()
+  local builder = Builder(self.explorer):build()
 
   self:_draw(bufnr, builder.lines, builder.hl_args, builder.signs, builder.extmarks, builder.virtual_lines)
 

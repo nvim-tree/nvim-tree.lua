@@ -58,7 +58,7 @@ function Explorer:new(args)
   self.opts = config
 
   self.sorters = Sorter(config)
-  self.renderer = Renderer:new(config, self)
+  self.renderer = Renderer({ explorer = self })
   self.filters = Filters:new(config, self)
   self.live_filter = LiveFilter:new(config, self)
   self.marks = Marks:new(config, self)
