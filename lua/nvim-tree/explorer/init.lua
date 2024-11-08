@@ -61,7 +61,7 @@ function Explorer:new(args)
   self.renderer = Renderer({ explorer = self })
   self.filters = Filters({ explorer = self })
   self.live_filter = LiveFilter({ explorer = self })
-  self.marks = Marks:new(config, self)
+  self.marks = Marks({ explorer = self })
   self.clipboard = Clipboard:new(config, self)
 
   self:create_autocmds()
