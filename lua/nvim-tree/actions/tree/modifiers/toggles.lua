@@ -22,43 +22,43 @@ end
 
 ---@param explorer Explorer
 local function custom(explorer)
-  explorer.filters.config.filter_custom = not explorer.filters.config.filter_custom
+  explorer.filters.states.custom = not explorer.filters.states.custom
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function git_ignored(explorer)
-  explorer.filters.config.filter_git_ignored = not explorer.filters.config.filter_git_ignored
+  explorer.filters.states.git_ignored = not explorer.filters.states.git_ignored
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function git_clean(explorer)
-  explorer.filters.config.filter_git_clean = not explorer.filters.config.filter_git_clean
+  explorer.filters.states.git_clean = not explorer.filters.states.git_clean
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function no_buffer(explorer)
-  explorer.filters.config.filter_no_buffer = not explorer.filters.config.filter_no_buffer
+  explorer.filters.states.no_buffer = not explorer.filters.states.no_buffer
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function no_bookmark(explorer)
-  explorer.filters.config.filter_no_bookmark = not explorer.filters.config.filter_no_bookmark
+  explorer.filters.states.no_bookmark = not explorer.filters.states.no_bookmark
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function dotfiles(explorer)
-  explorer.filters.config.filter_dotfiles = not explorer.filters.config.filter_dotfiles
+  explorer.filters.states.dotfiles = not explorer.filters.states.dotfiles
   reload(explorer)
 end
 
 ---@param explorer Explorer
 local function enable(explorer)
-  explorer.filters.config.enable = not explorer.filters.config.enable
+  explorer.filters.enabled = not explorer.filters.enabled
   reload(explorer)
 end
 

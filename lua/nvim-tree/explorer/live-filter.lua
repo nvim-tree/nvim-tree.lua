@@ -81,7 +81,7 @@ end
 ---@param node Node
 ---@return boolean
 local function matches(self, node)
-  if not self.explorer.filters.config.enable then
+  if not self.explorer.filters.enabled then
     return true
   end
 

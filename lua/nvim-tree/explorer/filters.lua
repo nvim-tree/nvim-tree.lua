@@ -3,8 +3,11 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
 local Class = require("nvim-tree.classic")
 
+---@alias FilterTypes "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
+
 ---@class (exact) Filters: Class
----@field config table hydrated user opts.filters
+---@field enabled boolean
+---@field states table<FilterTypes, boolean>
 ---@field private explorer Explorer
 ---@field private exclude_list string[] filters.exclude
 ---@field private ignore_list table<string, boolean> filters.custom string table
@@ -23,14 +26,15 @@ function Filters:new(args)
   self.ignore_list = {}
   self.exclude_list = self.explorer.opts.filters.exclude
   self.custom_function = nil
-  self.config = {
-    enable = self.explorer.opts.filters.enable,
-    filter_custom = true,
-    filter_dotfiles = self.explorer.opts.filters.dotfiles,
-    filter_git_ignored = self.explorer.opts.filters.git_ignored,
-    filter_git_clean = self.explorer.opts.filters.git_clean,
-    filter_no_buffer = self.explorer.opts.filters.no_buffer,
-    filter_no_bookmark = self.explorer.opts.filters.no_bookmark,
+
+  self.enabled = self.explorer.opts.filters.enable
+  self.states = {
+    custom = true,
+    dotfiles = self.explorer.opts.filters.dotfiles,
+    git_ignored = self.explorer.opts.filters.git_ignored,
+    git_clean = self.explorer.opts.filters.git_clean,
+    no_buffer = self.explorer.opts.filters.no_buffer,
+    no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 
   local custom_filter = self.explorer.opts.filters.custom
@@ -71,12 +75,12 @@ local function git(self, path, project)
   xy = xy or project.dirs.indirect[path] and project.dirs.indirect[path][1]
 
   -- filter ignored; overrides clean as they are effectively dirty
-  if self.config.filter_git_ignored and xy == "!!" then
+  if self.states.git_ignored and xy == "!!" then
     return true
   end
 
   -- filter clean
-  if self.config.filter_git_clean and not xy then
+  if self.states.git_clean and not xy then
     return true
   end
 
@@ -88,7 +92,7 @@ end
 ---@param bufinfo table vim.fn.getbufinfo { buflisted = 1 }
 ---@return boolean
 local function buf(self, path, bufinfo)
-  if not self.config.filter_no_buffer or type(bufinfo) ~= "table" then
+  if not self.states.no_buffer or type(bufinfo) ~= "table" then
     return false
   end
 
@@ -105,7 +109,7 @@ end
 ---@param path string
 ---@return boolean
 local function dotfile(self, path)
-  return self.config.filter_dotfiles and utils.path_basename(path):sub(1, 1) == "."
+  return self.states.dotfiles and utils.path_basename(path):sub(1, 1) == "."
 end
 
 ---Bookmark is present
@@ -114,7 +118,7 @@ end
 ---@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
 ---@return boolean
 local function bookmark(self, path, path_type, bookmarks)
-  if not self.config.filter_no_bookmark then
+  if not self.states.no_bookmark then
     return false
   end
   -- if bookmark is empty, we should see a empty filetree
@@ -149,7 +153,7 @@ end
 ---@param path string
 ---@return boolean
 local function custom(self, path)
-  if not self.config.filter_custom then
+  if not self.states.custom then
     return false
   end
 
@@ -191,7 +195,7 @@ function Filters:prepare(project)
     bookmarks = {},
   }
 
-  if self.config.filter_no_buffer then
+  if self.states.no_buffer then
     status.bufinfo = vim.fn.getbufinfo({ buflisted = 1 })
   end
 
@@ -211,7 +215,7 @@ end
 ---@param status table from prepare
 ---@return boolean
 function Filters:should_filter(path, fs_stat, status)
-  if not self.config.enable then
+  if not self.enabled then
     return false
   end
 
@@ -233,7 +237,7 @@ end
 ---@param status table from prepare
 ---@return FILTER_REASON
 function Filters:should_filter_as_reason(path, fs_stat, status)
-  if not self.config.enable then
+  if not self.enabled then
     return FILTER_REASON.none
   end
 
