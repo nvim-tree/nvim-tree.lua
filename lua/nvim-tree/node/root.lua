@@ -19,7 +19,7 @@ function RootNode:is_dotfile()
 end
 
 function RootNode:destroy()
-  DirectoryNode.destroy(self)
+  self.super.destroy(self)
 end
 
 return RootNode

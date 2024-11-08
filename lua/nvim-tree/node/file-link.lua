@@ -21,7 +21,7 @@ function FileLinkNode:new(args)
 end
 
 function FileLinkNode:destroy()
-  FileNode.destroy(self)
+  self.super.destroy(self)
 end
 
 ---Update the git_status of the target otherwise the link itself
@@ -60,7 +60,7 @@ end
 ---Create a sanitized partial copy of a node
 ---@return FileLinkNode cloned
 function FileLinkNode:clone()
-  local clone = FileNode.clone(self) --[[@as FileLinkNode]]
+  local clone = self.super.clone(self) --[[@as FileLinkNode]]
 
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target
