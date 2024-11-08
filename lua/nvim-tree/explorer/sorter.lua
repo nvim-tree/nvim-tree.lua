@@ -20,6 +20,7 @@ local Sorter = Class:extend()
 ---@class (exact) SorterArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args SorterArgs
 function Sorter:new(args)
   self.state = vim.deepcopy(args.explorer.opts.sort)

@@ -6,7 +6,7 @@ local DecoratorCut = Decorator:extend()
 ---@class DecoratorCut
 ---@overload fun(explorer: DecoratorArgs): DecoratorCut
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorCut:new(args)
   Decorator.new(self, {

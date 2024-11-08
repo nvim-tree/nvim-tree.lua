@@ -6,7 +6,7 @@ local DecoratorCopied = Decorator:extend()
 ---@class DecoratorCopied
 ---@overload fun(explorer: DecoratorArgs): DecoratorCopied
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorCopied:new(args)
   Decorator.new(self, {

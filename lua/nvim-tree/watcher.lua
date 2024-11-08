@@ -32,7 +32,7 @@ local Event = Class:extend()
 ---@class (exact) EventArgs
 ---@field path string
 
----@private
+---@protected
 ---@param args EventArgs
 function Event:new(args)
   self.destroyed = false
@@ -160,7 +160,7 @@ local Watcher = Class:extend()
 ---@field callback fun(watcher: Watcher)
 ---@field data table? user data
 
----@private
+---@protected
 ---@param args WatcherArgs
 function Watcher:new(args)
   self.data = args.data

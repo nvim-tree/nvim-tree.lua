@@ -47,6 +47,7 @@ local Builder = Class:extend()
 ---@class (exact) BuilderArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args BuilderArgs
 function Builder:new(args)
   self.explorer = args.explorer

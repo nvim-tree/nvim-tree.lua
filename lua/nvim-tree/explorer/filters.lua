@@ -20,6 +20,7 @@ local Filters = Class:extend()
 ---@class (exact) FiltersArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args FiltersArgs
 function Filters:new(args)
   self.explorer = args.explorer

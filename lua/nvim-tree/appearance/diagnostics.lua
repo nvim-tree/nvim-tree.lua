@@ -19,6 +19,7 @@ local HighlightDisplay = Class:extend()
 ---@class (exact) HighlightDisplayArgs
 ---@field group string nvim-tree highlight group name
 
+---@protected
 ---@param args HighlightDisplayArgs
 function HighlightDisplay:new(args)
   self.group = args.group

@@ -8,7 +8,7 @@ local LinkNode = Class:extend()
 ---@class (exact) LinkNodeArgs: NodeArgs
 ---@field link_to string
 ---@field fs_stat_target uv.fs_stat.result
----
+
 ---@protected
 ---@param args LinkNodeArgs
 function LinkNode:new(args)

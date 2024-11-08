@@ -24,7 +24,7 @@ local GitRunner = Class:extend()
 local timeouts = 0
 local MAX_TIMEOUTS = 5
 
----@private
+---@protected
 ---@param args GitRunnerArgs
 function GitRunner:new(args)
   self.args = args

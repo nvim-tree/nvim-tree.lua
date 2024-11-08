@@ -28,6 +28,7 @@ local Clipboard = Class:extend()
 ---@class (exact) ClipboardArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args ClipboardArgs
 function Clipboard:new(args)
   self.explorer = args.explorer

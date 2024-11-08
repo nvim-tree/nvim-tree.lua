@@ -21,6 +21,7 @@ local Renderer = Class:extend()
 ---@class (exact) RendererArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args RendererArgs
 function Renderer:new(args)
   self.explorer = args.explorer

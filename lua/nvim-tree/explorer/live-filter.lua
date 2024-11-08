@@ -18,6 +18,7 @@ local LiveFilter = Class:extend()
 ---@class (exact) LiveFilterArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args LiveFilterArgs
 function LiveFilter:new(args)
   self.explorer = args.explorer

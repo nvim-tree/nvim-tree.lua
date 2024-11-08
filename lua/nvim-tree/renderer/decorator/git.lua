@@ -22,7 +22,7 @@ local DecoratorGit = Decorator:extend()
 ---@class DecoratorGit
 ---@overload fun(explorer: DecoratorArgs): DecoratorGit
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorGit:new(args)
   Decorator.new(self, {

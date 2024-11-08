@@ -8,7 +8,7 @@ local DecoratorHidden = Decorator:extend()
 ---@class DecoratorHidden
 ---@overload fun(explorer: DecoratorArgs): DecoratorHidden
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorHidden:new(args)
   Decorator.new(self, {

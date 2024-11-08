@@ -9,7 +9,7 @@ local DecoratorOpened = Decorator:extend()
 ---@class DecoratorOpened
 ---@overload fun(explorer: DecoratorArgs): DecoratorOpened
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorOpened:new(args)
   Decorator.new(self, {

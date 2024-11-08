@@ -22,6 +22,7 @@ local Marks = Class:extend()
 ---@class (exact) MarksArgs
 ---@field explorer Explorer
 
+---@protected
 ---@param args MarksArgs
 function Marks:new(args)
   self.explorer = args.explorer

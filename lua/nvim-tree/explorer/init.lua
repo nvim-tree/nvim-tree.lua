@@ -43,6 +43,7 @@ local Explorer = RootNode:extend()
 ---@class (exact) ExplorerArgs
 ---@field path string
 
+---@protected
 ---@param args ExplorerArgs
 function Explorer:new(args)
   Explorer.super.new(self, {

@@ -37,7 +37,7 @@ local DecoratorDiagnostics = Decorator:extend()
 ---@class DecoratorDiagnostics
 ---@overload fun(explorer: DecoratorArgs): DecoratorDiagnostics
 
----@private
+---@protected
 ---@param args DecoratorArgs
 function DecoratorDiagnostics:new(args)
   Decorator.new(self, {
