@@ -169,7 +169,6 @@ function Watcher:new(args)
   self.callback = args.callback
   self.files = args.files
   self.listener = nil
-  self.event = args.event
 end
 
 ---Static factory method
