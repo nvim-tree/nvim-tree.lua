@@ -3,28 +3,31 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 local C = {}
 
----@class (exact) SorterCfg
+---@class (exact) SorterState
 ---@field sorter string|fun(nodes: Node[])
 ---@field folders_first boolean
 ---@field files_first boolean
 
 ---@class (exact) Sorter: Class
----@field cfg SorterCfg
+---@field state SorterState
 ---@field user fun(nodes: Node[])?
 ---@field pre string?
 local Sorter = Class:extend()
 
 ---@class Sorter
----@overload fun(opts: table): Sorter
+---@overload fun(args: SorterArgs): Sorter
 
----@param opts table user options
-function Sorter:new(opts)
-  self.cfg = vim.deepcopy(opts.sort)
+---@class (exact) SorterArgs
+---@field explorer Explorer
 
-  if type(self.cfg.sorter) == "function" then
-    self.user = self.cfg.sorter --[[@as fun(nodes: Node[])]]
-  elseif type(self.cfg.sorter) == "string" then
-    self.pre = self.cfg.sorter --[[@as string]]
+---@param args SorterArgs
+function Sorter:new(args)
+  self.state = vim.deepcopy(args.explorer.opts.sort)
+
+  if type(self.state.sorter) == "function" then
+    self.user = self.state.sorter --[[@as fun(nodes: Node[])]]
+  elseif type(self.state.sorter) == "string" then
+    self.pre = self.state.sorter --[[@as string]]
   end
 end
 
@@ -33,7 +36,7 @@ end
 ---@return fun(a: Node, b: Node): boolean
 function Sorter:get_comparator(sorter)
   return function(a, b)
-    return (C[sorter] or C.name)(a, b, self.cfg)
+    return (C[sorter] or C.name)(a, b, self.state)
   end
 end
 
@@ -54,7 +57,7 @@ end
 ---Evaluate `sort.folders_first` and `sort.files_first`
 ---@param a Node
 ---@param b Node
----@param cfg SorterCfg
+---@param cfg SorterState
 ---@return boolean|nil
 local function folders_or_files_first(a, b, cfg)
   if not (cfg.folders_first or cfg.files_first) then
@@ -178,7 +181,7 @@ end
 ---@param a Node
 ---@param b Node
 ---@param ignorecase boolean|nil
----@param cfg SorterCfg
+---@param cfg SorterState
 ---@return boolean
 local function node_comparator_name_ignorecase_or_not(a, b, ignorecase, cfg)
   if not (a and b) then
