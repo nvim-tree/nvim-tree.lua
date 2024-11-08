@@ -101,7 +101,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.states.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
@@ -113,7 +113,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufUnload", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.states.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
