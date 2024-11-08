@@ -94,8 +94,8 @@ function GitRunner:get_spawn_options(stdout_handle, stderr_handle)
   local untracked = self.args.list_untracked and "-u" or nil
   local ignored = (self.args.list_untracked and self.args.list_ignored) and "--ignored=matching" or "--ignored=no"
   return {
-    args = { "--no-optional-locks", "status", "--porcelain=v1", "-z", ignored, untracked, self.args.path },
-    cwd = self.args.toplevel,
+    args  = { "--no-optional-locks", "status", "--porcelain=v1", "-z", ignored, untracked, self.args.path },
+    cwd   = self.args.toplevel,
     stdio = { nil, stdout_handle, stderr_handle },
   }
 end

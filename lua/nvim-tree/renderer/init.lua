@@ -59,9 +59,9 @@ function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   for i, extname in pairs(extmarks) do
     for _, mark in ipairs(extname) do
       vim.api.nvim_buf_set_extmark(bufnr, namespace_extmarks_id, i, -1, {
-        virt_text = { { mark.str, mark.hl } },
+        virt_text     = { { mark.str, mark.hl } },
         virt_text_pos = "right_align",
-        hl_mode = "combine",
+        hl_mode       = "combine",
       })
     end
   end
@@ -69,8 +69,8 @@ function Renderer:_draw(bufnr, lines, hl_args, signs, extmarks, virtual_lines)
   vim.api.nvim_buf_clear_namespace(bufnr, namespace_virtual_lines_id, 0, -1)
   for line_nr, vlines in pairs(virtual_lines) do
     vim.api.nvim_buf_set_extmark(bufnr, namespace_virtual_lines_id, line_nr, 0, {
-      virt_lines = vlines,
-      virt_lines_above = false,
+      virt_lines         = vlines,
+      virt_lines_above   = false,
       virt_lines_leftcol = true,
     })
   end

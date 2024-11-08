@@ -52,14 +52,14 @@ end
 
 ---@param glyphs GitGlyphsByStatus
 function DecoratorGit:build_icons_by_status(glyphs)
-  self.icons_by_status = {}
-  self.icons_by_status.staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
-  self.icons_by_status.unstaged = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
-  self.icons_by_status.renamed = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 }
-  self.icons_by_status.deleted = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 }
-  self.icons_by_status.unmerged = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 }
+  self.icons_by_status           = {}
+  self.icons_by_status.staged    = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
+  self.icons_by_status.unstaged  = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
+  self.icons_by_status.renamed   = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 }
+  self.icons_by_status.deleted   = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 }
+  self.icons_by_status.unmerged  = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 }
   self.icons_by_status.untracked = { str = glyphs.untracked, hl = { "NvimTreeGitNewIcon" }, ord = 6 }
-  self.icons_by_status.ignored = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
+  self.icons_by_status.ignored   = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
 end
 
 ---@param icons GitIconsByXY
@@ -96,7 +96,7 @@ function DecoratorGit:build_icons_by_xy(icons)
     ["DD"] = { icons.deleted },
     ["DU"] = { icons.deleted, icons.unmerged },
     ["!!"] = { icons.ignored },
-    dirty = { icons.unstaged },
+    dirty  = { icons.unstaged },
   }
 end
 
@@ -115,7 +115,7 @@ function DecoratorGit:build_file_folder_hl_by_xy()
     [" T"] = "NvimTreeGitFileDirtyHL",
     ["MM"] = "NvimTreeGitFileDirtyHL",
     ["AM"] = "NvimTreeGitFileDirtyHL",
-    dirty = "NvimTreeGitFileDirtyHL",
+    dirty  = "NvimTreeGitFileDirtyHL",
     ["A "] = "NvimTreeGitFileStagedHL",
     ["??"] = "NvimTreeGitFileNewHL",
     ["AU"] = "NvimTreeGitFileMergeHL",

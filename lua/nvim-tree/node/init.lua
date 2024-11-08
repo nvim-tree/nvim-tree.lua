@@ -125,17 +125,17 @@ function Node:clone()
 
   ---@type Node
   local clone = {
-    type = self.type,
-    explorer = explorer_placeholder,
+    type          = self.type,
+    explorer      = explorer_placeholder,
     absolute_path = self.absolute_path,
-    executable = self.executable,
-    fs_stat = self.fs_stat,
-    git_status = self.git_status,
-    hidden = self.hidden,
-    name = self.name,
-    parent = nil,
-    diag_status = nil,
-    is_dot = self.is_dot,
+    executable    = self.executable,
+    fs_stat       = self.fs_stat,
+    git_status    = self.git_status,
+    hidden        = self.hidden,
+    name          = self.name,
+    parent        = nil,
+    diag_status   = nil,
+    is_dot        = self.is_dot,
   }
 
   return clone

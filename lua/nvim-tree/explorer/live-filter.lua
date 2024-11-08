@@ -169,21 +169,21 @@ local function create_overlay(self)
   if view.View.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
     vim.api.nvim_clear_autocmds({
-      event = "WinLeave",
+      event   = "WinLeave",
       pattern = "NvimTree_*",
-      group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
+      group   = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
     })
   end
 
   configure_buffer_overlay(self)
   overlay_winnr = vim.api.nvim_open_win(overlay_bufnr, true, {
-    col = 1,
-    row = 0,
+    col      = 1,
+    row      = 0,
     relative = "cursor",
-    width = calculate_overlay_win_width(self),
-    height = 1,
-    border = "none",
-    style = "minimal",
+    width    = calculate_overlay_win_width(self),
+    height   = 1,
+    border   = "none",
+    style    = "minimal",
   })
 
   if vim.fn.has("nvim-0.10") == 1 then

@@ -273,12 +273,12 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
-  local clone = Node.clone(self) --[[@as DirectoryNode]]
+  local clone        = Node.clone(self) --[[@as DirectoryNode]]
 
   clone.has_children = self.has_children
-  clone.group_next = nil
-  clone.nodes = {}
-  clone.open = self.open
+  clone.group_next   = nil
+  clone.nodes        = {}
+  clone.open         = self.open
   clone.hidden_stats = nil
 
   for _, child in ipairs(self.nodes) do

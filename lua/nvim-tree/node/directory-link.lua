@@ -48,10 +48,10 @@ function DirectoryLinkNode:highlighted_icon()
 
   if self.open then
     str = self.explorer.opts.renderer.icons.glyphs.folder.symlink_open
-    hl = "NvimTreeOpenedFolderIcon"
+    hl  = "NvimTreeOpenedFolderIcon"
   else
     str = self.explorer.opts.renderer.icons.glyphs.folder.symlink
-    hl = "NvimTreeClosedFolderIcon"
+    hl  = "NvimTreeClosedFolderIcon"
   end
 
   return { str = str, hl = { hl } }
@@ -64,8 +64,9 @@ function DirectoryLinkNode:highlighted_name()
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    name.str = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
-    name.hl = { "NvimTreeSymlinkFolderName" }
+
+    name.str      = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
+    name.hl       = { "NvimTreeSymlinkFolderName" }
   end
 
   return name

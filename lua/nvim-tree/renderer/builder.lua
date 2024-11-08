@@ -408,11 +408,11 @@ function Builder:setup_hidden_display_function(opts)
       -- In case of missing field such as live_filter we zero it, otherwise keep field as is
       hidden_stats = vim.tbl_deep_extend("force", {
         live_filter = 0,
-        git = 0,
-        buf = 0,
-        dotfile = 0,
-        custom = 0,
-        bookmark = 0,
+        git         = 0,
+        buf         = 0,
+        dotfile     = 0,
+        custom      = 0,
+        bookmark    = 0,
       }, hidden_stats or {})
 
       local ok, result = pcall(hidden_display, hidden_stats)

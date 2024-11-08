@@ -200,10 +200,10 @@ function Explorer:reload(node, project)
 
   -- To reset we must 'zero' everything that we use
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-    git = 0,
-    buf = 0,
-    dotfile = 0,
-    custom = 0,
+    git      = 0,
+    buf      = 0,
+    dotfile  = 0,
+    custom   = 0,
     bookmark = 0,
   })
 
@@ -234,11 +234,11 @@ function Explorer:reload(node, project)
 
       if not nodes_by_path[abs] then
         local new_child = node_factory.create({
-          explorer = self,
-          parent = node,
+          explorer      = self,
+          parent        = node,
           absolute_path = abs,
-          name = name,
-          fs_stat = stat
+          name          = name,
+          fs_stat       = stat
         })
         if new_child then
           table.insert(node.nodes, new_child)
@@ -355,10 +355,10 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
   local filter_status = parent.filters:prepare(project)
 
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-    git = 0,
-    buf = 0,
-    dotfile = 0,
-    custom = 0,
+    git      = 0,
+    buf      = 0,
+    dotfile  = 0,
+    custom   = 0,
     bookmark = 0,
   })
 
@@ -378,11 +378,11 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
         local child = node_factory.create({
-          explorer = self,
-          parent = node,
+          explorer      = self,
+          parent        = node,
           absolute_path = abs,
-          name = name,
-          fs_stat = stat
+          name          = name,
+          fs_stat       = stat
         })
         if child then
           table.insert(node.nodes, child)

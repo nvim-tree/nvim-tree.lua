@@ -30,11 +30,11 @@ function Filters:new(args)
 
   self.enabled = self.explorer.opts.filters.enable
   self.states = {
-    custom = true,
-    dotfiles = self.explorer.opts.filters.dotfiles,
+    custom      = true,
+    dotfiles    = self.explorer.opts.filters.dotfiles,
     git_ignored = self.explorer.opts.filters.git_ignored,
-    git_clean = self.explorer.opts.filters.git_clean,
-    no_buffer = self.explorer.opts.filters.no_buffer,
+    git_clean   = self.explorer.opts.filters.git_clean,
+    no_buffer   = self.explorer.opts.filters.no_buffer,
     no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 

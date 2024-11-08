@@ -130,11 +130,11 @@ function M.reload_project(toplevel, path, callback)
 
   ---@type GitRunnerArgs
   local args = {
-    toplevel = toplevel,
-    path = path,
+    toplevel       = toplevel,
+    path           = path,
     list_untracked = git_utils.should_show_untracked(toplevel),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
+    list_ignored   = true,
+    timeout        = M.config.git.timeout,
   }
 
   if callback then
@@ -276,10 +276,10 @@ function M.load_project(path)
   end
 
   local path_xys = GitRunner:run({
-    toplevel = toplevel,
+    toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
+    list_ignored   = true,
+    timeout        = M.config.git.timeout,
   })
 
   local watcher = nil
@@ -299,10 +299,10 @@ function M.load_project(path)
 
     local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
     watcher = Watcher:create({
-      path = git_dir,
-      files = WATCHED_FILES,
+      path     = git_dir,
+      files    = WATCHED_FILES,
       callback = callback,
-      data = {
+      data     = {
         toplevel = toplevel,
       }
     })
@@ -310,8 +310,8 @@ function M.load_project(path)
 
   if path_xys then
     M._projects_by_toplevel[toplevel] = {
-      files = path_xys,
-      dirs = git_utils.project_files_to_project_dirs(path_xys, toplevel),
+      files   = path_xys,
+      dirs    = git_utils.project_files_to_project_dirs(path_xys, toplevel),
       watcher = watcher,
     }
     return M._projects_by_toplevel[toplevel]

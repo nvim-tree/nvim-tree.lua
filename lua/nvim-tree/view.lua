@@ -15,31 +15,31 @@ local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
 
 M.View = {
-  adaptive_size = false,
+  adaptive_size        = false,
   centralize_selection = false,
-  tabpages = {},
-  cursors = {},
-  hide_root_folder = false,
-  live_filter = {
+  tabpages             = {},
+  cursors              = {},
+  hide_root_folder     = false,
+  live_filter          = {
     prev_focused_node = nil,
   },
-  winopts = {
+  winopts              = {
     relativenumber = false,
-    number = false,
-    list = false,
-    foldenable = false,
-    winfixwidth = true,
-    winfixheight = true,
-    spell = false,
-    signcolumn = "yes",
-    foldmethod = "manual",
-    foldcolumn = "0",
-    cursorcolumn = false,
-    cursorline = true,
-    cursorlineopt = "both",
-    colorcolumn = "0",
-    wrap = false,
-    winhl = table.concat({
+    number         = false,
+    list           = false,
+    foldenable     = false,
+    winfixwidth    = true,
+    winfixheight   = true,
+    spell          = false,
+    signcolumn     = "yes",
+    foldmethod     = "manual",
+    foldcolumn     = "0",
+    cursorcolumn   = false,
+    cursorline     = true,
+    cursorlineopt  = "both",
+    colorcolumn    = "0",
+    wrap           = false,
+    winhl          = table.concat({
       "EndOfBuffer:NvimTreeEndOfBuffer",
       "CursorLine:NvimTreeCursorLine",
       "CursorLineNr:NvimTreeCursorLineNr",
