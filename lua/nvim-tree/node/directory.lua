@@ -1,7 +1,6 @@
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
-
 local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: Node
@@ -47,7 +46,7 @@ function DirectoryNode:destroy()
     end
   end
 
-  self.super.destroy(self)
+  Node.destroy(self)
 end
 
 ---Update the git_status of the directory
@@ -273,7 +272,7 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
-  local clone = self.super.clone(self) --[[@as DirectoryNode]]
+  local clone = Node.clone(self) --[[@as DirectoryNode]]
 
   clone.has_children = self.has_children
   clone.group_next = nil

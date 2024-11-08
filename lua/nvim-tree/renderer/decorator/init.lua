@@ -4,6 +4,7 @@ local Class = require("nvim-tree.classic")
 ---@alias DecoratorIconPlacement "none" | "before" | "after" | "signcolumn" | "right_align"
 
 ---Abstract Decorator
+---Uses the factory pattern to instantiate child instances.
 ---@class (exact) Decorator: Class
 ---@field protected explorer Explorer
 ---@field protected enabled boolean

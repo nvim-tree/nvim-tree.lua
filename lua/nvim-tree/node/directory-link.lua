@@ -28,7 +28,7 @@ function DirectoryLinkNode:new(args)
 end
 
 function DirectoryLinkNode:destroy()
-  self.super.destroy(self)
+  DirectoryNode.destroy(self)
 end
 
 ---Update the directory git_status of link target and the file status of the link itself
@@ -60,7 +60,7 @@ end
 ---Maybe override name with arrow
 ---@return HighlightedString name
 function DirectoryLinkNode:highlighted_name()
-  local name = self.super.highlighted_name(self)
+  local name = DirectoryNode.highlighted_name(self)
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
@@ -74,7 +74,7 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryLinkNode cloned
 function DirectoryLinkNode:clone()
-  local clone = self.super.clone(self) --[[@as DirectoryLinkNode]]
+  local clone = DirectoryNode.clone(self) --[[@as DirectoryLinkNode]]
 
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target

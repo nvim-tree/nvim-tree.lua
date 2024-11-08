@@ -31,7 +31,7 @@ function FileNode:new(args)
 end
 
 function FileNode:destroy()
-  self.super.destroy(self)
+  Node.destroy(self)
 end
 
 ---Update the GitStatus of the file
@@ -96,7 +96,7 @@ end
 ---Create a sanitized partial copy of a node
 ---@return FileNode cloned
 function FileNode:clone()
-  local clone = self.super.clone(self) --[[@as FileNode]]
+  local clone = Node.clone(self) --[[@as FileNode]]
 
   clone.extension = self.extension
 
