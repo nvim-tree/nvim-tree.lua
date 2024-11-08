@@ -36,8 +36,8 @@ local Event = Class:extend()
 ---@param args EventArgs
 function Event:new(args)
   self.destroyed = false
-  self.path = args.path
-  self.fs_event = nil
+  self.path      = args.path
+  self.fs_event  = nil
   self.listeners = {}
 end
 
@@ -163,12 +163,12 @@ local Watcher = Class:extend()
 ---@protected
 ---@param args WatcherArgs
 function Watcher:new(args)
-  self.data = args.data
+  self.data      = args.data
   self.destroyed = false
-  self.path = args.path
-  self.callback = args.callback
-  self.files = args.files
-  self.listener = nil
+  self.path      = args.path
+  self.callback  = args.callback
+  self.files     = args.files
+  self.listener  = nil
 end
 
 ---Static factory method

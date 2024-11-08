@@ -50,17 +50,17 @@ local Builder = Class:extend()
 ---@protected
 ---@param args BuilderArgs
 function Builder:new(args)
-  self.explorer = args.explorer
-  self.index = 0
-  self.depth = 0
-  self.hl_args = {}
+  self.explorer        = args.explorer
+  self.index           = 0
+  self.depth           = 0
+  self.hl_args         = {}
   self.combined_groups = {}
-  self.lines = {}
-  self.markers = {}
-  self.signs = {}
-  self.extmarks = {}
-  self.virtual_lines = {}
-  self.decorators = {
+  self.lines           = {}
+  self.markers         = {}
+  self.signs           = {}
+  self.extmarks        = {}
+  self.virtual_lines   = {}
+  self.decorators      = {
     -- priority order
     DecoratorCut({ explorer = args.explorer }),
     DecoratorCopied({ explorer = args.explorer }),
@@ -71,7 +71,7 @@ function Builder:new(args)
     DecoratorOpened({ explorer = args.explorer }),
     DecoratorGit({ explorer = args.explorer })
   }
-  self.hidden_display = Builder:setup_hidden_display_function(self.explorer.opts)
+  self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
 end
 
 ---Insert ranged highlight groups into self.highlights
