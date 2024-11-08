@@ -27,7 +27,6 @@ local pad = require("nvim-tree.renderer.components.padding")
 ---@field col_end number
 
 ---@class (exact) Builder
----@field private __index? table
 ---@field lines string[] includes icons etc.
 ---@field hl_args AddHighlightArgs[] line highlights
 ---@field signs string[] line signs
