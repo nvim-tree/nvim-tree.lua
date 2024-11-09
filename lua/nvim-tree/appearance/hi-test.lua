@@ -5,8 +5,6 @@ local Class = require("nvim-tree.classic")
 -- others with name and links less than this arbitrary value are short
 local SHORT_LEN = 50
 
-local M = {}
-
 ---@class (exact) HighlightDisplay: Class for :NvimTreeHiTest
 ---@field group string nvim-tree highlight group name
 ---@field links string link chain to a concretely defined group
@@ -90,7 +88,7 @@ end
 
 ---Run a test similar to :so $VIMRUNTIME/syntax/hitest.vim
 ---Display all nvim-tree and neovim highlight groups, their link chain and actual definition
-function M.hi_test()
+return function()
   -- create a buffer
   local bufnr = vim.api.nvim_create_buf(false, true)
 
@@ -140,5 +138,3 @@ function M.hi_test()
 
   vim.cmd.buffer(bufnr)
 end
-
-return M

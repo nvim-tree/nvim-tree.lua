@@ -2,7 +2,7 @@ local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
-local appearance_diagnostics = require("nvim-tree.appearance.diagnostics")
+local appearance_hi_test = require("nvim-tree.appearance.hi-test")
 local events = require("nvim-tree.events")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
@@ -305,7 +305,7 @@ Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.config.mappings.default_on_attach = keymap.default_on_attach
 
-Api.diagnostics.hi_test = wrap(appearance_diagnostics.hi_test)
+Api.diagnostics.hi_test = wrap(appearance_hi_test)
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
