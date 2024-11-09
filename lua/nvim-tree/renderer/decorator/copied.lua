@@ -1,18 +1,20 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorCopied: Decorator
+---@field private explorer Explorer
 local DecoratorCopied = Decorator:extend()
 
 ---@class DecoratorCopied
----@overload fun(explorer: DecoratorArgs): DecoratorCopied
+---@overload fun(explorer: Explorer): DecoratorCopied
 
 ---@protected
----@param args DecoratorArgs
-function DecoratorCopied:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
+---@param explorer Explorer
+function DecoratorCopied:new(explorer)
+  self.explorer = explorer
+
+  DecoratorCopied.super.new(self, {
     enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_clipboard or "none",
+    hl_pos         = self.explorer.opts.renderer.highlight_clipboard or "none",
     icon_placement = "none",
   })
 end

@@ -2,20 +2,22 @@ local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) DecoratorHidden: Decorator
----@field icon HighlightedString?
+---@field private explorer Explorer
+---@field private icon HighlightedString?
 local DecoratorHidden = Decorator:extend()
 
 ---@class DecoratorHidden
----@overload fun(explorer: DecoratorArgs): DecoratorHidden
+---@overload fun(explorer: Explorer): DecoratorHidden
 
 ---@protected
----@param args DecoratorArgs
-function DecoratorHidden:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
+---@param explorer Explorer
+function DecoratorHidden:new(explorer)
+  self.explorer = explorer
+
+  DecoratorHidden.super.new(self, {
     enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_hidden or "none",
-    icon_placement = args.explorer.opts.renderer.icons.hidden_placement or "none",
+    hl_pos         = self.explorer.opts.renderer.highlight_hidden or "none",
+    icon_placement = self.explorer.opts.renderer.icons.hidden_placement or "none",
   })
 
   if self.explorer.opts.renderer.icons.show.hidden then

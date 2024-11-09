@@ -3,19 +3,21 @@ local buffers = require("nvim-tree.buffers")
 local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) DecoratorOpened: Decorator
----@field icon HighlightedString|nil
+---@field private explorer Explorer
+---@field private icon HighlightedString|nil
 local DecoratorOpened = Decorator:extend()
 
 ---@class DecoratorOpened
----@overload fun(explorer: DecoratorArgs): DecoratorOpened
+---@overload fun(explorer: Explorer): DecoratorOpened
 
 ---@protected
----@param args DecoratorArgs
-function DecoratorOpened:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
+---@param explorer Explorer
+function DecoratorOpened:new(explorer)
+  self.explorer = explorer
+
+  DecoratorOpened.super.new(self, {
     enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_opened_files or "none",
+    hl_pos         = self.explorer.opts.renderer.highlight_opened_files or "none",
     icon_placement = "none",
   })
 end

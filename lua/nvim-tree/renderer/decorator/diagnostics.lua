@@ -31,20 +31,22 @@ local ICON_KEYS = {
 }
 
 ---@class (exact) DecoratorDiagnostics: Decorator
----@field icons HighlightedString[]?
+---@field private explorer Explorer
+---@field private icons HighlightedString[]?
 local DecoratorDiagnostics = Decorator:extend()
 
 ---@class DecoratorDiagnostics
----@overload fun(explorer: DecoratorArgs): DecoratorDiagnostics
+---@overload fun(explorer: Explorer): DecoratorDiagnostics
 
 ---@protected
----@param args DecoratorArgs
-function DecoratorDiagnostics:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
+---@param explorer Explorer
+function DecoratorDiagnostics:new(explorer)
+  self.explorer = explorer
+
+  DecoratorDiagnostics.super.new(self, {
     enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_diagnostics or "none",
-    icon_placement = args.explorer.opts.renderer.icons.diagnostics_placement or "none",
+    hl_pos         = self.explorer.opts.renderer.highlight_diagnostics or "none",
+    icon_placement = self.explorer.opts.renderer.icons.diagnostics_placement or "none",
   })
 
   if not self.enabled then

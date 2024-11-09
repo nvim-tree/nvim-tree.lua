@@ -13,23 +13,25 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
 ---@class (exact) DecoratorGit: Decorator
----@field file_hl_by_xy table<GitXY, string>?
----@field folder_hl_by_xy table<GitXY, string>?
----@field icons_by_status GitIconsByStatus?
----@field icons_by_xy GitIconsByXY?
+---@field private explorer Explorer
+---@field private file_hl_by_xy table<GitXY, string>?
+---@field private folder_hl_by_xy table<GitXY, string>?
+---@field private icons_by_status GitIconsByStatus?
+---@field private icons_by_xy GitIconsByXY?
 local DecoratorGit = Decorator:extend()
 
 ---@class DecoratorGit
----@overload fun(explorer: DecoratorArgs): DecoratorGit
+---@overload fun(explorer: Explorer): DecoratorGit
 
 ---@protected
----@param args DecoratorArgs
-function DecoratorGit:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
-    enabled        = args.explorer.opts.git.enable,
-    hl_pos         = args.explorer.opts.renderer.highlight_git or "none",
-    icon_placement = args.explorer.opts.renderer.icons.git_placement or "none",
+---@param explorer Explorer
+function DecoratorGit:new(explorer)
+  self.explorer = explorer
+
+  DecoratorGit.super.new(self, {
+    enabled        = self.explorer.opts.git.enable,
+    hl_pos         = self.explorer.opts.renderer.highlight_git or "none",
+    icon_placement = self.explorer.opts.renderer.icons.git_placement or "none",
   })
 
   if not self.enabled then

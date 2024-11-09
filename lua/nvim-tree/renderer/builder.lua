@@ -13,12 +13,14 @@ local DecoratorGit = require("nvim-tree.renderer.decorator.git")
 local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
 local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
 local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
+local UserDecoratorExample = require("nvim-tree.renderer.decorator.example")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----@class (exact) HighlightedString
----@field str string
----@field hl string[]
+----TODO move all these classes to API meta
+----@class (exact) HighlightedString
+----@field str string
+----@field hl string[]
 
 ---@class (exact) AddHighlightArgs
 ---@field group string[]
@@ -62,16 +64,20 @@ function Builder:new(args)
   self.virtual_lines   = {}
   self.decorators      = {
     -- priority order
-    DecoratorCut({ explorer = args.explorer }),
-    DecoratorCopied({ explorer = args.explorer }),
-    DecoratorDiagnostics({ explorer = args.explorer }),
-    DecoratorBookmarks({ explorer = args.explorer }),
-    DecoratorModified({ explorer = args.explorer }),
-    DecoratorHidden({ explorer = args.explorer }),
-    DecoratorOpened({ explorer = args.explorer }),
-    DecoratorGit({ explorer = args.explorer })
+    DecoratorCut(self.explorer),
+    DecoratorCopied(self.explorer),
+    DecoratorDiagnostics(self.explorer),
+    DecoratorBookmarks(self.explorer),
+    DecoratorModified(self.explorer),
+    DecoratorHidden(self.explorer),
+    DecoratorOpened(self.explorer),
+    DecoratorGit(self.explorer),
   }
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
+
+  for _, user_decorator in ipairs(args.explorer.opts.renderer.user_decorators) do
+    table.insert(self.decorators, user_decorator.class())
+  end
 end
 
 ---Insert ranged highlight groups into self.highlights
