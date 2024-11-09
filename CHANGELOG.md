@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.8.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.1...nvim-tree-v1.8.0) (2024-11-09)
+
+
+### Features
+
+* **#2819:** add actions.open_file.relative_path, default enabled, following successful experiment ([#2995](https://github.com/nvim-tree/nvim-tree.lua/issues/2995)) ([2ee1c5e](https://github.com/nvim-tree/nvim-tree.lua/commit/2ee1c5e17fdfbf5013af31b1410e4a5f28f4cadd))
+* **#2938:** add default filesystem_watchers.ignore_dirs = { "/.ccls-cache", "/build", "/node_modules", "/target", } ([#2940](https://github.com/nvim-tree/nvim-tree.lua/issues/2940)) ([010ae03](https://github.com/nvim-tree/nvim-tree.lua/commit/010ae0365aafd6275c478d932515d2e8e897b7bb))
+
+
+### Bug Fixes
+
+* **#2945:** stack overflow on api.git.reload or fugitive event with watchers disabled ([#2949](https://github.com/nvim-tree/nvim-tree.lua/issues/2949)) ([5ad8762](https://github.com/nvim-tree/nvim-tree.lua/commit/5ad87620ec9d1190d15c88171a3f0122bc16b0fe))
+* **#2947:** root is never a dotfile, so that it doesn't propagate to children ([#2958](https://github.com/nvim-tree/nvim-tree.lua/issues/2958)) ([f5f6789](https://github.com/nvim-tree/nvim-tree.lua/commit/f5f67892996b280ae78b1b0a2d07c4fa29ae0905))
+* **#2951:** highlights incorrect following cancelled pick ([#2952](https://github.com/nvim-tree/nvim-tree.lua/issues/2952)) ([1c9553a](https://github.com/nvim-tree/nvim-tree.lua/commit/1c9553a19f70df3dcb171546a3d5e034531ef093))
+* **#2954:** resolve occasional tree flashing on diagnostics, set tree buffer options in deterministic order ([#2980](https://github.com/nvim-tree/nvim-tree.lua/issues/2980)) ([82ab19e](https://github.com/nvim-tree/nvim-tree.lua/commit/82ab19ebf79c1839d7351f2fed213d1af13a598e))
+* **#2961:** windows: escape brackets and parentheses when opening file ([#2962](https://github.com/nvim-tree/nvim-tree.lua/issues/2962)) ([63c7ad9](https://github.com/nvim-tree/nvim-tree.lua/commit/63c7ad9037fb7334682dd0b3a177cee25c5c8a0f))
+* **#2969:** After a rename, the node loses selection ([#2974](https://github.com/nvim-tree/nvim-tree.lua/issues/2974)) ([1403933](https://github.com/nvim-tree/nvim-tree.lua/commit/14039337a563f4efd72831888f332a15585f0ea1))
+* **#2972:** error on :colorscheme ([#2973](https://github.com/nvim-tree/nvim-tree.lua/issues/2973)) ([6e5a204](https://github.com/nvim-tree/nvim-tree.lua/commit/6e5a204ca659bb8f2a564df75df2739edec03cb0))
+* **#2976:** use vim.loop to preserve neovim 0.9 compatibility ([#2977](https://github.com/nvim-tree/nvim-tree.lua/issues/2977)) ([00dff48](https://github.com/nvim-tree/nvim-tree.lua/commit/00dff482f9a8fb806a54fd980359adc6cd45d435))
+* **#2978:** grouped folder not showing closed icon ([#2979](https://github.com/nvim-tree/nvim-tree.lua/issues/2979)) ([120ba58](https://github.com/nvim-tree/nvim-tree.lua/commit/120ba58254835d412bbc91cffe847e9be835fadd))
+* **#2981:** windows: root changed when navigating with LSP ([#2982](https://github.com/nvim-tree/nvim-tree.lua/issues/2982)) ([c22124b](https://github.com/nvim-tree/nvim-tree.lua/commit/c22124b37409bee6d1a0da77f4f3a1526f7a204d))
+* symlink file icons rendered when renderer.icons.show.file = false, folder.symlink* was incorrectly rendered as folder.default|open ([#2983](https://github.com/nvim-tree/nvim-tree.lua/issues/2983)) ([2156bc0](https://github.com/nvim-tree/nvim-tree.lua/commit/2156bc08c982d3c4b4cfc2b8fd7faeff58a88e10))
+
 ## [1.7.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.0...nvim-tree-v1.7.1) (2024-09-30)
 
 
