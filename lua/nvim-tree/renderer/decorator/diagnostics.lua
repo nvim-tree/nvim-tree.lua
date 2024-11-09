@@ -1,8 +1,5 @@
 local diagnostics = require("nvim-tree.diagnostics")
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -35,38 +32,35 @@ local ICON_KEYS = {
 
 ---@class (exact) DecoratorDiagnostics: Decorator
 ---@field icons HighlightedString[]?
-local DecoratorDiagnostics = Decorator:new()
+local DecoratorDiagnostics = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorDiagnostics
-function DecoratorDiagnostics:create(opts, explorer)
-  ---@type DecoratorDiagnostics
-  local o = {
-    explorer = explorer,
-    enabled = opts.diagnostics.enable,
-    hl_pos = HL_POSITION[opts.renderer.highlight_diagnostics] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[opts.renderer.icons.diagnostics_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
+---@class DecoratorDiagnostics
+---@overload fun(explorer: DecoratorArgs): DecoratorDiagnostics
 
-  if not o.enabled then
-    return o
+---@protected
+---@param args DecoratorArgs
+function DecoratorDiagnostics:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = true,
+    hl_pos         = args.explorer.opts.renderer.highlight_diagnostics or "none",
+    icon_placement = args.explorer.opts.renderer.icons.diagnostics_placement or "none",
+  })
+
+  if not self.enabled then
+    return
   end
 
-  if opts.renderer.icons.show.diagnostics then
-    o.icons = {}
+  if self.explorer.opts.renderer.icons.show.diagnostics then
+    self.icons = {}
     for name, sev in pairs(ICON_KEYS) do
-      o.icons[sev] = {
-        str = opts.diagnostics.icons[name],
+      self.icons[sev] = {
+        str = self.explorer.opts.diagnostics.icons[name],
         hl = { HG_ICON[sev] },
       }
-      o:define_sign(o.icons[sev])
+      self:define_sign(self.icons[sev])
     end
   end
-
-  return o
 end
 
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
@@ -87,7 +81,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorDiagnostics:calculate_highlight(node)
-  if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
+  if not node or not self.enabled or self.range == "none" then
     return nil
   end
 

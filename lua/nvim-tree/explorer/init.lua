@@ -3,7 +3,6 @@ local buffers = require("nvim-tree.buffers")
 local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
-local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local node_factory = require("nvim-tree.node.factory")
@@ -18,7 +17,7 @@ local NodeIterator = require("nvim-tree.iterators.node-iterator")
 local Filters = require("nvim-tree.explorer.filters")
 local Marks = require("nvim-tree.marks")
 local LiveFilter = require("nvim-tree.explorer.live-filter")
-local Sorters = require("nvim-tree.explorer.sorters")
+local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
@@ -36,51 +35,39 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
-local Explorer = RootNode:new()
+local Explorer = RootNode:extend()
 
----Static factory method
----@param path string?
----@return Explorer?
-function Explorer:create(path)
-  local err
+---@class Explorer
+---@overload fun(args: ExplorerArgs): Explorer
 
-  if path then
-    path, err = vim.loop.fs_realpath(path)
-  else
-    path, err = vim.loop.cwd()
-  end
-  if not path then
-    notify.error(err)
-    return nil
-  end
+---@class (exact) ExplorerArgs
+---@field path string
 
-  ---@type Explorer
-  local explorer_placeholder = nil
+---@protected
+---@param args ExplorerArgs
+function Explorer:new(args)
+  Explorer.super.new(self, {
+    explorer      = self,
+    absolute_path = args.path,
+    name          = "..",
+  })
 
-  local o = RootNode:create(explorer_placeholder, path, "..", nil)
+  self.uid_explorer = vim.loop.hrtime()
+  self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
-  o = self:new(o)
+  self.open         = true
+  self.opts         = config
 
-  o.explorer = o
+  self.sorters      = Sorter({ explorer = self })
+  self.renderer     = Renderer({ explorer = self })
+  self.filters      = Filters({ explorer = self })
+  self.live_filter  = LiveFilter({ explorer = self })
+  self.marks        = Marks({ explorer = self })
+  self.clipboard    = Clipboard({ explorer = self })
 
-  o.uid_explorer = vim.loop.hrtime()
-  o.augroup_id = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. o.uid_explorer, {})
+  self:create_autocmds()
 
-  o.open = true
-  o.opts = config
-
-  o.sorters = Sorters:create(config)
-  o.renderer = Renderer:new(config, o)
-  o.filters = Filters:new(config, o)
-  o.live_filter = LiveFilter:new(config, o)
-  o.marks = Marks:new(config, o)
-  o.clipboard = Clipboard:new(config, o)
-
-  o:create_autocmds()
-
-  o:_load(o)
-
-  return o
+  self:_load(self)
 end
 
 function Explorer:destroy()
@@ -114,7 +101,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.config.filter_no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
@@ -126,7 +113,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufUnload", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.config.filter_no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
@@ -213,10 +200,10 @@ function Explorer:reload(node, project)
 
   -- To reset we must 'zero' everything that we use
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-    git = 0,
-    buf = 0,
-    dotfile = 0,
-    custom = 0,
+    git      = 0,
+    buf      = 0,
+    dotfile  = 0,
+    custom   = 0,
     bookmark = 0,
   })
 
@@ -246,7 +233,13 @@ function Explorer:reload(node, project)
       end
 
       if not nodes_by_path[abs] then
-        local new_child = node_factory.create_node(self, node, abs, stat, name)
+        local new_child = node_factory.create({
+          explorer      = self,
+          parent        = node,
+          absolute_path = abs,
+          name          = name,
+          fs_stat       = stat
+        })
         if new_child then
           table.insert(node.nodes, new_child)
           nodes_by_path[abs] = new_child
@@ -362,10 +355,10 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
   local filter_status = parent.filters:prepare(project)
 
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-    git = 0,
-    buf = 0,
-    dotfile = 0,
-    custom = 0,
+    git      = 0,
+    buf      = 0,
+    dotfile  = 0,
+    custom   = 0,
     bookmark = 0,
   })
 
@@ -384,7 +377,13 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
       local stat = vim.loop.fs_lstat(abs)
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
-        local child = node_factory.create_node(self, node, abs, stat, name)
+        local child = node_factory.create({
+          explorer      = self,
+          parent        = node,
+          absolute_path = abs,
+          name          = name,
+          fs_stat       = stat
+        })
         if child then
           table.insert(node.nodes, child)
           nodes_by_path[child.absolute_path] = true

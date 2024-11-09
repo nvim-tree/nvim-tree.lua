@@ -1,45 +1,46 @@
 local appearance = require("nvim-tree.appearance")
 
+local Class = require("nvim-tree.classic")
+
 -- others with name and links less than this arbitrary value are short
 local SHORT_LEN = 50
 
-local M = {}
-
----@class HighlightDisplay for :NvimTreeHiTest
+---@class (exact) HighlightDisplay: Class for :NvimTreeHiTest
 ---@field group string nvim-tree highlight group name
 ---@field links string link chain to a concretely defined group
 ---@field def string :hi concrete definition after following any links
-local HighlightDisplay = {}
+local HighlightDisplay = Class:extend()
 
----@param group string nvim-tree highlight group name
----@return HighlightDisplay
-function HighlightDisplay:new(group)
-  local o = {}
-  setmetatable(o, self)
-  self.__index = self
+---@class HighlightDisplay
+---@overload fun(args: HighlightDisplayArgs): HighlightDisplay
 
-  o.group = group
-  local concrete = o.group
+---@class (exact) HighlightDisplayArgs
+---@field group string nvim-tree highlight group name
+
+---@protected
+---@param args HighlightDisplayArgs
+function HighlightDisplay:new(args)
+  self.group = args.group
+
+  local concrete = self.group
 
   -- maybe follow links
   local links = {}
-  local link = vim.api.nvim_get_hl(0, { name = o.group }).link
+  local link = vim.api.nvim_get_hl(0, { name = self.group }).link
   while link do
     table.insert(links, link)
     concrete = link
     link = vim.api.nvim_get_hl(0, { name = link }).link
   end
-  o.links = table.concat(links, " ")
+  self.links = table.concat(links, " ")
 
   -- concrete definition
   local ok, res = pcall(vim.api.nvim_cmd, { cmd = "highlight", args = { concrete } }, { output = true })
   if ok and type(res) == "string" then
-    o.def = res:gsub(".*xxx *", "")
+    self.def = res:gsub(".*xxx *", "")
   else
-    o.def = ""
+    self.def = ""
   end
-
-  return o
 end
 
 ---Render one group.
@@ -87,7 +88,7 @@ end
 
 ---Run a test similar to :so $VIMRUNTIME/syntax/hitest.vim
 ---Display all nvim-tree and neovim highlight groups, their link chain and actual definition
-function M.hi_test()
+return function()
   -- create a buffer
   local bufnr = vim.api.nvim_create_buf(false, true)
 
@@ -96,7 +97,7 @@ function M.hi_test()
   -- nvim-tree groups, ordered
   local displays = {}
   for _, highlight_group in ipairs(appearance.HIGHLIGHT_GROUPS) do
-    local display = HighlightDisplay:new(highlight_group.group)
+    local display = HighlightDisplay({ group = highlight_group.group })
     table.insert(displays, display)
   end
   l = render_displays("nvim-tree", displays, bufnr, l)
@@ -110,7 +111,7 @@ function M.hi_test()
   if ok then
     for group in string.gmatch(out, "(%w*)%s+xxx") do
       if group:find("NvimTree", 1, true) ~= 1 then
-        local display = HighlightDisplay:new(group)
+        local display = HighlightDisplay({ group = group })
         if #display.group + #display.links > SHORT_LEN then
           table.insert(displays_long, display)
         else
@@ -137,5 +138,3 @@ function M.hi_test()
 
   vim.cmd.buffer(bufnr)
 end
-
-return M

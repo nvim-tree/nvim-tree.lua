@@ -83,8 +83,12 @@ function M.create_watcher(node)
   end
 
   M.uid = M.uid + 1
-  return Watcher:create(path, nil, callback, {
-    context = "explorer:watch:" .. path .. ":" .. M.uid,
+  return Watcher:create({
+    path = path,
+    callback = callback,
+    data = {
+      context = "explorer:watch:" .. path .. ":" .. M.uid
+    }
   })
 end
 

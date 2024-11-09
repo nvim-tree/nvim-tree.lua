@@ -172,8 +172,8 @@ function M.git_status_dir(parent_ignored, project, path, path_fallback)
   elseif project then
     ns = {
       file = project.files and (project.files[path] or project.files[path_fallback]),
-      dir = project.dirs and {
-        direct = project.dirs.direct and project.dirs.direct[path],
+      dir  = project.dirs and {
+        direct   = project.dirs.direct and project.dirs.direct[path],
         indirect = project.dirs.indirect and project.dirs.indirect[path],
       },
     }

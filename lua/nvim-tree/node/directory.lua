@@ -1,6 +1,7 @@
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
+
 local Node = require("nvim-tree.node")
 
 ---@class (exact) DirectoryNode: Node
@@ -10,45 +11,28 @@ local Node = require("nvim-tree.node")
 ---@field open boolean
 ---@field hidden_stats table? -- Each field of this table is a key for source and value for count
 ---@field private watcher Watcher?
-local DirectoryNode = Node:new()
+local DirectoryNode = Node:extend()
 
----Static factory method
----@param explorer Explorer
----@param parent DirectoryNode?
----@param absolute_path string
----@param name string
----@param fs_stat uv.fs_stat.result|nil
----@return DirectoryNode
-function DirectoryNode:create(explorer, parent, absolute_path, name, fs_stat)
-  local handle = vim.loop.fs_scandir(absolute_path)
+---@class DirectoryNode
+---@overload fun(args: NodeArgs): DirectoryNode
+
+---@protected
+---@param args NodeArgs
+function DirectoryNode:new(args)
+  DirectoryNode.super.new(self, args)
+
+  local handle       = vim.loop.fs_scandir(args.absolute_path)
   local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil or false
 
-  ---@type DirectoryNode
-  local o = {
-    type = "directory",
-    explorer = explorer,
-    absolute_path = absolute_path,
-    executable = false,
-    fs_stat = fs_stat,
-    git_status = nil,
-    hidden = false,
-    name = name,
-    parent = parent,
-    watcher = nil,
-    diag_status = nil,
-    is_dot = false,
+  self.type          = "directory"
 
-    has_children = has_children,
-    group_next = nil,
-    nodes = {},
-    open = false,
-    hidden_stats = nil,
-  }
-  o = self:new(o)
+  self.has_children  = has_children
+  self.group_next    = nil
+  self.nodes         = {}
+  self.open          = false
+  self.hidden_stats  = nil
 
-  o.watcher = require("nvim-tree.explorer.watch").create_watcher(o)
-
-  return o
+  self.watcher       = require("nvim-tree.explorer.watch").create_watcher(self)
 end
 
 function DirectoryNode:destroy()
@@ -289,12 +273,12 @@ end
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@return DirectoryNode cloned
 function DirectoryNode:clone()
-  local clone = Node.clone(self) --[[@as DirectoryNode]]
+  local clone        = Node.clone(self) --[[@as DirectoryNode]]
 
   clone.has_children = self.has_children
-  clone.group_next = nil
-  clone.nodes = {}
-  clone.open = self.open
+  clone.group_next   = nil
+  clone.nodes        = {}
+  clone.open         = self.open
   clone.hidden_stats = nil
 
   for _, child in ipairs(self.nodes) do

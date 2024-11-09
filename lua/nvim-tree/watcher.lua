@@ -2,7 +2,7 @@ local notify = require("nvim-tree.notify")
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
 
-local Class = require("nvim-tree.class")
+local Class = require("nvim-tree.classic")
 
 local FS_EVENT_FLAGS = {
   -- inotify or equivalent will be used; fallback to stat has not yet been implemented
@@ -15,36 +15,45 @@ local M = {
   config = {},
 }
 
+---Registry of all events
+---@type Event[]
+local events = {}
+
 ---@class (exact) Event: Class
 ---@field destroyed boolean
 ---@field private path string
 ---@field private fs_event uv.uv_fs_event_t?
 ---@field private listeners function[]
-local Event = Class:new()
+local Event = Class:extend()
 
----Registry of all events
----@type Event[]
-local events = {}
+---@class Event
+---@overload fun(args: EventArgs): Event
+
+---@class (exact) EventArgs
+---@field path string
+
+---@protected
+---@param args EventArgs
+function Event:new(args)
+  self.destroyed = false
+  self.path      = args.path
+  self.fs_event  = nil
+  self.listeners = {}
+end
 
 ---Static factory method
 ---Creates and starts an Event
----@param path string
----@return Event|nil
-function Event:create(path)
-  log.line("watcher", "Event:create '%s'", path)
+---nil on failure to start
+---@param args EventArgs
+---@return Event?
+function Event:create(args)
+  log.line("watcher", "Event:create '%s'", args.path)
 
-  ---@type Event
-  local o = {
-    destroyed = false,
-    path = path,
-    fs_event = nil,
-    listeners = {},
-  }
-  o = self:new(o)
+  local event = Event(args)
 
-  if o:start() then
-    events[path] = o
-    return o
+  if event:start() then
+    events[event.path] = event
+    return event
   else
     return nil
   end
@@ -128,8 +137,10 @@ function Event:destroy(message)
   events[self.path] = nil
 end
 
----Static factory method
----Creates and starts a Watcher
+---Registry of all watchers
+---@type Watcher[]
+local watchers = {}
+
 ---@class (exact) Watcher: Class
 ---@field data table user data
 ---@field destroyed boolean
@@ -138,43 +149,50 @@ end
 ---@field private files string[]?
 ---@field private listener fun(filename: string)?
 ---@field private event Event
-local Watcher = Class:new()
+local Watcher = Class:extend()
 
----Registry of all watchers
----@type Watcher[]
-local watchers = {}
+---@class Watcher
+---@overload fun(args: WatcherArgs): Watcher
+
+---@class (exact) WatcherArgs
+---@field path string
+---@field files string[]|nil
+---@field callback fun(watcher: Watcher)
+---@field data table? user data
+
+---@protected
+---@param args WatcherArgs
+function Watcher:new(args)
+  self.data      = args.data
+  self.destroyed = false
+  self.path      = args.path
+  self.callback  = args.callback
+  self.files     = args.files
+  self.listener  = nil
+end
 
 ---Static factory method
----@param path string
----@param files string[]|nil
----@param callback fun(watcher: Watcher)
----@param data table user data
+---Creates and starts a Watcher
+---nil on failure to create Event
+---@param args WatcherArgs
 ---@return Watcher|nil
-function Watcher:create(path, files, callback, data)
-  log.line("watcher", "Watcher:create '%s' %s", path, vim.inspect(files))
+function Watcher:create(args)
+  log.line("watcher", "Watcher:create '%s' %s", args.path, vim.inspect(args.files))
 
-  local event = events[path] or Event:create(path)
+  local event = events[args.path] or Event:create({ path = args.path })
   if not event then
     return nil
   end
 
-  ---@type Watcher
-  local o = {
-    data = data,
-    destroyed = false,
-    path = path,
-    callback = callback,
-    files = files,
-    listener = nil,
-    event = event,
-  }
-  o = self:new(o)
+  local watcher = Watcher(args)
 
-  o:start()
+  watcher.event = event
 
-  table.insert(watchers, o)
+  watcher:start()
 
-  return o
+  table.insert(watchers, watcher)
+
+  return watcher
 end
 
 function Watcher:start()

@@ -1,8 +1,5 @@
 local notify = require("nvim-tree.notify")
 
-local HL_POSITION = require("nvim-tree.enum").HL_POSITION
-local ICON_PLACEMENT = require("nvim-tree.enum").ICON_PLACEMENT
-
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
@@ -20,52 +17,49 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field folder_hl_by_xy table<GitXY, string>?
 ---@field icons_by_status GitIconsByStatus?
 ---@field icons_by_xy GitIconsByXY?
-local DecoratorGit = Decorator:new()
+local DecoratorGit = Decorator:extend()
 
----Static factory method
----@param opts table
----@param explorer Explorer
----@return DecoratorGit
-function DecoratorGit:create(opts, explorer)
-  ---@type DecoratorGit
-  local o = {
-    explorer = explorer,
-    enabled = opts.git.enable,
-    hl_pos = HL_POSITION[opts.renderer.highlight_git] or HL_POSITION.none,
-    icon_placement = ICON_PLACEMENT[opts.renderer.icons.git_placement] or ICON_PLACEMENT.none,
-  }
-  o = self:new(o)
+---@class DecoratorGit
+---@overload fun(explorer: DecoratorArgs): DecoratorGit
 
-  if not o.enabled then
-    return o
+---@protected
+---@param args DecoratorArgs
+function DecoratorGit:new(args)
+  Decorator.new(self, {
+    explorer       = args.explorer,
+    enabled        = args.explorer.opts.git.enable,
+    hl_pos         = args.explorer.opts.renderer.highlight_git or "none",
+    icon_placement = args.explorer.opts.renderer.icons.git_placement or "none",
+  })
+
+  if not self.enabled then
+    return
   end
 
-  if o.hl_pos ~= HL_POSITION.none then
-    o:build_file_folder_hl_by_xy()
+  if self.range ~= "none" then
+    self:build_file_folder_hl_by_xy()
   end
 
-  if opts.renderer.icons.show.git then
-    o:build_icons_by_status(opts.renderer.icons.glyphs.git)
-    o:build_icons_by_xy(o.icons_by_status)
+  if self.explorer.opts.renderer.icons.show.git then
+    self:build_icons_by_status(self.explorer.opts.renderer.icons.glyphs.git)
+    self:build_icons_by_xy(self.icons_by_status)
 
-    for _, icon in pairs(o.icons_by_status) do
+    for _, icon in pairs(self.icons_by_status) do
       self:define_sign(icon)
     end
   end
-
-  return o
 end
 
 ---@param glyphs GitGlyphsByStatus
 function DecoratorGit:build_icons_by_status(glyphs)
-  self.icons_by_status = {}
-  self.icons_by_status.staged = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
-  self.icons_by_status.unstaged = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
-  self.icons_by_status.renamed = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 }
-  self.icons_by_status.deleted = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 }
-  self.icons_by_status.unmerged = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 }
+  self.icons_by_status           = {}
+  self.icons_by_status.staged    = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
+  self.icons_by_status.unstaged  = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
+  self.icons_by_status.renamed   = { str = glyphs.renamed, hl = { "NvimTreeGitRenamedIcon" }, ord = 3 }
+  self.icons_by_status.deleted   = { str = glyphs.deleted, hl = { "NvimTreeGitDeletedIcon" }, ord = 4 }
+  self.icons_by_status.unmerged  = { str = glyphs.unmerged, hl = { "NvimTreeGitMergeIcon" }, ord = 5 }
   self.icons_by_status.untracked = { str = glyphs.untracked, hl = { "NvimTreeGitNewIcon" }, ord = 6 }
-  self.icons_by_status.ignored = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
+  self.icons_by_status.ignored   = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
 end
 
 ---@param icons GitIconsByXY
@@ -102,7 +96,7 @@ function DecoratorGit:build_icons_by_xy(icons)
     ["DD"] = { icons.deleted },
     ["DU"] = { icons.deleted, icons.unmerged },
     ["!!"] = { icons.ignored },
-    dirty = { icons.unstaged },
+    dirty  = { icons.unstaged },
   }
 end
 
@@ -121,7 +115,7 @@ function DecoratorGit:build_file_folder_hl_by_xy()
     [" T"] = "NvimTreeGitFileDirtyHL",
     ["MM"] = "NvimTreeGitFileDirtyHL",
     ["AM"] = "NvimTreeGitFileDirtyHL",
-    dirty = "NvimTreeGitFileDirtyHL",
+    dirty  = "NvimTreeGitFileDirtyHL",
     ["A "] = "NvimTreeGitFileStagedHL",
     ["??"] = "NvimTreeGitFileNewHL",
     ["AU"] = "NvimTreeGitFileMergeHL",
@@ -165,7 +159,7 @@ function DecoratorGit:calculate_icons(node)
   for _, s in pairs(git_xy) do
     local icons = self.icons_by_xy[s]
     if not icons then
-      if self.hl_pos == HL_POSITION.none then
+      if self.range == "none" then
         notify.warn(string.format("Unrecognized git state '%s'", git_xy))
       end
       return nil
@@ -197,7 +191,7 @@ end
 ---@param node Node
 ---@return string|nil name
 function DecoratorGit:sign_name(node)
-  if self.icon_placement ~= ICON_PLACEMENT.signcolumn then
+  if self.icon_placement ~= "signcolumn" then
     return
   end
 
@@ -211,7 +205,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorGit:calculate_highlight(node)
-  if not node or not self.enabled or self.hl_pos == HL_POSITION.none then
+  if not node or not self.enabled or self.range == "none" then
     return nil
   end
 

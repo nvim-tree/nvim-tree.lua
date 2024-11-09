@@ -1,29 +1,30 @@
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 
+local Class = require("nvim-tree.classic")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class LiveFilter
+---@class (exact) LiveFilter: Class
 ---@field explorer Explorer
 ---@field prefix string
 ---@field always_show_folders boolean
 ---@field filter string
-local LiveFilter = {}
+local LiveFilter = Class:extend()
 
----@param opts table
----@param explorer Explorer
----@return LiveFilter
-function LiveFilter:new(opts, explorer)
-  local o = {
-    explorer = explorer,
-    prefix = opts.live_filter.prefix,
-    always_show_folders = opts.live_filter.always_show_folders,
-    filter = nil,
-  }
-  setmetatable(o, self)
-  self.__index = self
-  return o
+---@class LiveFilter
+---@overload fun(args: LiveFilterArgs): LiveFilter
+
+---@class (exact) LiveFilterArgs
+---@field explorer Explorer
+
+---@protected
+---@param args LiveFilterArgs
+function LiveFilter:new(args)
+  self.explorer = args.explorer
+  self.prefix = self.explorer.opts.live_filter.prefix
+  self.always_show_folders = self.explorer.opts.live_filter.always_show_folders
+  self.filter = nil
 end
 
 ---@param node_ Node?
@@ -81,7 +82,7 @@ end
 ---@param node Node
 ---@return boolean
 local function matches(self, node)
-  if not self.explorer.filters.config.enable then
+  if not self.explorer.filters.enabled then
     return true
   end
 
@@ -168,21 +169,21 @@ local function create_overlay(self)
   if view.View.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
     vim.api.nvim_clear_autocmds({
-      event = "WinLeave",
+      event   = "WinLeave",
       pattern = "NvimTree_*",
-      group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
+      group   = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
     })
   end
 
   configure_buffer_overlay(self)
   overlay_winnr = vim.api.nvim_open_win(overlay_bufnr, true, {
-    col = 1,
-    row = 0,
+    col      = 1,
+    row      = 0,
     relative = "cursor",
-    width = calculate_overlay_win_width(self),
-    height = 1,
-    border = "none",
-    style = "minimal",
+    width    = calculate_overlay_win_width(self),
+    height   = 1,
+    border   = "none",
+    style    = "minimal",
   })
 
   if vim.fn.has("nvim-0.10") == 1 then

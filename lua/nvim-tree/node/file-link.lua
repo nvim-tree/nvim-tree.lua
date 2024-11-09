@@ -2,31 +2,22 @@ local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
 local FileNode = require("nvim-tree.node.file")
+local LinkNode = require("nvim-tree.node.link")
 
----@class (exact) FileLinkNode: FileNode
----@field link_to string absolute path
----@field private fs_stat_target uv.fs_stat.result
-local FileLinkNode = FileNode:new()
+---@class (exact) FileLinkNode: FileNode, LinkNode
+local FileLinkNode = FileNode:extend()
+FileLinkNode:implement(LinkNode)
 
----Static factory method
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param link_to string
----@param name string
----@param fs_stat uv.fs_stat.result?
----@param fs_stat_target uv.fs_stat.result
----@return FileLinkNode? nil on vim.loop.fs_realpath failure
-function FileLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
-  local o = FileNode:create(explorer, parent, absolute_path, name, fs_stat)
+---@class FileLinkNode
+---@overload fun(args: LinkNodeArgs): FileLinkNode
 
-  o = self:new(o)
+---@protected
+---@param args LinkNodeArgs
+function FileLinkNode:new(args)
+  LinkNode.new(self, args)
+  FileLinkNode.super.new(self, args)
 
-  o.type = "link"
-  o.link_to = link_to
-  o.fs_stat_target = fs_stat_target
-
-  return o
+  self.type = "link"
 end
 
 function FileLinkNode:destroy()
@@ -71,7 +62,6 @@ end
 function FileLinkNode:clone()
   local clone = FileNode.clone(self) --[[@as FileLinkNode]]
 
-  clone.type = self.type
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target
 

@@ -15,35 +15,19 @@ local PICTURE_MAP = {
 
 ---@class (exact) FileNode: Node
 ---@field extension string
-local FileNode = Node:new()
+local FileNode = Node:extend()
 
----Static factory method
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param name string
----@param fs_stat uv.fs_stat.result?
----@return FileNode
-function FileNode:create(explorer, parent, absolute_path, name, fs_stat)
-  ---@type FileNode
-  local o = {
-    type = "file",
-    explorer = explorer,
-    absolute_path = absolute_path,
-    executable = utils.is_executable(absolute_path),
-    fs_stat = fs_stat,
-    git_status = nil,
-    hidden = false,
-    name = name,
-    parent = parent,
-    diag_status = nil,
-    is_dot = false,
+---@class FileNode
+---@overload fun(args: NodeArgs): FileNode
 
-    extension = string.match(name, ".?[^.]+%.(.*)") or "",
-  }
-  o = self:new(o)
+---@protected
+---@param args NodeArgs
+function FileNode:new(args)
+  FileNode.super.new(self, args)
 
-  return o
+  self.type       = "file"
+  self.extension  = string.match(args.name, ".?[^.]+%.(.*)") or ""
+  self.executable = utils.is_executable(args.absolute_path)
 end
 
 function FileNode:destroy()

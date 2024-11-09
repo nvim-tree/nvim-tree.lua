@@ -2,7 +2,7 @@ local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
-local appearance_diagnostics = require("nvim-tree.appearance.diagnostics")
+local appearance_hi_test = require("nvim-tree.appearance.hi-test")
 local events = require("nvim-tree.events")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
@@ -93,6 +93,22 @@ end
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
+---@param ... any passed to method
+---@return fun(...): any
+local function wrap_explorer_member_args(explorer_member, member_method, ...)
+  local method_args = ...
+  return wrap(function(...)
+    local explorer = core.get_explorer()
+    if explorer then
+      return explorer[explorer_member][member_method](explorer[explorer_member], method_args, ...)
+    end
+  end)
+end
+
+---Invoke a member's method on the singleton explorer.
+---Print error when setup not called.
+---@param explorer_member string explorer member name
+---@param member_method string method name to invoke on member
 ---@return fun(...): any
 local function wrap_explorer_member(explorer_member, member_method)
   return wrap(function(...)
@@ -165,13 +181,13 @@ Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
-Api.tree.toggle_enable_filters = wrap(actions.tree.modifiers.toggles.enable)
-Api.tree.toggle_gitignore_filter = wrap(actions.tree.modifiers.toggles.git_ignored)
-Api.tree.toggle_git_clean_filter = wrap(actions.tree.modifiers.toggles.git_clean)
-Api.tree.toggle_no_buffer_filter = wrap(actions.tree.modifiers.toggles.no_buffer)
-Api.tree.toggle_custom_filter = wrap(actions.tree.modifiers.toggles.custom)
-Api.tree.toggle_hidden_filter = wrap(actions.tree.modifiers.toggles.dotfiles)
-Api.tree.toggle_no_bookmark_filter = wrap(actions.tree.modifiers.toggles.no_bookmark)
+Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
+Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
+Api.tree.toggle_git_clean_filter = wrap_explorer_member_args("filters", "toggle", "git_clean")
+Api.tree.toggle_no_buffer_filter = wrap_explorer_member_args("filters", "toggle", "no_buffer")
+Api.tree.toggle_custom_filter = wrap_explorer_member_args("filters", "toggle", "custom")
+Api.tree.toggle_hidden_filter = wrap_explorer_member_args("filters", "toggle", "dotfiles")
+Api.tree.toggle_no_bookmark_filter = wrap_explorer_member_args("filters", "toggle", "no_bookmark")
 Api.tree.toggle_help = wrap(help.toggle)
 Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 
@@ -289,7 +305,7 @@ Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.config.mappings.default_on_attach = keymap.default_on_attach
 
-Api.diagnostics.hi_test = wrap(appearance_diagnostics.hi_test)
+Api.diagnostics.hi_test = wrap(appearance_hi_test)
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()

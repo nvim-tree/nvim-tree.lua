@@ -1,9 +1,8 @@
-local Class = require("nvim-tree.class")
+local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
----Uses the abstract factory pattern to instantiate child instances.
 ---@class (exact) Node: Class
----@field type NODE_TYPE
+---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
 ---@field executable boolean
@@ -14,7 +13,29 @@ local Class = require("nvim-tree.class")
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
 ---@field private is_dot boolean cached is_dotfile
-local Node = Class:new()
+local Node = Class:extend()
+
+---@class (exact) NodeArgs
+---@field explorer Explorer
+---@field parent DirectoryNode?
+---@field absolute_path string
+---@field name string
+---@field fs_stat uv.fs_stat.result?
+
+---@protected
+---@param args NodeArgs
+function Node:new(args)
+  self.explorer      = args.explorer
+  self.absolute_path = args.absolute_path
+  self.executable    = false
+  self.fs_stat       = args.fs_stat
+  self.git_status    = nil
+  self.hidden        = false
+  self.name          = args.name
+  self.parent        = args.parent
+  self.diag_status   = nil
+  self.is_dot        = false
+end
 
 function Node:destroy()
 end
@@ -104,17 +125,17 @@ function Node:clone()
 
   ---@type Node
   local clone = {
-    type = self.type,
-    explorer = explorer_placeholder,
+    type          = self.type,
+    explorer      = explorer_placeholder,
     absolute_path = self.absolute_path,
-    executable = self.executable,
-    fs_stat = self.fs_stat,
-    git_status = self.git_status,
-    hidden = self.hidden,
-    name = self.name,
-    parent = nil,
-    diag_status = nil,
-    is_dot = self.is_dot,
+    executable    = self.executable,
+    fs_stat       = self.fs_stat,
+    git_status    = self.git_status,
+    hidden        = self.hidden,
+    name          = self.name,
+    parent        = nil,
+    diag_status   = nil,
+    is_dot        = self.is_dot,
   }
 
   return clone

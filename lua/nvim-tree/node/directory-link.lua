@@ -2,35 +2,29 @@ local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local LinkNode = require("nvim-tree.node.link")
 
----@class (exact) DirectoryLinkNode: DirectoryNode
----@field link_to string absolute path
----@field private fs_stat_target uv.fs_stat.result
-local DirectoryLinkNode = DirectoryNode:new()
+---@class (exact) DirectoryLinkNode: DirectoryNode, LinkNode
+local DirectoryLinkNode = DirectoryNode:extend()
+DirectoryLinkNode:implement(LinkNode)
 
----Static factory method
----@param explorer Explorer
----@param parent DirectoryNode
----@param absolute_path string
----@param link_to string
----@param name string
----@param fs_stat uv.fs_stat.result?
----@param fs_stat_target uv.fs_stat.result
----@return DirectoryLinkNode? nil on vim.loop.fs_realpath failure
-function DirectoryLinkNode:create(explorer, parent, absolute_path, link_to, name, fs_stat, fs_stat_target)
-  -- create DirectoryNode with the target path for the watcher
-  local o = DirectoryNode:create(explorer, parent, link_to, name, fs_stat)
+---@class DirectoryLinkNode
+---@overload fun(args: LinkNodeArgs): DirectoryLinkNode
 
-  o = self:new(o)
+---@protected
+---@param args LinkNodeArgs
+function DirectoryLinkNode:new(args)
+  LinkNode.new(self, args)
+
+  -- create DirectoryNode with watcher on link_to
+  local absolute_path = args.absolute_path
+  args.absolute_path = args.link_to
+  DirectoryLinkNode.super.new(self, args)
+
+  self.type          = "link"
 
   -- reset absolute path to the link itself
-  o.absolute_path = absolute_path
-
-  o.type = "link"
-  o.link_to = link_to
-  o.fs_stat_target = fs_stat_target
-
-  return o
+  self.absolute_path = absolute_path
 end
 
 function DirectoryLinkNode:destroy()
@@ -54,10 +48,10 @@ function DirectoryLinkNode:highlighted_icon()
 
   if self.open then
     str = self.explorer.opts.renderer.icons.glyphs.folder.symlink_open
-    hl = "NvimTreeOpenedFolderIcon"
+    hl  = "NvimTreeOpenedFolderIcon"
   else
     str = self.explorer.opts.renderer.icons.glyphs.folder.symlink
-    hl = "NvimTreeClosedFolderIcon"
+    hl  = "NvimTreeClosedFolderIcon"
   end
 
   return { str = str, hl = { hl } }
@@ -70,8 +64,9 @@ function DirectoryLinkNode:highlighted_name()
 
   if self.explorer.opts.renderer.symlink_destination then
     local link_to = utils.path_relative(self.link_to, self.explorer.absolute_path)
-    name.str = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
-    name.hl = { "NvimTreeSymlinkFolderName" }
+
+    name.str      = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
+    name.hl       = { "NvimTreeSymlinkFolderName" }
   end
 
   return name
@@ -82,7 +77,6 @@ end
 function DirectoryLinkNode:clone()
   local clone = DirectoryNode.clone(self) --[[@as DirectoryLinkNode]]
 
-  clone.type = self.type
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target
 

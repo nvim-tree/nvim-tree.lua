@@ -1,52 +1,59 @@
 local utils = require("nvim-tree.utils")
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
----@class Filters to handle all opts.filters and related API
----@field config table hydrated user opts.filters
+local Class = require("nvim-tree.classic")
+
+---@alias FilterType "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
+
+---@class (exact) Filters: Class
+---@field enabled boolean
+---@field state table<FilterType, boolean>
 ---@field private explorer Explorer
 ---@field private exclude_list string[] filters.exclude
----@field private ignore_list string[] filters.custom string table
+---@field private ignore_list table<string, boolean> filters.custom string table
 ---@field private custom_function (fun(absolute_path: string): boolean)|nil filters.custom function
-local Filters = {}
+local Filters = Class:extend()
 
----@param opts table user options
----@param explorer Explorer
----@return Filters
-function Filters:new(opts, explorer)
-  local o = {
-    explorer = explorer,
-    ignore_list = {},
-    exclude_list = opts.filters.exclude,
-    custom_function = nil,
-    config = {
-      enable = opts.filters.enable,
-      filter_custom = true,
-      filter_dotfiles = opts.filters.dotfiles,
-      filter_git_ignored = opts.filters.git_ignored,
-      filter_git_clean = opts.filters.git_clean,
-      filter_no_buffer = opts.filters.no_buffer,
-      filter_no_bookmark = opts.filters.no_bookmark,
-    },
+---@class Filters
+---@overload fun(args: FiltersArgs): Filters
+
+---@class (exact) FiltersArgs
+---@field explorer Explorer
+
+---@protected
+---@param args FiltersArgs
+function Filters:new(args)
+  self.explorer        = args.explorer
+  self.ignore_list     = {}
+  self.exclude_list    = self.explorer.opts.filters.exclude
+  self.custom_function = nil
+
+  self.enabled         = self.explorer.opts.filters.enable
+  self.state           = {
+    custom      = true,
+    dotfiles    = self.explorer.opts.filters.dotfiles,
+    git_ignored = self.explorer.opts.filters.git_ignored,
+    git_clean   = self.explorer.opts.filters.git_clean,
+    no_buffer   = self.explorer.opts.filters.no_buffer,
+    no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 
-  local custom_filter = opts.filters.custom
+  local custom_filter  = self.explorer.opts.filters.custom
   if type(custom_filter) == "function" then
-    o.custom_function = custom_filter
+    self.custom_function = custom_filter
   else
     if custom_filter and #custom_filter > 0 then
       for _, filter_name in pairs(custom_filter) do
-        o.ignore_list[filter_name] = true
+        self.ignore_list[filter_name] = true
       end
     end
   end
-  setmetatable(o, self)
-  self.__index = self
-  return o
 end
 
+---@private
 ---@param path string
 ---@return boolean
-local function is_excluded(self, path)
+function Filters:is_excluded(path)
   for _, node in ipairs(self.exclude_list) do
     if path:match(node) then
       return true
@@ -56,10 +63,11 @@ local function is_excluded(self, path)
 end
 
 ---Check if the given path is git clean/ignored
+---@private
 ---@param path string Absolute path
 ---@param project GitProject from prepare
 ---@return boolean
-local function git(self, path, project)
+function Filters:git(path, project)
   if type(project) ~= "table" or type(project.files) ~= "table" or type(project.dirs) ~= "table" then
     return false
   end
@@ -70,12 +78,12 @@ local function git(self, path, project)
   xy = xy or project.dirs.indirect[path] and project.dirs.indirect[path][1]
 
   -- filter ignored; overrides clean as they are effectively dirty
-  if self.config.filter_git_ignored and xy == "!!" then
+  if self.state.git_ignored and xy == "!!" then
     return true
   end
 
   -- filter clean
-  if self.config.filter_git_clean and not xy then
+  if self.state.git_clean and not xy then
     return true
   end
 
@@ -83,11 +91,12 @@ local function git(self, path, project)
 end
 
 ---Check if the given path has no listed buffer
+---@private
 ---@param path string Absolute path
 ---@param bufinfo table vim.fn.getbufinfo { buflisted = 1 }
 ---@return boolean
-local function buf(self, path, bufinfo)
-  if not self.config.filter_no_buffer or type(bufinfo) ~= "table" then
+function Filters:buf(path, bufinfo)
+  if not self.state.no_buffer or type(bufinfo) ~= "table" then
     return false
   end
 
@@ -101,19 +110,21 @@ local function buf(self, path, bufinfo)
   return true
 end
 
+---@private
 ---@param path string
 ---@return boolean
-local function dotfile(self, path)
-  return self.config.filter_dotfiles and utils.path_basename(path):sub(1, 1) == "."
+function Filters:dotfile(path)
+  return self.state.dotfiles and utils.path_basename(path):sub(1, 1) == "."
 end
 
 ---Bookmark is present
+---@private
 ---@param path string
 ---@param path_type string|nil filetype of path
 ---@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
 ---@return boolean
-local function bookmark(self, path, path_type, bookmarks)
-  if not self.config.filter_no_bookmark then
+function Filters:bookmark(path, path_type, bookmarks)
+  if not self.state.no_bookmark then
     return false
   end
   -- if bookmark is empty, we should see a empty filetree
@@ -145,10 +156,11 @@ local function bookmark(self, path, path_type, bookmarks)
   return true
 end
 
+---@private
 ---@param path string
 ---@return boolean
-local function custom(self, path)
-  if not self.config.filter_custom then
+function Filters:custom(path)
+  if not self.state.custom then
     return false
   end
 
@@ -190,7 +202,7 @@ function Filters:prepare(project)
     bookmarks = {},
   }
 
-  if self.config.filter_no_buffer then
+  if self.state.no_buffer then
     status.bufinfo = vim.fn.getbufinfo({ buflisted = 1 })
   end
 
@@ -210,20 +222,20 @@ end
 ---@param status table from prepare
 ---@return boolean
 function Filters:should_filter(path, fs_stat, status)
-  if not self.config.enable then
+  if not self.enabled then
     return false
   end
 
   -- exclusions override all filters
-  if is_excluded(self, path) then
+  if self:is_excluded(path) then
     return false
   end
 
-  return git(self, path, status.project)
-    or buf(self, path, status.bufinfo)
-    or dotfile(self, path)
-    or custom(self, path)
-    or bookmark(self, path, fs_stat and fs_stat.type, status.bookmarks)
+  return self:git(path, status.project)
+    or self:buf(path, status.bufinfo)
+    or self:dotfile(path)
+    or self:custom(path)
+    or self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks)
 end
 
 --- Check if the given path should be filtered, and provide the reason why it was
@@ -232,26 +244,43 @@ end
 ---@param status table from prepare
 ---@return FILTER_REASON
 function Filters:should_filter_as_reason(path, fs_stat, status)
-  if not self.config.enable then
+  if not self.enabled then
     return FILTER_REASON.none
   end
 
-  if is_excluded(self, path) then
+  if self:is_excluded(path) then
     return FILTER_REASON.none
   end
 
-  if git(self, path, status.project) then
+  if self:git(path, status.project) then
     return FILTER_REASON.git
-  elseif buf(self, path, status.bufinfo) then
+  elseif self:buf(path, status.bufinfo) then
     return FILTER_REASON.buf
-  elseif dotfile(self, path) then
+  elseif self:dotfile(path) then
     return FILTER_REASON.dotfile
-  elseif custom(self, path) then
+  elseif self:custom(path) then
     return FILTER_REASON.custom
-  elseif bookmark(self, path, fs_stat and fs_stat.type, status.bookmarks) then
+  elseif self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks) then
     return FILTER_REASON.bookmark
   else
     return FILTER_REASON.none
+  end
+end
+
+---Toggle a type and refresh
+---@private
+---@param type FilterType? nil to disable all
+function Filters:toggle(type)
+  if not type or self.state[type] == nil then
+    self.enabled = not self.enabled
+  else
+    self.state[type] = not self.state[type]
+  end
+
+  local node = self.explorer:get_node_at_cursor()
+  self.explorer:reload_explorer()
+  if node then
+    utils.focus_node_or_parent(node)
   end
 end
 

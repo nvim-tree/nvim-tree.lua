@@ -128,25 +128,25 @@ function M.reload_project(toplevel, path, callback)
     return
   end
 
-  ---@type GitRunnerOpts
-  local runner_opts = {
-    toplevel = toplevel,
-    path = path,
+  ---@type GitRunnerArgs
+  local args = {
+    toplevel       = toplevel,
+    path           = path,
     list_untracked = git_utils.should_show_untracked(toplevel),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
+    list_ignored   = true,
+    timeout        = M.config.git.timeout,
   }
 
   if callback then
     ---@param path_xy GitPathXY
-    runner_opts.callback = function(path_xy)
+    args.callback = function(path_xy)
       reload_git_project(toplevel, path, project, path_xy)
       callback()
     end
-    GitRunner:run(runner_opts)
+    GitRunner:run(args)
   else
     -- TODO #1974 use callback once async/await is available
-    reload_git_project(toplevel, path, project, GitRunner:run(runner_opts))
+    reload_git_project(toplevel, path, project, GitRunner:run(args))
   end
 end
 
@@ -276,10 +276,10 @@ function M.load_project(path)
   end
 
   local path_xys = GitRunner:run({
-    toplevel = toplevel,
+    toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
-    list_ignored = true,
-    timeout = M.config.git.timeout,
+    list_ignored   = true,
+    timeout        = M.config.git.timeout,
   })
 
   local watcher = nil
@@ -298,15 +298,20 @@ function M.load_project(path)
     end
 
     local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
-    watcher = Watcher:create(git_dir, WATCHED_FILES, callback, {
-      toplevel = toplevel,
+    watcher = Watcher:create({
+      path     = git_dir,
+      files    = WATCHED_FILES,
+      callback = callback,
+      data     = {
+        toplevel = toplevel,
+      }
     })
   end
 
   if path_xys then
     M._projects_by_toplevel[toplevel] = {
-      files = path_xys,
-      dirs = git_utils.project_files_to_project_dirs(path_xys, toplevel),
+      files   = path_xys,
+      dirs    = git_utils.project_files_to_project_dirs(path_xys, toplevel),
       watcher = watcher,
     }
     return M._projects_by_toplevel[toplevel]

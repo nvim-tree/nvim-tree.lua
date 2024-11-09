@@ -57,13 +57,13 @@ local function show()
   end
 
   M.popup_win = vim.api.nvim_open_win(vim.api.nvim_create_buf(false, false), false, {
-    relative = "win",
-    row = 0,
-    bufpos = { vim.api.nvim_win_get_cursor(0)[1] - 1, 0 },
-    width = math.min(text_width, vim.o.columns - 2),
-    height = 1,
+    relative  = "win",
+    row       = 0,
+    bufpos    = { vim.api.nvim_win_get_cursor(0)[1] - 1, 0 },
+    width     = math.min(text_width, vim.o.columns - 2),
+    height    = 1,
     noautocmd = true,
-    style = "minimal",
+    style     = "minimal",
   })
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]

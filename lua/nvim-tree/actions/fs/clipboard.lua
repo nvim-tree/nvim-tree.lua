@@ -7,6 +7,7 @@ local notify = require("nvim-tree.notify")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
+local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@alias ClipboardAction "copy" | "cut"
@@ -14,35 +15,31 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@alias ClipboardActionFn fun(source: string, dest: string): boolean, string?
 
----@class Clipboard to handle all actions.fs clipboard API
----@field config table hydrated user opts.filters
+---@class (exact) Clipboard: Class
 ---@field private explorer Explorer
 ---@field private data ClipboardData
 ---@field private clipboard_name string
 ---@field private reg string
-local Clipboard = {}
+local Clipboard = Class:extend()
 
----@param opts table user options
----@param explorer Explorer
----@return Clipboard
-function Clipboard:new(opts, explorer)
-  ---@type Clipboard
-  local o = {
-    explorer = explorer,
-    data = {
-      copy = {},
-      cut = {},
-    },
-    clipboard_name = opts.actions.use_system_clipboard and "system" or "neovim",
-    reg = opts.actions.use_system_clipboard and "+" or "1",
-    config = {
-      filesystem_watchers = opts.filesystem_watchers,
-    },
+---@class Clipboard
+---@overload fun(args: ClipboardArgs): Clipboard
+
+---@class (exact) ClipboardArgs
+---@field explorer Explorer
+
+---@protected
+---@param args ClipboardArgs
+function Clipboard:new(args)
+  self.explorer = args.explorer
+
+  self.data = {
+    copy = {},
+    cut = {},
   }
 
-  setmetatable(o, self)
-  self.__index = self
-  return o
+  self.clipboard_name = self.explorer.opts.actions.use_system_clipboard and "system" or "neovim"
+  self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
 end
 
 ---@param source string
@@ -252,7 +249,7 @@ function Clipboard:do_paste(node, action, action_fn)
   end
 
   self.data[action] = {}
-  if not self.config.filesystem_watchers.enable then
+  if not self.explorer.opts.filesystem_watchers.enable then
     self.explorer:reload_explorer()
   end
 end
