@@ -10,7 +10,9 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field private sorter SorterType|SorterUser
 ---@field private folders_first boolean
 ---@field private files_first boolean
+---@field private comparators table<SorterType, SorterComparator>
 local Sorter = Class:extend()
+Sorter.comparators = {}
 
 ---@class Sorter
 ---@overload fun(args: SorterArgs): Sorter
@@ -41,6 +43,7 @@ local function tbl_slice(t, first, last)
 end
 
 ---Evaluate `sort.folders_first` and `sort.files_first`
+---@private
 ---@type SorterComparator
 function Sorter:folders_or_files_first(a, b)
   if not (self.folders_first or self.files_first) then
@@ -58,6 +61,7 @@ function Sorter:folders_or_files_first(a, b)
   return nil
 end
 
+---@private
 ---@param t Node[]
 ---@param first number
 ---@param mid number
@@ -96,6 +100,7 @@ function Sorter:merge(t, first, mid, last, comparator)
   end
 end
 
+---@private
 ---@param t Node[]
 ---@param first number
 ---@param last number
@@ -115,8 +120,8 @@ end
 ---Perform a merge sort using sorter option.
 ---@param t Node[]
 function Sorter:sort(t)
-  if self[self.sorter] then
-    self:split_merge(t, 1, #t, self[self.sorter])
+  if self.comparators[self.sorter] then
+    self:split_merge(t, 1, #t, self.comparators[self.sorter])
   elseif type(self.sorter) == "function" then
     local t_user = {}
     local origin_index = {}
@@ -134,11 +139,10 @@ function Sorter:sort(t)
       table.insert(origin_index, n)
     end
 
-    --- TODO code injection?
     -- user may return a SorterType
     local ret = self.sorter(t_user)
-    if self[ret] then
-      self:split_merge(t, 1, #t, self[ret])
+    if self.comparators[ret] then
+      self:split_merge(t, 1, #t, self.comparators[ret])
       return
     end
 
@@ -165,6 +169,7 @@ function Sorter:sort(t)
   end
 end
 
+---@private
 ---@param a Node
 ---@param b Node
 ---@param ignore_case boolean
@@ -186,18 +191,21 @@ function Sorter:name_case(a, b, ignore_case)
   end
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:case_sensitive(a, b)
+function Sorter.comparators:case_sensitive(a, b)
   return self:name_case(a, b, false)
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:name(a, b)
+function Sorter.comparators:name(a, b)
   return self:name_case(a, b, true)
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:modification_time(a, b)
+function Sorter.comparators:modification_time(a, b)
   if not (a and b) then
     return true
   end
@@ -221,8 +229,9 @@ function Sorter:modification_time(a, b)
   return last_modified_b <= last_modified_a
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:suffix(a, b)
+function Sorter.comparators:suffix(a, b)
   if not (a and b) then
     return true
   end
@@ -232,7 +241,7 @@ function Sorter:suffix(a, b)
   if early_return ~= nil then
     return early_return
   elseif a.nodes and b.nodes then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   -- dotfiles go second
@@ -241,7 +250,7 @@ function Sorter:suffix(a, b)
   elseif a.name:sub(1, 1) ~= "." and b.name:sub(1, 1) == "." then
     return false
   elseif a.name:sub(1, 1) == "." and b.name:sub(1, 1) == "." then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   -- unsuffixed go third
@@ -253,7 +262,7 @@ function Sorter:suffix(a, b)
   elseif a_suffix_ndx and not b_suffix_ndx then
     return false
   elseif not (a_suffix_ndx and b_suffix_ndx) then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   -- finally, compare by suffixes
@@ -265,14 +274,15 @@ function Sorter:suffix(a, b)
   elseif not a_suffix and b_suffix then
     return false
   elseif a_suffix:lower() == b_suffix:lower() then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   return a_suffix:lower() < b_suffix:lower()
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:extension(a, b)
+function Sorter.comparators:extension(a, b)
   if not (a and b) then
     return true
   end
@@ -291,14 +301,15 @@ function Sorter:extension(a, b)
   local a_ext = (a.extension or ""):lower()
   local b_ext = (b.extension or ""):lower()
   if a_ext == b_ext then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   return a_ext < b_ext
 end
 
+---@private
 ---@type SorterComparator
-function Sorter:filetype(a, b)
+function Sorter.comparators:filetype(a, b)
   local a_ft = vim.filetype.match({ filename = a.name })
   local b_ft = vim.filetype.match({ filename = b.name })
 
@@ -317,7 +328,7 @@ function Sorter:filetype(a, b)
 
   -- same filetype or both nil, sort by name
   if a_ft == b_ft then
-    return self:name(a, b)
+    return self.comparators:name(a, b)
   end
 
   return a_ft < b_ft
