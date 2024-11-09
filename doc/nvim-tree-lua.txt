@@ -592,6 +592,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           quit_on_open = false,
           eject = true,
           resize_window = true,
+          relative_path = true,
           window_picker = {
             enable = true,
             picker = "default",
@@ -631,11 +632,6 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         },
       },
       experimental = {
-        actions = {
-          open_file = {
-            relative_path = false,
-          },
-        },
       },
       log = {
         enable = false,
@@ -1497,6 +1493,11 @@ Configuration options for opening a file from nvim-tree.
     Resizes the tree when opening a file.
       Type: `boolean`, Default: `true`
 
+    *nvim-tree.experimental.actions.open_file.relative_path*
+    Buffers opened by nvim-tree will use with relative paths instead of
+    absolute.
+      Type: `boolean`, Default: `true`
+
     *nvim-tree.actions.open_file.window_picker*
     Window picker configuration.
 
@@ -1624,12 +1625,6 @@ Confirmation prompts.
 *nvim-tree.experimental*
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
-
-    *nvim-tree.experimental.actions.open_file.relative_path*
-    Buffers opened by nvim-tree will use with relative paths instead of
-    absolute.
-    Execute |:ls| to see the paths of all open buffers.
-      Type: `boolean`, Default: `false`
 
 ==============================================================================
  5.20 OPTS: LOG                                           *nvim-tree-opts-log*
@@ -2767,6 +2762,9 @@ Windows WSL and PowerShell
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
 - Some filesystem watcher error related to permissions will not be reported
+- Some users have reported unspecified issues with
+  |nvim-tree.experimental.actions.open_file.relative_path|. Please report any
+  issues or disable this feature.
 
 ==============================================================================
  12. NETRW                                                   *nvim-tree-netrw*

@@ -451,6 +451,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       quit_on_open = false,
       eject = true,
       resize_window = true,
+      relative_path = true,
       window_picker = {
         enable = true,
         picker = "default",
@@ -490,11 +491,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
-    actions = {
-      open_file = {
-        relative_path = false,
-      },
-    },
   },
   log = {
     enable = false,
