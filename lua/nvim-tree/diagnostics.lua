@@ -117,7 +117,9 @@ local function from_cache(node)
   return { value = max_severity, cache_version = NODE_SEVERITIES_VERSION }
 end
 
----Fired on DiagnosticChanged for a single buffer
+---Fired on DiagnosticChanged for a single buffer.
+---This will be called on set and reset of diagnostics.
+---On disabling LSP, a reset event will be sent for all buffers.
 ---@param ev table standard event with data.diagnostics populated
 function M.update_lsp(ev)
   if not M.enable or not ev or not ev.data or not ev.data.diagnostics then
@@ -171,7 +173,7 @@ function M.update_coc()
     return
   end
   utils.debounce("CocDiagnosticChanged update", M.debounce_delay, function()
-    local profile = log.profile_start("diagnostics update")
+    local profile = log.profile_start("CocDiagnosticChanged update")
     NODE_SEVERITIES = from_coc()
     NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
     if log.enabled("diagnostics") then
