@@ -17,7 +17,7 @@ local COC_SEVERITY_LEVELS = {
 }
 
 ---Absolute Node path to LSP severity level
----@alias NodeSeverities table<string, lsp.DiagnosticSeverity>
+---@alias NodeSeverities table<string, vim.diagnostic.Severity>
 
 ---@class DiagStatus
 ---@field value lsp.DiagnosticSeverity|nil
@@ -35,33 +35,6 @@ local NODE_SEVERITIES_VERSION = 0
 ---@return string
 local function uniformize_path(path)
   return utils.canonical_path(path:gsub("\\", "/"))
-end
-
----Marshal severities from LSP. Does nothing when LSP disabled.
----@return NodeSeverities
-local function from_nvim_lsp()
-  local buffer_severity = {}
-
-  -- is_enabled is not present in all 0.10 builds/releases, see #2781
-  local is_enabled = false
-  if vim.fn.has("nvim-0.10") == 1 and type(vim.diagnostic.is_enabled) == "function" then
-    is_enabled = vim.diagnostic.is_enabled()
-  elseif type(vim.diagnostic.is_disabled) == "function" then ---@diagnostic disable-line: deprecated
-    is_enabled = not vim.diagnostic.is_disabled() ---@diagnostic disable-line: deprecated
-  end
-
-  if is_enabled then
-    for _, diagnostic in ipairs(vim.diagnostic.get(nil, { severity = M.severity })) do
-      if diagnostic.severity and diagnostic.bufnr and vim.api.nvim_buf_is_valid(diagnostic.bufnr) then
-        local bufname = uniformize_path(vim.api.nvim_buf_get_name(diagnostic.bufnr))
-        if not buffer_severity[bufname] or diagnostic.severity < buffer_severity[bufname] then
-          buffer_severity[bufname] = diagnostic.severity
-        end
-      end
-    end
-  end
-
-  return buffer_severity
 end
 
 ---Severity is within diagnostics.severity.min, diagnostics.severity.max
@@ -135,11 +108,8 @@ local function from_cache(node)
     for bufname, severity in pairs(NODE_SEVERITIES) do
       local node_contains_buf = vim.startswith(bufname, nodepath .. "/")
       if node_contains_buf then
-        if severity == M.severity.max then
+        if not max_severity or severity < max_severity then
           max_severity = severity
-          break
-        else
-          max_severity = math.min(max_severity or severity, severity)
         end
       end
     end
@@ -147,23 +117,66 @@ local function from_cache(node)
   return { value = max_severity, cache_version = NODE_SEVERITIES_VERSION }
 end
 
----Fired on DiagnosticChanged and CocDiagnosticChanged events:
+---Fired on DiagnosticChanged for a single buffer
+---@param ev table standard event with data.diagnostics populated
+function M.update_lsp(ev)
+  if not M.enable or not ev or not ev.data or not ev.data.diagnostics then
+    return
+  end
+
+  local profile_event = log.profile_start("DiagnosticChanged event")
+
+  ---@type vim.Diagnostic[]
+  local diagnostics = ev.data.diagnostics
+
+  -- use the buffer from the event, as ev.data.diagnostics will be empty on resolved diagnostics
+  local bufname = uniformize_path(vim.api.nvim_buf_get_name(ev.buf))
+
+  ---@type vim.diagnostic.Severity?
+  local new_severity = nil
+
+  -- most severe (lowest) severity in user range
+  for _, diagnostic in ipairs(diagnostics) do
+    if diagnostic.severity >= M.severity.max and diagnostic.severity <= M.severity.min then
+      if not new_severity or diagnostic.severity < new_severity then
+        new_severity = diagnostic.severity
+      end
+    end
+  end
+
+  -- record delta and schedule a redraw
+  if new_severity ~= NODE_SEVERITIES[bufname] then
+    NODE_SEVERITIES[bufname] = new_severity
+    NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
+
+    utils.debounce("DiagnosticChanged redraw", M.debounce_delay, function()
+      local profile_redraw = log.profile_start("DiagnosticChanged redraw")
+
+      local explorer = core.get_explorer()
+      if explorer then
+        explorer.renderer:draw()
+      end
+
+      log.profile_end(profile_redraw)
+    end)
+  end
+
+  log.profile_end(profile_event)
+end
+
+---Fired on CocDiagnosticChanged events:
 ---debounced retrieval, cache update, version increment and draw
-function M.update()
+function M.update_coc()
   if not M.enable then
     return
   end
-  utils.debounce("diagnostics", M.debounce_delay, function()
+  utils.debounce("CocDiagnosticChanged update", M.debounce_delay, function()
     local profile = log.profile_start("diagnostics update")
-    if is_using_coc() then
-      NODE_SEVERITIES = from_coc()
-    else
-      NODE_SEVERITIES = from_nvim_lsp()
-    end
+    NODE_SEVERITIES = from_coc()
     NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
     if log.enabled("diagnostics") then
       for bufname, severity in pairs(NODE_SEVERITIES) do
-        log.line("diagnostics", "Indexing bufname '%s' with severity %d", bufname, severity)
+        log.line("diagnostics", "COC Indexing bufname '%s' with severity %d", bufname, severity)
       end
     end
     log.profile_end(profile)
