@@ -232,6 +232,17 @@ local function setup_autocommands(opts)
       end,
     })
   end
+
+  if opts.actions.set_last_win_as_target then
+    create_nvim_tree_autocmd("BufLeave", {
+      callback = function()
+        local buf_name = vim.api.nvim_buf_get_name(0)
+        if not string.find(buf_name, "NvimTree_") then
+          require("nvim-tree.lib").set_target_win()
+        end
+      end,
+    })
+  end
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
@@ -429,6 +440,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   },
   actions = {
     use_system_clipboard = true,
+    set_last_win_as_target = true,
     change_dir = {
       enable = true,
       global = false,
@@ -490,8 +502,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       default_yes = false,
     },
   },
-  experimental = {
-  },
+  experimental = {},
   log = {
     enable = false,
     truncate = false,

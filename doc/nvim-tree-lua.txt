@@ -570,6 +570,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
       },
       actions = {
         use_system_clipboard = true,
+        set_last_win_as_target = true,
         change_dir = {
           enable = true,
           global = false,
@@ -1432,6 +1433,14 @@ Useful when path is not in `.gitignore` or git integration is disabled.
 A boolean value that toggle the use of system clipboard when copy/paste
 function are invoked. When enabled, copied text will be stored in registers
 '+' (system), otherwise, it will be stored in '1' and '"'.
+  Type: `boolean`, Default: `true`
+
+*nvim-tree.actions.set_last_win_as_target*
+A boolean value that toggles the behavior of setting the last active window as
+the target window for `nvim-tree`. When enabled, the last active window will be
+set as the target for file actions (like opening files), ensuring better window
+management. When disabled, the default behavior applies.
+
   Type: `boolean`, Default: `true`
 
 *nvim-tree.actions.change_dir*
@@ -2887,6 +2896,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.open_file.window_picker.picker|
 |nvim-tree.actions.remove_file.close_window|
 |nvim-tree.actions.use_system_clipboard|
+|nvim-tree.actions.set_last_win_as_target|
 |nvim-tree.auto_reload_on_write|
 |nvim-tree.diagnostics.debounce_delay|
 |nvim-tree.diagnostics.enable|
