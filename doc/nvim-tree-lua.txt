@@ -417,6 +417,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         },
       },
       renderer = {
+        user_decorators = {},
         add_trailing = false,
         group_empty = false,
         full_name = false,
