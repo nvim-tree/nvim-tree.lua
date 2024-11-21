@@ -13,14 +13,13 @@ local DecoratorGit = require("nvim-tree.renderer.decorator.git")
 local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
 local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
 local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
-local UserDecoratorExample = require("nvim-tree.renderer.decorator.example")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
-----TODO move all these classes to API meta
-----@class (exact) HighlightedString
-----@field str string
-----@field hl string[]
+---TODO move all these classes to API meta
+---@class (exact) HighlightedString
+---@field str string
+---@field hl string[]
 
 ---@class (exact) AddHighlightArgs
 ---@field group string[]
