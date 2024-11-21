@@ -527,7 +527,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         enable = false,
         show_on_dirs = false,
         show_on_open_dirs = true,
-        debounce_delay = 50,
+        debounce_delay = 500,
         severity = {
           min = vim.diagnostic.severity.HINT,
           max = vim.diagnostic.severity.ERROR,
@@ -1272,7 +1272,7 @@ Enable/disable the feature.
 
 *nvim-tree.diagnostics.debounce_delay*
 Idle milliseconds between diagnostic event and update.
-  Type: `number`, Default: `50` (ms)
+  Type: `number`, Default: `500` (ms)
 
 *nvim-tree.diagnostics.show_on_dirs*
 Show diagnostic icons on parent directories.

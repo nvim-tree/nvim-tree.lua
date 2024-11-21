@@ -69,7 +69,7 @@ end
 
 ---Inject the node as the first argument if present otherwise do nothing.
 ---@param fn fun(node: Node, ...): any
----@return fun(node: Node, ...): any
+---@return fun(node: Node?, ...): any
 local function wrap_node(fn)
   return function(node, ...)
     node = node or wrap_explorer("get_node_at_cursor")()
@@ -80,8 +80,8 @@ local function wrap_node(fn)
 end
 
 ---Inject the node or nil as the first argument if absent.
----@param fn fun(node: Node, ...): any
----@return fun(node: Node, ...): any
+---@param fn fun(node: Node?, ...): any
+---@return fun(node: Node?, ...): any
 local function wrap_node_or_nil(fn)
   return function(node, ...)
     node = node or wrap_explorer("get_node_at_cursor")()

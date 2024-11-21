@@ -208,16 +208,16 @@ local function setup_autocommands(opts)
 
   if opts.diagnostics.enable then
     create_nvim_tree_autocmd("DiagnosticChanged", {
-      callback = function()
+      callback = function(ev)
         log.line("diagnostics", "DiagnosticChanged")
-        require("nvim-tree.diagnostics").update()
+        require("nvim-tree.diagnostics").update_lsp(ev)
       end,
     })
     create_nvim_tree_autocmd("User", {
       pattern = "CocDiagnosticChange",
       callback = function()
         log.line("diagnostics", "CocDiagnosticChange")
-        require("nvim-tree.diagnostics").update()
+        require("nvim-tree.diagnostics").update_coc()
       end,
     })
   end
@@ -387,7 +387,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     enable = false,
     show_on_dirs = false,
     show_on_open_dirs = true,
-    debounce_delay = 50,
+    debounce_delay = 500,
     severity = {
       min = vim.diagnostic.severity.HINT,
       max = vim.diagnostic.severity.ERROR,
