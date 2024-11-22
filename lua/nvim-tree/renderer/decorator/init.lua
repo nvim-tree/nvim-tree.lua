@@ -87,6 +87,13 @@ function Decorator:icons_right_align(node)
   return self:icons(node)
 end
 
+---Maybe icon override, optionally implemented
+---@param node Node
+---@return HighlightedString? icon_node
+function Decorator:icon_node(node)
+  return self:nop(node)
+end
+
 ---Maybe icons, optionally implemented
 ---@protected
 ---@param node Node

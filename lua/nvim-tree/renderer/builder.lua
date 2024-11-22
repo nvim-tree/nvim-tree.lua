@@ -197,43 +197,50 @@ function Builder:create_combined_group(groups)
   return combined_name
 end
 
----Calculate highlight group for icon and name. A combined highlight group will be created
----when there is more than one highlight.
+---Calculate decorated icon and name for a node.
+---A combined highlight group will be created when there is more than one highlight.
 ---A highlight group is always calculated and upserted for the case of highlights changing.
 ---@private
 ---@param node Node
----@return string|nil icon_hl_group
----@return string|nil name_hl_group
-function Builder:add_highlights(node)
-  -- result
-  local icon_hl_group, name_hl_group
+---@return HighlightedString icon
+---@return HighlightedString name
+function Builder:icon_name_decorated(node)
 
-  -- calculate all groups
+  -- base case
+  local icon = node:highlighted_icon()
+  local name = node:highlighted_name()
+
+  -- calculate node icon and all decorated highlight groups
   local icon_groups = {}
   local name_groups = {}
-  local d, icon, name
+  local decorator, hl_icon, hl_name
   for i = #self.decorators, 1, -1 do
-    d = self.decorators[i]
-    icon, name = d:highlight_group_icon_name(node)
-    table.insert(icon_groups, icon)
-    table.insert(name_groups, name)
+    decorator = self.decorators[i]
+
+    -- maybe overridde icon
+    icon = decorator:icon_node(node) or icon
+
+    hl_icon, hl_name = decorator:highlight_group_icon_name(node)
+
+    table.insert(icon_groups, hl_icon)
+    table.insert(name_groups, hl_name)
   end
 
-  -- one or many icon groups
+  -- add one or many icon groups
   if #icon_groups > 1 then
-    icon_hl_group = self:create_combined_group(icon_groups)
+    table.insert(icon.hl, self:create_combined_group(icon_groups))
   else
-    icon_hl_group = icon_groups[1]
+    table.insert(icon.hl, icon_groups[1])
   end
 
-  -- one or many name groups
+  -- add one or many name groups
   if #name_groups > 1 then
-    name_hl_group = self:create_combined_group(name_groups)
+    table.insert(name.hl, self:create_combined_group(name_groups))
   else
-    name_hl_group = name_groups[1]
+    table.insert(name.hl, name_groups[1])
   end
 
-  return icon_hl_group, name_hl_group
+  return icon, name
 end
 
 ---Insert node line into self.lines, calling Builder:build_lines for each directory
@@ -246,13 +253,8 @@ function Builder:build_line(node, idx, num_children)
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
-  -- main components
-  local icon, name = node:highlighted_icon(), node:highlighted_name()
-
-  -- highighting
-  local icon_hl_group, name_hl_group = self:add_highlights(node)
-  table.insert(icon.hl, icon_hl_group)
-  table.insert(name.hl, name_hl_group)
+  -- decorated node icon and name
+  local icon, name = self:icon_name_decorated(node)
 
   local line = self:format_line(indent_markers, arrows, icon, name, node)
   table.insert(self.lines, self:unwrap_highlighted_strings(line))

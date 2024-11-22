@@ -13,6 +13,13 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@class (exact) UserDecorator: Decorator
 local UserDecorator = Decorator:extend()
 
+---Override this method to set the node's icon
+---@param node Node
+---@return HighlightedString? icon_node
+function UserDecorator:icon_node(node)
+  return self:nop(node)
+end
+
 ---Override this method to provide icons and the highlight groups to apply to DecoratorIconPlacement
 ---@param node Node
 ---@return HighlightedString[]? icons
@@ -58,6 +65,17 @@ function MyDecorator:new()
   -- Define the icon sign only once
   -- Only needed if you are using icon_placement = "signcolumn"
   self:define_sign(self.my_icon)
+end
+
+---Overridden node icon
+---@param node Node
+---@return HighlightedString? icon_node
+function MyDecorator:icon_node(node)
+  if node.name == "example" then
+    return self.my_icon
+  else
+    return nil
+  end
 end
 
 ---Just one icon for DecoratorIconPlacement
