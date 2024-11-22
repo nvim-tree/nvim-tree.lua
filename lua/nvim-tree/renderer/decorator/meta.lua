@@ -11,3 +11,8 @@
 ---@field enabled boolean
 ---@field highlight_range DecoratorHighlightRange
 ---@field icon_placement DecoratorIconPlacement
+
+---A string for rendering, with optional highlight groups to apply to it
+---@class (exact) HighlightedString
+---@field str string
+---@field hl string[]

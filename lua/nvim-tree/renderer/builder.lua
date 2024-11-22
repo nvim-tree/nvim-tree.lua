@@ -16,11 +16,6 @@ local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----TODO move all these classes to API meta
----@class (exact) HighlightedString
----@field str string
----@field hl string[]
-
 ---@class (exact) AddHighlightArgs
 ---@field group string[]
 ---@field line number

@@ -2,7 +2,7 @@ local Decorator = require("nvim-tree.renderer.decorator")
 
 ---Abstract user decorator, extend to define your own.
 ---Icon and highlight are optional.
----Constructor will be called once per tree render, with no arguments:
+---Mandatory constructor will be called once per tree render, with no arguments:
 ---  Must call super passing DecoratorArgs: MyDecorator.super.new(self, args)
 ---  Must call define_sign, when using "signcolumn"
 ---See example at end.
@@ -10,7 +10,7 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@class (exact) UserDecorator: Decorator
 local UserDecorator = Decorator:extend()
 
----Override this method to provide icons and the highlight groups to apply to them
+---Override this method to provide icons and the highlight groups to apply to DecoratorIconPlacement
 ---@param node Node
 ---@return HighlightedString[]? icons
 function UserDecorator:calculate_icons(node)
