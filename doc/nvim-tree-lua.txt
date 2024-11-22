@@ -570,7 +570,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
       },
       actions = {
         use_system_clipboard = true,
-        set_last_win_as_target = true,
+        set_last_win_as_target = false,
         change_dir = {
           enable = true,
           global = false,
@@ -1441,7 +1441,7 @@ the target window for `nvim-tree`. When enabled, the last active window will be
 set as the target for file actions (like opening files), ensuring better window
 management. When disabled, the default behavior applies.
 
-  Type: `boolean`, Default: `true`
+  Type: `boolean`, Default: `false`
 
 *nvim-tree.actions.change_dir*
 vim |current-directory| behaviour.

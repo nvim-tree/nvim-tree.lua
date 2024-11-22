@@ -426,6 +426,15 @@ function M.setup(opts)
     opts.actions.open_file.window_picker.chars = tostring(opts.actions.open_file.window_picker.chars):upper()
   end
   M.window_picker = opts.actions.open_file.window_picker
+  if opts.actions.set_last_win_as_target then
+    vim.api.nvim_create_autocmd("BufLeave", {
+      callback = function()
+        if utils.is_nvim_tree_buf then
+          lib.set_target_win()
+        end
+      end,
+    })
+  end
 end
 
 return M
