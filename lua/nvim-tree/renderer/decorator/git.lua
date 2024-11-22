@@ -28,17 +28,20 @@ local DecoratorGit = Decorator:extend()
 function DecoratorGit:new(explorer)
   self.explorer = explorer
 
-  DecoratorGit.super.new(self, {
-    enabled        = self.explorer.opts.git.enable,
-    hl_pos         = self.explorer.opts.renderer.highlight_git or "none",
-    icon_placement = self.explorer.opts.renderer.icons.git_placement or "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = self.explorer.opts.git.enable,
+    highlight_range = self.explorer.opts.renderer.highlight_git or "none",
+    icon_placement  = self.explorer.opts.renderer.icons.git_placement or "none",
+  }
+
+  DecoratorGit.super.new(self, args)
 
   if not self.enabled then
     return
   end
 
-  if self.range ~= "none" then
+  if self.highlight_range ~= "none" then
     self:build_file_folder_hl_by_xy()
   end
 
@@ -161,7 +164,7 @@ function DecoratorGit:calculate_icons(node)
   for _, s in pairs(git_xy) do
     local icons = self.icons_by_xy[s]
     if not icons then
-      if self.range == "none" then
+      if self.highlight_range == "none" then
         notify.warn(string.format("Unrecognized git state '%s'", git_xy))
       end
       return nil
@@ -207,7 +210,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorGit:calculate_highlight(node)
-  if not node or not self.enabled or self.range == "none" then
+  if not node or not self.enabled or self.highlight_range == "none" then
     return nil
   end
 

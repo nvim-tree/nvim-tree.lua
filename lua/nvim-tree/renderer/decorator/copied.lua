@@ -12,18 +12,21 @@ local DecoratorCopied = Decorator:extend()
 function DecoratorCopied:new(explorer)
   self.explorer = explorer
 
-  DecoratorCopied.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_clipboard or "none",
-    icon_placement = "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none",
+    icon_placement  = "none",
+  }
+
+  DecoratorCopied.super.new(self, args)
 end
 
 ---Copied highlight: renderer.highlight_clipboard and node is copied
 ---@param node Node
 ---@return string|nil group
 function DecoratorCopied:calculate_highlight(node)
-  if self.range ~= "none" and self.explorer.clipboard:is_copied(node) then
+  if self.highlight_range ~= "none" and self.explorer.clipboard:is_copied(node) then
     return "NvimTreeCopiedHL"
   end
 end

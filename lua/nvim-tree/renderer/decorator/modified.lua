@@ -16,11 +16,14 @@ local DecoratorModified = Decorator:extend()
 function DecoratorModified:new(explorer)
   self.explorer = explorer
 
-  DecoratorModified.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_modified or "none",
-    icon_placement = self.explorer.opts.renderer.icons.modified_placement or "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_modified or "none",
+    icon_placement  = self.explorer.opts.renderer.icons.modified_placement or "none",
+  }
+
+  DecoratorModified.super.new(self, args)
 
   if not self.enabled then
     return
@@ -48,7 +51,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorModified:calculate_highlight(node)
-  if not self.enabled or self.range == "none" or not buffers.is_modified(node) then
+  if not self.enabled or self.highlight_range == "none" or not buffers.is_modified(node) then
     return nil
   end
 

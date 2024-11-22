@@ -15,18 +15,21 @@ local DecoratorOpened = Decorator:extend()
 function DecoratorOpened:new(explorer)
   self.explorer = explorer
 
-  DecoratorOpened.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_opened_files or "none",
-    icon_placement = "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_opened_files or "none",
+    icon_placement  = "none",
+  }
+
+  DecoratorOpened.super.new(self, args)
 end
 
 ---Opened highlight: renderer.highlight_opened_files and node has an open buffer
 ---@param node Node
 ---@return string|nil group
 function DecoratorOpened:calculate_highlight(node)
-  if self.range ~= "none" and buffers.is_opened(node) then
+  if self.highlight_range ~= "none" and buffers.is_opened(node) then
     return "NvimTreeOpenedHL"
   end
 end

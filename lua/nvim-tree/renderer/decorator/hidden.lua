@@ -14,11 +14,14 @@ local DecoratorHidden = Decorator:extend()
 function DecoratorHidden:new(explorer)
   self.explorer = explorer
 
-  DecoratorHidden.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_hidden or "none",
-    icon_placement = self.explorer.opts.renderer.icons.hidden_placement or "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_hidden or "none",
+    icon_placement  = self.explorer.opts.renderer.icons.hidden_placement or "none",
+  }
+
+  DecoratorHidden.super.new(self, args)
 
   if self.explorer.opts.renderer.icons.show.hidden then
     self.icon = {
@@ -42,7 +45,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorHidden:calculate_highlight(node)
-  if not self.enabled or self.range == "none" or not node:is_dotfile() then
+  if not self.enabled or self.highlight_range == "none" or not node:is_dotfile() then
     return nil
   end
 

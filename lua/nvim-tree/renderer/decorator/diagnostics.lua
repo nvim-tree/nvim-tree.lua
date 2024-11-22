@@ -43,11 +43,14 @@ local DecoratorDiagnostics = Decorator:extend()
 function DecoratorDiagnostics:new(explorer)
   self.explorer = explorer
 
-  DecoratorDiagnostics.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_diagnostics or "none",
-    icon_placement = self.explorer.opts.renderer.icons.diagnostics_placement or "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_diagnostics or "none",
+    icon_placement  = self.explorer.opts.renderer.icons.diagnostics_placement or "none",
+  }
+
+  DecoratorDiagnostics.super.new(self, args)
 
   if not self.enabled then
     return
@@ -83,7 +86,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorDiagnostics:calculate_highlight(node)
-  if not node or not self.enabled or self.range == "none" then
+  if not node or not self.enabled or self.highlight_range == "none" then
     return nil
   end
 

@@ -12,18 +12,21 @@ local DecoratorCut = Decorator:extend()
 function DecoratorCut:new(explorer)
   self.explorer = explorer
 
-  DecoratorCut.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_clipboard or "none",
-    icon_placement = "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none",
+    icon_placement  = "none",
+  }
+
+  DecoratorCut.super.new(self, args)
 end
 
 ---Cut highlight: renderer.highlight_clipboard and node is cut
 ---@param node Node
 ---@return string|nil group
 function DecoratorCut:calculate_highlight(node)
-  if self.range ~= "none" and self.explorer.clipboard:is_cut(node) then
+  if self.highlight_range ~= "none" and self.explorer.clipboard:is_cut(node) then
     return "NvimTreeCutHL"
   end
 end

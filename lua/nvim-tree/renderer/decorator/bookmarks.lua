@@ -13,11 +13,14 @@ local DecoratorBookmarks = Decorator:extend()
 function DecoratorBookmarks:new(explorer)
   self.explorer = explorer
 
-  DecoratorBookmarks.super.new(self, {
-    enabled        = true,
-    hl_pos         = self.explorer.opts.renderer.highlight_bookmarks or "none",
-    icon_placement = self.explorer.opts.renderer.icons.bookmarks_placement or "none",
-  })
+  ---@type DecoratorArgs
+  local args = {
+    enabled         = true,
+    highlight_range = self.explorer.opts.renderer.highlight_bookmarks or "none",
+    icon_placement  = self.explorer.opts.renderer.icons.bookmarks_placement or "none",
+  }
+
+  DecoratorBookmarks.super.new(self, args)
 
   if self.explorer.opts.renderer.icons.show.bookmarks then
     self.icon = {
@@ -41,7 +44,7 @@ end
 ---@param node Node
 ---@return string|nil group
 function DecoratorBookmarks:calculate_highlight(node)
-  if self.range ~= "none" and self.explorer.marks:get(node) then
+  if self.highlight_range ~= "none" and self.explorer.marks:get(node) then
     return "NvimTreeBookmarkHL"
   end
 end
