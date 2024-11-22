@@ -34,7 +34,7 @@ end
 ---Bookmark icon: renderer.icons.show.bookmarks and node is marked
 ---@param node Node
 ---@return HighlightedString[]|nil icons
-function DecoratorBookmarks:calculate_icons(node)
+function DecoratorBookmarks:icons(node)
   if self.explorer.marks:get(node) then
     return { self.icon }
   end
@@ -43,7 +43,7 @@ end
 ---Bookmark highlight: renderer.highlight_bookmarks and node is marked
 ---@param node Node
 ---@return string|nil group
-function DecoratorBookmarks:calculate_highlight(node)
+function DecoratorBookmarks:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.marks:get(node) then
     return "NvimTreeBookmarkHL"
   end

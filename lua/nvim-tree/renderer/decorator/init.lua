@@ -19,15 +19,15 @@ function Decorator:new(args)
   end
 end
 
----Maybe highlight groups
+---Maybe highlight groups for icon and name
 ---@param node Node
 ---@return string? icon highlight group
 ---@return string? name highlight group
-function Decorator:groups_icon_name(node)
+function Decorator:highlight_group_icon_name(node)
   local icon_hl, name_hl
 
   if self.enabled and self.highlight_range ~= "none" then
-    local hl = self:calculate_highlight(node)
+    local hl = self:highlight_group(node)
 
     if self.highlight_range == "all" or self.highlight_range == "icon" then
       icon_hl = hl
@@ -48,7 +48,7 @@ function Decorator:sign_name(node)
     return
   end
 
-  local icons = self:calculate_icons(node)
+  local icons = self:icons(node)
   if icons and #icons > 0 then
     return icons[1].hl[1]
   end
@@ -62,7 +62,7 @@ function Decorator:icons_before(node)
     return
   end
 
-  return self:calculate_icons(node)
+  return self:icons(node)
 end
 
 ---Icons when "after"
@@ -73,7 +73,7 @@ function Decorator:icons_after(node)
     return
   end
 
-  return self:calculate_icons(node)
+  return self:icons(node)
 end
 
 ---Icons when "right_align"
@@ -84,14 +84,14 @@ function Decorator:icons_right_align(node)
     return
   end
 
-  return self:calculate_icons(node)
+  return self:icons(node)
 end
 
 ---Maybe icons, optionally implemented
 ---@protected
 ---@param node Node
 ---@return HighlightedString[]? icons
-function Decorator:calculate_icons(node)
+function Decorator:icons(node)
   self:nop(node)
 end
 
@@ -99,7 +99,7 @@ end
 ---@protected
 ---@param node Node
 ---@return string? group
-function Decorator:calculate_highlight(node)
+function Decorator:highlight_group(node)
   self:nop(node)
 end
 

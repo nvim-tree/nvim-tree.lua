@@ -1,10 +1,13 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----Abstract user decorator, extend to define your own.
----Icon and highlight are optional.
----Mandatory constructor will be called once per tree render, with no arguments:
----  Must call super passing DecoratorArgs: MyDecorator.super.new(self, args)
----  Must call define_sign, when using "signcolumn"
+---Define a Decorator to optionally set:
+---  Additional icons
+---  Highlight group
+---  Node icon
+---Mandator constructor  MyDecorator:new()  will be called once per tree render, with no arguments.
+---Must call:
+---  super passing DecoratorArgs  MyDecorator.super.new(self, args)
+---  define_sign when using "signcolumn"
 ---See example at end.
 
 ---@class (exact) UserDecorator: Decorator
@@ -13,14 +16,14 @@ local UserDecorator = Decorator:extend()
 ---Override this method to provide icons and the highlight groups to apply to DecoratorIconPlacement
 ---@param node Node
 ---@return HighlightedString[]? icons
-function UserDecorator:calculate_icons(node)
+function UserDecorator:icons(node)
   self:nop(node)
 end
 
 ---Override this method to provide one highlight group to apply to DecoratorRange
 ---@param node Node
 ---@return string? group
-function UserDecorator:calculate_highlight(node)
+function UserDecorator:highlight_group(node)
   self:nop(node)
 end
 
@@ -60,7 +63,7 @@ end
 ---Just one icon for DecoratorIconPlacement
 ---@param node Node
 ---@return HighlightedString[]|nil icons
-function MyDecorator:calculate_icons(node)
+function MyDecorator:icons(node)
   if node.name == "example" then
     return { self.my_icon }
   else
@@ -71,7 +74,7 @@ end
 ---Exactly one highlight group for DecoratorHighlightRange
 ---@param node Node
 ---@return string|nil group
-function MyDecorator:calculate_highlight(node)
+function MyDecorator:highlight_group(node)
   if node.name == "example" then
     return "ExampleHighlight"
   else

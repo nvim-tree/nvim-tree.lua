@@ -214,7 +214,7 @@ function Builder:add_highlights(node)
   local d, icon, name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
-    icon, name = d:groups_icon_name(node)
+    icon, name = d:highlight_group_icon_name(node)
     table.insert(icon_groups, icon)
     table.insert(name_groups, name)
   end

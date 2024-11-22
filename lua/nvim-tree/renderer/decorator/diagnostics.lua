@@ -32,7 +32,7 @@ local ICON_KEYS = {
 
 ---@class (exact) DecoratorDiagnostics: Decorator
 ---@field private explorer Explorer
----@field private icons HighlightedString[]?
+---@field private diag_icons HighlightedString[]?
 local DecoratorDiagnostics = Decorator:extend()
 
 ---@class DecoratorDiagnostics
@@ -57,13 +57,13 @@ function DecoratorDiagnostics:new(explorer)
   end
 
   if self.explorer.opts.renderer.icons.show.diagnostics then
-    self.icons = {}
+    self.diag_icons = {}
     for name, sev in pairs(ICON_KEYS) do
-      self.icons[sev] = {
+      self.diag_icons[sev] = {
         str = self.explorer.opts.diagnostics.icons[name],
         hl = { HG_ICON[sev] },
       }
-      self:define_sign(self.icons[sev])
+      self:define_sign(self.diag_icons[sev])
     end
   end
 end
@@ -71,13 +71,13 @@ end
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
 ---@param node Node
 ---@return HighlightedString[]|nil icons
-function DecoratorDiagnostics:calculate_icons(node)
-  if node and self.enabled and self.icons then
+function DecoratorDiagnostics:icons(node)
+  if node and self.enabled and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)
     local diag_value = diag_status and diag_status.value
 
     if diag_value then
-      return { self.icons[diag_value] }
+      return { self.diag_icons[diag_value] }
     end
   end
 end
@@ -85,7 +85,7 @@ end
 ---Diagnostic highlight: diagnostics.enable, renderer.highlight_diagnostics and node has status
 ---@param node Node
 ---@return string|nil group
-function DecoratorDiagnostics:calculate_highlight(node)
+function DecoratorDiagnostics:highlight_group(node)
   if not node or not self.enabled or self.highlight_range == "none" then
     return nil
   end
