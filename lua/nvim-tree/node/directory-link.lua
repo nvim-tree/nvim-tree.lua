@@ -73,9 +73,9 @@ function DirectoryLinkNode:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
----@return DirectoryLinkNode cloned
+---@return nvim_tree.api.DirectoryLinkNode cloned
 function DirectoryLinkNode:clone()
-  local clone = DirectoryNode.clone(self) --[[@as DirectoryLinkNode]]
+  local clone = DirectoryNode.clone(self) --[[@as nvim_tree.api.DirectoryLinkNode]]
 
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target

@@ -22,4 +22,12 @@ function RootNode:destroy()
   DirectoryNode.destroy(self)
 end
 
+---Create a sanitized partial copy of a node, populating children recursively.
+---@return nvim_tree.api.RootNode cloned
+function RootNode:clone()
+  local clone = DirectoryNode.clone(self) --[[@as nvim_tree.api.RootNode]]
+
+  return clone
+end
+
 return RootNode

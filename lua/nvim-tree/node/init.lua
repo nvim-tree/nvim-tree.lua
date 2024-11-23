@@ -2,6 +2,7 @@ local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
 ---@class (exact) Node: Class
+---@field uid_node number vim.loop.hrtime() at construction time
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -11,6 +12,7 @@ local Class = require("nvim-tree.classic")
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
+---TODO split this into diag_severity and diag_severity_cache_version
 ---@field diag_status DiagStatus?
 ---@field private is_dot boolean cached is_dotfile
 local Node = Class:extend()
@@ -25,6 +27,7 @@ local Node = Class:extend()
 ---@protected
 ---@param args NodeArgs
 function Node:new(args)
+  self.uid_node      = vim.loop.hrtime()
   self.explorer      = args.explorer
   self.absolute_path = args.absolute_path
   self.executable    = false
@@ -112,21 +115,18 @@ end
 
 ---Highlighted name for the node
 ---Empty for base Node
----@return HighlightedString icon
+---@return HighlightedString name
 function Node:highlighted_name()
   return self:highlighted_name_empty()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
----@return Node cloned
+---@return nvim_tree.api.Node cloned
 function Node:clone()
-  ---@type Explorer
-  local explorer_placeholder = nil
-
-  ---@type Node
+  ---@type nvim_tree.api.Node
   local clone = {
+    uid_node      = self.uid_node,
     type          = self.type,
-    explorer      = explorer_placeholder,
     absolute_path = self.absolute_path,
     executable    = self.executable,
     fs_stat       = self.fs_stat,
@@ -134,8 +134,7 @@ function Node:clone()
     hidden        = self.hidden,
     name          = self.name,
     parent        = nil,
-    diag_status   = nil,
-    is_dot        = self.is_dot,
+    diag_severity = self.diag_status and self.diag_status.value or nil,
   }
 
   return clone
