@@ -24,7 +24,7 @@ end
 
 ---Cut highlight: renderer.highlight_clipboard and node is cut
 ---@param node Node
----@return string|nil group
+---@return string? highlight_group
 function DecoratorCut:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.clipboard:is_cut(node) then
     return "NvimTreeCutHL"

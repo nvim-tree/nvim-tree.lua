@@ -70,7 +70,7 @@ end
 
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
 ---@param node Node
----@return HighlightedString[]|nil icons
+---@return HighlightedString[]? icons
 function DecoratorDiagnostics:icons(node)
   if node and self.enabled and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)
@@ -84,7 +84,7 @@ end
 
 ---Diagnostic highlight: diagnostics.enable, renderer.highlight_diagnostics and node has status
 ---@param node Node
----@return string|nil group
+---@return string? highlight_group
 function DecoratorDiagnostics:highlight_group(node)
   if not node or not self.enabled or self.highlight_range == "none" then
     return nil

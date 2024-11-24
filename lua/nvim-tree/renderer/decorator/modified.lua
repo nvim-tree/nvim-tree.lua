@@ -40,7 +40,7 @@ end
 
 ---Modified icon: modified.enable, renderer.icons.show.modified and node is modified
 ---@param node Node
----@return HighlightedString[]|nil icons
+---@return HighlightedString[]? icons
 function DecoratorModified:icons(node)
   if self.enabled and buffers.is_modified(node) then
     return { self.icon }
@@ -49,7 +49,7 @@ end
 
 ---Modified highlight: modified.enable, renderer.highlight_modified and node is modified
 ---@param node Node
----@return string|nil group
+---@return string? highlight_group
 function DecoratorModified:highlight_group(node)
   if not self.enabled or self.highlight_range == "none" or not buffers.is_modified(node) then
     return nil

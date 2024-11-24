@@ -1,9 +1,14 @@
 ---@meta
+error('Cannot require a meta file')
+
+-- TODO describe class
+-- TODO describe user decorator
 
 --
 -- Nodes
 --
 
+---Base Node, Abstract
 ---@class (exact) nvim_tree.api.Node: Class
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field absolute_path string
@@ -15,45 +20,41 @@
 ---@field parent nvim_tree.api.DirectoryNode?
 ---@field diag_severity lsp.DiagnosticSeverity?
 
+---File
 ---@class (exact) nvim_tree.api.FileNode: nvim_tree.api.Node
 ---@field extension string
 
+---Directory
 ---@class (exact) nvim_tree.api.DirectoryNode: nvim_tree.api.Node
 ---@field has_children boolean
 ---@field nodes nvim_tree.api.Node[]
 ---@field open boolean
 
+---Root Directory
 ---@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
 
+---Link mixin
 ---@class (exact) nvim_tree.api.LinkNode: Class
 ---@field link_to string
 ---@field fs_stat_target uv.fs_stat.result
 
+---File Link
 ---@class (exact) nvim_tree.api.FileLinkNode: nvim_tree.api.FileNode, nvim_tree.api.LinkNode
 
+---DirectoryLink
 ---@class (exact) nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
 
 --
--- Decorators
---
-
----Highlight group range as per nvim-tree.renderer.highlight_*
----@alias DecoratorHighlightRange "none" | "icon" | "name" | "all"
-
----Icon position as per renderer.icons.*_placement
----@alias DecoratorIconPlacement "none" | "before" | "after" | "signcolumn" | "right_align"
-
----Decorator Constructor Arguments
----@class (exact) DecoratorArgs
----@field enabled boolean
----@field highlight_range DecoratorHighlightRange
----@field icon_placement DecoratorIconPlacement
-
---
--- Types
+-- Various Types
 --
 
 ---A string for rendering, with optional highlight groups to apply to it
----@class (exact) HighlightedString
+---@class (exact) nvim_tree.api.HighlightedString
 ---@field str string
 ---@field hl string[]
+
+--
+-- Internal Aliases
+--
+---@alias HighlightedString nvim_tree.api.HighlightedString
+

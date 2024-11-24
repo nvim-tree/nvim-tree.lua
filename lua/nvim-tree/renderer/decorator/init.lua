@@ -7,6 +7,11 @@ local Class = require("nvim-tree.classic")
 ---@field protected icon_placement DecoratorIconPlacement
 local Decorator = Class:extend()
 
+---@class (exact) DecoratorArgs
+---@field enabled boolean
+---@field highlight_range DecoratorHighlightRange
+---@field icon_placement DecoratorIconPlacement
+
 ---@protected
 ---@param args DecoratorArgs
 function Decorator:new(args)
@@ -105,7 +110,7 @@ end
 ---Maybe highlight group, optionally implemented
 ---@protected
 ---@param node Node
----@return string? group
+---@return string? highlight_group
 function Decorator:highlight_group(node)
   self:nop(node)
 end

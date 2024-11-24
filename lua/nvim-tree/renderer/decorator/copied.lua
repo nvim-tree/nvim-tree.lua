@@ -24,7 +24,7 @@ end
 
 ---Copied highlight: renderer.highlight_clipboard and node is copied
 ---@param node Node
----@return string|nil group
+---@return string? highlight_group
 function DecoratorCopied:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.clipboard:is_copied(node) then
     return "NvimTreeCopiedHL"

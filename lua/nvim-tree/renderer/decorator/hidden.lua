@@ -34,7 +34,7 @@ end
 
 ---Hidden icon: renderer.icons.show.hidden and node starts with `.` (dotfile).
 ---@param node Node
----@return HighlightedString[]|nil icons
+---@return HighlightedString[]? icons
 function DecoratorHidden:icons(node)
   if self.enabled and node:is_dotfile() then
     return { self.icon }
@@ -43,7 +43,7 @@ end
 
 ---Hidden highlight: renderer.highlight_hidden and node starts with `.` (dotfile).
 ---@param node Node
----@return string|nil group
+---@return string? highlight_group
 function DecoratorHidden:highlight_group(node)
   if not self.enabled or self.highlight_range == "none" or not node:is_dotfile() then
     return nil
