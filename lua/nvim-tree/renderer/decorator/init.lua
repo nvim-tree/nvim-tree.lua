@@ -10,12 +10,13 @@ local Decorator = Class:extend()
 
 ---@class (exact) DecoratorArgs
 ---@field explorer Explorer
----
+
+---Abstract constructor
 ---@class (exact) AbstractDecoratorArgs
 ---@field enabled boolean
 ---@field highlight_range DecoratorHighlightRange
 ---@field icon_placement DecoratorIconPlacement
-
+---
 ---@protected
 ---@param args AbstractDecoratorArgs
 function Decorator:new(args)

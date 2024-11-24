@@ -49,11 +49,13 @@ function Builder:new(args)
   self.signs           = {}
   self.extmarks        = {}
   self.virtual_lines   = {}
+  self.decorators      = {}
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
 
-  -- lowest priority is registered first
-  self.decorators      = {}
+  ---@type DecoratorArgs
   local decorator_args = { explorer = self.explorer }
+
+  -- lowest priority is registered first
   for _, d in ipairs(decorator_registry.registered) do
     if d:is(DecoratorUser) then
       table.insert(self.decorators, 1, d())

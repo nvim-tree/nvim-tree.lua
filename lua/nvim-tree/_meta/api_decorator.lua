@@ -3,7 +3,7 @@ error("Cannot require a meta file")
 
 local nvim_tree = { api = { decorator = { BaseDecorator = {} } } }
 
----Create a custom decorator, extending nvim_tree.api.decorator.BaseDecorator
+---Custom decorator extends nvim_tree.api.decorator.BaseDecorator
 ---It may:
 ---  Add icons
 ---  Set name highlight group
@@ -24,15 +24,18 @@ local nvim_tree = { api = { decorator = { BaseDecorator = {} } } }
 ---@alias nvim_tree.api.decorator.Name "Cut" | "Copied" | "Diagnostics" | "Bookmarks" | "Modified" | "Hidden" | "Opened" | "Git" | nvim_tree.api.decorator.BaseDecorator
 
 ---BaseDecorator Class, your decorator will extend this
+---
 ---@class (exact) nvim_tree.api.decorator.BaseDecorator
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.api.decorator.HighlightRange
 ---@field protected icon_placement nvim_tree.api.decorator.IconPlacement
 
 ---No-args constructor must be implemented
+---
 function nvim_tree.api.decorator.BaseDecorator:new() end
 
 ---Must be called from your constructor
+---
 ---@class (exact) nvim_tree.api.decorator.InitArgs
 ---@field enabled boolean
 ---@field highlight_range nvim_tree.api.decorator.HighlightRange
@@ -43,19 +46,23 @@ function nvim_tree.api.decorator.BaseDecorator:new() end
 function nvim_tree.api.decorator.BaseDecorator:init(args) end
 
 ---Optionally implement this method to set the node's icon
+---
 ---@param node nvim_tree.api.Node
 ---@return HighlightedString? icon_node
 function nvim_tree.api.decorator.BaseDecorator:icon_node(node) end
 
 ---Optionally implement this method to provide icons and the highlight groups for your icon_placement
+---
 ---@param node nvim_tree.api.Node
 ---@return HighlightedString[]? icons
 function nvim_tree.api.decorator.BaseDecorator:icons(node) end
 
 ---Optionally implement this method to provide one highlight group to apply to your highlight_range
+---
 ---@param node nvim_tree.api.Node
 ---@return string? highlight_group
 function nvim_tree.api.decorator.BaseDecorator:highlight_group(node) end
+
 
 --
 -- Example Decorator
