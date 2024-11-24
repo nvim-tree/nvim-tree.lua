@@ -164,8 +164,10 @@ local function set_window_options_and_buffer()
     local eventignore = vim.api.nvim_get_option("eventignore") ---@diagnostic disable-line: deprecated
     vim.api.nvim_set_option("eventignore", "all") ---@diagnostic disable-line: deprecated
 
+    -- #3009 vim.api.nvim_win_set_option does not set local scope without explicit winid.
+    -- Revert to opt_local instead of propagating it through for just the 0.10 path.
     for k, v in pairs(M.View.winopts) do
-      vim.api.nvim_win_set_option(0, k, v) ---@diagnostic disable-line: deprecated
+      vim.opt_local[k] = v
     end
 
     vim.api.nvim_set_option("eventignore", eventignore) ---@diagnostic disable-line: deprecated
