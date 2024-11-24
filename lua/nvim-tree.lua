@@ -276,7 +276,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   renderer = {
-    user_decorators = {},
     add_trailing = false,
     group_empty = false,
     full_name = false,

@@ -4,23 +4,24 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field private explorer Explorer
 ---@field private icon HighlightedString?
 local DecoratorBookmarks = Decorator:extend()
+DecoratorBookmarks.name = "Bookmarks"
 
 ---@class DecoratorBookmarks
 ---@overload fun(explorer: Explorer): DecoratorBookmarks
 
 ---@protected
----@param explorer Explorer
-function DecoratorBookmarks:new(explorer)
-  self.explorer = explorer
+---@param args DecoratorArgs
+function DecoratorBookmarks:new(args)
+  self.explorer = args.explorer
 
-  ---@type DecoratorArgs
-  local args = {
+  ---@type AbstractDecoratorArgs
+  local a = {
     enabled         = true,
     highlight_range = self.explorer.opts.renderer.highlight_bookmarks or "none",
     icon_placement  = self.explorer.opts.renderer.icons.bookmarks_placement or "none",
   }
 
-  DecoratorBookmarks.super.new(self, args)
+  DecoratorBookmarks.super.new(self, a)
 
   if self.explorer.opts.renderer.icons.show.bookmarks then
     self.icon = {

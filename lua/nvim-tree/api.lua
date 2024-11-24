@@ -7,6 +7,7 @@ local events = require("nvim-tree.events")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
+local decorator_registry = require("nvim-tree.renderer.decorator.registry")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
@@ -312,6 +313,10 @@ Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
 
+-- TODO provide a registration convenience to hide classic
+-- TODO add doc
 Api.decorator.BaseDecorator = require("nvim-tree.renderer.decorator.user") --[[@as nvim_tree.api.decorator.BaseDecorator ]]
+Api.decorator.register = decorator_registry.register
+Api.decorator.unregister = decorator_registry.unregister
 
 return Api

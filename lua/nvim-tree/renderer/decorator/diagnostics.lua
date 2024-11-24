@@ -34,23 +34,24 @@ local ICON_KEYS = {
 ---@field private explorer Explorer
 ---@field private diag_icons HighlightedString[]?
 local DecoratorDiagnostics = Decorator:extend()
+DecoratorDiagnostics.name = "Diagnostics"
 
 ---@class DecoratorDiagnostics
 ---@overload fun(explorer: Explorer): DecoratorDiagnostics
 
 ---@protected
----@param explorer Explorer
-function DecoratorDiagnostics:new(explorer)
-  self.explorer = explorer
+---@param args DecoratorArgs
+function DecoratorDiagnostics:new(args)
+  self.explorer = args.explorer
 
-  ---@type DecoratorArgs
-  local args = {
+  ---@type AbstractDecoratorArgs
+  local a = {
     enabled         = true,
     highlight_range = self.explorer.opts.renderer.highlight_diagnostics or "none",
     icon_placement  = self.explorer.opts.renderer.icons.diagnostics_placement or "none",
   }
 
-  DecoratorDiagnostics.super.new(self, args)
+  DecoratorDiagnostics.super.new(self, a)
 
   if not self.enabled then
     return

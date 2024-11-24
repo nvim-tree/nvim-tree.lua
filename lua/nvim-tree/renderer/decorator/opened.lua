@@ -6,23 +6,24 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field private explorer Explorer
 ---@field private icon HighlightedString|nil
 local DecoratorOpened = Decorator:extend()
+DecoratorOpened.name = "Opened"
 
 ---@class DecoratorOpened
 ---@overload fun(explorer: Explorer): DecoratorOpened
 
 ---@protected
----@param explorer Explorer
-function DecoratorOpened:new(explorer)
-  self.explorer = explorer
+---@param args DecoratorArgs
+function DecoratorOpened:new(args)
+  self.explorer = args.explorer
 
-  ---@type DecoratorArgs
-  local args = {
+  ---@type AbstractDecoratorArgs
+  local a = {
     enabled         = true,
     highlight_range = self.explorer.opts.renderer.highlight_opened_files or "none",
     icon_placement  = "none",
   }
 
-  DecoratorOpened.super.new(self, args)
+  DecoratorOpened.super.new(self, a)
 end
 
 ---Opened highlight: renderer.highlight_opened_files and node has an open buffer

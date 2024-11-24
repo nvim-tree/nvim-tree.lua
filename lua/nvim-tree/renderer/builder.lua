@@ -1,18 +1,11 @@
+local decorator_registry = require("nvim-tree.renderer.decorator.registry")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
 local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
-
-local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
-local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
-local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
-local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
-local DecoratorGit = require("nvim-tree.renderer.decorator.git")
-local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
-local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
-local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
+local DecoratorUser = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
@@ -56,21 +49,17 @@ function Builder:new(args)
   self.signs           = {}
   self.extmarks        = {}
   self.virtual_lines   = {}
-  self.decorators      = {
-    -- priority order
-    DecoratorCut(self.explorer),
-    DecoratorCopied(self.explorer),
-    DecoratorDiagnostics(self.explorer),
-    DecoratorBookmarks(self.explorer),
-    DecoratorModified(self.explorer),
-    DecoratorHidden(self.explorer),
-    DecoratorOpened(self.explorer),
-    DecoratorGit(self.explorer),
-  }
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
 
-  for _, user_decorator in ipairs(args.explorer.opts.renderer.user_decorators) do
-    table.insert(self.decorators, user_decorator.class())
+  -- lowest priority is registered first
+  self.decorators      = {}
+  local decorator_args = { explorer = self.explorer }
+  for _, d in ipairs(decorator_registry.registered) do
+    if d:is(DecoratorUser) then
+      table.insert(self.decorators, 1, d())
+    else
+      table.insert(self.decorators, 1, d(decorator_args))
+    end
   end
 end
 

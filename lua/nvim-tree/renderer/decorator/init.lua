@@ -2,18 +2,22 @@ local Class = require("nvim-tree.classic")
 
 ---Abstract Decorator
 ---@class (exact) Decorator: Class
+---@field name string for registry
 ---@field protected enabled boolean
 ---@field protected highlight_range DecoratorHighlightRange
 ---@field protected icon_placement DecoratorIconPlacement
 local Decorator = Class:extend()
 
 ---@class (exact) DecoratorArgs
+---@field explorer Explorer
+---
+---@class (exact) AbstractDecoratorArgs
 ---@field enabled boolean
 ---@field highlight_range DecoratorHighlightRange
 ---@field icon_placement DecoratorIconPlacement
 
 ---@protected
----@param args DecoratorArgs
+---@param args AbstractDecoratorArgs
 function Decorator:new(args)
   if args then
     self.enabled         = args.enabled
