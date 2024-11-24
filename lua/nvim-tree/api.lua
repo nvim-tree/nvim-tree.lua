@@ -316,13 +316,13 @@ end)
 
 ---Create a new decorator class
 ---
----@return nvim_tree.api.decorator.BaseDecorator
+---@return nvim_tree.api.decorator.AbstractDecorator
 Api.decorator.create = function() return DecoratorUser:extend() end
 
 ---Register a decorator class
 ---
 ---@class RegisterOpts
----@field decorator nvim_tree.api.decorator.BaseDecorator
+---@field decorator nvim_tree.api.decorator.AbstractDecorator
 ---@field below nvim_tree.api.decorator.Name?
 ---
 ---@param opts RegisterOpts
@@ -331,7 +331,7 @@ Api.decorator.register = function(opts) decorator_registry.register(opts) end
 ---Unregister a decorator class
 ---
 ---@class UnRegisterOpts
----@field decorator nvim_tree.api.decorator.BaseDecorator
+---@field decorator nvim_tree.api.decorator.AbstractDecorator
 ---
 ---@param opts UnRegisterOpts
 Api.decorator.unregister = function(opts) decorator_registry.unregister(opts) end
