@@ -12,6 +12,7 @@ local decorator_registry = require("nvim-tree.renderer.decorator.registry")
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
+local DecoratorUser = require("nvim-tree.renderer.decorator.user")
 
 local Api = {
   tree = {},
@@ -313,10 +314,26 @@ Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
 
--- TODO provide a registration convenience to hide classic
--- TODO add doc
-Api.decorator.BaseDecorator = require("nvim-tree.renderer.decorator.user") --[[@as nvim_tree.api.decorator.BaseDecorator ]]
-Api.decorator.register = decorator_registry.register
-Api.decorator.unregister = decorator_registry.unregister
+---Create a new decorator class
+---
+---@return nvim_tree.api.decorator.BaseDecorator
+Api.decorator.create = function() return DecoratorUser:extend() end
+
+---Register a decorator class
+---
+---@class RegisterOpts
+---@field decorator nvim_tree.api.decorator.BaseDecorator
+---@field below nvim_tree.api.decorator.Name?
+---
+---@param opts RegisterOpts
+Api.decorator.register = function(opts) decorator_registry.register(opts) end
+
+---Unregister a decorator class
+---
+---@class UnRegisterOpts
+---@field decorator nvim_tree.api.decorator.BaseDecorator
+---
+---@param opts UnRegisterOpts
+Api.decorator.unregister = function(opts) decorator_registry.unregister(opts) end
 
 return Api

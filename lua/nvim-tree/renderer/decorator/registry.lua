@@ -1,4 +1,3 @@
-local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 
 local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
@@ -11,12 +10,8 @@ local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
 local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 local DecoratorUser = require("nvim-tree.renderer.decorator.user")
 
--- Globally registered decorators including user
--- Lowest priority first
-
----@alias DecoratorName nvim_tree.api.decorator.BaseDecorator | "Cut" | "Copied" | "Diagnostics" | "Bookmarks" | "Modified" | "Hidden" | "Opened" | "Git"
-
 local M = {
+  -- Globally registered decorators including user. Lowest priority first.
   ---@type Decorator[]
   registered = {
     DecoratorGit,
@@ -30,10 +25,6 @@ local M = {
   }
 }
 
----@class RegisterOpts
----@field decorator nvim_tree.api.decorator.BaseDecorator
----@field below DecoratorName?
-
 ---@param opts RegisterOpts
 function M.register(opts)
   if not opts or not opts.decorator then
@@ -41,7 +32,6 @@ function M.register(opts)
   end
 
   if vim.tbl_contains(M.registered, opts.decorator) then
-    notify.error("decorator already registered")
     return
   end
 
@@ -55,9 +45,6 @@ function M.register(opts)
   -- default to highest at the top
   table.insert(M.registered, opts.decorator)
 end
-
----@class UnRegisterOpts
----@field decorator nvim_tree.api.decorator.BaseDecorator
 
 ---@param opts UnRegisterOpts
 function M.unregister(opts)

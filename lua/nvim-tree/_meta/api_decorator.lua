@@ -3,60 +3,56 @@ error("Cannot require a meta file")
 
 local nvim_tree = { api = { decorator = { BaseDecorator = {} } } }
 
+---Create a custom decorator, extending nvim_tree.api.decorator.BaseDecorator
+---It may:
+---  Add icons
+---  Set name highlight group
+---  Override node icon
+---Class must be created via nvim_tree.api.decorator.create()
+---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
+---Constructor must call:
+---  :init
+---  :define_sign when using "signcolumn" range
+
 ---Highlight group range as per nvim-tree.renderer.highlight_*
 ---@alias nvim_tree.api.decorator.HighlightRange "none" | "icon" | "name" | "all"
 
 ---Icon position as per renderer.icons.*_placement
 ---@alias nvim_tree.api.decorator.IconPlacement "none" | "before" | "after" | "signcolumn" | "right_align"
 
---
--- BaseDecorator Class, see example implementation below
---
+---Names of predefined decorators or your decorator classes
+---@alias nvim_tree.api.decorator.Name "Cut" | "Copied" | "Diagnostics" | "Bookmarks" | "Modified" | "Hidden" | "Opened" | "Git" | nvim_tree.api.decorator.BaseDecorator
 
----User defined decorator to optionally add:
----  Additional icons
----  Name highlight group
----  Node icon override
----Class must be created via nvim_tree.api.decorator.BaseDecorator:extend()
----Mandatory constructor  :new()  will be called once per tree render, with no arguments.
----Constructor must call:
----  .super.new(self, args)  passing nvim_tree.api.decorator.BaseDecoratorArgs
----  :define_sign(...)  when using "signcolumn" range
+---BaseDecorator Class, your decorator will extend this
 ---@class (exact) nvim_tree.api.decorator.BaseDecorator
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.api.decorator.HighlightRange
 ---@field protected icon_placement nvim_tree.api.decorator.IconPlacement
 
----Constructor Arguments
----@class (exact) nvim_tree.api.decorator.BaseDecoratorArgs
+---No-args constructor must be implemented
+function nvim_tree.api.decorator.BaseDecorator:new() end
+
+---Must be called from your constructor
+---@class (exact) nvim_tree.api.decorator.InitArgs
 ---@field enabled boolean
 ---@field highlight_range nvim_tree.api.decorator.HighlightRange
 ---@field icon_placement nvim_tree.api.decorator.IconPlacement
-
----Use to instantiate your decorator class
-function nvim_tree.api.decorator.BaseDecorator:extend() end
-
----Super constructor must be called from your constructor
----BaseDecorator.super.new(self, args)
+---
 ---@protected
----@param self nvim_tree.api.decorator.BaseDecorator your instance
----@param args nvim_tree.api.decorator.BaseDecoratorArgs
-function nvim_tree.api.decorator.BaseDecorator.new(self, args) end
+---@param args nvim_tree.api.decorator.InitArgs
+function nvim_tree.api.decorator.BaseDecorator:init(args) end
 
----Must implement a constructor and call super
-function nvim_tree.api.decorator.BaseDecorator:new() end
-
----Implement this method to set the node's icon
+---Optionally implement this method to set the node's icon
 ---@param node nvim_tree.api.Node
 ---@return HighlightedString? icon_node
 function nvim_tree.api.decorator.BaseDecorator:icon_node(node) end
 
----Implement this method to provide icons and the highlight groups to apply to IconPlacement
+---Optionally implement this method to provide icons and the highlight groups for your icon_placement
 ---@param node nvim_tree.api.Node
 ---@return HighlightedString[]? icons
 function nvim_tree.api.decorator.BaseDecorator:icons(node) end
 
----Implement this method to provide one highlight group to apply to HighlightRange
+---Optionally implement this method to provide one highlight group to apply to your highlight_range
 ---@param node nvim_tree.api.Node
 ---@return string? highlight_group
 function nvim_tree.api.decorator.BaseDecorator:highlight_group(node) end
@@ -65,23 +61,21 @@ function nvim_tree.api.decorator.BaseDecorator:highlight_group(node) end
 -- Example Decorator
 --
 
-local BaseDecorator = require("nvim-tree.api").decorator.BaseDecorator
-
 ---@class (exact) MyDecorator: nvim_tree.api.decorator.BaseDecorator
 ---@field private my_icon nvim_tree.api.HighlightedString
-local MyDecorator = BaseDecorator:extend()
+local MyDecorator = require("nvim-tree.api").decorator.create()
 
 ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
 function MyDecorator:new()
-  ----@type nvim_tree.api.decorator.BaseDecoratorArgs
+  ---@type nvim_tree.api.decorator.InitArgs
   local args = {
     enabled         = true,
     highlight_range = "all",
     icon_placement  = "signcolumn",
   }
 
-  -- construct super with args
-  BaseDecorator.new(self, args)
+  -- init
+  self:init(args)
 
   -- create your icon once, for convenience
   self.my_icon = { str = "I", hl = { "MyIcon" } }
