@@ -1,5 +1,5 @@
 ---@meta
-error('Cannot require a meta file')
+error("Cannot require a meta file")
 
 local nvim_tree = { api = { decorator = { BaseDecorator = {} } } }
 
@@ -60,7 +60,6 @@ function nvim_tree.api.decorator.BaseDecorator:icons(node) end
 ---@param node nvim_tree.api.Node
 ---@return string? highlight_group
 function nvim_tree.api.decorator.BaseDecorator:highlight_group(node) end
-
 
 --
 -- Example Decorator
