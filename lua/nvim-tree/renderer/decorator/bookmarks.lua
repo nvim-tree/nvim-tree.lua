@@ -7,7 +7,7 @@ local DecoratorBookmarks = Decorator:extend()
 DecoratorBookmarks.name = "Bookmarks"
 
 ---@class DecoratorBookmarks
----@overload fun(explorer: Explorer): DecoratorBookmarks
+---@overload fun(args: DecoratorArgs): DecoratorBookmarks
 
 ---@protected
 ---@param args DecoratorArgs

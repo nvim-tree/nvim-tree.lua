@@ -8,7 +8,7 @@ local DecoratorHidden = Decorator:extend()
 DecoratorHidden.name = "Hidden"
 
 ---@class DecoratorHidden
----@overload fun(explorer: Explorer): DecoratorHidden
+---@overload fun(args: DecoratorArgs): DecoratorHidden
 
 ---@protected
 ---@param args DecoratorArgs

@@ -37,7 +37,7 @@ local DecoratorDiagnostics = Decorator:extend()
 DecoratorDiagnostics.name = "Diagnostics"
 
 ---@class DecoratorDiagnostics
----@overload fun(explorer: Explorer): DecoratorDiagnostics
+---@overload fun(args: DecoratorArgs): DecoratorDiagnostics
 
 ---@protected
 ---@param args DecoratorArgs

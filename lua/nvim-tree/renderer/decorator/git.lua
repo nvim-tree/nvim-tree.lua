@@ -22,7 +22,7 @@ local DecoratorGit = Decorator:extend()
 DecoratorGit.name = "Git"
 
 ---@class DecoratorGit
----@overload fun(explorer: Explorer): DecoratorGit
+---@overload fun(args: DecoratorArgs): DecoratorGit
 
 ---@protected
 ---@param args DecoratorArgs

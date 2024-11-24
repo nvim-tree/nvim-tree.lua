@@ -10,7 +10,7 @@ local DecoratorModified = Decorator:extend()
 DecoratorModified.name = "Modified"
 
 ---@class DecoratorModified
----@overload fun(explorer: Explorer): DecoratorModified
+---@overload fun(args: DecoratorArgs): DecoratorModified
 
 ---@protected
 ---@param args DecoratorArgs

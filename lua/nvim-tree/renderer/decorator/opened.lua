@@ -9,7 +9,7 @@ local DecoratorOpened = Decorator:extend()
 DecoratorOpened.name = "Opened"
 
 ---@class DecoratorOpened
----@overload fun(explorer: Explorer): DecoratorOpened
+---@overload fun(args: DecoratorArgs): DecoratorOpened
 
 ---@protected
 ---@param args DecoratorArgs

@@ -6,7 +6,7 @@ local DecoratorCopied = Decorator:extend()
 DecoratorCopied.name = "Copied"
 
 ---@class DecoratorCopied
----@overload fun(explorer: Explorer): DecoratorCopied
+---@overload fun(args: DecoratorArgs): DecoratorCopied
 
 ---@protected
 ---@param args DecoratorArgs
