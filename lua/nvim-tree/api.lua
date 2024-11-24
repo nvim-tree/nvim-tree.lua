@@ -39,6 +39,7 @@ local Api = {
   },
   commands = {},
   diagnostics = {},
+  decorator = {},
 }
 
 ---Print error when setup not called.
@@ -310,5 +311,7 @@ Api.diagnostics.hi_test = wrap(appearance_hi_test)
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
+
+Api.decorator.BaseDecorator = require("nvim-tree.renderer.decorator.user") --[[@as nvim_tree.api.decorator.BaseDecorator ]]
 
 return Api

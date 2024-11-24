@@ -1,15 +1,12 @@
 ---@meta
-error('Cannot require a meta file')
-
--- TODO describe class
--- TODO describe user decorator
+error("Cannot require a meta file")
 
 --
 -- Nodes
 --
 
 ---Base Node, Abstract
----@class (exact) nvim_tree.api.Node: Class
+---@class (exact) nvim_tree.api.Node
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field absolute_path string
 ---@field executable boolean
@@ -34,7 +31,7 @@ error('Cannot require a meta file')
 ---@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
 
 ---Link mixin
----@class (exact) nvim_tree.api.LinkNode: Class
+---@class (exact) nvim_tree.api.LinkNode
 ---@field link_to string
 ---@field fs_stat_target uv.fs_stat.result
 
@@ -52,9 +49,3 @@ error('Cannot require a meta file')
 ---@class (exact) nvim_tree.api.HighlightedString
 ---@field str string
 ---@field hl string[]
-
---
--- Internal Aliases
---
----@alias HighlightedString nvim_tree.api.HighlightedString
-

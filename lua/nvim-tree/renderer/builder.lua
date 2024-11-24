@@ -205,7 +205,6 @@ end
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:icon_name_decorated(node)
-
   -- base case
   local icon = node:highlighted_icon()
   local name = node:highlighted_name()
