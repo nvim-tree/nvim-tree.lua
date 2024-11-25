@@ -23,9 +23,10 @@ function RootNode:destroy()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
+---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.RootNode cloned
-function RootNode:clone()
-  local clone = DirectoryNode.clone(self) --[[@as nvim_tree.api.RootNode]]
+function RootNode:clone(api_nodes)
+  local clone = DirectoryNode.clone(self, api_nodes) --[[@as nvim_tree.api.RootNode]]
 
   return clone
 end

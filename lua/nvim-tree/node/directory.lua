@@ -271,9 +271,10 @@ function DirectoryNode:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
+---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.DirectoryNode cloned
-function DirectoryNode:clone()
-  local clone        = Node.clone(self) --[[@as nvim_tree.api.DirectoryNode]]
+function DirectoryNode:clone(api_nodes)
+  local clone        = Node.clone(self, api_nodes) --[[@as nvim_tree.api.DirectoryNode]]
 
   clone.has_children = self.has_children
   clone.nodes        = {}
@@ -281,7 +282,7 @@ function DirectoryNode:clone()
 
   local clone_child
   for _, child in ipairs(self.nodes) do
-    clone_child = child:clone()
+    clone_child = child:clone(api_nodes)
     clone_child.parent = clone
     table.insert(clone.nodes, clone_child)
   end

@@ -13,6 +13,7 @@ local nvim_tree = { api = { decorator = { AbstractDecorator = {} } } }
 ---Constructor must call:
 ---  :init
 ---  :define_sign when using "signcolumn" range
+---Decorator must be registered via api.decorator.register
 
 ---Highlight group range as per nvim-tree.renderer.highlight_*
 ---@alias nvim_tree.api.decorator.HighlightRange "none" | "icon" | "name" | "all"
@@ -125,4 +126,5 @@ function MyDecorator:highlight_group(node)
   end
 end
 
-return MyDecorator
+---Register the decorator, below Cut in priority
+require("nvim-tree.api").decorator.register({ decorator = MyDecorator, below = "Cut" })

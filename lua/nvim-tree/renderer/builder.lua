@@ -28,6 +28,7 @@ local pad = require("nvim-tree.renderer.components.padding")
 ---@field private markers boolean[] indent markers
 ---@field private decorators Decorator[]
 ---@field private hidden_display fun(node: Node): string|nil
+---@field private api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node for user decorators
 local Builder = Class:extend()
 
 ---@class Builder
@@ -51,18 +52,31 @@ function Builder:new(args)
   self.virtual_lines   = {}
   self.decorators      = {}
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
+  self.api_nodes       = nil
 
   ---@type DecoratorArgs
   local decorator_args = { explorer = self.explorer }
 
-  -- lowest priority is registered first
+  -- instantiate all the decorators
   for _, d in ipairs(decorator_registry.registered) do
     if d:is(DecoratorUser) then
-      table.insert(self.decorators, 1, d())
+      self:build_api_nodes()
+      table.insert(self.decorators, d())
     else
-      table.insert(self.decorators, 1, d(decorator_args))
+      table.insert(self.decorators, d(decorator_args))
     end
   end
+end
+
+---Create and populate api_nodes if not present
+---@private
+function Builder:build_api_nodes()
+  if self.api_nodes then
+    return
+  end
+
+  self.api_nodes = {}
+  self.explorer:clone(self.api_nodes)
 end
 
 ---Insert ranged highlight groups into self.highlights
@@ -122,22 +136,25 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
-  for i = #self.decorators, 1, -1 do
-    add_to_end(line, self.decorators[i]:icons_before(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(line, d:icons_before(d:is(DecoratorUser) and api_node or node))
   end
 
   add_to_end(line, { name })
 
-  for i = #self.decorators, 1, -1 do
-    add_to_end(line, self.decorators[i]:icons_after(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(line, d:icons_after(d:is(DecoratorUser) and api_node or node))
   end
 
   local rights = {}
-  for i = #self.decorators, 1, -1 do
-    add_to_end(rights, self.decorators[i]:icons_right_align(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(rights, d:icons_right_align(d:is(DecoratorUser) and api_node or node))
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -149,10 +166,14 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+
   -- first in priority order
-  local sign_name
-  for _, d in ipairs(self.decorators) do
-    sign_name = d:sign_name(node)
+  local d, sign_name
+  for i = #self.decorators, 1, -1 do
+    d = self.decorators[i]
+    sign_name = d:sign_name(d:is(DecoratorUser) and api_node or node)
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -203,10 +224,8 @@ function Builder:icon_name_decorated(node)
   -- calculate node icon and all decorated highlight groups
   local icon_groups = {}
   local name_groups = {}
-  local decorator, hl_icon, hl_name
-  for i = #self.decorators, 1, -1 do
-    decorator = self.decorators[i]
-
+  local hl_icon, hl_name
+  for _, decorator in ipairs(self.decorators) do
     -- maybe overridde icon
     icon = decorator:icon_node(node) or icon
 

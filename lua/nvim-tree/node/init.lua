@@ -121,8 +121,9 @@ function Node:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node, populating children recursively.
+---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.Node cloned
-function Node:clone()
+function Node:clone(api_nodes)
   ---@type nvim_tree.api.Node
   local clone = {
     uid_node      = self.uid_node,
@@ -136,6 +137,10 @@ function Node:clone()
     parent        = nil,
     diag_severity = self.diag_status and self.diag_status.value or nil,
   }
+
+  if api_nodes then
+    api_nodes[self.uid_node] = clone
+  end
 
   return clone
 end
