@@ -3,10 +3,10 @@ error("Cannot require a meta file")
 
 local nvim_tree = { api = { decorator = { AbstractDecorator = {} } } }
 
----Custom decorator extends nvim_tree.api.decorator.AbstractDecorator
+---Custom decorator
 ---It may:
 ---  Add icons
----  Set name highlight group
+---  Set highlight group for the name or icons
 ---  Override node icon
 ---Class must be created via nvim_tree.api.decorator.create()
 ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
@@ -24,18 +24,36 @@ local nvim_tree = { api = { decorator = { AbstractDecorator = {} } } }
 ---Names of predefined decorators or your decorator classes
 ---@alias nvim_tree.api.decorator.Name "Cut" | "Copied" | "Diagnostics" | "Bookmarks" | "Modified" | "Hidden" | "Opened" | "Git" | nvim_tree.api.decorator.AbstractDecorator
 
----Abstract decorator class, your decorator will extend this
+---Abstract decorator class, your decorator will extend this.
 ---
 ---@class (exact) nvim_tree.api.decorator.AbstractDecorator
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.api.decorator.HighlightRange
 ---@field protected icon_placement nvim_tree.api.decorator.IconPlacement
 
----Abstract no-args constructor must be implemented
+---Abstract: no-args constructor must be implemented.
 ---
 function nvim_tree.api.decorator.AbstractDecorator:new() end
 
----Must be called from your constructor
+---Abstract: optionally implement to set the node's icon
+---
+---@param node nvim_tree.api.Node
+---@return HighlightedString? icon_node
+function nvim_tree.api.decorator.AbstractDecorator:icon_node(node) end
+
+---Abstract: optionally implement to provide icons and the highlight groups for your icon_placement.
+---
+---@param node nvim_tree.api.Node
+---@return HighlightedString[]? icons
+function nvim_tree.api.decorator.AbstractDecorator:icons(node) end
+
+---Abstract: optionally implement to provide one highlight group to apply to your highlight_range.
+---
+---@param node nvim_tree.api.Node
+---@return string? highlight_group
+function nvim_tree.api.decorator.AbstractDecorator:highlight_group(node) end
+
+---Must be called from your constructor.
 ---
 ---@class (exact) nvim_tree.api.decorator.AbstractDecoratorInitArgs
 ---@field enabled boolean
@@ -46,23 +64,11 @@ function nvim_tree.api.decorator.AbstractDecorator:new() end
 ---@param args nvim_tree.api.decorator.AbstractDecoratorInitArgs
 function nvim_tree.api.decorator.AbstractDecorator:init(args) end
 
----Abstract: optionally implement to set the node's icon
+---Define a sign. This should be called in the constructor.
 ---
----@param node nvim_tree.api.Node
----@return HighlightedString? icon_node
-function nvim_tree.api.decorator.AbstractDecorator:icon_node(node) end
-
----Abstract: optionally implement to provide icons and the highlight groups for your icon_placement
----
----@param node nvim_tree.api.Node
----@return HighlightedString[]? icons
-function nvim_tree.api.decorator.AbstractDecorator:icons(node) end
-
----Abstract: optionally implement to provide one highlight group to apply to your highlight_range
----
----@param node nvim_tree.api.Node
----@return string? highlight_group
-function nvim_tree.api.decorator.AbstractDecorator:highlight_group(node) end
+---@protected
+---@param icon HighlightedString?
+function nvim_tree.api.decorator.AbstractDecorator:define_sign(icon) end
 
 
 --
