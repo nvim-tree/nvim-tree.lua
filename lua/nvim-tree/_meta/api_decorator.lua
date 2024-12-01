@@ -1,7 +1,7 @@
 ---@meta
 error("Cannot require a meta file")
 
-local nvim_tree = {}
+local nvim_tree = { api = { decorator = {} } }
 
 ---Highlight group range as per nvim-tree.renderer.highlight_*
 ---@alias nvim_tree.api.decorator.HighlightRange "none" | "icon" | "name" | "all"
@@ -18,6 +18,11 @@ local nvim_tree = {}
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.api.decorator.HighlightRange
 ---@field protected icon_placement nvim_tree.api.decorator.IconPlacement
+nvim_tree.api.decorator.UserDecorator = {}
+
+---Create your decorator class
+---
+function nvim_tree.api.decorator.UserDecorator:extend() end
 
 ---Abstract: no-args constructor must be implemented and will be called once per tree render.
 ---Must set all fields.
