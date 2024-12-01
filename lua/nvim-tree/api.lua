@@ -7,7 +7,6 @@ local events = require("nvim-tree.events")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
-local decorator_registry = require("nvim-tree.renderer.decorator.registry")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
@@ -314,26 +313,8 @@ Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
 
----Create a new decorator class
----
----@return nvim_tree.api.decorator.AbstractDecorator
-Api.decorator.create = function() return DecoratorUser:extend() end
-
----Register a decorator class
----
----@class RegisterOpts
----@field decorator nvim_tree.api.decorator.AbstractDecorator
----@field below nvim_tree.api.decorator.Name?
----
----@param opts RegisterOpts
-Api.decorator.register = function(opts) decorator_registry.register(opts) end
-
----Unregister a decorator class
----
----@class UnRegisterOpts
----@field decorator nvim_tree.api.decorator.AbstractDecorator
----
----@param opts UnRegisterOpts
-Api.decorator.unregister = function(opts) decorator_registry.unregister(opts) end
+---User provided decorator. Extend this class via :extend()
+---@type nvim_tree.api.decorator.DecoratorUser
+Api.decorator.DecoratorUser = DecoratorUser --[[@as nvim_tree.api.decorator.DecoratorUser]]
 
 return Api

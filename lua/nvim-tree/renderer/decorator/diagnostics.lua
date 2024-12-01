@@ -34,7 +34,6 @@ local ICON_KEYS = {
 ---@field private explorer Explorer
 ---@field private diag_icons HighlightedString[]?
 local DecoratorDiagnostics = Decorator:extend()
-DecoratorDiagnostics.name = "Diagnostics"
 
 ---@class DecoratorDiagnostics
 ---@overload fun(args: DecoratorArgs): DecoratorDiagnostics

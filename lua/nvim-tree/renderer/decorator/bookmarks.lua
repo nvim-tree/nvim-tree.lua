@@ -4,7 +4,6 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field private explorer Explorer
 ---@field private icon HighlightedString?
 local DecoratorBookmarks = Decorator:extend()
-DecoratorBookmarks.name = "Bookmarks"
 
 ---@class DecoratorBookmarks
 ---@overload fun(args: DecoratorArgs): DecoratorBookmarks

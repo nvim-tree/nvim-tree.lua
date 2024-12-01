@@ -1,13 +1,35 @@
-local decorator_registry = require("nvim-tree.renderer.decorator.registry")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
 local Class = require("nvim-tree.classic")
+
 local DirectoryNode = require("nvim-tree.node.directory")
+
+local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
+local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
+local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
+local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
+local DecoratorGit = require("nvim-tree.renderer.decorator.git")
+local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
+local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
+local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
 local DecoratorUser = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
+
+-- Builtin Decorators
+---@type table<nvim_tree.api.decorator.Name, Decorator>
+local BUILTIN_DECORATORS = {
+  Git = DecoratorGit,
+  Opened = DecoratorOpened,
+  Hidden = DecoratorHidden,
+  Modified = DecoratorModified,
+  Bookmarks = DecoratorBookmarks,
+  Diagnostics = DecoratorDiagnostics,
+  Copied = DecoratorCopied,
+  Cut = DecoratorCut,
+}
 
 ---@class (exact) AddHighlightArgs
 ---@field group string[]
@@ -52,31 +74,28 @@ function Builder:new(args)
   self.virtual_lines   = {}
   self.decorators      = {}
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
-  self.api_nodes       = nil
 
-  ---@type DecoratorArgs
-  local decorator_args = { explorer = self.explorer }
+  -- instantiate all the builtin and user decorator instances
+  local builtin, user
+  for _, d in ipairs(self.explorer.opts.renderer.decorators) do
+    ---@type Decorator
+    builtin = BUILTIN_DECORATORS[d]
 
-  -- instantiate all the decorators
-  for _, d in ipairs(decorator_registry.registered) do
-    if d:is(DecoratorUser) then
-      self:build_api_nodes()
-      table.insert(self.decorators, d())
-    else
-      table.insert(self.decorators, d(decorator_args))
+    ---@type DecoratorUser
+    user = d.as and d:as(DecoratorUser)
+
+    if builtin then
+      table.insert(self.decorators, builtin({ explorer = self.explorer }))
+    elseif user then
+      table.insert(self.decorators, user())
+
+      -- clone user nodes once
+      if not self.api_nodes then
+        self.api_nodes = {}
+        self.explorer:clone(self.api_nodes)
+      end
     end
   end
-end
-
----Create and populate api_nodes if not present
----@private
-function Builder:build_api_nodes()
-  if self.api_nodes then
-    return
-  end
-
-  self.api_nodes = {}
-  self.explorer:clone(self.api_nodes)
 end
 
 ---Insert ranged highlight groups into self.highlights
@@ -143,18 +162,18 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   add_to_end(line, { icon })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_before(d:is(DecoratorUser) and api_node or node))
+    add_to_end(line, d:icons_before(not d:is(DecoratorUser) and node or api_node))
   end
 
   add_to_end(line, { name })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_after(d:is(DecoratorUser) and api_node or node))
+    add_to_end(line, d:icons_after(not d:is(DecoratorUser) and node or api_node))
   end
 
   local rights = {}
   for _, d in ipairs(self.decorators) do
-    add_to_end(rights, d:icons_right_align(d:is(DecoratorUser) and api_node or node))
+    add_to_end(rights, d:icons_right_align(not d:is(DecoratorUser) and node or api_node))
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -173,7 +192,7 @@ function Builder:build_signs(node)
   local d, sign_name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
-    sign_name = d:sign_name(d:is(DecoratorUser) and api_node or node)
+    sign_name = d:sign_name(not d:is(DecoratorUser) and node or api_node)
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -217,6 +236,9 @@ end
 ---@return HighlightedString icon
 ---@return HighlightedString name
 function Builder:icon_name_decorated(node)
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+
   -- base case
   local icon = node:highlighted_icon()
   local name = node:highlighted_name()
@@ -225,11 +247,11 @@ function Builder:icon_name_decorated(node)
   local icon_groups = {}
   local name_groups = {}
   local hl_icon, hl_name
-  for _, decorator in ipairs(self.decorators) do
+  for _, d in ipairs(self.decorators) do
     -- maybe overridde icon
-    icon = decorator:icon_node(node) or icon
+    icon = d:icon_node((not d:is(DecoratorUser) and node or api_node)) or icon
 
-    hl_icon, hl_name = decorator:highlight_group_icon_name(node)
+    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(DecoratorUser) and node or api_node))
 
     table.insert(icon_groups, hl_icon)
     table.insert(name_groups, hl_name)

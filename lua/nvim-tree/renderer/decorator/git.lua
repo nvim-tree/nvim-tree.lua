@@ -19,7 +19,6 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field private icons_by_status GitIconsByStatus?
 ---@field private icons_by_xy GitIconsByXY?
 local DecoratorGit = Decorator:extend()
-DecoratorGit.name = "Git"
 
 ---@class DecoratorGit
 ---@overload fun(args: DecoratorArgs): DecoratorGit

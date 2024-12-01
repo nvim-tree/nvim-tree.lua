@@ -2,7 +2,6 @@ local Class = require("nvim-tree.classic")
 
 ---Abstract Decorator
 ---@class (exact) Decorator: Class
----@field name string for registry
 ---@field protected enabled boolean
 ---@field protected highlight_range DecoratorHighlightRange
 ---@field protected icon_placement DecoratorIconPlacement

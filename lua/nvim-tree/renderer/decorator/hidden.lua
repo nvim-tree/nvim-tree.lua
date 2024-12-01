@@ -5,7 +5,6 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field private explorer Explorer
 ---@field private icon HighlightedString?
 local DecoratorHidden = Decorator:extend()
-DecoratorHidden.name = "Hidden"
 
 ---@class DecoratorHidden
 ---@overload fun(args: DecoratorArgs): DecoratorHidden

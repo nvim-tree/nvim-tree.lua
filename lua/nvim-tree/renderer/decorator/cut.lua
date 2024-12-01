@@ -3,7 +3,6 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@class (exact) DecoratorCut: Decorator
 ---@field private explorer Explorer
 local DecoratorCut = Decorator:extend()
-DecoratorCut.name = "Cut"
 
 ---@class DecoratorCut
 ---@overload fun(args: DecoratorArgs): DecoratorCut

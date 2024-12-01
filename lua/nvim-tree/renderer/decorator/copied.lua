@@ -3,7 +3,6 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@class (exact) DecoratorCopied: Decorator
 ---@field private explorer Explorer
 local DecoratorCopied = Decorator:extend()
-DecoratorCopied.name = "Copied"
 
 ---@class DecoratorCopied
 ---@overload fun(args: DecoratorArgs): DecoratorCopied
