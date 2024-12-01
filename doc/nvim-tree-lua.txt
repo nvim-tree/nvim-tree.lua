@@ -53,6 +53,7 @@ CONTENTS                                                           *nvim-tree*
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
  11. Decorators                               |nvim-tree-decorators|
+ 11.1  Decorator Example                        |nvim-tree-decorator-example|
  12. OS Specific Restrictions                 |nvim-tree-os-specific|
  13. Netrw                                    |nvim-tree-netrw|
  14. Legacy                                   |nvim-tree-legacy|
@@ -426,7 +427,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
         hidden_display = "none",
         symlink_destination = true,
-        decorators = { "Git", "Opened", "Hidden", "Modified", "Bookmarks", "Diagnostics", "Copied", "Cut", },
+        decorators = { "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", },
         highlight_git = "none",
         highlight_diagnostics = "none",
         highlight_opened_files = "none",
@@ -933,10 +934,10 @@ Uses strings to specify builtin decorators otherwise specify your
   Type: `nvim_tree.api.decorator.Name[]`, Default: >lua
     {
       "Git",
-      "Opened",
+      "Open",
       "Hidden",
       "Modified",
-      "Bookmarks",
+      "Bookmark",
       "Diagnostics",
       "Copied",
       "Cut",
@@ -2777,26 +2778,25 @@ Decorators may:
 - Set highlight group for the name or icons
 - Override node icon
 
-Create your decorator class via `api.decorator.UserDecorator:extend()` and add it
-to |nvim-tree.renderer.decorators|
+See `api_decorator.lua` for decorator class definition and full documentation.
 
-e.g. default decorators with an user decorator being overridden only by Cut: >lua
+Specify decorators and their precedence via |nvim-tree.renderer.decorators|
+e.g. defaults with a user decorator being overridden only by Cut: >lua
   {
     "Git",
-    "Opened",
+    "Open",
     "Hidden",
     "Modified",
-    "Bookmarks",
+    "Bookmark",
     "Diagnostics",
     "Copied",
     MyDecorator,
     "Cut",
   }
 <
-See `api_decorator.lua` for decorator class definition and full documentation.
-
-Example decorator: >lua
-
+==============================================================================
+ 11.1. DECORATOR EXAMPLE                         *nvim-tree-decorator-example*
+>lua
   ---Create your decorator class
   ---@class (exact) MyDecorator: nvim_tree.api.decorator.UserDecorator
   ---@field private my_icon nvim_tree.api.HighlightedString
