@@ -12,7 +12,6 @@ local Class = require("nvim-tree.classic")
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
----TODO split this into diag_severity and diag_severity_cache_version
 ---@field diag_status DiagStatus?
 ---@field private is_dot boolean cached is_dotfile
 local Node = Class:extend()
