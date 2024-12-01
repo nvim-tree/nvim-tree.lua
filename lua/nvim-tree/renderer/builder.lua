@@ -18,6 +18,8 @@ local DecoratorUser = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
+---@alias HighlightedString nvim_tree.api.HighlightedString
+
 -- Builtin Decorators
 ---@type table<nvim_tree.api.decorator.Name, Decorator>
 local BUILTIN_DECORATORS = {

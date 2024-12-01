@@ -13,16 +13,11 @@ local DecoratorOpened = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DecoratorOpened:new(args)
-  self.explorer = args.explorer
+  self.explorer        = args.explorer
 
-  ---@type AbstractDecoratorArgs
-  local a = {
-    enabled         = true,
-    highlight_range = self.explorer.opts.renderer.highlight_opened_files or "none",
-    icon_placement  = "none",
-  }
-
-  DecoratorOpened.super.new(self, a)
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_opened_files or "none"
+  self.icon_placement  = "none"
 end
 
 ---Opened highlight: renderer.highlight_opened_files and node has an open buffer

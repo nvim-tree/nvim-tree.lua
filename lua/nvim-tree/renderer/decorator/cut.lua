@@ -10,16 +10,11 @@ local DecoratorCut = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DecoratorCut:new(args)
-  self.explorer = args.explorer
+  self.explorer        = args.explorer
 
-  ---@type AbstractDecoratorArgs
-  local a = {
-    enabled         = true,
-    highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none",
-    icon_placement  = "none",
-  }
-
-  DecoratorCut.super.new(self, a)
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none"
+  self.icon_placement  = "none"
 end
 
 ---Cut highlight: renderer.highlight_clipboard and node is cut

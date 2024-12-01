@@ -313,7 +313,7 @@ Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
 
----User provided decorator. Extend this class via :extend()
+---Create a decorator class by calling :extend()
 ---@type nvim_tree.api.decorator.DecoratorUser
 Api.decorator.DecoratorUser = DecoratorUser --[[@as nvim_tree.api.decorator.DecoratorUser]]
 

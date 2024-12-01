@@ -3,29 +3,34 @@ local Class = require("nvim-tree.classic")
 ---Abstract Decorator
 ---@class (exact) Decorator: Class
 ---@field protected enabled boolean
----@field protected highlight_range DecoratorHighlightRange
----@field protected icon_placement DecoratorIconPlacement
+---@field protected highlight_range nvim_tree.api.decorator.HighlightRange
+---@field protected icon_placement nvim_tree.api.decorator.IconPlacement
 local Decorator = Class:extend()
 
 ---@class (exact) DecoratorArgs
 ---@field explorer Explorer
 
----Abstract constructor
----@class (exact) AbstractDecoratorArgs
----@field enabled boolean
----@field highlight_range DecoratorHighlightRange
----@field icon_placement DecoratorIconPlacement
----
+---Abstract icon override, optionally implemented
+---@param node Node
+---@return HighlightedString? icon_node
+function Decorator:icon_node(node)
+  return self:nop(node)
+end
+
+---Abstract icons, optionally implemented
 ---@protected
----@param args AbstractDecoratorArgs
-function Decorator:new(args)
-  if args then
-    self.enabled         = args.enabled
-    self.highlight_range = args.highlight_range
-    self.icon_placement  = args.icon_placement
-  else
-    self.enabled = false
-  end
+---@param node Node
+---@return HighlightedString[]? icons
+function Decorator:icons(node)
+  self:nop(node)
+end
+
+---Abstract highlight group, optionally implemented
+---@protected
+---@param node Node
+---@return string? highlight_group
+function Decorator:highlight_group(node)
+  self:nop(node)
 end
 
 ---Maybe highlight groups for icon and name
@@ -94,29 +99,6 @@ function Decorator:icons_right_align(node)
   end
 
   return self:icons(node)
-end
-
----Maybe icon override, optionally implemented
----@param node Node
----@return HighlightedString? icon_node
-function Decorator:icon_node(node)
-  return self:nop(node)
-end
-
----Maybe icons, optionally implemented
----@protected
----@param node Node
----@return HighlightedString[]? icons
-function Decorator:icons(node)
-  self:nop(node)
-end
-
----Maybe highlight group, optionally implemented
----@protected
----@param node Node
----@return string? highlight_group
-function Decorator:highlight_group(node)
-  self:nop(node)
 end
 
 ---Define a sign

@@ -11,16 +11,11 @@ local DecoratorBookmarks = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DecoratorBookmarks:new(args)
-  self.explorer = args.explorer
+  self.explorer        = args.explorer
 
-  ---@type AbstractDecoratorArgs
-  local a = {
-    enabled         = true,
-    highlight_range = self.explorer.opts.renderer.highlight_bookmarks or "none",
-    icon_placement  = self.explorer.opts.renderer.icons.bookmarks_placement or "none",
-  }
-
-  DecoratorBookmarks.super.new(self, a)
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_bookmarks or "none"
+  self.icon_placement  = self.explorer.opts.renderer.icons.bookmarks_placement or "none"
 
   if self.explorer.opts.renderer.icons.show.bookmarks then
     self.icon = {

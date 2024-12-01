@@ -41,20 +41,11 @@ local DecoratorDiagnostics = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DecoratorDiagnostics:new(args)
-  self.explorer = args.explorer
+  self.explorer        = args.explorer
 
-  ---@type AbstractDecoratorArgs
-  local a = {
-    enabled         = true,
-    highlight_range = self.explorer.opts.renderer.highlight_diagnostics or "none",
-    icon_placement  = self.explorer.opts.renderer.icons.diagnostics_placement or "none",
-  }
-
-  DecoratorDiagnostics.super.new(self, a)
-
-  if not self.enabled then
-    return
-  end
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_diagnostics or "none"
+  self.icon_placement  = self.explorer.opts.renderer.icons.diagnostics_placement or "none"
 
   if self.explorer.opts.renderer.icons.show.diagnostics then
     self.diag_icons = {}
@@ -72,7 +63,7 @@ end
 ---@param node Node
 ---@return HighlightedString[]? icons
 function DecoratorDiagnostics:icons(node)
-  if node and self.enabled and self.diag_icons then
+  if node and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)
     local diag_value = diag_status and diag_status.value
 
@@ -86,7 +77,7 @@ end
 ---@param node Node
 ---@return string? highlight_group
 function DecoratorDiagnostics:highlight_group(node)
-  if not node or not self.enabled or self.highlight_range == "none" then
+  if self.highlight_range == "none" then
     return nil
   end
 

@@ -26,16 +26,11 @@ local DecoratorGit = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DecoratorGit:new(args)
-  self.explorer = args.explorer
+  self.explorer        = args.explorer
 
-  ---@type AbstractDecoratorArgs
-  local a = {
-    enabled         = self.explorer.opts.git.enable,
-    highlight_range = self.explorer.opts.renderer.highlight_git or "none",
-    icon_placement  = self.explorer.opts.renderer.icons.git_placement or "none",
-  }
-
-  DecoratorGit.super.new(self, a)
+  self.enabled         = self.explorer.opts.git.enable
+  self.highlight_range = self.explorer.opts.renderer.highlight_git or "none"
+  self.icon_placement  = self.explorer.opts.renderer.icons.git_placement or "none"
 
   if not self.enabled then
     return
@@ -149,7 +144,7 @@ end
 ---@param node Node
 ---@return HighlightedString[]? icons
 function DecoratorGit:icons(node)
-  if not node or not self.enabled or not self.icons_by_xy then
+  if not self.icons_by_xy then
     return nil
   end
 
@@ -210,7 +205,7 @@ end
 ---@param node Node
 ---@return string? highlight_group
 function DecoratorGit:highlight_group(node)
-  if not node or not self.enabled or self.highlight_range == "none" then
+  if self.highlight_range == "none" then
     return nil
   end
 
