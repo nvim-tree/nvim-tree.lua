@@ -84,7 +84,7 @@ function Builder:new(args)
     builtin = BUILTIN_DECORATORS[d]
 
     ---@type UserDecorator
-    user = d.as and d:as(UserDecorator)
+    user = type(d) == "table" and type(d.as) == "function" and d:as(UserDecorator)
 
     if builtin then
       table.insert(self.decorators, builtin({ explorer = self.explorer }))
