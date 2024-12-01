@@ -1,15 +1,15 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----@class (exact) DecoratorCopied: Decorator
+---@class (exact) CopiedDecorator: Decorator
 ---@field private explorer Explorer
-local DecoratorCopied = Decorator:extend()
+local CopiedDecorator = Decorator:extend()
 
----@class DecoratorCopied
----@overload fun(args: DecoratorArgs): DecoratorCopied
+---@class CopiedDecorator
+---@overload fun(args: DecoratorArgs): CopiedDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorCopied:new(args)
+function CopiedDecorator:new(args)
   self.explorer   = args.explorer
 
   self.enabled         = true
@@ -20,10 +20,10 @@ end
 ---Copied highlight: renderer.highlight_clipboard and node is copied
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorCopied:highlight_group(node)
+function CopiedDecorator:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.clipboard:is_copied(node) then
     return "NvimTreeCopiedHL"
   end
 end
 
-return DecoratorCopied
+return CopiedDecorator

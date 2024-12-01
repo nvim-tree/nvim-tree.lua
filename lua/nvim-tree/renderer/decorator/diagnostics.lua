@@ -30,17 +30,17 @@ local ICON_KEYS = {
   ["hint"] = vim.diagnostic.severity.HINT,
 }
 
----@class (exact) DecoratorDiagnostics: Decorator
+---@class (exact) DiagnosticsDecorator: Decorator
 ---@field private explorer Explorer
 ---@field private diag_icons HighlightedString[]?
-local DecoratorDiagnostics = Decorator:extend()
+local DiagnosticsDecorator = Decorator:extend()
 
----@class DecoratorDiagnostics
----@overload fun(args: DecoratorArgs): DecoratorDiagnostics
+---@class DiagnosticsDecorator
+---@overload fun(args: DecoratorArgs): DiagnosticsDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorDiagnostics:new(args)
+function DiagnosticsDecorator:new(args)
   self.explorer        = args.explorer
 
   self.enabled         = true
@@ -62,7 +62,7 @@ end
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
 ---@param node Node
 ---@return HighlightedString[]? icons
-function DecoratorDiagnostics:icons(node)
+function DiagnosticsDecorator:icons(node)
   if node and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)
     local diag_value = diag_status and diag_status.value
@@ -76,7 +76,7 @@ end
 ---Diagnostic highlight: diagnostics.enable, renderer.highlight_diagnostics and node has status
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorDiagnostics:highlight_group(node)
+function DiagnosticsDecorator:highlight_group(node)
   if self.highlight_range == "none" then
     return nil
   end
@@ -102,4 +102,4 @@ function DecoratorDiagnostics:highlight_group(node)
   end
 end
 
-return DecoratorDiagnostics
+return DiagnosticsDecorator

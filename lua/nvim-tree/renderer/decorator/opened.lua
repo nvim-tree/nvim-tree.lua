@@ -2,17 +2,17 @@ local buffers = require("nvim-tree.buffers")
 
 local Decorator = require("nvim-tree.renderer.decorator")
 
----@class (exact) DecoratorOpened: Decorator
+---@class (exact) OpenDecorator: Decorator
 ---@field private explorer Explorer
 ---@field private icon HighlightedString|nil
-local DecoratorOpened = Decorator:extend()
+local OpenDecorator = Decorator:extend()
 
----@class DecoratorOpened
----@overload fun(args: DecoratorArgs): DecoratorOpened
+---@class OpenDecorator
+---@overload fun(args: DecoratorArgs): OpenDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorOpened:new(args)
+function OpenDecorator:new(args)
   self.explorer        = args.explorer
 
   self.enabled         = true
@@ -23,10 +23,10 @@ end
 ---Opened highlight: renderer.highlight_opened_files and node has an open buffer
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorOpened:highlight_group(node)
+function OpenDecorator:highlight_group(node)
   if self.highlight_range ~= "none" and buffers.is_opened(node) then
     return "NvimTreeOpenedHL"
   end
 end
 
-return DecoratorOpened
+return OpenDecorator

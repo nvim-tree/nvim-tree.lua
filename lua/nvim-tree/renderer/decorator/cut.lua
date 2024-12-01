@@ -1,15 +1,15 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----@class (exact) DecoratorCut: Decorator
+---@class (exact) CutDecorator: Decorator
 ---@field private explorer Explorer
-local DecoratorCut = Decorator:extend()
+local CutDecorator = Decorator:extend()
 
----@class DecoratorCut
----@overload fun(args: DecoratorArgs): DecoratorCut
+---@class CutDecorator
+---@overload fun(args: DecoratorArgs): CutDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorCut:new(args)
+function CutDecorator:new(args)
   self.explorer        = args.explorer
 
   self.enabled         = true
@@ -20,10 +20,10 @@ end
 ---Cut highlight: renderer.highlight_clipboard and node is cut
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorCut:highlight_group(node)
+function CutDecorator:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.clipboard:is_cut(node) then
     return "NvimTreeCutHL"
   end
 end
 
-return DecoratorCut
+return CutDecorator

@@ -1,16 +1,16 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----@class (exact) DecoratorBookmarks: Decorator
+---@class (exact) BookmarkDecorator: Decorator
 ---@field private explorer Explorer
 ---@field private icon HighlightedString?
-local DecoratorBookmarks = Decorator:extend()
+local BookmarkDecorator = Decorator:extend()
 
----@class DecoratorBookmarks
----@overload fun(args: DecoratorArgs): DecoratorBookmarks
+---@class BookmarkDecorator
+---@overload fun(args: DecoratorArgs): BookmarkDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorBookmarks:new(args)
+function BookmarkDecorator:new(args)
   self.explorer        = args.explorer
 
   self.enabled         = true
@@ -29,7 +29,7 @@ end
 ---Bookmark icon: renderer.icons.show.bookmarks and node is marked
 ---@param node Node
 ---@return HighlightedString[]? icons
-function DecoratorBookmarks:icons(node)
+function BookmarkDecorator:icons(node)
   if self.explorer.marks:get(node) then
     return { self.icon }
   end
@@ -38,10 +38,10 @@ end
 ---Bookmark highlight: renderer.highlight_bookmarks and node is marked
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorBookmarks:highlight_group(node)
+function BookmarkDecorator:highlight_group(node)
   if self.highlight_range ~= "none" and self.explorer.marks:get(node) then
     return "NvimTreeBookmarkHL"
   end
 end
 
-return DecoratorBookmarks
+return BookmarkDecorator

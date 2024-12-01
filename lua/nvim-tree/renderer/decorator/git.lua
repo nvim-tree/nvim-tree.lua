@@ -12,20 +12,20 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitIconsByXY table<GitXY, GitHighlightedString[]> porcelain status
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
----@class (exact) DecoratorGit: Decorator
+---@class (exact) GitDecorator: Decorator
 ---@field private explorer Explorer
 ---@field private file_hl_by_xy table<GitXY, string>?
 ---@field private folder_hl_by_xy table<GitXY, string>?
 ---@field private icons_by_status GitIconsByStatus?
 ---@field private icons_by_xy GitIconsByXY?
-local DecoratorGit = Decorator:extend()
+local GitDecorator = Decorator:extend()
 
----@class DecoratorGit
----@overload fun(args: DecoratorArgs): DecoratorGit
+---@class GitDecorator
+---@overload fun(args: DecoratorArgs): GitDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorGit:new(args)
+function GitDecorator:new(args)
   self.explorer        = args.explorer
 
   self.enabled         = self.explorer.opts.git.enable
@@ -51,7 +51,7 @@ function DecoratorGit:new(args)
 end
 
 ---@param glyphs GitGlyphsByStatus
-function DecoratorGit:build_icons_by_status(glyphs)
+function GitDecorator:build_icons_by_status(glyphs)
   self.icons_by_status           = {}
   self.icons_by_status.staged    = { str = glyphs.staged, hl = { "NvimTreeGitStagedIcon" }, ord = 1 }
   self.icons_by_status.unstaged  = { str = glyphs.unstaged, hl = { "NvimTreeGitDirtyIcon" }, ord = 2 }
@@ -63,7 +63,7 @@ function DecoratorGit:build_icons_by_status(glyphs)
 end
 
 ---@param icons GitIconsByXY
-function DecoratorGit:build_icons_by_xy(icons)
+function GitDecorator:build_icons_by_xy(icons)
   self.icons_by_xy = {
     ["M "] = { icons.staged },
     [" M"] = { icons.unstaged },
@@ -100,7 +100,7 @@ function DecoratorGit:build_icons_by_xy(icons)
   }
 end
 
-function DecoratorGit:build_file_folder_hl_by_xy()
+function GitDecorator:build_file_folder_hl_by_xy()
   self.file_hl_by_xy = {
     ["M "] = "NvimTreeGitFileStagedHL",
     ["C "] = "NvimTreeGitFileStagedHL",
@@ -143,7 +143,7 @@ end
 ---Git icons: git.enable, renderer.icons.show.git and node has status
 ---@param node Node
 ---@return HighlightedString[]? icons
-function DecoratorGit:icons(node)
+function GitDecorator:icons(node)
   if not self.icons_by_xy then
     return nil
   end
@@ -190,7 +190,7 @@ end
 ---Get the first icon as the sign if appropriate
 ---@param node Node
 ---@return string|nil name
-function DecoratorGit:sign_name(node)
+function GitDecorator:sign_name(node)
   if self.icon_placement ~= "signcolumn" then
     return
   end
@@ -204,7 +204,7 @@ end
 ---Git highlight: git.enable, renderer.highlight_git and node has status
 ---@param node Node
 ---@return string? highlight_group
-function DecoratorGit:highlight_group(node)
+function GitDecorator:highlight_group(node)
   if self.highlight_range == "none" then
     return nil
   end
@@ -221,4 +221,4 @@ function DecoratorGit:highlight_group(node)
   end
 end
 
-return DecoratorGit
+return GitDecorator

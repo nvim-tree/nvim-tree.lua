@@ -929,7 +929,7 @@ Whether to show the destination of the symlink.
 *nvim-tree.renderer.decorators*
 Highlighting and icons for the nodes, in increasing order of precedence.
 Uses strings to specify builtin decorators otherwise specify your
-`nvim_tree.api.decorator.DecoratorUser` class.
+`nvim_tree.api.decorator.UserDecorator` class.
   Type: `nvim_tree.api.decorator.Name[]`, Default: >lua
     {
       "Git",
@@ -2777,7 +2777,7 @@ Decorators may:
 - Set highlight group for the name or icons
 - Override node icon
 
-Create your decorator class via `api.decorator.DecoratorUser:extend()` and add it
+Create your decorator class via `api.decorator.UserDecorator:extend()` and add it
 to |nvim-tree.renderer.decorators|
 
 e.g. default decorators with an user decorator being overridden only by Cut: >lua
@@ -2798,9 +2798,9 @@ See `api_decorator.lua` for decorator class definition and full documentation.
 Example decorator: >lua
 
   ---Create your decorator class
-  ---@class (exact) MyDecorator: nvim_tree.api.decorator.DecoratorUser
+  ---@class (exact) MyDecorator: nvim_tree.api.decorator.UserDecorator
   ---@field private my_icon nvim_tree.api.HighlightedString
-  local MyDecorator = require("nvim-tree.api").decorator.DecoratorUser:extend()
+  local MyDecorator = require("nvim-tree.api").decorator.UserDecorator:extend()
 
   ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
   function MyDecorator:new()

@@ -6,15 +6,15 @@ local Class = require("nvim-tree.classic")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 
-local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
-local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
-local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
-local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
-local DecoratorGit = require("nvim-tree.renderer.decorator.git")
-local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
-local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
-local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
-local DecoratorUser = require("nvim-tree.renderer.decorator.user")
+local BookmarkDecorator = require("nvim-tree.renderer.decorator.bookmarks")
+local CopiedDecorator = require("nvim-tree.renderer.decorator.copied")
+local CutDecorator = require("nvim-tree.renderer.decorator.cut")
+local DiagnosticsDecorator = require("nvim-tree.renderer.decorator.diagnostics")
+local GitDecorator = require("nvim-tree.renderer.decorator.git")
+local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
+local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
+local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
+local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
@@ -23,14 +23,14 @@ local pad = require("nvim-tree.renderer.components.padding")
 -- Builtin Decorators
 ---@type table<nvim_tree.api.decorator.Name, Decorator>
 local BUILTIN_DECORATORS = {
-  Git = DecoratorGit,
-  Opened = DecoratorOpened,
-  Hidden = DecoratorHidden,
-  Modified = DecoratorModified,
-  Bookmarks = DecoratorBookmarks,
-  Diagnostics = DecoratorDiagnostics,
-  Copied = DecoratorCopied,
-  Cut = DecoratorCut,
+  Git = GitDecorator,
+  Open = OpenDecorator,
+  Hidden = HiddenDecorator,
+  Modified = ModifiedDecorator,
+  Bookmark = BookmarkDecorator,
+  Diagnostics = DiagnosticsDecorator,
+  Copied = CopiedDecorator,
+  Cut = CutDecorator,
 }
 
 ---@class (exact) AddHighlightArgs
@@ -83,8 +83,8 @@ function Builder:new(args)
     ---@type Decorator
     builtin = BUILTIN_DECORATORS[d]
 
-    ---@type DecoratorUser
-    user = d.as and d:as(DecoratorUser)
+    ---@type UserDecorator
+    user = d.as and d:as(UserDecorator)
 
     if builtin then
       table.insert(self.decorators, builtin({ explorer = self.explorer }))
@@ -164,18 +164,18 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   add_to_end(line, { icon })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_before(not d:is(DecoratorUser) and node or api_node))
+    add_to_end(line, d:icons_before(not d:is(UserDecorator) and node or api_node))
   end
 
   add_to_end(line, { name })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_after(not d:is(DecoratorUser) and node or api_node))
+    add_to_end(line, d:icons_after(not d:is(UserDecorator) and node or api_node))
   end
 
   local rights = {}
   for _, d in ipairs(self.decorators) do
-    add_to_end(rights, d:icons_right_align(not d:is(DecoratorUser) and node or api_node))
+    add_to_end(rights, d:icons_right_align(not d:is(UserDecorator) and node or api_node))
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -194,7 +194,7 @@ function Builder:build_signs(node)
   local d, sign_name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
-    sign_name = d:sign_name(not d:is(DecoratorUser) and node or api_node)
+    sign_name = d:sign_name(not d:is(UserDecorator) and node or api_node)
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -251,9 +251,9 @@ function Builder:icon_name_decorated(node)
   local hl_icon, hl_name
   for _, d in ipairs(self.decorators) do
     -- maybe overridde icon
-    icon = d:icon_node((not d:is(DecoratorUser) and node or api_node)) or icon
+    icon = d:icon_node((not d:is(UserDecorator) and node or api_node)) or icon
 
-    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(DecoratorUser) and node or api_node))
+    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(UserDecorator) and node or api_node))
 
     table.insert(icon_groups, hl_icon)
     table.insert(name_groups, hl_name)

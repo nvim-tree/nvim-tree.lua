@@ -1,7 +1,7 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----Exposed as nvim_tree.api.decorator.DecoratorUser
----@class (exact) DecoratorUser: Decorator
-local DecoratorUser = Decorator:extend()
+---Exposed as nvim_tree.api.decorator.UserDecorator
+---@class (exact) UserDecorator: Decorator
+local UserDecorator = Decorator:extend()
 
-return DecoratorUser
+return UserDecorator
