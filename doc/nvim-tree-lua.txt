@@ -2770,7 +2770,7 @@ configurations for different types of prompts.
 ==============================================================================
  11. DECORATORS                                         *nvim-tree-decorators*
 
-Highlighting and icons for nodes are is provided by Decorators. You may provide
+Highlighting and icons for nodes are provided by Decorators. You may provide
 your own in addition to the builtin decorators.
 
 Decorators may:
@@ -2778,10 +2778,8 @@ Decorators may:
 - Set highlight group for the name or icons
 - Override node icon
 
-See `api_decorator.lua` for decorator class definition and full documentation.
-
 Specify decorators and their precedence via |nvim-tree.renderer.decorators|
-e.g. defaults with a user decorator being overridden only by Cut: >lua
+e.g. defaults with a user decorator class being overridden only by Cut: >lua
   {
     "Git",
     "Open",
@@ -2793,6 +2791,9 @@ e.g. defaults with a user decorator being overridden only by Cut: >lua
     MyDecorator,
     "Cut",
   }
+
+See `nvim-tree/_meta/api_decorator.lua` for full
+`nvim_tree.api.decorator.UserDecorator` class documentation.
 <
 ==============================================================================
  11.1. DECORATOR EXAMPLE                         *nvim-tree-decorator-example*
