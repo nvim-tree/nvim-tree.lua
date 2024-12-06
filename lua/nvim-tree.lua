@@ -199,6 +199,10 @@ local function setup_autocommands(opts)
       callback = function()
         vim.schedule(function()
           vim.api.nvim_buf_call(0, function()
+            local is_term_mode = vim.api.nvim_get_mode().mode == "t"
+            if is_term_mode then
+              return
+            end
             vim.cmd([[norm! zz]])
           end)
         end)
