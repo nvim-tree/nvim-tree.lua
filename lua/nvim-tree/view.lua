@@ -119,7 +119,7 @@ local function get_size(size)
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
-    return size()
+    return get_size(size())
   end
   local size_as_number = tonumber(size:sub(0, -2))
   local percent_as_decimal = size_as_number / 100
