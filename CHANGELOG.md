@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.9.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.8.0...nvim-tree-v1.9.0) (2024-12-07)
+
+
+### Features
+
+* **#2948:** add custom decorators, :help nvim-tree-decorators ([#2996](https://github.com/nvim-tree/nvim-tree.lua/issues/2996)) ([7a4ff1a](https://github.com/nvim-tree/nvim-tree.lua/commit/7a4ff1a516fe92a5ed6b79d7ce31ea4d8f341a72))
+
+
+### Bug Fixes
+
+* **#2954:** more efficient LSP updates, increase diagnostics.debounce_delay from 50ms to 500ms ([#3007](https://github.com/nvim-tree/nvim-tree.lua/issues/3007)) ([1f3ffd6](https://github.com/nvim-tree/nvim-tree.lua/commit/1f3ffd6af145af2a4930a61c50f763264922c3fe))
+* **#2990:** Do not check if buffer is buflisted in diagnostics.update() ([#2998](https://github.com/nvim-tree/nvim-tree.lua/issues/2998)) ([28eac28](https://github.com/nvim-tree/nvim-tree.lua/commit/28eac2801b201f301449e976d7a9e8cfde053ba3))
+* **#3009:** nvim &lt; 0.10 apply view options locally ([#3010](https://github.com/nvim-tree/nvim-tree.lua/issues/3010)) ([ca7c4c3](https://github.com/nvim-tree/nvim-tree.lua/commit/ca7c4c33cac2ad66ec69d45e465379716ef0cc97))
+* **api:** correct argument types in `wrap_node` and `wrap_node_or_nil` ([#3006](https://github.com/nvim-tree/nvim-tree.lua/issues/3006)) ([f7c65e1](https://github.com/nvim-tree/nvim-tree.lua/commit/f7c65e11d695a084ca10b93df659bb7e68b71f9f))
+
 ## [1.8.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.7.1...nvim-tree-v1.8.0) (2024-11-09)
 
 
