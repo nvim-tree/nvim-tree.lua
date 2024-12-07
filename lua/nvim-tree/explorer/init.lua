@@ -530,7 +530,7 @@ function Explorer:place_cursor_on_node()
 end
 
 ---Api.tree.get_nodes
----@return Node
+---@return nvim_tree.api.Node
 function Explorer:get_nodes()
   return self:clone()
 end

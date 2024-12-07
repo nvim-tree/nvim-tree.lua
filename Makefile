@@ -13,7 +13,7 @@ check: luals
 # subtasks
 #
 luacheck:
-	luacheck -q lua
+	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
 
 # --diagnosis-as-error does not function for workspace, hence we post-process the output
 style-check:
