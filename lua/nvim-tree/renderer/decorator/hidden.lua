@@ -1,22 +1,22 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) DecoratorHidden: Decorator
----@field icon HighlightedString?
-local DecoratorHidden = Decorator:extend()
+---@class (exact) HiddenDecorator: Decorator
+---@field private explorer Explorer
+---@field private icon HighlightedString?
+local HiddenDecorator = Decorator:extend()
 
----@class DecoratorHidden
----@overload fun(explorer: DecoratorArgs): DecoratorHidden
+---@class HiddenDecorator
+---@overload fun(args: DecoratorArgs): HiddenDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorHidden:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
-    enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_hidden or "none",
-    icon_placement = args.explorer.opts.renderer.icons.hidden_placement or "none",
-  })
+function HiddenDecorator:new(args)
+  self.explorer        = args.explorer
+
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_hidden or "none"
+  self.icon_placement  = self.explorer.opts.renderer.icons.hidden_placement or "none"
 
   if self.explorer.opts.renderer.icons.show.hidden then
     self.icon = {
@@ -29,18 +29,18 @@ end
 
 ---Hidden icon: renderer.icons.show.hidden and node starts with `.` (dotfile).
 ---@param node Node
----@return HighlightedString[]|nil icons
-function DecoratorHidden:calculate_icons(node)
-  if self.enabled and node:is_dotfile() then
+---@return HighlightedString[]? icons
+function HiddenDecorator:icons(node)
+  if node:is_dotfile() then
     return { self.icon }
   end
 end
 
 ---Hidden highlight: renderer.highlight_hidden and node starts with `.` (dotfile).
 ---@param node Node
----@return string|nil group
-function DecoratorHidden:calculate_highlight(node)
-  if not self.enabled or self.range == "none" or not node:is_dotfile() then
+---@return string? highlight_group
+function HiddenDecorator:highlight_group(node)
+  if self.highlight_range == "none" or not node:is_dotfile() then
     return nil
   end
 
@@ -51,4 +51,4 @@ function DecoratorHidden:calculate_highlight(node)
   end
 end
 
-return DecoratorHidden
+return HiddenDecorator

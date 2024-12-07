@@ -58,9 +58,10 @@ function FileLinkNode:highlighted_name()
 end
 
 ---Create a sanitized partial copy of a node
----@return FileLinkNode cloned
-function FileLinkNode:clone()
-  local clone = FileNode.clone(self) --[[@as FileLinkNode]]
+---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
+---@return nvim_tree.api.FileLinkNode cloned
+function FileLinkNode:clone(api_nodes)
+  local clone = FileNode.clone(self, api_nodes) --[[@as nvim_tree.api.FileLinkNode]]
 
   clone.link_to = self.link_to
   clone.fs_stat_target = self.fs_stat_target

@@ -52,14 +52,16 @@ CONTENTS                                                           *nvim-tree*
   8.2  Highlight: Overhaul                      |nvim-tree-highlight-overhaul|
   9. Events                                   |nvim-tree-events|
  10. Prompts                                  |nvim-tree-prompts|
- 11. OS Specific Restrictions                 |nvim-tree-os-specific|
- 12. Netrw                                    |nvim-tree-netrw|
- 13. Legacy                                   |nvim-tree-legacy|
- 13.1  Legacy: Opts                             |nvim-tree-legacy-opts|
- 13.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
- 14. Index                                    |nvim-tree-index|
- 14.1  Index: Opts                              |nvim-tree-index-opts|
- 14.2  Index: API                               |nvim-tree-index-api|
+ 11. Decorators                               |nvim-tree-decorators|
+ 11.1  Decorator Example                        |nvim-tree-decorator-example|
+ 12. OS Specific Restrictions                 |nvim-tree-os-specific|
+ 13. Netrw                                    |nvim-tree-netrw|
+ 14. Legacy                                   |nvim-tree-legacy|
+ 14.1  Legacy: Opts                             |nvim-tree-legacy-opts|
+ 14.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
+ 15. Index                                    |nvim-tree-index|
+ 15.1  Index: Opts                              |nvim-tree-index-opts|
+ 15.2  Index: API                               |nvim-tree-index-api|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
@@ -425,6 +427,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
         hidden_display = "none",
         symlink_destination = true,
+        decorators = { "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", },
         highlight_git = "none",
         highlight_diagnostics = "none",
         highlight_opened_files = "none",
@@ -842,9 +845,6 @@ Use nvim-tree in a floating window.
 ==============================================================================
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
-Highlight precedence, additive:
-  git < opened < modified < bookmarked < diagnostics < copied < cut
-
 *nvim-tree.renderer.add_trailing*
 Appends a trailing slash to folder names.
   Type: `boolean`, Default: `false`
@@ -927,6 +927,22 @@ Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay
 Whether to show the destination of the symlink.
   Type: `boolean`, Default: `true`
 
+*nvim-tree.renderer.decorators*
+Highlighting and icons for the nodes, in increasing order of precedence.
+Uses strings to specify builtin decorators otherwise specify your
+`nvim_tree.api.decorator.UserDecorator` class.
+  Type: `nvim_tree.api.decorator.Name[]`, Default: >lua
+    {
+      "Git",
+      "Open",
+      "Hidden",
+      "Modified",
+      "Bookmark",
+      "Diagnostics",
+      "Copied",
+      "Cut",
+    }
+<
 *nvim-tree.renderer.highlight_git*
 Enable highlight for git attributes using `NvimTreeGit*HL` highlight groups.
 Requires |nvim-tree.git.enable|
@@ -995,9 +1011,6 @@ Configuration options for tree indent markers.
 <
 *nvim-tree.renderer.icons*
 Configuration options for icons.
-
-Icon order and sign column precedence:
-  git < hidden < modified < bookmarked < diagnostics
 
 `renderer.icons.*_placement` options may be:
 - `"before"` : before file/folder, after the file/folders icons
@@ -2755,7 +2768,90 @@ configurations for different types of prompts.
     send all bookmarked to trash during |nvim-tree-api.marks.bulk.trash()|
 
 ==============================================================================
- 11. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+ 11. DECORATORS                                         *nvim-tree-decorators*
+
+Highlighting and icons for nodes are provided by Decorators. You may provide
+your own in addition to the builtin decorators.
+
+Decorators may:
+- Add icons
+- Set highlight group for the name or icons
+- Override node icon
+
+Specify decorators and their precedence via |nvim-tree.renderer.decorators|
+e.g. defaults with a user decorator class being overridden only by Cut: >lua
+  {
+    "Git",
+    "Open",
+    "Hidden",
+    "Modified",
+    "Bookmark",
+    "Diagnostics",
+    "Copied",
+    MyDecorator,
+    "Cut",
+  }
+
+See `nvim-tree/_meta/api_decorator.lua` for full
+`nvim_tree.api.decorator.UserDecorator` class documentation.
+<
+==============================================================================
+ 11.1. DECORATOR EXAMPLE                         *nvim-tree-decorator-example*
+>lua
+  ---Create your decorator class
+  ---@class (exact) MyDecorator: nvim_tree.api.decorator.UserDecorator
+  ---@field private my_icon nvim_tree.api.HighlightedString
+  local MyDecorator = require("nvim-tree.api").decorator.UserDecorator:extend()
+
+  ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
+  function MyDecorator:new()
+    self.enabled         = true
+    self.highlight_range = "all"
+    self.icon_placement  = "signcolumn"
+
+    -- create your icon once, for convenience
+    self.my_icon         = { str = "I", hl = { "MyIcon" } }
+
+    -- Define the icon sign only once
+    -- Only needed if you are using icon_placement = "signcolumn"
+    self:define_sign(self.my_icon)
+  end
+
+  ---Override node icon
+  ---@param node nvim_tree.api.Node
+  ---@return nvim_tree.api.HighlightedString? icon_node
+  function MyDecorator:icon_node(node)
+    if node.name == "example" then
+      return self.my_icon
+    else
+      return nil
+    end
+  end
+
+  ---Return one icon for DecoratorIconPlacement
+  ---@param node nvim_tree.api.Node
+  ---@return nvim_tree.api.HighlightedString[]? icons
+  function MyDecorator:icons(node)
+    if node.name == "example" then
+      return { self.my_icon }
+    else
+      return nil
+    end
+  end
+
+  ---Exactly one highlight group for DecoratorHighlightRange
+  ---@param node nvim_tree.api.Node
+  ---@return string? highlight_group
+  function MyDecorator:highlight_group(node)
+    if node.name == "example" then
+      return "MyHighlight"
+    else
+      return nil
+    end
+  end
+<
+==============================================================================
+ 12. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
 
 Windows WSL and PowerShell
 - Trash is synchronized
@@ -2767,7 +2863,7 @@ Windows WSL and PowerShell
   issues or disable this feature.
 
 ==============================================================================
- 12. NETRW                                                   *nvim-tree-netrw*
+ 13. NETRW                                                   *nvim-tree-netrw*
 
 |netrw| is a standard neovim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
@@ -2788,14 +2884,14 @@ keep using |netrw| without its browser features please ensure:
 |nvim-tree.hijack_netrw| ` = true`
 
 ==============================================================================
- 13. LEGACY                                                 *nvim-tree-legacy*
+ 14. LEGACY                                                 *nvim-tree-legacy*
 
 Breaking refactors have been made however the legacy versions will be silently
 migrated and used.
 There are no plans to remove this migration.
 
 ==============================================================================
- 13.1 LEGACY: OPTS                                     *nvim-tree-legacy-opts*
+ 14.1 LEGACY: OPTS                                     *nvim-tree-legacy-opts*
 
 Legacy options are translated to the current, making type and value changes as
 needed.
@@ -2813,7 +2909,7 @@ needed.
 `renderer.icons.webdev_colors`       |nvim-tree.renderer.icons.web_devicons.file.color|
 
 ==============================================================================
- 13.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
+ 14.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
@@ -2862,10 +2958,10 @@ highlight group is not, hard linking as follows: >
     NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
 <
 ==============================================================================
- 14 INDEX                                                    *nvim-tree-index*
+ 15 INDEX                                                    *nvim-tree-index*
 
 ==============================================================================
- 14.1 INDEX: OPTS                                       *nvim-tree-index-opts*
+ 15.1 INDEX: OPTS                                       *nvim-tree-index-opts*
 
 |nvim-tree.actions.change_dir|
 |nvim-tree.actions.change_dir.enable|
@@ -2943,6 +3039,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.prefer_startup_root|
 |nvim-tree.reload_on_bufenter|
 |nvim-tree.renderer.add_trailing|
+|nvim-tree.renderer.decorators|
 |nvim-tree.renderer.full_name|
 |nvim-tree.renderer.group_empty|
 |nvim-tree.renderer.hidden_display|
@@ -3033,7 +3130,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.view.width.padding|
 
 ==============================================================================
- 14.2 INDEX: API                                         *nvim-tree-index-api*
+ 15.2 INDEX: API                                         *nvim-tree-index-api*
 
 |nvim-tree-api.commands.get()|
 |nvim-tree-api.config.mappings.default_on_attach()|
