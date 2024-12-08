@@ -800,22 +800,22 @@ Width of the window: can be a `%` string, a number representing columns, a
 function or a table.
 A table indicates that the view should be dynamically sized based on the
 longest line.
-  Type: `string | number | table | function()` returning a number
+  Type: `string | number | table | fun(): number|string`
   Default: `30`
 
     *nvim-tree.view.width.min*
     Minimum dynamic width.
-      Type: `string | number | function()` returning a number
+      Type: `string | number | fun(): number|string`
       Default: `30`
 
     *nvim-tree.view.width.max*
     Maximum dynamic width, -1 for unbounded.
-      Type: `string | number | function()` returning a number
+      Type: `string | number | fun(): number|string`
       Default: `-1`
 
     *nvim-tree.view.width.padding*
     Extra padding to the right.
-      Type: `number | function()` returning a number
+      Type: `number | fun(): number|string`
       Default: `1`
 
 *nvim-tree.view.float*
