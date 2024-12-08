@@ -3,22 +3,35 @@ local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
 local Class = require("nvim-tree.classic")
+
 local DirectoryNode = require("nvim-tree.node.directory")
 
-local DecoratorBookmarks = require("nvim-tree.renderer.decorator.bookmarks")
-local DecoratorCopied = require("nvim-tree.renderer.decorator.copied")
-local DecoratorCut = require("nvim-tree.renderer.decorator.cut")
-local DecoratorDiagnostics = require("nvim-tree.renderer.decorator.diagnostics")
-local DecoratorGit = require("nvim-tree.renderer.decorator.git")
-local DecoratorModified = require("nvim-tree.renderer.decorator.modified")
-local DecoratorHidden = require("nvim-tree.renderer.decorator.hidden")
-local DecoratorOpened = require("nvim-tree.renderer.decorator.opened")
+local BookmarkDecorator = require("nvim-tree.renderer.decorator.bookmarks")
+local CopiedDecorator = require("nvim-tree.renderer.decorator.copied")
+local CutDecorator = require("nvim-tree.renderer.decorator.cut")
+local DiagnosticsDecorator = require("nvim-tree.renderer.decorator.diagnostics")
+local GitDecorator = require("nvim-tree.renderer.decorator.git")
+local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
+local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
+local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
+local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----@class (exact) HighlightedString
----@field str string
----@field hl string[]
+---@alias HighlightedString nvim_tree.api.HighlightedString
+
+-- Builtin Decorators
+---@type table<nvim_tree.api.decorator.Name, Decorator>
+local BUILTIN_DECORATORS = {
+  Git = GitDecorator,
+  Open = OpenDecorator,
+  Hidden = HiddenDecorator,
+  Modified = ModifiedDecorator,
+  Bookmark = BookmarkDecorator,
+  Diagnostics = DiagnosticsDecorator,
+  Copied = CopiedDecorator,
+  Cut = CutDecorator,
+}
 
 ---@class (exact) AddHighlightArgs
 ---@field group string[]
@@ -39,6 +52,7 @@ local pad = require("nvim-tree.renderer.components.padding")
 ---@field private markers boolean[] indent markers
 ---@field private decorators Decorator[]
 ---@field private hidden_display fun(node: Node): string|nil
+---@field private api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node for user decorators
 local Builder = Class:extend()
 
 ---@class Builder
@@ -60,18 +74,30 @@ function Builder:new(args)
   self.signs           = {}
   self.extmarks        = {}
   self.virtual_lines   = {}
-  self.decorators      = {
-    -- priority order
-    DecoratorCut({ explorer = args.explorer }),
-    DecoratorCopied({ explorer = args.explorer }),
-    DecoratorDiagnostics({ explorer = args.explorer }),
-    DecoratorBookmarks({ explorer = args.explorer }),
-    DecoratorModified({ explorer = args.explorer }),
-    DecoratorHidden({ explorer = args.explorer }),
-    DecoratorOpened({ explorer = args.explorer }),
-    DecoratorGit({ explorer = args.explorer })
-  }
+  self.decorators      = {}
   self.hidden_display  = Builder:setup_hidden_display_function(self.explorer.opts)
+
+  -- instantiate all the builtin and user decorator instances
+  local builtin, user
+  for _, d in ipairs(self.explorer.opts.renderer.decorators) do
+    ---@type Decorator
+    builtin = BUILTIN_DECORATORS[d]
+
+    ---@type UserDecorator
+    user = type(d) == "table" and type(d.as) == "function" and d:as(UserDecorator)
+
+    if builtin then
+      table.insert(self.decorators, builtin({ explorer = self.explorer }))
+    elseif user then
+      table.insert(self.decorators, user())
+
+      -- clone user nodes once
+      if not self.api_nodes then
+        self.api_nodes = {}
+        self.explorer:clone(self.api_nodes)
+      end
+    end
+  end
 end
 
 ---Insert ranged highlight groups into self.highlights
@@ -131,22 +157,25 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
-  for i = #self.decorators, 1, -1 do
-    add_to_end(line, self.decorators[i]:icons_before(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(line, d:icons_before(not d:is(UserDecorator) and node or api_node))
   end
 
   add_to_end(line, { name })
 
-  for i = #self.decorators, 1, -1 do
-    add_to_end(line, self.decorators[i]:icons_after(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(line, d:icons_after(not d:is(UserDecorator) and node or api_node))
   end
 
   local rights = {}
-  for i = #self.decorators, 1, -1 do
-    add_to_end(rights, self.decorators[i]:icons_right_align(node))
+  for _, d in ipairs(self.decorators) do
+    add_to_end(rights, d:icons_right_align(not d:is(UserDecorator) and node or api_node))
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -158,10 +187,14 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+
   -- first in priority order
-  local sign_name
-  for _, d in ipairs(self.decorators) do
-    sign_name = d:sign_name(node)
+  local d, sign_name
+  for i = #self.decorators, 1, -1 do
+    d = self.decorators[i]
+    sign_name = d:sign_name(not d:is(UserDecorator) and node or api_node)
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -197,43 +230,50 @@ function Builder:create_combined_group(groups)
   return combined_name
 end
 
----Calculate highlight group for icon and name. A combined highlight group will be created
----when there is more than one highlight.
+---Calculate decorated icon and name for a node.
+---A combined highlight group will be created when there is more than one highlight.
 ---A highlight group is always calculated and upserted for the case of highlights changing.
 ---@private
 ---@param node Node
----@return string|nil icon_hl_group
----@return string|nil name_hl_group
-function Builder:add_highlights(node)
-  -- result
-  local icon_hl_group, name_hl_group
+---@return HighlightedString icon
+---@return HighlightedString name
+function Builder:icon_name_decorated(node)
+  -- use the api node for user decorators
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
 
-  -- calculate all groups
+  -- base case
+  local icon = node:highlighted_icon()
+  local name = node:highlighted_name()
+
+  -- calculate node icon and all decorated highlight groups
   local icon_groups = {}
   local name_groups = {}
-  local d, icon, name
-  for i = #self.decorators, 1, -1 do
-    d = self.decorators[i]
-    icon, name = d:groups_icon_name(node)
-    table.insert(icon_groups, icon)
-    table.insert(name_groups, name)
+  local hl_icon, hl_name
+  for _, d in ipairs(self.decorators) do
+    -- maybe overridde icon
+    icon = d:icon_node((not d:is(UserDecorator) and node or api_node)) or icon
+
+    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(UserDecorator) and node or api_node))
+
+    table.insert(icon_groups, hl_icon)
+    table.insert(name_groups, hl_name)
   end
 
-  -- one or many icon groups
+  -- add one or many icon groups
   if #icon_groups > 1 then
-    icon_hl_group = self:create_combined_group(icon_groups)
+    table.insert(icon.hl, self:create_combined_group(icon_groups))
   else
-    icon_hl_group = icon_groups[1]
+    table.insert(icon.hl, icon_groups[1])
   end
 
-  -- one or many name groups
+  -- add one or many name groups
   if #name_groups > 1 then
-    name_hl_group = self:create_combined_group(name_groups)
+    table.insert(name.hl, self:create_combined_group(name_groups))
   else
-    name_hl_group = name_groups[1]
+    table.insert(name.hl, name_groups[1])
   end
 
-  return icon_hl_group, name_hl_group
+  return icon, name
 end
 
 ---Insert node line into self.lines, calling Builder:build_lines for each directory
@@ -246,13 +286,8 @@ function Builder:build_line(node, idx, num_children)
   local indent_markers = pad.get_indent_markers(self.depth, idx, num_children, node, self.markers)
   local arrows = pad.get_arrows(node)
 
-  -- main components
-  local icon, name = node:highlighted_icon(), node:highlighted_name()
-
-  -- highighting
-  local icon_hl_group, name_hl_group = self:add_highlights(node)
-  table.insert(icon.hl, icon_hl_group)
-  table.insert(name.hl, name_hl_group)
+  -- decorated node icon and name
+  local icon, name = self:icon_name_decorated(node)
 
   local line = self:format_line(indent_markers, arrows, icon, name, node)
   table.insert(self.lines, self:unwrap_highlighted_strings(line))

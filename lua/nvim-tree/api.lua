@@ -11,6 +11,7 @@ local notify = require("nvim-tree.notify")
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
+local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local Api = {
   tree = {},
@@ -39,6 +40,7 @@ local Api = {
   },
   commands = {},
   diagnostics = {},
+  decorator = {},
 }
 
 ---Print error when setup not called.
@@ -310,5 +312,10 @@ Api.diagnostics.hi_test = wrap(appearance_hi_test)
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
+
+---Create a decorator class by calling :extend()
+---See :help nvim-tree-decorators
+---@type nvim_tree.api.decorator.UserDecorator
+Api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
 
 return Api

@@ -3,26 +3,22 @@ local buffers = require("nvim-tree.buffers")
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) DecoratorModified: Decorator
----@field icon HighlightedString?
-local DecoratorModified = Decorator:extend()
+---@class (exact) ModifiedDecorator: Decorator
+---@field private explorer Explorer
+---@field private icon HighlightedString?
+local ModifiedDecorator = Decorator:extend()
 
----@class DecoratorModified
----@overload fun(explorer: DecoratorArgs): DecoratorModified
+---@class ModifiedDecorator
+---@overload fun(args: DecoratorArgs): ModifiedDecorator
 
 ---@protected
 ---@param args DecoratorArgs
-function DecoratorModified:new(args)
-  Decorator.new(self, {
-    explorer       = args.explorer,
-    enabled        = true,
-    hl_pos         = args.explorer.opts.renderer.highlight_modified or "none",
-    icon_placement = args.explorer.opts.renderer.icons.modified_placement or "none",
-  })
+function ModifiedDecorator:new(args)
+  self.explorer        = args.explorer
 
-  if not self.enabled then
-    return
-  end
+  self.enabled         = true
+  self.highlight_range = self.explorer.opts.renderer.highlight_modified or "none"
+  self.icon_placement  = self.explorer.opts.renderer.icons.modified_placement or "none"
 
   if self.explorer.opts.renderer.icons.show.modified then
     self.icon = {
@@ -35,18 +31,18 @@ end
 
 ---Modified icon: modified.enable, renderer.icons.show.modified and node is modified
 ---@param node Node
----@return HighlightedString[]|nil icons
-function DecoratorModified:calculate_icons(node)
-  if self.enabled and buffers.is_modified(node) then
+---@return HighlightedString[]? icons
+function ModifiedDecorator:icons(node)
+  if buffers.is_modified(node) then
     return { self.icon }
   end
 end
 
 ---Modified highlight: modified.enable, renderer.highlight_modified and node is modified
 ---@param node Node
----@return string|nil group
-function DecoratorModified:calculate_highlight(node)
-  if not self.enabled or self.range == "none" or not buffers.is_modified(node) then
+---@return string? highlight_group
+function ModifiedDecorator:highlight_group(node)
+  if self.highlight_range == "none" or not buffers.is_modified(node) then
     return nil
   end
 
@@ -57,4 +53,4 @@ function DecoratorModified:calculate_highlight(node)
   end
 end
 
-return DecoratorModified
+return ModifiedDecorator
