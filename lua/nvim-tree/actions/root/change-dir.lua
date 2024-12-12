@@ -25,7 +25,7 @@ end
 ---@param new_tabpage integer
 ---@return boolean
 local function is_window_event(new_tabpage)
-  local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window
+  local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window or false
   return is_event_scope_window and new_tabpage == M.current_tab
 end
 
