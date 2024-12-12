@@ -4,6 +4,8 @@ local utils = require("nvim-tree.utils")
 
 local Class = require("nvim-tree.classic")
 
+local MESSAGE_EMFILE = "fs.inotify.max_user_watches exceeded, see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting"
+
 local FS_EVENT_FLAGS = {
   -- inotify or equivalent will be used; fallback to stat has not yet been implemented
   stat = false,
@@ -75,6 +77,18 @@ function Event:start()
   local event_cb = vim.schedule_wrap(function(err, filename)
     if err then
       log.line("watcher", "event_cb '%s' '%s' FAIL : %s", self.path, filename, err)
+
+      -- do nothing if watchers have already been disabled
+      if not M.config.filesystem_watchers.enable then
+        return
+      end
+
+      -- EMFILE is catastrophic
+      if name == "EMFILE" then
+        M.disable_watchers(MESSAGE_EMFILE)
+        return
+      end
+
       local message = string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self.path)
       if err == "EPERM" and (utils.is_windows or utils.is_wsl) then
         -- on directory removal windows will cascade the filesystem events out of order
@@ -94,7 +108,7 @@ function Event:start()
   rc, _, name = self.fs_event:start(self.path, FS_EVENT_FLAGS, event_cb)
   if rc ~= 0 then
     if name == "EMFILE" then
-      M.disable_watchers("fs.inotify.max_user_watches exceeded, see https://github.com/nvim-tree/nvim-tree.lua/wiki/Troubleshooting")
+      M.disable_watchers(MESSAGE_EMFILE)
     else
       notify.warn(string.format("Could not start the fs_event watcher for path %s : %s", self.path, name))
     end
