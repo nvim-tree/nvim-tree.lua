@@ -321,8 +321,19 @@ local function grow()
     max_width = get_width(M.View.max_width) - padding
   end
 
-  for _, l in pairs(lines) do
+  local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
+  for line_nr, l in pairs(lines) do
     local count = vim.fn.strchars(l)
+    -- also add space for right-aligned icons
+    local extmarks = vim.api.nvim_buf_get_extmarks(M.get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
+    for _, extmark in ipairs(extmarks) do
+      local virt_texts = extmark[4].virt_text
+      if virt_texts then
+        for _, virt_text in ipairs(virt_texts) do
+          count = count + vim.fn.strchars(virt_text[1])
+        end
+      end
+    end
     if resizing_width < count then
       resizing_width = count
     end
