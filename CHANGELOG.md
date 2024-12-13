@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.9.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.9.0...nvim-tree-v1.9.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* **#3015:** dynamic width no longer truncates on right_align icons ([#3022](https://github.com/nvim-tree/nvim-tree.lua/issues/3022)) ([f7b76cd](https://github.com/nvim-tree/nvim-tree.lua/commit/f7b76cd1a75615c8d6254fc58bedd2a7304eb7d8))
+* **#3018:** error when focusing nvim-tree when in terminal mode ([#3019](https://github.com/nvim-tree/nvim-tree.lua/issues/3019)) ([db8d7ac](https://github.com/nvim-tree/nvim-tree.lua/commit/db8d7ac1f524fc6f808764b29fa695c51e014aa6))
+* Can't re-enter normal mode from terminal mode ([db8d7ac](https://github.com/nvim-tree/nvim-tree.lua/commit/db8d7ac1f524fc6f808764b29fa695c51e014aa6))
+* view.width functions may return strings ([#3020](https://github.com/nvim-tree/nvim-tree.lua/issues/3020)) ([6b4be1d](https://github.com/nvim-tree/nvim-tree.lua/commit/6b4be1dc0cd4d5d5b8e8b56b510a75016e99746f))
+
 ## [1.9.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.8.0...nvim-tree-v1.9.0) (2024-12-07)
 
 
