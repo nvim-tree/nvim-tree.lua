@@ -397,7 +397,17 @@ function M.fn(mode, filename)
 
   local buf_loaded = is_already_loaded(filename)
 
-  open_in_new_window(filename, mode)
+  local found_win = utils.get_win_buf_from_path(filename)
+  if found_win and (mode == "preview" or mode == "preview_no_picker") then
+    return
+  end
+
+  if not found_win then
+    open_in_new_window(filename, mode)
+  else
+    vim.api.nvim_set_current_win(found_win)
+    vim.bo.bufhidden = ""
+  end
 
   if M.resize_window then
     view.resize()
