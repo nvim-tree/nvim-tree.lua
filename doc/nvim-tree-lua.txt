@@ -2025,8 +2025,18 @@ node.open.no_window_picker({node})
 node.open.vertical({node})                *nvim-tree-api.node.open.vertical()*
     |nvim-tree-api.node.edit()|, file will be opened in a new vertical split.
 
+                                *nvim-tree-api.node.open.vertical_no_picker()*
+node.open.vertical_no_picker({node})
+    |nvim-tree-api.node.vertical()|, window picker will never be used as per
+    |nvim-tree.actions.open_file.window_picker.enable| `false`
+
 node.open.horizontal({node})            *nvim-tree-api.node.open.horizontal()*
     |nvim-tree-api.node.edit()|, file will be opened in a new horizontal split.
+
+                              *nvim-tree-api.node.open.horizontal_no_picker()*
+node.open.horizontal_no_picker({node})
+    |nvim-tree-api.node.horizontal()|, window picker will never be used as per
+    |nvim-tree.actions.open_file.window_picker.enable| `false`
 
                                 *nvim-tree-api.node.open.toggle_group_empty()*
 node.open.toggle_group_empty({node})
@@ -3189,6 +3199,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.node.open.drop()|
 |nvim-tree-api.node.open.edit()|
 |nvim-tree-api.node.open.horizontal()|
+|nvim-tree-api.node.open.horizontal_no_picker()|
 |nvim-tree-api.node.open.no_window_picker()|
 |nvim-tree-api.node.open.preview()|
 |nvim-tree-api.node.open.preview_no_picker()|
@@ -3197,6 +3208,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.node.open.tab_drop()|
 |nvim-tree-api.node.open.toggle_group_empty()|
 |nvim-tree-api.node.open.vertical()|
+|nvim-tree-api.node.open.vertical_no_picker()|
 |nvim-tree-api.node.run.cmd()|
 |nvim-tree-api.node.run.system()|
 |nvim-tree-api.node.show_info_popup()|

@@ -235,9 +235,8 @@ end
 
 local function get_target_winid(mode)
   local target_winid
-  if not M.window_picker.enable or mode == "edit_no_picker" or mode == "preview_no_picker" then
+  if not M.window_picker.enable or string.find(mode, "no_picker") then
     target_winid = lib.target_winid
-
     -- first available window
     if not vim.tbl_contains(vim.api.nvim_tabpage_list_wins(0), target_winid) then
       target_winid = first_win_id()
@@ -278,6 +277,11 @@ local function open_in_new_window(filename, mode)
   local target_winid = get_target_winid(mode)
   if not target_winid then
     return
+  end
+
+  local position = string.find(mode, "no_picker")
+  if position then
+    mode = string.sub(mode, 0, position - 2)
   end
 
   -- non-floating, non-nvim-tree windows
