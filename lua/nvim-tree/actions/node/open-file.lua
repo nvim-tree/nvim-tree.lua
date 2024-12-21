@@ -131,11 +131,11 @@ local function pick_win_id()
     win_map[char] = id
 
     if vim.fn.has("nvim-0.10") == 1 then
-      vim.api.nvim_set_option_value("statusline", "%=" .. char .. "%=", { win = id })
-      vim.api.nvim_set_option_value("winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker", { win = id })
+      vim.api.nvim_set_option_value("statusline", "%=" .. char .. "%=",                                                { win = id })
+      vim.api.nvim_set_option_value("winhl",      "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker", { win = id })
     else
       vim.api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=") ---@diagnostic disable-line: deprecated
-      vim.api.nvim_win_set_option(id, "winhl", "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker") ---@diagnostic disable-line: deprecated
+      vim.api.nvim_win_set_option(id, "winhl",      "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker") ---@diagnostic disable-line: deprecated
     end
 
     i = i + 1
