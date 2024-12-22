@@ -223,8 +223,8 @@ end
 -- local json = vim.json
 
 local function save_bookmarks(marks)
-  local path = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
-  local file = io.open(path, "w")
+  local storepath = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
+  local file = io.open(storepath, "w")
   if file then
     local data = {}
     for path, _ in pairs(marks) do
@@ -236,8 +236,8 @@ local function save_bookmarks(marks)
 end
 
 local function load_bookmarks()
-  local path = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
-  local file = io.open(path, "r")
+  local storepath = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
+  local file = io.open(storepath, "r")
   if file then
     local content = file:read("*all")
     file:close()
