@@ -10,7 +10,6 @@ local utils = require("nvim-tree.utils")
 
 local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
-local json = vim.json
 
 ---@class (exact) Marks: Class
 ---@field private explorer Explorer
@@ -220,7 +219,6 @@ function Marks:navigate_next()
   self:navigate(false)
 end
 
--- local json = vim.json
 
 local function save_bookmarks(marks)
   local storepath = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
