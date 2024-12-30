@@ -470,6 +470,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     remove_file = {
       close_window = true,
     },
+    delete_buffer = {},
   },
   trash = {
     cmd = "gio trash",

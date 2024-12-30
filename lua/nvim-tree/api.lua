@@ -24,6 +24,7 @@ local Api = {
     },
     run = {},
     open = {},
+    buffer = {},
   },
   events = {},
   marks = {
@@ -131,7 +132,7 @@ end
 Api.tree.open = wrap(actions.tree.open.fn)
 Api.tree.focus = Api.tree.open
 
----@class ApiTreeToggleOpts
+---@class ApiTreeToggleOptsApiTreeTo
 ---@field path string|nil
 ---@field current_window boolean|nil default false
 ---@field winid number|nil
@@ -285,6 +286,13 @@ Api.node.navigate.diagnostics.prev = wrap_node(actions.moves.item.fn({ where = "
 Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag", recurse = true }))
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
+
+---@class ApiNodeDeleteBufferOpts
+---@field force boolean|nil default false
+
+Api.node.buffer.delete = wrap_node(function (node, opts)
+  actions.node.delete_buffer.fn(node.absolute_path, opts)
+end)
 
 Api.git.reload = wrap_explorer("reload_git")
 
