@@ -10,7 +10,7 @@ function M.fn(filename, opts)
   utils.delete_buffer("delete", filename, opts)
 end
 
-function M.setup(opts)
+function M.setup(_)
 end
 
 return M

@@ -290,10 +290,10 @@ Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev"
 ---@class ApiNodeDeleteWipeBufferOpts
 ---@field force boolean|nil default false
 
-Api.node.buffer.delete = wrap_node(function (node, opts)
+Api.node.buffer.delete = wrap_node(function(node, opts)
   actions.node.delete_buffer.fn(node.absolute_path, opts)
 end)
-Api.node.buffer.wipe = wrap_node(function (node, opts)
+Api.node.buffer.wipe = wrap_node(function(node, opts)
   actions.node.wipe_buffer.fn(node.absolute_path, opts)
 end)
 
