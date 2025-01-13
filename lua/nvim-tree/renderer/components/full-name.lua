@@ -81,7 +81,7 @@ local function show()
 
       vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col)
     end
-    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=hide ]])
+    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
   end)
 end
 
