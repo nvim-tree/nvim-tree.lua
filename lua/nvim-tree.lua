@@ -190,7 +190,7 @@ local function setup_autocommands(opts)
   end
 
   if opts.hijack_directories.enable then
-    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory })
+    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory, nested = true })
   end
 
   if opts.view.centralize_selection then
