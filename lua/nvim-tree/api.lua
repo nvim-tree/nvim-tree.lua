@@ -132,7 +132,7 @@ end
 Api.tree.open = wrap(actions.tree.open.fn)
 Api.tree.focus = Api.tree.open
 
----@class ApiTreeToggleOptsApiTreeTo
+---@class ApiTreeToggleOpts
 ---@field path string|nil
 ---@field current_window boolean|nil default false
 ---@field winid number|nil
