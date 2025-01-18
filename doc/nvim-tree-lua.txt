@@ -2164,6 +2164,12 @@ node.run.cmd({node})                            *nvim-tree-api.node.run.cmd()*
 node.run.system({node})                      *nvim-tree-api.node.run.system()*
     Execute |nvim-tree.system_open|
 
+node.buffer.delete({node})                      *nvim-tree-api.node.buffer.delete()*
+    Deletes node's related buffer.
+
+node.buffer.wipe({node})                      *nvim-tree-api.node.buffer.wipe()*
+    Same as |api.node.buffer.delete()|, but runs :bwipe instead of :bdelete.
+
 ==============================================================================
  6.4 API GIT                                               *nvim-tree-api.git*
 
@@ -3178,6 +3184,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.marks.navigate.prev()|
 |nvim-tree-api.marks.navigate.select()|
 |nvim-tree-api.marks.toggle()|
+|nvim-tree-api.node.buffer.delete()|
+|nvim-tree-api.node.buffer.wipe()|
 |nvim-tree-api.node.navigate.diagnostics.next()|
 |nvim-tree-api.node.navigate.diagnostics.next_recursive()|
 |nvim-tree-api.node.navigate.diagnostics.prev()|
