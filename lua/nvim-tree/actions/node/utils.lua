@@ -26,7 +26,7 @@ function M.delete_buffer(mode, filename, opts)
   -- check if buffer for file at cursor exists and if it is loaded
   local bufnr_at_filename = vim.fn.bufnr(filename)
   if bufnr_at_filename == -1 or vim.fn.getbufinfo(bufnr_at_filename)[1].loaded == 0 then
-    notify.error("No loaded buffer coincides with " .. notify_node)
+    notify.info("No loaded buffer coincides with " .. notify_node)
     return
   end
 
