@@ -3,18 +3,18 @@ local notify = require("nvim-tree.notify")
 
 local M = {}
 
----@param filename string
+---@param node Node
 ---@param opts ApiNodeDeleteWipeBufferOpts|nil
 ---@return nil
-function M.delete(filename, opts)
-  M.delete_buffer("delete", filename, opts)
+function M.delete(node, opts)
+  M.delete_buffer("delete", node.absolute_path, opts)
 end
 
----@param filename string
+---@param node Node
 ---@param opts ApiNodeDeleteWipeBufferOpts|nil
 ---@return nil
-function M.wipe(filename, opts)
-  M.delete_buffer("wipe", filename, opts)
+function M.wipe(node, opts)
+  M.delete_buffer("wipe", node.absolute_path, opts)
 end
 
 ---@alias ApiNodeDeleteWipeBufferMode '"delete"'|'"wipe"'

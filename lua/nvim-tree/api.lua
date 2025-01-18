@@ -291,10 +291,10 @@ Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev"
 ---@field force boolean|nil default false
 
 Api.node.buffer.delete = wrap_node(function(node, opts)
-  actions.node.buffer.delete(node.absolute_path, opts)
+  actions.node.buffer.delete(node, opts)
 end)
 Api.node.buffer.wipe = wrap_node(function(node, opts)
-  actions.node.buffer.wipe(node.absolute_path, opts)
+  actions.node.buffer.wipe(node, opts)
 end)
 
 Api.git.reload = wrap_explorer("reload_git")
