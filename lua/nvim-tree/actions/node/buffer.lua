@@ -55,7 +55,4 @@ function M.delete_buffer(mode, filename, opts)
   buf_fn({ filename, bang = force })
 end
 
-function M.setup(_)
-end
-
 return M
