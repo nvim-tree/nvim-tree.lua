@@ -11,6 +11,8 @@ local WIN_HL = table.concat({
   "CursorLine:NvimTreeCursorLine",
 }, ",")
 
+local namespace_help_id = vim.api.nvim_create_namespace("NvimTreeHelp")
+
 local M = {
   config = {},
 
@@ -82,8 +84,8 @@ end
 
 --- Compute all lines for the buffer
 ---@param map table keymap.get_keymap
----@return table strings of text
----@return table arrays of arguments 3-6 for nvim_buf_add_highlight()
+---@return string[] lines of text
+---@return table[] hl for lines: named arguments for vim.hl.range : higroup, start, finish
 ---@return number maximum length of text
 local function compute(map)
   local head_lhs = "nvim-tree mappings"
@@ -131,9 +133,9 @@ local function compute(map)
 
   -- header highlight, assume one character keys
   local hl = {
-    { "NvimTreeFolderName", 0, 0,         #head_lhs },
-    { "NvimTreeFolderName", 0, width - 1, width },
-    { "NvimTreeFolderName", 1, width - 1, width },
+    { higroup = "NvimTreeFolderName", start = { 0, 0, },         finish = { 0, #head_lhs, }, },
+    { higroup = "NvimTreeFolderName", start = { 0, width - 1, }, finish = { 0, width, }, },
+    { higroup = "NvimTreeFolderName", start = { 1, width - 1, }, finish = { 1, width, }, },
   }
 
   -- mappings, left padded 1
@@ -145,7 +147,7 @@ local function compute(map)
     width = math.max(#line, width)
 
     -- highlight lhs
-    table.insert(hl, { "NvimTreeFolderName", i + 1, 1, #l.lhs + 1 })
+    table.insert(hl, { higroup = "NvimTreeFolderName", start = { i + 1, 1, }, finish = { i + 1, #l.lhs + 1, }, })
   end
 
   return lines, hl, width
@@ -188,7 +190,11 @@ local function open()
 
   -- highlight it
   for _, h in ipairs(hl) do
-    vim.api.nvim_buf_add_highlight(M.bufnr, -1, h[1], h[2], h[3], h[4])
+    if vim.fn.has("nvim-0.11") == 1 then
+      vim.hl.range(M.bufnr, namespace_help_id, h.higroup, h.start, h.finish, {})
+    else
+      vim.api.nvim_buf_add_highlight(M.bufnr, -1, h.higroup, h.start[1], h.start[2], h.finish[2]) ---@diagnostic disable-line: deprecated
+    end
   end
 
   -- open a very restricted window
