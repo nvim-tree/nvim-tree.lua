@@ -85,7 +85,7 @@ end
 --- Compute all lines for the buffer
 ---@param map table keymap.get_keymap
 ---@return string[] lines of text
----@return { higroup:string, start:integer[], finish:integer[] }[] hl for lines: named arguments for vim.hl.range
+---@return HighlightRangeArgs[] hl_range_args for lines
 ---@return number maximum length of text
 local function compute(map)
   local head_lhs = "nvim-tree mappings"
@@ -132,7 +132,7 @@ local function compute(map)
   local width = #lines[1]
 
   -- header highlight, assume one character keys
-  local hl = {
+  local hl_range_args = {
     { higroup = "NvimTreeFolderName", start = { 0, 0, },         finish = { 0, #head_lhs, }, },
     { higroup = "NvimTreeFolderName", start = { 0, width - 1, }, finish = { 0, width, }, },
     { higroup = "NvimTreeFolderName", start = { 1, width - 1, }, finish = { 1, width, }, },
@@ -147,10 +147,10 @@ local function compute(map)
     width = math.max(#line, width)
 
     -- highlight lhs
-    table.insert(hl, { higroup = "NvimTreeFolderName", start = { i + 1, 1, }, finish = { i + 1, #l.lhs + 1, }, })
+    table.insert(hl_range_args, { higroup = "NvimTreeFolderName", start = { i + 1, 1, }, finish = { i + 1, #l.lhs + 1, }, })
   end
 
-  return lines, hl, width
+  return lines, hl_range_args, width
 end
 
 --- close the window and delete the buffer, if they exist
@@ -174,7 +174,7 @@ local function open()
   local map = keymap.get_keymap()
 
   -- text and highlight
-  local lines, hl, width = compute(map)
+  local lines, hl_range_args, width = compute(map)
 
   -- create the buffer
   M.bufnr = vim.api.nvim_create_buf(false, true)
@@ -189,11 +189,11 @@ local function open()
   end
 
   -- highlight it
-  for _, h in ipairs(hl) do
+  for _, args in ipairs(hl_range_args) do
     if vim.fn.has("nvim-0.11") == 1 then
-      vim.hl.range(M.bufnr, namespace_help_id, h.higroup, h.start, h.finish, {})
+      vim.hl.range(M.bufnr, namespace_help_id, args.higroup, args.start, args.finish, {})
     else
-      vim.api.nvim_buf_add_highlight(M.bufnr, -1, h.higroup, h.start[1], h.start[2], h.finish[2]) ---@diagnostic disable-line: deprecated
+      vim.api.nvim_buf_add_highlight(M.bufnr, -1, args.higroup, args.start[1], args.start[2], args.finish[2]) ---@diagnostic disable-line: deprecated
     end
   end
 
