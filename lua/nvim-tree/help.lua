@@ -85,7 +85,7 @@ end
 --- Compute all lines for the buffer
 ---@param map table keymap.get_keymap
 ---@return string[] lines of text
----@return table[] hl for lines: named arguments for vim.hl.range : higroup, start, finish
+---@return { higroup:string, start:integer[], finish:integer[] }[] hl for lines: named arguments for vim.hl.range
 ---@return number maximum length of text
 local function compute(map)
   local head_lhs = "nvim-tree mappings"
