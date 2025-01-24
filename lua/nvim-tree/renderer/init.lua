@@ -11,7 +11,7 @@ local namespace_highlights_id = vim.api.nvim_create_namespace("NvimTreeHighlight
 local namespace_extmarks_id = vim.api.nvim_create_namespace("NvimTreeExtmarks")
 local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtualLines")
 
----@alias HighlightRangeArgs { higroup:string, start:integer[], finish:integer[] }[] named arguments for vim.hl.range
+---@alias HighlightRangeArgs { higroup:string, start:integer[], finish:integer[] } named arguments for vim.hl.range
 
 ---@class (exact) Renderer: Class
 ---@field explorer Explorer
