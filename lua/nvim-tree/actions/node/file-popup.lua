@@ -50,6 +50,7 @@ local function setup_window(node)
     file_path = node.absolute_path,
   }
   local bufnr = vim.api.nvim_create_buf(false, true)
+  vim.bo[bufnr].bufhidden = "wipe"
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_win_set_buf(winnr, bufnr)
 end

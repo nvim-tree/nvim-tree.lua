@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.9.0...nvim-tree-v1.10.0) (2025-01-13)
+
+
+### Features
+
+* **api:** add node.open.vertical_no_picker, node.open.horizontal_no_picker ([#3031](https://github.com/nvim-tree/nvim-tree.lua/issues/3031)) ([68fc4c2](https://github.com/nvim-tree/nvim-tree.lua/commit/68fc4c20f5803444277022c681785c5edd11916d))
+
+
+### Bug Fixes
+
+* **#3015:** dynamic width no longer truncates on right_align icons ([#3022](https://github.com/nvim-tree/nvim-tree.lua/issues/3022)) ([f7b76cd](https://github.com/nvim-tree/nvim-tree.lua/commit/f7b76cd1a75615c8d6254fc58bedd2a7304eb7d8))
+* **#3018:** error when focusing nvim-tree when in terminal mode ([#3019](https://github.com/nvim-tree/nvim-tree.lua/issues/3019)) ([db8d7ac](https://github.com/nvim-tree/nvim-tree.lua/commit/db8d7ac1f524fc6f808764b29fa695c51e014aa6))
+* **#3041:** use vim.diagnostic.get for updating diagnostics ([#3042](https://github.com/nvim-tree/nvim-tree.lua/issues/3042)) ([aae0185](https://github.com/nvim-tree/nvim-tree.lua/commit/aae01853ddbd790d1efd6ff04ff96cf38c02c95f))
+* Can't re-enter normal mode from terminal mode ([db8d7ac](https://github.com/nvim-tree/nvim-tree.lua/commit/db8d7ac1f524fc6f808764b29fa695c51e014aa6))
+* hijack directory "BufEnter", "BufNewFile" events are nested ([#3044](https://github.com/nvim-tree/nvim-tree.lua/issues/3044)) ([39bc630](https://github.com/nvim-tree/nvim-tree.lua/commit/39bc63081605c1d4b974131ebecaea11e8a8595f))
+* view.width functions may return strings ([#3020](https://github.com/nvim-tree/nvim-tree.lua/issues/3020)) ([6b4be1d](https://github.com/nvim-tree/nvim-tree.lua/commit/6b4be1dc0cd4d5d5b8e8b56b510a75016e99746f))
+
 ## [1.9.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.8.0...nvim-tree-v1.9.0) (2024-12-07)
 
 
