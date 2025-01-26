@@ -222,21 +222,29 @@ Api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_ab
 Api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
 Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
+---
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
 
 ---@param mode string
 ---@param node Node
-local function edit(mode, node)
+---@param edit_opts NodeEditOpts?
+local function edit(mode, node, edit_opts)
   local file_link = node:as(FileLinkNode)
   local path = file_link and file_link.link_to or node.absolute_path
   actions.node.open_file.fn(mode, path)
+
+  if edit_opts and edit_opts.quit_on_open then
+    view.close()
+  end
 end
 
 ---@param mode string
 ---@param toggle_group boolean?
----@return fun(node: Node)
+---@return fun(node: Node, edit_opts: NodeEditOpts?)
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
-  return function(node)
+  return function(node, edit_opts)
     local root = node:as(RootNode)
     local dir = node:as(DirectoryNode)
 
@@ -245,7 +253,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     elseif dir then
       dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
-      edit(mode, node)
+      edit(mode, node, edit_opts)
     end
   end
 end
