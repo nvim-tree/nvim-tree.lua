@@ -244,6 +244,7 @@ end
 ---@return fun(node: Node, edit_opts: NodeEditOpts?)
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
+  ---@param edit_opts NodeEditOpts?
   return function(node, edit_opts)
     local root = node:as(RootNode)
     local dir = node:as(DirectoryNode)
