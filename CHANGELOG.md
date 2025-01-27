@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.10.0...nvim-tree-v1.11.0) (2025-01-27)
+
+
+### Features
+
+* **#3037:** add API node.buffer.delete, node.buffer.wipe ([#3040](https://github.com/nvim-tree/nvim-tree.lua/issues/3040)) ([fee1da8](https://github.com/nvim-tree/nvim-tree.lua/commit/fee1da88972f5972a8296813f6c00d7598325ebd))
+
+
+### Bug Fixes
+
+* **#3045:** wipe scratch buffers for full name and show info popups ([#3050](https://github.com/nvim-tree/nvim-tree.lua/issues/3050)) ([fca0b67](https://github.com/nvim-tree/nvim-tree.lua/commit/fca0b67c0b5a31727fb33addc4d9c100736a2894))
+
 ## [1.10.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.9.0...nvim-tree-v1.10.0) (2025-01-13)
 
 
