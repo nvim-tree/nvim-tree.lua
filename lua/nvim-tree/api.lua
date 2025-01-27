@@ -225,6 +225,7 @@ Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_pa
 ---
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
 
 ---@param mode string
 ---@param node Node
@@ -234,8 +235,15 @@ local function edit(mode, node, edit_opts)
   local path = file_link and file_link.link_to or node.absolute_path
   actions.node.open_file.fn(mode, path)
 
-  if edit_opts and edit_opts.quit_on_open then
+  edit_opts = edit_opts or {}
+
+  if edit_opts.quit_on_open then
     view.close()
+  end
+
+  local focus = edit_opts.focus == nil or edit_opts.focus == true
+  if not focus then
+    view.focus()
   end
 end
 
