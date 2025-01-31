@@ -243,6 +243,10 @@ local function edit(mode, node, edit_opts)
 
   local focus = edit_opts.focus == nil or edit_opts.focus == true
   if not focus then
+    -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
+    if mode == "tabnew" then
+      vim.cmd(":tabprev")
+    end
     view.focus()
   end
 end
