@@ -270,9 +270,12 @@ function M.close_all_tabs()
   end
 end
 
-function M.close()
+---@param tabpage integer|nil
+function M.close(tabpage)
   if M.View.tab.sync.close then
     M.close_all_tabs()
+  elseif tabpage then
+    close(tabpage)
   else
     M.close_this_tab_only()
   end
