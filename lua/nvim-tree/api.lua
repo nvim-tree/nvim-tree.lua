@@ -233,12 +233,14 @@ Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_pa
 local function edit(mode, node, edit_opts)
   local file_link = node:as(FileLinkNode)
   local path = file_link and file_link.link_to or node.absolute_path
+  local cur_tabpage = vim.api.nvim_get_current_tabpage()
+
   actions.node.open_file.fn(mode, path)
 
   edit_opts = edit_opts or {}
 
   if edit_opts.quit_on_open then
-    view.close()
+    view.close(cur_tabpage)
   end
 
   local focus = edit_opts.focus == nil or edit_opts.focus == true
