@@ -11,6 +11,10 @@ M.is_wsl = vim.fn.has("wsl") == 1
 -- false for WSL
 M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
 
+function M._is_windows()
+  return vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
+end
+
 ---@param haystack string
 ---@param needle string
 ---@return boolean
@@ -299,7 +303,7 @@ end
 ---@param path string
 ---@return string
 function M.canonical_path(path)
-  if M.is_windows and path:match("^%a:") then
+  if M._is_windows() and path:match("^%a:") then
     return path:sub(1, 1):upper() .. path:sub(2)
   end
   return path
