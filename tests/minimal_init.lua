@@ -1,0 +1,1 @@
+-- this file is necessary for the minimal_init option which directs the spawned nvim test instances be run with --noplugin
