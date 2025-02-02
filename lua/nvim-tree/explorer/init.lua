@@ -391,7 +391,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
         end
       else
         for reason, value in pairs(FILTER_REASON) do
-          if filter_reason == value then
+          if filter_reason == value and filter_reason ~= FILTER_REASON.none then
             node.hidden_stats[reason] = node.hidden_stats[reason] + 1
           end
         end
