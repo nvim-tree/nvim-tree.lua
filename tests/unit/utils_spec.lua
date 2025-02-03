@@ -5,9 +5,6 @@ local stub = require("luassert.stub")
 local utils = require("nvim-tree.utils")
 
 describe("utils.path_add_trailing", function()
-  before_each(function()
-  end)
-
   it("trailing added", function()
     assert.equals("foo/", utils.path_add_trailing("foo"))
   end)
@@ -20,9 +17,6 @@ end)
 describe("utils.canonical_path", function()
   before_each(function()
     stub(vim.fn, "has")
-  end)
-
-  after_each(function()
   end)
 
   it("is windows", function()
