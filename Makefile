@@ -47,7 +47,7 @@ help-check: help-update
 # test
 #
 test: plenary.nvim
-	scripts/test.sh $$TEST_NAME
+	scripts/test.sh
 
 #
 # Dependencies

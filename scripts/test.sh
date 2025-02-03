@@ -10,10 +10,12 @@ export DIR_PLENARY
 
 if [ "${#}" -eq 1 ]; then
 	TEST_NAME="${1}"
-else
+elif [ -z "${TEST_NAME}" ]; then
 	TEST_NAME="tests"
 fi
 export TEST_NAME
+
+echo "testing: ${TEST_NAME}"
 
 nvim --headless \
 	--clean \
