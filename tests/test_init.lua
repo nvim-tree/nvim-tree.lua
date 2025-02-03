@@ -1,7 +1,9 @@
-local test_harness = require('plenary.test_harness')
+local test_harness = require("plenary.test_harness")
 
-local DIR_TEST = vim.env.DIR_REPO .. '/tests'
-local FILE_MINIMAL_INIT = DIR_TEST .. '/minimal_init.lua'
-
-test_harness.test_directory(DIR_TEST, { minimal_init = FILE_MINIMAL_INIT })
-
+test_harness.test_directory(
+  vim.env.TEST_NAME,
+  {
+    minimal_init = vim.env.DIR_REPO .. "/tests/minimal_init.lua",
+    sequential = true,
+  }
+)

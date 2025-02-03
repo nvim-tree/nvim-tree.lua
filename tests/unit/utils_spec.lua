@@ -18,7 +18,6 @@ describe("utils.path_add_trailing", function()
 end)
 
 describe("utils.canonical_path", function()
-
   before_each(function()
     stub(vim.fn, "has")
   end)

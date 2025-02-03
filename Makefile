@@ -43,6 +43,19 @@ help-update:
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
+#
+# test
+#
+test: plenary.nvim
+	scripts/test.sh $$TEST_NAME
+
+#
+# Dependencies
+#
+# no plenary tags or releases available
+plenary.nvim:
+	git clone git@github.com:nvim-lua/plenary.nvim.git
+
 
 .PHONY: all lint style check luacheck style-check style-doc luals style-fix help-update help-check
 
