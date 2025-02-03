@@ -190,7 +190,7 @@ local function open()
 
   -- highlight it
   for _, args in ipairs(hl_range_args) do
-    if vim.fn.has("nvim-0.11") == 1 then
+    if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
       vim.hl.range(M.bufnr, namespace_help_id, args.higroup, args.start, args.finish, {})
     else
       vim.api.nvim_buf_add_highlight(M.bufnr, -1, args.higroup, args.start[1], args.start[2], args.finish[2]) ---@diagnostic disable-line: deprecated

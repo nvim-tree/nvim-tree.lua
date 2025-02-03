@@ -55,7 +55,7 @@ function HighlightDisplay:render(bufnr, fmt, l)
 
   vim.api.nvim_buf_set_lines(bufnr, l, -1, true, { text })
 
-  if vim.fn.has("nvim-0.11") == 1 then
+  if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
     vim.hl.range(bufnr, namespace_hi_test_id, self.group, { l, 0 }, { l, #self.group, }, {})
   else
     vim.api.nvim_buf_add_highlight(bufnr, -1, self.group, l, 0, #self.group) ---@diagnostic disable-line: deprecated
