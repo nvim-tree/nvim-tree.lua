@@ -4,16 +4,17 @@ set -e
 
 # TODO add ability for user to specify a test file or directory
 
-REPO_DIR="$(git rev-parse --show-toplevel)"
-export REPO_DIR
+# TODO clone plenary
 
-PLENARY_DIR="${REPO_DIR}/plenary.nvim"
-export PLENARY_DIR
+DIR_REPO="$(git rev-parse --show-toplevel)"
+export DIR_REPO
+
+DIR_PLENARY="${DIR_REPO}/plenary.nvim"
+export DIR_PLENARY
 
 nvim --headless \
 	--clean \
-	--noplugin \
-	-u "tests/minimal_init.lua" \
-	-c "lua require('plenary.test_harness').test_directory('tests/', { minimal_init = './tests/minimal_init.lua' })" \
+	-u "${DIR_REPO}/tests/minimal_init.lua" \
+	-l "${DIR_REPO}/tests/test_init.lua" \
 	-c "qa!"
 
