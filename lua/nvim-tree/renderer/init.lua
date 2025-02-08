@@ -87,7 +87,7 @@ function Renderer:render_hl(bufnr, hl_range_args)
   end
   vim.api.nvim_buf_clear_namespace(bufnr, namespace_highlights_id, 0, -1)
   for _, args in ipairs(hl_range_args) do
-    if vim.fn.has("nvim-0.11") == 1 then
+    if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
       vim.hl.range(bufnr, namespace_highlights_id, args.higroup, args.start, args.finish, {})
     else
       vim.api.nvim_buf_add_highlight(bufnr, namespace_highlights_id, args.higroup, args.start[1], args.start[2], args.finish[2]) ---@diagnostic disable-line: deprecated
