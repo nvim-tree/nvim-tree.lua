@@ -27,16 +27,12 @@ local function save_bookmarks(marks, opts)
     for path, _ in pairs(marks) do
       table.insert(data, path)
     end
-    print(storepath)
     file:write(vim.json.encode(data))
     file:close()
   end
 end
 
 local function load_bookmarks(opts)
-  if not opts.marks.enable_persistence then
-    return {}
-  end
   local storepath = get_save_path(opts)
   local file = io.open(storepath, "r")
   if file then
@@ -69,7 +65,15 @@ local Marks = Class:extend()
 ---@param args MarksArgs
 function Marks:new(args)
   self.explorer = args.explorer
-  self.marks = load_bookmarks(self.explorer.opts) or {}
+  self.marks = {}
+  if self.explorer.opts.marks.enable_persistence then
+    local ok, loaded_marks = pcall(load_bookmarks, self.explorer.opts)
+    if ok then
+      self.marks = loaded_marks
+    else
+      notify.warn("Failed to load bookmarks: " .. loaded_marks)
+    end
+  end
 end
 
 ---Clear all marks and reload if watchers disabled
@@ -100,7 +104,13 @@ function Marks:toggle(node)
   else
     self.marks[node.absolute_path] = node
   end
-  save_bookmarks(self.marks, self.explorer.opts)
+
+  if self.explorer.opts.marks.enable_persistence then
+    local ok, err = pcall(save_bookmarks, self.marks, self.explorer.opts)
+    if not ok then
+      notify.warn("Failed to save bookmarks: " .. err)
+    end
+  end
   self.explorer.renderer:draw()
 end
 
