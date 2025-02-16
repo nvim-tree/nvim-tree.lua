@@ -79,9 +79,15 @@ local function show()
       ---@type vim.api.keyset.extmark_details
       local details = extmark[4]
 
-      vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col)
+      if type(details) == "table" then
+        if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
+          vim.hl.range(0, ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
+        else
+          vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
+        end
+      end
     end
-    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=hide ]])
+    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
   end)
 end
 

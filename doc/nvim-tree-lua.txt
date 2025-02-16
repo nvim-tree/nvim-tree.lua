@@ -1894,7 +1894,7 @@ tree.winid({opts})                              *nvim-tree-api.tree.winid()*
       • {opts} (table) optional parameters
 
     Options: ~
-      • {tabpage}        (number|nil)  tabpage, 0 or nil for current, default nil
+      • {tabpage} (number|nil)  tabpage, 0 or nil for current, default nil
 
     Return: ~
       (number) winid or nil if tree is not visible
@@ -2163,6 +2163,28 @@ node.run.cmd({node})                            *nvim-tree-api.node.run.cmd()*
 
 node.run.system({node})                      *nvim-tree-api.node.run.system()*
     Execute |nvim-tree.system_open|
+
+node.buffer.delete({node}, {opts})        *nvim-tree-api.node.buffer.delete()*
+    Deletes node's related buffer, if one exists.
+    Executes |:bdelete| or |:bdelete|!
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {force} (boolean) delete even if buffer is modified, default false
+
+node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
+    Wipes node's related buffer, if one exists.
+    Executes |:bwipe| or |:bwipe|!
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {force} (boolean) wipe even if buffer is modified, default false
 
 ==============================================================================
  6.4 API GIT                                               *nvim-tree-api.git*
@@ -3178,6 +3200,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.marks.navigate.prev()|
 |nvim-tree-api.marks.navigate.select()|
 |nvim-tree-api.marks.toggle()|
+|nvim-tree-api.node.buffer.delete()|
+|nvim-tree-api.node.buffer.wipe()|
 |nvim-tree-api.node.navigate.diagnostics.next()|
 |nvim-tree-api.node.navigate.diagnostics.next_recursive()|
 |nvim-tree-api.node.navigate.diagnostics.prev()|

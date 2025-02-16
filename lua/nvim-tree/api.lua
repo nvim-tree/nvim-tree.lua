@@ -24,6 +24,7 @@ local Api = {
     },
     run = {},
     open = {},
+    buffer = {},
   },
   events = {},
   marks = {
@@ -285,6 +286,16 @@ Api.node.navigate.diagnostics.prev = wrap_node(actions.moves.item.fn({ where = "
 Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag", recurse = true }))
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
+
+---@class ApiNodeDeleteWipeBufferOpts
+---@field force boolean|nil default false
+
+Api.node.buffer.delete = wrap_node(function(node, opts)
+  actions.node.buffer.delete(node, opts)
+end)
+Api.node.buffer.wipe = wrap_node(function(node, opts)
+  actions.node.buffer.wipe(node, opts)
+end)
 
 Api.git.reload = wrap_explorer("reload_git")
 

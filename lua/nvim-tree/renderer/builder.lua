@@ -33,15 +33,9 @@ local BUILTIN_DECORATORS = {
   Cut = CutDecorator,
 }
 
----@class (exact) AddHighlightArgs
----@field group string[]
----@field line number
----@field col_start number
----@field col_end number
-
 ---@class (exact) Builder
 ---@field lines string[] includes icons etc.
----@field hl_args AddHighlightArgs[] line highlights
+---@field hl_range_args HighlightRangeArgs[] highlights for lines
 ---@field signs string[] line signs
 ---@field extmarks table[] extra marks for right icon placement
 ---@field virtual_lines table[] virtual lines for hidden count display
@@ -67,7 +61,7 @@ function Builder:new(args)
   self.explorer        = args.explorer
   self.index           = 0
   self.depth           = 0
-  self.hl_args         = {}
+  self.hl_range_args   = {}
   self.combined_groups = {}
   self.lines           = {}
   self.markers         = {}
@@ -106,7 +100,9 @@ end
 ---@param start number
 ---@param end_ number|nil
 function Builder:insert_highlight(groups, start, end_)
-  table.insert(self.hl_args, { groups, self.index, start, end_ or -1 })
+  for _, higroup in ipairs(groups) do
+    table.insert(self.hl_range_args, { higroup = higroup, start = { self.index, start, }, finish = { self.index, end_ or -1, } })
+  end
 end
 
 ---@private

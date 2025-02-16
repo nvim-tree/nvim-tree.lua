@@ -128,8 +128,7 @@ function M.update_lsp(ev)
 
   local profile_event = log.profile_start("DiagnosticChanged event")
 
-  ---@type vim.Diagnostic[]
-  local diagnostics = ev.data.diagnostics
+  local diagnostics = vim.diagnostic.get(ev.buf)
 
   -- use the buffer from the event, as ev.data.diagnostics will be empty on resolved diagnostics
   local bufname = uniformize_path(vim.api.nvim_buf_get_name(ev.buf))

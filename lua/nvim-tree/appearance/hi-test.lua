@@ -5,6 +5,8 @@ local Class = require("nvim-tree.classic")
 -- others with name and links less than this arbitrary value are short
 local SHORT_LEN = 50
 
+local namespace_hi_test_id = vim.api.nvim_create_namespace("NvimTreeHiTest")
+
 ---@class (exact) HighlightDisplay: Class for :NvimTreeHiTest
 ---@field group string nvim-tree highlight group name
 ---@field links string link chain to a concretely defined group
@@ -52,7 +54,12 @@ function HighlightDisplay:render(bufnr, fmt, l)
   local text = string.format(fmt, self.group, self.links, self.def)
 
   vim.api.nvim_buf_set_lines(bufnr, l, -1, true, { text })
-  vim.api.nvim_buf_add_highlight(bufnr, -1, self.group, l, 0, #self.group)
+
+  if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
+    vim.hl.range(bufnr, namespace_hi_test_id, self.group, { l, 0 }, { l, #self.group, }, {})
+  else
+    vim.api.nvim_buf_add_highlight(bufnr, -1, self.group, l, 0, #self.group) ---@diagnostic disable-line: deprecated
+  end
 
   return l + 1
 end
