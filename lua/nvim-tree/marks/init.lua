@@ -11,6 +11,49 @@ local utils = require("nvim-tree.utils")
 local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
 
+local function get_save_path(opts)
+  return opts.marks.save_path or (vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json")
+end
+
+local function save_bookmarks(marks, opts)
+  if not opts.marks.enable_persistence then
+    return
+  end
+
+  local storepath = get_save_path(opts)
+  local file = io.open(storepath, "w")
+  if file then
+    local data = {}
+    for path, _ in pairs(marks) do
+      table.insert(data, path)
+    end
+    print(storepath)
+    file:write(vim.json.encode(data))
+    file:close()
+  end
+end
+
+local function load_bookmarks(opts)
+  if not opts.marks.enable_persistence then
+    return {}
+  end
+  local storepath = get_save_path(opts)
+  local file = io.open(storepath, "r")
+  if file then
+    local content = file:read("*all")
+    file:close()
+    if content and content ~= "" then
+      local data = vim.json.decode(content)
+      local marks = {}
+      for _, path in ipairs(data) do
+        marks[path] = true -- or reconstruct node if needed
+      end
+      return marks
+    end
+  end
+  return {}
+end
+
 ---@class (exact) Marks: Class
 ---@field private explorer Explorer
 ---@field private marks table<string, Node> by absolute path
@@ -21,6 +64,11 @@ local Marks = Class:extend()
 
 ---@class (exact) MarksArgs
 ---@field explorer Explorer
+
+function Marks:new(args)
+  self.explorer = args.explorer
+  self.marks = load_bookmarks(self.explorer.opts) or {}
+end
 
 ---Clear all marks and reload if watchers disabled
 ---@private
@@ -35,6 +83,20 @@ end
 ---@public
 function Marks:clear()
   self.marks = {}
+  self.explorer.renderer:draw()
+end
+
+function Marks:toggle(node)
+  if node.absolute_path == nil then
+    return
+  end
+
+  if self:get(node) then
+    self.marks[node.absolute_path] = nil
+  else
+    self.marks[node.absolute_path] = node
+  end
+  save_bookmarks(self.marks, self.explorer.opts)
   self.explorer.renderer:draw()
 end
 
@@ -219,57 +281,6 @@ function Marks:navigate_next()
   self:navigate(false)
 end
 
-
-local function save_bookmarks(marks)
-  local storepath = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
-  local file = io.open(storepath, "w")
-  if file then
-    local data = {}
-    for path, _ in pairs(marks) do
-      table.insert(data, path)
-    end
-    file:write(vim.fn.json_encode(data))
-    file:close()
-  end
-end
-
-local function load_bookmarks()
-  local storepath = vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json"
-  local file = io.open(storepath, "r")
-  if file then
-    local content = file:read("*all")
-    file:close()
-    if content and content ~= "" then
-      local data = vim.fn.json_decode(content)
-      local marks = {}
-      for _, path in ipairs(data) do
-        marks[path] = true -- or reconstruct node if needed
-      end
-      return marks
-    end
-  end
-  return {}
-end
-
-function Marks:new(args)
-  self.explorer = args.explorer
-  self.marks = load_bookmarks() or {}
-end
-
-function Marks:toggle(node)
-  if node.absolute_path == nil then
-    return
-  end
-
-  if self:get(node) then
-    self.marks[node.absolute_path] = nil
-  else
-    self.marks[node.absolute_path] = node
-  end
-
-  save_bookmarks(self.marks)
-  self.explorer.renderer:draw()
-end
 ---Prompts for selection of a marked node, sorted by absolute paths.
 ---A folder will be focused, a file will be opened.
 ---@public
