@@ -65,6 +65,8 @@ local Marks = Class:extend()
 ---@class (exact) MarksArgs
 ---@field explorer Explorer
 
+---@protected
+---@param args MarksArgs
 function Marks:new(args)
   self.explorer = args.explorer
   self.marks = load_bookmarks(self.explorer.opts) or {}
@@ -86,6 +88,8 @@ function Marks:clear()
   self.explorer.renderer:draw()
 end
 
+---@public
+---@param node Node
 function Marks:toggle(node)
   if node.absolute_path == nil then
     return
