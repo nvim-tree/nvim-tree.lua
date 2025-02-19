@@ -239,12 +239,14 @@ local function edit(mode, node, edit_opts)
 
   edit_opts = edit_opts or {}
 
-  if edit_opts.quit_on_open then
+  local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
+  if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
     view.close(cur_tabpage)
   end
 
+  local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
   local focus = edit_opts.focus == nil or edit_opts.focus == true
-  if not focus then
+  if not mode_unsupported_focus and not focus then
     -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
     if mode == "tabnew" then
       vim.cmd(":tabprev")
