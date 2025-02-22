@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.11.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.10.0...nvim-tree-v1.11.0) (2025-02-22)
+
+
+### Features
+
+* **#1984:** add quit_on_open and focus opts to various api.node.open functions ([#3054](https://github.com/nvim-tree/nvim-tree.lua/issues/3054)) ([3281f33](https://github.com/nvim-tree/nvim-tree.lua/commit/3281f331f7f0bef13eb00fb2d5a9d28b2f6155a2))
+* **#3037:** add API node.buffer.delete, node.buffer.wipe ([#3040](https://github.com/nvim-tree/nvim-tree.lua/issues/3040)) ([fee1da8](https://github.com/nvim-tree/nvim-tree.lua/commit/fee1da88972f5972a8296813f6c00d7598325ebd))
+
+
+### Bug Fixes
+
+* **#3045:** wipe scratch buffers for full name and show info popups ([#3050](https://github.com/nvim-tree/nvim-tree.lua/issues/3050)) ([fca0b67](https://github.com/nvim-tree/nvim-tree.lua/commit/fca0b67c0b5a31727fb33addc4d9c100736a2894))
+* **#3059:** test for presence of new 0.11 API vim.hl.range ([#3060](https://github.com/nvim-tree/nvim-tree.lua/issues/3060)) ([70825f2](https://github.com/nvim-tree/nvim-tree.lua/commit/70825f23db61ecd900c4cfea169bffe931926a9d))
+* arithmetic on nil value error on first git project open ([#3064](https://github.com/nvim-tree/nvim-tree.lua/issues/3064)) ([8052310](https://github.com/nvim-tree/nvim-tree.lua/commit/80523101f0ae48b7f1990e907b685a3d79776c01))
+* stl and stlnc fillchars are hidden in window picker ([b699143](https://github.com/nvim-tree/nvim-tree.lua/commit/b69914325a945ee5157f0d21047210b42af5776e))
+* window picker: hide fillchars: stl and stlnc ([#3066](https://github.com/nvim-tree/nvim-tree.lua/issues/3066)) ([b699143](https://github.com/nvim-tree/nvim-tree.lua/commit/b69914325a945ee5157f0d21047210b42af5776e))
+
 ## [1.10.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.9.0...nvim-tree-v1.10.0) (2025-01-13)
 
 
