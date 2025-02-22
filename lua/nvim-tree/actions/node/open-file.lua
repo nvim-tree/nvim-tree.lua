@@ -80,6 +80,14 @@ local function pick_win_id()
   local win_map = {}
   local laststatus = vim.o.laststatus
   vim.o.laststatus = 2
+  local fillchars = vim.opt.fillchars:get()
+  local stl = fillchars.stl
+  local stlnc = fillchars.stlnc
+  fillchars.stl = nil
+  fillchars.stlnc = nil
+  vim.opt.fillchars = fillchars
+  fillchars.stl = stl
+  fillchars.stlnc = stlnc
 
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
@@ -179,6 +187,7 @@ local function pick_win_id()
   end
 
   vim.o.laststatus = laststatus
+  vim.opt.fillchars = fillchars
 
   if not vim.tbl_contains(vim.split(M.window_picker.chars, ""), resp) then
     return
