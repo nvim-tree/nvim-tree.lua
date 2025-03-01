@@ -28,7 +28,7 @@ jobs:
         with:
           luaVersion: ${{ matrix.lua_version }}
 
-      - uses: leafo/gh-actions-luarocks@v4
+      - uses: leafo/gh-actions-luarocks@v5
 
       - run: luarocks install luacheck 1.1.1
 
