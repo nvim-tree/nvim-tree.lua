@@ -34,30 +34,30 @@ jobs:
 
       - run: make lint
 
-  style:
-    runs-on: ubuntu-latest
+  # style:
+  #   runs-on: ubuntu-latest
 
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
-      cancel-in-progress: true
+  #   concurrency:
+  #     group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
+  #     cancel-in-progress: true
 
-    strategy:
-      matrix:
-        luals_version: [ 3.13.9 ]
+  #   strategy:
+  #     matrix:
+  #       luals_version: [ 3.13.9 ]
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: install luals
-        run: |
-          mkdir -p luals
-          curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
+  #     - name: install luals
+  #       run: |
+  #         mkdir -p luals
+  #         curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
 
-      - run: echo "luals/bin" >> "$GITHUB_PATH"
+  #     - run: echo "luals/bin" >> "$GITHUB_PATH"
 
-      - run: make style
+  #     - run: make style
 
-      - run: make style-doc
+  #     - run: make style-doc
 
   check:
     runs-on: ubuntu-latest
@@ -92,3 +92,11 @@ jobs:
         run: make check
 
       - run: make help-check
+
+      - name: make style
+        env:
+          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
+        run: make style
+
+      - run: make style-doc
+
