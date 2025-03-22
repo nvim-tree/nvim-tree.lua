@@ -35,7 +35,7 @@ jobs:
         uses: leafo/gh-actions-luarocks@v5
 
       - name: install luacheck ${{ matrix.luacheck_version }}
-        run: luarocks install ${{ matrix.luacheck_version }}
+        run: luarocks install luacheck ${{ matrix.luacheck_version }}
 
       - run: make lint
 
