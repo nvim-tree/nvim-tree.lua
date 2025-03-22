@@ -34,19 +34,20 @@ jobs:
 
       - run: make lint
 
-  style:
+  check:
     runs-on: ubuntu-latest
-    env:
-      VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
 
     concurrency:
-      group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
+      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ matrix.luals_version }}-${{ github.head_ref || github.ref_name }}
       cancel-in-progress: true
 
     strategy:
       matrix:
+        nvim_version: [ stable, nightly ]
         luals_version: [ 3.13.9 ]
-        nvim_version: [ stable ]
+
+    env:
+      VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
 
     steps:
       - uses: actions/checkout@v4
@@ -62,41 +63,10 @@ jobs:
           curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
           echo "luals/bin" >> "$GITHUB_PATH"
 
-      - name: make style
-        run: make style
-
-      - run: make style-doc
-
-  check:
-    runs-on: ubuntu-latest
-
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ matrix.luals_version }}-${{ github.head_ref || github.ref_name }}
-      cancel-in-progress: true
-
-    strategy:
-      matrix:
-        nvim_version: [ stable, nightly ]
-        luals_version: [ 3.13.9 ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: rhysd/action-setup-vim@v1
-        with:
-          neovim: true
-          version: ${{ matrix.nvim_version }}
-
-      - name: install luals
-        run: |
-          mkdir -p luals
-          curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
-
-      - run: echo "luals/bin" >> "$GITHUB_PATH"
-
-      - name: make check
-        env:
-          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
-        run: make check
+      - run: make check
 
       - run: make help-check
+
+      - run: make style
+
+      - run: make style-doc
