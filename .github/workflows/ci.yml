@@ -36,6 +36,8 @@ jobs:
 
   style:
     runs-on: ubuntu-latest
+    env:
+      VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
 
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
@@ -62,8 +64,6 @@ jobs:
       - run: echo "luals/bin" >> "$GITHUB_PATH"
 
       - name: make style
-        env:
-          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
         run: make style
 
       - run: make style-doc
