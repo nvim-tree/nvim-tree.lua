@@ -61,7 +61,10 @@ jobs:
 
       - run: echo "luals/bin" >> "$GITHUB_PATH"
 
-      - run: make style
+      - name: make style
+        env:
+          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
+        run: make style
 
       - run: make style-doc
 
