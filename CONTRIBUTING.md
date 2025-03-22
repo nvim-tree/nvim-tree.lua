@@ -14,7 +14,7 @@ Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
 Style Fixing: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
 
-nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals
+nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals, using an embedded [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle)
 
 You can install them via you OS package manager e.g. `pacman`, `brew` or other via other package managers such as `cargo` or `luarocks`
 
@@ -43,7 +43,7 @@ make lint
 make style
 ```
 
-You can automatically fix `CodeCheck` issues via:
+You can automatically fix style issues using `CodeCheck`:
 
 ```sh
 make style-fix
