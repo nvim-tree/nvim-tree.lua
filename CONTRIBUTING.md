@@ -12,7 +12,7 @@ Language server: [luals](https://luals.github.io)
 
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-Style: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
+Style Fixing: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
 
 nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals
 
@@ -36,7 +36,7 @@ make lint
 
 ## style
 
-1. Runs CodeCheck using `.editorconfig` settings
+1. Runs lua language server `codestyle-check` only, using `.luarc.json` settings
 1. Runs `scripts/doc-comments.sh` to validate annotated documentation
 
 ```sh
