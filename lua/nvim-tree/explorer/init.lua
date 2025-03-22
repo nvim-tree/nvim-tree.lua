@@ -388,7 +388,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
         })
         if child then
           table.insert(node.nodes, child)
-            nodes_by_path[child.absolute_path] = true
+          nodes_by_path[child.absolute_path] = true
           child:update_git_status(node_ignored, project)
         end
       elseif node.hidden_stats then
