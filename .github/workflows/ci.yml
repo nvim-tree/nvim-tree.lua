@@ -44,9 +44,15 @@ jobs:
     strategy:
       matrix:
         luals_version: [ 3.13.9 ]
+        nvim_version: [ stable ]
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.nvim_version }}
 
       - name: install luals
         run: |
