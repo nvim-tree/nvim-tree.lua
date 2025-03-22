@@ -22,7 +22,7 @@ mkdir "${DIR_OUT}"
 case "${1}" in
 	"codestyle-check")
 		jq \
-			'.diagnostics.neededFileStatus[] = "None" | ''.diagnostics.neededFileStatus."codestyle-check" = "Any"' \
+			'.diagnostics.neededFileStatus[] = "None" | .diagnostics.neededFileStatus."codestyle-check" = "Any"' \
 			"${PWD}/.luarc.json" > "${FILE_LUARC}"
 
 		;;
