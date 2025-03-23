@@ -7,6 +7,9 @@ end_of_line = lf
 [nvim-tree-lua.txt]
 max_line_length = 78
 
+# keep these in sync with .luarc.json
+#   .editorconfig is used within nvim, overriding .luarc.json
+#   .luarc.json is used by style check
 [*.lua]
 indent_style = space
 max_line_length = 140
