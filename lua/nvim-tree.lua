@@ -511,7 +511,11 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       watcher = false,
     },
   },
-} -- END_DEFAULT_OPTS
+  marks = {
+    enable_persistence = false,
+    save_path = nil, -- nil will default to stdpath("data") .. "/nvim-tree-bookmarks.json"
+  },
+}-- END_DEFAULT_OPTS
 
 local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
