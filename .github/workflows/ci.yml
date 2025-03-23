@@ -53,7 +53,7 @@ jobs:
 
     env:
       VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
-      GITHUB_PATH: luals/bin:${GITHUB_PATH}
+      GITHUB_PATH: luals/bin:${{ github.path }}
 
     steps:
       - name: checkout
