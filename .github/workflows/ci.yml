@@ -76,7 +76,11 @@ jobs:
           env
           echo "------"
 
-      - run: make check
+      - run: |
+          echo "------"
+          env
+          echo "------"
+          make check
 
       - run: make help-check
 
