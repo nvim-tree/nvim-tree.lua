@@ -69,11 +69,12 @@ jobs:
           echo "------"
           env
           echo "------"
-          cat "${GITHUB_PATH}"
-          echo "------"
           mkdir -p luals
           curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
           echo "luals/bin" >> "$GITHUB_PATH"
+          echo "------"
+          env
+          echo "------"
 
       - run: make check
 
