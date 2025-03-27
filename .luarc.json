@@ -3,7 +3,8 @@
   "workspace": {
     "library": [
       "$VIMRUNTIME/lua/vim",
-      "${3rd}/luv/library"
+      "${3rd}/luv/library",
+      "plenary.nvim"
     ]
   },
   "format": {
