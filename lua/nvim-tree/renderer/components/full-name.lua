@@ -64,6 +64,7 @@ local function show()
     height    = 1,
     noautocmd = true,
     style     = "minimal",
+    border    = "none"
   })
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
