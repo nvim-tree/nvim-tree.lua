@@ -349,7 +349,11 @@ end
 ---@param dst_pos string value pos
 ---@param remove boolean
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  local ok, err = pcall(vim.validate, {
+  local ok, err = pcall(function(arr)
+    for key, value in pairs(arr) do
+      vim.validate(key, value[1], value[2])
+    end
+  end, {
     src = { src, "table" },
     src_path = { src_path, "string" },
     src_pos = { src_pos, "string" },
