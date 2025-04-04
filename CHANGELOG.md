@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.11.0...nvim-tree-v1.11.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* explicitly set `border` to `"none"` in full name float ([#3094](https://github.com/nvim-tree/nvim-tree.lua/issues/3094)) ([c3c1935](https://github.com/nvim-tree/nvim-tree.lua/commit/c3c193594213c5e2f89ec5d7729cad805f76b256))
+
 ## [1.11.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.10.0...nvim-tree-v1.11.0) (2025-02-22)
 
 
