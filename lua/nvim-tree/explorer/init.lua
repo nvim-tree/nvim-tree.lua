@@ -134,7 +134,7 @@ function Explorer:create_autocmds()
         end)
       elseif self.opts.renderer.highlight_opened_files ~= "none" then
         -- draw to update opened highlight; must be delayed as the buffer is still loaded during BufUnload
-        utils.debounce("Buf:highlight_opened_files_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
+        vim.schedule(function()
           self.renderer:draw()
         end)
       end
