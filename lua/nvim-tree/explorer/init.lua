@@ -107,7 +107,7 @@ function Explorer:create_autocmds()
       end
 
       if self.filters.state.no_buffer then
-        -- full reload to update the filter state
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
@@ -128,7 +128,7 @@ function Explorer:create_autocmds()
       end
 
       if self.filters.state.no_buffer then
-        -- full reload to update the filter state
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
