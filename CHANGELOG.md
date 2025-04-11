@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.11.0...nvim-tree-v1.11.1) (2025-04-11)
+
+
+### Bug Fixes
+
+* **#3101:** when renderer.highlight_opened_files = "none" do not reload on BufUnload and BufReadPost ([#3102](https://github.com/nvim-tree/nvim-tree.lua/issues/3102)) ([5bea2b3](https://github.com/nvim-tree/nvim-tree.lua/commit/5bea2b37523a31288e0fcab42f3be5c1bd4516bb))
+* explicitly set `border` to `"none"` in full name float ([#3094](https://github.com/nvim-tree/nvim-tree.lua/issues/3094)) ([c3c1935](https://github.com/nvim-tree/nvim-tree.lua/commit/c3c193594213c5e2f89ec5d7729cad805f76b256))
+
 ## [1.11.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.10.0...nvim-tree-v1.11.0) (2025-02-22)
 
 
