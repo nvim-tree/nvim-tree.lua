@@ -101,10 +101,19 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      -- only handle normal files
+      if vim.bo[data.buf].buftype ~= "" then
+        return
+      end
+
+      if self.filters.state.no_buffer then
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
+      elseif self.opts.renderer.highlight_opened_files ~= "none" then
+        -- draw to update opened highlight
+        self.renderer:draw()
       end
     end,
   })
@@ -113,9 +122,20 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufUnload", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      -- only handle normal files
+      if vim.bo[data.buf].buftype ~= "" then
+        return
+      end
+
+      if self.filters.state.no_buffer then
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
+        end)
+      elseif self.opts.renderer.highlight_opened_files ~= "none" then
+        -- draw to update opened highlight; must be delayed as the buffer is still loaded during BufUnload
+        vim.schedule(function()
+          self.renderer:draw()
         end)
       end
     end,
