@@ -110,6 +110,7 @@ function M.open(opts)
 
   local explorer = core.get_explorer()
 
+  events._dispatch_on_tree_pre_open()
   if should_hijack_current_buf() then
     view.close_this_tab_only()
     view.open_in_win()
