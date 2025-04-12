@@ -2769,13 +2769,25 @@ e.g. handler for node renamed: >lua
 |nvim_tree_events_kind|
 
 - Event.Ready
-                When NvimTree has been initialized
+                When NvimTree has been initialized.
+                • Note: Handler takes no parameter.
+
+- Event.TreePreOpen
+                Invoked before the window and buffer for NvimTree are created
+                or opened. Before |Event.TreeOpen| event.
                 • Note: Handler takes no parameter.
 
 - Event.TreeOpen
+                Invoked after the NvimTree is opened.
+                • Note: Handler takes no parameter.
+
+- Event.TreePreClose
+                Invoked before the window and buffer for NvimTree are closed.
+                Before |Event.TreeClose| event.
                 • Note: Handler takes no parameter.
 
 - Event.TreeClose
+                Invoked after the NvimTree is closed.
                 • Note: Handler takes no parameter.
 
 - Event.Resize - When NvimTree is resized.

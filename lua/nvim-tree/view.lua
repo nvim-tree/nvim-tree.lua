@@ -238,6 +238,7 @@ local function close(tabpage)
     return
   end
   save_tab_state(tabpage)
+  events._dispatch_on_tree_pre_close()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr(tabpage)
   local current_win = vim.api.nvim_get_current_win()
@@ -289,6 +290,7 @@ function M.open(options)
 
   local profile = log.profile_start("view open")
 
+  events._dispatch_on_tree_pre_open()
   create_buffer()
   open_window()
   M.resize()
