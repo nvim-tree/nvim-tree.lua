@@ -1,6 +1,5 @@
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
-local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
 
 ---@class LibOpenOpts
