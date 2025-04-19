@@ -236,6 +236,17 @@ local function setup_autocommands(opts)
       end,
     })
   end
+
+  -- Handles event dispatch when tree is closed by `:q`
+  create_nvim_tree_autocmd("WinClosed", {
+    pattern = "*",
+    ---@param ev vim.api.keyset.create_autocmd.callback_args
+    callback = function(ev)
+      if vim.api.nvim_get_option_value("filetype", { buf = ev.buf }) == "NvimTree" then
+        require("nvim-tree.events")._dispatch_on_tree_close()
+      end
+    end,
+  })
 end
 
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
