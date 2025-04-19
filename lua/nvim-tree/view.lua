@@ -254,7 +254,6 @@ local function close(tabpage)
           return
         end
       end
-      events._dispatch_on_tree_close()
       return
     end
   end
@@ -425,6 +424,7 @@ function M.open_in_win(opts)
     M.reposition_window()
     M.resize()
   end
+  events._dispatch_on_tree_open()
 end
 
 function M.abandon_current_window()
