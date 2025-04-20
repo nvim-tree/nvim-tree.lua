@@ -16,8 +16,6 @@ local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
 
--- TODO #2826 attempt to type the tables, at least the options ones
-
 ---@class (exact) View: Class
 ---@field live_filter table
 ---@field side string
@@ -26,11 +24,10 @@ local DEFAULT_PADDING = 1
 ---@field private adaptive_size boolean
 ---@field private centralize_selection boolean
 ---@field private tabpages table
----@field private cursors table
+---@field private cursors table<integer, integer[]> as per vim.api.nvim_win_get_cursor
 ---@field private hide_root_folder boolean
 ---@field private winopts table
 ---@field private height integer
----@field private tab table
 ---@field private preserve_window_proportions boolean
 ---@field private initial_width integer
 ---@field private width (fun():integer)|integer|string
@@ -50,27 +47,30 @@ local View = Class:extend()
 function View:new(args)
   self.explorer                    = args.explorer
   self.adaptive_size               = false
-  self.centralize_selection        = false
-  self.tabpages                    = {}
-  self.cursors                     = {}
-  self.hide_root_folder            = false
   self.bufnr_per_tab               = {}
-  self.live_filter                 = {
-    prev_focused_node = nil,
-  }
+  self.centralize_selection        = self.explorer.opts.view.centralize_selection
+  self.cursors                     = {}
+  self.float                       = self.explorer.opts.view.float
+  self.height                      = self.explorer.opts.view.height
+  self.hide_root_folder            = self.explorer.opts.renderer.root_folder_label == false
+  self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
+  self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.tabpages                    = {}
+  self.live_filter                 = { prev_focused_node = nil, }
+
   self.winopts                     = {
-    relativenumber = false,
-    number         = false,
+    relativenumber = self.explorer.opts.view.relativenumber,
+    number         = self.explorer.opts.view.number,
     list           = false,
     foldenable     = false,
     winfixwidth    = true,
     winfixheight   = true,
     spell          = false,
-    signcolumn     = "yes",
+    signcolumn     = self.explorer.opts.view.signcolumn,
     foldmethod     = "manual",
     foldcolumn     = "0",
     cursorcolumn   = false,
-    cursorline     = true,
+    cursorline     = self.explorer.opts.view.cursorline,
     cursorlineopt  = "both",
     colorcolumn    = "0",
     wrap           = false,
@@ -90,20 +90,7 @@ function View:new(args)
     }, ","),
   }
 
-  self.centralize_selection        = self.explorer.opts.view.centralize_selection
-  self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.height                      = self.explorer.opts.view.height
-  self.hide_root_folder            = self.explorer.opts.renderer.root_folder_label == false
-  self.tab                         = self.explorer.opts.tab
-  self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
-  self.winopts.cursorline          = self.explorer.opts.view.cursorline
-  self.winopts.number              = self.explorer.opts.view.number
-  self.winopts.relativenumber      = self.explorer.opts.view.relativenumber
-  self.winopts.signcolumn          = self.explorer.opts.view.signcolumn
-  self.float                       = self.explorer.opts.view.float
-
   self:configure_width(self.explorer.opts.view.width)
-
   self.initial_width = self:get_width()
 end
 
@@ -330,7 +317,7 @@ end
 
 ---@param tabpage integer|nil
 function View:close(tabpage)
-  if self.tab.sync.close then
+  if self.explorer.opts.tab.sync.close then
     self:close_all_tabs()
   elseif tabpage then
     self:close_internal(tabpage)
