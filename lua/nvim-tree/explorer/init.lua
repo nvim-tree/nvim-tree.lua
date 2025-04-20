@@ -84,7 +84,7 @@ function Explorer:create_autocmds()
     group = self.augroup_id,
     callback = function()
       appearance.setup()
-      view.reset_winhl()
+      view.View:reset_winhl()
       self.renderer:draw()
     end,
   })
@@ -508,7 +508,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = view.get_winnr()
+  local winnr = view.View:get_winnr()
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end

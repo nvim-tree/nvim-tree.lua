@@ -158,7 +158,7 @@ local function setup_autocommands(opts)
         return
       end
       if opts.actions.open_file.eject then
-        view._prevent_buffer_override()
+        view.View:prevent_buffer_override()
       else
         view.View:abandon_current_window()
       end

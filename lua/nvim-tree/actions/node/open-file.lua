@@ -21,7 +21,7 @@ end
 local function usable_win_ids()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = view.get_winnr(tabpage)
+  local tree_winid = view.View:get_winnr(tabpage)
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
