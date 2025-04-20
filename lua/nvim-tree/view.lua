@@ -288,6 +288,7 @@ function M.open(options)
 
   local profile = log.profile_start("view open")
 
+  events._dispatch_on_tree_pre_open()
   create_buffer()
   open_window()
   M.resize()
@@ -413,6 +414,7 @@ end
 ---@param opts OpenInWinOpts|nil
 function M.open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
+  events._dispatch_on_tree_pre_open()
   if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
   end

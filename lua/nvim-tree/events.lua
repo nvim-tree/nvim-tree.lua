@@ -8,6 +8,7 @@ M.Event = {
   Ready = "Ready",
   WillRenameNode = "WillRenameNode",
   NodeRenamed = "NodeRenamed",
+  TreePreOpen = "TreePreOpen",
   TreeOpen = "TreeOpen",
   TreeClose = "TreeClose",
   WillCreateFile = "WillCreateFile",
@@ -89,6 +90,11 @@ end
 --@private
 function M._dispatch_folder_removed(folder_name)
   dispatch(M.Event.FolderRemoved, { folder_name = folder_name })
+end
+
+--@private
+function M._dispatch_on_tree_pre_open()
+  dispatch(M.Event.TreePreOpen, nil)
 end
 
 --@private
