@@ -10,6 +10,12 @@ local Class = require("nvim-tree.classic")
 ---@field resize boolean|nil default true
 ---@field winid number|nil 0 or nil for current
 
+local M = {}
+
+local DEFAULT_MIN_WIDTH = 30
+local DEFAULT_MAX_WIDTH = -1
+local DEFAULT_PADDING = 1
+
 --TODO attempt to type the tables, at least the options ones
 
 ---@class (exact) View: Class
@@ -99,12 +105,6 @@ function View:new(args)
 
   self.initial_width = self:get_width()
 end
-
-local M = {}
-
-local DEFAULT_MIN_WIDTH = 30
-local DEFAULT_MAX_WIDTH = -1
-local DEFAULT_PADDING = 1
 
 -- The initial state of a tab
 local tabinitial = {
