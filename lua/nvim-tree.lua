@@ -89,7 +89,7 @@ function M.tab_enter()
         return
       end
     end
-    view.open({ focus_tree = false })
+    view.View:open({ focus_tree = false })
 
     local explorer = core.get_explorer()
     if explorer then
@@ -692,7 +692,7 @@ local function localise_default_opts()
 end
 
 function M.purge_all_state()
-  view.close_all_tabs()
+  view.View:close_all_tabs()
   view.abandon_all_windows()
   local explorer = core.get_explorer()
   if explorer then
