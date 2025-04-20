@@ -373,7 +373,7 @@ local function is_already_loaded(filename)
 end
 
 local function edit_in_current_buf(filename)
-  require("nvim-tree.view").abandon_current_window()
+  require("nvim-tree.view").View:abandon_current_window()
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
@@ -419,7 +419,7 @@ function M.fn(mode, filename)
   end
 
   if M.resize_window then
-    view.resize()
+    view.View:resize()
   end
 
   if mode == "preview" or mode == "preview_no_picker" then

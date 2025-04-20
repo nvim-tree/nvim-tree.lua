@@ -23,7 +23,7 @@ function M.fn(opts)
     opts.path = nil
   end
 
-  if view.is_visible() then
+  if view.View:is_visible() then
     -- focus
     lib.set_target_win()
     view.focus()

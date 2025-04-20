@@ -111,17 +111,17 @@ function M.open(opts)
 
   if should_hijack_current_buf() then
     view.View:close_this_tab_only()
-    view.open_in_win()
+    view.View:open_in_win()
     if explorer then
       explorer.renderer:draw()
     end
   elseif opts.winid then
-    view.open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
+    view.View:open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
     if explorer then
       explorer.renderer:draw()
     end
   elseif opts.current_window then
-    view.open_in_win({ hijack_current_buf = false, resize = false })
+    view.View:open_in_win({ hijack_current_buf = false, resize = false })
     if explorer then
       explorer.renderer:draw()
     end

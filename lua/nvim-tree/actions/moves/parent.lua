@@ -25,7 +25,7 @@ function M.fn(should_close)
     local parent = (node:get_parent_of_group() or node).parent
 
     if not parent or not parent.parent then
-      view.set_cursor({ 1, 0 })
+      view.View:set_cursor({ 1, 0 })
       return
     end
 
@@ -33,7 +33,7 @@ function M.fn(should_close)
       return n.absolute_path == parent.absolute_path
     end)
 
-    view.set_cursor({ line + 1, 0 })
+    view.View:set_cursor({ line + 1, 0 })
     if should_close then
       parent.open = false
       parent.explorer.renderer:draw()

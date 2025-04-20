@@ -40,7 +40,7 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.path = nil
   end
 
-  if view.is_visible() then
+  if view.View:is_visible() then
     -- close
     view.View:close()
   else
