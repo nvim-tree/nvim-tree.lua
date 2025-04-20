@@ -364,7 +364,7 @@ end
 
 ---@private
 function View:grow()
-  local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
+  local starts_at = self:is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = self:get_size(self.padding)
@@ -534,15 +534,15 @@ end
 
 ---@param winnr number|nil
 ---@param open_if_closed boolean|nil
-function M.focus(winnr, open_if_closed)
+function View:focus(winnr, open_if_closed)
   local wnr = winnr or M.get_winnr()
 
   if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
-    M.close()
-    M.View:open()
+    self:close()
+    self:open()
     wnr = M.get_winnr()
-  elseif open_if_closed and not M.View:is_visible() then
-    M.View:open()
+  elseif open_if_closed and not self:is_visible() then
+    self:open()
   end
 
   if wnr then
@@ -553,12 +553,12 @@ end
 --- Retrieve the winid of the open tree.
 ---@param opts ApiTreeWinIdOpts|nil
 ---@return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
-function M.winid(opts)
+function View:winid(opts)
   local tabpage = opts and opts.tabpage
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
   end
-  if M.View:is_visible({ tabpage = tabpage }) then
+  if self:is_visible({ tabpage = tabpage }) then
     return M.get_winnr(tabpage)
   else
     return nil
@@ -566,9 +566,9 @@ function M.winid(opts)
 end
 
 --- Restores the state of a NvimTree window if it was initialized before.
-function M.restore_tab_state()
+function View:restore_tab_state()
   local tabpage = vim.api.nvim_get_current_tabpage()
-  M.View:set_cursor(M.View.cursors[tabpage])
+  self:set_cursor(self.cursors[tabpage])
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
@@ -638,8 +638,8 @@ end
 
 ---@param cwd string|nil
 ---@return boolean
-function M.is_root_folder_visible(cwd)
-  return cwd ~= "/" and not M.View.hide_root_folder
+function View:is_root_folder_visible(cwd)
+  return cwd ~= "/" and not self.hide_root_folder
 end
 
 -- used on ColorScheme event

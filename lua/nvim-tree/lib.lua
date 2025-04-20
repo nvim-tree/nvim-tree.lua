@@ -128,7 +128,7 @@ function M.open(opts)
   else
     open_view_and_draw()
   end
-  view.restore_tab_state()
+  view.View:restore_tab_state()
 end
 
 function M.setup(opts)
