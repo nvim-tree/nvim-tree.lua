@@ -486,7 +486,7 @@ function Explorer:reload_explorer()
 
   local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
-  if view.is_visible() then
+  if view.View:is_visible() then
     self.renderer:draw()
   end
   event_running = false

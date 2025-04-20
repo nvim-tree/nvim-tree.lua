@@ -14,7 +14,7 @@ local running = {}
 ---@param path string relative or absolute
 function M.fn(path)
   local explorer = core.get_explorer()
-  if not explorer or not view.is_visible() then
+  if not explorer or not view.View:is_visible() then
     return
   end
 
@@ -84,9 +84,9 @@ function M.fn(path)
     end)
     :iterate()
 
-  if found and view.is_visible() then
+  if found and view.View:is_visible() then
     explorer.renderer:draw()
-    view.set_cursor({ line, 0 })
+    view.View:set_cursor({ line, 0 })
   end
 
   running[path_real] = false

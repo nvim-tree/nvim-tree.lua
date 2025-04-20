@@ -111,7 +111,7 @@ local CMDS = {
       bar = true,
     },
     command = function(c)
-      view.resize(c.args)
+      view.View:resize(c.args)
     end,
   },
   {

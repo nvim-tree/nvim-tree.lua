@@ -113,7 +113,7 @@ function Renderer:draw()
     vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
   end
 
-  view.grow_from_content()
+  view.View:grow_from_content()
 
   log.profile_end(profile)
 
