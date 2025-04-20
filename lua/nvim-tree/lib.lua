@@ -31,7 +31,7 @@ end
 
 local function open_view_and_draw()
   local cwd = vim.fn.getcwd()
-  view.open()
+  view.View:open()
   handle_buf_cwd(cwd)
 
   local explorer = core.get_explorer()
@@ -110,7 +110,7 @@ function M.open(opts)
   local explorer = core.get_explorer()
 
   if should_hijack_current_buf() then
-    view.close_this_tab_only()
+    view.View:close_this_tab_only()
     view.open_in_win()
     if explorer then
       explorer.renderer:draw()

@@ -42,7 +42,7 @@ function M.fn(opts, no_focus, cwd, bang)
 
   if view.is_visible() then
     -- close
-    view.close()
+    view.View:close()
   else
     -- open
     lib.open({

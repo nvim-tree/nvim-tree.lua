@@ -145,8 +145,9 @@ local function wipe_rogue_buffer()
   end
 end
 
+---@private
 ---@param bufnr integer|boolean|nil
-local function create_buffer(bufnr)
+function View:create_buffer(bufnr)
   wipe_rogue_buffer()
 
   local tab = vim.api.nvim_get_current_tabpage()
@@ -193,20 +194,22 @@ local move_tbl = {
 }
 
 -- setup_tabpage sets up the initial state of a tab
+---@private
 ---@param tabpage integer
-local function setup_tabpage(tabpage)
+function View:setup_tabpage(tabpage)
   local winnr = vim.api.nvim_get_current_win()
-  M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
+  self.tabpages[tabpage] = vim.tbl_extend("force", self.tabpages[tabpage] or tabinitial, { winnr = winnr })
 end
 
-local function set_window_options_and_buffer()
+---@private
+function View:set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
     vim.api.nvim_set_option_value("eventignore", "all", {})
 
-    for k, v in pairs(M.View.winopts) do
+    for k, v in pairs(self.winopts) do
       vim.api.nvim_set_option_value(k, v, { scope = "local" })
     end
 
@@ -217,7 +220,7 @@ local function set_window_options_and_buffer()
 
     -- #3009 vim.api.nvim_win_set_option does not set local scope without explicit winid.
     -- Revert to opt_local instead of propagating it through for just the 0.10 path.
-    for k, v in pairs(M.View.winopts) do
+    for k, v in pairs(self.winopts) do
       vim.opt_local[k] = v
     end
 
@@ -225,24 +228,26 @@ local function set_window_options_and_buffer()
   end
 end
 
+---@private
 ---@return table
-local function open_win_config()
-  if type(M.View.float.open_win_config) == "function" then
-    return M.View.float.open_win_config()
+function View:open_win_config()
+  if type(self.float.open_win_config) == "function" then
+    return self.float.open_win_config()
   else
-    return M.View.float.open_win_config
+    return self.float.open_win_config
   end
 end
 
-local function open_window()
-  if M.View.float.enable then
-    vim.api.nvim_open_win(0, true, open_win_config())
+---@private
+function View:open_window()
+  if self.float.enable then
+    vim.api.nvim_open_win(0, true, self:open_win_config())
   else
     vim.api.nvim_command("vsp")
     M.reposition_window()
   end
-  setup_tabpage(vim.api.nvim_get_current_tabpage())
-  set_window_options_and_buffer()
+  self:setup_tabpage(vim.api.nvim_get_current_tabpage())
+  self:set_window_options_and_buffer()
 end
 
 ---@param buf integer
@@ -276,19 +281,21 @@ local function switch_buf_if_last_buf()
   end
 end
 
--- save_tab_state saves any state that should be preserved across redraws.
+---save_tab_state saves any state that should be preserved across redraws.
+---@private
 ---@param tabnr integer
-local function save_tab_state(tabnr)
+function View:save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
   M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage) or 0)
 end
 
+---@private
 ---@param tabpage integer
-local function close(tabpage)
+function View:close_internal(tabpage)
   if not M.is_visible({ tabpage = tabpage }) then
     return
   end
-  save_tab_state(tabpage)
+  self:save_tab_state(tabpage)
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr(tabpage)
   local current_win = vim.api.nvim_get_current_win()
@@ -310,29 +317,29 @@ local function close(tabpage)
   end
 end
 
-function M.close_this_tab_only()
-  close(vim.api.nvim_get_current_tabpage())
+function View:close_this_tab_only()
+  self:close_internal(vim.api.nvim_get_current_tabpage())
 end
 
-function M.close_all_tabs()
-  for tabpage, _ in pairs(M.View.tabpages) do
-    close(tabpage)
+function View:close_all_tabs()
+  for tabpage, _ in pairs(self.tabpages) do
+    self:close_internal(tabpage)
   end
 end
 
 ---@param tabpage integer|nil
-function M.close(tabpage)
+function View:close(tabpage)
   if M.View.tab.sync.close then
-    M.close_all_tabs()
+    self:close_all_tabs()
   elseif tabpage then
-    close(tabpage)
+    self:close_internal(tabpage)
   else
-    M.close_this_tab_only()
+    self:close_this_tab_only()
   end
 end
 
 ---@param options table|nil
-function M.open(options)
+function View:open(options)
   if M.is_visible() then
     return
   end
@@ -340,8 +347,8 @@ function M.open(options)
   local profile = log.profile_start("view open")
 
   events._dispatch_on_tree_pre_open()
-  create_buffer()
-  open_window()
+  self:create_buffer()
+  self:open_window()
   M.resize()
 
   local opts = options or { focus_tree = true }
@@ -462,10 +469,10 @@ function M.open_in_win(opts)
   if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
   end
-  create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
-  setup_tabpage(vim.api.nvim_get_current_tabpage())
+  M.View:create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
+  M.View:setup_tabpage(vim.api.nvim_get_current_tabpage())
   set_current_win()
-  set_window_options_and_buffer()
+  M.View:set_window_options_and_buffer()
   if opts.resize then
     M.reposition_window()
     M.resize()
@@ -527,10 +534,10 @@ function M.focus(winnr, open_if_closed)
 
   if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
     M.close()
-    M.open()
+    M.View:open()
     wnr = M.get_winnr()
   elseif open_if_closed and not M.is_visible() then
-    M.open()
+    M.View:open()
   end
 
   if wnr then
@@ -605,7 +612,7 @@ function M._prevent_buffer_override()
     -- might need a better patch
     vim.cmd("setlocal nowinfixwidth")
     vim.cmd("setlocal nowinfixheight")
-    M.open({ focus_tree = false })
+    M.View:open({ focus_tree = false })
 
     local explorer = require("nvim-tree.core").get_explorer()
     if explorer then
