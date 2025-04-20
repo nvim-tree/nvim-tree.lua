@@ -45,7 +45,7 @@ function M.fn(opts)
     -- focus
     if opts.focus then
       lib.set_target_win()
-      view.focus()
+      view.View:focus()
     end
   elseif opts.open then
     -- open
