@@ -1,3 +1,5 @@
+---TODO #2826 wrap all the view methods in explorer
+
 local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
@@ -241,7 +243,7 @@ local function edit(mode, node, edit_opts)
 
   local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
   if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
-    view.close(cur_tabpage)
+    view.View:close(cur_tabpage)
   end
 
   local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"

@@ -63,7 +63,7 @@ local function remove_overlay(self)
       group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          view.close()
+          view.View:close()
         end
       end,
     })

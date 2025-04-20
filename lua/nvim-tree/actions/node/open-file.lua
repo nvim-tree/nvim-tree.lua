@@ -198,7 +198,7 @@ end
 
 local function open_file_in_tab(filename)
   if M.quit_on_open then
-    view.close()
+    view.View:close()
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -208,7 +208,7 @@ end
 
 local function drop(filename)
   if M.quit_on_open then
-    view.close()
+    view.View:close()
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -218,7 +218,7 @@ end
 
 local function tab_drop(filename)
   if M.quit_on_open then
-    view.close()
+    view.View:close()
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -427,7 +427,7 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open then
-    view.close()
+    view.View:close()
   end
 end
 
