@@ -7,7 +7,7 @@ local M = {}
 function M.fn(opts)
   if opts == nil then
     -- reset to config values
-    view.configure_width()
+    view.View:configure_width()
     view.resize()
     return
   end
@@ -16,7 +16,7 @@ function M.fn(opts)
   local width_cfg = options.width
 
   if width_cfg ~= nil then
-    view.configure_width(width_cfg)
+    view.View:configure_width(width_cfg)
     view.resize()
     return
   end

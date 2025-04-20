@@ -3,27 +3,55 @@ local utils = require("nvim-tree.utils")
 local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
 
+local Class = require("nvim-tree.classic")
+
 ---@class OpenInWinOpts
 ---@field hijack_current_buf boolean|nil default true
 ---@field resize boolean|nil default true
 ---@field winid number|nil 0 or nil for current
 
-local M = {}
+--TODO attempt to type the tables, at least the options ones
 
-local DEFAULT_MIN_WIDTH = 30
-local DEFAULT_MAX_WIDTH = -1
-local DEFAULT_PADDING = 1
+---@class (exact) View: Class
+---@field live_filter table
+---@field side string
+---@field float table
+---TODO private below here
+---@field explorer Explorer
+---@field adaptive_size boolean
+---@field centralize_selection boolean
+---@field tabpages table
+---@field cursors table
+---@field hide_root_folder boolean
+---@field winopts table
+---@field height integer
+---@field tab table
+---@field preserve_window_proportions boolean
+---@field initial_width integer
+---@field width (fun():integer)|integer|string
+---@field max_width integer
+---@field padding integer
+local View = Class:extend()
 
-M.View = {
-  adaptive_size        = false,
-  centralize_selection = false,
-  tabpages             = {},
-  cursors              = {},
-  hide_root_folder     = false,
-  live_filter          = {
+---@class View
+---@overload fun(args: ViewArgs): View
+
+---@class (exact) ViewArgs
+---@field explorer Explorer
+
+---@protected
+---@param args ViewArgs
+function View:new(args)
+  self.explorer                    = args.explorer
+  self.adaptive_size               = false
+  self.centralize_selection        = false
+  self.tabpages                    = {}
+  self.cursors                     = {}
+  self.hide_root_folder            = false
+  self.live_filter                 = {
     prev_focused_node = nil,
-  },
-  winopts              = {
+  }
+  self.winopts                     = {
     relativenumber = false,
     number         = false,
     list           = false,
@@ -53,8 +81,30 @@ M.View = {
       "NormalFloat:NvimTreeNormalFloat",
       "FloatBorder:NvimTreeNormalFloatBorder",
     }, ","),
-  },
-}
+  }
+
+  self.centralize_selection        = self.explorer.opts.view.centralize_selection
+  self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.height                      = self.explorer.opts.view.height
+  self.hide_root_folder            = self.explorer.opts.renderer.root_folder_label == false
+  self.tab                         = self.explorer.opts.tab
+  self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
+  self.winopts.cursorline          = self.explorer.opts.view.cursorline
+  self.winopts.number              = self.explorer.opts.view.number
+  self.winopts.relativenumber      = self.explorer.opts.view.relativenumber
+  self.winopts.signcolumn          = self.explorer.opts.view.signcolumn
+  self.float                       = self.explorer.opts.view.float
+
+  self:configure_width(self.explorer.opts.view.width)
+
+  self.initial_width = self:get_width()
+end
+
+local M = {}
+
+local DEFAULT_MIN_WIDTH = 30
+local DEFAULT_MAX_WIDTH = -1
+local DEFAULT_PADDING = 1
 
 -- The initial state of a tab
 local tabinitial = {
@@ -113,13 +163,14 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
+---@private
 ---@param size (fun():integer)|integer|string
 ---@return integer
-local function get_size(size)
+function View:get_size(size)
   if type(size) == "number" then
     return size
   elseif type(size) == "function" then
-    return get_size(size())
+    return self:get_size(size())
   end
   local size_as_number = tonumber(size:sub(0, -2))
   local percent_as_decimal = size_as_number / 100
@@ -128,11 +179,11 @@ end
 
 ---@param size (fun():integer)|integer|nil
 ---@return integer
-local function get_width(size)
+function View:get_width(size)
   if size then
-    return get_size(size)
+    return self:get_size(size)
   else
-    return get_size(M.View.width)
+    return self:get_size(self.width)
   end
 end
 
@@ -305,7 +356,7 @@ local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
-  local padding = get_size(M.View.padding)
+  local padding = M.View:get_size(M.View.padding)
 
   -- account for sign/number columns etc.
   local wininfo = vim.fn.getwininfo(M.get_winnr())
@@ -320,7 +371,7 @@ local function grow()
   if M.View.max_width == -1 then
     max_width = -1
   else
-    max_width = get_width(M.View.max_width) - padding
+    max_width = M.View:get_width(M.View.max_width) - padding
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
@@ -386,7 +437,7 @@ function M.resize(size)
 
   local winnr = M.get_winnr() or 0
 
-  local new_size = get_width()
+  local new_size = M.View:get_width()
 
   if new_size ~= vim.api.nvim_win_get_width(winnr) then
     vim.api.nvim_win_set_width(winnr, new_size)
@@ -600,45 +651,32 @@ end
 
 ---Configure width-related config
 ---@param width string|function|number|table|nil
-function M.configure_width(width)
+function View:configure_width(width)
   if type(width) == "table" then
-    M.View.adaptive_size = true
-    M.View.width = width.min or DEFAULT_MIN_WIDTH
-    M.View.max_width = width.max or DEFAULT_MAX_WIDTH
-    M.View.padding = width.padding or DEFAULT_PADDING
+    self.adaptive_size = true
+    self.width = width.min or DEFAULT_MIN_WIDTH
+    self.max_width = width.max or DEFAULT_MAX_WIDTH
+    self.padding = width.padding or DEFAULT_PADDING
   elseif width == nil then
-    if M.config.width ~= nil then
+    if self.explorer.opts.view.width ~= nil then
       -- if we had input config - fallback to it
-      M.configure_width(M.config.width)
+      self:configure_width(self.explorer.opts.view.width)
     else
       -- otherwise - restore initial width
-      M.View.width = M.View.initial_width
+      self.width = self.initial_width
     end
   else
-    M.View.adaptive_size = false
-    M.View.width = width
+    self.adaptive_size = false
+    self.width = width
   end
 end
 
 function M.setup(opts)
-  local options = opts.view or {}
-  M.View.centralize_selection = options.centralize_selection
-  M.View.side = (options.side == "right") and "right" or "left"
-  M.View.height = options.height
-  M.View.hide_root_folder = opts.renderer.root_folder_label == false
-  M.View.tab = opts.tab
-  M.View.preserve_window_proportions = options.preserve_window_proportions
-  M.View.winopts.cursorline = options.cursorline
-  M.View.winopts.number = options.number
-  M.View.winopts.relativenumber = options.relativenumber
-  M.View.winopts.signcolumn = options.signcolumn
-  M.View.float = options.float
-  M.on_attach = opts.on_attach
-
-  M.config = options
-  M.configure_width(options.width)
-
-  M.View.initial_width = get_width()
+  M.View = View({
+    explorer = {
+      opts = opts
+    }
+  })
 end
 
 return M
