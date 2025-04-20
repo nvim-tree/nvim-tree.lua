@@ -16,13 +16,13 @@ local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
 
---TODO attempt to type the tables, at least the options ones
+-- TODO #2826 attempt to type the tables, at least the options ones
 
 ---@class (exact) View: Class
 ---@field live_filter table
 ---@field side string
 ---@field float table
----TODO private below here
+---TODO #2826 private below here
 ---@field explorer Explorer
 ---@field adaptive_size boolean
 ---@field centralize_selection boolean
@@ -42,6 +42,7 @@ local View = Class:extend()
 ---@class View
 ---@overload fun(args: ViewArgs): View
 
+--TODO #2826 exact
 ---@class (exact) ViewArgs
 ---@field explorer Explorer
 
@@ -114,7 +115,7 @@ local tabinitial = {
   winnr = nil,
 }
 
--- TODO member
+-- TODO #2826 member
 local BUFNR_PER_TAB = {}
 
 ---@type { name: string, value: any }[]
@@ -678,11 +679,8 @@ function View:configure_width(width)
 end
 
 function M.setup(opts)
-  M.View = View({
-    explorer = {
-      opts = opts
-    }
-  })
+  -- TODO #2826 move this to explorer constructor
+  M.View = View({ explorer = { opts = opts } }) ---@diagnostic disable-line: missing-fields
 end
 
 return M

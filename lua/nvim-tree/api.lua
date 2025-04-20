@@ -1,4 +1,4 @@
----TODO #2826 wrap all the view methods in explorer
+-- TODO #2826 wrap all the view methods in explorer
 
 local core = require("nvim-tree.core")
 local view = require("nvim-tree.view")
