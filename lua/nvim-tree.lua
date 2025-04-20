@@ -74,7 +74,7 @@ function M.change_root(path, bufnr)
 end
 
 function M.tab_enter()
-  if view.is_visible({ any_tabpage = true }) then
+  if view.View:is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
@@ -99,7 +99,7 @@ function M.tab_enter()
 end
 
 function M.open_on_directory()
-  local should_proceed = _config.hijack_directories.auto_open or view.is_visible()
+  local should_proceed = _config.hijack_directories.auto_open or view.View:is_visible()
   if not should_proceed then
     return
   end
@@ -160,7 +160,7 @@ local function setup_autocommands(opts)
       if opts.actions.open_file.eject then
         view._prevent_buffer_override()
       else
-        view.abandon_current_window()
+        view.View:abandon_current_window()
       end
     end,
   })
@@ -693,7 +693,7 @@ end
 
 function M.purge_all_state()
   view.View:close_all_tabs()
-  view.abandon_all_windows()
+  view.View:abandon_all_windows()
   local explorer = core.get_explorer()
   if explorer then
     require("nvim-tree.git").purge_state()

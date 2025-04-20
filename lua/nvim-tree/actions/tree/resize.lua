@@ -8,7 +8,7 @@ function M.fn(opts)
   if opts == nil then
     -- reset to config values
     view.View:configure_width()
-    view.resize()
+    view.View:resize()
     return
   end
 
@@ -17,7 +17,7 @@ function M.fn(opts)
 
   if width_cfg ~= nil then
     view.View:configure_width(width_cfg)
-    view.resize()
+    view.View:resize()
     return
   end
 
@@ -28,7 +28,7 @@ function M.fn(opts)
 
   local absolute = options.absolute
   if type(absolute) == "number" then
-    view.resize(absolute)
+    view.View:resize(absolute)
     return
   end
 
@@ -39,7 +39,7 @@ function M.fn(opts)
       relative_size = "+" .. relative_size
     end
 
-    view.resize(relative_size)
+    view.View:resize(relative_size)
     return
   end
 end

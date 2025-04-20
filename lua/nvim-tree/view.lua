@@ -114,6 +114,7 @@ local tabinitial = {
   winnr = nil,
 }
 
+-- TODO member
 local BUFNR_PER_TAB = {}
 
 ---@type { name: string, value: any }[]
@@ -244,7 +245,7 @@ function View:open_window()
     vim.api.nvim_open_win(0, true, self:open_win_config())
   else
     vim.api.nvim_command("vsp")
-    M.reposition_window()
+    self:reposition_window()
   end
   self:setup_tabpage(vim.api.nvim_get_current_tabpage())
   self:set_window_options_and_buffer()
@@ -286,13 +287,13 @@ end
 ---@param tabnr integer
 function View:save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
-  M.View.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage) or 0)
+  self.cursors[tabpage] = vim.api.nvim_win_get_cursor(M.get_winnr(tabpage) or 0)
 end
 
 ---@private
 ---@param tabpage integer
 function View:close_internal(tabpage)
-  if not M.is_visible({ tabpage = tabpage }) then
+  if not self:is_visible({ tabpage = tabpage }) then
     return
   end
   self:save_tab_state(tabpage)
@@ -329,7 +330,7 @@ end
 
 ---@param tabpage integer|nil
 function View:close(tabpage)
-  if M.View.tab.sync.close then
+  if self.tab.sync.close then
     self:close_all_tabs()
   elseif tabpage then
     self:close_internal(tabpage)
@@ -340,7 +341,7 @@ end
 
 ---@param options table|nil
 function View:open(options)
-  if M.is_visible() then
+  if self:is_visible() then
     return
   end
 
@@ -349,7 +350,7 @@ function View:open(options)
   events._dispatch_on_tree_pre_open()
   self:create_buffer()
   self:open_window()
-  M.resize()
+  self:resize()
 
   local opts = options or { focus_tree = true }
   if not opts.focus_tree then
@@ -360,11 +361,12 @@ function View:open(options)
   log.profile_end(profile)
 end
 
-local function grow()
+---@private
+function View:grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
-  local padding = M.View:get_size(M.View.padding)
+  local padding = self:get_size(self.padding)
 
   -- account for sign/number columns etc.
   local wininfo = vim.fn.getwininfo(M.get_winnr())
@@ -372,14 +374,14 @@ local function grow()
     padding = padding + wininfo[1].textoff
   end
 
-  local resizing_width = M.View.initial_width - padding
+  local resizing_width = self.initial_width - padding
   local max_width
 
   -- maybe bound max
-  if M.View.max_width == -1 then
+  if self.max_width == -1 then
     max_width = -1
   else
-    max_width = M.View:get_width(M.View.max_width) - padding
+    max_width = self:get_width(self.max_width) - padding
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
@@ -391,23 +393,23 @@ local function grow()
     if resizing_width < count then
       resizing_width = count
     end
-    if M.View.adaptive_size and max_width >= 0 and resizing_width >= max_width then
+    if self.adaptive_size and max_width >= 0 and resizing_width >= max_width then
       resizing_width = max_width
       break
     end
   end
-  M.resize(resizing_width + padding)
+  self:resize(resizing_width + padding)
 end
 
-function M.grow_from_content()
-  if M.View.adaptive_size then
-    grow()
+function View:grow_from_content()
+  if self.adaptive_size then
+    self:grow()
   end
 end
 
 ---@param size string|number|nil
-function M.resize(size)
-  if M.View.float.enable and not M.View.adaptive_size then
+function View:resize(size)
+  if self.float.enable and not self.adaptive_size then
     -- if the floating windows's adaptive size is not desired, then the
     -- float size should be defined in view.float.open_win_config
     return
@@ -419,7 +421,7 @@ function M.resize(size)
     size = tonumber(size)
 
     if first_char == "+" or first_char == "-" then
-      size = M.View.width + size
+      size = self.width + size
     end
   end
 
@@ -428,21 +430,21 @@ function M.resize(size)
   end
 
   if size then
-    M.View.width = size
-    M.View.height = size
+    self.width = size
+    self.height = size
   end
 
-  if not M.is_visible() then
+  if not self:is_visible() then
     return
   end
 
   local winnr = M.get_winnr() or 0
 
-  local new_size = M.View:get_width()
+  local new_size = self:get_width()
 
   if new_size ~= vim.api.nvim_win_get_width(winnr) then
     vim.api.nvim_win_set_width(winnr, new_size)
-    if not M.View.preserve_window_proportions then
+    if not self.preserve_window_proportions then
       vim.cmd(":wincmd =")
     end
   end
@@ -450,66 +452,68 @@ function M.resize(size)
   events._dispatch_on_tree_resize(new_size)
 end
 
-function M.reposition_window()
-  local move_to = move_tbl[M.View.side]
+---@private
+function View:reposition_window()
+  local move_to = move_tbl[self.side]
   vim.api.nvim_command("wincmd " .. move_to)
-  M.resize()
+  self:resize()
 end
 
-local function set_current_win()
+---@private
+function View:set_current_win()
   local current_tab = vim.api.nvim_get_current_tabpage()
-  M.View.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
+  self.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
 end
 
 ---Open the tree in the a window
 ---@param opts OpenInWinOpts|nil
-function M.open_in_win(opts)
+function View:open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
   events._dispatch_on_tree_pre_open()
   if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
   end
-  M.View:create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
-  M.View:setup_tabpage(vim.api.nvim_get_current_tabpage())
-  set_current_win()
-  M.View:set_window_options_and_buffer()
+  self:create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
+  self:setup_tabpage(vim.api.nvim_get_current_tabpage())
+  self:set_current_win()
+  self:set_window_options_and_buffer()
   if opts.resize then
-    M.reposition_window()
-    M.resize()
+    self:reposition_window()
+    self:resize()
   end
   events._dispatch_on_tree_open()
 end
 
-function M.abandon_current_window()
+function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = nil
-  if M.View.tabpages[tab] then
-    M.View.tabpages[tab].winnr = nil
+  if self.tabpages[tab] then
+    self.tabpages[tab].winnr = nil
   end
 end
 
-function M.abandon_all_windows()
+function View:abandon_all_windows()
   for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
     BUFNR_PER_TAB[tab] = nil
-    if M.View.tabpages[tab] then
-      M.View.tabpages[tab].winnr = nil
+    if self.tabpages[tab] then
+      self.tabpages[tab].winnr = nil
     end
   end
 end
 
 ---@param opts table|nil
 ---@return boolean
-function M.is_visible(opts)
+function View:is_visible(opts)
   if opts and opts.tabpage then
-    if M.View.tabpages[opts.tabpage] == nil then
+    if self.tabpages[opts.tabpage] == nil then
       return false
     end
-    local winnr = M.View.tabpages[opts.tabpage].winnr
+    local winnr = self.tabpages[opts.tabpage].winnr
     return winnr and vim.api.nvim_win_is_valid(winnr)
   end
 
   if opts and opts.any_tabpage then
-    for _, v in pairs(M.View.tabpages) do
+    for _, v in pairs(self.tabpages) do
       if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
         return true
       end
@@ -521,8 +525,8 @@ function M.is_visible(opts)
 end
 
 ---@param opts table|nil
-function M.set_cursor(opts)
-  if M.is_visible() then
+function View:set_cursor(opts)
+  if self:is_visible() then
     pcall(vim.api.nvim_win_set_cursor, M.get_winnr(), opts)
   end
 end
@@ -536,7 +540,7 @@ function M.focus(winnr, open_if_closed)
     M.close()
     M.View:open()
     wnr = M.get_winnr()
-  elseif open_if_closed and not M.is_visible() then
+  elseif open_if_closed and not M.View:is_visible() then
     M.View:open()
   end
 
@@ -553,7 +557,7 @@ function M.winid(opts)
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
   end
-  if M.is_visible({ tabpage = tabpage }) then
+  if M.View:is_visible({ tabpage = tabpage }) then
     return M.get_winnr(tabpage)
   else
     return nil
@@ -563,7 +567,7 @@ end
 --- Restores the state of a NvimTree window if it was initialized before.
 function M.restore_tab_state()
   local tabpage = vim.api.nvim_get_current_tabpage()
-  M.set_cursor(M.View.cursors[tabpage])
+  M.View:set_cursor(M.View.cursors[tabpage])
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified

@@ -41,7 +41,7 @@ function M.fn(opts)
     return
   end
 
-  if view.is_visible() then
+  if view.View:is_visible() then
     -- focus
     if opts.focus then
       lib.set_target_win()
