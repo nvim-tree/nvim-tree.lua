@@ -13,7 +13,7 @@ local M = {
 
 function M.set_target_win()
   local id = vim.api.nvim_get_current_win()
-  local tree_id = view.get_winnr()
+  local tree_id = view.View:get_winnr()
   if tree_id and id == tree_id then
     M.target_winid = 0
     return

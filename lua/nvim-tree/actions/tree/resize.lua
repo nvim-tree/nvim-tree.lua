@@ -21,7 +21,7 @@ function M.fn(opts)
     return
   end
 
-  if not view.is_width_determined() then
+  if not view.View:is_width_determined() then
     -- {absolute} and {relative} do nothing when {width} is a function.
     return
   end

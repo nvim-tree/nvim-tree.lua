@@ -156,7 +156,7 @@ end
 
 ---@return integer
 local function calculate_overlay_win_width(self)
-  local wininfo = vim.fn.getwininfo(view.get_winnr())[1]
+  local wininfo = vim.fn.getwininfo(view.View:get_winnr())[1]
 
   if wininfo then
     return wininfo.width - wininfo.textoff - #self.prefix

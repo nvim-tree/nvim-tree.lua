@@ -182,7 +182,7 @@ function M.update_coc()
     end
     log.profile_end(profile)
 
-    local bufnr = view.get_bufnr()
+    local bufnr = view.View:get_bufnr()
     local should_draw = bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
     if should_draw then
       local explorer = core.get_explorer()
