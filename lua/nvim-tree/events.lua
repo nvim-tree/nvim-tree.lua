@@ -10,7 +10,6 @@ M.Event = {
   NodeRenamed = "NodeRenamed",
   TreePreOpen = "TreePreOpen",
   TreeOpen = "TreeOpen",
-  TreePreClose = "TreePreClose",
   TreeClose = "TreeClose",
   WillCreateFile = "WillCreateFile",
   FileCreated = "FileCreated",
@@ -101,11 +100,6 @@ end
 --@private
 function M._dispatch_on_tree_open()
   dispatch(M.Event.TreeOpen, nil)
-end
-
---@private
-function M._dispatch_on_tree_pre_close()
-  dispatch(M.Event.TreePreClose, nil)
 end
 
 --@private

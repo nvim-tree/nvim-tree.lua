@@ -238,7 +238,6 @@ local function close(tabpage)
     return
   end
   save_tab_state(tabpage)
-  events._dispatch_on_tree_pre_close()
   switch_buf_if_last_buf()
   local tree_win = M.get_winnr(tabpage)
   local current_win = vim.api.nvim_get_current_win()
@@ -415,6 +414,7 @@ end
 ---@param opts OpenInWinOpts|nil
 function M.open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
+  events._dispatch_on_tree_pre_open()
   if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
   end
