@@ -523,7 +523,7 @@ function Explorer:get_node_at_cursor()
     return
   end
 
-  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
+  if cursor[1] == 1 and view.View:is_root_folder_visible(core.get_cwd()) then
     return self
   end
 

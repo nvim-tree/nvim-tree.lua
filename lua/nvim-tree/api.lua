@@ -257,7 +257,7 @@ local function edit(mode, node, edit_opts)
     if mode == "tabnew" then
       vim.cmd(":tabprev")
     end
-    view.focus()
+    view.View:focus()
   end
 end
 

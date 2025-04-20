@@ -228,7 +228,7 @@ local function on_preview(buf_loaded)
       once = true,
     })
   end
-  view.focus()
+  view.View:focus()
 end
 
 local function get_target_winid(mode)
