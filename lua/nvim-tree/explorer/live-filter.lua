@@ -1,4 +1,3 @@
-local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 
 local Class = require("nvim-tree.classic")
@@ -56,14 +55,14 @@ local overlay_bufnr = 0
 local overlay_winnr = 0
 
 local function remove_overlay(self)
-  if view.View.float.enable and view.View.float.quit_on_focus_loss then
+  if self.explorer.view.float.enable and self.explorer.view.float.quit_on_focus_loss then
     -- return to normal nvim-tree float behaviour when filter window is closed
     vim.api.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",
       group = vim.api.nvim_create_augroup("NvimTree", { clear = false }),
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          view.View:close()
+          self.explorer.view:close()
         end
       end,
     })
@@ -156,7 +155,7 @@ end
 
 ---@return integer
 local function calculate_overlay_win_width(self)
-  local wininfo = vim.fn.getwininfo(view.View:get_winnr())[1]
+  local wininfo = vim.fn.getwininfo(self.explorer.view:get_winnr())[1]
 
   if wininfo then
     return wininfo.width - wininfo.textoff - #self.prefix
@@ -166,7 +165,7 @@ local function calculate_overlay_win_width(self)
 end
 
 local function create_overlay(self)
-  if view.View.float.enable then
+  if self.explorer.view.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
     vim.api.nvim_clear_autocmds({
       event   = "WinLeave",
@@ -198,13 +197,13 @@ local function create_overlay(self)
 end
 
 function LiveFilter:start_filtering()
-  view.View.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
+  self.explorer.view.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
   self.filter = self.filter or ""
 
   self.explorer.renderer:draw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
-  view.View:set_cursor({ row, col })
+  self.explorer.view:set_cursor({ row, col })
   -- needs scheduling to let the cursor move before initializing the window
   vim.schedule(function()
     return create_overlay(self)
@@ -213,7 +212,7 @@ end
 
 function LiveFilter:clear_filter()
   local node = self.explorer:get_node_at_cursor()
-  local last_node = view.View.live_filter.prev_focused_node
+  local last_node = self.explorer.view.live_filter.prev_focused_node
 
   self.filter = nil
   reset_filter(self)
