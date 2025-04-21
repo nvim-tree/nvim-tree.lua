@@ -10,8 +10,6 @@ local Class = require("nvim-tree.classic")
 ---@field resize boolean|nil default true
 ---@field winid number|nil 0 or nil for current
 
-local M = {}
-
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
@@ -664,9 +662,4 @@ function View:configure_width(width)
   end
 end
 
-function M.setup(opts)
-  -- TODO #2826 move this to explorer constructor
-  M.View = View({ explorer = { opts = opts } }) ---@diagnostic disable-line: missing-fields
-end
-
-return M
+return View
