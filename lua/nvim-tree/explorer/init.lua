@@ -19,7 +19,7 @@ local LiveFilter = require("nvim-tree.explorer.live-filter")
 local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
-local View = require("nvim-tree.view")
+local View = require("nvim-tree.explorer.view")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
