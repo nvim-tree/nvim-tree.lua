@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.12.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.11.0...nvim-tree-v1.12.0) (2025-04-20)
+
+
+### Features
+
+* add TreePreOpen event ([#3105](https://github.com/nvim-tree/nvim-tree.lua/issues/3105)) ([c24c047](https://github.com/nvim-tree/nvim-tree.lua/commit/c24c0470d9de277fbebecd718f33561ed7c90298))
+
+
+### Bug Fixes
+
+* **#3101:** when renderer.highlight_opened_files = "none" do not reload on BufUnload and BufReadPost ([#3102](https://github.com/nvim-tree/nvim-tree.lua/issues/3102)) ([5bea2b3](https://github.com/nvim-tree/nvim-tree.lua/commit/5bea2b37523a31288e0fcab42f3be5c1bd4516bb))
+* explicitly set `border` to `"none"` in full name float ([#3094](https://github.com/nvim-tree/nvim-tree.lua/issues/3094)) ([c3c1935](https://github.com/nvim-tree/nvim-tree.lua/commit/c3c193594213c5e2f89ec5d7729cad805f76b256))
+* reliably dispatch exactly one TreeOpen and TreeClose events ([#3107](https://github.com/nvim-tree/nvim-tree.lua/issues/3107)) ([3a63717](https://github.com/nvim-tree/nvim-tree.lua/commit/3a63717d3d332d8f39aaf65be7a0e4c2265af021))
+
 ## [1.11.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.10.0...nvim-tree-v1.11.0) (2025-02-22)
 
 
