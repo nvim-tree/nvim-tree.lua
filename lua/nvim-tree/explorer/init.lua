@@ -91,6 +91,18 @@ function Explorer:create_autocmds()
     end,
   })
 
+  if self.opts.view.float.enable and self.opts.view.float.quit_on_focus_loss then
+    vim.api.nvim_create_autocmd("WinLeave", {
+      group = self.augroup_id,
+      pattern = "NvimTree_*",
+      callback = function()
+        if utils.is_nvim_tree_buf(0) then
+          self.view:close()
+        end
+      end,
+    })
+  end
+
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = self.augroup_id,
     callback = function()
@@ -139,6 +151,22 @@ function Explorer:create_autocmds()
         vim.schedule(function()
           self.renderer:draw()
         end)
+      end
+    end,
+  })
+
+  -- prevent new opened file from opening in the same window as nvim-tree
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = self.augroup_id,
+    pattern = "NvimTree_*",
+    callback = function()
+      if not utils.is_nvim_tree_buf(0) then
+        return
+      end
+      if self.opts.actions.open_file.eject then
+        self.view:prevent_buffer_override()
+      else
+        self.view:abandon_current_window()
       end
     end,
   })
