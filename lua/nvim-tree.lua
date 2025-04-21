@@ -148,26 +148,6 @@ local function setup_autocommands(opts)
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
 
-  -- TODO #2826 move this to explorer
-  -- prevent new opened file from opening in the same window as nvim-tree
-  create_nvim_tree_autocmd("BufWipeout", {
-    pattern = "NvimTree_*",
-    callback = function()
-      if not utils.is_nvim_tree_buf(0) then
-        return
-      end
-
-      local explorer = core.get_explorer()
-      if explorer then
-        if opts.actions.open_file.eject then
-          explorer.view:prevent_buffer_override()
-        else
-          explorer.view:abandon_current_window()
-        end
-      end
-    end,
-  })
-
   if opts.tab.sync.open then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
   end
@@ -225,21 +205,6 @@ local function setup_autocommands(opts)
       callback = function()
         log.line("diagnostics", "CocDiagnosticChange")
         require("nvim-tree.diagnostics").update_coc()
-      end,
-    })
-  end
-
-  -- TODO #2826 move this to explorer
-  if opts.view.float.enable and opts.view.float.quit_on_focus_loss then
-    create_nvim_tree_autocmd("WinLeave", {
-      pattern = "NvimTree_*",
-      callback = function()
-        if utils.is_nvim_tree_buf(0) then
-          local explorer = core.get_explorer()
-          if explorer then
-            explorer.view:close()
-          end
-        end
       end,
     })
   end
