@@ -2,7 +2,7 @@
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
-local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
 
 local M = {}
 
@@ -19,9 +19,10 @@ end
 ---Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
 local function usable_win_ids()
+  local explorer = core.get_explorer()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = view.View:get_winnr(tabpage)
+  local tree_winid = explorer and explorer.view:get_winnr(tabpage)
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -198,7 +199,10 @@ end
 
 local function open_file_in_tab(filename)
   if M.quit_on_open then
-    view.View:close()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.view:close()
+    end
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -208,7 +212,10 @@ end
 
 local function drop(filename)
   if M.quit_on_open then
-    view.View:close()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.view:close()
+    end
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -218,7 +225,10 @@ end
 
 local function tab_drop(filename)
   if M.quit_on_open then
-    view.View:close()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.view:close()
+    end
   end
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
@@ -239,7 +249,10 @@ local function on_preview(buf_loaded)
       once = true,
     })
   end
-  view.View:focus()
+  local explorer = core.get_explorer()
+  if explorer then
+    explorer.view:focus()
+  end
 end
 
 local function get_target_winid(mode)
@@ -279,6 +292,8 @@ local function set_current_win_no_autocmd(winid, autocmd)
 end
 
 local function open_in_new_window(filename, mode)
+  local explorer = core.get_explorer()
+
   if type(mode) ~= "string" then
     mode = ""
   end
@@ -301,7 +316,11 @@ local function open_in_new_window(filename, mode)
   end, vim.api.nvim_list_wins())
 
   local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
-  local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
+
+  local new_window_side = "belowright"
+  if explorer and (explorer.view.side == "right") then
+    new_window_side = "aboveleft"
+  end
 
   -- Target is invalid: create new window
   if not vim.tbl_contains(win_ids, target_winid) then
@@ -333,7 +352,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.view.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
@@ -373,7 +392,12 @@ local function is_already_loaded(filename)
 end
 
 local function edit_in_current_buf(filename)
-  require("nvim-tree.view").View:abandon_current_window()
+  local explorer = core.get_explorer()
+
+  if explorer then
+    explorer.view:abandon_current_window()
+  end
+
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
@@ -384,6 +408,8 @@ end
 ---@param filename string
 ---@return nil
 function M.fn(mode, filename)
+  local explorer = core.get_explorer()
+
   if type(mode) ~= "string" then
     mode = ""
   end
@@ -418,16 +444,16 @@ function M.fn(mode, filename)
     vim.bo.bufhidden = ""
   end
 
-  if M.resize_window then
-    view.View:resize()
+  if M.resize_window and explorer then
+    explorer.view:resize()
   end
 
   if mode == "preview" or mode == "preview_no_picker" then
     return on_preview(buf_loaded)
   end
 
-  if M.quit_on_open then
-    view.View:close()
+  if M.quit_on_open and explorer then
+    explorer.view:close()
   end
 end
 
