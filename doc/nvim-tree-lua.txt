@@ -3178,6 +3178,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons|
 |nvim-tree.renderer.icons.bookmarks_placement|
 |nvim-tree.renderer.icons.diagnostics_placement|
+|nvim-tree.renderer.icons.folder_arrow_padding|
 |nvim-tree.renderer.icons.git_placement|
 |nvim-tree.renderer.icons.glyphs|
 |nvim-tree.renderer.icons.glyphs.default|
