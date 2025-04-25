@@ -335,6 +335,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       diagnostics_placement = "signcolumn",
       bookmarks_placement = "signcolumn",
       padding = " ",
+      folder_arrow_padding = " ",
       symlink_arrow = " ➛ ",
       show = {
         file = true,

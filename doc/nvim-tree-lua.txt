@@ -463,6 +463,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           diagnostics_placement = "signcolumn",
           bookmarks_placement = "signcolumn",
           padding = " ",
+          folder_arrow_padding = " ",
           symlink_arrow = " ➛ ",
           show = {
             file = true,
@@ -1067,6 +1068,10 @@ Configuration options for icons.
 
     *nvim-tree.renderer.icons.padding*
     Inserted between icon and filename.
+      Type: `string`, Default: `" "`
+
+    *nvim-tree.renderer.icons.folder_arrow_padding*
+    Inserted between folder arrow icon and file/folder icon.
       Type: `string`, Default: `" "`
 
     *nvim-tree.renderer.icons.symlink_arrow*

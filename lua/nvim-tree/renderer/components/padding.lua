@@ -95,15 +95,15 @@ function M.get_arrows(node)
   local dir = node:as(DirectoryNode)
   if dir then
     if dir.open then
-      str = M.config.icons.glyphs.folder["arrow_open"] .. M.config.icons.padding
+      str = M.config.icons.glyphs.folder["arrow_open"] .. M.config.icons.folder_arrow_padding
       hl = "NvimTreeFolderArrowOpen"
     else
-      str = M.config.icons.glyphs.folder["arrow_closed"] .. M.config.icons.padding
+      str = M.config.icons.glyphs.folder["arrow_closed"] .. M.config.icons.folder_arrow_padding
     end
   elseif M.config.indent_markers.enable then
     str = ""
   else
-    str = "  "
+    str = " " .. string.rep(" ", #M.config.icons.folder_arrow_padding)
   end
 
   return { str = str, hl = { hl } }
