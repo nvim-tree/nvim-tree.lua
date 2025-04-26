@@ -62,7 +62,7 @@ function GitDecorator:build_icons_by_status(glyphs)
   self.icons_by_status.ignored   = { str = glyphs.ignored, hl = { "NvimTreeGitIgnoredIcon" }, ord = 7 }
 end
 
----@param icons GitIconsByXY
+---@param icons GitIconsByStatus
 function GitDecorator:build_icons_by_xy(icons)
   self.icons_by_xy = {
     ["M "] = { icons.staged },
