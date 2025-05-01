@@ -60,6 +60,9 @@ local function refactored(opts)
     end
   end
   utils.move_missing_val(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
+
+  -- 2025/04/30
+  utils.move_missing_val(opts, "renderer.icons", "padding", opts, "renderer.icons.padding", "icon", true)
 end
 
 local function deprecated(opts)
