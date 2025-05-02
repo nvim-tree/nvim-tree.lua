@@ -490,6 +490,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       dev = false,
       diagnostics = false,
       git = false,
+      lifecycle = true,
       profile = false,
       watcher = false,
     },
