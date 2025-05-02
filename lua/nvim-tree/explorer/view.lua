@@ -10,9 +10,17 @@ local Class = require("nvim-tree.classic")
 ---@field resize boolean|nil default true
 ---@field winid number|nil 0 or nil for current
 
+local M = {}
+
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
+
+-- TODO global, rework for multiinstance explorer
+-- M.View retained for simpler change history
+M.View = {
+  tabpages = {}
+}
 
 ---@class (exact) View: Class
 ---@field live_filter table
@@ -21,7 +29,6 @@ local DEFAULT_PADDING = 1
 ---@field private explorer Explorer
 ---@field private adaptive_size boolean
 ---@field private centralize_selection boolean
----@field private tabpages table
 ---@field private cursors table<integer, integer[]> as per vim.api.nvim_win_get_cursor
 ---@field private hide_root_folder boolean
 ---@field private winopts table
@@ -31,7 +38,6 @@ local DEFAULT_PADDING = 1
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
 ---@field private padding integer
----@field private bufnr_per_tab table<integer, integer>
 local View = Class:extend()
 
 ---@class View
@@ -43,9 +49,10 @@ local View = Class:extend()
 ---@protected
 ---@param args ViewArgs
 function View:new(args)
+  args.explorer:log_lifecycle("View:new")
+
   self.explorer                    = args.explorer
   self.adaptive_size               = false
-  self.bufnr_per_tab               = {}
   self.centralize_selection        = self.explorer.opts.view.centralize_selection
   self.cursors                     = {}
   self.float                       = self.explorer.opts.view.float
@@ -53,7 +60,6 @@ function View:new(args)
   self.hide_root_folder            = self.explorer.opts.renderer.root_folder_label == false
   self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
   self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.tabpages                    = {}
   self.live_filter                 = { prev_focused_node = nil, }
 
   self.winopts                     = {
@@ -100,6 +106,10 @@ local tabinitial = {
   winnr = nil,
 }
 
+-- TODO global, rework for multiinstance explorer
+---@type table<integer, integer>
+local BUFNR_PER_TAB = {}
+
 ---@type { name: string, value: any }[]
 local BUFFER_OPTIONS = {
   { name = "bufhidden",  value = "wipe" },
@@ -114,7 +124,7 @@ local BUFFER_OPTIONS = {
 ---@param bufnr integer
 ---@return boolean
 function View:matches_bufnr(bufnr)
-  for _, b in pairs(self.bufnr_per_tab) do
+  for _, b in pairs(BUFNR_PER_TAB) do
     if b == bufnr then
       return true
     end
@@ -137,7 +147,7 @@ function View:create_buffer(bufnr)
   self:wipe_rogue_buffer()
 
   local tab = vim.api.nvim_get_current_tabpage()
-  self.bufnr_per_tab[tab] = bufnr or vim.api.nvim_create_buf(false, false)
+  BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
   vim.api.nvim_buf_set_name(self:get_bufnr(), "NvimTree_" .. tab)
 
   bufnr = self:get_bufnr()
@@ -184,7 +194,7 @@ local move_tbl = {
 ---@param tabpage integer
 function View:setup_tabpage(tabpage)
   local winnr = vim.api.nvim_get_current_win()
-  self.tabpages[tabpage] = vim.tbl_extend("force", self.tabpages[tabpage] or tabinitial, { winnr = winnr })
+  M.View.tabpages[tabpage] = vim.tbl_extend("force", M.View.tabpages[tabpage] or tabinitial, { winnr = winnr })
 end
 
 ---@private
@@ -308,7 +318,7 @@ function View:close_this_tab_only()
 end
 
 function View:close_all_tabs()
-  for tabpage, _ in pairs(self.tabpages) do
+  for tabpage, _ in pairs(M.View.tabpages) do
     self:close_internal(tabpage)
   end
 end
@@ -447,7 +457,7 @@ end
 ---@private
 function View:set_current_win()
   local current_tab = vim.api.nvim_get_current_tabpage()
-  self.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
+  M.View.tabpages[current_tab].winnr = vim.api.nvim_get_current_win()
 end
 
 ---Open the tree in the a window
@@ -471,17 +481,17 @@ end
 
 function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
-  self.bufnr_per_tab[tab] = nil
-  if self.tabpages[tab] then
-    self.tabpages[tab].winnr = nil
+  BUFNR_PER_TAB[tab] = nil
+  if M.View.tabpages[tab] then
+    M.View.tabpages[tab].winnr = nil
   end
 end
 
 function View:abandon_all_windows()
   for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
-    self.bufnr_per_tab[tab] = nil
-    if self.tabpages[tab] then
-      self.tabpages[tab].winnr = nil
+    BUFNR_PER_TAB[tab] = nil
+    if M.View.tabpages[tab] then
+      M.View.tabpages[tab].winnr = nil
     end
   end
 end
@@ -490,15 +500,15 @@ end
 ---@return boolean
 function View:is_visible(opts)
   if opts and opts.tabpage then
-    if self.tabpages[opts.tabpage] == nil then
+    if M.View.tabpages[opts.tabpage] == nil then
       return false
     end
-    local winnr = self.tabpages[opts.tabpage].winnr
+    local winnr = M.View.tabpages[opts.tabpage].winnr
     return winnr and vim.api.nvim_win_is_valid(winnr)
   end
 
   if opts and opts.any_tabpage then
-    for _, v in pairs(self.tabpages) do
+    for _, v in pairs(M.View.tabpages) do
       if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
         return true
       end
@@ -560,7 +570,7 @@ end
 ---@return number|nil
 function View:get_winnr(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  local tabinfo = self.tabpages[tabpage]
+  local tabinfo = M.View.tabpages[tabpage]
   if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
     return tabinfo.winnr
   end
@@ -569,7 +579,7 @@ end
 --- Returns the current nvim tree bufnr
 ---@return number
 function View:get_bufnr()
-  return self.bufnr_per_tab[vim.api.nvim_get_current_tabpage()]
+  return BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
 end
 
 function View:prevent_buffer_override()
@@ -586,9 +596,9 @@ function View:prevent_buffer_override()
     local bufname = vim.api.nvim_buf_get_name(curbuf)
 
     if not bufname:match("NvimTree") then
-      for i, tabpage in ipairs(self.tabpages) do
+      for i, tabpage in ipairs(M.View.tabpages) do
         if tabpage.winnr == view_winnr then
-          self.tabpages[i] = nil
+          M.View.tabpages[i] = nil
           break
         end
       end

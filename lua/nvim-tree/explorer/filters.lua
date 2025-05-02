@@ -23,6 +23,8 @@ local Filters = Class:extend()
 ---@protected
 ---@param args FiltersArgs
 function Filters:new(args)
+  args.explorer:log_lifecycle("Filters:new")
+
   self.explorer        = args.explorer
   self.ignore_list     = {}
   self.exclude_list    = self.explorer.opts.filters.exclude

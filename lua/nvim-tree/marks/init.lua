@@ -25,6 +25,8 @@ local Marks = Class:extend()
 ---@protected
 ---@param args MarksArgs
 function Marks:new(args)
+  args.explorer:log_lifecycle("Marks:new")
+
   self.explorer = args.explorer
 
   self.marks = {}
