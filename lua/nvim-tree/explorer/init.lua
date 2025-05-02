@@ -56,6 +56,8 @@ function Explorer:new(args)
   self.uid_explorer = vim.loop.hrtime()
   self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
+  self:log_lifecycle("Explorer:new")
+
   self.open         = true
   self.opts         = config
 
@@ -73,7 +75,7 @@ function Explorer:new(args)
 end
 
 function Explorer:destroy()
-  log.line("dev", "Explorer:destroy")
+  self:log_lifecycle("Explorer:des")
 
   vim.api.nvim_del_augroup_by_id(self.augroup_id)
 
@@ -585,6 +587,12 @@ end
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
   return self:clone()
+end
+
+---Log a lifecycle message with uid_explorer and absolute_path
+---@param msg string?
+function Explorer:log_lifecycle(msg)
+  log.line("lifecycle", "%-15s %d %s", msg, self.uid_explorer, self.absolute_path)
 end
 
 function Explorer:setup(opts)
