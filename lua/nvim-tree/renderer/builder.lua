@@ -140,7 +140,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
     for _, v in ipairs(t2) do
       if added_len > 0 then
-        table.insert(t1, { str = self.explorer.opts.renderer.icons.padding })
+        table.insert(t1, { str = self.explorer.opts.renderer.icons.padding.icon })
       end
       table.insert(t1, v)
     end

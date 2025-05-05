@@ -334,7 +334,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       hidden_placement = "after",
       diagnostics_placement = "signcolumn",
       bookmarks_placement = "signcolumn",
-      padding = " ",
+      padding = {
+        icon = " ",
+        folder_arrow = " ",
+      },
       symlink_arrow = " ➛ ",
       show = {
         file = true,

@@ -60,6 +60,13 @@ local function refactored(opts)
     end
   end
   utils.move_missing_val(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
+
+  -- 2025/04/30
+  if opts.renderer and opts.renderer.icons and type(opts.renderer.icons.padding) == "string" then
+    local icons_padding = opts.renderer.icons.padding
+    opts.renderer.icons.padding = {}
+    opts.renderer.icons.padding.icon = icons_padding
+  end
 end
 
 local function deprecated(opts)
