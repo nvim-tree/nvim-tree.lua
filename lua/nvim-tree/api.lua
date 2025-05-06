@@ -42,6 +42,7 @@ local Api = {
   commands = {},
   diagnostics = {},
   decorator = {},
+  filters = {},
 }
 
 ---Print error when setup not called.
@@ -92,7 +93,7 @@ local function wrap_node_or_nil(fn)
   end
 end
 
----Invoke a member's method on the singleton explorer.
+---Invoke a member"s method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
@@ -108,7 +109,18 @@ local function wrap_explorer_member_args(explorer_member, member_method, ...)
   end)
 end
 
----Invoke a member's method on the singleton explorer.
+---@param filter_api_method string
+---@return fun(path: string): boolean
+local function wrap_explorer_filter_function(filter_api_method)
+  return wrap(function(path)
+    local explorer = core.get_explorer()
+    if explorer then
+      return explorer.filters.api[filter_api_method](explorer.filters, path)
+    end
+  end)
+end
+
+---Invoke a member"s method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
@@ -355,5 +367,13 @@ end)
 ---See :help nvim-tree-decorators
 ---@type nvim_tree.api.decorator.UserDecorator
 Api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
+
+Api.filters.custom = wrap_explorer_filter_function("custom")
+Api.filters.dotfile = wrap_explorer_filter_function("dotfile")
+Api.filters.git_ignored = wrap_explorer_filter_function("git_ignored")
+Api.filters.git_clean = wrap_explorer_filter_function("git_clean")
+Api.filters.no_buffer = wrap_explorer_filter_function("no_buffer")
+Api.filters.no_bookmark = wrap_explorer_filter_function("no_bookmark")
+Api.filters.filter_reason = wrap_explorer_filter_function("filter_reason")
 
 return Api

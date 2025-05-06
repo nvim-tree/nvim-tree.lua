@@ -23,7 +23,7 @@ local function search(search_dir, input_path)
   local function iter(dir)
     local realpath, path, name, stat, handle, _
 
-    local filter_status = explorer.filters:prepare()
+    explorer.filters:prepare()
 
     handle, _ = vim.loop.fs_scandir(dir)
     if not handle then
@@ -46,7 +46,7 @@ local function search(search_dir, input_path)
         break
       end
 
-      if not explorer.filters:should_filter(path, stat, filter_status) then
+      if not explorer.filters:should_filter(path) then
         if string.find(path, "/" .. input_path .. "$") then
           return path
         end
