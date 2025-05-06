@@ -93,7 +93,7 @@ local function wrap_node_or_nil(fn)
   end
 end
 
----Invoke a member"s method on the singleton explorer.
+---Invoke a member's method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
@@ -120,7 +120,7 @@ local function wrap_explorer_filter_function(filter_api_method)
   end)
 end
 
----Invoke a member"s method on the singleton explorer.
+---Invoke a member's method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member

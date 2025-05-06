@@ -191,13 +191,13 @@ function Filters:bookmark(path)
     end
 
     if path_type == "directory" then
-      -- check if path is mark"s parent
+      -- check if path is mark's parent
       if vim.fn.stridx(mark, mark_parent) == 0 then
         return false
       end
     end
     if mark_type == "directory" then
-      -- check if mark is path"s parent
+      -- check if mark is path's parent
       local path_parent = utils.path_add_trailing(mark)
       if vim.fn.stridx(path, path_parent) == 0 then
         return false
@@ -211,7 +211,7 @@ end
 ---@param path string
 ---@return boolean
 function Filters:custom(path)
-  -- filter user"s custom function
+  -- filter user's custom function
   if type(self.custom_function) == "function" then
     return self.custom_function(path)
   end
