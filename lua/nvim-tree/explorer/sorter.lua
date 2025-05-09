@@ -19,6 +19,8 @@ local Sorter = Class:extend()
 ---@protected
 ---@param args SorterArgs
 function Sorter:new(args)
+  args.explorer:log_lifecycle("Sorter:new")
+
   self.explorer = args.explorer
 end
 

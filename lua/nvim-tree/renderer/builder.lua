@@ -1,6 +1,5 @@
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
-local view = require("nvim-tree.view")
 
 local Class = require("nvim-tree.classic")
 
@@ -379,7 +378,7 @@ end
 
 ---@private
 function Builder:build_header()
-  if view.is_root_folder_visible(self.explorer.absolute_path) then
+  if self.explorer.view:is_root_folder_visible(self.explorer.absolute_path) then
     local root_name = self:format_root_name(self.explorer.opts.renderer.root_folder_label)
     table.insert(self.lines, root_name)
     self:insert_highlight({ "NvimTreeRootFolder" }, 0, string.len(root_name))

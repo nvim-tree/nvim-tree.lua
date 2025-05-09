@@ -1,5 +1,4 @@
 local log = require("nvim-tree.log")
-local view = require("nvim-tree.view")
 local events = require("nvim-tree.events")
 
 local Class = require("nvim-tree.classic")
@@ -26,6 +25,8 @@ local Renderer = Class:extend()
 ---@protected
 ---@param args RendererArgs
 function Renderer:new(args)
+  args.explorer:log_lifecycle("Renderer:new")
+
   self.explorer = args.explorer
 end
 
@@ -96,28 +97,28 @@ function Renderer:render_hl(bufnr, hl_range_args)
 end
 
 function Renderer:draw()
-  local bufnr = view.get_bufnr()
+  local bufnr = self.explorer.view:get_bufnr()
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
 
   local profile = log.profile_start("draw")
 
-  local cursor = vim.api.nvim_win_get_cursor(view.get_winnr() or 0)
+  local cursor = vim.api.nvim_win_get_cursor(self.explorer.view:get_winnr() or 0)
 
   local builder = Builder(self.explorer):build()
 
   self:_draw(bufnr, builder.lines, builder.hl_range_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then
-    vim.api.nvim_win_set_cursor(view.get_winnr() or 0, cursor)
+    vim.api.nvim_win_set_cursor(self.explorer.view:get_winnr() or 0, cursor)
   end
 
-  view.grow_from_content()
+  self.explorer.view:grow_from_content()
 
   log.profile_end(profile)
 
-  events._dispatch_on_tree_rendered(bufnr, view.get_winnr())
+  events._dispatch_on_tree_rendered(bufnr, self.explorer.view:get_winnr())
 end
 
 return Renderer
