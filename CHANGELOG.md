@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.13.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.12.0...nvim-tree-v1.13.0) (2025-05-09)
+
+
+### Features
+
+* **#3113:** add renderer.icons.folder_arrow_padding ([#3114](https://github.com/nvim-tree/nvim-tree.lua/issues/3114)) ([ea5097a](https://github.com/nvim-tree/nvim-tree.lua/commit/ea5097a1e2702b4827cb7380e7fa0bd6da87699c))
+
+
+### Bug Fixes
+
+* **#3122:** remove redundant vim.validate ([#3123](https://github.com/nvim-tree/nvim-tree.lua/issues/3123)) ([e7d1b7d](https://github.com/nvim-tree/nvim-tree.lua/commit/e7d1b7dadc62fe2eccc17d814354b0a5688621ce))
+
 ## [1.12.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.11.0...nvim-tree-v1.12.0) (2025-04-20)
 
 
