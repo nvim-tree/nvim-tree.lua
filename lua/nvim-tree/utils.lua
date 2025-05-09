@@ -291,8 +291,40 @@ end
 ---@param path string path to file or directory
 ---@return boolean
 function M.file_exists(path)
-  local _, error = vim.loop.fs_stat(path)
-  return error == nil
+  if not (M.is_windows or M.is_wsl) then
+    local _, error = vim.loop.fs_stat(path)
+    return error == nil
+  end
+
+  -- Windows is case-insensetive, but case-preserving
+  -- If a file's name is being changed into itself
+  -- with different casing, windows will falsely
+  -- report that file is already existing, so a hand-rolled
+  -- implementation of checking for existance is needed.
+  -- Same holds for WSL, since it can sometimes
+  -- access Windows files directly.
+  -- For more details see (#3117).
+
+  local parent = vim.fn.fnamemodify(path, ":h")
+  local filename = vim.fn.fnamemodify(path, ":t")
+
+  local handle = vim.loop.fs_scandir(parent)
+  if not handle then
+    -- File can not exist if its parent directory does not exist
+    return false
+  end
+
+  while true do
+    local name, _ = vim.loop.fs_scandir_next(handle)
+    if not name then
+      break
+    end
+    if name == filename then
+      return true
+    end
+  end
+
+  return false
 end
 
 ---@param path string
