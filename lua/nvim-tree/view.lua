@@ -302,6 +302,21 @@ function M.open(options)
   log.profile_end(profile)
 end
 
+---@param extmarks table
+---@return number
+function M.extmarks_length(extmarks)
+  local length = 0
+  for _, extmark in ipairs(extmarks) do
+    local details = extmark[4]
+    if details and details.virt_text then
+      for _, text in ipairs(details.virt_text) do
+        length = length + vim.fn.strchars(text[1])
+      end
+    end
+  end
+  return length
+end
+
 local function grow()
   local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
@@ -329,14 +344,7 @@ local function grow()
     local count = vim.fn.strchars(l)
     -- also add space for right-aligned icons
     local extmarks = vim.api.nvim_buf_get_extmarks(M.get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
-    for _, extmark in ipairs(extmarks) do
-      local virt_texts = extmark[4].virt_text
-      if virt_texts then
-        for _, virt_text in ipairs(virt_texts) do
-          count = count + vim.fn.strchars(virt_text[1])
-        end
-      end
-    end
+    count = count + M.extmarks_length(extmarks)
     if resizing_width < count then
       resizing_width = count
     end

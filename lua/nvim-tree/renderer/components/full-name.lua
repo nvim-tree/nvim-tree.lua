@@ -1,6 +1,7 @@
 local M = {}
 
 local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
 local function hide(win)
   if win then
@@ -32,7 +33,7 @@ local function effective_win_width()
   return win_width - win_info[1].textoff
 end
 
-local function show()
+local function show(opts)
   local line_nr = vim.api.nvim_win_get_cursor(0)[1]
   if vim.wo.wrap then
     return
@@ -50,6 +51,12 @@ local function show()
   end
 
   local text_width = vim.fn.strdisplaywidth(vim.fn.substitute(line, "[^[:print:]]*$", "", "g"))
+
+  -- also make space for right-aligned icons
+  local icon_ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
+  local icon_extmarks = vim.api.nvim_buf_get_extmarks(0, icon_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
+  text_width = text_width + view.extmarks_length(icon_extmarks)
+
   local win_width = effective_win_width()
 
   if text_width < win_width then
@@ -66,12 +73,26 @@ local function show()
     style     = "minimal",
     border    = "none"
   })
+  vim.wo[M.popup_win].winhl = view.View.winopts.winhl
 
-  local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
-  local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
+  local hl_ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
+  local hl_extmarks = vim.api.nvim_buf_get_extmarks(0, hl_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
   vim.api.nvim_win_call(M.popup_win, function()
     vim.api.nvim_buf_set_lines(0, 0, -1, true, { line })
-    for _, extmark in ipairs(extmarks) do
+
+    -- copy also right-aligned icons
+    for _, extmark in ipairs(icon_extmarks) do
+      local details = extmark[4]
+      if details then
+        vim.api.nvim_buf_set_extmark(0, icon_ns_id, 0, 0, {
+          virt_text     = details.virt_text,
+          virt_text_pos = details.virt_text_pos,
+          hl_mode       = details.hl_mode,
+        })
+      end
+    end
+
+    for _, extmark in ipairs(hl_extmarks) do
       -- nvim 0.10 luadoc is incorrect: vim.api.keyset.get_extmark_item is missing the extmark_id at the start
 
       ---@cast extmark table
@@ -82,13 +103,16 @@ local function show()
 
       if type(details) == "table" then
         if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
-          vim.hl.range(0, ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
+          vim.hl.range(0, hl_ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
         else
-          vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
+          vim.api.nvim_buf_add_highlight(0, hl_ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
         end
       end
     end
-    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
+    vim.cmd([[ setlocal nowrap noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
+    if opts.view.cursorline then
+      vim.cmd([[ setlocal cursorline cursorlineopt=both ]])
+    end
   end)
 end
 
@@ -114,7 +138,7 @@ M.setup = function(opts)
     pattern = { "NvimTree_*" },
     callback = function()
       if utils.is_nvim_tree_buf(0) then
-        show()
+        show(opts)
       end
     end,
   })
