@@ -51,13 +51,12 @@ local function show(opts)
   end
 
   local text_width = vim.fn.strdisplaywidth(vim.fn.substitute(line, "[^[:print:]]*$", "", "g"))
+  local win_width = effective_win_width()
 
-  -- also make space for right-aligned icons
+  -- windows width reduced by right aligned icons
   local icon_ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
   local icon_extmarks = vim.api.nvim_buf_get_extmarks(0, icon_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
   text_width = text_width + view.extmarks_length(icon_extmarks)
-
-  local win_width = effective_win_width()
 
   if text_width < win_width then
     return
@@ -75,24 +74,11 @@ local function show(opts)
   })
   vim.wo[M.popup_win].winhl = view.View.winopts.winhl
 
-  local hl_ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
-  local hl_extmarks = vim.api.nvim_buf_get_extmarks(0, hl_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
+  local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
+  local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
   vim.api.nvim_win_call(M.popup_win, function()
     vim.api.nvim_buf_set_lines(0, 0, -1, true, { line })
-
-    -- copy also right-aligned icons
-    for _, extmark in ipairs(icon_extmarks) do
-      local details = extmark[4]
-      if details then
-        vim.api.nvim_buf_set_extmark(0, icon_ns_id, 0, 0, {
-          virt_text     = details.virt_text,
-          virt_text_pos = details.virt_text_pos,
-          hl_mode       = details.hl_mode,
-        })
-      end
-    end
-
-    for _, extmark in ipairs(hl_extmarks) do
+    for _, extmark in ipairs(extmarks) do
       -- nvim 0.10 luadoc is incorrect: vim.api.keyset.get_extmark_item is missing the extmark_id at the start
 
       ---@cast extmark table
@@ -103,9 +89,9 @@ local function show(opts)
 
       if type(details) == "table" then
         if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
-          vim.hl.range(0, hl_ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
+          vim.hl.range(0, ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
         else
-          vim.api.nvim_buf_add_highlight(0, hl_ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
+          vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
         end
       end
     end
