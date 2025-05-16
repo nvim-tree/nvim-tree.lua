@@ -23,21 +23,30 @@ local function buf_match()
   end
 end
 
+---@param node Node
 ---@param keep_buffers boolean
-function M.fn(keep_buffers)
+function M.fn(node, keep_buffers)
   local explorer = core.get_explorer()
   if not explorer then
     return
   end
 
-  local node = explorer:get_node_at_cursor()
-  if not node then
+  local nodeAtCursor = explorer:get_node_at_cursor()
+  if not nodeAtCursor then
     return
   end
 
   local matches = buf_match()
 
-  Iterator.builder(explorer.nodes)
+  local nodesToIterate = explorer.nodes
+  if node then
+    local dir = node:as(DirectoryNode)
+    if dir then
+      nodesToIterate = { dir }
+    end
+  end
+
+  Iterator.builder(nodesToIterate)
     :hidden()
     :applier(function(n)
       local dir = n:as(DirectoryNode)
@@ -51,7 +60,7 @@ function M.fn(keep_buffers)
     :iterate()
 
   explorer.renderer:draw()
-  utils.focus_node_or_parent(node)
+  utils.focus_node_or_parent(nodeAtCursor)
 end
 
 return M
