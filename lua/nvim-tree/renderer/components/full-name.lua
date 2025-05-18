@@ -56,7 +56,7 @@ local function show(opts)
   -- windows width reduced by right aligned icons
   local icon_ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
   local icon_extmarks = vim.api.nvim_buf_get_extmarks(0, icon_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
-  text_width = text_width + view.extmarks_length(icon_extmarks)
+  text_width = text_width + utils.extmarks_length(icon_extmarks)
 
   if text_width < win_width then
     return

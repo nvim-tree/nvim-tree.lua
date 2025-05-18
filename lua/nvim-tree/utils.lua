@@ -172,6 +172,21 @@ function M.find_node_line(node)
   return -1
 end
 
+---@param extmarks vim.api.keyset.get_extmark_item[] as per vim.api.nvim_buf_get_extmarks
+---@return number
+function M.extmarks_length(extmarks)
+  local length = 0
+  for _, extmark in ipairs(extmarks) do
+    local details = extmark[4]
+    if details and details.virt_text then
+      for _, text in ipairs(details.virt_text) do
+        length = length + vim.fn.strchars(text[1])
+      end
+    end
+  end
+  return length
+end
+
 -- get the node in the tree state depending on the absolute path of the node
 -- (grouped or hidden too)
 ---@param path string
