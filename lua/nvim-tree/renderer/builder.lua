@@ -135,7 +135,7 @@ end
 function Builder:format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
   local function add_to_end(t1, t2)
-    if not t2 then
+    if not t2 or vim.tbl_isempty(t2) then
       return
     end
     for _, v in ipairs(t2) do
