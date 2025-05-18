@@ -23,9 +23,18 @@ local function buf_match()
   end
 end
 
----@param node Node
----@param keep_buffers boolean
-function M.fn(node, keep_buffers)
+---@param node Node|boolean|nil legacy -> opts.keep_buffers
+---@param opts ApiTreeCollapseAllOpts|nil
+function M.fn(node, opts)
+  -- legacy arguments
+  if type(node) == "boolean" then
+    opts = {
+      keep_buffers = node,
+    }
+    node = nil
+  end
+  opts = opts or {}
+
   local explorer = core.get_explorer()
   if not explorer then
     return
@@ -51,7 +60,7 @@ function M.fn(node, keep_buffers)
     :applier(function(n)
       local dir = n:as(DirectoryNode)
       if dir then
-        dir.open = keep_buffers and matches(dir.absolute_path)
+        dir.open = opts.keep_buffers and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
