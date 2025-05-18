@@ -31,6 +31,8 @@ local Clipboard = Class:extend()
 ---@protected
 ---@param args ClipboardArgs
 function Clipboard:new(args)
+  args.explorer:log_lifecycle("Clipboard:new")
+
   self.explorer = args.explorer
 
   self.data = {
