@@ -31,8 +31,8 @@ function M.fn(node, keep_buffers)
     return
   end
 
-  local nodeAtCursor = explorer:get_node_at_cursor()
-  if not nodeAtCursor then
+  local node_at_cursor = explorer:get_node_at_cursor()
+  if not node_at_cursor then
     return
   end
 
@@ -60,7 +60,7 @@ function M.fn(node, keep_buffers)
     :iterate()
 
   explorer.renderer:draw()
-  utils.focus_node_or_parent(nodeAtCursor)
+  utils.focus_node_or_parent(node_at_cursor)
 end
 
 return M
