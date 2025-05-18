@@ -60,7 +60,7 @@ function M.fn(node, opts)
     :applier(function(n)
       local dir = n:as(DirectoryNode)
       if dir then
-        dir.open = opts.keep_buffers and matches(dir.absolute_path)
+        dir.open = opts.keep_buffers == true and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
