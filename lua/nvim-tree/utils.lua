@@ -1,5 +1,4 @@
 local Iterator = require("nvim-tree.iterators.node-iterator")
-local notify = require("nvim-tree.notify")
 
 local M = {
   debouncers = {},
@@ -389,20 +388,6 @@ end
 ---@param dst_pos string value pos
 ---@param remove boolean
 function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  local ok, err = pcall(vim.validate, {
-    src = { src, "table" },
-    src_path = { src_path, "string" },
-    src_pos = { src_pos, "string" },
-    dst = { dst, "table" },
-    dst_path = { dst_path, "string" },
-    dst_pos = { dst_pos, "string" },
-    remove = { remove, "boolean" },
-  })
-  if not ok then
-    notify.warn("move_missing_val: " .. (err or "invalid arguments"))
-    return
-  end
-
   for pos in string.gmatch(src_path, "([^%.]+)%.*") do
     if src[pos] and type(src[pos]) == "table" then
       src = src[pos]

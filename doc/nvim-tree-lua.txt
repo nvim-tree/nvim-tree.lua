@@ -462,7 +462,10 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           hidden_placement = "after",
           diagnostics_placement = "signcolumn",
           bookmarks_placement = "signcolumn",
-          padding = " ",
+          padding = {
+            icon = " ",
+            folder_arrow = " ",
+          },
           symlink_arrow = " ➛ ",
           show = {
             file = true,
@@ -1065,8 +1068,12 @@ Configuration options for icons.
     Bookmark icon placement.
       Type: `string`, Default: `signcolumn`
 
-    *nvim-tree.renderer.icons.padding*
+    *nvim-tree.renderer.icons.padding.icon*
     Inserted between icon and filename.
+      Type: `string`, Default: `" "`
+
+    *nvim-tree.renderer.icons.padding.folder_arrow*
+    Inserted between folder arrow icon and file/folder icon.
       Type: `string`, Default: `" "`
 
     *nvim-tree.renderer.icons.symlink_arrow*
@@ -3027,6 +3034,7 @@ needed.
 `sort_by`                            |nvim-tree.sort.sorter|
 `git.ignore`                         |nvim-tree.filters.git_ignored|
 `renderer.icons.webdev_colors`       |nvim-tree.renderer.icons.web_devicons.file.color|
+`renderer.icons.padding`             |nvim-tree.renderer.icons.padding.icon|
 
 ==============================================================================
  14.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
@@ -3183,7 +3191,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.glyphs.symlink|
 |nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
-|nvim-tree.renderer.icons.padding|
+|nvim-tree.renderer.icons.padding.folder_arrow|
+|nvim-tree.renderer.icons.padding.icon|
 |nvim-tree.renderer.icons.show|
 |nvim-tree.renderer.icons.show.bookmarks|
 |nvim-tree.renderer.icons.show.diagnostics|
