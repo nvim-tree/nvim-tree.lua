@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.13.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.12.0...nvim-tree-v1.13.0) (2025-05-24)
+
+
+### Features
+
+* **#3113:** add renderer.icons.folder_arrow_padding ([#3114](https://github.com/nvim-tree/nvim-tree.lua/issues/3114)) ([ea5097a](https://github.com/nvim-tree/nvim-tree.lua/commit/ea5097a1e2702b4827cb7380e7fa0bd6da87699c))
+
+
+### Bug Fixes
+
+* "Invalid buffer id" on closing nvim-tree window ([#3129](https://github.com/nvim-tree/nvim-tree.lua/issues/3129)) ([25d16aa](https://github.com/nvim-tree/nvim-tree.lua/commit/25d16aab7d29ca940a9feb92e6bb734697417009))
+* **#2746:** background and right aligned icons in floating windows ([#3128](https://github.com/nvim-tree/nvim-tree.lua/issues/3128)) ([cbc3165](https://github.com/nvim-tree/nvim-tree.lua/commit/cbc3165e08893bb499da035c6f6f9d1512b57664))
+* **#3117:** allow changing filename's casing ([bd54d1d](https://github.com/nvim-tree/nvim-tree.lua/commit/bd54d1d33c20d8630703b9842480291588dbad07))
+* **#3117:** windows: change file/dir case ([#3135](https://github.com/nvim-tree/nvim-tree.lua/issues/3135)) ([bd54d1d](https://github.com/nvim-tree/nvim-tree.lua/commit/bd54d1d33c20d8630703b9842480291588dbad07))
+* **#3122:** remove redundant vim.validate ([#3123](https://github.com/nvim-tree/nvim-tree.lua/issues/3123)) ([e7d1b7d](https://github.com/nvim-tree/nvim-tree.lua/commit/e7d1b7dadc62fe2eccc17d814354b0a5688621ce))
+* **#3124:** fix icon padding for "right_align" placements, notably for dotfiles ([#3125](https://github.com/nvim-tree/nvim-tree.lua/issues/3125)) ([e4cd856](https://github.com/nvim-tree/nvim-tree.lua/commit/e4cd856ebf4fec51db10c69d63e43224b701cbce))
+* **#3124:** prevent empty icons_right_align response from breaking padding ([e4cd856](https://github.com/nvim-tree/nvim-tree.lua/commit/e4cd856ebf4fec51db10c69d63e43224b701cbce))
+* invalid buffer issue ([25d16aa](https://github.com/nvim-tree/nvim-tree.lua/commit/25d16aab7d29ca940a9feb92e6bb734697417009))
+
 ## [1.12.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.11.0...nvim-tree-v1.12.0) (2025-04-20)
 
 
