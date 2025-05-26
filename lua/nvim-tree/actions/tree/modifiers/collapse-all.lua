@@ -23,26 +23,44 @@ local function buf_match()
   end
 end
 
----@param keep_buffers boolean
-function M.fn(keep_buffers)
+---@param node Node|boolean|nil legacy -> opts.keep_buffers
+---@param opts ApiTreeCollapseAllOpts|nil
+function M.fn(node, opts)
+  -- legacy arguments
+  if type(node) == "boolean" then
+    opts = {
+      keep_buffers = node,
+    }
+    node = nil
+  end
+  opts = opts or {}
+
   local explorer = core.get_explorer()
   if not explorer then
     return
   end
 
-  local node = explorer:get_node_at_cursor()
-  if not node then
+  local node_at_cursor = explorer:get_node_at_cursor()
+  if not node_at_cursor then
     return
   end
 
   local matches = buf_match()
 
-  Iterator.builder(explorer.nodes)
+  local nodesToIterate = explorer.nodes
+  if node then
+    local dir = node:as(DirectoryNode)
+    if dir then
+      nodesToIterate = { dir }
+    end
+  end
+
+  Iterator.builder(nodesToIterate)
     :hidden()
     :applier(function(n)
       local dir = n:as(DirectoryNode)
       if dir then
-        dir.open = keep_buffers and matches(dir.absolute_path)
+        dir.open = opts.keep_buffers == true and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
@@ -51,7 +69,7 @@ function M.fn(keep_buffers)
     :iterate()
 
   explorer.renderer:draw()
-  utils.focus_node_or_parent(node)
+  utils.focus_node_or_parent(node_at_cursor)
 end
 
 return M
