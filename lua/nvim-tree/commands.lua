@@ -1,6 +1,5 @@
 local api = require("nvim-tree.api")
 local view = require("nvim-tree.view")
-local lib = require("nvim-tree.lib")
 
 local M = {}
 
