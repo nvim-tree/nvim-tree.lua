@@ -41,17 +41,17 @@ function M.fn(opts)
 
   local matches = buf_match()
 
-  local selectedNodes
+  local selected_nodes
   if under_cursor then
     if not node or not node.nodes then
       return
     end
-    selectedNodes = node.nodes
+    selected_nodes = node.nodes
   else
-    selectedNodes = explorer.nodes
+    selected_nodes = explorer.nodes
   end
 
-  Iterator.builder(selectedNodes)
+  Iterator.builder(selected_nodes)
     :hidden()
     :applier(function(n)
       local dir = n:as(DirectoryNode)
