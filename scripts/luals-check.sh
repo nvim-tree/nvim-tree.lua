@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Performs a lua-language-server check on all files.
 # luals-out/check.json will be produced on any issues, returning 1.
