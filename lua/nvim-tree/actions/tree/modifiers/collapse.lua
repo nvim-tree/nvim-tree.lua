@@ -23,12 +23,12 @@ local function buf_match()
   end
 end
 
----@param opts ApiTreeCollapseOpts|nil
-function M.fn(opts)
-  opts = opts or {}
-  local keep_buffers = opts.keep_buffers or false
-  local under_cursor = opts.under_cursor or false
-
+---@param opts ApiTreeCollapseOpts | nil
+function M.collapse(opts)
+  opts = opts or {
+    keep_buffers = false,
+    under_cursor = true
+  }
   local explorer = core.get_explorer()
   if not explorer then
     return
@@ -42,11 +42,13 @@ function M.fn(opts)
   local matches = buf_match()
 
   local selected_nodes
-  if under_cursor then
+  if opts.under_cursor then
+    local dir = node:as(DirectoryNode)
     if not node or not node.nodes then
       return
     end
     selected_nodes = node.nodes
+    dir.open = false
   else
     selected_nodes = explorer.nodes
   end
@@ -56,7 +58,7 @@ function M.fn(opts)
     :applier(function(n)
       local dir = n:as(DirectoryNode)
       if dir then
-        dir.open = keep_buffers and matches(dir.absolute_path)
+        dir.open = opts.keep_buffers and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
@@ -66,6 +68,12 @@ function M.fn(opts)
 
   explorer.renderer:draw()
   utils.focus_node_or_parent(node)
+end
+
+---@param keep_buffers boolean | nil
+function M.collapse_all(keep_buffers)
+  keep_buffers = keep_buffers or false
+  M.collapse({ keep_buffers = keep_buffers, under_cursor = false })
 end
 
 return M

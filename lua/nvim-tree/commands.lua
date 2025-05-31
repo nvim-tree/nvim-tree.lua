@@ -121,7 +121,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all({ under_cursor = false, keep_buffers = false })
+      api.tree.collapse({ under_cursor = false, keep_buffers = false })
     end,
   },
   {
@@ -131,7 +131,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all({ under_cursor = true, keep_buffers = false })
+      api.tree.collapse({ under_cursor = true, keep_buffers = false })
     end,
   },
   {
@@ -141,7 +141,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all(true)
+      api.tree.collapse({ under_cursor = false, keep_buffers = true })
     end,
   },
   {
