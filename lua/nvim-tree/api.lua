@@ -182,7 +182,13 @@ Api.tree.get_nodes = wrap_explorer("get_nodes")
 
 Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
-Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
+
+---@class ApiTreeCollapseOpts
+---@field under_cursor boolean
+---@field keep_buffers boolean
+
+Api.tree.collapse = wrap(actions.tree.modifiers.collapse.collapse)
+Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.collapse_all)
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
 Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")

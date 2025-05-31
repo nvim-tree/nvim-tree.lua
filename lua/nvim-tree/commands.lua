@@ -121,7 +121,17 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all(false)
+      api.tree.collapse({ under_cursor = false, keep_buffers = false })
+    end,
+  },
+  {
+    name = "NvimTreeCollapseFolder",
+    opts = {
+      desc = "nvim-tree: collapse the folder under cursor",
+      bar = true,
+    },
+    command = function()
+      api.tree.collapse({ under_cursor = true, keep_buffers = false })
     end,
   },
   {
@@ -131,7 +141,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      api.tree.collapse_all(true)
+      api.tree.collapse({ under_cursor = false, keep_buffers = true })
     end,
   },
   {
