@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # run after changing nvim-tree.lua DEFAULT_OPTS or keymap.lua M.default_on_attach
 # scrapes and updates nvim-tree-lua.txt
