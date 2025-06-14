@@ -68,9 +68,8 @@ function M.all(opts)
       keep_buffers = opts,
     }
   end
-  opts = opts or {}
 
-  collapse(nil, opts)
+  collapse(nil, opts or {})
 end
 
 ---@param node Node

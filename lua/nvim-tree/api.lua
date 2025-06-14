@@ -187,7 +187,7 @@ Api.tree.search_node = wrap(actions.finders.search_node.fn)
 ---@field keep_buffers boolean|nil default false
 
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
-Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
+Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
 Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
 Api.tree.toggle_git_clean_filter = wrap_explorer_member_args("filters", "toggle", "git_clean")
@@ -316,6 +316,7 @@ Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
 
+Api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
 Api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
 
 ---@class ApiNodeDeleteWipeBufferOpts

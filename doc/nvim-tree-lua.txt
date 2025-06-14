@@ -1470,7 +1470,8 @@ vim |current-directory| behaviour.
       Type: `boolean`, Default: `false`
 
 *nvim-tree.actions.expand_all*
-Configuration for expand_all behaviour.
+Configuration for *nvim-tree-api.tree.expand_all()* and
+*nvim-tree-api.node.expand()*
 
     *nvim-tree.actions.expand_all.max_folder_discovery*
     Limit the number of folders being explored when expanding every folders.
@@ -2278,8 +2279,15 @@ node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
     Options: ~
       • {force} (boolean) wipe even if buffer is modified, default false
 
+node.expand({node})                              *nvim-tree-api.node.expand()*
+    Recursively expand all nodes under a directory or a file's parent
+    directory.
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+
 node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
-    Collapse the tree underneath the node.
+    Collapse the tree under a directory or a file's parent directory.
 
     Parameters: ~
       • {node} (Node|nil) file or folder
