@@ -1,10 +1,10 @@
 local M = {}
 
-M.collapse_all = require("nvim-tree.actions.tree.modifiers.collapse-all")
-M.expand_all = require("nvim-tree.actions.tree.modifiers.expand-all")
+M.collapse = require("nvim-tree.actions.tree.modifiers.collapse")
+M.expand = require("nvim-tree.actions.tree.modifiers.expand")
 
 function M.setup(opts)
-  M.expand_all.setup(opts)
+  M.expand.setup(opts)
 end
 
 return M
