@@ -172,6 +172,21 @@ function M.find_node_line(node)
   return -1
 end
 
+---@param extmarks vim.api.keyset.get_extmark_item[] as per vim.api.nvim_buf_get_extmarks
+---@return number
+function M.extmarks_length(extmarks)
+  local length = 0
+  for _, extmark in ipairs(extmarks) do
+    local details = extmark[4]
+    if details and details.virt_text then
+      for _, text in ipairs(details.virt_text) do
+        length = length + vim.fn.strchars(text[1])
+      end
+    end
+  end
+  return length
+end
+
 -- get the node in the tree state depending on the absolute path of the node
 -- (grouped or hidden too)
 ---@param path string
@@ -288,11 +303,51 @@ function M.rename_loaded_buffers(old_path, new_path)
   end
 end
 
+local is_windows_drive = function(path)
+  return (M.is_windows) and (path:match("^%a:\\$") ~= nil)
+end
+
 ---@param path string path to file or directory
 ---@return boolean
 function M.file_exists(path)
-  local _, error = vim.loop.fs_stat(path)
-  return error == nil
+  if not (M.is_windows or M.is_wsl) then
+    local _, error = vim.loop.fs_stat(path)
+    return error == nil
+  end
+
+  -- Windows is case-insensetive, but case-preserving
+  -- If a file's name is being changed into itself
+  -- with different casing, windows will falsely
+  -- report that file is already existing, so a hand-rolled
+  -- implementation of checking for existance is needed.
+  -- Same holds for WSL, since it can sometimes
+  -- access Windows files directly.
+  -- For more details see (#3117).
+
+  if is_windows_drive(path) then
+    return vim.fn.isdirectory(path) == 1
+  end
+
+  local parent = vim.fn.fnamemodify(path, ":h")
+  local filename = vim.fn.fnamemodify(path, ":t")
+
+  local handle = vim.loop.fs_scandir(parent)
+  if not handle then
+    -- File can not exist if its parent directory does not exist
+    return false
+  end
+
+  while true do
+    local name, _ = vim.loop.fs_scandir_next(handle)
+    if not name then
+      break
+    end
+    if name == filename then
+      return true
+    end
+  end
+
+  return false
 end
 
 ---@param path string

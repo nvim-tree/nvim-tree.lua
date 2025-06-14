@@ -1523,7 +1523,8 @@ Configuration options for opening a file from nvim-tree.
 
         *nvim-tree.actions.open_file.window_picker.enable*
         Enable the feature. If the feature is not enabled, files will open in
-        window from which you last opened the tree.
+        window from which you last opened the tree, obeying
+        |nvim-tree.actions.open_file.window_picker.exclude|
           Type: `boolean`, Default: `true`
 
         *nvim-tree.actions.open_file.window_picker.picker*
@@ -1542,9 +1543,10 @@ Configuration options for opening a file from nvim-tree.
           Type: `string`, Default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
 
         *nvim-tree.actions.open_file.window_picker.exclude*
-        Table of buffer option names mapped to a list of option values that
-        indicates to the picker that the buffer's window should not be
-        selectable.
+        Table of buffer option names mapped to a list of option values.
+        Windows containing matching buffers will not be:
+        - available when using a window picker
+        - selected when not using a window picker
           Type: `table`, Default: >lua
             {
               filetype = {

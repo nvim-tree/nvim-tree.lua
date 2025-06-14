@@ -242,6 +242,9 @@ local function setup_autocommands(opts)
     pattern = "*",
     ---@param ev vim.api.keyset.create_autocmd.callback_args
     callback = function(ev)
+      if not vim.api.nvim_buf_is_valid(ev.buf) then
+        return
+      end
       if vim.api.nvim_get_option_value("filetype", { buf = ev.buf }) == "NvimTree" then
         require("nvim-tree.events")._dispatch_on_tree_close()
       end
