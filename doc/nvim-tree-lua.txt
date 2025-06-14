@@ -206,7 +206,7 @@ Show the mappings:  `g?`
 `S`               Search                     |nvim-tree-api.tree.search_node()|
 `u`               Rename: Full Path          |nvim-tree-api.fs.rename_full()|
 `U`               Toggle Filter: Hidden      |nvim-tree-api.tree.toggle_custom_filter()|
-`W`               Collapse                   |nvim-tree-api.tree.collapse_all()|
+`W`               Collapse All               |nvim-tree-api.tree.collapse_all()|
 `x`               Cut                        |nvim-tree-api.fs.cut()|
 `y`               Copy Name                  |nvim-tree-api.fs.copy.filename()|
 `Y`               Copy Relative Path         |nvim-tree-api.fs.copy.relative_path()|
@@ -341,7 +341,7 @@ See |nvim-tree-highlight| for details.
 
     See |nvim-tree-api.tree.collapse_all()|
 
-    Calls: `api.tree.collapse_all(false)`
+    Calls: `api.tree.collapse_all({ keep_buffers = false })`
 
 *:NvimTreeCollapseKeepBuffers*
 
@@ -350,7 +350,7 @@ See |nvim-tree-highlight| for details.
 
     See |nvim-tree-api.tree.collapse_all()|
 
-    Calls: `api.tree.collapse_all(true)`
+    Calls: `api.tree.collapse_all({ keep_buffers = true })`
 
 *:NvimTreeHiTest*
 
@@ -1831,10 +1831,13 @@ tree.find_file({opts})                        *nvim-tree-api.tree.find_file()*
 tree.search_node()                          *nvim-tree-api.tree.search_node()*
     Open the search dialogue as per the search_node action.
 
-tree.collapse_all({keep_buffers})          *nvim-tree-api.tree.collapse_all()*
+tree.collapse_all({opts})                  *nvim-tree-api.tree.collapse_all()*
     Collapse the tree.
 
     Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
 tree.expand_all({node})                      *nvim-tree-api.tree.expand_all()*
@@ -2275,6 +2278,16 @@ node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
     Options: ~
       • {force} (boolean) wipe even if buffer is modified, default false
 
+node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
+    Collapse the tree underneath the node.
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {keep_buffers} (boolean) do not collapse nodes with open buffers.
+
 ==============================================================================
  6.4 API GIT                                               *nvim-tree-api.git*
 
@@ -2529,7 +2542,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lu
   vim.keymap.set("n", "S",              api.tree.search_node,               opts("Search"))
   vim.keymap.set("n", "u",              api.fs.rename_full,                 opts("Rename: Full Path"))
   vim.keymap.set("n", "U",              api.tree.toggle_custom_filter,      opts("Toggle Filter: Hidden"))
-  vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse"))
+  vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse All"))
   vim.keymap.set("n", "x",              api.fs.cut,                         opts("Cut"))
   vim.keymap.set("n", "y",              api.fs.copy.filename,               opts("Copy Name"))
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
@@ -3301,6 +3314,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.marks.toggle()|
 |nvim-tree-api.node.buffer.delete()|
 |nvim-tree-api.node.buffer.wipe()|
+|nvim-tree-api.node.collapse()|
 |nvim-tree-api.node.navigate.diagnostics.next()|
 |nvim-tree-api.node.navigate.diagnostics.next_recursive()|
 |nvim-tree-api.node.navigate.diagnostics.prev()|
