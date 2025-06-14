@@ -1470,8 +1470,8 @@ vim |current-directory| behaviour.
       Type: `boolean`, Default: `false`
 
 *nvim-tree.actions.expand_all*
-Configuration for *nvim-tree-api.tree.expand_all()* and
-*nvim-tree-api.node.expand()*
+Configuration for |nvim-tree-api.tree.expand_all()| and
+|nvim-tree-api.node.expand()|
 
     *nvim-tree.actions.expand_all.max_folder_discovery*
     Limit the number of folders being explored when expanding every folders.
@@ -3323,6 +3323,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.node.buffer.delete()|
 |nvim-tree-api.node.buffer.wipe()|
 |nvim-tree-api.node.collapse()|
+|nvim-tree-api.node.expand()|
 |nvim-tree-api.node.navigate.diagnostics.next()|
 |nvim-tree-api.node.navigate.diagnostics.next_recursive()|
 |nvim-tree-api.node.navigate.diagnostics.prev()|
