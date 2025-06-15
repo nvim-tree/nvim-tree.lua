@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.13.1) (2025-06-15)
+
+
+### Bug Fixes
+
+* window picker ignore hidden window ([#3145](https://github.com/nvim-tree/nvim-tree.lua/issues/3145)) ([d87b41c](https://github.com/nvim-tree/nvim-tree.lua/commit/d87b41ca537e2131622d48a6c25ccf2fbe0e5d62))
+
 ## [1.13.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.12.0...nvim-tree-v1.13.0) (2025-06-14)
 
 
