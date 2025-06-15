@@ -56,7 +56,7 @@ local function setup_window(node)
 end
 
 function M.close_popup()
-  if current_popup ~= nil then
+  if current_popup ~= nil and vim.api.nvim_win_is_valid(current_popup.winnr) then
     vim.api.nvim_win_close(current_popup.winnr, true)
     vim.cmd("augroup NvimTreeRemoveFilePopup | au! CursorMoved | augroup END")
 
