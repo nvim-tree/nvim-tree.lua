@@ -39,7 +39,7 @@ local function usable_win_ids()
     end
 
     local win_config = vim.api.nvim_win_get_config(id)
-    return id ~= tree_winid and win_config.focusable and not win_config.external or false
+    return id ~= tree_winid and win_config.focusable and not win_config.hide and not win_config.external or false
   end, win_ids)
 end
 
