@@ -50,7 +50,7 @@ local View = Class:extend()
 ---@protected
 ---@param args ViewArgs
 function View:new(args)
-  args.explorer:log_lifecycle("View:new")
+  args.explorer:log_new("View")
 
   self.explorer                    = args.explorer
   self.adaptive_size               = false
@@ -84,6 +84,10 @@ function View:new(args)
 
   self:configure_width(self.explorer.opts.view.width)
   self.initial_width = self:get_width()
+end
+
+function View:destroy()
+  self.explorer:log_destroy("View")
 end
 
 -- The initial state of a tab

@@ -56,18 +56,18 @@ function Explorer:new(args)
   self.uid_explorer = vim.loop.hrtime()
   self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
-  self:log_lifecycle("Explorer:new")
+  self:log_new("Explorer")
 
-  self.open         = true
-  self.opts         = config
+  self.open        = true
+  self.opts        = config
 
-  self.sorters      = Sorter({ explorer = self })
-  self.renderer     = Renderer({ explorer = self })
-  self.filters      = Filters({ explorer = self })
-  self.live_filter  = LiveFilter({ explorer = self })
-  self.marks        = Marks({ explorer = self })
-  self.clipboard    = Clipboard({ explorer = self })
-  self.view         = View({ explorer = self })
+  self.sorters     = Sorter({ explorer = self })
+  self.renderer    = Renderer({ explorer = self })
+  self.filters     = Filters({ explorer = self })
+  self.live_filter = LiveFilter({ explorer = self })
+  self.marks       = Marks({ explorer = self })
+  self.clipboard   = Clipboard({ explorer = self })
+  self.view        = View({ explorer = self })
 
   self:create_autocmds()
 
@@ -75,7 +75,15 @@ function Explorer:new(args)
 end
 
 function Explorer:destroy()
-  self:log_lifecycle("Explorer:des")
+  self.explorer:log_destroy("Explorer")
+
+  self.clipboard:destroy()
+  self.filters:destroy()
+  self.live_filter:destroy()
+  self.marks:destroy()
+  self.renderer:destroy()
+  self.sorters:destroy()
+  self.window:destroy()
 
   vim.api.nvim_del_augroup_by_id(self.augroup_id)
 
@@ -591,8 +599,14 @@ end
 
 ---Log a lifecycle message with uid_explorer and absolute_path
 ---@param msg string?
-function Explorer:log_lifecycle(msg)
-  log.line("lifecycle", "%-15s %d %s", msg, self.uid_explorer, self.absolute_path)
+function Explorer:log_new(msg)
+  log.line("lifecycle", "+ %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
+end
+
+---Log a lifecycle message with uid_explorer and absolute_path
+---@param msg string?
+function Explorer:log_destroy(msg)
+  log.line("lifecycle", "- %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
 end
 
 function Explorer:setup(opts)
