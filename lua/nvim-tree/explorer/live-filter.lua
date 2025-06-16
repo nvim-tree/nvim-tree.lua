@@ -20,12 +20,16 @@ local LiveFilter = Class:extend()
 ---@protected
 ---@param args LiveFilterArgs
 function LiveFilter:new(args)
-  args.explorer:log_lifecycle("LiveFilter:new")
+  args.explorer:log_new("LiveFilter")
 
   self.explorer = args.explorer
   self.prefix = self.explorer.opts.live_filter.prefix
   self.always_show_folders = self.explorer.opts.live_filter.always_show_folders
   self.filter = nil
+end
+
+function LiveFilter:destroy()
+  self.explorer:log_destroy("LiveFilter")
 end
 
 ---@param node_ Node?

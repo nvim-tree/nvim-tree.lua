@@ -649,6 +649,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           dev = false,
           diagnostics = false,
           git = false,
+          lifecycle = true,
           profile = false,
           watcher = false,
         },

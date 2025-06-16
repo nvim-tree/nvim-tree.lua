@@ -25,9 +25,13 @@ local Renderer = Class:extend()
 ---@protected
 ---@param args RendererArgs
 function Renderer:new(args)
-  args.explorer:log_lifecycle("Renderer:new")
+  args.explorer:log_new("Renderer")
 
   self.explorer = args.explorer
+end
+
+function Renderer:destroy()
+  self.explorer:log_destroy("Renderer")
 end
 
 ---@private
