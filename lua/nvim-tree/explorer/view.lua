@@ -384,14 +384,7 @@ function View:grow()
     local count = vim.fn.strchars(l)
     -- also add space for right-aligned icons
     local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
-    for _, extmark in ipairs(extmarks) do
-      local virt_texts = extmark[4].virt_text
-      if virt_texts then
-        for _, virt_text in ipairs(virt_texts) do
-          count = count + vim.fn.strchars(virt_text[1])
-        end
-      end
-    end
+    count = count + utils.extmarks_length(extmarks)
     if resizing_width < count then
       resizing_width = count
     end

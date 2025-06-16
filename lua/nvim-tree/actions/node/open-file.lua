@@ -40,19 +40,8 @@ local function usable_win_ids()
     end
 
     local win_config = vim.api.nvim_win_get_config(id)
-    return id ~= tree_winid and win_config.focusable and not win_config.external or false
+    return id ~= tree_winid and win_config.focusable and not win_config.hide and not win_config.external or false
   end, win_ids)
-end
-
----Find the first window in the tab that is not NvimTree.
----@return integer -1 if none available
-local function first_win_id()
-  local selectable = usable_win_ids()
-  if #selectable > 0 then
-    return selectable[1]
-  else
-    return -1
-  end
 end
 
 ---Get user to pick a window in the tab that is not NvimTree.
@@ -259,9 +248,14 @@ local function get_target_winid(mode)
   local target_winid
   if not M.window_picker.enable or string.find(mode, "no_picker") then
     target_winid = lib.target_winid
-    -- first available window
-    if not vim.tbl_contains(vim.api.nvim_tabpage_list_wins(0), target_winid) then
-      target_winid = first_win_id()
+    local usable_wins = usable_win_ids()
+    -- first available usable window
+    if not vim.tbl_contains(usable_wins, target_winid) then
+      if #usable_wins > 0 then
+        target_winid = usable_wins[1]
+      else
+        target_winid = -1
+      end
     end
   else
     -- pick a window

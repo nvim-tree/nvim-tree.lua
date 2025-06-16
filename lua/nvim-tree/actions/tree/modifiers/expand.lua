@@ -2,6 +2,7 @@ local core = require("nvim-tree.core")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local notify = require("nvim-tree.notify")
 
+local FileNode = require("nvim-tree.node.file")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -70,21 +71,36 @@ local function gen_iterator()
   end
 end
 
----Expand the directory node or the root
----@param node Node
-function M.fn(node)
-  local explorer = core.get_explorer()
-  local parent = node:as(DirectoryNode) or explorer
-  if not parent then
+---@param node Node?
+local function expand_node(node)
+  if not node then
     return
   end
 
-  if gen_iterator()(parent) then
+  if gen_iterator()(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end
+
+  local explorer = core.get_explorer()
   if explorer then
     explorer.renderer:draw()
   end
+end
+
+---Expand the directory node or the root
+---@param node Node
+function M.all(node)
+  expand_node(node and node:as(DirectoryNode) or core.get_explorer())
+end
+
+---Expand the directory node or parent node
+---@param node Node
+function M.node(node)
+  if not node then
+    return
+  end
+
+  expand_node(node:is(FileNode) and node.parent or node:as(DirectoryNode))
 end
 
 function M.setup(opts)

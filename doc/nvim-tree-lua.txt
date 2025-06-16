@@ -206,7 +206,7 @@ Show the mappings:  `g?`
 `S`               Search                     |nvim-tree-api.tree.search_node()|
 `u`               Rename: Full Path          |nvim-tree-api.fs.rename_full()|
 `U`               Toggle Filter: Hidden      |nvim-tree-api.tree.toggle_custom_filter()|
-`W`               Collapse                   |nvim-tree-api.tree.collapse_all()|
+`W`               Collapse All               |nvim-tree-api.tree.collapse_all()|
 `x`               Cut                        |nvim-tree-api.fs.cut()|
 `y`               Copy Name                  |nvim-tree-api.fs.copy.filename()|
 `Y`               Copy Relative Path         |nvim-tree-api.fs.copy.relative_path()|
@@ -341,7 +341,7 @@ See |nvim-tree-highlight| for details.
 
     See |nvim-tree-api.tree.collapse_all()|
 
-    Calls: `api.tree.collapse_all(false)`
+    Calls: `api.tree.collapse_all({ keep_buffers = false })`
 
 *:NvimTreeCollapseKeepBuffers*
 
@@ -350,7 +350,7 @@ See |nvim-tree-highlight| for details.
 
     See |nvim-tree-api.tree.collapse_all()|
 
-    Calls: `api.tree.collapse_all(true)`
+    Calls: `api.tree.collapse_all({ keep_buffers = true })`
 
 *:NvimTreeHiTest*
 
@@ -462,7 +462,10 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           hidden_placement = "after",
           diagnostics_placement = "signcolumn",
           bookmarks_placement = "signcolumn",
-          padding = " ",
+          padding = {
+            icon = " ",
+            folder_arrow = " ",
+          },
           symlink_arrow = " ➛ ",
           show = {
             file = true,
@@ -1065,8 +1068,12 @@ Configuration options for icons.
     Bookmark icon placement.
       Type: `string`, Default: `signcolumn`
 
-    *nvim-tree.renderer.icons.padding*
+    *nvim-tree.renderer.icons.padding.icon*
     Inserted between icon and filename.
+      Type: `string`, Default: `" "`
+
+    *nvim-tree.renderer.icons.padding.folder_arrow*
+    Inserted between folder arrow icon and file/folder icon.
       Type: `string`, Default: `" "`
 
     *nvim-tree.renderer.icons.symlink_arrow*
@@ -1463,7 +1470,8 @@ vim |current-directory| behaviour.
       Type: `boolean`, Default: `false`
 
 *nvim-tree.actions.expand_all*
-Configuration for expand_all behaviour.
+Configuration for |nvim-tree-api.tree.expand_all()| and
+|nvim-tree-api.node.expand()|
 
     *nvim-tree.actions.expand_all.max_folder_discovery*
     Limit the number of folders being explored when expanding every folders.
@@ -1516,7 +1524,8 @@ Configuration options for opening a file from nvim-tree.
 
         *nvim-tree.actions.open_file.window_picker.enable*
         Enable the feature. If the feature is not enabled, files will open in
-        window from which you last opened the tree.
+        window from which you last opened the tree, obeying
+        |nvim-tree.actions.open_file.window_picker.exclude|
           Type: `boolean`, Default: `true`
 
         *nvim-tree.actions.open_file.window_picker.picker*
@@ -1535,9 +1544,10 @@ Configuration options for opening a file from nvim-tree.
           Type: `string`, Default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
 
         *nvim-tree.actions.open_file.window_picker.exclude*
-        Table of buffer option names mapped to a list of option values that
-        indicates to the picker that the buffer's window should not be
-        selectable.
+        Table of buffer option names mapped to a list of option values.
+        Windows containing matching buffers will not be:
+        - available when using a window picker
+        - selected when not using a window picker
           Type: `table`, Default: >lua
             {
               filetype = {
@@ -1822,10 +1832,13 @@ tree.find_file({opts})                        *nvim-tree-api.tree.find_file()*
 tree.search_node()                          *nvim-tree-api.tree.search_node()*
     Open the search dialogue as per the search_node action.
 
-tree.collapse_all({keep_buffers})          *nvim-tree-api.tree.collapse_all()*
+tree.collapse_all({opts})                  *nvim-tree-api.tree.collapse_all()*
     Collapse the tree.
 
     Parameters: ~
+      • {opts} (table) optional parameters
+
+    Options: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
 tree.expand_all({node})                      *nvim-tree-api.tree.expand_all()*
@@ -2266,6 +2279,23 @@ node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
     Options: ~
       • {force} (boolean) wipe even if buffer is modified, default false
 
+node.expand({node})                              *nvim-tree-api.node.expand()*
+    Recursively expand all nodes under a directory or a file's parent
+    directory.
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+
+node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
+    Collapse the tree under a directory or a file's parent directory.
+
+    Parameters: ~
+      • {node} (Node|nil) file or folder
+      • {opts} (table) optional parameters
+
+    Options: ~
+      • {keep_buffers} (boolean) do not collapse nodes with open buffers.
+
 ==============================================================================
  6.4 API GIT                                               *nvim-tree-api.git*
 
@@ -2520,7 +2550,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lu
   vim.keymap.set("n", "S",              api.tree.search_node,               opts("Search"))
   vim.keymap.set("n", "u",              api.fs.rename_full,                 opts("Rename: Full Path"))
   vim.keymap.set("n", "U",              api.tree.toggle_custom_filter,      opts("Toggle Filter: Hidden"))
-  vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse"))
+  vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse All"))
   vim.keymap.set("n", "x",              api.fs.cut,                         opts("Cut"))
   vim.keymap.set("n", "y",              api.fs.copy.filename,               opts("Copy Name"))
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
@@ -3027,6 +3057,7 @@ needed.
 `sort_by`                            |nvim-tree.sort.sorter|
 `git.ignore`                         |nvim-tree.filters.git_ignored|
 `renderer.icons.webdev_colors`       |nvim-tree.renderer.icons.web_devicons.file.color|
+`renderer.icons.padding`             |nvim-tree.renderer.icons.padding.icon|
 
 ==============================================================================
  14.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
@@ -3183,7 +3214,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.glyphs.symlink|
 |nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
-|nvim-tree.renderer.icons.padding|
+|nvim-tree.renderer.icons.padding.folder_arrow|
+|nvim-tree.renderer.icons.padding.icon|
 |nvim-tree.renderer.icons.show|
 |nvim-tree.renderer.icons.show.bookmarks|
 |nvim-tree.renderer.icons.show.diagnostics|
@@ -3290,6 +3322,8 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.marks.toggle()|
 |nvim-tree-api.node.buffer.delete()|
 |nvim-tree-api.node.buffer.wipe()|
+|nvim-tree-api.node.collapse()|
+|nvim-tree-api.node.expand()|
 |nvim-tree-api.node.navigate.diagnostics.next()|
 |nvim-tree-api.node.navigate.diagnostics.next_recursive()|
 |nvim-tree-api.node.navigate.diagnostics.prev()|

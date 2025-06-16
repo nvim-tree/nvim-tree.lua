@@ -214,6 +214,9 @@ local function setup_autocommands(opts)
     pattern = "*",
     ---@param ev vim.api.keyset.create_autocmd.callback_args
     callback = function(ev)
+      if not vim.api.nvim_buf_is_valid(ev.buf) then
+        return
+      end
       if vim.api.nvim_get_option_value("filetype", { buf = ev.buf }) == "NvimTree" then
         require("nvim-tree.events")._dispatch_on_tree_close()
       end
@@ -306,7 +309,10 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       hidden_placement = "after",
       diagnostics_placement = "signcolumn",
       bookmarks_placement = "signcolumn",
-      padding = " ",
+      padding = {
+        icon = " ",
+        folder_arrow = " ",
+      },
       symlink_arrow = " ➛ ",
       show = {
         file = true,

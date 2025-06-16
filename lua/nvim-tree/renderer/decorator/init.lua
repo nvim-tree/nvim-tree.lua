@@ -112,9 +112,8 @@ function Decorator:define_sign(icon)
       vim.fn.sign_undefine(name)
     end
 
-    -- don't use sign if not defined
+    -- don't render sign if empty
     if #icon.str < 1 then
-      self.icon_placement = "none"
       return
     end
 
