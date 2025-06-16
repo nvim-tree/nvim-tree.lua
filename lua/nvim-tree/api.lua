@@ -1,4 +1,5 @@
 local core = require("nvim-tree.core")
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
 local appearance_hi_test = require("nvim-tree.appearance.hi-test")
@@ -140,9 +141,9 @@ Api.tree.focus = Api.tree.open
 ---@field focus boolean|nil default true
 
 Api.tree.toggle = wrap(actions.tree.toggle.fn)
-Api.tree.close = wrap_explorer_member("view", "close")
-Api.tree.close_in_this_tab = wrap_explorer_member("view", "close_this_tab_only")
-Api.tree.close_in_all_tabs = wrap_explorer_member("view", "close_all_tabs")
+Api.tree.close = wrap_explorer_member("window", "close")
+Api.tree.close_in_this_tab = wrap_explorer_member("window", "close_this_tab_only")
+Api.tree.close_in_all_tabs = wrap_explorer_member("window", "close_all_tabs")
 Api.tree.reload = wrap_explorer("reload_explorer")
 
 ---@class ApiTreeResizeOpts
@@ -201,12 +202,12 @@ Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 ---@field tabpage number|nil
 ---@field any_tabpage boolean|nil default false
 
-Api.tree.is_visible = wrap_explorer_member("view", "is_visible")
+Api.tree.is_visible = wrap(view.is_visible)
 
 ---@class ApiTreeWinIdOpts
 ---@field tabpage number|nil default nil
 
-Api.tree.winid = wrap_explorer_member("view", "winid")
+Api.tree.winid = wrap(view.winid)
 
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
 Api.fs.remove = wrap_node(actions.fs.remove_file.fn)

@@ -1,4 +1,5 @@
 local log = require("nvim-tree.log")
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
 local core = require("nvim-tree.core")
@@ -73,8 +74,7 @@ function M.change_root(path, bufnr)
 end
 
 function M.tab_enter()
-  local explorer = core.get_explorer()
-  if explorer and explorer.window:is_visible({ any_tabpage = true }) then
+  if view.is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
@@ -89,15 +89,17 @@ function M.tab_enter()
         return
       end
     end
-    explorer.window:open({ focus_tree = false })
 
-    explorer.renderer:draw()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.window:open({ focus_tree = false })
+      explorer.renderer:draw()
+    end
   end
 end
 
 function M.open_on_directory()
-  local explorer = core.get_explorer()
-  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.window:is_visible()
+  local should_proceed = _config.hijack_directories.auto_open or view.is_visible()
   if not should_proceed then
     return
   end
@@ -668,7 +670,9 @@ function M.purge_all_state()
   local explorer = core.get_explorer()
   if explorer then
     explorer.window:close_all_tabs()
-    explorer.window:abandon_all_windows()
+  end
+  view.abandon_all_windows()
+  if explorer then
     require("nvim-tree.git").purge_state()
     explorer:destroy()
     core.reset_explorer()

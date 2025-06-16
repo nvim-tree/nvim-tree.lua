@@ -4,6 +4,7 @@ local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 local node_factory = require("nvim-tree.node.factory")
 
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -176,7 +177,7 @@ function Explorer:create_autocmds()
       if self.opts.actions.open_file.eject then
         self.window:prevent_buffer_override()
       else
-        self.window:abandon_current_window()
+        view.abandon_current_window()
       end
     end,
   })
@@ -526,7 +527,7 @@ function Explorer:reload_explorer()
 
   local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
-  if self.window:is_visible() then
+  if view.is_visible() then
     self.renderer:draw()
   end
   event_running = false
@@ -548,7 +549,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.window:get_winnr()
+  local winnr = view.get_winnr()
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end

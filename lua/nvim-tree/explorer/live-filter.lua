@@ -1,3 +1,4 @@
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 
 local Class = require("nvim-tree.classic")
@@ -209,7 +210,7 @@ function LiveFilter:start_filtering()
   self.explorer.renderer:draw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
-  self.explorer.window:set_cursor({ row, col })
+  view.set_cursor({ row, col })
   -- needs scheduling to let the cursor move before initializing the window
   vim.schedule(function()
     return create_overlay(self)

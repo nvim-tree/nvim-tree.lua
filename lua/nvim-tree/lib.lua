@@ -1,3 +1,4 @@
+local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 
@@ -11,11 +12,9 @@ local M = {
 }
 
 function M.set_target_win()
-  local explorer = core.get_explorer()
-
   local id = vim.api.nvim_get_current_win()
-
-  if explorer and id == explorer.window:get_winnr() then
+  local tree_id = view.get_winnr()
+  if tree_id and id == tree_id then
     M.target_winid = 0
     return
   end
@@ -134,10 +133,7 @@ function M.open(opts)
   else
     open_view_and_draw()
   end
-
-  if explorer then
-    explorer.window:restore_tab_state()
-  end
+  view.restore_tab_state()
 end
 
 function M.setup(opts)

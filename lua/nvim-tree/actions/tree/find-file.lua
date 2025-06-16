@@ -1,5 +1,6 @@
 local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
+local view = require("nvim-tree.view")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
@@ -41,7 +42,7 @@ function M.fn(opts)
   end
 
   local explorer = core.get_explorer()
-  if explorer and explorer.window:is_visible() then
+  if explorer and view.is_visible() then
     -- focus
     if opts.focus then
       lib.set_target_win()

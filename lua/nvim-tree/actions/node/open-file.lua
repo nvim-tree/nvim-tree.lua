@@ -3,6 +3,7 @@ local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
+local view = require("nvim-tree.view")
 
 local M = {}
 
@@ -19,10 +20,9 @@ end
 ---Get all windows in the current tabpage that aren't NvimTree.
 ---@return table with valid win_ids
 local function usable_win_ids()
-  local explorer = core.get_explorer()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = explorer and explorer.window:get_winnr(tabpage)
+  local tree_winid = view.get_winnr(tabpage)
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -386,12 +386,7 @@ local function is_already_loaded(filename)
 end
 
 local function edit_in_current_buf(filename)
-  local explorer = core.get_explorer()
-
-  if explorer then
-    explorer.window:abandon_current_window()
-  end
-
+  require("nvim-tree.view").abandon_current_window()
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
