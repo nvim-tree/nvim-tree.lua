@@ -1,3 +1,4 @@
+local appearance = require("nvim-tree.appearance")
 local events = require("nvim-tree.events")
 local utils = require("nvim-tree.utils")
 local log = require("nvim-tree.log")
@@ -78,20 +79,7 @@ function View:new(args)
     cursorlineopt  = "both",
     colorcolumn    = "0",
     wrap           = false,
-    winhl          = table.concat({
-      "EndOfBuffer:NvimTreeEndOfBuffer",
-      "CursorLine:NvimTreeCursorLine",
-      "CursorLineNr:NvimTreeCursorLineNr",
-      "LineNr:NvimTreeLineNr",
-      "WinSeparator:NvimTreeWinSeparator",
-      "StatusLine:NvimTreeStatusLine",
-      "StatusLineNC:NvimTreeStatuslineNC",
-      "SignColumn:NvimTreeSignColumn",
-      "Normal:NvimTreeNormal",
-      "NormalNC:NvimTreeNormalNC",
-      "NormalFloat:NvimTreeNormalFloat",
-      "FloatBorder:NvimTreeNormalFloatBorder",
-    }, ","),
+    winhl          = appearance.WIN_HL,
   }
 
   self:configure_width(self.explorer.opts.view.width)
@@ -640,7 +628,7 @@ end
 function View:reset_winhl()
   local winnr = self:get_winnr()
   if winnr and vim.api.nvim_win_is_valid(winnr) then
-    vim.wo[self:get_winnr()].winhl = self.winopts.winhl
+    vim.wo[self:get_winnr()].winhl = appearance.WIN_HL
   end
 end
 
