@@ -22,7 +22,7 @@ local function usable_win_ids()
   local explorer = core.get_explorer()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = explorer and explorer.view:get_winnr(tabpage)
+  local tree_winid = explorer and explorer.window:get_winnr(tabpage)
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -190,7 +190,7 @@ local function open_file_in_tab(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.window:close()
     end
   end
   if M.relative_path then
@@ -203,7 +203,7 @@ local function drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.window:close()
     end
   end
   if M.relative_path then
@@ -216,7 +216,7 @@ local function tab_drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.window:close()
     end
   end
   if M.relative_path then
@@ -240,7 +240,7 @@ local function on_preview(buf_loaded)
   end
   local explorer = core.get_explorer()
   if explorer then
-    explorer.view:focus()
+    explorer.window:focus()
   end
 end
 
@@ -312,7 +312,7 @@ local function open_in_new_window(filename, mode)
   local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
 
   local new_window_side = "belowright"
-  if explorer and (explorer.view.side == "right") then
+  if explorer and (explorer.window.side == "right") then
     new_window_side = "aboveleft"
   end
 
@@ -346,7 +346,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.view.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.window.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
@@ -389,7 +389,7 @@ local function edit_in_current_buf(filename)
   local explorer = core.get_explorer()
 
   if explorer then
-    explorer.view:abandon_current_window()
+    explorer.window:abandon_current_window()
   end
 
   if M.relative_path then
@@ -439,7 +439,7 @@ function M.fn(mode, filename)
   end
 
   if M.resize_window and explorer then
-    explorer.view:resize()
+    explorer.window:resize()
   end
 
   if mode == "preview" or mode == "preview_no_picker" then
@@ -447,7 +447,7 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open and explorer then
-    explorer.view:close()
+    explorer.window:close()
   end
 end
 

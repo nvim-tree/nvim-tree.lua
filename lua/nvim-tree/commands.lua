@@ -113,7 +113,7 @@ local CMDS = {
     command = function(c)
       local explorer = core.get_explorer()
       if explorer then
-        explorer.view:resize(c.args)
+        explorer.window:resize(c.args)
       end
     end,
   },

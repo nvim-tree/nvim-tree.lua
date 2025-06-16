@@ -66,9 +66,9 @@ local function move(explorer, where, what, skip_gitignored)
   end
 
   if nex then
-    explorer.view:set_cursor({ nex, 0 })
+    explorer.window:set_cursor({ nex, 0 })
   elseif vim.o.wrapscan and first then
-    explorer.view:set_cursor({ first, 0 })
+    explorer.window:set_cursor({ first, 0 })
   end
 end
 
@@ -188,13 +188,13 @@ local function move_prev_recursive(explorer, what, skip_gitignored)
 
       -- 4.3)
       if node_init.name == ".." then -- root node
-        explorer.view:set_cursor({ 1, 0 })    -- move to root node (position 1)
+        explorer.window:set_cursor({ 1, 0 })    -- move to root node (position 1)
       else
         local node_init_line = utils.find_node_line(node_init)
         if node_init_line < 0 then
           return
         end
-        explorer.view:set_cursor({ node_init_line, 0 })
+        explorer.window:set_cursor({ node_init_line, 0 })
       end
 
       -- 4.4)

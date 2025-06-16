@@ -41,11 +41,11 @@ function M.fn(opts)
   end
 
   local explorer = core.get_explorer()
-  if explorer and explorer.view:is_visible() then
+  if explorer and explorer.window:is_visible() then
     -- focus
     if opts.focus then
       lib.set_target_win()
-      explorer.view:focus()
+      explorer.window:focus()
     end
   elseif opts.open then
     -- open

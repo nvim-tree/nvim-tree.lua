@@ -15,7 +15,7 @@ function M.set_target_win()
 
   local id = vim.api.nvim_get_current_win()
 
-  if explorer and id == explorer.view:get_winnr() then
+  if explorer and id == explorer.window:get_winnr() then
     M.target_winid = 0
     return
   end
@@ -36,7 +36,7 @@ local function open_view_and_draw()
   local cwd = vim.fn.getcwd()
 
   if explorer then
-    explorer.view:open()
+    explorer.window:open()
   end
 
   handle_buf_cwd(cwd)
@@ -117,18 +117,18 @@ function M.open(opts)
 
   if should_hijack_current_buf() then
     if explorer then
-      explorer.view:close_this_tab_only()
-      explorer.view:open_in_win()
+      explorer.window:close_this_tab_only()
+      explorer.window:open_in_win()
       explorer.renderer:draw()
     end
   elseif opts.winid then
     if explorer then
-      explorer.view:open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
+      explorer.window:open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
       explorer.renderer:draw()
     end
   elseif opts.current_window then
     if explorer then
-      explorer.view:open_in_win({ hijack_current_buf = false, resize = false })
+      explorer.window:open_in_win({ hijack_current_buf = false, resize = false })
       explorer.renderer:draw()
     end
   else
@@ -136,7 +136,7 @@ function M.open(opts)
   end
 
   if explorer then
-    explorer.view:restore_tab_state()
+    explorer.window:restore_tab_state()
   end
 end
 

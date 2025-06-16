@@ -19,7 +19,7 @@ local LiveFilter = require("nvim-tree.explorer.live-filter")
 local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
-local View = require("nvim-tree.explorer.view")
+local Window = require("nvim-tree.explorer.window")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
@@ -35,7 +35,7 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
----@field view View
+---@field window Window
 local Explorer = RootNode:extend()
 
 ---@class Explorer
@@ -67,7 +67,7 @@ function Explorer:new(args)
   self.live_filter  = LiveFilter({ explorer = self })
   self.marks        = Marks({ explorer = self })
   self.clipboard    = Clipboard({ explorer = self })
-  self.view         = View({ explorer = self })
+  self.window       = Window({ explorer = self })
 
   self:create_autocmds()
 
@@ -88,7 +88,7 @@ function Explorer:create_autocmds()
     group = self.augroup_id,
     callback = function()
       appearance.setup()
-      self.view:reset_winhl()
+      self.window:reset_winhl()
       self.renderer:draw()
     end,
   })
@@ -99,7 +99,7 @@ function Explorer:create_autocmds()
       pattern = "NvimTree_*",
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          self.view:close()
+          self.window:close()
         end
       end,
     })
@@ -166,9 +166,9 @@ function Explorer:create_autocmds()
         return
       end
       if self.opts.actions.open_file.eject then
-        self.view:prevent_buffer_override()
+        self.window:prevent_buffer_override()
       else
-        self.view:abandon_current_window()
+        self.window:abandon_current_window()
       end
     end,
   })
@@ -518,7 +518,7 @@ function Explorer:reload_explorer()
 
   local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
-  if self.view:is_visible() then
+  if self.window:is_visible() then
     self.renderer:draw()
   end
   event_running = false
@@ -540,7 +540,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.view:get_winnr()
+  local winnr = self.window:get_winnr()
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end
@@ -555,7 +555,7 @@ function Explorer:get_node_at_cursor()
     return
   end
 
-  if cursor[1] == 1 and self.view:is_root_folder_visible(core.get_cwd()) then
+  if cursor[1] == 1 and self.window:is_root_folder_visible(core.get_cwd()) then
     return self
   end
 

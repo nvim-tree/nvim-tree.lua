@@ -145,7 +145,7 @@ function M.find_node(nodes, fn)
     :iterate()
 
   if node then
-    if not node.explorer.view:is_root_folder_visible() then
+    if not node.explorer.window:is_root_folder_visible() then
       i = i - 1
     end
     if node.explorer.live_filter.filter then
@@ -545,7 +545,7 @@ function M.focus_file(path)
   end)
   local explorer = require("nvim-tree.core").get_explorer()
   if explorer then
-    explorer.view:set_cursor({ i + 1, 1 })
+    explorer.window:set_cursor({ i + 1, 1 })
   end
 end
 
@@ -566,7 +566,7 @@ function M.focus_node_or_parent(node)
     end)
 
     if found_node or node.parent == nil then
-      explorer.view:set_cursor({ i + 1, 1 })
+      explorer.window:set_cursor({ i + 1, 1 })
       break
     end
 

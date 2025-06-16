@@ -199,13 +199,13 @@ local function create_overlay(self)
 end
 
 function LiveFilter:start_filtering()
-  self.explorer.view.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
+  self.explorer.window.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
   self.filter = self.filter or ""
 
   self.explorer.renderer:draw()
   local row = require("nvim-tree.core").get_nodes_starting_line() - 1
   local col = #self.prefix > 0 and #self.prefix - 1 or 1
-  self.explorer.view:set_cursor({ row, col })
+  self.explorer.window:set_cursor({ row, col })
   -- needs scheduling to let the cursor move before initializing the window
   vim.schedule(function()
     return create_overlay(self)
@@ -214,7 +214,7 @@ end
 
 function LiveFilter:clear_filter()
   local node = self.explorer:get_node_at_cursor()
-  local last_node = self.explorer.view.live_filter.prev_focused_node
+  local last_node = self.explorer.window.live_filter.prev_focused_node
 
   self.filter = nil
   reset_filter(self)

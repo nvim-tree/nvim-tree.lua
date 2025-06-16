@@ -247,7 +247,7 @@ local function edit(mode, node, edit_opts)
   local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
   if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
     if explorer then
-      explorer.view:close(cur_tabpage)
+      explorer.window:close(cur_tabpage)
     end
   end
 
@@ -259,7 +259,7 @@ local function edit(mode, node, edit_opts)
       vim.cmd(":tabprev")
     end
     if explorer then
-      explorer.view:focus()
+      explorer.window:focus()
     end
   end
 end

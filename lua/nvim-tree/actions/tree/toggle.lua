@@ -42,9 +42,9 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.path = nil
   end
 
-  if explorer and explorer.view:is_visible() then
+  if explorer and explorer.window:is_visible() then
     -- close
-    explorer.view:close()
+    explorer.window:close()
   else
     -- open
     lib.open({

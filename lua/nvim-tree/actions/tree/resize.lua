@@ -12,8 +12,8 @@ function M.fn(opts)
 
   if opts == nil then
     -- reset to config values
-    explorer.view:configure_width()
-    explorer.view:resize()
+    explorer.window:configure_width()
+    explorer.window:resize()
     return
   end
 
@@ -21,19 +21,19 @@ function M.fn(opts)
   local width_cfg = options.width
 
   if width_cfg ~= nil then
-    explorer.view:configure_width(width_cfg)
-    explorer.view:resize()
+    explorer.window:configure_width(width_cfg)
+    explorer.window:resize()
     return
   end
 
-  if not explorer.view:is_width_determined() then
+  if not explorer.window:is_width_determined() then
     -- {absolute} and {relative} do nothing when {width} is a function.
     return
   end
 
   local absolute = options.absolute
   if type(absolute) == "number" then
-    explorer.view:resize(absolute)
+    explorer.window:resize(absolute)
     return
   end
 
@@ -44,7 +44,7 @@ function M.fn(opts)
       relative_size = "+" .. relative_size
     end
 
-    explorer.view:resize(relative_size)
+    explorer.window:resize(relative_size)
     return
   end
 end
