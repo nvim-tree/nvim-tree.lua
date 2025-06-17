@@ -9,6 +9,7 @@ local TABPAGES = {}
 --- Debugging only.
 --- Tabs show TABPAGES winnr and BUFNR_PER_TAB bufnr for the tab.
 --- Orphans for inexistent tab_ids are shown at the right.
+--- lib.target_winid is always shown at the right next to a close button.
 --- Enable with:
 ---   vim.opt.tabline = "%!v:lua.require('nvim-tree.view').tab_line()"
 ---   vim.opt.showtabline = 2
@@ -96,8 +97,8 @@ function M.tab_line()
     tl = tl .. " "
   end
 
-  -- close button
-  tl = tl .. "|%#TabLine#%999X X |"
+  -- target win id and close button
+  tl = tl .. "|%#TabLine# twi" .. (require("nvim-tree.lib").target_winid or "?") .. " %999X| X |"
 
   return tl
 end
