@@ -6,6 +6,102 @@ local BUFNR_PER_TAB = {}
 local CURSORS = {}
 local TABPAGES = {}
 
+--- Debugging only.
+--- Tabs show TABPAGES winnr and BUFNR_PER_TAB bufnr for the tab.
+--- Orphans for inexistent tab_ids are shown at the right.
+--- Enable with:
+---   vim.opt.tabline = "%!v:lua.require('nvim-tree.view').tab_line()"
+---   vim.opt.showtabline = 2
+function M.tab_line()
+  local tab_ids = vim.api.nvim_list_tabpages()
+  local cur_tab_id = vim.api.nvim_get_current_tabpage()
+
+  local bufnr_per_tab = vim.deepcopy(BUFNR_PER_TAB)
+  local tabpages = vim.deepcopy(TABPAGES)
+
+  local tl = "%#TabLine#"
+
+  for i, tab_id in ipairs(tab_ids) do
+    -- click to select
+    tl = tl .. "%" .. i .. "T"
+
+    -- style
+    if tab_id == cur_tab_id then
+      tl = tl .. "%#StatusLine#|"
+    else
+      tl = tl .. "|%#TabLine#"
+    end
+
+    -- tab_id itself
+    tl = tl .. " t" .. tab_id
+
+    -- winnr, if present
+    local tp = TABPAGES[tab_id]
+    if tp then
+      tl = tl .. " w" .. tp.winnr
+    else
+      tl = tl .. "      "
+    end
+
+    -- bufnr, if present
+    local bpt = BUFNR_PER_TAB[tab_id]
+    if bpt then
+      tl = tl .. " b" .. bpt
+    else
+      tl = tl .. "   "
+    end
+
+    tl = tl .. " "
+
+    -- remove actively mapped
+    bufnr_per_tab[tab_id] = nil
+    tabpages[tab_id] = nil
+  end
+
+  -- close last and reset
+  tl = tl .. "|%#CursorLine#%T"
+
+  -- collect orphans
+  local orphans = {}
+  for tab_id, bufnr in pairs(bufnr_per_tab) do
+    orphans[tab_id] = orphans[tab_id] or {}
+    orphans[tab_id].bufnr = bufnr
+  end
+  for tab_id, tp in pairs(tabpages) do
+    orphans[tab_id] = orphans[tab_id] or {}
+    orphans[tab_id].winnr = tp.winnr
+  end
+
+  -- right-align
+  tl = tl .. "%=%#TabLine#"
+
+  -- print orphans
+  for tab_id, orphan in pairs(orphans) do
+    -- inexistent tab
+    tl = tl .. "%#error#| t" .. tab_id
+
+    -- maybe winnr
+    if orphan.winnr then
+      tl = tl .. " w" .. orphan.winnr
+    else
+      tl = tl .. "      "
+    end
+
+    -- maybe bufnr
+    if orphan.bufnr then
+      tl = tl .. " b" .. orphan.bufnr
+    else
+      tl = tl .. "   "
+    end
+    tl = tl .. " "
+  end
+
+  -- close button
+  tl = tl .. "|%#TabLine#%999X X |"
+
+  return tl
+end
+
 -- The initial state of a tab
 local tabinitial = {
   -- The position of the cursor { line, column }
