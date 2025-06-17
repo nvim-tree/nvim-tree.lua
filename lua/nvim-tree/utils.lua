@@ -658,32 +658,29 @@ function M.is_executable(absolute_path)
   end
 end
 
----List of all option info/values
----@param opts vim.api.keyset.option passed directly to vim.api.nvim_get_option_info2 and vim.api.nvim_get_option_value
----@param was_set boolean filter was_set
----@return { info: vim.api.keyset.get_option_info, val: any }[]
-function M.enumerate_options(opts, was_set)
-  local res = {}
+---@class UtilEnumerateOptionsOpts
+---@field keyset_opts vim.api.keyset.option
+---@field was_set boolean? as per vim.api.keyset.get_option_info
 
-  local infos = vim.tbl_filter(function(info)
-    if opts.buf and info.scope ~= "buf" then
-      return false
-    elseif opts.win and info.scope ~= "win" then
-      return false
+---Option name/values
+---@param opts UtilEnumerateOptionsOpts
+---@return table<string, any>
+function M.enumerate_options(opts)
+  -- enumerate all options, limiting buf and win scopes
+  return vim.tbl_map(function(info)
+    if opts.keyset_opts.buf and info.scope ~= "buf" then
+      return nil
+    elseif opts.keyset_opts.win and info.scope ~= "win" then
+      return nil
     else
-      return true
+      -- optional, lazy was_set check
+      if not opts.was_set or vim.api.nvim_get_option_info2(info.name, opts.keyset_opts).was_set then
+        return vim.api.nvim_get_option_value(info.name, opts.keyset_opts)
+      else
+        return nil
+      end
     end
   end, vim.api.nvim_get_all_options_info())
-
-  for _, info in vim.spairs(infos) do
-    local _, info2 = pcall(vim.api.nvim_get_option_info2, info.name, opts)
-    if not was_set or info2.was_set then
-      local val = pcall(vim.api.nvim_get_option_value, info.name, opts)
-      table.insert(res, { info = info2, val = val })
-    end
-  end
-
-  return res
 end
 
 return M
