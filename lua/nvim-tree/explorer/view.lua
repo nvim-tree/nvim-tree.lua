@@ -595,6 +595,19 @@ function View:get_winnr(tabpage, callsite)
       ret = tabinfo.winnr
     end
 
+    local winid_from_bufnr
+    if self.bufnr_by_tab[tabpage] then
+      for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+        if vim.api.nvim_win_get_buf(winid) == self.bufnr_by_tab[tabpage] then
+          winid_from_bufnr = winid
+        end
+      end
+    end
+
+    if ret ~= winid_from_bufnr then
+      msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid_from_bufnr)
+    end
+
     log.line("dev", "%s", msg)
 
     return ret
