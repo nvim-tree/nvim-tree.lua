@@ -171,8 +171,21 @@ local move_tbl = {
 -- setup_tabpage sets up the initial state of a tab
 ---@private
 ---@param tabpage integer
-function View:setup_tabpage(tabpage)
+---@param callsite string?
+function View:setup_tabpage(tabpage, callsite)
   local winnr = vim.api.nvim_get_current_win()
+
+  local msg = nil
+  if self.explorer.opts.experimental.multi_instance_debug then
+    msg = string.format( "View:setup_tabpage(%3s, %-20.20s) w%d", tabpage, callsite, winnr)
+    if globals.TABPAGES[tabpage] then
+      msg = string.format("%s %s", msg, vim.inspect(globals.TABPAGES[tabpage], { newline = "" }))
+    else
+      msg = string.format("%s tabinitial", msg)
+    end
+    log.line("dev", "%s", msg)
+  end
+
   globals.TABPAGES[tabpage] = vim.tbl_extend("force", globals.TABPAGES[tabpage] or tabinitial, { winnr = winnr })
 end
 
@@ -221,7 +234,7 @@ function View:open_window()
     vim.api.nvim_command("vsp")
     self:reposition_window()
   end
-  self:setup_tabpage(vim.api.nvim_get_current_tabpage())
+  self:setup_tabpage(vim.api.nvim_get_current_tabpage(), "View:open_window")
   self:set_window_options_and_buffer()
 end
 
@@ -448,7 +461,7 @@ function View:open_in_win(opts)
     vim.api.nvim_set_current_win(opts.winid)
   end
   self:create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
-  self:setup_tabpage(vim.api.nvim_get_current_tabpage())
+  self:setup_tabpage(vim.api.nvim_get_current_tabpage(),                         "View:open_in_win")
   self:set_current_win()
   self:set_window_options_and_buffer()
   if opts.resize then
