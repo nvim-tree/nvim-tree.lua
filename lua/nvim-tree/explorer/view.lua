@@ -175,15 +175,12 @@ local move_tbl = {
 function View:setup_tabpage(tabpage, callsite)
   local winnr = vim.api.nvim_get_current_win()
 
-  local msg = nil
   if self.explorer.opts.experimental.multi_instance_debug then
-    msg = string.format( "View:setup_tabpage(%3s, %-20.20s) w%d", tabpage, callsite, winnr)
-    if globals.TABPAGES[tabpage] then
-      msg = string.format("%s %s", msg, vim.inspect(globals.TABPAGES[tabpage], { newline = "" }))
-    else
-      msg = string.format("%s tabinitial", msg)
-    end
-    log.line("dev", "%s", msg)
+    log.line("dev", "View:setup_tabpage(%3s, %-20.20s) w%d %s",
+      tabpage,
+      callsite,
+      winnr,
+      globals.TABPAGES[tabpage] and vim.inspect(globals.TABPAGES[tabpage], { newline = "" }) or "tabinitial")
   end
 
   globals.TABPAGES[tabpage] = vim.tbl_extend("force", globals.TABPAGES[tabpage] or tabinitial, { winnr = winnr })
@@ -447,9 +444,21 @@ function View:reposition_window()
 end
 
 ---@private
-function View:set_current_win()
+function View:set_current_win(callsite)
   local current_tab = vim.api.nvim_get_current_tabpage()
-  globals.TABPAGES[current_tab].winnr = vim.api.nvim_get_current_win()
+  local current_win = vim.api.nvim_get_current_win()
+
+  if self.explorer.opts.experimental.multi_instance_debug then
+    log.line("dev", "View:set_current_win(%-20.20s) t%d w%3d->w%3d %s",
+      callsite,
+      current_tab,
+      globals.TABPAGES[current_tab].winnr,
+      current_win,
+      (globals.TABPAGES[current_tab].winnr == current_win) and "" or "UPDATED"
+    )
+  end
+
+  globals.TABPAGES[current_tab].winnr = current_win
 end
 
 ---Open the tree in the a window
@@ -462,7 +471,7 @@ function View:open_in_win(opts)
   end
   self:create_buffer(opts.hijack_current_buf and vim.api.nvim_get_current_buf())
   self:setup_tabpage(vim.api.nvim_get_current_tabpage(),                         "View:open_in_win")
-  self:set_current_win()
+  self:set_current_win("View:open_in_win")
   self:set_window_options_and_buffer()
   if opts.resize then
     self:reposition_window()
@@ -600,7 +609,7 @@ function View:get_bufnr()
 end
 
 function View:prevent_buffer_override()
-  local view_winnr = self:get_winnr(nil, "View:get_bufnr")
+  local view_winnr = self:get_winnr(nil, "View:prevent_buffer_override")
   local view_bufnr = self:get_bufnr()
 
   -- need to schedule to let the new buffer populate the window
@@ -615,6 +624,10 @@ function View:prevent_buffer_override()
     if not bufname:match("NvimTree") then
       for i, tabpage in ipairs(globals.TABPAGES) do
         if tabpage.winnr == view_winnr then
+          if self.explorer.opts.experimental.multi_instance_debug then
+            log.line("dev", "View:prevent_buffer_override() t%d w%d clearing", i, view_winnr)
+          end
+
           globals.TABPAGES[i] = nil
           break
         end
