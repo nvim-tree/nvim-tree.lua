@@ -600,13 +600,13 @@ end
 ---Log a lifecycle message with uid_explorer and absolute_path
 ---@param msg string?
 function Explorer:log_new(msg)
-  log.line("lifecycle", "+ %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
+  log.line("dev", "+ %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
 end
 
 ---Log a lifecycle message with uid_explorer and absolute_path
 ---@param msg string?
 function Explorer:log_destroy(msg)
-  log.line("lifecycle", "- %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
+  log.line("dev", "- %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
 end
 
 function Explorer:setup(opts)

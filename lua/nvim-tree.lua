@@ -485,6 +485,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
+    multi_instance_debug = false,
   },
   log = {
     enable = false,
@@ -496,7 +497,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       dev = false,
       diagnostics = false,
       git = false,
-      lifecycle = false,
       profile = false,
       watcher = false,
     },
@@ -726,6 +726,7 @@ function M.setup(conf)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
+  require("nvim-tree.multi-instance-debug").setup(opts)
 
   setup_autocommands(opts)
 
