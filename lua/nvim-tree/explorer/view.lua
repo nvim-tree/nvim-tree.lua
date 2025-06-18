@@ -31,6 +31,7 @@ local DEFAULT_PADDING = 1
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
 ---@field private padding integer
+---@field private bufnr_by_tab table<integer, integer> for diagnostics during multi instance
 local View = Class:extend()
 
 ---@class View
@@ -53,6 +54,7 @@ function View:new(args)
   self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
   self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter                 = { prev_focused_node = nil, }
+  self.bufnr_by_tab                = {}
 
   self.winopts                     = {
     relativenumber = self.explorer.opts.view.relativenumber,
@@ -127,16 +129,17 @@ function View:create_buffer(bufnr)
 
   local tab = vim.api.nvim_get_current_tabpage()
   globals.BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
-  vim.api.nvim_buf_set_name(self:get_bufnr(), "NvimTree_" .. tab)
+  self.bufnr_by_tab[tab] = globals.BUFNR_PER_TAB[tab]
+  vim.api.nvim_buf_set_name(self:get_bufnr("View:create_buffer1"), "NvimTree_" .. tab)
 
-  bufnr = self:get_bufnr()
+  bufnr = self:get_bufnr("View:create_buffer2")
   for _, option in ipairs(BUFFER_OPTIONS) do
     vim.api.nvim_set_option_value(option.name, option.value, { buf = bufnr })
   end
 
-  require("nvim-tree.keymap").on_attach(self:get_bufnr())
+  require("nvim-tree.keymap").on_attach(self:get_bufnr("View:create_buffer3"))
 
-  events._dispatch_tree_attached_post(self:get_bufnr())
+  events._dispatch_tree_attached_post(self:get_bufnr("View:create_buffer4"))
 end
 
 ---@private
@@ -171,7 +174,7 @@ local move_tbl = {
 -- setup_tabpage sets up the initial state of a tab
 ---@private
 ---@param tabpage integer
----@param callsite string?
+---@param callsite string
 function View:setup_tabpage(tabpage, callsite)
   local winnr = vim.api.nvim_get_current_win()
 
@@ -188,7 +191,7 @@ end
 
 ---@private
 function View:set_window_options_and_buffer()
-  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr())
+  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr("View:set_window_options_and_buffer"))
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
@@ -348,7 +351,7 @@ end
 ---@private
 function View:grow()
   local starts_at = self:is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
-  local lines = vim.api.nvim_buf_get_lines(self:get_bufnr(), starts_at, -1, false)
+  local lines = vim.api.nvim_buf_get_lines(self:get_bufnr("View:grow1"), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = self:get_size(self.padding)
 
@@ -372,7 +375,7 @@ function View:grow()
   for line_nr, l in pairs(lines) do
     local count = vim.fn.strchars(l)
     -- also add space for right-aligned icons
-    local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
+    local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr("View:grow2"), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
     count = count + utils.extmarks_length(extmarks)
     if resizing_width < count then
       resizing_width = count
@@ -449,7 +452,7 @@ function View:set_current_win(callsite)
   local current_win = vim.api.nvim_get_current_win()
 
   if self.explorer.opts.experimental.multi_instance_debug then
-    log.line("dev", "View:set_current_win(%-20.20s) t%d w%3d->w%3d %s",
+    log.line("dev", "View:set_current_win(%-20.20s) t%d w%3s->w%3s %s",
       callsite,
       current_tab,
       globals.TABPAGES[current_tab].winnr,
@@ -483,6 +486,7 @@ end
 function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
   globals.BUFNR_PER_TAB[tab] = nil
+  self.bufnr_by_tab[tab] = nil
   if globals.TABPAGES[tab] then
     globals.TABPAGES[tab].winnr = nil
   end
@@ -491,6 +495,7 @@ end
 function View:abandon_all_windows()
   for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
     globals.BUFNR_PER_TAB[tab] = nil
+    self.bufnr_by_tab[tab] = nil
     if globals.TABPAGES[tab] then
       globals.TABPAGES[tab].winnr = nil
     end
@@ -568,7 +573,7 @@ end
 
 --- Returns the window number for nvim-tree within the tabpage specified
 ---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@param callsite string? for logging purposes
+---@param callsite string for logging purposes
 ---@return number|nil
 function View:get_winnr(tabpage, callsite)
   if self.explorer.opts.experimental.multi_instance_debug then
@@ -603,14 +608,24 @@ function View:get_winnr(tabpage, callsite)
 end
 
 --- Returns the current nvim tree bufnr
+---@param callsite string
 ---@return number
-function View:get_bufnr()
-  return globals.BUFNR_PER_TAB[vim.api.nvim_get_current_tabpage()]
+function View:get_bufnr(callsite)
+  local tab = vim.api.nvim_get_current_tabpage()
+  if self.explorer.opts.experimental.multi_instance_debug then
+    log.line("dev", "View:get_bufnr(%-20.20s) t%d global b%s member b%s %s",
+      callsite,
+      tab,
+      globals.BUFNR_PER_TAB[tab],
+      self.bufnr_by_tab[tab],
+      (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
+  end
+  return globals.BUFNR_PER_TAB[tab]
 end
 
 function View:prevent_buffer_override()
   local view_winnr = self:get_winnr(nil, "View:prevent_buffer_override")
-  local view_bufnr = self:get_bufnr()
+  local view_bufnr = self:get_bufnr("View:prevent_buffer_override")
 
   -- need to schedule to let the new buffer populate the window
   -- because this event needs to be run on bufWipeout.

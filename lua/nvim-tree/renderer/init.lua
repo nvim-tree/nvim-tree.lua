@@ -101,7 +101,7 @@ function Renderer:render_hl(bufnr, hl_range_args)
 end
 
 function Renderer:draw()
-  local bufnr = self.explorer.view:get_bufnr()
+  local bufnr = self.explorer.view:get_bufnr("Renderer:draw")
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end

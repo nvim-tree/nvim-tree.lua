@@ -185,7 +185,7 @@ function M.update_coc()
 
     local bufnr
     if explorer then
-      bufnr = explorer.view:get_bufnr()
+      bufnr = explorer.view:get_bufnr("diagnostics.update_coc")
     end
 
     local should_draw = bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
