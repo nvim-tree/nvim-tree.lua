@@ -83,7 +83,7 @@ function Explorer:destroy()
   self.marks:destroy()
   self.renderer:destroy()
   self.sorters:destroy()
-  self.window:destroy()
+  self.view:destroy()
 
   vim.api.nvim_del_augroup_by_id(self.augroup_id)
 
