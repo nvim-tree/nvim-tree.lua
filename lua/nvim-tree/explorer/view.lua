@@ -261,7 +261,7 @@ end
 ---@param tabnr integer
 function View:save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
-  globals.CURSORS[tabpage] = vim.api.nvim_win_get_cursor(self:get_winnr(tabpage) or 0)
+  globals.CURSORS[tabpage] = vim.api.nvim_win_get_cursor(self:get_winnr(tabpage, "View:save_tab_state") or 0)
 end
 
 ---@private
@@ -272,7 +272,7 @@ function View:close_internal(tabpage)
   end
   self:save_tab_state(tabpage)
   switch_buf_if_last_buf()
-  local tree_win = self:get_winnr(tabpage)
+  local tree_win = self:get_winnr(tabpage, "View:close_internal")
   local current_win = vim.api.nvim_get_current_win()
   for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
     if vim.api.nvim_win_get_config(win).relative == "" then
@@ -343,7 +343,7 @@ function View:grow()
   local padding = self:get_size(self.padding)
 
   -- account for sign/number columns etc.
-  local wininfo = vim.fn.getwininfo(self:get_winnr())
+  local wininfo = vim.fn.getwininfo(self:get_winnr(nil, "View:grow"))
   if type(wininfo) == "table" and type(wininfo[1]) == "table" then
     padding = padding + wininfo[1].textoff
   end
@@ -412,7 +412,7 @@ function View:resize(size)
     return
   end
 
-  local winnr = self:get_winnr() or 0
+  local winnr = self:get_winnr(nil, "View:resize") or 0
 
   local new_size = self:get_width()
 
@@ -495,25 +495,25 @@ function View:is_visible(opts)
     return false
   end
 
-  return self:get_winnr() ~= nil and vim.api.nvim_win_is_valid(self:get_winnr() or 0)
+  return self:get_winnr(nil, "View:is_visible1") ~= nil and vim.api.nvim_win_is_valid(self:get_winnr(nil, "View:is_visible2") or 0)
 end
 
 ---@param opts table|nil
 function View:set_cursor(opts)
   if self:is_visible() then
-    pcall(vim.api.nvim_win_set_cursor, self:get_winnr(), opts)
+    pcall(vim.api.nvim_win_set_cursor, self:get_winnr(nil, "View:set_cursor"), opts)
   end
 end
 
 ---@param winnr number|nil
 ---@param open_if_closed boolean|nil
 function View:focus(winnr, open_if_closed)
-  local wnr = winnr or self:get_winnr()
+  local wnr = winnr or self:get_winnr(nil, "View:focus1")
 
   if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
     self:close()
     self:open()
-    wnr = self:get_winnr()
+    wnr = self:get_winnr(nil, "View:focus2")
   elseif open_if_closed and not self:is_visible() then
     self:open()
   end
@@ -532,7 +532,7 @@ function View:winid(opts)
     tabpage = vim.api.nvim_get_current_tabpage()
   end
   if self:is_visible({ tabpage = tabpage }) then
-    return self:get_winnr(tabpage)
+    return self:get_winnr(tabpage, "View:winid")
   else
     return nil
   end
@@ -546,12 +546,37 @@ end
 
 --- Returns the window number for nvim-tree within the tabpage specified
 ---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@param callsite string? for logging purposes
 ---@return number|nil
-function View:get_winnr(tabpage)
-  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-  local tabinfo = globals.TABPAGES[tabpage]
-  if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
-    return tabinfo.winnr
+function View:get_winnr(tabpage, callsite)
+  if self.explorer.opts.experimental.multi_instance_debug then
+    local msg = string.format("View:get_winnr(%3s, %-20.20s)", tabpage, callsite)
+
+    tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+    local tabinfo = globals.TABPAGES[tabpage]
+
+    local ret = nil
+
+    if not tabinfo then
+      msg = string.format("%s t%d no tabinfo", msg, tabpage)
+    elseif not tabinfo.winnr then
+      msg = string.format("%s t%d no tabinfo.winnr", msg, tabpage)
+    elseif not vim.api.nvim_win_is_valid(tabinfo.winnr) then
+      msg = string.format("%s t%d invalid tabinfo.winnr %d", msg, tabpage, tabinfo.winnr)
+    else
+      msg = string.format("%s t%d w%d", msg, tabpage, tabinfo.winnr)
+      ret = tabinfo.winnr
+    end
+
+    log.line("dev", "%s", msg)
+
+    return ret
+  else
+    tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+    local tabinfo = globals.TABPAGES[tabpage]
+    if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
+      return tabinfo.winnr
+    end
   end
 end
 
@@ -562,7 +587,7 @@ function View:get_bufnr()
 end
 
 function View:prevent_buffer_override()
-  local view_winnr = self:get_winnr()
+  local view_winnr = self:get_winnr(nil, "View:get_bufnr")
   local view_bufnr = self:get_bufnr()
 
   -- need to schedule to let the new buffer populate the window
@@ -617,9 +642,9 @@ end
 
 -- used on ColorScheme event
 function View:reset_winhl()
-  local winnr = self:get_winnr()
+  local winnr = self:get_winnr(nil, "View:reset_winhl1")
   if winnr and vim.api.nvim_win_is_valid(winnr) then
-    vim.wo[self:get_winnr()].winhl = appearance.WIN_HL
+    vim.wo[self:get_winnr(nil, "View:reset_winhl2")].winhl = appearance.WIN_HL
   end
 end
 

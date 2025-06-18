@@ -548,7 +548,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.view:get_winnr()
+  local winnr = self.view:get_winnr(nil, "Explorer:get_cursor_position")
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end
