@@ -594,7 +594,7 @@ end
 --- Retrieve the winid of the open tree.
 ---@param opts ApiTreeWinIdOpts|nil
 ---@return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
-function View:winid(opts)
+function View:api_winid(opts)
   local tabpage = opts and opts.tabpage
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
@@ -610,6 +610,28 @@ end
 function View:restore_tab_state()
   local tabpage = vim.api.nvim_get_current_tabpage()
   self:set_cursor(globals.CURSORS[tabpage])
+end
+
+--- winid containing the buffer
+---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
+---@param callsite string
+---@return integer? winid
+function View:winid(tabpage, callsite)
+  local winid = nil
+  local bufnr = self.bufnr_by_tab[tabpage]
+
+  local msg = string.format("View:winid(%3s, %-20.20s)", tabpage, callsite)
+
+  if bufnr then
+    for _, w in pairs(vim.api.nvim_tabpage_list_wins(tabpage or 0)) do
+      if vim.api.nvim_win_get_buf(w) == bufnr then
+        log.line("dev", "%s b%d : w%s", msg, bufnr, winid)
+        return w
+      end
+    end
+  else
+    msg = string.format("%s no bufnr", msg)
+  end
 end
 
 --- Returns the window number for nvim-tree within the tabpage specified
@@ -636,21 +658,14 @@ function View:get_winnr(tabpage, callsite)
       ret = tabinfo.winnr
     end
 
-    local winid_from_bufnr
-    if self.bufnr_by_tab[tabpage] then
-      for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
-        if vim.api.nvim_win_get_buf(winid) == self.bufnr_by_tab[tabpage] then
-          winid_from_bufnr = winid
-        end
-      end
-    end
-
-    if ret ~= winid_from_bufnr then
+    local winid = self:winid(tabpage, "View:get_winnr")
+    if ret ~= winid then
       if ret then
-        msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid_from_bufnr)
+        msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid)
       else
-        msg = string.format("%s winid_from_bufnr w%s STALE", msg, winid_from_bufnr)
+        msg = string.format("%s winid_from_bufnr w%s STALE", msg, winid)
       end
+      notify.error(string.format("View:get_winnr w%s View:winnr w%s MISMATCH", ret, winid))
     end
 
     log.line("dev", "%s", msg)
@@ -677,6 +692,13 @@ function View:get_bufnr(callsite)
       globals.BUFNR_PER_TAB[tab],
       self.bufnr_by_tab[tab],
       (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
+
+    if globals.BUFNR_PER_TAB[tab] ~= self.bufnr_by_tab[tab] then
+      notify.error(string.format("View:get_bufnr globals.BUFNR_PER_TAB[%s] b%s view.bufnr_by_tab[%s] b%s MISMATCH",
+        tab, globals.BUFNR_PER_TAB[tab],
+        tab, self.bufnr_by_tab[tab]
+      ))
+    end
   end
   return globals.BUFNR_PER_TAB[tab]
 end

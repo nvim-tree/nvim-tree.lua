@@ -206,7 +206,7 @@ Api.tree.is_visible = wrap_explorer_member("view", "is_visible")
 ---@class ApiTreeWinIdOpts
 ---@field tabpage number|nil default nil
 
-Api.tree.winid = wrap_explorer_member("view", "winid")
+Api.tree.winid = wrap_explorer_member("view", "api_winid")
 
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
 Api.fs.remove = wrap_node(actions.fs.remove_file.fn)
