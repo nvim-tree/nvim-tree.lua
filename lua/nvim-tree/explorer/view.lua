@@ -638,44 +638,45 @@ end
 ---@param callsite string
 ---@return number|nil
 function View:get_winnr(tabpage, callsite)
+  local tabid = tabpage or vim.api.nvim_get_current_tabpage()
+  local tabinfo = globals.TABPAGES[tabid]
+  local tabinfo_winid = nil
+
   if self.explorer.opts.experimental.multi_instance then
-    local msg = string.format("View:get_winnr(%3s, %-20.20s)", tabpage, callsite)
-
-    tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-    local tabinfo = globals.TABPAGES[tabpage]
-
-    local ret = nil
-
+    local msg_fault = ""
     if not tabinfo then
-      msg = string.format("%s t%d no tabinfo", msg, tabpage)
+      msg_fault = "no tabinfo"
     elseif not tabinfo.winnr then
-      msg = string.format("%s t%d no tabinfo.winnr", msg, tabpage)
+      msg_fault = "no tabinfo.winnr"
     elseif not vim.api.nvim_win_is_valid(tabinfo.winnr) then
-      msg = string.format("%s t%d invalid tabinfo.winnr %d", msg, tabpage, tabinfo.winnr)
+      msg_fault = string.format("invalid tabinfo.winnr %d", tabinfo.winnr)
     else
-      msg = string.format("%s t%d w%d", msg, tabpage, tabinfo.winnr)
-      ret = tabinfo.winnr
+      tabinfo_winid = tabinfo.winnr
     end
 
-    local winid = self:winid(tabpage, "View:get_winnr")
-    if ret ~= winid then
-      if ret then
-        msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid)
-      else
-        msg = string.format("%s winid_from_bufnr w%s STALE", msg, winid)
-      end
-      notify.error(string.format("View:get_winnr w%s View:winnr w%s MISMATCH", ret, winid))
+    local winid = self:winid(tabid, "View:get_winnr")
+
+    if winid ~= tabinfo_winid then
+      msg_fault = "MISMATCH"
     end
+
+    local msg = string.format("View:get_winnr(%3s, %-20.20s) globals.TABPAGES[%s].winnr=w%s view.winid(%s)=w%s %s",
+      tabpage,
+      callsite,
+      tabid, tabinfo_winid,
+      tabid, winid,
+      msg_fault
+    )
 
     log.line("dev", "%s", msg)
 
-    return ret
-  else
-    tabpage = tabpage or vim.api.nvim_get_current_tabpage()
-    local tabinfo = globals.TABPAGES[tabpage]
-    if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
-      return tabinfo.winnr
+    if winid ~= tabinfo_winid then
+      notify.error(msg)
     end
+  end
+
+  if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
+    return tabinfo.winnr
   end
 end
 
@@ -685,19 +686,18 @@ end
 function View:get_bufnr(callsite)
   local tab = vim.api.nvim_get_current_tabpage()
   if self.explorer.opts.experimental.multi_instance then
-    log.line("dev", "View:get_bufnr(%-20.20s) t%d global b%s member b%s %s",
+    local msg = string.format("View:get_bufnr(%-20.20s) globals.BUFNR_PER_TAB[%s]=b%s view.bufnr_by_tab[%s]=b%s MISMATCH",
       callsite,
-      tab,
-      globals.BUFNR_PER_TAB[tab],
-      self.bufnr_by_tab[tab],
-      (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
+      tab, globals.BUFNR_PER_TAB[tab],
+      tab, self.bufnr_by_tab[tab],
+      (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH"
+    )
 
     if globals.BUFNR_PER_TAB[tab] ~= self.bufnr_by_tab[tab] then
-      notify.error(string.format("View:get_bufnr globals.BUFNR_PER_TAB[%s] b%s view.bufnr_by_tab[%s] b%s MISMATCH",
-        tab, globals.BUFNR_PER_TAB[tab],
-        tab, self.bufnr_by_tab[tab]
-      ))
+      notify.error(msg)
     end
+
+    log.line("dev", msg)
   end
   return globals.BUFNR_PER_TAB[tab]
 end
