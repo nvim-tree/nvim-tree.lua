@@ -88,7 +88,7 @@ local tabinitial = {
   -- The position of the cursor { line, column }
   cursor = { 0, 0 },
   -- The NvimTree window number
-  winnr = nil,
+  winid = nil,
 }
 
 ---@type { name: string, value: any }[]
@@ -134,16 +134,17 @@ function View:create_buffer(bufnr)
     self.bufnr_by_tab[tab] = globals.BUFNR_PER_TAB[tab]
   end
 
-  vim.api.nvim_buf_set_name(self:get_bufnr("View:create_buffer1"), "NvimTree_" .. tab)
+  bufnr = self:get_bufnr("View:create_buffer")
 
-  bufnr = self:get_bufnr("View:create_buffer2")
+  vim.api.nvim_buf_set_name(bufnr, "NvimTree_" .. tab)
+
   for _, option in ipairs(BUFFER_OPTIONS) do
     vim.api.nvim_set_option_value(option.name, option.value, { buf = bufnr })
   end
 
-  require("nvim-tree.keymap").on_attach(self:get_bufnr("View:create_buffer3"))
+  require("nvim-tree.keymap").on_attach(bufnr)
 
-  events._dispatch_tree_attached_post(self:get_bufnr("View:create_buffer4"))
+  events._dispatch_tree_attached_post(bufnr)
 end
 
 ---@private
@@ -180,17 +181,17 @@ local move_tbl = {
 ---@param tabpage integer
 ---@param callsite string
 function View:setup_tabpage(tabpage, callsite)
-  local winnr = vim.api.nvim_get_current_win()
+  local winid = vim.api.nvim_get_current_win()
 
   if self.explorer.opts.experimental.multi_instance then
     log.line("dev", "View:setup_tabpage(%3s, %-20.20s) w%d %s",
       tabpage,
       callsite,
-      winnr,
+      winid,
       globals.TABPAGES[tabpage] and vim.inspect(globals.TABPAGES[tabpage], { newline = "" }) or "tabinitial")
   end
 
-  globals.TABPAGES[tabpage] = vim.tbl_extend("force", globals.TABPAGES[tabpage] or tabinitial, { winnr = winnr })
+  globals.TABPAGES[tabpage] = vim.tbl_extend("force", globals.TABPAGES[tabpage] or tabinitial, { winid = winid })
 end
 
 ---@private
@@ -278,7 +279,7 @@ end
 ---@param tabnr integer
 function View:save_tab_state(tabnr)
   local tabpage = tabnr or vim.api.nvim_get_current_tabpage()
-  globals.CURSORS[tabpage] = vim.api.nvim_win_get_cursor(self:get_winnr(tabpage, "View:save_tab_state") or 0)
+  globals.CURSORS[tabpage] = vim.api.nvim_win_get_cursor(self:get_winid(tabpage, "View:save_tab_state") or 0)
 end
 
 ---@private
@@ -292,7 +293,7 @@ function View:close_internal(tabpage)
   end
   self:save_tab_state(tabpage)
   switch_buf_if_last_buf()
-  local tree_win = self:get_winnr(tabpage, "View:close_internal")
+  local tree_win = self:get_winid(tabpage, "View:close_internal")
   local current_win = vim.api.nvim_get_current_win()
   for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
     if vim.api.nvim_win_get_config(win).relative == "" then
@@ -371,7 +372,7 @@ function View:grow()
   local padding = self:get_size(self.padding)
 
   -- account for sign/number columns etc.
-  local wininfo = vim.fn.getwininfo(self:get_winnr(nil, "View:grow"))
+  local wininfo = vim.fn.getwininfo(self:get_winid(nil, "View:grow"))
   if type(wininfo) == "table" and type(wininfo[1]) == "table" then
     padding = padding + wininfo[1].textoff
   end
@@ -440,12 +441,12 @@ function View:resize(size)
     return
   end
 
-  local winnr = self:get_winnr(nil, "View:resize") or 0
+  local winid = self:get_winid(nil, "View:resize") or 0
 
   local new_size = self:get_width()
 
-  if new_size ~= vim.api.nvim_win_get_width(winnr) then
-    vim.api.nvim_win_set_width(winnr, new_size)
+  if new_size ~= vim.api.nvim_win_get_width(winid) then
+    vim.api.nvim_win_set_width(winid, new_size)
     if not self.preserve_window_proportions then
       vim.cmd(":wincmd =")
     end
@@ -471,13 +472,13 @@ function View:set_current_win(callsite)
     log.line("dev", "View:set_current_win(%-20.20s) t%d w%3s->w%3s %s",
       callsite,
       current_tab,
-      globals.TABPAGES[current_tab].winnr,
+      globals.TABPAGES[current_tab].winid,
       current_win,
-      (globals.TABPAGES[current_tab].winnr == current_win) and "" or "MISMATCH"
+      (globals.TABPAGES[current_tab].winid == current_win) and "" or "MISMATCH"
     )
   end
 
-  globals.TABPAGES[current_tab].winnr = current_win
+  globals.TABPAGES[current_tab].winid = current_win
 end
 
 ---Open the tree in the a window
@@ -505,7 +506,7 @@ function View:abandon_current_window()
   if self.explorer.opts.experimental.multi_instance then
     log.line("dev", "View:abandon_current_window() t%d w%s b%s member b%s %s",
       tab,
-      globals.TABPAGES[tab] and globals.TABPAGES[tab].winnr or nil,
+      globals.TABPAGES[tab] and globals.TABPAGES[tab].winid or nil,
       globals.BUFNR_PER_TAB[tab],
       self.bufnr_by_tab[tab],
       (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
@@ -517,7 +518,7 @@ function View:abandon_current_window()
 
   globals.BUFNR_PER_TAB[tab] = nil
   if globals.TABPAGES[tab] then
-    globals.TABPAGES[tab].winnr = nil
+    globals.TABPAGES[tab].winid = nil
   end
 end
 
@@ -528,7 +529,7 @@ function View:abandon_all_windows(callsite)
       log.line("dev", "View:abandon_all_windows(%-20.20s) t%d w%s b%s member b%s %s",
         callsite,
         tab,
-        globals.TABPAGES and globals.TABPAGES.winnr or nil,
+        globals.TABPAGES and globals.TABPAGES.winid or nil,
         globals.BUFNR_PER_TAB[tab],
         self.bufnr_by_tab[tab],
         (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
@@ -538,7 +539,7 @@ function View:abandon_all_windows(callsite)
 
     globals.BUFNR_PER_TAB[tab] = nil
     if globals.TABPAGES[tab] then
-      globals.TABPAGES[tab].winnr = nil
+      globals.TABPAGES[tab].winid = nil
     end
   end
 end
@@ -550,38 +551,39 @@ function View:is_visible(opts)
     if globals.TABPAGES[opts.tabpage] == nil then
       return false
     end
-    local winnr = globals.TABPAGES[opts.tabpage].winnr
-    return winnr and vim.api.nvim_win_is_valid(winnr)
+    local winid = globals.TABPAGES[opts.tabpage].winid
+    return winid and vim.api.nvim_win_is_valid(winid)
   end
 
   if opts and opts.any_tabpage then
     for _, v in pairs(globals.TABPAGES) do
-      if v.winnr and vim.api.nvim_win_is_valid(v.winnr) then
+      if v.winid and vim.api.nvim_win_is_valid(v.winid) then
         return true
       end
     end
     return false
   end
 
-  return self:get_winnr(nil, "View:is_visible1") ~= nil and vim.api.nvim_win_is_valid(self:get_winnr(nil, "View:is_visible2") or 0)
+  local winid = self:get_winid(nil, "View:is_visible")
+  return winid ~= nil and vim.api.nvim_win_is_valid(winid or 0)
 end
 
 ---@param opts table|nil
 function View:set_cursor(opts)
   if self:is_visible() then
-    pcall(vim.api.nvim_win_set_cursor, self:get_winnr(nil, "View:set_cursor"), opts)
+    pcall(vim.api.nvim_win_set_cursor, self:get_winid(nil, "View:set_cursor"), opts)
   end
 end
 
----@param winnr number|nil
+---@param winid number|nil
 ---@param open_if_closed boolean|nil
-function View:focus(winnr, open_if_closed)
-  local wnr = winnr or self:get_winnr(nil, "View:focus1")
+function View:focus(winid, open_if_closed)
+  local wnr = winid or self:get_winid(nil, "View:focus1")
 
   if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
     self:close(nil, "View:focus")
     self:open()
-    wnr = self:get_winnr(nil, "View:focus2")
+    wnr = self:get_winid(nil, "View:focus2")
   elseif open_if_closed and not self:is_visible() then
     self:open()
   end
@@ -593,14 +595,14 @@ end
 
 --- Retrieve the winid of the open tree.
 ---@param opts ApiTreeWinIdOpts|nil
----@return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
+---@return number|nil winid unlike get_winid(), this returns nil if the nvim-tree window is not visible
 function View:api_winid(opts)
   local tabpage = opts and opts.tabpage
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
   end
   if self:is_visible({ tabpage = tabpage }) then
-    return self:get_winnr(tabpage, "View:winid")
+    return self:get_winid(tabpage, "View:winid")
   else
     return nil
   end
@@ -637,7 +639,7 @@ end
 ---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@param callsite string
 ---@return number|nil
-function View:get_winnr(tabpage, callsite)
+function View:get_winid(tabpage, callsite)
   local tabid = tabpage or vim.api.nvim_get_current_tabpage()
   local tabinfo = globals.TABPAGES[tabid]
   local tabinfo_winid = nil
@@ -646,21 +648,21 @@ function View:get_winnr(tabpage, callsite)
     local msg_fault = ""
     if not tabinfo then
       msg_fault = "no tabinfo"
-    elseif not tabinfo.winnr then
-      msg_fault = "no tabinfo.winnr"
-    elseif not vim.api.nvim_win_is_valid(tabinfo.winnr) then
-      msg_fault = string.format("invalid tabinfo.winnr %d", tabinfo.winnr)
+    elseif not tabinfo.winid then
+      msg_fault = "no tabinfo.winid"
+    elseif not vim.api.nvim_win_is_valid(tabinfo.winid) then
+      msg_fault = string.format("invalid tabinfo.winid %d", tabinfo.winid)
     else
-      tabinfo_winid = tabinfo.winnr
+      tabinfo_winid = tabinfo.winid
     end
 
-    local winid = self:winid(tabid, "View:get_winnr")
+    local winid = self:winid(tabid, "View:get_winid")
 
     if winid ~= tabinfo_winid then
       msg_fault = "MISMATCH"
     end
 
-    local msg = string.format("View:get_winnr(%3s, %-20.20s) globals.TABPAGES[%s].winnr=w%s view.winid(%s)=w%s %s",
+    local msg = string.format("View:get_winid(%3s, %-20.20s) globals.TABPAGES[%s].winid=w%s view.winid(%s)=w%s %s",
       tabpage,
       callsite,
       tabid, tabinfo_winid,
@@ -675,8 +677,9 @@ function View:get_winnr(tabpage, callsite)
     end
   end
 
-  if tabinfo and tabinfo.winnr and vim.api.nvim_win_is_valid(tabinfo.winnr) then
-    return tabinfo.winnr
+  -- legacy codepath
+  if tabinfo and tabinfo.winid and vim.api.nvim_win_is_valid(tabinfo.winid) then
+    return tabinfo.winid
   end
 end
 
@@ -703,7 +706,7 @@ function View:get_bufnr(callsite)
 end
 
 function View:prevent_buffer_override()
-  local view_winnr = self:get_winnr(nil, "View:prevent_buffer_override")
+  local view_winid = self:get_winid(nil, "View:prevent_buffer_override")
   local view_bufnr = self:get_bufnr("View:prevent_buffer_override")
 
   -- need to schedule to let the new buffer populate the window
@@ -717,9 +720,9 @@ function View:prevent_buffer_override()
 
     if not bufname:match("NvimTree") then
       for i, tabpage in ipairs(globals.TABPAGES) do
-        if tabpage.winnr == view_winnr then
+        if tabpage.winid == view_winid then
           if self.explorer.opts.experimental.multi_instance then
-            log.line("dev", "View:prevent_buffer_override() t%d w%d clearing", i, view_winnr)
+            log.line("dev", "View:prevent_buffer_override() t%d w%d clearing", i, view_winid)
           end
 
           globals.TABPAGES[i] = nil
@@ -727,7 +730,7 @@ function View:prevent_buffer_override()
         end
       end
     end
-    if curwin ~= view_winnr or bufname == "" or curbuf == view_bufnr then
+    if curwin ~= view_winid or bufname == "" or curbuf == view_bufnr then
       return
     end
 
@@ -762,9 +765,9 @@ end
 
 -- used on ColorScheme event
 function View:reset_winhl()
-  local winnr = self:get_winnr(nil, "View:reset_winhl1")
-  if winnr and vim.api.nvim_win_is_valid(winnr) then
-    vim.wo[self:get_winnr(nil, "View:reset_winhl2")].winhl = appearance.WIN_HL
+  local winid = self:get_winid(nil, "View:reset_winhl1")
+  if winid and vim.api.nvim_win_is_valid(winid) then
+    vim.wo[winid].winhl = appearance.WIN_HL
   end
 end
 
