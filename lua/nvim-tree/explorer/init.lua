@@ -105,7 +105,10 @@ function Explorer:create_autocmds()
     vim.api.nvim_create_autocmd("WinLeave", {
       group = self.augroup_id,
       pattern = "NvimTree_*",
-      callback = function()
+      callback = function(data)
+        if self.opts.experimental.multi_instance then
+          log.line("dev", "WinLeave %s", vim.inspect(data, { newline = "" }))
+        end
         if utils.is_nvim_tree_buf(0) then
           self.view:close(nil, "WinLeave")
         end
@@ -169,14 +172,17 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = self.augroup_id,
     pattern = "NvimTree_*",
-    callback = function()
+    callback = function(data)
+      if self.opts.experimental.multi_instance then
+        log.line("dev", "BufWipeout %s", vim.inspect(data, { newline = "" }))
+      end
       if not utils.is_nvim_tree_buf(0) then
         return
       end
       if self.opts.actions.open_file.eject then
         self.view:prevent_buffer_override()
       else
-        self.view:abandon_current_window("BufWipeout")
+        self.view:abandon_current_window()
       end
     end,
   })
