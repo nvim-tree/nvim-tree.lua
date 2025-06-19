@@ -133,10 +133,12 @@ function View:create_buffer(bufnr)
   if self.explorer.opts.experimental.multi_instance then
     local tabid = tab
     self.bufnr_by_tab[tabid] = globals.BUFNR_PER_TAB[tabid]
+
     log.line("dev", "buffer channel attaching t%d b%d", tabid, self.bufnr_by_tab[tabid])
-    vim.api.nvim_buf_attach(self.bufnr_by_tab[tabid], true, {
+    vim.api.nvim_buf_attach(self.bufnr_by_tab[tabid], false, {
       on_detach = function(op, bnr)
         log.line("dev", "buffer channel %s t%d b%d", op, tabid, bnr)
+        self.bufnr_by_tab[tabid] = nil
       end,
     })
   end
@@ -291,6 +293,9 @@ end
 ---@private
 ---@param tabpage integer
 function View:close_internal(tabpage)
+  if self.explorer.opts.experimental.multi_instance then
+    log.line("dev", "View:close_internal(t%s)", tabpage)
+  end
   if not self:is_visible({ tabpage = tabpage }) then
     return
   end
@@ -305,6 +310,9 @@ function View:close_internal(tabpage)
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
       if vim.api.nvim_win_is_valid(tree_win or 0) then
+        if self.explorer.opts.experimental.multi_instance then
+          log.line("dev", "View:close_internal(t%s) w%s", tabpage, tree_win)
+        end
         local success, error = pcall(vim.api.nvim_win_close, tree_win or 0, true)
         if not success then
           notify.debug("Failed to close window: " .. error)
@@ -327,7 +335,12 @@ function View:close_all_tabs()
 end
 
 ---@param tabpage integer|nil
-function View:close(tabpage)
+---@param callsite string
+function View:close(tabpage, callsite)
+  if self.explorer.opts.experimental.multi_instance then
+    log.line("dev", "View:close(t%s, %s)", tabpage, callsite)
+  end
+
   if self.explorer.opts.tab.sync.close then
     self:close_all_tabs()
   elseif tabpage then
@@ -503,7 +516,7 @@ function View:abandon_current_window(callsite)
     log.line("dev", "View:abandon_current_window(%-20.20s) t%d w%s b%s member b%s %s",
       callsite,
       tab,
-      globals.TABPAGES and globals.TABPAGES.winnr or nil,
+      globals.TABPAGES[tab] and globals.TABPAGES[tab].winnr or nil,
       globals.BUFNR_PER_TAB[tab],
       self.bufnr_by_tab[tab],
       (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
@@ -575,7 +588,7 @@ function View:focus(winnr, open_if_closed)
   local wnr = winnr or self:get_winnr(nil, "View:focus1")
 
   if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
-    self:close()
+    self:close(nil, "View:focus")
     self:open()
     wnr = self:get_winnr(nil, "View:focus2")
   elseif open_if_closed and not self:is_visible() then

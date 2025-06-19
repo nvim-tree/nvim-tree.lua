@@ -107,7 +107,7 @@ function Explorer:create_autocmds()
       pattern = "NvimTree_*",
       callback = function()
         if utils.is_nvim_tree_buf(0) then
-          self.view:close()
+          self.view:close(nil, "WinLeave")
         end
       end,
     })

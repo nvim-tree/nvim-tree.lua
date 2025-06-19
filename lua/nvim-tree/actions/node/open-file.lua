@@ -190,7 +190,7 @@ local function open_file_in_tab(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.view:close(nil, "open-file.open_file_in_tab")
     end
   end
   if M.relative_path then
@@ -203,7 +203,7 @@ local function drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.view:close(nil, "open-file.drop")
     end
   end
   if M.relative_path then
@@ -216,7 +216,7 @@ local function tab_drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close()
+      explorer.view:close(nil, "open-file.tab_drop")
     end
   end
   if M.relative_path then
@@ -447,7 +447,7 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open and explorer then
-    explorer.view:close()
+    explorer.view:close(nil, "open-file.fn")
   end
 end
 
