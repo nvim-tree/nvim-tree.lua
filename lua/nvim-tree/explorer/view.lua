@@ -630,7 +630,7 @@ function View:winid(tabpage, callsite)
       end
     end
   else
-    msg = string.format("%s no bufnr", msg)
+    log.line("dev", "%s no bufnr", msg)
   end
 end
 
