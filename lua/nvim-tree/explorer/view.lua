@@ -14,7 +14,6 @@ local Class = require("nvim-tree.classic")
 ---@field private explorer Explorer
 ---@field private adaptive_size boolean
 ---@field private winopts table
----@field private height integer
 ---@field private initial_width integer
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
@@ -35,7 +34,6 @@ function View:new(args)
 
   self.explorer                    = args.explorer
   self.adaptive_size               = false
-  self.height                      = self.explorer.opts.view.height
   self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter                 = { prev_focused_node = nil, }
   self.bufnr_by_tab                = {}
@@ -419,7 +417,6 @@ function View:resize(size)
 
   if size then
     self.width = size
-    self.height = size
   end
 
   if not self:is_visible() then
@@ -770,6 +767,7 @@ function View:is_width_determined()
   return type(self.width) ~= "function"
 end
 
+-- These are needed as they are populated only by the user, not configuration
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
 local DEFAULT_PADDING = 1
