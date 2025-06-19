@@ -1,5 +1,5 @@
 local api = require("nvim-tree.api")
-local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
 
 local M = {}
 
@@ -111,7 +111,10 @@ local CMDS = {
       bar = true,
     },
     command = function(c)
-      view.resize(c.args)
+      local explorer = core.get_explorer()
+      if explorer then
+        explorer.view:resize(c.args)
+      end
     end,
   },
   {

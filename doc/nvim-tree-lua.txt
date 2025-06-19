@@ -638,6 +638,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         },
       },
       experimental = {
+        multi_instance = false,
       },
       log = {
         enable = false,
@@ -1512,11 +1513,6 @@ Configuration options for opening a file from nvim-tree.
 
     *nvim-tree.actions.open_file.resize_window*
     Resizes the tree when opening a file.
-      Type: `boolean`, Default: `true`
-
-    *nvim-tree.experimental.actions.open_file.relative_path*
-    Buffers opened by nvim-tree will use with relative paths instead of
-    absolute.
       Type: `boolean`, Default: `true`
 
     *nvim-tree.actions.open_file.window_picker*
@@ -3008,9 +3004,6 @@ Windows WSL and PowerShell
 - Executable file detection is disabled as this is non-performant and can
   freeze nvim
 - Some filesystem watcher error related to permissions will not be reported
-- Some users have reported unspecified issues with
-  |nvim-tree.experimental.actions.open_file.relative_path|. Please report any
-  issues or disable this feature.
 
 ==============================================================================
  13. NETRW                                                   *nvim-tree-netrw*
@@ -3145,7 +3138,6 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.diagnostics.show_on_open_dirs|
 |nvim-tree.disable_netrw|
 |nvim-tree.experimental|
-|nvim-tree.experimental.actions.open_file.relative_path|
 |nvim-tree.filesystem_watchers.debounce_delay|
 |nvim-tree.filesystem_watchers.enable|
 |nvim-tree.filesystem_watchers.ignore_dirs|

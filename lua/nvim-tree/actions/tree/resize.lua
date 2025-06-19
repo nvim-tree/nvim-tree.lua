@@ -1,14 +1,19 @@
-local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
 
 local M = {}
 
 ---Resize the tree, persisting the new size.
 ---@param opts ApiTreeResizeOpts|nil
 function M.fn(opts)
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
   if opts == nil then
     -- reset to config values
-    view.configure_width()
-    view.resize()
+    explorer.view:configure_width()
+    explorer.view:resize()
     return
   end
 
@@ -16,19 +21,19 @@ function M.fn(opts)
   local width_cfg = options.width
 
   if width_cfg ~= nil then
-    view.configure_width(width_cfg)
-    view.resize()
+    explorer.view:configure_width(width_cfg)
+    explorer.view:resize()
     return
   end
 
-  if not view.is_width_determined() then
+  if not explorer.view:is_width_determined() then
     -- {absolute} and {relative} do nothing when {width} is a function.
     return
   end
 
   local absolute = options.absolute
   if type(absolute) == "number" then
-    view.resize(absolute)
+    explorer.view:resize(absolute)
     return
   end
 
@@ -39,7 +44,7 @@ function M.fn(opts)
       relative_size = "+" .. relative_size
     end
 
-    view.resize(relative_size)
+    explorer.view:resize(relative_size)
     return
   end
 end

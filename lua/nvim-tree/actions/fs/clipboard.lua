@@ -31,6 +31,8 @@ local Clipboard = Class:extend()
 ---@protected
 ---@param args ClipboardArgs
 function Clipboard:new(args)
+  args.explorer:log_new("Clipboard")
+
   self.explorer = args.explorer
 
   self.data = {
@@ -40,6 +42,10 @@ function Clipboard:new(args)
 
   self.clipboard_name = self.explorer.opts.actions.use_system_clipboard and "system" or "neovim"
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
+end
+
+function Clipboard:destroy()
+  self.explorer:log_destroy("Clipboard")
 end
 
 ---@param source string

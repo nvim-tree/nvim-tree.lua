@@ -1,5 +1,5 @@
+local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
-local view = require("nvim-tree.view")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
@@ -10,6 +10,8 @@ local M = {}
 ---@param cwd boolean|nil legacy -> opts.path
 ---@param bang boolean|nil legacy -> opts.update_root
 function M.fn(opts, no_focus, cwd, bang)
+  local explorer = core.get_explorer()
+
   -- legacy arguments
   if type(opts) == "boolean" then
     opts = {
@@ -40,9 +42,9 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.path = nil
   end
 
-  if view.is_visible() then
+  if explorer and explorer.view:is_visible() then
     -- close
-    view.close()
+    explorer.view:close(nil, "toggle.fn")
   else
     -- open
     lib.open({

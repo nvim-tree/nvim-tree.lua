@@ -1,4 +1,3 @@
-local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 
@@ -12,9 +11,11 @@ local M = {
 }
 
 function M.set_target_win()
+  local explorer = core.get_explorer()
+
   local id = vim.api.nvim_get_current_win()
-  local tree_id = view.get_winnr()
-  if tree_id and id == tree_id then
+
+  if explorer and id == explorer.view:get_winnr(nil, "lib.set_target_win") then
     M.target_winid = 0
     return
   end
@@ -30,11 +31,16 @@ local function handle_buf_cwd(cwd)
 end
 
 local function open_view_and_draw()
+  local explorer = core.get_explorer()
+
   local cwd = vim.fn.getcwd()
-  view.open()
+
+  if explorer then
+    explorer.view:open()
+  end
+
   handle_buf_cwd(cwd)
 
-  local explorer = core.get_explorer()
   if explorer then
     explorer.renderer:draw()
   end
@@ -96,39 +102,42 @@ function M.open(opts)
   M.set_target_win()
   if not core.get_explorer() or opts.path then
     if opts.path then
-      core.init(opts.path)
+      core.init(opts.path, "lib.open - opts.path")
     else
       local cwd, err = vim.loop.cwd()
       if not cwd then
         notify.error(string.format("current working directory unavailable: %s", err))
         return
       end
-      core.init(cwd)
+      core.init(cwd, "lib.open - cwd")
     end
   end
 
   local explorer = core.get_explorer()
 
   if should_hijack_current_buf() then
-    view.close_this_tab_only()
-    view.open_in_win()
     if explorer then
+      explorer.view:close_this_tab_only()
+      explorer.view:open_in_win()
       explorer.renderer:draw()
     end
   elseif opts.winid then
-    view.open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
     if explorer then
+      explorer.view:open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
       explorer.renderer:draw()
     end
   elseif opts.current_window then
-    view.open_in_win({ hijack_current_buf = false, resize = false })
     if explorer then
+      explorer.view:open_in_win({ hijack_current_buf = false, resize = false })
       explorer.renderer:draw()
     end
   else
     open_view_and_draw()
   end
-  view.restore_tab_state()
+
+  if explorer then
+    explorer.view:restore_tab_state()
+  end
 end
 
 function M.setup(opts)
