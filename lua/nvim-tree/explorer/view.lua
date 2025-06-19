@@ -32,13 +32,13 @@ local View = Class:extend()
 function View:new(args)
   args.explorer:log_new("View")
 
-  self.explorer                    = args.explorer
-  self.adaptive_size               = false
-  self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.live_filter                 = { prev_focused_node = nil, }
-  self.bufnr_by_tab                = {}
+  self.explorer      = args.explorer
+  self.adaptive_size = false
+  self.side          = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.live_filter   = { prev_focused_node = nil, }
+  self.bufnr_by_tab  = {}
 
-  self.winopts                     = {
+  self.winopts       = {
     relativenumber = self.explorer.opts.view.relativenumber,
     number         = self.explorer.opts.view.number,
     list           = false,
@@ -59,6 +59,10 @@ function View:new(args)
 
   self:configure_width(self.explorer.opts.view.width)
   self.initial_width = self:get_width()
+
+  -- TODO multi-instance remove this; delete buffers rather than retaining them
+  local tabid = vim.api.nvim_get_current_tabpage()
+  self.bufnr_by_tab[tabid] = globals.BUFNR_PER_TAB[tabid]
 end
 
 function View:destroy()
