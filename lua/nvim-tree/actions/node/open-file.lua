@@ -389,7 +389,7 @@ local function edit_in_current_buf(filename)
   local explorer = core.get_explorer()
 
   if explorer then
-    explorer.view:abandon_current_window()
+    explorer.view:abandon_current_window("open-file.edit_in_current_buf")
   end
 
   if M.relative_path then

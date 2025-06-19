@@ -36,7 +36,7 @@ function M.tab_line()
     -- winnr, if present
     local tp = globals.TABPAGES[tab_id]
     if tp then
-      tl = tl .. " w" .. tp.winnr
+      tl = tl .. " w" .. (tp.winnr or "nil")
     else
       tl = tl .. "      "
     end
@@ -80,7 +80,7 @@ function M.tab_line()
 
     -- maybe winnr
     if orphan.winnr then
-      tl = tl .. " w" .. orphan.winnr
+      tl = tl .. " w" .. (orphan.winnr or "nil")
     else
       tl = tl .. "      "
     end

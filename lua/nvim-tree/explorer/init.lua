@@ -176,7 +176,7 @@ function Explorer:create_autocmds()
       if self.opts.actions.open_file.eject then
         self.view:prevent_buffer_override()
       else
-        self.view:abandon_current_window()
+        self.view:abandon_current_window("BufWipeout")
       end
     end,
   })

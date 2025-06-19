@@ -129,7 +129,18 @@ function View:create_buffer(bufnr)
 
   local tab = vim.api.nvim_get_current_tabpage()
   globals.BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
-  self.bufnr_by_tab[tab] = globals.BUFNR_PER_TAB[tab]
+
+  if self.explorer.opts.experimental.multi_instance then
+    local tabid = tab
+    self.bufnr_by_tab[tabid] = globals.BUFNR_PER_TAB[tabid]
+    log.line("dev", "buffer channel attaching t%d b%d", tabid, self.bufnr_by_tab[tabid])
+    vim.api.nvim_buf_attach(self.bufnr_by_tab[tabid], true, {
+      on_detach = function(op, bnr)
+        log.line("dev", "buffer channel %s t%d b%d", op, tabid, bnr)
+      end,
+    })
+  end
+
   vim.api.nvim_buf_set_name(self:get_bufnr("View:create_buffer1"), "NvimTree_" .. tab)
 
   bufnr = self:get_bufnr("View:create_buffer2")
@@ -447,6 +458,7 @@ function View:reposition_window()
 end
 
 ---@private
+---@param callsite string
 function View:set_current_win(callsite)
   local current_tab = vim.api.nvim_get_current_tabpage()
   local current_win = vim.api.nvim_get_current_win()
@@ -483,19 +495,44 @@ function View:open_in_win(opts)
   events._dispatch_on_tree_open()
 end
 
-function View:abandon_current_window()
+---@param callsite string
+function View:abandon_current_window(callsite)
   local tab = vim.api.nvim_get_current_tabpage()
+
+  if self.explorer.opts.experimental.multi_instance then
+    log.line("dev", "View:abandon_current_window(%-20.20s) t%d w%s b%s member b%s %s",
+      callsite,
+      tab,
+      globals.TABPAGES and globals.TABPAGES.winnr or nil,
+      globals.BUFNR_PER_TAB[tab],
+      self.bufnr_by_tab[tab],
+      (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
+  end
+
+  -- TODO multi-instance kill the buffer instead of retaining
+
   globals.BUFNR_PER_TAB[tab] = nil
-  self.bufnr_by_tab[tab] = nil
   if globals.TABPAGES[tab] then
     globals.TABPAGES[tab].winnr = nil
   end
 end
 
-function View:abandon_all_windows()
+---@param callsite string
+function View:abandon_all_windows(callsite)
   for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
+    if self.explorer.opts.experimental.multi_instance then
+      log.line("dev", "View:abandon_all_windows(%-20.20s) t%d w%s b%s member b%s %s",
+        callsite,
+        tab,
+        globals.TABPAGES and globals.TABPAGES.winnr or nil,
+        globals.BUFNR_PER_TAB[tab],
+        self.bufnr_by_tab[tab],
+        (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
+    end
+
+    -- TODO multi-instance kill the buffer instead of retaining
+
     globals.BUFNR_PER_TAB[tab] = nil
-    self.bufnr_by_tab[tab] = nil
     if globals.TABPAGES[tab] then
       globals.TABPAGES[tab].winnr = nil
     end
@@ -573,7 +610,7 @@ end
 
 --- Returns the window number for nvim-tree within the tabpage specified
 ---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@param callsite string for logging purposes
+---@param callsite string
 ---@return number|nil
 function View:get_winnr(tabpage, callsite)
   if self.explorer.opts.experimental.multi_instance then
@@ -605,7 +642,11 @@ function View:get_winnr(tabpage, callsite)
     end
 
     if ret ~= winid_from_bufnr then
-      msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid_from_bufnr)
+      if ret then
+        msg = string.format("%s winid_from_bufnr w%s MISMATCH", msg, winid_from_bufnr)
+      else
+        msg = string.format("%s winid_from_bufnr w%s STALE", msg, winid_from_bufnr)
+      end
     end
 
     log.line("dev", "%s", msg)
