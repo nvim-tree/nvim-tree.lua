@@ -13,10 +13,8 @@ local Class = require("nvim-tree.classic")
 ---@field side string
 ---@field private explorer Explorer
 ---@field private adaptive_size boolean
----@field private centralize_selection boolean
 ---@field private winopts table
 ---@field private height integer
----@field private preserve_window_proportions boolean
 ---@field private initial_width integer
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
@@ -37,9 +35,7 @@ function View:new(args)
 
   self.explorer                    = args.explorer
   self.adaptive_size               = false
-  self.centralize_selection        = self.explorer.opts.view.centralize_selection
   self.height                      = self.explorer.opts.view.height
-  self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
   self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter                 = { prev_focused_node = nil, }
   self.bufnr_by_tab                = {}
@@ -436,7 +432,7 @@ function View:resize(size)
 
   if new_size ~= vim.api.nvim_win_get_width(winid) then
     vim.api.nvim_win_set_width(winid, new_size)
-    if not self.preserve_window_proportions then
+    if not self.explorer.opts.view.preserve_window_proportions then
       vim.cmd(":wincmd =")
     end
   end
