@@ -3,7 +3,7 @@ local globals = require("nvim-tree.globals")
 local M = {}
 
 --- Debugging only.
---- Tabs show TABPAGES winnr and BUFNR_PER_TAB bufnr for the tab.
+--- Tabs show TABPAGES winid and BUFNR_PER_TAB bufnr for the tab.
 --- Orphans for inexistent tab_ids are shown at the right.
 --- lib.target_winid is always shown at the right next to a close button.
 --- Enable with:
@@ -33,10 +33,10 @@ function M.tab_line()
     -- tab_id itself
     tl = tl .. " t" .. tab_id
 
-    -- winnr, if present
+    -- winid, if present
     local tp = globals.TABPAGES[tab_id]
     if tp then
-      tl = tl .. " w" .. (tp.winnr or "nil")
+      tl = tl .. " w" .. (tp.winid or "nil")
     else
       tl = tl .. "      "
     end
@@ -67,7 +67,7 @@ function M.tab_line()
   end
   for tab_id, tp in pairs(tabpages) do
     orphans[tab_id] = orphans[tab_id] or {}
-    orphans[tab_id].winnr = tp.winnr
+    orphans[tab_id].winid = tp.winid
   end
 
   -- right-align
@@ -78,9 +78,9 @@ function M.tab_line()
     -- inexistent tab
     tl = tl .. "%#error#| t" .. tab_id
 
-    -- maybe winnr
-    if orphan.winnr then
-      tl = tl .. " w" .. (orphan.winnr or "nil")
+    -- maybe winid
+    if orphan.winid then
+      tl = tl .. " w" .. (orphan.winid or "nil")
     else
       tl = tl .. "      "
     end

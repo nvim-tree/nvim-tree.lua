@@ -578,18 +578,18 @@ end
 ---@param winid number|nil
 ---@param open_if_closed boolean|nil
 function View:focus(winid, open_if_closed)
-  local wnr = winid or self:get_winid(nil, "View:focus1")
+  local wid = winid or self:get_winid(nil, "View:focus1")
 
-  if vim.api.nvim_win_get_tabpage(wnr or 0) ~= vim.api.nvim_win_get_tabpage(0) then
+  if vim.api.nvim_win_get_tabpage(wid or 0) ~= vim.api.nvim_win_get_tabpage(0) then
     self:close(nil, "View:focus")
     self:open()
-    wnr = self:get_winid(nil, "View:focus2")
+    wid = self:get_winid(nil, "View:focus2")
   elseif open_if_closed and not self:is_visible() then
     self:open()
   end
 
-  if wnr then
-    vim.api.nvim_set_current_win(wnr)
+  if wid then
+    vim.api.nvim_set_current_win(wid)
   end
 end
 
