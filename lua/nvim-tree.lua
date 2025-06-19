@@ -485,7 +485,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
-    multi_instance_debug = false,
+    multi_instance = false,
   },
   log = {
     enable = false,

@@ -638,7 +638,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
         },
       },
       experimental = {
-        multi_instance_debug = false,
+        multi_instance = false,
       },
       log = {
         enable = false,

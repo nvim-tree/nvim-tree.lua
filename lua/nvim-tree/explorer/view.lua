@@ -178,7 +178,7 @@ local move_tbl = {
 function View:setup_tabpage(tabpage, callsite)
   local winnr = vim.api.nvim_get_current_win()
 
-  if self.explorer.opts.experimental.multi_instance_debug then
+  if self.explorer.opts.experimental.multi_instance then
     log.line("dev", "View:setup_tabpage(%3s, %-20.20s) w%d %s",
       tabpage,
       callsite,
@@ -451,13 +451,13 @@ function View:set_current_win(callsite)
   local current_tab = vim.api.nvim_get_current_tabpage()
   local current_win = vim.api.nvim_get_current_win()
 
-  if self.explorer.opts.experimental.multi_instance_debug then
+  if self.explorer.opts.experimental.multi_instance then
     log.line("dev", "View:set_current_win(%-20.20s) t%d w%3s->w%3s %s",
       callsite,
       current_tab,
       globals.TABPAGES[current_tab].winnr,
       current_win,
-      (globals.TABPAGES[current_tab].winnr == current_win) and "" or "UPDATED"
+      (globals.TABPAGES[current_tab].winnr == current_win) and "" or "MISMATCH"
     )
   end
 
@@ -576,7 +576,7 @@ end
 ---@param callsite string for logging purposes
 ---@return number|nil
 function View:get_winnr(tabpage, callsite)
-  if self.explorer.opts.experimental.multi_instance_debug then
+  if self.explorer.opts.experimental.multi_instance then
     local msg = string.format("View:get_winnr(%3s, %-20.20s)", tabpage, callsite)
 
     tabpage = tabpage or vim.api.nvim_get_current_tabpage()
@@ -625,7 +625,7 @@ end
 ---@return number
 function View:get_bufnr(callsite)
   local tab = vim.api.nvim_get_current_tabpage()
-  if self.explorer.opts.experimental.multi_instance_debug then
+  if self.explorer.opts.experimental.multi_instance then
     log.line("dev", "View:get_bufnr(%-20.20s) t%d global b%s member b%s %s",
       callsite,
       tab,
@@ -652,7 +652,7 @@ function View:prevent_buffer_override()
     if not bufname:match("NvimTree") then
       for i, tabpage in ipairs(globals.TABPAGES) do
         if tabpage.winnr == view_winnr then
-          if self.explorer.opts.experimental.multi_instance_debug then
+          if self.explorer.opts.experimental.multi_instance then
             log.line("dev", "View:prevent_buffer_override() t%d w%d clearing", i, view_winnr)
           end
 

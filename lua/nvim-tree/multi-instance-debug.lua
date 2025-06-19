@@ -101,7 +101,7 @@ function M.tab_line()
 end
 
 function M.setup(opts)
-  if not opts.experimental.multi_instance_debug then
+  if not opts.experimental.multi_instance then
     return
   end
 
