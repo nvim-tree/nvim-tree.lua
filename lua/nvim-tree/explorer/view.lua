@@ -31,7 +31,7 @@ local DEFAULT_PADDING = 1
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
 ---@field private padding integer
----@field private bufnr_by_tab table<integer, integer> for diagnostics during multi instance
+---@field private bufnr_by_tab table<integer, integer> stored per tab until multi-instance is complete
 local View = Class:extend()
 
 ---@class View
@@ -617,7 +617,6 @@ end
 ---@param callsite string
 ---@return integer? winid
 function View:winid(tabpage, callsite)
-  local winid = nil
   local bufnr = self.bufnr_by_tab[tabpage]
 
   local msg = string.format("View:winid(%3s, %-20.20s)", tabpage, callsite)
@@ -625,7 +624,7 @@ function View:winid(tabpage, callsite)
   if bufnr then
     for _, w in pairs(vim.api.nvim_tabpage_list_wins(tabpage or 0)) do
       if vim.api.nvim_win_get_buf(w) == bufnr then
-        log.line("dev", "%s b%d : w%s", msg, bufnr, winid)
+        log.line("dev", "%s b%d : w%s", msg, bufnr, w)
         return w
       end
     end

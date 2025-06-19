@@ -102,14 +102,14 @@ function M.open(opts)
   M.set_target_win()
   if not core.get_explorer() or opts.path then
     if opts.path then
-      core.init(opts.path)
+      core.init(opts.path, "lib.open - opts.path")
     else
       local cwd, err = vim.loop.cwd()
       if not cwd then
         notify.error(string.format("current working directory unavailable: %s", err))
         return
       end
-      core.init(cwd)
+      core.init(cwd, "lib.open - cwd")
     end
   end
 

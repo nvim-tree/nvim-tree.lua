@@ -85,7 +85,7 @@ M.force_dirchange = add_profiling_to(function(foldername, should_open_view)
     if should_change_dir() then
       cd(M.options.global, foldername)
     end
-    core.init(foldername)
+    core.init(foldername, "change-dir")
   end
 
   if should_open_view then
