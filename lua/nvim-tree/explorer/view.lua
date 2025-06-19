@@ -7,15 +7,7 @@ local globals = require("nvim-tree.globals")
 
 local Class = require("nvim-tree.classic")
 
----@class OpenInWinOpts
----@field hijack_current_buf boolean|nil default true
----@field resize boolean|nil default true
----@field winid number|nil 0 or nil for current
-
-local DEFAULT_MIN_WIDTH = 30
-local DEFAULT_MAX_WIDTH = -1
-local DEFAULT_PADDING = 1
-
+---Window and buffer related settings and operations
 ---@class (exact) View: Class
 ---@field live_filter table
 ---@field side string
@@ -101,6 +93,7 @@ local BUFFER_OPTIONS = {
   { name = "swapfile",   value = false },
 }
 
+-- TODO multi-instance remove this; delete buffers rather than retaining them
 ---@private
 ---@param bufnr integer
 ---@return boolean
@@ -113,6 +106,7 @@ function View:matches_bufnr(bufnr)
   return false
 end
 
+-- TODO multi-instance remove this; delete buffers rather than retaining them
 ---@private
 function View:wipe_rogue_buffer()
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
@@ -128,13 +122,12 @@ function View:create_buffer(bufnr)
   self:wipe_rogue_buffer()
 
   local tab = vim.api.nvim_get_current_tabpage()
-  globals.BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
 
-  if self.explorer.opts.experimental.multi_instance then
-    self.bufnr_by_tab[tab] = globals.BUFNR_PER_TAB[tab]
-  end
+  bufnr = bufnr or vim.api.nvim_create_buf(false, false)
 
-  bufnr = self:get_bufnr("View:create_buffer")
+  -- set both bufnr registries
+  globals.BUFNR_PER_TAB[tab] = bufnr
+  self.bufnr_by_tab[tab] = bufnr
 
   vim.api.nvim_buf_set_name(bufnr, "NvimTree_" .. tab)
 
@@ -481,6 +474,11 @@ function View:set_current_win(callsite)
   globals.TABPAGES[current_tab].winid = current_win
 end
 
+---@class OpenInWinOpts
+---@field hijack_current_buf boolean|nil default true
+---@field resize boolean|nil default true
+---@field winid number|nil 0 or nil for current
+
 ---Open the tree in the a window
 ---@param opts OpenInWinOpts|nil
 function View:open_in_win(opts)
@@ -510,13 +508,14 @@ function View:abandon_current_window()
       globals.BUFNR_PER_TAB[tab],
       self.bufnr_by_tab[tab],
       (globals.BUFNR_PER_TAB[tab] == self.bufnr_by_tab[tab]) and "" or "MISMATCH")
-
-    self.bufnr_by_tab[tab] = nil
   end
 
-  -- TODO multi-instance kill the buffer instead of retaining
+  -- TODO multi-instance maybe kill the buffer instead of retaining
 
+  -- reset both bufnr registries
   globals.BUFNR_PER_TAB[tab] = nil
+  self.bufnr_by_tab[tab] = nil
+
   if globals.TABPAGES[tab] then
     globals.TABPAGES[tab].winid = nil
   end
@@ -614,6 +613,8 @@ function View:restore_tab_state()
   self:set_cursor(globals.CURSORS[tabpage])
 end
 
+--- TODO multi-instance remove comment
+--- not legacy codepath
 --- winid containing the buffer
 ---@param tabpage number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@param callsite string
@@ -689,7 +690,7 @@ end
 function View:get_bufnr(callsite)
   local tab = vim.api.nvim_get_current_tabpage()
   if self.explorer.opts.experimental.multi_instance then
-    local msg = string.format("View:get_bufnr(%-20.20s) globals.BUFNR_PER_TAB[%s]=b%s view.bufnr_by_tab[%s]=b%s MISMATCH",
+    local msg = string.format("View:get_bufnr(%-20.20s) globals.BUFNR_PER_TAB[%s]=b%s view.bufnr_by_tab[%s]=b%s %s",
       callsite,
       tab, globals.BUFNR_PER_TAB[tab],
       tab, self.bufnr_by_tab[tab],
@@ -765,7 +766,7 @@ end
 
 -- used on ColorScheme event
 function View:reset_winhl()
-  local winid = self:get_winid(nil, "View:reset_winhl1")
+  local winid = self:get_winid(nil, "View:reset_winhl")
   if winid and vim.api.nvim_win_is_valid(winid) then
     vim.wo[winid].winhl = appearance.WIN_HL
   end
@@ -776,6 +777,10 @@ end
 function View:is_width_determined()
   return type(self.width) ~= "function"
 end
+
+local DEFAULT_MIN_WIDTH = 30
+local DEFAULT_MAX_WIDTH = -1
+local DEFAULT_PADDING = 1
 
 ---Configure width-related config
 ---@param width string|function|number|table|nil

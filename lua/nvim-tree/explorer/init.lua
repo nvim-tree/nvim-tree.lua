@@ -85,6 +85,9 @@ function Explorer:destroy()
   self.sorters:destroy()
   self.view:destroy()
 
+  -- TODO existing buffer is retained by global and re-used. Delete it or retain it.
+  -- see wipe_rogue_buffer
+
   vim.api.nvim_del_augroup_by_id(self.augroup_id)
 
   RootNode.destroy(self)
