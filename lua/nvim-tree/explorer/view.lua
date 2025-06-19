@@ -11,11 +11,9 @@ local Class = require("nvim-tree.classic")
 ---@class (exact) View: Class
 ---@field live_filter table
 ---@field side string
----@field float table
 ---@field private explorer Explorer
 ---@field private adaptive_size boolean
 ---@field private centralize_selection boolean
----@field private hide_root_folder boolean
 ---@field private winopts table
 ---@field private height integer
 ---@field private preserve_window_proportions boolean
@@ -40,9 +38,7 @@ function View:new(args)
   self.explorer                    = args.explorer
   self.adaptive_size               = false
   self.centralize_selection        = self.explorer.opts.view.centralize_selection
-  self.float                       = self.explorer.opts.view.float
   self.height                      = self.explorer.opts.view.height
-  self.hide_root_folder            = self.explorer.opts.renderer.root_folder_label == false
   self.preserve_window_proportions = self.explorer.opts.view.preserve_window_proportions
   self.side                        = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter                 = { prev_focused_node = nil, }
@@ -217,16 +213,16 @@ end
 ---@private
 ---@return table
 function View:open_win_config()
-  if type(self.float.open_win_config) == "function" then
-    return self.float.open_win_config()
+  if type(self.explorer.opts.view.float.open_win_config) == "function" then
+    return self.explorer.opts.view.float.open_win_config()
   else
-    return self.float.open_win_config
+    return self.explorer.opts.view.float.open_win_config
   end
 end
 
 ---@private
 function View:open_window()
-  if self.float.enable then
+  if self.explorer.opts.view.float.enable then
     vim.api.nvim_open_win(0, true, self:open_win_config())
   else
     vim.api.nvim_command("vsp")
@@ -405,9 +401,9 @@ end
 
 ---@param size string|number|nil
 function View:resize(size)
-  if self.float.enable and not self.adaptive_size then
+  if self.explorer.opts.view.float.enable and not self.adaptive_size then
     -- if the floating windows's adaptive size is not desired, then the
-    -- float size should be defined in view.float.open_win_config
+    -- float size should be defined in self.explorer.opts.view.float.open_win_config
     return
   end
 
@@ -761,7 +757,7 @@ end
 ---@param cwd string|nil
 ---@return boolean
 function View:is_root_folder_visible(cwd)
-  return cwd ~= "/" and not self.hide_root_folder
+  return cwd ~= "/" and self.explorer.opts.renderer.root_folder_label ~= false
 end
 
 -- used on ColorScheme event

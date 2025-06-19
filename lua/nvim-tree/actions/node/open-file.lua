@@ -346,7 +346,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.view.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.opts.view.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
