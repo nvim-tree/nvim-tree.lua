@@ -18,7 +18,10 @@ local Class = require("nvim-tree.classic")
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
 ---@field private padding integer
----@field private bufnr_by_tabid table<integer, integer> stored per tab until multi-instance is complete
+-- TODO multi-instance remove or replace with single member
+---@field private bufnr_by_tabid table<integer, integer>
+-- TODO multi-instance change to single member
+---@field private cursors_by_tabid table<integer, integer[]> as per vim.api.nvim_win_get_cursor
 local View = Class:extend()
 
 ---@class View
@@ -32,13 +35,14 @@ local View = Class:extend()
 function View:new(args)
   args.explorer:log_new("View")
 
-  self.explorer       = args.explorer
-  self.adaptive_size  = false
-  self.side           = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.live_filter    = { prev_focused_node = nil, }
-  self.bufnr_by_tabid = {}
+  self.explorer         = args.explorer
+  self.adaptive_size    = false
+  self.side             = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.live_filter      = { prev_focused_node = nil, }
+  self.bufnr_by_tabid   = {}
+  self.cursors_by_tabid = {}
 
-  self.winopts        = {
+  self.winopts          = {
     relativenumber = self.explorer.opts.view.relativenumber,
     number         = self.explorer.opts.view.number,
     list           = false,
@@ -235,12 +239,12 @@ local function switch_buf_if_last_buf()
   end
 end
 
----save_tab_state saves any state that should be preserved across redraws.
+---save any state that should be preserved on reopening
 ---@private
 ---@param tabid integer
-function View:save_tab_state(tabid)
+function View:save_state(tabid)
   tabid = tabid or vim.api.nvim_get_current_tabpage()
-  globals.CURSORS[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid, "View:save_tab_state") or 0)
+  self.cursors_by_tabid[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid, "View:save_tab_state") or 0)
 end
 
 ---@private
@@ -255,7 +259,7 @@ function View:close_internal(tabid)
   if not self:is_visible({ tabpage = tabid }, "View:close_internal") then
     return
   end
-  self:save_tab_state(tabid)
+  self:save_state(tabid)
   switch_buf_if_last_buf()
   local tree_win = self:get_winid(tabid, "View:close_internal")
   local current_win = vim.api.nvim_get_current_win()
@@ -608,9 +612,9 @@ function View:api_winid(opts)
   end
 end
 
---- Restores the state of a NvimTree window if it was initialized before.
-function View:restore_tab_state()
-  self:set_cursor(globals.CURSORS[vim.api.nvim_get_current_tabpage()])
+---restore any state from last close
+function View:restore_state()
+  self:set_cursor(self.cursors_by_tabid[vim.api.nvim_get_current_tabpage()])
 end
 
 --- winid containing the buffer
