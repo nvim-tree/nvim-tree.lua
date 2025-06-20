@@ -533,14 +533,13 @@ function View:is_visible(opts, callsite)
         notify.error(msg)
       end
       log.line("dev", "%s", msg)
-    end
-    --- END multi-instance FF
 
-    if not globals.WINID_BY_TABID[opts.tabpage] then
-      return false
+      return winid and vim.api.nvim_win_is_valid(winid) or false
+      --- END multi-instance FF
+    else
+      local winid = globals.WINID_BY_TABID[opts.tabpage]
+      return winid and vim.api.nvim_win_is_valid(winid)
     end
-    local winid = globals.WINID_BY_TABID[opts.tabpage]
-    return winid and vim.api.nvim_win_is_valid(winid)
   end
 
   if opts and opts.any_tabpage then
@@ -558,11 +557,15 @@ function View:is_visible(opts, callsite)
           notify.error(msg)
         end
         log.line("dev", "%s", msg)
-      end
-      --- END multi-instance FF
 
-      if winid_by_tabid and vim.api.nvim_win_is_valid(winid_by_tabid) then
-        return true
+        if winid and vim.api.nvim_win_is_valid(winid) then
+          return true
+        end
+        --- END multi-instance FF
+      else
+        if winid_by_tabid and vim.api.nvim_win_is_valid(winid_by_tabid) then
+          return true
+        end
       end
     end
     return false
@@ -671,6 +674,8 @@ function View:get_winid(tabid, callsite)
     if winid ~= global_winid then
       notify.error(msg)
     end
+
+    return winid
   end
   --- END multi-instance FF
 
@@ -700,6 +705,8 @@ function View:get_bufnr(callsite)
     end
 
     log.line("dev", msg)
+
+    return self.bufnr_by_tabid[tab]
   end
   --- END multi-instance FF
 
