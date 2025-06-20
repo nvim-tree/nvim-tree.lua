@@ -41,7 +41,7 @@ function M.fn(opts)
   end
 
   local explorer = core.get_explorer()
-  if explorer and explorer.view:is_visible() then
+  if explorer and explorer.view:is_visible(nil, "tree/find-file.fn") then
     -- focus
     if opts.focus then
       lib.set_target_win()

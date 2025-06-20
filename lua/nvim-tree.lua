@@ -74,7 +74,7 @@ end
 
 function M.tab_enter()
   local explorer = core.get_explorer()
-  if explorer and explorer.view:is_visible({ any_tabpage = true }) then
+  if explorer and explorer.view:is_visible({ any_tabpage = true }, "nvim-tree.tab_enter") then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
@@ -97,7 +97,7 @@ end
 
 function M.open_on_directory()
   local explorer = core.get_explorer()
-  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.view:is_visible()
+  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.view:is_visible(nil, "nvim-tree.open_on_directory")
   if not should_proceed then
     return
   end
