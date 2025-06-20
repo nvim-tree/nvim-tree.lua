@@ -539,6 +539,7 @@ end
 ---@param opts table|nil
 ---@return boolean
 function View:is_visible(opts)
+  -- TODO multi-instance rewrite and consistency check
   if opts and opts.tabpage then
     if globals.TABPAGES[opts.tabpage] == nil then
       return false
@@ -618,10 +619,10 @@ function View:winid(tabpage, callsite)
   local msg = string.format("View:winid(%3s, %-20.20s)", tabpage, callsite)
 
   if bufnr then
-    for _, w in pairs(vim.api.nvim_tabpage_list_wins(tabpage or 0)) do
-      if vim.api.nvim_win_get_buf(w) == bufnr then
-        log.line("dev", "%s b%d : w%s", msg, bufnr, w)
-        return w
+    for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabpage or 0)) do
+      if vim.api.nvim_win_get_buf(winid) == bufnr then
+        log.line("dev", "%s b%d : w%s", msg, bufnr, winid)
+        return winid
       end
     end
   else
@@ -669,6 +670,8 @@ function View:get_winid(tabpage, callsite)
     if winid ~= tabinfo_winid then
       notify.error(msg)
     end
+
+    return winid
   end
 
   -- legacy codepath
@@ -712,6 +715,7 @@ function View:prevent_buffer_override()
     local curbuf = vim.api.nvim_win_get_buf(curwin)
     local bufname = vim.api.nvim_buf_get_name(curbuf)
 
+    --- TODO multi-instance this can be removed as winid() will handle it
     if not bufname:match("NvimTree") then
       for i, tabpage in ipairs(globals.TABPAGES) do
         if tabpage.winid == view_winid then
