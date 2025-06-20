@@ -668,7 +668,7 @@ function M.purge_all_state()
   local explorer = core.get_explorer()
   if explorer then
     explorer.view:close_all_tabs()
-    explorer.view:abandon_all_windows("purge_all_state")
+    explorer.view:abandon_all_windows()
     require("nvim-tree.git").purge_state()
     explorer:destroy()
     core.reset_explorer()

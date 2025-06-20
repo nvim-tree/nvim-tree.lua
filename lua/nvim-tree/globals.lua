@@ -2,7 +2,7 @@
 
 local M = {
   -- from View
-  TABPAGES = {},
+  WINID_PER_TAB = {},
   BUFNR_PER_TAB = {},
   CURSORS = {},
 }
