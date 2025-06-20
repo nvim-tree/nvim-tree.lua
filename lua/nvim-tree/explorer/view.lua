@@ -19,6 +19,7 @@ local Class = require("nvim-tree.classic")
 ---@field private max_width integer
 ---@field private padding integer
 ---@field private bufnr_by_tabid table<integer, integer> stored per tab until multi-instance is complete
+---@field private cursor integer[] as per vim.api.nvim_win_get_cursor
 local View = Class:extend()
 
 ---@class View
@@ -235,12 +236,12 @@ local function switch_buf_if_last_buf()
   end
 end
 
----save_tab_state saves any state that should be preserved across redraws.
+---save any state that should be preserved on reopening
 ---@private
 ---@param tabid integer
 function View:save_tab_state(tabid)
   tabid = tabid or vim.api.nvim_get_current_tabpage()
-  globals.CURSORS[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid, "View:save_tab_state") or 0)
+  self.cursor = vim.api.nvim_win_get_cursor(self:get_winid(tabid, "View:save_tab_state") or 0)
 end
 
 ---@private
@@ -608,9 +609,9 @@ function View:api_winid(opts)
   end
 end
 
---- Restores the state of a NvimTree window if it was initialized before.
-function View:restore_tab_state()
-  self:set_cursor(globals.CURSORS[vim.api.nvim_get_current_tabpage()])
+--- restore any state from last close
+function View:restore_state()
+  self:set_cursor(self.cursor)
 end
 
 --- winid containing the buffer
