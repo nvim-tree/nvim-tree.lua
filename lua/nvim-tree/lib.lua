@@ -135,8 +135,9 @@ function M.open(opts)
     open_view_and_draw()
   end
 
+  -- TODO multi-instance is this actually necessary?
   if explorer then
-    explorer.view:restore_state()
+    explorer.view:restore_tab_state()
   end
 end
 
