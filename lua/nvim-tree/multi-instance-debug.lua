@@ -3,7 +3,7 @@ local globals = require("nvim-tree.globals")
 local M = {}
 
 --- Debugging only.
---- Tabs show WINID_PER_TAB winid and BUFNR_PER_TAB bufnr for the tab.
+--- Tabs show WINID_BY_TABID winid and BUFNR_BY_TABID bufnr for the tab.
 --- Orphans for inexistent tab_ids are shown at the right.
 --- lib.target_winid is always shown at the right next to a close button.
 --- Enable with:
@@ -11,30 +11,30 @@ local M = {}
 ---   vim.opt.showtabline = 2
 ---@return string
 function M.tab_line()
-  local tab_ids = vim.api.nvim_list_tabpages()
-  local cur_tab_id = vim.api.nvim_get_current_tabpage()
+  local tabids = vim.api.nvim_list_tabpages()
+  local tabid_cur = vim.api.nvim_get_current_tabpage()
 
-  local bufnr_per_tab = vim.deepcopy(globals.BUFNR_PER_TAB)
-  local tabpages = vim.deepcopy(globals.WINID_PER_TAB)
+  local bufnr_by_tabid = vim.deepcopy(globals.BUFNR_BY_TABID)
+  local winid_by_tabid = vim.deepcopy(globals.WINID_BY_TABID)
 
   local tl = "%#TabLine#"
 
-  for i, tab_id in ipairs(tab_ids) do
+  for i, tabid in ipairs(tabids) do
     -- click to select
     tl = tl .. "%" .. i .. "T"
 
     -- style
-    if tab_id == cur_tab_id then
+    if tabid == tabid_cur then
       tl = tl .. "%#StatusLine#|"
     else
       tl = tl .. "|%#TabLine#"
     end
 
     -- tab_id itself
-    tl = tl .. " t" .. tab_id
+    tl = tl .. " t" .. tabid
 
     -- winid, if present
-    local tp = globals.WINID_PER_TAB[tab_id]
+    local tp = globals.WINID_BY_TABID[tabid]
     if tp then
       tl = tl .. " w" .. (tp or "nil")
     else
@@ -42,7 +42,7 @@ function M.tab_line()
     end
 
     -- bufnr, if present
-    local bpt = globals.BUFNR_PER_TAB[tab_id]
+    local bpt = globals.BUFNR_BY_TABID[tabid]
     if bpt then
       tl = tl .. " b" .. bpt
     else
@@ -52,8 +52,8 @@ function M.tab_line()
     tl = tl .. " "
 
     -- remove actively mapped
-    bufnr_per_tab[tab_id] = nil
-    tabpages[tab_id] = nil
+    bufnr_by_tabid[tabid] = nil
+    winid_by_tabid[tabid] = nil
   end
 
   -- close last and reset
@@ -61,11 +61,11 @@ function M.tab_line()
 
   -- collect orphans
   local orphans = {}
-  for tab_id, bufnr in pairs(bufnr_per_tab) do
+  for tab_id, bufnr in pairs(bufnr_by_tabid) do
     orphans[tab_id] = orphans[tab_id] or {}
     orphans[tab_id].bufnr = bufnr
   end
-  for tab_id, tp in pairs(tabpages) do
+  for tab_id, tp in pairs(winid_by_tabid) do
     orphans[tab_id] = orphans[tab_id] or {}
     orphans[tab_id].winid = tp
   end
