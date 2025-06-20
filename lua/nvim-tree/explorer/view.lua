@@ -69,7 +69,7 @@ function View:new(args)
     foldcolumn     = "0",
     cursorcolumn   = false,
     cursorline     = self.explorer.opts.view.cursorline,
-    cursorlineopt  = "both",
+    cursorlineopt  = self.explorer.opts.view.cursorlineopt,
     colorcolumn    = "0",
     wrap           = false,
     winhl          = appearance.WIN_HL,
