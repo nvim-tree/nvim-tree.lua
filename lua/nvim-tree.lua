@@ -245,6 +245,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   view = {
     centralize_selection = false,
     cursorline = true,
+    cursorlineopt = "both",
     debounce_delay = 15,
     side = "left",
     preserve_window_proportions = false,

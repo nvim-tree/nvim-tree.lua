@@ -398,6 +398,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
       view = {
         centralize_selection = false,
         cursorline = true,
+        cursorlineopt = "both",
         debounce_delay = 15,
         side = "left",
         preserve_window_proportions = false,
@@ -770,6 +771,10 @@ initially centralized, see |zz|.
 *nvim-tree.view.cursorline*
 Enable |cursorline| in the tree window.
   Type: `boolean`, Default: `true`
+
+*nvim-tree.view.cursorlineopt*
+Set |cursorlineopt| in the tree window.
+  Type: `string`, Default: `"both"`
 
 *nvim-tree.view.debounce_delay*
 Idle milliseconds before some reload / refresh operations.
@@ -3258,6 +3263,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.update_focused_file.update_root.ignore_list|
 |nvim-tree.view.centralize_selection|
 |nvim-tree.view.cursorline|
+|nvim-tree.view.cursorlineopt|
 |nvim-tree.view.debounce_delay|
 |nvim-tree.view.float|
 |nvim-tree.view.float.enable|
