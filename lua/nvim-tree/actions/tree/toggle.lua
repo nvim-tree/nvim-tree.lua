@@ -42,7 +42,7 @@ function M.fn(opts, no_focus, cwd, bang)
     opts.path = nil
   end
 
-  if explorer and explorer.view:is_visible() then
+  if explorer and explorer.view:is_visible(nil, "toggle.fn") then
     -- close
     explorer.view:close(nil, "toggle.fn")
   else

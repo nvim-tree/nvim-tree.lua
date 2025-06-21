@@ -2,8 +2,8 @@
 
 local M = {
   -- from View
-  TABPAGES = {},
-  BUFNR_PER_TAB = {},
+  WINID_BY_TABID = {},
+  BUFNR_BY_TABID = {},
   CURSORS = {},
 }
 

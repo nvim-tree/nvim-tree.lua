@@ -18,7 +18,7 @@ local function close_windows(windows)
   -- Prevent from closing when the win count equals 1 or 2,
   -- where the win to remove could be the last opened.
   -- For details see #2503.
-  if explorer and explorer.view.float.enable and #vim.api.nvim_list_wins() < 3 then
+  if explorer and explorer.opts.view.float.enable and #vim.api.nvim_list_wins() < 3 then
     return
   end
 
@@ -36,12 +36,12 @@ local function clear_buffer(absolute_path)
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       local tree_winnr = vim.api.nvim_get_current_win()
-      if buf.hidden == 0 and (#bufs > 1 or explorer and explorer.view.float.enable) then
+      if buf.hidden == 0 and (#bufs > 1 or explorer and explorer.opts.view.float.enable) then
         vim.api.nvim_set_current_win(buf.windows[1])
         vim.cmd(":bn")
       end
       vim.api.nvim_buf_delete(buf.bufnr, { force = true })
-      if explorer and not explorer.view.float.quit_on_focus_loss then
+      if explorer and not explorer.opts.view.float.quit_on_focus_loss then
         vim.api.nvim_set_current_win(tree_winnr)
       end
       if M.config.actions.remove_file.close_window then

@@ -15,7 +15,7 @@ function M.set_target_win()
 
   local id = vim.api.nvim_get_current_win()
 
-  if explorer and id == explorer.view:get_winnr(nil, "lib.set_target_win") then
+  if explorer and id == explorer.view:get_winid(nil, "lib.set_target_win") then
     M.target_winid = 0
     return
   end
@@ -136,7 +136,7 @@ function M.open(opts)
   end
 
   if explorer then
-    explorer.view:restore_tab_state()
+    explorer.view:restore_state()
   end
 end
 

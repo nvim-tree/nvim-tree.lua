@@ -22,7 +22,7 @@ local function usable_win_ids()
   local explorer = core.get_explorer()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = explorer and explorer.view:get_winnr(tabpage, "open-file.usable_win_ids")
+  local tree_winid = explorer and explorer.view:get_winid(tabpage, "open-file.usable_win_ids")
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -346,7 +346,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.view.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and explorer and explorer.opts.view.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
