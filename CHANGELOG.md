@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.14.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.14.0) (2025-06-21)
+
+
+### Features
+
+* **#3157:** add view.cursorlineopt ([#3158](https://github.com/nvim-tree/nvim-tree.lua/issues/3158)) ([8eb5e0b](https://github.com/nvim-tree/nvim-tree.lua/commit/8eb5e0bfd1c4da6efc03ab0c1ccf463dbaae831e))
+
+
+### Bug Fixes
+
+* **#3157:** add view.cursorlineopt ([8eb5e0b](https://github.com/nvim-tree/nvim-tree.lua/commit/8eb5e0bfd1c4da6efc03ab0c1ccf463dbaae831e))
+* invalid window id for popup info window ([#3147](https://github.com/nvim-tree/nvim-tree.lua/issues/3147)) ([d54a187](https://github.com/nvim-tree/nvim-tree.lua/commit/d54a1875a91e1a705795ea26074795210b92ce7f))
+* window picker ignore hidden window ([#3145](https://github.com/nvim-tree/nvim-tree.lua/issues/3145)) ([d87b41c](https://github.com/nvim-tree/nvim-tree.lua/commit/d87b41ca537e2131622d48a6c25ccf2fbe0e5d62))
+
 ## [1.13.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.12.0...nvim-tree-v1.13.0) (2025-06-14)
 
 
