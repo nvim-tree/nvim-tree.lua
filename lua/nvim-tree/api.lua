@@ -232,15 +232,15 @@ Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
 
 Api.tree.toggle_descend_until = wrap_node(function(node, descend_until)
-  if node.open then
-    local dir = node:as(DirectoryNode)
-    dir:expand_or_collapse("edit")
-  else
-    if node.nodes then
-      actions.tree.modifiers.expand.all(node, { descend_until = descend_until })
+  local dir = node:as(DirectoryNode)
+  if dir then
+    if node.open then
+      dir:expand_or_collapse(nil)
     else
-      edit("edit", node)
+      actions.tree.modifiers.expand.all(node, { descend_until = descend_until })
     end
+  else
+    edit("edit", node)
   end
 end)
 

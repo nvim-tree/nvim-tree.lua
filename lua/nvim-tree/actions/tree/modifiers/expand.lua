@@ -48,11 +48,16 @@ end
 ---@return boolean
 local function should_expand(expansion_count, node, should_descend)
   local dir = node:as(DirectoryNode)
-  return dir and not dir.open and should_descend(expansion_count, node)
+  if not dir then
+    return false
+  end
+
+  return not dir.open and should_descend(expansion_count, node)
 end
 
 
 ---@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@return fun(node): any
 local function gen_iterator(should_descend)
   local expansion_count = 0
 
