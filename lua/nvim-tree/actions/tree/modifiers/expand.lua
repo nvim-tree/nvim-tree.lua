@@ -30,17 +30,30 @@ end
 ---@param expansion_count integer
 ---@param node Node
 ---@return boolean
-local function should_expand(expansion_count, node)
+local function descend_until_max_or_empty(expansion_count, node)
   local dir = node:as(DirectoryNode)
   if not dir then
     return false
   end
+
   local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[dir.name]
-  return not should_halt and not dir.open and not should_exclude
+
+  return not should_halt and not should_exclude
 end
 
-local function gen_iterator()
+---@param expansion_count integer
+---@param node Node
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@return boolean
+local function should_expand(expansion_count, node, should_descend)
+  local dir = node:as(DirectoryNode)
+  return dir and not dir.open and should_descend(expansion_count, node)
+end
+
+
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
+local function gen_iterator(should_descend)
   local expansion_count = 0
 
   return function(parent)
@@ -52,7 +65,7 @@ local function gen_iterator()
     Iterator.builder(parent.nodes)
       :hidden()
       :applier(function(node)
-        if should_expand(expansion_count, node) then
+        if should_expand(expansion_count, node, should_descend) then
           expansion_count = expansion_count + 1
           node = node:as(DirectoryNode)
           if node then
@@ -61,7 +74,19 @@ local function gen_iterator()
         end
       end)
       :recursor(function(node)
-        return expansion_count < M.MAX_FOLDER_DISCOVERY and (node.group_next and { node.group_next } or (node.open and node.nodes))
+        if not should_descend(expansion_count, node) then
+          return nil
+        end
+
+        if node.group_next then
+          return { node.group_next }
+        end
+
+        if node.open and node.nodes then
+          return node.nodes
+        end
+
+        return nil
       end)
       :iterate()
 
@@ -72,12 +97,13 @@ local function gen_iterator()
 end
 
 ---@param node Node?
-local function expand_node(node)
+---@param expand_opts ApiTreeExpandAllOpts?
+local function expand_node(node, expand_opts)
   if not node then
     return
   end
-
-  if gen_iterator()(node) then
+  local descend_until = (expand_opts and expand_opts.descend_until) or descend_until_max_or_empty
+  if gen_iterator(descend_until)(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end
 
@@ -89,18 +115,20 @@ end
 
 ---Expand the directory node or the root
 ---@param node Node
-function M.all(node)
-  expand_node(node and node:as(DirectoryNode) or core.get_explorer())
+---@param expand_opts ApiTreeExpandAllOpts?
+function M.all(node, expand_opts)
+  expand_node(node and node:as(DirectoryNode) or core.get_explorer(), expand_opts)
 end
 
 ---Expand the directory node or parent node
 ---@param node Node
-function M.node(node)
+---@param expand_opts ApiTreeExpandAllOpts?
+function M.node(node, expand_opts)
   if not node then
     return
   end
 
-  expand_node(node:is(FileNode) and node.parent or node:as(DirectoryNode))
+  expand_node(node:is(FileNode) and node.parent or node:as(DirectoryNode), expand_opts)
 end
 
 function M.setup(opts)

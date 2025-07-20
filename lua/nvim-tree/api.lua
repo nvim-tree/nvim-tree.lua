@@ -121,6 +121,45 @@ local function wrap_explorer_member(explorer_member, member_method)
   end)
 end
 
+---
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
+
+---@param mode string
+---@param node Node
+---@param edit_opts NodeEditOpts?
+local function edit(mode, node, edit_opts)
+  local file_link = node:as(FileLinkNode)
+  local path = file_link and file_link.link_to or node.absolute_path
+  local cur_tabpage = vim.api.nvim_get_current_tabpage()
+
+  local explorer = core.get_explorer()
+
+  actions.node.open_file.fn(mode, path)
+
+  edit_opts = edit_opts or {}
+
+  local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
+  if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
+    if explorer then
+      explorer.view:close(cur_tabpage, "api.edit " .. mode)
+    end
+  end
+
+  local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
+  local focus = edit_opts.focus == nil or edit_opts.focus == true
+  if not mode_unsupported_focus and not focus then
+    -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
+    if mode == "tabnew" then
+      vim.cmd(":tabprev")
+    end
+    if explorer then
+      explorer.view:focus()
+    end
+  end
+end
+
 ---@class ApiTreeOpenOpts
 ---@field path string|nil path
 ---@field current_window boolean|nil default false
@@ -186,7 +225,25 @@ Api.tree.search_node = wrap(actions.finders.search_node.fn)
 ---@field keep_buffers boolean|nil default false
 
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+
+---@class ApiTreeExpandAllOpts
+---@field descend_until (fun(expansion_count: integer, node: Node): boolean)|nil
+
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
+
+Api.tree.toggle_descend_until = wrap_node(function(node, descend_until)
+  if node.open then
+    local dir = node:as(DirectoryNode)
+    dir:expand_or_collapse("edit")
+  else
+    if node.nodes then
+      actions.tree.modifiers.expand.all(node, { descend_until = descend_until })
+    else
+      edit("edit", node)
+    end
+  end
+end)
+
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
 Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
 Api.tree.toggle_git_clean_filter = wrap_explorer_member_args("filters", "toggle", "git_clean")
@@ -225,44 +282,6 @@ Api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_ab
 Api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
 Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
----
----@class NodeEditOpts
----@field quit_on_open boolean|nil default false
----@field focus boolean|nil default true
-
----@param mode string
----@param node Node
----@param edit_opts NodeEditOpts?
-local function edit(mode, node, edit_opts)
-  local file_link = node:as(FileLinkNode)
-  local path = file_link and file_link.link_to or node.absolute_path
-  local cur_tabpage = vim.api.nvim_get_current_tabpage()
-
-  local explorer = core.get_explorer()
-
-  actions.node.open_file.fn(mode, path)
-
-  edit_opts = edit_opts or {}
-
-  local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
-  if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
-    if explorer then
-      explorer.view:close(cur_tabpage, "api.edit " .. mode)
-    end
-  end
-
-  local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
-  local focus = edit_opts.focus == nil or edit_opts.focus == true
-  if not mode_unsupported_focus and not focus then
-    -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
-    if mode == "tabnew" then
-      vim.cmd(":tabprev")
-    end
-    if explorer then
-      explorer.view:focus()
-    end
-  end
-end
 
 ---@param mode string
 ---@param toggle_group boolean?
