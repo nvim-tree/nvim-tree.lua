@@ -71,9 +71,14 @@ local function remove_dir(cwd)
 
     -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
     local stat = vim.loop.fs_stat(new_cwd)
-    local type = stat and stat.type or nil
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local lstat = vim.loop.fs_lstat(new_cwd)
 
-    if type == "directory" then
+    local type = stat and stat.type or nil
+    -- Checks if file is a link file to ensure deletion of the symlink instead of the file it points to
+    local ltype = lstat and lstat.type or nil
+
+    if type == "directory" and ltype ~= "link" then
       local success = remove_dir(new_cwd)
       if not success then
         return false
