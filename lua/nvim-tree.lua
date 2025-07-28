@@ -74,7 +74,7 @@ end
 
 function M.tab_enter()
   local explorer = core.get_explorer()
-  if explorer and explorer.view:is_visible({ any_tabpage = true }, "nvim-tree.tab_enter") then
+  if explorer and explorer.view:is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
@@ -97,7 +97,7 @@ end
 
 function M.open_on_directory()
   local explorer = core.get_explorer()
-  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.view:is_visible(nil, "nvim-tree.open_on_directory")
+  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.view:is_visible()
   if not should_proceed then
     return
   end
@@ -486,7 +486,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
-    multi_instance = false,
   },
   log = {
     enable = false,
@@ -727,7 +726,6 @@ function M.setup(conf)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
-  require("nvim-tree.multi-instance-debug").setup(opts)
 
   setup_autocommands(opts)
 

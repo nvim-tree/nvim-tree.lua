@@ -105,12 +105,9 @@ function Explorer:create_autocmds()
     vim.api.nvim_create_autocmd("WinLeave", {
       group = self.augroup_id,
       pattern = "NvimTree_*",
-      callback = function(data)
-        if self.opts.experimental.multi_instance then
-          log.line("dev", "WinLeave %s", vim.inspect(data, { newline = "" }))
-        end
+      callback = function()
         if utils.is_nvim_tree_buf(0) then
-          self.view:close(nil, "WinLeave")
+          self.view:close()
         end
       end,
     })
@@ -172,10 +169,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = self.augroup_id,
     pattern = "NvimTree_*",
-    callback = function(data)
-      if self.opts.experimental.multi_instance then
-        log.line("dev", "BufWipeout %s", vim.inspect(data, { newline = "" }))
-      end
+    callback = function()
       if not utils.is_nvim_tree_buf(0) then
         return
       end
@@ -532,7 +526,7 @@ function Explorer:reload_explorer()
 
   local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
-  if self.view:is_visible(nil, "Explorer:reload_explorer") then
+  if self.view:is_visible() then
     self.renderer:draw()
   end
   event_running = false
@@ -554,7 +548,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.view:get_winid(nil, "Explorer:get_cursor_position")
+  local winnr = self.view:get_winid()
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end

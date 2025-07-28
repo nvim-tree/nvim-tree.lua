@@ -23,7 +23,7 @@ local function usable_win_ids()
   local explorer = core.get_explorer()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = explorer and explorer.view:get_winid(tabpage, "open-file.usable_win_ids")
+  local tree_winid = explorer and explorer.view:get_winid(tabpage)
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -196,7 +196,7 @@ local function open_file_in_tab(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close(nil, "open-file.open_file_in_tab")
+      explorer.view:close()
     end
   end
   if M.relative_path then
@@ -209,7 +209,7 @@ local function drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close(nil, "open-file.drop")
+      explorer.view:close()
     end
   end
   if M.relative_path then
@@ -222,7 +222,7 @@ local function tab_drop(filename)
   if M.quit_on_open then
     local explorer = core.get_explorer()
     if explorer then
-      explorer.view:close(nil, "open-file.tab_drop")
+      explorer.view:close()
     end
   end
   if M.relative_path then
@@ -453,7 +453,7 @@ function M.fn(mode, filename)
   end
 
   if M.quit_on_open and explorer then
-    explorer.view:close(nil, "open-file.fn")
+    explorer.view:close()
   end
 end
 

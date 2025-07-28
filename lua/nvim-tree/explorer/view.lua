@@ -161,7 +161,7 @@ local move_tbl = {
 
 ---@private
 function View:set_window_options_and_buffer()
-  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr("View:set_window_options_and_buffer"))
+  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr())
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
@@ -244,24 +244,18 @@ end
 ---@param tabid integer
 function View:save_state(tabid)
   tabid = tabid or vim.api.nvim_get_current_tabpage()
-  self.cursors_by_tabid[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid, "View:save_tab_state") or 0)
+  self.cursors_by_tabid[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid) or 0)
 end
 
 ---@private
 ---@param tabid integer
 function View:close_internal(tabid)
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    log.line("dev", "View:close_internal(t%s)", tabid)
-  end
-  --- END multi-instance FF
-
-  if not self:is_visible({ tabpage = tabid }, "View:close_internal") then
+  if not self:is_visible({ tabpage = tabid }) then
     return
   end
   self:save_state(tabid)
   switch_buf_if_last_buf()
-  local tree_win = self:get_winid(tabid, "View:close_internal")
+  local tree_win = self:get_winid(tabid)
   local current_win = vim.api.nvim_get_current_win()
   for _, win in pairs(vim.api.nvim_tabpage_list_wins(tabid)) do
     if vim.api.nvim_win_get_config(win).relative == "" then
@@ -270,12 +264,6 @@ function View:close_internal(tabid)
         vim.api.nvim_set_current_win(vim.fn.win_getid(prev_win))
       end
       if vim.api.nvim_win_is_valid(tree_win or 0) then
-        --- BEGIN multi-instance FF
-        if self.explorer.opts.experimental.multi_instance then
-          log.line("dev", "View:close_internal(t%s) w%s", tabid, tree_win)
-        end
-        --- END multi-instance FF
-        ---
         local success, error = pcall(vim.api.nvim_win_close, tree_win or 0, true)
         if not success then
           notify.debug("Failed to close window: " .. error)
@@ -288,38 +276,18 @@ function View:close_internal(tabid)
 end
 
 function View:close_this_tab_only()
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    log.line("dev", "View:close_this_tab_only()")
-  end
-  --- END multi-instance FF
-
   self:close_internal(vim.api.nvim_get_current_tabpage())
 end
 
 -- TODO this is broken at 1.13.0 - current tab does not close when tab.sync.close is set
 function View:close_all_tabs()
-  log.line("dev", "View:close_all_tabs() globals.WINID_BY_TABID=%s", vim.inspect(globals.WINID_BY_TABID))
   for tabid, _ in pairs(globals.WINID_BY_TABID) do
-    --- BEGIN multi-instance FF
-    if self.explorer.opts.experimental.multi_instance then
-      log.line("dev", "View:close_all_tabs()")
-    end
-    --- END multi-instance FF
-
     self:close_internal(tabid)
   end
 end
 
 ---@param tabid integer|nil
----@param callsite string
-function View:close(tabid, callsite)
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    log.line("dev", "View:close(t%s, %s)", tabid, callsite)
-  end
-  --- END multi-instance FF
-
+function View:close(tabid)
   if self.explorer.opts.tab.sync.close then
     self:close_all_tabs()
   elseif tabid then
@@ -331,7 +299,7 @@ end
 
 ---@param options table|nil
 function View:open(options)
-  if self:is_visible(nil, "View:open") then
+  if self:is_visible() then
     return
   end
 
@@ -354,12 +322,12 @@ end
 ---@private
 function View:grow()
   local starts_at = self:is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
-  local lines = vim.api.nvim_buf_get_lines(self:get_bufnr("View:grow1"), starts_at, -1, false)
+  local lines = vim.api.nvim_buf_get_lines(self:get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = self:get_size(self.padding)
 
   -- account for sign/number columns etc.
-  local wininfo = vim.fn.getwininfo(self:get_winid(nil, "View:grow"))
+  local wininfo = vim.fn.getwininfo(self:get_winid())
   if type(wininfo) == "table" and type(wininfo[1]) == "table" then
     padding = padding + wininfo[1].textoff
   end
@@ -378,7 +346,7 @@ function View:grow()
   for line_nr, l in pairs(lines) do
     local count = vim.fn.strchars(l)
     -- also add space for right-aligned icons
-    local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr("View:grow2"), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
+    local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
     count = count + utils.extmarks_length(extmarks)
     if resizing_width < count then
       resizing_width = count
@@ -423,11 +391,11 @@ function View:resize(size)
     self.width = size
   end
 
-  if not self:is_visible(nil, "View:resize") then
+  if not self:is_visible() then
     return
   end
 
-  local winid = self:get_winid(nil, "View:resize") or 0
+  local winid = self:get_winid() or 0
 
   local new_size = self:get_width()
 
@@ -481,17 +449,6 @@ end
 function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    log.line("dev", "View:abandon_current_window() t%d w%s b%s member b%s %s",
-      tab,
-      globals.WINID_BY_TABID[tab],
-      globals.BUFNR_BY_TABID[tab],
-      self.bufnr_by_tabid[tab],
-      (globals.BUFNR_BY_TABID[tab] == self.bufnr_by_tabid[tab]) and "" or "MISMATCH")
-  end
-  --- END multi-instance FF
-
   -- reset both bufnr registries
   globals.BUFNR_BY_TABID[tab] = nil
   self.bufnr_by_tabid[tab] = nil
@@ -507,91 +464,45 @@ function View:abandon_all_windows()
 end
 
 ---@param opts table|nil
----@param callsite string
 ---@return boolean
-function View:is_visible(opts, callsite)
-  local msg
-
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    msg = string.format("View:is_visible(%s, %-20.20s)", vim.inspect(opts, { newline = "" }), callsite)
-  end
-  --- END multi-instance FF
-
+function View:is_visible(opts)
   if opts and opts.tabpage then
-    --- BEGIN multi-instance FF
-    if self.explorer.opts.experimental.multi_instance then
-      local winid = self:winid(opts.tabpage)
-      local winid_by_tabid = opts.tabpage and globals.WINID_BY_TABID[opts.tabpage] or nil
-      msg = string.format("%s globals.WINID_BY_TABID[%s]=w%s view.winid(%s)=w%s",
-        msg,
-        opts.tabpage, winid_by_tabid,
-        opts.tabpage, winid
-      )
-      if winid ~= winid_by_tabid then
-        msg = string.format("%s MISMATCH", msg)
-        notify.error(msg)
-      end
-      log.line("dev", "%s", msg)
-
-      return winid and vim.api.nvim_win_is_valid(winid) or false
-      --- END multi-instance FF
-    else
-      local winid = globals.WINID_BY_TABID[opts.tabpage]
-      return winid and vim.api.nvim_win_is_valid(winid)
-    end
+    local winid = self:winid(opts.tabpage)
+    return winid and vim.api.nvim_win_is_valid(winid) or false
   end
 
   if opts and opts.any_tabpage then
-    for tabid, winid_by_tabid in pairs(globals.WINID_BY_TABID) do
-      --- BEGIN multi-instance FF
-      if self.explorer.opts.experimental.multi_instance then
-        local winid = self:winid(tabid)
-        msg = string.format("%s globals.WINID_BY_TABID[%s]=w%s view.winid(%s)=w%s",
-          msg,
-          tabid, winid_by_tabid,
-          tabid, winid
-        )
-        if winid ~= winid_by_tabid then
-          msg = string.format("%s MISMATCH", msg)
-          notify.error(msg)
-        end
-        log.line("dev", "%s", msg)
+    for tabid, _ in pairs(globals.WINID_BY_TABID) do
+      local winid = self:winid(tabid)
 
-        if winid and vim.api.nvim_win_is_valid(winid) then
-          return true
-        end
-        --- END multi-instance FF
-      else
-        if winid_by_tabid and vim.api.nvim_win_is_valid(winid_by_tabid) then
-          return true
-        end
+      if winid and vim.api.nvim_win_is_valid(winid) then
+        return true
       end
     end
     return false
   end
 
-  local winid = self:get_winid(nil, "View:is_visible")
+  local winid = self:get_winid()
   return winid ~= nil and vim.api.nvim_win_is_valid(winid or 0)
 end
 
 ---@param opts table|nil
 function View:set_cursor(opts)
-  if self:is_visible(nil, "View:set_cursor") then
-    pcall(vim.api.nvim_win_set_cursor, self:get_winid(nil, "View:set_cursor"), opts)
+  if self:is_visible() then
+    pcall(vim.api.nvim_win_set_cursor, self:get_winid(), opts)
   end
 end
 
 ---@param winid number|nil
 ---@param open_if_closed boolean|nil
 function View:focus(winid, open_if_closed)
-  local wid = winid or self:get_winid(nil, "View:focus1")
+  local wid = winid or self:get_winid(nil)
 
   if vim.api.nvim_win_get_tabpage(wid or 0) ~= vim.api.nvim_win_get_tabpage(0) then
-    self:close(nil, "View:focus")
+    self:close()
     self:open()
-    wid = self:get_winid(nil, "View:focus2")
-  elseif open_if_closed and not self:is_visible(nil, "View:focus") then
+    wid = self:get_winid(nil)
+  elseif open_if_closed and not self:is_visible() then
     self:open()
   end
 
@@ -608,8 +519,8 @@ function View:api_winid(opts)
   if tabpage == 0 then
     tabpage = vim.api.nvim_get_current_tabpage()
   end
-  if self:is_visible({ tabpage = tabpage }, "View:api_winid") then
-    return self:get_winid(tabpage, "View:winid")
+  if self:is_visible({ tabpage = tabpage }) then
+    return self:get_winid(tabpage)
   else
     return nil
   end
@@ -637,85 +548,23 @@ end
 
 --- Returns the window number for nvim-tree within the tabpage specified
 ---@param tabid number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
----@param callsite string
 ---@return number|nil
-function View:get_winid(tabid, callsite)
-  local tabid_param = tabid
+function View:get_winid(tabid)
   tabid = tabid or vim.api.nvim_get_current_tabpage()
-  local global_winid = nil
-
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    local msg_fault = ""
-    if not globals.WINID_BY_TABID[tabid] then
-      msg_fault = "no WINID_BY_TABID"
-    elseif not vim.api.nvim_win_is_valid(globals.WINID_BY_TABID[tabid]) then
-      msg_fault = string.format("invalid globals.WINID_BY_TABID[tabid] %d", globals.WINID_BY_TABID[tabid])
-    else
-      global_winid = globals.WINID_BY_TABID[tabid]
-    end
-
-    local winid = self:winid(tabid)
-
-    if winid ~= global_winid then
-      msg_fault = "MISMATCH"
-    end
-
-    local msg = string.format("View:get_winid(%3s, %-20.20s) globals.WINID_BY_TABID[%s]=w%s view.winid(%s)=w%s %s",
-      tabid_param,
-      callsite,
-      tabid, global_winid,
-      tabid, winid,
-      msg_fault
-    )
-
-    log.line("dev", "%s", msg)
-
-    if winid ~= global_winid then
-      notify.error(msg)
-    end
-
-    return winid
-  end
-  --- END multi-instance FF
-
-  -- legacy codepath
-  if global_winid and vim.api.nvim_win_is_valid(global_winid) then
-    return global_winid
-  end
+  return self:winid(tabid)
 end
 
 --- Returns the current nvim tree bufnr
----@param callsite string
 ---@return number
-function View:get_bufnr(callsite)
+function View:get_bufnr()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  --- BEGIN multi-instance FF
-  if self.explorer.opts.experimental.multi_instance then
-    local msg = string.format("View:get_bufnr(%-20.20s) globals.BUFNR_BY_TABID[%s]=b%s view.bufnr_by_tab[%s]=b%s %s",
-      callsite,
-      tab, globals.BUFNR_BY_TABID[tab],
-      tab, self.bufnr_by_tabid[tab],
-      (globals.BUFNR_BY_TABID[tab] == self.bufnr_by_tabid[tab]) and "" or "MISMATCH"
-    )
-
-    if globals.BUFNR_BY_TABID[tab] ~= self.bufnr_by_tabid[tab] then
-      notify.error(msg)
-    end
-
-    log.line("dev", msg)
-
-    return self.bufnr_by_tabid[tab]
-  end
-  --- END multi-instance FF
-
-  return globals.BUFNR_BY_TABID[tab]
+  return self.bufnr_by_tabid[tab]
 end
 
 function View:prevent_buffer_override()
-  local view_winid = self:get_winid(nil, "View:prevent_buffer_override")
-  local view_bufnr = self:get_bufnr("View:prevent_buffer_override")
+  local view_winid = self:get_winid()
+  local view_bufnr = self:get_bufnr()
 
   -- need to schedule to let the new buffer populate the window
   -- because this event needs to be run on bufWipeout.
@@ -769,7 +618,7 @@ end
 
 -- used on ColorScheme event
 function View:reset_winhl()
-  local winid = self:get_winid(nil, "View:reset_winhl")
+  local winid = self:get_winid()
   if winid and vim.api.nvim_win_is_valid(winid) then
     vim.wo[winid].winhl = appearance.WIN_HL
   end
