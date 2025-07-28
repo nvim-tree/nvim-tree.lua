@@ -34,13 +34,13 @@ local View = Class:extend()
 function View:new(args)
   args.explorer:log_new("View")
 
-  self.explorer         = args.explorer
-  self.adaptive_size    = false
-  self.side             = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.live_filter      = { prev_focused_node = nil, }
-  self.bufnr_by_tabid   = {}
+  self.explorer       = args.explorer
+  self.adaptive_size  = false
+  self.side           = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.live_filter    = { prev_focused_node = nil, }
+  self.bufnr_by_tabid = {}
 
-  self.winopts          = {
+  self.winopts        = {
     relativenumber = self.explorer.opts.view.relativenumber,
     number         = self.explorer.opts.view.number,
     list           = false,
@@ -137,7 +137,9 @@ local move_tbl = {
 
 ---@private
 function View:set_window_options_and_buffer()
-  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr_internal())
+  if not pcall(vim.api.nvim_command, "buffer " .. self.bufnr) then
+    return
+  end
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
@@ -298,7 +300,7 @@ end
 ---@private
 function View:grow()
   local starts_at = self:is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
-  local lines = vim.api.nvim_buf_get_lines(self:get_bufnr_internal(), starts_at, -1, false)
+  local lines = vim.api.nvim_buf_get_lines(self.bufnr, starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = self:get_size(self.padding)
 
@@ -322,7 +324,7 @@ function View:grow()
   for line_nr, l in pairs(lines) do
     local count = vim.fn.strchars(l)
     -- also add space for right-aligned icons
-    local extmarks = vim.api.nvim_buf_get_extmarks(self:get_bufnr_internal(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
+    local extmarks = vim.api.nvim_buf_get_extmarks(self.bufnr, ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
     count = count + utils.extmarks_length(extmarks)
     if resizing_width < count then
       resizing_width = count
@@ -540,16 +542,6 @@ function View:get_winid()
   return utils.first_window_containing_buf(self.bufnr)
 end
 
---- TODO this needs to be refactored away; it's private now to contain it
---- Returns the current nvim tree bufnr
----@private
----@return number
-function View:get_bufnr_internal()
-  local tab = vim.api.nvim_get_current_tabpage()
-
-  return self.bufnr_by_tabid[tab]
-end
-
 ---buffer for this view
 ---@return integer?
 function View:get_bufnr()
@@ -558,7 +550,7 @@ end
 
 function View:prevent_buffer_override()
   local view_winid = self:get_winid_internal()
-  local view_bufnr = self:get_bufnr_internal()
+  local view_bufnr = self.bufnr
 
   -- need to schedule to let the new buffer populate the window
   -- because this event needs to be run on bufWipeout.
