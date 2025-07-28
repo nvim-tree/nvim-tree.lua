@@ -20,8 +20,6 @@ local Class = require("nvim-tree.classic")
 ---@field private padding integer
 -- TODO multi-instance remove or replace with single member
 ---@field private bufnr_by_tabid table<integer, integer>
--- TODO multi-instance change to single member
----@field private cursors_by_tabid table<integer, integer[]> as per vim.api.nvim_win_get_cursor
 local View = Class:extend()
 
 ---@class View
@@ -40,7 +38,6 @@ function View:new(args)
   self.side             = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter      = { prev_focused_node = nil, }
   self.bufnr_by_tabid   = {}
-  self.cursors_by_tabid = {}
 
   self.winopts          = {
     relativenumber = self.explorer.opts.view.relativenumber,
@@ -244,7 +241,7 @@ end
 ---@param tabid integer
 function View:save_state(tabid)
   tabid = tabid or vim.api.nvim_get_current_tabpage()
-  self.cursors_by_tabid[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid) or 0)
+  globals.CURSORS[tabid] = vim.api.nvim_win_get_cursor(self:get_winid(tabid) or 0)
 end
 
 ---@private
@@ -528,7 +525,7 @@ end
 
 ---restore any state from last close
 function View:restore_state()
-  self:set_cursor(self.cursors_by_tabid[vim.api.nvim_get_current_tabpage()])
+  self:set_cursor(globals.CURSORS[vim.api.nvim_get_current_tabpage()])
 end
 
 --- winid containing the buffer
