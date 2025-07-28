@@ -649,6 +649,23 @@ function M.is_nvim_tree_buf(bufnr)
   return false
 end
 
+---First window that contains a buffer
+---@param bufnr integer?
+---@return integer? winid
+function M.first_window_containing_buf(bufnr)
+  if not bufnr then
+    return nil
+  end
+
+  for _, winid in pairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_buf(winid) == bufnr then
+      return winid
+    end
+  end
+
+  return nil
+end
+
 --- path is an executable file or directory
 ---@param absolute_path string
 ---@return boolean

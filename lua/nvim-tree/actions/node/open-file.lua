@@ -21,9 +21,7 @@ end
 ---@return table with valid win_ids
 local function usable_win_ids()
   local explorer = core.get_explorer()
-  local tabpage = vim.api.nvim_get_current_tabpage()
-  local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)
-  local tree_winid = explorer and explorer.view:get_winid(tabpage)
+  local tree_winid = explorer and explorer.view:get_winid()
 
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
@@ -47,7 +45,7 @@ local function usable_win_ids()
       and not win_config.hide
       and not win_config.external
       or false
-  end, win_ids)
+  end, vim.api.nvim_tabpage_list_wins(0))
 end
 
 ---Get user to pick a window in the tab that is not NvimTree.
