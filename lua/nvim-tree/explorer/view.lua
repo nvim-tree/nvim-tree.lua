@@ -60,10 +60,6 @@ function View:new(args)
 
   self:configure_width(self.explorer.opts.view.width)
   self.initial_width = self:get_width()
-
-  -- TODO multi-instance remove this; delete buffers rather than retaining them
-  local tabid = vim.api.nvim_get_current_tabpage()
-  self.bufnr_by_tabid[tabid] = globals.BUFNR_BY_TABID[tabid]
 end
 
 function View:destroy()
@@ -161,7 +157,6 @@ function View:create_buffer(bufnr)
 
   -- set both bufnr registries
   globals.BUFNR_BY_TABID[tabid] = bufnr
-  self.bufnr_by_tabid[tabid] = bufnr
 
   vim.api.nvim_buf_set_name(bufnr, "NvimTree_" .. tabid)
 
@@ -498,7 +493,6 @@ function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
 
   globals.BUFNR_BY_TABID[tab] = nil
-  self.bufnr_by_tabid[tab] = nil
 
   globals.WINID_BY_TABID[tab] = nil
 end
@@ -582,7 +576,7 @@ end
 ---@param tabid number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return integer? winid
 function View:winid(tabid)
-  local bufnr = self.bufnr_by_tabid[tabid]
+  local bufnr = globals.BUFNR_BY_TABID[tabid]
 
   if bufnr then
     for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabid or 0)) do
@@ -607,7 +601,7 @@ end
 function View:get_bufnr()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  return self.bufnr_by_tabid[tab]
+  return globals.BUFNR_BY_TABID[tabd]
 end
 
 function View:prevent_buffer_override()
