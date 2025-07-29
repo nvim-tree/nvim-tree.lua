@@ -18,8 +18,9 @@ local Class = require("nvim-tree.classic")
 ---@field private width (fun():integer)|integer|string
 ---@field private max_width integer
 ---@field private padding integer
--- TODO multi-instance remove or replace with single member
+-- TODO multi-instance replace with single members
 ---@field private bufnr_by_tabid table<integer, integer>
+---@field private winid_by_tabid table<integer, integer>
 local View = Class:extend()
 
 ---@class View
@@ -33,13 +34,14 @@ local View = Class:extend()
 function View:new(args)
   args.explorer:log_new("View")
 
-  self.explorer         = args.explorer
-  self.adaptive_size    = false
-  self.side             = (self.explorer.opts.view.side == "right") and "right" or "left"
-  self.live_filter      = { prev_focused_node = nil, }
-  self.bufnr_by_tabid   = {}
+  self.explorer       = args.explorer
+  self.adaptive_size  = false
+  self.side           = (self.explorer.opts.view.side == "right") and "right" or "left"
+  self.live_filter    = { prev_focused_node = nil, }
+  self.bufnr_by_tabid = {}
+  self.winid_by_tabid = {}
 
-  self.winopts          = {
+  self.winopts        = {
     relativenumber = self.explorer.opts.view.relativenumber,
     number         = self.explorer.opts.view.number,
     list           = false,
@@ -60,10 +62,6 @@ function View:new(args)
 
   self:configure_width(self.explorer.opts.view.width)
   self.initial_width = self:get_width()
-
-  -- TODO multi-instance remove this; delete buffers rather than retaining them
-  local tabid = vim.api.nvim_get_current_tabpage()
-  self.bufnr_by_tabid[tabid] = globals.BUFNR_BY_TABID[tabid]
 end
 
 function View:destroy()
@@ -79,6 +77,64 @@ local BUFFER_OPTIONS = {
   { name = "modifiable", value = false },
   { name = "swapfile",   value = false },
 }
+
+---Buffer local autocommands to track state, deleted on buffer wipeout
+---@private
+---@param bufnr integer
+function View:create_autocmds(bufnr)
+  -- clear bufnr and winid
+  -- eject buffer opened in the nvim-tree window and create a new buffer
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = self.explorer.augroup_id,
+    buffer = bufnr,
+    callback = function(data)
+      log.line("dev",
+        "View BufWipeout\n  bufnr = %s\n  data.buf = %s\n  self.bufnr_by_tabid = %s\n  self.winid_by_tabid = %s",
+        bufnr,
+        data.buf,
+        vim.inspect(self.bufnr_by_tabid, { newline = "" }),
+        vim.inspect(self.winid_by_tabid, { newline = "" }),
+        vim.inspect(data, { newline = "" })
+      )
+
+      -- clear the tab's buffer
+      self.bufnr_by_tabid = vim.tbl_map(function(b)
+        return b ~= bufnr and b or nil
+      end, self.bufnr_by_tabid)
+
+      -- clear the tab's window(s)
+      local winids = vim.fn.win_findbuf(bufnr)
+      self.winid_by_tabid = vim.tbl_map(function(winid)
+        return not vim.tbl_contains(winids, winid) and winid or nil
+      end, self.winid_by_tabid)
+
+      if self.explorer.opts.actions.open_file.eject then
+        self:prevent_buffer_override()
+      else
+        self:abandon_current_window()
+      end
+    end,
+  })
+
+  -- set winid
+  vim.api.nvim_create_autocmd("BufWinEnter", {
+    group = self.explorer.augroup_id,
+    buffer = bufnr,
+    callback = function(data)
+      local tabid = vim.api.nvim_get_current_tabpage()
+
+      log.line("dev",
+        "View BufWinEnter\n  bufnr = %s\n  data.buf = %s\n  self.bufnr_by_tabid = %s\n  self.winid_by_tabid = %s",
+        bufnr,
+        data.buf,
+        vim.inspect(self.bufnr_by_tabid, { newline = "" }),
+        vim.inspect(self.winid_by_tabid, { newline = "" })
+      )
+
+      self.winid_by_tabid[tabid] = vim.fn.bufwinid(data.buf) -- first on current tabpage
+    end,
+  })
+end
 
 -- TODO multi-instance remove this; delete buffers rather than retaining them
 ---@private
@@ -112,15 +168,17 @@ function View:create_buffer(bufnr)
 
   bufnr = bufnr or vim.api.nvim_create_buf(false, false)
 
-  -- set both bufnr registries
-  globals.BUFNR_BY_TABID[tabid] = bufnr
   self.bufnr_by_tabid[tabid] = bufnr
+
+  globals.BUFNR_BY_TABID[tabid] = bufnr
 
   vim.api.nvim_buf_set_name(bufnr, "NvimTree_" .. tabid)
 
   for _, option in ipairs(BUFFER_OPTIONS) do
     vim.api.nvim_set_option_value(option.name, option.value, { buf = bufnr })
   end
+
+  self:create_autocmds(bufnr)
 
   require("nvim-tree.keymap").on_attach(bufnr)
 
@@ -158,7 +216,9 @@ local move_tbl = {
 
 ---@private
 function View:set_window_options_and_buffer()
-  pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr())
+  if not pcall(vim.api.nvim_command, "buffer " .. self:get_bufnr()) then
+    return
+  end
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
@@ -446,9 +506,7 @@ end
 function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  -- reset both bufnr registries
   globals.BUFNR_BY_TABID[tab] = nil
-  self.bufnr_by_tabid[tab] = nil
 
   globals.WINID_BY_TABID[tab] = nil
 end
@@ -532,7 +590,7 @@ end
 ---@param tabid number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return integer? winid
 function View:winid(tabid)
-  local bufnr = self.bufnr_by_tabid[tabid]
+  local bufnr = globals.BUFNR_BY_TABID[tabid]
 
   if bufnr then
     for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabid or 0)) do
@@ -543,6 +601,7 @@ function View:winid(tabid)
   end
 end
 
+--- TODO this needs to be refactored away; it's private now to contain it
 --- Returns the window number for nvim-tree within the tabpage specified
 ---@param tabid number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return number|nil
@@ -556,7 +615,7 @@ end
 function View:get_bufnr()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  return self.bufnr_by_tabid[tab]
+  return globals.BUFNR_BY_TABID[tab]
 end
 
 function View:prevent_buffer_override()
