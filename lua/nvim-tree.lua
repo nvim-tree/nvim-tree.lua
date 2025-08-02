@@ -486,7 +486,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
-    multi_instance = false,
   },
   log = {
     enable = false,
@@ -669,7 +668,7 @@ function M.purge_all_state()
   local explorer = core.get_explorer()
   if explorer then
     explorer.view:close_all_tabs()
-    explorer.view:abandon_all_windows("purge_all_state")
+    explorer.view:abandon_all_windows()
     require("nvim-tree.git").purge_state()
     explorer:destroy()
     core.reset_explorer()
@@ -727,7 +726,6 @@ function M.setup(conf)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
-  require("nvim-tree.multi-instance-debug").setup(opts)
 
   setup_autocommands(opts)
 
