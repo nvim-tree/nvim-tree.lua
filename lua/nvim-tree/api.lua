@@ -269,19 +269,6 @@ local function edit(mode, node, edit_opts)
   end
 end
 
-Api.tree.toggle_descend_until = wrap_node(function(node, descend_until)
-  local dir = node:as(DirectoryNode)
-  if dir then
-    if node.open then
-      dir:expand_or_collapse(nil)
-    else
-      actions.tree.modifiers.expand.all(node, { descend_until = descend_until })
-    end
-  else
-    edit("edit", node)
-  end
-end)
-
 ---@param mode string
 ---@param toggle_group boolean?
 ---@return fun(node: Node, edit_opts: NodeEditOpts?)
