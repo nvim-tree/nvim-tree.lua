@@ -187,7 +187,7 @@ Api.tree.search_node = wrap(actions.finders.search_node.fn)
 
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
 
----@class ApiTreeExpandAllOpts
+---@class ApiTreeExpandOpts
 ---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
 
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
