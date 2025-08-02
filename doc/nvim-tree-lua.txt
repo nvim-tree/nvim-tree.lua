@@ -1846,6 +1846,7 @@ tree.expand_all({node})                      *nvim-tree-api.tree.expand_all()*
 
     Parameters: ~
       • {node} (Node|nil) folder
+      • {expand_opts} (ApiTreeExpandOpts|nil) optional parameters
 
                                   *nvim-tree-api.tree.toggle_enable_filters()*
 tree.toggle_enable_filters()
@@ -2285,6 +2286,7 @@ node.expand({node})                              *nvim-tree-api.node.expand()*
 
     Parameters: ~
       • {node} (Node|nil) file or folder
+      • {expand_opts} (ApiTreeExpandOpts|nil) optional parameters
 
 node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
     Collapse the tree under a directory or a file's parent directory.
