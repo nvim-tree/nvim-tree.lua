@@ -52,7 +52,15 @@ local function should_expand(expansion_count, node, should_descend)
     return false
   end
 
-  return not dir.open and should_descend(expansion_count, node)
+  if not dir.open and should_descend(expansion_count, node) then
+    core.get_explorer():expand(node)
+    if node.group_next then
+      return should_expand(expansion_count, node.group_next, should_descend)
+    else
+      return true
+    end
+  end
+  return false
 end
 
 
