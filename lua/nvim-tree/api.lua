@@ -229,7 +229,6 @@ Api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_ab
 Api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
 Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
-
 ---
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false
