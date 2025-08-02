@@ -44,7 +44,7 @@ end
 
 ---@param expansion_count integer
 ---@param node Node
----@param should_descend fun(expansion_count: integer, node: DirectoryNode): boolean
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return boolean
 local function should_expand(expansion_count, node, should_descend)
   local dir = node:as(DirectoryNode)
@@ -52,7 +52,7 @@ local function should_expand(expansion_count, node, should_descend)
     return false
   end
 
-  if not dir.open and should_descend(expansion_count, dir) then
+  if not dir.open and should_descend(expansion_count, node) then
     core.get_explorer():expand(dir) -- populate node.group_next
     if dir.group_next then
       return should_expand(expansion_count, dir.group_next, should_descend)
@@ -64,7 +64,7 @@ local function should_expand(expansion_count, node, should_descend)
 end
 
 
----@param should_descend fun(expansion_count: integer, node: DirectoryNode): boolean
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return fun(node): any
 local function gen_iterator(should_descend)
   local expansion_count = 0
