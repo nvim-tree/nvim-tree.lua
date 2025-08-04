@@ -87,7 +87,6 @@ function View:log_event(data, bufnr)
   vim.api.nvim_get_current_tabpage() = %s\
   vim.api.nvim_get_current_win() = %s\
   self.bufnr_by_tabid = %s\
-  globals.BUFNR_BY_TABID = %s\
   globals.WINID_BY_TABID = %s\
   vim.fn.win_findbuf(bufnr) = %s\
   data = %s\
@@ -97,7 +96,6 @@ function View:log_event(data, bufnr)
     vim.api.nvim_get_current_tabpage(),
     vim.api.nvim_get_current_win(),
     vim.inspect(self.bufnr_by_tabid, { newline = "" }),
-    vim.inspect(globals.BUFNR_BY_TABID, { newline = "" }),
     vim.inspect(globals.WINID_BY_TABID, { newline = "" }),
     vim.inspect(vim.fn.win_findbuf(bufnr), { newline = "" }),
     vim.inspect(data, { newline = "" }),
@@ -179,7 +177,7 @@ end
 ---@param bufnr integer
 ---@return boolean
 function View:matches_bufnr(bufnr)
-  for _, b in pairs(globals.BUFNR_BY_TABID) do
+  for _, b in pairs(self.bufnr_by_tabid) do
     if b == bufnr then
       return true
     end
@@ -207,8 +205,6 @@ function View:create_buffer(bufnr)
   bufnr = bufnr or vim.api.nvim_create_buf(false, false)
 
   self.bufnr_by_tabid[tabid] = bufnr
-
-  globals.BUFNR_BY_TABID[tabid] = bufnr
 
   vim.api.nvim_buf_set_name(bufnr, "NvimTree_" .. tabid)
 
@@ -544,14 +540,14 @@ end
 function View:abandon_current_window()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  globals.BUFNR_BY_TABID[tab] = nil
+  self.bufnr_by_tabid[tab] = nil
 
   globals.WINID_BY_TABID[tab] = nil
 end
 
 function View:abandon_all_windows()
   for tab, _ in pairs(vim.api.nvim_list_tabpages()) do
-    globals.BUFNR_BY_TABID[tab] = nil
+    self.bufnr_by_tabid[tab] = nil
     globals.WINID_BY_TABID[tab] = nil
   end
 end
@@ -628,7 +624,7 @@ end
 ---@param tabid number|nil (optional) the number of the chosen tabpage. Defaults to current tabpage.
 ---@return integer? winid
 function View:winid(tabid)
-  local bufnr = globals.BUFNR_BY_TABID[tabid]
+  local bufnr = self.bufnr_by_tabid[tabid]
 
   if bufnr then
     for _, winid in pairs(vim.api.nvim_tabpage_list_wins(tabid or 0)) do
@@ -653,7 +649,7 @@ end
 function View:get_bufnr()
   local tab = vim.api.nvim_get_current_tabpage()
 
-  return globals.BUFNR_BY_TABID[tab]
+  return self.bufnr_by_tabid[tab]
 end
 
 function View:prevent_buffer_override()
