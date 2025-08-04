@@ -16,12 +16,13 @@ function M.get_toplevel(cwd)
   local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel", "--absolute-git-dir" }
   log.line("git", "%s", table.concat(cmd, " "))
 
-  local out = vim.fn.system(cmd)
+  local obj = vim.system(cmd):wait()
+  local out = vim.trim(obj.stdout)
 
   log.raw("git", out)
   log.profile_end(profile)
 
-  if vim.v.shell_error ~= 0 or not out or #out == 0 or out:match("fatal") then
+  if obj.code ~= 0 or not out or #out == 0 or out:match("fatal") then
     return nil, nil
   end
 
