@@ -17,7 +17,7 @@ function M.get_toplevel(cwd)
   log.line("git", "%s", table.concat(cmd, " "))
 
   local obj = vim.system(cmd):wait()
-  local out = obj.stdout
+  local out = obj.stdout or ""
 
   log.raw("git", out)
   log.profile_end(profile)
