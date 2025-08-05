@@ -107,7 +107,6 @@ end
 ---@private
 ---@param bufnr integer
 function View:create_autocmds(bufnr)
-  -- clear bufnr and winid
   -- eject buffer opened in the nvim-tree window and create a new buffer
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = self.explorer.augroup_id,
@@ -128,7 +127,6 @@ function View:create_autocmds(bufnr)
     end,
   })
 
-  -- close any other windows containing this buffer
   -- not fired when entering the first window, only subsequent event such as following a split
   -- does fire on :tabnew for _any_ buffer
   vim.api.nvim_create_autocmd("WinEnter", {
@@ -149,25 +147,37 @@ function View:create_autocmds(bufnr)
         return
       end
 
-      -- are there any other windows containing bufnr?
-      local winids_buf = vim.fn.win_findbuf(bufnr)
-      if #winids_buf <= 1 then
-        return
-      end
-
-      -- close all other windows
-      local winid_cur = vim.api.nvim_get_current_win()
-      for _, winid in ipairs(winids_buf) do
-        if winid ~= winid_cur then
-          pcall(vim.api.nvim_win_close, winid, false)
-        end
-      end
-
-      -- setup this window, it may be new e.g. split
-      self:set_window_options_and_buffer()
-      self:resize()
+      -- close other windows in this tab
+      self:close_other_windows(bufnr)
     end,
   })
+end
+
+---Close any other windows containing this buffer and setup current window
+---Feature gated behind experimental.close_other_windows_in_tab
+---@param bufnr integer
+function View:close_other_windows(bufnr)
+  if not self.explorer.opts.experimental.close_other_windows_in_tab then
+    return
+  end
+
+  -- are there any other windows containing bufnr?
+  local winids_buf = vim.fn.win_findbuf(bufnr)
+  if #winids_buf <= 1 then
+    return
+  end
+
+  -- close all other windows
+  local winid_cur = vim.api.nvim_get_current_win()
+  for _, winid in ipairs(winids_buf) do
+    if winid ~= winid_cur then
+      pcall(vim.api.nvim_win_close, winid, false)
+    end
+  end
+
+  -- setup current window, it may be new e.g. split
+  self:set_window_options_and_buffer()
+  self:resize()
 end
 
 -- TODO multi-instance remove this; delete buffers rather than retaining them
