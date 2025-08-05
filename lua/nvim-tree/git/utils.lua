@@ -5,6 +5,19 @@ local M = {
   use_cygpath = false,
 }
 
+--- Execute system command
+---@param cmd string[]
+---@return string stdout
+---@return integer exit code
+local function system(cmd)
+  if vim.fn.has("nvim-0.10") == 1 then
+    local obj = vim.system(cmd):wait()
+    return obj.stdout or "", obj.code
+  else
+    return vim.fn.system(cmd), vim.v.shell_error
+  end
+end
+
 --- Retrieve the git toplevel directory
 ---@param cwd string path
 ---@return string|nil toplevel absolute path
@@ -16,13 +29,7 @@ function M.get_toplevel(cwd)
   local cmd = { "git", "-C", cwd, "rev-parse", "--show-toplevel", "--absolute-git-dir" }
   log.line("git", "%s", table.concat(cmd, " "))
 
-  local out, exitCode
-  if vim.fn.has("nvim-0.10") == 1 then
-    local obj = vim.system(cmd):wait()
-    out, exitCode = obj.stdout or "", obj.code
-  else
-    out, exitCode = vim.fn.system(cmd), vim.v.shell_error
-  end
+  local out, exitCode = system(cmd)
 
   log.raw("git", out)
   log.profile_end(profile)
@@ -79,7 +86,7 @@ function M.should_show_untracked(cwd)
   local cmd = { "git", "-C", cwd, "config", "status.showUntrackedFiles" }
   log.line("git", table.concat(cmd, " "))
 
-  local has_untracked = vim.fn.system(cmd)
+  local has_untracked = system(cmd)
 
   log.raw("git", has_untracked)
   log.profile_end(profile)
