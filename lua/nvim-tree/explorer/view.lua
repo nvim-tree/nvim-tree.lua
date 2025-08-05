@@ -20,7 +20,6 @@ local Class = require("nvim-tree.classic")
 ---@field private padding integer
 -- TODO multi-instance replace with single members
 ---@field private bufnr_by_tabid table<integer, integer>
----@field private winid_by_tabid table<integer, integer>
 local View = Class:extend()
 
 ---@class View
@@ -39,7 +38,6 @@ function View:new(args)
   self.side           = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter    = { prev_focused_node = nil, }
   self.bufnr_by_tabid = {}
-  self.winid_by_tabid = {}
 
   self.winopts        = {
     relativenumber = self.explorer.opts.view.relativenumber,
@@ -78,35 +76,48 @@ local BUFFER_OPTIONS = {
   { name = "swapfile",   value = false },
 }
 
+---@private
+---@param data table
+---@param bufnr integer
+function View:log_event(data, bufnr)
+  log.line("dev", "View %s\
+  bufnr = %s\
+  vim.api.nvim_get_current_tabpage() = %s\
+  vim.api.nvim_get_current_win() = %s\
+  self.bufnr_by_tabid = %s\
+  globals.BUFNR_BY_TABID = %s\
+  globals.WINID_BY_TABID = %s\
+  vim.fn.win_findbuf(bufnr) = %s\
+  data = %s\
+  vim.v.event = %s",
+    data.event,
+    bufnr,
+    vim.api.nvim_get_current_tabpage(),
+    vim.api.nvim_get_current_win(),
+    vim.inspect(self.bufnr_by_tabid, { newline = "" }),
+    vim.inspect(globals.BUFNR_BY_TABID, { newline = "" }),
+    vim.inspect(globals.WINID_BY_TABID, { newline = "" }),
+    vim.inspect(vim.fn.win_findbuf(bufnr), { newline = "" }),
+    vim.inspect(data, { newline = "" }),
+    vim.inspect(vim.v.event, { newline = "" })
+  )
+end
+
 ---Buffer local autocommands to track state, deleted on buffer wipeout
 ---@private
 ---@param bufnr integer
 function View:create_autocmds(bufnr)
-  -- clear bufnr and winid
   -- eject buffer opened in the nvim-tree window and create a new buffer
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = self.explorer.augroup_id,
     buffer = bufnr,
     callback = function(data)
-      log.line("dev",
-        "View BufWipeout\n  bufnr = %s\n  data.buf = %s\n  self.bufnr_by_tabid = %s\n  self.winid_by_tabid = %s",
-        bufnr,
-        data.buf,
-        vim.inspect(self.bufnr_by_tabid, { newline = "" }),
-        vim.inspect(self.winid_by_tabid, { newline = "" }),
-        vim.inspect(data, { newline = "" })
-      )
+      self:log_event(data, bufnr)
 
       -- clear the tab's buffer
       self.bufnr_by_tabid = vim.tbl_map(function(b)
         return b ~= bufnr and b or nil
       end, self.bufnr_by_tabid)
-
-      -- clear the tab's window(s)
-      local winids = vim.fn.win_findbuf(bufnr)
-      self.winid_by_tabid = vim.tbl_map(function(winid)
-        return not vim.tbl_contains(winids, winid) and winid or nil
-      end, self.winid_by_tabid)
 
       if self.explorer.opts.actions.open_file.eject then
         self:prevent_buffer_override()
@@ -116,24 +127,57 @@ function View:create_autocmds(bufnr)
     end,
   })
 
-  -- set winid
-  vim.api.nvim_create_autocmd("BufWinEnter", {
+  -- not fired when entering the first window, only subsequent event such as following a split
+  -- does fire on :tabnew for _any_ buffer
+  vim.api.nvim_create_autocmd("WinEnter", {
     group = self.explorer.augroup_id,
     buffer = bufnr,
     callback = function(data)
-      local tabid = vim.api.nvim_get_current_tabpage()
+      self:log_event(data, bufnr)
 
-      log.line("dev",
-        "View BufWinEnter\n  bufnr = %s\n  data.buf = %s\n  self.bufnr_by_tabid = %s\n  self.winid_by_tabid = %s",
-        bufnr,
-        data.buf,
-        vim.inspect(self.bufnr_by_tabid, { newline = "" }),
-        vim.inspect(self.winid_by_tabid, { newline = "" })
-      )
+      -- ignore other buffers
+      if data.buf ~= bufnr then
+        return
+      end
 
-      self.winid_by_tabid[tabid] = vim.fn.bufwinid(data.buf) -- first on current tabpage
+      -- ignore other tabs
+      -- this event is fired on a a :tabnew window, even though the buffer isn't actually present
+      local tabid_cur = vim.api.nvim_get_current_tabpage()
+      if self.bufnr_by_tabid[tabid_cur] ~= bufnr then
+        return
+      end
+
+      -- close other windows in this tab
+      self:close_other_windows(bufnr)
     end,
   })
+end
+
+---Close any other windows containing this buffer and setup current window
+---Feature gated behind experimental.close_other_windows_in_tab
+---@param bufnr integer
+function View:close_other_windows(bufnr)
+  if not self.explorer.opts.experimental.close_other_windows_in_tab then
+    return
+  end
+
+  -- are there any other windows containing bufnr?
+  local winids_buf = vim.fn.win_findbuf(bufnr)
+  if #winids_buf <= 1 then
+    return
+  end
+
+  -- close all other windows
+  local winid_cur = vim.api.nvim_get_current_win()
+  for _, winid in ipairs(winids_buf) do
+    if winid ~= winid_cur then
+      pcall(vim.api.nvim_win_close, winid, false)
+    end
+  end
+
+  -- setup current window, it may be new e.g. split
+  self:set_window_options_and_buffer()
+  self:resize()
 end
 
 -- TODO multi-instance remove this; delete buffers rather than retaining them
