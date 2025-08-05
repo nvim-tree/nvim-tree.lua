@@ -20,7 +20,6 @@ local Class = require("nvim-tree.classic")
 ---@field private padding integer
 -- TODO multi-instance replace with single members
 ---@field private bufnr_by_tabid table<integer, integer>
----@field private winid_by_tabid table<integer, integer>
 local View = Class:extend()
 
 ---@class View
@@ -39,7 +38,6 @@ function View:new(args)
   self.side           = (self.explorer.opts.view.side == "right") and "right" or "left"
   self.live_filter    = { prev_focused_node = nil, }
   self.bufnr_by_tabid = {}
-  self.winid_by_tabid = {}
 
   self.winopts        = {
     relativenumber = self.explorer.opts.view.relativenumber,
@@ -164,8 +162,6 @@ function View:create_autocmds(bufnr)
           pcall(vim.api.nvim_win_close, winid, false)
         end
       end
-
-      globals.WINID_BY_TABID[tabid_cur] = winid_cur
 
       -- setup this window, it may be new e.g. split
       self:set_window_options_and_buffer()
