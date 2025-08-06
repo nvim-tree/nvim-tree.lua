@@ -131,7 +131,7 @@ function GitDecorator:build_file_folder_hl_by_xy()
     ["RM"] = "NvimTreeGitFileRenamedHL",
     [" R"] = "NvimTreeGitFileRenamedHL",
     ["!!"] = "NvimTreeGitFileIgnoredHL",
-    [" A"] = "none",
+    [" A"] = "NvimTreeGitFileNewHL",
   }
 
   self.folder_hl_by_xy = {}
