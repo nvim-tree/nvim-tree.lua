@@ -27,19 +27,30 @@ local function expand(node)
   end
 end
 
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@return fun(expansion_count: integer, node: Node): boolean
+local function limit_folder_discovery(should_descend)
+  return function(expansion_count, node)
+    local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
+    if should_halt then
+      return false
+    end
+
+    return should_descend(expansion_count, node)
+  end
+end
+
 ---@param expansion_count integer
 ---@param node Node
 ---@return boolean
-local function descend_until_max_or_empty(expansion_count, node)
+local function descend_until_empty(_, node)
   local dir = node:as(DirectoryNode)
   if not dir then
     return false
   end
 
-  local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
   local should_exclude = M.EXCLUDE[dir.name]
-
-  return not should_halt and not should_exclude
+  return not should_exclude
 end
 
 ---@param expansion_count integer
@@ -122,7 +133,7 @@ local function expand_node(node, expand_opts)
   if not node then
     return
   end
-  local descend_until = (expand_opts and expand_opts.expand_until) or descend_until_max_or_empty
+  local descend_until = limit_folder_discovery((expand_opts and expand_opts.expand_until) or descend_until_empty)
   if gen_iterator(descend_until)(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end
