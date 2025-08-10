@@ -43,7 +43,7 @@ end
 ---@param expansion_count integer
 ---@param node Node
 ---@return boolean
-local function descend_until_empty(_, node)
+local function descend_until_empty(expansion_count, node)
   local dir = node:as(DirectoryNode)
   if not dir then
     return false
@@ -65,7 +65,7 @@ local function should_expand(expansion_count, node, should_descend)
 
   if not dir.open and should_descend(expansion_count, node) then
     if #node.nodes == 0 then
-      core.get_explorer():expand(node) -- populate node.group_next
+      core.get_explorer():expand(dir) -- populate node.group_next
     end
 
     if dir.group_next then
