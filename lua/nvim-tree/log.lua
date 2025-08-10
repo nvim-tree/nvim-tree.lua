@@ -1,4 +1,4 @@
----@alias LogTypes "all" | "config" | "copy_paste" | "dev" | "diagnostics" | "git"  | "profile" | "watcher"
+---@alias LogTypes "all" | "config" | "copy_paste" | "dev" | "diagnostics" | "git" | "profile" | "watcher"
 
 ---@type table<LogTypes, boolean>
 local types = {}

@@ -1,10 +1,15 @@
-local appearance = require("nvim-tree.appearance")
 local keymap = require("nvim-tree.keymap")
 local api = {} -- circular dependency
 
 local PAT_MOUSE = "^<.*Mouse"
 local PAT_CTRL = "^<C%-"
 local PAT_SPECIAL = "^<.+"
+
+local WIN_HL = table.concat({
+  "NormalFloat:NvimTreeNormalFloat",
+  "WinSeparator:NvimTreeWinSeparator",
+  "CursorLine:NvimTreeCursorLine",
+}, ",")
 
 local namespace_help_id = vim.api.nvim_create_namespace("NvimTreeHelp")
 
@@ -205,7 +210,7 @@ local function open()
   })
 
   -- style it a bit like the tree
-  vim.wo[M.winnr].winhl = appearance.WIN_HL_HELP
+  vim.wo[M.winnr].winhl = WIN_HL
   vim.wo[M.winnr].cursorline = M.config.cursorline
 
   local function toggle_sort()

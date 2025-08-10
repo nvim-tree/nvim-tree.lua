@@ -4,6 +4,7 @@ local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 local node_factory = require("nvim-tree.node.factory")
 
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -19,7 +20,6 @@ local LiveFilter = require("nvim-tree.explorer.live-filter")
 local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
-local View = require("nvim-tree.explorer.view")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
@@ -35,7 +35,6 @@ local config
 ---@field sorters Sorter
 ---@field marks Marks
 ---@field clipboard Clipboard
----@field view View
 local Explorer = RootNode:extend()
 
 ---@class Explorer
@@ -56,18 +55,15 @@ function Explorer:new(args)
   self.uid_explorer = vim.loop.hrtime()
   self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
-  self:log_new("Explorer")
+  self.open         = true
+  self.opts         = config
 
-  self.open        = true
-  self.opts        = config
-
-  self.sorters     = Sorter({ explorer = self })
-  self.renderer    = Renderer({ explorer = self })
-  self.filters     = Filters({ explorer = self })
-  self.live_filter = LiveFilter({ explorer = self })
-  self.marks       = Marks({ explorer = self })
-  self.clipboard   = Clipboard({ explorer = self })
-  self.view        = View({ explorer = self })
+  self.sorters      = Sorter({ explorer = self })
+  self.renderer     = Renderer({ explorer = self })
+  self.filters      = Filters({ explorer = self })
+  self.live_filter  = LiveFilter({ explorer = self })
+  self.marks        = Marks({ explorer = self })
+  self.clipboard    = Clipboard({ explorer = self })
 
   self:create_autocmds()
 
@@ -75,15 +71,7 @@ function Explorer:new(args)
 end
 
 function Explorer:destroy()
-  self.explorer:log_destroy("Explorer")
-
-  self.clipboard:destroy()
-  self.filters:destroy()
-  self.live_filter:destroy()
-  self.marks:destroy()
-  self.renderer:destroy()
-  self.sorters:destroy()
-  self.view:destroy()
+  log.line("dev", "Explorer:destroy")
 
   vim.api.nvim_del_augroup_by_id(self.augroup_id)
 
@@ -96,25 +84,10 @@ function Explorer:create_autocmds()
     group = self.augroup_id,
     callback = function()
       appearance.setup()
-      self.view:reset_winhl()
+      view.reset_winhl()
       self.renderer:draw()
     end,
   })
-
-  if self.opts.view.float.enable and self.opts.view.float.quit_on_focus_loss then
-    vim.api.nvim_create_autocmd("WinLeave", {
-      group = self.augroup_id,
-      pattern = "NvimTree_*",
-      callback = function(data)
-        if self.opts.experimental.multi_instance then
-          log.line("dev", "WinLeave %s", vim.inspect(data, { newline = "" }))
-        end
-        if utils.is_nvim_tree_buf(0) then
-          self.view:close(nil, "WinLeave")
-        end
-      end,
-    })
-  end
 
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = self.augroup_id,
@@ -164,25 +137,6 @@ function Explorer:create_autocmds()
         vim.schedule(function()
           self.renderer:draw()
         end)
-      end
-    end,
-  })
-
-  -- prevent new opened file from opening in the same window as nvim-tree
-  vim.api.nvim_create_autocmd("BufWipeout", {
-    group = self.augroup_id,
-    pattern = "NvimTree_*",
-    callback = function(data)
-      if self.opts.experimental.multi_instance then
-        log.line("dev", "BufWipeout %s", vim.inspect(data, { newline = "" }))
-      end
-      if not utils.is_nvim_tree_buf(0) then
-        return
-      end
-      if self.opts.actions.open_file.eject then
-        self.view:prevent_buffer_override()
-      else
-        self.view:abandon_current_window()
       end
     end,
   })
@@ -532,7 +486,7 @@ function Explorer:reload_explorer()
 
   local projects = git.reload_all_projects()
   self:refresh_nodes(projects)
-  if self.view:is_visible() then
+  if view.is_visible() then
     self.renderer:draw()
   end
   event_running = false
@@ -554,7 +508,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.view:get_winnr(nil, "Explorer:get_cursor_position")
+  local winnr = view.get_winnr()
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end
@@ -569,7 +523,7 @@ function Explorer:get_node_at_cursor()
     return
   end
 
-  if cursor[1] == 1 and self.view:is_root_folder_visible(core.get_cwd()) then
+  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
     return self
   end
 
@@ -601,18 +555,6 @@ end
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
   return self:clone()
-end
-
----Log a lifecycle message with uid_explorer and absolute_path
----@param msg string?
-function Explorer:log_new(msg)
-  log.line("dev", "+ %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
-end
-
----Log a lifecycle message with uid_explorer and absolute_path
----@param msg string?
-function Explorer:log_destroy(msg)
-  log.line("dev", "- %-15s %d %s", msg, self.uid_explorer, self.absolute_path)
 end
 
 function Explorer:setup(opts)
