@@ -101,29 +101,28 @@ function Renderer:render_hl(bufnr, hl_range_args)
 end
 
 function Renderer:draw()
-  local bufnr = self.explorer.view:get_bufnr()
+  local bufnr = self.explorer.view:get_bufnr("Renderer:draw")
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
     return
   end
-  local winid = self.explorer.view:get_winid()
 
   local profile = log.profile_start("draw")
 
-  local cursor = vim.api.nvim_win_get_cursor(winid or 0)
+  local cursor = vim.api.nvim_win_get_cursor(self.explorer.view:get_winnr(nil, "Renderer:draw1") or 0)
 
   local builder = Builder(self.explorer):build()
 
   self:_draw(bufnr, builder.lines, builder.hl_range_args, builder.signs, builder.extmarks, builder.virtual_lines)
 
   if cursor and #builder.lines >= cursor[1] then
-    vim.api.nvim_win_set_cursor(winid or 0, cursor)
+    vim.api.nvim_win_set_cursor(self.explorer.view:get_winnr(nil, "Renderer:draw2") or 0, cursor)
   end
 
   self.explorer.view:grow_from_content()
 
   log.profile_end(profile)
 
-  events._dispatch_on_tree_rendered(bufnr, winid)
+  events._dispatch_on_tree_rendered(bufnr, self.explorer.view:get_winnr(nil, "Renderer:draw3"))
 end
 
 return Renderer

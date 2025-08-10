@@ -15,7 +15,7 @@ function M.set_target_win()
 
   local id = vim.api.nvim_get_current_win()
 
-  if explorer and id == explorer.view:get_winid() then
+  if explorer and id == explorer.view:get_winnr(nil, "lib.set_target_win") then
     M.target_winid = 0
     return
   end
@@ -102,14 +102,14 @@ function M.open(opts)
   M.set_target_win()
   if not core.get_explorer() or opts.path then
     if opts.path then
-      core.init(opts.path)
+      core.init(opts.path, "lib.open - opts.path")
     else
       local cwd, err = vim.loop.cwd()
       if not cwd then
         notify.error(string.format("current working directory unavailable: %s", err))
         return
       end
-      core.init(cwd)
+      core.init(cwd, "lib.open - cwd")
     end
   end
 
@@ -136,7 +136,7 @@ function M.open(opts)
   end
 
   if explorer then
-    explorer.view:restore_state()
+    explorer.view:restore_tab_state()
   end
 end
 

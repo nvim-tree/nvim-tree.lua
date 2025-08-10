@@ -105,9 +105,12 @@ function Explorer:create_autocmds()
     vim.api.nvim_create_autocmd("WinLeave", {
       group = self.augroup_id,
       pattern = "NvimTree_*",
-      callback = function()
+      callback = function(data)
+        if self.opts.experimental.multi_instance then
+          log.line("dev", "WinLeave %s", vim.inspect(data, { newline = "" }))
+        end
         if utils.is_nvim_tree_buf(0) then
-          self.view:close()
+          self.view:close(nil, "WinLeave")
         end
       end,
     })
@@ -161,6 +164,25 @@ function Explorer:create_autocmds()
         vim.schedule(function()
           self.renderer:draw()
         end)
+      end
+    end,
+  })
+
+  -- prevent new opened file from opening in the same window as nvim-tree
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = self.augroup_id,
+    pattern = "NvimTree_*",
+    callback = function(data)
+      if self.opts.experimental.multi_instance then
+        log.line("dev", "BufWipeout %s", vim.inspect(data, { newline = "" }))
+      end
+      if not utils.is_nvim_tree_buf(0) then
+        return
+      end
+      if self.opts.actions.open_file.eject then
+        self.view:prevent_buffer_override()
+      else
+        self.view:abandon_current_window()
       end
     end,
   })
@@ -532,7 +554,7 @@ end
 ---nil on no explorer or invalid view win
 ---@return integer[]|nil
 function Explorer:get_cursor_position()
-  local winnr = self.view:get_winid()
+  local winnr = self.view:get_winnr(nil, "Explorer:get_cursor_position")
   if not winnr or not vim.api.nvim_win_is_valid(winnr) then
     return
   end
