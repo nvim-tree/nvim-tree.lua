@@ -19,13 +19,7 @@ local Sorter = Class:extend()
 ---@protected
 ---@param args SorterArgs
 function Sorter:new(args)
-  args.explorer:log_new("Sorter")
-
   self.explorer = args.explorer
-end
-
-function Sorter:destroy()
-  self.explorer:log_destroy("Sorter")
 end
 
 ---Create a shallow copy of a portion of a list.

@@ -134,29 +134,6 @@ M.HIGHLIGHT_GROUPS = {
   { group = "NvimTreeDiagnosticHintFolderHL",  link = "NvimTreeDiagnosticHintFileHL" },
 }
 
--- winhighlight for most cases
-M.WIN_HL = table.concat({
-  "EndOfBuffer:NvimTreeEndOfBuffer",
-  "CursorLine:NvimTreeCursorLine",
-  "CursorLineNr:NvimTreeCursorLineNr",
-  "LineNr:NvimTreeLineNr",
-  "WinSeparator:NvimTreeWinSeparator",
-  "StatusLine:NvimTreeStatusLine",
-  "StatusLineNC:NvimTreeStatuslineNC",
-  "SignColumn:NvimTreeSignColumn",
-  "Normal:NvimTreeNormal",
-  "NormalNC:NvimTreeNormalNC",
-  "NormalFloat:NvimTreeNormalFloat",
-  "FloatBorder:NvimTreeNormalFloatBorder",
-}, ",")
-
--- winhighlight for help
-M.WIN_HL_HELP = table.concat({
-  "NormalFloat:NvimTreeNormalFloat",
-  "WinSeparator:NvimTreeWinSeparator",
-  "CursorLine:NvimTreeCursorLine",
-}, ",")
-
 -- nvim-tree highlight groups to legacy
 M.LEGACY_LINKS = {
   NvimTreeModifiedIcon = "NvimTreeModifiedFile",

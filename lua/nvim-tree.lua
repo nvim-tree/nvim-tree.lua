@@ -1,4 +1,5 @@
 local log = require("nvim-tree.log")
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
 local core = require("nvim-tree.core")
@@ -73,8 +74,7 @@ function M.change_root(path, bufnr)
 end
 
 function M.tab_enter()
-  local explorer = core.get_explorer()
-  if explorer and explorer.view:is_visible({ any_tabpage = true }) then
+  if view.is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
 
     local ft
@@ -89,15 +89,17 @@ function M.tab_enter()
         return
       end
     end
-    explorer.view:open({ focus_tree = false })
+    view.open({ focus_tree = false })
 
-    explorer.renderer:draw()
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
   end
 end
 
 function M.open_on_directory()
-  local explorer = core.get_explorer()
-  local should_proceed = _config.hijack_directories.auto_open or explorer and explorer.view:is_visible()
+  local should_proceed = _config.hijack_directories.auto_open or view.is_visible()
   if not should_proceed then
     return
   end
@@ -147,6 +149,21 @@ local function setup_autocommands(opts)
     local default_opts = { group = augroup_id }
     vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
   end
+
+  -- prevent new opened file from opening in the same window as nvim-tree
+  create_nvim_tree_autocmd("BufWipeout", {
+    pattern = "NvimTree_*",
+    callback = function()
+      if not utils.is_nvim_tree_buf(0) then
+        return
+      end
+      if opts.actions.open_file.eject then
+        view._prevent_buffer_override()
+      else
+        view.abandon_current_window()
+      end
+    end,
+  })
 
   if opts.tab.sync.open then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
@@ -205,6 +222,17 @@ local function setup_autocommands(opts)
       callback = function()
         log.line("diagnostics", "CocDiagnosticChange")
         require("nvim-tree.diagnostics").update_coc()
+      end,
+    })
+  end
+
+  if opts.view.float.enable and opts.view.float.quit_on_focus_loss then
+    create_nvim_tree_autocmd("WinLeave", {
+      pattern = "NvimTree_*",
+      callback = function()
+        if utils.is_nvim_tree_buf(0) then
+          view.close()
+        end
       end,
     })
   end
@@ -486,7 +514,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
     },
   },
   experimental = {
-    multi_instance = false,
   },
   log = {
     enable = false,
@@ -666,10 +693,10 @@ local function localise_default_opts()
 end
 
 function M.purge_all_state()
+  view.close_all_tabs()
+  view.abandon_all_windows()
   local explorer = core.get_explorer()
   if explorer then
-    explorer.view:close_all_tabs()
-    explorer.view:abandon_all_windows("purge_all_state")
     require("nvim-tree.git").purge_state()
     explorer:destroy()
     core.reset_explorer()
@@ -722,12 +749,12 @@ function M.setup(conf)
   require("nvim-tree.explorer.watch").setup(opts)
   require("nvim-tree.git").setup(opts)
   require("nvim-tree.git.utils").setup(opts)
+  require("nvim-tree.view").setup(opts)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer.components").setup(opts)
   require("nvim-tree.buffers").setup(opts)
   require("nvim-tree.help").setup(opts)
   require("nvim-tree.watcher").setup(opts)
-  require("nvim-tree.multi-instance-debug").setup(opts)
 
   setup_autocommands(opts)
 

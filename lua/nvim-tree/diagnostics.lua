@@ -1,5 +1,6 @@
 local core = require("nvim-tree.core")
 local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 local log = require("nvim-tree.log")
 
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -181,15 +182,10 @@ function M.update_coc()
     end
     log.profile_end(profile)
 
-    local explorer = core.get_explorer()
-
-    local bufnr
-    if explorer then
-      bufnr = explorer.view:get_bufnr("diagnostics.update_coc")
-    end
-
+    local bufnr = view.get_bufnr()
     local should_draw = bufnr and vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
     if should_draw then
+      local explorer = core.get_explorer()
       if explorer then
         explorer.renderer:draw()
       end
