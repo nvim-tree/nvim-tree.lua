@@ -1,3 +1,4 @@
+local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 
@@ -11,11 +12,9 @@ local M = {
 }
 
 function M.set_target_win()
-  local explorer = core.get_explorer()
-
   local id = vim.api.nvim_get_current_win()
-
-  if explorer and id == explorer.view:get_winid() then
+  local tree_id = view.get_winnr()
+  if tree_id and id == tree_id then
     M.target_winid = 0
     return
   end
@@ -31,16 +30,11 @@ local function handle_buf_cwd(cwd)
 end
 
 local function open_view_and_draw()
-  local explorer = core.get_explorer()
-
   local cwd = vim.fn.getcwd()
-
-  if explorer then
-    explorer.view:open()
-  end
-
+  view.open()
   handle_buf_cwd(cwd)
 
+  local explorer = core.get_explorer()
   if explorer then
     explorer.renderer:draw()
   end
@@ -116,28 +110,25 @@ function M.open(opts)
   local explorer = core.get_explorer()
 
   if should_hijack_current_buf() then
+    view.close_this_tab_only()
+    view.open_in_win()
     if explorer then
-      explorer.view:close_this_tab_only()
-      explorer.view:open_in_win()
       explorer.renderer:draw()
     end
   elseif opts.winid then
+    view.open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
     if explorer then
-      explorer.view:open_in_win({ hijack_current_buf = false, resize = false, winid = opts.winid })
       explorer.renderer:draw()
     end
   elseif opts.current_window then
+    view.open_in_win({ hijack_current_buf = false, resize = false })
     if explorer then
-      explorer.view:open_in_win({ hijack_current_buf = false, resize = false })
       explorer.renderer:draw()
     end
   else
     open_view_and_draw()
   end
-
-  if explorer then
-    explorer.view:restore_state()
-  end
+  view.restore_tab_state()
 end
 
 function M.setup(opts)
