@@ -143,16 +143,10 @@ function M.find_node(nodes, fn)
       return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
     end)
     :iterate()
-
-  if node then
-    if not node.explorer.view:is_root_folder_visible() then
-      i = i - 1
-    end
-    if node.explorer.live_filter.filter then
-      i = i + 1
-    end
+  i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
+  if node and node.explorer.live_filter.filter then
+    i = i + 1
   end
-
   return node, i
 end
 
@@ -543,10 +537,7 @@ function M.focus_file(path)
   local _, i = M.find_node(require("nvim-tree.core").get_explorer().nodes, function(node)
     return node.absolute_path == path
   end)
-  local explorer = require("nvim-tree.core").get_explorer()
-  if explorer then
-    explorer.view:set_cursor({ i + 1, 1 })
-  end
+  require("nvim-tree.view").set_cursor({ i + 1, 1 })
 end
 
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
@@ -566,7 +557,7 @@ function M.focus_node_or_parent(node)
     end)
 
     if found_node or node.parent == nil then
-      explorer.view:set_cursor({ i + 1, 1 })
+      require("nvim-tree.view").set_cursor({ i + 1, 1 })
       break
     end
 
@@ -661,29 +652,32 @@ function M.is_executable(absolute_path)
   end
 end
 
----@class UtilEnumerateOptionsOpts
----@field keyset_opts vim.api.keyset.option
----@field was_set boolean? as per vim.api.keyset.get_option_info
+---List of all option info/values
+---@param opts vim.api.keyset.option passed directly to vim.api.nvim_get_option_info2 and vim.api.nvim_get_option_value
+---@param was_set boolean filter was_set
+---@return { info: vim.api.keyset.get_option_info, val: any }[]
+function M.enumerate_options(opts, was_set)
+  local res = {}
 
----Option name/values
----@param opts UtilEnumerateOptionsOpts
----@return table<string, any>
-function M.enumerate_options(opts)
-  -- enumerate all options, limiting buf and win scopes
-  return vim.tbl_map(function(info)
-    if opts.keyset_opts.buf and info.scope ~= "buf" then
-      return nil
-    elseif opts.keyset_opts.win and info.scope ~= "win" then
-      return nil
+  local infos = vim.tbl_filter(function(info)
+    if opts.buf and info.scope ~= "buf" then
+      return false
+    elseif opts.win and info.scope ~= "win" then
+      return false
     else
-      -- optional, lazy was_set check
-      if not opts.was_set or vim.api.nvim_get_option_info2(info.name, opts.keyset_opts).was_set then
-        return vim.api.nvim_get_option_value(info.name, opts.keyset_opts)
-      else
-        return nil
-      end
+      return true
     end
   end, vim.api.nvim_get_all_options_info())
+
+  for _, info in vim.spairs(infos) do
+    local _, info2 = pcall(vim.api.nvim_get_option_info2, info.name, opts)
+    if not was_set or info2.was_set then
+      local val = pcall(vim.api.nvim_get_option_value, info.name, opts)
+      table.insert(res, { info = info2, val = val })
+    end
+  end
+
+  return res
 end
 
 return M

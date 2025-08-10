@@ -1,6 +1,7 @@
 local core = require("nvim-tree.core")
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
+local view = require("nvim-tree.view")
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 
@@ -13,12 +14,10 @@ local M = {
 
 ---@param windows integer[]
 local function close_windows(windows)
-  local explorer = core.get_explorer()
-
   -- Prevent from closing when the win count equals 1 or 2,
   -- where the win to remove could be the last opened.
   -- For details see #2503.
-  if explorer and explorer.opts.view.float.enable and #vim.api.nvim_list_wins() < 3 then
+  if view.View.float.enable and #vim.api.nvim_list_wins() < 3 then
     return
   end
 
@@ -31,17 +30,16 @@ end
 
 ---@param absolute_path string
 local function clear_buffer(absolute_path)
-  local explorer = core.get_explorer()
   local bufs = vim.fn.getbufinfo({ bufloaded = 1, buflisted = 1 })
   for _, buf in pairs(bufs) do
     if buf.name == absolute_path then
       local tree_winnr = vim.api.nvim_get_current_win()
-      if buf.hidden == 0 and (#bufs > 1 or explorer and explorer.opts.view.float.enable) then
+      if buf.hidden == 0 and (#bufs > 1 or view.View.float.enable) then
         vim.api.nvim_set_current_win(buf.windows[1])
         vim.cmd(":bn")
       end
       vim.api.nvim_buf_delete(buf.bufnr, { force = true })
-      if explorer and not explorer.opts.view.float.quit_on_focus_loss then
+      if not view.View.float.quit_on_focus_loss then
         vim.api.nvim_set_current_win(tree_winnr)
       end
       if M.config.actions.remove_file.close_window then

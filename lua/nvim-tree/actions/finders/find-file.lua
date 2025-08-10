@@ -1,4 +1,5 @@
 local log = require("nvim-tree.log")
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
 
@@ -13,7 +14,7 @@ local running = {}
 ---@param path string relative or absolute
 function M.fn(path)
   local explorer = core.get_explorer()
-  if not explorer or not explorer.view:is_visible() then
+  if not explorer or not view.is_visible() then
     return
   end
 
@@ -83,9 +84,9 @@ function M.fn(path)
     end)
     :iterate()
 
-  if found and explorer.view:is_visible() then
+  if found and view.is_visible() then
     explorer.renderer:draw()
-    explorer.view:set_cursor({ line, 0 })
+    view.set_cursor({ line, 0 })
   end
 
   running[path_real] = false

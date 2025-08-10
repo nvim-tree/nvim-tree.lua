@@ -1,4 +1,5 @@
 local core = require("nvim-tree.core")
+local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
 local appearance_hi_test = require("nvim-tree.appearance.hi-test")
@@ -140,9 +141,9 @@ Api.tree.focus = Api.tree.open
 ---@field focus boolean|nil default true
 
 Api.tree.toggle = wrap(actions.tree.toggle.fn)
-Api.tree.close = wrap_explorer_member("view", "close")
-Api.tree.close_in_this_tab = wrap_explorer_member("view", "close_this_tab_only")
-Api.tree.close_in_all_tabs = wrap_explorer_member("view", "close_all_tabs")
+Api.tree.close = wrap(view.close)
+Api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
+Api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
 Api.tree.reload = wrap_explorer("reload_explorer")
 
 ---@class ApiTreeResizeOpts
@@ -205,12 +206,12 @@ Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 ---@field tabpage number|nil
 ---@field any_tabpage boolean|nil default false
 
-Api.tree.is_visible = wrap_explorer_member("view", "is_visible")
+Api.tree.is_visible = wrap(view.is_visible)
 
 ---@class ApiTreeWinIdOpts
 ---@field tabpage number|nil default nil
 
-Api.tree.winid = wrap_explorer_member("view", "api_winid")
+Api.tree.winid = wrap(view.winid)
 
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
 Api.fs.remove = wrap_node(actions.fs.remove_file.fn)
@@ -242,17 +243,13 @@ local function edit(mode, node, edit_opts)
   local path = file_link and file_link.link_to or node.absolute_path
   local cur_tabpage = vim.api.nvim_get_current_tabpage()
 
-  local explorer = core.get_explorer()
-
   actions.node.open_file.fn(mode, path)
 
   edit_opts = edit_opts or {}
 
   local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
   if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
-    if explorer then
-      explorer.view:close(cur_tabpage)
-    end
+    view.close(cur_tabpage)
   end
 
   local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
@@ -262,9 +259,7 @@ local function edit(mode, node, edit_opts)
     if mode == "tabnew" then
       vim.cmd(":tabprev")
     end
-    if explorer then
-      explorer.view:focus()
-    end
+    view.focus()
   end
 end
 

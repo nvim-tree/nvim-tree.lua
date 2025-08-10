@@ -48,7 +48,7 @@ function NodeIterator:recursor(f)
 end
 
 ---@return Node|nil
----@return number
+---@return number|nil
 function NodeIterator:iterate()
   local iteration_count = 0
   local function iter(nodes)

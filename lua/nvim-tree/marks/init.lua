@@ -25,15 +25,9 @@ local Marks = Class:extend()
 ---@protected
 ---@param args MarksArgs
 function Marks:new(args)
-  args.explorer:log_new("Marks")
-
   self.explorer = args.explorer
 
   self.marks = {}
-end
-
-function Marks:destroy()
-  self.explorer:log_destroy("Marks")
 end
 
 ---Clear all marks and reload if watchers disabled

@@ -1,7 +1,7 @@
-local appearance = require("nvim-tree.appearance")
-local utils = require("nvim-tree.utils")
-
 local M = {}
+
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
 local function hide(win)
   if win then
@@ -72,7 +72,7 @@ local function show(opts)
     style     = "minimal",
     border    = "none"
   })
-  vim.wo[M.popup_win].winhl = appearance.WIN_HL
+  vim.wo[M.popup_win].winhl = view.View.winopts.winhl
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
   local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
