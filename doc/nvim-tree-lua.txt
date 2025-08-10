@@ -1841,12 +1841,17 @@ tree.collapse_all({opts})                  *nvim-tree-api.tree.collapse_all()*
     Options: ~
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
-tree.expand_all({node})                      *nvim-tree-api.tree.expand_all()*
+tree.expand_all({node}, {opts})              *nvim-tree-api.tree.expand_all()*
     Recursively expand all nodes under the tree root or specified folder.
 
     Parameters: ~
       • {node} (Node|nil) folder
-      • {expand_opts} (ApiTreeExpandOpts|nil) optional parameters
+      • {opts} (ApiTreeExpandOpts) optional parameters
+
+    Options: ~
+      • {expand_until} ((fun(expansion_count: integer, node: Node?): boolean)?)
+            Return true if {node} should be expanded.
+            {expansion_count} is the total number of folders expanded.
 
                                   *nvim-tree-api.tree.toggle_enable_filters()*
 tree.toggle_enable_filters()
@@ -2280,13 +2285,18 @@ node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
     Options: ~
       • {force} (boolean) wipe even if buffer is modified, default false
 
-node.expand({node})                              *nvim-tree-api.node.expand()*
+node.expand({node}, {opts})                      *nvim-tree-api.node.expand()*
     Recursively expand all nodes under a directory or a file's parent
     directory.
 
     Parameters: ~
       • {node} (Node|nil) file or folder
-      • {expand_opts} (ApiTreeExpandOpts|nil) optional parameters
+      • {opts} (ApiTreeExpandOpts) optional parameters
+
+    Options: ~
+      • {expand_until} ((fun(expansion_count: integer, node: Node?): boolean)?)
+            Return true if {node} should be expanded.
+            {expansion_count} is the total number of folders expanded.
 
 node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
     Collapse the tree under a directory or a file's parent directory.
