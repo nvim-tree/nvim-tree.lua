@@ -43,7 +43,8 @@ end
 ---@param expansion_count integer
 ---@param node Node
 ---@return boolean
-local function descend_until_empty(expansion_count, node)
+local function descend_until_empty(expansion_count, node) --luacheck: ignore 212
+
   local dir = node:as(DirectoryNode)
   if not dir then
     return false
