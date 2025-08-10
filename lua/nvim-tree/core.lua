@@ -9,8 +9,11 @@ local TreeExplorer = nil
 local first_init_done = false
 
 ---@param foldername string
-function M.init(foldername)
+---@param callsite string
+function M.init(foldername, callsite)
   local profile = log.profile_start("core init %s", foldername)
+
+  log.line("dev", "core.init(%s, %s)", foldername, callsite)
 
   if TreeExplorer then
     TreeExplorer:destroy()
