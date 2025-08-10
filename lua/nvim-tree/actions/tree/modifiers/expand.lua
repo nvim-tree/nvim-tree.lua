@@ -122,7 +122,7 @@ local function expand_node(node, expand_opts)
   if not node then
     return
   end
-  local descend_until = (expand_opts and expand_opts.descend_until) or descend_until_max_or_empty
+  local descend_until = (expand_opts and expand_opts.expand_until) or descend_until_max_or_empty
   if gen_iterator(descend_until)(node) then
     notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
   end
