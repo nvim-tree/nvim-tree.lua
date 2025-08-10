@@ -165,6 +165,22 @@ function Explorer:create_autocmds()
     end,
   })
 
+  -- prevent new opened file from opening in the same window as nvim-tree
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = self.augroup_id,
+    pattern = "NvimTree_*",
+    callback = function()
+      if not utils.is_nvim_tree_buf(0) then
+        return
+      end
+      if self.opts.actions.open_file.eject then
+        self.view:prevent_buffer_override()
+      else
+        self.view:abandon_current_window()
+      end
+    end,
+  })
+
   vim.api.nvim_create_autocmd("BufEnter", {
     group = self.augroup_id,
     pattern = "NvimTree_*",
