@@ -187,6 +187,10 @@ Api.tree.search_node = wrap(actions.finders.search_node.fn)
 ---@field keep_buffers boolean|nil default false
 
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+
+---@class ApiTreeExpandOpts
+---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
+
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
 Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
