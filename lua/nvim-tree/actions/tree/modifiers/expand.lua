@@ -41,7 +41,7 @@ local function limit_folder_discovery(should_descend)
   end
 end
 
----@param _ integer expansion_count 
+---@param _ integer expansion_count
 ---@param node Node
 ---@return boolean
 local function descend_until_empty(_, node)
