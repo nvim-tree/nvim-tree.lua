@@ -4,6 +4,30 @@ Thank you for contributing.
 
 See [wiki: Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) for environment setup, tips and tools.
 
+<!-- 
+https://github.com/jonschlinkert/markdown-toc
+markdown-toc --maxdepth=2 -i CONTRIBUTING.md
+-->
+
+<!-- toc -->
+
+- [Tools](#tools)
+- [Quality](#quality)
+  * [lint](#lint)
+  * [style](#style)
+  * [check](#check)
+- [Diagnostics](#diagnostics)
+- [Backwards Compatibility](#backwards-compatibility)
+- [Adding New Actions](#adding-new-actions)
+- [Documentation](#documentation)
+  * [Opts](#opts)
+  * [API](#api)
+- [Windows](#windows)
+- [Pull Request](#pull-request)
+  * [Subject](#subject)
+
+<!-- tocstop -->
+
 # Tools
 
 Following are used during CI and strongly recommended during local development.
@@ -70,6 +94,30 @@ mkdir luals
 curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.9.1/lua-language-server-3.9.1-linux-x64.tar.gz" | tar zx --directory luals
 
 PATH="luals/bin:${PATH}" make check
+```
+
+# Diagnostics
+
+Diagnostics issues may not be suppressed. See [luals](https://luals.github.io) documentation for details on how to structure the code and comments.
+
+Suppressions are permitted only in the following cases:
+
+- Backwards compatibility shims
+- neovim API metadata incorrect, awaiting upstream fix
+- classic class framework
+
+# Backwards Compatibility
+
+Whenever new neovim API is introduced, please ensure that it is available in older versions. See `:help deprecated.txt` and `$VIMRUNTIME/lua/vim/_meta/api.lua`
+
+See `nvim-tree.setup` for the oldest supported version of neovim. If the API is not availble in that version, a backwards compatibility shim must be used e.g.
+
+```lua
+if vim.fn.has("nvim-0.10") == 1 then
+  modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
+else
+  modified = vim.api.nvim_buf_get_option(target_bufid, "modified") ---@diagnostic disable-line: deprecated
+end
 ```
 
 # Adding New Actions
