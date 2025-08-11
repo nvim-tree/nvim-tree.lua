@@ -40,10 +40,10 @@ local function limit_folder_discovery(should_descend)
   end
 end
 
----@param expansion_count integer
+---@param _ integer expansion_count 
 ---@param node Node
 ---@return boolean
-local function descend_until_empty(expansion_count, node) --luacheck: ignore 212
+local function descend_until_empty(_, node)
 
   local dir = node:as(DirectoryNode)
   if not dir then
