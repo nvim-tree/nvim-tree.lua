@@ -33,6 +33,7 @@ local function limit_folder_discovery(should_descend)
   return function(expansion_count, node)
     local should_halt = expansion_count >= M.MAX_FOLDER_DISCOVERY
     if should_halt then
+      notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
       return false
     end
 
@@ -121,10 +122,6 @@ local function gen_iterator(should_descend)
         return nil
       end)
       :iterate()
-
-    if expansion_count >= M.MAX_FOLDER_DISCOVERY then
-      return true
-    end
   end
 end
 
@@ -135,9 +132,7 @@ local function expand_node(node, expand_opts)
     return
   end
   local descend_until = limit_folder_discovery((expand_opts and expand_opts.expand_until) or descend_until_empty)
-  if gen_iterator(descend_until)(node) then
-    notify.warn("expansion iteration was halted after " .. M.MAX_FOLDER_DISCOVERY .. " discovered folders")
-  end
+  gen_iterator(descend_until)(node)
 
   local explorer = core.get_explorer()
   if explorer then
