@@ -193,9 +193,10 @@ function M.get_toplevel(path)
     end
   end
 
-  -- attempt to fetch toplevel
+  -- attempt to fetch toplevel, cache if untracked
   local toplevel, git_dir = git_utils.get_toplevel(path)
   if not toplevel or not git_dir then
+    M._toplevels_by_path[path] = false
     return nil
   end
   local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
