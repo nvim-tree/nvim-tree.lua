@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.14.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.14.0) (2025-08-12)
+
+
+### Features
+
+* **#2685:** highlight git new tracked with NvimTreeGitFileNewHL ([#3176](https://github.com/nvim-tree/nvim-tree.lua/issues/3176)) ([0a52012](https://github.com/nvim-tree/nvim-tree.lua/commit/0a52012d611f3c1492b8d2aba363fabf734de91d))
+* **#2789:** add optional function expand_until to api.tree.expand_all and api.node.expand ([#3166](https://github.com/nvim-tree/nvim-tree.lua/issues/3166)) ([1b876db](https://github.com/nvim-tree/nvim-tree.lua/commit/1b876db04903b93c78c97fd3f3dd85d59eeef5ff))
+* **#2826:** allow only one window with nvim-tree buffer per tab ([#3174](https://github.com/nvim-tree/nvim-tree.lua/issues/3174)) ([dd2364d](https://github.com/nvim-tree/nvim-tree.lua/commit/dd2364d6802f7f57a98acb8b545ed484c6697626))
+* **#3157:** add view.cursorlineopt ([#3158](https://github.com/nvim-tree/nvim-tree.lua/issues/3158)) ([8eb5e0b](https://github.com/nvim-tree/nvim-tree.lua/commit/8eb5e0bfd1c4da6efc03ab0c1ccf463dbaae831e))
+
+
+### Bug Fixes
+
+* **#3077:** deleting a directory containing symlinked directory will delete the contents of the linked directory ([#3168](https://github.com/nvim-tree/nvim-tree.lua/issues/3168)) ([10db694](https://github.com/nvim-tree/nvim-tree.lua/commit/10db6943cb40625941a35235eeb385ffdfbf827a))
+* **#3157:** add view.cursorlineopt ([8eb5e0b](https://github.com/nvim-tree/nvim-tree.lua/commit/8eb5e0bfd1c4da6efc03ab0c1ccf463dbaae831e))
+* **#3172:** live filter exception ([#3173](https://github.com/nvim-tree/nvim-tree.lua/issues/3173)) ([0a7fcdf](https://github.com/nvim-tree/nvim-tree.lua/commit/0a7fcdf3f8ba208f4260988a198c77ec11748339))
+* invalid window id for popup info window ([#3147](https://github.com/nvim-tree/nvim-tree.lua/issues/3147)) ([d54a187](https://github.com/nvim-tree/nvim-tree.lua/commit/d54a1875a91e1a705795ea26074795210b92ce7f))
+* **picker:** exclude full_name window id from the choice ([#3165](https://github.com/nvim-tree/nvim-tree.lua/issues/3165)) ([543ed3c](https://github.com/nvim-tree/nvim-tree.lua/commit/543ed3cac212dc3993ef9f042f6c0812e34ddd43))
+* window picker ignore hidden window ([#3145](https://github.com/nvim-tree/nvim-tree.lua/issues/3145)) ([d87b41c](https://github.com/nvim-tree/nvim-tree.lua/commit/d87b41ca537e2131622d48a6c25ccf2fbe0e5d62))
+
+
+### Performance Improvements
+
+* **#3171:** cache toplevel for untracked ([#3185](https://github.com/nvim-tree/nvim-tree.lua/issues/3185)) ([4425136](https://github.com/nvim-tree/nvim-tree.lua/commit/442513648c6936e754c3308a1c58591a399493e5))
+* **#3171:** use vim.system() instead of vim.fn.system() to execute git toplevel ([#3175](https://github.com/nvim-tree/nvim-tree.lua/issues/3175)) ([9a05b9e](https://github.com/nvim-tree/nvim-tree.lua/commit/9a05b9e9f928856ca23dbf876fab372003180c3f))
+
+
+### Reverts
+
+* **#3180, #3177:** invalid group or tabpage ([#3181](https://github.com/nvim-tree/nvim-tree.lua/issues/3181)) ([9b289ab](https://github.com/nvim-tree/nvim-tree.lua/commit/9b289abd6998e30fd24cbc9919e0b0cbed6364ce))
+* **#3180, #3177:** resolve live filter failures ([#3183](https://github.com/nvim-tree/nvim-tree.lua/issues/3183)) ([a4699c0](https://github.com/nvim-tree/nvim-tree.lua/commit/a4699c0904103e7767334f6da05f5c2ea5514845))
+
 ## [1.13.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.12.0...nvim-tree-v1.13.0) (2025-06-14)
 
 
