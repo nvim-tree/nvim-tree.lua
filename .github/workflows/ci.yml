@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: install lua ${{ matrix.lua_version }}
         uses: leafo/gh-actions-lua@v11
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: install nvim ${{ matrix.nvim_version }}
         uses: rhysd/action-setup-vim@v1
