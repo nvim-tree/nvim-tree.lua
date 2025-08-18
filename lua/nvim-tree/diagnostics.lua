@@ -231,7 +231,10 @@ end
 function M.setup(opts)
   M.enable = opts.diagnostics.enable
   M.debounce_delay = opts.diagnostics.debounce_delay
-  M.severity = opts.diagnostics.severity
+  M.severity = opts.diagnostics.diagnostic_opts and {
+    min = vim.diagnostic.severity.HINT,
+    max = vim.diagnostic.severity.ERROR
+  } or opts.diagnostics.severity
 
   if M.enable then
     log.line("diagnostics", "setup")
