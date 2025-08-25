@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.14.0...nvim-tree-v1.15.0) (2025-08-25)
+
+
+### Features
+
+* **#1826:** add diagnostics.diagnostic_opts: vim.diagnostic.Opts will override diagnostics.severity and diagnostics.icons ([#3190](https://github.com/nvim-tree/nvim-tree.lua/issues/3190)) ([fefa335](https://github.com/nvim-tree/nvim-tree.lua/commit/fefa335f1c8f690eb668a1efd18ee4fc6d64cd3e))
+
 ## [1.14.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.14.0) (2025-08-12)
 
 
