@@ -41,17 +41,29 @@ local DiagnosticsDecorator = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function DiagnosticsDecorator:new(args)
-  self.explorer        = args.explorer
+  self.explorer              = args.explorer
 
-  self.enabled         = true
-  self.highlight_range = self.explorer.opts.renderer.highlight_diagnostics or "none"
-  self.icon_placement  = self.explorer.opts.renderer.icons.diagnostics_placement or "none"
+  self.enabled               = true
+  self.highlight_range       = self.explorer.opts.renderer.highlight_diagnostics or "none"
+  self.icon_placement        = self.explorer.opts.renderer.icons.diagnostics_placement or "none"
+
+  local vim_diagnostic_icons = {}
+
+  if self.explorer.opts.diagnostics.diagnostic_opts then
+    local vim_diagnostic_config = vim.diagnostic.config() or {}
+    local signs                 = vim_diagnostic_config.signs or {}
+    if type(signs) == "function" then
+      signs = signs(0, 0)
+    end
+
+    vim_diagnostic_icons = (type(signs) == "table" and signs.text) or {}
+  end
 
   if self.explorer.opts.renderer.icons.show.diagnostics then
     self.diag_icons = {}
     for name, sev in pairs(ICON_KEYS) do
       self.diag_icons[sev] = {
-        str = self.explorer.opts.diagnostics.icons[name],
+        str = vim_diagnostic_icons[sev] or self.explorer.opts.diagnostics.icons[name],
         hl = { HG_ICON[sev] },
       }
       self:define_sign(self.diag_icons[sev])

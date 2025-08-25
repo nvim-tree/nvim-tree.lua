@@ -420,6 +420,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       warning = "",
       error = "",
     },
+    diagnostic_opts = false,
   },
   modified = {
     enable = false,

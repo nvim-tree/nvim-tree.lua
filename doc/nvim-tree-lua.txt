@@ -545,6 +545,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           warning = "",
           error = "",
         },
+        diagnostic_opts = false,
       },
       modified = {
         enable = false,
@@ -1329,6 +1330,10 @@ Icons for diagnostic severity.
       error = ""
     }
 <
+*nvim-tree.diagnostics.diagnostic_opts*
+|vim.diagnostic.Opts| overrides |nvim-tree.diagnostics.severity| and
+|nvim-tree.diagnostics.icons|
+  Type: `boolean`, Default: `false`
 ==============================================================================
  5.9 OPTS: MODIFIED                                  *nvim-tree-opts-modified*
 
@@ -3175,6 +3180,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.use_system_clipboard|
 |nvim-tree.auto_reload_on_write|
 |nvim-tree.diagnostics.debounce_delay|
+|nvim-tree.diagnostics.diagnostic_opts|
 |nvim-tree.diagnostics.enable|
 |nvim-tree.diagnostics.icons|
 |nvim-tree.diagnostics.severity|
