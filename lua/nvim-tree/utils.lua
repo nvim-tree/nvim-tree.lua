@@ -26,6 +26,7 @@ function M.read_file(path)
   end
   local stat = vim.loop.fs_fstat(fd)
   if not stat then
+    vim.loop.fs_close(fd)
     return ""
   end
   local data = vim.loop.fs_read(fd, stat.size, 0)
