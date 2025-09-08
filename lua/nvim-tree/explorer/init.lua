@@ -578,7 +578,6 @@ end
 ---@return Node|nil
 ---@return number|nil
 function Explorer:get_node_from_path(path)
-
   if self.absolute_path == path then
     return self
   end
@@ -604,7 +603,6 @@ end
 ---If node is nil do nothing.
 ---@param node Node? node to focus
 function Explorer:focus_node_or_parent(node)
-
   while node do
     local found_node, i = self:find_node(function(node_)
       return node_.absolute_path == node.absolute_path
@@ -626,11 +624,11 @@ end
 ---@return number
 function Explorer:find_node(fn)
   local node, i = Iterator.builder(self.nodes)
-  :matcher(fn)
-  :recursor(function(node)
-    return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
-  end)
-  :iterate()
+    :matcher(fn)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
   i = view.is_root_folder_visible() and i or i - 1
   if node and node.explorer.live_filter.filter then
     i = i + 1
