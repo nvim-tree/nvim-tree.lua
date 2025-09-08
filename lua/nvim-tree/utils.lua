@@ -377,38 +377,6 @@ function M.table_create_missing(tbl, path)
   return t
 end
 
---- Move a value from src to dst if value is nil on dst.
---- Remove value from src
----@param src table to copy from
----@param src_path string dot separated string of sub-tables
----@param src_pos string value pos
----@param dst table to copy to
----@param dst_path string dot separated string of sub-tables, created when missing
----@param dst_pos string value pos
----@param remove boolean
-function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  for pos in string.gmatch(src_path, "([^%.]+)%.*") do
-    if src[pos] and type(src[pos]) == "table" then
-      src = src[pos]
-    else
-      return
-    end
-  end
-  local src_val = src[src_pos]
-  if src_val == nil then
-    return
-  end
-
-  dst = M.table_create_missing(dst, dst_path)
-  if dst[dst_pos] == nil then
-    dst[dst_pos] = src_val
-  end
-
-  if remove then
-    src[src_pos] = nil
-  end
-end
-
 local function round(value)
   -- Amount of digits to round to after floating point.
   local digits = 2

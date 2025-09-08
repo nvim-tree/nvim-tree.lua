@@ -1,27 +1,58 @@
-local utils = require("nvim-tree.utils")
 local notify = require("nvim-tree.notify")
 
 local M = {}
 
+--- Move a value from src to dst if value is nil on dst.
+--- Remove value from src
+---@param src table to copy from
+---@param src_path string dot separated string of sub-tables
+---@param src_pos string value pos
+---@param dst table to copy to
+---@param dst_path string dot separated string of sub-tables, created when missing
+---@param dst_pos string value pos
+---@param remove boolean
+local function move(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
+  for pos in string.gmatch(src_path, "([^%.]+)%.*") do
+    if src[pos] and type(src[pos]) == "table" then
+      src = src[pos]
+    else
+      return
+    end
+  end
+  local src_val = src[src_pos]
+  if src_val == nil then
+    return
+  end
+
+  dst = M.table_create_missing(dst, dst_path)
+  if dst[dst_pos] == nil then
+    dst[dst_pos] = src_val
+  end
+
+  if remove then
+    src[src_pos] = nil
+  end
+end
+
 -- silently move, please add to help nvim-tree-legacy-opts
 local function refactored(opts)
   -- 2022/06/20
-  utils.move_missing_val(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root",        true)
-  utils.move_missing_val(opts, "",                    "update_cwd", opts, "",                    "sync_root_with_cwd", true)
+  move(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root",        true)
+  move(opts, "",                    "update_cwd", opts, "",                    "sync_root_with_cwd", true)
 
   -- 2022/11/07
-  utils.move_missing_val(opts, "", "open_on_tab",              opts, "tab.sync", "open",   false)
-  utils.move_missing_val(opts, "", "open_on_tab",              opts, "tab.sync", "close",  true)
-  utils.move_missing_val(opts, "", "ignore_buf_on_tab_change", opts, "tab.sync", "ignore", true)
+  move(opts, "", "open_on_tab",              opts, "tab.sync", "open",   false)
+  move(opts, "", "open_on_tab",              opts, "tab.sync", "close",  true)
+  move(opts, "", "ignore_buf_on_tab_change", opts, "tab.sync", "ignore", true)
 
   -- 2022/11/22
-  utils.move_missing_val(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label", true)
+  move(opts, "renderer", "root_folder_modifier", opts, "renderer", "root_folder_label", true)
 
   -- 2023/01/01
-  utils.move_missing_val(opts, "update_focused_file", "debounce_delay", opts, "view", "debounce_delay", true)
+  move(opts, "update_focused_file", "debounce_delay", opts, "view", "debounce_delay", true)
 
   -- 2023/01/08
-  utils.move_missing_val(opts, "trash", "require_confirm", opts, "ui.confirm", "trash", true)
+  move(opts, "trash", "require_confirm", opts, "ui.confirm", "trash", true)
 
   -- 2023/01/15
   if type(opts.view) == "table" and opts.view.adaptive_size ~= nil then
@@ -35,13 +66,13 @@ local function refactored(opts)
   end
 
   -- 2023/07/15
-  utils.move_missing_val(opts, "", "sort_by", opts, "sort", "sorter", true)
+  move(opts, "", "sort_by", opts, "sort", "sorter", true)
 
   -- 2023/07/16
-  utils.move_missing_val(opts, "git", "ignore", opts, "filters", "git_ignored", true)
+  move(opts, "git", "ignore", opts, "filters", "git_ignored", true)
 
   -- 2023/08/26
-  utils.move_missing_val(opts, "renderer.icons", "webdev_colors", opts, "renderer.icons.web_devicons.file", "color", true)
+  move(opts, "renderer.icons", "webdev_colors", opts, "renderer.icons.web_devicons.file", "color", true)
 
   -- 2023/10/08
   if type(opts.renderer) == "table" and type(opts.renderer.highlight_diagnostics) == "boolean" then
@@ -59,7 +90,7 @@ local function refactored(opts)
       opts.update_focused_file.update_root = { enable = opts.update_focused_file.update_root }
     end
   end
-  utils.move_missing_val(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
+  move(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
 
   -- 2025/04/30
   if opts.renderer and opts.renderer.icons and type(opts.renderer.icons.padding) == "string" then
