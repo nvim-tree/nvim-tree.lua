@@ -361,22 +361,6 @@ function M.escape_special_chars(path)
   return M.is_windows and escape_special_char_for_windows(path) or path
 end
 
---- Create empty sub-tables if not present
----@param tbl table to create empty inside of
----@param path string dot separated string of sub-tables
----@return table deepest sub-table
-function M.table_create_missing(tbl, path)
-  local t = tbl
-  for s in string.gmatch(path, "([^%.]+)%.*") do
-    if t[s] == nil then
-      t[s] = {}
-    end
-    t = t[s]
-  end
-
-  return t
-end
-
 local function round(value)
   -- Amount of digits to round to after floating point.
   local digits = 2

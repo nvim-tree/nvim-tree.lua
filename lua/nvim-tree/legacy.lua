@@ -2,6 +2,22 @@ local notify = require("nvim-tree.notify")
 
 local M = {}
 
+--- Create empty sub-tables if not present
+---@param tbl table to create empty inside of
+---@param path string dot separated string of sub-tables
+---@return table deepest sub-table
+local function create(tbl, path)
+  local t = tbl
+  for s in string.gmatch(path, "([^%.]+)%.*") do
+    if t[s] == nil then
+      t[s] = {}
+    end
+    t = t[s]
+  end
+
+  return t
+end
+
 --- Move a value from src to dst if value is nil on dst.
 --- Remove value from src
 ---@param src table to copy from
@@ -24,7 +40,7 @@ local function move(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
     return
   end
 
-  dst = M.table_create_missing(dst, dst_path)
+  dst = create(dst, dst_path)
   if dst[dst_pos] == nil then
     dst[dst_pos] = src_val
   end
