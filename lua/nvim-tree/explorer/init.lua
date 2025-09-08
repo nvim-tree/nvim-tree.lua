@@ -572,6 +572,33 @@ function Explorer:find_node_line(node)
   return -1
 end
 
+-- get the node in the tree state depending on the absolute path of the node
+-- (grouped or hidden too)
+---@param path string
+---@return Node|nil
+---@return number|nil
+function Explorer:get_node_from_path(path)
+
+  if self.absolute_path == path then
+    return self
+  end
+
+  return Iterator.builder(self.nodes)
+    :hidden()
+    :matcher(function(node)
+      return node.absolute_path == path or node.link_to == path
+    end)
+    :recursor(function(node)
+      if node.group_next then
+        return { node.group_next }
+      end
+      if node.nodes then
+        return node.nodes
+      end
+    end)
+    :iterate()
+end
+
 ---Api.tree.get_nodes
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
