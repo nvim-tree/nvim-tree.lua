@@ -280,7 +280,7 @@ function Filters:toggle(type)
   local node = self.explorer:get_node_at_cursor()
   self.explorer:reload_explorer()
   if node then
-    utils.focus_node_or_parent(node)
+    self.explorer:focus_node_or_parent(node)
   end
 end
 

@@ -607,6 +607,26 @@ function Explorer:focus_file(path)
   view.set_cursor({ i + 1, 1 })
 end
 
+---Focus node passed as parameter if visible, otherwise focus first visible parent.
+---If none of the parents is visible focus root.
+---If node is nil do nothing.
+---@param node Node? node to focus
+function Explorer:focus_node_or_parent(node)
+
+  while node do
+    local found_node, i = utils.find_node(self.nodes, function(node_)
+      return node_.absolute_path == node.absolute_path
+    end)
+
+    if found_node or node.parent == nil then
+      require("nvim-tree.view").set_cursor({ i + 1, 1 })
+      break
+    end
+
+    node = node.parent
+  end
+end
+
 ---Api.tree.get_nodes
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()

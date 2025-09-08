@@ -227,9 +227,9 @@ function Marks:navigate(up)
   end
 
   if up then
-    utils.focus_node_or_parent(prev or last)
+    self.explorer:focus_node_or_parent(prev or last)
   else
-    utils.focus_node_or_parent(next or first)
+    self.explorer:focus_node_or_parent(next or first)
   end
 end
 
