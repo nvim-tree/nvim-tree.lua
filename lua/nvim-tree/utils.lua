@@ -17,22 +17,6 @@ function M.str_find(haystack, needle)
   return vim.fn.stridx(haystack, needle) ~= -1
 end
 
----@param path string
----@return string|uv.uv_fs_t
-function M.read_file(path)
-  local fd = vim.loop.fs_open(path, "r", 438)
-  if not fd then
-    return ""
-  end
-  local stat = vim.loop.fs_fstat(fd)
-  if not stat then
-    return ""
-  end
-  local data = vim.loop.fs_read(fd, stat.size, 0)
-  vim.loop.fs_close(fd)
-  return data or ""
-end
-
 local path_separator = package.config:sub(1, 1)
 ---@param paths string[]
 ---@return string
@@ -375,54 +359,6 @@ function M.escape_special_chars(path)
     return path
   end
   return M.is_windows and escape_special_char_for_windows(path) or path
-end
-
---- Create empty sub-tables if not present
----@param tbl table to create empty inside of
----@param path string dot separated string of sub-tables
----@return table deepest sub-table
-function M.table_create_missing(tbl, path)
-  local t = tbl
-  for s in string.gmatch(path, "([^%.]+)%.*") do
-    if t[s] == nil then
-      t[s] = {}
-    end
-    t = t[s]
-  end
-
-  return t
-end
-
---- Move a value from src to dst if value is nil on dst.
---- Remove value from src
----@param src table to copy from
----@param src_path string dot separated string of sub-tables
----@param src_pos string value pos
----@param dst table to copy to
----@param dst_path string dot separated string of sub-tables, created when missing
----@param dst_pos string value pos
----@param remove boolean
-function M.move_missing_val(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
-  for pos in string.gmatch(src_path, "([^%.]+)%.*") do
-    if src[pos] and type(src[pos]) == "table" then
-      src = src[pos]
-    else
-      return
-    end
-  end
-  local src_val = src[src_pos]
-  if src_val == nil then
-    return
-  end
-
-  dst = M.table_create_missing(dst, dst_path)
-  if dst[dst_pos] == nil then
-    dst[dst_pos] = src_val
-  end
-
-  if remove then
-    src[src_pos] = nil
-  end
 end
 
 local function round(value)
