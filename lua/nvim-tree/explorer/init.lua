@@ -527,7 +527,7 @@ function Explorer:get_node_at_cursor()
     return self
   end
 
-  return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
+  return self:get_nodes_by_line(core.get_nodes_starting_line())[cursor[1]]
 end
 
 function Explorer:place_cursor_on_node()
@@ -549,6 +549,114 @@ function Explorer:place_cursor_on_node()
   if idx >= 0 then
     vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
   end
+end
+
+-- Find the line number of a node.
+---@param node Node?
+---@return integer -1 not found
+function Explorer:find_node_line(node)
+  if not node then
+    return -1
+  end
+
+  local first_node_line = core.get_nodes_starting_line()
+  local nodes_by_line = self:get_nodes_by_line(first_node_line)
+  local iter_start, iter_end = first_node_line, #nodes_by_line
+
+  for line = iter_start, iter_end, 1 do
+    if nodes_by_line[line] == node then
+      return line
+    end
+  end
+
+  return -1
+end
+
+-- get the node in the tree state depending on the absolute path of the node
+-- (grouped or hidden too)
+---@param path string
+---@return Node|nil
+---@return number|nil
+function Explorer:get_node_from_path(path)
+  if self.absolute_path == path then
+    return self
+  end
+
+  return Iterator.builder(self.nodes)
+    :hidden()
+    :matcher(function(node)
+      return node.absolute_path == path or node.link_to == path
+    end)
+    :recursor(function(node)
+      if node.group_next then
+        return { node.group_next }
+      end
+      if node.nodes then
+        return node.nodes
+      end
+    end)
+    :iterate()
+end
+
+---Focus node passed as parameter if visible, otherwise focus first visible parent.
+---If none of the parents is visible focus root.
+---If node is nil do nothing.
+---@param node Node? node to focus
+function Explorer:focus_node_or_parent(node)
+  while node do
+    local found_node, i = self:find_node(function(node_)
+      return node_.absolute_path == node.absolute_path
+    end)
+
+    if found_node or node.parent == nil then
+      view.set_cursor({ i + 1, 1 })
+      break
+    end
+
+    node = node.parent
+  end
+end
+
+--- Get the node and index of the node from the tree that matches the predicate.
+--- The explored nodes are those displayed on the view.
+---@param fn fun(node: Node): boolean
+---@return table|nil
+---@return number
+function Explorer:find_node(fn)
+  local node, i = Iterator.builder(self.nodes)
+    :matcher(fn)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
+  i = view.is_root_folder_visible() and i or i - 1
+  if node and node.explorer.live_filter.filter then
+    i = i + 1
+  end
+  return node, i
+end
+
+--- Return visible nodes indexed by line
+---@param line_start number
+---@return table
+function Explorer:get_nodes_by_line(line_start)
+  local nodes_by_line = {}
+  local line = line_start
+
+  Iterator.builder(self.nodes)
+    :applier(function(node)
+      if node.group_next then
+        return
+      end
+      nodes_by_line[line] = node
+      line = line + 1
+    end)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
+
+  return nodes_by_line
 end
 
 ---Api.tree.get_nodes

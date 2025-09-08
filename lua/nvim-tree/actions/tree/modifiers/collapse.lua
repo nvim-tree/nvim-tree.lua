@@ -56,7 +56,7 @@ local function collapse(node, opts)
     :iterate()
 
   explorer.renderer:draw()
-  utils.focus_node_or_parent(node_at_cursor)
+  explorer:focus_node_or_parent(node_at_cursor)
 end
 
 
