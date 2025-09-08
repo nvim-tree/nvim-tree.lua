@@ -263,7 +263,7 @@ function Marks:navigate_select()
     if node and not node:is(DirectoryNode) and not utils.get_win_buf_from_path(node.absolute_path) then
       open_file.fn("edit", node.absolute_path)
     elseif node then
-      self.explorer:focus_file(node.absolute_path)
+      self.explorer:focus_node_or_parent(node)
     end
   end)
 end

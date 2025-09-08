@@ -220,9 +220,9 @@ function LiveFilter:clear_filter()
   self.explorer.renderer:draw()
 
   if node then
-    self.explorer:focus_file(node.absolute_path)
+    self.explorer:focus_node_or_parent(node)
   elseif last_node then
-    self.explorer:focus_file(last_node.absolute_path)
+    self.explorer:focus_node_or_parent(last_node)
   end
 end
 

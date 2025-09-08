@@ -49,7 +49,7 @@ function M.fn(direction)
     end
 
     if target_node then
-      explorer:focus_file(target_node.absolute_path)
+      explorer:focus_node_or_parent(target_node)
     end
   end
 end
