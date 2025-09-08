@@ -149,39 +149,6 @@ function M.extmarks_length(extmarks)
   return length
 end
 
--- get the node in the tree state depending on the absolute path of the node
--- (grouped or hidden too)
----@param path string
----@return Node|nil
----@return number|nil
-function M.get_node_from_path(path)
-  local explorer = require("nvim-tree.core").get_explorer()
-
-  -- tree may not yet be loaded
-  if not explorer then
-    return
-  end
-
-  if explorer.absolute_path == path then
-    return explorer
-  end
-
-  return Iterator.builder(explorer.nodes)
-    :hidden()
-    :matcher(function(node)
-      return node.absolute_path == path or node.link_to == path
-    end)
-    :recursor(function(node)
-      if node.group_next then
-        return { node.group_next }
-      end
-      if node.nodes then
-        return node.nodes
-      end
-    end)
-    :iterate()
-end
-
 M.default_format_hidden_count = function(hidden_count, simple)
   local parts = {}
   local total_count = 0
