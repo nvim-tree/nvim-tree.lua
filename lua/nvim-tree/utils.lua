@@ -1,5 +1,3 @@
-local Iterator = require("nvim-tree.iterators.node-iterator")
-
 local M = {
   debouncers = {},
 }
@@ -147,30 +145,6 @@ M.default_format_hidden_count = function(hidden_count, simple)
     return "(" .. tostring(total_count) .. (simple and " hidden" or " total ") .. hidden_count_string .. ")"
   end
   return nil
-end
-
---- Return visible nodes indexed by line
----@param nodes_all Node[]
----@param line_start number
----@return table
-function M.get_nodes_by_line(nodes_all, line_start)
-  local nodes_by_line = {}
-  local line = line_start
-
-  Iterator.builder(nodes_all)
-    :applier(function(node)
-      if node.group_next then
-        return
-      end
-      nodes_by_line[line] = node
-      line = line + 1
-    end)
-    :recursor(function(node)
-      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
-    end)
-    :iterate()
-
-  return nodes_by_line
 end
 
 function M.rename_loaded_buffers(old_path, new_path)

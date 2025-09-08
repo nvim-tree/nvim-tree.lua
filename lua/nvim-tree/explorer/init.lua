@@ -527,7 +527,7 @@ function Explorer:get_node_at_cursor()
     return self
   end
 
-  return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
+  return self:get_nodes_by_line(core.get_nodes_starting_line())[cursor[1]]
 end
 
 function Explorer:place_cursor_on_node()
@@ -560,7 +560,7 @@ function Explorer:find_node_line(node)
   end
 
   local first_node_line = core.get_nodes_starting_line()
-  local nodes_by_line = utils.get_nodes_by_line(self.nodes, first_node_line)
+  local nodes_by_line = self:get_nodes_by_line(first_node_line)
   local iter_start, iter_end = first_node_line, #nodes_by_line
 
   for line = iter_start, iter_end, 1 do
@@ -644,6 +644,29 @@ function Explorer:find_node(fn)
     i = i + 1
   end
   return node, i
+end
+
+--- Return visible nodes indexed by line
+---@param line_start number
+---@return table
+function Explorer:get_nodes_by_line(line_start)
+  local nodes_by_line = {}
+  local line = line_start
+
+  Iterator.builder(self.nodes)
+    :applier(function(node)
+      if node.group_next then
+        return
+      end
+      nodes_by_line[line] = node
+      line = line + 1
+    end)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
+
+  return nodes_by_line
 end
 
 ---Api.tree.get_nodes
