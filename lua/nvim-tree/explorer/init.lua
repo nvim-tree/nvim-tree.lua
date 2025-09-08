@@ -551,6 +551,27 @@ function Explorer:place_cursor_on_node()
   end
 end
 
+-- Find the line number of a node.
+---@param node Node?
+---@return integer -1 not found
+function Explorer:find_node_line(node)
+  if not node then
+    return -1
+  end
+
+  local first_node_line = core.get_nodes_starting_line()
+  local nodes_by_line = utils.get_nodes_by_line(self.nodes, first_node_line)
+  local iter_start, iter_end = first_node_line, #nodes_by_line
+
+  for line = iter_start, iter_end, 1 do
+    if nodes_by_line[line] == node then
+      return line
+    end
+  end
+
+  return -1
+end
+
 ---Api.tree.get_nodes
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
