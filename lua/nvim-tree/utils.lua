@@ -447,13 +447,6 @@ function M.debounce(context, timeout, callback)
   end)
 end
 
-function M.focus_file(path)
-  local _, i = M.find_node(require("nvim-tree.core").get_explorer().nodes, function(node)
-    return node.absolute_path == path
-  end)
-  require("nvim-tree.view").set_cursor({ i + 1, 1 })
-end
-
 ---Focus node passed as parameter if visible, otherwise focus first visible parent.
 ---If none of the parents is visible focus root.
 ---If node is nil do nothing.

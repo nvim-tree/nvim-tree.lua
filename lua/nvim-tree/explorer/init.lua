@@ -599,6 +599,14 @@ function Explorer:get_node_from_path(path)
     :iterate()
 end
 
+---@param path string
+function Explorer:focus_file(path)
+  local _, i = utils.find_node(self.nodes, function(node)
+    return node.absolute_path == path
+  end)
+  view.set_cursor({ i + 1, 1 })
+end
+
 ---Api.tree.get_nodes
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()

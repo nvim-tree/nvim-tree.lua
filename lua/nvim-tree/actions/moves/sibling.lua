@@ -1,4 +1,3 @@
-local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 
@@ -12,9 +11,14 @@ function M.fn(direction)
       return
     end
 
+    local explorer = core.get_explorer()
+    if not explorer then
+      return
+    end
+
     local first, last, next, prev = nil, nil, nil, nil
     local found = false
-    local parent = node.parent or core.get_explorer()
+    local parent = node.parent or explorer
     Iterator.builder(parent and parent.nodes or {})
       :recursor(function()
         return nil
@@ -45,7 +49,7 @@ function M.fn(direction)
     end
 
     if target_node then
-      utils.focus_file(target_node.absolute_path)
+      explorer:focus_file(target_node.absolute_path)
     end
   end
 end
