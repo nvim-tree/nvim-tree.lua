@@ -601,7 +601,7 @@ end
 
 ---@param path string
 function Explorer:focus_file(path)
-  local _, i = utils.find_node(self.nodes, function(node)
+  local _, i = self:find_node(function(node)
     return node.absolute_path == path
   end)
   view.set_cursor({ i + 1, 1 })
@@ -614,7 +614,7 @@ end
 function Explorer:focus_node_or_parent(node)
 
   while node do
-    local found_node, i = utils.find_node(self.nodes, function(node_)
+    local found_node, i = self:find_node(function(node_)
       return node_.absolute_path == node.absolute_path
     end)
 
@@ -625,6 +625,25 @@ function Explorer:focus_node_or_parent(node)
 
     node = node.parent
   end
+end
+
+--- Get the node and index of the node from the tree that matches the predicate.
+--- The explored nodes are those displayed on the view.
+---@param fn fun(node: Node): boolean
+---@return table|nil
+---@return number
+function Explorer:find_node(fn)
+  local node, i = Iterator.builder(self.nodes)
+  :matcher(fn)
+  :recursor(function(node)
+    return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+  end)
+  :iterate()
+  i = view.is_root_folder_visible() and i or i - 1
+  if node and node.explorer.live_filter.filter then
+    i = i + 1
+  end
+  return node, i
 end
 
 ---Api.tree.get_nodes

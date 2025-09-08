@@ -114,26 +114,6 @@ end
 
 M.path_separator = path_separator
 
---- Get the node and index of the node from the tree that matches the predicate.
---- The explored nodes are those displayed on the view.
----@param nodes Node[]
----@param fn fun(node: Node): boolean
----@return table|nil
----@return number
-function M.find_node(nodes, fn)
-  local node, i = Iterator.builder(nodes)
-    :matcher(fn)
-    :recursor(function(node)
-      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
-    end)
-    :iterate()
-  i = require("nvim-tree.view").is_root_folder_visible() and i or i - 1
-  if node and node.explorer.live_filter.filter then
-    i = i + 1
-  end
-  return node, i
-end
-
 ---@param extmarks vim.api.keyset.get_extmark_item[] as per vim.api.nvim_buf_get_extmarks
 ---@return number
 function M.extmarks_length(extmarks)

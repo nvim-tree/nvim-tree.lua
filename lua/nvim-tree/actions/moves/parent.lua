@@ -1,6 +1,4 @@
 local view = require("nvim-tree.view")
-local utils = require("nvim-tree.utils")
-
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -29,7 +27,7 @@ function M.fn(should_close)
       return
     end
 
-    local _, line = utils.find_node(parent.explorer.nodes, function(n)
+    local _, line = parent.explorer:find_node(function(n)
       return n.absolute_path == parent.absolute_path
     end)
 
