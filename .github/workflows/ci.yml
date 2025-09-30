@@ -32,7 +32,7 @@ jobs:
           luaVersion: ${{ matrix.lua_version }}
 
       - name: install luarocks
-        uses: leafo/gh-actions-luarocks@v5
+        uses: leafo/gh-actions-luarocks@v6
 
       - name: install luacheck ${{ matrix.luacheck_version }}
         run: luarocks install luacheck ${{ matrix.luacheck_version }}
