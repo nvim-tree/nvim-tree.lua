@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: install lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v11
+        uses: leafo/gh-actions-lua@v12
         with:
           luaVersion: ${{ matrix.lua_version }}
 
