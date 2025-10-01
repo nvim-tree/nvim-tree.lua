@@ -11,6 +11,45 @@ local utils = require("nvim-tree.utils")
 local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
 
+local function get_save_path(opts)
+  return opts.marks.save_path or (vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json")
+end
+
+local function save_bookmarks(marks, opts)
+  if not opts.marks.enable_persistence then
+    return
+  end
+
+  local storepath = get_save_path(opts)
+  local file = io.open(storepath, "w")
+  if file then
+    local data = {}
+    for path, _ in pairs(marks) do
+      table.insert(data, path)
+    end
+    file:write(vim.json.encode(data))
+    file:close()
+  end
+end
+
+local function load_bookmarks(opts)
+  local storepath = get_save_path(opts)
+  local file = io.open(storepath, "r")
+  if file then
+    local content = file:read("*all")
+    file:close()
+    if content and content ~= "" then
+      local data = vim.json.decode(content)
+      local marks = {}
+      for _, path in ipairs(data) do
+        marks[path] = true -- or reconstruct node if needed
+      end
+      return marks
+    end
+  end
+  return {}
+end
+
 ---@class (exact) Marks: Class
 ---@field private explorer Explorer
 ---@field private marks table<string, Node> by absolute path
@@ -26,8 +65,15 @@ local Marks = Class:extend()
 ---@param args MarksArgs
 function Marks:new(args)
   self.explorer = args.explorer
-
   self.marks = {}
+  if self.explorer.opts.marks.enable_persistence then
+    local ok, loaded_marks = pcall(load_bookmarks, self.explorer.opts)
+    if ok then
+      self.marks = loaded_marks
+    else
+      notify.warn("Failed to load bookmarks: " .. loaded_marks)
+    end
+  end
 end
 
 ---Clear all marks and reload if watchers disabled
@@ -59,6 +105,12 @@ function Marks:toggle(node)
     self.marks[node.absolute_path] = node
   end
 
+  if self.explorer.opts.marks.enable_persistence then
+    local ok, err = pcall(save_bookmarks, self.marks, self.explorer.opts)
+    if not ok then
+      notify.warn("Failed to save bookmarks: " .. err)
+    end
+  end
   self.explorer.renderer:draw()
 end
 
