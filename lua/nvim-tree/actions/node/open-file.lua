@@ -198,7 +198,14 @@ local function open_file_in_tab(filename)
   if M.relative_path then
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
-  vim.cmd("tabe " .. vim.fn.fnameescape(filename))
+  vim.cmd.tabnew()
+  -- HACK: prevent NvimTree to be alternate buffer
+  if utils.is_nvim_tree_buf(vim.fn.bufnr("#")) then
+    local tmpbuf = vim.api.nvim_create_buf(false, true)
+    vim.fn.setreg("#", tmpbuf)
+    vim.api.nvim_buf_delete(tmpbuf, { force = true })
+  end
+  vim.cmd.edit(vim.fn.fnameescape(filename))
 end
 
 local function drop(filename)
