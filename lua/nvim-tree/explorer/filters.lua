@@ -4,14 +4,23 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local Class = require("nvim-tree.classic")
 
 ---@alias FilterType "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
+---@alias GitFilterType "git_clean" | "git_ignored"
+
+---@class FilterStatus
+---@field project GitProject | nil
+---@field bufinfo table
+---@field bookmarks table
 
 ---@class (exact) Filters: Class
 ---@field enabled boolean
 ---@field state table<FilterType, boolean>
+---@field api table<string, fun(self: Filters, path: string): boolean|nil>
 ---@field private explorer Explorer
 ---@field private exclude_list string[] filters.exclude
 ---@field private ignore_list table<string, boolean> filters.custom string table
 ---@field private custom_function (fun(absolute_path: string): boolean)|nil filters.custom function
+---@field protected status FilterStatus
+---@field private filter_cache table<string, FILTER_REASON>
 local Filters = Class:extend()
 
 ---@class Filters
@@ -38,6 +47,8 @@ function Filters:new(args)
     no_bookmark = self.explorer.opts.filters.no_bookmark,
   }
 
+  self.filter_cache = {}
+
   local custom_filter  = self.explorer.opts.filters.custom
   if type(custom_filter) == "function" then
     self.custom_function = custom_filter
@@ -48,6 +59,35 @@ function Filters:new(args)
       end
     end
   end
+end
+
+--- Cache filter function results so subsequent calls to the same path in a loop
+--- iteration are as fast as possible
+---@private
+---@param fn fun(self: Filters, path: string): boolean
+---@param reason FILTER_REASON
+---@return fun(self: Filters, path: string): boolean
+local function cache_wrapper(fn, reason)
+
+  ---@param self Filters
+  ---@param path string
+  ---@return FILTER_REASON
+  ---@diagnostic disable:invisible
+  local function inner(self, path)
+
+    if self.filter_cache[reason] == nil then
+      self.filter_cache[reason] = {}
+    end
+
+    if self.filter_cache[reason][path] == nil then
+      self.filter_cache[reason][path] = fn(self, path)
+    end
+
+    return self.filter_cache[reason][path]
+  end
+  ---@diagnostic enable:invisible
+
+  return inner
 end
 
 ---@private
@@ -64,10 +104,11 @@ end
 
 ---Check if the given path is git clean/ignored
 ---@private
+---@param filter_type GitFilterType
 ---@param path string Absolute path
 ---@param project GitProject from prepare
 ---@return boolean
-function Filters:git(path, project)
+function Filters:git(filter_type, path, project)
   if type(project) ~= "table" or type(project.files) ~= "table" or type(project.dirs) ~= "table" then
     return false
   end
@@ -77,31 +118,44 @@ function Filters:git(path, project)
   xy = xy or project.dirs.direct[path] and project.dirs.direct[path][1]
   xy = xy or project.dirs.indirect[path] and project.dirs.indirect[path][1]
 
-  -- filter ignored; overrides clean as they are effectively dirty
-  if self.state.git_ignored and xy == "!!" then
+  if filter_type == "git_ignored" and xy == "!!" then
     return true
   end
 
-  -- filter clean
-  if self.state.git_clean and not xy then
+  if filter_type == "git_clean" and not xy then
     return true
   end
 
   return false
 end
 
----Check if the given path has no listed buffer
----@private
----@param path string Absolute path
----@param bufinfo table vim.fn.getbufinfo { buflisted = 1 }
+---@param path string
 ---@return boolean
-function Filters:buf(path, bufinfo)
-  if not self.state.no_buffer or type(bufinfo) ~= "table" then
+function Filters:git_clean(path)
+  -- filter ignored; overrides clean as they are effectively dirty
+  if self.state.git_ignored and self:git_ignored("path") then
+    return true
+  else
+    return self:git("git_clean", path, self.status.project)
+  end
+end
+
+---@param path string
+---@return boolean
+function Filters:git_ignored(path)
+  return self:git("git_ignored", path, self.status.project)
+end
+
+---Check if the given path has no listed buffer
+---@param path string Absolute path
+---@return boolean
+function Filters:buf(path)
+  if type(self.status.bufinfo) ~= "table" then
     return false
   end
 
   -- filter files with no open buffer and directories containing no open buffers
-  for _, b in ipairs(bufinfo) do
+  for _, b in ipairs(self.status.bufinfo) do
     if b.name == path or b.name:find(path .. "/", 1, true) then
       return false
     end
@@ -110,27 +164,25 @@ function Filters:buf(path, bufinfo)
   return true
 end
 
----@private
 ---@param path string
 ---@return boolean
 function Filters:dotfile(path)
-  return self.state.dotfiles and utils.path_basename(path):sub(1, 1) == "."
+  return utils.path_basename(path):sub(1, 1) == "."
 end
 
 ---Bookmark is present
----@private
 ---@param path string
----@param path_type string|nil filetype of path
----@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
 ---@return boolean
-function Filters:bookmark(path, path_type, bookmarks)
-  if not self.state.no_bookmark then
-    return false
-  end
+function Filters:bookmark(path)
+  local bookmarks = self.status.bookmarks
+
   -- if bookmark is empty, we should see a empty filetree
   if next(bookmarks) == nil then
     return true
   end
+
+  local stat, _ = vim.loop.fs_stat(path)
+  local path_type = stat and stat.type
 
   local mark_parent = utils.path_add_trailing(path)
   for mark, mark_type in pairs(bookmarks) do
@@ -156,20 +208,15 @@ function Filters:bookmark(path, path_type, bookmarks)
   return true
 end
 
----@private
 ---@param path string
 ---@return boolean
 function Filters:custom(path)
-  if not self.state.custom then
-    return false
+  -- filter user's custom function
+  if type(self.custom_function) == "function" then
+    return self.custom_function(path)
   end
 
   local basename = utils.path_basename(path)
-
-  -- filter user's custom function
-  if self.custom_function and self.custom_function(path) then
-    return true
-  end
 
   -- filter custom regexes
   local relpath = utils.path_relative(path, vim.loop.cwd())
@@ -196,32 +243,30 @@ end
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
 --- bookmarks: absolute paths to boolean
 function Filters:prepare(project)
-  local status = {
+  self.status = {
     project = project or {},
     bufinfo = {},
     bookmarks = {},
   }
 
-  if self.state.no_buffer then
-    status.bufinfo = vim.fn.getbufinfo({ buflisted = 1 })
-  end
+  self.filter_cache = {}
+
+  self.status.bufinfo = vim.fn.getbufinfo({ buflisted = 1 })
 
   local explorer = require("nvim-tree.core").get_explorer()
   if explorer then
     for _, node in pairs(explorer.marks:list()) do
-      status.bookmarks[node.absolute_path] = node.type
+      self.status.bookmarks[node.absolute_path] = node.type
     end
   end
 
-  return status
+  return self.status
 end
 
 ---Check if the given path should be filtered.
 ---@param path string Absolute path
----@param fs_stat uv.fs_stat.result|nil fs_stat of file
----@param status table from prepare
 ---@return boolean
-function Filters:should_filter(path, fs_stat, status)
+function Filters:should_filter(path)
   if not self.enabled then
     return false
   end
@@ -231,19 +276,18 @@ function Filters:should_filter(path, fs_stat, status)
     return false
   end
 
-  return self:git(path, status.project)
-    or self:buf(path, status.bufinfo)
-    or self:dotfile(path)
-    or self:custom(path)
-    or self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks)
+  return (self.state.custom and self:custom(path))
+    or (self.state.git_clean and self:git_clean(path))
+    or (self.state.git_ignored and self:git_ignored(path))
+    or (self.state.no_buffer and self:buf(path))
+    or (self.state.dotfiles and self:dotfile(path))
+    or (self.state.no_bookmark and self:bookmark(path))
 end
 
 --- Check if the given path should be filtered, and provide the reason why it was
 ---@param path string Absolute path
----@param fs_stat uv.fs_stat.result|nil fs_stat of file
----@param status table from prepare
 ---@return FILTER_REASON
-function Filters:should_filter_as_reason(path, fs_stat, status)
+function Filters:should_filter_as_reason(path)
   if not self.enabled then
     return FILTER_REASON.none
   end
@@ -252,16 +296,28 @@ function Filters:should_filter_as_reason(path, fs_stat, status)
     return FILTER_REASON.none
   end
 
-  if self:git(path, status.project) then
-    return FILTER_REASON.git
-  elseif self:buf(path, status.bufinfo) then
-    return FILTER_REASON.buf
-  elseif self:dotfile(path) then
-    return FILTER_REASON.dotfile
-  elseif self:custom(path) then
+  if not self:should_filter(path) then
+    return FILTER_REASON.none
+  end
+
+  if self.state.custom and self:custom(path) then
     return FILTER_REASON.custom
-  elseif self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks) then
+
+  elseif self.state.git_clean and self:git_clean(path) then
+    return FILTER_REASON.git_clean
+
+  elseif self.state.git_ignored and self:git_ignored(path) then
+    return FILTER_REASON.git_ignore
+
+  elseif self.state.no_buffer and self:buf(path) then
+    return FILTER_REASON.buf
+
+  elseif self.state.dotfiles and self:dotfile(path) then
+    return FILTER_REASON.dotfile
+
+  elseif self.state.no_bookmark and self:bookmark(path) then
     return FILTER_REASON.bookmark
+
   else
     return FILTER_REASON.none
   end
@@ -283,5 +339,23 @@ function Filters:toggle(type)
     self.explorer:focus_node_or_parent(node)
   end
 end
+
+---@diagnostic disable:inject-field
+Filters.custom      = cache_wrapper(Filters.custom, FILTER_REASON.custom)
+Filters.dotfile     = cache_wrapper(Filters.dotfile, FILTER_REASON.dotfile)
+Filters.git_ignored = cache_wrapper(Filters.git_ignored, FILTER_REASON.git_ignore)
+Filters.git_clean   = cache_wrapper(Filters.git_clean, FILTER_REASON.git_clean)
+Filters.buf         = cache_wrapper(Filters.buf, FILTER_REASON.buf)
+Filters.bookmark    = cache_wrapper(Filters.bookmark, FILTER_REASON.bookmark)
+---@diagnostic enable:inject-field
+
+Filters.api = {
+  custom      = Filters.custom,
+  dotfile     = Filters.dotfile,
+  git_ignored = Filters.git_ignored,
+  git_clean   = Filters.git_clean,
+  no_buffer   = Filters.buf,
+  no_bookmark = Filters.bookmark,
+}
 
 return Filters
