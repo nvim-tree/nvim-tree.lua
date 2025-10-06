@@ -199,6 +199,7 @@ local function open_file_in_tab(filename)
     filename = utils.path_relative(filename, vim.fn.getcwd())
   end
   vim.cmd.tabnew()
+  vim.bo.bufhidden = "wipe"
   -- HACK: prevent NvimTree to be alternate buffer
   if utils.is_nvim_tree_buf(vim.fn.bufnr("#")) then
     local tmpbuf = vim.api.nvim_create_buf(false, true)
