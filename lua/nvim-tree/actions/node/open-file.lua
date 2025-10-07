@@ -200,7 +200,7 @@ local function open_file_in_tab(filename)
   end
   vim.cmd.tabnew()
   vim.bo.bufhidden = "wipe"
-  -- HACK: prevent NvimTree to be alternate buffer
+  -- Following vim.fn.tabnew the # buffer may be set to the tree buffer. There is no way to clear the # buffer via vim.fn.setreg as it requires a valid buffer. Clear # by setting it to a new temporary scratch buffer.
   if utils.is_nvim_tree_buf(vim.fn.bufnr("#")) then
     local tmpbuf = vim.api.nvim_create_buf(false, true)
     vim.fn.setreg("#", tmpbuf)
