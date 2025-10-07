@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.15.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.14.0...nvim-tree-v1.15.0) (2025-10-07)
+
+
+### Features
+
+* **#1826:** add diagnostics.diagnostic_opts: vim.diagnostic.Opts will override diagnostics.severity and diagnostics.icons ([#3190](https://github.com/nvim-tree/nvim-tree.lua/issues/3190)) ([fefa335](https://github.com/nvim-tree/nvim-tree.lua/commit/fefa335f1c8f690eb668a1efd18ee4fc6d64cd3e))
+
+
+### Bug Fixes
+
+* prevent NvimTree to be alternate buffer when tab open ([#3205](https://github.com/nvim-tree/nvim-tree.lua/issues/3205)) ([e397756](https://github.com/nvim-tree/nvim-tree.lua/commit/e397756d2a79d74314ea4cd3efc41300e91c0ff0))
+
 ## [1.14.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.14.0) (2025-08-12)
 
 
