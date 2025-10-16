@@ -1,5 +1,7 @@
 # A File Explorer For Neovim Written In Lua
 
+This repository were forked from "nvim-tree/nvim-tree.lua".
+
 [![CI](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml/badge.svg)](https://github.com/nvim-tree/nvim-tree.lua/actions/workflows/ci.yml)
 
 <img align="left" width="199" height="598" src="https://user-images.githubusercontent.com/1505378/232662694-8dc494e0-24da-497a-8541-29344293378c.png">
