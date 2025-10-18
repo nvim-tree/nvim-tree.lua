@@ -2339,6 +2339,7 @@ events.Event                                      *nvim-tree-api.events.Event*
 
 live_filter.start()                        *nvim-tree-api.live_filter.start()*
     Enter |nvim-tree.live_filter| mode.
+    Opens an input window with |filetype| `"NvimTreeFilter"`
 
 live_filter.clear()                        *nvim-tree-api.live_filter.clear()*
     Exit |nvim-tree.live_filter| mode.

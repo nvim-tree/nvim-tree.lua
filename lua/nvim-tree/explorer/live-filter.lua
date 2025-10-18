@@ -188,8 +188,10 @@ local function create_overlay(self)
 
   if vim.fn.has("nvim-0.10") == 1 then
     vim.api.nvim_set_option_value("modifiable", true, { buf = overlay_bufnr })
+    vim.api.nvim_set_option_value("filetype", "NvimTreeFilter", { buf = overlay_bufnr })
   else
     vim.api.nvim_buf_set_option(overlay_bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
+    vim.api.nvim_buf_set_option(overlay_bufnr, "filetype", "NvimTreeFilter") ---@diagnostic disable-line: deprecated
   end
 
   vim.api.nvim_buf_set_lines(overlay_bufnr, 0, -1, false, { self.filter })
