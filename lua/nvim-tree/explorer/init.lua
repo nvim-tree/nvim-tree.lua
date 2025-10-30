@@ -23,7 +23,6 @@ local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
--- local dir_up = require("lua.nvim-tree.explorer.dir-up")
 local change_dir = require("nvim-tree.explorer.change-dir")
 
 
