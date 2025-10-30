@@ -23,6 +23,10 @@ local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 
+-- local dir_up = require("lua.nvim-tree.explorer.dir-up")
+local change_dir = require("nvim-tree.explorer.change-dir")
+
+
 local config
 
 ---@class (exact) Explorer: RootNode
@@ -30,6 +34,7 @@ local config
 ---@field opts table user options
 ---@field augroup_id integer
 ---@field renderer Renderer
+---@field change_dir any
 ---@field filters Filters
 ---@field live_filter LiveFilter
 ---@field sorters Sorter
@@ -665,8 +670,26 @@ function Explorer:get_nodes()
   return self:clone()
 end
 
+---@param node Node
+function Explorer:dir_up(node)
+  if not node or node.name == ".." then
+    require("nvim-tree.explorer.change-dir").fn("..")
+  else
+    local cwd = core.get_cwd()
+    if cwd == nil then
+      return
+    end
+    local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
+    require("nvim-tree.explorer.change-dir").fn(newdir)
+    require("nvim-tree.actions.finders.find-file").fn(node.absolute_path)
+  end
+end
+
+Explorer.change_dir = change_dir
+
 function Explorer:setup(opts)
   config = opts
+  change_dir.setup(opts)
 end
 
 return Explorer

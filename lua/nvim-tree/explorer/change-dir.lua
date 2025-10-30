@@ -66,6 +66,7 @@ end
 
 ---@return boolean
 local function should_change_dir()
+  local explorer = core.get_explorer()
   return M.options.enable and vim.tbl_isempty(vim.v.event)
 end
 

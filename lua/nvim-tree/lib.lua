@@ -25,7 +25,7 @@ end
 ---@param cwd string
 local function handle_buf_cwd(cwd)
   if M.respect_buf_cwd and cwd ~= core.get_cwd() then
-    require("nvim-tree.actions.root.change-dir").fn(cwd)
+    require("lua.nvim-tree.explorer.change-dir").fn(cwd)
   end
 end
 
