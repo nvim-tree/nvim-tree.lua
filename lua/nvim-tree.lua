@@ -759,10 +759,7 @@ function M.setup(conf)
 
   setup_autocommands(opts)
 
-  if vim.g.NvimTreeSetup ~= 1 then
-    -- first call to setup
-    require("nvim-tree.commands").setup()
-  else
+  if vim.g.NvimTreeSetup == 1 then
     -- subsequent calls to setup
     M.purge_all_state()
   end
