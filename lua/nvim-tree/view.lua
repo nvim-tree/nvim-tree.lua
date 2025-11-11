@@ -303,8 +303,7 @@ function M.open(options)
 end
 
 local function grow()
-  local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
-  local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
+  local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), 0, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = get_size(M.View.padding)
 
