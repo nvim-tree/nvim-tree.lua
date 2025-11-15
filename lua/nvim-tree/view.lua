@@ -12,6 +12,7 @@ local M = {}
 
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
+local DEFAULT_INCLUDE_ROOT = false
 local DEFAULT_PADDING = 1
 
 M.View = {
@@ -303,7 +304,7 @@ function M.open(options)
 end
 
 local function grow()
-  local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
+  local starts_at = (M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and M.View.include_root) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = get_size(M.View.padding)
@@ -600,6 +601,7 @@ function M.configure_width(width)
     M.View.adaptive_size = true
     M.View.width = width.min or DEFAULT_MIN_WIDTH
     M.View.max_width = width.max or DEFAULT_MAX_WIDTH
+    M.View.include_root = width.include_root or DEFAULT_INCLUDE_ROOT
     M.View.padding = width.padding or DEFAULT_PADDING
   elseif width == nil then
     if M.config.width ~= nil then

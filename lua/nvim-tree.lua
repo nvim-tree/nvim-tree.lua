@@ -553,6 +553,7 @@ local ACCEPTED_TYPES = {
       "table",
       min = { "string", "function", "number" },
       max = { "string", "function", "number" },
+      include_root = { "boolean" },
       padding = { "function", "number" },
     },
   },
