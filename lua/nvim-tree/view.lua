@@ -315,31 +315,25 @@ local function grow()
     padding = padding + wininfo[1].textoff
   end
 
-  local resizing_width = M.View.initial_width - padding
-  local max_width
-
-  -- maybe bound max
-  if M.View.max_width == -1 then
-    max_width = -1
-  else
-    max_width = get_width(M.View.max_width) - padding
+  local final_width = M.View.initial_width
+  local max_width = math.huge
+  if M.View.max_width ~= -1 then
+    max_width = get_width(M.View.max_width)
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
   for line_nr, l in pairs(lines) do
-    local count = vim.fn.strchars(l)
+    local line_width = vim.fn.strchars(l)
     -- also add space for right-aligned icons
     local extmarks = vim.api.nvim_buf_get_extmarks(M.get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
-    count = count + utils.extmarks_length(extmarks)
-    if resizing_width < count then
-      resizing_width = count
-    end
-    if M.View.adaptive_size and max_width >= 0 and resizing_width >= max_width then
-      resizing_width = max_width
+    line_width = line_width + utils.extmarks_length(extmarks) + padding
+    final_width = math.max(final_width, line_width)
+    if final_width >= max_width then
+      final_width = max_width
       break
     end
   end
-  M.resize(resizing_width + padding)
+  M.resize(final_width)
 end
 
 function M.grow_from_content()
