@@ -855,7 +855,7 @@ Use nvim-tree in a floating window.
  5.3 OPTS: RENDERER                                  *nvim-tree-opts-renderer*
 
 *nvim-tree.renderer.add_trailing*
-Appends a trailing slash to folder names.
+Appends a trailing slash to folder and symlink folder destination names.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.renderer.group_empty*
