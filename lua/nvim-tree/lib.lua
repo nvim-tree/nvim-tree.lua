@@ -1,6 +1,7 @@
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
+local change_dir = require("nvim-tree.explorer.change-dir")
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -25,7 +26,7 @@ end
 ---@param cwd string
 local function handle_buf_cwd(cwd)
   if M.respect_buf_cwd and cwd ~= core.get_cwd() then
-    require("lua.nvim-tree.explorer.change-dir").fn(cwd)
+    change_dir.fn(cwd)
   end
 end
 

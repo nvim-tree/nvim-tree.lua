@@ -170,7 +170,7 @@ Api.tree.change_root_to_node = wrap_node(function(node)
 end)
 
 
-Api.tree.change_root_to_parent = wrap_node(Explorer.dir_up)
+Api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
 Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
 Api.tree.get_nodes = wrap_explorer("get_nodes")
 
