@@ -27,12 +27,7 @@ case "${1}" in
 
 		;;
 	*)
-		# Add runtime.version for strict neovim baseline 5.1
-		# It is not set normally, to prevent luals loading 5.1 and 5.x, resulting in both versions being chosen on vim.lsp.buf.definition
-		jq \
-			'."runtime.version" = "Lua 5.1"' \
-			"${PWD}/.luarc.json" > "${FILE_LUARC}"
-
+		cp "${PWD}/.luarc.json" "${FILE_LUARC}"
 		;;
 esac
 
