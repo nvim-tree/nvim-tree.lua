@@ -553,6 +553,7 @@ local ACCEPTED_TYPES = {
       "table",
       min = { "string", "function", "number" },
       max = { "string", "function", "number" },
+      lines_excluded = { "table" },
       padding = { "function", "number" },
     },
   },
@@ -612,6 +613,14 @@ local ACCEPTED_STRINGS = {
   },
 }
 
+local ACCEPTED_ENUMS = {
+  view = {
+    width = {
+      lines_excluded = { "root", },
+    },
+  },
+}
+
 ---@param conf table|nil
 local function validate_options(conf)
   local msg
@@ -620,15 +629,19 @@ local function validate_options(conf)
   ---@param def any
   ---@param strs table
   ---@param types table
+  ---@param enums table
   ---@param prefix string
-  local function validate(user, def, strs, types, prefix)
+  local function validate(user, def, strs, types, enums, prefix)
     -- if user's option is not a table there is nothing to do
     if type(user) ~= "table" then
       return
     end
 
-    -- only compare tables with contents that are not integer indexed
-    if type(def) ~= "table" or not next(def) or type(next(def)) == "number" then
+    -- we have hit a leaf enum to validate against - it's an integer indexed table
+    local enum_value = type(enums) == "table" and next(enums) and type(next(enums)) == "number"
+
+    -- only compare tables with contents that are not integer indexed nor enums
+    if not enum_value and (type(def) ~= "table" or not next(def) or type(next(def)) == "number") then
       -- unless the field can be a table (and is not a table in default config)
       if vim.tbl_contains(types, "table") then
         -- use a dummy default to allow all checks
@@ -642,27 +655,33 @@ local function validate_options(conf)
       if not FIELD_SKIP_VALIDATE[k] then
         local invalid
 
-        if def[k] == nil and types[k] == nil then
-          -- option does not exist
-          invalid = string.format("Unknown option: %s%s", prefix, k)
-        elseif type(v) ~= type(def[k]) then
-          local expected
+        if enum_value then
+          if not vim.tbl_contains(enums, v) then
+            invalid = string.format("Invalid value for field %s%s: Expected one of enum '%s', got '%s'", prefix, k, table.concat(enums, "'|'"), tostring(v))
+          end
+        else
+          if def[k] == nil and types[k] == nil then
+            -- option does not exist
+            invalid = string.format("Unknown option: %s%s", prefix, k)
+          elseif type(v) ~= type(def[k]) then
+            local expected
 
-          if types[k] and #types[k] > 0 then
-            if not vim.tbl_contains(types[k], type(v)) then
-              expected = table.concat(types[k], "|")
+            if types[k] and #types[k] > 0 then
+              if not vim.tbl_contains(types[k], type(v)) then
+                expected = table.concat(types[k], "|")
+              end
+            else
+              expected = type(def[k])
             end
-          else
-            expected = type(def[k])
-          end
 
-          if expected then
-            -- option is of the wrong type
-            invalid = string.format("Invalid option: %s%s. Expected %s, got %s", prefix, k, expected, type(v))
+            if expected then
+              -- option is of the wrong type
+              invalid = string.format("Invalid option: %s%s. Expected %s, got %s", prefix, k, expected, type(v))
+            end
+          elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
+            -- option has type `string` but value is not accepted
+            invalid = string.format("Invalid value for field %s%s: '%s'", prefix, k, v)
           end
-        elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
-          -- option has type `string` but value is not accepted
-          invalid = string.format("Invalid value for field %s%s: '%s'", prefix, k, v)
         end
 
         if invalid then
@@ -672,14 +691,14 @@ local function validate_options(conf)
             msg = invalid
           end
           user[k] = nil
-        else
-          validate(v, def[k], strs[k] or {}, types[k] or {}, prefix .. k .. ".")
+        elseif not enum_value then
+          validate(v, def[k], strs[k] or {}, types[k] or {}, enums[k] or {}, prefix .. k .. ".")
         end
       end
     end
   end
 
-  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, ACCEPTED_TYPES, "")
+  validate(conf, DEFAULT_OPTS, ACCEPTED_STRINGS, ACCEPTED_TYPES, ACCEPTED_ENUMS, "")
 
   if msg then
     notify.warn(msg .. "\n\nsee :help nvim-tree-opts for available configuration options")

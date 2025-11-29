@@ -12,6 +12,9 @@ local M = {}
 
 local DEFAULT_MIN_WIDTH = 30
 local DEFAULT_MAX_WIDTH = -1
+local DEFAULT_LINES_EXCLUDED = {
+  "root",
+}
 local DEFAULT_PADDING = 1
 
 M.View = {
@@ -303,7 +306,7 @@ function M.open(options)
 end
 
 local function grow()
-  local starts_at = M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and 1 or 0
+  local starts_at = (M.is_root_folder_visible(require("nvim-tree.core").get_cwd()) and M.View.root_excluded) and 1 or 0
   local lines = vim.api.nvim_buf_get_lines(M.get_bufnr(), starts_at, -1, false)
   -- number of columns of right-padding to indicate end of path
   local padding = get_size(M.View.padding)
@@ -314,31 +317,25 @@ local function grow()
     padding = padding + wininfo[1].textoff
   end
 
-  local resizing_width = M.View.initial_width - padding
-  local max_width
-
-  -- maybe bound max
-  if M.View.max_width == -1 then
-    max_width = -1
-  else
-    max_width = get_width(M.View.max_width) - padding
+  local final_width = M.View.initial_width
+  local max_width = math.huge
+  if M.View.max_width ~= -1 then
+    max_width = get_width(M.View.max_width)
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
   for line_nr, l in pairs(lines) do
-    local count = vim.fn.strchars(l)
+    local line_width = vim.fn.strchars(l)
     -- also add space for right-aligned icons
     local extmarks = vim.api.nvim_buf_get_extmarks(M.get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
-    count = count + utils.extmarks_length(extmarks)
-    if resizing_width < count then
-      resizing_width = count
-    end
-    if M.View.adaptive_size and max_width >= 0 and resizing_width >= max_width then
-      resizing_width = max_width
+    line_width = line_width + utils.extmarks_length(extmarks) + padding
+    final_width = math.max(final_width, line_width)
+    if final_width >= max_width then
+      final_width = max_width
       break
     end
   end
-  M.resize(resizing_width + padding)
+  M.resize(final_width)
 end
 
 function M.grow_from_content()
@@ -600,6 +597,8 @@ function M.configure_width(width)
     M.View.adaptive_size = true
     M.View.width = width.min or DEFAULT_MIN_WIDTH
     M.View.max_width = width.max or DEFAULT_MAX_WIDTH
+    local lines_excluded = width.lines_excluded or DEFAULT_LINES_EXCLUDED
+    M.View.root_excluded = vim.tbl_contains(lines_excluded, "root")
     M.View.padding = width.padding or DEFAULT_PADDING
   elseif width == nil then
     if M.config.width ~= nil then
