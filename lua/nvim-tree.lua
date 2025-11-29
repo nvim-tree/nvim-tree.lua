@@ -553,6 +553,7 @@ local ACCEPTED_TYPES = {
       "table",
       min = { "string", "function", "number" },
       max = { "string", "function", "number" },
+      lines_excluded = { "string" },
       padding = { "function", "number" },
     },
   },
@@ -589,6 +590,9 @@ local ACCEPTED_STRINGS = {
   view = {
     side = { "left", "right" },
     signcolumn = { "yes", "no", "auto" },
+    width = {
+      lines_excluded = { "root", "none" },
+    },
   },
   renderer = {
     hidden_display = { "none", "simple", "all" },
