@@ -822,6 +822,15 @@ longest line.
       Type: `string | number | fun(): number|string`
       Default: `-1`
 
+    *nvim-tree.view.width.lines_excluded*
+    Exclude these lines when computing width.
+    Supported values: `"root".
+      Type: `table`
+      Default:
+        `{`
+          `"root"`
+        `}`
+
     *nvim-tree.view.width.padding*
     Extra padding to the right.
       Type: `number | fun(): number|string`
@@ -3323,6 +3332,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.view.side|
 |nvim-tree.view.signcolumn|
 |nvim-tree.view.width|
+|nvim-tree.view.width.lines_excluded|
 |nvim-tree.view.width.max|
 |nvim-tree.view.width.min|
 |nvim-tree.view.width.padding|
