@@ -1,10 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
   "workspace": {
-    "library": [
-      "$VIMRUNTIME/lua/vim",
-      "${3rd}/luv/library"
-    ]
+    "library": ["$VIMRUNTIME/lua/vim", "${3rd}/luv/library"]
   },
   "format": {
     "defaultConfig": {

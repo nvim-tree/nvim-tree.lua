@@ -4,6 +4,7 @@ local utils = require("nvim-tree.utils")
 local actions = require("nvim-tree.actions")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
+local Explorer = require("nvim-tree.explorer")
 
 local _config = {}
 
@@ -47,7 +48,7 @@ function M.change_root(path, bufnr)
   -- test if in vim_cwd
   if utils.path_relative(path, vim_cwd) ~= path then
     if vim_cwd ~= cwd then
-      actions.root.change_dir.fn(vim_cwd)
+      Explorer.change_dir.fn(vim_cwd)
     end
     return
   end
@@ -58,19 +59,20 @@ function M.change_root(path, bufnr)
 
   -- otherwise test M.init_root
   if _config.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
-    actions.root.change_dir.fn(M.init_root)
+    Explorer.change_dir.fn(M.init_root)
     return
   end
   -- otherwise root_dirs
+
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
     if utils.path_relative(path, dir) ~= path then
-      actions.root.change_dir.fn(dir)
+      Explorer.change_dir.fn(dir)
       return
     end
   end
   -- finally fall back to the folder containing the file
-  actions.root.change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
+  Explorer.change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.tab_enter()
@@ -110,7 +112,7 @@ function M.open_on_directory()
     return
   end
 
-  actions.root.change_dir.force_dirchange(bufname, true)
+  Explorer.change_dir.force_dirchange(bufname, true)
 end
 
 ---@return table
@@ -134,7 +136,7 @@ end
 ---@param name string|nil
 function M.change_dir(name)
   if name then
-    actions.root.change_dir.fn(name)
+    Explorer.change_dir.fn(name)
   end
 
   if _config.update_focused_file.update_root.enable then
