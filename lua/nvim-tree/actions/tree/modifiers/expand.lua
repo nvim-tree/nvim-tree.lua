@@ -45,7 +45,6 @@ end
 ---@param node Node
 ---@return boolean
 local function descend_until_empty(_, node)
-
   local dir = node:as(DirectoryNode)
   if not dir then
     return false

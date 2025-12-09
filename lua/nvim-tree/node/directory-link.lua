@@ -68,8 +68,8 @@ function DirectoryLinkNode:highlighted_name()
       link_to = utils.path_add_trailing(link_to)
     end
 
-    name.str      = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
-    name.hl       = { "NvimTreeSymlinkFolderName" }
+    name.str = string.format("%s%s%s", name.str, self.explorer.opts.renderer.icons.symlink_arrow, link_to)
+    name.hl  = { "NvimTreeSymlinkFolderName" }
   end
 
   return name

@@ -657,7 +657,8 @@ local function validate_options(conf)
 
         if enum_value then
           if not vim.tbl_contains(enums, v) then
-            invalid = string.format("Invalid value for field %s%s: Expected one of enum '%s', got '%s'", prefix, k, table.concat(enums, "'|'"), tostring(v))
+            invalid = string.format("Invalid value for field %s%s: Expected one of enum '%s', got '%s'", prefix, k,
+              table.concat(enums, "'|'"), tostring(v))
           end
         else
           if def[k] == nil and types[k] == nil then
