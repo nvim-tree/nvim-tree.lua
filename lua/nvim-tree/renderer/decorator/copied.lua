@@ -10,7 +10,7 @@ local CopiedDecorator = Decorator:extend()
 ---@protected
 ---@param args DecoratorArgs
 function CopiedDecorator:new(args)
-  self.explorer   = args.explorer
+  self.explorer        = args.explorer
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none"
