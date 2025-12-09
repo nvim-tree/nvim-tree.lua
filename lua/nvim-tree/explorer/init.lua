@@ -659,6 +659,22 @@ function Explorer:get_nodes_by_line(line_start)
   return nodes_by_line
 end
 
+---@param node Node
+function Explorer:dir_up(node)
+  if not node or node.name == ".." then
+    require("nvim-tree.actions.root.change-dir").fn("..")
+  else
+    local cwd = core.get_cwd()
+    if cwd == nil then
+      return
+    end
+
+    local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
+    require("nvim-tree.actions.root.change-dir").fn(newdir)
+    require("nvim-tree.actions.finders.find-file").fn(node.absolute_path)
+  end
+end
+
 ---Api.tree.get_nodes
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
