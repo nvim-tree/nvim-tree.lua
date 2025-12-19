@@ -22,6 +22,8 @@ local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
+local change_dir = require("nvim-tree.actions.root.change-dir")
+local find_file = require("nvim-tree.actions.finders.find-file")
 
 local config
 
@@ -662,7 +664,7 @@ end
 ---@param node Node
 function Explorer:dir_up(node)
   if not node or node.name == ".." then
-    require("nvim-tree.actions.root.change-dir").fn("..")
+    change_dir.fn("..")
   else
     local cwd = core.get_cwd()
     if cwd == nil then
@@ -670,8 +672,8 @@ function Explorer:dir_up(node)
     end
 
     local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
-    require("nvim-tree.actions.root.change-dir").fn(newdir)
-    require("nvim-tree.actions.finders.find-file").fn(node.absolute_path)
+    change_dir.fn(newdir)
+    find_file.fn(node.absolute_path)
   end
 end
 
