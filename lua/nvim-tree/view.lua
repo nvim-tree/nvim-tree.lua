@@ -104,12 +104,13 @@ local function create_buffer(bufnr)
 
   local tab = vim.api.nvim_get_current_tabpage()
   BUFNR_PER_TAB[tab] = bufnr or vim.api.nvim_create_buf(false, false)
-  vim.api.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
 
   bufnr = M.get_bufnr()
   for _, option in ipairs(BUFFER_OPTIONS) do
     vim.api.nvim_set_option_value(option.name, option.value, { buf = bufnr })
   end
+
+  vim.api.nvim_buf_set_name(M.get_bufnr(), "NvimTree_" .. tab)
 
   require("nvim-tree.keymap").on_attach(M.get_bufnr())
 
