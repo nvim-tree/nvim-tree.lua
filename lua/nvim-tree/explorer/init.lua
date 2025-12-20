@@ -207,7 +207,7 @@ function Explorer:reload(node, project)
 
   local profile = log.profile_start("reload %s", node.absolute_path)
 
-  local filter_status = self.filters:prepare(project)
+  self.filters:prepare(project)
 
   if node.group_next then
     node.nodes = { node.group_next }
@@ -222,11 +222,12 @@ function Explorer:reload(node, project)
 
   -- To reset we must 'zero' everything that we use
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
-    git      = 0,
-    buf      = 0,
-    dotfile  = 0,
-    custom   = 0,
-    bookmark = 0,
+    git_clean   = 0,
+    git_ignore  = 0,
+    buf         = 0,
+    dotfile     = 0,
+    custom      = 0,
+    bookmark    = 0,
   })
 
   while true do
@@ -240,7 +241,7 @@ function Explorer:reload(node, project)
     -- path incorrectly specified as an integer
     local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
 
-    local filter_reason = self.filters:should_filter_as_reason(abs, stat, filter_status)
+    local filter_reason = self.filters:should_filter_as_reason(abs)
     if filter_reason == FILTER_REASON.none then
       remain_childs[abs] = true
 
@@ -375,7 +376,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
   local node_ignored = node:is_git_ignored()
   local nodes_by_path = utils.bool_record(node.nodes, "absolute_path")
 
-  local filter_status = parent.filters:prepare(project)
+  parent.filters:prepare(project)
 
   node.hidden_stats = vim.tbl_deep_extend("force", node.hidden_stats or {}, {
     git      = 0,
@@ -399,7 +400,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
       -- path incorrectly specified as an integer
       local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
 
-      local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
+      local filter_reason = parent.filters:should_filter_as_reason(abs)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
         local child = node_factory.create({
           explorer      = self,
