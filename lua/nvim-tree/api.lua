@@ -50,7 +50,11 @@ local Api = {
 ---@return fun(...): any
 local function wrap(fn)
   return function(...)
-    if vim.g.NvimTreeSetup == 1 then
+    if vim.g.NvimTreeSetup == 1 or vim.g.NvimTreeConfig then
+      if vim.g.NvimTreeSetup ~= 1 then
+        require("nvim-tree").setup(vim.g.NvimTreeConfig)
+      end
+
       return fn(...)
     else
       notify.error("nvim-tree setup not called")

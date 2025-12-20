@@ -76,6 +76,11 @@ require("nvim-tree").setup({
     dotfiles = true,
   },
 })
+
+-- OR use the following variable and nvim-tree will call setup lazily
+vim.g.NvimTreeConfig = {
+  on_attach = my_on_attach
+}
 ```
 
 ### Help
