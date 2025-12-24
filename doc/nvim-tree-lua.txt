@@ -569,6 +569,7 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
+        max_outstanding_events = 100,
         ignore_dirs = {
           "/.ccls-cache",
           "/build",
@@ -1449,6 +1450,15 @@ Enable / disable the feature.
 *nvim-tree.filesystem_watchers.debounce_delay*
 Idle milliseconds between filesystem change and action.
   Type: `number`, Default: `50` (ms)
+
+*nvim-tree.filesystem_watchers.max_outstanding_events*
+Maximum number of consecutive file system events for a single directory with
+an interval < |nvim-tree.filesystem_watchers.debounce_delay|
+When this is exceeded a warning notification will be shown and the file system
+watcher disabled for the directory.
+This has been observed when running on Windows PowerShell.
+Consider adding this directory to |filesystem_watchers.ignore_dirs|
+  Type: `number`, Default: `100`
 
 *nvim-tree.filesystem_watchers.ignore_dirs*
 List of vim regex for absolute directory paths that will not be watched or
@@ -3203,6 +3213,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.filesystem_watchers.debounce_delay|
 |nvim-tree.filesystem_watchers.enable|
 |nvim-tree.filesystem_watchers.ignore_dirs|
+|nvim-tree.filesystem_watchers.max_outstanding_events|
 |nvim-tree.filters.custom|
 |nvim-tree.filters.dotfiles|
 |nvim-tree.filters.enable|
