@@ -37,10 +37,7 @@ function DirectoryNode:new(args)
 end
 
 function DirectoryNode:destroy()
-  if self.watcher then
-    self.watcher:destroy()
-    self.watcher = nil
-  end
+  self:destroy_watcher()
 
   if self.nodes then
     for _, node in pairs(self.nodes) do
@@ -49,6 +46,14 @@ function DirectoryNode:destroy()
   end
 
   Node.destroy(self)
+end
+
+---Halt and remove the watcher for this node
+function DirectoryNode:destroy_watcher()
+  if self.watcher then
+    self.watcher:destroy()
+    self.watcher = nil
+  end
 end
 
 ---Update the git_status of the directory
