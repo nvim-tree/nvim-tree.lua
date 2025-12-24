@@ -444,6 +444,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
+    max_outstanding_events = 100,
     ignore_dirs = {
       "/.ccls-cache",
       "/build",
