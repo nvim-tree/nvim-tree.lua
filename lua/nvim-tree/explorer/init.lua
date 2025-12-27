@@ -31,6 +31,7 @@ local config
 ---@field uid_explorer number vim.loop.hrtime() at construction time
 ---@field opts table user options
 ---@field augroup_id integer
+---@field current_tab integer
 ---@field renderer Renderer
 ---@field filters Filters
 ---@field live_filter LiveFilter
@@ -60,12 +61,15 @@ function Explorer:new(args)
   self.open         = true
   self.opts         = config
 
-  self.sorters      = Sorter({ explorer = self })
-  self.renderer     = Renderer({ explorer = self })
-  self.filters      = Filters({ explorer = self })
-  self.live_filter  = LiveFilter({ explorer = self })
-  self.marks        = Marks({ explorer = self })
-  self.clipboard    = Clipboard({ explorer = self })
+
+  self.sorters     = Sorter({ explorer = self })
+  self.renderer    = Renderer({ explorer = self })
+  self.filters     = Filters({ explorer = self })
+  self.live_filter = LiveFilter({ explorer = self })
+  self.marks       = Marks({ explorer = self })
+  self.clipboard   = Clipboard({ explorer = self })
+
+  self.current_tab = vim.api.nvim_get_current_tabpage()
 
   self:create_autocmds()
 
@@ -681,6 +685,91 @@ end
 ---@return nvim_tree.api.Node
 function Explorer:get_nodes()
   return self:clone()
+end
+
+---@param new_tabpage integer
+---@return boolean
+function Explorer:is_window_event(new_tabpage)
+  local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window or false
+  return is_event_scope_window and new_tabpage == M.current_tab
+end
+
+---@param name string
+---@return string|nil
+function Explorer:clean_input_cwd(name)
+  name = vim.fn.fnameescape(name)
+  local cwd = core.get_cwd()
+  if cwd == nil then
+    return
+  end
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
+  if name == ".." and root_parent_cwd then
+    return vim.fn.expand(root_parent_cwd)
+  else
+    return vim.fn.expand(name)
+  end
+end
+
+---@param foldername string
+---@return boolean
+function Explorer:prevent_cwd_change(foldername)
+  local is_same_cwd = foldername == core.get_cwd()
+  local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  return is_same_cwd or is_restricted_above
+end
+
+function Explorer:force_dirchange(foldername, with_open)
+  local fn = add_profiling_to(function(foldername, should_open_view)
+    local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
+    if valid_dir then
+      if should_change_dir() then
+        cd(M.options.global, foldername)
+      end
+      core.init(foldername)
+    end
+
+    if should_open_view then
+      require("nvim-tree.lib").open()
+    else
+      local explorer = core.get_explorer()
+      if explorer then
+        explorer.renderer:draw()
+      end
+    end
+  end)
+
+  fn(foldername, with_open)
+end
+
+---@param f function
+---@return fun(foldername: string, should_open_view: boolean|nil)
+function Explorer:add_profiling_to(f)
+  return function(foldername, should_open_view)
+    local profile = log.profile_start("change dir %s", foldername)
+    f(foldername, should_open_view)
+    log.profile_end(profile)
+  end
+end
+
+---@param input_cwd string
+---@param with_open boolean|nil
+function Explorer:change_dir(input_cwd, with_open)
+  if not core.get_explorer() then
+    return
+  end
+
+  local new_tabpage = vim.api.nvim_get_current_tabpage()
+  if self:is_window_event(new_tabpage) then
+    return
+  end
+
+  local foldername = self:clean_input_cwd(input_cwd)
+  if foldername == nil or self:prevent_cwd_change(foldername) then
+    return
+  end
+
+  self.current_tab = new_tabpage
+  M.force_dirchange(foldername, with_open)
 end
 
 function Explorer:setup(opts)
