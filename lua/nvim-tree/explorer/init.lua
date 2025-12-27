@@ -738,7 +738,7 @@ function Explorer:cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
 
-function Explorer:force_dirchange(_foldername, with_open)
+function Explorer:force_dirchange(folder_name, with_open)
   local fn = self:add_profiling_to(function(foldername, should_open_view)
     local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
     if valid_dir then
@@ -758,7 +758,7 @@ function Explorer:force_dirchange(_foldername, with_open)
     end
   end)
 
-  fn(_foldername, with_open)
+  fn(folder_name, with_open)
 end
 
 ---@param input_cwd string
