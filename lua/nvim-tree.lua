@@ -11,6 +11,16 @@ local M = {
   init_root = "",
 }
 
+--- Helper function to execute some explorer method safely
+---@param fn string # key of explorer
+---@return function|nil
+local function explorer_fn(fn)
+  local explorer = core.get_explorer()
+  if explorer then
+    return explorer[fn]
+  end
+end
+
 --- Update the tree root to a directory or the directory containing
 ---@param path string relative or absolute
 ---@param bufnr number|nil
@@ -47,7 +57,7 @@ function M.change_root(path, bufnr)
   -- test if in vim_cwd
   if utils.path_relative(path, vim_cwd) ~= path then
     if vim_cwd ~= cwd then
-      actions.root.change_dir.fn(vim_cwd)
+      explorer_fn("change_dir")(vim_cwd)
     end
     return
   end
@@ -58,19 +68,19 @@ function M.change_root(path, bufnr)
 
   -- otherwise test M.init_root
   if _config.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
-    actions.root.change_dir.fn(M.init_root)
+    explorer_fn("change_dir")(M.init_root)
     return
   end
   -- otherwise root_dirs
   for _, dir in pairs(_config.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
     if utils.path_relative(path, dir) ~= path then
-      actions.root.change_dir.fn(dir)
+      explorer_fn("change_dir")(dir)
       return
     end
   end
   -- finally fall back to the folder containing the file
-  actions.root.change_dir.fn(vim.fn.fnamemodify(path, ":p:h"))
+  explorer_fn("change_dir")(vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.tab_enter()
@@ -110,7 +120,7 @@ function M.open_on_directory()
     return
   end
 
-  actions.root.change_dir.force_dirchange(bufname, true)
+  explorer_fn("force_dirchange")(bufname, true)
 end
 
 ---@return table
@@ -134,7 +144,7 @@ end
 ---@param name string|nil
 function M.change_dir(name)
   if name then
-    actions.root.change_dir.fn(name)
+    explorer_fn("change_dir")(name)
   end
 
   if _config.update_focused_file.update_root.enable then

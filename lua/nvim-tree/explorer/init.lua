@@ -22,7 +22,6 @@ local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
-local change_dir = require("nvim-tree.actions.root.change-dir")
 local find_file = require("nvim-tree.actions.finders.find-file")
 
 local config
@@ -668,7 +667,7 @@ end
 ---@param node Node
 function Explorer:dir_up(node)
   if not node or node.name == ".." then
-    change_dir.fn("..")
+    self:change_dir("..")
   else
     local cwd = core.get_cwd()
     if cwd == nil then
@@ -676,7 +675,7 @@ function Explorer:dir_up(node)
     end
 
     local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
-    change_dir.fn(newdir)
+    self:change_dir(newdir)
     find_file.fn(node.absolute_path)
   end
 end
@@ -714,7 +713,7 @@ end
 ---@return boolean
 function Explorer:prevent_cwd_change(foldername)
   local is_same_cwd = foldername == core.get_cwd()
-  local is_restricted_above = M.options.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  local is_restricted_above = config.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   return is_same_cwd or is_restricted_above
 end
 
@@ -730,7 +729,7 @@ end
 
 ---@return boolean
 function Explorer:should_change_dir()
-  return M.options.enable and vim.tbl_isempty(vim.v.event)
+  return config.enable and vim.tbl_isempty(vim.v.event)
 end
 
 ---@param global boolean
@@ -744,7 +743,7 @@ function Explorer:force_dirchange(_foldername, with_open)
     local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
     if valid_dir then
       if self:should_change_dir() then
-        self:cd(M.options.global, foldername)
+        self:cd(config.global, foldername)
       end
       core.init(foldername)
     end

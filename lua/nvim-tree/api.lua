@@ -159,11 +159,11 @@ end)
 
 Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." or node:is(RootNode) then
-    actions.root.change_dir.fn("..")
+    wrap_explorer("change_dir")("..")
   else
     node = node:as(DirectoryNode)
     if node then
-      actions.root.change_dir.fn(node:last_group_node().absolute_path)
+      wrap_explorer("change_dir")(node:last_group_node().absolute_path)
     end
   end
 end)
@@ -274,7 +274,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     local dir = node:as(DirectoryNode)
 
     if root or node.name == ".." then
-      actions.root.change_dir.fn("..")
+      wrap_explorer("change_dir")("..")
     elseif dir then
       dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
