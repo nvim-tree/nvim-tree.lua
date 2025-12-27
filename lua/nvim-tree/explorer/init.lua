@@ -191,7 +191,7 @@ function Explorer:create_autocmds()
 end
 
 ---@param node DirectoryNode
-function Explorer:expand(node)
+function Explorer:expand_dir_node(node)
   self:_load(node)
 end
 
