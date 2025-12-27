@@ -691,7 +691,7 @@ end
 ---@return boolean
 function Explorer:is_window_event(new_tabpage)
   local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window or false
-  return is_event_scope_window and new_tabpage == M.current_tab
+  return is_event_scope_window and new_tabpage == self.current_tab
 end
 
 ---@param name string
@@ -718,12 +718,33 @@ function Explorer:prevent_cwd_change(foldername)
   return is_same_cwd or is_restricted_above
 end
 
-function Explorer:force_dirchange(foldername, with_open)
-  local fn = add_profiling_to(function(foldername, should_open_view)
+---@param f function
+---@return fun(foldername: string, should_open_view: boolean|nil)
+function Explorer:add_profiling_to(f)
+  return function(foldername, should_open_view)
+    local profile = log.profile_start("change dir %s", foldername)
+    f(foldername, should_open_view)
+    log.profile_end(profile)
+  end
+end
+
+---@return boolean
+function Explorer:should_change_dir()
+  return M.options.enable and vim.tbl_isempty(vim.v.event)
+end
+
+---@param global boolean
+---@param path string
+function Explorer:cd(global, path)
+  vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
+end
+
+function Explorer:force_dirchange(_foldername, with_open)
+  local fn = self:add_profiling_to(function(foldername, should_open_view)
     local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
     if valid_dir then
-      if should_change_dir() then
-        cd(M.options.global, foldername)
+      if self:should_change_dir() then
+        self:cd(M.options.global, foldername)
       end
       core.init(foldername)
     end
@@ -738,17 +759,7 @@ function Explorer:force_dirchange(foldername, with_open)
     end
   end)
 
-  fn(foldername, with_open)
-end
-
----@param f function
----@return fun(foldername: string, should_open_view: boolean|nil)
-function Explorer:add_profiling_to(f)
-  return function(foldername, should_open_view)
-    local profile = log.profile_start("change dir %s", foldername)
-    f(foldername, should_open_view)
-    log.profile_end(profile)
-  end
+  fn(_foldername, with_open)
 end
 
 ---@param input_cwd string
@@ -769,7 +780,7 @@ function Explorer:change_dir(input_cwd, with_open)
   end
 
   self.current_tab = new_tabpage
-  M.force_dirchange(foldername, with_open)
+  self:force_dirchange(foldername, with_open)
 end
 
 function Explorer:setup(opts)
