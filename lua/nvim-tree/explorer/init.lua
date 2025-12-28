@@ -716,7 +716,7 @@ end
 ---@return boolean
 function Explorer:prevent_cwd_change(foldername)
   local is_same_cwd = foldername == self.absolute_path
-  local is_restricted_above = config.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  local is_restricted_above = config.actions.change_dir.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   return is_same_cwd or is_restricted_above
 end
 

@@ -10,6 +10,7 @@ local notify = require("nvim-tree.notify")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
+local FileNode = require("nvim-tree.node.file")
 local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
@@ -160,6 +161,8 @@ end)
 Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." or node:is(RootNode) then
     wrap_explorer("change_dir")("..")
+  elseif node:is(FileNode) and node.parent ~= nil then
+    wrap_explorer("change_dir")(node.parent:last_group_node().absolute_path)
   else
     node = node:as(DirectoryNode)
     if node then
