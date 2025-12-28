@@ -683,6 +683,28 @@ function Explorer:get_nodes()
   return self:clone()
 end
 
+---Expand the directory node or the root
+---@param node Node
+---@param expand_opts ApiTreeExpandOpts?
+function Explorer:expand_all(node, expand_opts)
+  if node then
+    node:expand(expand_opts)
+  else
+    self.expand(self, expand_opts)
+  end
+end
+
+---Expand the directory node or parent node
+---@param node Node
+---@param expand_opts ApiTreeExpandOpts?
+function Explorer:expand_node(node, expand_opts)
+  if not node then
+    return
+  end
+
+  node:expand(expand_opts)
+end
+
 function Explorer:setup(opts)
   config = opts
 end
