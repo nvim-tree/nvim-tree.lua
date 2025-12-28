@@ -412,7 +412,7 @@ function DirectoryNode:expand_dir_node()
   local node = self:last_group_node()
   node.open = true
   if #node.nodes == 0 then
-    self.explorer:expand_dir_node(self)
+    self.explorer:expand_dir_node(node)
   end
 end
 

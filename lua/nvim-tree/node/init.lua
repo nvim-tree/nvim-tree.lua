@@ -149,7 +149,7 @@ end
 ---@param expand_opts ApiTreeExpandOpts?
 function Node:expand(expand_opts)
   if self:is(FileNode) then
-    self.parent.expand(self.parent, expand_opts)
+    self.parent:expand(expand_opts)
   else
     self:as(DirectoryNode).expand_opts(expand_opts)
   end
