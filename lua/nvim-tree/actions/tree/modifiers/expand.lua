@@ -18,14 +18,6 @@ local function to_lookup_table(list)
   return table
 end
 
----@param node DirectoryNode
-local function expand(node)
-  node = node:last_group_node()
-  node.open = true
-  if #node.nodes == 0 then
-    core.get_explorer():expand_dir_node(node)
-  end
-end
 
 ---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return fun(expansion_count: integer, node: Node): boolean

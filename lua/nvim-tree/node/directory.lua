@@ -1,6 +1,7 @@
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
+local core = require("nvim-tree.core")
 
 local Node = require("nvim-tree.node")
 
@@ -288,6 +289,15 @@ function DirectoryNode:clone(api_nodes)
   end
 
   return clone
+end
+
+---@param node DirectoryNode
+function DirectoryNode:expand(node)
+  node = node:last_group_node()
+  node.open = true
+  if #node.nodes == 0 then
+    core.get_explorer():expand_dir_node(node)
+  end
 end
 
 return DirectoryNode
