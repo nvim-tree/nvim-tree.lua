@@ -20,6 +20,7 @@ local LiveFilter = require("nvim-tree.explorer.live-filter")
 local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
+local FileNode = require("nvim-tree.node.file")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local find_file = require("nvim-tree.actions.finders.find-file")
@@ -771,6 +772,19 @@ function Explorer:change_dir(input_cwd, with_open)
 
   self.current_tab = new_tabpage
   self:force_dirchange(foldername, with_open)
+end
+
+function Explorer:change_dir_to_node(node)
+  if node.name == ".." or node:is(RootNode) then
+    self:change_dir("..")
+  elseif node:is(FileNode) and node.parent ~= nil then
+    self:change_dir(node.parent:last_group_node().absolute_path)
+  else
+    node = node:as(DirectoryNode)
+    if node then
+      self:change_dir(node:last_group_node().absolute_path)
+    end
+  end
 end
 
 function Explorer:setup(opts)
