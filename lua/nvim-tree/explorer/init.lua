@@ -151,7 +151,7 @@ function Explorer:create_autocmds()
     pattern = "NvimTree_*",
     callback = function()
       if utils.is_nvim_tree_buf(0) then
-        if vim.fn.getcwd() ~= core.get_cwd() or (self.opts.reload_on_bufenter and not self.opts.filesystem_watchers.enable) then
+        if vim.fn.getcwd() ~= self.absolute_path or (self.opts.reload_on_bufenter and not self.opts.filesystem_watchers.enable) then
           self:reload_explorer()
         end
       end
@@ -528,7 +528,7 @@ function Explorer:get_node_at_cursor()
     return
   end
 
-  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
+  if cursor[1] == 1 and view.is_root_folder_visible(self.absolute_path) then
     return self
   end
 
@@ -669,7 +669,7 @@ function Explorer:dir_up(node)
   if not node or node.name == ".." then
     self:change_dir("..")
   else
-    local cwd = core.get_cwd()
+    local cwd = self.absolute_path
     if cwd == nil then
       return
     end
@@ -686,6 +686,7 @@ function Explorer:get_nodes()
   return self:clone()
 end
 
+---@private
 ---@param new_tabpage integer
 ---@return boolean
 function Explorer:is_window_event(new_tabpage)
@@ -693,11 +694,12 @@ function Explorer:is_window_event(new_tabpage)
   return is_event_scope_window and new_tabpage == self.current_tab
 end
 
+---@private
 ---@param name string
 ---@return string|nil
 function Explorer:clean_input_cwd(name)
   name = vim.fn.fnameescape(name)
-  local cwd = core.get_cwd()
+  local cwd = self.absolute_path
   if cwd == nil then
     return
   end
@@ -709,65 +711,54 @@ function Explorer:clean_input_cwd(name)
   end
 end
 
+---@private
 ---@param foldername string
 ---@return boolean
 function Explorer:prevent_cwd_change(foldername)
-  local is_same_cwd = foldername == core.get_cwd()
+  local is_same_cwd = foldername == self.absolute_path
   local is_restricted_above = config.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   return is_same_cwd or is_restricted_above
 end
 
----@param f function
----@return fun(foldername: string, should_open_view: boolean|nil)
-function Explorer:add_profiling_to(f)
-  return function(foldername, should_open_view)
-    local profile = log.profile_start("change dir %s", foldername)
-    f(foldername, should_open_view)
-    log.profile_end(profile)
-  end
-end
-
+---@private
 ---@return boolean
 function Explorer:should_change_dir()
   return config.enable and vim.tbl_isempty(vim.v.event)
 end
 
+---@private
 ---@param global boolean
 ---@param path string
 function Explorer:cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
 
-function Explorer:force_dirchange(folder_name, with_open)
-  local fn = self:add_profiling_to(function(foldername, should_open_view)
-    local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
-    if valid_dir then
-      if self:should_change_dir() then
-        self:cd(config.global, foldername)
-      end
-      core.init(foldername)
-    end
+---@private
+---@param foldername string
+---@param should_open_view boolean|nil
+function Explorer:force_dirchange(foldername, should_open_view)
+  local profile = log.profile_start("change dir %s", foldername)
 
-    if should_open_view then
-      require("nvim-tree.lib").open()
-    else
-      local explorer = core.get_explorer()
-      if explorer then
-        explorer.renderer:draw()
-      end
+  local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
+  if valid_dir then
+    if self:should_change_dir() then
+      self:cd(config.global, foldername)
     end
-  end)
+    core.init(foldername)
+  end
 
-  fn(folder_name, with_open)
+  if should_open_view then
+    require("nvim-tree.lib").open()
+  else
+    self.renderer:draw()
+  end
+
+  log.profile_end(profile)
 end
 
 ---@param input_cwd string
 ---@param with_open boolean|nil
 function Explorer:change_dir(input_cwd, with_open)
-  if not core.get_explorer() then
-    return
-  end
-
   local new_tabpage = vim.api.nvim_get_current_tabpage()
   if self:is_window_event(new_tabpage) then
     return
