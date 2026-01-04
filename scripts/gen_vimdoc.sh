@@ -12,20 +12,20 @@ mkdir -pv runtime/doc
 cp -v "doc/nvim-tree-lua.txt" runtime/doc
 
 # modify gen_vimdoc.lua to use our config
-cp -v "${NEOVIM_SRC}/src/gen/gen_vimdoc.lua" scripts/gen_vimdoc.lua
-sed -i -E 's/spairs\(config\)/spairs\(require("gen_vimdoc_nvim-tree")\)/g' scripts/gen_vimdoc.lua
+cp -v "${NEOVIM_SRC}/src/gen/gen_vimdoc.lua" gen_vimdoc.lua
+sed -i -E 's/spairs\(config\)/spairs\(require("gen_vimdoc_config")\)/g' gen_vimdoc.lua
 
 # use luacacts etc. from neovim src as well as our specific config
-LUA_PATH="${NEOVIM_SRC}/src/?.lua;scripts/gen_vimdoc_config.lua;${LUA_PATH}"
+export LUA_PATH="${NEOVIM_SRC}/src/?.lua;scripts/?.lua"
 
 # generate
-scripts/gen_vimdoc.lua
+./gen_vimdoc.lua
 
-# move the new help back out
+# move the generated help out
 mv -v "runtime/doc/nvim-tree-lua.txt" doc
-rmdir -v runtime/doc
-rmdir -v runtime
 
 # clean up
-rm -v scripts/gen_vimdoc.lua
+rmdir -v runtime/doc
+rmdir -v runtime
+rm -v gen_vimdoc.lua
 
