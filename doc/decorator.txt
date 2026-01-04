@@ -1,0 +1,66 @@
+*decorator.txt*   nvim-tree decorators
+
+==============================================================================
+==============================================================================
+Lua module: nvim_tree.api.decorator                     *nvim-tree-decorators*
+
+*nvim_tree.api.decorator.UserDecorator*
+    Custom decorator, see :help nvim-tree-decorators
+
+    Fields: ~
+      • {enabled}          (`boolean`)
+      • {highlight_range}  (`nvim_tree.api.decorator.HighlightRange`)
+      • {icon_placement}   (`nvim_tree.api.decorator.IconPlacement`)
+      • {extend}           (`fun(self: nvim_tree.api.decorator.UserDecorator)`)
+                           See |UserDecorator:extend()|.
+      • {new}              (`fun(self: nvim_tree.api.decorator.UserDecorator)`)
+                           See |UserDecorator:new()|.
+      • {icon_node}        (`fun(self: nvim_tree.api.decorator.UserDecorator, node: nvim_tree.api.Node): nvim_tree.api.HighlightedString?`)
+                           See |UserDecorator:icon_node()|.
+      • {icons}            (`fun(self: nvim_tree.api.decorator.UserDecorator, node: nvim_tree.api.Node): nvim_tree.api.HighlightedString[]?`)
+                           See |UserDecorator:icons()|.
+      • {highlight_group}  (`fun(self: nvim_tree.api.decorator.UserDecorator, node: nvim_tree.api.Node): string?`)
+                           See |UserDecorator:highlight_group()|.
+
+
+UserDecorator:extend()        *nvim_tree.api.decorator.UserDecorator:extend()*
+    Create your decorator class
+
+                     *nvim_tree.api.decorator.UserDecorator:highlight_group()*
+UserDecorator:highlight_group({node})
+    Abstract: optionally implement to provide one highlight group to apply to
+    your highlight_range.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`string?`) highlight_group
+
+                           *nvim_tree.api.decorator.UserDecorator:icon_node()*
+UserDecorator:icon_node({node})
+    Abstract: optionally implement to set the node's icon
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`nvim_tree.api.HighlightedString?`) icon_node
+
+                               *nvim_tree.api.decorator.UserDecorator:icons()*
+UserDecorator:icons({node})
+    Abstract: optionally implement to provide icons and the highlight groups
+    for your icon_placement.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`nvim_tree.api.HighlightedString[]?`) icons
+
+UserDecorator:new()              *nvim_tree.api.decorator.UserDecorator:new()*
+    Abstract: no-args constructor must be implemented and will be called once
+    per tree render. Must set all fields.
+
+
+ vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
