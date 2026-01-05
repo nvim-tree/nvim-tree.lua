@@ -20,19 +20,54 @@ error("Cannot require a meta file")
 --
 
 ---@class nvim_tree.Config
+---
+---Runs when creating the nvim-tree buffer. Use this to set your nvim-tree specific mappings. See |nvim-tree-mappings|. When `on_attach` is not a function, |nvim-tree-mappings-default| will be called.
 ---@field on_attach? string|fun(bufnr: integer)
----@field auto_reload_on_write? boolean Reloads the explorer every time a buffer is written to. Default: `true`
----@field disable_netrw? boolean Completely disable netrw Default: `false`
----@field hijack_cursor? boolean Keeps the cursor on the first letter of the filename when moving in the tree. Default: `false`
----@field hijack_netrw? boolean Hijack netrw windows (overridden if |disable_netrw| is `true`) Default: `true`
----@field hijack_unnamed_buffer_when_opening? boolean Opens in place of the unnamed buffer if it's empty. Default: `false`
----@field prefer_startup_root? boolean Prefer startup root directory when updating root directory of the tree. Only relevant when `update_focused_file.update_root` is `true` Default: `false` @see nvim-tree.update_focused_file.update_root
----@field reload_on_bufenter? boolean Automatically reloads the tree on `BufEnter` nvim-tree. Default: `false`
----@field respect_buf_cwd? boolean Will change cwd of nvim-tree to that of new buffer's when opening nvim-tree. Default: `false`
----@field select_prompts? boolean Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim Default: `false`
----@field sync_root_with_cwd? boolean Changes the tree root directory on `DirChanged` and refreshes the tree. Default: `false`
----@field root_dirs? string[] Preferred root directories. Only relevant when `update_focused_file.update_root` is `true` Default: `{}` @see nvim-tree.update_focused_file.update_root
----@field experimental? table Experimental features that may become default or optional functionality. In the event of a problem please disable the experiment and raise an issue.
+---
+---Keeps the cursor on the first letter of the filename when moving in the tree.
+---(default: `false`)
+---@field hijack_cursor? boolean 
+---
+---Reloads the explorer every time a buffer is written to.
+---(default: `true`)
+---@field auto_reload_on_write? boolean
+---
+---Completely disable |netrw|, see |nvim-tree-netrw| for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
+---(default: `false`)
+---@field disable_netrw? boolean 
+---
+---Hijack netrw windows, ignored when `disable_netrw` is `true`
+---(default: `true`)
+---@field hijack_netrw? boolean 
+---
+---Opens in place of the unnamed buffer if it's empty.
+---(default: `false`)
+---TODO reinstate this one when formatting is done #2934
+-----@field hijack_unnamed_buffer_when_opening? boolean
+---@field hubwo? boolean
+---
+---Preferred root directories. Only relevant when |nvim_tree.Config.UpdateFocusedFile| `update_root` is `true`
+---@field root_dirs? string[]
+---
+---Prefer startup root directory when updating root directory of the tree. Only relevant when |nvim_tree.Config.UpdateFocusedFile| `update_root` is `true`
+---(default: `false`)
+---@field prefer_startup_root? boolean 
+---
+---Changes the tree root directory on |DirChanged| and refreshes the tree.
+---(default: `false`)
+---@field sync_root_with_cwd? boolean
+---
+---Automatically reloads the tree on |BufEnter| nvim-tree.
+---(default: `false`)
+---@field reload_on_bufenter? boolean
+---
+---Change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+---(default: `false`)
+---@field respect_buf_cwd? boolean 
+---
+---Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
+---(default: `false`)
+---@field select_prompts? boolean 
 ---
 ---|nvim_tree.Config.Sort|
 ---@field sort? nvim_tree.Config.Sort
