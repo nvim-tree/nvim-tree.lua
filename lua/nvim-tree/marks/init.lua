@@ -30,6 +30,9 @@ local function save_bookmarks(marks, opts)
     file:write(vim.json.encode(data))
     file:close()
   end
+else
+    notify.warn("Invalid marks.save_path, disabling persistence: " .. errmsg)
+    opts.marks.enable_persistence = false
 end
 
 local function load_bookmarks(opts)
