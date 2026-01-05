@@ -640,6 +640,9 @@ Following is the default configuration. See |nvim-tree-opts| for details. >lua
           default_yes = false,
         },
       },
+      bookmarks = {
+        persist = false,
+      },
       experimental = {
       },
       log = {
@@ -3200,6 +3203,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.remove_file.close_window|
 |nvim-tree.actions.use_system_clipboard|
 |nvim-tree.auto_reload_on_write|
+|nvim-tree.bookmarks.persist|
 |nvim-tree.diagnostics.debounce_delay|
 |nvim-tree.diagnostics.diagnostic_opts|
 |nvim-tree.diagnostics.enable|

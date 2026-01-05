@@ -127,7 +127,6 @@ function Marks:get(node)
   if not node or not node.absolute_path then
     return nil
   end
-  
   local mark = self.marks[node.absolute_path]
   if mark == true then
     -- Lazy resolve: try to find node in explorer tree
@@ -139,7 +138,6 @@ function Marks:get(node)
     end
     return nil
   end
-  
   return mark
 end
 
@@ -162,7 +160,6 @@ function Marks:list()
       -- Already a node object
       node = mark
     end
-    
     if node then
       table.insert(list, node)
     end
@@ -359,7 +356,6 @@ function Marks:navigate_select()
     else
       node = mark
     end
-    
     if node and not node:is(DirectoryNode) and not utils.get_win_buf_from_path(node.absolute_path) then
       open_file.fn("edit", node.absolute_path)
     elseif node then
