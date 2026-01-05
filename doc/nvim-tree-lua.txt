@@ -3695,21 +3695,27 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                 `vim.diagnostic.severity.ERROR`
 
 *nvim_tree.Config.FilesystemWatchers*
+    Use file system watcher (libuv fs_event) to watch the filesystem for
+    changes.
+
+    Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree
+    which were used to update the whole tree.
+
+    With this feature, the tree will be updated only for the appropriate
+    folder change, resulting in better performance.
 
     Fields: ~
-      • {enable}?          (`boolean`) Enable / disable the feature. Default:
-                           `true`
-      • {debounce_delay}?  (`integer`) Idle milliseconds between filesystem
-                           change and action. Default: `50` (ms)
-      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`) List of vim
-                           regex for absolute directory paths that will not be
-                           watched or function returning whether a path should
-                           be ignored. Strings must be backslash escaped e.g.
-                           `"my-proj/\\.build$"`. See |string-match|. Function
-                           is passed an absolute path. Useful when path is not
-                           in `.gitignore` or git integration is disabled.
-                           Default:
-                           `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`
+      • {enable}?          (`boolean`) (default: `true`)
+      • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
+                           between filesystem change and action.
+      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
+                           List of vim regex for absolute directory paths that
+                           will not be watched or function returning whether a
+                           path should be ignored. Strings must be backslash
+                           escaped e.g. `"my-proj/\\.build$"`. See
+                           |string-match|. Function is passed an absolute
+                           path. Useful when path is not in `.gitignore` or
+                           git integration is disabled.
 
 *nvim_tree.Config.Filters*
 
@@ -3801,8 +3807,10 @@ Lua module: nvim_tree                                       *nvim-tree-module*
 *nvim_tree.Config.LiveFilter*
     Configurations for the live_filtering feature. The live filter allows you
     to filter the tree nodes dynamically, based on regex matching (see
-    |vim.regex|). This feature is bound to the `f` key by default. The filter
-    can be cleared with the `F` key by default.
+    |vim.regex|).
+
+    This feature is bound to the `f` key by default. The filter can be cleared
+    with the `F` key by default.
 
     Fields: ~
       • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
@@ -3811,33 +3819,35 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                                 folders or not.
 
 *nvim_tree.Config.Log*
+    Log to a file `nvim-tree.log` in |stdpath|("log"), usually
+    `${XDG_STATE_HOME}/nvim`
 
     Fields: ~
-      • {enable}?    (`boolean`) Enable logging to a file `nvim-tree.log` in
-                     |stdpath| `"log"`, usually `${XDG_STATE_HOME}/nvim`
-                     Default: `false`
-      • {truncate}?  (`boolean`) Remove existing log file at startup. Default:
-                     `false`
-      • {types}?     (`nvim_tree.Config.Log.Types`) Specify which information
-                     to log.
+      • {enable}?    (`boolean`) (default: `false`)
+      • {truncate}?  (`boolean`, default: `false`) Remove existing log file at
+                     startup.
+      • {types}?     (`nvim_tree.Config.Log.Types`)
+                     |nvim_tree.Config.Log.Types|
 
 *nvim_tree.Config.Log.Types*
+    Specify which information to log.
 
     Fields: ~
-      • {all}?          (`boolean`) Everything. Default: `false`
-      • {profile}?      (`boolean`) Timing of some operations. Default:
-                        `false`
-      • {config}?       (`boolean`) Options and mappings, at startup. Default:
-                        `false`
-      • {copy_paste}?   (`boolean`) File copy and paste actions. Default:
-                        `false`
-      • {dev}?          (`boolean`) Used for local development only. Not
-                        useful for users. Default: `false`
-      • {diagnostics}?  (`boolean`) LSP and COC processing, verbose. Default:
-                        `false`
-      • {git}?          (`boolean`) Git processing, verbose. Default: `false`
-      • {watcher}?      (`boolean`) nvim-tree.filesystem_watchers processing,
-                        verbose. Default: `false`
+      • {all}?          (`boolean`, default: `false`) Everything.
+      • {profile}?      (`boolean`, default: `false`) Timing of some
+                        operations.
+      • {config}?       (`boolean`, default: `false`) Options and mappings, at
+                        startup.
+      • {copy_paste}?   (`boolean`, default: `false`) File copy and paste
+                        actions.
+      • {dev}?          (`boolean`, default: `false`) Used for local
+                        development only. Not useful for users.
+      • {diagnostics}?  (`boolean`, default: `false`) LSP and COC processing,
+                        verbose.
+      • {git}?          (`boolean`, default: `false`) Git processing, verbose.
+      • {watcher}?      (`boolean`, default: `false`)
+                        |nvim_tree.Config.FilesystemWatchers| processing,
+                        verbose.
 
 *nvim_tree.Config.Modified*
     Indicate which file have unsaved modification. To see modified status in
