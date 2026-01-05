@@ -26,7 +26,7 @@ error("Cannot require a meta file")
 ---
 ---Keeps the cursor on the first letter of the filename when moving in the tree.
 ---(default: `false`)
----@field hijack_cursor? boolean 
+---@field hijack_cursor? boolean
 ---
 ---Reloads the explorer every time a buffer is written to.
 ---(default: `true`)
@@ -34,11 +34,11 @@ error("Cannot require a meta file")
 ---
 ---Completely disable |netrw|, see |nvim-tree-netrw| for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
 ---(default: `false`)
----@field disable_netrw? boolean 
+---@field disable_netrw? boolean
 ---
 ---Hijack netrw windows, ignored when `disable_netrw` is `true`
 ---(default: `true`)
----@field hijack_netrw? boolean 
+---@field hijack_netrw? boolean
 ---
 ---Opens in place of the unnamed buffer if it's empty.
 ---(default: `false`)
@@ -51,7 +51,7 @@ error("Cannot require a meta file")
 ---
 ---Prefer startup root directory when updating root directory of the tree. Only relevant when |nvim_tree.Config.UpdateFocusedFile| `update_root` is `true`
 ---(default: `false`)
----@field prefer_startup_root? boolean 
+---@field prefer_startup_root? boolean
 ---
 ---Changes the tree root directory on |DirChanged| and refreshes the tree.
 ---(default: `false`)
@@ -63,11 +63,11 @@ error("Cannot require a meta file")
 ---
 ---Change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 ---(default: `false`)
----@field respect_buf_cwd? boolean 
+---@field respect_buf_cwd? boolean
 ---
 ---Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
 ---(default: `false`)
----@field select_prompts? boolean 
+---@field select_prompts? boolean
 ---
 ---|nvim_tree.Config.Sort|
 ---@field sort? nvim_tree.Config.Sort
@@ -246,37 +246,83 @@ error("Cannot require a meta file")
 -- Modified
 --
 
+---Indicate which file have unsaved modification.
+---To see modified status in the tree you will need to set:
+--- - |nvim_tree.Config.Renderer.Icons.Show| `modified` to `true` OR
+--- - |nvim_tree.Config.Renderer| `highlight_modified` to `true`
 ---@class nvim_tree.Config.Modified
----@field enable? boolean Enable / disable the feature. Default: `false`
----@field show_on_dirs? boolean Show modified indication on directory whose children are modified. Default: `true`
----@field show_on_open_dirs? boolean Show modified indication on open directories. Only relevant when |modified.show_on_dirs| is `true`. Default: `false` @see nvim-tree.modified.show_on_dirs
+---
+---Enable modified.
+---(default: `false`)
+---@field enable? boolean
+---
+---Show modified indication on directory whose children are modified.
+---(default: `true`)
+---@field show_on_dirs? boolean
+---
+---Show modified indication on open directories. Only relevant when `show_on_dirs` is `true`.
+---(default: `false`)
+---@field show_on_open_dirs? boolean
 
 --
 -- Tab
 --
 
----@class nvim_tree.Config.Tab
----@field sync? nvim_tree.Config.Tab.Sync Configuration for syncing nvim-tree across tabs.
 
+---@class nvim_tree.Config.Tab
+---
+---|nvim_tree.Config.Tab.Sync|
+---@field sync? nvim_tree.Config.Tab.Sync
+
+--
+-- Tab.Sync
+--
+
+---Configuration for syncing nvim-tree across tabs.
 ---@class nvim_tree.Config.Tab.Sync
----@field open? boolean Opens the tree automatically when switching tabpage or opening a new tabpage if the tree was previously open. Default: `false`
----@field close? boolean Closes the tree across all tabpages when the tree is closed. Default: `false`
----@field ignore? string[] List of filetypes or buffer names on new tab that will prevent |nvim-tree.tab.sync.open| and |nvim-tree.tab.sync.close| Default: `{}`
+---
+---Opens the tree automatically when switching tabpage or opening a new tabpage if the tree was previously open.
+---(default: `false`)
+---@field open? boolean
+---
+---Closes the tree across all tabpages when the tree is closed.
+---(default: `false`)
+---@field close? boolean
+---
+---
+---List of filetypes or buffer names on new tab that will prevent `open` and `close`
+---(default: `{}`)
+---@field ignore? string[]
 
 --
 -- Trash
 --
 
 ---@class nvim_tree.Config.Trash
----@field cmd? string The command used to trash items (must be installed on your system). Default linux `"gio trash"` from glib2 is a commonly shipped linux package. macOS default `"trash"` requires the homebrew package `trash` Windows default `"trash"` requires `trash-cli` or similar Default: `"gio trash"` or `"trash"`
+---
+---The command used to trash items, which must be installed on your system.
+--- - linux: `gio trash`, from linux package `glib2`
+--- - macOS: `trash`, from homebrew package `trash`
+--- - windows: `trash`, requires `trash-cli` or similar
+---(default: `gio trash` or `trash`)
+---@field cmd? string
 
 --
 -- Live Filter
 --
 
+--- Configurations for the live_filtering feature. The live filter allows you to filter the tree nodes dynamically, based on regex matching (see |vim.regex|).
+---
+--- This feature is bound to the `f` key by default. The filter can be cleared with the `F` key by default.
 ---@class nvim_tree.Config.LiveFilter
----@field prefix? string Prefix of the filter displayed in the buffer. Default: `"[FILTER]: "`
----@field always_show_folders? boolean Whether to filter folders or not. Default: `true`
+---
+---Prefix of the filter displayed in the buffer.
+---(default: `[FILTER]: `)
+---@field prefix? string
+---
+---Whether to filter folders or not.
+---(default: `true`)
+---@field always_show_folders? boolean
 
 --
 -- System Open

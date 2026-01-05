@@ -3799,12 +3799,16 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                       was previously closed.
 
 *nvim_tree.Config.LiveFilter*
+    Configurations for the live_filtering feature. The live filter allows you
+    to filter the tree nodes dynamically, based on regex matching (see
+    |vim.regex|). This feature is bound to the `f` key by default. The filter
+    can be cleared with the `F` key by default.
 
     Fields: ~
-      • {prefix}?               (`string`) Prefix of the filter displayed in
-                                the buffer. Default: `"[FILTER]: "`
-      • {always_show_folders}?  (`boolean`) Whether to filter folders or not.
-                                Default: `true`
+      • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
+                                the filter displayed in the buffer.
+      • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
+                                folders or not.
 
 *nvim_tree.Config.Log*
 
@@ -3836,17 +3840,19 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                         verbose. Default: `false`
 
 *nvim_tree.Config.Modified*
+    Indicate which file have unsaved modification. To see modified status in
+    the tree you will need to set:
+    • |nvim_tree.Config.Renderer.Icons.Show| `modified` to `true` OR
+    • |nvim_tree.Config.Renderer| `highlight_modified` to `true`
 
     Fields: ~
-      • {enable}?             (`boolean`) Enable / disable the feature.
-                              Default: `false`
-      • {show_on_dirs}?       (`boolean`) Show modified indication on
-                              directory whose children are modified. Default:
-                              `true`
-      • {show_on_open_dirs}?  (`boolean`) Show modified indication on open
-                              directories. Only relevant when
-                              |modified.show_on_dirs| is `true`. Default:
-                              `false` @see nvim-tree.modified.show_on_dirs
+      • {enable}?             (`boolean`, default: `false`) Enable modified.
+      • {show_on_dirs}?       (`boolean`, default: `true`) Show modified
+                              indication on directory whose children are
+                              modified.
+      • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
+                              indication on open directories. Only relevant
+                              when `show_on_dirs` is `true`.
 
 *nvim_tree.Config.Notify*
 
@@ -4159,30 +4165,28 @@ Lua module: nvim_tree                                       *nvim-tree-module*
 *nvim_tree.Config.Tab*
 
     Fields: ~
-      • {sync}?  (`nvim_tree.Config.Tab.Sync`) Configuration for syncing
-                 nvim-tree across tabs.
+      • {sync}?  (`nvim_tree.Config.Tab.Sync`) |nvim_tree.Config.Tab.Sync|
 
 *nvim_tree.Config.Tab.Sync*
+    Configuration for syncing nvim-tree across tabs.
 
     Fields: ~
-      • {open}?    (`boolean`) Opens the tree automatically when switching
-                   tabpage or opening a new tabpage if the tree was previously
-                   open. Default: `false`
-      • {close}?   (`boolean`) Closes the tree across all tabpages when the
-                   tree is closed. Default: `false`
-      • {ignore}?  (`string[]`) List of filetypes or buffer names on new tab
-                   that will prevent |nvim-tree.tab.sync.open| and
-                   |nvim-tree.tab.sync.close| Default: `{}`
+      • {open}?    (`boolean`, default: `false`) Opens the tree automatically
+                   when switching tabpage or opening a new tabpage if the tree
+                   was previously open.
+      • {close}?   (`boolean`, default: `false`) Closes the tree across all
+                   tabpages when the tree is closed.
+      • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
+                   names on new tab that will prevent `open` and `close`
 
 *nvim_tree.Config.Trash*
 
     Fields: ~
-      • {cmd}?  (`string`) The command used to trash items (must be installed
-                on your system). Default linux `"gio trash"` from glib2 is a
-                commonly shipped linux package. macOS default `"trash"`
-                requires the homebrew package `trash` Windows default
-                `"trash"` requires `trash-cli` or similar Default:
-                `"gio trash"` or `"trash"`
+      • {cmd}?  (`string`, default: `gio trash` or `trash`) The command used
+                to trash items, which must be installed on your system.
+                • linux: `gio trash`, from linux package `glib2`
+                • macOS: `trash`, from homebrew package `trash`
+                • windows: `trash`, requires `trash-cli` or similar
 
 *nvim_tree.Config.UI*
 
