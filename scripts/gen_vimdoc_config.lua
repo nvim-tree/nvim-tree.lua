@@ -6,22 +6,28 @@ local config = {
     filename = "nvim-tree-lua.txt",
     -- filename = "decorator.txt",
     section_order = {
+      "config.lua",
       "api_decorator.lua",
     },
     files = {
       -- module is derived soley from the file name, first letter capitalised
       "lua/nvim-tree/_meta/api_decorator.lua",
+      "lua/nvim-tree/_meta/config.lua",
     },
     section_fmt = function(name)
-      if name == "Api_decorator" then
-        return " 6.11 API DECORATOR"
+      if name == "Config" then
+        return "Lua module: nvim_tree.Config"
+      elseif name == "Api_decorator" then
+        return "Lua module: nvim_tree.api.decorator"
       end
       error(string.format("unknown module %s passed to section_fmt", name))
     end,
     helptag_fmt = function(name)
-      -- used to locate the help section
-      if name == "Api_decorator" then
-        return "nvim-tree-api.decorator"
+      -- used to locate the first section only, others will be rendered after
+      if name == "Config" then
+        return "nvim-tree-config"
+      elseif name == "Api_decorator" then
+        return "nvim-tree-api-decorator"
       end
       error(string.format("unknown module %s passed to helptag_fmt", name))
     end,
