@@ -514,6 +514,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       default_yes = false,
     },
   },
+  bookmarks = {
+    persist = false,
+  },
   experimental = {
   },
   log = {
@@ -529,10 +532,6 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       profile = false,
       watcher = false,
     },
-  },
-  marks = {
-    enable_persistence = false,
-    save_path = nil, -- nil will default to stdpath("data") .. "/nvim-tree-bookmarks.json"
   },
 }-- END_DEFAULT_OPTS
 
@@ -584,6 +583,9 @@ local ACCEPTED_TYPES = {
         picker = { "function", "string" },
       },
     },
+  },
+  bookmarks = {
+    persist = { "boolean", "string" },
   },
 }
 

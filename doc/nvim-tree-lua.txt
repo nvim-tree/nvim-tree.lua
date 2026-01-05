@@ -32,8 +32,9 @@ CONTENTS                                                           *nvim-tree*
   5.16 Opts: Notify                             |nvim-tree-opts-notify|
   5.17 Opts: Help                               |nvim-tree-opts-help|
   5.18 Opts: UI                                 |nvim-tree-opts-ui|
-  5.19 Opts: Experimental                       |nvim-tree-opts-experimental|
-  5.20 Opts: Log                                |nvim-tree-opts-log|
+  5.19 Opts: Bookmarks                          |nvim-tree-opts-bookmarks|
+  5.20 Opts: Experimental                       |nvim-tree-opts-experimental|
+  5.21 Opts: Log                                |nvim-tree-opts-log|
   6. API                                      |nvim-tree-api|
   6.1  API Tree                                 |nvim-tree-api.tree|
   6.2  API File System                          |nvim-tree-api.fs|
@@ -1657,14 +1658,24 @@ Confirmation prompts.
       Type: `boolean`, Default: `false`
 
 ==============================================================================
- 5.19 OPTS: EXPERIMENTAL                         *nvim-tree-opts-experimental*
+ 5.19 OPTS: BOOKMARKS                               *nvim-tree-opts-bookmarks*
+
+*nvim-tree.bookmarks.persist*
+Persist bookmarks to a json file containing a list of absolute paths.
+Type: `boolean` | `string`, Default: `false`
+
+`true`: use default: `stdpath("data") .. "/nvim-tree-bookmarks.json"`
+`string`: absolute path of your choice.
+
+==============================================================================
+ 5.20 OPTS: EXPERIMENTAL                         *nvim-tree-opts-experimental*
 
 *nvim-tree.experimental*
 Experimental features that may become default or optional functionality.
 In the event of a problem please disable the experiment and raise an issue.
 
 ==============================================================================
- 5.20 OPTS: LOG                                           *nvim-tree-opts-log*
+ 5.21 OPTS: LOG                                           *nvim-tree-opts-log*
 
 Configuration for diagnostic logging.
 
