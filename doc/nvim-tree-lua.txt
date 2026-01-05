@@ -3516,25 +3516,44 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                                                event of a problem please
                                                disable the experiment and
                                                raise an issue.
-      • {hijack_directories}?                  (`nvim_tree.Config.HijackDirectories`)
-      • {renderer}?                            (`nvim_tree.Config.Renderer`)
-      • {modified}?                            (`nvim_tree.Config.Modified`)
-      • {tab}?                                 (`nvim_tree.Config.Tab`)
-      • {trash}?                               (`nvim_tree.Config.Trash`)
-      • {live_filter}?                         (`nvim_tree.Config.LiveFilter`)
-      • {system_open}?                         (`nvim_tree.Config.SystemOpen`)
-      • {help}?                                (`nvim_tree.Config.Help`)
       • {sort}?                                (`nvim_tree.Config.Sort`)
-      • {filters}?                             (`nvim_tree.Config.Filters`)
-      • {update_focused_file}?                 (`nvim_tree.Config.UpdateFocusedFile`)
-      • {git}?                                 (`nvim_tree.Config.Git`)
-      • {diagnostics}?                         (`nvim_tree.Config.Diagnostics`)
-      • {notify}?                              (`nvim_tree.Config.Notify`)
-      • {filesystem_watchers}?                 (`nvim_tree.Config.FilesystemWatchers`)
-      • {log}?                                 (`nvim_tree.Config.Log`)
-      • {ui}?                                  (`nvim_tree.Config.UI`)
-      • {actions}?                             (`nvim_tree.Config.Actions`)
+                                               |nvim_tree.Config.Sort|
       • {view}?                                (`nvim_tree.Config.View`)
+                                               |nvim_tree.Config.View|
+      • {renderer}?                            (`nvim_tree.Config.Renderer`)
+                                               |nvim_tree.Config.Renderer|
+      • {hijack_directories}?                  (`nvim_tree.Config.HijackDirectories`)
+                                               |nvim_tree.Config.HijackDirectories|
+      • {update_focused_file}?                 (`nvim_tree.Config.UpdateFocusedFile`)
+                                               |nvim_tree.Config.UpdateFocusedFile|
+      • {system_open}?                         (`nvim_tree.Config.SystemOpen`)
+                                               |nvim_tree.Config.SystemOpen|
+      • {git}?                                 (`nvim_tree.Config.Git`)
+                                               |nvim_tree.Config.Git|
+      • {diagnostics}?                         (`nvim_tree.Config.Diagnostics`)
+                                               |nvim_tree.Config.Diagnostics|
+      • {modified}?                            (`nvim_tree.Config.Modified`)
+                                               |nvim_tree.Config.Modified|
+      • {filters}?                             (`nvim_tree.Config.Filters`)
+                                               |nvim_tree.Config.Filters|
+      • {live_filter}?                         (`nvim_tree.Config.LiveFilter`)
+                                               |nvim_tree.Config.LiveFilter|
+      • {filesystem_watchers}?                 (`nvim_tree.Config.FilesystemWatchers`)
+                                               |nvim_tree.Config.FilesystemWatchers|
+      • {actions}?                             (`nvim_tree.Config.Actions`)
+                                               |nvim_tree.Config.Actions|
+      • {trash}?                               (`nvim_tree.Config.Trash`)
+                                               |nvim_tree.Config.Trash|
+      • {tab}?                                 (`nvim_tree.Config.Tab`)
+                                               |nvim_tree.Config.Tab|
+      • {notify}?                              (`nvim_tree.Config.Notify`)
+                                               |nvim_tree.Config.Notify|
+      • {help}?                                (`nvim_tree.Config.Help`)
+                                               |nvim_tree.Config.Help|
+      • {ui}?                                  (`nvim_tree.Config.UI`)
+                                               |nvim_tree.Config.UI|
+      • {log}?                                 (`nvim_tree.Config.Log`)
+                                               |nvim_tree.Config.Log|
 
 *nvim_tree.Config.Actions*
 
@@ -3780,12 +3799,12 @@ Lua module: nvim_tree                                       *nvim-tree-module*
 *nvim_tree.Config.HijackDirectories*
 
     Fields: ~
-      • {enable}?     (`boolean`) Enable the feature. Disable this option if
-                      you use vim-dirvish or dirbuf.nvim. If `hijack_netrw`
-                      and `disable_netrw` are `false`, this feature will be
-                      disabled. Default: `true`
-      • {auto_open}?  (`boolean`) Opens the tree if the tree was previously
-                      closed. Default: `true`
+      • {enable}?     (`boolean`, default: `true`) Hijack directory buffers.
+                      Disable this option if you use vim-dirvish or
+                      dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are
+                      `false`, this feature will be disabled.
+      • {auto_open}?  (`boolean`, default: `true`) Opens the tree if the tree
+                      was previously closed.
 
 *nvim_tree.Config.LiveFilter*
 

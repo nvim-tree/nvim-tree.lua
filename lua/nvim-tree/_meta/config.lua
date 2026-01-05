@@ -33,33 +33,77 @@ error("Cannot require a meta file")
 ---@field sync_root_with_cwd? boolean Changes the tree root directory on `DirChanged` and refreshes the tree. Default: `false`
 ---@field root_dirs? string[] Preferred root directories. Only relevant when `update_focused_file.update_root` is `true` Default: `{}` @see nvim-tree.update_focused_file.update_root
 ---@field experimental? table Experimental features that may become default or optional functionality. In the event of a problem please disable the experiment and raise an issue.
----@field hijack_directories? nvim_tree.Config.HijackDirectories
----@field renderer? nvim_tree.Config.Renderer
----@field modified? nvim_tree.Config.Modified
----@field tab? nvim_tree.Config.Tab
----@field trash? nvim_tree.Config.Trash
----@field live_filter? nvim_tree.Config.LiveFilter
----@field system_open? nvim_tree.Config.SystemOpen
----@field help? nvim_tree.Config.Help
+---
+---|nvim_tree.Config.Sort|
 ---@field sort? nvim_tree.Config.Sort
----@field filters? nvim_tree.Config.Filters
----@field update_focused_file? nvim_tree.Config.UpdateFocusedFile
----@field git? nvim_tree.Config.Git
----@field diagnostics? nvim_tree.Config.Diagnostics
----@field notify? nvim_tree.Config.Notify
----@field filesystem_watchers? nvim_tree.Config.FilesystemWatchers
----@field log? nvim_tree.Config.Log
----@field ui? nvim_tree.Config.UI
----@field actions? nvim_tree.Config.Actions
+---
+---|nvim_tree.Config.View|
 ---@field view? nvim_tree.Config.View
+---
+---|nvim_tree.Config.Renderer|
+---@field renderer? nvim_tree.Config.Renderer
+---
+---|nvim_tree.Config.HijackDirectories|
+---@field hijack_directories? nvim_tree.Config.HijackDirectories
+---
+---|nvim_tree.Config.UpdateFocusedFile|
+---@field update_focused_file? nvim_tree.Config.UpdateFocusedFile
+---
+---|nvim_tree.Config.SystemOpen|
+---@field system_open? nvim_tree.Config.SystemOpen
+---
+---|nvim_tree.Config.Git|
+---@field git? nvim_tree.Config.Git
+---
+---|nvim_tree.Config.Diagnostics|
+---@field diagnostics? nvim_tree.Config.Diagnostics
+---
+---|nvim_tree.Config.Modified|
+---@field modified? nvim_tree.Config.Modified
+---
+---|nvim_tree.Config.Filters|
+---@field filters? nvim_tree.Config.Filters
+---
+---|nvim_tree.Config.LiveFilter|
+---@field live_filter? nvim_tree.Config.LiveFilter
+---
+---|nvim_tree.Config.FilesystemWatchers|
+---@field filesystem_watchers? nvim_tree.Config.FilesystemWatchers
+---
+---|nvim_tree.Config.Actions|
+---@field actions? nvim_tree.Config.Actions
+---
+---|nvim_tree.Config.Trash|
+---@field trash? nvim_tree.Config.Trash
+---
+---|nvim_tree.Config.Tab|
+---@field tab? nvim_tree.Config.Tab
+---
+---|nvim_tree.Config.Notify|
+---@field notify? nvim_tree.Config.Notify
+---
+---|nvim_tree.Config.Help|
+---@field help? nvim_tree.Config.Help
+---
+---|nvim_tree.Config.UI|
+---@field ui? nvim_tree.Config.UI
+---
+---|nvim_tree.Config.Log|
+---@field log? nvim_tree.Config.Log
 
 --
 -- HijackDirectories
 --
 
 ---@class nvim_tree.Config.HijackDirectories
----@field enable? boolean Enable the feature. Disable this option if you use vim-dirvish or dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are `false`, this feature will be disabled. Default: `true`
----@field auto_open? boolean Opens the tree if the tree was previously closed. Default: `true`
+---
+---Hijack directory buffers. Disable this option if you use vim-dirvish or dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are `false`, this feature will be disabled.
+---(default: `true`)
+---@field enable? boolean
+---
+---Opens the tree if the tree was previously closed.
+---(default: `true`)
+---@field auto_open? boolean
 
 --
 -- Renderer
