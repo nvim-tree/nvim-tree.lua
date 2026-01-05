@@ -208,8 +208,8 @@ function Filters:prepare(project)
 
   local explorer = require("nvim-tree.core").get_explorer()
   if explorer then
-    for key, node in pairs(explorer.marks.marks) do
-        status.bookmarks[key] = node
+    for _, node in ipairs(explorer.marks:list()) do
+        status.bookmarks[node.absolute_path] = node
     end
   end
 
