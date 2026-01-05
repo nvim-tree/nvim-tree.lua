@@ -1,9 +1,9 @@
-*nvim-tree.lua* A File Explorer For Neovim Written In Lua
+*nvim-tree* A File Explorer For Neovim Written In Lua
 
 Author: Yazdani Kiyan
 
 ==============================================================================
-CONTENTS                                                           *nvim-tree*
+CONTENTS
 
   1. Introduction                             |nvim-tree-introduction|
   2. Quickstart                               |nvim-tree-quickstart|
@@ -3459,7 +3459,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.winid()|
 
 ==============================================================================
-Lua module: nvim_tree.Config                                *nvim-tree-config*
+Lua module: nvim_tree                                       *nvim-tree-module*
 
 *nvim_tree.Config*
 
@@ -4273,6 +4273,96 @@ Lua module: nvim_tree.Config                                *nvim-tree-config*
                            `{ "root" }`
       • {padding}?         (`integer|fun(): integer|string`) Extra padding to
                            the right. Default: `1`
+
+
+
+==============================================================================
+Lua module: nvim_tree.api                                      *nvim-tree-api*
+
+*nvim_tree.api.CollapseOpts*
+
+    Fields: ~
+      • {keep_buffers}?  (`boolean`) do not collapse nodes with open buffers
+
+*nvim_tree.api.NodeBufferOpts*
+
+    Fields: ~
+      • {force}?  (`boolean`) delete/wipe even if buffer is modified, default
+                  false
+
+*nvim_tree.api.NodeEditOpts*
+
+    Fields: ~
+      • {quit_on_open}?  (`boolean`) quits the tree when opening the file
+      • {focus}?         (`boolean`) keep focus in the tree when opening the
+                         file
+
+*nvim_tree.api.TreeExpandOpts*
+
+    Fields: ~
+      • {expand_until}?  (`fun(expansion_count: integer, node: Node): boolean`)
+                         Return true if node should be expanded.
+                         expansion_count is the total number of folders
+                         expanded.
+
+*nvim_tree.api.TreeFindFileOpts*
+
+    Fields: ~
+      • {buf}?             (`string|number`) absolute/relative path OR bufnr
+                           to find
+      • {open}?            (`boolean`) open the tree if necessary
+      • {current_window}?  (`boolean`) requires open, open in the current
+                           window
+      • {winid}?           (`number`) open the tree in the specified |winid|,
+                           overrides current_window
+      • {update_root}?     (`boolean`) see
+                           |nvim-tree.update_focused_file.update_root|
+      • {focus}?           (`boolean`) focus the tree
+
+*nvim_tree.api.TreeIsVisibleOpts*
+
+    Fields: ~
+      • {tabpage}?      (`number`) as per |nvim_get_current_tabpage()|
+      • {any_tabpage}?  (`boolean`) visible on any tab, default false
+
+*nvim_tree.api.TreeOpenOpts*
+
+    Fields: ~
+      • {path}?            (`string`) root directory for the tree
+      • {current_window}?  (`boolean`) open the tree in the current window
+      • {winid}?           (`number`) open the tree in the specified winid,
+                           overrides current_window
+      • {find_file}?       (`boolean`) find the current buffer
+      • {update_root}?     (`boolean`) requires find_file, see
+                           |nvim-tree.update_focused_file.update_root|
+      • {focus}?           (`boolean`) focus the tree when opening, default
+                           true
+
+*nvim_tree.api.TreeResizeOpts*
+
+    Fields: ~
+      • {width}?     (`string|function|number|table`) new
+                     |nvim-tree.view.width| value
+      • {absolute}?  (`number`) set the width
+      • {relative}?  (`number`) relative width adjustment
+
+*nvim_tree.api.TreeToggleOpts*
+
+    Fields: ~
+      • {path}?            (`string`) root directory for the tree
+      • {current_window}?  (`boolean`) open the tree in the current window
+      • {winid}?           (`number`) open the tree in the specified |winid|,
+                           overrides current_window
+      • {find_file}?       (`boolean`) find the current buffer
+      • {update_root}?     (`boolean`) requires find_file, see
+                           |nvim-tree.update_focused_file.update_root|
+      • {focus}?           (`boolean`) focus the tree when opening, default
+                           true
+
+*nvim_tree.api.TreeWinIdOpts*
+
+    Fields: ~
+      • {tabpage}?  (`number`) tabpage, 0 or nil for current, default nil
 
 
 
