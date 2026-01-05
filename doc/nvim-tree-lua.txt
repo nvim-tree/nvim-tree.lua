@@ -46,7 +46,6 @@ CONTENTS                                                           *nvim-tree*
   6.8  API Config                               |nvim-tree-api.config|
   6.9  API Commands                             |nvim-tree-api.commands|
   6.10 API Diagnostics                          |nvim-tree-api.diagnostics|
-  6.11 API Decorator                            |nvim-tree-api.decorator|
   7. Mappings                                 |nvim-tree-mappings|
   7.1  Mappings: Default                        |nvim-tree-mappings-default|
   8. Highlight                                |nvim-tree-highlight|
@@ -3460,7 +3459,825 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.winid()|
 
 ==============================================================================
- 6.11 API DECORATOR                                  *nvim-tree-api.decorator*
+Lua module: nvim_tree.Config                                *nvim-tree-config*
+
+*nvim_tree.Config*
+
+    Fields: ~
+      • {on_attach}?                           (`string|fun(bufnr: integer)`)
+      • {auto_reload_on_write}?                (`boolean`) Reloads the
+                                               explorer every time a buffer is
+                                               written to. Default: `true`
+      • {disable_netrw}?                       (`boolean`) Completely disable
+                                               netrw Default: `false`
+      • {hijack_cursor}?                       (`boolean`) Keeps the cursor on
+                                               the first letter of the
+                                               filename when moving in the
+                                               tree. Default: `false`
+      • {hijack_netrw}?                        (`boolean`) Hijack netrw
+                                               windows (overridden if
+                                               |disable_netrw| is `true`)
+                                               Default: `true`
+      • {hijack_unnamed_buffer_when_opening}?  (`boolean`) Opens in place of
+                                               the unnamed buffer if it's
+                                               empty. Default: `false`
+      • {prefer_startup_root}?                 (`boolean`) Prefer startup root
+                                               directory when updating root
+                                               directory of the tree. Only
+                                               relevant when
+                                               `update_focused_file.update_root`
+                                               is `true` Default: `false` @see
+                                               nvim-tree.update_focused_file.update_root
+      • {reload_on_bufenter}?                  (`boolean`) Automatically
+                                               reloads the tree on `BufEnter`
+                                               nvim-tree. Default: `false`
+      • {respect_buf_cwd}?                     (`boolean`) Will change cwd of
+                                               nvim-tree to that of new
+                                               buffer's when opening
+                                               nvim-tree. Default: `false`
+      • {select_prompts}?                      (`boolean`) Use |vim.ui.select|
+                                               style prompts. Necessary when
+                                               using a UI prompt decorator
+                                               such as dressing.nvim or
+                                               telescope-ui-select.nvim
+                                               Default: `false`
+      • {sync_root_with_cwd}?                  (`boolean`) Changes the tree
+                                               root directory on `DirChanged`
+                                               and refreshes the tree.
+                                               Default: `false`
+      • {root_dirs}?                           (`string[]`) Preferred root
+                                               directories. Only relevant when
+                                               `update_focused_file.update_root`
+                                               is `true` Default: `{}` @see
+                                               nvim-tree.update_focused_file.update_root
+      • {experimental}?                        (`table`) Experimental features
+                                               that may become default or
+                                               optional functionality. In the
+                                               event of a problem please
+                                               disable the experiment and
+                                               raise an issue.
+      • {hijack_directories}?                  (`nvim_tree.Config.HijackDirectories`)
+      • {renderer}?                            (`nvim_tree.Config.Renderer`)
+      • {modified}?                            (`nvim_tree.Config.Modified`)
+      • {tab}?                                 (`nvim_tree.Config.Tab`)
+      • {trash}?                               (`nvim_tree.Config.Trash`)
+      • {live_filter}?                         (`nvim_tree.Config.LiveFilter`)
+      • {system_open}?                         (`nvim_tree.Config.SystemOpen`)
+      • {help}?                                (`nvim_tree.Config.Help`)
+      • {sort}?                                (`nvim_tree.Config.Sort`)
+      • {filters}?                             (`nvim_tree.Config.Filters`)
+      • {update_focused_file}?                 (`nvim_tree.Config.UpdateFocusedFile`)
+      • {git}?                                 (`nvim_tree.Config.Git`)
+      • {diagnostics}?                         (`nvim_tree.Config.Diagnostics`)
+      • {notify}?                              (`nvim_tree.Config.Notify`)
+      • {filesystem_watchers}?                 (`nvim_tree.Config.FilesystemWatchers`)
+      • {log}?                                 (`nvim_tree.Config.Log`)
+      • {ui}?                                  (`nvim_tree.Config.UI`)
+      • {actions}?                             (`nvim_tree.Config.Actions`)
+      • {view}?                                (`nvim_tree.Config.View`)
+
+*nvim_tree.Config.Actions*
+
+    Fields: ~
+      • {use_system_clipboard}?  (`boolean`) A boolean value that toggle the
+                                 use of system clipboard when copy/paste
+                                 function are invoked. When enabled, copied
+                                 text will be stored in registers '+'
+                                 (system), otherwise, it will be stored in '1'
+                                 and '"'. Default: `true`
+      • {change_dir}?            (`nvim_tree.Config.Actions.ChangeDir`) vim
+                                 |current-directory| behaviour.
+      • {expand_all}?            (`nvim_tree.Config.Actions.ExpandAll`)
+                                 Configuration for
+                                 |nvim-tree-api.tree.expand_all()| and
+                                 |nvim-tree-api.node.expand()|
+      • {file_popup}?            (`nvim_tree.Config.Actions.FilePopup`)
+                                 Configuration for file_popup behaviour.
+      • {open_file}?             (`nvim_tree.Config.Actions.OpenFile`)
+                                 Configuration options for opening a file from
+                                 nvim-tree.
+      • {remove_file}?           (`nvim_tree.Config.Actions.RemoveFile`)
+                                 Configuration options for removing a file
+                                 from nvim-tree.
+
+*nvim_tree.Config.Actions.ChangeDir*
+
+    Fields: ~
+      • {enable}?              (`boolean`) Change the working directory when
+                               changing directories in the tree. Default:
+                               `true`
+      • {global}?              (`boolean`) Use `:cd` instead of `:lcd` when
+                               changing directories. Default: `false`
+      • {restrict_above_cwd}?  (`boolean`) Restrict changing to a directory
+                               above the global cwd. Default: `false`
+
+*nvim_tree.Config.Actions.ExpandAll*
+
+    Fields: ~
+      • {max_folder_discovery}?  (`integer`) Limit the number of folders being
+                                 explored when expanding every folders. Avoids
+                                 hanging neovim when running this action on
+                                 very large folders. Default: `300`
+      • {exclude}?               (`string[]`) A list of directories that
+                                 should not be expanded automatically. E.g
+                                 `{ ".git", "target", "build" }` etc. Default:
+                                 `{}`
+
+*nvim_tree.Config.Actions.FilePopup*
+
+    Fields: ~
+      • {open_win_config}?  (`table`) Floating window config for file_popup.
+                            See |nvim_open_win| for more details. You
+                            shouldn't define `"width"` and `"height"` values
+                            here. They will be overridden to fit the
+                            file_popup content. Default:
+                            `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`
+
+*nvim_tree.Config.Actions.OpenFile*
+
+    Fields: ~
+      • {quit_on_open}?   (`boolean`) Closes the explorer when opening a file.
+                          Default: `false`
+      • {eject}?          (`boolean`) Prevent a new file opened from within
+                          nvim-tree replacing the current nvim-tree window.
+                          Default: `true`
+      • {resize_window}?  (`boolean`) Resizes the tree when opening a file.
+                          Default: `true`
+      • {window_picker}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker`)
+                          Window picker configuration.
+
+*nvim_tree.Config.Actions.OpenFile.WindowPicker*
+
+    Fields: ~
+      • {enable}?   (`boolean`) Enable the window picker. If this feature is
+                    not enabled, files will open in the current window.
+                    Default: `true`
+      • {picker}?   (`string|fun(): integer`) Change the way in which to pick
+                    a window. Default: `"default"`
+      • {chars}?    (`string`) A string of chars used for window picker
+                    labels. Default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`
+      • {exclude}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude`)
+                    Floating window config for window selector.
+
+*nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude*
+
+    Fields: ~
+      • {filetype}?  (`string[]`) A list of filetypes to exclude from window
+                     picker. Default:
+                     `{ "notify", "lazy", "qf", "diff", "fugitive", "fugitiveblame", }`
+      • {buftype}?   (`string[]`) A list of buftypes to exclude from window
+                     picker. Default: `{ "nofile", "terminal", "help", }`
+
+*nvim_tree.Config.Actions.RemoveFile*
+
+    Fields: ~
+      • {close_window}?  (`boolean`) Close any window that displays a file
+                         when removing that file from the tree. Default:
+                         `true`
+
+*nvim_tree.Config.Diagnostics*
+
+    Fields: ~
+      • {enable}?             (`boolean`) Enable/disable the feature. Default:
+                              `false`
+      • {debounce_delay}?     (`integer`) Idle milliseconds between diagnostic
+                              event and update. Default: `500` (ms)
+      • {show_on_dirs}?       (`boolean`) Show diagnostic icons on parent
+                              directories. Default: `false`
+      • {show_on_open_dirs}?  (`boolean`) Show diagnostics icons on
+                              directories that are open. Only relevant when
+                              `diagnostics.show_on_dirs` is `true`. Default:
+                              `true` @see nvim-tree.diagnostics.show_on_dirs
+      • {severity}?           (`nvim_tree.Config.Diagnostics.Severity`)
+                              Severity for which the diagnostics will be
+                              displayed. See |diagnostic-severity| @see
+                              nvim-tree.diagnostics.icons
+      • {icons}?              (`nvim_tree.Config.Diagnostics.Icons`) Icons for
+                              diagnostic severity.
+      • {diagnostic_opts}?    (`boolean`) vim.diagnostic.Opts overrides
+                              nvim-tree.diagnostics.severity and
+                              nvim-tree.diagnostics.icons Default: `false`
+
+*nvim_tree.Config.Diagnostics.Icons*
+
+    Fields: ~
+      • {hint}?     (`string`) Default: `""`
+      • {info}?     (`string`) Default: `""`
+      • {warning}?  (`string`) Default: `""`
+      • {error}?    (`string`) Default: `""`
+
+*nvim_tree.Config.Diagnostics.Severity*
+
+    Fields: ~
+      • {min}?  (`vim.diagnostic.Severity`) Minimum severity. Default:
+                `vim.diagnostic.severity.HINT`
+      • {max}?  (`vim.diagnostic.Severity`) Maximum severity. Default:
+                `vim.diagnostic.severity.ERROR`
+
+*nvim_tree.Config.FilesystemWatchers*
+
+    Fields: ~
+      • {enable}?          (`boolean`) Enable / disable the feature. Default:
+                           `true`
+      • {debounce_delay}?  (`integer`) Idle milliseconds between filesystem
+                           change and action. Default: `50` (ms)
+      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`) List of vim
+                           regex for absolute directory paths that will not be
+                           watched or function returning whether a path should
+                           be ignored. Strings must be backslash escaped e.g.
+                           `"my-proj/\\.build$"`. See |string-match|. Function
+                           is passed an absolute path. Useful when path is not
+                           in `.gitignore` or git integration is disabled.
+                           Default:
+                           `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`
+
+*nvim_tree.Config.Filters*
+
+    Fields: ~
+      • {enable}?       (`boolean`) Enable / disable all filters including
+                        live filter. Toggle via
+                        |nvim-tree-api.tree.toggle_enable_filters()| Default:
+                        `true`
+      • {git_ignored}?  (`boolean`) Ignore files based on `.gitignore`.
+                        Requires |git.enable| `= true` Toggle via
+                        |nvim-tree-api.tree.toggle_gitignore_filter()|,
+                        default `I` Default: `true`
+      • {dotfiles}?     (`boolean`) Do not show dotfiles: files starting with
+                        a `.` Toggle via
+                        |nvim-tree-api.tree.toggle_hidden_filter()|, default
+                        `H` Default: `false`
+      • {git_clean}?    (`boolean`) Do not show files with no git status. This
+                        will show ignored files when
+                        |nvim-tree.filters.git_ignored| is set, as they are
+                        effectively dirty. Toggle via
+                        |nvim-tree-api.tree.toggle_git_clean_filter()|,
+                        default `C` Default: `false`
+      • {no_buffer}?    (`boolean`) Do not show files that have no
+                        |buflisted()| buffer. Toggle via
+                        |nvim-tree-api.tree.toggle_no_buffer_filter()|,
+                        default `B` For performance reasons this may not
+                        immediately update on buffer delete/wipe. A reload or
+                        filesystem event will result in an update. Default:
+                        `false`
+      • {no_bookmark}?  (`boolean`) Do not show files that are not bookmarked.
+                        Toggle via
+                        |nvim-tree-api.tree.toggle_no_bookmark_filter()|,
+                        default `M` Enabling this is not useful as there is no
+                        means yet to persist bookmarks. Default: `false`
+      • {custom}?       (`string[]|fun(absolute_path: string): boolean`)
+                        Custom list of vim regex for file/directory names that
+                        will not be shown. Backslashes must be escaped e.g.
+                        "^\\.git". See |string-match|. Toggle via
+                        |nvim-tree-api.tree.toggle_custom_filter()|, default
+                        `U` Default: `{}`
+      • {exclude}?      (`string[]`) List of directories or files to exclude
+                        from filtering: always show them. Overrides
+                        `filters.git_ignored`, `filters.dotfiles` and
+                        `filters.custom`. Default: `{}`
+
+*nvim_tree.Config.Git*
+
+    Fields: ~
+      • {enable}?             (`boolean`) Enable / disable the feature.
+                              Default: `true`
+      • {show_on_dirs}?       (`boolean`) Show status icons of children when
+                              directory itself has no status icon. Default:
+                              `true`
+      • {show_on_open_dirs}?  (`boolean`) Show status icons of children on
+                              directories that are open. Only relevant when
+                              `git.show_on_dirs` is `true`. Default: `true`
+                              @see nvim-tree.git.show_on_dirs
+      • {disable_for_dirs}?   (`string[]|fun(path: string): boolean`) Disable
+                              git integration when git top-level matches these
+                              paths. Strings may be relative, evaluated via
+                              |fnamemodify| `:p` Function is passed an
+                              absolute path and returns true for disable.
+                              Default: `{}`
+      • {timeout}?            (`integer`) Kills the git process after some
+                              time if it takes too long. Git integration will
+                              be disabled after 10 git jobs exceed this
+                              timeout. Default: `400` (ms)
+      • {cygwin_support}?     (`boolean`) Use `cygpath` if available to
+                              resolve paths for git. Default: `false`
+
+*nvim_tree.Config.Help*
+
+    Fields: ~
+      • {sort_by}?  (`nvim_tree.HelpSortOption`) Defines how mappings are
+                    sorted in the help window. Can be `"key"` (sort
+                    alphabetically by keymap) or `"desc"` (sort alphabetically
+                    by description). Default: `"key"`
+
+*nvim_tree.Config.HijackDirectories*
+
+    Fields: ~
+      • {enable}?     (`boolean`) Enable the feature. Disable this option if
+                      you use vim-dirvish or dirbuf.nvim. If `hijack_netrw`
+                      and `disable_netrw` are `false`, this feature will be
+                      disabled. Default: `true`
+      • {auto_open}?  (`boolean`) Opens the tree if the tree was previously
+                      closed. Default: `true`
+
+*nvim_tree.Config.LiveFilter*
+
+    Fields: ~
+      • {prefix}?               (`string`) Prefix of the filter displayed in
+                                the buffer. Default: `"[FILTER]: "`
+      • {always_show_folders}?  (`boolean`) Whether to filter folders or not.
+                                Default: `true`
+
+*nvim_tree.Config.Log*
+
+    Fields: ~
+      • {enable}?    (`boolean`) Enable logging to a file `nvim-tree.log` in
+                     |stdpath| `"log"`, usually `${XDG_STATE_HOME}/nvim`
+                     Default: `false`
+      • {truncate}?  (`boolean`) Remove existing log file at startup. Default:
+                     `false`
+      • {types}?     (`nvim_tree.Config.Log.Types`) Specify which information
+                     to log.
+
+*nvim_tree.Config.Log.Types*
+
+    Fields: ~
+      • {all}?          (`boolean`) Everything. Default: `false`
+      • {profile}?      (`boolean`) Timing of some operations. Default:
+                        `false`
+      • {config}?       (`boolean`) Options and mappings, at startup. Default:
+                        `false`
+      • {copy_paste}?   (`boolean`) File copy and paste actions. Default:
+                        `false`
+      • {dev}?          (`boolean`) Used for local development only. Not
+                        useful for users. Default: `false`
+      • {diagnostics}?  (`boolean`) LSP and COC processing, verbose. Default:
+                        `false`
+      • {git}?          (`boolean`) Git processing, verbose. Default: `false`
+      • {watcher}?      (`boolean`) nvim-tree.filesystem_watchers processing,
+                        verbose. Default: `false`
+
+*nvim_tree.Config.Modified*
+
+    Fields: ~
+      • {enable}?             (`boolean`) Enable / disable the feature.
+                              Default: `false`
+      • {show_on_dirs}?       (`boolean`) Show modified indication on
+                              directory whose children are modified. Default:
+                              `true`
+      • {show_on_open_dirs}?  (`boolean`) Show modified indication on open
+                              directories. Only relevant when
+                              |modified.show_on_dirs| is `true`. Default:
+                              `false` @see nvim-tree.modified.show_on_dirs
+
+*nvim_tree.Config.Notify*
+
+    Fields: ~
+      • {threshold}?      (`vim.log.levels`) Specify minimum notification
+                          level, uses the values from |vim.log.levels|
+                          Default: `vim.log.levels.INFO` `ERROR`: hard errors
+                          e.g. failure to read from the file system.
+                          `WARNING`: non-fatal errors e.g. unable to system
+                          open a file. `INFO:` information only e.g. file copy
+                          path confirmation. `DEBUG:` information for
+                          troubleshooting, e.g. failures in some window
+                          closing operations.
+      • {absolute_path}?  (`boolean`) Whether to use absolute paths or item
+                          names in fs action notifications. Default: `true`
+
+*nvim_tree.Config.Renderer*
+
+    Fields: ~
+      • {add_trailing}?            (`boolean`) Appends a trailing slash to
+                                   folder and symlink folder destination
+                                   names. Default: `false`
+      • {group_empty}?             (`boolean|fun(relative_path: string): string`)
+                                   Compact folders that only contain a single
+                                   folder into one node. Boolean or function
+                                   that takes one argument (the relative path
+                                   of grouped folders) and returns a string to
+                                   be displayed. Default: `false`
+      • {full_name}?               (`boolean`) Display node whose name length
+                                   is wider than the width of nvim-tree window
+                                   in floating window. Default: `false`
+      • {root_folder_label}?       (`string|boolean|fun(root_cwd: string): string`)
+                                   In what format to show root folder. See
+                                   `:help filename-modifiers` for available
+                                   `string` options. Set to `false` to hide
+                                   the root folder. or `boolean` or
+                                   `function(root_cwd)`, Default:
+                                   `":~:s?$?/..?"`
+      • {indent_width}?            (`integer`) Number of spaces for an each
+                                   tree nesting level. Minimum 1. Default: `2`
+      • {special_files}?           (`string[]`) A list of filenames that gets
+                                   highlighted with `NvimTreeSpecialFile`.
+                                   Default:
+                                   `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
+      • {hidden_display}?          (`fun(hidden_stats: table<string, integer>): string?|nvim_tree.HiddenDisplayOption`)
+                                   Show a summary of hidden files below the
+                                   tree using
+                                   `NvimTreeHiddenDisplay Default: `"none"`
+      • {symlink_destination}?     (`boolean`) Whether to show the destination
+                                   of the symlink. Default: `true`
+      • {decorators}?              (`(string|nvim_tree.api.decorator.UserDecorator)[]`)
+                                   Highlighting and icons for the nodes, in
+                                   increasing order of precedence. Uses
+                                   strings to specify builtin decorators
+                                   otherwise specify your
+                                   `nvim_tree.api.decorator.UserDecorator`
+                                   class. Default: > lua { "Git", "Open",
+                                   "Hidden", "Modified", "Bookmark",
+                                   "Diagnostics", "Copied", "Cut", }
+      • {highlight_git}?           (`nvim_tree.HighlightOption`) Enable
+                                   highlight for git attributes using
+                                   `NvimTreeGit*HL` highlight groups. Requires
+                                   |nvim-tree.git.enable| Value can be
+                                   `"none"`, `"icon"`, `"name"` or `"all"`.
+                                   Default: `"none"` @see nvim-tree.git.enable
+      • {highlight_diagnostics}?   (`nvim_tree.HighlightOption`) Enable
+                                   highlight for diagnostics using
+                                   `NvimTreeDiagnostic*HL` highlight groups.
+                                   Requires |nvim-tree.diagnostics.enable|
+                                   Value can be `"none"`, `"icon"`, `"name"`
+                                   or `"all"`. Default: `"none"` @see
+                                   nvim-tree.diagnostics.enable
+      • {highlight_opened_files}?  (`nvim_tree.HighlightOption`) Highlight
+                                   icons and/or names for |bufloaded()| files
+                                   using the `NvimTreeOpenedHL` highlight
+                                   group. See
+                                   |nvim-tree-api.navigate.opened.next()| and
+                                   |nvim-tree-api.navigate.opened.prev()|
+                                   Value can be `"none"`, `"icon"`, `"name"`
+                                   or `"all"`. Default: `"none"`
+      • {highlight_modified}?      (`nvim_tree.HighlightOption`) Highlight
+                                   icons and/or names for modified files using
+                                   the `NvimTreeModifiedFile` highlight group.
+                                   Requires |nvim-tree.modified.enable| Value
+                                   can be `"none"`, `"icon"`, `"name"` or
+                                   `"all"` Default `"none"` @see
+                                   nvim-tree.modified.enable
+      • {highlight_hidden}?        (`nvim_tree.HighlightOption`) Highlight
+                                   icons and/or names for hidden files
+                                   (dotfiles) using the `NvimTreeHiddenFileHL`
+                                   highlight group. Value can be `"none"`,
+                                   `"icon"`, `"name"` or `"all"` Default
+                                   `"none"`
+      • {highlight_bookmarks}?     (`nvim_tree.HighlightOption`) Highlight
+                                   bookmarked using the `NvimTreeBookmarkHL`
+                                   group. Value can be `"none"`, `"icon"`,
+                                   `"name"` or `"all"` Default `"none"`
+      • {highlight_clipboard}?     (`nvim_tree.HighlightOption`) Enable
+                                   highlight for clipboard items using the
+                                   `NvimTreeCutHL` and `NvimTreeCopiedHL`
+                                   groups. Value can be `"none"`, `"icon"`,
+                                   `"name"` or `"all"`. Default: `"name"`
+      • {indent_markers}?          (`nvim_tree.Config.Renderer.IndentMarkers`)
+                                   Configuration options for tree indent
+                                   markers.
+      • {icons}?                   (`nvim_tree.Config.Renderer.Icons`)
+                                   Configuration options for icons.
+
+*nvim_tree.Config.Renderer.Icons*
+
+    Fields: ~
+      • {web_devicons}?           (`nvim_tree.Config.Renderer.Icons.WebDevicons`)
+                                  Configure optional plugin
+                                  `"nvim-tree/nvim-web-devicons"`
+      • {git_placement}?          (`nvim_tree.PlacementOption`) Git icons
+                                  placement. Default: `"before"`
+      • {diagnostics_placement}?  (`nvim_tree.PlacementOption`) Diganostic
+                                  icon placement. Default: `"signcolumn"` @see
+                                  nvim-tree.view.signcolumn @see
+                                  nvim-tree.renderer.icons.show.diagnostics
+      • {modified_placement}?     (`nvim_tree.PlacementOption`) Modified icon
+                                  placement. Default: `"after"`
+      • {hidden_placement}?       (`nvim_tree.PlacementOption`) Hidden icon
+                                  placement. Default: `"after"`
+      • {bookmarks_placement}?    (`nvim_tree.PlacementOption`) Bookmark icon
+                                  placement. Default: `"signcolumn"` @see
+                                  nvim-tree.renderer.icons.show.bookmarks
+      • {padding}?                (`nvim_tree.Config.Renderer.Icons.Padding`)
+      • {symlink_arrow}?          (`string`) Used as a separator between
+                                  symlinks' source and target. Default:
+                                  `" ➛ "`
+      • {show}?                   (`nvim_tree.Config.Renderer.Icons.Show`)
+                                  Configuration options for showing icon
+                                  types. Left to right order: file/folder,
+                                  git, modified, hidden, diagnostics,
+                                  bookmarked.
+      • {glyphs}?                 (`nvim_tree.Config.Renderer.Icons.Glyphs`)
+                                  Configuration options for icon glyphs. NOTE:
+                                  Do not set any glyphs to more than two
+                                  characters if it's going to appear in the
+                                  signcolumn.
+
+*nvim_tree.Config.Renderer.Icons.Glyphs*
+
+    Fields: ~
+      • {default}?   (`string`) Glyph for files. Overridden by
+                     |nvim-tree.renderer.icons.web_devicons| if available.
+                     Default: `""`
+      • {symlink}?   (`string`) Glyph for symlinks to files. Default: `""`
+      • {bookmark}?  (`string`) Bookmark icon. Default: `"Ὰ4"`
+      • {modified}?  (`string`) Icon to display for modified files. Default:
+                     `"●"`
+      • {hidden}?    (`string`) Icon to display for hidden files. Default:
+                     `"c""`
+      • {folder}?    (`nvim_tree.Config.Renderer.Icons.Glyphs.Folder`) Glyphs
+                     for directories. Overridden by
+                     |nvim-tree.renderer.icons.web_devicons| if available.
+                     Default:
+                     `{ arrow_closed = "", arrow_open = "", default = "", open = "", empty = "", empty_open = "", symlink = "", symlink_open = "", }`
+      • {git}?       (`nvim_tree.Config.Renderer.Icons.Glyphs.Git`) Glyphs for
+                     git status. Default:
+                     `{ unstaged = "✗", staged = "✓", unmerged = "", renamed = "➜", untracked = "★", deleted = "", ignored = "◌", }`
+
+*nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
+
+    Fields: ~
+      • {arrow_closed}?  (`string`) Default: `""`
+      • {arrow_open}?    (`string`) Default: `""`
+      • {default}?       (`string`) Default: `""`
+      • {open}?          (`string`) Default: `""`
+      • {empty}?         (`string`) Default: `""`
+      • {empty_open}?    (`string`) Default: `""`
+      • {symlink}?       (`string`) Default: `""`
+      • {symlink_open}?  (`string`) Default: `""`
+
+*nvim_tree.Config.Renderer.Icons.Glyphs.Git*
+
+    Fields: ~
+      • {unstaged}?   (`string`) Default: `"✗"`
+      • {staged}?     (`string`) Default: `"✓"`
+      • {unmerged}?   (`string`) Default: `""`
+      • {renamed}?    (`string`) Default: `"➜"`
+      • {untracked}?  (`string`) Default: `"★"`
+      • {deleted}?    (`string`) Default: `""`
+      • {ignored}?    (`string`) Default: `"◌"`
+
+*nvim_tree.Config.Renderer.Icons.Padding*
+
+    Fields: ~
+      • {icon}?          (`string`) Inserted between icon and filename.
+                         Default: `" "`
+      • {folder_arrow}?  (`string`) Inserted between folder arrow icon and
+                         file/folder icon. Default: `" "`
+
+*nvim_tree.Config.Renderer.Icons.Show*
+
+    Fields: ~
+      • {file}?          (`boolean`) Show an icon before the file name.
+                         Default: `true`
+      • {folder}?        (`boolean`) Show an icon before the folder name.
+                         Default: `true`
+      • {folder_arrow}?  (`boolean`) Show a small arrow before the folder
+                         node. Arrow will be a part of the node when using
+                         |renderer.indent_markers|. Default: `true`
+      • {git}?           (`boolean`) Show a git status icon, see
+                         |renderer.icons.git_placement| Requires |git.enable|
+                         `= true` Default: `true` @see
+                         nvim-tree.renderer.icons.git_placement @see
+                         nvim-tree.git.enable
+      • {modified}?      (`boolean`) Show a modified icon, see
+                         |renderer.icons.modified_placement| Requires
+                         |modified.enable| `= true` Default: `true` @see
+                         nvim-tree.renderer.icons.modified_placement @see
+                         nvim-tree.modified.enable
+      • {hidden}?        (`boolean`) Show a hidden icon, see
+                         |renderer.icons.hidden_placement| Default: `false`
+                         @see nvim-tree.renderer.icons.hidden_placement
+      • {diagnostics}?   (`boolean`) Show a diagnostics status icon, see
+                         |renderer.icons.diagnostics_placement| Requires
+                         |diagnostics.enable| `= true` Default: `true` @see
+                         nvim-tree.renderer.icons.diagnostics_placement @see
+                         nvim-tree.diagnostics.enable
+      • {bookmarks}?     (`boolean`) Show a bookmark icon, see
+                         |renderer.icons.bookmarks_placement| Default: `true`
+                         @see nvim-tree.renderer.icons.bookmarks_placement
+
+*nvim_tree.Config.Renderer.Icons.WebDevicons*
+
+    Fields: ~
+      • {file}?    (`nvim_tree.Config.Renderer.Icons.WebDevicons.File`) File
+                   icons.
+      • {folder}?  (`nvim_tree.Config.Renderer.Icons.WebDevicons.Folder`)
+                   Folder icons.
+
+*nvim_tree.Config.Renderer.Icons.WebDevicons.File*
+
+    Fields: ~
+      • {enable}?  (`boolean`) Show icons on files. Overrides
+                   |nvim-tree.renderer.icons.glyphs.default| Default: `true`
+      • {color}?   (`boolean`) Use icon colors for files. Overrides highlight
+                   groups. Default: `true`
+
+*nvim_tree.Config.Renderer.Icons.WebDevicons.Folder*
+
+    Fields: ~
+      • {enable}?  (`boolean`) Show icons on folders. Overrides
+                   |nvim-tree.renderer.icons.glyphs.folder| Default: `false`
+      • {color}?   (`boolean`) Use icon colors for folders. Overrides
+                   highlight groups. Default: `true`
+
+*nvim_tree.Config.Renderer.IndentMarkers*
+
+    Fields: ~
+      • {enable}?         (`boolean`) Display indent markers when folders are
+                          open Default: `false`
+      • {inline_arrows}?  (`boolean`) Display folder arrows in the same column
+                          as indent marker when using
+                          |renderer.icons.show.folder_arrow| Default: `true`
+      • {icons}?          (`nvim_tree.Config.Renderer.IndentMarkers.Icons`)
+                          Icons shown before the file/directory. Length 1.
+                          Default: > lua { corner = "└", edge = "│", item
+                          = "│", bottom = "─", none = " ", }
+
+*nvim_tree.Config.Renderer.IndentMarkers.Icons*
+
+    Fields: ~
+      • {corner}?  (`string`) Default: `"└"`
+      • {edge}?    (`string`) Default: `"│"`
+      • {item}?    (`string`) Default: `"│"`
+      • {bottom}?  (`string`) Default: `"─"`
+      • {none}?    (`string`) Default: `" "`
+
+*nvim_tree.Config.Sort*
+
+    Fields: ~
+      • {sorter}?         (`nvim_tree.SortOption|fun(nodes: table): nil`)
+                          Changes how files within the same directory are
+                          sorted. Can be one of `"name"`, `"case_sensitive"`,
+                          `"modification_time"`, `"extension"`, `"suffix"`,
+                          `"filetype"` or a function. `"extension"` uses all
+                          suffixes e.g. `foo.tar.gz` -> `.tar.gz` `"suffix"`
+                          uses the last e.g. `.gz` Default: `"name"` Function
+                          may perform a sort or return a string with one of
+                          the above methods. It is passed a table of nodes to
+                          be sorted, each node containing: - `absolute_path`:
+                          `string` - `executable`: `boolean` - `extension`:
+                          `string` - `filetype`: `string` - `link_to`:
+                          `string` - `name`: `string` - `type`: `"directory"`
+                          | `"file"` | `"link"`
+      • {folders_first}?  (`boolean`) Sort folders before files. Has no effect
+                          when |nvim-tree.sort.sorter| is a function. Default:
+                          `true` @see nvim-tree.sort.sorter
+      • {files_first}?    (`boolean`) Sort files before folders. Has no effect
+                          when |nvim-tree.sort.sorter| is a function. If set
+                          to `true` it overrides
+                          |nvim-tree.sort.folders_first|. Default: `false`
+                          @see nvim-tree.sort.sorter @see
+                          nvim-tree.sort.folders_first
+
+*nvim_tree.Config.SystemOpen*
+
+    Fields: ~
+      • {cmd}?   (`string`) The open command itself. Default: `""` neovim >=
+                 0.10 defaults to |vim.ui.open| neovim < 0.10 defaults to:
+                 UNIX: `"xdg-open"` macOS: `"open"` Windows: `"cmd"`
+      • {args}?  (`string[]`) Optional argument list. Default: `{}` Leave
+                 empty for OS specific default: Windows:
+                 `{ "/c", "start", '""' }`
+
+*nvim_tree.Config.Tab*
+
+    Fields: ~
+      • {sync}?  (`nvim_tree.Config.Tab.Sync`) Configuration for syncing
+                 nvim-tree across tabs.
+
+*nvim_tree.Config.Tab.Sync*
+
+    Fields: ~
+      • {open}?    (`boolean`) Opens the tree automatically when switching
+                   tabpage or opening a new tabpage if the tree was previously
+                   open. Default: `false`
+      • {close}?   (`boolean`) Closes the tree across all tabpages when the
+                   tree is closed. Default: `false`
+      • {ignore}?  (`string[]`) List of filetypes or buffer names on new tab
+                   that will prevent |nvim-tree.tab.sync.open| and
+                   |nvim-tree.tab.sync.close| Default: `{}`
+
+*nvim_tree.Config.Trash*
+
+    Fields: ~
+      • {cmd}?  (`string`) The command used to trash items (must be installed
+                on your system). Default linux `"gio trash"` from glib2 is a
+                commonly shipped linux package. macOS default `"trash"`
+                requires the homebrew package `trash` Windows default
+                `"trash"` requires `trash-cli` or similar Default:
+                `"gio trash"` or `"trash"`
+
+*nvim_tree.Config.UI*
+
+    Fields: ~
+      • {confirm}?  (`nvim_tree.Config.UI.Confirm`) Confirmation prompts.
+
+*nvim_tree.Config.UI.Confirm*
+
+    Fields: ~
+      • {remove}?       (`boolean`) Prompt before removing. Default: `true`
+      • {trash}?        (`boolean`) Prompt before trashing. Default: `true`
+      • {default_yes}?  (`boolean`) If `true` the prompt will be `\"Y/n\"`,
+                        otherwise `\"y/N\"`. Default: `false`
+
+*nvim_tree.Config.UpdateFocusedFile*
+
+    Fields: ~
+      • {enable}?       (`boolean`) Enable this feature. Default: `false`
+      • {update_root}?  (`nvim_tree.Config.UpdateFocusedFile.UpdateRoot`)
+                        Update the root directory of the tree if the file is
+                        not under current root directory. It prefers vim's cwd
+                        and `root_dirs`. Otherwise it falls back to the folder
+                        containing the file. Only relevant when
+                        `update_focused_file.enable` is `true` @see
+                        nvim-tree.update_focused_file.enable
+      • {exclude}?      (`fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`)
+                        A function that returns true if the file should not be
+                        focused when opening. Takes the `BufEnter` event as an
+                        argument. see |autocmd-events| Default: `false`
+
+*nvim_tree.Config.UpdateFocusedFile.UpdateRoot*
+
+    Fields: ~
+      • {enable}?       (`boolean`) Default: `false`
+      • {ignore_list}?  (`string[]`) List of buffer names and filetypes that
+                        will not update the root dir of the tree if the file
+                        isn't found under the current root directory. Only
+                        relevant when `update_focused_file.update_root.enable`
+                        and `update_focused_file.enable` are `true`. Default:
+                        `{}` @see
+                        nvim-tree.update_focused_file.update_root.enable @see
+                        nvim-tree.update_focused_file.enable
+
+*nvim_tree.Config.View*
+
+    Fields: ~
+      • {adaptive_size}?                (`boolean`) Resize the window on each
+                                        draw based on the longest line.
+                                        Default: `false`
+      • {centralize_selection}?         (`boolean`) When entering nvim-tree,
+                                        reposition the view so that the
+                                        current node is initially centralized,
+                                        see |zz|. Default: `false`
+      • {side}?                         (`nvim_tree.PlacementOption`) Side of
+                                        the tree. Default: `"left"`
+      • {preserve_window_proportions}?  (`boolean`) Preserves window
+                                        proportions when opening a file. If
+                                        `false`, the height and width of
+                                        windows other than nvim-tree will be
+                                        equalized. Default: `false`
+      • {number}?                       (`boolean`) Print the line number in
+                                        front of each line. Default: `false`
+      • {relativenumber}?               (`boolean`) Show the line number
+                                        relative to the line with the cursor
+                                        in front of each line. Default:
+                                        `false`
+      • {signcolumn}?                   (`nvim_tree.HiddenDisplayOption`) Show
+                                        |signcolumn|. Default: `"yes"`
+      • {width}?                        (`string|integer|nvim_tree.Config.View.Width|fun(): integer|string`)
+                                        Width of the window: can be a `%`
+                                        string, a number representing columns,
+                                        a function or a table. A table
+                                        indicates that the view should be
+                                        dynamically sized based on the longest
+                                        line. Default: `30`
+      • {float}?                        (`nvim_tree.Config.View.Float`)
+                                        Configuration options for floating
+                                        window.
+      • {cursorline}?                   (`boolean`) Enable |cursorline| in
+                                        nvim-tree window. Default: `true`
+      • {debounce_delay}?               (`integer`) Idle milliseconds before
+                                        some reload / refresh operations.
+                                        Increase if you experience performance
+                                        issues around screen refresh. Default:
+                                        `15` (ms)
+
+*nvim_tree.Config.View.Float*
+
+    Fields: ~
+      • {enable}?              (`boolean`) If true, tree window will be
+                               floating. Default: `false`
+      • {quit_on_focus_loss}?  (`boolean`) Close the floating tree window when
+                               it loses focus. Default: `true`
+      • {open_win_config}?     (`table|fun(): table`) Floating window config.
+                               See |nvim_open_win()| for more details.
+                               Default:
+                               `{ relative = "editor", border = "rounded", width = 30, height = 30, row = 1, col = 1, }`
+
+*nvim_tree.Config.View.Width*
+
+    Fields: ~
+      • {min}?             (`string|integer|fun(): integer|string`) Minimum
+                           dynamic width. Default: `30`
+      • {max}?             (`string|integer|fun(): integer|string`) Maximum
+                           dynamic width, -1 for unbounded. Default: `-1`
+      • {lines_excluded}?  (`string[]`) Exclude these lines when computing
+                           width. Supported values: `"root"`. Default:
+                           `{ "root" }`
+      • {padding}?         (`integer|fun(): integer|string`) Extra padding to
+                           the right. Default: `1`
+
+
+
+==============================================================================
+Lua module: nvim_tree.api.decorator                  *nvim-tree-api-decorator*
 
 *nvim_tree.api.decorator.UserDecorator*
     Custom decorator, see :help nvim-tree-decorators
