@@ -22,6 +22,8 @@ local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
+local change_dir = require("nvim-tree.actions.root.change-dir")
+local find_file = require("nvim-tree.actions.finders.find-file")
 
 local config
 
@@ -101,10 +103,19 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      -- only handle normal files
+      if vim.bo[data.buf].buftype ~= "" then
+        return
+      end
+
+      if self.filters.state.no_buffer then
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
         end)
+      elseif self.opts.renderer.highlight_opened_files ~= "none" then
+        -- draw to update opened highlight
+        self.renderer:draw()
       end
     end,
   })
@@ -113,9 +124,20 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("BufUnload", {
     group = self.augroup_id,
     callback = function(data)
-      if (self.filters.state.no_buffer or self.opts.highlight_opened_files ~= "none") and vim.bo[data.buf].buftype == "" then
+      -- only handle normal files
+      if vim.bo[data.buf].buftype ~= "" then
+        return
+      end
+
+      if self.filters.state.no_buffer then
+        -- full reload is required to update the filter state
         utils.debounce("Buf:filter_buffer_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           self:reload_explorer()
+        end)
+      elseif self.opts.renderer.highlight_opened_files ~= "none" then
+        -- draw to update opened highlight; must be delayed as the buffer is still loaded during BufUnload
+        vim.schedule(function()
+          self.renderer:draw()
         end)
       end
     end,
@@ -214,8 +236,9 @@ function Explorer:reload(node, project)
     end
 
     local abs = utils.path_join({ cwd, name })
-    ---@type uv.fs_stat.result|nil
-    local stat = vim.loop.fs_lstat(abs)
+
+    -- path incorrectly specified as an integer
+    local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
 
     local filter_reason = self.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none then
@@ -373,8 +396,9 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("populate_children %s", abs)
 
-      ---@type uv.fs_stat.result|nil
-      local stat = vim.loop.fs_lstat(abs)
+      -- path incorrectly specified as an integer
+      local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
+
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
         local child = node_factory.create({
@@ -505,7 +529,7 @@ function Explorer:get_node_at_cursor()
     return self
   end
 
-  return utils.get_nodes_by_line(self.nodes, core.get_nodes_starting_line())[cursor[1]]
+  return self:get_nodes_by_line(core.get_nodes_starting_line())[cursor[1]]
 end
 
 function Explorer:place_cursor_on_node()
@@ -526,6 +550,130 @@ function Explorer:place_cursor_on_node()
 
   if idx >= 0 then
     vim.api.nvim_win_set_cursor(0, { cursor[1], idx })
+  end
+end
+
+-- Find the line number of a node.
+---@param node Node?
+---@return integer -1 not found
+function Explorer:find_node_line(node)
+  if not node then
+    return -1
+  end
+
+  local first_node_line = core.get_nodes_starting_line()
+  local nodes_by_line = self:get_nodes_by_line(first_node_line)
+  local iter_start, iter_end = first_node_line, #nodes_by_line
+
+  for line = iter_start, iter_end, 1 do
+    if nodes_by_line[line] == node then
+      return line
+    end
+  end
+
+  return -1
+end
+
+-- get the node in the tree state depending on the absolute path of the node
+-- (grouped or hidden too)
+---@param path string
+---@return Node|nil
+---@return number|nil
+function Explorer:get_node_from_path(path)
+  if self.absolute_path == path then
+    return self
+  end
+
+  return Iterator.builder(self.nodes)
+    :hidden()
+    :matcher(function(node)
+      return node.absolute_path == path or node.link_to == path
+    end)
+    :recursor(function(node)
+      if node.group_next then
+        return { node.group_next }
+      end
+      if node.nodes then
+        return node.nodes
+      end
+    end)
+    :iterate()
+end
+
+---Focus node passed as parameter if visible, otherwise focus first visible parent.
+---If none of the parents is visible focus root.
+---If node is nil do nothing.
+---@param node Node? node to focus
+function Explorer:focus_node_or_parent(node)
+  while node do
+    local found_node, i = self:find_node(function(node_)
+      return node_.absolute_path == node.absolute_path
+    end)
+
+    if found_node or node.parent == nil then
+      view.set_cursor({ i + 1, 1 })
+      break
+    end
+
+    node = node.parent
+  end
+end
+
+--- Get the node and index of the node from the tree that matches the predicate.
+--- The explored nodes are those displayed on the view.
+---@param fn fun(node: Node): boolean
+---@return table|nil
+---@return number
+function Explorer:find_node(fn)
+  local node, i = Iterator.builder(self.nodes)
+    :matcher(fn)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
+  i = view.is_root_folder_visible() and i or i - 1
+  if node and node.explorer.live_filter.filter then
+    i = i + 1
+  end
+  return node, i
+end
+
+--- Return visible nodes indexed by line
+---@param line_start number
+---@return table
+function Explorer:get_nodes_by_line(line_start)
+  local nodes_by_line = {}
+  local line = line_start
+
+  Iterator.builder(self.nodes)
+    :applier(function(node)
+      if node.group_next then
+        return
+      end
+      nodes_by_line[line] = node
+      line = line + 1
+    end)
+    :recursor(function(node)
+      return node.group_next and { node.group_next } or (node.open and #node.nodes > 0 and node.nodes)
+    end)
+    :iterate()
+
+  return nodes_by_line
+end
+
+---@param node Node
+function Explorer:dir_up(node)
+  if not node or node.name == ".." then
+    change_dir.fn("..")
+  else
+    local cwd = core.get_cwd()
+    if cwd == nil then
+      return
+    end
+
+    local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
+    change_dir.fn(newdir)
+    find_file.fn(node.absolute_path)
   end
 end
 

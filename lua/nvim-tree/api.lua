@@ -9,6 +9,7 @@ local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
 
 local DirectoryNode = require("nvim-tree.node.directory")
+local FileNode = require("nvim-tree.node.file")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
@@ -160,15 +161,21 @@ end)
 Api.tree.change_root_to_node = wrap_node(function(node)
   if node.name == ".." or node:is(RootNode) then
     actions.root.change_dir.fn("..")
-  else
-    node = node:as(DirectoryNode)
-    if node then
-      actions.root.change_dir.fn(node:last_group_node().absolute_path)
-    end
+    return
+  end
+
+  if node:is(FileNode) and node.parent ~= nil then
+    actions.root.change_dir.fn(node.parent:last_group_node().absolute_path)
+    return
+  end
+
+  if node:is(DirectoryNode) then
+    actions.root.change_dir.fn(node:last_group_node().absolute_path)
+    return
   end
 end)
 
-Api.tree.change_root_to_parent = wrap_node(actions.root.dir_up.fn)
+Api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
 Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
 Api.tree.get_nodes = wrap_explorer("get_nodes")
 
@@ -182,8 +189,16 @@ Api.tree.get_nodes = wrap_explorer("get_nodes")
 
 Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
-Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse_all.fn)
-Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand_all.fn)
+
+---@class ApiCollapseOpts
+---@field keep_buffers boolean|nil default false
+
+Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+
+---@class ApiTreeExpandOpts
+---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
+
+Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
 Api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
 Api.tree.toggle_git_clean_filter = wrap_explorer_member_args("filters", "toggle", "git_clean")
@@ -311,6 +326,9 @@ Api.node.navigate.diagnostics.prev = wrap_node(actions.moves.item.fn({ where = "
 Api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag", recurse = true }))
 Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
+
+Api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
+Api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
 
 ---@class ApiNodeDeleteWipeBufferOpts
 ---@field force boolean|nil default false

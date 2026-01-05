@@ -32,7 +32,7 @@ function M.fn(path)
   local profile = log.profile_start("find file %s", path_real)
 
   -- refresh the contents of all parents, expanding groups as needed
-  if utils.get_node_from_path(path_real) == nil then
+  if explorer:get_node_from_path(path_real) == nil then
     explorer:refresh_parent_nodes_for_path(vim.fn.fnamemodify(path_real, ":h"))
   end
 

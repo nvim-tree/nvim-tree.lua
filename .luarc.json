@@ -1,11 +1,23 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-  "runtime.version.luals-check-only": "Lua 5.1",
+  "runtime.version": "Lua 5.1",
   "workspace": {
     "library": [
       "$VIMRUNTIME/lua/vim",
       "${3rd}/luv/library"
     ]
+  },
+  "format": {
+    "defaultConfig": {
+      "indent_style": "space",
+      "max_line_length": "140",
+      "indent_size": "2",
+      "continuation_indent": "2",
+      "quote_style": "double",
+      "call_arg_parentheses": "always",
+      "space_before_closure_open_parenthesis": "false",
+      "align_continuous_similar_call_args": "true"
+    }
   },
   "diagnostics": {
     "libraryFiles": "Disable",

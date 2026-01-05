@@ -1,6 +1,5 @@
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
-local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
 
 ---@class LibOpenOpts
@@ -130,7 +129,6 @@ function M.open(opts)
     open_view_and_draw()
   end
   view.restore_tab_state()
-  events._dispatch_on_tree_open()
 end
 
 function M.setup(opts)

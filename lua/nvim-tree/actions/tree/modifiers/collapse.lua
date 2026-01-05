@@ -2,6 +2,7 @@ local utils = require("nvim-tree.utils")
 local core = require("nvim-tree.core")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 
+local FileNode = require("nvim-tree.node.file")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -23,26 +24,30 @@ local function buf_match()
   end
 end
 
----@param keep_buffers boolean
-function M.fn(keep_buffers)
+---Collapse a node, root if nil
+---@param node Node?
+---@param opts ApiCollapseOpts
+local function collapse(node, opts)
   local explorer = core.get_explorer()
   if not explorer then
     return
   end
 
-  local node = explorer:get_node_at_cursor()
-  if not node then
+  node = node or explorer
+
+  local node_at_cursor = explorer:get_node_at_cursor()
+  if not node_at_cursor then
     return
   end
 
   local matches = buf_match()
 
-  Iterator.builder(explorer.nodes)
+  Iterator.builder({ node:is(FileNode) and node.parent or node:as(DirectoryNode) })
     :hidden()
     :applier(function(n)
       local dir = n:as(DirectoryNode)
       if dir then
-        dir.open = keep_buffers and matches(dir.absolute_path)
+        dir.open = opts.keep_buffers == true and matches(dir.absolute_path)
       end
     end)
     :recursor(function(n)
@@ -51,7 +56,26 @@ function M.fn(keep_buffers)
     :iterate()
 
   explorer.renderer:draw()
-  utils.focus_node_or_parent(node)
+  explorer:focus_node_or_parent(node_at_cursor)
+end
+
+
+---@param opts ApiCollapseOpts|boolean|nil legacy -> opts.keep_buffers
+function M.all(opts)
+  -- legacy arguments
+  if type(opts) == "boolean" then
+    opts = {
+      keep_buffers = opts,
+    }
+  end
+
+  collapse(nil, opts or {})
+end
+
+---@param node Node
+---@param opts ApiCollapseOpts?
+function M.node(node, opts)
+  collapse(node, opts or {})
 end
 
 return M

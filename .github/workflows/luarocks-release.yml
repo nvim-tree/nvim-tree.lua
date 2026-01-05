@@ -1,14 +1,16 @@
 name: Luarocks Release
+
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - v*
   workflow_dispatch:
+
 jobs:
   luarocks-upload:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: LuaRocks Upload
         uses: nvim-neorocks/luarocks-tag-release@v7
         env:

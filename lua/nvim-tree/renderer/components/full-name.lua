@@ -1,6 +1,7 @@
 local M = {}
 
 local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
 local function hide(win)
   if win then
@@ -32,7 +33,7 @@ local function effective_win_width()
   return win_width - win_info[1].textoff
 end
 
-local function show()
+local function show(opts)
   local line_nr = vim.api.nvim_win_get_cursor(0)[1]
   if vim.wo.wrap then
     return
@@ -52,6 +53,11 @@ local function show()
   local text_width = vim.fn.strdisplaywidth(vim.fn.substitute(line, "[^[:print:]]*$", "", "g"))
   local win_width = effective_win_width()
 
+  -- windows width reduced by right aligned icons
+  local icon_ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
+  local icon_extmarks = vim.api.nvim_buf_get_extmarks(0, icon_ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
+  win_width = win_width - utils.extmarks_length(icon_extmarks)
+
   if text_width < win_width then
     return
   end
@@ -64,7 +70,9 @@ local function show()
     height    = 1,
     noautocmd = true,
     style     = "minimal",
+    border    = "none"
   })
+  vim.wo[M.popup_win].winhl = view.View.winopts.winhl
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeHighlights"]
   local extmarks = vim.api.nvim_buf_get_extmarks(0, ns_id, { line_nr - 1, 0 }, { line_nr - 1, -1 }, { details = true })
@@ -87,7 +95,10 @@ local function show()
         end
       end
     end
-    vim.cmd([[ setlocal nowrap cursorline noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
+    vim.cmd([[ setlocal nowrap noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
+    if opts.view.cursorline then
+      vim.cmd([[ setlocal cursorline cursorlineopt=both ]])
+    end
   end)
 end
 
@@ -113,7 +124,7 @@ M.setup = function(opts)
     pattern = { "NvimTree_*" },
     callback = function()
       if utils.is_nvim_tree_buf(0) then
-        show()
+        show(opts)
       end
     end,
   })

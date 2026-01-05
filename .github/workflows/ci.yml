@@ -20,44 +20,24 @@ jobs:
     strategy:
       matrix:
         lua_version: [ 5.1 ]
+        luacheck_version: [ 1.2.0 ]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
 
-      - uses: leafo/gh-actions-lua@v10
+      - name: install lua ${{ matrix.lua_version }}
+        uses: leafo/gh-actions-lua@v12
         with:
           luaVersion: ${{ matrix.lua_version }}
 
-      - uses: leafo/gh-actions-luarocks@v4
+      - name: install luarocks
+        uses: leafo/gh-actions-luarocks@v6
 
-      - run: luarocks install luacheck 1.1.1
+      - name: install luacheck ${{ matrix.luacheck_version }}
+        run: luarocks install luacheck ${{ matrix.luacheck_version }}
 
       - run: make lint
-
-  style:
-    runs-on: ubuntu-latest
-
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.emmy_lua_code_style_version }}-${{ github.head_ref || github.ref_name }}
-      cancel-in-progress: true
-
-    strategy:
-      matrix:
-        emmy_lua_code_style_version: [ 1.5.6 ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install emmy_lua_code_style
-        run: |
-          mkdir -p CodeFormat
-          curl -L "https://github.com/CppCXY/EmmyLuaCodeStyle/releases/download/${{ matrix.emmy_lua_code_style_version }}/linux-x64.tar.gz" | tar zx --directory CodeFormat
-
-      - run: echo "CodeFormat/linux-x64/bin" >> "$GITHUB_PATH"
-
-      - run: make style
-
-      - run: make style-doc
 
   check:
     runs-on: ubuntu-latest
@@ -69,26 +49,31 @@ jobs:
     strategy:
       matrix:
         nvim_version: [ stable, nightly ]
-        luals_version: [ 3.11.0 ]
+        luals_version: [ 3.15.0 ]
+
+    env:
+      VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
 
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
 
-      - uses: rhysd/action-setup-vim@v1
+      - name: install nvim ${{ matrix.nvim_version }}
+        uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: ${{ matrix.nvim_version }}
 
-      - name: install luals
+      - name: install lua-language-server ${{ matrix.luals_version }}
         run: |
           mkdir -p luals
           curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
+          echo "luals/bin" >> "$GITHUB_PATH"
 
-      - run: echo "luals/bin" >> "$GITHUB_PATH"
-
-      - name: make check
-        env:
-          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
-        run: make check
+      - run: make check
 
       - run: make help-check
+
+      - run: make style
+
+      - run: make style-doc
