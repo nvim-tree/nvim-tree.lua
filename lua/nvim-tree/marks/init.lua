@@ -25,7 +25,7 @@ local function save_bookmarks(marks, opts)
   end
 
   local storepath = get_save_path(opts)
-  local file = io.open(storepath, "w")
+  local file, errmsg = io.open(storepath, "w")
   if file then
     local data = {}
     for path, _ in pairs(marks) do
