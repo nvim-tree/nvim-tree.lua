@@ -5,7 +5,7 @@ local finders_find_file = require("nvim-tree.actions.finders.find-file")
 local M = {}
 
 ---Open the tree, focusing if already open.
----@param opts ApiTreeOpenOpts|nil|string legacy -> opts.path
+---@param opts nvim_tree.api.TreeOpenOpts|nil|string legacy -> opts.path
 function M.fn(opts)
   -- legacy arguments
   if type(opts) == "string" then
