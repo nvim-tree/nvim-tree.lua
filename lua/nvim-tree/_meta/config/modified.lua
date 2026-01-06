@@ -1,7 +1,7 @@
 ---@meta
 error("Cannot require a meta file")
 
----Indicate which file have unsaved modification.
+---Indicate which files have unsaved modification.
 ---To see modified status in the tree you will need to set:
 --- - |nvim_tree.Config.Renderer.Icons.Show| {modified} to `true` OR
 --- - |nvim_tree.Config.Renderer| {highlight_modified} to `true`

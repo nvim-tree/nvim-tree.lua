@@ -7,7 +7,7 @@ error("Cannot require a meta file")
 ---
 ---Watchers may be disabled for absolute directory paths via {ignore_dirs}. Useful when path is not in `.gitignore` or git integration is disabled.
 ---
----Regex |pattern| strings must be backslash escaped e.g. `"my-proj/\\.build$"`
+---|vim.regex| strings must be backslash escaped e.g. `"my-proj/\\.build$"`
 ---
 ---Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree which were used to update the whole tree.
 ---@class nvim_tree.Config.FilesystemWatchers
