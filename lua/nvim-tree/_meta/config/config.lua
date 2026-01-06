@@ -9,7 +9,6 @@ error("Cannot require a meta file")
 ---@alias nvim_tree.HighlightOption "none"|"icon"|"name"|"all"
 ---@alias nvim_tree.HiddenDisplayOption "none"|"simple"|"all"
 ---@alias nvim_tree.SortOption "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
----@alias nvim_tree.HelpSortOption "key"|"desc"
 
 --
 -- nvim-tree Setup Config
@@ -223,13 +222,6 @@ error("Cannot require a meta file")
 ---@field untracked? string Default: `"★"`
 ---@field deleted? string Default: `""`
 ---@field ignored? string Default: `"◌"`
-
---
--- Help
---
-
----@class nvim_tree.Config.Help
----@field sort_by? nvim_tree.HelpSortOption Defines how mappings are sorted in the help window. Can be `"key"` (sort alphabetically by keymap) or `"desc"` (sort alphabetically by description). Default: `"key"`
 
 --
 -- Filters

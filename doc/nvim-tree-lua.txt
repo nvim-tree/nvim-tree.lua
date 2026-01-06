@@ -3655,14 +3655,6 @@ Class: Config                                               *nvim-tree-config*
       • {cygwin_support}?     (`boolean`) Use `cygpath` if available to
                               resolve paths for git. Default: `false`
 
-*nvim_tree.Config.Help*
-
-    Fields: ~
-      • {sort_by}?  (`nvim_tree.HelpSortOption`) Defines how mappings are
-                    sorted in the help window. Can be `"key"` (sort
-                    alphabetically by keymap) or `"desc"` (sort alphabetically
-                    by description). Default: `"key"`
-
 *nvim_tree.Config.Renderer*
 
     Fields: ~
@@ -4240,8 +4232,8 @@ Class: Config.Actions                               *nvim-tree-config-actions*
 
     Fields: ~
       • {enable}?   (`boolean`) (default: `true`)
-      • {picker}?   (`string|fun(): integer`, default: `"default"`) Change the
-                    default window picker: a string `"default"` or a function.
+      • {picker}?   (`string|fun(): integer`, default: `default`) Change the
+                    default window picker: string `default` or a function.
       • {chars}?    (`string`, default:
                     `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`) Identifier
                     characters to use.
@@ -4323,6 +4315,21 @@ Class: Config.Notify                                 *nvim-tree-config-notify*
                           Specify minimum notification level
       • {absolute_path}?  (`boolean`, default: `true`) Use absolute paths in
                           FS action notifications, otherwise item names.
+
+
+
+==============================================================================
+Class: Config.                                          *nvim-tree-config-YYY*
+
+*nvim_tree.Config.Help*
+    Configure help window, default mapping `g?`
+
+    Valid {sort_by}:
+    • `key`: sort alphabetically by keymap
+    • `desc`: sort alphabetically by description
+
+    Fields: ~
+      • {sort_by}?  (`nvim_tree.Config.Help.SortBy`) (default: `key`)
 
 
 
