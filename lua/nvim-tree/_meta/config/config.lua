@@ -223,20 +223,6 @@ error("Cannot require a meta file")
 ---@field ignored? string Default: `"◌"`
 
 --
--- Filters
---
-
----@class nvim_tree.Config.Filters
----@field enable? boolean Enable / disable all filters including live filter. Toggle via |nvim-tree-api.tree.toggle_enable_filters()| Default: `true`
----@field git_ignored? boolean Ignore files based on `.gitignore`. Requires |git.enable| `= true` Toggle via |nvim-tree-api.tree.toggle_gitignore_filter()|, default `I` Default: `true`
----@field dotfiles? boolean Do not show dotfiles: files starting with a `.` Toggle via |nvim-tree-api.tree.toggle_hidden_filter()|, default `H` Default: `false`
----@field git_clean? boolean Do not show files with no git status. This will show ignored files when |nvim-tree.filters.git_ignored| is set, as they are effectively dirty. Toggle via |nvim-tree-api.tree.toggle_git_clean_filter()|, default `C` Default: `false`
----@field no_buffer? boolean Do not show files that have no |buflisted()| buffer. Toggle via |nvim-tree-api.tree.toggle_no_buffer_filter()|, default `B` For performance reasons this may not immediately update on buffer delete/wipe. A reload or filesystem event will result in an update. Default: `false`
----@field no_bookmark? boolean Do not show files that are not bookmarked. Toggle via |nvim-tree-api.tree.toggle_no_bookmark_filter()|, default `M` Enabling this is not useful as there is no means yet to persist bookmarks. Default: `false`
----@field custom? string[]|fun(absolute_path: string): boolean Custom list of vim regex for file/directory names that will not be shown. Backslashes must be escaped e.g. "^\\.git". See |string-match|. Toggle via |nvim-tree-api.tree.toggle_custom_filter()|, default `U` Default: `{}`
----@field exclude? string[] List of directories or files to exclude from filtering: always show them. Overrides `filters.git_ignored`, `filters.dotfiles` and `filters.custom`. Default: `{}`
-
---
 -- Update Focused File
 --
 
