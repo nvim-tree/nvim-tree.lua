@@ -3586,29 +3586,6 @@ Class: Config                                               *nvim-tree-config*
       • {max}?  (`vim.diagnostic.Severity`) Maximum severity. Default:
                 `vim.diagnostic.severity.ERROR`
 
-*nvim_tree.Config.FilesystemWatchers*
-    Use file system watcher (libuv fs_event) to watch the filesystem for
-    changes.
-
-    Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree
-    which were used to update the whole tree.
-
-    With this feature, the tree will be updated only for the appropriate
-    folder change, resulting in better performance.
-
-    Fields: ~
-      • {enable}?          (`boolean`) (default: `true`)
-      • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
-                           between filesystem change and action.
-      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
-                           List of vim regex for absolute directory paths that
-                           will not be watched or function returning whether a
-                           path should be ignored. Strings must be backslash
-                           escaped e.g. `"my-proj/\\.build$"`. See
-                           |string-match|. Function is passed an absolute
-                           path. Useful when path is not in `.gitignore` or
-                           git integration is disabled.
-
 *nvim_tree.Config.Filters*
 
     Fields: ~
@@ -4223,6 +4200,36 @@ Class: Config.LiveFilter                        *nvim-tree-config-live-filter*
                                 the filter displayed in the buffer.
       • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
                                 folders or not.
+
+
+
+==============================================================================
+Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
+
+*nvim_tree.Config.FilesystemWatchers*
+    Use file system watchers (libuv fs_event) to monitor the filesystem for
+    changes and update the tree.
+
+    With this feature, the tree will be updated only for the appropriate
+    folder change, resulting in better performance.
+
+    Watchers may be disabled for absolute directory paths via {ignore_dirs}.
+    Useful when path is not in `.gitignore` or git integration is disabled.
+
+    Regex |pattern| strings must be backslash escaped e.g.
+    `"my-proj/\\.build$"`
+
+    Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree
+    which were used to update the whole tree.
+
+    Fields: ~
+      • {enable}?          (`boolean`) (default: `true`)
+      • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
+                           between filesystem change and tree update.
+      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
+                           Disable for directories via a list of vim regex OR
+                           a function passed the absolute path of the
+                           directory.
 
 
 
