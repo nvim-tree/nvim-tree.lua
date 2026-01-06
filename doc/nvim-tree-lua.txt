@@ -4159,8 +4159,8 @@ Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
       • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
-                           Disable for directories via a list of vim regex OR
-                           a function passed the absolute path of the
+                           Disable for directories via a list of |vim regex|
+                           OR a function passed the absolute path of the
                            directory.
 
 

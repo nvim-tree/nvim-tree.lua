@@ -19,6 +19,6 @@ error("Cannot require a meta file")
 ---(default: `50`)
 ---@field debounce_delay? integer
 ---
----Disable for directories via a list of vim regex OR a function passed the absolute path of the directory.
+---Disable for directories via a list of |vim regex| OR a function passed the absolute path of the directory.
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
 ---@field ignore_dirs? string[]|fun(path: string): boolean
