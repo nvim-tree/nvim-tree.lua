@@ -3975,21 +3975,6 @@ Class: Config                                               *nvim-tree-config*
                  empty for OS specific default: Windows:
                  `{ "/c", "start", '""' }`
 
-*nvim_tree.Config.UI*
-
-    Fields: ~
-      • {confirm}?  (`nvim_tree.Config.UI.Confirm`)
-                    |nvim_tree.Config.UI.Confirm|
-
-*nvim_tree.Config.UI.Confirm*
-    Confirmation prompts.
-
-    Fields: ~
-      • {remove}?       (`boolean`, default: `true`) Prompt before removing.
-      • {trash}?        (`boolean`, default: `true`) Prompt before trashing.
-      • {default_yes}?  (`boolean`, default: `false`) If `true` the prompt
-                        will be `Y/n`, otherwise `y/N`
-
 *nvim_tree.Config.UpdateFocusedFile*
 
     Fields: ~
@@ -4353,6 +4338,26 @@ Class: Config.Tab                                       *nvim-tree-config-tab*
                    tabpages when the tree is closed.
       • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
                    names on new tab that will prevent `open` and `close`
+
+
+
+==============================================================================
+Class: Config.UI                                         *nvim-tree-config-ui*
+
+*nvim_tree.Config.UI*
+
+    Fields: ~
+      • {confirm}?  (`nvim_tree.Config.UI.Confirm`)
+                    |nvim_tree.Config.UI.Confirm|
+
+*nvim_tree.Config.UI.Confirm*
+    Confirmation prompts.
+
+    Fields: ~
+      • {remove}?       (`boolean`, default: `true`) Prompt before removing.
+      • {trash}?        (`boolean`, default: `true`) Prompt before trashing.
+      • {default_yes}?  (`boolean`, default: `false`) If `true` the prompt
+                        will be `Y/n`, otherwise `y/N`
 
 
 
