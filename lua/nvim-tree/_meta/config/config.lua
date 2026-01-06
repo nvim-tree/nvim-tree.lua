@@ -260,19 +260,6 @@ error("Cannot require a meta file")
 ---@field ignore? string[]
 
 --
--- Trash
---
-
----@class nvim_tree.Config.Trash
----
----The command used to trash items, which must be installed on your system.
---- - linux: `gio trash`, from linux package `glib2`
---- - macOS: `trash`, from homebrew package `trash`
---- - windows: `trash`, requires `trash-cli` or similar
----(default: `gio trash` or `trash`)
----@field cmd? string
-
---
 -- System Open
 --
 
