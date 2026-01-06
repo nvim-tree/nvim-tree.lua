@@ -3686,20 +3686,6 @@ Class: Config                                               *nvim-tree-config*
                     alphabetically by keymap) or `"desc"` (sort alphabetically
                     by description). Default: `"key"`
 
-*nvim_tree.Config.LiveFilter*
-    Configurations for the live_filtering feature. The live filter allows you
-    to filter the tree nodes dynamically, based on regex matching (see
-    |vim.regex|).
-
-    This feature is bound to the `f` key by default. The filter can be cleared
-    with the `F` key by default.
-
-    Fields: ~
-      • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
-                                the filter displayed in the buffer.
-      • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
-                                folders or not.
-
 *nvim_tree.Config.Log*
     Log to a file `nvim-tree.log` in |stdpath|("log"), usually
     `${XDG_STATE_HOME}/nvim`
@@ -4219,6 +4205,24 @@ Class: Config.Modified                             *nvim-tree-config-modified*
       • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
                               indication on open directories. Only relevant
                               when {show_on_dirs} is `true`.
+
+
+
+==============================================================================
+Class: Config.LiveFilter                        *nvim-tree-config-live-filter*
+
+*nvim_tree.Config.LiveFilter*
+    Live filter allows you to filter the tree nodes dynamically, based on
+    regex matching, see |vim.regex|
+
+    This feature is bound to the `f` key by default. The filter can be cleared
+    with the `F` key by default.
+
+    Fields: ~
+      • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
+                                the filter displayed in the buffer.
+      • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
+                                folders or not.
 
 
 
