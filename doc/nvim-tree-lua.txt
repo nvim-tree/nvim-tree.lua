@@ -4310,12 +4310,13 @@ Class: Config.Help                                     *nvim-tree-config-help*
 *nvim_tree.Config.Help*
     Configure help window, default mapping `g?`
 
-    Valid {sort_by}:
-    • `key`: sort alphabetically by keymap
-    • `desc`: sort alphabetically by description
+                                                *nvim_tree.Config.Help.SortBy*
+    • `key`: alphabetically by keymap
+    • `desc`: alphabetically by description
 
     Fields: ~
-      • {sort_by}?  (`nvim_tree.Config.Help.SortBy`) (default: `key`)
+      • {sort_by}?  (`nvim_tree.Config.Help.SortBy`, default: `key`)
+                    |nvim_tree.Config.Help.SortBy|
 
 
 
