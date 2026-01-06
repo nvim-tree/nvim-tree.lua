@@ -3547,114 +3547,6 @@ Class: Config                                               *nvim-tree-config*
       • {log}?                   (`nvim_tree.Config.Log`)
                                  |nvim_tree.Config.Log|
 
-*nvim_tree.Config.Actions*
-
-    Fields: ~
-      • {use_system_clipboard}?  (`boolean`, default: `true`) A boolean value
-                                 that toggle the use of system clipboard when
-                                 copy/paste function are invoked. When
-                                 enabled, copied text will be stored in
-                                 registers `+` (system), otherwise, it will be
-                                 stored in `1` and `"`
-      • {change_dir}?            (`nvim_tree.Config.Actions.ChangeDir`)
-                                 |nvim_tree.Config.Actions.ChangeDir|
-      • {expand_all}?            (`nvim_tree.Config.Actions.ExpandAll`)
-                                 |nvim_tree.Config.Actions.ExpandAll|
-      • {file_popup}?            (`nvim_tree.Config.Actions.FilePopup`)
-                                 |nvim_tree.Config.Actions.FilePopup|
-      • {open_file}?             (`nvim_tree.Config.Actions.OpenFile`)
-                                 |nvim_tree.Config.Actions.OpenFile|
-      • {remove_file}?           (`nvim_tree.Config.Actions.RemoveFile`)
-                                 |nvim_tree.Config.Actions.RemoveFile|
-
-*nvim_tree.Config.Actions.ChangeDir*
-    vim |current-directory| behaviour
-
-    Fields: ~
-      • {enable}?              (`boolean`, default: `true`) Change the working
-                               directory when changing directories in the tree
-      • {global}?              (`boolean`, default: `false`) Use `:cd` instead
-                               of `:lcd` when changing directories.
-      • {restrict_above_cwd}?  (`boolean`, default: `false`) Restrict changing
-                               to a directory above the global cwd.
-
-*nvim_tree.Config.Actions.ExpandAll*
-    Configuration for |nvim-tree-api.tree.expand_all()| and
-    |nvim-tree-api.node.expand()|
-
-    Fields: ~
-      • {max_folder_discovery}?  (`integer`, default: `300`) Limit the number
-                                 of folders being explored when expanding
-                                 every folders. Avoids hanging neovim when
-                                 running this action on very large folders.
-      • {exclude}?               (`string[]`, default: `{}`) A list of
-                                 directories that should not be expanded
-                                 automatically e.g
-                                 `{ ".git", "target", "build" }`
-
-*nvim_tree.Config.Actions.FilePopup*
-    Configuration for file_popup behaviour.
-
-    Fields: ~
-      • {open_win_config}?  (`vim.api.keyset.win_config`, default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
-                            Floating window config for file_popup. See
-                            |nvim_open_win| and |vim.api.keyset.win_config|
-                            for more details. You shouldn't define `width` and
-                            `height` values here. They will be overridden to
-                            fit the file_popup content.
-
-*nvim_tree.Config.Actions.OpenFile*
-    Configuration options for opening a file from nvim-tree.
-
-    Fields: ~
-      • {quit_on_open}?   (`boolean`, default: `false`) Closes the explorer
-                          when opening a file
-      • {eject}?          (`boolean`, default: `true`) Prevent new opened file
-                          from opening in the same window as the tree.
-      • {resize_window}?  (`boolean`, default: `true`) Resizes the tree when
-                          opening a file
-      • {window_picker}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker`)
-                          |nvim_tree.Config.Actions.OpenFile.WindowPicker|
-
-*nvim_tree.Config.Actions.OpenFile.WindowPicker*
-    Window picker configuration.
-
-    Fields: ~
-      • {enable}?   (`boolean`, default: `true`) Enable the feature. If the
-                    feature is not enabled, files will open in window from
-                    which you last opened the tree, obeying
-                    |nvim-tree.actions.open_file.window_picker.exclude|
-      • {picker}?   (`string|fun(): integer`, default: `"default"`) Change the
-                    default window picker: a string `"default"` or a function.
-                    The function should return the window id that will open
-                    the node, or `nil` if an invalid window is picked or user
-                    cancelled the action. The picker may create a new window.
-      • {chars}?    (`string`, default:
-                    `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`) A string of
-                    chars used as identifiers by the window picker.
-      • {exclude}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude`)
-                    |nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude|
-
-*nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude*
-    Tables of buffer option names mapped to a list of option values. Windows
-    containing matching buffers will not be:
-    • available when using a window picker
-    • selected when not using a window picker
-
-    Fields: ~
-      • {filetype}?  (`string[]`) (default:
-                     `{ "notify", "lazy", "qf", "diff", "fugitive", "fugitiveblame", }`)
-      • {buftype}?   (`string[]`) (default:
-                     `{ "nofile", "terminal", "help", }`)
-
-*nvim_tree.Config.Actions.RemoveFile*
-    Configuration options for removing a file from nvim-tree.
-
-    Fields: ~
-      • {close_window}?  (`boolean`, default: `true`) Close any window that
-                         displays a file when removing that file from the
-                         tree.
-
 *nvim_tree.Config.Diagnostics*
 
     Fields: ~
@@ -4311,14 +4203,130 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
 Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
 
 *nvim_tree.Config.HijackDirectories*
+    Hijack directory buffers by replacing the directory buffer with the tree.
+
+    Disable this option if you use vim-dirvish or dirbuf.nvim.
+
+    If |nvim_tree.Config| {hijack_netrw} and {disable_netrw} are `false` this
+    feature will be disabled.
 
     Fields: ~
-      • {enable}?     (`boolean`, default: `true`) Hijack directory buffers.
-                      Disable this option if you use vim-dirvish or
-                      dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are
-                      `false`, this feature will be disabled.
-      • {auto_open}?  (`boolean`, default: `true`) Opens the tree if the tree
-                      was previously closed.
+      • {enable}?     (`boolean`) (default: `true`)
+      • {auto_open}?  (`boolean`, default: `true`) Open if the tree was
+                      previously closed.
+
+
+
+==============================================================================
+Class: Config.Actions                               *nvim-tree-config-actions*
+
+*nvim_tree.Config.Actions*
+
+    Fields: ~
+      • {use_system_clipboard}?  (`boolean`, default: `true`) Use the system
+                                 clipboard for copy/paste. Copied text will be
+                                 stored in registers `+` (system), otherwise,
+                                 it will be stored in `1` and `"`
+      • {change_dir}?            (`nvim_tree.Config.Actions.ChangeDir`)
+                                 |nvim_tree.Config.Actions.ChangeDir|
+      • {expand_all}?            (`nvim_tree.Config.Actions.ExpandAll`)
+                                 |nvim_tree.Config.Actions.ExpandAll|
+      • {file_popup}?            (`nvim_tree.Config.Actions.FilePopup`)
+                                 |nvim_tree.Config.Actions.FilePopup|
+      • {open_file}?             (`nvim_tree.Config.Actions.OpenFile`)
+                                 |nvim_tree.Config.Actions.OpenFile|
+      • {remove_file}?           (`nvim_tree.Config.Actions.RemoveFile`)
+                                 |nvim_tree.Config.Actions.RemoveFile|
+
+*nvim_tree.Config.Actions.ChangeDir*
+    vim |current-directory| behaviour
+
+    Fields: ~
+      • {enable}?              (`boolean`, default: `true`) Change the working
+                               directory when changing directories in the tree
+      • {global}?              (`boolean`, default: `false`) Use `:cd` instead
+                               of `:lcd` when changing directories.
+      • {restrict_above_cwd}?  (`boolean`, default: `false`) Restrict changing
+                               to a directory above the global cwd.
+
+*nvim_tree.Config.Actions.ExpandAll*
+    Configuration for |nvim-tree-api.tree.expand_all()| and
+    |nvim-tree-api.node.expand()|
+
+    Fields: ~
+      • {max_folder_discovery}?  (`integer`, default: `300`) Limit the number
+                                 of folders being explored when expanding
+                                 every folders. Avoids hanging neovim when
+                                 running this action on very large folders.
+      • {exclude}?               (`string[]`, default: `{}`) A list of
+                                 directories that should not be expanded
+                                 automatically e.g
+                                 `{ ".git", "target", "build" }`
+
+*nvim_tree.Config.Actions.FilePopup*
+    Configuration for file_popup floating window, see |nvim_open_win|
+
+    You shouldn't define |vim.api.keyset.win_config| {width} and {height}
+    values here. They will be overridden to fit the file_popup content.
+
+    Fields: ~
+      • {open_win_config}?  (`vim.api.keyset.win_config`, default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
+                            Neovim window config.
+
+*nvim_tree.Config.Actions.OpenFile*
+    Configuration options for opening a file from nvim-tree.
+
+    Fields: ~
+      • {quit_on_open}?   (`boolean`, default: `false`) Closes the explorer
+                          when opening a file
+      • {eject}?          (`boolean`, default: `true`) Prevent new opened file
+                          from opening in the same window as the tree.
+      • {resize_window}?  (`boolean`, default: `true`) Resizes the tree when
+                          opening a file
+      • {window_picker}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker`)
+                          |nvim_tree.Config.Actions.OpenFile.WindowPicker|
+
+*nvim_tree.Config.Actions.OpenFile.WindowPicker*
+    A window picker will be shown when there are multiple windows available to
+    open a file. It will show a single character identifier in each window's
+    status line.
+
+    When it is not enabled the file will open in the window from which you
+    last opened the tree, obeying {exclude}
+
+    You may define a function that should return the window id that will open
+    the node, or `nil` if an invalid window is picked or user cancelled the
+    action. The picker may create a new window.
+
+    Fields: ~
+      • {enable}?   (`boolean`) (default: `true`)
+      • {picker}?   (`string|fun(): integer`, default: `"default"`) Change the
+                    default window picker: a string `"default"` or a function.
+      • {chars}?    (`string`, default:
+                    `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`) Identifier
+                    characters to use.
+      • {exclude}?  (`nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude`)
+                    |nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude|
+
+*nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude*
+    Tables of buffer option names mapped to a list of option values. Windows
+    containing matching buffers will not be:
+    • available when using a window picker
+    • selected when not using a window picker
+
+    Fields: ~
+      • {filetype}?  (`string[]`) (default:
+                     `{ "notify", "lazy", "qf", "diff", "fugitive", "fugitiveblame", }`)
+      • {buftype}?   (`string[]`) (default:
+                     `{ "nofile", "terminal", "help", }`)
+
+*nvim_tree.Config.Actions.RemoveFile*
+    Configuration options for removing a file from nvim-tree.
+
+    Fields: ~
+      • {close_window}?  (`boolean`, default: `true`) Close any window that
+                         displays a file when removing that file from the
+                         tree.
 
 
 
