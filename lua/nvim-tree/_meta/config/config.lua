@@ -225,14 +225,6 @@ error("Cannot require a meta file")
 ---@field ignored? string Default: `"◌"`
 
 --
--- System Open
---
-
----@class nvim_tree.Config.SystemOpen
----@field cmd? string The open command itself. Default: `""` neovim >= 0.10 defaults to |vim.ui.open| neovim < 0.10 defaults to: UNIX: `"xdg-open"` macOS: `"open"` Windows: `"cmd"`
----@field args? string[] Optional argument list. Default: `{}` Leave empty for OS specific default: Windows: `{ "/c", "start", '""' }`
-
---
 -- Help
 --
 

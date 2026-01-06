@@ -13,4 +13,3 @@ error("Cannot require a meta file")
 ---Whether to filter folders or not.
 ---(default: `true`)
 ---@field always_show_folders? boolean
-

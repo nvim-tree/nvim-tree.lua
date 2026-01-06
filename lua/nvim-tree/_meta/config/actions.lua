@@ -65,7 +65,7 @@ error("Cannot require a meta file")
 ---You shouldn't define |vim.api.keyset.win_config| {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.Config.Actions.FilePopup
 ---
----Neovim window config. 
+---Neovim window config.
 ---(default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
 ---@field open_win_config? vim.api.keyset.win_config
 
@@ -142,4 +142,3 @@ error("Cannot require a meta file")
 ---Close any window that displays a file when removing that file from the tree.
 ---(default: `true`)
 ---@field close_window? boolean
-

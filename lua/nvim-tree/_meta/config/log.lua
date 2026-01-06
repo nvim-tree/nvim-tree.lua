@@ -48,4 +48,3 @@ error("Cannot require a meta file")
 ---|nvim_tree.Config.FilesystemWatchers| processing, verbose.
 ---(default: `false`)
 ---@field watcher? boolean
-
