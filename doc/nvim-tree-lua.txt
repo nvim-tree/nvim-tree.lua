@@ -4319,7 +4319,7 @@ Class: Config.Notify                                 *nvim-tree-config-notify*
 
 
 ==============================================================================
-Class: Config.                                          *nvim-tree-config-YYY*
+Class: Config.Help                                     *nvim-tree-config-help*
 
 *nvim_tree.Config.Help*
     Configure help window, default mapping `g?`
