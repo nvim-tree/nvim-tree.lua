@@ -3992,15 +3992,6 @@ Class: Config                                               *nvim-tree-config*
       • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
                    names on new tab that will prevent `open` and `close`
 
-*nvim_tree.Config.Trash*
-
-    Fields: ~
-      • {cmd}?  (`string`, default: `gio trash` or `trash`) The command used
-                to trash items, which must be installed on your system.
-                • linux: `gio trash`, from linux package `glib2`
-                • macOS: `trash`, from homebrew package `trash`
-                • windows: `trash`, requires `trash-cli` or similar
-
 *nvim_tree.Config.UI*
 
     Fields: ~
@@ -4343,6 +4334,21 @@ Class: Config.Actions                               *nvim-tree-config-actions*
       • {close_window}?  (`boolean`, default: `true`) Close any window that
                          displays a file when removing that file from the
                          tree.
+
+
+
+==============================================================================
+Class: Config.Trash                                   *nvim-tree-config-trash*
+
+*nvim_tree.Config.Trash*
+    Files may be trashed via an external command that must be installed on
+    your system.
+    • linux: `gio trash`, from linux package `glib2`
+    • macOS: `trash`, from homebrew package `trash`
+    • windows: `trash`, requires `trash-cli` or similar
+
+    Fields: ~
+      • {cmd}?  (`string`, default: `gio trash` or `trash`) External command.
 
 
 
