@@ -3663,21 +3663,6 @@ Class: Config                                               *nvim-tree-config*
                     alphabetically by keymap) or `"desc"` (sort alphabetically
                     by description). Default: `"key"`
 
-*nvim_tree.Config.Notify*
-
-    Fields: ~
-      • {threshold}?      (`vim.log.levels`) Specify minimum notification
-                          level, uses the values from |vim.log.levels|
-                          Default: `vim.log.levels.INFO` `ERROR`: hard errors
-                          e.g. failure to read from the file system.
-                          `WARNING`: non-fatal errors e.g. unable to system
-                          open a file. `INFO:` information only e.g. file copy
-                          path confirmation. `DEBUG:` information for
-                          troubleshooting, e.g. failures in some window
-                          closing operations.
-      • {absolute_path}?  (`boolean`) Whether to use absolute paths or item
-                          names in fs action notifications. Default: `true`
-
 *nvim_tree.Config.Renderer*
 
     Fields: ~
@@ -4307,6 +4292,25 @@ Class: Config.Tab                                       *nvim-tree-config-tab*
                    tabpages when the tree is closed.
       • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
                    names on new tab that will prevent `open` and `close`
+
+
+
+==============================================================================
+Class: Config.Notify                                 *nvim-tree-config-notify*
+
+*nvim_tree.Config.Notify*
+    nvim-tree notifications levels:
+    • ERROR: hard errors e.g. failure to read from the file system.
+    • WARN: non-fatal errors e.g. unable to system open a file.
+    • INFO: information only e.g. file copy path confirmation.
+    • DEBUG: information for troubleshooting, e.g. failures in some window
+      closing operations.
+
+    Fields: ~
+      • {threshold}?      (`vim.log.levels`, default: `vim.log.levels.INFO`)
+                          Specify minimum notification level
+      • {absolute_path}?  (`boolean`, default: `true`) Use absolute paths in
+                          FS action notifications, otherwise item names.
 
 
 

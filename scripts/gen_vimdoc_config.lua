@@ -24,7 +24,7 @@ local modules = {
   { helptag = "nvim-tree-config-actions",             title = "Class: Config.Actions",               path = "lua/nvim-tree/_meta/config/actions.lua", },
   { helptag = "nvim-tree-config-trash",               title = "Class: Config.Trash",                 path = "lua/nvim-tree/_meta/config/trash.lua", },
   { helptag = "nvim-tree-config-tab",                 title = "Class: Config.Tab",                   path = "lua/nvim-tree/_meta/config/tab.lua", },
-  { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/notify.lua", },
+  { helptag = "nvim-tree-config-notify",              title = "Class: Config.Notify",                path = "lua/nvim-tree/_meta/config/notify.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/help.lua", },
   { helptag = "nvim-tree-config-ui",                  title = "Class: Config.UI",                    path = "lua/nvim-tree/_meta/config/ui.lua",                  name = "UI", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                   path = "lua/nvim-tree/_meta/config/log.lua", },
