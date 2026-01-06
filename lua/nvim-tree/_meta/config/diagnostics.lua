@@ -1,4 +1,55 @@
 ---@meta
 error("Cannot require a meta file")
 
---- TODO #2934
+---Integrate with |lsp| or COC diagnostics.
+---
+---@class nvim_tree.Config.Diagnostics
+---
+---(default: `false`)
+---@field enable? boolean
+---
+---Idle milliseconds between diagnostic event and tree update.
+---(default: `500`)
+---@field debounce_delay? integer
+---
+---Show diagnostic icons on parent directories.
+---(default: `false`)
+---@field show_on_dirs? boolean
+---
+---Show diagnostics icons on directories that are open. Only relevant when {show_on_dirs} is `true`.
+---(default: `true`)
+---@field show_on_open_dirs? boolean
+---
+---Global |vim.diagnostic.Opts| overrides {severity} and {icons}
+---(default: `false`)
+---@field diagnostic_opts? boolean
+---
+---|nvim_tree.Config.Diagnostics.Severity|
+---@field severity? nvim_tree.Config.Diagnostics.Severity
+---
+---|nvim_tree.Config.Diagnostics.Icons|
+---@field icons? nvim_tree.Config.Diagnostics.Icons
+
+---@class nvim_tree.Config.Diagnostics.Severity
+---
+---|vim.diagnostic.Severity|
+---(default: HINT)
+---@field min? vim.diagnostic.Severity
+---
+---|vim.diagnostic.Severity|
+---(default: ERROR)
+---@field max? vim.diagnostic.Severity
+
+---@class nvim_tree.Config.Diagnostics.Icons
+---
+---(default: )
+---@field hint? string
+---
+---(default: )
+---@field info? string
+---
+---(default: )
+---@field warning? string
+---
+---(default: )
+---@field error? string
