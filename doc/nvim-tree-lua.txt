@@ -3975,23 +3975,6 @@ Class: Config                                               *nvim-tree-config*
                  empty for OS specific default: Windows:
                  `{ "/c", "start", '""' }`
 
-*nvim_tree.Config.Tab*
-
-    Fields: ~
-      • {sync}?  (`nvim_tree.Config.Tab.Sync`) |nvim_tree.Config.Tab.Sync|
-
-*nvim_tree.Config.Tab.Sync*
-    Configuration for syncing nvim-tree across tabs.
-
-    Fields: ~
-      • {open}?    (`boolean`, default: `false`) Opens the tree automatically
-                   when switching tabpage or opening a new tabpage if the tree
-                   was previously open.
-      • {close}?   (`boolean`, default: `false`) Closes the tree across all
-                   tabpages when the tree is closed.
-      • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
-                   names on new tab that will prevent `open` and `close`
-
 *nvim_tree.Config.UI*
 
     Fields: ~
@@ -4160,7 +4143,7 @@ Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
 Class: Config.Modified                             *nvim-tree-config-modified*
 
 *nvim_tree.Config.Modified*
-    Indicate which file have unsaved modification. To see modified status in
+    Indicate which files have unsaved modification. To see modified status in
     the tree you will need to set:
     • |nvim_tree.Config.Renderer.Icons.Show| {modified} to `true` OR
     • |nvim_tree.Config.Renderer| {highlight_modified} to `true`
@@ -4207,8 +4190,7 @@ Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
     Watchers may be disabled for absolute directory paths via {ignore_dirs}.
     Useful when path is not in `.gitignore` or git integration is disabled.
 
-    Regex |pattern| strings must be backslash escaped e.g.
-    `"my-proj/\\.build$"`
+    |vim.regex| strings must be backslash escaped e.g. `"my-proj/\\.build$"`
 
     Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree
     which were used to update the whole tree.
@@ -4349,6 +4331,28 @@ Class: Config.Trash                                   *nvim-tree-config-trash*
 
     Fields: ~
       • {cmd}?  (`string`, default: `gio trash` or `trash`) External command.
+
+
+
+==============================================================================
+Class: Config.Tab                                       *nvim-tree-config-tab*
+
+*nvim_tree.Config.Tab*
+
+    Fields: ~
+      • {sync}?  (`nvim_tree.Config.Tab.Sync`) |nvim_tree.Config.Tab.Sync|
+
+*nvim_tree.Config.Tab.Sync*
+    Configuration for syncing nvim-tree across tabs.
+
+    Fields: ~
+      • {open}?    (`boolean`, default: `false`) Opens the tree automatically
+                   when switching tabpage or opening a new tabpage if the tree
+                   was previously open.
+      • {close}?   (`boolean`, default: `false`) Closes the tree across all
+                   tabpages when the tree is closed.
+      • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
+                   names on new tab that will prevent `open` and `close`
 
 
 
