@@ -3731,21 +3731,6 @@ Class: Config                                               *nvim-tree-config*
                         |nvim_tree.Config.FilesystemWatchers| processing,
                         verbose.
 
-*nvim_tree.Config.Modified*
-    Indicate which file have unsaved modification. To see modified status in
-    the tree you will need to set:
-    • |nvim_tree.Config.Renderer.Icons.Show| `modified` to `true` OR
-    • |nvim_tree.Config.Renderer| `highlight_modified` to `true`
-
-    Fields: ~
-      • {enable}?             (`boolean`, default: `false`) Enable modified.
-      • {show_on_dirs}?       (`boolean`, default: `true`) Show modified
-                              indication on directory whose children are
-                              modified.
-      • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
-                              indication on open directories. Only relevant
-                              when `show_on_dirs` is `true`.
-
 *nvim_tree.Config.Notify*
 
     Fields: ~
@@ -4214,6 +4199,26 @@ Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
       • {enable}?     (`boolean`) (default: `true`)
       • {auto_open}?  (`boolean`, default: `true`) Open if the tree was
                       previously closed.
+
+
+
+==============================================================================
+Class: Config.Modified                             *nvim-tree-config-modified*
+
+*nvim_tree.Config.Modified*
+    Indicate which file have unsaved modification. To see modified status in
+    the tree you will need to set:
+    • |nvim_tree.Config.Renderer.Icons.Show| {modified} to `true` OR
+    • |nvim_tree.Config.Renderer| {highlight_modified} to `true`
+
+    Fields: ~
+      • {enable}?             (`boolean`) (default: `false`)
+      • {show_on_dirs}?       (`boolean`, default: `true`) Show modified
+                              indication on directory whose children are
+                              modified.
+      • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
+                              indication on open directories. Only relevant
+                              when {show_on_dirs} is `true`.
 
 
 
