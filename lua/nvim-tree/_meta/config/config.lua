@@ -302,14 +302,6 @@ error("Cannot require a meta file")
 ---@field error? string Default: `""`
 
 --
--- Notify
---
-
----@class nvim_tree.Config.Notify
----@field threshold? vim.log.levels Specify minimum notification level, uses the values from |vim.log.levels| Default: `vim.log.levels.INFO` `ERROR`: hard errors e.g. failure to read from the file system. `WARNING`: non-fatal errors e.g. unable to system open a file. `INFO:` information only e.g. file copy path confirmation. `DEBUG:` information for troubleshooting, e.g. failures in some window closing operations.
----@field absolute_path? boolean Whether to use absolute paths or item names in fs action notifications. Default: `true`
-
---
 -- View
 --
 
