@@ -3663,37 +3663,6 @@ Class: Config                                               *nvim-tree-config*
                     alphabetically by keymap) or `"desc"` (sort alphabetically
                     by description). Default: `"key"`
 
-*nvim_tree.Config.Log*
-    Log to a file `nvim-tree.log` in |stdpath|("log"), usually
-    `${XDG_STATE_HOME}/nvim`
-
-    Fields: ~
-      • {enable}?    (`boolean`) (default: `false`)
-      • {truncate}?  (`boolean`, default: `false`) Remove existing log file at
-                     startup.
-      • {types}?     (`nvim_tree.Config.Log.Types`)
-                     |nvim_tree.Config.Log.Types|
-
-*nvim_tree.Config.Log.Types*
-    Specify which information to log.
-
-    Fields: ~
-      • {all}?          (`boolean`, default: `false`) Everything.
-      • {profile}?      (`boolean`, default: `false`) Timing of some
-                        operations.
-      • {config}?       (`boolean`, default: `false`) Options and mappings, at
-                        startup.
-      • {copy_paste}?   (`boolean`, default: `false`) File copy and paste
-                        actions.
-      • {dev}?          (`boolean`, default: `false`) Used for local
-                        development only. Not useful for users.
-      • {diagnostics}?  (`boolean`, default: `false`) LSP and COC processing,
-                        verbose.
-      • {git}?          (`boolean`, default: `false`) Git processing, verbose.
-      • {watcher}?      (`boolean`, default: `false`)
-                        |nvim_tree.Config.FilesystemWatchers| processing,
-                        verbose.
-
 *nvim_tree.Config.Notify*
 
     Fields: ~
@@ -4358,6 +4327,42 @@ Class: Config.UI                                         *nvim-tree-config-ui*
       • {trash}?        (`boolean`, default: `true`) Prompt before trashing.
       • {default_yes}?  (`boolean`, default: `false`) If `true` the prompt
                         will be `Y/n`, otherwise `y/N`
+
+
+
+==============================================================================
+Class: Config.Log                                       *nvim-tree-config-log*
+
+*nvim_tree.Config.Log*
+    Log to a file `nvim-tree.log` in |stdpath|("log"), usually
+    `${XDG_STATE_HOME}/nvim`
+
+    Fields: ~
+      • {enable}?    (`boolean`) (default: `false`)
+      • {truncate}?  (`boolean`, default: `false`) Remove existing log file at
+                     startup.
+      • {types}?     (`nvim_tree.Config.Log.Types`)
+                     |nvim_tree.Config.Log.Types|
+
+*nvim_tree.Config.Log.Types*
+    Specify which information to log.
+
+    Fields: ~
+      • {all}?          (`boolean`, default: `false`) Everything.
+      • {profile}?      (`boolean`, default: `false`) Timing of some
+                        operations.
+      • {config}?       (`boolean`, default: `false`) Options and mappings, at
+                        startup.
+      • {copy_paste}?   (`boolean`, default: `false`) File copy and paste
+                        actions.
+      • {dev}?          (`boolean`, default: `false`) Used for local
+                        development only. Not useful for users.
+      • {diagnostics}?  (`boolean`, default: `false`) LSP and COC processing,
+                        verbose.
+      • {git}?          (`boolean`, default: `false`) Git processing, verbose.
+      • {watcher}?      (`boolean`, default: `false`)
+                        |nvim_tree.Config.FilesystemWatchers| processing,
+                        verbose.
 
 
 
