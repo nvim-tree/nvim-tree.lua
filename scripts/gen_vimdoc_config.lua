@@ -2,20 +2,32 @@
 
 -- module name is derived as the file name with the first letter capitalised
 local modules = {
-  Api = {
+  Config = {
+    order = 1,
+    helptag = "nvim-tree-config",
+    title = "Class: Config",
+    path = "lua/nvim-tree/_meta/config/config.lua",
+  },
+  Sort = {
     order = 2,
+    helptag = "nvim-tree-config-sort",
+    title = "Class: Config.Sort",
+    path = "lua/nvim-tree/_meta/config/sort.lua",
+  },
+  Hijack_directories = {
+    order = 3,
+    helptag = "nvim-tree-config-hijack-directories",
+    title = "Class: Config.HijackDirectories",
+    path = "lua/nvim-tree/_meta/config/hijack_directories.lua",
+  },
+  Api = {
+    order = 4,
     helptag = "nvim-tree-api",
     title = "Lua module: nvim_tree.api",
     path = "lua/nvim-tree/_meta/api.lua",
   },
-  Config = {
-    order = 1,
-    helptag = "nvim-tree-module",
-    title = "Lua module: nvim_tree",
-    path = "lua/nvim-tree/_meta/config.lua",
-  },
   Api_decorator = {
-    order = 3,
+    order = 5,
     helptag = "nvim-tree-api-decorator",
     title = "Lua module: nvim_tree.api.decorator",
     path = "lua/nvim-tree/_meta/api_decorator.lua",

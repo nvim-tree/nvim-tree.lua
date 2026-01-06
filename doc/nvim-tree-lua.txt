@@ -3459,7 +3459,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree-api.tree.winid()|
 
 ==============================================================================
-Lua module: nvim_tree                                       *nvim-tree-module*
+Class: Config                                               *nvim-tree-config*
 
 *nvim_tree.Config*
 
@@ -3794,16 +3794,6 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                     alphabetically by keymap) or `"desc"` (sort alphabetically
                     by description). Default: `"key"`
 
-*nvim_tree.Config.HijackDirectories*
-
-    Fields: ~
-      • {enable}?     (`boolean`, default: `true`) Hijack directory buffers.
-                      Disable this option if you use vim-dirvish or
-                      dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are
-                      `false`, this feature will be disabled.
-      • {auto_open}?  (`boolean`, default: `true`) Opens the tree if the tree
-                      was previously closed.
-
 *nvim_tree.Config.LiveFilter*
     Configurations for the live_filtering feature. The live filter allows you
     to filter the tree nodes dynamically, based on regex matching (see
@@ -4135,33 +4125,6 @@ Lua module: nvim_tree                                       *nvim-tree-module*
       • {bottom}?  (`string`) Default: `"─"`
       • {none}?    (`string`) Default: `" "`
 
-*nvim_tree.Config.Sort*
-
-    Fields: ~
-      • {sorter}?         (`nvim_tree.SortOption|fun(nodes: table): nil`)
-                          Changes how files within the same directory are
-                          sorted. Can be one of `"name"`, `"case_sensitive"`,
-                          `"modification_time"`, `"extension"`, `"suffix"`,
-                          `"filetype"` or a function. `"extension"` uses all
-                          suffixes e.g. `foo.tar.gz` -> `.tar.gz` `"suffix"`
-                          uses the last e.g. `.gz` Default: `"name"` Function
-                          may perform a sort or return a string with one of
-                          the above methods. It is passed a table of nodes to
-                          be sorted, each node containing: - `absolute_path`:
-                          `string` - `executable`: `boolean` - `extension`:
-                          `string` - `filetype`: `string` - `link_to`:
-                          `string` - `name`: `string` - `type`: `"directory"`
-                          | `"file"` | `"link"`
-      • {folders_first}?  (`boolean`) Sort folders before files. Has no effect
-                          when |nvim-tree.sort.sorter| is a function. Default:
-                          `true` @see nvim-tree.sort.sorter
-      • {files_first}?    (`boolean`) Sort files before folders. Has no effect
-                          when |nvim-tree.sort.sorter| is a function. If set
-                          to `true` it overrides
-                          |nvim-tree.sort.folders_first|. Default: `false`
-                          @see nvim-tree.sort.sorter @see
-                          nvim-tree.sort.folders_first
-
 *nvim_tree.Config.SystemOpen*
 
     Fields: ~
@@ -4309,6 +4272,53 @@ Lua module: nvim_tree                                       *nvim-tree-module*
                            `{ "root" }`
       • {padding}?         (`integer|fun(): integer|string`) Extra padding to
                            the right. Default: `1`
+
+
+
+==============================================================================
+Class: Config.Sort                                     *nvim-tree-config-sort*
+
+*nvim_tree.Config.Sort*
+
+    Fields: ~
+      • {sorter}?         (`nvim_tree.SortOption|fun(nodes: table): nil`)
+                          Changes how files within the same directory are
+                          sorted. Can be one of `"name"`, `"case_sensitive"`,
+                          `"modification_time"`, `"extension"`, `"suffix"`,
+                          `"filetype"` or a function. `"extension"` uses all
+                          suffixes e.g. `foo.tar.gz` -> `.tar.gz` `"suffix"`
+                          uses the last e.g. `.gz` Default: `"name"` Function
+                          may perform a sort or return a string with one of
+                          the above methods. It is passed a table of nodes to
+                          be sorted, each node containing: - `absolute_path`:
+                          `string` - `executable`: `boolean` - `extension`:
+                          `string` - `filetype`: `string` - `link_to`:
+                          `string` - `name`: `string` - `type`: `"directory"`
+                          | `"file"` | `"link"`
+      • {folders_first}?  (`boolean`) Sort folders before files. Has no effect
+                          when |nvim-tree.sort.sorter| is a function. Default:
+                          `true` @see nvim-tree.sort.sorter
+      • {files_first}?    (`boolean`) Sort files before folders. Has no effect
+                          when |nvim-tree.sort.sorter| is a function. If set
+                          to `true` it overrides
+                          |nvim-tree.sort.folders_first|. Default: `false`
+                          @see nvim-tree.sort.sorter @see
+                          nvim-tree.sort.folders_first
+
+
+
+==============================================================================
+Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
+
+*nvim_tree.Config.HijackDirectories*
+
+    Fields: ~
+      • {enable}?     (`boolean`, default: `true`) Hijack directory buffers.
+                      Disable this option if you use vim-dirvish or
+                      dirbuf.nvim. If `hijack_netrw` and `disable_netrw` are
+                      `false`, this feature will be disabled.
+      • {auto_open}?  (`boolean`, default: `true`) Opens the tree if the tree
+                      was previously closed.
 
 
 
