@@ -8,7 +8,6 @@ error("Cannot require a meta file")
 ---@alias nvim_tree.PlacementOption "before"|"after"|"signcolumn"|"right_align"
 ---@alias nvim_tree.HighlightOption "none"|"icon"|"name"|"all"
 ---@alias nvim_tree.HiddenDisplayOption "none"|"simple"|"all"
----@alias nvim_tree.SortOption "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
 
 --
 -- nvim-tree Setup Config
@@ -261,29 +260,6 @@ error("Cannot require a meta file")
 ---@field disable_for_dirs? string[]|fun(path: string): boolean Disable git integration when git top-level matches these paths. Strings may be relative, evaluated via |fnamemodify| `:p` Function is passed an absolute path and returns true for disable. Default: `{}`
 ---@field timeout? integer Kills the git process after some time if it takes too long. Git integration will be disabled after 10 git jobs exceed this timeout. Default: `400` (ms)
 ---@field cygwin_support? boolean Use `cygpath` if available to resolve paths for git. Default: `false`
-
---
--- Diagnostics
---
-
----@class nvim_tree.Config.Diagnostics
----@field enable? boolean Enable/disable the feature. Default: `false`
----@field debounce_delay? integer Idle milliseconds between diagnostic event and update. Default: `500` (ms)
----@field show_on_dirs? boolean Show diagnostic icons on parent directories. Default: `false`
----@field show_on_open_dirs? boolean Show diagnostics icons on directories that are open. Only relevant when `diagnostics.show_on_dirs` is `true`. Default: `true` @see nvim-tree.diagnostics.show_on_dirs
----@field severity? nvim_tree.Config.Diagnostics.Severity Severity for which the diagnostics will be displayed. See |diagnostic-severity| @see nvim-tree.diagnostics.icons
----@field icons? nvim_tree.Config.Diagnostics.Icons Icons for diagnostic severity.
----@field diagnostic_opts? boolean vim.diagnostic.Opts overrides nvim-tree.diagnostics.severity and nvim-tree.diagnostics.icons Default: `false`
-
----@class nvim_tree.Config.Diagnostics.Severity
----@field min? vim.diagnostic.Severity Minimum severity. Default: `vim.diagnostic.severity.HINT`
----@field max? vim.diagnostic.Severity Maximum severity. Default: `vim.diagnostic.severity.ERROR`
-
----@class nvim_tree.Config.Diagnostics.Icons
----@field hint? string Default: `""`
----@field info? string Default: `""`
----@field warning? string Default: `""`
----@field error? string Default: `""`
 
 --
 -- View

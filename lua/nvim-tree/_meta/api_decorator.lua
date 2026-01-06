@@ -1,6 +1,8 @@
 ---@meta
 error("Cannot require a meta file")
 
+-- TODO #2934 add enum docs
+
 ---Highlight group range as per nvim-tree.renderer.highlight_*
 ---@alias nvim_tree.api.decorator.HighlightRange "none" | "icon" | "name" | "all"
 

@@ -3547,45 +3547,6 @@ Class: Config                                               *nvim-tree-config*
       • {log}?                   (`nvim_tree.Config.Log`)
                                  |nvim_tree.Config.Log|
 
-*nvim_tree.Config.Diagnostics*
-
-    Fields: ~
-      • {enable}?             (`boolean`) Enable/disable the feature. Default:
-                              `false`
-      • {debounce_delay}?     (`integer`) Idle milliseconds between diagnostic
-                              event and update. Default: `500` (ms)
-      • {show_on_dirs}?       (`boolean`) Show diagnostic icons on parent
-                              directories. Default: `false`
-      • {show_on_open_dirs}?  (`boolean`) Show diagnostics icons on
-                              directories that are open. Only relevant when
-                              `diagnostics.show_on_dirs` is `true`. Default:
-                              `true` @see nvim-tree.diagnostics.show_on_dirs
-      • {severity}?           (`nvim_tree.Config.Diagnostics.Severity`)
-                              Severity for which the diagnostics will be
-                              displayed. See |diagnostic-severity| @see
-                              nvim-tree.diagnostics.icons
-      • {icons}?              (`nvim_tree.Config.Diagnostics.Icons`) Icons for
-                              diagnostic severity.
-      • {diagnostic_opts}?    (`boolean`) vim.diagnostic.Opts overrides
-                              nvim-tree.diagnostics.severity and
-                              nvim-tree.diagnostics.icons Default: `false`
-
-*nvim_tree.Config.Diagnostics.Icons*
-
-    Fields: ~
-      • {hint}?     (`string`) Default: `""`
-      • {info}?     (`string`) Default: `""`
-      • {warning}?  (`string`) Default: `""`
-      • {error}?    (`string`) Default: `""`
-
-*nvim_tree.Config.Diagnostics.Severity*
-
-    Fields: ~
-      • {min}?  (`vim.diagnostic.Severity`) Minimum severity. Default:
-                `vim.diagnostic.severity.HINT`
-      • {max}?  (`vim.diagnostic.Severity`) Maximum severity. Default:
-                `vim.diagnostic.severity.ERROR`
-
 *nvim_tree.Config.Filters*
 
     Fields: ~
@@ -4079,6 +4040,47 @@ Class: Config.SystemOpen                        *nvim-tree-config-system-open*
       • {args}?  (`string[]`, default: `{}` or `{ "/c", "start", '""' }` on
                  windows) Optional argument list. Leave empty for OS specific
                  default.
+
+
+
+==============================================================================
+Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
+
+*nvim_tree.Config.Diagnostics*
+    Integrate with |lsp| or COC diagnostics.
+
+    Fields: ~
+      • {enable}?             (`boolean`) (default: `false`)
+      • {debounce_delay}?     (`integer`, default: `500`) Idle milliseconds
+                              between diagnostic event and tree update.
+      • {show_on_dirs}?       (`boolean`, default: `false`) Show diagnostic
+                              icons on parent directories.
+      • {show_on_open_dirs}?  (`boolean`, default: `true`) Show diagnostics
+                              icons on directories that are open. Only
+                              relevant when {show_on_dirs} is `true`.
+      • {diagnostic_opts}?    (`boolean`, default: `false`) Global
+                              |vim.diagnostic.Opts| overrides {severity} and
+                              {icons}
+      • {severity}?           (`nvim_tree.Config.Diagnostics.Severity`)
+                              |nvim_tree.Config.Diagnostics.Severity|
+      • {icons}?              (`nvim_tree.Config.Diagnostics.Icons`)
+                              |nvim_tree.Config.Diagnostics.Icons|
+
+*nvim_tree.Config.Diagnostics.Icons*
+
+    Fields: ~
+      • {hint}?     (`string`) (default: )
+      • {info}?     (`string`) (default: )
+      • {warning}?  (`string`) (default: )
+      • {error}?    (`string`) (default: )
+
+*nvim_tree.Config.Diagnostics.Severity*
+
+    Fields: ~
+      • {min}?  (`vim.diagnostic.Severity`, default: HINT)
+                |vim.diagnostic.Severity|
+      • {max}?  (`vim.diagnostic.Severity`, default: ERROR)
+                |vim.diagnostic.Severity|
 
 
 
