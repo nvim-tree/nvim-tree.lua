@@ -358,28 +358,6 @@ error("Cannot require a meta file")
 ---@field absolute_path? boolean Whether to use absolute paths or item names in fs action notifications. Default: `true`
 
 --
--- Filesystem Watchers
---
-
---- Use file system watcher (libuv fs_event) to watch the filesystem for changes.
----
---- Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree which were used to update the whole tree.
----
---- With this feature, the tree will be updated only for the appropriate folder change, resulting in better performance.
----@class nvim_tree.Config.FilesystemWatchers
----
----(default: `true`)
----@field enable? boolean
----
----Idle milliseconds between filesystem change and action.
----(default: `50`)
----@field debounce_delay? integer
----
----List of vim regex for absolute directory paths that will not be watched or function returning whether a path should be ignored. Strings must be backslash escaped e.g. `"my-proj/\\.build$"`. See |string-match|. Function is passed an absolute path. Useful when path is not in `.gitignore` or git integration is disabled.
----(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
----@field ignore_dirs? string[]|fun(path: string): boolean
-
---
 -- Log
 --
 
