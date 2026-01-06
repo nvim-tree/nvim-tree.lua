@@ -106,8 +106,8 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field enable? boolean
 ---
----Change the default window picker: a string `"default"` or a function.
----(default: `"default"`)
+---Change the default window picker: string `default` or a function.
+---(default: `default`)
 ---@field picker? string|fun(): integer
 ---
 ---Identifier characters to use.
