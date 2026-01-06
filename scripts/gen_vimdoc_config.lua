@@ -14,7 +14,7 @@ local modules = {
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/renderer.lua", },
   { helptag = "nvim-tree-config-hijack-directories",  title = "Class: Config.HijackDirectories",     path = "lua/nvim-tree/_meta/config/hijack_directories.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/update_focused_file.lua", },
-  { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/system_open.lua", },
+  { helptag = "nvim-tree-config-system-open",         title = "Class: Config.SystemOpen",            path = "lua/nvim-tree/_meta/config/system_open.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/git.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                      path = "lua/nvim-tree/_meta/config/diagnostics.lua", },
   { helptag = "nvim-tree-config-modified",            title = "Class: Config.Modified",              path = "lua/nvim-tree/_meta/config/modified.lua", },

@@ -10,4 +10,3 @@ error("Cannot require a meta file")
 ---External command.
 ---(default: `gio trash` or `trash`)
 ---@field cmd? string
-

@@ -3919,16 +3919,6 @@ Class: Config                                               *nvim-tree-config*
       • {bottom}?  (`string`) Default: `"─"`
       • {none}?    (`string`) Default: `" "`
 
-*nvim_tree.Config.SystemOpen*
-
-    Fields: ~
-      • {cmd}?   (`string`) The open command itself. Default: `""` neovim >=
-                 0.10 defaults to |vim.ui.open| neovim < 0.10 defaults to:
-                 UNIX: `"xdg-open"` macOS: `"open"` Windows: `"cmd"`
-      • {args}?  (`string[]`) Optional argument list. Default: `{}` Leave
-                 empty for OS specific default: Windows:
-                 `{ "/c", "start", '""' }`
-
 *nvim_tree.Config.UpdateFocusedFile*
 
     Fields: ~
@@ -4075,6 +4065,28 @@ Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
       • {enable}?     (`boolean`) (default: `true`)
       • {auto_open}?  (`boolean`, default: `true`) Open if the tree was
                       previously closed.
+
+
+
+==============================================================================
+Class: Config.SystemOpen                        *nvim-tree-config-system-open*
+
+*nvim_tree.Config.SystemOpen*
+    Open files or directories via the OS.
+
+    Neovim:
+    • `>=` 0.10 uses |vim.ui.open| unless {cmd} is specified
+    • `<` 0.10 calls external {cmd}:
+      • UNIX: `xdg-open`
+      • macOS: `open`
+      • Windows: `cmd`
+
+    Fields: ~
+      • {cmd}?   (`string`, default: `xdg-open`, `open` or `cmd`) The open
+                 command itself
+      • {args}?  (`string[]`, default: `{}` or `{ "/c", "start", '""' }` on
+                 windows) Optional argument list. Leave empty for OS specific
+                 default.
 
 
 
