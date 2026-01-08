@@ -163,6 +163,7 @@ Show the mappings:  `g?`
 `<C-x>`           Open: Horizontal Split     |nvim-tree-api.node.open.horizontal()|
 `<BS>`            Close Directory            |nvim-tree-api.node.navigate.parent_close()|
 `<CR>`            Open                       |nvim-tree-api.node.open.edit()|
+`<Del>`           Delete                     |nvim-tree-api.fs.remove()|
 `<Tab>`           Open Preview               |nvim-tree-api.node.open.preview()|
 `>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
 `<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
@@ -2534,6 +2535,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lu
   vim.keymap.set("n", "<C-x>",          api.node.open.horizontal,           opts("Open: Horizontal Split"))
   vim.keymap.set("n", "<BS>",           api.node.navigate.parent_close,     opts("Close Directory"))
   vim.keymap.set("n", "<CR>",           api.node.open.edit,                 opts("Open"))
+  vim.keymap.set("n", "<Del>",          api.fs.remove,                      opts("Delete"))
   vim.keymap.set("n", "<Tab>",          api.node.open.preview,              opts("Open Preview"))
   vim.keymap.set("n", ">",              api.node.navigate.sibling.next,     opts("Next Sibling"))
   vim.keymap.set("n", "<",              api.node.navigate.sibling.prev,     opts("Previous Sibling"))
