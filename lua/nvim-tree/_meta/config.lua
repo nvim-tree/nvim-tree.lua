@@ -222,19 +222,6 @@ error("Cannot require a meta file")
 ---@field deleted? string Default: `""`
 ---@field ignored? string Default: `"◌"`
 
---
--- Update Focused File
---
-
----@class nvim_tree.Config.UpdateFocusedFile
----@field enable? boolean Enable this feature. Default: `false`
----@field update_root? nvim_tree.Config.UpdateFocusedFile.UpdateRoot Update the root directory of the tree if the file is not under current root directory. It prefers vim's cwd and `root_dirs`. Otherwise it falls back to the folder containing the file. Only relevant when `update_focused_file.enable` is `true` @see nvim-tree.update_focused_file.enable
----@field exclude? fun(args: vim.api.keyset.create_autocmd.callback_args): boolean A function that returns true if the file should not be focused when opening. Takes the `BufEnter` event as an argument. see |autocmd-events| Default: `false`
-
----@class nvim_tree.Config.UpdateFocusedFile.UpdateRoot
----@field enable? boolean Default: `false`
----@field ignore_list? string[] List of buffer names and filetypes that will not update the root dir of the tree if the file isn't found under the current root directory. Only relevant when `update_focused_file.update_root.enable` and `update_focused_file.enable` are `true`. Default: `{}` @see nvim-tree.update_focused_file.update_root.enable @see nvim-tree.update_focused_file.enable
-
 
 --
 -- View
