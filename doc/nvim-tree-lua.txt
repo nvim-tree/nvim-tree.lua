@@ -3803,35 +3803,6 @@ Class: Config                                               *nvim-tree-config*
       • {bottom}?  (`string`) Default: `"─"`
       • {none}?    (`string`) Default: `" "`
 
-*nvim_tree.Config.UpdateFocusedFile*
-
-    Fields: ~
-      • {enable}?       (`boolean`) Enable this feature. Default: `false`
-      • {update_root}?  (`nvim_tree.Config.UpdateFocusedFile.UpdateRoot`)
-                        Update the root directory of the tree if the file is
-                        not under current root directory. It prefers vim's cwd
-                        and `root_dirs`. Otherwise it falls back to the folder
-                        containing the file. Only relevant when
-                        `update_focused_file.enable` is `true` @see
-                        nvim-tree.update_focused_file.enable
-      • {exclude}?      (`fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`)
-                        A function that returns true if the file should not be
-                        focused when opening. Takes the `BufEnter` event as an
-                        argument. see |autocmd-events| Default: `false`
-
-*nvim_tree.Config.UpdateFocusedFile.UpdateRoot*
-
-    Fields: ~
-      • {enable}?       (`boolean`) Default: `false`
-      • {ignore_list}?  (`string[]`) List of buffer names and filetypes that
-                        will not update the root dir of the tree if the file
-                        isn't found under the current root directory. Only
-                        relevant when `update_focused_file.update_root.enable`
-                        and `update_focused_file.enable` are `true`. Default:
-                        `{}` @see
-                        nvim-tree.update_focused_file.update_root.enable @see
-                        nvim-tree.update_focused_file.enable
-
 *nvim_tree.Config.View*
 
     Fields: ~
@@ -3949,6 +3920,38 @@ Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
       • {enable}?     (`boolean`) (default: `true`)
       • {auto_open}?  (`boolean`, default: `true`) Open if the tree was
                       previously closed.
+
+
+
+==============================================================================
+Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
+
+*nvim_tree.Config.UpdateFocusedFile*
+    Update the focused file on |BufEnter|, uncollapsing folders recursively.
+
+    Fields: ~
+      • {enable}?       (`boolean`) (default: `false`)
+      • {update_root}?  (`nvim_tree.Config.UpdateFocusedFile.UpdateRoot`)
+                        |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|
+      • {exclude}?      (`fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`, default: `false`)
+                        A function called on |BufEnter| that returns true if
+                        the file should not be focused when opening.
+
+*nvim_tree.Config.UpdateFocusedFile.UpdateRoot*
+    Update the root directory of the tree if the file is not under the current
+    root directory.
+
+    Prefers vim's cwd and |nvim_tree.Config| {root_dirs}, falling back to the
+    directory containing the file.
+
+    Only relevant when |nvim_tree.Config.UpdateFocusedFile| {enable} is `true`
+
+    Fields: ~
+      • {enable}?       (`boolean`) (default: `false`)
+      • {ignore_list}?  (`string[]`, default: `{}`) List of buffer names and
+                        filetypes that will not update the root dir of the
+                        tree if the file isn't found under the current root
+                        directory.
 
 
 
