@@ -235,17 +235,6 @@ error("Cannot require a meta file")
 ---@field enable? boolean Default: `false`
 ---@field ignore_list? string[] List of buffer names and filetypes that will not update the root dir of the tree if the file isn't found under the current root directory. Only relevant when `update_focused_file.update_root.enable` and `update_focused_file.enable` are `true`. Default: `{}` @see nvim-tree.update_focused_file.update_root.enable @see nvim-tree.update_focused_file.enable
 
---
--- Git
---
-
----@class nvim_tree.Config.Git
----@field enable? boolean Enable / disable the feature. Default: `true`
----@field show_on_dirs? boolean Show status icons of children when directory itself has no status icon. Default: `true`
----@field show_on_open_dirs? boolean Show status icons of children on directories that are open. Only relevant when `git.show_on_dirs` is `true`. Default: `true` @see nvim-tree.git.show_on_dirs
----@field disable_for_dirs? string[]|fun(path: string): boolean Disable git integration when git top-level matches these paths. Strings may be relative, evaluated via |fnamemodify| `:p` Function is passed an absolute path and returns true for disable. Default: `{}`
----@field timeout? integer Kills the git process after some time if it takes too long. Git integration will be disabled after 10 git jobs exceed this timeout. Default: `400` (ms)
----@field cygwin_support? boolean Use `cygpath` if available to resolve paths for git. Default: `false`
 
 --
 -- View

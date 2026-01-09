@@ -3,13 +3,12 @@ error("Cannot require a meta file")
 
 ---Use file system watchers (libuv fs_event) to monitor the filesystem for changes and update the tree.
 ---
----With this feature, the tree will be updated only for the appropriate folder change, resulting in better performance.
+---With this feature, the tree will be partially updated on specific directory changes, resulting in better performance.
 ---
----Watchers may be disabled for absolute directory paths via {ignore_dirs}. Useful when path is not in `.gitignore` or git integration is disabled.
----
----|vim.regex| strings must be backslash escaped e.g. `"my-proj/\\.build$"`
----
----Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree which were used to update the whole tree.
+---Watchers may be disabled for absolute directory paths via {ignore_dirs}. 
+--- - A list of |vim regex| to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
+--- - A function that is passed an absolute path and returns `true` to disable
+---This may be useful when a path is not in `.gitignore` or git integration is disabled.
 ---@class nvim_tree.Config.FilesystemWatchers
 ---
 ---(default: `true`)
@@ -19,6 +18,6 @@ error("Cannot require a meta file")
 ---(default: `50`)
 ---@field debounce_delay? integer
 ---
----Disable for directories via a list of |vim regex| OR a function passed the absolute path of the directory.
+---Disable for directories.
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
 ---@field ignore_dirs? string[]|fun(path: string): boolean

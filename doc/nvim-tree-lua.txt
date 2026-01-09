@@ -3547,31 +3547,6 @@ Class: Config                                               *nvim-tree-config*
       • {log}?                   (`nvim_tree.Config.Log`)
                                  |nvim_tree.Config.Log|
 
-*nvim_tree.Config.Git*
-
-    Fields: ~
-      • {enable}?             (`boolean`) Enable / disable the feature.
-                              Default: `true`
-      • {show_on_dirs}?       (`boolean`) Show status icons of children when
-                              directory itself has no status icon. Default:
-                              `true`
-      • {show_on_open_dirs}?  (`boolean`) Show status icons of children on
-                              directories that are open. Only relevant when
-                              `git.show_on_dirs` is `true`. Default: `true`
-                              @see nvim-tree.git.show_on_dirs
-      • {disable_for_dirs}?   (`string[]|fun(path: string): boolean`) Disable
-                              git integration when git top-level matches these
-                              paths. Strings may be relative, evaluated via
-                              |fnamemodify| `:p` Function is passed an
-                              absolute path and returns true for disable.
-                              Default: `{}`
-      • {timeout}?            (`integer`) Kills the git process after some
-                              time if it takes too long. Git integration will
-                              be disabled after 10 git jobs exceed this
-                              timeout. Default: `400` (ms)
-      • {cygwin_support}?     (`boolean`) Use `cygpath` if available to
-                              resolve paths for git. Default: `false`
-
 *nvim_tree.Config.Renderer*
 
     Fields: ~
@@ -4000,6 +3975,38 @@ Class: Config.SystemOpen                        *nvim-tree-config-system-open*
 
 
 ==============================================================================
+Class: Config.Git                                       *nvim-tree-config-git*
+
+*nvim_tree.Config.Git*
+    Git operations are run in the background thus status may not immediately
+    appear.
+
+    Processes will be killed if they exceed {timeout}ms. Git integration will
+    be disabled following 5 timeouts and you will be notified.
+
+    Git integration may be disabled for git top-level directories via
+    {disable_for_dirs}:
+    • A list of relative paths evaluated with |fnamemodify| `:p` OR
+    • A function that is passed an absolute path and returns `true` to disable
+
+    Fields: ~
+      • {enable}?             (`boolean`) (default: `true`)
+      • {show_on_dirs}?       (`boolean`, default: `true`) Show status icons
+                              of children when directory itself has no status
+                              icon
+      • {show_on_open_dirs}?  (`boolean`, default: `true`) Show status icons
+                              of children on directories that are open. Only
+                              relevant when {show_on_dirs} is `true`.
+      • {disable_for_dirs}?   (`string[]|fun(path: string): boolean`, default:
+                              `{}`) Disable for top level paths.
+      • {timeout}?            (`integer`, default: `400`) `git` processes
+                              timeout milliseconds.
+      • {cygwin_support}?     (`boolean`, default: `false`) Use `cygpath` if
+                              available to resolve paths for git.
+
+
+
+==============================================================================
 Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
 
 *nvim_tree.Config.Diagnostics*
@@ -4143,25 +4150,22 @@ Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
     Use file system watchers (libuv fs_event) to monitor the filesystem for
     changes and update the tree.
 
-    With this feature, the tree will be updated only for the appropriate
-    folder change, resulting in better performance.
+    With this feature, the tree will be partially updated on specific
+    directory changes, resulting in better performance.
 
     Watchers may be disabled for absolute directory paths via {ignore_dirs}.
-    Useful when path is not in `.gitignore` or git integration is disabled.
-
-    |vim.regex| strings must be backslash escaped e.g. `"my-proj/\\.build$"`
-
-    Using this will disable |BufEnter| and |BufWritePost| events in nvim-tree
-    which were used to update the whole tree.
+    • A list of |vim regex| to match a path, backslash escaped e.g.
+      `"my-proj/\\.build$"` OR
+    • A function that is passed an absolute path and returns `true` to disable
+      This may be useful when a path is not in `.gitignore` or git integration
+      is disabled.
 
     Fields: ~
       • {enable}?          (`boolean`) (default: `true`)
       • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
-                           Disable for directories via a list of |vim regex|
-                           OR a function passed the absolute path of the
-                           directory.
+                           Disable for directories.
 
 
 

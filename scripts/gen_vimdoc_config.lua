@@ -8,14 +8,14 @@
 ---Generated within help files in this order
 ---@type Module[]
 local modules = {
-  { helptag = "nvim-tree-config",                     title = "Class: Config",                    path = "lua/nvim-tree/_meta/config/config.lua", },
+  { helptag = "nvim-tree-config",                     title = "Class: Config",                    path = "lua/nvim-tree/_meta/config.lua", },
   { helptag = "nvim-tree-config-sort",                title = "Class: Config.Sort",               path = "lua/nvim-tree/_meta/config/sort.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                   path = "lua/nvim-tree/_meta/config/view.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                   path = "lua/nvim-tree/_meta/config/renderer.lua", },
   { helptag = "nvim-tree-config-hijack-directories",  title = "Class: Config.HijackDirectories",  path = "lua/nvim-tree/_meta/config/hijack_directories.lua", },
   { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                   path = "lua/nvim-tree/_meta/config/update_focused_file.lua", },
   { helptag = "nvim-tree-config-system-open",         title = "Class: Config.SystemOpen",         path = "lua/nvim-tree/_meta/config/system_open.lua", },
-  { helptag = "nvim-tree-config-YYY",                 title = "Class: Config.",                   path = "lua/nvim-tree/_meta/config/git.lua", },
+  { helptag = "nvim-tree-config-git",                 title = "Class: Config.Git",                path = "lua/nvim-tree/_meta/config/git.lua", },
   { helptag = "nvim-tree-config-diagnostics",         title = "Class: Config.Diagnostics",        path = "lua/nvim-tree/_meta/config/diagnostics.lua", },
   { helptag = "nvim-tree-config-modified",            title = "Class: Config.Modified",           path = "lua/nvim-tree/_meta/config/modified.lua", },
   { helptag = "nvim-tree-config-filters",             title = "Class: Config.Filters",            path = "lua/nvim-tree/_meta/config/filters.lua", },
