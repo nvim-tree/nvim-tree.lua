@@ -10,7 +10,7 @@ error("Cannot require a meta file")
 -- Tab.Sync
 --
 
----Configuration for syncing nvim-tree across tabs.
+---Sync nvim-tree across tabs.
 ---@class nvim_tree.Config.Tab.Sync
 ---
 ---Opens the tree automatically when switching tabpage or opening a new tabpage if the tree was previously open.

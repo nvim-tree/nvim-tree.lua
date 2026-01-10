@@ -30,6 +30,7 @@ error("Cannot require a meta file")
 ---[nvim_tree.Config.Diagnostics.Icons]
 ---@field icons? nvim_tree.Config.Diagnostics.Icons
 
+---@inlinedoc
 ---@class nvim_tree.Config.Diagnostics.Severity
 ---
 ---[vim.diagnostic.Severity]
@@ -40,6 +41,7 @@ error("Cannot require a meta file")
 ---(default: ERROR)
 ---@field max? vim.diagnostic.Severity
 
+---@inlinedoc
 ---@class nvim_tree.Config.Diagnostics.Icons
 ---
 ---(default: )
