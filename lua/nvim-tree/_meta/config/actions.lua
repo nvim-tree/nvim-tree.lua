@@ -39,7 +39,7 @@ error("Cannot require a meta file")
 ---@field restrict_above_cwd? boolean
 
 
----Configuration for [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
+---Configure [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
 ---@class nvim_tree.Config.Actions.ExpandAll
 ---
 ---Limit the number of folders being explored when expanding every folders. Avoids hanging neovim when running this action on very large folders.
@@ -51,7 +51,7 @@ error("Cannot require a meta file")
 ---@field exclude? string[]
 
 
----Configuration for file_popup floating window.
+---{file_popup} floating window.
 ---
 ---[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
 ---```lua
@@ -70,7 +70,7 @@ error("Cannot require a meta file")
 ---@field open_win_config? vim.api.keyset.win_config
 
 
----Configuration options for opening a file from nvim-tree.
+---Opening files.
 ---@class nvim_tree.Config.Actions.OpenFile
 ---
 ---Closes the explorer when opening a file
@@ -124,7 +124,7 @@ error("Cannot require a meta file")
 ---@field buftype? string[]
 
 
----Configuration options for removing a file from nvim-tree.
+---Removing files.
 ---@class nvim_tree.Config.Actions.RemoveFile
 ---
 ---Close any window that displays a file when removing that file from the tree.

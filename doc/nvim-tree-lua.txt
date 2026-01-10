@@ -3467,10 +3467,9 @@ Class: Config                                               *nvim-tree-config*
     Fields: ~
       • {on_attach}?             (`string|fun(bufnr: integer)`) Runs when
                                  creating the nvim-tree buffer. Use this to
-                                 set your nvim-tree specific mappings. See
-                                 |nvim-tree-mappings|. When `on_attach` is not
-                                 a function, |nvim-tree-mappings-default| will
-                                 be called.
+                                 set your |nvim-tree-mappings|. When
+                                 `on_attach` is not a function,
+                                 |nvim-tree-mappings-default| will be called.
       • {hijack_cursor}?         (`boolean`, default: `false`) Keeps the
                                  cursor on the first letter of the filename
                                  when moving in the tree.
@@ -3492,12 +3491,12 @@ Class: Config                                               *nvim-tree-config*
       • {root_dirs}?             (`string[]`) Preferred root directories. Only
                                  relevant when
                                  |nvim_tree.Config.UpdateFocusedFile|
-                                 `update_root` is `true`
+                                 {update_root} is `true`
       • {prefer_startup_root}?   (`boolean`, default: `false`) Prefer startup
                                  root directory when updating root directory
                                  of the tree. Only relevant when
                                  |nvim_tree.Config.UpdateFocusedFile|
-                                 `update_root` is `true`
+                                 {update_root} is `true`
       • {sync_root_with_cwd}?    (`boolean`, default: `false`) Changes the
                                  tree root directory on |DirChanged| and
                                  refreshes the tree.
@@ -3576,7 +3575,7 @@ Class: Config                                               *nvim-tree-config*
                                    highlighted with `NvimTreeSpecialFile`.
                                    Default:
                                    `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
-      • {hidden_display}?          (`fun(hidden_stats: table<string, integer>): string?|nvim_tree.HiddenDisplayOption`)
+      • {hidden_display}?          (`(fun(hidden_stats: table<string, integer>): string)|nvim_tree.HiddenDisplayOption`)
                                    Show a summary of hidden files below the
                                    tree using
                                    `NvimTreeHiddenDisplay Default: `"none"`
@@ -3812,7 +3811,7 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
 *nvim_tree.Config.Sort*
     Sort files within a directory.
 
-    {sorter} builtin |nvim_tree.Config.Sort.Sorter|:
+    {sorter}                                    *nvim_tree.Config.Sort.Sorter*
     • `name`
     • `case_sensitive` name
     • `modification_time`
@@ -3833,7 +3832,7 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
         end
 <
 
-    Alternatively, the function may return a |nvim_tree.Config.Sort.Sorter|
+    {sorter} may be a function that returns a |nvim_tree.Config.Sort.Sorter|
 
     Fields: ~
       • {sorter}?         (`nvim_tree.Config.Sort.Sorter|fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?`)
@@ -3869,9 +3868,9 @@ Class: Config.View                                     *nvim-tree-config-view*
                                         entering nvim-tree, reposition the
                                         view so that the current node is
                                         initially centralized, see |zz|.
-      • {cursorline}?                   (`boolean`, default: `true`) Set
+      • {cursorline}?                   (`boolean`, default: `true`)
                                         |cursorline|
-      • {cursorlineopt}?                (`string`, default: `both`) Set
+      • {cursorlineopt}?                (`string`, default: `both`)
                                         |cursorlineopt|
       • {debounce_delay}?               (`integer`, default: `15`) Idle
                                         milliseconds before some reload /
@@ -3884,12 +3883,11 @@ Class: Config.View                                     *nvim-tree-config-view*
                                         opening a file. If `false`, the height
                                         and width of windows other than
                                         nvim-tree will be equalized.
-      • {number}?                       (`boolean`, default: `false`) Set
-                                        |number|
-      • {relativenumber}?               (`boolean`, default: `false`) Set
+      • {number}?                       (`boolean`, default: `false`) |number|
+      • {relativenumber}?               (`boolean`, default: `false`)
                                         |relativenumber|
       • {signcolumn}?                   (`"yes"|"auto"|"no"`, default: `yes`)
-                                        Set |signcolumn|.
+                                        |signcolumn|
       • {width}?                        (`nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width`)
                                         (default: `30`)
       • {float}?                        (`nvim_tree.Config.View.Float`)
@@ -3959,7 +3957,7 @@ Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
       • {enable}?       (`boolean`) (default: `false`)
       • {update_root}?  (`nvim_tree.Config.UpdateFocusedFile.UpdateRoot`)
                         |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|
-      • {exclude}?      (`fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`, default: `false`)
+      • {exclude}?      (`boolean|fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`, default: `false`)
                         A function called on |BufEnter| that returns true if
                         the file should not be focused when opening.
 
@@ -4053,26 +4051,17 @@ Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
       • {diagnostic_opts}?    (`boolean`, default: `false`) Global
                               |vim.diagnostic.Opts| overrides {severity} and
                               {icons}
-      • {severity}?           (`nvim_tree.Config.Diagnostics.Severity`)
+      • {severity}?           (`table`)
                               |nvim_tree.Config.Diagnostics.Severity|
-      • {icons}?              (`nvim_tree.Config.Diagnostics.Icons`)
-                              |nvim_tree.Config.Diagnostics.Icons|
-
-*nvim_tree.Config.Diagnostics.Icons*
-
-    Fields: ~
-      • {hint}?     (`string`) (default: )
-      • {info}?     (`string`) (default: )
-      • {warning}?  (`string`) (default: )
-      • {error}?    (`string`) (default: )
-
-*nvim_tree.Config.Diagnostics.Severity*
-
-    Fields: ~
-      • {min}?  (`vim.diagnostic.Severity`, default: HINT)
-                |vim.diagnostic.Severity|
-      • {max}?  (`vim.diagnostic.Severity`, default: ERROR)
-                |vim.diagnostic.Severity|
+                              • {min}? (`vim.diagnostic.Severity`, default:
+                                HINT) |vim.diagnostic.Severity|
+                              • {max}? (`vim.diagnostic.Severity`, default:
+                                ERROR) |vim.diagnostic.Severity|
+      • {icons}?              (`table`) |nvim_tree.Config.Diagnostics.Icons|
+                              • {hint}? (`string`) (default: )
+                              • {info}? (`string`) (default: )
+                              • {warning}? (`string`) (default: )
+                              • {error}? (`string`) (default: )
 
 
 
@@ -4231,7 +4220,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
                                to a directory above the global cwd.
 
 *nvim_tree.Config.Actions.ExpandAll*
-    Configuration for |nvim-tree-api.tree.expand_all()| and
+    Configure |nvim-tree-api.tree.expand_all()| and
     |nvim-tree-api.node.expand()|
 
     Fields: ~
@@ -4245,7 +4234,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
                                  `{ ".git", "target", "build" }`
 
 *nvim_tree.Config.Actions.FilePopup*
-    Configuration for file_popup floating window.
+    {file_popup} floating window.
 
     |vim.api.keyset.win_config| {open_win_config} is passed directly to
     |nvim_open_win|, default: >lua
@@ -4265,7 +4254,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
       • {open_win_config}?  (`vim.api.keyset.win_config`) (default: above)
 
 *nvim_tree.Config.Actions.OpenFile*
-    Configuration options for opening a file from nvim-tree.
+    Opening files.
 
     Fields: ~
       • {quit_on_open}?   (`boolean`, default: `false`) Closes the explorer
@@ -4312,7 +4301,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
                      `{ "nofile", "terminal", "help", }`)
 
 *nvim_tree.Config.Actions.RemoveFile*
-    Configuration options for removing a file from nvim-tree.
+    Removing files.
 
     Fields: ~
       • {close_window}?  (`boolean`, default: `true`) Close any window that
@@ -4345,7 +4334,7 @@ Class: Config.Tab                                       *nvim-tree-config-tab*
       • {sync}?  (`nvim_tree.Config.Tab.Sync`) |nvim_tree.Config.Tab.Sync|
 
 *nvim_tree.Config.Tab.Sync*
-    Configuration for syncing nvim-tree across tabs.
+    Sync nvim-tree across tabs.
 
     Fields: ~
       • {open}?    (`boolean`, default: `false`) Opens the tree automatically
@@ -4417,7 +4406,7 @@ Class: Config.UI                                         *nvim-tree-config-ui*
 Class: Config.Log                                       *nvim-tree-config-log*
 
 *nvim_tree.Config.Log*
-    Log to a file `nvim-tree.log` in |stdpath|("log"), usually
+    Log to a file `nvim-tree.log` in |stdpath| `log`, usually
     `${XDG_STATE_HOME}/nvim`
 
     Fields: ~
