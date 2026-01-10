@@ -34,7 +34,7 @@ local function save_bookmarks(marks, opts)
     file:write(vim.json.encode(data))
     file:close()
   else
-    notify.warn("Invalid bookmarks.save_path, disabling persistence: " .. errmsg)
+    notify.warn(string.format("Invalid bookmarks.persist, disabling persistence: %s", errmsg))
     opts.bookmarks.persist = false
   end
 end
@@ -79,7 +79,7 @@ function Marks:new(args)
     if ok then
       self.marks = loaded_marks
     else
-      notify.warn("Failed to load bookmarks: " .. loaded_marks)
+      notify.warn(string.format("Failed to load bookmarks: %s", loaded_marks))
     end
   end
 end
@@ -116,7 +116,7 @@ function Marks:toggle(node)
   if self.explorer.opts.bookmarks.persist then
     local ok, err = pcall(save_bookmarks, self.marks, self.explorer.opts)
     if not ok then
-      notify.warn("Failed to save bookmarks: " .. err)
+      notify.warn(string.format("Failed to save bookmarks: %s", err))
     end
   end
   self.explorer.renderer:draw()

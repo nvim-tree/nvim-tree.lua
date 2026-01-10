@@ -1405,7 +1405,6 @@ delete/wipe. A reload or filesystem event will result in an update.
 *nvim-tree.filters.no_bookmark*
 Do not show files that are not bookmarked.
 Toggle via |nvim-tree-api.tree.toggle_no_bookmark_filter()|, default `M`
-Enabling this is not useful as there is no means yet to persist bookmarks.
   Type: `boolean`, Default: `false`
 
 *nvim-tree.filters.custom*
