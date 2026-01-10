@@ -22,9 +22,6 @@ error("Cannot require a meta file")
 ---|nvim_tree.Config.Actions.RemoveFile|
 ---@field remove_file? nvim_tree.Config.Actions.RemoveFile
 
---
--- Actions.ChangeDir
---
 
 --- vim |current-directory| behaviour
 ---@class nvim_tree.Config.Actions.ChangeDir
@@ -41,9 +38,6 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field restrict_above_cwd? boolean
 
---
--- Actions.ExpandAll
---
 
 ---Configuration for |nvim-tree-api.tree.expand_all()| and |nvim-tree-api.node.expand()|
 ---@class nvim_tree.Config.Actions.ExpandAll
@@ -56,22 +50,25 @@ error("Cannot require a meta file")
 ---(default: `{}`)
 ---@field exclude? string[]
 
---
--- Actions.FilePopup
---
 
----Configuration for file_popup floating window, see |nvim_open_win|
+---Configuration for file_popup floating window.
 ---
+---|vim.api.keyset.win_config| {open_win_config} is passed directly to |nvim_open_win|, default:
+---```lua
+---{
+---  col = 1,
+---  row = 1,
+---  relative = "cursor",
+---  border = "shadow",
+---  style = "minimal",
+---}
+---```
 ---You shouldn't define |vim.api.keyset.win_config| {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.Config.Actions.FilePopup
 ---
----Neovim window config.
----(default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
+---(default: above)
 ---@field open_win_config? vim.api.keyset.win_config
 
---
--- Actions.OpenFile
---
 
 ---Configuration options for opening a file from nvim-tree.
 ---@class nvim_tree.Config.Actions.OpenFile
@@ -91,9 +88,6 @@ error("Cannot require a meta file")
 ---|nvim_tree.Config.Actions.OpenFile.WindowPicker|
 ---@field window_picker? nvim_tree.Config.Actions.OpenFile.WindowPicker
 
---
--- Actions.OpenFile.WindowPicker
---
 
 ---A window picker will be shown when there are multiple windows available to open a file. It will show a single character identifier in each window's status line.
 ---
@@ -117,9 +111,6 @@ error("Cannot require a meta file")
 ---|nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude|
 ---@field exclude? nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude
 
---
--- Actions.OpenFile.WindowPicker.Exclude
---
 
 ---Tables of buffer option names mapped to a list of option values. Windows containing matching buffers will not be:
 --- - available when using a window picker
@@ -132,9 +123,6 @@ error("Cannot require a meta file")
 ---(default: `{ "nofile", "terminal", "help", }`)
 ---@field buftype? string[]
 
---
--- Actions.RemoveFile
---
 
 ---Configuration options for removing a file from nvim-tree.
 ---@class nvim_tree.Config.Actions.RemoveFile
