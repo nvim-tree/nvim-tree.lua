@@ -252,6 +252,7 @@ local function setup_autocommands(opts)
   })
 end
 
+---@type nvim_tree.Config
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   on_attach = "default",
   hijack_cursor = false,

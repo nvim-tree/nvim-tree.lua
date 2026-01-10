@@ -3,7 +3,7 @@ error("Cannot require a meta file")
 
 ---@class nvim_tree.Config.Tab
 ---
----|nvim_tree.Config.Tab.Sync|
+---[nvim_tree.Config.Tab.Sync]
 ---@field sync? nvim_tree.Config.Tab.Sync
 
 --

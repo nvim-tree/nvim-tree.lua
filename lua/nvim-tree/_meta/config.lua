@@ -6,12 +6,12 @@ error("Cannot require a meta file")
 ---@alias nvim_tree.HighlightOption "none"|"icon"|"name"|"all"
 ---@alias nvim_tree.HiddenDisplayOption "none"|"simple"|"all"
 
----
 --- TODO #2934 brief and some links
+---
 ---
 ---@class nvim_tree.Config
 ---
----Runs when creating the nvim-tree buffer. Use this to set your nvim-tree specific mappings. See |nvim-tree-mappings|. When `on_attach` is not a function, |nvim-tree-mappings-default| will be called.
+---Runs when creating the nvim-tree buffer. Use this to set your [nvim-tree-mappings]. When `on_attach` is not a function, [nvim-tree-mappings-default] will be called.
 ---@field on_attach? string|fun(bufnr: integer)
 ---
 ---Keeps the cursor on the first letter of the filename when moving in the tree.
@@ -22,7 +22,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field auto_reload_on_write? boolean
 ---
----Completely disable |netrw|, see |nvim-tree-netrw| for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
+---Completely disable [netrw], see [nvim-tree-netrw] for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
 ---(default: `false`)
 ---@field disable_netrw? boolean
 ---
@@ -36,18 +36,18 @@ error("Cannot require a meta file")
 -----@field hijack_unnamed_buffer_when_opening? boolean
 ---@field hubwo? boolean
 ---
----Preferred root directories. Only relevant when |nvim_tree.Config.UpdateFocusedFile| `update_root` is `true`
+---Preferred root directories. Only relevant when [nvim_tree.Config.UpdateFocusedFile] {update_root} is `true`
 ---@field root_dirs? string[]
 ---
----Prefer startup root directory when updating root directory of the tree. Only relevant when |nvim_tree.Config.UpdateFocusedFile| `update_root` is `true`
+---Prefer startup root directory when updating root directory of the tree. Only relevant when [nvim_tree.Config.UpdateFocusedFile] {update_root} is `true`
 ---(default: `false`)
 ---@field prefer_startup_root? boolean
 ---
----Changes the tree root directory on |DirChanged| and refreshes the tree.
+---Changes the tree root directory on [DirChanged] and refreshes the tree.
 ---(default: `false`)
 ---@field sync_root_with_cwd? boolean
 ---
----Automatically reloads the tree on |BufEnter| nvim-tree.
+---Automatically reloads the tree on [BufEnter] nvim-tree.
 ---(default: `false`)
 ---@field reload_on_bufenter? boolean
 ---
@@ -55,65 +55,65 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field respect_buf_cwd? boolean
 ---
----Use |vim.ui.select| style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
+---Use [vim.ui.select] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
 ---(default: `false`)
 ---@field select_prompts? boolean
 ---
----|nvim_tree.Config.Sort|
+---[nvim_tree.Config.Sort]
 ---@field sort? nvim_tree.Config.Sort
 ---
----|nvim_tree.Config.View|
+---[nvim_tree.Config.View]
 ---@field view? nvim_tree.Config.View
 ---
----|nvim_tree.Config.Renderer|
+---[nvim_tree.Config.Renderer]
 ---@field renderer? nvim_tree.Config.Renderer
 ---
----|nvim_tree.Config.HijackDirectories|
+---[nvim_tree.Config.HijackDirectories]
 ---@field hijack_directories? nvim_tree.Config.HijackDirectories
 ---
----|nvim_tree.Config.UpdateFocusedFile|
+---[nvim_tree.Config.UpdateFocusedFile]
 ---@field update_focused_file? nvim_tree.Config.UpdateFocusedFile
 ---
----|nvim_tree.Config.SystemOpen|
+---[nvim_tree.Config.SystemOpen]
 ---@field system_open? nvim_tree.Config.SystemOpen
 ---
----|nvim_tree.Config.Git|
+---[nvim_tree.Config.Git]
 ---@field git? nvim_tree.Config.Git
 ---
----|nvim_tree.Config.Diagnostics|
+---[nvim_tree.Config.Diagnostics]
 ---@field diagnostics? nvim_tree.Config.Diagnostics
 ---
----|nvim_tree.Config.Modified|
+---[nvim_tree.Config.Modified]
 ---@field modified? nvim_tree.Config.Modified
 ---
----|nvim_tree.Config.Filters|
+---[nvim_tree.Config.Filters]
 ---@field filters? nvim_tree.Config.Filters
 ---
----|nvim_tree.Config.LiveFilter|
+---[nvim_tree.Config.LiveFilter]
 ---@field live_filter? nvim_tree.Config.LiveFilter
 ---
----|nvim_tree.Config.FilesystemWatchers|
+---[nvim_tree.Config.FilesystemWatchers]
 ---@field filesystem_watchers? nvim_tree.Config.FilesystemWatchers
 ---
----|nvim_tree.Config.Actions|
+---[nvim_tree.Config.Actions]
 ---@field actions? nvim_tree.Config.Actions
 ---
----|nvim_tree.Config.Trash|
+---[nvim_tree.Config.Trash]
 ---@field trash? nvim_tree.Config.Trash
 ---
----|nvim_tree.Config.Tab|
+---[nvim_tree.Config.Tab]
 ---@field tab? nvim_tree.Config.Tab
 ---
----|nvim_tree.Config.Notify|
+---[nvim_tree.Config.Notify]
 ---@field notify? nvim_tree.Config.Notify
 ---
----|nvim_tree.Config.Help|
+---[nvim_tree.Config.Help]
 ---@field help? nvim_tree.Config.Help
 ---
----|nvim_tree.Config.UI|
+---[nvim_tree.Config.UI]
 ---@field ui? nvim_tree.Config.UI
 ---
----|nvim_tree.Config.Log|
+---[nvim_tree.Config.Log]
 ---@field log? nvim_tree.Config.Log
 
 --
@@ -127,7 +127,7 @@ error("Cannot require a meta file")
 ---@field root_folder_label? string|boolean|fun(root_cwd: string): string In what format to show root folder. See `:help filename-modifiers` for available `string` options. Set to `false` to hide the root folder.  or `boolean` or `function(root_cwd)`, Default: `":~:s?$?/..?"`
 ---@field indent_width? integer Number of spaces for an each tree nesting level. Minimum 1. Default: `2`
 ---@field special_files? string[] A list of filenames that gets highlighted with `NvimTreeSpecialFile`. Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
----@field hidden_display? fun(hidden_stats: table<string, integer>): string|nil|nvim_tree.HiddenDisplayOption Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay Default: `"none"`
+---@field hidden_display? (fun(hidden_stats: table<string, integer>): string)|nvim_tree.HiddenDisplayOption Show a summary of hidden files below the tree using `NvimTreeHiddenDisplay Default: `"none"`
 ---@field symlink_destination? boolean Whether to show the destination of the symlink. Default: `true`
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[] Highlighting and icons for the nodes, in increasing order of precedence. Uses strings to specify builtin decorators otherwise specify your `nvim_tree.api.decorator.UserDecorator` class. Default: > lua { "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }
 ---@field highlight_git? nvim_tree.HighlightOption Enable highlight for git attributes using `NvimTreeGit*HL` highlight groups. Requires |nvim-tree.git.enable| Value can be `"none"`, `"icon"`, `"name"` or `"all"`. Default: `"none"` @see nvim-tree.git.enable

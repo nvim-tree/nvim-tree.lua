@@ -3,7 +3,7 @@ error("Cannot require a meta file")
 
 ---@class nvim_tree.Config.UI
 ---
----|nvim_tree.Config.UI.Confirm|
+---[nvim_tree.Config.UI.Confirm]
 ---@field confirm? nvim_tree.Config.UI.Confirm
 
 --
