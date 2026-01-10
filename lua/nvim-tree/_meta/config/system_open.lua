@@ -4,7 +4,7 @@ error("Cannot require a meta file")
 ---Open files or directories via the OS.
 ---
 ---Neovim:
----- `>=` 0.10 uses |vim.ui.open| unless {cmd} is specified
+---- `>=` 0.10 uses [vim.ui.open] unless {cmd} is specified
 ---- `<` 0.10 calls external {cmd}:
 ---   - UNIX: `xdg-open`
 ---   - macOS: `open`

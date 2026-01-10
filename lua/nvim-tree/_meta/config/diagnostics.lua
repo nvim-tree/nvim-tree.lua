@@ -1,7 +1,7 @@
 ---@meta
 error("Cannot require a meta file")
 
----Integrate with |lsp| or COC diagnostics.
+---Integrate with [lsp] or COC diagnostics.
 ---
 ---@class nvim_tree.Config.Diagnostics
 ---
@@ -20,23 +20,23 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field show_on_open_dirs? boolean
 ---
----Global |vim.diagnostic.Opts| overrides {severity} and {icons}
+---Global [vim.diagnostic.Opts] overrides {severity} and {icons}
 ---(default: `false`)
 ---@field diagnostic_opts? boolean
 ---
----|nvim_tree.Config.Diagnostics.Severity|
+---[nvim_tree.Config.Diagnostics.Severity]
 ---@field severity? nvim_tree.Config.Diagnostics.Severity
 ---
----|nvim_tree.Config.Diagnostics.Icons|
+---[nvim_tree.Config.Diagnostics.Icons]
 ---@field icons? nvim_tree.Config.Diagnostics.Icons
 
 ---@class nvim_tree.Config.Diagnostics.Severity
 ---
----|vim.diagnostic.Severity|
+---[vim.diagnostic.Severity]
 ---(default: HINT)
 ---@field min? vim.diagnostic.Severity
 ---
----|vim.diagnostic.Severity|
+---[vim.diagnostic.Severity]
 ---(default: ERROR)
 ---@field max? vim.diagnostic.Severity
 

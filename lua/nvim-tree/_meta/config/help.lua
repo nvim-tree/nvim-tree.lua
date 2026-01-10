@@ -11,6 +11,6 @@ error("Cannot require a meta file")
 ---
 ---@class nvim_tree.Config.Help
 ---
----|nvim_tree.Config.Help.SortBy|
+---[nvim_tree.Config.Help.SortBy]
 ---(default: `key`)
 ---@field sort_by? nvim_tree.Config.Help.SortBy

@@ -5,9 +5,9 @@ error("Cannot require a meta file")
 
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
----The window is "docked" at the left by default, however may be configured to float: |nvim_tree.Config.View.Float|
+---The window is "docked" at the left by default, however may be configured to float: [nvim_tree.Config.View.Float]
 ---
----{width} can be a |nvim_tree.Config.View.WidthSpec| for simple static control or a |nvim_tree.Config.View.Width| for fully dynamic control based on longest line.
+---{width} can be a [nvim_tree.Config.View.WidthSpec] for simple static control or a [nvim_tree.Config.View.Width] for fully dynamic control based on longest line.
 ---
 ---[nvim_tree.Config.View.WidthSpec]()
 ---- string: `x%` string e.g. `30%`
@@ -16,15 +16,15 @@ error("Cannot require a meta file")
 ---
 ---@class nvim_tree.Config.View
 ---
----When entering nvim-tree, reposition the view so that the current node is initially centralized, see |zz|.
+---When entering nvim-tree, reposition the view so that the current node is initially centralized, see [zz].
 ---(default: `false`)
 ---@field centralize_selection? boolean
 ---
----Set |cursorline|
+---[cursorline]
 ---(default: `true`)
 ---@field cursorline? boolean
 ---
----Set |cursorlineopt|
+---[cursorlineopt]
 ---(default: `both`)
 ---@field cursorlineopt? string
 ---
@@ -39,22 +39,22 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field preserve_window_proportions? boolean
 ---
----Set |number|
+---[number]
 ---(default: `false`)
 ---@field number? boolean
 ---
----Set |relativenumber|
+---[relativenumber]
 ---(default: `false`)
 ---@field relativenumber? boolean
 ---
----Set |signcolumn|.
+---[signcolumn]
 ---(default: `yes`)
 ---@field signcolumn? "yes"|"auto"|"no"
 ---
 ---(default: `30`)
 ---@field width? nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width
 ---
----|nvim_tree.Config.View.Float|
+---[nvim_tree.Config.View.Float]
 ---@field float? nvim_tree.Config.View.Float
 
 
@@ -80,7 +80,7 @@ error("Cannot require a meta file")
 
 ---Configure floating window behaviour
 ---
----|vim.api.keyset.win_config| {open_win_config} is passed directly to |nvim_open_win|, default:
+---[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
 ---```lua
 ---{
 ---  relative = "editor",

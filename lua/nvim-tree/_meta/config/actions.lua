@@ -7,23 +7,23 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field use_system_clipboard? boolean
 ---
----|nvim_tree.Config.Actions.ChangeDir|
+---[nvim_tree.Config.Actions.ChangeDir]
 ---@field change_dir? nvim_tree.Config.Actions.ChangeDir
 ---
----|nvim_tree.Config.Actions.ExpandAll|
+---[nvim_tree.Config.Actions.ExpandAll]
 ---@field expand_all? nvim_tree.Config.Actions.ExpandAll
 ---
----|nvim_tree.Config.Actions.FilePopup|
+---[nvim_tree.Config.Actions.FilePopup]
 ---@field file_popup? nvim_tree.Config.Actions.FilePopup
 ---
----|nvim_tree.Config.Actions.OpenFile|
+---[nvim_tree.Config.Actions.OpenFile]
 ---@field open_file? nvim_tree.Config.Actions.OpenFile
 ---
----|nvim_tree.Config.Actions.RemoveFile|
+---[nvim_tree.Config.Actions.RemoveFile]
 ---@field remove_file? nvim_tree.Config.Actions.RemoveFile
 
 
---- vim |current-directory| behaviour
+--- vim [current-directory] behaviour
 ---@class nvim_tree.Config.Actions.ChangeDir
 ---
 ---Change the working directory when changing directories in the tree
@@ -39,7 +39,7 @@ error("Cannot require a meta file")
 ---@field restrict_above_cwd? boolean
 
 
----Configuration for |nvim-tree-api.tree.expand_all()| and |nvim-tree-api.node.expand()|
+---Configuration for [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
 ---@class nvim_tree.Config.Actions.ExpandAll
 ---
 ---Limit the number of folders being explored when expanding every folders. Avoids hanging neovim when running this action on very large folders.
@@ -53,7 +53,7 @@ error("Cannot require a meta file")
 
 ---Configuration for file_popup floating window.
 ---
----|vim.api.keyset.win_config| {open_win_config} is passed directly to |nvim_open_win|, default:
+---[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
 ---```lua
 ---{
 ---  col = 1,
@@ -63,7 +63,7 @@ error("Cannot require a meta file")
 ---  style = "minimal",
 ---}
 ---```
----You shouldn't define |vim.api.keyset.win_config| {width} and {height} values here. They will be overridden to fit the file_popup content.
+---You shouldn't define [vim.api.keyset.win_config] {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.Config.Actions.FilePopup
 ---
 ---(default: above)
@@ -85,7 +85,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field resize_window? boolean
 ---
----|nvim_tree.Config.Actions.OpenFile.WindowPicker|
+---[nvim_tree.Config.Actions.OpenFile.WindowPicker]
 ---@field window_picker? nvim_tree.Config.Actions.OpenFile.WindowPicker
 
 
@@ -108,7 +108,7 @@ error("Cannot require a meta file")
 ---(default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`)
 ---@field chars? string
 ---
----|nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude|
+---[nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude]
 ---@field exclude? nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude
 
 
