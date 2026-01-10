@@ -1,18 +1,14 @@
 ---@meta
 error("Cannot require a meta file")
 
---
--- Type Aliases for Enums
---
-
+--- TODO #2934 these were not correctly generated, inline or fix
 ---@alias nvim_tree.PlacementOption "before"|"after"|"signcolumn"|"right_align"
 ---@alias nvim_tree.HighlightOption "none"|"icon"|"name"|"all"
 ---@alias nvim_tree.HiddenDisplayOption "none"|"simple"|"all"
 
---
--- nvim-tree Setup Config
---
-
+---
+--- TODO #2934 brief and some links
+---
 ---@class nvim_tree.Config
 ---
 ---Runs when creating the nvim-tree buffer. Use this to set your nvim-tree specific mappings. See |nvim-tree-mappings|. When `on_attach` is not a function, |nvim-tree-mappings-default| will be called.
@@ -221,32 +217,3 @@ error("Cannot require a meta file")
 ---@field untracked? string Default: `"★"`
 ---@field deleted? string Default: `""`
 ---@field ignored? string Default: `"◌"`
-
-
---
--- View
---
-
----@class nvim_tree.Config.View
----@field adaptive_size? boolean Resize the window on each draw based on the longest line. Default: `false`
----@field centralize_selection? boolean When entering nvim-tree, reposition the view so that the current node is initially centralized, see |zz|. Default: `false`
----@field side? nvim_tree.PlacementOption Side of the tree. Default: `"left"`
----@field preserve_window_proportions? boolean Preserves window proportions when opening a file. If `false`, the height and width of windows other than nvim-tree will be equalized. Default: `false`
----@field number? boolean Print the line number in front of each line. Default: `false`
----@field relativenumber? boolean Show the line number relative to the line with the cursor in front of each line. Default: `false`
----@field signcolumn? nvim_tree.HiddenDisplayOption Show |signcolumn|. Default: `"yes"`
----@field width? string|integer|nvim_tree.Config.View.Width|fun(): integer|string Width of the window: can be a `%` string, a number representing columns, a function or a table. A table indicates that the view should be dynamically sized based on the longest line. Default: `30`
----@field float? nvim_tree.Config.View.Float Configuration options for floating window.
----@field cursorline? boolean Enable |cursorline| in nvim-tree window. Default: `true`
----@field debounce_delay? integer Idle milliseconds before some reload / refresh operations. Increase if you experience performance issues around screen refresh. Default: `15` (ms)
-
----@class nvim_tree.Config.View.Width
----@field min? string|integer|fun(): integer|string Minimum dynamic width. Default: `30`
----@field max? string|integer|fun(): integer|string Maximum dynamic width, -1 for unbounded. Default: `-1`
----@field lines_excluded? string[] Exclude these lines when computing width. Supported values: `"root"`. Default: `{ "root" }`
----@field padding? integer|fun(): integer|string Extra padding to the right. Default: `1`
-
----@class nvim_tree.Config.View.Float
----@field enable? boolean If true, tree window will be floating. Default: `false`
----@field quit_on_focus_loss? boolean Close the floating tree window when it loses focus. Default: `true`
----@field open_win_config? table|fun(): table Floating window config. See |nvim_open_win()| for more details. Default: `{ relative = "editor", border = "rounded", width = 30, height = 30, row = 1, col = 1, }`
