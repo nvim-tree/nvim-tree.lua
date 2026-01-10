@@ -1,18 +1,18 @@
 ---@meta
 error("Cannot require a meta file")
 
----@alias nvim_tree.Config.View.WidthOpt string|integer|fun(): integer|string
+---@alias nvim_tree.Config.View.WidthSpec string|integer|fun(): integer|string
 
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
----Window widths are generally defined by a |nvim_tree.Config.View.WidthOpt|:
----- string: `%` string e.g. `30%`
+---The window is "docked" at the left by default, however may be configured to float: |nvim_tree.Config.View.Float|
+---
+---{width} can be a |nvim_tree.Config.View.WidthSpec| for simple static control or a |nvim_tree.Config.View.Width| for fully dynamic control based on longest line.
+---
+---[nvim_tree.Config.View.WidthSpec]()
+---- string: `x%` string e.g. `30%`
 ---- integer: number of columns
 ---- function: returns one of the above
----
----{width} can be a |nvim_tree.Config.View.WidthOpt| for simple static control or a |nvim_tree.Config.View.Width| for fully dynamic control based on longest line.
----
----The window is "docked" at the left by default, however may be configured to float: |nvim_tree.Config.View.Float|
 ---
 ---@class nvim_tree.Config.View
 ---
@@ -52,7 +52,7 @@ error("Cannot require a meta file")
 ---@field signcolumn? "yes"|"auto"|"no"
 ---
 ---(default: `30`)
----@field width? nvim_tree.Config.View.WidthOpt|nvim_tree.Config.View.Width
+---@field width? nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width
 ---
 ---|nvim_tree.Config.View.Float|
 ---@field float? nvim_tree.Config.View.Float
@@ -63,11 +63,11 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.View.Width
 ---
 ---(default: `30`)
----@field min? nvim_tree.Config.View.WidthOpt
+---@field min? nvim_tree.Config.View.WidthSpec
 ---
 ----1 for unbounded.
 ---(default: `-1`)
----@field max? nvim_tree.Config.View.WidthOpt
+---@field max? nvim_tree.Config.View.WidthSpec
 ---
 ---Exclude these lines when computing width.
 ---(default: `{ "root" }`)
@@ -75,7 +75,7 @@ error("Cannot require a meta file")
 ---
 ---Extra padding to the right.
 ---(default: `1`)
----@field padding? nvim_tree.Config.View.WidthOpt
+---@field padding? nvim_tree.Config.View.WidthSpec
 
 
 ---Configure floating window behaviour

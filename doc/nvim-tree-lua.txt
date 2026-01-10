@@ -3852,17 +3852,17 @@ Class: Config.View                                     *nvim-tree-config-view*
 *nvim_tree.Config.View*
     Configures the dimensions and appearance of the nvim-tree window.
 
-    Window widths are generally defined by a |nvim_tree.Config.View.WidthOpt|:
-    • string: `%` string e.g. `30%`
-    • integer: number of columns
-    • function: returns one of the above
+    The window is "docked" at the left by default, however may be configured
+    to float: |nvim_tree.Config.View.Float|
 
-    {width} can be a |nvim_tree.Config.View.WidthOpt| for simple static
+    {width} can be a |nvim_tree.Config.View.WidthSpec| for simple static
     control or a |nvim_tree.Config.View.Width| for fully dynamic control based
     on longest line.
 
-    The window is "docked" at the left by default, however may be configured
-    to float: |nvim_tree.Config.View.Float|
+                                             *nvim_tree.Config.View.WidthSpec*
+    • string: `x%` string e.g. `30%`
+    • integer: number of columns
+    • function: returns one of the above
 
     Fields: ~
       • {centralize_selection}?         (`boolean`, default: `false`) When
@@ -3890,7 +3890,7 @@ Class: Config.View                                     *nvim-tree-config-view*
                                         |relativenumber|
       • {signcolumn}?                   (`"yes"|"auto"|"no"`, default: `yes`)
                                         Set |signcolumn|.
-      • {width}?                        (`nvim_tree.Config.View.WidthOpt|nvim_tree.Config.View.Width`)
+      • {width}?                        (`nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width`)
                                         (default: `30`)
       • {float}?                        (`nvim_tree.Config.View.Float`)
                                         |nvim_tree.Config.View.Float|
@@ -3921,12 +3921,12 @@ Class: Config.View                                     *nvim-tree-config-view*
     Configure dynamic width based on longest line.
 
     Fields: ~
-      • {min}?             (`nvim_tree.Config.View.WidthOpt`) (default: `30`)
-      • {max}?             (`nvim_tree.Config.View.WidthOpt`, default: `-1`)
+      • {min}?             (`nvim_tree.Config.View.WidthSpec`) (default: `30`)
+      • {max}?             (`nvim_tree.Config.View.WidthSpec`, default: `-1`)
                            -1 for unbounded.
       • {lines_excluded}?  (`("root")[]`, default: `{ "root" }`) Exclude these
                            lines when computing width.
-      • {padding}?         (`nvim_tree.Config.View.WidthOpt`, default: `1`)
+      • {padding}?         (`nvim_tree.Config.View.WidthSpec`, default: `1`)
                            Extra padding to the right.
 
 
