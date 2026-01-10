@@ -3674,48 +3674,37 @@ Class: Config                                               *nvim-tree-config*
                                   signcolumn.
 
 *nvim_tree.Config.Renderer.Icons.Glyphs*
+    Glyphs that appear in the sign column must have length <= 2
+
+    Glyphs defined elsewhere:
+    • |nvim_tree.Config.Diagnostics.Icons|
+    • |nvim_tree.Config.Renderer.IndentMarkers.Icons|
 
     Fields: ~
-      • {default}?   (`string`) Glyph for files. Overridden by
-                     |nvim-tree.renderer.icons.web_devicons| if available.
-                     Default: `""`
-      • {symlink}?   (`string`) Glyph for symlinks to files. Default: `""`
-      • {bookmark}?  (`string`) Bookmark icon. Default: `"Ὰ4"`
-      • {modified}?  (`string`) Icon to display for modified files. Default:
-                     `"●"`
-      • {hidden}?    (`string`) Icon to display for hidden files. Default:
-                     `"c""`
-      • {folder}?    (`nvim_tree.Config.Renderer.Icons.Glyphs.Folder`) Glyphs
-                     for directories. Overridden by
-                     |nvim-tree.renderer.icons.web_devicons| if available.
-                     Default:
-                     `{ arrow_closed = "", arrow_open = "", default = "", open = "", empty = "", empty_open = "", symlink = "", symlink_open = "", }`
-      • {git}?       (`nvim_tree.Config.Renderer.Icons.Glyphs.Git`) Glyphs for
-                     git status. Default:
-                     `{ unstaged = "✗", staged = "✓", unmerged = "", renamed = "➜", untracked = "★", deleted = "", ignored = "◌", }`
-
-*nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
-
-    Fields: ~
-      • {arrow_closed}?  (`string`) Default: `""`
-      • {arrow_open}?    (`string`) Default: `""`
-      • {default}?       (`string`) Default: `""`
-      • {open}?          (`string`) Default: `""`
-      • {empty}?         (`string`) Default: `""`
-      • {empty_open}?    (`string`) Default: `""`
-      • {symlink}?       (`string`) Default: `""`
-      • {symlink_open}?  (`string`) Default: `""`
-
-*nvim_tree.Config.Renderer.Icons.Glyphs.Git*
-
-    Fields: ~
-      • {unstaged}?   (`string`) Default: `"✗"`
-      • {staged}?     (`string`) Default: `"✓"`
-      • {unmerged}?   (`string`) Default: `""`
-      • {renamed}?    (`string`) Default: `"➜"`
-      • {untracked}?  (`string`) Default: `"★"`
-      • {deleted}?    (`string`) Default: `""`
-      • {ignored}?    (`string`) Default: `"◌"`
+      • {default}?   (`string`, default: ``) Files, overridden by
+                     |nvim_tree.Config.Renderer.Icons| {web_devicons}
+      • {symlink}?   (`string`) (default: ``)
+      • {bookmark}?  (`string`) (default: `󰆤`)
+      • {modified}?  (`string`) (default: `●`)
+      • {hidden}?    (`string`) (default: `󰜌`)
+      • {folder}?    (`table`) Directories, overridden by
+                     |nvim_tree.Config.Renderer.Icons| {web_devicons}
+                     • {arrow_closed}? (`string`) (default: `� `)
+                     • {arrow_open}? (`string`) (default: ``)
+                     • {default}? (`string`) (default: ``)
+                     • {open}? (`string`) (default: ``)
+                     • {empty}? (`string`) (default: ``)
+                     • {empty_open}? (`string`) (default: ``)
+                     • {symlink}? (`string`) (default: ``)
+                     • {symlink_open}? (`string`) (default: ``)
+      • {git}?       (`table`) Git status.
+                     • {unstaged}? (`string`) (default: `✗`)
+                     • {staged}? (`string`) (default: `✓`)
+                     • {unmerged}? (`string`) (default: ``)
+                     • {renamed}? (`string`) (default: `➜`)
+                     • {untracked}? (`string`) (default: `★`)
+                     • {deleted}? (`string`) (default: ``)
+                     • {ignored}? (`string`) (default: `◌`)
 
 *nvim_tree.Config.Renderer.Icons.Padding*
 
@@ -3726,36 +3715,43 @@ Class: Config                                               *nvim-tree-config*
                          file/folder icon. Default: `" "`
 
 *nvim_tree.Config.Renderer.Icons.Show*
+    Control which icons are displayed.
+
+    Left to right ordered:
+    • {file}
+    • {folder}
+    • {git}
+    • {modified}
+    • {hidden}
+    • {diagnostics}
+    • {bookmarks}
 
     Fields: ~
-      • {file}?          (`boolean`) Show an icon before the file name.
-                         Default: `true`
-      • {folder}?        (`boolean`) Show an icon before the folder name.
-                         Default: `true`
-      • {folder_arrow}?  (`boolean`) Show a small arrow before the folder
-                         node. Arrow will be a part of the node when using
-                         |renderer.indent_markers|. Default: `true`
-      • {git}?           (`boolean`) Show a git status icon, see
-                         |renderer.icons.git_placement| Requires |git.enable|
-                         `= true` Default: `true` @see
-                         nvim-tree.renderer.icons.git_placement @see
-                         nvim-tree.git.enable
-      • {modified}?      (`boolean`) Show a modified icon, see
-                         |renderer.icons.modified_placement| Requires
-                         |modified.enable| `= true` Default: `true` @see
-                         nvim-tree.renderer.icons.modified_placement @see
-                         nvim-tree.modified.enable
-      • {hidden}?        (`boolean`) Show a hidden icon, see
-                         |renderer.icons.hidden_placement| Default: `false`
-                         @see nvim-tree.renderer.icons.hidden_placement
-      • {diagnostics}?   (`boolean`) Show a diagnostics status icon, see
-                         |renderer.icons.diagnostics_placement| Requires
-                         |diagnostics.enable| `= true` Default: `true` @see
-                         nvim-tree.renderer.icons.diagnostics_placement @see
-                         nvim-tree.diagnostics.enable
-      • {bookmarks}?     (`boolean`) Show a bookmark icon, see
-                         |renderer.icons.bookmarks_placement| Default: `true`
-                         @see nvim-tree.renderer.icons.bookmarks_placement
+      • {file}?          (`boolean`, default: `true`) Before file name.
+      • {folder}?        (`boolean`, default: `true`) Before folder name.
+      • {folder_arrow}?  (`boolean`, default: `true`) Show a small arrow
+                         before the folder node. Arrow will be a part of the
+                         node when using |nvim_tree.Config.Renderer|
+                         {indent_markers}.
+      • {git}?           (`boolean`, default: `true`) Icons:
+                         |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
+                         Location: |nvim_tree.Config.Renderer.Icons|
+                         {git_placement}. Requires |nvim_tree.Config.Git|
+                         {enable}.
+      • {modified}?      (`boolean`, default: `true`) Location:
+                         |nvim_tree.Config.Renderer.Icons|
+                         {modified_placement}. Requires
+                         |nvim_tree.Config.Modified| {enable}.
+      • {hidden}?        (`boolean`, default: `false`) Location:
+                         |nvim_tree.Config.Renderer.Icons| {hidden_placement}.
+      • {diagnostics}?   (`boolean`, default: `true`) Icons:
+                         |nvim_tree.Config.Diagnostics.Icons| Location:
+                         |nvim_tree.Config.Renderer.Icons|
+                         {diagnostics_placement}. Requires
+                         |nvim_tree.Config.Diagnostics| {enable}.
+      • {bookmarks}?     (`boolean`, default: `true`) Location:
+                         |nvim_tree.Config.Renderer.Icons|
+                         {bookmarks_placement}.
 
 *nvim_tree.Config.Renderer.Icons.WebDevicons*
 

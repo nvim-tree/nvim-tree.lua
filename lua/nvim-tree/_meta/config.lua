@@ -116,9 +116,6 @@ error("Cannot require a meta file")
 ---[nvim_tree.Config.Log]
 ---@field log? nvim_tree.Config.Log
 
---
--- Renderer
---
 
 ---@class nvim_tree.Config.Renderer
 ---@field add_trailing? boolean Appends a trailing slash to folder and symlink folder destination names. Default: `false`
@@ -140,10 +137,12 @@ error("Cannot require a meta file")
 ---@field indent_markers? nvim_tree.Config.Renderer.IndentMarkers Configuration options for tree indent markers.
 ---@field icons? nvim_tree.Config.Renderer.Icons Configuration options for icons.
 
+
 ---@class nvim_tree.Config.Renderer.IndentMarkers
 ---@field enable? boolean Display indent markers when folders are open Default: `false`
 ---@field inline_arrows? boolean Display folder arrows in the same column as indent marker when using |renderer.icons.show.folder_arrow| Default: `true`
 ---@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons Icons shown before the file/directory. Length 1. Default: > lua { corner = "└", edge = "│", item = "│", bottom = "─", none = " ", }
+
 
 ---@class nvim_tree.Config.Renderer.IndentMarkers.Icons
 ---@field corner? string Default: `"└"`
@@ -151,6 +150,7 @@ error("Cannot require a meta file")
 ---@field item? string Default: `"│"`
 ---@field bottom? string Default: `"─"`
 ---@field none? string Default: `" "`
+
 
 ---@class nvim_tree.Config.Renderer.Icons Configuration options for icons.
 ---@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons Configure optional plugin `"nvim-tree/nvim-web-devicons"`
@@ -164,56 +164,139 @@ error("Cannot require a meta file")
 ---@field show? nvim_tree.Config.Renderer.Icons.Show Configuration options for showing icon types. Left to right order: file/folder, git, modified, hidden, diagnostics, bookmarked.
 ---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs Configuration options for icon glyphs. NOTE: Do not set any glyphs to more than two characters if it's going to appear in the signcolumn.
 
+
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons
 ---@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File File icons.
 ---@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder Folder icons.
+
 
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---@field enable? boolean Show icons on files. Overrides |nvim-tree.renderer.icons.glyphs.default| Default: `true`
 ---@field color? boolean Use icon colors for files. Overrides highlight groups. Default: `true`
 
+
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 ---@field enable? boolean Show icons on folders. Overrides |nvim-tree.renderer.icons.glyphs.folder| Default: `false`
 ---@field color? boolean Use icon colors for folders. Overrides highlight groups. Default: `true`
+
 
 ---@class nvim_tree.Config.Renderer.Icons.Padding
 ---@field icon? string Inserted between icon and filename. Default: `" "`
 ---@field folder_arrow? string Inserted between folder arrow icon and file/folder icon. Default: `" "`
 
----@class nvim_tree.Config.Renderer.Icons.Show
----@field file? boolean Show an icon before the file name. Default: `true`
----@field folder? boolean Show an icon before the folder name. Default: `true`
----@field folder_arrow? boolean Show a small arrow before the folder node. Arrow will be a part of the node when using |renderer.indent_markers|. Default: `true`
----@field git? boolean Show a git status icon, see |renderer.icons.git_placement| Requires |git.enable| `= true` Default: `true` @see nvim-tree.renderer.icons.git_placement @see nvim-tree.git.enable
----@field modified? boolean Show a modified icon, see |renderer.icons.modified_placement| Requires |modified.enable| `= true` Default: `true` @see nvim-tree.renderer.icons.modified_placement @see nvim-tree.modified.enable
----@field hidden? boolean Show a hidden icon, see |renderer.icons.hidden_placement| Default: `false` @see nvim-tree.renderer.icons.hidden_placement
----@field diagnostics? boolean Show a diagnostics status icon, see |renderer.icons.diagnostics_placement| Requires |diagnostics.enable| `= true` Default: `true` @see nvim-tree.renderer.icons.diagnostics_placement @see nvim-tree.diagnostics.enable
----@field bookmarks? boolean Show a bookmark icon, see |renderer.icons.bookmarks_placement| Default: `true` @see nvim-tree.renderer.icons.bookmarks_placement
 
+---Control which icons are displayed.
+---
+---Left to right ordered:
+---- {file}
+---- {folder}
+---- {git}
+---- {modified}
+---- {hidden}
+---- {diagnostics}
+---- {bookmarks}
+---
+---@class nvim_tree.Config.Renderer.Icons.Show
+---
+---Before file name.
+---(default: `true`)
+---@field file? boolean
+---
+---Before folder name.
+---(default: `true`)
+---@field folder? boolean
+---
+---Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer] {indent_markers}.
+---(default: `true`)
+---@field folder_arrow? boolean 
+---
+---Icons: [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
+---Location: [nvim_tree.Config.Renderer.Icons] {git_placement}.
+---Requires |nvim_tree.Config.Git| {enable}.
+---(default: `true`)
+---@field git? boolean
+---
+---Location: [nvim_tree.Config.Renderer.Icons] {modified_placement}.
+---Requires |nvim_tree.Config.Modified| {enable}.
+---(default: `true`)
+---@field modified? boolean
+---
+---Location: [nvim_tree.Config.Renderer.Icons] {hidden_placement}.
+---(default: `false`)
+---@field hidden? boolean 
+---
+---Icons: [nvim_tree.Config.Diagnostics.Icons]
+---Location: [nvim_tree.Config.Renderer.Icons] {diagnostics_placement}.
+---Requires |nvim_tree.Config.Diagnostics| {enable}.
+---(default: `true`)
+---@field diagnostics? boolean 
+---
+---Location: [nvim_tree.Config.Renderer.Icons] {bookmarks_placement}.
+---(default: `true`)
+---@field bookmarks? boolean 
+
+
+---Glyphs that appear in the sign column must have length <= 2
+---
+---Glyphs defined elsewhere:
+---- [nvim_tree.Config.Diagnostics.Icons]
+---- [nvim_tree.Config.Renderer.IndentMarkers.Icons]
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
----@field default? string Glyph for files. Overridden by |nvim-tree.renderer.icons.web_devicons| if available. Default: `""`
----@field symlink? string Glyph for symlinks to files. Default: `""`
----@field bookmark? string Bookmark icon. Default: `"Ὰ4"`
----@field modified? string Icon to display for modified files. Default: `"●"`
----@field hidden? string Icon to display for hidden files. Default: `"c""`
----@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder Glyphs for directories. Overridden by |nvim-tree.renderer.icons.web_devicons| if available. Default: `{ arrow_closed = "", arrow_open = "", default = "", open = "", empty = "", empty_open = "", symlink = "", symlink_open = "", }`
----@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git Glyphs for git status. Default: `{ unstaged = "✗", staged = "✓", unmerged = "", renamed = "➜", untracked = "★", deleted = "", ignored = "◌", }`
+---
+---Files, overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
+---(default: ``)
+---@field default? string
+---
+---(default: ``)
+---@field symlink? string
+---
+---(default: `󰆤`)
+---@field bookmark? string
+---
+---(default: `●`)
+---@field modified? string
+---
+---(default: `󰜌`)
+---@field hidden? string
+---
+---Directories, overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
+---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder 
+---
+---Git status.
+---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
 
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
----@field arrow_closed? string Default: `""`
----@field arrow_open? string Default: `""`
----@field default? string Default: `""`
----@field open? string Default: `""`
----@field empty? string Default: `""`
----@field empty_open? string Default: `""`
----@field symlink? string Default: `""`
----@field symlink_open? string Default: `""`
+---@inlinedoc
+---(default: ``)
+---@field arrow_closed? string
+---(default: ``)
+---@field arrow_open? string
+---(default: ``)
+---@field default? string
+---(default: ``)
+---@field open? string
+---(default: ``)
+---@field empty? string
+---(default: ``)
+---@field empty_open? string
+---(default: ``)
+---@field symlink? string
+---(default: ``)
+---@field symlink_open? string
 
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
----@field unstaged? string Default: `"✗"`
----@field staged? string Default: `"✓"`
----@field unmerged? string Default: `""`
----@field renamed? string Default: `"➜"`
----@field untracked? string Default: `"★"`
----@field deleted? string Default: `""`
----@field ignored? string Default: `"◌"`
+---@inlinedoc
+---(default: `✗`)
+---@field unstaged? string
+---(default: `✓`)
+---@field staged? string
+---(default: ``)
+---@field unmerged? string
+---(default: `➜`)
+---@field renamed? string
+---(default: `★`)
+---@field untracked? string
+---(default: ``)
+---@field deleted? string
+---(default: `◌`)
+---@field ignored? string
