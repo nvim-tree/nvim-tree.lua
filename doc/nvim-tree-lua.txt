@@ -3681,30 +3681,30 @@ Class: Config                                               *nvim-tree-config*
     • |nvim_tree.Config.Renderer.IndentMarkers.Icons|
 
     Fields: ~
-      • {default}?   (`string`, default: ``) Files, overridden by
+      • {default}?   (`string`, default: `` ) Files, overridden by
                      |nvim_tree.Config.Renderer.Icons| {web_devicons}
-      • {symlink}?   (`string`) (default: ``)
-      • {bookmark}?  (`string`) (default: `󰆤`)
-      • {modified}?  (`string`) (default: `●`)
-      • {hidden}?    (`string`) (default: `󰜌`)
-      • {folder}?    (`table`) Directories, overridden by
-                     |nvim_tree.Config.Renderer.Icons| {web_devicons}
-                     • {arrow_closed}? (`string`) (default: `� `)
-                     • {arrow_open}? (`string`) (default: ``)
-                     • {default}? (`string`) (default: ``)
-                     • {open}? (`string`) (default: ``)
-                     • {empty}? (`string`) (default: ``)
-                     • {empty_open}? (`string`) (default: ``)
-                     • {symlink}? (`string`) (default: ``)
-                     • {symlink_open}? (`string`) (default: ``)
-      • {git}?       (`table`) Git status.
-                     • {unstaged}? (`string`) (default: `✗`)
-                     • {staged}? (`string`) (default: `✓`)
-                     • {unmerged}? (`string`) (default: ``)
-                     • {renamed}? (`string`) (default: `➜`)
-                     • {untracked}? (`string`) (default: `★`)
-                     • {deleted}? (`string`) (default: ``)
-                     • {ignored}? (`string`) (default: `◌`)
+      • {symlink}?   (`string`) (default: `` )
+      • {bookmark}?  (`string`) (default: `󰆤` )
+      • {modified}?  (`string`) (default: `●` )
+      • {hidden}?    (`string`) (default: `󰜌` )
+      • {folder}?    (`table`) Overridden by |nvim_tree.Config.Renderer.Icons|
+                     {web_devicons}
+                     • {arrow_closed}? (`string`) (default: left arrow)
+                     • {arrow_open}? (`string`) (default: down arrow)
+                     • {default}? (`string`) (default: `` )
+                     • {open}? (`string`) (default: `` )
+                     • {empty}? (`string`) (default: `` )
+                     • {empty_open}? (`string`) (default: `` )
+                     • {symlink}? (`string`) (default: `` )
+                     • {symlink_open}? (`string`) (default: `` )
+      • {git}?       (`table`) Git status on files and directories.
+                     • {unstaged}? (`string`) (default: `✗` )
+                     • {staged}? (`string`) (default: `✓` )
+                     • {unmerged}? (`string`) (default: `` )
+                     • {renamed}? (`string`) (default: `➜` )
+                     • {untracked}? (`string`) (default: `★` )
+                     • {deleted}? (`string`) (default: `` )
+                     • {ignored}? (`string`) (default: `◌` )
 
 *nvim_tree.Config.Renderer.Icons.Padding*
 
@@ -4054,10 +4054,10 @@ Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
                               • {max}? (`vim.diagnostic.Severity`, default:
                                 ERROR) |vim.diagnostic.Severity|
       • {icons}?              (`table`) |nvim_tree.Config.Diagnostics.Icons|
-                              • {hint}? (`string`) (default: )
-                              • {info}? (`string`) (default: )
-                              • {warning}? (`string`) (default: )
-                              • {error}? (`string`) (default: )
+                              • {hint}? (`string`) (default: `` )
+                              • {info}? (`string`) (default: `` )
+                              • {warning}? (`string`) (default: `` )
+                              • {error}? (`string`) (default: `` )
 
 
 

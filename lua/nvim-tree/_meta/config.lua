@@ -244,59 +244,59 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
 ---
 ---Files, overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
----(default: ``)
+---(default: `` )
 ---@field default? string
 ---
----(default: ``)
+---(default: `` )
 ---@field symlink? string
 ---
----(default: `󰆤`)
+---(default: `󰆤` )
 ---@field bookmark? string
 ---
----(default: `●`)
+---(default: `●` )
 ---@field modified? string
 ---
----(default: `󰜌`)
+---(default: `󰜌` )
 ---@field hidden? string
 ---
----Directories, overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
+---Overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
 ---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder 
 ---
----Git status.
+---Git status on files and directories.
 ---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
 
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
 ---@inlinedoc
----(default: ``)
+---(default: left arrow)
 ---@field arrow_closed? string
----(default: ``)
+---(default: down arrow)
 ---@field arrow_open? string
----(default: ``)
+---(default: `` )
 ---@field default? string
----(default: ``)
+---(default: `` )
 ---@field open? string
----(default: ``)
+---(default: `` )
 ---@field empty? string
----(default: ``)
+---(default: `` )
 ---@field empty_open? string
----(default: ``)
+---(default: `` )
 ---@field symlink? string
----(default: ``)
+---(default: `` )
 ---@field symlink_open? string
 
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
 ---@inlinedoc
----(default: `✗`)
+---(default: `✗` )
 ---@field unstaged? string
----(default: `✓`)
+---(default: `✓` )
 ---@field staged? string
----(default: ``)
+---(default: `` )
 ---@field unmerged? string
----(default: `➜`)
+---(default: `➜` )
 ---@field renamed? string
----(default: `★`)
+---(default: `★` )
 ---@field untracked? string
----(default: ``)
+---(default: `` )
 ---@field deleted? string
----(default: `◌`)
+---(default: `◌` )
 ---@field ignored? string

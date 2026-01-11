@@ -44,14 +44,14 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Diagnostics.Icons
 ---@inlinedoc
 ---
----(default: )
+---(default: `` )
 ---@field hint? string
 ---
----(default: )
+---(default: `` )
 ---@field info? string
 ---
----(default: )
+---(default: `` )
 ---@field warning? string
 ---
----(default: )
+---(default: `` )
 ---@field error? string
