@@ -102,7 +102,7 @@ error("Cannot require a meta file")
 ---
 ---Change the default window picker: string `default` or a function.
 ---(default: `default`)
----@field picker? string|fun(): integer
+---@field picker? string|(fun(): integer)
 ---
 ---Identifier characters to use.
 ---(default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`)

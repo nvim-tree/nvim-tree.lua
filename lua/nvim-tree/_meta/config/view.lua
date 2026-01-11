@@ -1,7 +1,7 @@
 ---@meta
 error("Cannot require a meta file")
 
----@alias nvim_tree.Config.View.WidthSpec string|integer|fun(): integer|string
+---@alias nvim_tree.Config.View.WidthSpec string|integer|(fun(): integer|string)
 
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
@@ -101,4 +101,4 @@ error("Cannot require a meta file")
 ---@field quit_on_focus_loss? boolean
 ---
 ---(default: above)
----@field open_win_config? vim.api.keyset.win_config|fun(): vim.api.keyset.win_config
+---@field open_win_config? vim.api.keyset.win_config|(fun(): vim.api.keyset.win_config)
