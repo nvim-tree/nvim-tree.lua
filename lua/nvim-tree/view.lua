@@ -325,7 +325,8 @@ local function grow()
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
-  for line_nr, l in pairs(lines) do
+  for i, l in pairs(lines) do
+    local line_nr = starts_at + i - 1
     local line_width = vim.fn.strchars(l)
     -- also add space for right-aligned icons
     local extmarks = vim.api.nvim_buf_get_extmarks(M.get_bufnr(), ns_id, { line_nr, 0 }, { line_nr, -1 }, { details = true })
