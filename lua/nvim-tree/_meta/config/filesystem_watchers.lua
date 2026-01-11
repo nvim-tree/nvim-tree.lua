@@ -20,4 +20,4 @@ error("Cannot require a meta file")
 ---
 ---Disable for directories.
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
----@field ignore_dirs? string[]|fun(path: string): boolean
+---@field ignore_dirs? string[]|(fun(path: string): boolean)

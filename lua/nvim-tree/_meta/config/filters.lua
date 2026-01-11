@@ -64,7 +64,7 @@ error("Cannot require a meta file")
 ---@field no_bookmark? boolean
 ---
 ---(default: `{}`)
----@field custom? string[]|fun(absolute_path: string): boolean
+---@field custom? string[]|(fun(absolute_path: string): boolean)
 ---
 ---(default: `{}`)
 ---@field exclude? string[] 

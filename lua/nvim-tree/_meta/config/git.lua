@@ -24,7 +24,7 @@ error("Cannot require a meta file")
 ---
 ---Disable for top level paths.
 ---(default: `{}`)
----@field disable_for_dirs? string[]|fun(path: string): boolean
+---@field disable_for_dirs? string[]|(fun(path: string): boolean)
 ---
 ---`git` processes timeout milliseconds.
 ---(default: `400`)

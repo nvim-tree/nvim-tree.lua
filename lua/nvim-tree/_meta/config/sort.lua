@@ -30,7 +30,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Sort
 ---
 ---(default: `name`)
----@field sorter? nvim_tree.Config.Sort.Sorter|fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?
+---@field sorter? nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)
 ---
 ---Sort folders before files. Has no effect when {sorter} is a function.
 ---(default: `true`)

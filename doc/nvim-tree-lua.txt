@@ -3465,7 +3465,7 @@ Class: Config                                               *nvim-tree-config*
     TODO #2934 brief and some links
 
     Fields: ~
-      • {on_attach}?             (`string|fun(bufnr: integer)`) Runs when
+      • {on_attach}?             (`string|(fun(bufnr: integer))`) Runs when
                                  creating the nvim-tree buffer. Use this to
                                  set your |nvim-tree-mappings|. When
                                  `on_attach` is not a function,
@@ -3548,48 +3548,55 @@ Class: Config                                               *nvim-tree-config*
                                  |nvim_tree.Config.Log|
 
 *nvim_tree.Config.Renderer*
+    TODO overview
+
+    {root_folder_label} has 3 forms:
+    • `string`: |filename-modifiers| format string
+    • `boolean`: `true` to disable
+    • `fun(root_cwd: string): string`: string from root absolute path e.g. >lua
+        my_root_folder_label = function(path)
+         return ".../" .. vim.fn.fnamemodify(path, ":t")
+        end
+<
+
+    TODO: link to hidden display help section
+                                     *nvim_tree.Config.Renderer.HiddenDisplay*
+
+    {hidden_display} summary of hidden files below the tree.
+    • `none`: disabled
+    • `simple`: show how many hidden files are in a folder
+    • `all`: show how many hidden and the number of hidden files by reason
+    • `fun(hidden_stats: table<string, integer>): string`: returns a summary
+      of hidden stats
 
     Fields: ~
-      • {add_trailing}?            (`boolean`) Appends a trailing slash to
-                                   folder and symlink folder destination
-                                   names. Default: `false`
-      • {group_empty}?             (`boolean|fun(relative_path: string): string`)
+      • {add_trailing}?            (`boolean`, default: `false`) Appends a
+                                   trailing slash to folder and symlink folder
+                                   destination names.
+      • {group_empty}?             (`boolean|(fun(relative_path: string): string)`, default: `false`)
                                    Compact folders that only contain a single
-                                   folder into one node. Boolean or function
-                                   that takes one argument (the relative path
-                                   of grouped folders) and returns a string to
-                                   be displayed. Default: `false`
-      • {full_name}?               (`boolean`) Display node whose name length
-                                   is wider than the width of nvim-tree window
-                                   in floating window. Default: `false`
-      • {root_folder_label}?       (`string|boolean|fun(root_cwd: string): string`)
-                                   In what format to show root folder. See
-                                   `:help filename-modifiers` for available
-                                   `string` options. Set to `false` to hide
-                                   the root folder. or `boolean` or
-                                   `function(root_cwd)`, Default:
-                                   `":~:s?$?/..?"`
-      • {indent_width}?            (`integer`) Number of spaces for an each
-                                   tree nesting level. Minimum 1. Default: `2`
-      • {special_files}?           (`string[]`) A list of filenames that gets
-                                   highlighted with `NvimTreeSpecialFile`.
-                                   Default:
-                                   `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`
-      • {hidden_display}?          (`(fun(hidden_stats: table<string, integer>): string)|nvim_tree.HiddenDisplayOption`)
-                                   Show a summary of hidden files below the
-                                   tree using
-                                   `NvimTreeHiddenDisplay Default: `"none"`
-      • {symlink_destination}?     (`boolean`) Whether to show the destination
-                                   of the symlink. Default: `true`
-      • {decorators}?              (`(string|nvim_tree.api.decorator.UserDecorator)[]`)
+                                   folder into one node. Function variant
+                                   takes the relative path of grouped folders
+                                   and returns a string to be displayed.
+      • {full_name}?               (`boolean`, default: `false`) Display node
+                                   whose name length is wider than the width
+                                   of nvim-tree window in floating window.
+      • {root_folder_label}?       (`string|boolean|(fun(root_cwd: string): string)`)
+                                   (default: `":~:s?$?/..?"`)
+      • {indent_width}?            (`integer`, default: `2`) Number of spaces
+                                   for an each tree nesting level. Minimum 1.
+      • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
+                                   A list of filenames that gets highlighted
+                                   with `NvimTreeSpecialFile`.
+      • {hidden_display}?          (`nvim_tree.Config.Renderer.HiddenDisplay`)
+                                   (default: `none`)
+      • {symlink_destination}?     (`boolean`, default: `true`) Appends an
+                                   arrow followed by the destination of the
+                                   symlink.
+      • {decorators}?              (`(string|nvim_tree.api.decorator.UserDecorator)[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
                                    Highlighting and icons for the nodes, in
-                                   increasing order of precedence. Uses
-                                   strings to specify builtin decorators
-                                   otherwise specify your
-                                   `nvim_tree.api.decorator.UserDecorator`
-                                   class. Default: > lua { "Git", "Open",
-                                   "Hidden", "Modified", "Bookmark",
-                                   "Diagnostics", "Copied", "Cut", }
+                                   increasing order of precedence. Strings
+                                   specify builtin decorators.
       • {highlight_git}?           (`nvim_tree.HighlightOption`) Enable
                                    highlight for git attributes using
                                    `NvimTreeGit*HL` highlight groups. Requires
@@ -3831,7 +3838,7 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
     {sorter} may be a function that returns a |nvim_tree.Config.Sort.Sorter|
 
     Fields: ~
-      • {sorter}?         (`nvim_tree.Config.Sort.Sorter|fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?`)
+      • {sorter}?         (`nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)`)
                           (default: `name`)
       • {folders_first}?  (`boolean`, default: `true`) Sort folders before
                           files. Has no effect when {sorter} is a function.
@@ -3908,7 +3915,7 @@ Class: Config.View                                     *nvim-tree-config-view*
       • {enable}?              (`boolean`) (default: `false`)
       • {quit_on_focus_loss}?  (`boolean`, default: `true`) Close the floating
                                window when it loses focus.
-      • {open_win_config}?     (`vim.api.keyset.win_config|fun(): vim.api.keyset.win_config`)
+      • {open_win_config}?     (`vim.api.keyset.win_config|(fun(): vim.api.keyset.win_config)`)
                                (default: above)
 
 *nvim_tree.Config.View.Width*
@@ -3953,7 +3960,7 @@ Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
       • {enable}?       (`boolean`) (default: `false`)
       • {update_root}?  (`nvim_tree.Config.UpdateFocusedFile.UpdateRoot`)
                         |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|
-      • {exclude}?      (`boolean|fun(args: vim.api.keyset.create_autocmd.callback_args): boolean`, default: `false`)
+      • {exclude}?      (`boolean|(fun(args: vim.api.keyset.create_autocmd.callback_args): boolean)`, default: `false`)
                         A function called on |BufEnter| that returns true if
                         the file should not be focused when opening.
 
@@ -4020,8 +4027,8 @@ Class: Config.Git                                       *nvim-tree-config-git*
       • {show_on_open_dirs}?  (`boolean`, default: `true`) Show status icons
                               of children on directories that are open. Only
                               relevant when {show_on_dirs} is `true`.
-      • {disable_for_dirs}?   (`string[]|fun(path: string): boolean`, default:
-                              `{}`) Disable for top level paths.
+      • {disable_for_dirs}?   (`string[]|(fun(path: string): boolean)`,
+                              default: `{}`) Disable for top level paths.
       • {timeout}?            (`integer`, default: `400`) `git` processes
                               timeout milliseconds.
       • {cygwin_support}?     (`boolean`, default: `false`) Use `cygpath` if
@@ -4133,7 +4140,7 @@ overriding {git_ignored}, {dotfiles} and {custom}
       • {git_clean}?    (`boolean`) (default: `false`)
       • {no_buffer}?    (`boolean`) (default: `false`)
       • {no_bookmark}?  (`boolean`) (default: `false`)
-      • {custom}?       (`string[]|fun(absolute_path: string): boolean`)
+      • {custom}?       (`string[]|(fun(absolute_path: string): boolean)`)
                         (default: `{}`)
       • {exclude}?      (`string[]`) (default: `{}`)
 
@@ -4178,7 +4185,7 @@ Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
       • {enable}?          (`boolean`) (default: `true`)
       • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
                            between filesystem change and tree update.
-      • {ignore_dirs}?     (`string[]|fun(path: string): boolean`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
+      • {ignore_dirs}?     (`string[]|(fun(path: string): boolean)`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
                            Disable for directories.
 
 
@@ -4276,7 +4283,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
 
     Fields: ~
       • {enable}?   (`boolean`) (default: `true`)
-      • {picker}?   (`string|fun(): integer`, default: `default`) Change the
+      • {picker}?   (`string|(fun(): integer)`, default: `default`) Change the
                     default window picker: string `default` or a function.
       • {chars}?    (`string`, default:
                     `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`) Identifier
