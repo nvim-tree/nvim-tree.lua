@@ -105,6 +105,7 @@ Suppressions are permitted only in the following cases:
 - Backwards compatibility shims
 - neovim API metadata incorrect, awaiting upstream fix
 - classic class framework
+- `gen_vimdoc_config.lua` help generator as it requires neovim source
 
 # Backwards Compatibility
 

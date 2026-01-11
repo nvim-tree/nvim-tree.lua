@@ -1,0 +1,21 @@
+---@meta
+error("Cannot require a meta file")
+
+---Open files or directories via the OS.
+---
+---Neovim:
+---- `>=` 0.10 uses [vim.ui.open] unless {cmd} is specified
+---- `<` 0.10 calls external {cmd}:
+---   - UNIX: `xdg-open`
+---   - macOS: `open`
+---   - Windows: `cmd`
+---
+---@class nvim_tree.Config.SystemOpen
+---
+---The open command itself
+---(default: `xdg-open`, `open` or `cmd`)
+---@field cmd? string
+---
+---Optional argument list. Leave empty for OS specific default.
+---(default: `{}` or `{ "/c", "start", '""' }` on windows)
+---@field args? string[]

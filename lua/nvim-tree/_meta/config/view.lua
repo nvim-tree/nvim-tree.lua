@@ -1,0 +1,104 @@
+---@meta
+error("Cannot require a meta file")
+
+---@alias nvim_tree.Config.View.WidthSpec string|integer|(fun(): integer|string)
+
+---Configures the dimensions and appearance of the nvim-tree window.
+---
+---The window is "docked" at the left by default, however may be configured to float: [nvim_tree.Config.View.Float]
+---
+---{width} can be a [nvim_tree.Config.View.WidthSpec] for simple static control or a [nvim_tree.Config.View.Width] for fully dynamic control based on longest line.
+---
+---[nvim_tree.Config.View.WidthSpec]()
+---- string: `x%` string e.g. `30%`
+---- integer: number of columns
+---- function: returns one of the above
+---
+---@class nvim_tree.Config.View
+---
+---When entering nvim-tree, reposition the view so that the current node is initially centralized, see [zz].
+---(default: `false`)
+---@field centralize_selection? boolean
+---
+---[cursorline]
+---(default: `true`)
+---@field cursorline? boolean
+---
+---[cursorlineopt]
+---(default: `both`)
+---@field cursorlineopt? string
+---
+---Idle milliseconds before some reload / refresh operations. Increase if you experience performance issues around screen refresh.
+---(default: `15`)
+---@field debounce_delay? integer
+---
+---(default: `left`)
+---@field side? "left"|"right"
+---
+---Preserves window proportions when opening a file. If `false`, the height and width of windows other than nvim-tree will be equalized.
+---(default: `false`)
+---@field preserve_window_proportions? boolean
+---
+---[number]
+---(default: `false`)
+---@field number? boolean
+---
+---[relativenumber]
+---(default: `false`)
+---@field relativenumber? boolean
+---
+---[signcolumn]
+---(default: `yes`)
+---@field signcolumn? "yes"|"auto"|"no"
+---
+---(default: `30`)
+---@field width? nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width
+---
+---[nvim_tree.Config.View.Float]
+---@field float? nvim_tree.Config.View.Float
+
+
+---Configure dynamic width based on longest line.
+---
+---@class nvim_tree.Config.View.Width
+---
+---(default: `30`)
+---@field min? nvim_tree.Config.View.WidthSpec
+---
+----1 for unbounded.
+---(default: `-1`)
+---@field max? nvim_tree.Config.View.WidthSpec
+---
+---Exclude these lines when computing width.
+---(default: `{ "root" }`)
+---@field lines_excluded? ("root")[]
+---
+---Extra padding to the right.
+---(default: `1`)
+---@field padding? nvim_tree.Config.View.WidthSpec
+
+
+---Configure floating window behaviour
+---
+---[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
+---```lua
+---{
+---  relative = "editor",
+---  border = "rounded",
+---  width = 30,
+---  height = 30,
+---  row = 1,
+---  col = 1,
+---}
+---```
+---@class nvim_tree.Config.View.Float
+---
+---(default: `false`)
+---@field enable? boolean
+---
+---Close the floating window when it loses focus.
+---(default: `true`)
+---@field quit_on_focus_loss? boolean
+---
+---(default: above)
+---@field open_win_config? vim.api.keyset.win_config|(fun(): vim.api.keyset.win_config)
