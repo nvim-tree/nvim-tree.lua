@@ -514,6 +514,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       default_yes = false,
     },
   },
+  bookmarks = {
+    persist = false,
+  },
   experimental = {
   },
   log = {
@@ -530,7 +533,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       watcher = false,
     },
   },
-} -- END_DEFAULT_OPTS
+}-- END_DEFAULT_OPTS
 
 local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
@@ -580,6 +583,9 @@ local ACCEPTED_TYPES = {
         picker = { "function", "string" },
       },
     },
+  },
+  bookmarks = {
+    persist = { "boolean", "string" },
   },
 }
 
