@@ -13,13 +13,13 @@ CONTENTS
   2.4  Quickstart: Highlight                    |nvim-tree-quickstart-highlight|
   3. Commands                                 |nvim-tree-commands|
   4. Setup                                    |nvim-tree-setup|
-  5. Opts                                     |nvim-tree-opts|
+  5. Opts                                     |nvim_tree.Config|
   5.1  Opts: Sort                               |nvim-tree-opts-sort|
   5.2  Opts: View                               |nvim-tree-opts-view|
-  5.3  Opts: Renderer                           |nvim-tree-opts-renderer|
+  5.3  Opts: Renderer                           |nvim_tree.Config.Renderer|
   5.4  Opts: Hijack Directories                 |nvim-tree-opts-hijack-directories|
-  5.5  Opts: Update Focused File                |nvim-tree-opts-update-focused-file|
-  5.6  Opts: System Open                        |nvim-tree-opts-system-open|
+  5.5  Opts: Update Focused File                |nvim_tree.Config.UpdateFocusedFile|
+  5.6  Opts: System Open                        |nvim_tree.Config.SystemOpen|
   5.7  Opts: Git                                |nvim-tree-opts-git|
   5.8  Opts: Diagnostics                        |nvim-tree-opts-diagnostics|
   5.9  Opts: Modified                           |nvim-tree-opts-modified|
@@ -27,7 +27,7 @@ CONTENTS
   5.11 Opts: Live Filter                        |nvim-tree-opts-live-filter|
   5.12 Opts: Filesystem Watchers                |nvim-tree-opts-filesystem-watchers|
   5.13 Opts: Actions                            |nvim-tree-opts-actions|
-  5.14 Opts: Trash                              |nvim-tree-opts-trash|
+  5.14 Opts: Trash                              |nvim_tree.Config.Trash|
   5.15 Opts: Tab                                |nvim-tree-opts-tab|
   5.16 Opts: Notify                             |nvim-tree-opts-notify|
   5.17 Opts: Help                               |nvim-tree-opts-help|
@@ -218,7 +218,7 @@ Show the mappings:  `g?`
  2.3 QUICKSTART: CUSTOM MAPPINGS        *nvim-tree-quickstart-custom-mappings*
 
 |nvim-tree-mappings-default| are applied by default however you may customise
-via |nvim-tree.on_attach| e.g. >lua
+via |nvim_tree.Config| {on_attach} e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require "nvim-tree.api"
@@ -376,7 +376,7 @@ the configuration. Nothing happens until the tree is first opened.
 Subsequent setup() calls are expensive as they tear down the world before
 applying configuration.
 
-Following is the default configuration. See |nvim-tree-opts| for details. >lua
+Following is the default configuration. See |nvim_tree.Config| for details. >lua
 
     require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
       on_attach = "default",
@@ -755,12 +755,12 @@ Can be one of `"name"`, `"case_sensitive"`, `"modification_time"`, `"extension"`
     end
 <
 *nvim-tree.sort.folders_first*
-Sort folders before files. Has no effect when |nvim-tree.sort.sorter| is a
+Sort folders before files. Has no effect when |nvim_tree.Config.Sort| {sorter} is a
 function.
   Type: `boolean`, Default: `true`
 
 *nvim-tree.sort.files_first*
-Sort files before folders. Has no effect when |nvim-tree.sort.sorter| is a
+Sort files before folders. Has no effect when |nvim_tree.Config.Sort| {sorter} is a
 function. If set to `true` it overrides |nvim-tree.sort.folders_first|.
   Type: `boolean`, Default: `false`
 
@@ -1392,7 +1392,7 @@ Toggle via |nvim-tree-api.tree.toggle_hidden_filter()|, default `H`
 
 *nvim-tree.filters.git_clean*
 Do not show files with no git status. This will show ignored files when
-|nvim-tree.filters.git_ignored| is set, as they are effectively dirty.
+|nvim_tree.Config.Filters| {git_ignored} is set, as they are effectively dirty.
 Toggle via |nvim-tree-api.tree.toggle_git_clean_filter()|, default `C`
   Type: `boolean`, Default: `false`
 
@@ -1614,7 +1614,7 @@ Configuration for syncing nvim-tree across tabs.
 
     *nvim-tree.tab.sync.ignore*
     List of filetypes or buffer names on new tab that will prevent
-    |nvim-tree.tab.sync.open| and |nvim-tree.tab.sync.close|
+    |nvim_tree.Config.Tab.Sync| {open} and |nvim_tree.Config.Tab.Sync| {close}
       Type: {string}, Default: `{}`
 
 ==============================================================================
@@ -1758,7 +1758,7 @@ tree.open({opts})                                  *nvim-tree-api.tree.open()*
                                    overrides {current_window}
       • {find_file}      (boolean) find the current buffer
       • {update_root}    (boolean) requires {find_file}, see
-                                   |nvim-tree.update_focused_file.update_root|
+                                   |nvim_tree.Config.UpdateFocusedFile| {update_root}
 
 tree.toggle({opts})                              *nvim-tree-api.tree.toggle()*
     Open or close the tree.
@@ -1773,11 +1773,11 @@ tree.toggle({opts})                              *nvim-tree-api.tree.toggle()*
                                    overrides {current_window}
       • {find_file}      (boolean) find the current buffer
       • {update_root}    (boolean) requires {find_file}, see
-                                   |nvim-tree.update_focused_file.update_root|
+                                   |nvim_tree.Config.UpdateFocusedFile| {update_root}
       • {focus}          (boolean) focus the tree when opening, default true
 
 tree.close()                                      *nvim-tree-api.tree.close()*
-    Close the tree, affecting all tabs as per |nvim-tree.tab.sync.close|
+    Close the tree, affecting all tabs as per |nvim_tree.Config.Tab.Sync| {close}
 
 tree.close_in_this_tab()              *nvim-tree-api.tree.close_in_this_tab()*
     Close the tree in this tab only.
@@ -1794,14 +1794,14 @@ tree.reload()                                    *nvim-tree-api.tree.reload()*
 
 tree.resize({opts})                              *nvim-tree-api.tree.resize()*
     Resize the tree, persisting the new size.
-    Resets to |nvim-tree.view.width| when no {opts} provided.
+    Resets to |nvim_tree.Config.View| {width} when no {opts} provided.
     See |:NvimTreeResize|
 
     Parameters: ~
       • {opts} (table) optional parameters
 
     Options: ~
-      • {width}    (table)  new |nvim-tree.view.width| value
+      • {width}    (table)  new |nvim_tree.Config.View| {width} value
       • {absolute} (number) set the width
       • {relative} (number) increase or decrease the width
 
@@ -1854,7 +1854,7 @@ tree.find_file({opts})                        *nvim-tree-api.tree.find_file()*
       • {current_window} (boolean)        requires {open}, open in the current window
       • {winid}          (number)         open the tree in the specified |winid|,
                                           overrides {current_window}
-      • {update_root}    (boolean)        see |nvim-tree.update_focused_file.update_root|
+      • {update_root}    (boolean)        see |nvim_tree.Config.UpdateFocusedFile| {update_root}
       • {focus}          (boolean)        focus the tree
 
 tree.search_node()                          *nvim-tree-api.tree.search_node()*
@@ -1883,31 +1883,31 @@ tree.expand_all({node}, {opts})              *nvim-tree-api.tree.expand_all()*
 
                                   *nvim-tree-api.tree.toggle_enable_filters()*
 tree.toggle_enable_filters()
-    Toggle |nvim-tree.filters.enable| all filters.
+    Toggle |nvim_tree.Config.Filters| {enable} all filters.
 
                                 *nvim-tree-api.tree.toggle_gitignore_filter()*
 tree.toggle_gitignore_filter()
-    Toggle |nvim-tree.filters.git_ignored| filter.
+    Toggle |nvim_tree.Config.Filters| {git_ignored} filter.
 
                                 *nvim-tree-api.tree.toggle_git_clean_filter()*
 tree.toggle_git_clean_filter()
-    Toggle |nvim-tree.filters.git_clean| filter.
+    Toggle |nvim_tree.Config.Filters| {git_clean} filter.
 
                                 *nvim-tree-api.tree.toggle_no_buffer_filter()*
 tree.toggle_no_buffer_filter()
-    Toggle |nvim-tree.filters.no_buffer| filter.
+    Toggle |nvim_tree.Config.Filters| {no_buffer} filter.
 
                               *nvim-tree-api.tree.toggle_no_bookmark_filter()*
 tree.toggle_no_bookmark_filter()
-    Toggle |nvim-tree.filters.no_bookmark| filter.
+    Toggle |nvim_tree.Config.Filters| {no_bookmark} filter.
 
                                    *nvim-tree-api.tree.toggle_custom_filter()*
 tree.toggle_custom_filter()
-    Toggle |nvim-tree.filters.custom| filter.
+    Toggle |nvim_tree.Config.Filters| {custom} filter.
 
                                    *nvim-tree-api.tree.toggle_hidden_filter()*
 tree.toggle_hidden_filter()
-    Toggle |nvim-tree.filters.dotfiles| filter.
+    Toggle |nvim_tree.Config.Filters| {dotfiles} filter.
 
 tree.toggle_help()                          *nvim-tree-api.tree.toggle_help()*
     Toggle help view.
@@ -1963,7 +1963,7 @@ fs.remove({node})                                  *nvim-tree-api.fs.remove()*
       • {node} (Node|nil) file or folder
 
 fs.trash({node})                                    *nvim-tree-api.fs.trash()*
-    Trash a file or folder as per |nvim-tree-opts-trash|
+    Trash a file or folder as per |nvim_tree.Config.Trash|
 
     Parameters: ~
       • {node} (Node|nil) file or folder
@@ -2055,7 +2055,7 @@ Parameters: ~
   • {node} (Node|nil) file or folder
 
 node.open.edit({node}, {opts})                        *nvim-tree-api.node.open.edit()*
-    File:   open as per |nvim-tree.actions.open_file|
+    File:   open as per |nvim_tree.Config.Actions.OpenFile|
     Folder: expand or collapse
     Root:   change directory up
 
@@ -2135,9 +2135,9 @@ node.open.horizontal_no_picker({node}, {opts})
 
                                 *nvim-tree-api.node.open.toggle_group_empty()*
 node.open.toggle_group_empty({node}, {opts})
-    Toggle |nvim-tree.renderer.group_empty| for a specific folder.
+    Toggle |nvim_tree.Config.Renderer| {group_empty} for a specific folder.
     Does nothing on files.
-    Needs |nvim-tree.renderer.group_empty| set.
+    Needs |nvim_tree.Config.Renderer| {group_empty} set.
 
     Parameters: ~
       • {node} (Node|nil) file or folder
@@ -2208,7 +2208,7 @@ node.navigate.git.next({node})        *nvim-tree-api.node.navigate.git.next()*
 node.navigate.git.next_recursive({node})
     Alternative to |nvim-tree-api.node.navigate.git.next()| that navigates to
     the next file showing git status, recursively.
-    Needs |nvim-tree.git.show_on_dirs| set.
+    Needs |nvim_tree.Config.Git| {show_on_dirs} set.
 
                       *nvim-tree-api.node.navigate.git.next_skip_gitignored()*
 node.navigate.git.next_skip_gitignored({node})
@@ -2221,7 +2221,7 @@ node.navigate.git.prev({node})        *nvim-tree-api.node.navigate.git.prev()*
 node.navigate.git.prev_recursive({node})
     Alternative to |nvim-tree-api.node.navigate.git.prev()| that navigates to
     the previous file showing git status, recursively.
-    Needs |nvim-tree.git.show_on_dirs| set.
+    Needs |nvim_tree.Config.Git| {show_on_dirs} set.
 
                       *nvim-tree-api.node.navigate.git.prev_skip_gitignored()*
 node.navigate.git.prev_skip_gitignored({node})
@@ -2235,7 +2235,7 @@ node.navigate.diagnostics.next({node})
 node.navigate.diagnostics.next_recursive({node})
     Alternative to |nvim-tree-api.node.navigate.diagnostics.next()| that
     navigates to the next file showing diagnostic status, recursively.
-    Needs |nvim-tree.diagnostics.show_on_dirs| set.
+    Needs |nvim_tree.Config.Diagnostics| {show_on_dirs} set.
 
                               *nvim-tree-api.node.navigate.diagnostics.prev()*
 node.navigate.diagnostics.prev({node})
@@ -2245,17 +2245,17 @@ node.navigate.diagnostics.prev({node})
 node.navigate.diagnostics.prev_recursive({node})
     Alternative to |nvim-tree-api.node.navigate.diagnostics.prev()| that
     navigates to the previous file showing diagnostic status, recursively.
-    Needs |nvim-tree.diagnostics.show_on_dirs| set.
+    Needs |nvim_tree.Config.Diagnostics| {show_on_dirs} set.
 
                                    *nvim-tree-api.node.navigate.opened.next()*
 node.navigate.opened.next({node})
     Navigate to the next |bufloaded()| item.
-    See |nvim-tree.renderer.highlight_opened_files|
+    See |nvim_tree.Config.Renderer| {highlight_opened_files}
 
                                    *nvim-tree-api.node.navigate.opened.prev()*
 node.navigate.opened.prev({node})
     Navigate to the previous |bufloaded()| item.
-    See |nvim-tree.renderer.highlight_opened_files|
+    See |nvim_tree.Config.Renderer| {highlight_opened_files}
 
                                   *nvim-tree-api.node.navigate.sibling.next()*
 node.navigate.sibling.next({node})
@@ -2289,7 +2289,7 @@ node.run.cmd({node})                            *nvim-tree-api.node.run.cmd()*
     of the line.
 
 node.run.system({node})                      *nvim-tree-api.node.run.system()*
-    Execute |nvim-tree-opts-system-open|
+    Execute |nvim_tree.Config.SystemOpen|
 
 node.buffer.delete({node}, {opts})        *nvim-tree-api.node.buffer.delete()*
     Deletes node's related buffer, if one exists.
@@ -2402,8 +2402,8 @@ marks.bulk.move()                            *nvim-tree-api.marks.bulk.move()*
 
 marks.navigate.next()                    *nvim-tree-api.marks.navigate.next()*
     Navigate to the next marked node, wraps.
-    Opens files as per |nvim-tree.actions.open_file|
-    Works best with |nvim-tree-opts-update-focused-file| enabled.
+    Opens files as per |nvim_tree.Config.Actions.OpenFile|
+    Works best with |nvim_tree.Config.UpdateFocusedFile| enabled.
 
 marks.navigate.prev()                    *nvim-tree-api.marks.navigate.prev()*
     As per |nvim-tree-api.marks.navigate.next()|
@@ -2417,15 +2417,15 @@ marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
 
                            *nvim-tree-api.config.mappings.default_on_attach()*
 config.mappings.default_on_attach({bufnr})
-    Set all |nvim-tree-mappings-default|. Call from your |nvim-tree.on_attach|
+    Set all |nvim-tree-mappings-default|. Call from your |nvim_tree.Config| {on_attach}
 
     Parameters: ~
-      • {bufnr} (number) nvim-tree buffer number passed to |nvim-tree.on_attach|
+      • {bufnr} (number) nvim-tree buffer number passed to |nvim_tree.Config| {on_attach}
 
                                   *nvim-tree-api.config.mappings.get_keymap()*
 config.mappings.get_keymap()
     Retrieves all buffer local mappings for nvim-tree.
-    These are the mappings that are applied by |nvim-tree.on_attach|, which
+    These are the mappings that are applied by |nvim_tree.Config| {on_attach}, which
     may include default mappings.
 
     Return: ~
@@ -2463,7 +2463,7 @@ diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
 ==============================================================================
  7. MAPPINGS                                              *nvim-tree-mappings*
 
-Mappings are set via the |nvim-tree.on_attach| function, which is run upon
+Mappings are set via the |nvim_tree.Config| {on_attach} function, which is run upon
 creating the nvim-tree buffer. Mappings are usually |nvim-tree-api| functions
 however may be your own.
 
@@ -2525,10 +2525,10 @@ define your own function to map complex functionality e.g. >lua
 ==============================================================================
  7.1 MAPPINGS: DEFAULT                            *nvim-tree-mappings-default*
 
-In the absence of an |nvim-tree.on_attach| function, the following defaults
+In the absence of an |nvim_tree.Config| {on_attach} function, the following defaults
 will be applied.
 
-You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lua
+You are encouraged to copy these to your own |nvim_tree.Config| {on_attach} function. >lua
 
   local api = require("nvim-tree.api")
 
@@ -2597,7 +2597,7 @@ You are encouraged to copy these to your own |nvim-tree.on_attach| function. >lu
   vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
   -- END_DEFAULT_ON_ATTACH
 <
-Alternatively, you may apply these default mappings from your |nvim-tree.on_attach| via
+Alternatively, you may apply these default mappings from your |nvim_tree.Config| {on_attach} via
 |nvim-tree-api.config.mappings.default_on_attach()| e.g. >lua
 
   local function my_on_attach(bufnr)
@@ -2630,7 +2630,7 @@ To view the nvim-tree highlight groups run |:NvimTreeHiTest|
 To view all active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
-The `*HL` groups are additive as per |nvim-tree-opts-renderer| precedence.
+The `*HL` groups are additive as per |nvim_tree.Config.Renderer| precedence.
 Only present attributes will clobber each other.
 In this example a modified, opened file will have magenta text, with cyan
 undercurl: >vim
@@ -2786,7 +2786,7 @@ See |nvim-tree-legacy-highlight| for old highlight group compatibility.
   allowing  `"none"`, `"icon"`, `"name"` or `"all"`
 - `highlight_xxx` has highlight groups for both File and Folder
 - `highlight_xxx` is additive instead of overwriting. See
-  |nvim-tree-opts-renderer| for precedence.
+  |nvim_tree.Config.Renderer| for precedence.
 
 2024-01-29: disambiguate default highlights sharing groups:
 
@@ -2897,7 +2897,7 @@ e.g. handler for node renamed: >lua
 
 - Event.TreeAttachedPost
                 Invoked after the tree's buffer has been created and mappings
-                have been applied: |nvim-tree-mappings| or |nvim-tree.on_attach|
+                have been applied: |nvim-tree-mappings| or |nvim_tree.Config| {on_attach}
                 handler parameters: ~
                   {buf}          `{number} `API buffer handle (buffer number)
 
@@ -2933,7 +2933,7 @@ Example subscription: >lua
  10. PROMPTS                                               *nvim-tree-prompts*
 
 Some NvimTree actions use the builtin |vim.ui.select()| prompt API for
-confirmations when the |nvim-tree.select_prompts| option is set.
+confirmations when the |nvim_tree.Config| {select_prompts} option is set.
 
 The API accepts the optional `kind` key as part of the {opts} parameter, which
 can can be used to identify the type of prompt, to allow user side
@@ -3093,7 +3093,7 @@ There are many |netrw| features beyond the file browser. If you want to
 keep using |netrw| without its browser features please ensure:
 
 |nvim-tree.disable_netrw| `= false`
-|nvim-tree.hijack_netrw| ` = true`
+|nvim_tree.Config| {hijack_netrw} ` = true`
 
 ==============================================================================
  14. LEGACY                                                 *nvim-tree-legacy*
@@ -3108,18 +3108,18 @@ There are no plans to remove this migration.
 Legacy options are translated to the current, making type and value changes as
 needed.
 
-`update_cwd`                         |nvim-tree.sync_root_with_cwd|
-`update_focused_file.update_cwd`     |nvim-tree.update_focused_file.update_root|
-`open_on_tab`                        |nvim-tree.tab.sync.open|
-`ignore_buf_on_tab_change`           |nvim-tree.tab.sync.ignore|
-`renderer.root_folder_modifier`      |nvim-tree.renderer.root_folder_label|
-`update_focused_file.debounce_delay` |nvim-tree.view.debounce_delay|
-`trash.require_confirm`              |nvim-tree.ui.confirm.trash|
-`view.adaptive_size`                 |nvim-tree.view.width|
-`sort_by`                            |nvim-tree.sort.sorter|
-`git.ignore`                         |nvim-tree.filters.git_ignored|
-`renderer.icons.webdev_colors`       |nvim-tree.renderer.icons.web_devicons.file.color|
-`renderer.icons.padding`             |nvim-tree.renderer.icons.padding.icon|
+`update_cwd`                         |nvim_tree.Config| {sync_root_with_cwd}
+`update_focused_file.update_cwd`     |nvim_tree.Config.UpdateFocusedFile| {update_root}
+`open_on_tab`                        |nvim_tree.Config.Tab.Sync| {open}
+`ignore_buf_on_tab_change`           |nvim_tree.Config.Tab.Sync| {ignore}
+`renderer.root_folder_modifier`      |nvim_tree.Config.Renderer| {root_folder_label}
+`update_focused_file.debounce_delay` |nvim_tree.Config.View| {debounce_delay}
+`trash.require_confirm`              |nvim_tree.Config.UI.Confirm| {trash}
+`view.adaptive_size`                 |nvim_tree.Config.View| {width}
+`sort_by`                            |nvim_tree.Config.Sort| {sorter}
+`git.ignore`                         |nvim_tree.Config.Filters| {git_ignored}
+`renderer.icons.webdev_colors`       |nvim_tree.Config.Renderer.Icons.WebDevicons.File| {color}
+`renderer.icons.padding`             |nvim_tree.Config.Renderer.Icons.Padding| {icon}
 
 ==============================================================================
  14.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
@@ -3185,7 +3185,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.actions.expand_all.max_folder_discovery|
 |nvim-tree.actions.file_popup|
 |nvim-tree.actions.file_popup.open_win_config|
-|nvim-tree.actions.open_file|
+|nvim_tree.Config.Actions.OpenFile|
 |nvim-tree.actions.open_file.eject|
 |nvim-tree.actions.open_file.quit_on_open|
 |nvim-tree.actions.open_file.resize_window|
@@ -3205,32 +3205,32 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.diagnostics.severity|
 |nvim-tree.diagnostics.severity.max|
 |nvim-tree.diagnostics.severity.min|
-|nvim-tree.diagnostics.show_on_dirs|
+|nvim_tree.Config.Diagnostics| {show_on_dirs}
 |nvim-tree.diagnostics.show_on_open_dirs|
 |nvim-tree.disable_netrw|
 |nvim-tree.experimental|
 |nvim-tree.filesystem_watchers.debounce_delay|
 |nvim-tree.filesystem_watchers.enable|
 |nvim-tree.filesystem_watchers.ignore_dirs|
-|nvim-tree.filters.custom|
-|nvim-tree.filters.dotfiles|
-|nvim-tree.filters.enable|
+|nvim_tree.Config.Filters| {custom}
+|nvim_tree.Config.Filters| {dotfiles}
+|nvim_tree.Config.Filters| {enable}
 |nvim-tree.filters.exclude|
-|nvim-tree.filters.git_clean|
-|nvim-tree.filters.git_ignored|
-|nvim-tree.filters.no_bookmark|
-|nvim-tree.filters.no_buffer|
+|nvim_tree.Config.Filters| {git_clean}
+|nvim_tree.Config.Filters| {git_ignored}
+|nvim_tree.Config.Filters| {no_bookmark}
+|nvim_tree.Config.Filters| {no_buffer}
 |nvim-tree.git.cygwin_support|
 |nvim-tree.git.disable_for_dirs|
 |nvim-tree.git.enable|
-|nvim-tree.git.show_on_dirs|
+|nvim_tree.Config.Git| {show_on_dirs}
 |nvim-tree.git.show_on_open_dirs|
 |nvim-tree.git.timeout|
 |nvim-tree.help.sort_by|
 |nvim-tree.hijack_cursor|
 |nvim-tree.hijack_directories.auto_open|
 |nvim-tree.hijack_directories.enable|
-|nvim-tree.hijack_netrw|
+|nvim_tree.Config| {hijack_netrw}
 |nvim-tree.hijack_unnamed_buffer_when_opening|
 |nvim-tree.live_filter.always_show_folders|
 |nvim-tree.live_filter.prefix|
@@ -3249,13 +3249,13 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.modified.show_on_dirs|
 |nvim-tree.modified.show_on_open_dirs|
 |nvim-tree.notify.threshold|
-|nvim-tree.on_attach|
+|nvim_tree.Config| {on_attach}
 |nvim-tree.prefer_startup_root|
 |nvim-tree.reload_on_bufenter|
 |nvim-tree.renderer.add_trailing|
 |nvim-tree.renderer.decorators|
 |nvim-tree.renderer.full_name|
-|nvim-tree.renderer.group_empty|
+|nvim_tree.Config.Renderer| {group_empty}
 |nvim-tree.renderer.hidden_display|
 |nvim-tree.renderer.highlight_bookmarks|
 |nvim-tree.renderer.highlight_clipboard|
@@ -3263,7 +3263,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.highlight_git|
 |nvim-tree.renderer.highlight_hidden|
 |nvim-tree.renderer.highlight_modified|
-|nvim-tree.renderer.highlight_opened_files|
+|nvim_tree.Config.Renderer| {highlight_opened_files}
 |nvim-tree.renderer.icons|
 |nvim-tree.renderer.icons.bookmarks_placement|
 |nvim-tree.renderer.icons.diagnostics_placement|
@@ -3278,7 +3278,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.hidden_placement|
 |nvim-tree.renderer.icons.modified_placement|
 |nvim-tree.renderer.icons.padding.folder_arrow|
-|nvim-tree.renderer.icons.padding.icon|
+|nvim_tree.Config.Renderer.Icons.Padding| {icon}
 |nvim-tree.renderer.icons.show|
 |nvim-tree.renderer.icons.show.bookmarks|
 |nvim-tree.renderer.icons.show.diagnostics|
@@ -3291,7 +3291,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.icons.symlink_arrow|
 |nvim-tree.renderer.icons.web_devicons|
 |nvim-tree.renderer.icons.web_devicons.file|
-|nvim-tree.renderer.icons.web_devicons.file.color|
+|nvim_tree.Config.Renderer.Icons.WebDevicons.File| {color}
 |nvim-tree.renderer.icons.web_devicons.file.enable|
 |nvim-tree.renderer.icons.web_devicons.folder|
 |nvim-tree.renderer.icons.web_devicons.folder.color|
@@ -3301,36 +3301,36 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.renderer.indent_markers.icons|
 |nvim-tree.renderer.indent_markers.inline_arrows|
 |nvim-tree.renderer.indent_width|
-|nvim-tree.renderer.root_folder_label|
+|nvim_tree.Config.Renderer| {root_folder_label}
 |nvim-tree.renderer.special_files|
 |nvim-tree.renderer.symlink_destination|
 |nvim-tree.respect_buf_cwd|
 |nvim-tree.root_dirs|
-|nvim-tree.select_prompts|
+|nvim_tree.Config| {select_prompts}
 |nvim-tree.sort.files_first|
 |nvim-tree.sort.folders_first|
-|nvim-tree.sort.sorter|
-|nvim-tree.sync_root_with_cwd|
+|nvim_tree.Config.Sort| {sorter}
+|nvim_tree.Config| {sync_root_with_cwd}
 |nvim-tree.system_open.args|
 |nvim-tree.system_open.cmd|
 |nvim-tree.tab.sync|
-|nvim-tree.tab.sync.close|
-|nvim-tree.tab.sync.ignore|
-|nvim-tree.tab.sync.open|
+|nvim_tree.Config.Tab.Sync| {close}
+|nvim_tree.Config.Tab.Sync| {ignore}
+|nvim_tree.Config.Tab.Sync| {open}
 |nvim-tree.trash.cmd|
 |nvim-tree.ui.confirm|
 |nvim-tree.ui.confirm.default_yes|
 |nvim-tree.ui.confirm.remove|
-|nvim-tree.ui.confirm.trash|
+|nvim_tree.Config.UI.Confirm| {trash}
 |nvim-tree.update_focused_file.enable|
 |nvim-tree.update_focused_file.exclude|
-|nvim-tree.update_focused_file.update_root|
+|nvim_tree.Config.UpdateFocusedFile| {update_root}
 |nvim-tree.update_focused_file.update_root.enable|
 |nvim-tree.update_focused_file.update_root.ignore_list|
 |nvim-tree.view.centralize_selection|
 |nvim-tree.view.cursorline|
 |nvim-tree.view.cursorlineopt|
-|nvim-tree.view.debounce_delay|
+|nvim_tree.Config.View| {debounce_delay}
 |nvim-tree.view.float|
 |nvim-tree.view.float.enable|
 |nvim-tree.view.float.open_win_config|
@@ -3340,7 +3340,7 @@ highlight group is not, hard linking as follows: >
 |nvim-tree.view.relativenumber|
 |nvim-tree.view.side|
 |nvim-tree.view.signcolumn|
-|nvim-tree.view.width|
+|nvim_tree.Config.View| {width}
 |nvim-tree.view.width.lines_excluded|
 |nvim-tree.view.width.max|
 |nvim-tree.view.width.min|
