@@ -3,12 +3,14 @@ error("Cannot require a meta file")
 
 ---Open files or directories via the OS.
 ---
----Neovim:
+---nvim:
 ---- `>=` 0.10 uses [vim.ui.open()] unless {cmd} is specified
 ---- `<` 0.10 calls external {cmd}:
 ---   - UNIX: `xdg-open`
 ---   - macOS: `open`
 ---   - Windows: `cmd`
+---
+---Once nvim-tree minimum nvim version is updated to 0.10, these options will no longer be necessary and will be removed.
 ---
 ---@class nvim_tree.Config.SystemOpen
 ---

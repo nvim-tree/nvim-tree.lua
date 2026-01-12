@@ -13,7 +13,7 @@ error("Cannot require a meta file")
 ---- `suffix` uses the last e.g. `foo.tar.gz` -> `.gz`
 ---- `filetype` [filetype]
 ---
----{sorter} may be a function that is passed a list of [nvim_tree.api.Node] to be sorted in place e.g.
+---{sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be sorted in place e.g.
 ---```lua
 ---
 ------Sort by name length
