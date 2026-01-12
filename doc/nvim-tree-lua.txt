@@ -85,7 +85,7 @@ File Icons
 
      should look like an open folder.
 
-    To disable the display of icons see |renderer.icons.show|
+    To disable the display of icons see |nvim-tree.renderer.icons.show|
 
 Colours
 
@@ -1018,7 +1018,7 @@ Configuration options for tree indent markers.
 
     *nvim-tree.renderer.indent_markers.inline_arrows*
     Display folder arrows in the same column as indent marker
-    when using |renderer.icons.show.folder_arrow|
+    when using |nvim-tree.renderer.icons.show.folder_arrow|
       Type: `boolean`, Default: `true`
 
     *nvim-tree.renderer.indent_markers.icons*
@@ -1114,30 +1114,30 @@ Configuration options for icons.
 
         *nvim-tree.renderer.icons.show.folder_arrow*
         Show a small arrow before the folder node. Arrow will be a part of the
-        node when using |renderer.indent_markers|.
+        node when using |nvim-tree.renderer.indent_markers|.
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.git*
-        Show a git status icon, see |renderer.icons.git_placement|
+        Show a git status icon, see |nvim-tree.renderer.icons.git_placement|
         Requires |nvim-tree.git.enable| `= true`
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.modified*
-        Show a modified icon, see |renderer.icons.modified_placement|
+        Show a modified icon, see |nvim-tree.renderer.icons.modified_placement|
         Requires |nvim-tree.modified.enable| `= true`
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.hidden*
-        Show a hidden icon, see |renderer.icons.hidden_placement|
+        Show a hidden icon, see |nvim-tree.renderer.icons.hidden_placement|
           Type: `boolean`, Default: `false`
 
         *nvim-tree.renderer.icons.show.diagnostics*
-        Show a diagnostics status icon, see |renderer.icons.diagnostics_placement|
+        Show a diagnostics status icon, see |nvim-tree.renderer.icons.diagnostics_placement|
         Requires |nvim-tree.diagnostics.enable| `= true`
           Type: `boolean`, Default: `true`
 
         *nvim-tree.renderer.icons.show.bookmarks*
-        Show a bookmark icon, see |renderer.icons.bookmarks_placement|
+        Show a bookmark icon, see |nvim-tree.renderer.icons.bookmarks_placement|
           Type: `boolean`, Default: `true`
 
     *nvim-tree.renderer.icons.glyphs*
@@ -1353,8 +1353,8 @@ Icons for diagnostic severity.
 
 Indicate which file have unsaved modification.
 
-You will still need to set |renderer.icons.show.modified| `= true` or
-|renderer.highlight_modified| `= true` to be able to see modified status in the
+You will still need to set |nvim-tree.renderer.icons.show.modified| `= true` or
+|nvim-tree.renderer.highlight_modified| `= true` to be able to see modified status in the
 tree.
 
 *nvim-tree.modified.enable*
@@ -1723,7 +1723,7 @@ Specify which information to log.
       Type: `boolean`, Default: `false`
 
     *nvim-tree.log.types.watcher*
-    |nvim-tree.filesystem_watchers| processing, verbose.
+    |nvim-tree-opts-filesystem-watchers| processing, verbose.
       Type: `boolean`, Default: `false`
 
 ==============================================================================
@@ -1963,7 +1963,7 @@ fs.remove({node})                                  *nvim-tree-api.fs.remove()*
       • {node} (Node|nil) file or folder
 
 fs.trash({node})                                    *nvim-tree-api.fs.trash()*
-    Trash a file or folder as per |nvim-tree.trash|
+    Trash a file or folder as per |nvim-tree-opts-trash|
 
     Parameters: ~
       • {node} (Node|nil) file or folder
@@ -2289,7 +2289,7 @@ node.run.cmd({node})                            *nvim-tree-api.node.run.cmd()*
     of the line.
 
 node.run.system({node})                      *nvim-tree-api.node.run.system()*
-    Execute |nvim-tree.system_open|
+    Execute |nvim-tree-opts-system-open|
 
 node.buffer.delete({node}, {opts})        *nvim-tree-api.node.buffer.delete()*
     Deletes node's related buffer, if one exists.
@@ -2361,11 +2361,11 @@ events.Event                                      *nvim-tree-api.events.Event*
  6.6 API LIVE FILTER                               *nvim-tree-api.live_filter*
 
 live_filter.start()                        *nvim-tree-api.live_filter.start()*
-    Enter |nvim-tree.live_filter| mode.
+    Enter |nvim-tree-api.live_filter| mode.
     Opens an input window with |filetype| `"NvimTreeFilter"`
 
 live_filter.clear()                        *nvim-tree-api.live_filter.clear()*
-    Exit |nvim-tree.live_filter| mode.
+    Exit |nvim-tree-api.live_filter| mode.
 
 ==============================================================================
  6.7 API MARKS                                           *nvim-tree-api.marks*
@@ -2403,7 +2403,7 @@ marks.bulk.move()                            *nvim-tree-api.marks.bulk.move()*
 marks.navigate.next()                    *nvim-tree-api.marks.navigate.next()*
     Navigate to the next marked node, wraps.
     Opens files as per |nvim-tree.actions.open_file|
-    Works best with |nvim-tree.update_focused_file| enabled.
+    Works best with |nvim-tree-opts-update-focused-file| enabled.
 
 marks.navigate.prev()                    *nvim-tree-api.marks.navigate.prev()*
     As per |nvim-tree-api.marks.navigate.next()|
@@ -2811,8 +2811,6 @@ Approximate pre-overhaul values for the `SpellCap` groups may be set via: >lua
 ==============================================================================
  9. EVENTS                                                  *nvim-tree-events*
 
-|nvim_tree_events|
-
 nvim-tree will dispatch events whenever an action is made. These events can be
 subscribed to through handler functions. This allows for even further
 customization of nvim-tree.
@@ -2821,7 +2819,7 @@ A handler for an event is just a function which receives one argument, the
 payload of the event. The payload is different for each event type. Refer
 to |nvim_tree_registering_handlers| for more information.
 
-|nvim_tree_registering_handlers|
+*nvim_tree_registering_handlers*
 
 Handlers are registered by calling |nvim-tree-api.events.subscribe()|
 function with an |nvim-tree-api.events.Event|
@@ -2835,7 +2833,7 @@ e.g. handler for node renamed: >lua
       print("Node renamed from " .. data.old_name .. " to " ..  data.new_name)
     end)
 <
-|nvim_tree_events_kind|
+*nvim_tree_events_kind*
 
 - Event.Ready
                 When NvimTree has been initialized.
@@ -2912,7 +2910,7 @@ e.g. handler for node renamed: >lua
                   {bufnr}          `{number} `API buffer handle (buffer number)
                   {winnr}          `{number} `API window handle (window number)
 
-|nvim_tree_events_startup|
+*nvim_tree_events_startup*
 
 There are two special startup events in the form of User autocommands:
 
@@ -2935,7 +2933,7 @@ Example subscription: >lua
  10. PROMPTS                                               *nvim-tree-prompts*
 
 Some NvimTree actions use the builtin |vim.ui.select()| prompt API for
-confirmations when the |nvim_tree.select_prompts| option is set.
+confirmations when the |nvim-tree.select_prompts| option is set.
 
 The API accepts the optional `kind` key as part of the {opts} parameter, which
 can can be used to identify the type of prompt, to allow user side
@@ -3726,7 +3724,8 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                    Highlighting and icons for the nodes, in
                                    increasing order of precedence. Strings
                                    specify builtin decorators. See
-                                   |nvim-tree-decorators|
+                                   |nvim-tree-decorators|,
+                                   |nvim-tree-api.decorator|
       • {highlight_git}?           (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Git status: `NvimTreeGit*HL`. Requires
                                    |nvim_tree.Config.Git| {enable}.
