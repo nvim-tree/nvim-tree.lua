@@ -16,7 +16,7 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field show_on_dirs? boolean
 ---
----Show diagnostics icons on directories that are open. Only relevant when {show_on_dirs} is `true`.
+---Show diagnostics icons on directories that are open. Requires {show_on_dirs}.
 ---(default: `true`)
 ---@field show_on_open_dirs? boolean
 ---

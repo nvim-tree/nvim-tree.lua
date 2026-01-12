@@ -31,10 +31,10 @@ error("Cannot require a meta file")
 -----@field hijack_unnamed_buffer_when_opening? boolean
 ---@field hubwo? boolean
 ---
----Preferred root directories. Only relevant when [nvim_tree.Config.UpdateFocusedFile] {update_root} is `true`
+---Preferred root directories. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
 ---@field root_dirs? string[]
 ---
----Prefer startup root directory when updating root directory of the tree. Only relevant when [nvim_tree.Config.UpdateFocusedFile] {update_root} is `true`
+---Prefer startup root directory when updating root directory of the tree. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
 ---(default: `false`)
 ---@field prefer_startup_root? boolean
 ---

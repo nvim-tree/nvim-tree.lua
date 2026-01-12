@@ -3482,15 +3482,13 @@ Class: Config                                               *nvim-tree-config*
                                  reinstate this one when formatting is done
                                  #2934 --@field
                                  hijack_unnamed_buffer_when_opening? boolean
-      • {root_dirs}?             (`string[]`) Preferred root directories. Only
-                                 relevant when
-                                 |nvim_tree.Config.UpdateFocusedFile|
-                                 {update_root} is `true`
+      • {root_dirs}?             (`string[]`) Preferred root directories.
+                                 Requires
+                                 |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
       • {prefer_startup_root}?   (`boolean`, default: `false`) Prefer startup
                                  root directory when updating root directory
-                                 of the tree. Only relevant when
-                                 |nvim_tree.Config.UpdateFocusedFile|
-                                 {update_root} is `true`
+                                 of the tree. Requires
+                                 |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
       • {sync_root_with_cwd}?    (`boolean`, default: `false`) Changes the
                                  tree root directory on |DirChanged| and
                                  refreshes the tree.
@@ -3727,21 +3725,19 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                    |nvim-tree-decorators|.
       • {highlight_git}?           (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Git status: `NvimTreeGit*HL`. Requires
-                                   |nvim_tree.Config.Git| {enable}.
+                                   |nvim_tree.Config.Git|.
       • {highlight_opened_files}?  (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    |bufloaded()| files: `NvimTreeOpenedHL`.
       • {highlight_hidden}?        (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Hidden (dotfiles): `NvimTreeHiddenFileHL`.
       • {highlight_modified}?      (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Modified files: `NvimTreeModifiedFile`.
-                                   Requires |nvim_tree.Config.Modified|
-                                   {enable}.
+                                   Requires |nvim_tree.Config.Modified|.
       • {highlight_bookmarks}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Bookmarked: `NvimTreeBookmarkHL`.
       • {highlight_diagnostics}?   (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Diagnostic status: `NvimTreeDiagnostic*HL`.
-                                   Requires |nvim_tree.Config.Diagnostics|
-                                   {enable}.
+                                   Requires |nvim_tree.Config.Diagnostics|.
       • {highlight_clipboard}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `name`)
                                    Copied: `NvimTreeCopiedHL`, cut:
                                    `NvimTreeCutHL`.
@@ -3769,11 +3765,9 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {git_placement}?          (`nvim_tree.Config.Renderer.Icons.Placement`)
                                   (default: `before`)
       • {diagnostics_placement}?  (`nvim_tree.Config.Renderer.Icons.Placement`, default: `signcolumn`)
-                                  Requires |nvim_tree.Config.Diagnostics|
-                                  {enable}.
+                                  Requires |nvim_tree.Config.Diagnostics|.
       • {modified_placement}?     (`nvim_tree.Config.Renderer.Icons.Placement`, default: `after`)
-                                  Requires |nvim_tree.Config.Modified|
-                                  {enable}.
+                                  Requires |nvim_tree.Config.Modified|.
       • {hidden_placement}?       (`nvim_tree.Config.Renderer.Icons.Placement`)
                                   (default: `after`)
       • {bookmarks_placement}?    (`nvim_tree.Config.Renderer.Icons.Placement`)
@@ -3801,13 +3795,13 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
 
     Fields: ~
       • {default}?   (`string`, default: `` ) Files, overridden by
-                     |nvim_tree.Config.Renderer.Icons| {web_devicons}
+                     |nvim_tree.Config.Renderer.Icons.WebDevicons|.
       • {symlink}?   (`string`) (default: `` )
       • {bookmark}?  (`string`) (default: `󰆤` )
       • {modified}?  (`string`) (default: `●` )
       • {hidden}?    (`string`) (default: `󰜌` )
-      • {folder}?    (`table`) Overridden by |nvim_tree.Config.Renderer.Icons|
-                     {web_devicons} *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
+      • {folder}?    (`table`) Overridden by
+                     |nvim_tree.Config.Renderer.Icons.WebDevicons|. *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
                      • {arrow_closed}? (`string`) (default: left arrow)
                      • {arrow_open}? (`string`) (default: down arrow)
                      • {default}? (`string`) (default: `` )
@@ -3843,24 +3837,23 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {folder}?        (`boolean`, default: `true`) Before folder name.
       • {folder_arrow}?  (`boolean`, default: `true`) Show a small arrow
                          before the folder node. Arrow will be a part of the
-                         node when using |nvim_tree.Config.Renderer|
-                         {indent_markers}.
-      • {git}?           (`boolean`, default: `true`) Icons:
-                         |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
-                         Location: |nvim_tree.Config.Renderer.Icons|
-                         {git_placement}. Requires |nvim_tree.Config.Git|
-                         {enable}.
+                         node when using
+                         |nvim_tree.Config.Renderer.IndentMarkers|.
+      • {git}?           (`boolean`, default: `true`) Location:
+                         |nvim_tree.Config.Renderer.Icons| {git_placement}.
+                         Icons: |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
+                         Requires |nvim_tree.Config.Git|.
       • {modified}?      (`boolean`, default: `true`) Location:
                          |nvim_tree.Config.Renderer.Icons|
                          {modified_placement}. Requires
-                         |nvim_tree.Config.Modified| {enable}.
+                         |nvim_tree.Config.Modified|.
       • {hidden}?        (`boolean`, default: `false`) Location:
                          |nvim_tree.Config.Renderer.Icons| {hidden_placement}.
-      • {diagnostics}?   (`boolean`, default: `true`) Icons:
-                         |nvim_tree.Config.Diagnostics.Icons| Location:
+      • {diagnostics}?   (`boolean`, default: `true`) Location:
                          |nvim_tree.Config.Renderer.Icons|
-                         {diagnostics_placement}. Requires
-                         |nvim_tree.Config.Diagnostics| {enable}.
+                         {diagnostics_placement}. Icons:
+                         |nvim_tree.Config.Diagnostics.Icons|. Requires
+                         |nvim_tree.Config.Diagnostics|.
       • {bookmarks}?     (`boolean`, default: `true`) Location:
                          |nvim_tree.Config.Renderer.Icons|
                          {bookmarks_placement}.
@@ -3874,15 +3867,15 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {file}?    (`table`)
                             *nvim_tree.Config.Renderer.Icons.WebDevicons.File*
                    • {enable}? (`boolean`, default: `true`) Show icons for
-                     files, overrides |nvim_tree.Config.Renderer.Icons.Glyphs|
-                     {default}.
+                     files, overrides
+                     |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
                    • {color}? (`boolean`, default: `true`) Apply colours to
                      files, overrides `NvimTreeFileIcon`.
       • {folder}?  (`table`)
                           *nvim_tree.Config.Renderer.Icons.WebDevicons.Folder*
                    • {enable}? (`boolean`, default: `false`) Show icons for
                      directories, overrides
-                     |nvim_tree.Config.Renderer.Icons.Glyphs| {folder}.
+                     |nvim_tree.Config.Renderer.Icons.Glyphs.Folder|.
                    • {color}? (`boolean`, default: `true`) Apply colors to
                      directories, overrides `NvimTree*FolderName`.
 
@@ -3945,7 +3938,7 @@ Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
     Prefers vim's cwd and |nvim_tree.Config| {root_dirs}, falling back to the
     directory containing the file.
 
-    Only relevant when |nvim_tree.Config.UpdateFocusedFile| {enable} is `true`
+    Requires |nvim_tree.Config.UpdateFocusedFile|
 
     Fields: ~
       • {enable}?       (`boolean`) (default: `false`)
@@ -4002,8 +3995,8 @@ Class: Config.Git                                       *nvim-tree-config-git*
                               of children when directory itself has no status
                               icon
       • {show_on_open_dirs}?  (`boolean`, default: `true`) Show status icons
-                              of children on directories that are open. Only
-                              relevant when {show_on_dirs} is `true`.
+                              of children on directories that are open.
+                              Requires {show_on_dirs}.
       • {disable_for_dirs}?   (`string[]|(fun(path: string): boolean)`,
                               default: `{}`) Disable for top level paths.
       • {timeout}?            (`integer`, default: `400`) `git` processes
@@ -4026,8 +4019,8 @@ Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
       • {show_on_dirs}?       (`boolean`, default: `false`) Show diagnostic
                               icons on parent directories.
       • {show_on_open_dirs}?  (`boolean`, default: `true`) Show diagnostics
-                              icons on directories that are open. Only
-                              relevant when {show_on_dirs} is `true`.
+                              icons on directories that are open. Requires
+                              {show_on_dirs}.
       • {diagnostic_opts}?    (`boolean`, default: `false`) Global
                               |vim.diagnostic.Opts| overrides {severity} and
                               {icons}
@@ -4050,9 +4043,9 @@ Class: Config.Modified                             *nvim-tree-config-modified*
 
 *nvim_tree.Config.Modified*
     Indicate which files have unsaved modification. To see modified status in
-    the tree you will need to set:
-    • |nvim_tree.Config.Renderer.Icons.Show| {modified} to `true` OR
-    • |nvim_tree.Config.Renderer| {highlight_modified} to `true`
+    the tree you will need:
+    • |nvim_tree.Config.Renderer.Icons.Show| {modified} OR
+    • |nvim_tree.Config.Renderer| {highlight_modified}
 
     Fields: ~
       • {enable}?             (`boolean`) (default: `false`)
@@ -4060,8 +4053,8 @@ Class: Config.Modified                             *nvim-tree-config-modified*
                               indication on directory whose children are
                               modified.
       • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
-                              indication on open directories. Only relevant
-                              when {show_on_dirs} is `true`.
+                              indication on open directories. Requires
+                              {show_on_dirs}.
 
 
 
@@ -4077,7 +4070,7 @@ Filters can be set at startup and toggled live via API with default keymappings.
 
 `I`    {git_ignored}    |nvim-tree-api.tree.toggle_gitignore_filter()|
   Ignore files based on `.gitignore`.
-  Requires |nvim_tree.Config.Git| {enable}
+  Requires |nvim_tree.Config.Git|
 
 `H`    {dotfiles}       |nvim-tree-api.tree.toggle_hidden_filter()|
   Filter dotfiles: files starting with a `.`

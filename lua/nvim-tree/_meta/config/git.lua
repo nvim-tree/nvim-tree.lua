@@ -18,7 +18,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field show_on_dirs? boolean
 ---
----Show status icons of children on directories that are open. Only relevant when {show_on_dirs} is `true`.
+---Show status icons of children on directories that are open. Requires {show_on_dirs}.
 ---(default: `true`)
 ---@field show_on_open_dirs? boolean
 ---

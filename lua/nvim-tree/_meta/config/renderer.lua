@@ -63,7 +63,7 @@ error("Cannot require a meta file")
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
 ---Git status: `NvimTreeGit*HL`.
----Requires [nvim_tree.Config.Git] {enable}.
+---Requires [nvim_tree.Config.Git].
 ---(default: `none`)
 ---@field highlight_git? nvim_tree.Config.Renderer.HighlightPlacement
 ---
@@ -76,7 +76,7 @@ error("Cannot require a meta file")
 ---@field highlight_hidden? nvim_tree.Config.Renderer.HighlightPlacement 
 ---
 ---Modified files: `NvimTreeModifiedFile`.
----Requires [nvim_tree.Config.Modified] {enable}.
+---Requires [nvim_tree.Config.Modified].
 ---(default: `none`)
 ---@field highlight_modified? nvim_tree.Config.Renderer.HighlightPlacement
 ---
@@ -85,7 +85,7 @@ error("Cannot require a meta file")
 ---@field highlight_bookmarks? nvim_tree.Config.Renderer.HighlightPlacement
 ---
 ---Diagnostic status: `NvimTreeDiagnostic*HL`.
----Requires [nvim_tree.Config.Diagnostics] {enable}.
+---Requires [nvim_tree.Config.Diagnostics].
 ---(default: `none`)
 ---@field highlight_diagnostics? nvim_tree.Config.Renderer.HighlightPlacement
 ---
@@ -152,11 +152,11 @@ error("Cannot require a meta file")
 ---(default: `before`)
 ---@field git_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
----Requires [nvim_tree.Config.Diagnostics] {enable}.
+---Requires [nvim_tree.Config.Diagnostics].
 ---(default: `signcolumn`)
 ---@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
----Requires [nvim_tree.Config.Modified] {enable}.
+---Requires [nvim_tree.Config.Modified].
 ---(default: `after`)
 ---@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
@@ -194,7 +194,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---@inlinedoc
 ---
----Show icons for files, overrides [nvim_tree.Config.Renderer.Icons.Glyphs] {default}.
+---Show icons for files, overrides [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
 ---(default: `true`)
 ---@field enable? boolean 
 ---
@@ -207,7 +207,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 ---@inlinedoc
 ---
----Show icons for directories, overrides [nvim_tree.Config.Renderer.Icons.Glyphs] {folder}.
+---Show icons for directories, overrides [nvim_tree.Config.Renderer.Icons.Glyphs.Folder].
 ---(default: `false`)
 ---@field enable? boolean
 ---
@@ -250,18 +250,18 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field folder? boolean
 ---
----Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer] {indent_markers}.
+---Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer.IndentMarkers].
 ---(default: `true`)
 ---@field folder_arrow? boolean
 ---
----Icons: [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
 ---Location: [nvim_tree.Config.Renderer.Icons] {git_placement}.
----Requires [nvim_tree.Config.Git] {enable}.
+---Icons: [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
+---Requires [nvim_tree.Config.Git].
 ---(default: `true`)
 ---@field git? boolean
 ---
 ---Location: [nvim_tree.Config.Renderer.Icons] {modified_placement}.
----Requires [nvim_tree.Config.Modified] {enable}.
+---Requires [nvim_tree.Config.Modified].
 ---(default: `true`)
 ---@field modified? boolean
 ---
@@ -269,9 +269,9 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field hidden? boolean
 ---
----Icons: [nvim_tree.Config.Diagnostics.Icons]
 ---Location: [nvim_tree.Config.Renderer.Icons] {diagnostics_placement}.
----Requires [nvim_tree.Config.Diagnostics] {enable}.
+---Icons: [nvim_tree.Config.Diagnostics.Icons].
+---Requires [nvim_tree.Config.Diagnostics].
 ---(default: `true`)
 ---@field diagnostics? boolean
 ---
@@ -287,7 +287,7 @@ error("Cannot require a meta file")
 ---- [nvim_tree.Config.Renderer.IndentMarkers.Icons]
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
 ---
----Files, overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
+---Files, overridden by [nvim_tree.Config.Renderer.Icons.WebDevicons].
 ---(default: `` )
 ---@field default? string
 ---
@@ -303,7 +303,7 @@ error("Cannot require a meta file")
 ---(default: `󰜌` )
 ---@field hidden? string
 ---
----Overridden by [nvim_tree.Config.Renderer.Icons] {web_devicons}
+---Overridden by [nvim_tree.Config.Renderer.Icons.WebDevicons].
 ---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder
 ---
 ---Git status on files and directories.

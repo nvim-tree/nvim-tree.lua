@@ -11,7 +11,7 @@ error("Cannot require a meta file")
 ---
 ---`I`    {git_ignored}    |nvim-tree-api.tree.toggle_gitignore_filter()|
 ---   Ignore files based on `.gitignore`.
----   Requires |nvim_tree.Config.Git| {enable}
+---   Requires |nvim_tree.Config.Git|
 ---
 ---`H`    {dotfiles}       |nvim-tree-api.tree.toggle_hidden_filter()|
 ---   Filter dotfiles: files starting with a `.`

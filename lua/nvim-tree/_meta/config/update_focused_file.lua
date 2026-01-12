@@ -20,7 +20,7 @@ error("Cannot require a meta file")
 ---
 ---Prefers vim's cwd and [nvim_tree.Config] {root_dirs}, falling back to the directory containing the file.
 ---
----Only relevant when [nvim_tree.Config.UpdateFocusedFile] {enable} is `true`
+---Requires [nvim_tree.Config.UpdateFocusedFile]
 ---
 ---@class nvim_tree.Config.UpdateFocusedFile.UpdateRoot
 ---
