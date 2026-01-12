@@ -53,7 +53,7 @@ error("Cannot require a meta file")
 
 ---{file_popup} floating window.
 ---
----[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
+---{open_win_config} is passed directly to [nvim_open_win()], default:
 ---```lua
 ---{
 ---  col = 1,
@@ -63,7 +63,7 @@ error("Cannot require a meta file")
 ---  style = "minimal",
 ---}
 ---```
----You shouldn't define [vim.api.keyset.win_config] {width} and {height} values here. They will be overridden to fit the file_popup content.
+---You shouldn't define {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.Config.Actions.FilePopup
 ---
 ---(default: above)

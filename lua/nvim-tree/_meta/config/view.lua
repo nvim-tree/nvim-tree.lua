@@ -20,11 +20,11 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field centralize_selection? boolean
 ---
----[cursorline]
+---['cursorline']
 ---(default: `true`)
 ---@field cursorline? boolean
 ---
----[cursorlineopt]
+---['cursorlineopt']
 ---(default: `both`)
 ---@field cursorlineopt? string
 ---
@@ -39,15 +39,15 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field preserve_window_proportions? boolean
 ---
----[number]
+---['number']
 ---(default: `false`)
 ---@field number? boolean
 ---
----[relativenumber]
+---['relativenumber']
 ---(default: `false`)
 ---@field relativenumber? boolean
 ---
----[signcolumn]
+---['signcolumn']
 ---(default: `yes`)
 ---@field signcolumn? "yes"|"auto"|"no"
 ---
@@ -80,7 +80,7 @@ error("Cannot require a meta file")
 
 ---Configure floating window behaviour
 ---
----[vim.api.keyset.win_config] {open_win_config} is passed directly to [nvim_open_win], default:
+---{open_win_config} is passed directly to [nvim_open_win()], default:
 ---```lua
 ---{
 ---  relative = "editor",

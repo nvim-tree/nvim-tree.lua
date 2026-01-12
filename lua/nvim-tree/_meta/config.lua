@@ -50,7 +50,7 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field respect_buf_cwd? boolean
 ---
----Use [vim.ui.select] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
+---Use [vim.ui.select()] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
 ---(default: `false`)
 ---@field select_prompts? boolean
 ---

@@ -33,11 +33,11 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Diagnostics.Severity
 ---@inlinedoc
 ---
----[vim.diagnostic.Severity]
+---[vim.diagnostic.severity]
 ---(default: HINT)
 ---@field min? vim.diagnostic.Severity
 ---
----[vim.diagnostic.Severity]
+---[vim.diagnostic.severity]
 ---(default: ERROR)
 ---@field max? vim.diagnostic.Severity
 
