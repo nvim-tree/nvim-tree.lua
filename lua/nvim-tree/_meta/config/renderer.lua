@@ -58,7 +58,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
----Highlighting and icons for the nodes, in increasing order of precedence. Strings specify builtin decorators. See [nvim-tree-decorators], [nvim-tree-api.decorator]
+---Highlighting and icons for the nodes, in increasing order of precedence. Strings specify builtin decorators. See [nvim-tree-decorators].
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
@@ -114,10 +114,10 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field inline_arrows? boolean 
 ---
----
 ---@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons 
 
 
+---[nvim_tree.Config.Renderer.IndentMarkers.Icons]()
 ---Before the file/directory, length 1.
 ---@class nvim_tree.Config.Renderer.IndentMarkers.Icons
 ---@inlinedoc
@@ -166,7 +166,6 @@ error("Cannot require a meta file")
 ---(default: `signcolumn`)
 ---@field bookmarks_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
----Padding inserted between
 ---@field padding? nvim_tree.Config.Renderer.Icons.Padding
 ---
 ---Separator between symlink source and target.
@@ -186,13 +185,12 @@ error("Cannot require a meta file")
 ---
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons
 ---
----Files
 ---@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---
----Directories
 ---@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 
 
+---[nvim_tree.Config.Renderer.Icons.WebDevicons.File]()
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---@inlinedoc
 ---
@@ -205,6 +203,7 @@ error("Cannot require a meta file")
 ---@field color? boolean
 
 
+---[nvim_tree.Config.Renderer.Icons.WebDevicons.Folder]()
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 ---@inlinedoc
 ---
@@ -217,14 +216,15 @@ error("Cannot require a meta file")
 ---@field color? boolean
 
 
+---[nvim_tree.Config.Renderer.Icons.Padding]()
 ---@class nvim_tree.Config.Renderer.Icons.Padding
 ---@inlinedoc
 ---
----icon and filename.
+---Between icon and filename.
 ---(default: ` `)
 ---@field icon? string 
 ---
----folder arrow icon and file/folder icon.
+---Between folder arrow icon and file/folder icon.
 ---(default: ` `)
 ---@field folder_arrow? string 
 
@@ -309,6 +309,7 @@ error("Cannot require a meta file")
 ---Git status on files and directories.
 ---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
 
+---[nvim_tree.Config.Renderer.Icons.Glyphs.Folder]()
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
 ---@inlinedoc
 ---(default: left arrow)
@@ -328,6 +329,7 @@ error("Cannot require a meta file")
 ---(default: `` )
 ---@field symlink_open? string
 
+---[nvim_tree.Config.Renderer.Icons.Glyphs.Git]()
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
 ---@inlinedoc
 ---(default: `✗` )

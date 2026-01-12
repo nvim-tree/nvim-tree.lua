@@ -3724,8 +3724,7 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                    Highlighting and icons for the nodes, in
                                    increasing order of precedence. Strings
                                    specify builtin decorators. See
-                                   |nvim-tree-decorators|,
-                                   |nvim-tree-api.decorator|
+                                   |nvim-tree-decorators|.
       • {highlight_git}?           (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
                                    Git status: `NvimTreeGit*HL`. Requires
                                    |nvim_tree.Config.Git| {enable}.
@@ -3779,11 +3778,13 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                   (default: `after`)
       • {bookmarks_placement}?    (`nvim_tree.Config.Renderer.Icons.Placement`)
                                   (default: `signcolumn`)
-      • {padding}?                (`table`) Padding inserted between
-                                  • {icon}? (`string`, default: ` `) icon and
-                                    filename.
+      • {padding}?                (`table`)
+                                     *nvim_tree.Config.Renderer.Icons.Padding*
+                                  • {icon}? (`string`, default: ` `) Between
+                                    icon and filename.
                                   • {folder_arrow}? (`string`, default: ` `)
-                                    folder arrow icon and file/folder icon.
+                                    Between folder arrow icon and file/folder
+                                    icon.
       • {symlink_arrow}?          (`string`, default: ` ➛ `) Separator
                                   between symlink source and target.
       • {show}?                   (`nvim_tree.Config.Renderer.Icons.Show`)
@@ -3806,7 +3807,7 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {modified}?  (`string`) (default: `●` )
       • {hidden}?    (`string`) (default: `󰜌` )
       • {folder}?    (`table`) Overridden by |nvim_tree.Config.Renderer.Icons|
-                     {web_devicons}
+                     {web_devicons} *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
                      • {arrow_closed}? (`string`) (default: left arrow)
                      • {arrow_open}? (`string`) (default: down arrow)
                      • {default}? (`string`) (default: `` )
@@ -3815,7 +3816,8 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                      • {empty_open}? (`string`) (default: `` )
                      • {symlink}? (`string`) (default: `` )
                      • {symlink_open}? (`string`) (default: `` )
-      • {git}?       (`table`) Git status on files and directories.
+      • {git}?       (`table`) Git status on files and
+                     directories. *nvim_tree.Config.Renderer.Icons.Glyphs.Git*
                      • {unstaged}? (`string`) (default: `✗` )
                      • {staged}? (`string`) (default: `✓` )
                      • {unmerged}? (`string`) (default: `` )
@@ -3869,13 +3871,15 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
     Overrides glyphs and highlight groups where noted.
 
     Fields: ~
-      • {file}?    (`table`) Files
+      • {file}?    (`table`)
+                            *nvim_tree.Config.Renderer.Icons.WebDevicons.File*
                    • {enable}? (`boolean`, default: `true`) Show icons for
                      files, overrides |nvim_tree.Config.Renderer.Icons.Glyphs|
                      {default}.
                    • {color}? (`boolean`, default: `true`) Apply colours to
                      files, overrides `NvimTreeFileIcon`.
-      • {folder}?  (`table`) Directories
+      • {folder}?  (`table`)
+                          *nvim_tree.Config.Renderer.Icons.WebDevicons.Folder*
                    • {enable}? (`boolean`, default: `false`) Show icons for
                      directories, overrides
                      |nvim_tree.Config.Renderer.Icons.Glyphs| {folder}.
@@ -3891,7 +3895,9 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                           in the same column as indent marker when using
                           |nvim_tree.Config.Renderer.Icons.Padding|
                           {folder_arrow}
-      • {icons}?          (`table`) Before the file/directory, length 1.
+      • {icons}?          (`table`)
+                               *nvim_tree.Config.Renderer.IndentMarkers.Icons*
+                          Before the file/directory, length 1.
                           • {corner}? (`string`) (default: `└` )
                           • {edge}? (`string`) (default: `│` )
                           • {item}? (`string`) (default: `│` )
@@ -4023,12 +4029,12 @@ Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
                               |vim.diagnostic.Opts| overrides {severity} and
                               {icons}
       • {severity}?           (`table`)
-                              |nvim_tree.Config.Diagnostics.Severity|
+                                       *nvim_tree.Config.Diagnostics.Severity*
                               • {min}? (`vim.diagnostic.Severity`, default:
                                 HINT) |vim.diagnostic.severity|
                               • {max}? (`vim.diagnostic.Severity`, default:
                                 ERROR) |vim.diagnostic.severity|
-      • {icons}?              (`table`) |nvim_tree.Config.Diagnostics.Icons|
+      • {icons}?              (`table`)                                *nvim_tree.Config.Diagnostics.Icons*
                               • {hint}? (`string`) (default: `` )
                               • {info}? (`string`) (default: `` )
                               • {warning}? (`string`) (default: `` )
