@@ -3548,12 +3548,19 @@ Class: Config                                               *nvim-tree-config*
                                  |nvim_tree.Config.Log|
 
 *nvim_tree.Config.Renderer*
-    TODO overview
+    Appearance of the tree.
+
+    {highlight_} options        *nvim_tree.Config.Renderer.HighlightPlacement*
+    • `none`: no highlighting
+    • `icon`: icon only
+    • `name`: name only
+    • `all`: icon and name
 
     {root_folder_label} has 3 forms:
     • `string`: |filename-modifiers| format string
     • `boolean`: `true` to disable
-    • `fun(root_cwd: string): string`: string from root absolute path e.g. >lua
+    • `fun(root_cwd: string): string`: return a literal string from root's
+      absolute path e.g. >lua
         my_root_folder_label = function(path)
          return ".../" .. vim.fn.fnamemodify(path, ":t")
         end
@@ -3578,16 +3585,13 @@ Class: Config                                               *nvim-tree-config*
                                    folder into one node. Function variant
                                    takes the relative path of grouped folders
                                    and returns a string to be displayed.
-      • {full_name}?               (`boolean`, default: `false`) Display node
+      • {full_name}?               (`boolean`, default: `false`) Display nodes
                                    whose name length is wider than the width
                                    of nvim-tree window in floating window.
       • {root_folder_label}?       (`string|boolean|(fun(root_cwd: string): string)`)
                                    (default: `":~:s?$?/..?"`)
       • {indent_width}?            (`integer`, default: `2`) Number of spaces
-                                   for an each tree nesting level. Minimum 1.
-      • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
-                                   A list of filenames that gets highlighted
-                                   with `NvimTreeSpecialFile`.
+                                   for each tree nesting level. Minimum 1.
       • {hidden_display}?          (`nvim_tree.Config.Renderer.HiddenDisplay`)
                                    (default: `none`)
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
@@ -3596,55 +3600,35 @@ Class: Config                                               *nvim-tree-config*
       • {decorators}?              (`(string|nvim_tree.api.decorator.UserDecorator)[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
                                    Highlighting and icons for the nodes, in
                                    increasing order of precedence. Strings
-                                   specify builtin decorators.
-      • {highlight_git}?           (`nvim_tree.HighlightOption`) Enable
-                                   highlight for git attributes using
-                                   `NvimTreeGit*HL` highlight groups. Requires
-                                   |nvim-tree.git.enable| Value can be
-                                   `"none"`, `"icon"`, `"name"` or `"all"`.
-                                   Default: `"none"` @see nvim-tree.git.enable
-      • {highlight_diagnostics}?   (`nvim_tree.HighlightOption`) Enable
-                                   highlight for diagnostics using
-                                   `NvimTreeDiagnostic*HL` highlight groups.
-                                   Requires |nvim-tree.diagnostics.enable|
-                                   Value can be `"none"`, `"icon"`, `"name"`
-                                   or `"all"`. Default: `"none"` @see
-                                   nvim-tree.diagnostics.enable
-      • {highlight_opened_files}?  (`nvim_tree.HighlightOption`) Highlight
-                                   icons and/or names for |bufloaded()| files
-                                   using the `NvimTreeOpenedHL` highlight
-                                   group. See
-                                   |nvim-tree-api.navigate.opened.next()| and
-                                   |nvim-tree-api.navigate.opened.prev()|
-                                   Value can be `"none"`, `"icon"`, `"name"`
-                                   or `"all"`. Default: `"none"`
-      • {highlight_modified}?      (`nvim_tree.HighlightOption`) Highlight
-                                   icons and/or names for modified files using
-                                   the `NvimTreeModifiedFile` highlight group.
-                                   Requires |nvim-tree.modified.enable| Value
-                                   can be `"none"`, `"icon"`, `"name"` or
-                                   `"all"` Default `"none"` @see
-                                   nvim-tree.modified.enable
-      • {highlight_hidden}?        (`nvim_tree.HighlightOption`) Highlight
-                                   icons and/or names for hidden files
-                                   (dotfiles) using the `NvimTreeHiddenFileHL`
-                                   highlight group. Value can be `"none"`,
-                                   `"icon"`, `"name"` or `"all"` Default
-                                   `"none"`
-      • {highlight_bookmarks}?     (`nvim_tree.HighlightOption`) Highlight
-                                   bookmarked using the `NvimTreeBookmarkHL`
-                                   group. Value can be `"none"`, `"icon"`,
-                                   `"name"` or `"all"` Default `"none"`
-      • {highlight_clipboard}?     (`nvim_tree.HighlightOption`) Enable
-                                   highlight for clipboard items using the
-                                   `NvimTreeCutHL` and `NvimTreeCopiedHL`
-                                   groups. Value can be `"none"`, `"icon"`,
-                                   `"name"` or `"all"`. Default: `"name"`
+                                   specify builtin decorators. See
+                                   |nvim-tree-decorators|,
+                                   |nvim-tree-api.decorator|
+      • {highlight_git}?           (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   Git status: `NvimTreeGit*HL`. Requires
+                                   |nvim_tree.Config.Git| {enable}.
+      • {highlight_opened_files}?  (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   |bufloaded()| files: `NvimTreeOpenedHL`.
+      • {highlight_hidden}?        (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   Hidden (dotfiles): `NvimTreeHiddenFileHL`.
+      • {highlight_modified}?      (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   Modified files: `NvimTreeModifiedFile`.
+                                   Requires |nvim_tree.Config.Modified|
+                                   {enable}.
+      • {highlight_bookmarks}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   Bookmarked: `NvimTreeBookmarkHL`.
+      • {highlight_diagnostics}?   (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
+                                   Diagnostic status: `NvimTreeDiagnostic*HL`.
+                                   Requires |nvim_tree.Config.Diagnostics|
+                                   {enable}.
+      • {highlight_clipboard}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `name`)
+                                   Copied: `NvimTreeCopiedHL`, cut:
+                                   `NvimTreeCutHL`.
+      • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
+                                   Sepcial files: `NvimTreeSpecialFile`.
       • {indent_markers}?          (`nvim_tree.Config.Renderer.IndentMarkers`)
-                                   Configuration options for tree indent
-                                   markers.
+                                   |nvim_tree.Config.Renderer.IndentMarkers|
       • {icons}?                   (`nvim_tree.Config.Renderer.Icons`)
-                                   Configuration options for icons.
+                                   |nvim_tree.Config.Renderer.Icons|
 
 *nvim_tree.Config.Renderer.Icons*
 
@@ -3787,24 +3771,18 @@ Class: Config                                               *nvim-tree-config*
 *nvim_tree.Config.Renderer.IndentMarkers*
 
     Fields: ~
-      • {enable}?         (`boolean`) Display indent markers when folders are
-                          open Default: `false`
-      • {inline_arrows}?  (`boolean`) Display folder arrows in the same column
-                          as indent marker when using
-                          |renderer.icons.show.folder_arrow| Default: `true`
-      • {icons}?          (`nvim_tree.Config.Renderer.IndentMarkers.Icons`)
-                          Icons shown before the file/directory. Length 1.
-                          Default: > lua { corner = "└", edge = "│", item
-                          = "│", bottom = "─", none = " ", }
-
-*nvim_tree.Config.Renderer.IndentMarkers.Icons*
-
-    Fields: ~
-      • {corner}?  (`string`) Default: `"└"`
-      • {edge}?    (`string`) Default: `"│"`
-      • {item}?    (`string`) Default: `"│"`
-      • {bottom}?  (`string`) Default: `"─"`
-      • {none}?    (`string`) Default: `" "`
+      • {enable}?         (`boolean`, default: `false`) Display indent markers
+                          when folders are open.
+      • {inline_arrows}?  (`boolean`, default: `true`) Display folder arrows
+                          in the same column as indent marker when using
+                          |nvim_tree.Config.Renderer.Icons.Padding|
+                          {folder_arrow}
+      • {icons}?          (`table`) Before the file/directory, length 1.
+                          • {corner}? (`string`) (default: `└` )
+                          • {edge}? (`string`) (default: `│` )
+                          • {item}? (`string`) (default: `│` )
+                          • {bottom}? (`string`) (default: `─` )
+                          • {none}? (`string`) (default: ` ` )
 
 
 
