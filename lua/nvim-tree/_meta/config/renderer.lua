@@ -1,14 +1,10 @@
 ---@meta
 error("Cannot require a meta file")
 
----@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
----@alias nvim_tree.Config.Renderer.HighlightPlacement "none"|"icon"|"name"|"all"
 
---- TODO #2934 these were not correctly generated, inline or fix
----@alias nvim_tree.PlacementOption "before"|"after"|"signcolumn"|"right_align"
-
----Appearance of the tree.
+---Controls the appearance of the tree.
 ---
+---@alias nvim_tree.Config.Renderer.HighlightPlacement "none"|"icon"|"name"|"all"
 ---{highlight_} options [nvim_tree.Config.Renderer.HighlightPlacement]()
 ---- `none`: no highlighting
 ---- `icon`: icon only
@@ -25,7 +21,8 @@ error("Cannot require a meta file")
 ---end
 ---```
 ---
----TODO: link to hidden display help section [nvim_tree.Config.Renderer.HiddenDisplay]()
+---@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
+---TODO: link / move to hidden display help section [nvim_tree.Config.Renderer.HiddenDisplay]()
 ---
 ---{hidden_display} summary of hidden files below the tree.
 ---- `none`: disabled
@@ -35,7 +32,7 @@ error("Cannot require a meta file")
 ---
 ---@class nvim_tree.Config.Renderer
 ---
----Appends a trailing slash to folder and symlink folder destination names.
+---Appends a trailing slash to folder and symlink folder target names.
 ---(default: `false`)
 ---@field add_trailing? boolean
 ---
@@ -57,7 +54,7 @@ error("Cannot require a meta file")
 ---(default: `none`)
 ---@field hidden_display? nvim_tree.Config.Renderer.HiddenDisplay
 ---
----Appends an arrow followed by the destination of the symlink.
+---Appends an arrow followed by the target of the symlink.
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
@@ -137,37 +134,99 @@ error("Cannot require a meta file")
 ---@field none? string
 
 
----@class nvim_tree.Config.Renderer.Icons Configuration options for icons.
----@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons Configure optional plugin `"nvim-tree/nvim-web-devicons"`
----@field git_placement? nvim_tree.PlacementOption Git icons placement. Default: `"before"`
----@field diagnostics_placement? nvim_tree.PlacementOption Diganostic icon placement. Default: `"signcolumn"` @see nvim-tree.view.signcolumn @see nvim-tree.renderer.icons.show.diagnostics
----@field modified_placement? nvim_tree.PlacementOption Modified icon placement. Default: `"after"`
----@field hidden_placement? nvim_tree.PlacementOption Hidden icon placement. Default: `"after"`
----@field bookmarks_placement? nvim_tree.PlacementOption Bookmark icon placement. Default: `"signcolumn"` @see nvim-tree.renderer.icons.show.bookmarks
+---Icons and separators.
+---
+---@alias nvim_tree.Config.Renderer.Icons.Placement "before"|"after"|"signcolumn"|"right_align"
+---{_placement} options [nvim_tree.Config.Renderer.Icons.Placement]()
+---- `before`: before file/folder, after the file/folders icons
+---- `after`: after file/folder
+---- `signcolumn`: far left, requires [nvim_tree.Config.View] {signcolumn}.
+---- `right_align`: far right
+---
+---@class nvim_tree.Config.Renderer.Icons
+---
+---[nvim_tree.Config.Renderer.Icons.WebDevicons]
+---Use optional plugin `nvim-tree/nvim-web-devicons`
+---@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons
+---
+---(default: `before`)
+---@field git_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---Requires [nvim_tree.Config.Diagnostics] {enable}.
+---(default: `signcolumn`)
+---@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---Requires [nvim_tree.Config.Modified] {enable}.
+---(default: `after`)
+---@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `after`)
+---@field hidden_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `signcolumn`)
+---@field bookmarks_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---Padding inserted between
 ---@field padding? nvim_tree.Config.Renderer.Icons.Padding
----@field symlink_arrow? string Used as a separator between symlinks' source and target. Default: `" ➛ "`
----@field show? nvim_tree.Config.Renderer.Icons.Show Configuration options for showing icon types. Left to right order: file/folder, git, modified, hidden, diagnostics, bookmarked.
----@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs Configuration options for icon glyphs. NOTE: Do not set any glyphs to more than two characters if it's going to appear in the signcolumn.
+---
+---Separator between symlink source and target.
+---(default: ` ➛ `)
+---@field symlink_arrow? string 
+---
+---[nvim_tree.Config.Renderer.Icons.Show]
+---@field show? nvim_tree.Config.Renderer.Icons.Show 
+---
+---[nvim_tree.Config.Renderer.Icons.Glyphs]
+---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
 
 
+---Configure optional plugin `nvim-tree/nvim-web-devicons`.
+---
+---Overrides glyphs and highlight groups where noted.
+---
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons
----@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File File icons.
----@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder Folder icons.
+---
+---Files
+---@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File
+---
+---Directories
+---@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 
 
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
----@field enable? boolean Show icons on files. Overrides |nvim-tree.renderer.icons.glyphs.default| Default: `true`
----@field color? boolean Use icon colors for files. Overrides highlight groups. Default: `true`
+---@inlinedoc
+---
+---Show icons for files, overrides [nvim_tree.Config.Renderer.Icons.Glyphs] {default}.
+---(default: `true`)
+---@field enable? boolean 
+---
+---Apply colours to files, overrides `NvimTreeFileIcon`.
+---(default: `true`)
+---@field color? boolean
 
 
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
----@field enable? boolean Show icons on folders. Overrides |nvim-tree.renderer.icons.glyphs.folder| Default: `false`
----@field color? boolean Use icon colors for folders. Overrides highlight groups. Default: `true`
+---@inlinedoc
+---
+---Show icons for directories, overrides [nvim_tree.Config.Renderer.Icons.Glyphs] {folder}.
+---(default: `false`)
+---@field enable? boolean
+---
+---Apply colors to directories, overrides `NvimTree*FolderName`.
+---(default: `true`)
+---@field color? boolean
 
 
 ---@class nvim_tree.Config.Renderer.Icons.Padding
----@field icon? string Inserted between icon and filename. Default: `" "`
----@field folder_arrow? string Inserted between folder arrow icon and file/folder icon. Default: `" "`
+---@inlinedoc
+---
+---icon and filename.
+---(default: ` `)
+---@field icon? string 
+---
+---folder arrow icon and file/folder icon.
+---(default: ` `)
+---@field folder_arrow? string 
 
 
 ---Control which icons are displayed.
