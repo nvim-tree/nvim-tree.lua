@@ -1,4 +1,4 @@
-*nvim-tree* A File Explorer For nvim
+*nvim-tree* A File Explorer For Nvim
 
 Author: Yazdani Kiyan
 
@@ -106,7 +106,7 @@ Git Integration
 
 Requirements
 
-    This file explorer requires nvim >= 0.9
+    This file explorer requires Nvim >= 0.9
 
 ==============================================================================
  2. QUICKSTART                                          *nvim-tree-quickstart*
@@ -365,7 +365,7 @@ See |nvim-tree-highlight| for details.
  4. SETUP                                                    *nvim-tree-setup*
 
 You must run setup() function once to initialise nvim-tree. It may be called
-again to apply a change in configuration without restarting nvim.
+again to apply a change in configuration without restarting Nvim.
 
 setup() function takes one optional argument: configuration table. If omitted
 nvim-tree will be initialised with default configuration.
@@ -1239,18 +1239,18 @@ Takes the `BufEnter` event as an argument. see |autocmd-events|
 
 Open a file or directory in your preferred application.
 
-|vim.ui.open()| was introduced in nvim 0.10 and is the default.
+|vim.ui.open()| was introduced in Nvim 0.10 and is the default.
 
-Once nvim-tree minimum nvim version is updated to 0.10, these options will
+Once nvim-tree minimum Nvim version is updated to 0.10, these options will
 no longer be necessary and will be removed.
 
 *nvim-tree.system_open.cmd*
 The open command itself.
   Type: `string`, Default: `""`
 
-nvim >= 0.10 defaults to |vim.ui.open()|
+Nvim >= 0.10 defaults to |vim.ui.open()|
 
-nvim <  0.10 defaults to:
+Nvim <  0.10 defaults to:
   UNIX:    `"xdg-open"`
   macOS:   `"open"`
   Windows: `"cmd"`
@@ -1498,7 +1498,7 @@ Configuration for |nvim-tree-api.tree.expand_all()| and
 
     *nvim-tree.actions.expand_all.max_folder_discovery*
     Limit the number of folders being explored when expanding every folders.
-    Avoids hanging nvim when running this action on very large folders.
+    Avoids hanging Nvim when running this action on very large folders.
       Type: `number`, Default: `300`
 
     *nvim-tree.actions.expand_all.exclude*
@@ -3071,13 +3071,13 @@ Contents of `my-decorator.lua`:
 Windows WSL and PowerShell
 - Trash is synchronized
 - Executable file detection is disabled as this is non-performant and can
-  freeze nvim
+  freeze Nvim
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
  13. NETRW                                                   *nvim-tree-netrw*
 
-|netrw| is a standard nvim plugin that is enabled by default. It provides,
+|netrw| is a standard Nvim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
 
 It interferes with nvim-tree and the intended user experience is nvim-tree
@@ -3955,14 +3955,14 @@ Class: Config.SystemOpen                        *nvim-tree-config-system-open*
 *nvim_tree.Config.SystemOpen*
     Open files or directories via the OS.
 
-    nvim:
+    Nvim:
     • `>=` 0.10 uses |vim.ui.open()| unless {cmd} is specified
     • `<` 0.10 calls external {cmd}:
       • UNIX: `xdg-open`
       • macOS: `open`
       • Windows: `cmd`
 
-    Once nvim-tree minimum nvim version is updated to 0.10, these options will
+    Once nvim-tree minimum Nvim version is updated to 0.10, these options will
     no longer be necessary and will be removed.
 
     Fields: ~
@@ -4199,7 +4199,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
     Fields: ~
       • {max_folder_discovery}?  (`integer`, default: `300`) Limit the number
                                  of folders being explored when expanding
-                                 every folder. Avoids hanging nvim when
+                                 every folder. Avoids hanging Nvim when
                                  running this action on very large folders.
       • {exclude}?               (`string[]`, default: `{}`) A list of
                                  directories that should not be expanded
