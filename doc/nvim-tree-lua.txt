@@ -37,8 +37,6 @@ CONTENTS
  14. Legacy                                   |nvim-tree-legacy|
  14.1  Legacy: Opts                             |nvim-tree-legacy-opts|
  14.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
- 15. Index                                    |nvim-tree-index|
- 15.2  Index: API                               |nvim-tree-index-api|
 
 ==============================================================================
  1. INTRODUCTION                                      *nvim-tree-introduction*
