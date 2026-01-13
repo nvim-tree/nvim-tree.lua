@@ -1,46 +1,11 @@
-*nvim-tree* A File Explorer For Nvim
+*nvim-tree-lua.txt*         A File Explorer For Nvim                 *nvim-tree*
 
 Author: Yazdani Kiyan
 
-==============================================================================
-CONTENTS
-
-  1. Introduction                             |nvim-tree-introduction|
-  2. Quickstart                               |nvim-tree-quickstart|
-  2.1  Quickstart: Setup                        |nvim-tree-quickstart-setup|
-  2.2  Quickstart: Help                         |nvim-tree-quickstart-help|
-  2.3  Quickstart: Custom Mappings              |nvim-tree-quickstart-custom-mappings|
-  2.4  Quickstart: Highlight                    |nvim-tree-quickstart-highlight|
-  3. Commands                                 |nvim-tree-commands|
-  4. Setup                                    |nvim-tree-setup|
-  6. API                                      |nvim-tree-api|
-  6.1  API Tree                                 |nvim-tree-api.tree|
-  6.2  API File System                          |nvim-tree-api.fs|
-  6.3  API Node                                 |nvim-tree-api.node|
-  6.4  API Git                                  |nvim-tree-api.git|
-  6.5  API Events                               |nvim-tree-api.events|
-  6.6  API Live Filter                          |nvim-tree-api.live_filter|
-  6.7  API Marks                                |nvim-tree-api.marks|
-  6.8  API Config                               |nvim-tree-api.config|
-  6.9  API Commands                             |nvim-tree-api.commands|
-  6.10 API Diagnostics                          |nvim-tree-api.diagnostics|
-  7. Mappings                                 |nvim-tree-mappings|
-  7.1  Mappings: Default                        |nvim-tree-mappings-default|
-  8. Highlight                                |nvim-tree-highlight|
-  8.1  Highlight: Default                       |nvim-tree-highlight-default|
-  9. Events                                   |nvim-tree-events|
- 10. Prompts                                  |nvim-tree-prompts|
- 11. Decorators                               |nvim-tree-decorators|
- 11.1  Decorator Example                        |nvim-tree-decorator-example|
- 12. OS Specific Restrictions                 |nvim-tree-os-specific|
- 13. Netrw                                    |nvim-tree-netrw|
- 14. Legacy                                   |nvim-tree-legacy|
- 14.1  Legacy: Opts                             |nvim-tree-legacy-opts|
- 14.2  Legacy: Highlight                        |nvim-tree-legacy-highlight|
- 15. Hidden Display                             |nvim-tree-hidden-display|
+                                       Type |gO| to see the table of contents.
 
 ==============================================================================
- 1. INTRODUCTION                                      *nvim-tree-introduction*
+Introduction                                          *nvim-tree-introduction*
 
 Features
 
@@ -81,10 +46,10 @@ Git Integration
 
 Requirements
 
-    This file explorer requires Nvim >= 0.9
+    Nvim >= 0.9
 
 ==============================================================================
- 2. QUICKSTART                                          *nvim-tree-quickstart*
+Quickstart                                              *nvim-tree-quickstart*
 
 Install the plugins via your package manager:
   `"nvim-tree/nvim-tree.lua"`
@@ -93,7 +58,7 @@ Install the plugins via your package manager:
 Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
 
 ==============================================================================
- 2.1 QUICKSTART: SETUP                            *nvim-tree-quickstart-setup*
+Quickstart: Setup                                 *nvim-tree-quickstart-setup*
 
 Setup the plugin in your `init.lua`, passing |nvim_tree.Config|
 e.g. >lua
@@ -125,7 +90,7 @@ e.g. >lua
   })
 <
 ==============================================================================
- 2.2 QUICKSTART: HELP                              *nvim-tree-quickstart-help*
+Quickstart: Help                                   *nvim-tree-quickstart-help*
 
 Open the tree:  `:NvimTreeOpen`
 
@@ -191,7 +156,7 @@ Show the mappings:  `g?`
 `<2-RightMouse>`  CD                         |nvim-tree-api.tree.change_root_to_node()|
 
 ==============================================================================
- 2.3 QUICKSTART: CUSTOM MAPPINGS        *nvim-tree-quickstart-custom-mappings*
+Quickstart: Custom Mappings             *nvim-tree-quickstart-custom-mappings*
 
 |nvim-tree-mappings-default| are applied by default however you may customise
 via |nvim_tree.Config| {on_attach} e.g. >lua
@@ -219,7 +184,7 @@ via |nvim_tree.Config| {on_attach} e.g. >lua
   }
 <
 ==============================================================================
- 2.4 QUICKSTART: HIGHLIGHT                    *nvim-tree-quickstart-highlight*
+Quickstart: Highlight                         *nvim-tree-quickstart-highlight*
 
 Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
 
@@ -236,7 +201,7 @@ applied at runtime. e.g. >lua
 See |nvim-tree-highlight| for details.
 
 ==============================================================================
- 3. COMMANDS                                              *nvim-tree-commands*
+Commands                                                  *nvim-tree-commands*
 
 *:NvimTreeOpen*
 
@@ -338,7 +303,7 @@ See |nvim-tree-highlight| for details.
     Calls: `api.diagnostics.hi_test()`
 
 ==============================================================================
- 4. SETUP                                                    *nvim-tree-setup*
+Setup                                                        *nvim-tree-setup*
 
 You must run setup() function once to initialise nvim-tree. It may be called
 again to apply a change in configuration without restarting Nvim.
@@ -639,7 +604,7 @@ Following is the default configuration. See |nvim_tree.Config| for details. >lua
 <
 
 ==============================================================================
- 6. API                                                        *nvim-tree-api*
+API                                                            *nvim-tree-api*
 
 Nvim-tree's public API can be used to access features. e.g. >lua
     local api = require("nvim-tree.api")
@@ -655,7 +620,7 @@ Functions accepting {node} as their first argument will use the node under the
 cursor when that argument is not present or nil.
 
 ==============================================================================
- 6.1 API TREE                                             *nvim-tree-api.tree*
+API: Tree                                                 *nvim-tree-api.tree*
 
 tree.open({opts})                                  *nvim-tree-api.tree.open()*
     Open the tree, focusing it if already open.
@@ -859,7 +824,7 @@ tree.winid({opts})                              *nvim-tree-api.tree.winid()*
       (number) winid or nil if tree is not visible
 
 ==============================================================================
- 6.2 API FILE SYSTEM                                        *nvim-tree-api.fs*
+API: File System                                            *nvim-tree-api.fs*
 
 fs.create({node})                                  *nvim-tree-api.fs.create()*
     Prompt to create a file or directory. Use a trailing `/` for a directory.
@@ -961,12 +926,9 @@ fs.print_clipboard()                      *nvim-tree-api.fs.print_clipboard()*
     Print the contents of the nvim-tree clipboard.
 
 ==============================================================================
- 6.3 API NODE                                             *nvim-tree-api.node*
+API: Node                                                 *nvim-tree-api.node*
 
-Parameters: ~
-  • {node} (Node|nil) file or folder
-
-node.open.edit({node}, {opts})                        *nvim-tree-api.node.open.edit()*
+node.open.edit({node}, {opts})                *nvim-tree-api.node.open.edit()*
     File:   open as per |nvim_tree.Config.Actions.OpenFile|
     Folder: expand or collapse
     Root:   change directory up
@@ -1245,13 +1207,13 @@ node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
       • {keep_buffers} (boolean) do not collapse nodes with open buffers.
 
 ==============================================================================
- 6.4 API GIT                                               *nvim-tree-api.git*
+API: Git                                                   *nvim-tree-api.git*
 
 git.reload()                                      *nvim-tree-api.git.reload()*
     Update the git status of the entire tree.
 
 ==============================================================================
- 6.5 API EVENTS                                         *nvim-tree-api.events*
+API: Events                                             *nvim-tree-api.events*
 
                                             *nvim-tree-api.events.subscribe()*
 events.subscribe({event_type},     {callback})
@@ -1266,7 +1228,7 @@ events.Event                                      *nvim-tree-api.events.Event*
 
 
 ==============================================================================
- 6.6 API LIVE FILTER                               *nvim-tree-api.live_filter*
+API: Live Filter                                   *nvim-tree-api.live_filter*
 
 live_filter.start()                        *nvim-tree-api.live_filter.start()*
     Enter |nvim-tree-api.live_filter| mode.
@@ -1276,7 +1238,7 @@ live_filter.clear()                        *nvim-tree-api.live_filter.clear()*
     Exit |nvim-tree-api.live_filter| mode.
 
 ==============================================================================
- 6.7 API MARKS                                           *nvim-tree-api.marks*
+API: Marks                                               *nvim-tree-api.marks*
 
 marks.get({node})                                  *nvim-tree-api.marks.get()*
     Return the node if it is marked.
@@ -1321,7 +1283,7 @@ marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
     A folder will be focused, a file will be opened.
 
 ==============================================================================
- 6.8 API CONFIG                                         *nvim-tree-api.config*
+API: Config                                             *nvim-tree-api.config*
 
                            *nvim-tree-api.config.mappings.default_on_attach()*
 config.mappings.default_on_attach({bufnr})
@@ -1348,7 +1310,7 @@ config.mappings.get_keymap_default()
         (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
- 6.9 API COMMANDS                                     *nvim-tree-api.commands*
+API: Commands                                         *nvim-tree-api.commands*
 
 commands.get()                                  *nvim-tree-api.commands.get()*
     Retrieve all commands, see |nvim-tree-commands|
@@ -1360,7 +1322,7 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {opts}    (table)
 
 ==============================================================================
- 6.10 DIAGNOSTICS                                  *nvim-tree-api.diagnostics*
+API: Diagnostics                                   *nvim-tree-api.diagnostics*
 
 diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
     Open a new buffer displaying all nvim-tree highlight groups, their link
@@ -1369,7 +1331,7 @@ diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
     Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 ==============================================================================
- 7. MAPPINGS                                              *nvim-tree-mappings*
+Mappings                                                  *nvim-tree-mappings*
 
 Mappings are set via the |nvim_tree.Config| {on_attach} function, which is run upon
 creating the nvim-tree buffer. Mappings are usually |nvim-tree-api| functions
@@ -1431,7 +1393,7 @@ define your own function to map complex functionality e.g. >lua
   vim.keymap.set("n", "<C-P>", print_node_path, opts("Print Path"))
 <
 ==============================================================================
- 7.1 MAPPINGS: DEFAULT                            *nvim-tree-mappings-default*
+Mappings: Default                                 *nvim-tree-mappings-default*
 
 In the absence of an |nvim_tree.Config| {on_attach} function, the following defaults
 will be applied.
@@ -1521,7 +1483,7 @@ Alternatively, you may apply these default mappings from your |nvim_tree.Config|
   end
 <
 ==============================================================================
- 8. HIGHLIGHT                                            *nvim-tree-highlight*
+Highlight                                                *nvim-tree-highlight*
 
 All the following highlight groups can be configured by hand. Aside from
 `NvimTreeWindowPicker`, it is not advised to colorize the background of these
@@ -1554,7 +1516,7 @@ To prevent usage of a highlight:
     :hi! link NvimTreeExecFile NONE
 <
 ==============================================================================
- 8.1 HIGHLIGHT: DEFAULT                          *nvim-tree-highlight-default*
+Highlight: Default                               *nvim-tree-highlight-default*
 
 |:highlight-link| `default` or |:highlight-default| define the groups on setup:
 
@@ -1680,7 +1642,7 @@ Diagnostics Folder Highlight: >
     NvimTreeDiagnosticHintFolderHL      NvimTreeDiagnosticHintFileHL
 <
 ==============================================================================
- 9. EVENTS                                                  *nvim-tree-events*
+Events                                                      *nvim-tree-events*
 
 nvim-tree will dispatch events whenever an action is made. These events can be
 subscribed to through handler functions. This allows for even further
@@ -1801,7 +1763,7 @@ Example subscription: >lua
   })
 <
 ==============================================================================
- 10. PROMPTS                                               *nvim-tree-prompts*
+Prompts                                                    *nvim-tree-prompts*
 
 Some NvimTree actions use the builtin |vim.ui.select()| prompt API for
 confirmations when the |nvim_tree.Config| {select_prompts} option is set.
@@ -1826,7 +1788,7 @@ configurations for different types of prompts.
     send all bookmarked to trash during |nvim-tree-api.marks.bulk.trash()|
 
 ==============================================================================
- 11. DECORATORS                                         *nvim-tree-decorators*
+Decorators                                              *nvim-tree-decorators*
 
 Highlighting and icons for nodes are provided by Decorators. You may provide
 your own in addition to the builtin decorators.
@@ -1842,7 +1804,7 @@ precedence via |nvim_tree.Config.Renderer| {decorators}
 See |nvim-tree-decorator-example|
 
 ==============================================================================
- 11.1. DECORATOR EXAMPLE                         *nvim-tree-decorator-example*
+Decorators: Example                              *nvim-tree-decorator-example*
 
 A decorator class for nodes named "example", overridind all builtin decorators
 except for Cut.
@@ -1937,7 +1899,7 @@ Contents of `my-decorator.lua`:
   return MyDecorator
 <
 ==============================================================================
- 12. OS SPECIFIC RESTRICTIONS                          *nvim-tree-os-specific*
+OS Specific Restrictions                               *nvim-tree-os-specific*
 
 Windows WSL and PowerShell
 - Trash is synchronized
@@ -1946,7 +1908,7 @@ Windows WSL and PowerShell
 - Some filesystem watcher error related to permissions will not be reported
 
 ==============================================================================
- 13. NETRW                                                   *nvim-tree-netrw*
+netrw                                                        *nvim-tree-netrw*
 
 |netrw| is a standard Nvim plugin that is enabled by default. It provides,
 amongst other functionality, a file/directory browser.
@@ -1967,16 +1929,16 @@ keep using |netrw| without its browser features please ensure:
 |nvim_tree.Config| {hijack_netrw}`  = true`
 
 ==============================================================================
- 14. LEGACY                                                 *nvim-tree-legacy*
+Legacy                                                      *nvim-tree-legacy*
 
 Breaking refactors have been made however the legacy versions will be silently
 migrated and used.
 There are no plans to remove this migration.
 
 ==============================================================================
- 14.1 LEGACY: OPTS                                     *nvim-tree-legacy-opts*
+Legacy: Config                                         *nvim-tree-legacy-opts*
 
-Legacy options are translated to the current, making type and value changes as
+Legacy config is translated to the current, making type and value changes as
 needed.
 
 `update_cwd`                         |nvim_tree.Config| {sync_root_with_cwd}
@@ -1993,7 +1955,7 @@ needed.
 `renderer.icons.padding`             |nvim_tree.Config.Renderer.Icons.Padding| {icon}
 
 ==============================================================================
- 14.2 LEGACY: HIGHLIGHT                           *nvim-tree-legacy-highlight*
+Legacy: Highlight                                 *nvim-tree-legacy-highlight*
 
 Legacy highlight group are still obeyed when they are defined and the current
 highlight group is not, hard linking as follows: >
@@ -2043,7 +2005,7 @@ highlight group is not, hard linking as follows: >
 <
 
 ==============================================================================
- 15. HIDDEN DISPLAY                                 *nvim-tree-hidden-display*
+Hidden Display                                      *nvim-tree-hidden-display*
 
 Show a summary of hidden files below the tree highlighted with `NvimTreeHiddenDisplay
 
