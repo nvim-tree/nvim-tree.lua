@@ -29,14 +29,6 @@ error("Cannot require a meta file")
 ---  return ".../" .. vim.fn.fnamemodify(path, ":t")
 ---end
 ---```
----
----TODO: link / move to hidden display help section [nvim_tree.Config.Renderer.HiddenDisplay]()
----
----{hidden_display} summary of hidden files below the tree.
----- `none`: disabled
----- `simple`: show how many hidden files are in a folder
----- `all`: show how many hidden and the number of hidden files by reason
----- `fun(hidden_stats: table<string, integer>): string`: returns a summary of hidden stats
 
 
 
@@ -61,6 +53,7 @@ error("Cannot require a meta file")
 ---(default: `2`)
 ---@field indent_width? integer
 ---
+---[nvim-tree-hidden-display]
 ---(default: `none`)
 ---@field hidden_display? nvim_tree.Config.Renderer.HiddenDisplay
 ---
