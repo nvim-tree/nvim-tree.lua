@@ -1,8 +1,13 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
+---@brief
 ---Update the focused file on [BufEnter], uncollapsing folders recursively.
----
+
+
+
 ---@class nvim_tree.Config.UpdateFocusedFile
 ---
 ---(default: `false`)
@@ -14,6 +19,7 @@ error("Cannot require a meta file")
 ---A function called on [BufEnter] that returns true if the file should not be focused when opening.
 ---(default: `false`)
 ---@field exclude? boolean|(fun(args: vim.api.keyset.create_autocmd.callback_args): boolean)
+
 
 
 ---Update the root directory of the tree if the file is not under the current root directory.

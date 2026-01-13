@@ -1,6 +1,8 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
 ---@brief
 ---<pre>help
 ---Filters may be applied to the tree to exlude the display of file and directories.
@@ -41,6 +43,8 @@ error("Cannot require a meta file")
 ---Files/directories may be {exclude}d from filtering: they will always be shown,
 ---overriding {git_ignored}, {dotfiles} and {custom}
 ---</pre>
+
+
 
 ---@class nvim_tree.Config.Filters
 ---

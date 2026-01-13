@@ -1,14 +1,14 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
 ---@class nvim_tree.Config.UI
 ---
 ---[nvim_tree.Config.UI.Confirm]
 ---@field confirm? nvim_tree.Config.UI.Confirm
 
---
--- UI.Confirm
---
+
 
 ---Confirmation prompts.
 ---@class nvim_tree.Config.UI.Confirm

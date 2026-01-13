@@ -1,6 +1,8 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
 ---@class nvim_tree.Config.Actions
 ---
 ---Use the system clipboard for copy/paste. Copied text will be stored in registers `+` (system), otherwise, it will be stored in `1` and `"`
@@ -23,6 +25,7 @@ error("Cannot require a meta file")
 ---@field remove_file? nvim_tree.Config.Actions.RemoveFile
 
 
+
 --- vim [current-directory] behaviour
 ---@class nvim_tree.Config.Actions.ChangeDir
 ---
@@ -39,6 +42,7 @@ error("Cannot require a meta file")
 ---@field restrict_above_cwd? boolean
 
 
+
 ---Configure [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
 ---@class nvim_tree.Config.Actions.ExpandAll
 ---
@@ -49,6 +53,7 @@ error("Cannot require a meta file")
 ---A list of directories that should not be expanded automatically e.g `{ ".git", "target", "build" }`
 ---(default: `{}`)
 ---@field exclude? string[]
+
 
 
 ---{file_popup} floating window.
@@ -70,6 +75,7 @@ error("Cannot require a meta file")
 ---@field open_win_config? vim.api.keyset.win_config
 
 
+
 ---Opening files.
 ---@class nvim_tree.Config.Actions.OpenFile
 ---
@@ -87,6 +93,7 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.Config.Actions.OpenFile.WindowPicker]
 ---@field window_picker? nvim_tree.Config.Actions.OpenFile.WindowPicker
+
 
 
 ---A window picker will be shown when there are multiple windows available to open a file. It will show a single character identifier in each window's status line.
@@ -110,6 +117,7 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude]
 ---@field exclude? nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude
+
 
 
 ---Tables of buffer option names mapped to a list of option values. Windows containing matching buffers will not be:

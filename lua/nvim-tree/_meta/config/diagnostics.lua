@@ -1,8 +1,13 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
+---@brief
 ---Integrate with [lsp] or COC diagnostics.
----
+
+
+
 ---@class nvim_tree.Config.Diagnostics
 ---
 ---(default: `false`)
@@ -28,6 +33,8 @@ error("Cannot require a meta file")
 ---
 ---@field icons? nvim_tree.Config.Diagnostics.Icons
 
+
+
 ---[nvim_tree.Config.Diagnostics.Severity]()
 ---@class nvim_tree.Config.Diagnostics.Severity
 ---@inlinedoc
@@ -39,6 +46,8 @@ error("Cannot require a meta file")
 ---[vim.diagnostic.severity]
 ---(default: ERROR)
 ---@field max? vim.diagnostic.Severity
+
+
 
 ---[nvim_tree.Config.Diagnostics.Icons]()
 ---@class nvim_tree.Config.Diagnostics.Icons

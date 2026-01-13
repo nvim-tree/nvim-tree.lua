@@ -99,6 +99,9 @@ error("Cannot require a meta file")
 ---[nvim_tree.Config.Tab]
 ---@field tab? nvim_tree.Config.Tab
 ---
+---[nvim_tree.Config.Bookmarks]
+---@field bookmarks? nvim_tree.Config.Bookmarks
+---
 ---[nvim_tree.Config.Notify]
 ---@field notify? nvim_tree.Config.Notify
 ---

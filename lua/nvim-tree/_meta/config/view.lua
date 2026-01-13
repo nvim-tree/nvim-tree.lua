@@ -1,8 +1,13 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
 ---@alias nvim_tree.Config.View.WidthSpec string|integer|(fun(): integer|string)
 
+
+
+---@brief
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
 ---The window is "docked" at the left by default, however may be configured to float: [nvim_tree.Config.View.Float]
@@ -10,10 +15,12 @@ error("Cannot require a meta file")
 ---{width} can be a [nvim_tree.Config.View.WidthSpec] for simple static control or a [nvim_tree.Config.View.Width] for fully dynamic control based on longest line.
 ---
 ---[nvim_tree.Config.View.WidthSpec]()
----- string: `x%` string e.g. `30%`
----- integer: number of columns
----- function: returns one of the above
----
+---- `string`: `x%` string e.g. `30%`
+---- `integer`: number of columns
+---- `function`: returns one of the above
+
+
+
 ---@class nvim_tree.Config.View
 ---
 ---When entering nvim-tree, reposition the view so that the current node is initially centralized, see [zz].
@@ -58,6 +65,7 @@ error("Cannot require a meta file")
 ---@field float? nvim_tree.Config.View.Float
 
 
+
 ---Configure dynamic width based on longest line.
 ---
 ---@class nvim_tree.Config.View.Width
@@ -76,6 +84,7 @@ error("Cannot require a meta file")
 ---Extra padding to the right.
 ---(default: `1`)
 ---@field padding? nvim_tree.Config.View.WidthSpec
+
 
 
 ---Configure floating window behaviour

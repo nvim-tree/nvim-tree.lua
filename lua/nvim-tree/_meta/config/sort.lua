@@ -1,11 +1,16 @@
 ---@meta
 error("Cannot require a meta file")
 
+
+
 ---@alias nvim_tree.Config.Sort.Sorter "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
 
+
+
+---@brief
 ---Sort files within a directory.
 ---
----{sorter} [nvim_tree.Config.Sort.Sorter]()
+---{sorter} presets [nvim_tree.Config.Sort.Sorter]()
 ---- `name`
 ---- `case_sensitive` name
 ---- `modification_time`
@@ -26,7 +31,9 @@ error("Cannot require a meta file")
 ---end
 ---```
 ---{sorter} may be a function that returns a [nvim_tree.Config.Sort.Sorter]
----
+
+
+
 ---@class nvim_tree.Config.Sort
 ---
 ---(default: `name`)

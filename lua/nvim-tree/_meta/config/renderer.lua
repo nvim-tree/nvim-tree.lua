@@ -2,9 +2,18 @@
 error("Cannot require a meta file")
 
 
+
+---@alias nvim_tree.Config.Renderer.HighlightPlacement "none"|"icon"|"name"|"all"
+
+---@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
+
+---@alias nvim_tree.Config.Renderer.Icons.Placement "before"|"after"|"signcolumn"|"right_align"
+
+
+
+---@brief
 ---Controls the appearance of the tree.
 ---
----@alias nvim_tree.Config.Renderer.HighlightPlacement "none"|"icon"|"name"|"all"
 ---{highlight_} options [nvim_tree.Config.Renderer.HighlightPlacement]()
 ---- `none`: no highlighting
 ---- `icon`: icon only
@@ -21,7 +30,6 @@ error("Cannot require a meta file")
 ---end
 ---```
 ---
----@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
 ---TODO: link / move to hidden display help section [nvim_tree.Config.Renderer.HiddenDisplay]()
 ---
 ---{hidden_display} summary of hidden files below the tree.
@@ -29,7 +37,9 @@ error("Cannot require a meta file")
 ---- `simple`: show how many hidden files are in a folder
 ---- `all`: show how many hidden and the number of hidden files by reason
 ---- `fun(hidden_stats: table<string, integer>): string`: returns a summary of hidden stats
----
+
+
+
 ---@class nvim_tree.Config.Renderer
 ---
 ---Appends a trailing slash to folder and symlink folder target names.
@@ -117,6 +127,7 @@ error("Cannot require a meta file")
 ---@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons 
 
 
+
 ---[nvim_tree.Config.Renderer.IndentMarkers.Icons]()
 ---Before the file/directory, length 1.
 ---@class nvim_tree.Config.Renderer.IndentMarkers.Icons
@@ -134,9 +145,9 @@ error("Cannot require a meta file")
 ---@field none? string
 
 
+
 ---Icons and separators.
 ---
----@alias nvim_tree.Config.Renderer.Icons.Placement "before"|"after"|"signcolumn"|"right_align"
 ---{_placement} options [nvim_tree.Config.Renderer.Icons.Placement]()
 ---- `before`: before file/folder, after the file/folders icons
 ---- `after`: after file/folder
@@ -179,6 +190,7 @@ error("Cannot require a meta file")
 ---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
 
 
+
 ---Configure optional plugin `nvim-tree/nvim-web-devicons`.
 ---
 ---Overrides glyphs and highlight groups where noted.
@@ -188,6 +200,7 @@ error("Cannot require a meta file")
 ---@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---
 ---@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
+
 
 
 ---[nvim_tree.Config.Renderer.Icons.WebDevicons.File]()
@@ -216,6 +229,7 @@ error("Cannot require a meta file")
 ---@field color? boolean
 
 
+
 ---[nvim_tree.Config.Renderer.Icons.Padding]()
 ---@class nvim_tree.Config.Renderer.Icons.Padding
 ---@inlinedoc
@@ -227,6 +241,7 @@ error("Cannot require a meta file")
 ---Between folder arrow icon and file/folder icon.
 ---(default: ` `)
 ---@field folder_arrow? string 
+
 
 
 ---Control which icons are displayed.
@@ -280,6 +295,7 @@ error("Cannot require a meta file")
 ---@field bookmarks? boolean
 
 
+
 ---Glyphs that appear in the sign column must have length <= 2
 ---
 ---Glyphs defined elsewhere:
@@ -309,6 +325,8 @@ error("Cannot require a meta file")
 ---Git status on files and directories.
 ---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
 
+
+
 ---[nvim_tree.Config.Renderer.Icons.Glyphs.Folder]()
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
 ---@inlinedoc
@@ -328,6 +346,8 @@ error("Cannot require a meta file")
 ---@field symlink? string
 ---(default: `` )
 ---@field symlink_open? string
+
+
 
 ---[nvim_tree.Config.Renderer.Icons.Glyphs.Git]()
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git

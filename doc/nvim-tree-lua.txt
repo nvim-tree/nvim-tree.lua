@@ -2119,6 +2119,8 @@ Class: Config                                               *nvim-tree-config*
                                  |nvim_tree.Config.Trash|
       • {tab}?                   (`nvim_tree.Config.Tab`)
                                  |nvim_tree.Config.Tab|
+      • {bookmarks}?             (`nvim_tree.Config.Bookmarks`)
+                                 |nvim_tree.Config.Bookmarks|
       • {notify}?                (`nvim_tree.Config.Notify`)
                                  |nvim_tree.Config.Notify|
       • {help}?                  (`nvim_tree.Config.Help`)
@@ -2132,31 +2134,33 @@ Class: Config                                               *nvim-tree-config*
 ==============================================================================
 Class: Config.Sort                                     *nvim-tree-config-sort*
 
-*nvim_tree.Config.Sort*
-    Sort files within a directory.
+Sort files within a directory.
 
-    {sorter}                                    *nvim_tree.Config.Sort.Sorter*
-    • `name`
-    • `case_sensitive` name
-    • `modification_time`
-    • `extension` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
-    • `suffix` uses the last e.g. `foo.tar.gz` -> `.gz`
-    • `filetype` |filetype|
+{sorter} presets                                *nvim_tree.Config.Sort.Sorter*
+• `name`
+• `case_sensitive` name
+• `modification_time`
+• `extension` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
+• `suffix` uses the last e.g. `foo.tar.gz` -> `.gz`
+• `filetype` |filetype|
 
-    {sorter} may be a function that is passed a list of `nvim_tree.api.Node`
-    to be sorted in place e.g. >lua
+{sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be
+sorted in place e.g. >lua
 
-        ---Sort by name length
-        ---@param nodes nvim_tree.api.Node[]
-        ---@return nvim_tree.Config.Sort.Sorter?
-        local sorter = function(nodes)
-         table.sort(nodes, function(a, b)
-           return #a.name < #b.name
-         end)
-        end
+    ---Sort by name length
+    ---@param nodes nvim_tree.api.Node[]
+    ---@return nvim_tree.Config.Sort.Sorter?
+    local sorter = function(nodes)
+     table.sort(nodes, function(a, b)
+       return #a.name < #b.name
+     end)
+    end
 <
 
-    {sorter} may be a function that returns a |nvim_tree.Config.Sort.Sorter|
+{sorter} may be a function that returns a |nvim_tree.Config.Sort.Sorter|
+
+
+*nvim_tree.Config.Sort*
 
     Fields: ~
       • {sorter}?         (`nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)`)
@@ -2172,20 +2176,22 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
 ==============================================================================
 Class: Config.View                                     *nvim-tree-config-view*
 
-*nvim_tree.Config.View*
-    Configures the dimensions and appearance of the nvim-tree window.
+Configures the dimensions and appearance of the nvim-tree window.
 
-    The window is "docked" at the left by default, however may be configured
-    to float: |nvim_tree.Config.View.Float|
+The window is "docked" at the left by default, however may be configured to
+float: |nvim_tree.Config.View.Float|
 
-    {width} can be a |nvim_tree.Config.View.WidthSpec| for simple static
-    control or a |nvim_tree.Config.View.Width| for fully dynamic control based
-    on longest line.
+{width} can be a |nvim_tree.Config.View.WidthSpec| for simple static control
+or a |nvim_tree.Config.View.Width| for fully dynamic control based on longest
+line.
 
                                              *nvim_tree.Config.View.WidthSpec*
-    • string: `x%` string e.g. `30%`
-    • integer: number of columns
-    • function: returns one of the above
+• `string`: `x%` string e.g. `30%`
+• `integer`: number of columns
+• `function`: returns one of the above
+
+
+*nvim_tree.Config.View*
 
     Fields: ~
       • {centralize_selection}?         (`boolean`, default: `false`) When
@@ -2256,34 +2262,36 @@ Class: Config.View                                     *nvim-tree-config-view*
 ==============================================================================
 Class: Config.Renderer                             *nvim-tree-config-renderer*
 
-*nvim_tree.Config.Renderer*
-    Controls the appearance of the tree.
+Controls the appearance of the tree.
 
-    {highlight_} options        *nvim_tree.Config.Renderer.HighlightPlacement*
-    • `none`: no highlighting
-    • `icon`: icon only
-    • `name`: name only
-    • `all`: icon and name
+{highlight_} options            *nvim_tree.Config.Renderer.HighlightPlacement*
+• `none`: no highlighting
+• `icon`: icon only
+• `name`: name only
+• `all`: icon and name
 
-    {root_folder_label} has 3 forms:
-    • `string`: |filename-modifiers| format string
-    • `boolean`: `true` to disable
-    • `fun(root_cwd: string): string`: return a literal string from root's
-      absolute path e.g. >lua
-        my_root_folder_label = function(path)
-         return ".../" .. vim.fn.fnamemodify(path, ":t")
-        end
+{root_folder_label} has 3 forms:
+• `string`: |filename-modifiers| format string
+• `boolean`: `true` to disable
+• `fun(root_cwd: string): string`: return a literal string from root's
+  absolute path e.g. >lua
+    my_root_folder_label = function(path)
+     return ".../" .. vim.fn.fnamemodify(path, ":t")
+    end
 <
 
-    TODO: link / move to hidden display help section
+TODO: link / move to hidden display help section
                                      *nvim_tree.Config.Renderer.HiddenDisplay*
 
-    {hidden_display} summary of hidden files below the tree.
-    • `none`: disabled
-    • `simple`: show how many hidden files are in a folder
-    • `all`: show how many hidden and the number of hidden files by reason
-    • `fun(hidden_stats: table<string, integer>): string`: returns a summary
-      of hidden stats
+{hidden_display} summary of hidden files below the tree.
+• `none`: disabled
+• `simple`: show how many hidden files are in a folder
+• `all`: show how many hidden and the number of hidden files by reason
+• `fun(hidden_stats: table<string, integer>): string`: returns a summary of
+  hidden stats
+
+
+*nvim_tree.Config.Renderer*
 
     Fields: ~
       • {add_trailing}?            (`boolean`, default: `false`) Appends a
@@ -2490,13 +2498,15 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
 ==============================================================================
 Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
 
+Hijack directory buffers by replacing the directory buffer with the tree.
+
+Disable this option if you use vim-dirvish or dirbuf.nvim.
+
+If |nvim_tree.Config| {hijack_netrw} and {disable_netrw} are `false` this
+feature will be disabled.
+
+
 *nvim_tree.Config.HijackDirectories*
-    Hijack directory buffers by replacing the directory buffer with the tree.
-
-    Disable this option if you use vim-dirvish or dirbuf.nvim.
-
-    If |nvim_tree.Config| {hijack_netrw} and {disable_netrw} are `false` this
-    feature will be disabled.
 
     Fields: ~
       • {enable}?     (`boolean`) (default: `true`)
@@ -2508,8 +2518,10 @@ Class: Config.HijackDirectories          *nvim-tree-config-hijack-directories*
 ==============================================================================
 Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
 
+Update the focused file on |BufEnter|, uncollapsing folders recursively.
+
+
 *nvim_tree.Config.UpdateFocusedFile*
-    Update the focused file on |BufEnter|, uncollapsing folders recursively.
 
     Fields: ~
       • {enable}?       (`boolean`) (default: `false`)
@@ -2540,18 +2552,20 @@ Class: Config.UpdateFocusedFile         *nvim-tree-config-update-focused-file*
 ==============================================================================
 Class: Config.SystemOpen                        *nvim-tree-config-system-open*
 
+Open files or directories via the OS.
+
+Nvim:
+• `>=` 0.10 uses |vim.ui.open()| unless {cmd} is specified
+• `<` 0.10 calls external {cmd}:
+  • UNIX: `xdg-open`
+  • macOS: `open`
+  • Windows: `cmd`
+
+Once nvim-tree minimum Nvim version is updated to 0.10, these options will no
+longer be necessary and will be removed.
+
+
 *nvim_tree.Config.SystemOpen*
-    Open files or directories via the OS.
-
-    Nvim:
-    • `>=` 0.10 uses |vim.ui.open()| unless {cmd} is specified
-    • `<` 0.10 calls external {cmd}:
-      • UNIX: `xdg-open`
-      • macOS: `open`
-      • Windows: `cmd`
-
-    Once nvim-tree minimum Nvim version is updated to 0.10, these options will
-    no longer be necessary and will be removed.
 
     Fields: ~
       • {cmd}?   (`string`, default: `xdg-open`, `open` or `cmd`) The open
@@ -2565,17 +2579,19 @@ Class: Config.SystemOpen                        *nvim-tree-config-system-open*
 ==============================================================================
 Class: Config.Git                                       *nvim-tree-config-git*
 
+Git operations are run in the background thus status may not immediately
+appear.
+
+Processes will be killed if they exceed {timeout} ms. Git integration will be
+disabled following 5 timeouts and you will be notified.
+
+Git integration may be disabled for git top-level directories via
+{disable_for_dirs}:
+• A list of relative paths evaluated with |fnamemodify()| `:p` OR
+• A function that is passed an absolute path and returns `true` to disable
+
+
 *nvim_tree.Config.Git*
-    Git operations are run in the background thus status may not immediately
-    appear.
-
-    Processes will be killed if they exceed {timeout}ms. Git integration will
-    be disabled following 5 timeouts and you will be notified.
-
-    Git integration may be disabled for git top-level directories via
-    {disable_for_dirs}:
-    • A list of relative paths evaluated with |fnamemodify()| `:p` OR
-    • A function that is passed an absolute path and returns `true` to disable
 
     Fields: ~
       • {enable}?             (`boolean`) (default: `true`)
@@ -2597,8 +2613,10 @@ Class: Config.Git                                       *nvim-tree-config-git*
 ==============================================================================
 Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
 
+Integrate with |lsp| or COC diagnostics.
+
+
 *nvim_tree.Config.Diagnostics*
-    Integrate with |lsp| or COC diagnostics.
 
     Fields: ~
       • {enable}?             (`boolean`) (default: `false`)
@@ -2629,11 +2647,13 @@ Class: Config.Diagnostics                       *nvim-tree-config-diagnostics*
 ==============================================================================
 Class: Config.Modified                             *nvim-tree-config-modified*
 
+Indicate which files have unsaved modification. To see modified status in the
+tree you will need:
+• |nvim_tree.Config.Renderer.Icons.Show| {modified} OR
+• |nvim_tree.Config.Renderer| {highlight_modified}
+
+
 *nvim_tree.Config.Modified*
-    Indicate which files have unsaved modification. To see modified status in
-    the tree you will need:
-    • |nvim_tree.Config.Renderer.Icons.Show| {modified} OR
-    • |nvim_tree.Config.Renderer| {highlight_modified}
 
     Fields: ~
       • {enable}?             (`boolean`) (default: `false`)
@@ -2707,12 +2727,14 @@ overriding {git_ignored}, {dotfiles} and {custom}
 ==============================================================================
 Class: Config.LiveFilter                        *nvim-tree-config-live-filter*
 
-*nvim_tree.Config.LiveFilter*
-    Live filter allows you to filter the tree nodes dynamically, based on
-    regex matching, see |vim.regex|
+Live filter allows you to filter the tree nodes dynamically, based on regex
+matching, see |vim.regex|
 
-    This feature is bound to the `f` key by default. The filter can be cleared
-    with the `F` key by default.
+This feature is bound to the `f` key by default. The filter can be cleared
+with the `F` key by default.
+
+
+*nvim_tree.Config.LiveFilter*
 
     Fields: ~
       • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
@@ -2725,19 +2747,21 @@ Class: Config.LiveFilter                        *nvim-tree-config-live-filter*
 ==============================================================================
 Class: Config.FilesystemWatchers        *nvim-tree-config-filesystem-watchers*
 
+Use file system watchers (libuv `uv_fs_event_t`) to monitor the filesystem for
+changes and update the tree.
+
+With this feature, the tree will be partially updated on specific directory
+changes, resulting in better performance.
+
+Watchers may be disabled for absolute directory paths via {ignore_dirs}.
+• A list of |vim.regex| to match a path, backslash escaped e.g.
+  `"my-proj/\\.build$"` OR
+• A function that is passed an absolute path and returns `true` to disable
+  This may be useful when a path is not in `.gitignore` or git integration is
+  disabled.
+
+
 *nvim_tree.Config.FilesystemWatchers*
-    Use file system watchers (libuv fs_event) to monitor the filesystem for
-    changes and update the tree.
-
-    With this feature, the tree will be partially updated on specific
-    directory changes, resulting in better performance.
-
-    Watchers may be disabled for absolute directory paths via {ignore_dirs}.
-    • A list of |vim.regex| to match a path, backslash escaped e.g.
-      `"my-proj/\\.build$"` OR
-    • A function that is passed an absolute path and returns `true` to disable
-      This may be useful when a path is not in `.gitignore` or git integration
-      is disabled.
 
     Fields: ~
       • {enable}?          (`boolean`) (default: `true`)
@@ -2873,12 +2897,14 @@ Class: Config.Actions                               *nvim-tree-config-actions*
 ==============================================================================
 Class: Config.Trash                                   *nvim-tree-config-trash*
 
+Files may be trashed via an external command that must be installed on your
+system.
+• linux: `gio trash`, from linux package `glib2`
+• macOS: `trash`, from homebrew package `trash`
+• windows: `trash`, requires `trash-cli` or similar
+
+
 *nvim_tree.Config.Trash*
-    Files may be trashed via an external command that must be installed on
-    your system.
-    • linux: `gio trash`, from linux package `glib2`
-    • macOS: `trash`, from homebrew package `trash`
-    • windows: `trash`, requires `trash-cli` or similar
 
     Fields: ~
       • {cmd}?  (`string`, default: `gio trash` or `trash`) External command.
@@ -2894,7 +2920,6 @@ Class: Config.Tab                                       *nvim-tree-config-tab*
       • {sync}?  (`nvim_tree.Config.Tab.Sync`) |nvim_tree.Config.Tab.Sync|
 
 *nvim_tree.Config.Tab.Sync*
-    Sync nvim-tree across tabs.
 
     Fields: ~
       • {open}?    (`boolean`, default: `false`) Opens the tree automatically
@@ -2910,31 +2935,51 @@ Class: Config.Tab                                       *nvim-tree-config-tab*
 ==============================================================================
 Class: Config.Notify                                 *nvim-tree-config-notify*
 
+nvim-tree |vim.log.levels|
+• `ERROR`: hard errors e.g. failure to read from the file system.
+• `WARN`: non-fatal errors e.g. unable to system open a file.
+• `INFO`: information only e.g. file copy path confirmation.
+• `DEBUG`: information for troubleshooting, e.g. failures in some window
+  closing operations.
+
+
 *nvim_tree.Config.Notify*
-    nvim-tree notifications levels:
-    • ERROR: hard errors e.g. failure to read from the file system.
-    • WARN: non-fatal errors e.g. unable to system open a file.
-    • INFO: information only e.g. file copy path confirmation.
-    • DEBUG: information for troubleshooting, e.g. failures in some window
-      closing operations.
 
     Fields: ~
       • {threshold}?      (`vim.log.levels`, default: `vim.log.levels.INFO`)
-                          Specify minimum notification level
+                          Specify minimum notification |vim.log.levels|
       • {absolute_path}?  (`boolean`, default: `true`) Use absolute paths in
                           FS action notifications, otherwise item names.
 
 
 
 ==============================================================================
+Class: Config.Bookmarks                           *nvim-tree-config-bookmarks*
+
+Optionally {persist} bookmarks to a json file:
+• `true` use default: `stdpath("data") .. "/nvim-tree-bookmarks.json"`
+• `false` do not persist
+• `string` absolute path of your choice
+
+
+*nvim_tree.Config.Bookmarks*
+
+    Fields: ~
+      • {persist}?  (`boolean|string`) (default: `false`)
+
+
+
+==============================================================================
 Class: Config.Help                                     *nvim-tree-config-help*
 
-*nvim_tree.Config.Help*
-    Configure help window, default mapping `g?`
+Configure help window, default mapping `g?`
 
                                                 *nvim_tree.Config.Help.SortBy*
-    • `key`: alphabetically by keymap
-    • `desc`: alphabetically by description
+• `key`: alphabetically by keymap
+• `desc`: alphabetically by description
+
+
+*nvim_tree.Config.Help*
 
     Fields: ~
       • {sort_by}?  (`nvim_tree.Config.Help.SortBy`, default: `key`)
@@ -2965,9 +3010,11 @@ Class: Config.UI                                         *nvim-tree-config-ui*
 ==============================================================================
 Class: Config.Log                                       *nvim-tree-config-log*
 
+Log to a file `nvim-tree.log` in |stdpath()| `log`, usually
+`${XDG_STATE_HOME}/nvim`
+
+
 *nvim_tree.Config.Log*
-    Log to a file `nvim-tree.log` in |stdpath()| `log`, usually
-    `${XDG_STATE_HOME}/nvim`
 
     Fields: ~
       • {enable}?    (`boolean`) (default: `false`)
