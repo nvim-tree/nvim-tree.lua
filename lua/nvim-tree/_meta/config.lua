@@ -1,9 +1,31 @@
 ---@meta
 error("Cannot require a meta file")
 
---- TODO #2934 brief, some links to setup etc., lsp hint
+
+---@brief
 ---
+---Arguments to pass to [nvim-tree-setup].
 ---
+---They can be validated by |lsp| when passed directly e.g.
+---```lua
+---  require("nvim-tree").setup({
+---    hijack_cursor = true,
+---  })
+---```
+---
+---or as a typed variable e.g.
+---```lua
+---  ---@type nvim_tree.Config
+---  local config = {
+---    hijack_cursor = true,
+---  }
+---  require("nvim-tree").setup(config)
+---```
+---
+---When a value is not present/nil, the default will be used.
+
+
+
 ---@class nvim_tree.Config
 ---
 ---Runs when creating the nvim-tree buffer. Use this to set your [nvim-tree-mappings]. When `on_attach` is not a function, [nvim-tree-mappings-default] will be called.

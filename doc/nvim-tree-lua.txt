@@ -95,7 +95,8 @@ Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
 ==============================================================================
  2.1 QUICKSTART: SETUP                            *nvim-tree-quickstart-setup*
 
-Setup the plugin in your `init.lua` e.g. >lua
+Setup the plugin in your `init.lua`, passing |nvim_tree.Config|
+e.g. >lua
 
   -- disable netrw at the very start of your init.lua
   vim.g.loaded_netrw = 1
@@ -2089,8 +2090,26 @@ Example of function that can be passed: >lua
 ==============================================================================
 Class: Config                                               *nvim-tree-config*
 
+Arguments to pass to |nvim-tree-setup|.
+
+They can be validated by |lsp| when passed directly e.g. >lua
+     require("nvim-tree").setup({
+       hijack_cursor = true,
+     })
+<
+
+or as a typed variable e.g. >lua
+     ---@type nvim_tree.Config
+     local config = {
+       hijack_cursor = true,
+     }
+     require("nvim-tree").setup(config)
+<
+
+When a value is not present/nil, the default will be used.
+
+
 *nvim_tree.Config*
-    TODO #2934 brief, some links to setup etc., lsp hint
 
     Fields: ~
       • {on_attach}?             (`string|(fun(bufnr: integer))`) Runs when
