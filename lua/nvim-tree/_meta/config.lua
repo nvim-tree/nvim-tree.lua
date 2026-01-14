@@ -6,6 +6,8 @@ error("Cannot require a meta file")
 ---
 ---Arguments to pass to [nvim-tree-setup].
 ---
+---When a value is not present/nil, the default will be used.
+---
 ---They can be validated by |lsp| when passed directly e.g.
 ---```lua
 ---  require("nvim-tree").setup({
@@ -21,58 +23,71 @@ error("Cannot require a meta file")
 ---  }
 ---  require("nvim-tree").setup(config)
 ---```
+
+
+
+-- Root class {field}s are documented manually above "Fields:" as there is insufficent room for them in the column.
+
+
+
+---{on_attach} Runs when creating the nvim-tree buffer. Use this to set your [nvim-tree-mappings]. When not a function, [nvim-tree-mappings-default] will be used.
 ---
----When a value is not present/nil, the default will be used.
-
-
-
+---{hijack_cursor} keep the cursor on the first letter of the filename when moving in the tree.
+---
+---{auto_reload_on_write} reload the explorer every time a buffer is written to.
+---
+---{disable_netrw} completely disables [netrw], see [nvim-tree-netrw] for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
+---
+---{hijack_netrw} hijacks netrw windows, ignored when {disable_netrw}.
+---
+---{hijack_unnamed_buffer_when_opening} opens in place of the unnamed buffer if it's empty.
+---
+---{root_dirs} preferred root directories, requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
+---
+---{prefer_startup_root} prefer startup root directory when updating root directory of the tree. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
+---
+---{sync_root_with_cwd} changes the tree root directory on [DirChanged] and refreshes the tree.
+---
+---{reload_on_bufenter} automatically reloads the tree on [BufEnter] nvim-tree.
+---
+---{respect_buf_cwd} changes the [current-directory] of nvim-tree to that of new buffer's when opening nvim-tree.
+---
+---{select_prompts} uses [vim.ui.select()] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
 ---@class nvim_tree.Config
 ---
----Runs when creating the nvim-tree buffer. Use this to set your [nvim-tree-mappings]. When `on_attach` is not a function, [nvim-tree-mappings-default] will be called.
+---(default: `default`)
 ---@field on_attach? string|(fun(bufnr: integer))
 ---
----Keeps the cursor on the first letter of the filename when moving in the tree.
 ---(default: `false`)
 ---@field hijack_cursor? boolean
 ---
----Reloads the explorer every time a buffer is written to.
 ---(default: `true`)
 ---@field auto_reload_on_write? boolean
 ---
----Completely disable [netrw], see [nvim-tree-netrw] for details. It is strongly advised to eagerly disable netrw, due to race conditions at vim startup.
 ---(default: `false`)
 ---@field disable_netrw? boolean
 ---
----Hijack netrw windows, ignored when `disable_netrw` is `true`
 ---(default: `true`)
 ---@field hijack_netrw? boolean
 ---
----Opens in place of the unnamed buffer if it's empty.
 ---(default: `false`)
----TODO reinstate this one when formatting is done #2934
------@field hijack_unnamed_buffer_when_opening? boolean
----@field hubwo? boolean
+---@field hijack_unnamed_buffer_when_opening? boolean
 ---
----Preferred root directories. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
+---(default: `{}`)
 ---@field root_dirs? string[]
 ---
----Prefer startup root directory when updating root directory of the tree. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
 ---(default: `false`)
 ---@field prefer_startup_root? boolean
 ---
----Changes the tree root directory on [DirChanged] and refreshes the tree.
 ---(default: `false`)
 ---@field sync_root_with_cwd? boolean
 ---
----Automatically reloads the tree on [BufEnter] nvim-tree.
 ---(default: `false`)
 ---@field reload_on_bufenter? boolean
 ---
----Change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
 ---(default: `false`)
 ---@field respect_buf_cwd? boolean
 ---
----Use [vim.ui.select()] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
 ---(default: `false`)
 ---@field select_prompts? boolean
 ---

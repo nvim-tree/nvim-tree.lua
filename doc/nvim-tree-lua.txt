@@ -1,7 +1,6 @@
-*nvim-tree-lua.txt*         A File Explorer For Nvim                 *nvim-tree*
+*nvim-tree-lua.txt*       A File Explorer For Nvim        *nvim_tree*  *nvim-tree*
 
 Author: Yazdani Kiyan
-
                                        Type |gO| to see the table of contents.
 
 ==============================================================================
@@ -1337,7 +1336,7 @@ Mappings are set via the |nvim_tree.Config| {on_attach} function, which is run u
 creating the nvim-tree buffer. Mappings are usually |nvim-tree-api| functions
 however may be your own.
 
-When on_attach is not a function, |nvim-tree-mappings-default| will be used.
+When {on_attach} is not a function, |nvim-tree-mappings-default| will be used.
 
 Active mappings may be viewed via HELP, default `g?`. The mapping's description
 is used when displaying HELP.
@@ -1395,10 +1394,10 @@ define your own function to map complex functionality e.g. >lua
 ==============================================================================
 Mappings: Default                                 *nvim-tree-mappings-default*
 
-In the absence of an |nvim_tree.Config| {on_attach} function, the following defaults
-will be applied.
+In the absence of an |nvim_tree.Config| {on_attach} function, the following
+defaults will be applied.
 
-You are encouraged to copy these to your own |nvim_tree.Config| {on_attach} function. >lua
+You are encouraged to copy these to your {on_attach} function. >lua
 
   local api = require("nvim-tree.api")
 
@@ -2113,6 +2112,8 @@ Class: Config                                               *nvim-tree-config*
 
 Arguments to pass to |nvim-tree-setup|.
 
+When a value is not present/nil, the default will be used.
+
 They can be validated by |lsp| when passed directly e.g. >lua
      require("nvim-tree").setup({
        hijack_cursor = true,
@@ -2127,93 +2128,101 @@ or as a typed variable e.g. >lua
      require("nvim-tree").setup(config)
 <
 
-When a value is not present/nil, the default will be used.
-
 
 *nvim_tree.Config*
+    {on_attach} Runs when creating the nvim-tree buffer. Use this to set your
+    |nvim-tree-mappings|. When not a function, |nvim-tree-mappings-default|
+    will be used.
+
+    {hijack_cursor} keep the cursor on the first letter of the filename when
+    moving in the tree.
+
+    {auto_reload_on_write} reload the explorer every time a buffer is written
+    to.
+
+    {disable_netrw} completely disables |netrw|, see |nvim-tree-netrw| for
+    details. It is strongly advised to eagerly disable netrw, due to race
+    conditions at vim startup.
+
+    {hijack_netrw} hijacks netrw windows, ignored when {disable_netrw}.
+
+    {hijack_unnamed_buffer_when_opening} opens in place of the unnamed buffer
+    if it's empty.
+
+    {root_dirs} preferred root directories, requires
+    |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
+
+    {prefer_startup_root} prefer startup root directory when updating root
+    directory of the tree. Requires
+    |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
+
+    {sync_root_with_cwd} changes the tree root directory on |DirChanged| and
+    refreshes the tree.
+
+    {reload_on_bufenter} automatically reloads the tree on |BufEnter|
+    nvim-tree.
+
+    {respect_buf_cwd} changes the |current-directory| of nvim-tree to that of
+    new buffer's when opening nvim-tree.
+
+    {select_prompts} uses |vim.ui.select()| style prompts. Necessary when
+    using a UI prompt decorator such as dressing.nvim or
+    telescope-ui-select.nvim
 
     Fields: ~
-      • {on_attach}?             (`string|(fun(bufnr: integer))`) Runs when
-                                 creating the nvim-tree buffer. Use this to
-                                 set your |nvim-tree-mappings|. When
-                                 `on_attach` is not a function,
-                                 |nvim-tree-mappings-default| will be called.
-      • {hijack_cursor}?         (`boolean`, default: `false`) Keeps the
-                                 cursor on the first letter of the filename
-                                 when moving in the tree.
-      • {auto_reload_on_write}?  (`boolean`, default: `true`) Reloads the
-                                 explorer every time a buffer is written to.
-      • {disable_netrw}?         (`boolean`, default: `false`) Completely
-                                 disable |netrw|, see |nvim-tree-netrw| for
-                                 details. It is strongly advised to eagerly
-                                 disable netrw, due to race conditions at vim
-                                 startup.
-      • {hijack_netrw}?          (`boolean`, default: `true`) Hijack netrw
-                                 windows, ignored when `disable_netrw` is
-                                 `true`
-      • {hubwo}?                 (`boolean`, default: `false`) Opens in place
-                                 of the unnamed buffer if it's empty. TODO
-                                 reinstate this one when formatting is done
-                                 #2934 --@field
-                                 hijack_unnamed_buffer_when_opening? boolean
-      • {root_dirs}?             (`string[]`) Preferred root directories.
-                                 Requires
-                                 |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
-      • {prefer_startup_root}?   (`boolean`, default: `false`) Prefer startup
-                                 root directory when updating root directory
-                                 of the tree. Requires
-                                 |nvim_tree.Config.UpdateFocusedFile.UpdateRoot|.
-      • {sync_root_with_cwd}?    (`boolean`, default: `false`) Changes the
-                                 tree root directory on |DirChanged| and
-                                 refreshes the tree.
-      • {reload_on_bufenter}?    (`boolean`, default: `false`) Automatically
-                                 reloads the tree on |BufEnter| nvim-tree.
-      • {respect_buf_cwd}?       (`boolean`, default: `false`) Change cwd of
-                                 nvim-tree to that of new buffer's when
-                                 opening nvim-tree.
-      • {select_prompts}?        (`boolean`, default: `false`) Use
-                                 |vim.ui.select()| style prompts. Necessary
-                                 when using a UI prompt decorator such as
-                                 dressing.nvim or telescope-ui-select.nvim
-      • {sort}?                  (`nvim_tree.Config.Sort`)
-                                 |nvim_tree.Config.Sort|
-      • {view}?                  (`nvim_tree.Config.View`)
-                                 |nvim_tree.Config.View|
-      • {renderer}?              (`nvim_tree.Config.Renderer`)
-                                 |nvim_tree.Config.Renderer|
-      • {hijack_directories}?    (`nvim_tree.Config.HijackDirectories`)
-                                 |nvim_tree.Config.HijackDirectories|
-      • {update_focused_file}?   (`nvim_tree.Config.UpdateFocusedFile`)
-                                 |nvim_tree.Config.UpdateFocusedFile|
-      • {system_open}?           (`nvim_tree.Config.SystemOpen`)
-                                 |nvim_tree.Config.SystemOpen|
-      • {git}?                   (`nvim_tree.Config.Git`)
-                                 |nvim_tree.Config.Git|
-      • {diagnostics}?           (`nvim_tree.Config.Diagnostics`)
-                                 |nvim_tree.Config.Diagnostics|
-      • {modified}?              (`nvim_tree.Config.Modified`)
-                                 |nvim_tree.Config.Modified|
-      • {filters}?               (`nvim_tree.Config.Filters`)
-                                 |nvim_tree.Config.Filters|
-      • {live_filter}?           (`nvim_tree.Config.LiveFilter`)
-                                 |nvim_tree.Config.LiveFilter|
-      • {filesystem_watchers}?   (`nvim_tree.Config.FilesystemWatchers`)
-                                 |nvim_tree.Config.FilesystemWatchers|
-      • {actions}?               (`nvim_tree.Config.Actions`)
-                                 |nvim_tree.Config.Actions|
-      • {trash}?                 (`nvim_tree.Config.Trash`)
-                                 |nvim_tree.Config.Trash|
-      • {tab}?                   (`nvim_tree.Config.Tab`)
-                                 |nvim_tree.Config.Tab|
-      • {bookmarks}?             (`nvim_tree.Config.Bookmarks`)
-                                 |nvim_tree.Config.Bookmarks|
-      • {notify}?                (`nvim_tree.Config.Notify`)
-                                 |nvim_tree.Config.Notify|
-      • {help}?                  (`nvim_tree.Config.Help`)
-                                 |nvim_tree.Config.Help|
-      • {ui}?                    (`nvim_tree.Config.UI`) |nvim_tree.Config.UI|
-      • {log}?                   (`nvim_tree.Config.Log`)
-                                 |nvim_tree.Config.Log|
+      • {on_attach}?                           (`string|(fun(bufnr: integer))`)
+                                               (default: `default`)
+      • {hijack_cursor}?                       (`boolean`) (default: `false`)
+      • {auto_reload_on_write}?                (`boolean`) (default: `true`)
+      • {disable_netrw}?                       (`boolean`) (default: `false`)
+      • {hijack_netrw}?                        (`boolean`) (default: `true`)
+      • {hijack_unnamed_buffer_when_opening}?  (`boolean`) (default: `false`)
+      • {root_dirs}?                           (`string[]`) (default: `{}`)
+      • {prefer_startup_root}?                 (`boolean`) (default: `false`)
+      • {sync_root_with_cwd}?                  (`boolean`) (default: `false`)
+      • {reload_on_bufenter}?                  (`boolean`) (default: `false`)
+      • {respect_buf_cwd}?                     (`boolean`) (default: `false`)
+      • {select_prompts}?                      (`boolean`) (default: `false`)
+      • {sort}?                                (`nvim_tree.Config.Sort`)
+                                               |nvim_tree.Config.Sort|
+      • {view}?                                (`nvim_tree.Config.View`)
+                                               |nvim_tree.Config.View|
+      • {renderer}?                            (`nvim_tree.Config.Renderer`)
+                                               |nvim_tree.Config.Renderer|
+      • {hijack_directories}?                  (`nvim_tree.Config.HijackDirectories`)
+                                               |nvim_tree.Config.HijackDirectories|
+      • {update_focused_file}?                 (`nvim_tree.Config.UpdateFocusedFile`)
+                                               |nvim_tree.Config.UpdateFocusedFile|
+      • {system_open}?                         (`nvim_tree.Config.SystemOpen`)
+                                               |nvim_tree.Config.SystemOpen|
+      • {git}?                                 (`nvim_tree.Config.Git`)
+                                               |nvim_tree.Config.Git|
+      • {diagnostics}?                         (`nvim_tree.Config.Diagnostics`)
+                                               |nvim_tree.Config.Diagnostics|
+      • {modified}?                            (`nvim_tree.Config.Modified`)
+                                               |nvim_tree.Config.Modified|
+      • {filters}?                             (`nvim_tree.Config.Filters`)
+                                               |nvim_tree.Config.Filters|
+      • {live_filter}?                         (`nvim_tree.Config.LiveFilter`)
+                                               |nvim_tree.Config.LiveFilter|
+      • {filesystem_watchers}?                 (`nvim_tree.Config.FilesystemWatchers`)
+                                               |nvim_tree.Config.FilesystemWatchers|
+      • {actions}?                             (`nvim_tree.Config.Actions`)
+                                               |nvim_tree.Config.Actions|
+      • {trash}?                               (`nvim_tree.Config.Trash`)
+                                               |nvim_tree.Config.Trash|
+      • {tab}?                                 (`nvim_tree.Config.Tab`)
+                                               |nvim_tree.Config.Tab|
+      • {bookmarks}?                           (`nvim_tree.Config.Bookmarks`)
+                                               |nvim_tree.Config.Bookmarks|
+      • {notify}?                              (`nvim_tree.Config.Notify`)
+                                               |nvim_tree.Config.Notify|
+      • {help}?                                (`nvim_tree.Config.Help`)
+                                               |nvim_tree.Config.Help|
+      • {ui}?                                  (`nvim_tree.Config.UI`)
+                                               |nvim_tree.Config.UI|
+      • {log}?                                 (`nvim_tree.Config.Log`)
+                                               |nvim_tree.Config.Log|
 
 
 
