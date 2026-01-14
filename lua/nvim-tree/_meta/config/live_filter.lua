@@ -13,7 +13,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.LiveFilter
 ---
 ---Prefix of the filter displayed in the buffer.
----(default: `[FILTER]: `)
+---(default: `"[FILTER]: "`)
 ---@field prefix? string
 ---
 ---Whether to filter folders or not.

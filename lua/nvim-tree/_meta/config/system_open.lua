@@ -20,7 +20,6 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.SystemOpen
 ---
 ---The open command itself
----(default: `xdg-open`, `open` or `cmd`)
 ---@field cmd? string
 ---
 ---Optional argument list. Leave empty for OS specific default.

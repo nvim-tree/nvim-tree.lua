@@ -56,25 +56,25 @@ error("Cannot require a meta file")
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_git? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_opened_files? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_hidden? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_modified? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_bookmarks? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `none`)
+---(default: `"none"`)
 ---@field highlight_diagnostics? nvim_tree.Config.Renderer.Highlight
 ---
----(default: `name`)
+---(default: `"name"`)
 ---@field highlight_clipboard? nvim_tree.Config.Renderer.Highlight
 ---
 ---Highlight special files and directories with `NvimTreeSpecial*`.
@@ -108,15 +108,15 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.IndentMarkers.Icons
 ---@inlinedoc
 ---
----(default: `└` )
+---(default: `"└"`)
 ---@field corner? string
----(default: `│` )
+---(default: `"│"`)
 ---@field edge? string
----(default: `│` )
+---(default: `"│"`)
 ---@field item? string
----(default: `─` )
+---(default: `"─"`)
 ---@field bottom? string
----(default: ` ` )
+---(default: `" "`)
 ---@field none? string
 
 
@@ -144,7 +144,7 @@ error("Cannot require a meta file")
 ---@field padding? nvim_tree.Config.Renderer.Icons.Padding
 ---
 ---Separator between symlink source and target.
----(default: ` ➛ `)
+---(default: `" ➛ "`)
 ---@field symlink_arrow? string
 ---
 ---[nvim_tree.Config.Renderer.Icons.Show]
@@ -196,11 +196,11 @@ error("Cannot require a meta file")
 ---@inlinedoc
 ---
 ---Between icon and filename.
----(default: ` `)
+---(default: `" "`)
 ---@field icon? string
 ---
 ---Between folder arrow icon and file/folder icon.
----(default: ` `)
+---(default: `" "`)
 ---@field folder_arrow? string
 
 
@@ -241,19 +241,19 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
 ---
 ---Files
----(default: `` )
+---(default: `""`)
 ---@field default? string
 ---
----(default: `` )
+---(default: `""`)
 ---@field symlink? string
 ---
----(default: `󰆤` )
+---(default: `"󰆤"`)
 ---@field bookmark? string
 ---
----(default: `●` )
+---(default: `"●"`)
 ---@field modified? string
 ---
----(default: `󰜌` )
+---(default: `"󰜌"`)
 ---@field hidden? string
 ---
 ---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder
@@ -269,17 +269,17 @@ error("Cannot require a meta file")
 ---@field arrow_closed? string
 ---(default: down arrow)
 ---@field arrow_open? string
----(default: `` )
+---(default: `""`)
 ---@field default? string
----(default: `` )
+---(default: `""`)
 ---@field open? string
----(default: `` )
+---(default: `""`)
 ---@field empty? string
----(default: `` )
+---(default: `""`)
 ---@field empty_open? string
----(default: `` )
+---(default: `""`)
 ---@field symlink? string
----(default: `` )
+---(default: `""`)
 ---@field symlink_open? string
 
 
@@ -287,17 +287,17 @@ error("Cannot require a meta file")
 ---[nvim_tree.Config.Renderer.Icons.Glyphs.Git]()
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
 ---@inlinedoc
----(default: `✗` )
+---(default: `"✗"`)
 ---@field unstaged? string
----(default: `✓` )
+---(default: `"✓"`)
 ---@field staged? string
----(default: `` )
+---(default: `""`)
 ---@field unmerged? string
----(default: `➜` )
+---(default: `"➜"`)
 ---@field renamed? string
----(default: `★` )
+---(default: `"★"`)
 ---@field untracked? string
----(default: `` )
+---(default: `""`)
 ---@field deleted? string
----(default: `◌` )
+---(default: `"◌"`)
 ---@field ignored? string

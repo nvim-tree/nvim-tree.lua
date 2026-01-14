@@ -39,7 +39,7 @@ error("Cannot require a meta file")
 ---(default: `15`)
 ---@field debounce_delay? integer
 ---
----(default: `left`)
+---(default: `"left"`)
 ---@field side? "left"|"right"
 ---
 ---Preserves window proportions when opening a file. If `false`, the height and width of windows other than nvim-tree will be equalized.
@@ -55,7 +55,7 @@ error("Cannot require a meta file")
 ---@field relativenumber? boolean
 ---
 ---['signcolumn']
----(default: `yes`)
+---(default: `"yes"`)
 ---@field signcolumn? "yes"|"auto"|"no"
 ---
 ---(default: `30`)
@@ -89,7 +89,7 @@ error("Cannot require a meta file")
 
 ---Configure floating window behaviour
 ---
----{open_win_config} is passed directly to [nvim_open_win()], default:
+---{open_win_config} is passed to [nvim_open_win()], default:
 ---```lua
 ---{
 ---  relative = "editor",
@@ -109,5 +109,5 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field quit_on_focus_loss? boolean
 ---
----(default: above)
+---(default: `{ relative = "editor", border = "rounded", width = 30, height = 30, row = 1, col = 1, }`)
 ---@field open_win_config? vim.api.keyset.win_config|(fun(): vim.api.keyset.win_config)

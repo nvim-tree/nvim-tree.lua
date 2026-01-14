@@ -58,7 +58,7 @@ error("Cannot require a meta file")
 
 ---{file_popup} floating window.
 ---
----{open_win_config} is passed directly to [nvim_open_win()], default:
+---{open_win_config} is passed to [nvim_open_win()], default:
 ---```lua
 ---{
 ---  col = 1,
@@ -71,7 +71,7 @@ error("Cannot require a meta file")
 ---You shouldn't define {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.Config.Actions.FilePopup
 ---
----(default: above)
+---(default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
 ---@field open_win_config? vim.api.keyset.win_config
 
 
@@ -100,16 +100,16 @@ error("Cannot require a meta file")
 ---
 ---When it is not enabled the file will open in the window from which you last opened the tree, obeying {exclude}
 ---
----You may define a function that should return the window id that will open the node, or `nil` if an invalid window is picked or user cancelled the action. The picker may create a new window.
+---You may define a {picker} function that should return the window id that will open the node, or `nil` if an invalid window is picked or user cancelled the action. The picker may create a new window.
 ---
 ---@class nvim_tree.Config.Actions.OpenFile.WindowPicker
 ---
 ---(default: `true`)
 ---@field enable? boolean
 ---
----Change the default window picker: string `default` or a function.
----(default: `default`)
----@field picker? string|(fun(): integer)
+---Change the default window picker or define your own.
+---(default: `"default"`)
+---@field picker? "default"|(fun(): integer)
 ---
 ---Identifier characters to use.
 ---(default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`)

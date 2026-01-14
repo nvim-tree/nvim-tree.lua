@@ -13,6 +13,5 @@ error("Cannot require a meta file")
 
 ---@class nvim_tree.Config.Trash
 ---
----External command.
----(default: `gio trash` or `trash`)
+---(default: `"gio trash"` or `"trash"`)
 ---@field cmd? string

@@ -11,12 +11,12 @@ error("Cannot require a meta file")
 ---Sort files within a directory.
 ---
 ---{sorter} presets [nvim_tree.Config.Sort.Sorter]()
----- `name`
----- `case_sensitive` name
----- `modification_time`
----- `extension` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
----- `suffix` uses the last e.g. `foo.tar.gz` -> `.gz`
----- `filetype` [filetype]
+---- `"name"`
+---- `"case_sensitive"` name
+---- `"modification_time"`
+---- `"extension"` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
+---- `"suffix"` uses the last e.g. `foo.tar.gz` -> `.gz`
+---- `"filetype"` [filetype]
 ---
 ---{sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be sorted in place e.g.
 ---```lua
@@ -36,7 +36,7 @@ error("Cannot require a meta file")
 
 ---@class nvim_tree.Config.Sort
 ---
----(default: `name`)
+---(default: `"name"`)
 ---@field sorter? nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)
 ---
 ---Sort folders before files. Has no effect when {sorter} is a function.

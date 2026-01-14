@@ -56,7 +56,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config
 ---
 ---(default: `default`)
----@field on_attach? string|(fun(bufnr: integer))
+---@field on_attach? "default"|(fun(bufnr: integer))
 ---
 ---(default: `false`)
 ---@field hijack_cursor? boolean

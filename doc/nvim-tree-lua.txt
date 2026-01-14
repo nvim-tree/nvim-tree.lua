@@ -2170,7 +2170,7 @@ or as a typed variable e.g. >lua
     telescope-ui-select.nvim
 
     Fields: ~
-      • {on_attach}?                           (`string|(fun(bufnr: integer))`)
+      • {on_attach}?                           (`"default"|(fun(bufnr: integer))`)
                                                (default: `default`)
       • {hijack_cursor}?                       (`boolean`) (default: `false`)
       • {auto_reload_on_write}?                (`boolean`) (default: `true`)
@@ -2232,12 +2232,12 @@ Class: Config.Sort                                     *nvim-tree-config-sort*
 Sort files within a directory.
 
 {sorter} presets                                *nvim_tree.Config.Sort.Sorter*
-• `name`
-• `case_sensitive` name
-• `modification_time`
-• `extension` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
-• `suffix` uses the last e.g. `foo.tar.gz` -> `.gz`
-• `filetype` |filetype|
+• `"name"`
+• `"case_sensitive"` name
+• `"modification_time"`
+• `"extension"` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
+• `"suffix"` uses the last e.g. `foo.tar.gz` -> `.gz`
+• `"filetype"` |filetype|
 
 {sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be
 sorted in place e.g. >lua
@@ -2259,7 +2259,7 @@ sorted in place e.g. >lua
 
     Fields: ~
       • {sorter}?         (`nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)`)
-                          (default: `name`)
+                          (default: `"name"`)
       • {folders_first}?  (`boolean`, default: `true`) Sort folders before
                           files. Has no effect when {sorter} is a function.
       • {files_first}?    (`boolean`, default: `false`) Sort files before
@@ -2302,7 +2302,7 @@ line.
                                         refresh operations. Increase if you
                                         experience performance issues around
                                         screen refresh.
-      • {side}?                         (`"left"|"right"`) (default: `left`)
+      • {side}?                         (`"left"|"right"`) (default: `"left"`)
       • {preserve_window_proportions}?  (`boolean`, default: `false`)
                                         Preserves window proportions when
                                         opening a file. If `false`, the height
@@ -2312,8 +2312,8 @@ line.
                                         |'number'|
       • {relativenumber}?               (`boolean`, default: `false`)
                                         |'relativenumber'|
-      • {signcolumn}?                   (`"yes"|"auto"|"no"`, default: `yes`)
-                                        |'signcolumn'|
+      • {signcolumn}?                   (`"yes"|"auto"|"no"`, default:
+                                        `"yes"`) |'signcolumn'|
       • {width}?                        (`nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width`)
                                         (default: `30`)
       • {float}?                        (`nvim_tree.Config.View.Float`)
@@ -2322,7 +2322,7 @@ line.
 *nvim_tree.Config.View.Float*
     Configure floating window behaviour
 
-    {open_win_config} is passed directly to |nvim_open_win()|, default: >lua
+    {open_win_config} is passed to |nvim_open_win()|, default: >lua
         {
          relative = "editor",
          border = "rounded",
@@ -2338,7 +2338,8 @@ line.
       • {quit_on_focus_loss}?  (`boolean`, default: `true`) Close the floating
                                window when it loses focus.
       • {open_win_config}?     (`vim.api.keyset.win_config|(fun(): vim.api.keyset.win_config)`)
-                               (default: above)
+                               (default:
+                               `{ relative = "editor", border = "rounded", width = 30, height = 30, row = 1, col = 1, }`)
 
 *nvim_tree.Config.View.Width*
     Configure dynamic width based on longest line.
@@ -2398,19 +2399,19 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                    (default:
                                    `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
       • {highlight_git}?           (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_opened_files}?  (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_hidden}?        (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_modified}?      (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_bookmarks}?     (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_diagnostics}?   (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `none`)
+                                   (default: `"none"`)
       • {highlight_clipboard}?     (`nvim_tree.Config.Renderer.Highlight`)
-                                   (default: `name`)
+                                   (default: `"name"`)
       • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
                                    Highlight special files and directories
                                    with `NvimTreeSpecial*`.
@@ -2437,12 +2438,12 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                   (default: `signcolumn`)
       • {padding}?                (`table`)
                                      *nvim_tree.Config.Renderer.Icons.Padding*
-                                  • {icon}? (`string`, default: ` `) Between
+                                  • {icon}? (`string`, default: `" "`) Between
                                     icon and filename.
-                                  • {folder_arrow}? (`string`, default: ` `)
+                                  • {folder_arrow}? (`string`, default: `" "`)
                                     Between folder arrow icon and file/folder
                                     icon.
-      • {symlink_arrow}?          (`string`, default: ` ➛ `) Separator
+      • {symlink_arrow}?          (`string`, default: `" ➛ "`) Separator
                                   between symlink source and target.
       • {show}?                   (`nvim_tree.Config.Renderer.Icons.Show`)
                                   |nvim_tree.Config.Renderer.Icons.Show|
@@ -2457,28 +2458,28 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
     Glyphs that appear in the sign column must have length <= 2
 
     Fields: ~
-      • {default}?   (`string`, default: `` ) Files
-      • {symlink}?   (`string`) (default: `` )
-      • {bookmark}?  (`string`) (default: `󰆤` )
-      • {modified}?  (`string`) (default: `●` )
-      • {hidden}?    (`string`) (default: `󰜌` )
+      • {default}?   (`string`, default: `""`) Files
+      • {symlink}?   (`string`) (default: `""`)
+      • {bookmark}?  (`string`) (default: `"󰆤"`)
+      • {modified}?  (`string`) (default: `"●"`)
+      • {hidden}?    (`string`) (default: `"󰜌"`)
       • {folder}?    (`table`)                     *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
                      • {arrow_closed}? (`string`) (default: left arrow)
                      • {arrow_open}? (`string`) (default: down arrow)
-                     • {default}? (`string`) (default: `` )
-                     • {open}? (`string`) (default: `` )
-                     • {empty}? (`string`) (default: `` )
-                     • {empty_open}? (`string`) (default: `` )
-                     • {symlink}? (`string`) (default: `` )
-                     • {symlink_open}? (`string`) (default: `` )
+                     • {default}? (`string`) (default: `""`)
+                     • {open}? (`string`) (default: `""`)
+                     • {empty}? (`string`) (default: `""`)
+                     • {empty_open}? (`string`) (default: `""`)
+                     • {symlink}? (`string`) (default: `""`)
+                     • {symlink_open}? (`string`) (default: `""`)
       • {git}?       (`table`)                        *nvim_tree.Config.Renderer.Icons.Glyphs.Git*
-                     • {unstaged}? (`string`) (default: `✗` )
-                     • {staged}? (`string`) (default: `✓` )
-                     • {unmerged}? (`string`) (default: `` )
-                     • {renamed}? (`string`) (default: `➜` )
-                     • {untracked}? (`string`) (default: `★` )
-                     • {deleted}? (`string`) (default: `` )
-                     • {ignored}? (`string`) (default: `◌` )
+                     • {unstaged}? (`string`) (default: `"✗"`)
+                     • {staged}? (`string`) (default: `"✓"`)
+                     • {unmerged}? (`string`) (default: `""`)
+                     • {renamed}? (`string`) (default: `"➜"`)
+                     • {untracked}? (`string`) (default: `"★"`)
+                     • {deleted}? (`string`) (default: `""`)
+                     • {ignored}? (`string`) (default: `"◌"`)
 
 *nvim_tree.Config.Renderer.Icons.Show*
     See |nvim-tree-icons-highlighting|.
@@ -2522,11 +2523,11 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {icons}?          (`table`)
                                *nvim_tree.Config.Renderer.IndentMarkers.Icons*
                           Before the file/directory, length 1.
-                          • {corner}? (`string`) (default: `└` )
-                          • {edge}? (`string`) (default: `│` )
-                          • {item}? (`string`) (default: `│` )
-                          • {bottom}? (`string`) (default: `─` )
-                          • {none}? (`string`) (default: ` ` )
+                          • {corner}? (`string`) (default: `"└"`)
+                          • {edge}? (`string`) (default: `"│"`)
+                          • {item}? (`string`) (default: `"│"`)
+                          • {bottom}? (`string`) (default: `"─"`)
+                          • {none}? (`string`) (default: `" "`)
 
 
 
@@ -2603,8 +2604,7 @@ longer be necessary and will be removed.
 *nvim_tree.Config.SystemOpen*
 
     Fields: ~
-      • {cmd}?   (`string`, default: `xdg-open`, `open` or `cmd`) The open
-                 command itself
+      • {cmd}?   (`string`) The open command itself
       • {args}?  (`string[]`, default: `{}` or `{ "/c", "start", '""' }` on
                  windows) Optional argument list. Leave empty for OS specific
                  default.
@@ -2676,10 +2676,10 @@ See |nvim-tree-icons-highlighting|.
                               • {max}? (`vim.diagnostic.Severity`, default:
                                 ERROR) |vim.diagnostic.severity|
       • {icons}?              (`table`)                                *nvim_tree.Config.Diagnostics.Icons*
-                              • {hint}? (`string`) (default: `` )
-                              • {info}? (`string`) (default: `` )
-                              • {warning}? (`string`) (default: `` )
-                              • {error}? (`string`) (default: `` )
+                              • {hint}? (`string`) (default: `""` )
+                              • {info}? (`string`) (default: `""` )
+                              • {warning}? (`string`) (default: `""` )
+                              • {error}? (`string`) (default: `""` )
 
 
 
@@ -2778,7 +2778,7 @@ with the `F` key by default.
 *nvim_tree.Config.LiveFilter*
 
     Fields: ~
-      • {prefix}?               (`string`, default: `[FILTER]: `) Prefix of
+      • {prefix}?               (`string`, default: `"[FILTER]: "`) Prefix of
                                 the filter displayed in the buffer.
       • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
                                 folders or not.
@@ -2862,7 +2862,7 @@ Class: Config.Actions                               *nvim-tree-config-actions*
 *nvim_tree.Config.Actions.FilePopup*
     {file_popup} floating window.
 
-    {open_win_config} is passed directly to |nvim_open_win()|, default: >lua
+    {open_win_config} is passed to |nvim_open_win()|, default: >lua
         {
          col = 1,
          row = 1,
@@ -2876,7 +2876,8 @@ Class: Config.Actions                               *nvim-tree-config-actions*
     overridden to fit the file_popup content.
 
     Fields: ~
-      • {open_win_config}?  (`vim.api.keyset.win_config`) (default: above)
+      • {open_win_config}?  (`vim.api.keyset.win_config`) (default:
+                            `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
 
 *nvim_tree.Config.Actions.OpenFile*
     Opening files.
@@ -2899,14 +2900,14 @@ Class: Config.Actions                               *nvim-tree-config-actions*
     When it is not enabled the file will open in the window from which you
     last opened the tree, obeying {exclude}
 
-    You may define a function that should return the window id that will open
-    the node, or `nil` if an invalid window is picked or user cancelled the
-    action. The picker may create a new window.
+    You may define a {picker} function that should return the window id that
+    will open the node, or `nil` if an invalid window is picked or user
+    cancelled the action. The picker may create a new window.
 
     Fields: ~
       • {enable}?   (`boolean`) (default: `true`)
-      • {picker}?   (`string|(fun(): integer)`, default: `default`) Change the
-                    default window picker: string `default` or a function.
+      • {picker}?   (`"default"|(fun(): integer)`, default: `"default"`)
+                    Change the default window picker or define your own.
       • {chars}?    (`string`, default:
                     `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`) Identifier
                     characters to use.
@@ -2948,7 +2949,7 @@ system.
 *nvim_tree.Config.Trash*
 
     Fields: ~
-      • {cmd}?  (`string`, default: `gio trash` or `trash`) External command.
+      • {cmd}?  (`string`) (default: `"gio trash"` or `"trash"`)
 
 
 
@@ -3016,14 +3017,14 @@ Class: Config.Help                                     *nvim-tree-config-help*
 Configure help window, default mapping `g?`
 
                                                 *nvim_tree.Config.Help.SortBy*
-• `key`: alphabetically by keymap
-• `desc`: alphabetically by description
+• `"key"`: alphabetically by keymap
+• `"desc"`: alphabetically by description
 
 
 *nvim_tree.Config.Help*
 
     Fields: ~
-      • {sort_by}?  (`nvim_tree.Config.Help.SortBy`, default: `key`)
+      • {sort_by}?  (`nvim_tree.Config.Help.SortBy`, default: `"key"`)
                     |nvim_tree.Config.Help.SortBy|
 
 
