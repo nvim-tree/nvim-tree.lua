@@ -2291,6 +2291,21 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
 
 Controls the appearance of the tree.
 
+
+Icons and highlighting in ascending order of precedence:
+
+|nvim_tree.Config.Renderer.Icons.Show|  Requires                      |nvim_tree.Config.Renderer.Icons|  |nvim_tree.Config.Renderer|  Devicons?  Highlight                   Icon(s)
+{file}                                 -                             -                                -                         yes        `NvimTreeNo*`, `NvimTreeFile*`  |nvim_tree.Config.Renderer.Icons.Glyphs| {default}
+{folder}                               -                             -                                -                         yes        `NvimTree*Folder*`            |nvim_tree.Config.Renderer.Icons.Glyphs.Folder|
+{git}                                 |nvim_tree.Config.Git|          {git_placement}                  {highlight_git}            yes        `NvimTreeGit*`                |nvim_tree.Config.Renderer.Icons.Glyphs.Git|
+ -                                     -                             -                               {highlight_opened_files}   no         `NvimTreeOpened*`              -
+{hidden}                               -                            {hidden_placement}               {highlight_hidden}         no         `NvimTreeHidden*`             |nvim_tree.Config.Renderer.Icons.Glyphs| {hidden}
+{modified}                            |nvim_tree.Config.Modified|     {modified_placement}             {highlight_modified}       no         `NvimTreeModified*`           |nvim_tree.Config.Renderer.Icons.Glyphs| {modified}
+{bookmarks}                            -                            {bookmarks_placement}            {highlight_bookmarks}      no         `NvimTreeBookmark*`           |nvim_tree.Config.Renderer.Icons.Glyphs| {bookmark}
+{diagnostics}                         |nvim_tree.Config.Diagnostics|  {diagnostics_placement}          {highlight_diagnostics}    no         `NvimTreeDiagnostic*`         |nvim_tree.Config.Diagnostics.Icons|
+ -                                     -                             -                               {highlight_clipboard}      no         `NvimTreeC*HL`                 -
+
+
 {highlight_} options            *nvim_tree.Config.Renderer.HighlightPlacement*
 • `none`: no highlighting
 • `icon`: icon only
@@ -2298,7 +2313,7 @@ Controls the appearance of the tree.
 • `all`: icon and name
 
 {root_folder_label} has 3 forms:
-• `string`: |filename-modifiers| format string
+• `string`: |filename-modifiers| format string, default `":~:s?$?/..?"`
 • `boolean`: `true` to disable
 • `fun(root_cwd: string): string`: return a literal string from root's
   absolute path e.g. >lua
@@ -2337,25 +2352,22 @@ Controls the appearance of the tree.
                                    specify builtin decorators. See
                                    |nvim-tree-decorators|.
       • {highlight_git}?           (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   Git status: `NvimTreeGit*HL`. Requires
-                                   |nvim_tree.Config.Git|.
+                                   Git status.
       • {highlight_opened_files}?  (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   |bufloaded()| files: `NvimTreeOpenedHL`.
+                                   |bufloaded()| files.
       • {highlight_hidden}?        (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   Hidden (dotfiles): `NvimTreeHiddenFileHL`.
+                                   Hidden (dotfiles) files and directories.
       • {highlight_modified}?      (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   Modified files: `NvimTreeModifiedFile`.
-                                   Requires |nvim_tree.Config.Modified|.
+                                   Modified files.
       • {highlight_bookmarks}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   Bookmarked: `NvimTreeBookmarkHL`.
+                                   Bookmarked files and directories.
       • {highlight_diagnostics}?   (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `none`)
-                                   Diagnostic status: `NvimTreeDiagnostic*HL`.
-                                   Requires |nvim_tree.Config.Diagnostics|.
+                                   Diagnostic status.
       • {highlight_clipboard}?     (`nvim_tree.Config.Renderer.HighlightPlacement`, default: `name`)
-                                   Copied: `NvimTreeCopiedHL`, cut:
-                                   `NvimTreeCutHL`.
+                                   Copied and cut.
       • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
-                                   Sepcial files: `NvimTreeSpecialFile`.
+                                   Highlight special files and directories
+                                   with `NvimTreeSpecial*`.
       • {indent_markers}?          (`nvim_tree.Config.Renderer.IndentMarkers`)
                                    |nvim_tree.Config.Renderer.IndentMarkers|
       • {icons}?                   (`nvim_tree.Config.Renderer.Icons`)
@@ -2402,19 +2414,13 @@ Controls the appearance of the tree.
 *nvim_tree.Config.Renderer.Icons.Glyphs*
     Glyphs that appear in the sign column must have length <= 2
 
-    Glyphs defined elsewhere:
-    • |nvim_tree.Config.Diagnostics.Icons|
-    • |nvim_tree.Config.Renderer.IndentMarkers.Icons|
-
     Fields: ~
-      • {default}?   (`string`, default: `` ) Files, overridden by
-                     |nvim_tree.Config.Renderer.Icons.WebDevicons|.
+      • {default}?   (`string`, default: `` ) Files
       • {symlink}?   (`string`) (default: `` )
       • {bookmark}?  (`string`) (default: `󰆤` )
       • {modified}?  (`string`) (default: `●` )
       • {hidden}?    (`string`) (default: `󰜌` )
-      • {folder}?    (`table`) Overridden by
-                     |nvim_tree.Config.Renderer.Icons.WebDevicons|. *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
+      • {folder}?    (`table`)                     *nvim_tree.Config.Renderer.Icons.Glyphs.Folder*
                      • {arrow_closed}? (`string`) (default: left arrow)
                      • {arrow_open}? (`string`) (default: down arrow)
                      • {default}? (`string`) (default: `` )
@@ -2423,8 +2429,7 @@ Controls the appearance of the tree.
                      • {empty_open}? (`string`) (default: `` )
                      • {symlink}? (`string`) (default: `` )
                      • {symlink_open}? (`string`) (default: `` )
-      • {git}?       (`table`) Git status on files and
-                     directories. *nvim_tree.Config.Renderer.Icons.Glyphs.Git*
+      • {git}?       (`table`)                        *nvim_tree.Config.Renderer.Icons.Glyphs.Git*
                      • {unstaged}? (`string`) (default: `✗` )
                      • {staged}? (`string`) (default: `✓` )
                      • {unmerged}? (`string`) (default: `` )
@@ -2436,61 +2441,31 @@ Controls the appearance of the tree.
 *nvim_tree.Config.Renderer.Icons.Show*
     Control which icons are displayed.
 
-    Left to right ordered:
-    • {file}
-    • {folder}
-    • {git}
-    • {modified}
-    • {hidden}
-    • {diagnostics}
-    • {bookmarks}
-
     Fields: ~
-      • {file}?          (`boolean`, default: `true`) Before file name.
-      • {folder}?        (`boolean`, default: `true`) Before folder name.
+      • {file}?          (`boolean`) (default: `true`)
+      • {folder}?        (`boolean`) (default: `true`)
+      • {git}?           (`boolean`) (default: `true`)
+      • {modified}?      (`boolean`) (default: `true`)
+      • {hidden}?        (`boolean`) (default: `false`)
+      • {diagnostics}?   (`boolean`) (default: `true`)
+      • {bookmarks}?     (`boolean`) (default: `true`)
       • {folder_arrow}?  (`boolean`, default: `true`) Show a small arrow
                          before the folder node. Arrow will be a part of the
                          node when using
                          |nvim_tree.Config.Renderer.IndentMarkers|.
-      • {git}?           (`boolean`, default: `true`) Location:
-                         |nvim_tree.Config.Renderer.Icons| {git_placement}.
-                         Icons: |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
-                         Requires |nvim_tree.Config.Git|.
-      • {modified}?      (`boolean`, default: `true`) Location:
-                         |nvim_tree.Config.Renderer.Icons|
-                         {modified_placement}. Requires
-                         |nvim_tree.Config.Modified|.
-      • {hidden}?        (`boolean`, default: `false`) Location:
-                         |nvim_tree.Config.Renderer.Icons| {hidden_placement}.
-      • {diagnostics}?   (`boolean`, default: `true`) Location:
-                         |nvim_tree.Config.Renderer.Icons|
-                         {diagnostics_placement}. Icons:
-                         |nvim_tree.Config.Diagnostics.Icons|. Requires
-                         |nvim_tree.Config.Diagnostics|.
-      • {bookmarks}?     (`boolean`, default: `true`) Location:
-                         |nvim_tree.Config.Renderer.Icons|
-                         {bookmarks_placement}.
 
 *nvim_tree.Config.Renderer.Icons.WebDevicons*
     Configure optional plugin `nvim-tree/nvim-web-devicons`.
 
-    Overrides glyphs and highlight groups where noted.
-
     Fields: ~
       • {file}?    (`table`)
                             *nvim_tree.Config.Renderer.Icons.WebDevicons.File*
-                   • {enable}? (`boolean`, default: `true`) Show icons for
-                     files, overrides
-                     |nvim_tree.Config.Renderer.Icons.Glyphs.Git|.
-                   • {color}? (`boolean`, default: `true`) Apply colours to
-                     files, overrides `NvimTreeFileIcon`.
+                   • {enable}? (`boolean`) (default: `true`)
+                   • {color}? (`boolean`) (default: `true`)
       • {folder}?  (`table`)
                           *nvim_tree.Config.Renderer.Icons.WebDevicons.Folder*
-                   • {enable}? (`boolean`, default: `false`) Show icons for
-                     directories, overrides
-                     |nvim_tree.Config.Renderer.Icons.Glyphs.Folder|.
-                   • {color}? (`boolean`, default: `true`) Apply colors to
-                     directories, overrides `NvimTree*FolderName`.
+                   • {enable}? (`boolean`) (default: `false`)
+                   • {color}? (`boolean`) (default: `true`)
 
 *nvim_tree.Config.Renderer.IndentMarkers*
 

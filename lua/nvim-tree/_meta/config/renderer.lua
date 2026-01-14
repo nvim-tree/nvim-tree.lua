@@ -14,6 +14,22 @@ error("Cannot require a meta file")
 ---@brief
 ---Controls the appearance of the tree.
 ---
+---<pre>help
+---Icons and highlighting in ascending order of precedence:
+---
+--- |nvim_tree.Config.Renderer.Icons.Show|  Requires                      |nvim_tree.Config.Renderer.Icons|  |nvim_tree.Config.Renderer|  Devicons?  Highlight                   Icon(s)
+--- {file}                                 -                             -                                -                         yes        `NvimTreeNo*`, `NvimTreeFile*`  |nvim_tree.Config.Renderer.Icons.Glyphs| {default}
+--- {folder}                               -                             -                                -                         yes        `NvimTree*Folder*`            |nvim_tree.Config.Renderer.Icons.Glyphs.Folder|
+--- {git}                                 |nvim_tree.Config.Git|          {git_placement}                  {highlight_git}            yes        `NvimTreeGit*`                |nvim_tree.Config.Renderer.Icons.Glyphs.Git|
+---  -                                     -                             -                               {highlight_opened_files}   no         `NvimTreeOpened*`              -
+--- {hidden}                               -                            {hidden_placement}               {highlight_hidden}         no         `NvimTreeHidden*`             |nvim_tree.Config.Renderer.Icons.Glyphs| {hidden}
+--- {modified}                            |nvim_tree.Config.Modified|     {modified_placement}             {highlight_modified}       no         `NvimTreeModified*`           |nvim_tree.Config.Renderer.Icons.Glyphs| {modified}
+--- {bookmarks}                            -                            {bookmarks_placement}            {highlight_bookmarks}      no         `NvimTreeBookmark*`           |nvim_tree.Config.Renderer.Icons.Glyphs| {bookmark}
+--- {diagnostics}                         |nvim_tree.Config.Diagnostics|  {diagnostics_placement}          {highlight_diagnostics}    no         `NvimTreeDiagnostic*`         |nvim_tree.Config.Diagnostics.Icons|
+---  -                                     -                             -                               {highlight_clipboard}      no         `NvimTreeC*HL`                 -
+---
+---</pre>
+---
 ---{highlight_} options [nvim_tree.Config.Renderer.HighlightPlacement]()
 ---- `none`: no highlighting
 ---- `icon`: icon only
@@ -21,7 +37,7 @@ error("Cannot require a meta file")
 ---- `all`:  icon and name
 ---
 ---{root_folder_label} has 3 forms:
----- `string`: [filename-modifiers] format string
+---- `string`: [filename-modifiers] format string, default `":~:s?$?/..?"`
 ---- `boolean`: `true` to disable
 ---- `fun(root_cwd: string): string`: return a literal string from root's absolute path e.g.
 ---```lua
@@ -65,38 +81,35 @@ error("Cannot require a meta file")
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
----Git status: `NvimTreeGit*HL`.
----Requires [nvim_tree.Config.Git].
+---Git status.
 ---(default: `none`)
 ---@field highlight_git? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----[bufloaded()] files: `NvimTreeOpenedHL`.
+---[bufloaded()] files.
 ---(default: `none`)
 ---@field highlight_opened_files? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Hidden (dotfiles): `NvimTreeHiddenFileHL`.
+---Hidden (dotfiles) files and directories.
 ---(default: `none`)
----@field highlight_hidden? nvim_tree.Config.Renderer.HighlightPlacement 
+---@field highlight_hidden? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Modified files: `NvimTreeModifiedFile`.
----Requires [nvim_tree.Config.Modified].
+---Modified files.
 ---(default: `none`)
 ---@field highlight_modified? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Bookmarked: `NvimTreeBookmarkHL`.
+---Bookmarked files and directories.
 ---(default: `none`)
 ---@field highlight_bookmarks? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Diagnostic status: `NvimTreeDiagnostic*HL`.
----Requires [nvim_tree.Config.Diagnostics].
+---Diagnostic status.
 ---(default: `none`)
 ---@field highlight_diagnostics? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Copied: `NvimTreeCopiedHL`, cut: `NvimTreeCutHL`.
+---Copied and cut.
 ---(default: `name`)
 ---@field highlight_clipboard? nvim_tree.Config.Renderer.HighlightPlacement
 ---
----Sepcial files: `NvimTreeSpecialFile`.
+---Highlight special files and directories with `NvimTreeSpecial*`.
 ---(default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
 ---@field special_files? string[]
 ---
@@ -111,13 +124,13 @@ error("Cannot require a meta file")
 ---
 ---Display indent markers when folders are open.
 ---(default: `false`)
----@field enable? boolean 
+---@field enable? boolean
 ---
 ---Display folder arrows in the same column as indent marker when using [nvim_tree.Config.Renderer.Icons.Padding] {folder_arrow}
 ---(default: `true`)
----@field inline_arrows? boolean 
+---@field inline_arrows? boolean
 ---
----@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons 
+---@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons
 
 
 
@@ -127,7 +140,7 @@ error("Cannot require a meta file")
 ---@inlinedoc
 ---
 ---(default: `└` )
----@field corner? string 
+---@field corner? string
 ---(default: `│` )
 ---@field edge? string
 ---(default: `│` )
@@ -174,10 +187,10 @@ error("Cannot require a meta file")
 ---
 ---Separator between symlink source and target.
 ---(default: ` ➛ `)
----@field symlink_arrow? string 
+---@field symlink_arrow? string
 ---
 ---[nvim_tree.Config.Renderer.Icons.Show]
----@field show? nvim_tree.Config.Renderer.Icons.Show 
+---@field show? nvim_tree.Config.Renderer.Icons.Show
 ---
 ---[nvim_tree.Config.Renderer.Icons.Glyphs]
 ---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
@@ -185,8 +198,6 @@ error("Cannot require a meta file")
 
 
 ---Configure optional plugin `nvim-tree/nvim-web-devicons`.
----
----Overrides glyphs and highlight groups where noted.
 ---
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons
 ---
@@ -200,11 +211,9 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
 ---@inlinedoc
 ---
----Show icons for files, overrides [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
 ---(default: `true`)
----@field enable? boolean 
+---@field enable? boolean
 ---
----Apply colours to files, overrides `NvimTreeFileIcon`.
 ---(default: `true`)
 ---@field color? boolean
 
@@ -213,11 +222,9 @@ error("Cannot require a meta file")
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
 ---@inlinedoc
 ---
----Show icons for directories, overrides [nvim_tree.Config.Renderer.Icons.Glyphs.Folder].
 ---(default: `false`)
 ---@field enable? boolean
 ---
----Apply colors to directories, overrides `NvimTree*FolderName`.
 ---(default: `true`)
 ---@field color? boolean
 
@@ -229,74 +236,49 @@ error("Cannot require a meta file")
 ---
 ---Between icon and filename.
 ---(default: ` `)
----@field icon? string 
+---@field icon? string
 ---
 ---Between folder arrow icon and file/folder icon.
 ---(default: ` `)
----@field folder_arrow? string 
+---@field folder_arrow? string
 
 
 
 ---Control which icons are displayed.
----
----Left to right ordered:
----- {file}
----- {folder}
----- {git}
----- {modified}
----- {hidden}
----- {diagnostics}
----- {bookmarks}
----
 ---@class nvim_tree.Config.Renderer.Icons.Show
 ---
----Before file name.
 ---(default: `true`)
 ---@field file? boolean
 ---
----Before folder name.
 ---(default: `true`)
 ---@field folder? boolean
+---
+---(default: `true`)
+---@field git? boolean
+---
+---(default: `true`)
+---@field modified? boolean
+---
+---(default: `false`)
+---@field hidden? boolean
+---
+---(default: `true`)
+---@field diagnostics? boolean
+---
+---(default: `true`)
+---@field bookmarks? boolean
 ---
 ---Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer.IndentMarkers].
 ---(default: `true`)
 ---@field folder_arrow? boolean
----
----Location: [nvim_tree.Config.Renderer.Icons] {git_placement}.
----Icons: [nvim_tree.Config.Renderer.Icons.Glyphs.Git].
----Requires [nvim_tree.Config.Git].
----(default: `true`)
----@field git? boolean
----
----Location: [nvim_tree.Config.Renderer.Icons] {modified_placement}.
----Requires [nvim_tree.Config.Modified].
----(default: `true`)
----@field modified? boolean
----
----Location: [nvim_tree.Config.Renderer.Icons] {hidden_placement}.
----(default: `false`)
----@field hidden? boolean
----
----Location: [nvim_tree.Config.Renderer.Icons] {diagnostics_placement}.
----Icons: [nvim_tree.Config.Diagnostics.Icons].
----Requires [nvim_tree.Config.Diagnostics].
----(default: `true`)
----@field diagnostics? boolean
----
----Location: [nvim_tree.Config.Renderer.Icons] {bookmarks_placement}.
----(default: `true`)
----@field bookmarks? boolean
 
 
 
 ---Glyphs that appear in the sign column must have length <= 2
 ---
----Glyphs defined elsewhere:
----- [nvim_tree.Config.Diagnostics.Icons]
----- [nvim_tree.Config.Renderer.IndentMarkers.Icons]
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
 ---
----Files, overridden by [nvim_tree.Config.Renderer.Icons.WebDevicons].
+---Files
 ---(default: `` )
 ---@field default? string
 ---
@@ -312,10 +294,8 @@ error("Cannot require a meta file")
 ---(default: `󰜌` )
 ---@field hidden? string
 ---
----Overridden by [nvim_tree.Config.Renderer.Icons.WebDevicons].
 ---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder
 ---
----Git status on files and directories.
 ---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
 
 

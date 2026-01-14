@@ -46,4 +46,3 @@ error("Cannot require a meta file")
 ---Sort files before folders. Has no effect when {sorter} is a function. Overrides {folders_first}.
 ---(default: `false`)
 ---@field files_first? boolean
----
