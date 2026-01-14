@@ -3,11 +3,8 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Update the focused file on [BufEnter], uncollapsing folders recursively.
-
-
-
+---
 ---@class nvim_tree.Config.UpdateFocusedFile
 ---
 ---(default: `false`)

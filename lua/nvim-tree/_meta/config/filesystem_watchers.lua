@@ -3,7 +3,6 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Use file system watchers (libuv `uv_fs_event_t`) to monitor the filesystem for changes and update the tree.
 ---
 ---With this feature, the tree will be partially updated on specific directory changes, resulting in better performance.
@@ -12,9 +11,7 @@ error("Cannot require a meta file")
 --- - A list of [vim.regex] to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
 --- - A function that is passed an absolute path and returns `true` to disable
 ---This may be useful when a path is not in `.gitignore` or git integration is disabled.
-
-
-
+---
 ---@class nvim_tree.Config.FilesystemWatchers
 ---
 ---(default: `true`)

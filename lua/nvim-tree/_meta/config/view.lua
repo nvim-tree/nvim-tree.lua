@@ -7,7 +7,6 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
 ---The window is "docked" at the left by default, however may be configured to float: [nvim_tree.Config.View.Float]
@@ -18,9 +17,7 @@ error("Cannot require a meta file")
 ---- `string`: `x%` string e.g. `30%`
 ---- `integer`: number of columns
 ---- `function`: returns one of the above
-
-
-
+---
 ---@class nvim_tree.Config.View
 ---
 ---When entering nvim-tree, reposition the view so that the current node is initially centralized, see [zz].

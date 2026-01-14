@@ -3,15 +3,12 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Hijack directory buffers by replacing the directory buffer with the tree.
 ---
 ---Disable this option if you use vim-dirvish or dirbuf.nvim.
 ---
 ---If [nvim_tree.Config] {hijack_netrw} and {disable_netrw} are `false` this feature will be disabled.
-
-
-
+---
 ---@class nvim_tree.Config.HijackDirectories
 ---
 ---(default: `true`)

@@ -7,7 +7,6 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Sort files within a directory.
 ---
 ---{sorter} presets [nvim_tree.Config.Sort.Sorter]()
@@ -31,9 +30,7 @@ error("Cannot require a meta file")
 ---end
 ---```
 ---{sorter} may be a function that returns a [nvim_tree.Config.Sort.Sorter]
-
-
-
+---
 ---@class nvim_tree.Config.Sort
 ---
 ---(default: `"name"`)

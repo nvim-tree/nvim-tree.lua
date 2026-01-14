@@ -2,8 +2,11 @@
 error("Cannot require a meta file")
 
 
----@brief
----
+
+-- Root class {field}s are documented manually above "Fields:" as there is insufficent room for them in the column.
+
+
+
 ---Arguments to pass to [nvim-tree-setup].
 ---
 ---When a value is not present/nil, the default will be used.
@@ -23,13 +26,6 @@ error("Cannot require a meta file")
 ---  }
 ---  require("nvim-tree").setup(config)
 ---```
-
-
-
--- Root class {field}s are documented manually above "Fields:" as there is insufficent room for them in the column.
-
-
-
 ---{on_attach} Runs when creating the nvim-tree buffer. Use this to set your [nvim-tree-mappings]. When not a function, [nvim-tree-mappings-default] will be used.
 ---
 ---{hijack_cursor} keep the cursor on the first letter of the filename when moving in the tree.
@@ -147,6 +143,9 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.Config.UI]
 ---@field ui? nvim_tree.Config.UI
+---
+---[nvim_tree.Config.Experimental]
+---@field experimental? nvim_tree.Config.Experimental
 ---
 ---[nvim_tree.Config.Log]
 ---@field log? nvim_tree.Config.Log

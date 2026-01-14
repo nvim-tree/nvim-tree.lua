@@ -3,13 +3,12 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---<pre>help
----Filters may be applied to the tree to exlude the display of file and directories.
+---Filters may be applied to the tree to exlude the display of file/directories.
 ---
 ---Multiple filters may be applied at once.
 ---
----Filters can be set at startup and toggled live via API with default keymappings.
+---Filters can be set at startup or toggled live via API with default mappings.
 ---
 ---`I`    {git_ignored}    |nvim-tree-api.tree.toggle_gitignore_filter()|
 ---   Ignore files based on `.gitignore`.
@@ -25,8 +24,8 @@ error("Cannot require a meta file")
 ---
 ---`B`    {no_buffer}      |nvim-tree-api.tree.toggle_no_buffer_filter()|
 ---   Filter files that have no |buflisted()| buffer.
----   For performance reasons this may not immediately update on buffer delete/wipe.
----   A reload or filesystem event will result in an update.
+---   For performance reasons buffer delete/wipe may not be immediately shown.
+---   A reload or filesystem event will always result in an update.
 ---
 ---`M`    {no_bookmark}    |nvim-tree-api.tree.toggle_no_bookmark_filter()|
 ---   Filter files that are not bookmarked.
@@ -40,12 +39,9 @@ error("Cannot require a meta file")
 ---All filters including live filter may be disabled via {enable} and toggled
 ---with |nvim-tree-api.tree.toggle_enable_filters()|
 ---
----Files/directories may be {exclude}d from filtering: they will always be shown,
----overriding {git_ignored}, {dotfiles} and {custom}
+---Files/directories may be {exclude}d from filtering: they will always be
+---shown, overriding {git_ignored}, {dotfiles} and {custom}.
 ---</pre>
-
-
-
 ---@class nvim_tree.Config.Filters
 ---
 ---Enable all filters.

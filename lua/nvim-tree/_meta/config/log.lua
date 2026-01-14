@@ -3,11 +3,8 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Log to a file `nvim-tree.log` in [stdpath()] `log`, usually `${XDG_STATE_HOME}/nvim`
-
-
-
+---
 ---@class nvim_tree.Config.Log
 ---
 ---(default: `false`)

@@ -7,15 +7,12 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Configure help window, default mapping `g?`
 ---
 ---[nvim_tree.Config.Help.SortBy]()
 ---- `"key"`: alphabetically by keymap
 ---- `"desc"`: alphabetically by description
-
-
-
+---
 ---@class nvim_tree.Config.Help
 ---
 ---[nvim_tree.Config.Help.SortBy]

@@ -3,13 +3,10 @@ error("Cannot require a meta file")
 
 
 
----@brief
 ---Integrate with [lsp] or COC diagnostics.
 ---
 ---See [nvim-tree-icons-highlighting].
-
-
-
+---
 ---@class nvim_tree.Config.Diagnostics
 ---
 ---(default: `false`)
