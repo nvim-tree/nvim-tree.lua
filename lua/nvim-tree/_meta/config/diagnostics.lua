@@ -5,6 +5,8 @@ error("Cannot require a meta file")
 
 ---@brief
 ---Integrate with [lsp] or COC diagnostics.
+---
+---See [nvim-tree-icons-highlighting].
 
 
 

@@ -13,6 +13,8 @@ error("Cannot require a meta file")
 
 ---Controls the appearance of the tree.
 ---
+---See [nvim-tree-icons-highlighting] for {highlight_} and {decorators} fields.
+---
 ---{root_folder_label} has 3 forms:
 ---- `string`: [filename-modifiers] format string, default `":~:s?$?/..?"`
 ---- `boolean`: `true` to disable
@@ -51,35 +53,27 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
----Highlighting and icons for the nodes, in increasing order of precedence. Strings specify builtin decorators. See [nvim-tree-decorators].
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
----Git status.
 ---(default: `none`)
 ---@field highlight_git? nvim_tree.Config.Renderer.Highlight
 ---
----[bufloaded()] files.
 ---(default: `none`)
 ---@field highlight_opened_files? nvim_tree.Config.Renderer.Highlight
 ---
----Hidden (dotfiles) files and directories.
 ---(default: `none`)
 ---@field highlight_hidden? nvim_tree.Config.Renderer.Highlight
 ---
----Modified files.
 ---(default: `none`)
 ---@field highlight_modified? nvim_tree.Config.Renderer.Highlight
 ---
----Bookmarked files and directories.
 ---(default: `none`)
 ---@field highlight_bookmarks? nvim_tree.Config.Renderer.Highlight
 ---
----Diagnostic status.
 ---(default: `none`)
 ---@field highlight_diagnostics? nvim_tree.Config.Renderer.Highlight
 ---
----Copied and cut.
 ---(default: `name`)
 ---@field highlight_clipboard? nvim_tree.Config.Renderer.Highlight
 ---
@@ -92,6 +86,7 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.Config.Renderer.Icons]
 ---@field icons? nvim_tree.Config.Renderer.Icons
+
 
 
 ---@class nvim_tree.Config.Renderer.IndentMarkers
@@ -126,29 +121,25 @@ error("Cannot require a meta file")
 
 
 
----Icons and separators.
----@class nvim_tree.Config.Renderer.Icons
+---Icons and separators
 ---
----[nvim_tree.Config.Renderer.Icons.WebDevicons]
----Use optional plugin `nvim-tree/nvim-web-devicons`
----@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons
+---See [nvim-tree-icons-highlighting] for: {_placement} fields.
+---@class nvim_tree.Config.Renderer.Icons
 ---
 ---(default: `before`)
 ---@field git_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
----Requires [nvim_tree.Config.Diagnostics].
----(default: `signcolumn`)
----@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
----
----Requires [nvim_tree.Config.Modified].
----(default: `after`)
----@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
----
 ---(default: `after`)
 ---@field hidden_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
+---(default: `after`)
+---@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
 ---(default: `signcolumn`)
 ---@field bookmarks_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `signcolumn`)
+---@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
 ---
 ---@field padding? nvim_tree.Config.Renderer.Icons.Padding
 ---
@@ -161,10 +152,13 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.Config.Renderer.Icons.Glyphs]
 ---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
+---
+---[nvim_tree.Config.Renderer.Icons.WebDevicons]
+---@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons
 
 
 
----Configure optional plugin `nvim-tree/nvim-web-devicons`.
+---Configure optional plugin `nvim-tree/nvim-web-devicons`, see [nvim-tree-icons-highlighting].
 ---
 ---@class nvim_tree.Config.Renderer.Icons.WebDevicons
 ---
@@ -211,7 +205,7 @@ error("Cannot require a meta file")
 
 
 
----Control which icons are displayed.
+---See [nvim-tree-icons-highlighting].
 ---@class nvim_tree.Config.Renderer.Icons.Show
 ---
 ---(default: `true`)
@@ -241,8 +235,9 @@ error("Cannot require a meta file")
 
 
 
----Glyphs that appear in the sign column must have length <= 2
+---See [nvim-tree-icons-highlighting].
 ---
+---Glyphs that appear in the sign column must have length <= 2
 ---@class nvim_tree.Config.Renderer.Icons.Glyphs
 ---
 ---Files

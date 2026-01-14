@@ -11,6 +11,8 @@ error("Cannot require a meta file")
 ---Git integration may be disabled for git top-level directories via {disable_for_dirs}:
 --- - A list of relative paths evaluated with [fnamemodify()] `:p` OR
 --- - A function that is passed an absolute path and returns `true` to disable
+---
+---See [nvim-tree-icons-highlighting].
 
 
 

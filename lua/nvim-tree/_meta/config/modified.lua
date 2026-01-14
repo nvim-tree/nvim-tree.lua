@@ -8,6 +8,8 @@ error("Cannot require a meta file")
 ---To see modified status in the tree you will need:
 --- - [nvim_tree.Config.Renderer.Icons.Show] {modified} OR
 --- - [nvim_tree.Config.Renderer] {highlight_modified}
+---
+---See [nvim-tree-icons-highlighting].
 
 
 
