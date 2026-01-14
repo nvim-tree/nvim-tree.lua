@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.15.0...nvim-tree-v1.16.0) (2026-01-14)
+
+
+### Features
+
+* add &lt;Del&gt; mapping ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
+* add default &lt;Del&gt; mapping for api.fs.remove ([#3238](https://github.com/nvim-tree/nvim-tree.lua/issues/3238)) ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
+
 ## [1.15.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.14.0...nvim-tree-v1.15.0) (2026-01-11)
 
 
