@@ -23,7 +23,7 @@ local function expand(node)
   node = node:last_group_node()
   node.open = true
   if #node.nodes == 0 then
-    core.get_explorer():expand(node)
+    core.get_explorer():expand_dir_node(node)
   end
 end
 
@@ -66,7 +66,7 @@ local function should_expand(expansion_count, node, should_descend)
 
   if not dir.open and should_descend(expansion_count, node) then
     if #node.nodes == 0 then
-      core.get_explorer():expand(dir) -- populate node.group_next
+      core.get_explorer():expand_dir_node(dir) -- populate node.group_next
     end
 
     if dir.group_next then

@@ -167,7 +167,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   end
 
   if #self.nodes == 0 then
-    self.explorer:expand(self)
+    self.explorer:expand_dir_node(self)
   end
 
   local head_node = self:get_parent_of_group() or self

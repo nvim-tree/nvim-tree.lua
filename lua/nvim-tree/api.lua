@@ -9,7 +9,6 @@ local keymap = require("nvim-tree.keymap")
 local notify = require("nvim-tree.notify")
 
 local DirectoryNode = require("nvim-tree.node.directory")
-local FileNode = require("nvim-tree.node.file")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
@@ -158,23 +157,7 @@ Api.tree.change_root = wrap(function(...)
   require("nvim-tree").change_dir(...)
 end)
 
-Api.tree.change_root_to_node = wrap_node(function(node)
-  if node.name == ".." or node:is(RootNode) then
-    actions.root.change_dir.fn("..")
-    return
-  end
-
-  if node:is(FileNode) and node.parent ~= nil then
-    actions.root.change_dir.fn(node.parent:last_group_node().absolute_path)
-    return
-  end
-
-  if node:is(DirectoryNode) then
-    actions.root.change_dir.fn(node:last_group_node().absolute_path)
-    return
-  end
-end)
-
+Api.tree.change_root_to_node = wrap_node(wrap_explorer("change_dir_to_node"))
 Api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
 Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
 Api.tree.get_nodes = wrap_explorer("get_nodes")
@@ -281,7 +264,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     local dir = node:as(DirectoryNode)
 
     if root or node.name == ".." then
-      actions.root.change_dir.fn("..")
+      wrap_explorer("change_dir")("..")
     elseif dir then
       dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
