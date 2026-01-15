@@ -1,18 +1,28 @@
 #!/usr/bin/env sh
 
-# Wrapper around nvim help generator gen_vimdoc.lua, run as part of nvim's make doc target.
+# Wrapper around Nvim help generator gen_vimdoc.lua, run as part of Nvim's make doc target.
 #
-# Doesn't require nvim to have been built.
+# Doesn't require Nvim to have been built.
 #
-# Shims our moudules into gen_vimdoc_config.lua, replacing nvim's.
+# Shims our moudules into gen_vimdoc_config.lua, replacing Nvim's.
 #
 # There are some hardcoded expectations which we work around as commented.
 
 set -e
 
 if [ ! -d "${NVIM_SRC}" ]; then
-	echo "\$NVIM_SRC not set"
-	exit 1
+	cat << EOM
+
+\$NVIM_SRC not set
+
+Nvim source is required to run src/gen/gen_vimdoc.lua
+
+Please:
+  mkdir -p src
+  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
+  NVIM_SRC=src/neovim-stable ${0}
+EOM
+exit 1
 fi
 
 # runtime/doc is hardcoded, copy the help in
