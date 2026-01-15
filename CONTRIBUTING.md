@@ -121,19 +121,32 @@ else
 end
 ```
 
-# Adding New Actions
-
-To add a new action, add a file in `actions/name-of-the-action.lua`. You should export a `setup` function if some configuration is needed.
-
-Once you did, you should run `make help-update`
-
 # Documentation
 
-## Opts
+## Config And Mappings
 
-When adding new options, you should declare the defaults in the main `nvim-tree.lua` file.
+When adding to or changing:
+1. `DEFAULT_OPTS`
+2. `Config` classes
+3. `on_attach` default mappings
 
-Documentation for options should also be added to `nvim-tree-opts` in `doc/nvim-tree-lua.txt`
+You must generate help documentation. This requires neovim stable sources. You will be promted with instructions on fetching and referencing the source.
+
+```sh
+make help-update
+```
+
+This will:
+1. Update config defaults in `*nvim-tree-setup*`
+2. Regenerate from `*nvim-tree-config*` to the end of the file, see `gen_vimdoc.sh`
+3. Update default mappings in `*nvim-tree-mappings-default*` and `*nvim-tree-quickstart-help*`
+
+Commit your changes then run:
+```sh
+make help-check
+```
+
+This will re-run `help-update` and check that there are no diffs. It will also lint the documentation, see `lintdoc.sh`
 
 ## API
 
