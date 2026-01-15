@@ -75,7 +75,7 @@ jobs:
         run: |
           mkdir -p src
           curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory src
-          cd src/${{ matrix.nvim_version }}
+          cd "${NVIM_SRC}"
           make
 
       - run: make check
