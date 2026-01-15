@@ -438,7 +438,7 @@ function M.abandon_all_windows()
   end
 end
 
----@param opts? nvim_tree.api.TreeIsVisibleOpts
+---@param opts table|nil
 ---@return boolean
 function M.is_visible(opts)
   if opts and opts.tabpage then
@@ -487,7 +487,7 @@ function M.focus(winnr, open_if_closed)
 end
 
 --- Retrieve the winid of the open tree.
----@param opts nvim_tree.api.TreeWinIdOpts|nil
+---@param opts ApiTreeWinIdOpts|nil
 ---@return number|nil winid unlike get_winnr(), this returns nil if the nvim-tree window is not visible
 function M.winid(opts)
   local tabpage = opts and opts.tabpage

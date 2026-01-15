@@ -125,7 +125,7 @@ local function gen_iterator(should_descend)
 end
 
 ---@param node Node?
----@param expand_opts nvim_tree.api.TreeExpandOpts?
+---@param expand_opts ApiTreeExpandOpts?
 local function expand_node(node, expand_opts)
   if not node then
     return
@@ -141,14 +141,14 @@ end
 
 ---Expand the directory node or the root
 ---@param node Node
----@param expand_opts nvim_tree.api.TreeExpandOpts?
+---@param expand_opts ApiTreeExpandOpts?
 function M.all(node, expand_opts)
   expand_node(node and node:as(DirectoryNode) or core.get_explorer(), expand_opts)
 end
 
 ---Expand the directory node or parent node
 ---@param node Node
----@param expand_opts nvim_tree.api.TreeExpandOpts?
+---@param expand_opts ApiTreeExpandOpts?
 function M.node(node, expand_opts)
   if not node then
     return

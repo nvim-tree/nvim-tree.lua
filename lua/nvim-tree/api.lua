@@ -14,18 +14,6 @@ local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
--- Backwards compatibility aliases for renamed classes
----@alias ApiTreeOpenOpts nvim_tree.api.TreeOpenOpts
----@alias ApiTreeToggleOpts nvim_tree.api.TreeToggleOpts
----@alias ApiTreeResizeOpts nvim_tree.api.TreeResizeOpts
----@alias ApiTreeFindFileOpts nvim_tree.api.TreeFindFileOpts
----@alias ApiCollapseOpts nvim_tree.api.CollapseOpts
----@alias ApiTreeExpandOpts nvim_tree.api.TreeExpandOpts
----@alias ApiTreeIsVisibleOpts nvim_tree.api.TreeIsVisibleOpts
----@alias ApiTreeWinIdOpts nvim_tree.api.TreeWinIdOpts
----@alias NodeEditOpts nvim_tree.api.NodeEditOpts
----@alias ApiNodeDeleteWipeBufferOpts nvim_tree.api.NodeBufferOpts
-
 local Api = {
   tree = {},
   node = {
@@ -135,14 +123,34 @@ local function wrap_explorer_member(explorer_member, member_method)
   end)
 end
 
+---@class ApiTreeOpenOpts
+---@field path string|nil path
+---@field current_window boolean|nil default false
+---@field winid number|nil
+---@field find_file boolean|nil default false
+---@field update_root boolean|nil default false
+
 Api.tree.open = wrap(actions.tree.open.fn)
 Api.tree.focus = Api.tree.open
+
+---@class ApiTreeToggleOpts
+---@field path string|nil
+---@field current_window boolean|nil default false
+---@field winid number|nil
+---@field find_file boolean|nil default false
+---@field update_root boolean|nil default false
+---@field focus boolean|nil default true
 
 Api.tree.toggle = wrap(actions.tree.toggle.fn)
 Api.tree.close = wrap(view.close)
 Api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
 Api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
 Api.tree.reload = wrap_explorer("reload_explorer")
+
+---@class ApiTreeResizeOpts
+---@field width string|function|number|table|nil
+---@field absolute number|nil
+---@field relative number|nil
 
 Api.tree.resize = wrap(actions.tree.resize.fn)
 
@@ -171,10 +179,24 @@ Api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
 Api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
 Api.tree.get_nodes = wrap_explorer("get_nodes")
 
+---@class ApiTreeFindFileOpts
+---@field buf string|number|nil
+---@field open boolean|nil default false
+---@field current_window boolean|nil default false
+---@field winid number|nil
+---@field update_root boolean|nil default false
+---@field focus boolean|nil default false
+
 Api.tree.find_file = wrap(actions.tree.find_file.fn)
 Api.tree.search_node = wrap(actions.finders.search_node.fn)
 
+---@class ApiCollapseOpts
+---@field keep_buffers boolean|nil default false
+
 Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+
+---@class ApiTreeExpandOpts
+---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
 
 Api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
 Api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
@@ -187,7 +209,14 @@ Api.tree.toggle_no_bookmark_filter = wrap_explorer_member_args("filters", "toggl
 Api.tree.toggle_help = wrap(help.toggle)
 Api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 
+---@class ApiTreeIsVisibleOpts
+---@field tabpage number|nil
+---@field any_tabpage boolean|nil default false
+
 Api.tree.is_visible = wrap(view.is_visible)
+
+---@class ApiTreeWinIdOpts
+---@field tabpage number|nil default nil
 
 Api.tree.winid = wrap(view.winid)
 
@@ -209,9 +238,13 @@ Api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filenam
 Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
 ---
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
+
 ---@param mode string
 ---@param node Node
----@param edit_opts nvim_tree.api.NodeEditOpts?
+---@param edit_opts NodeEditOpts?
 local function edit(mode, node, edit_opts)
   local file_link = node:as(FileLinkNode)
   local path = file_link and file_link.link_to or node.absolute_path
@@ -239,10 +272,10 @@ end
 
 ---@param mode string
 ---@param toggle_group boolean?
----@return fun(node: Node, edit_opts: nvim_tree.api.NodeEditOpts?)
+---@return fun(node: Node, edit_opts: NodeEditOpts?)
 local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
-  ---@param edit_opts nvim_tree.api.NodeEditOpts?
+  ---@param edit_opts NodeEditOpts?
   return function(node, edit_opts)
     local root = node:as(RootNode)
     local dir = node:as(DirectoryNode)
@@ -296,6 +329,9 @@ Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev"
 
 Api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
 Api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
+
+---@class ApiNodeDeleteWipeBufferOpts
+---@field force boolean|nil default false
 
 Api.node.buffer.delete = wrap_node(function(node, opts)
   actions.node.buffer.delete(node, opts)

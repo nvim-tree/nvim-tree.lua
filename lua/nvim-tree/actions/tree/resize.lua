@@ -3,7 +3,7 @@ local view = require("nvim-tree.view")
 local M = {}
 
 ---Resize the tree, persisting the new size.
----@param opts nvim_tree.api.TreeResizeOpts|nil
+---@param opts ApiTreeResizeOpts|nil
 function M.fn(opts)
   if opts == nil then
     -- reset to config values
