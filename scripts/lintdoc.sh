@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-# Wrapper around nvim help linter lintdoc.lua, run as part of nvim's make lintdoc target.
+# Wrapper around Nvim help linter lintdoc.lua, run as part of Nvim's make lintdoc target.
 #
-# Requires nvim to have been built.
+# Requires Nvim to have been built.
 #
 # Desired:
 # - tags valid
@@ -24,19 +24,19 @@ Compiled Nvim source is required to run src/gen/gen_vimdoc.lua
 Please:
   mkdir -p src
   curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
-  NVIM_SRC=src/neovim-stable ${0}
+  export NVIM_SRC=src/neovim-stable
 EOM
 exit 1
 fi
 
-# runtime/doc in the nvim source is practically hardcoded, copy our help in
+# unset to ensure no collisions with system installs etc.
+unset VIMRUNTIME
+
+# runtime/doc in the Nvim source is practically hardcoded, copy our help in
 cp -v "doc/nvim-tree-lua.txt" "${NVIM_SRC}/runtime/doc"
 
-# run from within nvim source
+# run from within Nvim source
 cd "${NVIM_SRC}"
 
-# make nvim 
-make
-
-# execute the lint
-VIMRUNTIME=runtime scripts/lintdoc.lua
+# make nvim and execute the lint
+make lintdoc

@@ -20,10 +20,13 @@ Nvim source is required to run src/gen/gen_vimdoc.lua
 Please:
   mkdir -p src
   curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
-  NVIM_SRC=src/neovim-stable ${0}
+  export NVIM_SRC=src/neovim-stable
 EOM
 exit 1
 fi
+
+# unset to ensure no collisions with system installs etc.
+unset VIMRUNTIME
 
 # runtime/doc is hardcoded, copy the help in
 mkdir -pv runtime/doc
