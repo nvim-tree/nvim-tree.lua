@@ -53,6 +53,7 @@ jobs:
 
     env:
       VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
+      NVIM_SRC: src/neovim-${{ matrix.nvim_version }}
 
     steps:
       - name: checkout
@@ -73,8 +74,7 @@ jobs:
       - name: get Nvim source
         run: |
           mkdir -p src
-          curl -L 'https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz' | tar zx --directory src
-          echo "src/neovim-stable" >> "$NVIM_SRC"
+          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory src
 
       - run: make check
 
