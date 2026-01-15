@@ -15,8 +15,18 @@
 set -e
 
 if [ ! -d "${NVIM_SRC}" ]; then
-	echo "\$NVIM_SRC not set"
-	exit 1
+	cat << EOM
+
+\$NVIM_SRC not set
+
+Compiled Nvim source is required to run src/gen/gen_vimdoc.lua
+
+Please:
+  mkdir -p src
+  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
+  NVIM_SRC=src/neovim-stable ${0}
+EOM
+exit 1
 fi
 
 # runtime/doc in the nvim source is practically hardcoded, copy our help in
