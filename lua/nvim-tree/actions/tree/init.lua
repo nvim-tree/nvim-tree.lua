@@ -8,7 +8,6 @@ M.resize = require("nvim-tree.actions.tree.resize")
 
 function M.setup(opts)
   M.find_file.setup(opts)
-  M.modifiers.setup(opts)
   M.open.setup(opts)
   M.toggle.setup(opts)
   M.resize.setup(opts)
