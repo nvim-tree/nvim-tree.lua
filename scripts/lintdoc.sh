@@ -14,6 +14,11 @@
 
 set -e
 
+if [ ! -d "${NVIM_SRC}" ] && [ -d "src/neovim-stable" ]; then
+	export NVIM_SRC="src/neovim-stable"
+	echo "${0} assumed NVIM_SRC=${NVIM_SRC}"
+fi
+
 if [ ! -d "${NVIM_SRC}" ]; then
 	cat << EOM
 

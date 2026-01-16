@@ -147,10 +147,15 @@ Api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
 Api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
 Api.tree.reload = wrap_explorer("reload_explorer")
 
----@class ApiTreeResizeOpts
+---@class (exact) ApiTreeResizeOpts
+---@inlinedoc
 ---@field width string|function|number|table|nil
 ---@field absolute number|nil
 ---@field relative number|nil
+
+local nvim_tree = { api = { tree = { } } }
+---@param opts? ApiTreeResizeOpts
+function nvim_tree.api.tree.resize(opts) end
 
 Api.tree.resize = wrap(actions.tree.resize.fn)
 

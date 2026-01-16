@@ -49,3 +49,6 @@ error("Cannot require a meta file")
 ---@class (exact) nvim_tree.api.HighlightedString
 ---@field str string
 ---@field hl string[]
+
+---@param opts? ApiTreeResizeOpts
+function nvim_tree.api.tree.resize(opts) end

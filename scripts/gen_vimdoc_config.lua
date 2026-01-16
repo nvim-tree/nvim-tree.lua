@@ -31,8 +31,8 @@ local modules = {
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",       path = "lua/nvim-tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                path = "lua/nvim-tree/_meta/config/log.lua", },
 
-  -- { helptag = "nvim-tree-api",                        title = "Lua module: nvim_tree.api",           path = "lua/nvim-tree/_meta/api.lua", },
-  -- { helptag = "nvim-tree-api-decorator",              title = "Lua module: nvim_tree.api.decorator", path = "lua/nvim-tree/_meta/api_decorator.lua", },
+  -- { helptag = "nvim-tree-apim",                       title = "Lua module: nvim_tree.api",        path = "runtime/lua/nvim_tree/_meta/api.lua", },
+  { helptag = "nvim-tree-api",                        title = "Lua module: nvim_tree.api",        path = "runtime/lua/nvim_tree/api.lua", },
 }
 
 -- hydrate file names
@@ -82,6 +82,19 @@ local config = {
         return string.format("%s.%s%s", fun.module, fun.name, fn_sfx)
       end
       return fun.name .. fn_sfx
+    end,
+
+    -- optional, no default xform
+    fn_xform = function(fun)
+      print("fn_xform: " .. vim.inspect(fun))
+
+      -- remove the API prefix from the left aligned function name
+      -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
+      fun.name = fun.name:gsub("^nvim_tree.api.", "")
+
+      -- generator doesn't strip meta
+      -- also cascades into fn_helptag_fmt
+      fun.module = fun.module:gsub("._meta", "")
     end,
   }
 }

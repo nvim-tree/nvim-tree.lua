@@ -10,6 +10,11 @@
 
 set -e
 
+if [ ! -d "${NVIM_SRC}" ] && [ -d "src/neovim-stable" ]; then
+	export NVIM_SRC="src/neovim-stable"
+	echo "${0} assumed NVIM_SRC=${NVIM_SRC}"
+fi
+
 if [ ! -d "${NVIM_SRC}" ]; then
 	cat << EOM
 
@@ -39,6 +44,14 @@ sed -i -E 's/spairs\(config\)/spairs\(require("gen_vimdoc_config")\)/g' gen_vimd
 # use luacacts etc. from neovim src as well as our specific config
 export LUA_PATH="${NVIM_SRC}/src/?.lua;scripts/?.lua"
 
+# 1. gen_vimdoc.lua doesn't like to work with a top level lua directory, resulting in modules like 'lua.nvim-tree.api.lua.nvim_tree.api...'
+#   -> use a lua subdirectory of runtime
+# 2. gen_vimdoc.lua doesn't like dashes in names
+#   -> use nvim_tree instead of nvim-tree
+# Modules will now be derived from the path under runtime/lua
+mkdir -pv runtime/lua
+ln -sv ../../lua/nvim-tree runtime/lua/nvim_tree
+
 # generate
 ./gen_vimdoc.lua
 
@@ -46,6 +59,8 @@ export LUA_PATH="${NVIM_SRC}/src/?.lua;scripts/?.lua"
 mv -v "runtime/doc/nvim-tree-lua.txt" doc
 
 # clean up
+rm -v runtime/lua/nvim_tree
+rmdir -v runtime/lua
 rmdir -v runtime/doc
 rmdir -v runtime
 rm -v gen_vimdoc.lua
