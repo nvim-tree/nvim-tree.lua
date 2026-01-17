@@ -1,9 +1,6 @@
 #!/usr/bin/env sh
 
 
-# TODO #3088 this is not picking up invalid links
-
-
 # Wrapper around Nvim help linter lintdoc.lua, run as part of Nvim's make lintdoc target.
 #
 # Requires Nvim to have been built.
