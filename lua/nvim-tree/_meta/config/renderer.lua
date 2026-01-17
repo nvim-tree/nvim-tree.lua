@@ -1,0 +1,303 @@
+---@meta
+error("Cannot require a meta file")
+
+
+
+---@alias nvim_tree.Config.Renderer.Highlight "none"|"icon"|"name"|"all"
+
+---@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
+
+---@alias nvim_tree.Config.Renderer.Icons.Placement "before"|"after"|"signcolumn"|"right_align"
+
+
+
+---Controls the appearance of the tree.
+---
+---See [nvim-tree-icons-highlighting] for {highlight_} and {decorators} fields.
+---
+---{root_folder_label} has 3 forms:
+---- `string`: [filename-modifiers] format string, default `":~:s?$?/..?"`
+---- `boolean`: `true` to disable
+---- `fun(root_cwd: string): string`: return a literal string from root's absolute path e.g.
+---```lua
+---my_root_folder_label = function(path)
+---  return ".../" .. vim.fn.fnamemodify(path, ":t")
+---end
+---```
+---@class nvim_tree.Config.Renderer
+---
+---Appends a trailing slash to folder and symlink folder target names.
+---(default: `false`)
+---@field add_trailing? boolean
+---
+---Compact folders that only contain a single folder into one node. Function variant takes the relative path of grouped folders and returns a string to be displayed.
+---(default: `false`)
+---@field group_empty? boolean|(fun(relative_path: string): string)
+---
+---Display nodes whose name length is wider than the width of nvim-tree window in floating window.
+---(default: `false`)
+---@field full_name? boolean
+---
+---(default: `":~:s?$?/..?"`)
+---@field root_folder_label? string|boolean|(fun(root_cwd: string): string)
+---
+---Number of spaces for each tree nesting level. Minimum 1.
+---(default: `2`)
+---@field indent_width? integer
+---
+---[nvim-tree-hidden-display]
+---(default: `none`)
+---@field hidden_display? nvim_tree.Config.Renderer.HiddenDisplay
+---
+---Appends an arrow followed by the target of the symlink.
+---(default: `true`)
+---@field symlink_destination? boolean
+---
+---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
+---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
+---
+---(default: `"none"`)
+---@field highlight_git? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"none"`)
+---@field highlight_opened_files? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"none"`)
+---@field highlight_hidden? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"none"`)
+---@field highlight_modified? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"none"`)
+---@field highlight_bookmarks? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"none"`)
+---@field highlight_diagnostics? nvim_tree.Config.Renderer.Highlight
+---
+---(default: `"name"`)
+---@field highlight_clipboard? nvim_tree.Config.Renderer.Highlight
+---
+---Highlight special files and directories with `NvimTreeSpecial*`.
+---(default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
+---@field special_files? string[]
+---
+---[nvim_tree.Config.Renderer.IndentMarkers]
+---@field indent_markers? nvim_tree.Config.Renderer.IndentMarkers
+---
+---[nvim_tree.Config.Renderer.Icons]
+---@field icons? nvim_tree.Config.Renderer.Icons
+
+
+
+---@class nvim_tree.Config.Renderer.IndentMarkers
+---
+---Display indent markers when folders are open.
+---(default: `false`)
+---@field enable? boolean
+---
+---Display folder arrows in the same column as indent marker when using [nvim_tree.Config.Renderer.Icons.Padding] {folder_arrow}
+---(default: `true`)
+---@field inline_arrows? boolean
+---
+---@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons
+
+
+
+---[nvim_tree.Config.Renderer.IndentMarkers.Icons]()
+---Before the file/directory, length 1.
+---@class nvim_tree.Config.Renderer.IndentMarkers.Icons
+---@inlinedoc
+---
+---(default: `"└"`)
+---@field corner? string
+---(default: `"│"`)
+---@field edge? string
+---(default: `"│"`)
+---@field item? string
+---(default: `"─"`)
+---@field bottom? string
+---(default: `" "`)
+---@field none? string
+
+
+
+---Icons and separators
+---
+---See [nvim-tree-icons-highlighting] for: {_placement} fields.
+---@class nvim_tree.Config.Renderer.Icons
+---
+---(default: `before`)
+---@field git_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `after`)
+---@field hidden_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `after`)
+---@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `signcolumn`)
+---@field bookmarks_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---(default: `signcolumn`)
+---@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
+---
+---@field padding? nvim_tree.Config.Renderer.Icons.Padding
+---
+---Separator between symlink source and target.
+---(default: `" ➛ "`)
+---@field symlink_arrow? string
+---
+---[nvim_tree.Config.Renderer.Icons.Show]
+---@field show? nvim_tree.Config.Renderer.Icons.Show
+---
+---[nvim_tree.Config.Renderer.Icons.Glyphs]
+---@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
+---
+---[nvim_tree.Config.Renderer.Icons.WebDevicons]
+---@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons
+
+
+
+---Configure optional plugin `nvim-tree/nvim-web-devicons`, see [nvim-tree-icons-highlighting].
+---
+---@class nvim_tree.Config.Renderer.Icons.WebDevicons
+---
+---@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File
+---
+---@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
+
+
+
+---[nvim_tree.Config.Renderer.Icons.WebDevicons.File]()
+---@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
+---@inlinedoc
+---
+---(default: `true`)
+---@field enable? boolean
+---
+---(default: `true`)
+---@field color? boolean
+
+
+---[nvim_tree.Config.Renderer.Icons.WebDevicons.Folder]()
+---@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
+---@inlinedoc
+---
+---(default: `false`)
+---@field enable? boolean
+---
+---(default: `true`)
+---@field color? boolean
+
+
+
+---[nvim_tree.Config.Renderer.Icons.Padding]()
+---@class nvim_tree.Config.Renderer.Icons.Padding
+---@inlinedoc
+---
+---Between icon and filename.
+---(default: `" "`)
+---@field icon? string
+---
+---Between folder arrow icon and file/folder icon.
+---(default: `" "`)
+---@field folder_arrow? string
+
+
+
+---See [nvim-tree-icons-highlighting].
+---@class nvim_tree.Config.Renderer.Icons.Show
+---
+---(default: `true`)
+---@field file? boolean
+---
+---(default: `true`)
+---@field folder? boolean
+---
+---(default: `true`)
+---@field git? boolean
+---
+---(default: `true`)
+---@field modified? boolean
+---
+---(default: `false`)
+---@field hidden? boolean
+---
+---(default: `true`)
+---@field diagnostics? boolean
+---
+---(default: `true`)
+---@field bookmarks? boolean
+---
+---Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer.IndentMarkers].
+---(default: `true`)
+---@field folder_arrow? boolean
+
+
+
+---See [nvim-tree-icons-highlighting].
+---
+---Glyphs that appear in the sign column must have length <= 2
+---@class nvim_tree.Config.Renderer.Icons.Glyphs
+---
+---Files
+---(default: `""`)
+---@field default? string
+---
+---(default: `""`)
+---@field symlink? string
+---
+---(default: `"󰆤"`)
+---@field bookmark? string
+---
+---(default: `"●"`)
+---@field modified? string
+---
+---(default: `"󰜌"`)
+---@field hidden? string
+---
+---@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder
+---
+---@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
+
+
+
+---[nvim_tree.Config.Renderer.Icons.Glyphs.Folder]()
+---@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
+---@inlinedoc
+---(default: left arrow)
+---@field arrow_closed? string
+---(default: down arrow)
+---@field arrow_open? string
+---(default: `""`)
+---@field default? string
+---(default: `""`)
+---@field open? string
+---(default: `""`)
+---@field empty? string
+---(default: `""`)
+---@field empty_open? string
+---(default: `""`)
+---@field symlink? string
+---(default: `""`)
+---@field symlink_open? string
+
+
+
+---[nvim_tree.Config.Renderer.Icons.Glyphs.Git]()
+---@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
+---@inlinedoc
+---(default: `"✗"`)
+---@field unstaged? string
+---(default: `"✓"`)
+---@field staged? string
+---(default: `""`)
+---@field unmerged? string
+---(default: `"➜"`)
+---@field renamed? string
+---(default: `"★"`)
+---@field untracked? string
+---(default: `""`)
+---@field deleted? string
+---(default: `"◌"`)
+---@field ignored? string
