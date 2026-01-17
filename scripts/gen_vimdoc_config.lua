@@ -30,6 +30,8 @@ local modules = {
   { helptag = "nvim-tree-config-ui",                  title = "Class: Config.UI",                 path = "./lua/nvim_tree/_meta/config/ui.lua",                  name = "UI", },
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",       path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                path = "./lua/nvim_tree/_meta/config/log.lua", },
+
+  { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",   path = "./lua/nvim_tree/api/tree.lua", },
 }
 
 -- hydrate file names
@@ -59,26 +61,41 @@ local config = {
     files = vim.tbl_map(function(m) return m.path end, modules),
 
     section_fmt = function(name)
+      print(string.format("section_fmt name=%s", name))
       return modules_by_name[name] and modules_by_name[name].title or error(string.format("unknown module %s passed to section_fmt", name))
     end,
 
     helptag_fmt = function(name)
+      print(string.format("helptag_fmt name=%s", name))
       return modules_by_name[name] and modules_by_name[name].helptag or error(string.format("unknown module %s passed to helptag_fmt", name))
     end,
 
-    -- class/function's help tag
-    fn_helptag_fmt = function(fun)
-      -- Modified copy of fn_helptag_fmt_common
-      -- Uses fully qualified class name in the tag for methods.
-      -- The module is used everywhere else, however not available for classes.
-      local fn_sfx = fun.table and "" or "()"
-      if fun.classvar then
-        return string.format("%s:%s%s", fun.class or fun.classvar, fun.name, fn_sfx)
+    -- optional, no default xform
+    fn_xform = function(fun)
+      print(string.format("fn_xform fun=%s", vim.inspect(fun)))
+
+      if (fun.module) then
+        -- generator doesn't strip meta
+        -- also cascades into fn_helptag_fmt
+        local module = fun.module:gsub("._meta", "", 1)
+
+        if module ~= fun.module then
+          error("unexpected _meta in module")
+          print(string.format("fn_xform module: %s -> %s", fun.module, module))
+        end
+
+        -- remove the API prefix from the left aligned function name
+        -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
+        local name, replaced = fun.name:gsub("^" .. module .. "%.", "", 1)
+        if (replaced ~= 1) then
+          error(string.format("function name does not start with module: %s", vim.inspect(fun)))
+        end
+
+        print(string.format("fn_xform name: %s -> %s", fun.name, name))
+
+        fun.module = module
+        fun.name = name
       end
-      if fun.module then
-        return string.format("%s.%s%s", fun.module, fun.name, fn_sfx)
-      end
-      return fun.name .. fn_sfx
     end,
   }
 }

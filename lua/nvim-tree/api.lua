@@ -123,6 +123,9 @@ local function wrap_explorer_member(explorer_member, member_method)
   end)
 end
 
+function Api.hydrate_tree(tree)
+  Api.tree = tree
+
 ---@class ApiTreeOpenOpts
 ---@field path string|nil path
 ---@field current_window boolean|nil default false
@@ -219,6 +222,8 @@ Api.tree.is_visible = wrap(view.is_visible)
 ---@field tabpage number|nil default nil
 
 Api.tree.winid = wrap(view.winid)
+
+end
 
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
 Api.fs.remove = wrap_node(actions.fs.remove_file.fn)

@@ -3068,4 +3068,85 @@ Class: Config.Log                                       *nvim-tree-config-log*
 
 
 
+==============================================================================
+Lua module: nvim_tree.api.tree                            *nvim-tree-api-tree*
+
+focus()                                           *nvim_tree.api.tree.focus()*
+    TODO #3088 descriptions are needed to properly format the functions
+
+nvim_tree.api.tree.change_root()            *nvim_tree.api.tree.change_root()*
+
+                                    *nvim_tree.api.tree.change_root_to_node()*
+nvim_tree.api.tree.change_root_to_node()
+
+                                  *nvim_tree.api.tree.change_root_to_parent()*
+nvim_tree.api.tree.change_root_to_parent()
+
+nvim_tree.api.tree.close()                        *nvim_tree.api.tree.close()*
+
+                                      *nvim_tree.api.tree.close_in_all_tabs()*
+nvim_tree.api.tree.close_in_all_tabs()
+
+                                      *nvim_tree.api.tree.close_in_this_tab()*
+nvim_tree.api.tree.close_in_this_tab()
+
+nvim_tree.api.tree.collapse_all()          *nvim_tree.api.tree.collapse_all()*
+
+nvim_tree.api.tree.expand_all()              *nvim_tree.api.tree.expand_all()*
+
+nvim_tree.api.tree.find_file()                *nvim_tree.api.tree.find_file()*
+
+                                  *nvim_tree.api.tree.get_node_under_cursor()*
+nvim_tree.api.tree.get_node_under_cursor()
+
+nvim_tree.api.tree.get_nodes()                *nvim_tree.api.tree.get_nodes()*
+
+nvim_tree.api.tree.is_tree_buf()            *nvim_tree.api.tree.is_tree_buf()*
+
+nvim_tree.api.tree.is_visible()              *nvim_tree.api.tree.is_visible()*
+
+nvim_tree.api.tree.reload()                      *nvim_tree.api.tree.reload()*
+
+nvim_tree.api.tree.resize()                      *nvim_tree.api.tree.resize()*
+
+nvim_tree.api.tree.search_node()            *nvim_tree.api.tree.search_node()*
+
+nvim_tree.api.tree.toggle()                      *nvim_tree.api.tree.toggle()*
+
+                                   *nvim_tree.api.tree.toggle_custom_filter()*
+nvim_tree.api.tree.toggle_custom_filter()
+
+                                  *nvim_tree.api.tree.toggle_enable_filters()*
+nvim_tree.api.tree.toggle_enable_filters()
+
+                                *nvim_tree.api.tree.toggle_git_clean_filter()*
+nvim_tree.api.tree.toggle_git_clean_filter()
+
+                                *nvim_tree.api.tree.toggle_gitignore_filter()*
+nvim_tree.api.tree.toggle_gitignore_filter()
+
+nvim_tree.api.tree.toggle_help()            *nvim_tree.api.tree.toggle_help()*
+
+                                   *nvim_tree.api.tree.toggle_hidden_filter()*
+nvim_tree.api.tree.toggle_hidden_filter()
+
+                              *nvim_tree.api.tree.toggle_no_bookmark_filter()*
+nvim_tree.api.tree.toggle_no_bookmark_filter()
+
+                                *nvim_tree.api.tree.toggle_no_buffer_filter()*
+nvim_tree.api.tree.toggle_no_buffer_filter()
+
+nvim_tree.api.tree.winid()                        *nvim_tree.api.tree.winid()*
+
+open({opts})                                       *nvim_tree.api.tree.open()*
+
+    Parameters: ~
+      • {opts}  (`table?`) A table with the following fields:
+                • {path} (`string?`) path
+                • {current_window} (`boolean?`) default false
+                • {winid} (`number?`)
+                • {find_file} (`boolean?`) default false
+                • {update_root} (`boolean?`) default false
+
+
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
