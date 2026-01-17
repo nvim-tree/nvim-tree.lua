@@ -79,8 +79,8 @@ jobs:
 
       - name: build Nvim from source
         run: |
-          mkdir -p src
-          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory src
+          mkdir -p "${DIR_NVIM_SRC}"
+          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory "${DIR_NVIM_SRC}/.."
           cd "${DIR_NVIM_SRC}"
           make
 
