@@ -364,9 +364,14 @@ Api.marks.navigate.next = wrap_explorer_member("marks", "navigate_next")
 Api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
 Api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
+function Api.hydrate_config(tree)
+  Api.tree = tree
+
 Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
 Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.config.mappings.default_on_attach = keymap.default_on_attach
+
+end
 
 Api.diagnostics.hi_test = wrap(appearance_hi_test)
 

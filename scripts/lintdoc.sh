@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-
 # Wrapper around Nvim help linter lintdoc.lua, run as part of Nvim's make lintdoc target.
 #
 # Requires Nvim to have been built.

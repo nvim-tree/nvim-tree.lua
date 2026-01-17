@@ -13,8 +13,8 @@ local nvim_tree = { api = { tree = {} } }
 ---(default: false)
 ---@field current_window? boolean
 ---
----Open the tree in the specified [winid], overrides {current_window}
----@field winid? number
+---Open the tree in the specified  [window-ID], overrides {current_window}
+---@field winid? integer
 ---
 ---Find the current buffer.
 ---(default: false)
@@ -41,8 +41,8 @@ function nvim_tree.api.tree.open(opts) end
 ---(default: false)
 ---@field current_window? boolean
 ---
----Open the tree in the specified [winid], overrides {current_window}
----@field winid? number
+---Open the tree in the specified [window-ID], overrides {current_window}
+---@field winid? integer
 ---
 ---Find the current buffer.
 ---(default: false)
@@ -93,10 +93,10 @@ function nvim_tree.api.tree.reload() end
 ---@field width nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width
 ---
 ---Set the width.
----@field absolute number
+---@field absolute integer
 ---
 ---Increase or decrease the width.
----@field relative number
+---@field relative integer
 
 ---Resize the tree, persisting the new size. Resets to [nvim_tree.Config.View] {width} when no {opts} provided.
 ---
@@ -143,8 +143,8 @@ function nvim_tree.api.tree.get_nodes() end
 ---@class nvim_tree.api.tree.find_file.Opts
 ---@inlinedoc
 ---
----Absolute/relative path OR [bufnr()] to find.
----@field buf? string|number
+---Absolute/relative path OR `bufnr` to find.
+---@field buf? string|integer
 ---
 ---Open the tree if necessary.
 ---(default: false)
@@ -154,8 +154,8 @@ function nvim_tree.api.tree.get_nodes() end
 ---(default: false)
 ---@field current_window? boolean
 ---
----Open the tree in the specified [winid], overrides {current_window}
----@field winid? number
+---Open the tree in the specified [window-ID], overrides {current_window}
+---@field winid? integer
 ---
 ---Update root after find, see [nvim_tree.Config.UpdateFocusedFile] {update_root}
 ---(default: false)
@@ -250,7 +250,8 @@ function nvim_tree.api.tree.toggle_help() end
 
 ---Checks if a buffer is an nvim-tree.
 ---
----@param bufnr? number 0 or nil for current buffer.
+---@param bufnr? integer 0 or nil for current buffer.
+---
 ---@return boolean
 function nvim_tree.api.tree.is_tree_buf(bufnr) end
 
@@ -280,10 +281,10 @@ function nvim_tree.api.tree.is_visible(opts) end
 ---[tab-ID] 0 or nil for current.
 ---@field tabpage? integer
 
----Retrieve the winid of the open tree.
+---Retrieve the window of the open tree.
 ---
 ---@param opts? nvim_tree.api.tree.winid.Opts optional
----@return integer? [winid], nil if tree is not visible.
+---@return integer? [window-ID], nil if tree is not visible.
 function nvim_tree.api.tree.winid(opts) end
 
 

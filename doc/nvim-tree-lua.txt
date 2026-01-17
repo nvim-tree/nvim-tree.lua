@@ -1079,32 +1079,6 @@ marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
     Prompts for selection of a marked node, sorted by absolute paths.
     A folder will be focused, a file will be opened.
 
-==============================================================================
-API: Config                                             *nvim-tree-api.config*
-
-                           *nvim-tree-api.config.mappings.default_on_attach()*
-config.mappings.default_on_attach({bufnr})
-    Set all |nvim-tree-mappings-default|. Call from your |nvim_tree.Config| {on_attach}
-
-    Parameters: ~
-      • {bufnr} (number) nvim-tree buffer number passed to |nvim_tree.Config| {on_attach}
-
-                                  *nvim-tree-api.config.mappings.get_keymap()*
-config.mappings.get_keymap()
-    Retrieves all buffer local mappings for nvim-tree.
-    These are the mappings that are applied by |nvim_tree.Config| {on_attach}, which
-    may include default mappings.
-
-    Return: ~
-        (table) as per |nvim_buf_get_keymap()|
-
-                          *nvim-tree-api.config.mappings.get_keymap_default()*
-config.mappings.get_keymap_default()
-    Retrieves the buffer local mappings for nvim-tree that are applied by
-    |nvim-tree-api.config.mappings.default_on_attach()|
-
-    Return: ~
-        (table) as per |nvim_buf_get_keymap()|
 
 ==============================================================================
 API: Commands                                         *nvim-tree-api.commands*
@@ -1266,7 +1240,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   -- END_DEFAULT_ON_ATTACH
 <
 Alternatively, you may apply these default mappings from your |nvim_tree.Config| {on_attach} via
-|nvim-tree-api.config.mappings.default_on_attach()| e.g. >lua
+|nvim_tree.api.config.mappings.default_on_attach()| e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require("nvim-tree.api")
@@ -2866,6 +2840,34 @@ Class: Config.Log                                       *nvim-tree-config-log*
 
 
 ==============================================================================
+Lua module: nvim_tree.api.config                        *nvim-tree-api-config*
+
+                           *nvim_tree.api.config.mappings.default_on_attach()*
+default_on_attach({bufnr})
+    Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.Config|
+    {on_attach}.
+
+    Parameters: ~
+      • {bufnr}  (`integer`) use the `bufnr` passed to {on_attach}
+
+get_keymap()                      *nvim_tree.api.config.mappings.get_keymap()*
+    Retrieve all buffer local mappings for nvim-tree. These are the mappings
+    that are applied by |nvim_tree.Config| {on_attach}, which may include
+    default mappings.
+
+    Return: ~
+        (`vim.api.keyset.get_keymap[]`)
+
+                          *nvim_tree.api.config.mappings.get_keymap_default()*
+get_keymap_default()
+    Retrieves the buffer local mappings for nvim-tree that are applied by
+    |nvim_tree.api.config.mappings.default_on_attach()|
+
+    Return: ~
+        (`vim.api.keyset.get_keymap[]`)
+
+
+==============================================================================
 Lua module: nvim_tree.api.tree                            *nvim-tree-api-tree*
 
 change_root({path})                         *nvim_tree.api.tree.change_root()*
@@ -2922,14 +2924,14 @@ find_file({opts})                             *nvim_tree.api.tree.find_file()*
 
     Parameters: ~
       • {opts}  (`table?`) optional
-                • {buf}? (`string|number`) Absolute/relative path OR |bufnr()|
+                • {buf}? (`string|integer`) Absolute/relative path OR `bufnr`
                   to find.
                 • {open}? (`boolean`, default: false) Open the tree if
                   necessary.
                 • {current_window}? (`boolean`, default: false) Requires
                   {open}: open in the current window.
-                • {winid}? (`number`) Open the tree in the specified |winid|,
-                  overrides {current_window}
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
                 • {update_root}? (`boolean`, default: false) Update root after
                   find, see |nvim_tree.Config.UpdateFocusedFile| {update_root}
                 • {focus}? (`boolean`, default: false) Focus the tree window.
@@ -2954,7 +2956,7 @@ is_tree_buf({bufnr})                        *nvim_tree.api.tree.is_tree_buf()*
     Checks if a buffer is an nvim-tree.
 
     Parameters: ~
-      • {bufnr}  (`number?`) 0 or nil for current buffer.
+      • {bufnr}  (`integer?`) 0 or nil for current buffer.
 
     Return: ~
         (`boolean`)
@@ -2979,8 +2981,8 @@ open({opts})                                       *nvim_tree.api.tree.open()*
                 • {path}? (`string`) Root directory for the tree
                 • {current_window}? (`boolean`, default: false) Open the tree
                   in the current window
-                • {winid}? (`number`) Open the tree in the specified |winid|,
-                  overrides {current_window}
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
                 • {find_file}? (`boolean`, default: false) Find the current
                   buffer.
                 • {update_root}? (`boolean`, default: false) Update root
@@ -3005,8 +3007,8 @@ resize({opts})                                   *nvim_tree.api.tree.resize()*
                 • {width}
                   (`nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width`)
                   New |nvim_tree.Config.View| {width} value.
-                • {absolute} (`number`) Set the width.
-                • {relative} (`number`) Increase or decrease the width.
+                • {absolute} (`integer`) Set the width.
+                • {relative} (`integer`) Increase or decrease the width.
 
 search_node()                               *nvim_tree.api.tree.search_node()*
     Open the search dialogue.
@@ -3019,8 +3021,8 @@ toggle({opts})                                   *nvim_tree.api.tree.toggle()*
                 • {path}? (`string`) Root directory for the tree
                 • {current_window}? (`boolean`, default: false) Open the tree
                   in the current window
-                • {winid}? (`number`) Open the tree in the specified |winid|,
-                  overrides {current_window}
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
                 • {find_file}? (`boolean`, default: false) Find the current
                   buffer.
                 • {focus}? (`boolean`, default: true) Focus the tree when
@@ -3055,14 +3057,14 @@ toggle_no_buffer_filter()
     Toggle |nvim_tree.Config.Filters| {no_buffer} filter.
 
 winid({opts})                                     *nvim_tree.api.tree.winid()*
-    Retrieve the winid of the open tree.
+    Retrieve the window of the open tree.
 
     Parameters: ~
       • {opts}  (`table?`) optional
                 • {tabpage}? (`integer`) |tab-ID| 0 or nil for current.
 
     Return: ~
-        (`integer?`) |winid|, nil if tree is not visible.
+        (`integer?`) |window-ID|, nil if tree is not visible.
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:

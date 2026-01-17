@@ -31,6 +31,7 @@ local modules = {
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",       path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                path = "./lua/nvim_tree/_meta/config/log.lua", },
 
+  { helptag = "nvim-tree-api-config",                 title = "Lua module: nvim_tree.api.config", path = "./lua/nvim_tree/api/config/mappings.lua", },
   { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",   path = "./lua/nvim_tree/api/tree.lua", },
 }
 
@@ -39,13 +40,13 @@ for _, m in ipairs(modules) do
   m.file = vim.fn.fnamemodify(m.path, ":t")
 end
 
---module name is derived by the generator as the file name with the first letter capitalised
+--section name is derived by the generator as the file name with the first letter capitalised
 --except for some like UI
 ---@type table<string, Module>
-local modules_by_name = {}
+local modules_by_section = {}
 for _, m in ipairs(modules) do
   local name = m.name or m.file:gsub(".lua", ""):gsub("^%l", string.upper)
-  modules_by_name[name] = m
+  modules_by_section[name] = m
 end
 
 ---@diagnostic disable-next-line: undefined-doc-name
@@ -62,17 +63,17 @@ local config = {
 
     section_fmt = function(name)
       print(string.format("section_fmt name=%s", name))
-      return modules_by_name[name] and modules_by_name[name].title or error(string.format("unknown module %s passed to section_fmt", name))
+      return modules_by_section[name] and modules_by_section[name].title or error(string.format("unknown module %s passed to section_fmt", name))
     end,
 
     helptag_fmt = function(name)
       print(string.format("helptag_fmt name=%s", name))
-      return modules_by_name[name] and modules_by_name[name].helptag or error(string.format("unknown module %s passed to helptag_fmt", name))
+      return modules_by_section[name] and modules_by_section[name].helptag or error(string.format("unknown module %s passed to helptag_fmt", name))
     end,
 
     -- optional, no default xform
     fn_xform = function(fun)
-      print(string.format("fn_xform fun=%s", vim.inspect(fun)))
+      -- print(string.format("fn_xform fun=%s", vim.inspect(fun)))
 
       if (fun.module) then
         -- generator doesn't strip meta
