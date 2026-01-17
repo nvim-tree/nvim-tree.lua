@@ -54,4 +54,4 @@ cp -v "${DIR_NVT}/doc/nvim-tree-lua.txt" "${DIR_NVIM_SRC}/runtime/doc"
 cd "${DIR_NVIM_SRC}"
 
 # make nvim and execute the lint
-make 
+make lintdoc
