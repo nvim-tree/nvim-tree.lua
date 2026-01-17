@@ -10,43 +10,62 @@
 
 set -e
 
-if [ ! -d "${NVIM_SRC}" ]; then
+# unset to ensure no collisions with system installs etc.
+unset VIMRUNTIME
+
+# Use a directory outside of nvim_tree source. Adding lua files inside will (rightly) upset luals.
+DIR_NVT="${PWD}"
+DIR_WORK="/tmp/nvim-tree-gen_vimdoc"
+DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
+
+if [ ! -f "${DIR_NVT}/scripts/gen_vimdoc.sh" ]; then
+	echo "Must be run from nvim-tree root"
+	exit 1
+fi
+
+if [ -z "${DIR_NVIM_SRC}" ] && [ -d "${DIR_NVIM_SRC_DEF}" ]; then
+	export DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
+	echo "Assumed DIR_NVIM_SRC=${DIR_NVIM_SRC}"
+fi
+
+if [ ! -d "${DIR_NVIM_SRC}" ]; then
 	cat << EOM
 
-\$NVIM_SRC not set
+\$DIR_NVIM_SRC=${DIR_NVIM_SRC} not set or missing.
 
-Nvim source is required to run src/gen/gen_vimdoc.lua
+Nvim source is required to run ${0}
 
 Please:
-  mkdir -p src
-  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
-  export NVIM_SRC=src/neovim-stable
+  mkdir -p ${DIR_NVIM_SRC_DEF}
+  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory $(dirname "${DIR_NVIM_SRC_DEF}")
+  export DIR_NVIM_SRC=/tmp/src/neovim-stable
 EOM
 exit 1
 fi
 
-# unset to ensure no collisions with system installs etc.
-unset VIMRUNTIME
+# clean up previous
+rm -rfv "${DIR_WORK}"
 
 # runtime/doc is hardcoded, copy the help in
-mkdir -pv runtime/doc
-cp -v "doc/nvim-tree-lua.txt" runtime/doc
+mkdir -pv "${DIR_WORK}/runtime/doc"
+cp -v "${DIR_NVT}/doc/nvim-tree-lua.txt" "${DIR_WORK}/runtime/doc"
 
 # modify gen_vimdoc.lua to use our config
-cp -v "${NVIM_SRC}/src/gen/gen_vimdoc.lua" gen_vimdoc.lua
-sed -i -E 's/spairs\(config\)/spairs\(require("gen_vimdoc_config")\)/g' gen_vimdoc.lua
+cp -v "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua" "${DIR_WORK}/gen_vimdoc.lua"
+sed -i -E 's/spairs\(config\)/spairs\(require("gen_vimdoc_config")\)/g' "${DIR_WORK}/gen_vimdoc.lua"
 
 # use luacacts etc. from neovim src as well as our specific config
-export LUA_PATH="${NVIM_SRC}/src/?.lua;scripts/?.lua"
+export LUA_PATH="${DIR_NVIM_SRC}/src/?.lua;${DIR_NVT}/scripts/?.lua"
+
+# gen_vimdoc.lua doesn't like dashes in lua module names
+#   -> use nvim_tree instead of nvim-tree
+mkdir -pv "${DIR_WORK}/lua"
+ln -sv "${DIR_NVT}/lua/nvim-tree" "${DIR_WORK}/lua/nvim_tree"
 
 # generate
+cd "${DIR_WORK}" && pwd
 ./gen_vimdoc.lua
+cd -
 
-# move the generated help out
-mv -v "runtime/doc/nvim-tree-lua.txt" doc
-
-# clean up
-rmdir -v runtime/doc
-rmdir -v runtime
-rm -v gen_vimdoc.lua
-
+# copy the generated help out
+cp -v "${DIR_WORK}/runtime/doc/nvim-tree-lua.txt" "${DIR_NVT}/doc"

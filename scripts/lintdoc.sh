@@ -14,29 +14,44 @@
 
 set -e
 
-if [ ! -d "${NVIM_SRC}" ]; then
+# unset to ensure no collisions with system installs etc.
+unset VIMRUNTIME
+
+# Use a directory outside of nvim_tree source. Adding lua files inside will (rightly) upset luals.
+DIR_NVT="${PWD}"
+DIR_WORK="/tmp/nvim-tree-lintdoc"
+DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
+
+if [ ! -f "${DIR_NVT}/scripts/lintdoc.sh" ]; then
+	echo "Must be run from nvim-tree root"
+	exit 1
+fi
+
+if [ -z "${DIR_NVIM_SRC}" ] && [ -d "${DIR_NVIM_SRC_DEF}" ]; then
+	export DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
+	echo "Assumed DIR_NVIM_SRC=${DIR_NVIM_SRC}"
+fi
+
+if [ ! -d "${DIR_NVIM_SRC}" ]; then
 	cat << EOM
 
-\$NVIM_SRC not set
+\$DIR_NVIM_SRC=${DIR_NVIM_SRC} not set or missing.
 
-Compiled Nvim source is required to run src/gen/gen_vimdoc.lua
+Nvim source is required to run ${0}
 
 Please:
-  mkdir -p src
-  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory src
-  export NVIM_SRC=src/neovim-stable
+  mkdir -p ${DIR_NVIM_SRC_DEF}
+  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory $(dirname "${DIR_NVIM_SRC_DEF}")
+  export DIR_NVIM_SRC=/tmp/src/neovim-stable
 EOM
 exit 1
 fi
 
-# unset to ensure no collisions with system installs etc.
-unset VIMRUNTIME
-
 # runtime/doc in the Nvim source is practically hardcoded, copy our help in
-cp -v "doc/nvim-tree-lua.txt" "${NVIM_SRC}/runtime/doc"
+cp -v "${DIR_NVT}/doc/nvim-tree-lua.txt" "${DIR_NVIM_SRC}/runtime/doc"
 
 # run from within Nvim source
-cd "${NVIM_SRC}"
+cd "${DIR_NVIM_SRC}"
 
 # make nvim and execute the lint
-make lintdoc
+make 
