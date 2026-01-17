@@ -47,3 +47,6 @@ begin="Show the mappings:"
 end="======"
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.help
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
+
+# TODO #3088 remove once all api references have been updated
+sed -i -e "s/nvim-tree-api.tree/nvim_tree.api.tree/g" doc/nvim-tree-lua.txt
