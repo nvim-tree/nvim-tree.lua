@@ -251,6 +251,8 @@ See |nvim-tree-highlight-groups| for details.
 ==============================================================================
 Commands                                                  *nvim-tree-commands*
 
+TODO #3088 clean up descriptions and render call as Lua.
+
 *:NvimTreeOpen*
 
     Opens the tree. See |nvim_tree.api.tree.open()|
@@ -346,9 +348,9 @@ Commands                                                  *nvim-tree-commands*
 
     Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
 
-    See |nvim-tree-api.diagnostics.hi_test()|
+    See |nvim_tree.api.health.hi_test()|
 
-    Calls: `api.diagnostics.hi_test()`
+    Calls: `api.health.hi_test()`
 
 ==============================================================================
 Setup                                                        *nvim-tree-setup*
@@ -1141,15 +1143,6 @@ commands.get()                                  *nvim-tree-api.commands.get()*
         • {opts}    (table)
 
 ==============================================================================
-API: Diagnostics                                   *nvim-tree-api.diagnostics*
-
-diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
-    Open a new buffer displaying all nvim-tree highlight groups, their link
-    chain and concrete definition.
-
-    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
-
-==============================================================================
 Mappings                                                  *nvim-tree-mappings*
 
 Mappings are set via the |nvim_tree.Config| {on_attach} function, which is run upon
@@ -1842,6 +1835,8 @@ continue to be available.
 `api.config.mappings.get_keymap`          |nvim_tree.api.map.get_keymap()|
 `api.config.mappings.get_keymap_default`  |nvim_tree.api.map.get_keymap_default()|
 `api.config.mappings.default_on_attach`   |nvim_tree.api.map.default_on_attach()|
+
+`api.diagnostics.hi_test`                 |nvim_tree.api.health.hi_test()|
 
 `api.git.reload`                          |nvim_tree.api.tree.reload_git()|
 
@@ -2911,6 +2906,16 @@ live_filter.clear()                 *nvim_tree.api.filter.live_filter.clear()*
 live_filter.start()                 *nvim_tree.api.filter.live_filter.start()*
     Enter live filter mode. Opens an input window with |filetype|
     `NvimTreeFilter`
+
+
+==============================================================================
+Lua module: nvim_tree.api.health                        *nvim-tree-api-health*
+
+hi_test()                                     *nvim_tree.api.health.hi_test()*
+    Open a new buffer displaying all nvim-tree highlight groups, their link
+    chain and concrete definition.
+
+    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 
 ==============================================================================
