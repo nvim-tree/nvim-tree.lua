@@ -1024,20 +1024,6 @@ API: Git                                                   *nvim-tree-api.git*
 git.reload()                                      *nvim-tree-api.git.reload()*
     Update the git status of the entire tree.
 
-==============================================================================
-API: Events                                             *nvim-tree-api.events*
-
-                                            *nvim-tree-api.events.subscribe()*
-events.subscribe({event_type},     {callback})
-    Register a handler for an event, see |nvim-tree-events|
-
-    Parameters: ~
-      • {event_type} (string)   |nvim-tree-api.events.Event|
-      • {callback}   (function) see |nvim_tree_events_kind| for parameters
-
-events.Event                                      *nvim-tree-api.events.Event*
-    String enum: |nvim_tree_events_kind|
-
 
 ==============================================================================
 API: Live Filter                                   *nvim-tree-api.live_filter*
@@ -1491,8 +1477,8 @@ to |nvim_tree_registering_handlers| for more information.
 
 *nvim_tree_registering_handlers*
 
-Handlers are registered by calling |nvim-tree-api.events.subscribe()|
-function with an |nvim-tree-api.events.Event|
+Handlers are registered by calling |nvim_tree.api.events.subscribe()| function
+with an |nvim_tree_events_kind|.
 
 e.g. handler for node renamed: >lua
 
