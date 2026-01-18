@@ -1,4 +1,5 @@
 return {
+  events = require("nvim-tree.api.events"),
   filter = require("nvim-tree.api.filter"),
   health = require("nvim-tree.api.health"),
   map = require("nvim-tree.api.map"),

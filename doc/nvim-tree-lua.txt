@@ -2863,6 +2863,17 @@ Class: Config.Log                                       *nvim-tree-config-log*
 
 
 ==============================================================================
+Lua module: nvim_tree.api.events                        *nvim-tree-api-events*
+
+subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
+    Register a handler for an event, see |nvim-tree-events|.
+
+    Parameters: ~
+      • {event_type}  (`string`) |nvim_tree_events_kind|
+      • {callback}    (`fun(payload: table?)`)
+
+
+==============================================================================
 Lua module: nvim_tree.api.filter                        *nvim-tree-api-filter*
 
 live_filter.clear()                 *nvim_tree.api.filter.live_filter.clear()*

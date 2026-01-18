@@ -354,8 +354,13 @@ end)
 
 -- Api.git.reload = wrap_explorer("reload_git")
 
+function Api.hydrate_events(ev)
+  Api.events = ev
+
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
+
+end
 
 function Api.hydrate_filter(filter)
   Api.filter = filter

@@ -31,10 +31,11 @@ local modules = {
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",       path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                path = "./lua/nvim_tree/_meta/config/log.lua", },
 
+  { helptag = "nvim-tree-api-events",                 title = "Lua module: nvim_tree.api.events", path = "./lua/nvim_tree/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter", path = "./lua/nvim_tree/api/filter.lua", },
   { helptag = "nvim-tree-api-health",                 title = "Lua module: nvim_tree.api.health", path = "./lua/nvim_tree/api/health.lua", },
   { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",    path = "./lua/nvim_tree/api/map.lua", },
-  { helptag = "nvim-tree-api-marks",                    title = "Lua module: nvim_tree.api.marks",    path = "./lua/nvim_tree/api/marks.lua", },
+  { helptag = "nvim-tree-api-marks",                  title = "Lua module: nvim_tree.api.marks",  path = "./lua/nvim_tree/api/marks.lua", },
   { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",   path = "./lua/nvim_tree/api/tree.lua", },
 }
 
