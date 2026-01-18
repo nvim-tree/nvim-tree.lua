@@ -1,4 +1,4 @@
 return {
-  config = require("nvim-tree.api.config.mappings"),
+  config = require("nvim-tree.api.map"),
   tree = require("nvim-tree.api.tree"),
 }

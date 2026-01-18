@@ -31,7 +31,7 @@ local modules = {
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",       path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                path = "./lua/nvim_tree/_meta/config/log.lua", },
 
-  { helptag = "nvim-tree-api-config",                 title = "Lua module: nvim_tree.api.config", path = "./lua/nvim_tree/api/config/mappings.lua", },
+  { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",    path = "./lua/nvim_tree/api/map.lua", },
   { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",   path = "./lua/nvim_tree/api/tree.lua", },
 }
 
@@ -63,12 +63,14 @@ local config = {
 
     section_fmt = function(name)
       print(string.format("section_fmt name=%s", name))
-      return modules_by_section[name] and modules_by_section[name].title or error(string.format("unknown module %s passed to section_fmt", name))
+      return modules_by_section[name] and modules_by_section[name].title or
+      error(string.format("unknown module %s passed to section_fmt", name))
     end,
 
     helptag_fmt = function(name)
       print(string.format("helptag_fmt name=%s", name))
-      return modules_by_section[name] and modules_by_section[name].helptag or error(string.format("unknown module %s passed to helptag_fmt", name))
+      return modules_by_section[name] and modules_by_section[name].helptag or
+      error(string.format("unknown module %s passed to helptag_fmt", name))
     end,
 
     -- optional, no default xform

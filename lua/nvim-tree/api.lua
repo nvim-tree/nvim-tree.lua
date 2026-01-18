@@ -35,13 +35,13 @@ local Api = {
   fs = {
     copy = {},
   },
-  git = {},
-  live_filter = {},
-  config = {
+  git = {}, -- 1 collides with Config.Git - api.tree.reload_git
+  live_filter = {}, -- 2 collides with Config.LiveFilter -  api.filter
+  config = {-- collides with Config - api.mapping
     mappings = {},
   },
   commands = {},
-  diagnostics = {},
+  diagnostics = {},-- 1 collides with Config.Diagnostics -  api.health
   decorator = {},
 }
 
@@ -364,12 +364,16 @@ Api.marks.navigate.next = wrap_explorer_member("marks", "navigate_next")
 Api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
 Api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
-function Api.hydrate_config(tree)
-  Api.tree = tree
+function Api.hydrate_map(map)
+  Api.map = map
 
-Api.config.mappings.get_keymap = wrap(keymap.get_keymap)
-Api.config.mappings.get_keymap_default = wrap(keymap.get_keymap_default)
-Api.config.mappings.default_on_attach = keymap.default_on_attach
+Api.map.get_keymap = wrap(keymap.get_keymap)
+Api.map.get_keymap_default = wrap(keymap.get_keymap_default)
+Api.map.default_on_attach = keymap.default_on_attach
+
+Api.config.mappings.get_keymap = Api.map.get_keymap
+Api.config.mappings.get_keymap_default = Api.map.get_keymap_default
+Api.config.mappings.default_on_attach = Api.map.default_on_attach
 
 end
 
@@ -383,5 +387,9 @@ end)
 ---See :help nvim-tree-decorators
 ---@type nvim_tree.api.decorator.UserDecorator
 Api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
+
+
+-- TODO #3088 legacy mappings have to go somewhere
+
 
 return Api
