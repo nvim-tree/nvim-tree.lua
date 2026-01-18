@@ -27,14 +27,14 @@ local Api = {
     open = {},
     buffer = {},
   },
-  events = {},
+  -- events = {},
   -- marks = {
   --   bulk = {},
   --   navigate = {},
   -- },
-  fs = {
-    copy = {},
-  },
+  -- fs = {
+  --   copy = {},
+  -- },
   -- git = {},
   -- live_filter = {},
   -- config = {
@@ -232,6 +232,9 @@ Api.git = {
 
 end
 
+function Api.hydrate_fs(fs)
+  Api.fs = fs
+
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
 Api.fs.remove = wrap_node(actions.fs.remove_file.fn)
 Api.fs.trash = wrap_node(actions.fs.trash.fn)
@@ -249,6 +252,9 @@ Api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_ab
 Api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
 Api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
 Api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
+
+end
+
 ---
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false

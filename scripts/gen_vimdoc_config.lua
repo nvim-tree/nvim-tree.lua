@@ -33,6 +33,7 @@ local modules = {
 
   { helptag = "nvim-tree-api-events",                 title = "Lua module: nvim_tree.api.events", path = "./lua/nvim_tree/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter", path = "./lua/nvim_tree/api/filter.lua", },
+  { helptag = "nvim-tree-api-fs",                     title = "Lua module: nvim_tree.api.fs",     path = "./lua/nvim_tree/api/fs.lua", },
   { helptag = "nvim-tree-api-health",                 title = "Lua module: nvim_tree.api.health", path = "./lua/nvim_tree/api/health.lua", },
   { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",    path = "./lua/nvim_tree/api/map.lua", },
   { helptag = "nvim-tree-api-marks",                  title = "Lua module: nvim_tree.api.marks",  path = "./lua/nvim_tree/api/marks.lua", },
