@@ -35,9 +35,9 @@ local Api = {
   fs = {
     copy = {},
   },
-  git = {}, -- 1 collides with Config.Git - api.tree.reload_git
-  live_filter = {}, -- 2 collides with Config.LiveFilter -  api.filter
-  config = {-- collides with Config - api.mapping
+  git = {},
+  live_filter = {},
+  config = {
     mappings = {},
   },
   commands = {},
@@ -223,6 +223,11 @@ Api.tree.is_visible = wrap(view.is_visible)
 
 Api.tree.winid = wrap(view.winid)
 
+Api.tree.reload_git = wrap_explorer("reload_git")
+
+-- TODO #3088 legacy mappings have to go somewhere
+Api.git.reload = Api.tree.reload_git
+
 end
 
 Api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
@@ -397,9 +402,5 @@ end)
 ---See :help nvim-tree-decorators
 ---@type nvim_tree.api.decorator.UserDecorator
 Api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
-
-
--- TODO #3088 legacy mappings have to go somewhere
-
 
 return Api

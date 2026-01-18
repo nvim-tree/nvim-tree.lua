@@ -1843,6 +1843,11 @@ continue to be available.
 `api.config.mappings.get_keymap_default`  |nvim_tree.api.map.get_keymap_default()|
 `api.config.mappings.default_on_attach`   |nvim_tree.api.map.default_on_attach()|
 
+`api.git.reload`                          |nvim_tree.api.tree.reload_git()|
+
+`api.live_filter.start`                   |nvim_tree.api.filter.live_filter.start()|
+`api.live_filter.clear`                   |nvim_tree.api.filter.live_filter.clear()|
+
 ==============================================================================
 Legacy: Highlight                                 *nvim-tree-legacy-highlight*
 
@@ -3058,6 +3063,9 @@ open({opts})                                       *nvim_tree.api.tree.open()*
 
 reload()                                         *nvim_tree.api.tree.reload()*
     Refresh the tree. Does nothing if closed.
+
+reload_git()                                 *nvim_tree.api.tree.reload_git()*
+    Update the git status of the entire tree.
 
 resize({opts})                                   *nvim_tree.api.tree.resize()*
     Resize the tree, persisting the new size. Resets to
