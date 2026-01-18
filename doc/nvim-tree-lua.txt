@@ -158,36 +158,6 @@ Show the mappings:  `g?`
 ==============================================================================
 Quickstart: Custom Mappings             *nvim-tree-quickstart-custom-mappings*
 
-
-
-
-TODO #3088 remove dummy tags once entire API has been migrated
-
-*nvim_tree.api.node.navigate.diagnostics.next()*
-*nvim_tree.api.node.navigate.diagnostics.prev()*
-*nvim_tree.api.node.navigate.git.next()*
-*nvim_tree.api.node.navigate.git.prev()*
-*nvim_tree.api.node.navigate.parent()*
-*nvim_tree.api.node.navigate.parent_close()*
-*nvim_tree.api.node.navigate.sibling.first()*
-*nvim_tree.api.node.navigate.sibling.last()*
-*nvim_tree.api.node.navigate.sibling.next()*
-*nvim_tree.api.node.navigate.sibling.prev()*
-*nvim_tree.api.node.open.edit()*
-*nvim_tree.api.node.open.horizontal()*
-*nvim_tree.api.node.open.no_window_picker()*
-*nvim_tree.api.node.open.preview()*
-*nvim_tree.api.node.open.replace_tree_buffer()*
-*nvim_tree.api.node.open.tab()*
-*nvim_tree.api.node.open.toggle_group_empty()*
-*nvim_tree.api.node.open.vertical()*
-*nvim_tree.api.node.run.cmd()*
-*nvim_tree.api.node.run.system()*
-*nvim_tree.api.node.show_info_popup()*
-
-
-
-
 |nvim-tree-mappings-default| are applied by default however you may customise
 via |nvim_tree.Config| {on_attach} e.g. >lua
 
@@ -2947,6 +2917,167 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node`) file or directory
+
+
+==============================================================================
+Lua module: nvim_tree.api.node                            *nvim-tree-api-node*
+
+*nvim_tree.api.DirectoryLinkNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    DirectoryLink
+
+*nvim_tree.api.DirectoryNode*
+    Extends: |nvim_tree.api.Node|
+
+    Directory
+
+    Fields: ~
+      • {has_children}  (`boolean`)
+      • {nodes}         (`nvim_tree.api.Node[]`)
+      • {open}          (`boolean`)
+
+*nvim_tree.api.FileLinkNode*
+    Extends: |nvim_tree.api.FileNode|
+
+    File Link
+
+*nvim_tree.api.FileNode*
+    Extends: |nvim_tree.api.Node|
+
+    File
+
+    Fields: ~
+      • {extension}  (`string`)
+
+*nvim_tree.api.LinkNode*
+    Link mixin
+
+    Fields: ~
+      • {link_to}         (`string`)
+      • {fs_stat_target}  (`uv.fs_stat.result`)
+
+*nvim_tree.api.Node*
+    Base Node, Abstract
+
+    Fields: ~
+      • {type}           (`"file"|"directory"|"link"`) uv.fs_stat.result.type
+      • {absolute_path}  (`string`)
+      • {executable}     (`boolean`)
+      • {fs_stat}        (`uv.fs_stat.result?`)
+      • {git_status}     (`GitNodeStatus?`)
+      • {hidden}         (`boolean`)
+      • {name}           (`string`)
+      • {parent}         (`nvim_tree.api.DirectoryNode?`)
+      • {diag_severity}  (`lsp.DiagnosticSeverity?`)
+
+*nvim_tree.api.RootNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    Root Directory
+
+
+nvim_tree.api.node.buffer.delete()        *nvim_tree.api.node.buffer.delete()*
+
+nvim_tree.api.node.buffer.wipe()            *nvim_tree.api.node.buffer.wipe()*
+
+nvim_tree.api.node.collapse()                  *nvim_tree.api.node.collapse()*
+
+nvim_tree.api.node.expand()                      *nvim_tree.api.node.expand()*
+
+                              *nvim_tree.api.node.navigate.diagnostics.next()*
+nvim_tree.api.node.navigate.diagnostics.next()
+
+                    *nvim_tree.api.node.navigate.diagnostics.next_recursive()*
+nvim_tree.api.node.navigate.diagnostics.next_recursive()
+
+                              *nvim_tree.api.node.navigate.diagnostics.prev()*
+nvim_tree.api.node.navigate.diagnostics.prev()
+
+                    *nvim_tree.api.node.navigate.diagnostics.prev_recursive()*
+nvim_tree.api.node.navigate.diagnostics.prev_recursive()
+
+                                      *nvim_tree.api.node.navigate.git.next()*
+nvim_tree.api.node.navigate.git.next()
+
+                            *nvim_tree.api.node.navigate.git.next_recursive()*
+nvim_tree.api.node.navigate.git.next_recursive()
+
+                      *nvim_tree.api.node.navigate.git.next_skip_gitignored()*
+nvim_tree.api.node.navigate.git.next_skip_gitignored()
+
+                                      *nvim_tree.api.node.navigate.git.prev()*
+nvim_tree.api.node.navigate.git.prev()
+
+                            *nvim_tree.api.node.navigate.git.prev_recursive()*
+nvim_tree.api.node.navigate.git.prev_recursive()
+
+                      *nvim_tree.api.node.navigate.git.prev_skip_gitignored()*
+nvim_tree.api.node.navigate.git.prev_skip_gitignored()
+
+                                   *nvim_tree.api.node.navigate.opened.next()*
+nvim_tree.api.node.navigate.opened.next()
+
+                                   *nvim_tree.api.node.navigate.opened.prev()*
+nvim_tree.api.node.navigate.opened.prev()
+
+                                        *nvim_tree.api.node.navigate.parent()*
+nvim_tree.api.node.navigate.parent()
+
+                                  *nvim_tree.api.node.navigate.parent_close()*
+nvim_tree.api.node.navigate.parent_close()
+
+                                 *nvim_tree.api.node.navigate.sibling.first()*
+nvim_tree.api.node.navigate.sibling.first()
+
+                                  *nvim_tree.api.node.navigate.sibling.last()*
+nvim_tree.api.node.navigate.sibling.last()
+
+                                  *nvim_tree.api.node.navigate.sibling.next()*
+nvim_tree.api.node.navigate.sibling.next()
+
+                                  *nvim_tree.api.node.navigate.sibling.prev()*
+nvim_tree.api.node.navigate.sibling.prev()
+
+nvim_tree.api.node.open.drop()                *nvim_tree.api.node.open.drop()*
+
+nvim_tree.api.node.open.edit()                *nvim_tree.api.node.open.edit()*
+
+                                        *nvim_tree.api.node.open.horizontal()*
+nvim_tree.api.node.open.horizontal()
+
+                              *nvim_tree.api.node.open.horizontal_no_picker()*
+nvim_tree.api.node.open.horizontal_no_picker()
+
+                                  *nvim_tree.api.node.open.no_window_picker()*
+nvim_tree.api.node.open.no_window_picker()
+
+nvim_tree.api.node.open.preview()          *nvim_tree.api.node.open.preview()*
+
+                                 *nvim_tree.api.node.open.preview_no_picker()*
+nvim_tree.api.node.open.preview_no_picker()
+
+                               *nvim_tree.api.node.open.replace_tree_buffer()*
+nvim_tree.api.node.open.replace_tree_buffer()
+
+nvim_tree.api.node.open.tab()                  *nvim_tree.api.node.open.tab()*
+
+nvim_tree.api.node.open.tab_drop()        *nvim_tree.api.node.open.tab_drop()*
+
+                                *nvim_tree.api.node.open.toggle_group_empty()*
+nvim_tree.api.node.open.toggle_group_empty()
+
+nvim_tree.api.node.open.vertical()        *nvim_tree.api.node.open.vertical()*
+
+                                *nvim_tree.api.node.open.vertical_no_picker()*
+nvim_tree.api.node.open.vertical_no_picker()
+
+nvim_tree.api.node.run.cmd()                    *nvim_tree.api.node.run.cmd()*
+
+nvim_tree.api.node.run.system()              *nvim_tree.api.node.run.system()*
+
+                                        *nvim_tree.api.node.show_info_popup()*
+nvim_tree.api.node.show_info_popup()
 
 
 ==============================================================================

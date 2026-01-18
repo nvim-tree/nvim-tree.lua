@@ -16,17 +16,17 @@ local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local Api = {
   -- tree = {},
-  node = {
-    navigate = {
-      sibling = {},
-      git = {},
-      diagnostics = {},
-      opened = {},
-    },
-    run = {},
-    open = {},
-    buffer = {},
-  },
+  -- node = {
+  --   navigate = {
+  --     sibling = {},
+  --     git = {},
+  --     diagnostics = {},
+  --     opened = {},
+  --   },
+  --   run = {},
+  --   open = {},
+  --   buffer = {},
+  -- },
   -- events = {},
   -- marks = {
   --   bulk = {},
@@ -40,7 +40,7 @@ local Api = {
   -- config = {
   --   mappings = {},
   -- },
-  commands = {},
+  -- commands = {},
   -- diagnostics = {},
   decorator = {},
 }
@@ -308,6 +308,9 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
   end
 end
 
+function Api.hydrate_node(n)
+  Api.node = n
+
 Api.node.open.edit = wrap_node(open_or_expand_or_dir_up("edit"))
 Api.node.open.drop = wrap_node(open_or_expand_or_dir_up("drop"))
 Api.node.open.tab_drop = wrap_node(open_or_expand_or_dir_up("tab_drop"))
@@ -357,6 +360,8 @@ end)
 Api.node.buffer.wipe = wrap_node(function(node, opts)
   actions.node.buffer.wipe(node, opts)
 end)
+
+end
 
 -- Api.git.reload = wrap_explorer("reload_git")
 

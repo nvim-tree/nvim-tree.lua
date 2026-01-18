@@ -5,5 +5,6 @@ return {
   health = require("nvim-tree.api.health"),
   map = require("nvim-tree.api.map"),
   marks = require("nvim-tree.api.marks"),
+  node = require("nvim-tree.api.node"),
   tree = require("nvim-tree.api.tree"),
 }
