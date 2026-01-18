@@ -31,6 +31,8 @@ local modules = {
   { helptag = "nvim-tree-config-experimental",        title = "Class: Config.Experimental",         path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 title = "Class: Config.Log",                  path = "./lua/nvim_tree/_meta/config/log.lua", },
 
+  { helptag = "nvim-tree-api",                        title = "Lua module: nvim_tree.api",          path = "./lua/nvim_tree/api/init.lua", },
+
   { helptag = "nvim-tree-api-commands",               title = "Lua module: nvim_tree.api.commands", path = "./lua/nvim_tree/api/commands.lua", },
   { helptag = "nvim-tree-api-events",                 title = "Lua module: nvim_tree.api.events",   path = "./lua/nvim_tree/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter",   path = "./lua/nvim_tree/api/filter.lua", },
