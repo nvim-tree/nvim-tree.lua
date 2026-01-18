@@ -15,7 +15,7 @@ local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local Api = {
-  tree = {},
+  -- tree = {},
   node = {
     navigate = {
       sibling = {},
@@ -28,20 +28,20 @@ local Api = {
     buffer = {},
   },
   events = {},
-  marks = {
-    bulk = {},
-    navigate = {},
-  },
+  -- marks = {
+  --   bulk = {},
+  --   navigate = {},
+  -- },
   fs = {
     copy = {},
   },
-  git = {},
-  live_filter = {},
-  config = {
-    mappings = {},
-  },
+  -- git = {},
+  -- live_filter = {},
+  -- config = {
+  --   mappings = {},
+  -- },
   commands = {},
-  diagnostics = {},-- 1 collides with Config.Diagnostics -  api.health
+  -- diagnostics = {},
   decorator = {},
 }
 
@@ -226,7 +226,9 @@ Api.tree.winid = wrap(view.winid)
 Api.tree.reload_git = wrap_explorer("reload_git")
 
 -- TODO #3088 legacy mappings have to go somewhere
-Api.git.reload = Api.tree.reload_git
+Api.git = {
+  reload = Api.tree.reload_git
+}
 
 end
 
@@ -350,7 +352,7 @@ Api.node.buffer.wipe = wrap_node(function(node, opts)
   actions.node.buffer.wipe(node, opts)
 end)
 
-Api.git.reload = wrap_explorer("reload_git")
+-- Api.git.reload = wrap_explorer("reload_git")
 
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
@@ -362,8 +364,10 @@ Api.filter.live_filter.start = wrap_explorer_member("live_filter", "start_filter
 Api.filter.live_filter.clear = wrap_explorer_member("live_filter", "clear_filter")
 
 -- TODO #3088 legacy mappings have to go somewhere
-Api.live_filter.start = filter.live_filter.start
-Api.live_filter.clear = filter.live_filter.clear
+Api.live_filter = {
+  start = filter.live_filter.start,
+  clear = filter.live_filter.clear,
+}
 
 end
 
@@ -391,9 +395,13 @@ Api.map.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.map.default_on_attach = keymap.default_on_attach
 
 -- TODO #3088 legacy mappings have to go somewhere
-Api.config.mappings.get_keymap = Api.map.get_keymap
-Api.config.mappings.get_keymap_default = Api.map.get_keymap_default
-Api.config.mappings.default_on_attach = Api.map.default_on_attach
+Api.config = {
+  mappings = {
+    get_keymap = Api.map.get_keymap,
+    get_keymap_default = Api.map.get_keymap_default,
+    default_on_attach = Api.map.default_on_attach,
+  }
+}
 
 end
 
@@ -403,7 +411,10 @@ function Api.hydrate_health(health)
 Api.health.hi_test = wrap(appearance_hi_test)
 
 -- TODO #3088 legacy mappings have to go somewhere
-Api.diagnostics.hi_test = Api.health.hi_test
+Api.diagnostics = {
+  hi_test = Api.health.hi_test,
+}
+
 end
 
 Api.commands.get = wrap(function()

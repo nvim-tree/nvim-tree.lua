@@ -2922,16 +2922,16 @@ bulk.trash()                                *nvim_tree.api.marks.bulk.trash()*
     Delete all marked, prompting if |nvim_tree.Config.UI.Confirm| {trash}
 
 clear()                                          *nvim_tree.api.marks.clear()*
-    Clear all bookmarks.
+    Clear all marks.
 
 get()                                              *nvim_tree.api.marks.get()*
-    Return the node if it is bookmarked.
+    Return the node if it is marked.
 
     Return: ~
         (`nvim_tree.api.Node?`)
 
 list()                                            *nvim_tree.api.marks.list()*
-    Retrieve all bookmarked nodes.
+    Retrieve all marked nodes.
 
     Return: ~
         (`nvim_tree.api.Node[]`)
@@ -2947,7 +2947,7 @@ navigate.select()                      *nvim_tree.api.marks.navigate.select()*
     will be focused, a file will be opened.
 
 toggle({node})                                  *nvim_tree.api.marks.toggle()*
-    Toggle bookmark.
+    Toggle mark.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node`) file or directory
