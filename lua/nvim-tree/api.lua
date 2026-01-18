@@ -367,6 +367,9 @@ Api.live_filter.clear = filter.live_filter.clear
 
 end
 
+function Api.hydrate_marks(marks)
+  Api.marks = marks
+
 Api.marks.get = wrap_node(wrap_explorer_member("marks", "get"))
 Api.marks.list = wrap_explorer_member("marks", "list")
 Api.marks.toggle = wrap_node(wrap_explorer_member("marks", "toggle"))
@@ -377,6 +380,8 @@ Api.marks.bulk.move = wrap_explorer_member("marks", "bulk_move")
 Api.marks.navigate.next = wrap_explorer_member("marks", "navigate_next")
 Api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
 Api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
+
+end
 
 function Api.hydrate_map(map)
   Api.map = map

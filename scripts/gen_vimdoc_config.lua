@@ -34,6 +34,7 @@ local modules = {
   { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter", path = "./lua/nvim_tree/api/filter.lua", },
   { helptag = "nvim-tree-api-health",                 title = "Lua module: nvim_tree.api.health", path = "./lua/nvim_tree/api/health.lua", },
   { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",    path = "./lua/nvim_tree/api/map.lua", },
+  { helptag = "nvim-tree-api-marks",                    title = "Lua module: nvim_tree.api.marks",    path = "./lua/nvim_tree/api/marks.lua", },
   { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",   path = "./lua/nvim_tree/api/tree.lua", },
 }
 

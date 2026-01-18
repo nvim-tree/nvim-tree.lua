@@ -177,10 +177,6 @@ TODO #3088 remove dummy tags once entire API has been migrated
 *nvim_tree.api.fs.rename_full()*
 *nvim_tree.api.fs.rename_sub()*
 *nvim_tree.api.fs.trash()*
-*nvim_tree.api.marks.bulk.delete()*
-*nvim_tree.api.marks.bulk.move()*
-*nvim_tree.api.marks.bulk.trash()*
-*nvim_tree.api.marks.toggle()*
 *nvim_tree.api.node.navigate.diagnostics.next()*
 *nvim_tree.api.node.navigate.diagnostics.prev()*
 *nvim_tree.api.node.navigate.git.next()*
@@ -2911,6 +2907,50 @@ get_keymap_default()                  *nvim_tree.api.map.get_keymap_default()*
 
     Return: ~
         (`vim.api.keyset.get_keymap[]`)
+
+
+==============================================================================
+Lua module: nvim_tree.api.marks                          *nvim-tree-api-marks*
+
+bulk.delete()                              *nvim_tree.api.marks.bulk.delete()*
+    Delete all marked, prompting if |nvim_tree.Config.UI.Confirm| {remove}
+
+bulk.move()                                  *nvim_tree.api.marks.bulk.move()*
+    Prompts for a directory to move all marked nodes into.
+
+bulk.trash()                                *nvim_tree.api.marks.bulk.trash()*
+    Delete all marked, prompting if |nvim_tree.Config.UI.Confirm| {trash}
+
+clear()                                          *nvim_tree.api.marks.clear()*
+    Clear all bookmarks.
+
+get()                                              *nvim_tree.api.marks.get()*
+    Return the node if it is bookmarked.
+
+    Return: ~
+        (`nvim_tree.api.Node?`)
+
+list()                                            *nvim_tree.api.marks.list()*
+    Retrieve all bookmarked nodes.
+
+    Return: ~
+        (`nvim_tree.api.Node[]`)
+
+navigate.next()                          *nvim_tree.api.marks.navigate.next()*
+    Navigate to the next marked node, wraps.
+
+navigate.prev()                          *nvim_tree.api.marks.navigate.prev()*
+    Navigate to the previous marked node, wraps.
+
+navigate.select()                      *nvim_tree.api.marks.navigate.select()*
+    Prompts for selection of a marked node, sorted by absolute paths. A folder
+    will be focused, a file will be opened.
+
+toggle({node})                                  *nvim_tree.api.marks.toggle()*
+    Toggle bookmark.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`) file or directory
 
 
 ==============================================================================
