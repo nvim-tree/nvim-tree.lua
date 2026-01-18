@@ -1,6 +1,12 @@
 ---@meta
 local nvim_tree = { api = { node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {}, }, run = {}, open = {}, buffer = {}, } } }
 
+---@class ApiNodeDeleteWipeBufferOpts
+---@field force boolean|nil default false
+
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
 
 function nvim_tree.api.node.buffer.delete() end
 
@@ -78,6 +84,6 @@ function nvim_tree.api.node.run.system() end
 
 function nvim_tree.api.node.show_info_popup() end
 
-require("nvim-tree.api").hydrate_node(nvim_tree.api.node)
+require("nvim-tree.api.impl").node(nvim_tree.api.node)
 
 return nvim_tree.api.node

@@ -793,9 +793,6 @@ function M.setup(conf)
 
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
-
-  -- TODO #3088 remove this bootstrap once api/init.lua replaces old api.lua
-  require("nvim-tree.api.init")
 end
 
 vim.g.NvimTreeRequired = 1

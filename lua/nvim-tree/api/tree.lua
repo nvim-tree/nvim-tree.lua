@@ -19,7 +19,7 @@ function nvim_tree.api.tree.open(opts) end
 ---(default: false)
 ---@field current_window? boolean
 ---
----Open the tree in the specified  [window-ID], overrides {current_window}
+---Open the tree in the specified [window-ID], overrides {current_window}
 ---@field winid? integer
 ---
 ---Find the current buffer.
@@ -52,6 +52,10 @@ function nvim_tree.api.tree.toggle(opts) end
 ---Find the current buffer.
 ---(default: false)
 ---@field find_file? boolean
+---
+---Update root following {find_file}, see [nvim_tree.Config.UpdateFocusedFile] {update_root}
+---(default: false)
+---@field update_root? boolean
 ---
 ---Focus the tree when opening.
 ---(default: true)
@@ -279,6 +283,6 @@ function nvim_tree.api.tree.winid(opts) end
 ---
 function nvim_tree.api.tree.reload_git() end
 
-require("nvim-tree.api").hydrate_tree(nvim_tree.api.tree)
+require("nvim-tree.api.impl").tree(nvim_tree.api.tree)
 
 return nvim_tree.api.tree

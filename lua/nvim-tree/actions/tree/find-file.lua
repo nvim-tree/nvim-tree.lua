@@ -6,7 +6,7 @@ local finders_find_file = require("nvim-tree.actions.finders.find-file")
 local M = {}
 
 --- Find file or buffer
----@param opts ApiTreeFindFileOpts|nil|boolean legacy -> opts.buf
+---@param opts nvim_tree.api.tree.find_file.Opts|nil|boolean legacy -> opts.buf
 function M.fn(opts)
   -- legacy arguments
   if type(opts) == "string" then

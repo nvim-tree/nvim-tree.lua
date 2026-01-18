@@ -2647,6 +2647,18 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
 ==============================================================================
 Lua module: nvim_tree.api.node                            *nvim-tree-api-node*
 
+*ApiNodeDeleteWipeBufferOpts*
+
+    Fields: ~
+      • {force}  (`boolean?`) default false
+
+*NodeEditOpts*
+
+    Fields: ~
+      • {quit_on_open}  (`boolean?`) default false
+      • {focus}         (`boolean?`) default true
+
+
 nvim_tree.api.node.buffer.delete()        *nvim_tree.api.node.buffer.delete()*
 
 nvim_tree.api.node.buffer.wipe()            *nvim_tree.api.node.buffer.wipe()*
@@ -2911,6 +2923,9 @@ toggle({opts})                                   *nvim_tree.api.tree.toggle()*
                   |window-ID|, overrides {current_window}
                 • {find_file}? (`boolean`, default: false) Find the current
                   buffer.
+                • {update_root}? (`boolean`, default: false) Update root
+                  following {find_file}, see
+                  |nvim_tree.Config.UpdateFocusedFile| {update_root}
                 • {focus}? (`boolean`, default: true) Focus the tree when
                   opening.
 

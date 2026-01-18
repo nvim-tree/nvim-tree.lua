@@ -119,7 +119,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      require("nvim-tree.api").tree.collapse_all(false)
+      require("nvim-tree.api").tree.collapse_all({ keep_buffers = false })
     end,
   },
   {
@@ -129,7 +129,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      require("nvim-tree.api").tree.collapse_all(true)
+      require("nvim-tree.api").tree.collapse_all({ keep_buffers = true })
     end,
   },
   {

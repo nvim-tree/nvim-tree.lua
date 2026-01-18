@@ -8,6 +8,6 @@ local nvim_tree = { api = { health = {} } }
 ---
 function nvim_tree.api.health.hi_test() end
 
-require("nvim-tree.api").hydrate_health(nvim_tree.api.health)
+require("nvim-tree.api.impl").health(nvim_tree.api.health)
 
 return nvim_tree.api.health
