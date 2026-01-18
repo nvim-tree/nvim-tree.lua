@@ -1,5 +1,6 @@
 local M = {}
 
+---@type nvim_tree.api.commands.Command[]
 local CMDS = {
   {
     name = "NvimTreeOpen",
@@ -118,7 +119,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      require("nvim-tree.api").tree.collapse_all(false)
+      require("nvim-tree.api").tree.collapse_all({ keep_buffers = false })
     end,
   },
   {
@@ -128,7 +129,7 @@ local CMDS = {
       bar = true,
     },
     command = function()
-      require("nvim-tree.api").tree.collapse_all(true)
+      require("nvim-tree.api").tree.collapse_all({ keep_buffers = true })
     end,
   },
   {
@@ -137,11 +138,12 @@ local CMDS = {
       desc = "nvim-tree: highlight test",
     },
     command = function()
-      require("nvim-tree.api").diagnostics.hi_test()
+      require("nvim-tree.api").health.hi_test()
     end,
   },
 }
 
+---@return nvim_tree.api.commands.Command[]
 function M.get()
   return vim.deepcopy(CMDS)
 end

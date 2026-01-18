@@ -26,7 +26,7 @@ end
 
 ---Collapse a node, root if nil
 ---@param node Node?
----@param opts ApiCollapseOpts
+---@param opts nvim_tree.api.tree.collapse.Opts
 local function collapse(node, opts)
   local explorer = core.get_explorer()
   if not explorer then
@@ -60,7 +60,7 @@ local function collapse(node, opts)
 end
 
 
----@param opts ApiCollapseOpts|boolean|nil legacy -> opts.keep_buffers
+---@param opts nvim_tree.api.tree.collapse.Opts|boolean|nil legacy -> opts.keep_buffers
 function M.all(opts)
   -- legacy arguments
   if type(opts) == "boolean" then
@@ -73,7 +73,7 @@ function M.all(opts)
 end
 
 ---@param node Node
----@param opts ApiCollapseOpts?
+---@param opts nvim_tree.api.tree.collapse.Opts?
 function M.node(node, opts)
   collapse(node, opts or {})
 end
