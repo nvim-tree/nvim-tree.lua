@@ -428,9 +428,14 @@ Api.diagnostics = {
 
 end
 
+function Api.hydrate_commands(commands)
+  Api.commands = commands
+
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()
 end)
+
+end
 
 ---Create a decorator class by calling :extend()
 ---See :help nvim-tree-decorators

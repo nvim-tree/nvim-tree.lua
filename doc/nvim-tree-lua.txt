@@ -966,18 +966,6 @@ marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
 
 
 ==============================================================================
-API: Commands                                         *nvim-tree-api.commands*
-
-commands.get()                                  *nvim-tree-api.commands.get()*
-    Retrieve all commands, see |nvim-tree-commands|
-
-    Return: ~
-        (table) array containing |nvim_create_user_command()| parameters:
-        • {name}    (string)
-        • {command} (function)
-        • {opts}    (table)
-
-==============================================================================
 Mappings                                                  *nvim-tree-mappings*
 
 Mappings are set via the |nvim_tree.Config| {on_attach} function, which is run upon
@@ -2730,6 +2718,25 @@ Class: Config.Log                                       *nvim-tree-config-log*
                         |nvim_tree.Config.FilesystemWatchers| processing,
                         verbose.
 
+
+
+==============================================================================
+Lua module: nvim_tree.api.commands                    *nvim-tree-api-commands*
+
+*nvim_tree.api.commands.Command*
+    Arguments for |nvim_create_user_command()|
+
+    Fields: ~
+      • {name}     (`string`)
+      • {command}  (`fun(args: vim.api.keyset.create_user_command.command_args)`)
+      • {opts}     (`vim.api.keyset.user_command`)
+
+
+get()                                           *nvim_tree.api.commands.get()*
+    Retrieve all nvim-tree commands, see |nvim-tree-commands|
+
+    Return: ~
+        (`nvim_tree.api.commands.Command[]`)
 
 
 ==============================================================================

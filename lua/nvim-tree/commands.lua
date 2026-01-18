@@ -1,5 +1,6 @@
 local M = {}
 
+---@type nvim_tree.api.commands.Command[]
 local CMDS = {
   {
     name = "NvimTreeOpen",
@@ -142,6 +143,7 @@ local CMDS = {
   },
 }
 
+---@return nvim_tree.api.commands.Command[]
 function M.get()
   return vim.deepcopy(CMDS)
 end
