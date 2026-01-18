@@ -392,7 +392,14 @@ Api.config.mappings.default_on_attach = Api.map.default_on_attach
 
 end
 
-Api.diagnostics.hi_test = wrap(appearance_hi_test)
+function Api.hydrate_health(health)
+  Api.health = health
+
+Api.health.hi_test = wrap(appearance_hi_test)
+
+-- TODO #3088 legacy mappings have to go somewhere
+Api.diagnostics.hi_test = Api.health.hi_test
+end
 
 Api.commands.get = wrap(function()
   return require("nvim-tree.commands").get()

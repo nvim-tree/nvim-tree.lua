@@ -137,7 +137,7 @@ local CMDS = {
       desc = "nvim-tree: highlight test",
     },
     command = function()
-      require("nvim-tree.api").diagnostics.hi_test()
+      require("nvim-tree.api").health.hi_test()
     end,
   },
 }
