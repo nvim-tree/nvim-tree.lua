@@ -251,106 +251,75 @@ See |nvim-tree-highlight-groups| for details.
 ==============================================================================
 Commands                                                  *nvim-tree-commands*
 
-TODO #3088 clean up descriptions and render call as Lua.
+Commands may be executed with a `<bang>` (`!`) or take a `<path>` string argument.
 
-*:NvimTreeOpen*
+*:NvimTreeOpen*                            |nvim_tree.api.tree.open()| >lua
 
-    Opens the tree. See |nvim_tree.api.tree.open()|
+  require("nvim-tree.api").tree.open({
+    path = "<args>"
+  })
+<
+*:NvimTreeClose*                           |nvim_tree.api.tree.close()| >lua
 
-    Calls: `api.tree.open({ path = "<args>" })`
+  require("nvim-tree.api").tree.close()
+<
+*:NvimTreeToggle*                          |nvim_tree.api.tree.toggle()| >lua
 
-*:NvimTreeClose*
+  require("nvim-tree.api").tree.toggle({
+    path = "<args>",
+    find_file = false,
+    update_root = false,
+    focus = true,
+  })
+<
+*:NvimTreeFocus*                           |nvim_tree.api.tree.open()| >lua
 
-    Closes the tree. See |nvim_tree.api.tree.close()|
+  require("nvim-tree.api").tree.open()
+<
+*:NvimTreeRefresh*                         |nvim_tree.api.tree.reload()| >lua
 
-    Calls: `api.tree.close()`
+  require("nvim-tree.api").tree.reload()
+<
+*:NvimTreeFindFile*                        |nvim_tree.api.tree.find_file()| >lua
 
-*:NvimTreeToggle*
+  require("nvim-tree.api").tree.find_file({
+    open = true,
+    update_root = "<bang>",
+    focus = true,
+  })
+<
+*:NvimTreeFindFileToggle*                  |nvim_tree.api.tree.toggle()| >lua
 
-    Open or close the tree. See |nvim_tree.api.tree.toggle()|
+  require("nvim-tree.api").tree.toggle({
+    path = "<args>",
+    find_file = true,
+    update_root = "<bang>",
+    focus = true,
+  })
+<
+*:NvimTreeClipboard*                       |nvim-tree-api.fs.print_clipboard()| >lua
 
-    Calls: `api.tree.toggle({ path = "<args>", find_file = false, update_root = false, focus = true, })`
+  require("nvim-tree.api").fs.print_clipboard()
+<
+*:NvimTreeCollapse*                        |nvim_tree.api.tree.collapse_all()| >lua
 
-*:NvimTreeFocus*
+  require("nvim-tree.api").tree.collapse_all({
+    keep_buffers = false
+  })
+<
+*:NvimTreeCollapseKeepBuffers*             |nvim_tree.api.tree.collapse_all()| >lua
 
-    Open the tree if it is closed, and then focus on the tree.
+  require("nvim-tree.api").tree.collapse_all({
+    keep_buffers = true
+  })
+<
+*:NvimTreeHiTest*                          |nvim_tree.api.health.hi_test()| >lua
 
-    See |nvim_tree.api.tree.open()|
-
-    Calls: `api.tree.open()`
-
-*:NvimTreeRefresh*
-
-    Refresh the tree. See |nvim_tree.api.tree.reload()|
-
-    Calls: `api.tree.reload()`
-
-*:NvimTreeFindFile*
-
-    The command will change the cursor in the tree for the current bufname.
-
-    It will also open the leafs of the tree leading to the file in the buffer
-    (if you opened a file with something else than the NvimTree, like `fzf` or
-    `:split`)
-
-    Invoke with a bang `:NvimTreeFindFile!` to update the root.
-
-    See |nvim_tree.api.tree.find_file()|
-
-    Calls: `api.tree.find_file({ update_root = <bang>, open = true, focus = true, })`
-
-*:NvimTreeFindFileToggle*
-
-    close the tree or change the cursor in the tree for the current bufname,
-    similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
-    optional path argument.
-
-    Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
-
-    See |nvim_tree.api.tree.toggle()|
-
-    Calls: `api.tree.toggle({ path = "<args>", update_root = <bang>, find_file = true, focus = true, })`
-
-*:NvimTreeClipboard*
-
-    Print clipboard content for both cut and copy
-
-    See |nvim-tree-api.fs.print_clipboard()|
-
-    Calls: `api.fs.print_clipboard()`
-
+  require("nvim-tree.api").health.hi_test()
+<
 *:NvimTreeResize*
 
-    Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
-    resizes the window to the width of 50. If the size starts with "+" or "-" it
-    adds or removes the given value to the current window width.
-    Example `:NvimTreeResize -20` removes the value 20 from the current width. And
-    `:NvimTreeResize +20` adds the value 20 to the current width.
-
-*:NvimTreeCollapse*
-
-    Collapses the nvim-tree recursively.
-
-    See |nvim_tree.api.tree.collapse_all()|
-
-    Calls: `api.tree.collapse_all({ keep_buffers = false })`
-
-*:NvimTreeCollapseKeepBuffers*
-
-    Collapses the nvim-tree recursively, but keep the directories open, which are
-    used in an open buffer.
-
-    See |nvim_tree.api.tree.collapse_all()|
-
-    Calls: `api.tree.collapse_all({ keep_buffers = true })`
-
-*:NvimTreeHiTest*
-
-    Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
-
-    See |nvim_tree.api.health.hi_test()|
-
-    Calls: `api.health.hi_test()`
+Columns integer argument is absolute (e.g. `40`) or a delta (e.g. `-5`, `+5`)
 
 ==============================================================================
 Setup                                                        *nvim-tree-setup*
