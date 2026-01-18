@@ -96,67 +96,115 @@ Open the tree:  `:NvimTreeOpen`
 Show the mappings:  `g?`
 
 `<C-]>`           CD                         |nvim_tree.api.tree.change_root_to_node()|
-`<C-e>`           Open: In Place             |nvim-tree-api.node.open.replace_tree_buffer()|
-`<C-k>`           Info                       |nvim-tree-api.node.show_info_popup()|
-`<C-r>`           Rename: Omit Filename      |nvim-tree-api.fs.rename_sub()|
-`<C-t>`           Open: New Tab              |nvim-tree-api.node.open.tab()|
-`<C-v>`           Open: Vertical Split       |nvim-tree-api.node.open.vertical()|
-`<C-x>`           Open: Horizontal Split     |nvim-tree-api.node.open.horizontal()|
-`<BS>`            Close Directory            |nvim-tree-api.node.navigate.parent_close()|
-`<CR>`            Open                       |nvim-tree-api.node.open.edit()|
-`<Del>`           Delete                     |nvim-tree-api.fs.remove()|
-`<Tab>`           Open Preview               |nvim-tree-api.node.open.preview()|
-`>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
-`<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
-`.`               Run Command                |nvim-tree-api.node.run.cmd()|
+`<C-e>`           Open: In Place             |nvim_tree.api.node.open.replace_tree_buffer()|
+`<C-k>`           Info                       |nvim_tree.api.node.show_info_popup()|
+`<C-r>`           Rename: Omit Filename      |nvim_tree.api.fs.rename_sub()|
+`<C-t>`           Open: New Tab              |nvim_tree.api.node.open.tab()|
+`<C-v>`           Open: Vertical Split       |nvim_tree.api.node.open.vertical()|
+`<C-x>`           Open: Horizontal Split     |nvim_tree.api.node.open.horizontal()|
+`<BS>`            Close Directory            |nvim_tree.api.node.navigate.parent_close()|
+`<CR>`            Open                       |nvim_tree.api.node.open.edit()|
+`<Del>`           Delete                     |nvim_tree.api.fs.remove()|
+`<Tab>`           Open Preview               |nvim_tree.api.node.open.preview()|
+`>`               Next Sibling               |nvim_tree.api.node.navigate.sibling.next()|
+`<`               Previous Sibling           |nvim_tree.api.node.navigate.sibling.prev()|
+`.`               Run Command                |nvim_tree.api.node.run.cmd()|
 `-`               Up                         |nvim_tree.api.tree.change_root_to_parent()|
-`a`               Create File Or Directory   |nvim-tree-api.fs.create()|
-`bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
-`bt`              Trash Bookmarked           |nvim-tree-api.marks.bulk.trash()|
-`bmv`             Move Bookmarked            |nvim-tree-api.marks.bulk.move()|
+`a`               Create File Or Directory   |nvim_tree.api.fs.create()|
+`bd`              Delete Bookmarked          |nvim_tree.api.marks.bulk.delete()|
+`bt`              Trash Bookmarked           |nvim_tree.api.marks.bulk.trash()|
+`bmv`             Move Bookmarked            |nvim_tree.api.marks.bulk.move()|
 `B`               Toggle Filter: No Buffer   |nvim_tree.api.tree.toggle_no_buffer_filter()|
-`c`               Copy                       |nvim-tree-api.fs.copy.node()|
+`c`               Copy                       |nvim_tree.api.fs.copy.node()|
 `C`               Toggle Filter: Git Clean   |nvim_tree.api.tree.toggle_git_clean_filter()|
-`[c`              Prev Git                   |nvim-tree-api.node.navigate.git.prev()|
-`]c`              Next Git                   |nvim-tree-api.node.navigate.git.next()|
-`d`               Delete                     |nvim-tree-api.fs.remove()|
-`D`               Trash                      |nvim-tree-api.fs.trash()|
+`[c`              Prev Git                   |nvim_tree.api.node.navigate.git.prev()|
+`]c`              Next Git                   |nvim_tree.api.node.navigate.git.next()|
+`d`               Delete                     |nvim_tree.api.fs.remove()|
+`D`               Trash                      |nvim_tree.api.fs.trash()|
 `E`               Expand All                 |nvim_tree.api.tree.expand_all()|
-`e`               Rename: Basename           |nvim-tree-api.fs.rename_basename()|
-`]e`              Next Diagnostic            |nvim-tree-api.node.navigate.diagnostics.next()|
-`[e`              Prev Diagnostic            |nvim-tree-api.node.navigate.diagnostics.prev()|
-`F`               Live Filter: Clear         |nvim-tree-api.live_filter.clear()|
-`f`               Live Filter: Start         |nvim-tree-api.live_filter.start()|
+`e`               Rename: Basename           |nvim_tree.api.fs.rename_basename()|
+`]e`              Next Diagnostic            |nvim_tree.api.node.navigate.diagnostics.next()|
+`[e`              Prev Diagnostic            |nvim_tree.api.node.navigate.diagnostics.prev()|
+`F`               Live Filter: Clear         |nvim_tree.api.filter.live_filter.clear()|
+`f`               Live Filter: Start         |nvim_tree.api.filter.live_filter.start()|
 `g?`              Help                       |nvim_tree.api.tree.toggle_help()|
-`gy`              Copy Absolute Path         |nvim-tree-api.fs.copy.absolute_path()|
-`ge`              Copy Basename              |nvim-tree-api.fs.copy.basename()|
+`gy`              Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
+`ge`              Copy Basename              |nvim_tree.api.fs.copy.basename()|
 `H`               Toggle Filter: Dotfiles    |nvim_tree.api.tree.toggle_hidden_filter()|
 `I`               Toggle Filter: Git Ignore  |nvim_tree.api.tree.toggle_gitignore_filter()|
-`J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
-`K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
-`L`               Toggle Group Empty         |nvim-tree-api.node.open.toggle_group_empty()|
+`J`               Last Sibling               |nvim_tree.api.node.navigate.sibling.last()|
+`K`               First Sibling              |nvim_tree.api.node.navigate.sibling.first()|
+`L`               Toggle Group Empty         |nvim_tree.api.node.open.toggle_group_empty()|
 `M`               Toggle Filter: No Bookmark |nvim_tree.api.tree.toggle_no_bookmark_filter()|
-`m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
-`o`               Open                       |nvim-tree-api.node.open.edit()|
-`O`               Open: No Window Picker     |nvim-tree-api.node.open.no_window_picker()|
-`p`               Paste                      |nvim-tree-api.fs.paste()|
-`P`               Parent Directory           |nvim-tree-api.node.navigate.parent()|
+`m`               Toggle Bookmark            |nvim_tree.api.marks.toggle()|
+`o`               Open                       |nvim_tree.api.node.open.edit()|
+`O`               Open: No Window Picker     |nvim_tree.api.node.open.no_window_picker()|
+`p`               Paste                      |nvim_tree.api.fs.paste()|
+`P`               Parent Directory           |nvim_tree.api.node.navigate.parent()|
 `q`               Close                      |nvim_tree.api.tree.close()|
-`r`               Rename                     |nvim-tree-api.fs.rename()|
+`r`               Rename                     |nvim_tree.api.fs.rename()|
 `R`               Refresh                    |nvim_tree.api.tree.reload()|
-`s`               Run System                 |nvim-tree-api.node.run.system()|
+`s`               Run System                 |nvim_tree.api.node.run.system()|
 `S`               Search                     |nvim_tree.api.tree.search_node()|
-`u`               Rename: Full Path          |nvim-tree-api.fs.rename_full()|
+`u`               Rename: Full Path          |nvim_tree.api.fs.rename_full()|
 `U`               Toggle Filter: Hidden      |nvim_tree.api.tree.toggle_custom_filter()|
 `W`               Collapse All               |nvim_tree.api.tree.collapse_all()|
-`x`               Cut                        |nvim-tree-api.fs.cut()|
-`y`               Copy Name                  |nvim-tree-api.fs.copy.filename()|
-`Y`               Copy Relative Path         |nvim-tree-api.fs.copy.relative_path()|
-`<2-LeftMouse>`   Open                       |nvim-tree-api.node.open.edit()|
+`x`               Cut                        |nvim_tree.api.fs.cut()|
+`y`               Copy Name                  |nvim_tree.api.fs.copy.filename()|
+`Y`               Copy Relative Path         |nvim_tree.api.fs.copy.relative_path()|
+`<2-LeftMouse>`   Open                       |nvim_tree.api.node.open.edit()|
 `<2-RightMouse>`  CD                         |nvim_tree.api.tree.change_root_to_node()|
 
 ==============================================================================
 Quickstart: Custom Mappings             *nvim-tree-quickstart-custom-mappings*
+
+
+
+
+TODO #3088 remove dummy tags once entire API has been migrated
+
+*nvim_tree.api.fs.copy.absolute_path()*
+*nvim_tree.api.fs.copy.basename()*
+*nvim_tree.api.fs.copy.filename()*
+*nvim_tree.api.fs.copy.node()*
+*nvim_tree.api.fs.copy.relative_path()*
+*nvim_tree.api.fs.create()*
+*nvim_tree.api.fs.cut()*
+*nvim_tree.api.fs.paste()*
+*nvim_tree.api.fs.remove()*
+*nvim_tree.api.fs.rename()*
+*nvim_tree.api.fs.rename_basename()*
+*nvim_tree.api.fs.rename_full()*
+*nvim_tree.api.fs.rename_sub()*
+*nvim_tree.api.fs.trash()*
+*nvim_tree.api.marks.bulk.delete()*
+*nvim_tree.api.marks.bulk.move()*
+*nvim_tree.api.marks.bulk.trash()*
+*nvim_tree.api.marks.toggle()*
+*nvim_tree.api.node.navigate.diagnostics.next()*
+*nvim_tree.api.node.navigate.diagnostics.prev()*
+*nvim_tree.api.node.navigate.git.next()*
+*nvim_tree.api.node.navigate.git.prev()*
+*nvim_tree.api.node.navigate.parent()*
+*nvim_tree.api.node.navigate.parent_close()*
+*nvim_tree.api.node.navigate.sibling.first()*
+*nvim_tree.api.node.navigate.sibling.last()*
+*nvim_tree.api.node.navigate.sibling.next()*
+*nvim_tree.api.node.navigate.sibling.prev()*
+*nvim_tree.api.node.open.edit()*
+*nvim_tree.api.node.open.horizontal()*
+*nvim_tree.api.node.open.no_window_picker()*
+*nvim_tree.api.node.open.preview()*
+*nvim_tree.api.node.open.replace_tree_buffer()*
+*nvim_tree.api.node.open.tab()*
+*nvim_tree.api.node.open.toggle_group_empty()*
+*nvim_tree.api.node.open.vertical()*
+*nvim_tree.api.node.run.cmd()*
+*nvim_tree.api.node.run.system()*
+*nvim_tree.api.node.show_info_popup()*
+
+
+
 
 |nvim-tree-mappings-default| are applied by default however you may customise
 via |nvim_tree.Config| {on_attach} e.g. >lua
@@ -1208,8 +1256,8 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "e",              api.fs.rename_basename,             opts("Rename: Basename"))
   vim.keymap.set("n", "]e",             api.node.navigate.diagnostics.next, opts("Next Diagnostic"))
   vim.keymap.set("n", "[e",             api.node.navigate.diagnostics.prev, opts("Prev Diagnostic"))
-  vim.keymap.set("n", "F",              api.live_filter.clear,              opts("Live Filter: Clear"))
-  vim.keymap.set("n", "f",              api.live_filter.start,              opts("Live Filter: Start"))
+  vim.keymap.set("n", "F",              api.filter.live_filter.clear,       opts("Live Filter: Clear"))
+  vim.keymap.set("n", "f",              api.filter.live_filter.start,       opts("Live Filter: Start"))
   vim.keymap.set("n", "g?",             api.tree.toggle_help,               opts("Help"))
   vim.keymap.set("n", "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
   vim.keymap.set("n", "ge",             api.fs.copy.basename,               opts("Copy Basename"))
@@ -2847,6 +2895,17 @@ Class: Config.Log                                       *nvim-tree-config-log*
                         |nvim_tree.Config.FilesystemWatchers| processing,
                         verbose.
 
+
+
+==============================================================================
+Lua module: nvim_tree.api.filter                        *nvim-tree-api-filter*
+
+live_filter.clear()                 *nvim_tree.api.filter.live_filter.clear()*
+    Exit live filter mode.
+
+live_filter.start()                 *nvim_tree.api.filter.live_filter.start()*
+    Enter live filter mode. Opens an input window with |filetype|
+    `NvimTreeFilter`
 
 
 ==============================================================================

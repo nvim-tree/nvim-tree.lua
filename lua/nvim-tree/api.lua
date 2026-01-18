@@ -350,8 +350,17 @@ Api.git.reload = wrap_explorer("reload_git")
 Api.events.subscribe = events.subscribe
 Api.events.Event = events.Event
 
-Api.live_filter.start = wrap_explorer_member("live_filter", "start_filtering")
-Api.live_filter.clear = wrap_explorer_member("live_filter", "clear_filter")
+function Api.hydrate_filter(filter)
+  Api.filter = filter
+
+Api.filter.live_filter.start = wrap_explorer_member("live_filter", "start_filtering")
+Api.filter.live_filter.clear = wrap_explorer_member("live_filter", "clear_filter")
+
+-- TODO #3088 legacy mappings have to go somewhere
+Api.live_filter.start = filter.live_filter.start
+Api.live_filter.clear = filter.live_filter.clear
+
+end
 
 Api.marks.get = wrap_node(wrap_explorer_member("marks", "get"))
 Api.marks.list = wrap_explorer_member("marks", "list")
@@ -371,6 +380,7 @@ Api.map.get_keymap = wrap(keymap.get_keymap)
 Api.map.get_keymap_default = wrap(keymap.get_keymap_default)
 Api.map.default_on_attach = keymap.default_on_attach
 
+-- TODO #3088 legacy mappings have to go somewhere
 Api.config.mappings.get_keymap = Api.map.get_keymap
 Api.config.mappings.get_keymap_default = Api.map.get_keymap_default
 Api.config.mappings.default_on_attach = Api.map.default_on_attach
