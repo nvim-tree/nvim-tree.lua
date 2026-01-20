@@ -2332,26 +2332,34 @@ Class: Config.Log                                       *nvim-tree-config-log*
 
 
 ==============================================================================
-Lua module: nvim_tree.api                                      *nvim-tree-api*
+api Overview                                                   *nvim-tree-api*
 
 nvim-tree exposes a public API. This is non breaking, with additions made as
 necessary.
 
 Please do not require or use modules other than `nvim-tree.api`, as internal
-modules are not stable and will change without notice.
+modules will change without notice.
 
-The API is separated into multiple modules, which can be accessed via the
-parent `nvim-tree.api` or via `nvim-tree.api.<module>`. The following examples
-are equivalent: >lua
+The API is separated into multiple modules:
+• |nvim-tree-api-commands|
+• |nvim-tree-api-events|
+• |nvim-tree-api-filter|
+• |nvim-tree-api-fs|
+• |nvim-tree-api-health|
+• |nvim-tree-api-map|
+• |nvim-tree-api-marks|
+• |nvim-tree-api-node|
+• |nvim-tree-api-tree|
+
+Modules are accessed via `api.<module>.<function>`
+
+Example invocation of the `reload` function in the `tree` module: >lua
 
     local api = require("nvim-tree.api")
     api.tree.reload()
-
-    local tree = require("nvim-tree.api.tree")
-    tree.reload()
 <
 
-Generally, functions accepting {node} as their first argument will use the
+Generally, functions accepting a {node} as their first argument will use the
 node under the cursor when that argument is not present or nil. e.g. the
 following are functionally identical: >lua
 
@@ -2361,64 +2369,9 @@ following are functionally identical: >lua
 <
 
 
-*nvim_tree.api.DirectoryLinkNode*
-    Extends: |nvim_tree.api.DirectoryNode|
-
-    DirectoryLink
-
-*nvim_tree.api.DirectoryNode*
-    Extends: |nvim_tree.api.Node|
-
-    Directory
-
-    Fields: ~
-      • {has_children}  (`boolean`)
-      • {nodes}         (`nvim_tree.api.Node[]`)
-      • {open}          (`boolean`)
-
-*nvim_tree.api.FileLinkNode*
-    Extends: |nvim_tree.api.FileNode|
-
-    File Link
-
-*nvim_tree.api.FileNode*
-    Extends: |nvim_tree.api.Node|
-
-    File
-
-    Fields: ~
-      • {extension}  (`string`)
-
-*nvim_tree.api.LinkNode*
-    Link mixin
-
-    Fields: ~
-      • {link_to}         (`string`)
-      • {fs_stat_target}  (`uv.fs_stat.result`)
-
-*nvim_tree.api.Node*
-    Base Node, Abstract
-
-    Fields: ~
-      • {type}           (`"file"|"directory"|"link"`) uv.fs_stat.result.type
-      • {absolute_path}  (`string`)
-      • {executable}     (`boolean`)
-      • {fs_stat}        (`uv.fs_stat.result?`)
-      • {git_status}     (`GitNodeStatus?`)
-      • {hidden}         (`boolean`)
-      • {name}           (`string`)
-      • {parent}         (`nvim_tree.api.DirectoryNode?`)
-      • {diag_severity}  (`lsp.DiagnosticSeverity?`)
-
-*nvim_tree.api.RootNode*
-    Extends: |nvim_tree.api.DirectoryNode|
-
-    Root Directory
-
-
 
 ==============================================================================
-Lua module: nvim_tree.api.commands                    *nvim-tree-api-commands*
+api.commands                                          *nvim-tree-api-commands*
 
 get()                                           *nvim_tree.api.commands.get()*
     Retrieve all |nvim-tree-commands|
@@ -2436,7 +2389,7 @@ get()                                           *nvim_tree.api.commands.get()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.events                        *nvim-tree-api-events*
+api.events                                              *nvim-tree-api-events*
 
 subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
     Register a handler for an event, see |nvim-tree-events|.
@@ -2447,7 +2400,7 @@ subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.filter                        *nvim-tree-api-filter*
+api.filter                                              *nvim-tree-api-filter*
 
 live_filter.clear()                 *nvim_tree.api.filter.live_filter.clear()*
     Exit live filter mode.
@@ -2458,7 +2411,7 @@ live_filter.start()                 *nvim_tree.api.filter.live_filter.start()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.fs                                *nvim-tree-api-fs*
+api.fs                                                      *nvim-tree-api-fs*
 
 clear_clipboard()                         *nvim_tree.api.fs.clear_clipboard()*
     Clear the nvim-tree clipboard.
@@ -2566,7 +2519,7 @@ trash({node})                                       *nvim_tree.api.fs.trash()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.health                        *nvim-tree-api-health*
+api.health                                              *nvim-tree-api-health*
 
 hi_test()                                     *nvim_tree.api.health.hi_test()*
     Open a new buffer displaying all nvim-tree highlight groups, their link
@@ -2576,7 +2529,7 @@ hi_test()                                     *nvim_tree.api.health.hi_test()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.map                              *nvim-tree-api-map*
+api.map                                                    *nvim-tree-api-map*
 
 default_on_attach({bufnr})             *nvim_tree.api.map.default_on_attach()*
     Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.Config|
@@ -2602,7 +2555,7 @@ get_keymap_default()                  *nvim_tree.api.map.get_keymap_default()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.marks                          *nvim-tree-api-marks*
+api.marks                                                *nvim-tree-api-marks*
 
 bulk.delete()                              *nvim_tree.api.marks.bulk.delete()*
     Delete all marked, prompting if |nvim_tree.Config.UI.Confirm| {remove}
@@ -2646,7 +2599,7 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.node                            *nvim-tree-api-node*
+api.node                                                  *nvim-tree-api-node*
 
 buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
     Deletes node's related buffer, if one exists. Executes |:bdelete| or
@@ -2978,7 +2931,7 @@ show_info_popup({node})                 *nvim_tree.api.node.show_info_popup()*
 
 
 ==============================================================================
-Lua module: nvim_tree.api.tree                            *nvim-tree-api-tree*
+api.tree                                                  *nvim-tree-api-tree*
 
 change_root({path})                         *nvim_tree.api.tree.change_root()*
     Change the tree's root to a path.
@@ -3181,6 +3134,68 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 
     Return: ~
         (`integer?`) |window-ID|, nil if tree is not visible.
+
+
+==============================================================================
+api Classes                                            *nvim-tree-api-classes*
+
+Classes shared by multiple API modules.
+
+
+*nvim_tree.api.DirectoryLinkNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    DirectoryLink
+
+*nvim_tree.api.DirectoryNode*
+    Extends: |nvim_tree.api.Node|
+
+    Directory
+
+    Fields: ~
+      • {has_children}  (`boolean`)
+      • {nodes}         (`nvim_tree.api.Node[]`)
+      • {open}          (`boolean`)
+
+*nvim_tree.api.FileLinkNode*
+    Extends: |nvim_tree.api.FileNode|
+
+    File Link
+
+*nvim_tree.api.FileNode*
+    Extends: |nvim_tree.api.Node|
+
+    File
+
+    Fields: ~
+      • {extension}  (`string`)
+
+*nvim_tree.api.LinkNode*
+    Link mixin
+
+    Fields: ~
+      • {link_to}         (`string`)
+      • {fs_stat_target}  (`uv.fs_stat.result`)
+
+*nvim_tree.api.Node*
+    Base Node, Abstract
+
+    Fields: ~
+      • {type}           (`"file"|"directory"|"link"`) uv.fs_stat.result.type
+      • {absolute_path}  (`string`)
+      • {executable}     (`boolean`)
+      • {fs_stat}        (`uv.fs_stat.result?`)
+      • {git_status}     (`GitNodeStatus?`)
+      • {hidden}         (`boolean`)
+      • {name}           (`string`)
+      • {parent}         (`nvim_tree.api.DirectoryNode?`)
+      • {diag_severity}  (`lsp.DiagnosticSeverity?`)
+
+*nvim_tree.api.RootNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    Root Directory
+
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
