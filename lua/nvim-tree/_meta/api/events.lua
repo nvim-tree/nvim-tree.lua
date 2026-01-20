@@ -13,6 +13,4 @@ function nvim_tree.api.events.subscribe(event_type, callback) end
 
 nvim_tree.api.events.Event = events.Event
 
-require("nvim-tree.api-impl").events(nvim_tree.api.events)
-
 return nvim_tree.api.events

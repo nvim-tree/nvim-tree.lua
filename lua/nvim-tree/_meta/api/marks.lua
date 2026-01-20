@@ -55,6 +55,4 @@ function nvim_tree.api.marks.navigate.prev() end
 ---
 function nvim_tree.api.marks.navigate.select() end
 
-require("nvim-tree.api-impl").marks(nvim_tree.api.marks)
-
 return nvim_tree.api.marks

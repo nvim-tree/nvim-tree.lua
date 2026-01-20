@@ -11,6 +11,4 @@ function nvim_tree.api.filter.live_filter.start() end
 ---
 function nvim_tree.api.filter.live_filter.clear() end
 
-require("nvim-tree.api-impl").filter(nvim_tree.api.filter)
-
 return nvim_tree.api.filter

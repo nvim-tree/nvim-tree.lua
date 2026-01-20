@@ -16,6 +16,4 @@ local nvim_tree = { api = { commands = {} } }
 ---@return nvim_tree.api.commands.Command[]
 function nvim_tree.api.commands.get() end
 
-require("nvim-tree.api-impl").commands(nvim_tree.api.commands)
-
 return nvim_tree.api.commands

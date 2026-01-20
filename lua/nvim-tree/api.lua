@@ -73,9 +73,10 @@
 
 
 --
---Load and hydrate all
+--Load the (empty) meta definitions
 --
 local api = {
+  commands = require("nvim-tree._meta.api.commands"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
@@ -88,32 +89,8 @@ local api = {
 
 
 --
---Legacy mappings
+--Hydrate the implementations
 --
-api.git = {
-  reload = api.tree.reload_git,
-}
-api.live_filter = {
-  start = api.filter.live_filter.start,
-  clear = api.filter.live_filter.clear,
-}
-api.config = {
-  mappings = {
-    get_keymap = api.map.get_keymap,
-    get_keymap_default = api.map.get_keymap_default,
-    default_on_attach = api.map.default_on_attach,
-  }
-}
-api.diagnostics = {
-  hi_test = api.health.hi_test,
-}
-
--- TODO #3241 create a proper decorator API
-api.decorator = {}
-
----Create a decorator class by calling :extend()
----See :help nvim-tree-decorators
----@type nvim_tree.api.decorator.UserDecorator
-api.decorator.UserDecorator = require("nvim-tree.renderer.decorator.user") --[[@as nvim_tree.api.decorator.UserDecorator]]
+require("nvim-tree.api-impl")(api)
 
 return api
