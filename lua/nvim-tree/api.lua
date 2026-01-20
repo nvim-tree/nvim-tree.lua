@@ -76,14 +76,14 @@
 --Load and hydrate all
 --
 local api = {
-  events = require("nvim-tree.api.events"),
-  filter = require("nvim-tree.api.filter"),
-  fs = require("nvim-tree.api.fs"),
-  health = require("nvim-tree.api.health"),
-  map = require("nvim-tree.api.map"),
-  marks = require("nvim-tree.api.marks"),
-  node = require("nvim-tree.api.node"),
-  tree = require("nvim-tree.api.tree"),
+  events = require("nvim-tree._meta.api.events"),
+  filter = require("nvim-tree._meta.api.filter"),
+  fs = require("nvim-tree._meta.api.fs"),
+  health = require("nvim-tree._meta.api.health"),
+  map = require("nvim-tree._meta.api.map"),
+  marks = require("nvim-tree._meta.api.marks"),
+  node = require("nvim-tree._meta.api.node"),
+  tree = require("nvim-tree._meta.api.tree"),
 }
 
 

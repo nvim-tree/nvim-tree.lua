@@ -21,8 +21,6 @@ mkdir "${DIR_OUT}"
 
 case "${1}" in
 	"codestyle-check")
-		echo "TODO #3088 skipping codestyle-check until api.lua refactor is complete"
-		exit 0
 		jq \
 			'.diagnostics.neededFileStatus[] = "None" | .diagnostics.neededFileStatus."codestyle-check" = "Any"' \
 			"${PWD}/.luarc.json" > "${FILE_LUARC}"

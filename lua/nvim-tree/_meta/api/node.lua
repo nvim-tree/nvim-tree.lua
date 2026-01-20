@@ -284,6 +284,6 @@ function nvim_tree.api.node.run.system(node) end
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.show_info_popup(node) end
 
-require("nvim-tree.api.impl").node(nvim_tree.api.node)
+require("nvim-tree.api-impl").node(nvim_tree.api.node)
 
 return nvim_tree.api.node

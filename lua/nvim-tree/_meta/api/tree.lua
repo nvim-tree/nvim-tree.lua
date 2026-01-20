@@ -268,6 +268,6 @@ function nvim_tree.api.tree.winid(opts) end
 ---
 function nvim_tree.api.tree.reload_git() end
 
-require("nvim-tree.api.impl").tree(nvim_tree.api.tree)
+require("nvim-tree.api-impl").tree(nvim_tree.api.tree)
 
 return nvim_tree.api.tree

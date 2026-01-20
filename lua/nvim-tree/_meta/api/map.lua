@@ -19,6 +19,6 @@ function nvim_tree.api.map.get_keymap_default() end
 ---@param bufnr integer use the `bufnr` passed to {on_attach}
 function nvim_tree.api.map.default_on_attach(bufnr) end
 
-require("nvim-tree.api.impl").map(nvim_tree.api.map)
+require("nvim-tree.api-impl").map(nvim_tree.api.map)
 
 return nvim_tree.api.map

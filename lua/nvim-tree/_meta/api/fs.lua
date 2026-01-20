@@ -109,6 +109,6 @@ function nvim_tree.api.fs.rename_sub(node) end
 ---@param node nvim_tree.api.Node
 function nvim_tree.api.fs.trash(node) end
 
-require("nvim-tree.api.impl").fs(nvim_tree.api.fs)
+require("nvim-tree.api-impl").fs(nvim_tree.api.fs)
 
 return nvim_tree.api.fs

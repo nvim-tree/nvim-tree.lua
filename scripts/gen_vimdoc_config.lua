@@ -33,15 +33,15 @@ local modules = {
 
   { helptag = "nvim-tree-api",                        title = "Lua module: nvim_tree.api",          path = "./lua/nvim_tree/api.lua", },
 
-  { helptag = "nvim-tree-api-commands",               title = "Lua module: nvim_tree.api.commands", path = "./lua/nvim_tree/api/commands.lua", },
-  { helptag = "nvim-tree-api-events",                 title = "Lua module: nvim_tree.api.events",   path = "./lua/nvim_tree/api/events.lua", },
-  { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter",   path = "./lua/nvim_tree/api/filter.lua", },
-  { helptag = "nvim-tree-api-fs",                     title = "Lua module: nvim_tree.api.fs",       path = "./lua/nvim_tree/api/fs.lua", },
-  { helptag = "nvim-tree-api-health",                 title = "Lua module: nvim_tree.api.health",   path = "./lua/nvim_tree/api/health.lua", },
-  { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",      path = "./lua/nvim_tree/api/map.lua", },
-  { helptag = "nvim-tree-api-marks",                  title = "Lua module: nvim_tree.api.marks",    path = "./lua/nvim_tree/api/marks.lua", },
-  { helptag = "nvim-tree-api-node",                   title = "Lua module: nvim_tree.api.node",     path = "./lua/nvim_tree/api/node.lua", },
-  { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",     path = "./lua/nvim_tree/api/tree.lua", },
+  { helptag = "nvim-tree-api-commands",               title = "Lua module: nvim_tree.api.commands", path = "./lua/nvim_tree/_meta/api/commands.lua", },
+  { helptag = "nvim-tree-api-events",                 title = "Lua module: nvim_tree.api.events",   path = "./lua/nvim_tree/_meta/api/events.lua", },
+  { helptag = "nvim-tree-api-filter",                 title = "Lua module: nvim_tree.api.filter",   path = "./lua/nvim_tree/_meta/api/filter.lua", },
+  { helptag = "nvim-tree-api-fs",                     title = "Lua module: nvim_tree.api.fs",       path = "./lua/nvim_tree/_meta/api/fs.lua", },
+  { helptag = "nvim-tree-api-health",                 title = "Lua module: nvim_tree.api.health",   path = "./lua/nvim_tree/_meta/api/health.lua", },
+  { helptag = "nvim-tree-api-map",                    title = "Lua module: nvim_tree.api.map",      path = "./lua/nvim_tree/_meta/api/map.lua", },
+  { helptag = "nvim-tree-api-marks",                  title = "Lua module: nvim_tree.api.marks",    path = "./lua/nvim_tree/_meta/api/marks.lua", },
+  { helptag = "nvim-tree-api-node",                   title = "Lua module: nvim_tree.api.node",     path = "./lua/nvim_tree/_meta/api/node.lua", },
+  { helptag = "nvim-tree-api-tree",                   title = "Lua module: nvim_tree.api.tree",     path = "./lua/nvim_tree/_meta/api/tree.lua", },
 }
 
 -- hydrate file names
@@ -84,17 +84,12 @@ local config = {
 
     -- optional, no default xform
     fn_xform = function(fun)
-      -- print(string.format("fn_xform fun=%s", vim.inspect(fun)))
+      print(string.format("fn_xform fun=%s", vim.inspect(fun)))
 
       if (fun.module) then
         -- generator doesn't strip meta
         -- also cascades into fn_helptag_fmt
         local module = fun.module:gsub("._meta", "", 1)
-
-        if module ~= fun.module then
-          error("unexpected _meta in module")
-          print(string.format("fn_xform module: %s -> %s", fun.module, module))
-        end
 
         -- remove the API prefix from the left aligned function name
         -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
