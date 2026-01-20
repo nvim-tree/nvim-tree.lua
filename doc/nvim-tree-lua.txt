@@ -2,6 +2,12 @@
 
 Author: Yazdani Kiyan
                                        Type |gO| to see the table of contents.
+Help tag prefixes:
+• `nvim-tree-`  Help Sections e.g.
+  • |nvim-tree-mappings|
+  • |nvim-tree-config|
+• `nvim_tree.`  API and classes e.g.
+  • |nvim_tree.config.filesystem_watchers|
 
 ==============================================================================
 Introduction                                          *nvim-tree-introduction*
