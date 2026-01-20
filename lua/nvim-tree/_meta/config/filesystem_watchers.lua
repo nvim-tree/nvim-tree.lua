@@ -12,7 +12,7 @@ error("Cannot require a meta file")
 --- - A function that is passed an absolute path and returns `true` to disable
 ---This may be useful when a path is not in `.gitignore` or git integration is disabled.
 ---
----@class nvim_tree.Config.FilesystemWatchers
+---@class nvim_tree.config.filesystem_watchers
 ---
 ---(default: `true`)
 ---@field enable? boolean

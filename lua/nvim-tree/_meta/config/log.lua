@@ -5,7 +5,7 @@ error("Cannot require a meta file")
 
 ---Log to a file `nvim-tree.log` in [stdpath()] `log`, usually `${XDG_STATE_HOME}/nvim`
 ---
----@class nvim_tree.Config.Log
+---@class nvim_tree.config.log
 ---
 ---(default: `false`)
 ---@field enable? boolean
@@ -14,11 +14,11 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field truncate? boolean
 ---
----[nvim_tree.Config.Log.Types]
----@field types? nvim_tree.Config.Log.Types
+---[nvim_tree.config.log.types]
+---@field types? nvim_tree.config.log.types
 
 ---Specify which information to log.
----@class nvim_tree.Config.Log.Types
+---@class nvim_tree.config.log.types
 ---
 ---Everything.
 ---(default: `false`)
@@ -48,6 +48,6 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field git? boolean
 ---
----[nvim_tree.Config.FilesystemWatchers] processing, verbose.
+---[nvim_tree.config.filesystem_watchers] processing, verbose.
 ---(default: `false`)
 ---@field watcher? boolean

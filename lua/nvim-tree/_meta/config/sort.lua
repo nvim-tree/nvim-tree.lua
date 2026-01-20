@@ -3,13 +3,13 @@ error("Cannot require a meta file")
 
 
 
----@alias nvim_tree.Config.Sort.Sorter "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
+---@alias nvim_tree.config.sort.Sorter "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
 
 
 
 ---Sort files within a directory.
 ---
----{sorter} presets [nvim_tree.Config.Sort.Sorter]()
+---{sorter} presets [nvim_tree.config.sort.Sorter]()
 ---- `"name"`
 ---- `"case_sensitive"` name
 ---- `"modification_time"`
@@ -22,19 +22,19 @@ error("Cannot require a meta file")
 ---
 ------Sort by name length
 ------@param nodes nvim_tree.api.Node[]
-------@return nvim_tree.Config.Sort.Sorter?
+------@return nvim_tree.config.sort.Sorter?
 ---local sorter = function(nodes)
 ---  table.sort(nodes, function(a, b)
 ---    return #a.name < #b.name
 ---  end)
 ---end
 ---```
----{sorter} may be a function that returns a [nvim_tree.Config.Sort.Sorter]
+---{sorter} may be a function that returns a [nvim_tree.config.sort.Sorter]
 ---
----@class nvim_tree.Config.Sort
+---@class nvim_tree.config.sort
 ---
 ---(default: `"name"`)
----@field sorter? nvim_tree.Config.Sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.Config.Sort.Sorter?)
+---@field sorter? nvim_tree.config.sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.config.sort.Sorter?)
 ---
 ---Sort folders before files. Has no effect when {sorter} is a function.
 ---(default: `true`)

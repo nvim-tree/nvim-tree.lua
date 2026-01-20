@@ -9,7 +9,7 @@ error("Cannot require a meta file")
 ---- `INFO`: information only e.g. file copy path confirmation.
 ---- `DEBUG`: information for troubleshooting, e.g. failures in some window closing operations.
 ---
----@class nvim_tree.Config.Notify
+---@class nvim_tree.config.notify
 ---
 ---Specify minimum notification |vim.log.levels|
 ---(Default: `vim.log.levels.INFO`)

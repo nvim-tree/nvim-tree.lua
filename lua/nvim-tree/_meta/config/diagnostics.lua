@@ -7,7 +7,7 @@ error("Cannot require a meta file")
 ---
 ---See [nvim-tree-icons-highlighting].
 ---
----@class nvim_tree.Config.Diagnostics
+---@class nvim_tree.config.diagnostics
 ---
 ---(default: `false`)
 ---@field enable? boolean
@@ -28,14 +28,14 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field diagnostic_opts? boolean
 ---
----@field severity? nvim_tree.Config.Diagnostics.Severity
+---@field severity? nvim_tree.config.diagnostics.severity
 ---
----@field icons? nvim_tree.Config.Diagnostics.Icons
+---@field icons? nvim_tree.config.diagnostics.icons
 
 
 
----[nvim_tree.Config.Diagnostics.Severity]()
----@class nvim_tree.Config.Diagnostics.Severity
+---[nvim_tree.config.diagnostics.severity]()
+---@class nvim_tree.config.diagnostics.severity
 ---@inlinedoc
 ---
 ---[vim.diagnostic.severity]
@@ -48,8 +48,8 @@ error("Cannot require a meta file")
 
 
 
----[nvim_tree.Config.Diagnostics.Icons]()
----@class nvim_tree.Config.Diagnostics.Icons
+---[nvim_tree.config.diagnostics.icons]()
+---@class nvim_tree.config.diagnostics.icons
 ---@inlinedoc
 ---
 ---(default: `""` )

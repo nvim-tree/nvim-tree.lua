@@ -20,7 +20,7 @@ error("Cannot require a meta file")
 ---
 ---or as a typed variable e.g.
 ---```lua
----  ---@type nvim_tree.Config
+---  ---@type nvim_tree.config
 ---  local config = {
 ---    hijack_cursor = true,
 ---  }
@@ -38,9 +38,9 @@ error("Cannot require a meta file")
 ---
 ---{hijack_unnamed_buffer_when_opening} opens in place of the unnamed buffer if it's empty.
 ---
----{root_dirs} preferred root directories, requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
+---{root_dirs} preferred root directories, requires [nvim_tree.config.update_focused_file.update_root].
 ---
----{prefer_startup_root} prefer startup root directory when updating root directory of the tree. Requires [nvim_tree.Config.UpdateFocusedFile.UpdateRoot].
+---{prefer_startup_root} prefer startup root directory when updating root directory of the tree. Requires [nvim_tree.config.update_focused_file.update_root].
 ---
 ---{sync_root_with_cwd} changes the tree root directory on [DirChanged] and refreshes the tree.
 ---
@@ -49,7 +49,7 @@ error("Cannot require a meta file")
 ---{respect_buf_cwd} changes the [current-directory] of nvim-tree to that of new buffer's when opening nvim-tree.
 ---
 ---{select_prompts} uses [vim.ui.select()] style prompts. Necessary when using a UI prompt decorator such as dressing.nvim or telescope-ui-select.nvim
----@class nvim_tree.Config
+---@class nvim_tree.config
 ---
 ---(default: `default`)
 ---@field on_attach? "default"|(fun(bufnr: integer))
@@ -87,65 +87,65 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field select_prompts? boolean
 ---
----[nvim_tree.Config.Sort]
----@field sort? nvim_tree.Config.Sort
+---[nvim_tree.config.sort]
+---@field sort? nvim_tree.config.sort
 ---
----[nvim_tree.Config.View]
----@field view? nvim_tree.Config.View
+---[nvim_tree.config.view]
+---@field view? nvim_tree.config.view
 ---
----[nvim_tree.Config.Renderer]
----@field renderer? nvim_tree.Config.Renderer
+---[nvim_tree.config.renderer]
+---@field renderer? nvim_tree.config.renderer
 ---
----[nvim_tree.Config.HijackDirectories]
----@field hijack_directories? nvim_tree.Config.HijackDirectories
+---[nvim_tree.config.hijack_directories]
+---@field hijack_directories? nvim_tree.config.hijack_directories
 ---
----[nvim_tree.Config.UpdateFocusedFile]
----@field update_focused_file? nvim_tree.Config.UpdateFocusedFile
+---[nvim_tree.config.update_focused_file]
+---@field update_focused_file? nvim_tree.config.update_focused_file
 ---
----[nvim_tree.Config.SystemOpen]
----@field system_open? nvim_tree.Config.SystemOpen
+---[nvim_tree.config.system_open]
+---@field system_open? nvim_tree.config.system_open
 ---
----[nvim_tree.Config.Git]
----@field git? nvim_tree.Config.Git
+---[nvim_tree.config.git]
+---@field git? nvim_tree.config.git
 ---
----[nvim_tree.Config.Diagnostics]
----@field diagnostics? nvim_tree.Config.Diagnostics
+---[nvim_tree.config.diagnostics]
+---@field diagnostics? nvim_tree.config.diagnostics
 ---
----[nvim_tree.Config.Modified]
----@field modified? nvim_tree.Config.Modified
+---[nvim_tree.config.modified]
+---@field modified? nvim_tree.config.modified
 ---
----[nvim_tree.Config.Filters]
----@field filters? nvim_tree.Config.Filters
+---[nvim_tree.config.filters]
+---@field filters? nvim_tree.config.filters
 ---
----[nvim_tree.Config.LiveFilter]
----@field live_filter? nvim_tree.Config.LiveFilter
+---[nvim_tree.config.live_filter]
+---@field live_filter? nvim_tree.config.live_filter
 ---
----[nvim_tree.Config.FilesystemWatchers]
----@field filesystem_watchers? nvim_tree.Config.FilesystemWatchers
+---[nvim_tree.config.filesystem_watchers]
+---@field filesystem_watchers? nvim_tree.config.filesystem_watchers
 ---
----[nvim_tree.Config.Actions]
----@field actions? nvim_tree.Config.Actions
+---[nvim_tree.config.actions]
+---@field actions? nvim_tree.config.actions
 ---
----[nvim_tree.Config.Trash]
----@field trash? nvim_tree.Config.Trash
+---[nvim_tree.config.trash]
+---@field trash? nvim_tree.config.trash
 ---
----[nvim_tree.Config.Tab]
----@field tab? nvim_tree.Config.Tab
+---[nvim_tree.config.tab]
+---@field tab? nvim_tree.config.tab
 ---
----[nvim_tree.Config.Bookmarks]
----@field bookmarks? nvim_tree.Config.Bookmarks
+---[nvim_tree.config.bookmarks]
+---@field bookmarks? nvim_tree.config.bookmarks
 ---
----[nvim_tree.Config.Notify]
----@field notify? nvim_tree.Config.Notify
+---[nvim_tree.config.notify]
+---@field notify? nvim_tree.config.notify
 ---
----[nvim_tree.Config.Help]
----@field help? nvim_tree.Config.Help
+---[nvim_tree.config.help]
+---@field help? nvim_tree.config.help
 ---
----[nvim_tree.Config.UI]
----@field ui? nvim_tree.Config.UI
+---[nvim_tree.config.ui]
+---@field ui? nvim_tree.config.ui
 ---
----[nvim_tree.Config.Experimental]
----@field experimental? nvim_tree.Config.Experimental
+---[nvim_tree.config.experimental]
+---@field experimental? nvim_tree.config.experimental
 ---
----[nvim_tree.Config.Log]
----@field log? nvim_tree.Config.Log
+---[nvim_tree.config.log]
+---@field log? nvim_tree.config.log

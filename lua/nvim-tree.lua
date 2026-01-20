@@ -252,7 +252,7 @@ local function setup_autocommands(opts)
   })
 end
 
----@type nvim_tree.Config
+---@type nvim_tree.config
 local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   on_attach = "default",
   hijack_cursor = false,
@@ -628,7 +628,7 @@ local ACCEPTED_ENUMS = {
   },
 }
 
----@param conf? nvim_tree.Config
+---@param conf? nvim_tree.config
 local function validate_options(conf)
   local msg
 
@@ -733,7 +733,7 @@ function M.purge_all_state()
   require("nvim-tree.watcher").purge_watchers()
 end
 
----@param conf? nvim_tree.Config
+---@param conf? nvim_tree.config
 function M.setup(conf)
   if vim.fn.has("nvim-0.9") == 0 then
     notify.warn("nvim-tree.lua requires Neovim 0.9 or higher")

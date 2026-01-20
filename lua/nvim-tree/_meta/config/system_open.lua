@@ -14,7 +14,7 @@ error("Cannot require a meta file")
 ---
 ---Once nvim-tree minimum Nvim version is updated to 0.10, these options will no longer be necessary and will be removed.
 ---
----@class nvim_tree.Config.SystemOpen
+---@class nvim_tree.config.system_open
 ---
 ---The open command itself
 ---@field cmd? string

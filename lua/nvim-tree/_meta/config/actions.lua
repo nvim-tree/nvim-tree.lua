@@ -3,31 +3,31 @@ error("Cannot require a meta file")
 
 
 
----@class nvim_tree.Config.Actions
+---@class nvim_tree.config.actions
 ---
 ---Use the system clipboard for copy/paste. Copied text will be stored in registers `+` (system), otherwise, it will be stored in `1` and `"`
 ---(default: `true`)
 ---@field use_system_clipboard? boolean
 ---
----[nvim_tree.Config.Actions.ChangeDir]
----@field change_dir? nvim_tree.Config.Actions.ChangeDir
+---[nvim_tree.config.actions.change_dir]
+---@field change_dir? nvim_tree.config.actions.change_dir
 ---
----[nvim_tree.Config.Actions.ExpandAll]
----@field expand_all? nvim_tree.Config.Actions.ExpandAll
+---[nvim_tree.config.actions.expand_all]
+---@field expand_all? nvim_tree.config.actions.expand_all
 ---
----[nvim_tree.Config.Actions.FilePopup]
----@field file_popup? nvim_tree.Config.Actions.FilePopup
+---[nvim_tree.config.actions.file_popup]
+---@field file_popup? nvim_tree.config.actions.file_popup
 ---
----[nvim_tree.Config.Actions.OpenFile]
----@field open_file? nvim_tree.Config.Actions.OpenFile
+---[nvim_tree.config.actions.open_file]
+---@field open_file? nvim_tree.config.actions.open_file
 ---
----[nvim_tree.Config.Actions.RemoveFile]
----@field remove_file? nvim_tree.Config.Actions.RemoveFile
+---[nvim_tree.config.actions.remove_file]
+---@field remove_file? nvim_tree.config.actions.remove_file
 
 
 
 --- vim [current-directory] behaviour
----@class nvim_tree.Config.Actions.ChangeDir
+---@class nvim_tree.config.actions.change_dir
 ---
 ---Change the working directory when changing directories in the tree
 ---(default: `true`)
@@ -44,7 +44,7 @@ error("Cannot require a meta file")
 
 
 ---Configure [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
----@class nvim_tree.Config.Actions.ExpandAll
+---@class nvim_tree.config.actions.expand_all
 ---
 ---Limit the number of folders being explored when expanding every folder. Avoids hanging Nvim when running this action on very large folders.
 ---(default: `300`)
@@ -69,7 +69,7 @@ error("Cannot require a meta file")
 ---}
 ---```
 ---You shouldn't define {width} and {height} values here. They will be overridden to fit the file_popup content.
----@class nvim_tree.Config.Actions.FilePopup
+---@class nvim_tree.config.actions.file_popup
 ---
 ---(default: `{ col = 1, row = 1, relative = "cursor", border = "shadow", style = "minimal", }`)
 ---@field open_win_config? vim.api.keyset.win_config
@@ -77,7 +77,7 @@ error("Cannot require a meta file")
 
 
 ---Opening files.
----@class nvim_tree.Config.Actions.OpenFile
+---@class nvim_tree.config.actions.open_file
 ---
 ---Closes the explorer when opening a file
 ---(default: `false`)
@@ -91,8 +91,8 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field resize_window? boolean
 ---
----[nvim_tree.Config.Actions.OpenFile.WindowPicker]
----@field window_picker? nvim_tree.Config.Actions.OpenFile.WindowPicker
+---[nvim_tree.config.actions.open_file.window_picker]
+---@field window_picker? nvim_tree.config.actions.open_file.window_picker
 
 
 
@@ -102,7 +102,7 @@ error("Cannot require a meta file")
 ---
 ---You may define a {picker} function that should return the window id that will open the node, or `nil` if an invalid window is picked or user cancelled the action. The picker may create a new window.
 ---
----@class nvim_tree.Config.Actions.OpenFile.WindowPicker
+---@class nvim_tree.config.actions.open_file.window_picker
 ---
 ---(default: `true`)
 ---@field enable? boolean
@@ -115,15 +115,15 @@ error("Cannot require a meta file")
 ---(default: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"`)
 ---@field chars? string
 ---
----[nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude]
----@field exclude? nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude
+---[nvim_tree.config.actions.open_file.window_picker.exclude]
+---@field exclude? nvim_tree.config.actions.open_file.window_picker.exclude
 
 
 
 ---Tables of buffer option names mapped to a list of option values. Windows containing matching buffers will not be:
 --- - available when using a window picker
 --- - selected when not using a window picker
----@class nvim_tree.Config.Actions.OpenFile.WindowPicker.Exclude
+---@class nvim_tree.config.actions.open_file.window_picker.exclude
 ---
 ---(default: `{ "notify", "lazy", "qf", "diff", "fugitive", "fugitiveblame", }`)
 ---@field filetype? string[]
@@ -133,7 +133,7 @@ error("Cannot require a meta file")
 
 
 ---Removing files.
----@class nvim_tree.Config.Actions.RemoveFile
+---@class nvim_tree.config.actions.remove_file
 ---
 ---Close any window that displays a file when removing that file from the tree.
 ---(default: `true`)

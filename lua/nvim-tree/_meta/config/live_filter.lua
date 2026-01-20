@@ -7,7 +7,7 @@ error("Cannot require a meta file")
 ---
 --- This feature is bound to the `f` key by default. The filter can be cleared with the `F` key by default.
 ---
----@class nvim_tree.Config.LiveFilter
+---@class nvim_tree.config.live_filter
 ---
 ---Prefix of the filter displayed in the buffer.
 ---(default: `"[FILTER]: "`)

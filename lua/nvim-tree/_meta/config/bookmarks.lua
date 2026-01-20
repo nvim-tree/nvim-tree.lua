@@ -7,7 +7,7 @@ error("Cannot require a meta file")
 ---- `false` do not persist
 ---- `string` absolute path of your choice
 ---
----@class nvim_tree.Config.Bookmarks
+---@class nvim_tree.config.bookmarks
 ---
 ---(default: `false`)
 ---@field persist? boolean|string

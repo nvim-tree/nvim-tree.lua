@@ -3,11 +3,11 @@ error("Cannot require a meta file")
 
 
 
----@alias nvim_tree.Config.Renderer.Highlight "none"|"icon"|"name"|"all"
+---@alias nvim_tree.config.renderer.Highlight "none"|"icon"|"name"|"all"
 
----@alias nvim_tree.Config.Renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
+---@alias nvim_tree.config.renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
 
----@alias nvim_tree.Config.Renderer.Icons.Placement "before"|"after"|"signcolumn"|"right_align"
+---@alias nvim_tree.config.renderer.icons.Placement "before"|"after"|"signcolumn"|"right_align"
 
 
 
@@ -24,7 +24,7 @@ error("Cannot require a meta file")
 ---  return ".../" .. vim.fn.fnamemodify(path, ":t")
 ---end
 ---```
----@class nvim_tree.Config.Renderer
+---@class nvim_tree.config.renderer
 ---
 ---Appends a trailing slash to folder and symlink folder target names.
 ---(default: `false`)
@@ -47,7 +47,7 @@ error("Cannot require a meta file")
 ---
 ---[nvim-tree-hidden-display]
 ---(default: `none`)
----@field hidden_display? nvim_tree.Config.Renderer.HiddenDisplay
+---@field hidden_display? nvim_tree.config.renderer.HiddenDisplay
 ---
 ---Appends an arrow followed by the target of the symlink.
 ---(default: `true`)
@@ -57,55 +57,55 @@ error("Cannot require a meta file")
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
 ---(default: `"none"`)
----@field highlight_git? nvim_tree.Config.Renderer.Highlight
+---@field highlight_git? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"none"`)
----@field highlight_opened_files? nvim_tree.Config.Renderer.Highlight
+---@field highlight_opened_files? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"none"`)
----@field highlight_hidden? nvim_tree.Config.Renderer.Highlight
+---@field highlight_hidden? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"none"`)
----@field highlight_modified? nvim_tree.Config.Renderer.Highlight
+---@field highlight_modified? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"none"`)
----@field highlight_bookmarks? nvim_tree.Config.Renderer.Highlight
+---@field highlight_bookmarks? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"none"`)
----@field highlight_diagnostics? nvim_tree.Config.Renderer.Highlight
+---@field highlight_diagnostics? nvim_tree.config.renderer.Highlight
 ---
 ---(default: `"name"`)
----@field highlight_clipboard? nvim_tree.Config.Renderer.Highlight
+---@field highlight_clipboard? nvim_tree.config.renderer.Highlight
 ---
 ---Highlight special files and directories with `NvimTreeSpecial*`.
 ---(default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
 ---@field special_files? string[]
 ---
----[nvim_tree.Config.Renderer.IndentMarkers]
----@field indent_markers? nvim_tree.Config.Renderer.IndentMarkers
+---[nvim_tree.config.renderer.indent_markers]
+---@field indent_markers? nvim_tree.config.renderer.indent_markers
 ---
----[nvim_tree.Config.Renderer.Icons]
----@field icons? nvim_tree.Config.Renderer.Icons
+---[nvim_tree.config.renderer.icons]
+---@field icons? nvim_tree.config.renderer.icons
 
 
 
----@class nvim_tree.Config.Renderer.IndentMarkers
+---@class nvim_tree.config.renderer.indent_markers
 ---
 ---Display indent markers when folders are open.
 ---(default: `false`)
 ---@field enable? boolean
 ---
----Display folder arrows in the same column as indent marker when using [nvim_tree.Config.Renderer.Icons.Padding] {folder_arrow}
+---Display folder arrows in the same column as indent marker when using [nvim_tree.config.renderer.icons.padding] {folder_arrow}
 ---(default: `true`)
 ---@field inline_arrows? boolean
 ---
----@field icons? nvim_tree.Config.Renderer.IndentMarkers.Icons
+---@field icons? nvim_tree.config.renderer.indent_markers.icons
 
 
 
----[nvim_tree.Config.Renderer.IndentMarkers.Icons]()
+---[nvim_tree.config.renderer.indent_markers.icons]()
 ---Before the file/directory, length 1.
----@class nvim_tree.Config.Renderer.IndentMarkers.Icons
+---@class nvim_tree.config.renderer.indent_markers.icons
 ---@inlinedoc
 ---
 ---(default: `"└"`)
@@ -124,52 +124,52 @@ error("Cannot require a meta file")
 ---Icons and separators
 ---
 ---See [nvim-tree-icons-highlighting] for: {_placement} fields.
----@class nvim_tree.Config.Renderer.Icons
+---@class nvim_tree.config.renderer.icons
 ---
 ---(default: `before`)
----@field git_placement? nvim_tree.Config.Renderer.Icons.Placement
+---@field git_placement? nvim_tree.config.renderer.icons.Placement
 ---
 ---(default: `after`)
----@field hidden_placement? nvim_tree.Config.Renderer.Icons.Placement
+---@field hidden_placement? nvim_tree.config.renderer.icons.Placement
 ---
 ---(default: `after`)
----@field modified_placement? nvim_tree.Config.Renderer.Icons.Placement
+---@field modified_placement? nvim_tree.config.renderer.icons.Placement
 ---
 ---(default: `signcolumn`)
----@field bookmarks_placement? nvim_tree.Config.Renderer.Icons.Placement
+---@field bookmarks_placement? nvim_tree.config.renderer.icons.Placement
 ---
 ---(default: `signcolumn`)
----@field diagnostics_placement? nvim_tree.Config.Renderer.Icons.Placement
+---@field diagnostics_placement? nvim_tree.config.renderer.icons.Placement
 ---
----@field padding? nvim_tree.Config.Renderer.Icons.Padding
+---@field padding? nvim_tree.config.renderer.icons.padding
 ---
 ---Separator between symlink source and target.
 ---(default: `" ➛ "`)
 ---@field symlink_arrow? string
 ---
----[nvim_tree.Config.Renderer.Icons.Show]
----@field show? nvim_tree.Config.Renderer.Icons.Show
+---[nvim_tree.config.renderer.icons.show]
+---@field show? nvim_tree.config.renderer.icons.show
 ---
----[nvim_tree.Config.Renderer.Icons.Glyphs]
----@field glyphs? nvim_tree.Config.Renderer.Icons.Glyphs
+---[nvim_tree.config.renderer.icons.glyphs]
+---@field glyphs? nvim_tree.config.renderer.icons.glyphs
 ---
----[nvim_tree.Config.Renderer.Icons.WebDevicons]
----@field web_devicons? nvim_tree.Config.Renderer.Icons.WebDevicons
+---[nvim_tree.config.renderer.icons.web_devicons]
+---@field web_devicons? nvim_tree.config.renderer.icons.web_devicons
 
 
 
 ---Configure optional plugin `nvim-tree/nvim-web-devicons`, see [nvim-tree-icons-highlighting].
 ---
----@class nvim_tree.Config.Renderer.Icons.WebDevicons
+---@class nvim_tree.config.renderer.icons.web_devicons
 ---
----@field file? nvim_tree.Config.Renderer.Icons.WebDevicons.File
+---@field file? nvim_tree.config.renderer.icons.web_devicons.file
 ---
----@field folder? nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
+---@field folder? nvim_tree.config.renderer.icons.web_devicons.folder
 
 
 
----[nvim_tree.Config.Renderer.Icons.WebDevicons.File]()
----@class nvim_tree.Config.Renderer.Icons.WebDevicons.File
+---[nvim_tree.config.renderer.icons.web_devicons.file]()
+---@class nvim_tree.config.renderer.icons.web_devicons.file
 ---@inlinedoc
 ---
 ---(default: `true`)
@@ -179,8 +179,8 @@ error("Cannot require a meta file")
 ---@field color? boolean
 
 
----[nvim_tree.Config.Renderer.Icons.WebDevicons.Folder]()
----@class nvim_tree.Config.Renderer.Icons.WebDevicons.Folder
+---[nvim_tree.config.renderer.icons.web_devicons.folder]()
+---@class nvim_tree.config.renderer.icons.web_devicons.folder
 ---@inlinedoc
 ---
 ---(default: `false`)
@@ -191,8 +191,8 @@ error("Cannot require a meta file")
 
 
 
----[nvim_tree.Config.Renderer.Icons.Padding]()
----@class nvim_tree.Config.Renderer.Icons.Padding
+---[nvim_tree.config.renderer.icons.padding]()
+---@class nvim_tree.config.renderer.icons.padding
 ---@inlinedoc
 ---
 ---Between icon and filename.
@@ -206,7 +206,7 @@ error("Cannot require a meta file")
 
 
 ---See [nvim-tree-icons-highlighting].
----@class nvim_tree.Config.Renderer.Icons.Show
+---@class nvim_tree.config.renderer.icons.show
 ---
 ---(default: `true`)
 ---@field file? boolean
@@ -229,7 +229,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field bookmarks? boolean
 ---
----Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.Config.Renderer.IndentMarkers].
+---Show a small arrow before the folder node. Arrow will be a part of the node when using [nvim_tree.config.renderer.indent_markers].
 ---(default: `true`)
 ---@field folder_arrow? boolean
 
@@ -238,7 +238,7 @@ error("Cannot require a meta file")
 ---See [nvim-tree-icons-highlighting].
 ---
 ---Glyphs that appear in the sign column must have length <= 2
----@class nvim_tree.Config.Renderer.Icons.Glyphs
+---@class nvim_tree.config.renderer.icons.glyphs
 ---
 ---Files
 ---(default: `""`)
@@ -256,14 +256,14 @@ error("Cannot require a meta file")
 ---(default: `"󰜌"`)
 ---@field hidden? string
 ---
----@field folder? nvim_tree.Config.Renderer.Icons.Glyphs.Folder
+---@field folder? nvim_tree.config.renderer.icons.glyphs.folder
 ---
----@field git? nvim_tree.Config.Renderer.Icons.Glyphs.Git
+---@field git? nvim_tree.config.renderer.icons.glyphs.git
 
 
 
----[nvim_tree.Config.Renderer.Icons.Glyphs.Folder]()
----@class nvim_tree.Config.Renderer.Icons.Glyphs.Folder
+---[nvim_tree.config.renderer.icons.glyphs.folder]()
+---@class nvim_tree.config.renderer.icons.glyphs.folder
 ---@inlinedoc
 ---(default: left arrow)
 ---@field arrow_closed? string
@@ -284,8 +284,8 @@ error("Cannot require a meta file")
 
 
 
----[nvim_tree.Config.Renderer.Icons.Glyphs.Git]()
----@class nvim_tree.Config.Renderer.Icons.Glyphs.Git
+---[nvim_tree.config.renderer.icons.glyphs.git]()
+---@class nvim_tree.config.renderer.icons.glyphs.git
 ---@inlinedoc
 ---(default: `"✗"`)
 ---@field unstaged? string

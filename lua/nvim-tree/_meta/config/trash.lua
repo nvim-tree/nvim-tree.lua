@@ -8,7 +8,7 @@ error("Cannot require a meta file")
 --- - macOS: `trash`, from homebrew package `trash`
 --- - windows: `trash`, requires `trash-cli` or similar
 ---
----@class nvim_tree.Config.Trash
+---@class nvim_tree.config.trash
 ---
 ---(default: `"gio trash"` or `"trash"`)
 ---@field cmd? string

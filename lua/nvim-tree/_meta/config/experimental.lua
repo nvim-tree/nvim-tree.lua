@@ -7,7 +7,7 @@ error("Cannot require a meta file")
 ---
 ---In the event of a problem please disable the experiment and raise an issue.
 ---
----@class nvim_tree.Config.Experimental
+---@class nvim_tree.config.experimental
 ---
 --Example below for future reference:
 --
