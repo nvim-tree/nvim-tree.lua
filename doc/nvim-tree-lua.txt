@@ -2676,11 +2676,16 @@ collapse({node}, {opts})                       *nvim_tree.api.node.collapse()*
                   nodes with open buffers.
 
 expand({node}, {opts})                           *nvim_tree.api.node.expand()*
+    Recursively expand all nodes under a directory or a file's parent
+    directory.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {expand_until}?
+                  (`fun(expansion_count: integer, node: Node): boolean`)
+                  Return `true` if `node` should be expanded.
+                  `expansion_count` is the total number of folders expanded.
 
                               *nvim_tree.api.node.navigate.diagnostics.next()*
 navigate.diagnostics.next({node})
@@ -2788,107 +2793,162 @@ navigate.sibling.prev({node})
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 open.drop({node})                             *nvim_tree.api.node.open.drop()*
+    Switch to window with selected file if it exists, open file otherwise.
+    • file: open file using |:drop|
+    • directory: expand or collapse
+    • root: change directory up
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
+    • file: open as per |nvim_tree.Config.Actions.OpenFile|
+    • directory: expand or collapse
+    • root: change directory up
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 open.horizontal({node}, {opts})         *nvim_tree.api.node.open.horizontal()*
+    Open file in a new horizontal split.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                               *nvim_tree.api.node.open.horizontal_no_picker()*
 open.horizontal_no_picker({node}, {opts})
+    Open file in a new horizontal split without using the window picker.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                   *nvim_tree.api.node.open.no_window_picker()*
 open.no_window_picker({node}, {opts})
+    Open file without using the window picker.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 open.preview({node}, {opts})               *nvim_tree.api.node.open.preview()*
+    Open file with |'bufhidden'| set to `delete`.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                  *nvim_tree.api.node.open.preview_no_picker()*
 open.preview_no_picker({node}, {opts})
+    Open file with |'bufhidden'| set to `delete` without using the window
+    picker.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                *nvim_tree.api.node.open.replace_tree_buffer()*
 open.replace_tree_buffer({node})
+    Open file in place: in the nvim-tree window.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
 
 open.tab({node}, {opts})                       *nvim_tree.api.node.open.tab()*
+    Open file in a new tab.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 open.tab_drop({node})                     *nvim_tree.api.node.open.tab_drop()*
+    Switch to tab containing window with selected file if it exists. Open file
+    in new tab otherwise.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                 *nvim_tree.api.node.open.toggle_group_empty()*
 open.toggle_group_empty({node}, {opts})
+    Toggle |nvim_tree.Config.Renderer| {group_empty} for a directory. Needs
+    {group_empty} set.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) directory
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 open.vertical({node}, {opts})             *nvim_tree.api.node.open.vertical()*
+    Open file in a new vertical split.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                 *nvim_tree.api.node.open.vertical_no_picker()*
 open.vertical_no_picker({node}, {opts})
+    Open file in a new vertical split without using the window picker.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {foo}? (`boolean`) (default: false)
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 run.cmd({node})                                 *nvim_tree.api.node.run.cmd()*
+    Enter |cmdline| with the full path of the node and the cursor at the start
+    of the line.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 run.system({node})                           *nvim_tree.api.node.run.system()*
+    Execute |nvim_tree.Config.SystemOpen|.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 show_info_popup({node})                 *nvim_tree.api.node.show_info_popup()*
+    Open a popup window showing: fullpath, size, accessed, modified, created.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
