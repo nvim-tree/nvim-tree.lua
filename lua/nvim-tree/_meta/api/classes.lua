@@ -1,3 +1,5 @@
+---@meta
+
 ---@brief
 ---Classes shared by multiple API modules.
 ---

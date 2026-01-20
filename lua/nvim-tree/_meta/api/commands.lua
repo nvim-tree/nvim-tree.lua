@@ -1,7 +1,6 @@
 ---@meta
 local nvim_tree = { api = { commands = {} } }
 
-
 ---
 ---@class nvim_tree.api.commands.Command
 ---@inlinedoc

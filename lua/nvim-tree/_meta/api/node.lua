@@ -1,7 +1,6 @@
 ---@meta
 local nvim_tree = { api = { node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {}, }, run = {}, open = {}, buffer = {}, } } }
 
-
 ---
 ---@class nvim_tree.api.node.open.Opts
 ---@inlinedoc
