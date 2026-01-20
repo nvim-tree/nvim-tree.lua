@@ -3,11 +3,11 @@ error("Cannot require a meta file")
 
 
 
----@alias nvim_tree.config.renderer.Highlight "none"|"icon"|"name"|"all"
+---@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
 
----@alias nvim_tree.config.renderer.HiddenDisplay "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
+---@alias nvim_tree.config.renderer.hidden_display "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
 
----@alias nvim_tree.config.renderer.icons.Placement "before"|"after"|"signcolumn"|"right_align"
+---@alias nvim_tree.config.renderer.icons.placement "before"|"after"|"signcolumn"|"right_align"
 
 
 
@@ -47,7 +47,7 @@ error("Cannot require a meta file")
 ---
 ---[nvim-tree-hidden-display]
 ---(default: `none`)
----@field hidden_display? nvim_tree.config.renderer.HiddenDisplay
+---@field hidden_display? nvim_tree.config.renderer.hidden_display
 ---
 ---Appends an arrow followed by the target of the symlink.
 ---(default: `true`)
@@ -57,25 +57,25 @@ error("Cannot require a meta file")
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---
 ---(default: `"none"`)
----@field highlight_git? nvim_tree.config.renderer.Highlight
+---@field highlight_git? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"none"`)
----@field highlight_opened_files? nvim_tree.config.renderer.Highlight
+---@field highlight_opened_files? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"none"`)
----@field highlight_hidden? nvim_tree.config.renderer.Highlight
+---@field highlight_hidden? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"none"`)
----@field highlight_modified? nvim_tree.config.renderer.Highlight
+---@field highlight_modified? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"none"`)
----@field highlight_bookmarks? nvim_tree.config.renderer.Highlight
+---@field highlight_bookmarks? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"none"`)
----@field highlight_diagnostics? nvim_tree.config.renderer.Highlight
+---@field highlight_diagnostics? nvim_tree.config.renderer.highlight
 ---
 ---(default: `"name"`)
----@field highlight_clipboard? nvim_tree.config.renderer.Highlight
+---@field highlight_clipboard? nvim_tree.config.renderer.highlight
 ---
 ---Highlight special files and directories with `NvimTreeSpecial*`.
 ---(default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
@@ -127,19 +127,19 @@ error("Cannot require a meta file")
 ---@class nvim_tree.config.renderer.icons
 ---
 ---(default: `before`)
----@field git_placement? nvim_tree.config.renderer.icons.Placement
+---@field git_placement? nvim_tree.config.renderer.icons.placement
 ---
 ---(default: `after`)
----@field hidden_placement? nvim_tree.config.renderer.icons.Placement
+---@field hidden_placement? nvim_tree.config.renderer.icons.placement
 ---
 ---(default: `after`)
----@field modified_placement? nvim_tree.config.renderer.icons.Placement
+---@field modified_placement? nvim_tree.config.renderer.icons.placement
 ---
 ---(default: `signcolumn`)
----@field bookmarks_placement? nvim_tree.config.renderer.icons.Placement
+---@field bookmarks_placement? nvim_tree.config.renderer.icons.placement
 ---
 ---(default: `signcolumn`)
----@field diagnostics_placement? nvim_tree.config.renderer.icons.Placement
+---@field diagnostics_placement? nvim_tree.config.renderer.icons.placement
 ---
 ---@field padding? nvim_tree.config.renderer.icons.padding
 ---

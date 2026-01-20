@@ -1504,14 +1504,14 @@ creating custom decorators.
 `REQUIRES`
   Feature must be enabled to show icons and highlighting.
 
-`PLACEMENT`                          *nvim_tree.config.renderer.icons.Placement*
+`PLACEMENT`                          *nvim_tree.config.renderer.icons.placement*
   Where to place the icon: |nvim_tree.config.renderer.icons| {_placement}
   • `before`: before file/folder, after the file/folders icons
   • `after`: after file/folder
   • `signcolumn`: far left, requires |nvim_tree.config.view| {signcolumn}.
   • `right_align`: far right
 
-`HIGHLIGHT`                                *nvim_tree.config.renderer.Highlight*
+`HIGHLIGHT`                                *nvim_tree.config.renderer.highlight*
   What should be highlighted: |nvim_tree.config.renderer| {highlight_}
   • `none`: no highlighting
   • `icon`: icon only
@@ -2071,7 +2071,7 @@ Show a summary of hidden files below the tree highlighted with `NvimTreeHiddenDi
 
 Configure via |nvim_tree.config.renderer| {hidden_display}
 
-                                     *nvim_tree.config.renderer.HiddenDisplay*
+                                    *nvim_tree.config.renderer.hidden_display*
  • `none`: disabled
  • `simple`: show how many hidden files are in a folder
  • `all`: show how many hidden and the number of hidden files by reason
@@ -2278,11 +2278,11 @@ Class: Config.View                                     *nvim-tree-config-view*
     The window is "docked" at the left by default, however may be configured
     to float: |nvim_tree.config.view.float|
 
-    {width} can be a |nvim_tree.config.view.widthSpec| for simple static
-    control or a |nvim_tree.config.view.width| for fully dynamic control based
-    on longest line.
+    {width} can be a |nvim_tree.config.view.width.spec| for static control or
+    a |nvim_tree.config.view.width| for fully dynamic control based on longest
+    line.
 
-                                             *nvim_tree.config.view.widthSpec*
+                                            *nvim_tree.config.view.width.spec*
     • `string`: `x%` string e.g. `30%`
     • `integer`: number of columns
     • `function`: returns one of the above
@@ -2313,7 +2313,7 @@ Class: Config.View                                     *nvim-tree-config-view*
                                         |'relativenumber'|
       • {signcolumn}?                   (`"yes"|"auto"|"no"`, default:
                                         `"yes"`) |'signcolumn'|
-      • {width}?                        (`nvim_tree.config.view.widthSpec|nvim_tree.config.view.width`)
+      • {width}?                        (`nvim_tree.config.view.width.spec|nvim_tree.config.view.width`)
                                         (default: `30`)
       • {float}?                        (`nvim_tree.config.view.float`)
                                         |nvim_tree.config.view.float|
@@ -2344,12 +2344,13 @@ Class: Config.View                                     *nvim-tree-config-view*
     Configure dynamic width based on longest line.
 
     Fields: ~
-      • {min}?             (`nvim_tree.config.view.widthSpec`) (default: `30`)
-      • {max}?             (`nvim_tree.config.view.widthSpec`, default: `-1`)
+      • {min}?             (`nvim_tree.config.view.width.spec`) (default:
+                           `30`)
+      • {max}?             (`nvim_tree.config.view.width.spec`, default: `-1`)
                            -1 for unbounded.
       • {lines_excluded}?  (`("root")[]`, default: `{ "root" }`) Exclude these
                            lines when computing width.
-      • {padding}?         (`nvim_tree.config.view.widthSpec`, default: `1`)
+      • {padding}?         (`nvim_tree.config.view.width.spec`, default: `1`)
                            Extra padding to the right.
 
 
@@ -2389,7 +2390,7 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
                                    (default: `":~:s?$?/..?"`)
       • {indent_width}?            (`integer`, default: `2`) Number of spaces
                                    for each tree nesting level. Minimum 1.
-      • {hidden_display}?          (`nvim_tree.config.renderer.HiddenDisplay`, default: `none`)
+      • {hidden_display}?          (`nvim_tree.config.renderer.hidden_display`, default: `none`)
                                    |nvim-tree-hidden-display|
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
                                    arrow followed by the target of the
@@ -2397,19 +2398,19 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
       • {decorators}?              (`(string|nvim_tree.api.decorator.UserDecorator)[]`)
                                    (default:
                                    `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
-      • {highlight_git}?           (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_git}?           (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_opened_files}?  (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_opened_files}?  (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_hidden}?        (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_hidden}?        (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_modified}?      (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_modified}?      (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_bookmarks}?     (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_bookmarks}?     (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_diagnostics}?   (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_diagnostics}?   (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
-      • {highlight_clipboard}?     (`nvim_tree.config.renderer.Highlight`)
+      • {highlight_clipboard}?     (`nvim_tree.config.renderer.highlight`)
                                    (default: `"name"`)
       • {special_files}?           (`string[]`, default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`)
                                    Highlight special files and directories
@@ -2425,15 +2426,15 @@ Class: Config.Renderer                             *nvim-tree-config-renderer*
     See |nvim-tree-icons-highlighting| for: {_placement} fields.
 
     Fields: ~
-      • {git_placement}?          (`nvim_tree.config.renderer.icons.Placement`)
+      • {git_placement}?          (`nvim_tree.config.renderer.icons.placement`)
                                   (default: `before`)
-      • {hidden_placement}?       (`nvim_tree.config.renderer.icons.Placement`)
+      • {hidden_placement}?       (`nvim_tree.config.renderer.icons.placement`)
                                   (default: `after`)
-      • {modified_placement}?     (`nvim_tree.config.renderer.icons.Placement`)
+      • {modified_placement}?     (`nvim_tree.config.renderer.icons.placement`)
                                   (default: `after`)
-      • {bookmarks_placement}?    (`nvim_tree.config.renderer.icons.Placement`)
+      • {bookmarks_placement}?    (`nvim_tree.config.renderer.icons.placement`)
                                   (default: `signcolumn`)
-      • {diagnostics_placement}?  (`nvim_tree.config.renderer.icons.Placement`)
+      • {diagnostics_placement}?  (`nvim_tree.config.renderer.icons.placement`)
                                   (default: `signcolumn`)
       • {padding}?                (`table`)
                                      *nvim_tree.config.renderer.icons.padding*
@@ -2989,15 +2990,9 @@ Class: Config.Bookmarks                           *nvim-tree-config-bookmarks*
 Class: Config.Help                                     *nvim-tree-config-help*
 
 *nvim_tree.config.help*
-    Configure help window, default mapping `g?`
-
-                                                *nvim_tree.config.help.SortBy*
-    • `"key"`: alphabetically by keymap
-    • `"desc"`: alphabetically by description
 
     Fields: ~
-      • {sort_by}?  (`nvim_tree.config.help.SortBy`, default: `"key"`)
-                    |nvim_tree.config.help.SortBy|
+      • {sort_by}?  (`"key"|"desc"`, default: `"key"`) Alphabetically.
 
 
 
