@@ -55,3 +55,6 @@ cd "${DIR_NVIM_SRC}"
 
 # make nvim and execute the lint
 make lintdoc
+
+# clean up
+rm -v "${DIR_NVIM_SRC}/runtime/doc/nvim-tree-lua.txt"

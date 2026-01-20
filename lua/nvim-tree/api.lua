@@ -1,5 +1,3 @@
--- TODO #3088 rename this to nvim-tree/api.lua
-
 ---@brief
 ---nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
 ---
@@ -73,6 +71,10 @@
 ---
 ---@class nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
 
+
+--
+--Load and hydrate all
+--
 local api = {
   events = require("nvim-tree.api.events"),
   filter = require("nvim-tree.api.filter"),

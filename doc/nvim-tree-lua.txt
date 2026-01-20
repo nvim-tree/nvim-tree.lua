@@ -2647,119 +2647,251 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
 ==============================================================================
 Lua module: nvim_tree.api.node                            *nvim-tree-api-node*
 
-*ApiNodeDeleteWipeBufferOpts*
+buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
+    Deletes node's related buffer, if one exists. Executes |:bdelete| or
+    |:bdelete|!
 
-    Fields: ~
-      • {force}  (`boolean?`) default false
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`) file
+      • {opts}  (`table?`) A table with the following fields:
+                • {force}? (`boolean`, default: false) Delete even if buffer
+                  is modified.
 
-*NodeEditOpts*
+buffer.wipe({node}, {opts})                 *nvim_tree.api.node.buffer.wipe()*
+    Wipes node's related buffer, if one exists. Executes |:bwipe| or |:bwipe|!
 
-    Fields: ~
-      • {quit_on_open}  (`boolean?`) default false
-      • {focus}         (`boolean?`) default true
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {force}? (`boolean`, default: false) Wipe even if buffer is
+                  modified.
 
+collapse({node}, {opts})                       *nvim_tree.api.node.collapse()*
+    Collapse the tree under a directory or a file's parent directory.
 
-nvim_tree.api.node.buffer.delete()        *nvim_tree.api.node.buffer.delete()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {keep_buffers}? (`boolean`, default: false) Do not collapse
+                  nodes with open buffers.
 
-nvim_tree.api.node.buffer.wipe()            *nvim_tree.api.node.buffer.wipe()*
+expand({node}, {opts})                           *nvim_tree.api.node.expand()*
 
-nvim_tree.api.node.collapse()                  *nvim_tree.api.node.collapse()*
-
-nvim_tree.api.node.expand()                      *nvim_tree.api.node.expand()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                               *nvim_tree.api.node.navigate.diagnostics.next()*
-nvim_tree.api.node.navigate.diagnostics.next()
+navigate.diagnostics.next({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                     *nvim_tree.api.node.navigate.diagnostics.next_recursive()*
-nvim_tree.api.node.navigate.diagnostics.next_recursive()
+navigate.diagnostics.next_recursive({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                               *nvim_tree.api.node.navigate.diagnostics.prev()*
-nvim_tree.api.node.navigate.diagnostics.prev()
+navigate.diagnostics.prev({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                     *nvim_tree.api.node.navigate.diagnostics.prev_recursive()*
-nvim_tree.api.node.navigate.diagnostics.prev_recursive()
+navigate.diagnostics.prev_recursive({node})
 
-                                      *nvim_tree.api.node.navigate.git.next()*
-nvim_tree.api.node.navigate.git.next()
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.git.next({node})             *nvim_tree.api.node.navigate.git.next()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                             *nvim_tree.api.node.navigate.git.next_recursive()*
-nvim_tree.api.node.navigate.git.next_recursive()
+navigate.git.next_recursive({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                       *nvim_tree.api.node.navigate.git.next_skip_gitignored()*
-nvim_tree.api.node.navigate.git.next_skip_gitignored()
+navigate.git.next_skip_gitignored({node})
 
-                                      *nvim_tree.api.node.navigate.git.prev()*
-nvim_tree.api.node.navigate.git.prev()
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.git.prev({node})             *nvim_tree.api.node.navigate.git.prev()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                             *nvim_tree.api.node.navigate.git.prev_recursive()*
-nvim_tree.api.node.navigate.git.prev_recursive()
+navigate.git.prev_recursive({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                       *nvim_tree.api.node.navigate.git.prev_skip_gitignored()*
-nvim_tree.api.node.navigate.git.prev_skip_gitignored()
+navigate.git.prev_skip_gitignored({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                    *nvim_tree.api.node.navigate.opened.next()*
-nvim_tree.api.node.navigate.opened.next()
+navigate.opened.next({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                    *nvim_tree.api.node.navigate.opened.prev()*
-nvim_tree.api.node.navigate.opened.prev()
+navigate.opened.prev({node})
 
-                                        *nvim_tree.api.node.navigate.parent()*
-nvim_tree.api.node.navigate.parent()
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.parent({node})                 *nvim_tree.api.node.navigate.parent()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.parent_close()*
-nvim_tree.api.node.navigate.parent_close()
+navigate.parent_close({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                  *nvim_tree.api.node.navigate.sibling.first()*
-nvim_tree.api.node.navigate.sibling.first()
+navigate.sibling.first({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.last()*
-nvim_tree.api.node.navigate.sibling.last()
+navigate.sibling.last({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.next()*
-nvim_tree.api.node.navigate.sibling.next()
+navigate.sibling.next({node})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.prev()*
-nvim_tree.api.node.navigate.sibling.prev()
+navigate.sibling.prev({node})
 
-nvim_tree.api.node.open.drop()                *nvim_tree.api.node.open.drop()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
-nvim_tree.api.node.open.edit()                *nvim_tree.api.node.open.edit()*
+open.drop({node})                             *nvim_tree.api.node.open.drop()*
 
-                                        *nvim_tree.api.node.open.horizontal()*
-nvim_tree.api.node.open.horizontal()
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
+
+open.horizontal({node}, {opts})         *nvim_tree.api.node.open.horizontal()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                               *nvim_tree.api.node.open.horizontal_no_picker()*
-nvim_tree.api.node.open.horizontal_no_picker()
+open.horizontal_no_picker({node}, {opts})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                                   *nvim_tree.api.node.open.no_window_picker()*
-nvim_tree.api.node.open.no_window_picker()
+open.no_window_picker({node}, {opts})
 
-nvim_tree.api.node.open.preview()          *nvim_tree.api.node.open.preview()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
+
+open.preview({node}, {opts})               *nvim_tree.api.node.open.preview()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                                  *nvim_tree.api.node.open.preview_no_picker()*
-nvim_tree.api.node.open.preview_no_picker()
+open.preview_no_picker({node}, {opts})
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                                *nvim_tree.api.node.open.replace_tree_buffer()*
-nvim_tree.api.node.open.replace_tree_buffer()
+open.replace_tree_buffer({node})
 
-nvim_tree.api.node.open.tab()                  *nvim_tree.api.node.open.tab()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
-nvim_tree.api.node.open.tab_drop()        *nvim_tree.api.node.open.tab_drop()*
+open.tab({node}, {opts})                       *nvim_tree.api.node.open.tab()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
+
+open.tab_drop({node})                     *nvim_tree.api.node.open.tab_drop()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                 *nvim_tree.api.node.open.toggle_group_empty()*
-nvim_tree.api.node.open.toggle_group_empty()
+open.toggle_group_empty({node}, {opts})
 
-nvim_tree.api.node.open.vertical()        *nvim_tree.api.node.open.vertical()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
+
+open.vertical({node}, {opts})             *nvim_tree.api.node.open.vertical()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
                                 *nvim_tree.api.node.open.vertical_no_picker()*
-nvim_tree.api.node.open.vertical_no_picker()
+open.vertical_no_picker({node}, {opts})
 
-nvim_tree.api.node.run.cmd()                    *nvim_tree.api.node.run.cmd()*
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {foo}? (`boolean`) (default: false)
 
-nvim_tree.api.node.run.system()              *nvim_tree.api.node.run.system()*
+run.cmd({node})                                 *nvim_tree.api.node.run.cmd()*
 
-                                        *nvim_tree.api.node.show_info_popup()*
-nvim_tree.api.node.show_info_popup()
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+run.system({node})                           *nvim_tree.api.node.run.system()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+show_info_popup({node})                 *nvim_tree.api.node.show_info_popup()*
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
 
 ==============================================================================

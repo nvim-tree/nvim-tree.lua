@@ -92,6 +92,10 @@ local function wrap_explorer_member(explorer_member, member_method)
   end)
 end
 
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
+
 ---@param mode string
 ---@param node Node
 ---@param edit_opts NodeEditOpts?
