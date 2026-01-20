@@ -1,8 +1,6 @@
 ---@meta
 local nvim_tree = { api = { tree = {} } }
 
--- TODO #3088 move expand/collapse into api.node
-
 ---
 ---Open the tree, focusing it if already open.
 ---
@@ -177,28 +175,15 @@ function nvim_tree.api.tree.search_node() end
 ---
 ---Collapse the tree.
 ---
----@param opts? nvim_tree.api.tree.collapse.Opts optional
+---@param opts? nvim_tree.api.node.collapse.Opts optional
 function nvim_tree.api.tree.collapse_all(opts) end
-
----@class nvim_tree.api.tree.collapse.Opts
----@inlinedoc
----
----Do not collapse nodes with open buffers.
----(default: false)
----@field keep_buffers? boolean
 
 ---
 ---Recursively expand all nodes under the tree root or specified folder.
 ---
 ---@param node? nvim_tree.api.Node directory
----@param opts? nvim_tree.api.tree.expand.Opts optional
+---@param opts? nvim_tree.api.node.expand.Opts optional
 function nvim_tree.api.tree.expand_all(node, opts) end
-
----@class nvim_tree.api.tree.expand.Opts
----@inlinedoc
----
----Return `true` if `node` should be expanded. `expansion_count` is the total number of folders expanded.
----@field expand_until? fun(expansion_count: integer, node: Node): boolean
 
 ---
 ---Toggle [nvim_tree.Config.Filters] {enable} all filters.

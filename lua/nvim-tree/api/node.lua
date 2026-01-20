@@ -42,120 +42,133 @@ function nvim_tree.api.node.buffer.wipe(node, opts) end
 ---Collapse the tree under a directory or a file's parent directory.
 ---
 ---@param node? nvim_tree.api.Node directory or file
----@param opts? nvim_tree.api.tree.collapse.Opts optional
+---@param opts? nvim_tree.api.node.collapse.Opts optional
 function nvim_tree.api.node.collapse(node, opts) end
+
+---@class nvim_tree.api.node.collapse.Opts
+---@inlinedoc
+---
+---Do not collapse nodes with open buffers.
+---(default: false)
+---@field keep_buffers? boolean
 
 ---
 ---Recursively expand all nodes under a directory or a file's parent directory.
 ---
 ---@param node? nvim_tree.api.Node directory or file
----@param opts? nvim_tree.api.tree.expand.Opts optional
+---@param opts? nvim_tree.api.node.expand.Opts optional
 function nvim_tree.api.node.expand(node, opts) end
 
+---@class nvim_tree.api.node.expand.Opts
+---@inlinedoc
 ---
+---Return `true` if `node` should be expanded. `expansion_count` is the total number of folders expanded.
+---@field expand_until? fun(expansion_count: integer, node: Node): boolean
+
 ---
+---Navigate to the next item showing diagnostic status.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.next(node) end
 
 ---
----
+---Navigate to the next item showing diagnostic status, recursively. Needs [nvim_tree.Config.Diagnostics] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.next_recursive(node) end
 
 ---
----
+---Navigate to the previous item showing diagnostic status.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.prev(node) end
 
 ---
----
+---Navigate to the previous item showing diagnostic status, recursively. Needs [nvim_tree.Config.Diagnostics] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.prev_recursive(node) end
 
 ---
----
+---Navigate to the next item showing git status.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.next(node) end
 
 ---
----
+---Navigate to the next item showing git status, recursively. Needs [nvim_tree.Config.Git] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.next_recursive(node) end
 
 ---
----
+---Navigate to the next item showing git status, skipping `.gitignore`
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.next_skip_gitignored(node) end
 
 ---
----
+---Navigate to the previous item showing git status.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.prev(node) end
 
 ---
----
+---Navigate to the previous item showing git status, recursively. Needs [nvim_tree.Config.Git] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.prev_recursive(node) end
 
 ---
----
+---Navigate to the previous item showing git status, skipping `.gitignore`
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.prev_skip_gitignored(node) end
 
 ---
----
+---Navigate to the next [bufloaded()] file.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.opened.next(node) end
 
 ---
----
+---Navigate to the previous [bufloaded()] file.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.opened.prev(node) end
 
 ---
----
+---Navigate to the parent directory of the node.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.parent(node) end
 
 ---
----
+---Navigate to the parent directory of the node, closing it.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.parent_close(node) end
 
 ---
----
+---Navigate to the first node in the current node's folder.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.sibling.first(node) end
 
 ---
----
+---Navigate to the last node in the current node's folder.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.sibling.last(node) end
 
 ---
----
+---Navigate to the next node in the current node's folder, wraps.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.sibling.next(node) end
 
 ---
----
+---Navigate to the previous node in the current node's folder, wraps.
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.sibling.prev(node) end

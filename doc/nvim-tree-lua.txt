@@ -2689,105 +2689,127 @@ expand({node}, {opts})                           *nvim_tree.api.node.expand()*
 
                               *nvim_tree.api.node.navigate.diagnostics.next()*
 navigate.diagnostics.next({node})
+    Navigate to the next item showing diagnostic status.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                     *nvim_tree.api.node.navigate.diagnostics.next_recursive()*
 navigate.diagnostics.next_recursive({node})
+    Navigate to the next item showing diagnostic status, recursively. Needs
+    |nvim_tree.Config.Diagnostics| {show_on_dirs}
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                               *nvim_tree.api.node.navigate.diagnostics.prev()*
 navigate.diagnostics.prev({node})
+    Navigate to the previous item showing diagnostic status.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                     *nvim_tree.api.node.navigate.diagnostics.prev_recursive()*
 navigate.diagnostics.prev_recursive({node})
+    Navigate to the previous item showing diagnostic status, recursively.
+    Needs |nvim_tree.Config.Diagnostics| {show_on_dirs}
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 navigate.git.next({node})             *nvim_tree.api.node.navigate.git.next()*
+    Navigate to the next item showing git status.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                             *nvim_tree.api.node.navigate.git.next_recursive()*
 navigate.git.next_recursive({node})
+    Navigate to the next item showing git status, recursively. Needs
+    |nvim_tree.Config.Git| {show_on_dirs}
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                       *nvim_tree.api.node.navigate.git.next_skip_gitignored()*
 navigate.git.next_skip_gitignored({node})
+    Navigate to the next item showing git status, skipping `.gitignore`
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 navigate.git.prev({node})             *nvim_tree.api.node.navigate.git.prev()*
+    Navigate to the previous item showing git status.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                             *nvim_tree.api.node.navigate.git.prev_recursive()*
 navigate.git.prev_recursive({node})
+    Navigate to the previous item showing git status, recursively. Needs
+    |nvim_tree.Config.Git| {show_on_dirs}
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                       *nvim_tree.api.node.navigate.git.prev_skip_gitignored()*
 navigate.git.prev_skip_gitignored({node})
+    Navigate to the previous item showing git status, skipping `.gitignore`
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                    *nvim_tree.api.node.navigate.opened.next()*
 navigate.opened.next({node})
+    Navigate to the next |bufloaded()| file.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                    *nvim_tree.api.node.navigate.opened.prev()*
 navigate.opened.prev({node})
+    Navigate to the previous |bufloaded()| file.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 navigate.parent({node})                 *nvim_tree.api.node.navigate.parent()*
+    Navigate to the parent directory of the node.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.parent_close()*
 navigate.parent_close({node})
+    Navigate to the parent directory of the node, closing it.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                  *nvim_tree.api.node.navigate.sibling.first()*
 navigate.sibling.first({node})
+    Navigate to the first node in the current node's folder.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.last()*
 navigate.sibling.last({node})
+    Navigate to the last node in the current node's folder.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.next()*
 navigate.sibling.next({node})
+    Navigate to the next node in the current node's folder, wraps.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.node.navigate.sibling.prev()*
 navigate.sibling.prev({node})
+    Navigate to the previous node in the current node's folder, wraps.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
