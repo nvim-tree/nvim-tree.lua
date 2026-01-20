@@ -1,13 +1,13 @@
----@class (exact) Module
+---@class (exact) Src
 ---@field helptag string must be globally unique
 ---@field section string arbitrary
 ---@field path string relative to root
----@field file string? generated from path
----@field name string? override generated module name
+---@field file_name string? generated from path
+---@field name string? override generated name
 
----Generated within help files in this order
----@type Module[]
-local modules = {
+---Help txt is deleted from first tag down and generated content is appended.
+---@type Src[]
+local srcs = {
   { helptag = "nvim-tree-config",                     section = "Class: Config",                    path = "./lua/nvim_tree/_meta/config.lua", },
   { helptag = "nvim-tree-config-sort",                section = "Class: Config.Sort",               path = "./lua/nvim_tree/_meta/config/sort.lua", },
   { helptag = "nvim-tree-config-view",                section = "Class: Config.View",               path = "./lua/nvim_tree/_meta/config/view.lua", },
@@ -47,17 +47,17 @@ local modules = {
 }
 
 -- hydrate file names
-for _, m in ipairs(modules) do
-  m.file = vim.fn.fnamemodify(m.path, ":t")
+for _, m in ipairs(srcs) do
+  m.file_name = vim.fn.fnamemodify(m.path, ":t")
 end
 
 --name is derived by the generator as the file name with the first letter capitalised
---except for some like UI
----@type table<string, Module>
-local modules_by_section = {}
-for _, m in ipairs(modules) do
-  local name = m.name or m.file:gsub(".lua", ""):gsub("^%l", string.upper)
-  modules_by_section[name] = m
+--except for some like UI which are overridden in srcs
+---@type table<string, Src>
+local srcs_by_name = {}
+for _, m in ipairs(srcs) do
+  local name = m.name or m.file_name:gsub(".lua", ""):gsub("^%l", string.upper)
+  srcs_by_name[name] = m
 end
 
 ---@diagnostic disable-next-line: undefined-doc-name
@@ -66,22 +66,22 @@ local config = {
   all = {
     filename = "nvim-tree-lua.txt",
 
-    -- file is used to set order
-    section_order = vim.tbl_map(function(m) return m.file end, modules),
+    -- source file name is used to set order
+    section_order = vim.tbl_map(function(src) return src.file_name end, srcs),
 
     -- path
-    files = vim.tbl_map(function(m) return m.path end, modules),
+    files = vim.tbl_map(function(src) return src.path end, srcs),
 
     section_fmt = function(name)
       print(string.format("section_fmt name=%s", name))
-      return modules_by_section[name] and modules_by_section[name].section or
-        error(string.format("unknown module %s passed to section_fmt", name))
+      return srcs_by_name[name] and srcs_by_name[name].section or
+        error(string.format("unknown name %s passed to section_fmt", name))
     end,
 
     helptag_fmt = function(name)
       print(string.format("helptag_fmt name=%s", name))
-      return modules_by_section[name] and modules_by_section[name].helptag or
-        error(string.format("unknown module %s passed to helptag_fmt", name))
+      return srcs_by_name[name] and srcs_by_name[name].helptag or
+        error(string.format("unknown name %s passed to helptag_fmt", name))
     end,
 
     -- optional, no default xform
