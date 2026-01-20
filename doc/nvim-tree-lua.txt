@@ -203,7 +203,9 @@ See |nvim-tree-highlight-groups| for details.
 ==============================================================================
 Commands                                                  *nvim-tree-commands*
 
-Commands may be executed with a `<bang>` (`!`) or take a `<path>` string argument.
+Commands may be executed with a `<bang>` (`!`) or take a `path` string argument.
+
+All commands execute public API.
 
 *:NvimTreeOpen*                            |nvim_tree.api.tree.open()| >lua
 
@@ -2418,20 +2420,19 @@ following are functionally identical: >lua
 ==============================================================================
 Lua module: nvim_tree.api.commands                    *nvim-tree-api-commands*
 
-*nvim_tree.api.commands.Command*
-    Arguments for |nvim_create_user_command()|
-
-    Fields: ~
-      • {name}     (`string`)
-      • {command}  (`fun(args: vim.api.keyset.create_user_command.command_args)`)
-      • {opts}     (`vim.api.keyset.user_command`)
-
-
 get()                                           *nvim_tree.api.commands.get()*
-    Retrieve all nvim-tree commands, see |nvim-tree-commands|
+    Retrieve all |nvim-tree-commands|
+
+    They have been created via |nvim_create_user_command()|, see also
+    |lua-guide-commands-create|
 
     Return: ~
-        (`nvim_tree.api.commands.Command[]`)
+        (`table[]`)
+        • {name} (`string`) name of the `:NvimTree*` command
+        • {command}
+          (`fun(args: vim.api.keyset.create_user_command.command_args)`)
+          function that the command will execute
+        • {opts} (`vim.api.keyset.user_command`) |command-attributes|
 
 
 ==============================================================================
