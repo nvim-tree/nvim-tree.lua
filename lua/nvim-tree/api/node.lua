@@ -2,6 +2,7 @@
 local nvim_tree = { api = { node = { navigate = { sibling = {}, git = {}, diagnostics = {}, opened = {}, }, run = {}, open = {}, buffer = {}, } } }
 
 
+---
 ---@class nvim_tree.api.node.open.Opts
 ---@inlinedoc
 ---
@@ -15,32 +16,27 @@ local nvim_tree = { api = { node = { navigate = { sibling = {}, git = {}, diagno
 
 
 ---
+---@class nvim_tree.api.node.buffer.RemoveOpts
+---@inlinedoc
+---
+---Proceed even if the buffer is modified.
+---(default: false)
+---@field force? boolean
+
+
+---
 ---Deletes node's related buffer, if one exists. Executes [:bdelete] or [:bdelete]!
 ---
 ---@param node nvim_tree.api.Node file
----@param opts? nvim_tree.api.node.buffer.delete.Opts
+---@param opts? nvim_tree.api.node.buffer.RemoveOpts
 function nvim_tree.api.node.buffer.delete(node, opts) end
-
----@class nvim_tree.api.node.buffer.delete.Opts optional
----@inlinedoc
----
----Delete even if buffer is modified.
----(default: false)
----@field force? boolean
 
 ---
 ---Wipes node's related buffer, if one exists. Executes [:bwipe] or [:bwipe]!
 ---
 ---@param node? nvim_tree.api.Node file
----@param opts? nvim_tree.api.node.buffer.wipe.Opts optional
+---@param opts? nvim_tree.api.node.buffer.RemoveOpts optional
 function nvim_tree.api.node.buffer.wipe(node, opts) end
-
----@class nvim_tree.api.node.buffer.wipe.Opts
----@inlinedoc
----
----Wipe even if buffer is modified.
----(default: false)
----@field force? boolean
 
 ---
 ---Collapse the tree under a directory or a file's parent directory.

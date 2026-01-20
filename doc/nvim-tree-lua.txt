@@ -2653,9 +2653,9 @@ buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node`) file
-      • {opts}  (`table?`) A table with the following fields:
-                • {force}? (`boolean`, default: false) Delete even if buffer
-                  is modified.
+      • {opts}  (`table?`)
+                • {force}? (`boolean`, default: false) Proceed even if the
+                  buffer is modified.
 
 buffer.wipe({node}, {opts})                 *nvim_tree.api.node.buffer.wipe()*
     Wipes node's related buffer, if one exists. Executes |:bwipe| or |:bwipe|!
@@ -2663,8 +2663,8 @@ buffer.wipe({node}, {opts})                 *nvim_tree.api.node.buffer.wipe()*
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`) optional
-                • {force}? (`boolean`, default: false) Wipe even if buffer is
-                  modified.
+                • {force}? (`boolean`, default: false) Proceed even if the
+                  buffer is modified.
 
 collapse({node}, {opts})                       *nvim_tree.api.node.collapse()*
     Collapse the tree under a directory or a file's parent directory.
