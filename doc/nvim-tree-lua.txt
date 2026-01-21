@@ -65,8 +65,9 @@ Disabling |netrw| is strongly advised, see |nvim-tree-netrw|
 ==============================================================================
 Quickstart: Setup                                 *nvim-tree-quickstart-setup*
 
-Setup the plugin in your `init.lua`, passing |nvim_tree.config|
-e.g. >lua
+Setup the plugin in your `init.lua`.
+
+See |nvim-tree-setup| and |nvim-tree-default-config >lua
 
   -- disable netrw at the very start of your init.lua
   vim.g.loaded_netrw = 1
@@ -78,8 +79,10 @@ e.g. >lua
   -- empty setup using defaults
   require("nvim-tree").setup()
 
-  -- OR setup with some options
-  require("nvim-tree").setup({
+  -- OR setup with a config
+
+  ---@type nvim_tree.config
+  local config = {
     sort = {
       sorter = "case_sensitive",
     },
@@ -92,7 +95,8 @@ e.g. >lua
     filters = {
       dotfiles = true,
     },
-  })
+  }
+  require("nvim-tree").setup(config)
 <
 ==============================================================================
 Quickstart: Help                                   *nvim-tree-quickstart-help*
@@ -183,11 +187,11 @@ via |nvim_tree.config| {on_attach} e.g. >lua
   end
 
   -- pass to setup along with your other options
-  require("nvim-tree").setup {
+  require("nvim-tree").setup({
     ---
     on_attach = my_on_attach,
     ---
-  }
+  })
 <
 ==============================================================================
 Quickstart: Highlight Groups                  *nvim-tree-quickstart-highlight*
@@ -311,20 +315,31 @@ Commands                                                  *nvim-tree-commands*
 ==============================================================================
 Setup                                                        *nvim-tree-setup*
 
-You must run setup() function once to initialise nvim-tree. It may be called
-again to apply a change in configuration without restarting Nvim.
+You must run the `setup()` function once to initialise nvim-tree. It may be
+called again to apply a change in configuration without restarting Nvim.
 
-setup() function takes one optional argument: configuration table. If omitted
-nvim-tree will be initialised with default configuration.
+The `setup()` function takes one optional argument: |nvim_tree.config|. If
+omitted nvim-tree will be initialised with default configuration:
+|nvim-tree-default-config|.
 
-See |nvim-tree-default-config| for the default configuration table.
+Config can be validated with |lsp| when passed directly e.g. >lua
 
-TODO #2934 move setup call patterns from config to here
+  require("nvim-tree").setup({
+    hijack_cursor = true,
+  })
+<
+or as a typed variable e.g. >lua
 
-The first setup() call is cheap: it does nothing more than validate / apply
+  ---@type nvim_tree.config
+  local config = {
+    hijack_cursor = true,
+  }
+  require("nvim-tree").setup(config)
+<
+The first `setup()` call is cheap: it does nothing more than validate / apply
 the configuration. Nothing happens until the tree is first opened.
 
-Subsequent setup() calls are expensive as they tear down the world before
+Subsequent `setup()` calls are expensive as they tear down the world before
 applying configuration.
 
 
@@ -1841,20 +1856,6 @@ Class: config                                               *nvim-tree-config*
     Arguments to pass to |nvim-tree-setup|.
 
     When a value is not present/nil, the default will be used.
-
-    They can be validated by |lsp| when passed directly e.g. >lua
-         require("nvim-tree").setup({
-           hijack_cursor = true,
-         })
-<
-
-    or as a typed variable e.g. >lua
-         ---@type nvim_tree.config
-         local config = {
-           hijack_cursor = true,
-         }
-         require("nvim-tree").setup(config)
-<
 
     {on_attach} Runs when creating the nvim-tree buffer. Use this to set your
     |nvim-tree-mappings|. When not a function, |nvim-tree-mappings-default|
