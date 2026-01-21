@@ -57,4 +57,4 @@ error("Cannot require a meta file")
 ---@field custom? string[]|(fun(absolute_path: string): boolean)
 ---
 ---(default: `{}`)
----@field exclude? string[] 
+---@field exclude? string[]

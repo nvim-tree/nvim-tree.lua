@@ -19,7 +19,6 @@ unset VIMRUNTIME
 
 # Use a directory outside of nvim_tree source. Adding lua files inside will (rightly) upset luals.
 DIR_NVT="${PWD}"
-DIR_WORK="/tmp/nvim-tree-lintdoc"
 DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 
 if [ ! -f "${DIR_NVT}/scripts/lintdoc.sh" ]; then

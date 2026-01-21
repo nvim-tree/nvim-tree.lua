@@ -14,4 +14,3 @@ error("Cannot require a meta file")
 --Buffers opened by nvim-tree will use with relative paths instead of absolute.
 --(default: false)
 --@field relative_path? boolean
-
