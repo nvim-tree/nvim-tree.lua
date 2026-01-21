@@ -18,9 +18,8 @@ markdown-toc --maxdepth=2 -i CONTRIBUTING.md
   * [check](#check)
 - [Diagnostics](#diagnostics)
 - [Backwards Compatibility](#backwards-compatibility)
-- [Adding New Actions](#adding-new-actions)
 - [Documentation](#documentation)
-  * [Opts](#opts)
+  * [Config And Mappings](#config-and-mappings)
   * [API](#api)
 - [Windows](#windows)
 - [Pull Request](#pull-request)
@@ -126,8 +125,8 @@ end
 ## Config And Mappings
 
 When adding to or changing:
-1. `DEFAULT_OPTS`
-2. `Config` classes
+1. Default config
+2. `config` classes
 3. `on_attach` default mappings
 
 You must generate help documentation. This requires neovim stable sources. You will be promted with instructions on fetching and referencing the source.

@@ -104,7 +104,7 @@ function nvim_tree.api.fs.rename_node(node) end
 function nvim_tree.api.fs.rename_sub(node) end
 
 ---
----Trash as per |nvim_tree.Config.Trash|
+---Trash as per |nvim_tree.config.trash|
 ---
 ---@param node nvim_tree.api.Node
 function nvim_tree.api.fs.trash(node) end

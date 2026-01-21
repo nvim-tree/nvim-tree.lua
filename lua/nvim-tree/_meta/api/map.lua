@@ -2,7 +2,7 @@
 local nvim_tree = { api = { map = {} } }
 
 ---
----Retrieve all buffer local mappings for nvim-tree. These are the mappings that are applied by [nvim_tree.Config] {on_attach}, which may include default mappings.
+---Retrieve all buffer local mappings for nvim-tree. These are the mappings that are applied by [nvim_tree.config] {on_attach}, which may include default mappings.
 ---
 ---@return vim.api.keyset.get_keymap[]
 function nvim_tree.api.map.get_keymap() end
@@ -14,7 +14,7 @@ function nvim_tree.api.map.get_keymap() end
 function nvim_tree.api.map.get_keymap_default() end
 
 ---
----Apply all [nvim-tree-mappings-default]. Call from your [nvim_tree.Config] {on_attach}.
+---Apply all [nvim-tree-mappings-default]. Call from your [nvim_tree.config] {on_attach}.
 ---
 ---@param bufnr integer use the `bufnr` passed to {on_attach}
 function nvim_tree.api.map.default_on_attach(bufnr) end

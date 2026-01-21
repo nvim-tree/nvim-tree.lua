@@ -25,12 +25,12 @@ function nvim_tree.api.marks.toggle(node) end
 function nvim_tree.api.marks.clear() end
 
 ---
----Delete all marked, prompting if [nvim_tree.Config.UI.Confirm] {remove}
+---Delete all marked, prompting if [nvim_tree.config.ui.confirm] {remove}
 ---
 function nvim_tree.api.marks.bulk.delete() end
 
 ---
----Delete all marked, prompting if [nvim_tree.Config.UI.Confirm] {trash}
+---Delete all marked, prompting if [nvim_tree.config.ui.confirm] {trash}
 ---
 function nvim_tree.api.marks.bulk.trash() end
 

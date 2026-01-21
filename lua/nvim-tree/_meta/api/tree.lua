@@ -24,7 +24,7 @@ function nvim_tree.api.tree.open(opts) end
 ---(default: false)
 ---@field find_file? boolean
 ---
----Update root following {find_file}, see [nvim_tree.Config.UpdateFocusedFile] {update_root}
+---Update root following {find_file}, see [nvim_tree.config.update_focused_file] {update_root}
 ---(default: false)
 ---@field update_root? boolean
 
@@ -51,7 +51,7 @@ function nvim_tree.api.tree.toggle(opts) end
 ---(default: false)
 ---@field find_file? boolean
 ---
----Update root following {find_file}, see [nvim_tree.Config.UpdateFocusedFile] {update_root}
+---Update root following {find_file}, see [nvim_tree.config.update_focused_file] {update_root}
 ---(default: false)
 ---@field update_root? boolean
 ---
@@ -60,7 +60,7 @@ function nvim_tree.api.tree.toggle(opts) end
 ---@field focus? boolean
 
 ---
----Close the tree, affecting all tabs as per [nvim_tree.Config.Tab.Sync] {close}
+---Close the tree, affecting all tabs as per [nvim_tree.config.tab.sync] {close}
 ---
 function nvim_tree.api.tree.close() end
 
@@ -85,11 +85,11 @@ function nvim_tree.api.tree.focus() end
 function nvim_tree.api.tree.reload() end
 
 ---
----Resize the tree, persisting the new size. Resets to [nvim_tree.Config.View] {width} when no {opts} provided.
+---Resize the tree, persisting the new size. Resets to [nvim_tree.config.view] {width} when no {opts} provided.
 ---
 ---Only one option is supported, priority order: {width}, {absolute}, {relative}.
 ---
----{absolute} and {relative} do nothing when [nvim_tree.Config.View] {width} is a function.
+---{absolute} and {relative} do nothing when [nvim_tree.config.view] {width} is a function.
 ---
 ---@param opts? nvim_tree.api.tree.resize.Opts optional
 function nvim_tree.api.tree.resize(opts) end
@@ -97,8 +97,8 @@ function nvim_tree.api.tree.resize(opts) end
 ---@class nvim_tree.api.tree.resize.Opts
 ---@inlinedoc
 ---
----New [nvim_tree.Config.View] {width} value.
----@field width nvim_tree.Config.View.WidthSpec|nvim_tree.Config.View.Width
+---New [nvim_tree.config.view] {width} value.
+---@field width nvim_tree.config.view.width.spec|nvim_tree.config.view.width
 ---
 ---Set the width.
 ---@field absolute integer
@@ -159,7 +159,7 @@ function nvim_tree.api.tree.find_file(opts) end
 ---Open the tree in the specified [window-ID], overrides {current_window}
 ---@field winid? integer
 ---
----Update root after find, see [nvim_tree.Config.UpdateFocusedFile] {update_root}
+---Update root after find, see [nvim_tree.config.update_focused_file] {update_root}
 ---(default: false)
 ---@field update_root? boolean
 ---
@@ -186,37 +186,37 @@ function nvim_tree.api.tree.collapse_all(opts) end
 function nvim_tree.api.tree.expand_all(node, opts) end
 
 ---
----Toggle [nvim_tree.Config.Filters] {enable} all filters.
+---Toggle [nvim_tree.config.filters] {enable} all filters.
 ---
 function nvim_tree.api.tree.toggle_enable_filters() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {git_ignored} filter.
+---Toggle [nvim_tree.config.filters] {git_ignored} filter.
 ---
 function nvim_tree.api.tree.toggle_gitignore_filter() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {dotfiles} filter.
+---Toggle [nvim_tree.config.filters] {dotfiles} filter.
 ---
 function nvim_tree.api.tree.toggle_hidden_filter() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {git_clean} filter.
+---Toggle [nvim_tree.config.filters] {git_clean} filter.
 ---
 function nvim_tree.api.tree.toggle_git_clean_filter() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {no_buffer} filter.
+---Toggle [nvim_tree.config.filters] {no_buffer} filter.
 ---
 function nvim_tree.api.tree.toggle_no_buffer_filter() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {no_bookmark} filter.
+---Toggle [nvim_tree.config.filters] {no_bookmark} filter.
 ---
 function nvim_tree.api.tree.toggle_no_bookmark_filter() end
 
 ---
----Toggle [nvim_tree.Config.Filters] {custom} filter.
+---Toggle [nvim_tree.config.filters] {custom} filter.
 ---
 function nvim_tree.api.tree.toggle_custom_filter() end
 

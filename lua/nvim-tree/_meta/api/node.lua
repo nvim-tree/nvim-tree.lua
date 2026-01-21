@@ -71,7 +71,7 @@ function nvim_tree.api.node.expand(node, opts) end
 function nvim_tree.api.node.navigate.diagnostics.next(node) end
 
 ---
----Navigate to the next item showing diagnostic status, recursively. Needs [nvim_tree.Config.Diagnostics] {show_on_dirs}
+---Navigate to the next item showing diagnostic status, recursively. Needs [nvim_tree.config.diagnostics] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.next_recursive(node) end
@@ -83,7 +83,7 @@ function nvim_tree.api.node.navigate.diagnostics.next_recursive(node) end
 function nvim_tree.api.node.navigate.diagnostics.prev(node) end
 
 ---
----Navigate to the previous item showing diagnostic status, recursively. Needs [nvim_tree.Config.Diagnostics] {show_on_dirs}
+---Navigate to the previous item showing diagnostic status, recursively. Needs [nvim_tree.config.diagnostics] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.diagnostics.prev_recursive(node) end
@@ -95,7 +95,7 @@ function nvim_tree.api.node.navigate.diagnostics.prev_recursive(node) end
 function nvim_tree.api.node.navigate.git.next(node) end
 
 ---
----Navigate to the next item showing git status, recursively. Needs [nvim_tree.Config.Git] {show_on_dirs}
+---Navigate to the next item showing git status, recursively. Needs [nvim_tree.config.git] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.next_recursive(node) end
@@ -113,7 +113,7 @@ function nvim_tree.api.node.navigate.git.next_skip_gitignored(node) end
 function nvim_tree.api.node.navigate.git.prev(node) end
 
 ---
----Navigate to the previous item showing git status, recursively. Needs [nvim_tree.Config.Git] {show_on_dirs}
+---Navigate to the previous item showing git status, recursively. Needs [nvim_tree.config.git] {show_on_dirs}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.navigate.git.prev_recursive(node) end
@@ -182,7 +182,7 @@ function nvim_tree.api.node.navigate.sibling.prev(node) end
 function nvim_tree.api.node.open.drop(node) end
 
 ---
----- file: open as per [nvim_tree.Config.Actions.OpenFile]
+---- file: open as per [nvim_tree.config.actions.open_file]
 ---- directory: expand or collapse
 ---- root: change directory up
 ---
@@ -245,7 +245,7 @@ function nvim_tree.api.node.open.tab(node, opts) end
 function nvim_tree.api.node.open.tab_drop(node) end
 
 ---
----Toggle [nvim_tree.Config.Renderer] {group_empty} for a directory. Needs {group_empty} set.
+---Toggle [nvim_tree.config.renderer] {group_empty} for a directory. Needs {group_empty} set.
 ---
 ---@param node? nvim_tree.api.Node directory
 ---@param opts? nvim_tree.api.node.open.Opts optional
@@ -272,7 +272,7 @@ function nvim_tree.api.node.open.vertical_no_picker(node, opts) end
 function nvim_tree.api.node.run.cmd(node) end
 
 ---
----Execute [nvim_tree.Config.SystemOpen].
+---Execute [nvim_tree.config.system_open].
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.run.system(node) end

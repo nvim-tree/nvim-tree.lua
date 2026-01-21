@@ -10,7 +10,7 @@ error("Cannot require a meta file")
 ---Filters can be set at startup or toggled live via API with default mappings.
 ---
 ---`I     `{git_ignored}`         `|nvim_tree.api.tree.toggle_gitignore_filter()|
----Ignore files based on `.gitignore`. Requires |nvim_tree.Config.Git|
+---Ignore files based on `.gitignore`. Requires |nvim_tree.config.git|
 ---
 ---`H     `{dotfiles}`            `|nvim_tree.api.tree.toggle_hidden_filter()|
 ---Filter dotfiles: files/directories starting with a `.`
@@ -32,7 +32,7 @@ error("Cannot require a meta file")
 ---All filters including live filter may be disabled via {enable} and toggled with |nvim_tree.api.tree.toggle_enable_filters()|
 ---
 ---Files/directories may be {exclude}d from filtering: they will always be shown, overriding {git_ignored}, {dotfiles} and {custom}.
----@class nvim_tree.Config.Filters
+---@class nvim_tree.config.filters
 ---
 ---Enable all filters.
 ---(default: `true`)

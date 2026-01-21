@@ -3,15 +3,15 @@ error("Cannot require a meta file")
 
 
 
----@class nvim_tree.Config.UI
+---@class nvim_tree.config.ui
 ---
----[nvim_tree.Config.UI.Confirm]
----@field confirm? nvim_tree.Config.UI.Confirm
+---[nvim_tree.config.ui.confirm]
+---@field confirm? nvim_tree.config.ui.confirm
 
 
 
 ---Confirmation prompts.
----@class nvim_tree.Config.UI.Confirm
+---@class nvim_tree.config.ui.confirm
 ---
 ---Prompt before removing.
 ---(default: `true`)

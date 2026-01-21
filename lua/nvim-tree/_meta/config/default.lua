@@ -1,0 +1,11 @@
+---@brief
+---Following is the default configuration, see |nvim_tree.config| for details.
+---
+---```lua
+---
+------@type nvim_tree.config
+---local config = {
+---default-config-injection-placeholder
+---}
+---```
+---

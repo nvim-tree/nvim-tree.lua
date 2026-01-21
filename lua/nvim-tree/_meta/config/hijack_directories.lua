@@ -7,9 +7,9 @@ error("Cannot require a meta file")
 ---
 ---Disable this option if you use vim-dirvish or dirbuf.nvim.
 ---
----If [nvim_tree.Config] {hijack_netrw} and {disable_netrw} are `false` this feature will be disabled.
+---If [nvim_tree.config] {hijack_netrw} and {disable_netrw} are `false` this feature will be disabled.
 ---
----@class nvim_tree.Config.HijackDirectories
+---@class nvim_tree.config.hijack_directories
 ---
 ---(default: `true`)
 ---@field enable? boolean

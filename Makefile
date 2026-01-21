@@ -35,8 +35,8 @@ style-fix:
 # utility
 #
 help-update:
-	scripts/help-update.sh
 	scripts/gen_vimdoc.sh
+	scripts/help-update.sh
 
 #
 # CI

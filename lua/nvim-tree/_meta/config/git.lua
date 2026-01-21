@@ -13,7 +13,7 @@ error("Cannot require a meta file")
 ---
 ---See [nvim-tree-icons-highlighting].
 ---
----@class nvim_tree.Config.Git
+---@class nvim_tree.config.git
 ---
 ---(default: `true`)
 ---@field enable? boolean
