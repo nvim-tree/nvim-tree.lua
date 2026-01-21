@@ -253,7 +253,7 @@ local function setup_autocommands(opts)
 end
 
 ---@type nvim_tree.config
-local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
+local DEFAULT_OPTS = { -- default-config-start
   on_attach = "default",
   hijack_cursor = false,
   auto_reload_on_write = true,
@@ -534,7 +534,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
       watcher = false,
     },
   },
-}-- END_DEFAULT_OPTS
+}-- default-config-end
 
 local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})

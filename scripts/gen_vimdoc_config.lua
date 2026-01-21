@@ -1,3 +1,7 @@
+--nvim-tree configuration for Nvim's gen_vimdoc.lua
+--Returned config is injected into the above.
+--See gen_vimdoc.sh
+
 ---@class (exact) Src
 ---@field helptag string must be globally unique
 ---@field section string arbitrary
@@ -8,28 +12,30 @@
 ---Help txt is deleted from first tag down and generated content is appended.
 ---@type Src[]
 local srcs = {
-  { helptag = "nvim-tree-config",                     section = "class: config",                     path = "./lua/nvim_tree/_meta/config.lua", },
-  { helptag = "nvim-tree-config-sort",                section = "class: config.sort",                path = "./lua/nvim_tree/_meta/config/sort.lua", },
-  { helptag = "nvim-tree-config-view",                section = "class: config.view",                path = "./lua/nvim_tree/_meta/config/view.lua", },
-  { helptag = "nvim-tree-config-renderer",            section = "class: config.renderer",            path = "./lua/nvim_tree/_meta/config/renderer.lua", },
-  { helptag = "nvim-tree-config-hijack-directories",  section = "class: config.hijack_directories",  path = "./lua/nvim_tree/_meta/config/hijack_directories.lua", },
-  { helptag = "nvim-tree-config-update-focused-file", section = "class: config.update_focused_file", path = "./lua/nvim_tree/_meta/config/update_focused_file.lua", },
-  { helptag = "nvim-tree-config-system-open",         section = "class: config.system_open",         path = "./lua/nvim_tree/_meta/config/system_open.lua", },
-  { helptag = "nvim-tree-config-git",                 section = "class: config.git",                 path = "./lua/nvim_tree/_meta/config/git.lua", },
-  { helptag = "nvim-tree-config-diagnostics",         section = "class: config.diagnostics",         path = "./lua/nvim_tree/_meta/config/diagnostics.lua", },
-  { helptag = "nvim-tree-config-modified",            section = "class: config.modified",            path = "./lua/nvim_tree/_meta/config/modified.lua", },
-  { helptag = "nvim-tree-config-filters",             section = "class: config.filters",             path = "./lua/nvim_tree/_meta/config/filters.lua", },
-  { helptag = "nvim-tree-config-live-filter",         section = "class: config.live_filter",         path = "./lua/nvim_tree/_meta/config/live_filter.lua", },
-  { helptag = "nvim-tree-config-filesystem-watchers", section = "class: config.filesystem_watchers", path = "./lua/nvim_tree/_meta/config/filesystem_watchers.lua", },
-  { helptag = "nvim-tree-config-actions",             section = "class: config.actions",             path = "./lua/nvim_tree/_meta/config/actions.lua", },
-  { helptag = "nvim-tree-config-trash",               section = "class: config.trash",               path = "./lua/nvim_tree/_meta/config/trash.lua", },
-  { helptag = "nvim-tree-config-tab",                 section = "class: config.tab",                 path = "./lua/nvim_tree/_meta/config/tab.lua", },
-  { helptag = "nvim-tree-config-notify",              section = "class: config.notify",              path = "./lua/nvim_tree/_meta/config/notify.lua", },
-  { helptag = "nvim-tree-config-bookmarks",           section = "class: config.bookmarks",           path = "./lua/nvim_tree/_meta/config/bookmarks.lua", },
-  { helptag = "nvim-tree-config-help",                section = "class: config.help",                path = "./lua/nvim_tree/_meta/config/help.lua", },
-  { helptag = "nvim-tree-config-ui",                  section = "class: config.ui",                  path = "./lua/nvim_tree/_meta/config/ui.lua",                  name = "UI", },
-  { helptag = "nvim-tree-config-experimental",        section = "class: config.experimental",        path = "./lua/nvim_tree/_meta/config/experimental.lua", },
-  { helptag = "nvim-tree-config-log",                 section = "class: config.log",                 path = "./lua/nvim_tree/_meta/config/log.lua", },
+  { helptag = "nvim-tree-config",                     section = "Class: config",                     path = "./lua/nvim_tree/_meta/config.lua", },
+  { helptag = "nvim-tree-config-sort",                section = "Class: config.sort",                path = "./lua/nvim_tree/_meta/config/sort.lua", },
+  { helptag = "nvim-tree-config-view",                section = "Class: config.view",                path = "./lua/nvim_tree/_meta/config/view.lua", },
+  { helptag = "nvim-tree-config-renderer",            section = "Class: config.renderer",            path = "./lua/nvim_tree/_meta/config/renderer.lua", },
+  { helptag = "nvim-tree-config-hijack-directories",  section = "Class: config.hijack_directories",  path = "./lua/nvim_tree/_meta/config/hijack_directories.lua", },
+  { helptag = "nvim-tree-config-update-focused-file", section = "Class: config.update_focused_file", path = "./lua/nvim_tree/_meta/config/update_focused_file.lua", },
+  { helptag = "nvim-tree-config-system-open",         section = "Class: config.system_open",         path = "./lua/nvim_tree/_meta/config/system_open.lua", },
+  { helptag = "nvim-tree-config-git",                 section = "Class: config.git",                 path = "./lua/nvim_tree/_meta/config/git.lua", },
+  { helptag = "nvim-tree-config-diagnostics",         section = "Class: config.diagnostics",         path = "./lua/nvim_tree/_meta/config/diagnostics.lua", },
+  { helptag = "nvim-tree-config-modified",            section = "Class: config.modified",            path = "./lua/nvim_tree/_meta/config/modified.lua", },
+  { helptag = "nvim-tree-config-filters",             section = "Class: config.filters",             path = "./lua/nvim_tree/_meta/config/filters.lua", },
+  { helptag = "nvim-tree-config-live-filter",         section = "Class: config.live_filter",         path = "./lua/nvim_tree/_meta/config/live_filter.lua", },
+  { helptag = "nvim-tree-config-filesystem-watchers", section = "Class: config.filesystem_watchers", path = "./lua/nvim_tree/_meta/config/filesystem_watchers.lua", },
+  { helptag = "nvim-tree-config-actions",             section = "Class: config.actions",             path = "./lua/nvim_tree/_meta/config/actions.lua", },
+  { helptag = "nvim-tree-config-trash",               section = "Class: config.trash",               path = "./lua/nvim_tree/_meta/config/trash.lua", },
+  { helptag = "nvim-tree-config-tab",                 section = "Class: config.tab",                 path = "./lua/nvim_tree/_meta/config/tab.lua", },
+  { helptag = "nvim-tree-config-notify",              section = "Class: config.notify",              path = "./lua/nvim_tree/_meta/config/notify.lua", },
+  { helptag = "nvim-tree-config-bookmarks",           section = "Class: config.bookmarks",           path = "./lua/nvim_tree/_meta/config/bookmarks.lua", },
+  { helptag = "nvim-tree-config-help",                section = "Class: config.help",                path = "./lua/nvim_tree/_meta/config/help.lua", },
+  { helptag = "nvim-tree-config-ui",                  section = "Class: config.ui",                  path = "./lua/nvim_tree/_meta/config/ui.lua",                  name = "UI", },
+  { helptag = "nvim-tree-config-experimental",        section = "Class: config.experimental",        path = "./lua/nvim_tree/_meta/config/experimental.lua", },
+  { helptag = "nvim-tree-config-log",                 section = "Class: config.log",                 path = "./lua/nvim_tree/_meta/config/log.lua", },
+
+  { helptag = "nvim-tree-default-config",             section = "Config: default",                   path = "./lua/nvim_tree/_meta/config/default.lua", },
 }
 
 -- hydrate file names
