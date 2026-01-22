@@ -19,7 +19,7 @@ DIR_WORK="/tmp/nvim-tree-gen_vimdoc"
 DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 
 if [ ! -f "${DIR_NVT}/scripts/gen_vimdoc.sh" ]; then
-	echo "Must be run from nvim-tree root"
+	echo "Must be run from nvim-tree root" 1>&2
 	exit 1
 fi
 
