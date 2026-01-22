@@ -1,4 +1,4 @@
- local M = {}
+local M = {}
 
 ---Reason for filter in filter.lua
 ---@enum FILTER_REASON

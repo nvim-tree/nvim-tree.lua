@@ -1,5 +1,5 @@
 ---@meta
- error("Cannot require a meta file")
+error("Cannot require a meta file")
 
 --
 -- Nodes
