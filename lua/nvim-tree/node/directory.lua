@@ -320,11 +320,10 @@ local function to_lookup_table(list)
 end
 
 ---@private
----@param _ integer expansion_count
 ---@return boolean
-function DirectoryNode:descend_until_empty(node)
-  local EXCLUDE = to_lookup_table(node.explorer.opts.actions.expand_all.exclude)
-  local should_exclude = EXCLUDE[node.name]
+function DirectoryNode:descend_until_empty()
+  local EXCLUDE = to_lookup_table(self.explorer.opts.actions.expand_all.exclude)
+  local should_exclude = EXCLUDE[self.name]
   return not should_exclude
 end
 
@@ -357,53 +356,49 @@ function DirectoryNode:should_expand(expansion_count, node, should_descend)
   return false
 end
 
----@private
----@param should_descend fun(expansion_count: integer, node: Node): boolean
----@return fun(node): any
-function DirectoryNode:gen_iterator(should_descend)
-  local expansion_count = 0
-
-  return function(parent)
-    if parent.parent and parent.nodes and not parent.open then
-      expansion_count = expansion_count + 1
-      parent:expand_dir_node()
-    end
-
-    Iterator.builder(parent.nodes)
-      :hidden()
-      :applier(function(node)
-        if DirectoryNode:should_expand(expansion_count, node, should_descend) then
-          expansion_count = expansion_count + 1
-          node = node:as(DirectoryNode)
-          if node then
-            node:expand_dir_node()
-          end
-        end
-      end)
-      :recursor(function(node)
-        if not should_descend(expansion_count, node) then
-          return nil
-        end
-
-        if node.group_next then
-          return { node.group_next }
-        end
-
-        if node.open and node.nodes then
-          return node.nodes
-        end
-
-        return nil
-      end)
-      :iterate()
-  end
-end
-
 ---@param expand_opts ApiTreeExpandOpts?
 function DirectoryNode:expand(expand_opts)
-  local descend_until_empty_fn = self.descend_until_empty
-  local descend_until = self:limit_folder_discovery((expand_opts and expand_opts.expand_until) or descend_until_empty_fn)
-  self:gen_iterator(descend_until)(self)
+  local expansion_count = 0
+
+  local function safe_descend_until_empty(_, node)
+    return self.descend_until_empty(node) -- calling with dot so that node is attached as self
+  end
+
+  local should_descend = self:limit_folder_discovery((expand_opts and expand_opts.expand_until) or safe_descend_until_empty)
+
+
+  if self.parent and self.nodes and not self.open then
+    expansion_count = expansion_count + 1
+    self:expand_dir_node()
+  end
+
+  Iterator.builder(self.nodes)
+    :hidden()
+    :applier(function(node)
+      if DirectoryNode:should_expand(expansion_count, node, should_descend) then
+        expansion_count = expansion_count + 1
+        node = node:as(DirectoryNode)
+        if node then
+          node:expand_dir_node()
+        end
+      end
+    end)
+    :recursor(function(node)
+      if not should_descend(expansion_count, node) then
+        return nil
+      end
+
+      if node.group_next then
+        return { node.group_next }
+      end
+
+      if node.open and node.nodes then
+        return node.nodes
+      end
+
+      return nil
+    end)
+    :iterate()
 
   self.explorer.renderer:draw()
 end
