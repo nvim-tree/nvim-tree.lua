@@ -136,13 +136,6 @@ return function(api)
   api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
 
   api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
-  api.tree.toggle_enable_filters = wrap_explorer_member("filters", "toggle")
-  api.tree.toggle_gitignore_filter = wrap_explorer_member_args("filters", "toggle", "git_ignored")
-  api.tree.toggle_git_clean_filter = wrap_explorer_member_args("filters", "toggle", "git_clean")
-  api.tree.toggle_no_buffer_filter = wrap_explorer_member_args("filters", "toggle", "no_buffer")
-  api.tree.toggle_custom_filter = wrap_explorer_member_args("filters", "toggle", "custom")
-  api.tree.toggle_hidden_filter = wrap_explorer_member_args("filters", "toggle", "dotfiles")
-  api.tree.toggle_no_bookmark_filter = wrap_explorer_member_args("filters", "toggle", "no_bookmark")
   api.tree.toggle_help = wrap(help.toggle)
   api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
 
@@ -275,8 +268,15 @@ return function(api)
   api.events.subscribe = events.subscribe
   api.events.Event = events.Event
 
-  api.filter.live_filter.start = wrap_explorer_member("live_filter", "start_filtering")
-  api.filter.live_filter.clear = wrap_explorer_member("live_filter", "clear_filter")
+  api.filter.live.start = wrap_explorer_member("live_filter", "start_filtering")
+  api.filter.live.clear = wrap_explorer_member("live_filter", "clear_filter")
+  api.filter.toggle = wrap_explorer_member("filters", "toggle")
+  api.filter.git.ignored.toggle = wrap_explorer_member_args("filters", "toggle", "git_ignored")
+  api.filter.git.clean.toggle = wrap_explorer_member_args("filters", "toggle", "git_clean")
+  api.filter.no_buffer.toggle = wrap_explorer_member_args("filters", "toggle", "no_buffer")
+  api.filter.custom.toggle = wrap_explorer_member_args("filters", "toggle", "custom")
+  api.filter.dotfiles.toggle = wrap_explorer_member_args("filters", "toggle", "dotfiles")
+  api.filter.no_bookmark.toggle = wrap_explorer_member_args("filters", "toggle", "no_bookmark")
 
   api.marks.get = wrap_node(wrap_explorer_member("marks", "get"))
   api.marks.list = wrap_explorer_member("marks", "list")
@@ -313,8 +313,8 @@ return function(api)
     reload = api.tree.reload_git,
   }
   api.live_filter = {
-    start = api.filter.live_filter.start,
-    clear = api.filter.live_filter.clear,
+    start = api.filter.live.start,
+    clear = api.filter.live.clear,
   }
   api.config = {
     mappings = {

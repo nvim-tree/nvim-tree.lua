@@ -47,6 +47,8 @@ local srcs = {
   { helptag = "nvim-tree-api-map",                    section = "API: map",                    path = "./lua/nvim_tree/_meta/api/map.lua", },
   { helptag = "nvim-tree-api-marks",                  section = "API: marks",                  path = "./lua/nvim_tree/_meta/api/marks.lua", },
   { helptag = "nvim-tree-api-node",                   section = "API: node",                   path = "./lua/nvim_tree/_meta/api/node.lua", },
+  { helptag = "nvim-tree-api-node-navigate",          section = "API: node.navigate",          path = "./lua/nvim_tree/_meta/api/node/navigate.lua", },
+  { helptag = "nvim-tree-api-node-open",              section = "API: node.open",              path = "./lua/nvim_tree/_meta/api/node/open.lua", },
   { helptag = "nvim-tree-api-tree",                   section = "API: tree",                   path = "./lua/nvim_tree/_meta/api/tree.lua", },
 
   { helptag = "nvim-tree-api-classes",                section = "API: Classes",                path = "./lua/nvim_tree/_meta/api/classes.lua", },
