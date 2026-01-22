@@ -342,7 +342,7 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
     vim.keymap.set("n", "<C-e>", api.node.open.replace_tree_buffer,     opts("Open: In Place"))
     ---
     -- OR use all default mappings
-    api.config.mappings.default_on_attach(bufnr)
+    api.map.default_on_attach.default_on_attach(bufnr)
 
     -- remove a default
     vim.keymap.del("n", "<C-]>", { buffer = bufnr })
@@ -463,7 +463,7 @@ Alternatively, you may apply these default mappings from your
       return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    api.config.mappings.default_on_attach(bufnr)
+    api.map.default_on_attach.default_on_attach(bufnr)
 
     -- your removals and mappings go here
   end

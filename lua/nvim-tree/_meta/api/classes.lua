@@ -1,5 +1,7 @@
 ---@meta
 
+-- TODO #3088 document these
+
 ---@brief
 ---Classes shared by multiple API modules.
 ---
