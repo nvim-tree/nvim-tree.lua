@@ -1,10 +1,12 @@
 ---@meta
-local nvim_tree = { api = { fs = { copy = {} } } }
+local nvim_tree = { api = { fs = {} } }
 
 ---
 ---Clear the nvim-tree clipboard.
 ---
 function nvim_tree.api.fs.clear_clipboard() end
+
+nvim_tree.api.fs.copy = {}
 
 ---
 ---Copy the absolute path to the system clipboard.

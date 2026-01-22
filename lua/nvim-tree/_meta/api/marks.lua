@@ -1,5 +1,5 @@
 ---@meta
-local nvim_tree = { api = { marks = { bulk = {}, navigate = {}, } } }
+local nvim_tree = { api = { marks = {} } }
 
 ---
 ---Return the node if it is marked.
@@ -24,6 +24,8 @@ function nvim_tree.api.marks.toggle(node) end
 ---
 function nvim_tree.api.marks.clear() end
 
+nvim_tree.api.marks.bulk = {}
+
 ---
 ---Delete all marked, prompting if [nvim_tree.config.ui.confirm] {remove}
 ---
@@ -38,6 +40,8 @@ function nvim_tree.api.marks.bulk.trash() end
 ---Prompts for a directory to move all marked nodes into.
 ---
 function nvim_tree.api.marks.bulk.move() end
+
+nvim_tree.api.marks.navigate = {}
 
 ---
 ---Navigate to the next marked node, wraps.

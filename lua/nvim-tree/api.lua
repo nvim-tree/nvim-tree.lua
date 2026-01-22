@@ -1,3 +1,5 @@
+local api = {}
+
 ---@brief
 ---nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
 ---
@@ -35,17 +37,15 @@
 --
 --Load the (empty) meta definitions
 --
-local api = {
-  commands = require("nvim-tree._meta.api.commands"),
-  events = require("nvim-tree._meta.api.events"),
-  filter = require("nvim-tree._meta.api.filter"),
-  fs = require("nvim-tree._meta.api.fs"),
-  health = require("nvim-tree._meta.api.health"),
-  map = require("nvim-tree._meta.api.map"),
-  marks = require("nvim-tree._meta.api.marks"),
-  node = require("nvim-tree._meta.api.node"),
-  tree = require("nvim-tree._meta.api.tree"),
-}
+api.commands = require("nvim-tree._meta.api.commands")
+api.events = require("nvim-tree._meta.api.events")
+api.filter = require("nvim-tree._meta.api.filter")
+api.fs = require("nvim-tree._meta.api.fs")
+api.health = require("nvim-tree._meta.api.health")
+api.map = require("nvim-tree._meta.api.map")
+api.marks = require("nvim-tree._meta.api.marks")
+api.node = require("nvim-tree._meta.api.node")
+api.tree = require("nvim-tree._meta.api.tree")
 
 
 --
