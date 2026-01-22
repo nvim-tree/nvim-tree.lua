@@ -753,6 +753,7 @@ function Explorer:force_dirchange(foldername, should_open_view)
   else
     -- TODO #2255
     -- The call to core.init destroyed this Explorer instance hence we need to fetch the new instance.
+    -- Problem is described at https://github.com/nvim-tree/nvim-tree.lua/pull/3233#issuecomment-3704402527
     local explorer = core.get_explorer()
     if explorer then
       explorer.renderer:draw()
