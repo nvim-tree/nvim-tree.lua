@@ -1,0 +1,53 @@
+---@meta
+error("Cannot require a meta file")
+
+
+
+---Log to a file `nvim-tree.log` in [stdpath()] `log`, usually `${XDG_STATE_HOME}/nvim`
+---
+---@class nvim_tree.config.log
+---
+---(default: `false`)
+---@field enable? boolean
+---
+---Remove existing log file at startup.
+---(default: `false`)
+---@field truncate? boolean
+---
+---[nvim_tree.config.log.types]
+---@field types? nvim_tree.config.log.types
+
+---Specify which information to log.
+---@class nvim_tree.config.log.types
+---
+---Everything.
+---(default: `false`)
+---@field all? boolean
+---
+--- Timing of some operations.
+---(default: `false`)
+---@field profile? boolean
+---
+---Options and mappings, at startup.
+---(default: `false`)
+---@field config? boolean
+---
+---File copy and paste actions.
+---(default: `false`)
+---@field copy_paste? boolean
+---
+---Used for local development only. Not useful for users.
+---(default: `false`)
+---@field dev? boolean
+---
+---LSP and COC processing, verbose.
+---(default: `false`)
+---@field diagnostics? boolean
+---
+---Git processing, verbose.
+---(default: `false`)
+---@field git? boolean
+---
+---[nvim_tree.config.filesystem_watchers] processing, verbose.
+---(default: `false`)
+---@field watcher? boolean

@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.15.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.14.0...nvim-tree-v1.15.0) (2026-01-11)
+
+
+### Features
+
+* **#1826:** add diagnostics.diagnostic_opts: vim.diagnostic.Opts will override diagnostics.severity and diagnostics.icons ([#3190](https://github.com/nvim-tree/nvim-tree.lua/issues/3190)) ([fefa335](https://github.com/nvim-tree/nvim-tree.lua/commit/fefa335f1c8f690eb668a1efd18ee4fc6d64cd3e))
+* **#1851:** add bookmarks.persist, default path: vim.fn.stdpath("data") .. "/nvim-tree-bookmarks.json", disabled by default ([#3033](https://github.com/nvim-tree/nvim-tree.lua/issues/3033)) ([c89215d](https://github.com/nvim-tree/nvim-tree.lua/commit/c89215d6a1107a3c0c134750be48657ba8e6a9aa))
+* **#3213:** add `view.width.lines_excluded` option ([776a5cd](https://github.com/nvim-tree/nvim-tree.lua/commit/776a5cdfac948b490e06f1d1d22c4cb986e40699))
+* **#3213:** add view.width.lines_excluded option ([#3214](https://github.com/nvim-tree/nvim-tree.lua/issues/3214)) ([776a5cd](https://github.com/nvim-tree/nvim-tree.lua/commit/776a5cdfac948b490e06f1d1d22c4cb986e40699))
+* add NvimTreeFilter filetype ([64e2192](https://github.com/nvim-tree/nvim-tree.lua/commit/64e2192f5250796aa4a7f33c6ad888515af50640))
+* load command definitions at nvim startup ([#3211](https://github.com/nvim-tree/nvim-tree.lua/issues/3211)) ([1eda256](https://github.com/nvim-tree/nvim-tree.lua/commit/1eda2569394f866360e61f590f1796877388cb8a))
+* load command definitions in `plugin` directory ([1eda256](https://github.com/nvim-tree/nvim-tree.lua/commit/1eda2569394f866360e61f590f1796877388cb8a))
+* set filter input filetype to NvimTreeFilter ([#3207](https://github.com/nvim-tree/nvim-tree.lua/issues/3207)) ([64e2192](https://github.com/nvim-tree/nvim-tree.lua/commit/64e2192f5250796aa4a7f33c6ad888515af50640))
+* use `add_trailing` also for symlink destination ([81ede55](https://github.com/nvim-tree/nvim-tree.lua/commit/81ede55c47528ff7c81b2a498fbee61b298c4e2f))
+
+
+### Bug Fixes
+
+* **#3226:** set &swapfile=false before setting tree buffer name, avoiding any potential collisions with a swapfile ([#3227](https://github.com/nvim-tree/nvim-tree.lua/issues/3227)) ([8298117](https://github.com/nvim-tree/nvim-tree.lua/commit/8298117311a1f23f039c278e4e4977ab80a15e33))
+* api.tree.change_root_to_node on a file now changes directory to parent as per documentation ([#3228](https://github.com/nvim-tree/nvim-tree.lua/issues/3228)) ([b8b44b6](https://github.com/nvim-tree/nvim-tree.lua/commit/b8b44b6a2494d086a9177251a119f9daec6cace8))
+* correctly assign extmarks to lines when computing tree window width in `grow` when `nvim-tree.view.width.lines_excluded` contains "root" ([e66994d](https://github.com/nvim-tree/nvim-tree.lua/commit/e66994d40db2d57c91bf9aeaee8bf7ab8b1131f6))
+* incorrect window width when right_align icons present ([#3239](https://github.com/nvim-tree/nvim-tree.lua/issues/3239)) ([e66994d](https://github.com/nvim-tree/nvim-tree.lua/commit/e66994d40db2d57c91bf9aeaee8bf7ab8b1131f6))
+* prevent NvimTree to be alternate buffer when tab open ([#3205](https://github.com/nvim-tree/nvim-tree.lua/issues/3205)) ([e397756](https://github.com/nvim-tree/nvim-tree.lua/commit/e397756d2a79d74314ea4cd3efc41300e91c0ff0))
+* renderer.add_trailing applies to symlink destination ([#3217](https://github.com/nvim-tree/nvim-tree.lua/issues/3217)) ([81ede55](https://github.com/nvim-tree/nvim-tree.lua/commit/81ede55c47528ff7c81b2a498fbee61b298c4e2f))
+
+
+### Performance Improvements
+
+* **commands:** defer module loading ([#3210](https://github.com/nvim-tree/nvim-tree.lua/issues/3210)) ([68c67ad](https://github.com/nvim-tree/nvim-tree.lua/commit/68c67adfabfd1ce923839570507ef2e81ab8a408))
+
 ## [1.14.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.13.0...nvim-tree-v1.14.0) (2025-08-12)
 
 

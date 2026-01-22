@@ -1,0 +1,45 @@
+---@meta
+error("Cannot require a meta file")
+
+
+
+---@alias nvim_tree.config.sort.Sorter "name"|"case_sensitive"|"modification_time"|"extension"|"suffix"|"filetype"
+
+
+
+---Sort files within a directory.
+---
+---{sorter} presets [nvim_tree.config.sort.Sorter]()
+---- `"name"`
+---- `"case_sensitive"` name
+---- `"modification_time"`
+---- `"extension"` uses all suffixes e.g. `foo.tar.gz` -> `.tar.gz`
+---- `"suffix"` uses the last e.g. `foo.tar.gz` -> `.gz`
+---- `"filetype"` [filetype]
+---
+---{sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be sorted in place e.g.
+---```lua
+---
+------Sort by name length
+------@param nodes nvim_tree.api.Node[]
+------@return nvim_tree.config.sort.Sorter?
+---local sorter = function(nodes)
+---  table.sort(nodes, function(a, b)
+---    return #a.name < #b.name
+---  end)
+---end
+---```
+---{sorter} may be a function that returns a [nvim_tree.config.sort.Sorter]
+---
+---@class nvim_tree.config.sort
+---
+---(default: `"name"`)
+---@field sorter? nvim_tree.config.sort.Sorter|(fun(nodes: nvim_tree.api.Node[]): nvim_tree.config.sort.Sorter?)
+---
+---Sort folders before files. Has no effect when {sorter} is a function.
+---(default: `true`)
+---@field folders_first? boolean
+---
+---Sort files before folders. Has no effect when {sorter} is a function. Overrides {folders_first}.
+---(default: `false`)
+---@field files_first? boolean

@@ -1,0 +1,60 @@
+---@meta
+error("Cannot require a meta file")
+
+
+
+---Filters may be applied to the tree to exlude the display of file/directories.
+---
+---Multiple filters may be applied at once.
+---
+---Filters can be set at startup or toggled live via API with default mappings.
+---
+---`I     `{git_ignored}`         `|nvim-tree-api.tree.toggle_gitignore_filter()|
+---Ignore files based on `.gitignore`. Requires |nvim_tree.config.git|
+---
+---`H     `{dotfiles}`            `|nvim-tree-api.tree.toggle_hidden_filter()|
+---Filter dotfiles: files/directories starting with a `.`
+---
+---`C     `{git_clean}`           `|nvim-tree-api.tree.toggle_git_clean_filter()|
+---Filter files with no git status. `.gitignore` files will not be filtered when {git_ignored}, as they are effectively dirty.
+---
+---`B     `{no_buffer}`           `|nvim-tree-api.tree.toggle_no_buffer_filter()|
+---Filter files that have no |buflisted()| buffer. For performance reasons buffer delete/wipe may not be immediately shown. A reload or filesystem event will always result in an update.
+---
+---`M     `{no_bookmark}`         `|nvim-tree-api.tree.toggle_no_bookmark_filter()|
+---Filter files that are not bookmarked. Enabling this is not useful as there is no means yet to persist bookmarks.
+---
+---`U     `{custom}`              `|nvim-tree-api.tree.toggle_custom_filter()|
+---Disable specific file/directory names via:
+---- a list of backslash escaped |vim.regex| strings e.g. `"^\\.git""`
+---- a function passed the absolute path of the directory.
+---
+---All filters including live filter may be disabled via {enable} and toggled with |nvim-tree-api.tree.toggle_enable_filters()|
+---
+---Files/directories may be {exclude}d from filtering: they will always be shown, overriding {git_ignored}, {dotfiles} and {custom}.
+---@class nvim_tree.config.filters
+---
+---Enable all filters.
+---(default: `true`)
+---@field enable? boolean
+---
+---(default: `true`)
+---@field git_ignored? boolean
+---
+---(default: `false`)
+---@field dotfiles? boolean
+---
+---(default: `false`)
+---@field git_clean? boolean
+---
+---(default: `false`)
+---@field no_buffer? boolean
+---
+---(default: `false`)
+---@field no_bookmark? boolean
+---
+---(default: `{}`)
+---@field custom? string[]|(fun(absolute_path: string): boolean)
+---
+---(default: `{}`)
+---@field exclude? string[]
