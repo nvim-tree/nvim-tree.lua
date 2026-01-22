@@ -81,7 +81,7 @@ function M.change_root(path, bufnr)
     end
   end
   -- finally fall back to the folder containing the file
-  explorer_fn("change_dir", vim.fn.fnamemodify, path, ":p:h")
+  explorer_fn("change_dir", vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.tab_enter()
