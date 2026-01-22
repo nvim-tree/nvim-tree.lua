@@ -141,7 +141,7 @@ Show the mappings:  `g?`
 `gy`              Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
 `ge`              Copy Basename              |nvim_tree.api.fs.copy.basename()|
 `H`               Toggle Filter: Dotfiles    |nvim_tree.api.filter.dotfiles.toggle()|
-`I`               Toggle Filter: Git Ignore  |nvim_tree.api.filter.git.ignored.toggle()|
+`I`               Toggle Filter: Git Ignored |nvim_tree.api.filter.git.ignored.toggle()|
 `J`               Last Sibling               |nvim_tree.api.node.navigate.sibling.last()|
 `K`               First Sibling              |nvim_tree.api.node.navigate.sibling.first()|
 `L`               Toggle Group Empty         |nvim_tree.api.node.open.toggle_group_empty()|
@@ -157,7 +157,7 @@ Show the mappings:  `g?`
 `s`               Run System                 |nvim_tree.api.node.run.system()|
 `S`               Search                     |nvim_tree.api.tree.search_node()|
 `u`               Rename: Full Path          |nvim_tree.api.fs.rename_full()|
-`U`               Toggle Filter: Hidden      |nvim_tree.api.filter.custom.toggle()|
+`U`               Toggle Filter: Custom      |nvim_tree.api.filter.custom.toggle()|
 `W`               Collapse All               |nvim_tree.api.tree.collapse_all()|
 `x`               Cut                        |nvim_tree.api.fs.cut()|
 `y`               Copy Name                  |nvim_tree.api.fs.copy.filename()|
@@ -428,7 +428,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
   vim.keymap.set("n", "ge",             api.fs.copy.basename,               opts("Copy Basename"))
   vim.keymap.set("n", "H",              api.filter.dotfiles.toggle,         opts("Toggle Filter: Dotfiles"))
-  vim.keymap.set("n", "I",              api.filter.git.ignored.toggle,      opts("Toggle Filter: Git Ignore"))
+  vim.keymap.set("n", "I",              api.filter.git.ignored.toggle,      opts("Toggle Filter: Git Ignored"))
   vim.keymap.set("n", "J",              api.node.navigate.sibling.last,     opts("Last Sibling"))
   vim.keymap.set("n", "K",              api.node.navigate.sibling.first,    opts("First Sibling"))
   vim.keymap.set("n", "L",              api.node.open.toggle_group_empty,   opts("Toggle Group Empty"))
@@ -444,7 +444,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "s",              api.node.run.system,                opts("Run System"))
   vim.keymap.set("n", "S",              api.tree.search_node,               opts("Search"))
   vim.keymap.set("n", "u",              api.fs.rename_full,                 opts("Rename: Full Path"))
-  vim.keymap.set("n", "U",              api.filter.custom.toggle,           opts("Toggle Filter: Hidden"))
+  vim.keymap.set("n", "U",              api.filter.custom.toggle,           opts("Toggle Filter: Custom"))
   vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse All"))
   vim.keymap.set("n", "x",              api.fs.cut,                         opts("Cut"))
   vim.keymap.set("n", "y",              api.fs.copy.filename,               opts("Copy Name"))
