@@ -322,9 +322,9 @@ end
 ---@private
 ---@param _ integer expansion_count
 ---@return boolean
-function DirectoryNode:descend_until_empty(_)
-  local EXCLUDE = to_lookup_table(self.explorer.opts.actions.expand_all.exclude)
-  local should_exclude = EXCLUDE[self.name]
+function DirectoryNode:descend_until_empty(node)
+  local EXCLUDE = to_lookup_table(node.explorer.opts.actions.expand_all.exclude)
+  local should_exclude = EXCLUDE[node.name]
   return not should_exclude
 end
 
@@ -341,7 +341,7 @@ function DirectoryNode:should_expand(expansion_count, node, should_descend)
 
   if not dir.open and should_descend(expansion_count, node) then
     if #node.nodes == 0 then
-      self.explorer:expand_dir_node(dir) -- populate node.group_next
+      node.explorer:expand_dir_node(dir) -- populate node.group_next
     end
 
     if dir.group_next then
@@ -376,7 +376,7 @@ function DirectoryNode:gen_iterator(should_descend)
           expansion_count = expansion_count + 1
           node = node:as(DirectoryNode)
           if node then
-            self:expand_dir_node()
+            node:expand_dir_node()
           end
         end
       end)
