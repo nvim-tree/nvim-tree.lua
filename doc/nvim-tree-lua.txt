@@ -2052,7 +2052,7 @@ Config: log                                             *nvim-tree-config-log*
 
 
 ==============================================================================
-Config: Default                                     *nvim-tree-default-config*
+Config: Default                                     *nvim-tree-config-default*
 
 Following is the default configuration, see |nvim_tree.config| for details. >lua
 
@@ -2344,7 +2344,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
 
 
 ==============================================================================
-api Overview                                                   *nvim-tree-api*
+API                                                            *nvim-tree-api*
 
 nvim-tree exposes a public API. This is non breaking, with additions made as
 necessary.
@@ -2383,7 +2383,7 @@ following are functionally identical: >lua
 
 
 ==============================================================================
-api.commands                                          *nvim-tree-api-commands*
+API: commands                                         *nvim-tree-api-commands*
 
 get()                                           *nvim_tree.api.commands.get()*
     Retrieve all |nvim-tree-commands|
@@ -2401,7 +2401,7 @@ get()                                           *nvim_tree.api.commands.get()*
 
 
 ==============================================================================
-api.events                                              *nvim-tree-api-events*
+API: events                                             *nvim-tree-api-events*
 
 subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
     Register a handler for an event, see |nvim-tree-events|.
@@ -2412,7 +2412,7 @@ subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
 
 
 ==============================================================================
-api.filter                                              *nvim-tree-api-filter*
+API: filter                                             *nvim-tree-api-filter*
 
 live_filter.clear()                 *nvim_tree.api.filter.live_filter.clear()*
     Exit live filter mode.
@@ -2423,7 +2423,7 @@ live_filter.start()                 *nvim_tree.api.filter.live_filter.start()*
 
 
 ==============================================================================
-api.fs                                                      *nvim-tree-api-fs*
+API: fs                                                     *nvim-tree-api-fs*
 
 clear_clipboard()                         *nvim_tree.api.fs.clear_clipboard()*
     Clear the nvim-tree clipboard.
@@ -2531,7 +2531,7 @@ trash({node})                                       *nvim_tree.api.fs.trash()*
 
 
 ==============================================================================
-api.health                                              *nvim-tree-api-health*
+API: health                                             *nvim-tree-api-health*
 
 hi_test()                                     *nvim_tree.api.health.hi_test()*
     Open a new buffer displaying all nvim-tree highlight groups, their link
@@ -2541,7 +2541,7 @@ hi_test()                                     *nvim_tree.api.health.hi_test()*
 
 
 ==============================================================================
-api.map                                                    *nvim-tree-api-map*
+API: map                                                   *nvim-tree-api-map*
 
 default_on_attach({bufnr})             *nvim_tree.api.map.default_on_attach()*
     Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.config|
@@ -2567,7 +2567,7 @@ get_keymap_default()                  *nvim_tree.api.map.get_keymap_default()*
 
 
 ==============================================================================
-api.marks                                                *nvim-tree-api-marks*
+API: marks                                               *nvim-tree-api-marks*
 
 bulk.delete()                              *nvim_tree.api.marks.bulk.delete()*
     Delete all marked, prompting if |nvim_tree.config.ui.confirm| {remove}
@@ -2611,7 +2611,7 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
 
 
 ==============================================================================
-api.node                                                  *nvim-tree-api-node*
+API: node                                                 *nvim-tree-api-node*
 
 buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
     Deletes node's related buffer, if one exists. Executes |:bdelete| or
@@ -2943,7 +2943,7 @@ show_info_popup({node})                 *nvim_tree.api.node.show_info_popup()*
 
 
 ==============================================================================
-api.tree                                                  *nvim-tree-api-tree*
+API: tree                                                 *nvim-tree-api-tree*
 
 change_root({path})                         *nvim_tree.api.tree.change_root()*
     Change the tree's root to a path.
@@ -3150,7 +3150,7 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 
 
 ==============================================================================
-api Classes                                            *nvim-tree-api-classes*
+API: Classes                                           *nvim-tree-api-classes*
 
 Classes shared by multiple API modules.
 

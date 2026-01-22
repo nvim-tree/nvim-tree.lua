@@ -139,7 +139,7 @@ This will:
 2. Regenerate from `*nvim-tree-config*` to the end of the file, see `gen_vimdoc.sh`
 3. Update default mappings in `*nvim-tree-mappings-default*` and `*nvim-tree-quickstart-help*`
 
-Commit your changes then run:
+Commit or stage your changes then run:
 ```sh
 make help-check
 ```

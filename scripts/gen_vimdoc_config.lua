@@ -35,21 +35,21 @@ local srcs = {
   { helptag = "nvim-tree-config-experimental",        section = "Config: experimental",        path = "./lua/nvim_tree/_meta/config/experimental.lua", },
   { helptag = "nvim-tree-config-log",                 section = "Config: log",                 path = "./lua/nvim_tree/_meta/config/log.lua", },
 
-  { helptag = "nvim-tree-default-config",             section = "Config: Default",             path = "./lua/nvim_tree/_meta/config/default.lua", },
+  { helptag = "nvim-tree-config-default",             section = "Config: Default",             path = "./lua/nvim_tree/_meta/config/default.lua", },
 
-  { helptag = "nvim-tree-api",                        section = "api Overview",                path = "./lua/nvim_tree/api.lua", },
+  { helptag = "nvim-tree-api",                        section = "API",                         path = "./lua/nvim_tree/api.lua", },
 
-  { helptag = "nvim-tree-api-commands",               section = "api.commands",                path = "./lua/nvim_tree/_meta/api/commands.lua", },
-  { helptag = "nvim-tree-api-events",                 section = "api.events",                  path = "./lua/nvim_tree/_meta/api/events.lua", },
-  { helptag = "nvim-tree-api-filter",                 section = "api.filter",                  path = "./lua/nvim_tree/_meta/api/filter.lua", },
-  { helptag = "nvim-tree-api-fs",                     section = "api.fs",                      path = "./lua/nvim_tree/_meta/api/fs.lua", },
-  { helptag = "nvim-tree-api-health",                 section = "api.health",                  path = "./lua/nvim_tree/_meta/api/health.lua", },
-  { helptag = "nvim-tree-api-map",                    section = "api.map",                     path = "./lua/nvim_tree/_meta/api/map.lua", },
-  { helptag = "nvim-tree-api-marks",                  section = "api.marks",                   path = "./lua/nvim_tree/_meta/api/marks.lua", },
-  { helptag = "nvim-tree-api-node",                   section = "api.node",                    path = "./lua/nvim_tree/_meta/api/node.lua", },
-  { helptag = "nvim-tree-api-tree",                   section = "api.tree",                    path = "./lua/nvim_tree/_meta/api/tree.lua", },
+  { helptag = "nvim-tree-api-commands",               section = "API: commands",               path = "./lua/nvim_tree/_meta/api/commands.lua", },
+  { helptag = "nvim-tree-api-events",                 section = "API: events",                 path = "./lua/nvim_tree/_meta/api/events.lua", },
+  { helptag = "nvim-tree-api-filter",                 section = "API: filter",                 path = "./lua/nvim_tree/_meta/api/filter.lua", },
+  { helptag = "nvim-tree-api-fs",                     section = "API: fs",                     path = "./lua/nvim_tree/_meta/api/fs.lua", },
+  { helptag = "nvim-tree-api-health",                 section = "API: health",                 path = "./lua/nvim_tree/_meta/api/health.lua", },
+  { helptag = "nvim-tree-api-map",                    section = "API: map",                    path = "./lua/nvim_tree/_meta/api/map.lua", },
+  { helptag = "nvim-tree-api-marks",                  section = "API: marks",                  path = "./lua/nvim_tree/_meta/api/marks.lua", },
+  { helptag = "nvim-tree-api-node",                   section = "API: node",                   path = "./lua/nvim_tree/_meta/api/node.lua", },
+  { helptag = "nvim-tree-api-tree",                   section = "API: tree",                   path = "./lua/nvim_tree/_meta/api/tree.lua", },
 
-  { helptag = "nvim-tree-api-classes",                section = "api Classes",                 path = "./lua/nvim_tree/_meta/api/classes.lua", },
+  { helptag = "nvim-tree-api-classes",                section = "API: Classes",                path = "./lua/nvim_tree/_meta/api/classes.lua", },
 }
 
 -- hydrate file names
