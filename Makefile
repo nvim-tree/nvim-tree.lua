@@ -12,18 +12,19 @@ check: luals
 #
 # subtasks
 #
+# TODO #3241 ensure that decorator is checked - all meta should be valid
 luacheck:
-	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
+	luacheck --codes --quiet lua --exclude-files "**/_meta/api_decorator.lua"
+	luacheck --codes --quiet scripts
 
-# --diagnosis-as-error does not function for workspace, hence we post-process the output
 style-check:
-	@scripts/luals-check.sh codestyle-check
+	scripts/luals-check.sh codestyle-check
 
 style-doc:
 	scripts/doc-comments.sh
 
 luals:
-	@scripts/luals-check.sh
+	scripts/luals-check.sh
 
 #
 # fixes

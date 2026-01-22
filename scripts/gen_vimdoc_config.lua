@@ -52,8 +52,7 @@ for _, m in ipairs(srcs) do
   srcs_by_name[name] = m
 end
 
----@diagnostic disable-next-line: undefined-doc-name
---- @type table<string,nvim.gen_vimdoc.Config>
+-- @type table<string,nvim.gen_vimdoc.Config>
 local config = {
   all = {
     filename = "nvim-tree-lua.txt",
