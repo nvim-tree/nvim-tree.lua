@@ -1005,16 +1005,24 @@ Legacy: API                                             *nvim-tree-legacy-api*
 Some API functions have been refactored however the previous function will
 continue to be available.
 
-`api.config.mappings.get_keymap`          |nvim_tree.api.map.get_keymap()|
-`api.config.mappings.get_keymap_default`  |nvim_tree.api.map.get_keymap_default()|
-`api.config.mappings.default_on_attach`   |nvim_tree.api.map.default_on_attach()|
+`api.config.mappings.get_keymap`         |nvim_tree.api.map.get_keymap()|
+`api.config.mappings.get_keymap_default` |nvim_tree.api.map.get_keymap_default()|
+`api.config.mappings.default_on_attach`  |nvim_tree.api.map.default_on_attach()|
 
-`api.diagnostics.hi_test`                 |nvim_tree.api.health.hi_test()|
+`api.diagnostics.hi_test`                |nvim_tree.api.health.hi_test()|
 
-`api.git.reload`                          |nvim_tree.api.tree.reload_git()|
+`api.git.reload`                         |nvim_tree.api.tree.reload_git()|
 
-`api.live_filter.start`                   |nvim_tree.api.filter.live.start()|
-`api.live_filter.clear`                   |nvim_tree.api.filter.live.clear()|
+`api.live_filter.start`                  |nvim_tree.api.filter.live.start()|
+`api.live_filter.clear`                  |nvim_tree.api.filter.live.clear()|
+
+`api.tree.toggle_enable_filters`         |nvim_tree.api.filter.toggle()|
+`api.tree.toggle_gitignore_filter`       |nvim_tree.api.filter.git.ignored.toggle()|
+`api.tree.toggle_git_clean_filter`       |nvim_tree.api.filter.git.clean.toggle()|
+`api.tree.toggle_no_buffer_filter`       |nvim_tree.api.filter.no_buffer.toggle()|
+`api.tree.toggle_custom_filter`          |nvim_tree.api.filter.custom.toggle()|
+`api.tree.toggle_hidden_filter`          |nvim_tree.api.filter.dotfiles.toggle()|
+`api.tree.toggle_no_bookmark_filter`     |nvim_tree.api.filter.no_bookmark.toggle()|
 
 ==============================================================================
 Legacy: Highlight                                 *nvim-tree-legacy-highlight*
@@ -2440,7 +2448,7 @@ no_buffer.toggle()                   *nvim_tree.api.filter.no_buffer.toggle()*
     Toggle |nvim_tree.config.filters| {no_buffer} filter.
 
 toggle()                                       *nvim_tree.api.filter.toggle()*
-    Toggle |nvim_tree.config.filters| {enable} all filters.
+    Toggle |nvim_tree.config.filters| {enable} which applies to ALL filters.
 
 
 ==============================================================================

@@ -2,7 +2,7 @@
 local nvim_tree = { api = { filter = {} } }
 
 ---
----Toggle [nvim_tree.config.filters] {enable} all filters.
+---Toggle [nvim_tree.config.filters] {enable} which applies to ALL filters.
 ---
 function nvim_tree.api.filter.toggle() end
 
@@ -18,7 +18,7 @@ function nvim_tree.api.filter.live.start() end
 ---
 function nvim_tree.api.filter.live.clear() end
 
-nvim_tree.api.filter.git = {}
+nvim_tree.api.filter.git = { clean = {}, ignored = {} }
 
 ---
 ---Toggle [nvim_tree.config.filters] {git_clean} filter.
