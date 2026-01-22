@@ -12,11 +12,8 @@ check: luals
 #
 # subtasks
 #
-# TODO #3241 ensure that decorator is checked - all meta should be valid
-# TODO #3088 check api
 luacheck:
-	# luacheck --codes --quiet lua --exclude-files "**/_meta/api_decorator.lua"
-	luacheck --codes --quiet lua --exclude-files "**/_meta/api*"
+	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
 	luacheck --codes --quiet scripts
 
 style-check:
