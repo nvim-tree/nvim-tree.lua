@@ -146,13 +146,8 @@ end
 
 ---@param expand_opts ApiTreeExpandOpts?
 function Node:expand(expand_opts)
-  local DirectoryNode = require("nvim-tree.node.directory")
-  local FileNode = require("nvim-tree.node.file")
-
-  if self:is(FileNode) then
+  if self.parent then
     self.parent:expand(expand_opts)
-  else
-    self:as(DirectoryNode).expand_opts(expand_opts)
   end
 end
 
