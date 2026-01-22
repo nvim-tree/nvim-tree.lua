@@ -724,7 +724,7 @@ end
 ---@private
 ---@return boolean
 function Explorer:should_change_dir()
-  return config.enable and vim.tbl_isempty(vim.v.event)
+  return config.actions.change_dir.enable and vim.tbl_isempty(vim.v.event)
 end
 
 ---@private
@@ -743,7 +743,7 @@ function Explorer:force_dirchange(foldername, should_open_view)
   local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
   if valid_dir then
     if self:should_change_dir() then
-      self:cd(config.global, foldername)
+      self:cd(config.actions.change_dir.global, foldername)
     end
     core.init(foldername)
   end
