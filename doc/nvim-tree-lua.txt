@@ -1112,7 +1112,7 @@ Example of function that can be passed: >lua
 <
 
 ==============================================================================
-Class: config                                               *nvim-tree-config*
+Config                                                      *nvim-tree-config*
 
 *nvim_tree.config*
     Arguments to pass to |nvim-tree-setup|.
@@ -1218,7 +1218,7 @@ Class: config                                               *nvim-tree-config*
 
 
 ==============================================================================
-Class: config.sort                                     *nvim-tree-config-sort*
+Config: sort                                           *nvim-tree-config-sort*
 
 *nvim_tree.config.sort*
     Sort files within a directory.
@@ -1258,7 +1258,7 @@ Class: config.sort                                     *nvim-tree-config-sort*
 
 
 ==============================================================================
-Class: config.view                                     *nvim-tree-config-view*
+Config: view                                           *nvim-tree-config-view*
 
 *nvim_tree.config.view*
     Configures the dimensions and appearance of the nvim-tree window.
@@ -1344,7 +1344,7 @@ Class: config.view                                     *nvim-tree-config-view*
 
 
 ==============================================================================
-Class: config.renderer                             *nvim-tree-config-renderer*
+Config: renderer                                   *nvim-tree-config-renderer*
 
 *nvim_tree.config.renderer*
     Controls the appearance of the tree.
@@ -1520,7 +1520,7 @@ Class: config.renderer                             *nvim-tree-config-renderer*
 
 
 ==============================================================================
-Class: config.hijack_directories         *nvim-tree-config-hijack-directories*
+Config: hijack_directories               *nvim-tree-config-hijack-directories*
 
 *nvim_tree.config.hijack_directories*
     Hijack directory buffers by replacing the directory buffer with the tree.
@@ -1538,7 +1538,7 @@ Class: config.hijack_directories         *nvim-tree-config-hijack-directories*
 
 
 ==============================================================================
-Class: config.update_focused_file       *nvim-tree-config-update-focused-file*
+Config: update_focused_file             *nvim-tree-config-update-focused-file*
 
 *nvim_tree.config.update_focused_file*
     Update the focused file on |BufEnter|, uncollapsing folders recursively.
@@ -1570,7 +1570,7 @@ Class: config.update_focused_file       *nvim-tree-config-update-focused-file*
 
 
 ==============================================================================
-Class: config.system_open                       *nvim-tree-config-system-open*
+Config: system_open                             *nvim-tree-config-system-open*
 
 *nvim_tree.config.system_open*
     Open files or directories via the OS.
@@ -1594,7 +1594,7 @@ Class: config.system_open                       *nvim-tree-config-system-open*
 
 
 ==============================================================================
-Class: config.git                                       *nvim-tree-config-git*
+Config: git                                             *nvim-tree-config-git*
 
 *nvim_tree.config.git*
     Git operations are run in the background thus status may not immediately
@@ -1628,7 +1628,7 @@ Class: config.git                                       *nvim-tree-config-git*
 
 
 ==============================================================================
-Class: config.diagnostics                       *nvim-tree-config-diagnostics*
+Config: diagnostics                             *nvim-tree-config-diagnostics*
 
 *nvim_tree.config.diagnostics*
     Integrate with |lsp| or COC diagnostics.
@@ -1662,7 +1662,7 @@ Class: config.diagnostics                       *nvim-tree-config-diagnostics*
 
 
 ==============================================================================
-Class: config.modified                             *nvim-tree-config-modified*
+Config: modified                                   *nvim-tree-config-modified*
 
 *nvim_tree.config.modified*
     Indicate which files have unsaved modification. To see modified status in
@@ -1684,7 +1684,7 @@ Class: config.modified                             *nvim-tree-config-modified*
 
 
 ==============================================================================
-Class: config.filters                               *nvim-tree-config-filters*
+Config: filters                                     *nvim-tree-config-filters*
 
 *nvim_tree.config.filters*
     Filters may be applied to the tree to exlude the display of
@@ -1739,7 +1739,7 @@ Class: config.filters                               *nvim-tree-config-filters*
 
 
 ==============================================================================
-Class: config.live_filter                       *nvim-tree-config-live-filter*
+Config: live_filter                             *nvim-tree-config-live-filter*
 
 *nvim_tree.config.live_filter*
     Live filter allows you to filter the tree nodes dynamically, based on
@@ -1757,7 +1757,7 @@ Class: config.live_filter                       *nvim-tree-config-live-filter*
 
 
 ==============================================================================
-Class: config.filesystem_watchers       *nvim-tree-config-filesystem-watchers*
+Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
 
 *nvim_tree.config.filesystem_watchers*
     Use file system watchers (libuv `uv_fs_event_t`) to monitor the filesystem
@@ -1783,7 +1783,7 @@ Class: config.filesystem_watchers       *nvim-tree-config-filesystem-watchers*
 
 
 ==============================================================================
-Class: config.actions                               *nvim-tree-config-actions*
+Config: actions                                     *nvim-tree-config-actions*
 
 *nvim_tree.config.actions*
 
@@ -1906,7 +1906,7 @@ Class: config.actions                               *nvim-tree-config-actions*
 
 
 ==============================================================================
-Class: config.trash                                   *nvim-tree-config-trash*
+Config: trash                                         *nvim-tree-config-trash*
 
 *nvim_tree.config.trash*
     Files may be trashed via an external command that must be installed on
@@ -1921,7 +1921,7 @@ Class: config.trash                                   *nvim-tree-config-trash*
 
 
 ==============================================================================
-Class: config.tab                                       *nvim-tree-config-tab*
+Config: tab                                             *nvim-tree-config-tab*
 
 *nvim_tree.config.tab*
 
@@ -1942,7 +1942,7 @@ Class: config.tab                                       *nvim-tree-config-tab*
 
 
 ==============================================================================
-Class: config.notify                                 *nvim-tree-config-notify*
+Config: notify                                       *nvim-tree-config-notify*
 
 *nvim_tree.config.notify*
     nvim-tree |vim.log.levels|
@@ -1961,7 +1961,7 @@ Class: config.notify                                 *nvim-tree-config-notify*
 
 
 ==============================================================================
-Class: config.bookmarks                           *nvim-tree-config-bookmarks*
+Config: bookmarks                                 *nvim-tree-config-bookmarks*
 
 *nvim_tree.config.bookmarks*
     Optionally {persist} bookmarks to a json file:
@@ -1975,7 +1975,7 @@ Class: config.bookmarks                           *nvim-tree-config-bookmarks*
 
 
 ==============================================================================
-Class: config.help                                     *nvim-tree-config-help*
+Config: help                                           *nvim-tree-config-help*
 
 *nvim_tree.config.help*
 
@@ -1985,7 +1985,7 @@ Class: config.help                                     *nvim-tree-config-help*
 
 
 ==============================================================================
-Class: config.ui                                         *nvim-tree-config-ui*
+Config: ui                                               *nvim-tree-config-ui*
 
 *nvim_tree.config.ui*
 
@@ -2005,7 +2005,7 @@ Class: config.ui                                         *nvim-tree-config-ui*
 
 
 ==============================================================================
-Class: config.experimental                     *nvim-tree-config-experimental*
+Config: experimental                           *nvim-tree-config-experimental*
 
 *nvim_tree.config.experimental*
     Experimental features that may become default or optional functionality.
@@ -2016,7 +2016,7 @@ Class: config.experimental                     *nvim-tree-config-experimental*
 
 
 ==============================================================================
-Class: config.log                                       *nvim-tree-config-log*
+Config: log                                             *nvim-tree-config-log*
 
 *nvim_tree.config.log*
     Log to a file `nvim-tree.log` in |stdpath()| `log`, usually
@@ -2052,7 +2052,7 @@ Class: config.log                                       *nvim-tree-config-log*
 
 
 ==============================================================================
-Config: default                                     *nvim-tree-default-config*
+Config: Default                                     *nvim-tree-default-config*
 
 Following is the default configuration, see |nvim_tree.config| for details. >lua
 

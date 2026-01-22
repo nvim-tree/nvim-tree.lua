@@ -16,7 +16,6 @@ local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 -- hydrates meta api definitions with implementations
 return function(api)
-
   ---Print error when setup not called.
   ---@param fn fun(...): any
   ---@return fun(...): any

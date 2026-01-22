@@ -53,4 +53,3 @@
 ---DirectoryLink
 ---
 ---@class nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
-

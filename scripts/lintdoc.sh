@@ -19,11 +19,10 @@ unset VIMRUNTIME
 
 # Use a directory outside of nvim_tree source. Adding lua files inside will (rightly) upset luals.
 DIR_NVT="${PWD}"
-DIR_WORK="/tmp/nvim-tree-lintdoc"
 DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 
 if [ ! -f "${DIR_NVT}/scripts/lintdoc.sh" ]; then
-	echo "Must be run from nvim-tree root"
+	echo "Must be run from nvim-tree root" 1>&2
 	exit 1
 fi
 
@@ -38,6 +37,8 @@ if [ ! -d "${DIR_NVIM_SRC}" ]; then
 \$DIR_NVIM_SRC=${DIR_NVIM_SRC} not set or missing.
 
 Nvim source is required to run ${0}
+
+The "make lintdoc" target will be executed, which needs to compile Nvim first.
 
 Please:
   mkdir -p ${DIR_NVIM_SRC_DEF}

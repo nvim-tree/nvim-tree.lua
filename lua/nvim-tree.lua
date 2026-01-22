@@ -534,7 +534,7 @@ local DEFAULT_OPTS = { -- default-config-start
       watcher = false,
     },
   },
-}-- default-config-end
+} -- default-config-end
 
 local function merge_options(conf)
   return vim.tbl_deep_extend("force", DEFAULT_OPTS, conf or {})
