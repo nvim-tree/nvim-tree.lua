@@ -1,6 +1,4 @@
 local Class = require("nvim-tree.classic")
-local DirectoryNode = require("nvim-tree.node.directory")
-local FileNode = require("nvim-tree.node.file")
 
 ---Abstract Node class.
 ---@class (exact) Node: Class
@@ -148,6 +146,9 @@ end
 
 ---@param expand_opts ApiTreeExpandOpts?
 function Node:expand(expand_opts)
+  local DirectoryNode = require("nvim-tree.node.directory")
+  local FileNode = require("nvim-tree.node.file")
+
   if self:is(FileNode) then
     self.parent:expand(expand_opts)
   else
