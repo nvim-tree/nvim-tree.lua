@@ -98,13 +98,13 @@ function nvim_tree.api.tree.resize(opts) end
 ---@inlinedoc
 ---
 ---New [nvim_tree.config.view] {width} value.
----@field width nvim_tree.config.view.width.spec|nvim_tree.config.view.width
+---@field width? nvim_tree.config.view.width.spec|nvim_tree.config.view.width
 ---
 ---Set the width.
----@field absolute integer
+---@field absolute? integer
 ---
 ---Increase or decrease the width.
----@field relative integer
+---@field relative? integer
 
 ---
 ---Change the tree's root to a path.
