@@ -2457,36 +2457,6 @@ API: fs                                                     *nvim-tree-api-fs*
 clear_clipboard()                         *nvim_tree.api.fs.clear_clipboard()*
     Clear the nvim-tree clipboard.
 
-copy.absolute_path({node})             *nvim_tree.api.fs.copy.absolute_path()*
-    Copy the absolute path to the system clipboard.
-
-    Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
-
-copy.basename({node})                       *nvim_tree.api.fs.copy.basename()*
-    Copy the name with extension omitted to the system clipboard.
-
-    Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
-
-copy.filename({node})                       *nvim_tree.api.fs.copy.filename()*
-    Copy the name to the system clipboard.
-
-    Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
-
-copy.node({node})                               *nvim_tree.api.fs.copy.node()*
-    Copy to the nvim-tree clipboard.
-
-    Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
-
-copy.relative_path({node})             *nvim_tree.api.fs.copy.relative_path()*
-    Copy the path relative to the tree root to the system clipboard.
-
-    Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
-
 create({node})                                     *nvim_tree.api.fs.create()*
     Prompt to create a file or directory.
 
@@ -2497,13 +2467,13 @@ create({node})                                     *nvim_tree.api.fs.create()*
     Multiple directories/files may be created e.g. `"foo/bar/baz"`
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 cut({node})                                           *nvim_tree.api.fs.cut()*
     Cut to the nvim-tree clipboard.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 paste({node})                                       *nvim_tree.api.fs.paste()*
     Paste from the nvim-tree clipboard.
@@ -2511,7 +2481,7 @@ paste({node})                                       *nvim_tree.api.fs.paste()*
     If {node} is a file it will pasted in the parent directory.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 print_clipboard()                         *nvim_tree.api.fs.print_clipboard()*
     Print the contents of the nvim-tree clipboard.
@@ -2520,43 +2490,77 @@ remove({node})                                     *nvim_tree.api.fs.remove()*
     Delete from the file system.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 rename({node})                                     *nvim_tree.api.fs.rename()*
     Prompt to rename by name.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 rename_basename({node})                   *nvim_tree.api.fs.rename_basename()*
     Prompt to rename by name with extension omitted.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 rename_full({node})                           *nvim_tree.api.fs.rename_full()*
     Prompt to rename by absolute path.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 rename_node({node})                           *nvim_tree.api.fs.rename_node()*
     Prompt to rename.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 rename_sub({node})                             *nvim_tree.api.fs.rename_sub()*
     Prompt to rename by absolute path with name omitted.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
 
 trash({node})                                       *nvim_tree.api.fs.trash()*
     Trash as per |nvim_tree.config.trash|
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`)
+      • {node}  (`nvim_tree.api.Node?`)
+
+
+==============================================================================
+API: fs.copy                                           *nvim-tree-api-fs-copy*
+
+absolute_path({node})                  *nvim_tree.api.fs.copy.absolute_path()*
+    Copy the absolute path to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+basename({node})                            *nvim_tree.api.fs.copy.basename()*
+    Copy the name with extension omitted to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+filename({node})                            *nvim_tree.api.fs.copy.filename()*
+    Copy the name to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+node({node})                                    *nvim_tree.api.fs.copy.node()*
+    Copy to the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+relative_path({node})                  *nvim_tree.api.fs.copy.relative_path()*
+    Copy the path relative to the tree root to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
 
 
 ==============================================================================
@@ -2636,7 +2640,7 @@ toggle({node})                                  *nvim_tree.api.marks.toggle()*
     Toggle mark.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`) file or directory
+      • {node}  (`nvim_tree.api.Node?`) file or directory
 
 
 ==============================================================================
@@ -2647,7 +2651,7 @@ buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
     |:bdelete|!
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`) file
+      • {node}  (`nvim_tree.api.Node?`) file
       • {opts}  (`table?`)
                 • {force}? (`boolean`, default: false) Proceed even if the
                   buffer is modified.
@@ -2976,14 +2980,14 @@ change_root_to_node({node})         *nvim_tree.api.tree.change_root_to_node()*
     Change the tree's root to a folder node or the parent of a file node.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
                                   *nvim_tree.api.tree.change_root_to_parent()*
 change_root_to_parent({node})
     Change the tree's root to the parent of a node.
 
     Parameters: ~
-      • {node}  (`nvim_tree.api.Node`) directory or file
+      • {node}  (`nvim_tree.api.Node?`) directory or file
 
 close()                                           *nvim_tree.api.tree.close()*
     Close the tree, affecting all tabs as per |nvim_tree.config.tab.sync|

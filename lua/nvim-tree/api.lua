@@ -49,8 +49,9 @@ api.tree = require("nvim-tree._meta.api.tree")
 
 
 --
---Hydrate the implementations
+--Map implementations
 --
 require("nvim-tree.api-impl")(api)
+require("nvim-tree.legacy").map_api(api)
 
 return api

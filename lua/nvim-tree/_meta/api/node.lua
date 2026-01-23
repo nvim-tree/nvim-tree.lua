@@ -18,7 +18,7 @@ nvim_tree.api.node.buffer = {}
 ---
 ---Deletes node's related buffer, if one exists. Executes [:bdelete] or [:bdelete]!
 ---
----@param node nvim_tree.api.Node file
+---@param node? nvim_tree.api.Node file
 ---@param opts? nvim_tree.api.node.buffer.RemoveOpts
 function nvim_tree.api.node.buffer.delete(node, opts) end
 

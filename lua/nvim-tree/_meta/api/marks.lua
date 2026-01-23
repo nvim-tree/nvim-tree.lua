@@ -16,7 +16,7 @@ function nvim_tree.api.marks.list() end
 ---
 ---Toggle mark.
 ---
----@param node nvim_tree.api.Node file or directory
+---@param node? nvim_tree.api.Node file or directory
 function nvim_tree.api.marks.toggle(node) end
 
 ---

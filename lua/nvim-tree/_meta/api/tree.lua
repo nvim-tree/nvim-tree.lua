@@ -115,13 +115,13 @@ function nvim_tree.api.tree.change_root(path) end
 ---
 ---Change the tree's root to a folder node or the parent of a file node.
 ---
----@param node nvim_tree.api.Node directory or file
+---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.tree.change_root_to_node(node) end
 
 ---
 ---Change the tree's root to the parent of a node.
 ---
----@param node nvim_tree.api.Node directory or file
+---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.tree.change_root_to_parent(node) end
 
 ---

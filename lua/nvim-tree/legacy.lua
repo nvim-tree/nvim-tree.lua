@@ -2,6 +2,10 @@ local notify = require("nvim-tree.notify")
 
 local M = {}
 
+--
+--Functions
+--
+
 --- Create empty sub-tables if not present
 ---@param tbl table to create empty inside of
 ---@param path string dot separated string of sub-tables
@@ -49,6 +53,10 @@ local function move(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
     src[src_pos] = nil
   end
 end
+
+--
+--Config
+--
 
 -- silently move, please add to help nvim-tree-legacy-opts
 local function refactored(opts)
@@ -149,6 +157,39 @@ function M.migrate_legacy_options(opts)
 
   -- warn and delete
   removed(opts)
+end
+
+--
+--API
+--
+
+---Create new api entries pointing legacy functions to current
+---@param api table
+function M.map_api(api)
+  api.config = api.config or {}
+  api.config.mappings = api.config.mappings or {}
+  api.config.mappings.get_keymap = api.map.get_keymap
+  api.config.mappings.get_keymap_default = api.map.get_keymap_default
+  api.config.mappings.default_on_attach = api.map.default_on_attach
+
+  api.git = api.git or {}
+  api.git.reload = api.tree.reload_git
+
+  api.live_filter = api.live_filter or {}
+  api.live_filter.start = api.filter.live.start
+  api.live_filter.clear = api.filter.live.clear
+
+  api.tree = api.tree or {}
+  api.tree.toggle_enable_filters = api.filter.toggle
+  api.tree.toggle_gitignore_filter = api.filter.git.ignored.toggle
+  api.tree.toggle_git_clean_filter = api.filter.git.clean.toggle
+  api.tree.toggle_no_buffer_filter = api.filter.no_buffer.toggle
+  api.tree.toggle_custom_filter = api.filter.custom.toggle
+  api.tree.toggle_hidden_filter = api.filter.dotfiles.toggle
+  api.tree.toggle_no_bookmark_filter = api.filter.no_bookmark.toggle
+
+  api.diagnostics = api.diagnostics or {}
+  api.diagnostics.hi_test = api.health.hi_test
 end
 
 return M
