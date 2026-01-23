@@ -121,6 +121,12 @@ function M.open_on_directory()
     return
   end
 
+
+  local explorer = core.get_explorer()
+  if not explorer then
+    core.init(bufname)
+  end
+
   explorer_fn("force_dirchange", bufname, true)
 end
 
