@@ -134,6 +134,9 @@ function Filters:bookmark(path, path_type, bookmarks)
 
   local mark_parent = utils.path_add_trailing(path)
   for mark, mark_type in pairs(bookmarks) do
+    if type(mark_type) == "table" and mark_type.type then
+      mark_type = mark_type.type
+    end
     if path == mark then
       return false
     end
