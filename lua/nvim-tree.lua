@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
@@ -793,6 +794,8 @@ function M.setup(conf)
 
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
+
+  require("nvim-tree.api-impl").hydrate_after_setup(api)
 end
 
 vim.g.NvimTreeRequired = 1

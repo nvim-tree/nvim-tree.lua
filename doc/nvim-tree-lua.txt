@@ -3108,11 +3108,11 @@ resize({opts})                                   *nvim_tree.api.tree.resize()*
 
     Parameters: ~
       • {opts}  (`table?`) optional
-                • {width}
+                • {width}?
                   (`nvim_tree.config.view.width.spec|nvim_tree.config.view.width`)
                   New |nvim_tree.config.view| {width} value.
-                • {absolute} (`integer`) Set the width.
-                • {relative} (`integer`) Increase or decrease the width.
+                • {absolute}? (`integer`) Set the width.
+                • {relative}? (`integer`) Increase or decrease the width.
 
 search_node()                               *nvim_tree.api.tree.search_node()*
     Open the search dialogue.

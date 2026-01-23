@@ -14,8 +14,55 @@ local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
--- hydrates meta api definitions with implementations
-return function(api)
+local M = {}
+
+---Walk the api, setting all functions to the error notification
+---@param t table
+local function hydrate_notify(t)
+  for k, v in pairs(t) do
+    if type(v) == "function" then
+      t[k] = function() notify.error("nvim-tree setup not called") end
+    elseif type(v) == "table" then
+      hydrate_notify(v)
+    end
+  end
+end
+
+---Hydrates meta api definition functions with a function.
+---- Default: return "nvim-tree setup not called".
+---- Exceptions: concrete implementation for API that can be called before setup.
+---Call it once when api is first required
+---@param api table
+function M.hydrate_init(api)
+  --
+  -- Hydrate all with the error function
+  --
+  hydrate_notify(api)
+
+  --
+  -- Rehydrate implementations that may be called before setup
+  --
+  api.events.subscribe = events.subscribe
+  api.events.Event = events.Event
+
+  api.map.default_on_attach = keymap.default_on_attach
+
+  api.decorator = {}
+  ---Create a decorator class by calling :extend()
+  ---See :help nvim-tree-decorators
+  ---@type nvim_tree.api.decorator.UserDecorator
+  api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
+
+  --
+  -- Map legacy to above.
+  --
+  require("nvim-tree.legacy").map_api(api)
+end
+
+---Hydrates all API functions with concrete implementations.
+---Call this after nvim-tree setup
+---@param api table
+function M.hydrate_after_setup(api)
   ---Print error when setup not called.
   ---@param fn fun(...): any
   ---@return fun(...): any
@@ -253,9 +300,6 @@ return function(api)
   api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
   api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
 
-  ---@class ApiNodeDeleteWipeBufferOpts
-  ---@field force boolean|nil default false
-
   api.node.buffer.delete = wrap_node(function(node, opts)
     actions.node.buffer.delete(node, opts)
   end)
@@ -264,9 +308,6 @@ return function(api)
   end)
 
   api.tree.reload_git = wrap_explorer("reload_git")
-
-  api.events.subscribe = events.subscribe
-  api.events.Event = events.Event
 
   api.filter.live.start = wrap_explorer_member("live_filter", "start_filtering")
   api.filter.live.clear = wrap_explorer_member("live_filter", "clear_filter")
@@ -291,7 +332,6 @@ return function(api)
 
   api.map.get_keymap = wrap(keymap.get_keymap)
   api.map.get_keymap_default = wrap(keymap.get_keymap_default)
-  api.map.default_on_attach = keymap.default_on_attach
 
   api.health.hi_test = wrap(appearance_hi_test)
 
@@ -299,9 +339,10 @@ return function(api)
     return require("nvim-tree.commands").get()
   end)
 
-  api.decorator = {}
-  ---Create a decorator class by calling :extend()
-  ---See :help nvim-tree-decorators
-  ---@type nvim_tree.api.decorator.UserDecorator
-  api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
+  --
+  -- Remap legacy to above
+  --
+  require("nvim-tree.legacy").map_api(api)
 end
+
+return M

@@ -35,7 +35,7 @@ local api = {}
 
 
 --
---Load the (empty) meta definitions
+-- Load the (empty) meta definitions
 --
 api.commands = require("nvim-tree._meta.api.commands")
 api.events = require("nvim-tree._meta.api.events")
@@ -49,9 +49,8 @@ api.tree = require("nvim-tree._meta.api.tree")
 
 
 --
---Map implementations
+-- Map implementations
 --
-require("nvim-tree.api-impl")(api)
-require("nvim-tree.legacy").map_api(api)
+require("nvim-tree.api-impl").hydrate_init(api)
 
 return api
