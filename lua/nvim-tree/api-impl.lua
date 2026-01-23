@@ -63,30 +63,18 @@ end
 ---Call this after nvim-tree setup
 ---@param api table
 function M.hydrate_after_setup(api)
-  ---Print error when setup not called.
-  ---@param fn fun(...): any
-  ---@return fun(...): any
-  local function wrap(fn)
-    return function(...)
-      if vim.g.NvimTreeSetup == 1 then
-        return fn(...)
-      else
-        notify.error("nvim-tree setup not called")
-      end
-    end
-  end
 
   ---Invoke a method on the singleton explorer.
   ---Print error when setup not called.
   ---@param explorer_method string explorer method name
   ---@return fun(...): any
   local function wrap_explorer(explorer_method)
-    return wrap(function(...)
+    return function(...)
       local explorer = core.get_explorer()
       if explorer then
         return explorer[explorer_method](explorer, ...)
       end
-    end)
+    end
   end
 
   ---Inject the node as the first argument if present otherwise do nothing.
@@ -119,12 +107,12 @@ function M.hydrate_after_setup(api)
   ---@return fun(...): any
   local function wrap_explorer_member_args(explorer_member, member_method, ...)
     local method_args = ...
-    return wrap(function(...)
+    return function(...)
       local explorer = core.get_explorer()
       if explorer then
         return explorer[explorer_member][member_method](explorer[explorer_member], method_args, ...)
       end
-    end)
+    end
   end
 
   ---Invoke a member's method on the singleton explorer.
@@ -133,28 +121,26 @@ function M.hydrate_after_setup(api)
   ---@param member_method string method name to invoke on member
   ---@return fun(...): any
   local function wrap_explorer_member(explorer_member, member_method)
-    return wrap(function(...)
+    return function(...)
       local explorer = core.get_explorer()
       if explorer then
         return explorer[explorer_member][member_method](explorer[explorer_member], ...)
       end
-    end)
+    end
   end
 
-  api.tree.open = wrap(actions.tree.open.fn)
+  api.tree.open = actions.tree.open.fn
   api.tree.focus = api.tree.open
 
-  api.tree.toggle = wrap(actions.tree.toggle.fn)
-  api.tree.close = wrap(view.close)
-  api.tree.close_in_this_tab = wrap(view.close_this_tab_only)
-  api.tree.close_in_all_tabs = wrap(view.close_all_tabs)
+  api.tree.toggle = actions.tree.toggle.fn
+  api.tree.close = view.close
+  api.tree.close_in_this_tab = view.close_this_tab_only
+  api.tree.close_in_all_tabs = view.close_all_tabs
   api.tree.reload = wrap_explorer("reload_explorer")
 
-  api.tree.resize = wrap(actions.tree.resize.fn)
+  api.tree.resize = actions.tree.resize.fn
 
-  api.tree.change_root = wrap(function(...)
-    require("nvim-tree").change_dir(...)
-  end)
+  api.tree.change_root = require("nvim-tree").change_dir
 
   api.tree.change_root_to_node = wrap_node(function(node)
     if node.name == ".." or node:is(RootNode) then
@@ -177,18 +163,18 @@ function M.hydrate_after_setup(api)
   api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
   api.tree.get_nodes = wrap_explorer("get_nodes")
 
-  api.tree.find_file = wrap(actions.tree.find_file.fn)
-  api.tree.search_node = wrap(actions.finders.search_node.fn)
+  api.tree.find_file = actions.tree.find_file.fn
+  api.tree.search_node = actions.finders.search_node.fn
 
-  api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+  api.tree.collapse_all = actions.tree.modifiers.collapse.all
 
   api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
-  api.tree.toggle_help = wrap(help.toggle)
-  api.tree.is_tree_buf = wrap(utils.is_nvim_tree_buf)
+  api.tree.toggle_help = help.toggle
+  api.tree.is_tree_buf = utils.is_nvim_tree_buf
 
-  api.tree.is_visible = wrap(view.is_visible)
+  api.tree.is_visible = view.is_visible
 
-  api.tree.winid = wrap(view.winid)
+  api.tree.winid = view.winid
 
   api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
   api.fs.remove = wrap_node(actions.fs.remove_file.fn)
@@ -330,14 +316,12 @@ function M.hydrate_after_setup(api)
   api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
-  api.map.get_keymap = wrap(keymap.get_keymap)
-  api.map.get_keymap_default = wrap(keymap.get_keymap_default)
+  api.map.get_keymap = keymap.get_keymap
+  api.map.get_keymap_default = keymap.get_keymap_default
 
-  api.health.hi_test = wrap(appearance_hi_test)
+  api.health.hi_test = appearance_hi_test
 
-  api.commands.get = wrap(function()
-    return require("nvim-tree.commands").get()
-  end)
+  api.commands.get = require("nvim-tree.commands").get
 
   --
   -- Remap legacy to above
