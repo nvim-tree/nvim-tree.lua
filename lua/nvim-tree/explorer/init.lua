@@ -737,7 +737,8 @@ end
 ---@private
 ---@param foldername string
 ---@param should_open_view boolean|nil
-function Explorer:force_dirchange(foldername, should_open_view)
+---@param should_init boolean|nil
+function Explorer:force_dirchange(foldername, should_open_view, should_init)
   local profile = log.profile_start("change dir %s", foldername)
 
   local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
@@ -745,7 +746,10 @@ function Explorer:force_dirchange(foldername, should_open_view)
     if self:should_change_dir() then
       self:cd(config.actions.change_dir.global, foldername)
     end
-    core.init(foldername)
+
+    if should_init ~= false then
+      core.init(foldername)
+    end
   end
 
   if should_open_view then

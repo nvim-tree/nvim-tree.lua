@@ -127,7 +127,7 @@ function M.open_on_directory()
     core.init(bufname)
   end
 
-  explorer_fn("force_dirchange", bufname, true)
+  explorer_fn("force_dirchange", bufname, true, false)
 end
 
 ---@return table
