@@ -20,9 +20,9 @@ local LiveFilter = require("nvim-tree.explorer.live-filter")
 local Sorter = require("nvim-tree.explorer.sorter")
 local Clipboard = require("nvim-tree.actions.fs.clipboard")
 local Renderer = require("nvim-tree.renderer")
+local FileNode = require("nvim-tree.node.file")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
-local change_dir = require("nvim-tree.actions.root.change-dir")
 local find_file = require("nvim-tree.actions.finders.find-file")
 
 local config
@@ -31,6 +31,7 @@ local config
 ---@field uid_explorer number vim.loop.hrtime() at construction time
 ---@field opts table user options
 ---@field augroup_id integer
+---@field current_tab integer
 ---@field renderer Renderer
 ---@field filters Filters
 ---@field live_filter LiveFilter
@@ -60,12 +61,15 @@ function Explorer:new(args)
   self.open         = true
   self.opts         = config
 
-  self.sorters      = Sorter({ explorer = self })
-  self.renderer     = Renderer({ explorer = self })
-  self.filters      = Filters({ explorer = self })
-  self.live_filter  = LiveFilter({ explorer = self })
-  self.marks        = Marks({ explorer = self })
-  self.clipboard    = Clipboard({ explorer = self })
+
+  self.sorters     = Sorter({ explorer = self })
+  self.renderer    = Renderer({ explorer = self })
+  self.filters     = Filters({ explorer = self })
+  self.live_filter = LiveFilter({ explorer = self })
+  self.marks       = Marks({ explorer = self })
+  self.clipboard   = Clipboard({ explorer = self })
+
+  self.current_tab = vim.api.nvim_get_current_tabpage()
 
   self:create_autocmds()
 
@@ -148,7 +152,7 @@ function Explorer:create_autocmds()
     pattern = "NvimTree_*",
     callback = function()
       if utils.is_nvim_tree_buf(0) then
-        if vim.fn.getcwd() ~= core.get_cwd() or (self.opts.reload_on_bufenter and not self.opts.filesystem_watchers.enable) then
+        if vim.fn.getcwd() ~= self.absolute_path or (self.opts.reload_on_bufenter and not self.opts.filesystem_watchers.enable) then
           self:reload_explorer()
         end
       end
@@ -525,7 +529,7 @@ function Explorer:get_node_at_cursor()
     return
   end
 
-  if cursor[1] == 1 and view.is_root_folder_visible(core.get_cwd()) then
+  if cursor[1] == 1 and view.is_root_folder_visible(self.absolute_path) then
     return self
   end
 
@@ -664,15 +668,15 @@ end
 ---@param node Node
 function Explorer:dir_up(node)
   if not node or node.name == ".." then
-    change_dir.fn("..")
+    self:change_dir("..")
   else
-    local cwd = core.get_cwd()
+    local cwd = self.absolute_path
     if cwd == nil then
       return
     end
 
     local newdir = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
-    change_dir.fn(newdir)
+    self:change_dir(newdir)
     find_file.fn(node.absolute_path)
   end
 end
@@ -703,6 +707,116 @@ function Explorer:expand_node(node, expand_opts)
   end
 
   node:expand(expand_opts)
+end
+
+---@private
+---@param new_tabpage integer
+---@return boolean
+function Explorer:is_window_event(new_tabpage)
+  local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window or false
+  return is_event_scope_window and new_tabpage == self.current_tab
+end
+
+---@private
+---@param name string
+---@return string|nil
+function Explorer:clean_input_cwd(name)
+  name = vim.fn.fnameescape(name)
+  local cwd = self.absolute_path
+  if cwd == nil then
+    return
+  end
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(cwd), ":h")
+  if name == ".." and root_parent_cwd then
+    return vim.fn.expand(root_parent_cwd)
+  else
+    return vim.fn.expand(name)
+  end
+end
+
+---@private
+---@param foldername string
+---@return boolean
+function Explorer:prevent_cwd_change(foldername)
+  local is_same_cwd = foldername == self.absolute_path
+  local is_restricted_above = config.actions.change_dir.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  return is_same_cwd or is_restricted_above
+end
+
+---@private
+---@return boolean
+function Explorer:should_change_dir()
+  return config.actions.change_dir.enable and vim.tbl_isempty(vim.v.event)
+end
+
+---@private
+---@param global boolean
+---@param path string
+function Explorer:cd(global, path)
+  vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
+end
+
+---@private
+---@param foldername string
+---@param should_open_view boolean|nil
+---@param should_init boolean|nil
+function Explorer:force_dirchange(foldername, should_open_view, should_init)
+  local profile = log.profile_start("change dir %s", foldername)
+
+  local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
+  if valid_dir then
+    if self:should_change_dir() then
+      self:cd(config.actions.change_dir.global, foldername)
+    end
+
+    if should_init ~= false then
+      core.init(foldername)
+    end
+  end
+
+  if should_open_view then
+    require("nvim-tree.lib").open()
+  else
+    -- TODO #2255
+    -- The call to core.init destroyed this Explorer instance hence we need to fetch the new instance.
+    -- Problem is described at https://github.com/nvim-tree/nvim-tree.lua/pull/3233#issuecomment-3704402527
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
+  end
+
+  log.profile_end(profile)
+end
+
+---@param input_cwd string
+---@param with_open boolean|nil
+function Explorer:change_dir(input_cwd, with_open)
+  local new_tabpage = vim.api.nvim_get_current_tabpage()
+  if self:is_window_event(new_tabpage) then
+    return
+  end
+
+  local foldername = self:clean_input_cwd(input_cwd)
+  if foldername == nil or self:prevent_cwd_change(foldername) then
+    return
+  end
+
+  self.current_tab = new_tabpage
+  self:force_dirchange(foldername, with_open)
+end
+
+function Explorer:change_dir_to_node(node)
+  if node.name == ".." or node:is(RootNode) then
+    self:change_dir("..")
+  elseif node:is(FileNode) and node.parent ~= nil then
+    self:change_dir(node.parent:last_group_node().absolute_path)
+  else
+    node = node:as(DirectoryNode)
+    if node then
+      self:change_dir(node:last_group_node().absolute_path)
+    end
+  end
 end
 
 function Explorer:setup(opts)
