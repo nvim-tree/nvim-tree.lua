@@ -121,35 +121,35 @@ end
 ---@private
 ---@param path string
 ---@param path_type string|nil filetype of path
----@param bookmarks table<string, string|nil> path, filetype table of bookmarked files
+---@param bookmarks table<string, Node> path to bookmarked Node
 ---@return boolean
 function Filters:bookmark(path, path_type, bookmarks)
   if not self.state.no_bookmark then
     return false
   end
-  -- if bookmark is empty, we should see a empty filetree
+
   if next(bookmarks) == nil then
     return true
   end
 
+  local DirectoryNode = require("nvim-tree.node.directory")
   local mark_parent = utils.path_add_trailing(path)
-  for mark, mark_type in pairs(bookmarks) do
-    if type(mark_type) == "table" and mark_type.type then
-      mark_type = mark_type.type
-    end
-    if path == mark then
+
+  for bookmark_path, bookmark_entry in pairs(bookmarks) do
+    if path == bookmark_path then
       return false
     end
 
     if path_type == "directory" then
-      -- check if path is mark's parent
-      if vim.fn.stridx(mark, mark_parent) == 0 then
+      if vim.fn.stridx(bookmark_path, mark_parent) == 0 then
         return false
       end
     end
-    if mark_type == "directory" then
-      -- check if mark is path's parent
-      local path_parent = utils.path_add_trailing(mark)
+
+    ---@type DirectoryNode?
+    local dir = bookmark_entry:as(DirectoryNode)
+    if dir then
+      local path_parent = utils.path_add_trailing(bookmark_path)
       if vim.fn.stridx(path, path_parent) == 0 then
         return false
       end
