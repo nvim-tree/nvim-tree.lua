@@ -1,7 +1,7 @@
 local M = {}
 
 M.find_file = require("nvim-tree.actions.tree.find-file")
-M.modifiers = require("nvim-tree.actions.tree.modifiers")
+M.collapse = require("nvim-tree.actions.tree.collapse")
 M.open = require("nvim-tree.actions.tree.open")
 M.toggle = require("nvim-tree.actions.tree.toggle")
 M.resize = require("nvim-tree.actions.tree.resize")

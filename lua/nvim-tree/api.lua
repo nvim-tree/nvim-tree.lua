@@ -176,7 +176,7 @@ Api.tree.search_node = wrap(actions.finders.search_node.fn)
 ---@class ApiCollapseOpts
 ---@field keep_buffers boolean|nil default false
 
-Api.tree.collapse_all = wrap(actions.tree.modifiers.collapse.all)
+Api.tree.collapse_all = wrap(actions.tree.collapse.all)
 
 ---@class ApiTreeExpandOpts
 ---@field expand_until (fun(expansion_count: integer, node: Node): boolean)|nil
@@ -311,7 +311,7 @@ Api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next"
 Api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
 
 Api.node.expand = wrap_node(wrap_explorer("expand_node"))
-Api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
+Api.node.collapse = wrap_node(actions.tree.collapse.node)
 
 ---@class ApiNodeDeleteWipeBufferOpts
 ---@field force boolean|nil default false
