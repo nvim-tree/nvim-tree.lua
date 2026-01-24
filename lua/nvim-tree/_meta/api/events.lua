@@ -8,6 +8,4 @@ local nvim_tree = { api = { events = {} } }
 ---@param callback fun(payload: table?)
 function nvim_tree.api.events.subscribe(event_type, callback) end
 
-nvim_tree.api.events.Event = require("nvim-tree.events").Event
-
 return nvim_tree.api.events

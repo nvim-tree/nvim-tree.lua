@@ -241,12 +241,6 @@ local function hydrate_post(api)
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
   api.map.get_keymap = function() require("nvim-tree.keymap").get_keymap() end
-  api.map.get_keymap_default = function() require("nvim-tree.keymap").get_keymap_default() end
-
-  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
-
-  -- TODO #3231 this should be OK pre
-  api.commands.get = function() require("nvim-tree.commands").get() end
 end
 
 ---Hydrates all API functions with concrete implementations.
