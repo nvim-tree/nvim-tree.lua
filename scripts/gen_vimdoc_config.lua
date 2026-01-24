@@ -6,8 +6,9 @@
 ---@field helptag string must be globally unique
 ---@field section string arbitrary
 ---@field path string relative to root
----@field file_name string? generated from path
----@field name string? override generated name
+---@field file_name? string generated from path
+---@field name? string override generated name
+---@field append_only? boolean follows previous section
 
 ---Help txt is deleted from first tag down and generated content is appended.
 ---@type Src[]
@@ -39,6 +40,10 @@ local srcs = {
 
   { helptag = "nvim-tree-api",                        section = "API",                         path = "./lua/nvim_tree/api.lua", },
 
+  -- logically ordered classes with no section
+  { helptag = "xxx",                                  section = "XXX",                         path = "./lua/nvim_tree/_meta/api/classes01.lua",              append_only = true, },
+  { helptag = "xxx",                                  section = "XXX",                         path = "./lua/nvim_tree/_meta/api/classes02.lua",              append_only = true, },
+
   { helptag = "nvim-tree-api-commands",               section = "API: commands",               path = "./lua/nvim_tree/_meta/api/commands.lua", },
   { helptag = "nvim-tree-api-events",                 section = "API: events",                 path = "./lua/nvim_tree/_meta/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 section = "API: filter",                 path = "./lua/nvim_tree/_meta/api/filter.lua", },
@@ -51,8 +56,6 @@ local srcs = {
   { helptag = "nvim-tree-api-node-navigate",          section = "API: node.navigate",          path = "./lua/nvim_tree/_meta/api/node/navigate.lua", },
   { helptag = "nvim-tree-api-node-open",              section = "API: node.open",              path = "./lua/nvim_tree/_meta/api/node/open.lua", },
   { helptag = "nvim-tree-api-tree",                   section = "API: tree",                   path = "./lua/nvim_tree/_meta/api/tree.lua", },
-
-  { helptag = "nvim-tree-api-classes",                section = "API: Classes",                path = "./lua/nvim_tree/_meta/api/classes.lua", },
 }
 
 -- hydrate file names
@@ -79,6 +82,8 @@ local config = {
 
     -- path
     files = vim.tbl_map(function(src) return src.path end, srcs),
+
+    append_only = vim.tbl_map(function(src) return src.append_only and src.file_name or nil end, srcs),
 
     section_fmt = function(name)
       print(string.format("section_fmt name=%s", name))

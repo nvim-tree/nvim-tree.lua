@@ -25,7 +25,7 @@ local api = {}
 ---local api = require("nvim-tree.api")
 ---api.tree.reload()
 ---```
----Generally, functions accepting a {node} as their first argument will use the node under the cursor when that argument is not present or nil. e.g. the following are functionally identical:
+---Generally, functions accepting a [nvim_tree.api.Node] as their first argument will use the node under the cursor when that argument is not present or nil. e.g. the following are functionally identical:
 ---```lua
 ---
 ---api.node.open.edit(nil, { focus = true })
