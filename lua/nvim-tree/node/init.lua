@@ -144,6 +144,35 @@ function Node:clone(api_nodes)
   return clone
 end
 
+---@param expansion_count integer
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@return boolean
+function Node:should_expand(expansion_count, should_descend)
+  local DirectoryNode = require("nvim-tree.node.directory")
+
+  local dir = self:as(DirectoryNode)
+  if not dir then
+    return false
+  end
+
+  if not dir.open and should_descend(expansion_count, self) then
+    if #self.nodes == 0 then
+      self.explorer:expand_dir_node(dir) -- populate node.group_next
+    end
+
+    if dir.group_next then
+      local expand_next = dir.group_next:should_expand(expansion_count, should_descend)
+      if expand_next then
+        dir.open = true
+      end
+      return expand_next
+    else
+      return true
+    end
+  end
+  return false
+end
+
 ---@param expand_opts ApiTreeExpandOpts?
 function Node:expand(expand_opts)
   if self.parent then
