@@ -127,7 +127,7 @@ function Filters:bookmark(path, path_type, bookmarks)
   if not self.state.no_bookmark then
     return false
   end
-
+  -- if bookmark is empty, we should see a empty filetree
   if next(bookmarks) == nil then
     return true
   end
@@ -141,6 +141,7 @@ function Filters:bookmark(path, path_type, bookmarks)
     end
 
     if path_type == "directory" then
+      -- check if path is mark's parent
       if vim.fn.stridx(bookmark_path, mark_parent) == 0 then
         return false
       end
@@ -149,6 +150,7 @@ function Filters:bookmark(path, path_type, bookmarks)
     ---@type DirectoryNode?
     local dir = bookmark_entry:as(DirectoryNode)
     if dir then
+      -- check if mark is path's parent
       local path_parent = utils.path_add_trailing(bookmark_path)
       if vim.fn.stridx(path, path_parent) == 0 then
         return false
