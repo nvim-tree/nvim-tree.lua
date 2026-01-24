@@ -66,7 +66,7 @@ function M.fn(path)
             dir.open = true
           end
           if #dir.nodes == 0 then
-            core.get_explorer():expand(dir)
+            core.get_explorer():expand_dir_node(dir)
             if dir.group_next and incremented_line then
               line = line - 1
             end

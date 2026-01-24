@@ -2,7 +2,6 @@ local view = require("nvim-tree.view")
 local actions = require("nvim-tree.actions")
 
 local DirectoryNode = require("nvim-tree.node.directory")
-local FileNode = require("nvim-tree.node.file")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 
@@ -139,23 +138,7 @@ local function hydrate_post(api)
 
   api.tree.change_root = require("nvim-tree").change_dir
 
-  api.tree.change_root_to_node = wrap_node(function(node)
-    if node.name == ".." or node:is(RootNode) then
-      actions.root.change_dir.fn("..")
-      return
-    end
-
-    if node:is(FileNode) and node.parent ~= nil then
-      actions.root.change_dir.fn(node.parent:last_group_node().absolute_path)
-      return
-    end
-
-    if node:is(DirectoryNode) then
-      actions.root.change_dir.fn(node:last_group_node().absolute_path)
-      return
-    end
-  end)
-
+  api.tree.change_root_to_node = wrap_node(wrap_explorer("change_dir_to_node"))
   api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
   api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
   api.tree.get_nodes = wrap_explorer("get_nodes")
