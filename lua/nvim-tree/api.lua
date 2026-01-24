@@ -51,6 +51,6 @@ api.tree = require("nvim-tree._meta.api.tree")
 --
 -- Map implementations
 --
-require("nvim-tree.api-impl").hydrate_init(api)
+require("nvim-tree.api.impl.pre")(api)
 
 return api
