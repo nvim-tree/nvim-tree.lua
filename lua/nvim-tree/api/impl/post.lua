@@ -1,7 +1,12 @@
---This file should have no requires. Everything must be lazy loaded.
---The user must be able to require api cheaply and run setup cheaply.
+local view = require("nvim-tree.view")
+local actions = require("nvim-tree.actions")
+
+local DirectoryNode = require("nvim-tree.node.directory")
+local FileLinkNode = require("nvim-tree.node.file-link")
+local RootNode = require("nvim-tree.node.root")
 
 ---Invoke a method on the singleton explorer.
+---Print error when setup not called.
 ---@param explorer_method string explorer method name
 ---@return fun(...): any
 local function wrap_explorer(explorer_method)
@@ -36,6 +41,7 @@ local function wrap_node_or_nil(fn)
 end
 
 ---Invoke a member's method on the singleton explorer.
+---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
 ---@param ... any passed to method
@@ -51,6 +57,7 @@ local function wrap_explorer_member_args(explorer_member, member_method, ...)
 end
 
 ---Invoke a member's method on the singleton explorer.
+---Print error when setup not called.
 ---@param explorer_member string explorer member name
 ---@param member_method string method name to invoke on member
 ---@return fun(...): any
@@ -71,10 +78,7 @@ end
 ---@param node Node
 ---@param edit_opts NodeEditOpts?
 local function edit(mode, node, edit_opts)
-  local actions = require("nvim-tree.actions")
-  local view = require("nvim-tree.view")
-
-  local file_link = node:as(require("nvim-tree.node.file-link"))
+  local file_link = node:as(FileLinkNode)
   local path = file_link and file_link.link_to or node.absolute_path
   local cur_tabpage = vim.api.nvim_get_current_tabpage()
 
@@ -105,11 +109,11 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
   ---@param node Node
   ---@param edit_opts NodeEditOpts?
   return function(node, edit_opts)
-    local root = node:as(require("nvim-tree.node.root"))
-    local dir = node:as(require("nvim-tree.node.directory"))
+    local root = node:as(RootNode)
+    local dir = node:as(DirectoryNode)
 
     if root or node.name == ".." then
-      require("nvim-tree.actions").root.change_dir.fn("..")
+      actions.root.change_dir.fn("..")
     elseif dir then
       dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
@@ -121,45 +125,45 @@ end
 ---Hydrate all implementations barring those that were called during hydrate_pre
 ---@param api table
 local function hydrate_post(api)
-  api.tree.open = function(...) require("nvim-tree.actions").tree.open.fn(...) end
+  api.tree.open = actions.tree.open.fn
   api.tree.focus = api.tree.open
 
-  api.tree.toggle = function(...) require("nvim-tree.actions").tree.toggle.fn(...) end
-  api.tree.close = function(...) require("nvim-tree.view").close(...) end
-  api.tree.close_in_this_tab = function() require("nvim-tree.view").close_this_tab_only() end
-  api.tree.close_in_all_tabs = function() require("nvim-tree.view").close_all_tabs() end
+  api.tree.toggle = actions.tree.toggle.fn
+  api.tree.close = view.close
+  api.tree.close_in_this_tab = view.close_this_tab_only
+  api.tree.close_in_all_tabs = view.close_all_tabs
   api.tree.reload = wrap_explorer("reload_explorer")
 
-  api.tree.resize = function(...) require("nvim-tree.actions").tree.resize.fn(...) end
+  api.tree.resize = actions.tree.resize.fn
 
-  api.tree.change_root = function(...) require("nvim-tree").change_dir(...) end
+  api.tree.change_root = require("nvim-tree").change_dir
 
   api.tree.change_root_to_node = wrap_node(wrap_explorer("change_dir_to_node"))
   api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
   api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
   api.tree.get_nodes = wrap_explorer("get_nodes")
 
-  api.tree.find_file = function(...) require("nvim-tree.actions").tree.find_file.fn(...) end
-  api.tree.search_node = function() require("nvim-tree.actions").finders.search_node.fn() end
+  api.tree.find_file = actions.tree.find_file.fn
+  api.tree.search_node = actions.finders.search_node.fn
 
-  api.tree.collapse_all = function(...) require("nvim-tree.actions").tree.modifiers.collapse.all(...) end
+  api.tree.collapse_all = actions.tree.modifiers.collapse.all
 
-  api.tree.expand_all = wrap_node(require("nvim-tree.actions").tree.modifiers.expand.all)
+  api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
   api.tree.toggle_help = function() require("nvim-tree.help").toggle() end
-  api.tree.is_tree_buf = function(...) require("nvim-tree.utils").is_nvim_tree_buf(...) end
+  api.tree.is_tree_buf = function() require("nvim-tree.utils").is_nvim_tree_buf() end
 
-  api.tree.is_visible = function(...) require("nvim-tree.view").is_visible(...) end
+  api.tree.is_visible = view.is_visible
 
-  api.tree.winid = function(...) require("nvim-tree.view").winid(...) end
+  api.tree.winid = view.winid
 
-  api.fs.create = wrap_node_or_nil(require("nvim-tree.actions").fs.create_file.fn)
-  api.fs.remove = wrap_node(require("nvim-tree.actions").fs.remove_file.fn)
-  api.fs.trash = wrap_node(require("nvim-tree.actions").fs.trash.fn)
-  api.fs.rename_node = wrap_node(require("nvim-tree.actions").fs.rename_file.fn(":t"))
-  api.fs.rename = wrap_node(require("nvim-tree.actions").fs.rename_file.fn(":t"))
-  api.fs.rename_sub = wrap_node(require("nvim-tree.actions").fs.rename_file.fn(":p:h"))
-  api.fs.rename_basename = wrap_node(require("nvim-tree.actions").fs.rename_file.fn(":t:r"))
-  api.fs.rename_full = wrap_node(require("nvim-tree.actions").fs.rename_file.fn(":p"))
+  api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
+  api.fs.remove = wrap_node(actions.fs.remove_file.fn)
+  api.fs.trash = wrap_node(actions.fs.trash.fn)
+  api.fs.rename_node = wrap_node(actions.fs.rename_file.fn(":t"))
+  api.fs.rename = wrap_node(actions.fs.rename_file.fn(":t"))
+  api.fs.rename_sub = wrap_node(actions.fs.rename_file.fn(":p:h"))
+  api.fs.rename_basename = wrap_node(actions.fs.rename_file.fn(":t:r"))
+  api.fs.rename_full = wrap_node(actions.fs.rename_file.fn(":p"))
   api.fs.cut = wrap_node(wrap_explorer_member("clipboard", "cut"))
   api.fs.paste = wrap_node(wrap_explorer_member("clipboard", "paste"))
   api.fs.clear_clipboard = wrap_explorer_member("clipboard", "clear_clipboard")
@@ -184,34 +188,34 @@ local function hydrate_post(api)
   api.node.open.preview = wrap_node(open_or_expand_or_dir_up("preview"))
   api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up("preview_no_picker"))
 
-  api.node.show_info_popup = wrap_node(require("nvim-tree.actions").node.file_popup.toggle_file_info)
-  api.node.run.cmd = wrap_node(require("nvim-tree.actions").node.run_command.run_file_command)
-  api.node.run.system = wrap_node(require("nvim-tree.actions").node.system_open.fn)
+  api.node.show_info_popup = wrap_node(actions.node.file_popup.toggle_file_info)
+  api.node.run.cmd = wrap_node(actions.node.run_command.run_file_command)
+  api.node.run.system = wrap_node(actions.node.system_open.fn)
 
-  api.node.navigate.sibling.next = wrap_node(require("nvim-tree.actions").moves.sibling.fn("next"))
-  api.node.navigate.sibling.prev = wrap_node(require("nvim-tree.actions").moves.sibling.fn("prev"))
-  api.node.navigate.sibling.first = wrap_node(require("nvim-tree.actions").moves.sibling.fn("first"))
-  api.node.navigate.sibling.last = wrap_node(require("nvim-tree.actions").moves.sibling.fn("last"))
-  api.node.navigate.parent = wrap_node(require("nvim-tree.actions").moves.parent.fn(false))
-  api.node.navigate.parent_close = wrap_node(require("nvim-tree.actions").moves.parent.fn(true))
-  api.node.navigate.git.next = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "git" }))
-  api.node.navigate.git.next_skip_gitignored = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "git", skip_gitignored = true }))
-  api.node.navigate.git.next_recursive = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "git", recurse = true }))
-  api.node.navigate.git.prev = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "git" }))
-  api.node.navigate.git.prev_skip_gitignored = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "git", skip_gitignored = true }))
-  api.node.navigate.git.prev_recursive = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "git", recurse = true }))
-  api.node.navigate.diagnostics.next = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "diag" }))
-  api.node.navigate.diagnostics.next_recursive = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "diag", recurse = true }))
-  api.node.navigate.diagnostics.prev = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "diag" }))
-  api.node.navigate.diagnostics.prev_recursive = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "diag", recurse = true }))
-  api.node.navigate.opened.next = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "next", what = "opened" }))
-  api.node.navigate.opened.prev = wrap_node(require("nvim-tree.actions").moves.item.fn({ where = "prev", what = "opened" }))
+  api.node.navigate.sibling.next = wrap_node(actions.moves.sibling.fn("next"))
+  api.node.navigate.sibling.prev = wrap_node(actions.moves.sibling.fn("prev"))
+  api.node.navigate.sibling.first = wrap_node(actions.moves.sibling.fn("first"))
+  api.node.navigate.sibling.last = wrap_node(actions.moves.sibling.fn("last"))
+  api.node.navigate.parent = wrap_node(actions.moves.parent.fn(false))
+  api.node.navigate.parent_close = wrap_node(actions.moves.parent.fn(true))
+  api.node.navigate.git.next = wrap_node(actions.moves.item.fn({ where = "next", what = "git" }))
+  api.node.navigate.git.next_skip_gitignored = wrap_node(actions.moves.item.fn({ where = "next", what = "git", skip_gitignored = true }))
+  api.node.navigate.git.next_recursive = wrap_node(actions.moves.item.fn({ where = "next", what = "git", recurse = true }))
+  api.node.navigate.git.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "git" }))
+  api.node.navigate.git.prev_skip_gitignored = wrap_node(actions.moves.item.fn({ where = "prev", what = "git", skip_gitignored = true }))
+  api.node.navigate.git.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "git", recurse = true }))
+  api.node.navigate.diagnostics.next = wrap_node(actions.moves.item.fn({ where = "next", what = "diag" }))
+  api.node.navigate.diagnostics.next_recursive = wrap_node(actions.moves.item.fn({ where = "next", what = "diag", recurse = true }))
+  api.node.navigate.diagnostics.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag" }))
+  api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag", recurse = true }))
+  api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
+  api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
 
-  api.node.expand = wrap_node(require("nvim-tree.actions").tree.modifiers.expand.node)
-  api.node.collapse = wrap_node(require("nvim-tree.actions").tree.modifiers.collapse.node)
+  api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
+  api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
 
-  api.node.buffer.delete = wrap_node(function(node, opts) require("nvim-tree.actions").node.buffer.delete(node, opts) end)
-  api.node.buffer.wipe = wrap_node(function(node, opts) require("nvim-tree.actions").node.buffer.wipe(node, opts) end)
+  api.node.buffer.delete = wrap_node(function(node, opts) actions.node.buffer.delete(node, opts) end)
+  api.node.buffer.wipe = wrap_node(function(node, opts) actions.node.buffer.wipe(node, opts) end)
 
   api.tree.reload_git = wrap_explorer("reload_git")
 
@@ -238,6 +242,11 @@ local function hydrate_post(api)
 
   api.map.get_keymap = function() require("nvim-tree.keymap").get_keymap() end
   api.map.get_keymap_default = function() require("nvim-tree.keymap").get_keymap_default() end
+
+  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
+
+  -- TODO #3231 this should be OK pre
+  api.commands.get = function() require("nvim-tree.commands").get() end
 end
 
 ---Hydrates all API functions with concrete implementations.
