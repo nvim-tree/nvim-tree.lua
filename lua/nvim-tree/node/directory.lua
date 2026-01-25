@@ -327,6 +327,28 @@ function DirectoryNode:descend_until_empty()
   return not should_exclude
 end
 
+---@param expansion_count integer
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@return boolean
+function DirectoryNode:should_expand(expansion_count, should_descend)
+  if not self.open and should_descend(expansion_count, self) then
+    if #self.nodes == 0 then
+      self.explorer:expand_dir_node(self) -- populate node.group_next
+    end
+
+    if self.group_next then
+      local expand_next = self.group_next:should_expand(expansion_count, should_descend)
+      if expand_next then
+        self.open = true
+      end
+      return expand_next
+    else
+      return true
+    end
+  end
+  return false
+end
+
 ---@param expand_opts ApiTreeExpandOpts?
 function DirectoryNode:expand(expand_opts)
   local expansion_count = 0
