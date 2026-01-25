@@ -1,3 +1,11 @@
+---Hydrates all API functions with concrete implementations.
+---All "nvim-tree setup not called" error functions from pre.lua will be replaced.
+---
+---Call this after nvim-tree setup
+---
+---This is expensive as there are many cascading requires and is avoided
+---until after setup has been called, so that the user may require API cheaply.
+
 local view = require("nvim-tree.view")
 local actions = require("nvim-tree.actions")
 
@@ -243,13 +251,7 @@ local function hydrate_post(api)
   api.map.get_keymap = function() require("nvim-tree.keymap").get_keymap() end
 end
 
----Hydrates all API functions with concrete implementations.
----All "nvim-tree setup not called" error functions will be replaced.
----
----Call this after nvim-tree setup
----
----This is expensive as there are many cascading requires and is avoided
----until after setup has been called, so that the user may require API cheaply.
+---Re-hydrate api
 ---@param api table
 return function(api)
   -- All concrete implementations

@@ -1,4 +1,11 @@
+--Hydrates meta api empty definition functions with a new function:
+-- - Default: error notification "nvim-tree setup not called".
+-- - Exceptions: concrete implementation for API that can be called before setup.
+--
+--Call it once when api is first required
+--
 --This file should have minimal requires that are cheap and have no dependencies or are already required.
+--
 --Everything must be as lazily loaded as possible: the user must be able to require api cheaply.
 
 local commands = require("nvim-tree.commands") -- already required by plugin.lua
@@ -58,10 +65,7 @@ local function hydrate_pre(api)
   api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
 end
 
---Hydrates meta api empty definition functions with a new function:
--- - Default: error notification "nvim-tree setup not called".
--- - Exceptions: concrete implementation for API that can be called before setup.
---Call it once when api is first required
+---Hydrate api
 ---@param api table
 return function(api)
   -- Default: error
