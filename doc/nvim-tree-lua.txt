@@ -2398,18 +2398,17 @@ e.g. the following are functionally identical: >lua
     Please do not mutate the contents of any Node object.
 
     Fields: ~
-      • {type}            (`"file"|"directory"|"link"`) see |uv.fs_stat()|
-                          {type}
       • {absolute_path}   (`string`) of the file or directory
+      • {name}            (`string`) file or directory name
+      • {parent}?         (`nvim_tree.api.DirectoryNode`) parent directory,
+                          nil for root
+      • {type}            (`"file"|"directory"|"link"`) |uv.fs_stat()| {type}
       • {executable}      (`boolean`) file is executable
       • {fs_stat}?        (`uv.fs_stat.result`) at time of last tree display,
                           see |uv.fs_stat()|
       • {git_status}      (`nvim_tree.git.Status?`) for files and directories
-      • {hidden}          (`boolean`) node is not visible in the tree
-      • {name}            (`string`) file or directory name
-      • {parent}?         (`nvim_tree.api.DirectoryNode`) parent directory,
-                          nil for root
       • {diag_severity}?  (`lsp.DiagnosticSeverity`) diagnostic status
+      • {hidden}          (`boolean`) node is not visible in the tree
 
 *nvim_tree.git.Status*
     Git statuses for a single node.

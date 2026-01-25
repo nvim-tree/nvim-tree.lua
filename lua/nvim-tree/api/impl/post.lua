@@ -113,7 +113,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
     local dir = node:as(DirectoryNode)
 
     if root or node.name == ".." then
-      actions.root.change_dir.fn("..")
+      wrap_explorer("change_dir")("..")
     elseif dir then
       dir:expand_or_collapse(toggle_group)
     elseif not toggle_group then
