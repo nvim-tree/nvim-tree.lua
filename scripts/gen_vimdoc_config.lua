@@ -38,11 +38,7 @@ local srcs = {
 
   { helptag = "nvim-tree-config-default",             section = "Config: Default",             path = "./lua/nvim_tree/_meta/config/default.lua", },
 
-  { helptag = "nvim-tree-api",                        section = "API",                         path = "./lua/nvim_tree/api.lua", },
-
-  -- logically ordered classes with no section
-  { helptag = "xxx",                                  section = "XXX",                         path = "./lua/nvim_tree/_meta/api/classes01.lua",              append_only = true, },
-  { helptag = "xxx",                                  section = "XXX",                         path = "./lua/nvim_tree/_meta/api/classes02.lua",              append_only = true, },
+  { helptag = "nvim-tree-api",                        section = "API",                         path = "./lua/nvim_tree/_meta/api.lua", },
 
   { helptag = "nvim-tree-api-commands",               section = "API: commands",               path = "./lua/nvim_tree/_meta/api/commands.lua", },
   { helptag = "nvim-tree-api-events",                 section = "API: events",                 path = "./lua/nvim_tree/_meta/api/events.lua", },

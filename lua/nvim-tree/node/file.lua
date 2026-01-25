@@ -36,12 +36,12 @@ end
 
 ---Update the GitStatus of the file
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function FileNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_file(parent_ignored, project, self.absolute_path, nil)
 end
 
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function FileNode:get_git_xy()
   if not self.git_status then
     return nil

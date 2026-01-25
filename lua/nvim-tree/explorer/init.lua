@@ -200,7 +200,7 @@ function Explorer:expand_dir_node(node)
 end
 
 ---@param node DirectoryNode
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 ---@return Node[]?
 function Explorer:reload(node, project)
   local cwd = node.link_to or node.absolute_path
@@ -358,7 +358,7 @@ end
 ---@private
 ---@param nodes_by_path Node[]
 ---@param node_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 ---@return fun(node: Node): Node
 function Explorer:update_git_statuses(nodes_by_path, node_ignored, project)
   return function(node)
@@ -373,7 +373,7 @@ end
 ---@param handle uv.uv_fs_t
 ---@param cwd string
 ---@param node DirectoryNode
----@param project GitProject
+---@param project nvim_tree.git.Project
 ---@param parent Explorer
 function Explorer:populate_children(handle, cwd, node, project, parent)
   local node_ignored = node:is_git_ignored()
@@ -432,7 +432,7 @@ end
 
 ---@private
 ---@param node DirectoryNode
----@param project GitProject
+---@param project nvim_tree.git.Project
 ---@param parent Explorer
 ---@return Node[]|nil
 function Explorer:explore(node, project, parent)
@@ -467,7 +467,7 @@ function Explorer:explore(node, project, parent)
 end
 
 ---@private
----@param projects GitProject[]
+---@param projects nvim_tree.git.Project[]
 function Explorer:refresh_nodes(projects)
   Iterator.builder({ self })
     :applier(function(n)

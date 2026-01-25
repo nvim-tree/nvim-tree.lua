@@ -2389,72 +2389,42 @@ e.g. the following are functionally identical: >lua
 <
 
 
-
-
-
-Base Node class:
-
-
 *nvim_tree.api.Node*
-    Base Node, Abstract
+    The Node class is a data class. Instances may be provided by API functions
+    for use as a:
+    • handle to pass back to API functions e.g. |nvim_tree.api.node.run.cmd()|
+    • reference in callbacks e.g. |nvim_tree.config.sort.Sorter| {sorter}
+
+    Please do not mutate the contents of any Node object.
 
     Fields: ~
-      • {type}            (`"file"|"directory"|"link"`) uv.fs_stat.result.type
-      • {absolute_path}   (`string`)
-      • {executable}      (`boolean`)
-      • {fs_stat}?        (`uv.fs_stat.result`)
-      • {git_status}?     (`GitNodeStatus`)
-      • {hidden}          (`boolean`)
-      • {name}            (`string`)
-      • {parent}?         (`nvim_tree.api.DirectoryNode`)
-      • {diag_severity}?  (`lsp.DiagnosticSeverity`)
+      • {type}            (`"file"|"directory"|"link"`) see |uv.fs_stat()|
+                          {type}
+      • {absolute_path}   (`string`) of the file or directory
+      • {executable}      (`boolean`) file is executable
+      • {fs_stat}?        (`uv.fs_stat.result`) at time of last tree display,
+                          see |uv.fs_stat()|
+      • {git_status}      (`nvim_tree.git.Status?`) for files and directories
+      • {hidden}          (`boolean`) node is not visible in the tree
+      • {name}            (`string`) file or directory name
+      • {parent}?         (`nvim_tree.api.DirectoryNode`) parent directory,
+                          nil for root
+      • {diag_severity}?  (`lsp.DiagnosticSeverity`) diagnostic status
 
+*nvim_tree.git.Status*
+    Git statuses for a single node.
 
+    `nvim_tree.git.XY`: 2 character string, see `man 1 git-status` "Short
+    Format"
 
-
-
-Node subclasses:
-
-
-*nvim_tree.api.DirectoryLinkNode*
-    Extends: |nvim_tree.api.DirectoryNode|
-
-    DirectoryLink
-
-*nvim_tree.api.DirectoryNode*
-    Extends: |nvim_tree.api.Node|
-
-    Directory
+    {dir} status is derived from its contents:
+    • `direct`: inherited from child files
+    • `indirect`: inherited from child directories
 
     Fields: ~
-      • {has_children}  (`boolean`)
-      • {nodes}         (`nvim_tree.api.Node[]`)
-      • {open}          (`boolean`)
-
-*nvim_tree.api.FileLinkNode*
-    Extends: |nvim_tree.api.FileNode|
-
-    File Link
-
-*nvim_tree.api.FileNode*
-    Extends: |nvim_tree.api.Node|
-
-    File
-
-    Fields: ~
-      • {extension}  (`string`)
-
-*nvim_tree.api.LinkNode*
-    Link mixin
-
-    Fields: ~
-      • {link_to}         (`string`)
-      • {fs_stat_target}  (`uv.fs_stat.result`)
-
-*nvim_tree.api.RootNode*
-    Extends: |nvim_tree.api.DirectoryNode|
-
-    Root Directory
+      • {file}?  (`nvim_tree.git.XY`) status of a file node
+      • {dir}?   (`table<"direct"|"indirect", nvim_tree.git.XY[]>`) direct
+                 inclusive-or indirect status
 
 
 

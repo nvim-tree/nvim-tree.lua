@@ -8,7 +8,7 @@ local Class = require("nvim-tree.classic")
 ---@field absolute_path string
 ---@field executable boolean
 ---@field fs_stat uv.fs_stat.result?
----@field git_status GitNodeStatus?
+---@field git_status nvim_tree.git.Status?
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
@@ -45,13 +45,13 @@ end
 ---Update the git_status of the node
 ---Abstract
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function Node:update_git_status(parent_ignored, project)
   self:nop(parent_ignored, project)
 end
 
 ---Short-format statuses
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function Node:get_git_xy()
 end
 

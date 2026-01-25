@@ -104,11 +104,11 @@ local function nil_insert(t, k)
   return t
 end
 
----@param project_files GitProjectFiles
+---@param project_files nvim_tree.git.ProjectFiles
 ---@param cwd string|nil
----@return GitProjectDirs
+---@return nvim_tree.git.ProjectDirs
 function M.project_files_to_project_dirs(project_files, cwd)
-  ---@type GitProjectDirs
+  ---@type nvim_tree.git.ProjectDirs
   local project_dirs = {}
 
   project_dirs.direct = {}
@@ -145,12 +145,12 @@ end
 
 ---Git file status for an absolute path
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 ---@param path string
 ---@param path_fallback string? alternative file path when no other file status
----@return GitNodeStatus
+---@return nvim_tree.git.Status
 function M.git_status_file(parent_ignored, project, path, path_fallback)
-  ---@type GitNodeStatus
+  ---@type nvim_tree.git.Status
   local ns
 
   if parent_ignored then
@@ -170,12 +170,12 @@ end
 
 ---Git file and directory status for an absolute path
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 ---@param path string
 ---@param path_fallback string? alternative file path when no other file status
----@return GitNodeStatus?
+---@return nvim_tree.git.Status?
 function M.git_status_dir(parent_ignored, project, path, path_fallback)
-  ---@type GitNodeStatus?
+  ---@type nvim_tree.git.Status?
   local ns
 
   if parent_ignored then
