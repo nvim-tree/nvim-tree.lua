@@ -6,7 +6,7 @@ local events = require("nvim-tree.events")     -- needed for event registration 
 local keymap = require("nvim-tree.keymap")     -- needed for default on attach
 local notify = require("nvim-tree.notify")     -- already required by events and others
 
-local UserDecorator = require("nvim-tree.renderer.decorator.user") -- TODO #3241
+local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 ---Walk the api, hydrating all functions with the error notification
 ---@param t table api root or sub-module
@@ -26,21 +26,31 @@ end
 ---@param api table
 local function hydrate_pre(api)
   --
-  -- May be lazily requried on execution
+  -- Essential
   --
-  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
-
-  --
-  -- Essential or already required elsewhere
-  --
-  api.commands.get = commands.get
-
   api.events.Event = events.Event
   api.events.subscribe = events.subscribe
 
   api.map.default_on_attach = keymap.default_on_attach
+
+
+  --
+  -- May be lazily requried on execution
+  --
+  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
+
+
+  --
+  -- Already required elsewhere
+  --
+  api.commands.get = commands.get
+
   api.map.get_keymap_default = keymap.get_keymap_default
 
+
+  --
+  -- TODO #3241
+  --
   api.decorator = {}
   ---Create a decorator class by calling :extend()
   ---See :help nvim-tree-decorators
