@@ -694,7 +694,7 @@ function Explorer:expand_all(node, expand_opts)
   if node then
     node:expand(expand_opts)
   else
-    self.expand(self, expand_opts)
+    self:expand(expand_opts)
   end
 end
 
