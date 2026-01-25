@@ -44,13 +44,10 @@ local srcs = {
   { helptag = "nvim-tree-api-events",                 section = "API: events",                 path = "./lua/nvim_tree/_meta/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 section = "API: filter",                 path = "./lua/nvim_tree/_meta/api/filter.lua", },
   { helptag = "nvim-tree-api-fs",                     section = "API: fs",                     path = "./lua/nvim_tree/_meta/api/fs.lua", },
-  { helptag = "nvim-tree-api-fs-copy",                section = "API: fs.copy",                path = "./lua/nvim_tree/_meta/api/fs/copy.lua", },
   { helptag = "nvim-tree-api-health",                 section = "API: health",                 path = "./lua/nvim_tree/_meta/api/health.lua", },
   { helptag = "nvim-tree-api-map",                    section = "API: map",                    path = "./lua/nvim_tree/_meta/api/map.lua", },
   { helptag = "nvim-tree-api-marks",                  section = "API: marks",                  path = "./lua/nvim_tree/_meta/api/marks.lua", },
   { helptag = "nvim-tree-api-node",                   section = "API: node",                   path = "./lua/nvim_tree/_meta/api/node.lua", },
-  { helptag = "nvim-tree-api-node-navigate",          section = "API: node.navigate",          path = "./lua/nvim_tree/_meta/api/node/navigate.lua", },
-  { helptag = "nvim-tree-api-node-open",              section = "API: node.open",              path = "./lua/nvim_tree/_meta/api/node/open.lua", },
   { helptag = "nvim-tree-api-tree",                   section = "API: tree",                   path = "./lua/nvim_tree/_meta/api/tree.lua", },
 }
 
