@@ -307,26 +307,6 @@ function DirectoryNode:limit_folder_discovery(should_descend)
   end
 end
 
----@private
----@param list string[]
----@return table
-local function to_lookup_table(list)
-  local table = {}
-  for _, element in ipairs(list) do
-    table[element] = true
-  end
-
-  return table
-end
-
----@private
----@return boolean
-function DirectoryNode:descend_until_empty()
-  local EXCLUDE = to_lookup_table(self.explorer.opts.actions.expand_all.exclude)
-  local should_exclude = EXCLUDE[self.name]
-  return not should_exclude
-end
-
 ---@param expansion_count integer
 ---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return boolean
@@ -349,15 +329,31 @@ function DirectoryNode:should_expand(expansion_count, should_descend)
   return false
 end
 
+---@param list string[]
+---@return table
+local function to_lookup_table(list)
+  local table = {}
+  for _, element in ipairs(list) do
+    table[element] = true
+  end
+
+  return table
+end
+
+---@param _ integer
+---@param node Node
+---@return boolean
+local function descend_until_empty(_, node)
+  local EXCLUDE = to_lookup_table(node.explorer.opts.actions.expand_all.exclude)
+  local should_exclude = EXCLUDE[node.name]
+  return not should_exclude
+end
+
 ---@param expand_opts ApiTreeExpandOpts?
 function DirectoryNode:expand(expand_opts)
   local expansion_count = 0
 
-  local function safe_descend_until_empty(_, node)
-    return self.descend_until_empty(node) -- calling with dot so that node is attached as self
-  end
-
-  local should_descend = self:limit_folder_discovery((expand_opts and expand_opts.expand_until) or safe_descend_until_empty)
+  local should_descend = self:limit_folder_discovery((expand_opts and expand_opts.expand_until) or descend_until_empty)
 
 
   if self.parent and self.nodes and not self.open then
