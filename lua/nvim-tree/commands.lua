@@ -109,7 +109,12 @@ local CMDS = {
       bar = true,
     },
     command = function(c)
-      require("nvim-tree.view").resize(c.args)
+      local sign = c.args:sub(1, 1)
+      if sign == "+" or sign == "-" then
+        require("nvim-tree.api").tree.resize({ relative = tonumber(c.args) })
+      else
+        require("nvim-tree.api").tree.resize({ absolute = tonumber(c.args) })
+      end
     end,
   },
   {

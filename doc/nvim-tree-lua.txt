@@ -281,9 +281,15 @@ All commands execute public API.
 
   require("nvim-tree.api").health.hi_test()
 <
-*:NvimTreeResize*
+*:NvimTreeResize*                          |nvim_tree.api.tree.resize()| >lua
 
-Columns integer argument is absolute (e.g. `40`) or a delta (e.g. `-5`, `+5`)
+  local sign = c.args:sub(1, 1)
+  if sign == "+" or sign == "-" then
+    require("nvim-tree.api").tree.resize({ relative = tonumber(c.args) })
+  else
+    require("nvim-tree.api").tree.resize({ absolute = tonumber(c.args) })
+  end
+<
 
 ==============================================================================
 Setup                                                        *nvim-tree-setup*
