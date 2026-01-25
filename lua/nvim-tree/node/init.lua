@@ -144,10 +144,10 @@ function Node:clone(api_nodes)
   return clone
 end
 
----@param expansion_count integer
----@param should_descend fun(expansion_count: integer, node: Node): boolean
+---@param _expansion_count integer
+---@param _should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return boolean
-function Node:should_expand(expansion_count, should_descend)
+function Node:should_expand(_expansion_count, _should_descend)
   return false
 end
 
