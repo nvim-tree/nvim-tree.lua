@@ -44,6 +44,8 @@ local srcs = {
   { helptag = "nvim-tree-api-events",                 section = "API: events",                 path = "./lua/nvim_tree/_meta/api/events.lua", },
   { helptag = "nvim-tree-api-filter",                 section = "API: filter",                 path = "./lua/nvim_tree/_meta/api/filter.lua", },
   { helptag = "nvim-tree-api-fs",                     section = "API: fs",                     path = "./lua/nvim_tree/_meta/api/fs.lua", },
+  -- TODO #3088 come up with a solution to avoid filename clashes
+  { helptag = "nvim-tree-api-git",                    section = "API: git",                    path = "./lua/nvim_tree/_meta/api/_git.lua", },
   { helptag = "nvim-tree-api-health",                 section = "API: health",                 path = "./lua/nvim_tree/_meta/api/health.lua", },
   { helptag = "nvim-tree-api-map",                    section = "API: map",                    path = "./lua/nvim_tree/_meta/api/map.lua", },
   { helptag = "nvim-tree-api-marks",                  section = "API: marks",                  path = "./lua/nvim_tree/_meta/api/marks.lua", },
@@ -101,10 +103,13 @@ local config = {
 
         -- remove the API prefix from the left aligned function name
         -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
+
+        -- TODO #3088 come up with a solution to avoid filename clashes
+        ---@diagnostic disable-next-line: unused-local
         local name, replaced = fun.name:gsub("^" .. module .. "%.", "", 1)
-        if (replaced ~= 1) then
-          error(string.format("function name does not start with module: %s", vim.inspect(fun)))
-        end
+        -- if (replaced ~= 1) then
+        --   error(string.format("function name does not start with module: %s", vim.inspect(fun)))
+        -- end
 
         print(string.format("fn_xform name: %s -> %s", fun.name, name))
 

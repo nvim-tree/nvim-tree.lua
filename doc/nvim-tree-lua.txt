@@ -1017,8 +1017,6 @@ continue to be available.
 
 `api.diagnostics.hi_test`                |nvim_tree.api.health.hi_test()|
 
-`api.git.reload`                         |nvim_tree.api.tree.reload_git()|
-
 `api.live_filter.start`                  |nvim_tree.api.filter.live.start()|
 `api.live_filter.clear`                  |nvim_tree.api.filter.live.clear()|
 
@@ -2371,6 +2369,7 @@ The API is separated into multiple modules:
 • |nvim-tree-api-events|
 • |nvim-tree-api-filter|
 • |nvim-tree-api-fs|
+• |nvim-tree-api-git|
 • |nvim-tree-api-health|
 • |nvim-tree-api-map|
 • |nvim-tree-api-marks|
@@ -2600,6 +2599,14 @@ trash({node})                                       *nvim_tree.api.fs.trash()*
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`)
+
+
+==============================================================================
+API: git                                                   *nvim-tree-api-git*
+
+                               *nvim_tree.api._git.nvim_tree.api.git.reload()*
+nvim_tree.api.git.reload()
+    Update the git status of the entire tree.
 
 
 ==============================================================================
@@ -3130,9 +3137,6 @@ open({opts})                                       *nvim_tree.api.tree.open()*
 
 reload()                                         *nvim_tree.api.tree.reload()*
     Refresh the tree. Does nothing if closed.
-
-reload_git()                                 *nvim_tree.api.tree.reload_git()*
-    Update the git status of the entire tree.
 
 resize({opts})                                   *nvim_tree.api.tree.resize()*
     Resize the tree, persisting the new size. Resets to

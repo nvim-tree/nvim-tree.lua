@@ -228,9 +228,4 @@ function nvim_tree.api.tree.winid(opts) end
 ---[tab-ID] 0 or nil for current.
 ---@field tabpage? integer
 
----
----Update the git status of the entire tree.
----
-function nvim_tree.api.tree.reload_git() end
-
 return nvim_tree.api.tree

@@ -30,7 +30,6 @@ local function hydrate_error(t)
 end
 
 ---Hydrate implementations that may be called pre setup
----@param api table
 local function hydrate_pre(api)
   --
   -- Essential
@@ -66,7 +65,6 @@ local function hydrate_pre(api)
 end
 
 ---Hydrate api
----@param api table
 return function(api)
   -- Default: error
   hydrate_error(api)
@@ -75,5 +73,5 @@ return function(api)
   hydrate_pre(api)
 
   -- Hydrate any legacy by mapping to function set above
-  require("nvim-tree.legacy").map_api(api)
+  require("nvim-tree.legacy").api_map(api)
 end

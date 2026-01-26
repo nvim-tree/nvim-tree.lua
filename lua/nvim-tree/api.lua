@@ -11,6 +11,7 @@ local api = {}
 ---- [nvim-tree-api-events]
 ---- [nvim-tree-api-filter]
 ---- [nvim-tree-api-fs]
+---- [nvim-tree-api-git]
 ---- [nvim-tree-api-health]
 ---- [nvim-tree-api-map]
 ---- [nvim-tree-api-marks]
@@ -69,6 +70,7 @@ local api = {}
 ---@field dir? table<"direct" | "indirect", nvim_tree.git.XY[]> direct inclusive-or indirect status
 
 
+-- TODO #3088 add nvim_tree.api class
 
 --
 -- Load the (empty) meta definitions
@@ -77,12 +79,19 @@ api.commands = require("nvim-tree._meta.api.commands")
 api.events = require("nvim-tree._meta.api.events")
 api.filter = require("nvim-tree._meta.api.filter")
 api.fs = require("nvim-tree._meta.api.fs")
+api.git = require("nvim-tree._meta.api._git")
 api.health = require("nvim-tree._meta.api.health")
 api.map = require("nvim-tree._meta.api.map")
 api.marks = require("nvim-tree._meta.api.marks")
 api.node = require("nvim-tree._meta.api.node")
 api.tree = require("nvim-tree._meta.api.tree")
 
+
+---
+---@nodoc
+---Legacy meta definitions
+---
+api = require("nvim-tree.legacy").api_meta(api)
 
 
 --

@@ -258,5 +258,5 @@ return function(api)
   hydrate_post(api)
 
   -- (Re)hydrate any legacy by mapping to function set above
-  require("nvim-tree.legacy").map_api(api)
+  require("nvim-tree.legacy").api_map(api)
 end
