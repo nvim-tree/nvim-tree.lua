@@ -296,14 +296,14 @@ end
 ---@return fun(expansion_count: integer, node: Node): boolean
 function DirectoryNode:limit_folder_discovery(should_descend)
   local MAX_FOLDER_DISCOVERY = self.explorer.opts.actions.expand_all.max_folder_discovery
-  return function(expansion_count)
+  return function(expansion_count, node)
     local should_halt = expansion_count >= MAX_FOLDER_DISCOVERY
     if should_halt then
       notify.warn("expansion iteration was halted after " .. MAX_FOLDER_DISCOVERY .. " discovered folders")
       return false
     end
 
-    return should_descend(expansion_count, self)
+    return should_descend(expansion_count, node)
   end
 end
 
