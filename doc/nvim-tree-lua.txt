@@ -179,7 +179,7 @@ via |nvim_tree.config| {on_attach} e.g. >lua
     end
 
     -- default mappings
-    api.map.default_on_attach(bufnr)
+    api.map.on_attach.default(bufnr)
 
     -- custom mappings
     vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent,        opts("Up"))
@@ -348,7 +348,7 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
     vim.keymap.set("n", "<C-e>", api.node.open.replace_tree_buffer,     opts("Open: In Place"))
     ---
     -- OR use all default mappings
-    api.map.default_on_attach.default_on_attach(bufnr)
+    api.map.on_attach.default.on_attach_default(bufnr)
 
     -- remove a default
     vim.keymap.del("n", "<C-]>", { buffer = bufnr })
@@ -397,7 +397,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
     return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
 
-  -- BEGIN_DEFAULT_ON_ATTACH
+  -- BEGIN_ON_ATTACH_DEFAULT
   vim.keymap.set("n", "<C-]>",          api.tree.change_root_to_node,       opts("CD"))
   vim.keymap.set("n", "<C-e>",          api.node.open.replace_tree_buffer,  opts("Open: In Place"))
   vim.keymap.set("n", "<C-k>",          api.node.show_info_popup,           opts("Info"))
@@ -457,10 +457,10 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
   vim.keymap.set("n", "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
-  -- END_DEFAULT_ON_ATTACH
+  -- END_ON_ATTACH_DEFAULT
 <
 Alternatively, you may apply these default mappings from your
-|nvim_tree.config| {on_attach} via |nvim_tree.api.map.default_on_attach()| e.g. >lua
+|nvim_tree.config| {on_attach} via |nvim_tree.api.map.on_attach.default()| e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require("nvim-tree.api")
@@ -469,7 +469,7 @@ Alternatively, you may apply these default mappings from your
       return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    api.map.default_on_attach.default_on_attach(bufnr)
+    api.map.on_attach.default.on_attach_default(bufnr)
 
     -- your removals and mappings go here
   end
@@ -1011,9 +1011,9 @@ Legacy: API                                             *nvim-tree-legacy-api*
 Some API functions have been refactored however the previous function will
 continue to be available.
 
-`api.config.mappings.get_keymap`         |nvim_tree.api.map.get_keymap()|
-`api.config.mappings.get_keymap_default` |nvim_tree.api.map.get_keymap_default()|
-`api.config.mappings.default_on_attach`  |nvim_tree.api.map.default_on_attach()|
+`api.config.mappings.get_keymap`         |nvim_tree.api.map.keymap.current()|
+`api.config.mappings.get_keymap_default` |nvim_tree.api.map.keymap.default()|
+`api.config.mappings.default_on_attach`  |nvim_tree.api.map.on_attach.default()|
 
 `api.diagnostics.hi_test`                |nvim_tree.api.health.hi_test()|
 
@@ -2615,14 +2615,7 @@ hi_test()                                     *nvim_tree.api.health.hi_test()*
 ==============================================================================
 API: map                                                   *nvim-tree-api-map*
 
-default_on_attach({bufnr})             *nvim_tree.api.map.default_on_attach()*
-    Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.config|
-    {on_attach}.
-
-    Parameters: ~
-      • {bufnr}  (`integer`) use the `bufnr` passed to {on_attach}
-
-get_keymap()                                  *nvim_tree.api.map.get_keymap()*
+keymap.current()                          *nvim_tree.api.map.keymap.current()*
     Retrieve all buffer local mappings for nvim-tree. These are the mappings
     that are applied by |nvim_tree.config| {on_attach}, which may include
     default mappings.
@@ -2630,12 +2623,19 @@ get_keymap()                                  *nvim_tree.api.map.get_keymap()*
     Return: ~
         (`vim.api.keyset.get_keymap[]`)
 
-get_keymap_default()                  *nvim_tree.api.map.get_keymap_default()*
+keymap.default()                          *nvim_tree.api.map.keymap.default()*
     Retrieves the buffer local mappings for nvim-tree that are applied by
-    |nvim_tree.api.map.default_on_attach()|
+    |nvim_tree.api.map.on_attach.default()|
 
     Return: ~
         (`vim.api.keyset.get_keymap[]`)
+
+on_attach.default({bufnr})             *nvim_tree.api.map.on_attach.default()*
+    Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.config|
+    {on_attach}.
+
+    Parameters: ~
+      • {bufnr}  (`integer`) use the `bufnr` passed to {on_attach}
 
 
 ==============================================================================

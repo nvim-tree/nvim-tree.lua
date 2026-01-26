@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# run after changing default config or keymap.lua M.default_on_attach
+# run after changing default config or keymap.lua M.on_attach_default
 # scrapes and updates nvim-tree-lua.txt
 # run from repository root: scripts/help-update.sh  OR  make help-update
 
@@ -25,25 +25,25 @@ sed -i -e "/${inject}/r /tmp/DEFAULT_OPTS.6.lua" -e "/${inject}/d" doc/nvim-tree
 # Inject default mappings
 #
 
-begin="BEGIN_DEFAULT_ON_ATTACH"
-end="END_DEFAULT_ON_ATTACH"
+begin="BEGIN_ON_ATTACH_DEFAULT"
+end="END_ON_ATTACH_DEFAULT"
 
-# scrape DEFAULT_ON_ATTACH, indented at 2
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/DEFAULT_ON_ATTACH.lua
+# scrape ON_ATTACH_DEFAULT, indented at 2
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/ON_ATTACH_DEFAULT.lua
 
 # help lua
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.lua
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.lua
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt
 
 # help human
-echo > /tmp/DEFAULT_ON_ATTACH.help
+echo > /tmp/ON_ATTACH_DEFAULT.help
 sed -E "s/^ *vim.keymap.set\(\"n\", \"(.*)\",.*api(.*),.*opts\(\"(.*)\".*$/'\`\1\`' '\3' '|nvim_tree.api\2()|'/g
-" /tmp/DEFAULT_ON_ATTACH.lua | while read -r line
+" /tmp/ON_ATTACH_DEFAULT.lua | while read -r line
 do
-	eval "printf '%-17.17s %-26.26s %s\n' ${line}" >> /tmp/DEFAULT_ON_ATTACH.help
+	eval "printf '%-17.17s %-26.26s %s\n' ${line}" >> /tmp/ON_ATTACH_DEFAULT.help
 done
-echo >> /tmp/DEFAULT_ON_ATTACH.help
+echo >> /tmp/ON_ATTACH_DEFAULT.help
 begin="Show the mappings:"
 end="======"
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/DEFAULT_ON_ATTACH.help
+sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.help
            }; /${end}/p; d; }" doc/nvim-tree-lua.txt

@@ -1,7 +1,7 @@
 local M = {}
 
 --- Apply mappings to a scratch buffer and return buffer local mappings
----@param fn fun(bufnr: integer) on_attach or default_on_attach
+---@param fn fun(bufnr: integer) on_attach or on_attach_default
 ---@return table as per vim.api.nvim_buf_get_keymap
 local function generate_keymap(fn)
   -- create an unlisted scratch buffer
@@ -26,11 +26,11 @@ end
 
 ---@return table
 function M.get_keymap_default()
-  return generate_keymap(M.default_on_attach)
+  return generate_keymap(M.on_attach_default)
 end
 
 ---@param bufnr integer
-function M.default_on_attach(bufnr)
+function M.on_attach_default(bufnr)
   local api = require("nvim-tree.api")
 
   local function opts(desc)
@@ -43,7 +43,7 @@ function M.default_on_attach(bufnr)
     }
   end
 
-  -- BEGIN_DEFAULT_ON_ATTACH
+  -- BEGIN_ON_ATTACH_DEFAULT
   vim.keymap.set("n", "<C-]>",          api.tree.change_root_to_node,       opts("CD"))
   vim.keymap.set("n", "<C-e>",          api.node.open.replace_tree_buffer,  opts("Open: In Place"))
   vim.keymap.set("n", "<C-k>",          api.node.show_info_popup,           opts("Info"))
@@ -103,12 +103,12 @@ function M.default_on_attach(bufnr)
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
   vim.keymap.set("n", "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
-  -- END_DEFAULT_ON_ATTACH
+  -- END_ON_ATTACH_DEFAULT
 end
 
 function M.setup(opts)
   if type(opts.on_attach) ~= "function" then
-    M.on_attach = M.default_on_attach
+    M.on_attach = M.on_attach_default
   else
     M.on_attach = opts.on_attach
   end

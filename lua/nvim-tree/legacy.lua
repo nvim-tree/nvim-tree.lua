@@ -168,9 +168,9 @@ end
 function M.map_api(api)
   api.config = api.config or {}
   api.config.mappings = api.config.mappings or {}
-  api.config.mappings.get_keymap = api.map.get_keymap
-  api.config.mappings.get_keymap_default = api.map.get_keymap_default
-  api.config.mappings.default_on_attach = api.map.default_on_attach
+  api.config.mappings.get_keymap = api.map.keymap.current
+  api.config.mappings.get_keymap_default = api.map.keymap.default
+  api.config.mappings.default_on_attach = api.map.on_attach.default
 
   api.git = api.git or {}
   api.git.reload = api.tree.reload_git

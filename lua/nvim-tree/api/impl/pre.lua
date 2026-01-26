@@ -38,7 +38,7 @@ local function hydrate_pre(api)
   api.events.Event = events.Event
   api.events.subscribe = events.subscribe
 
-  api.map.default_on_attach = keymap.default_on_attach
+  api.map.on_attach.default = keymap.on_attach_default
 
 
   --
