@@ -689,7 +689,7 @@ end
 
 ---Expand the directory node or the root
 ---@param node Node
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function Explorer:expand_all(node, expand_opts)
   if node then
     node:expand(expand_opts)
@@ -699,8 +699,8 @@ function Explorer:expand_all(node, expand_opts)
 end
 
 ---Expand the directory node or parent node
----@param node Node
----@param expand_opts ApiTreeExpandOpts?
+---@param node? Node
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function Explorer:expand_node(node, expand_opts)
   if not node then
     return

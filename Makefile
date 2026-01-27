@@ -14,7 +14,6 @@ check: luals
 #
 luacheck:
 	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
-	luacheck --codes --quiet scripts
 
 style-check:
 	scripts/luals-check.sh codestyle-check

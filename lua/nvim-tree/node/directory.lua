@@ -354,7 +354,7 @@ local function descend_until_empty(_, node)
   return not should_exclude
 end
 
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function DirectoryNode:expand(expand_opts)
   local expansion_count = 0
 

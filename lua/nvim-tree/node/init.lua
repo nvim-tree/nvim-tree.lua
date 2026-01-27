@@ -151,7 +151,7 @@ function Node:should_expand(_expansion_count, _should_descend)
   return false
 end
 
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function Node:expand(expand_opts)
   if self.parent then
     self.parent:expand(expand_opts)

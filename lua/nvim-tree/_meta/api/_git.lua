@@ -1,5 +1,5 @@
 ---@meta
-local nvim_tree = { api = { git = {  } } }
+local nvim_tree = { api = { git = {} } }
 
 ---
 ---Update the git status of the entire tree.
