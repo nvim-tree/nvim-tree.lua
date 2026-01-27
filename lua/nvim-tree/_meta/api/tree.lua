@@ -228,4 +228,27 @@ function nvim_tree.api.tree.winid(opts) end
 ---[tab-ID] 0 or nil for current.
 ---@field tabpage? integer
 
+
+---@deprecated use `nvim_tree.api.filter.toggle()`
+function nvim_tree.api.tree.toggle_enable_filters() end
+
+---@deprecated use `nvim_tree.api.filter.git.ignored.toggle()`
+function nvim_tree.api.tree.toggle_gitignore_filter() end
+
+---@deprecated use `nvim_tree.api.filter.git.clean.toggle()`
+function nvim_tree.api.tree.toggle_git_clean_filter() end
+
+---@deprecated use `nvim_tree.api.filter.no_buffer.toggle()`
+function nvim_tree.api.tree.toggle_no_buffer_filter() end
+
+---@deprecated use `nvim_tree.api.filter.custom.toggle()`
+function nvim_tree.api.tree.toggle_custom_filter() end
+
+---@deprecated use `nvim_tree.api.filter.dotfiles.toggle()`
+function nvim_tree.api.tree.toggle_hidden_filter() end
+
+---@deprecated use `nvim_tree.api.filter.no_bookmark.toggle()`
+function nvim_tree.api.tree.toggle_no_bookmark_filter() end
+
+
 return nvim_tree.api.tree

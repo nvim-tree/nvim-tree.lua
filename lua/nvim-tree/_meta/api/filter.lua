@@ -18,12 +18,16 @@ function nvim_tree.api.filter.live.start() end
 ---
 function nvim_tree.api.filter.live.clear() end
 
-nvim_tree.api.filter.git = { clean = {}, ignored = {} }
+nvim_tree.api.filter.git = {}
+
+nvim_tree.api.filter.git.clean = {}
 
 ---
 ---Toggle [nvim_tree.config.filters] {git_clean} filter.
 ---
 function nvim_tree.api.filter.git.clean.toggle() end
+
+nvim_tree.api.filter.git.ignored = {}
 
 ---
 ---Toggle [nvim_tree.config.filters] {git_ignored} filter.

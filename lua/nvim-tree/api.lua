@@ -1,5 +1,3 @@
-local api = {}
-
 ---@brief
 ---nvim-tree exposes a public API. This is non breaking, with additions made as necessary.
 ---
@@ -70,28 +68,29 @@ local api = {}
 ---@field dir? table<"direct" | "indirect", nvim_tree.git.XY[]> direct inclusive-or indirect status
 
 
--- TODO #3088 add nvim_tree.api class
 
 --
 -- Load the (empty) meta definitions
 --
-api.commands = require("nvim-tree._meta.api.commands")
-api.events = require("nvim-tree._meta.api.events")
-api.filter = require("nvim-tree._meta.api.filter")
-api.fs = require("nvim-tree._meta.api.fs")
-api.git = require("nvim-tree._meta.api._git")
-api.health = require("nvim-tree._meta.api.health")
-api.map = require("nvim-tree._meta.api.map")
-api.marks = require("nvim-tree._meta.api.marks")
-api.node = require("nvim-tree._meta.api.node")
-api.tree = require("nvim-tree._meta.api.tree")
 
-
----
+---nvim-tree Public API
+---@class nvim_tree.api
 ---@nodoc
----Legacy meta definitions
----
-api = require("nvim-tree.legacy").api_meta(api)
+local api = {
+  commands = require("nvim-tree._meta.api.commands"),
+  config = require("nvim-tree._meta.api.deprecated").config,
+  diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics,
+  events = require("nvim-tree._meta.api.events"),
+  filter = require("nvim-tree._meta.api.filter"),
+  fs = require("nvim-tree._meta.api.fs"),
+  git = require("nvim-tree._meta.api._git"),
+  health = require("nvim-tree._meta.api.health"),
+  live_filter = require("nvim-tree._meta.api.deprecated").live_filter,
+  map = require("nvim-tree._meta.api.map"),
+  marks = require("nvim-tree._meta.api.marks"),
+  node = require("nvim-tree._meta.api.node"),
+  tree = require("nvim-tree._meta.api.tree"),
+}
 
 
 --
