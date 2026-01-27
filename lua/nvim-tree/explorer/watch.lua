@@ -1,6 +1,7 @@
 local log = require("nvim-tree.log")
 local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
+local notify = require("nvim-tree.notify")
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {
@@ -69,10 +70,30 @@ function M.create_watcher(node)
   ---@param watcher Watcher
   local function callback(watcher)
     log.line("watcher", "node event scheduled refresh %s", watcher.data.context)
+
+    -- event is awaiting debouncing and handling
+    watcher.data.outstanding_events = watcher.data.outstanding_events + 1
+
+    -- disable watcher when outstanding exceeds max
+    if watcher.data.outstanding_events > M.config.filesystem_watchers.max_events then
+      notify.error(string.format(
+        "Observed %d consecutive file system events with interval < %dms, exceeding filesystem_watchers.max_events=%s. Disabling watcher for directory '%s'. Consider adding this directory to filesystem_watchers.ignore_dirs",
+        watcher.data.outstanding_events,
+        M.config.filesystem_watchers.max_events,
+        M.config.filesystem_watchers.debounce_delay,
+        node.absolute_path
+      ))
+      node:destroy_watcher()
+    end
+
     utils.debounce(watcher.data.context, M.config.filesystem_watchers.debounce_delay, function()
       if watcher.destroyed then
         return
       end
+
+      -- event has been handled
+      watcher.data.outstanding_events = 0
+
       if node.link_to then
         log.line("watcher", "node event executing refresh '%s' -> '%s'", node.link_to, node.absolute_path)
       else
@@ -87,7 +108,8 @@ function M.create_watcher(node)
     path = path,
     callback = callback,
     data = {
-      context = "explorer:watch:" .. path .. ":" .. M.uid
+      context = "explorer:watch:" .. path .. ":" .. M.uid,
+      outstanding_events = 0, -- unprocessed events that have not been debounced
     }
   })
 end

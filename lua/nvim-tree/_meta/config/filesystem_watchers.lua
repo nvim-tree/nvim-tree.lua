@@ -12,6 +12,11 @@ error("Cannot require a meta file")
 --- - A function that is passed an absolute path and returns `true` to disable
 ---This may be useful when a path is not in `.gitignore` or git integration is disabled.
 ---
+---After {max_events} consecutive filesystem events on a single directory with an interval < {debounce_delay}:
+---- The filesystem watcher will be disabled for that directory.
+---- A warning notification will be shown.
+---- Consider adding this directory to {ignore_dirs}
+---
 ---@class nvim_tree.config.filesystem_watchers
 ---
 ---(default: `true`)
@@ -21,6 +26,10 @@ error("Cannot require a meta file")
 ---(default: `50`)
 ---@field debounce_delay? integer
 ---
----Disable for directories.
+---Disable for specific directories.
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
 ---@field ignore_dirs? string[]|(fun(path: string): boolean)
+---
+---Disable for a single directory after {max_events} consecutive events with an interval < {debounce_delay}.
+---(default: `100`)
+---@field max_events? integer
