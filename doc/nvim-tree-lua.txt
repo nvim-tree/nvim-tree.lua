@@ -2511,12 +2511,25 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
       This may be useful when a path is not in `.gitignore` or git integration
       is disabled.
 
+    On runaway consecutive filesystem events for a single directory with an
+    interval < |nvim-tree.filesystem_watchers.debounce_delay|:
+    • The filesystem watcher will be disabled for that directory.
+    • A warning notification will be shown.
+    • Consider adding this directory to |filesystem_watchers.ignore_dirs|
+
+    The runaway threshold is controlled by {max_events} and has been observed
+    when running on Windows PowerShell: an infinite number of filesystem
+    events were raised and Nvim hangs.
+
     Fields: ~
       • {enable}?          (`boolean`) (default: `true`)
       • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|(fun(path: string): boolean)`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
-                           Disable for directories.
+                           Disable for specific directories.
+      • {max_events}?      (`integer`, default: `100`) Disable for a single
+                           directory after consecutive events with an interval
+                           < |nvim-tree.filesystem_watchers.debounce_delay|.
 
 
 
@@ -2987,7 +3000,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
-        max_outstanding_events = 100,
+        max_events = 100,
         ignore_dirs = {
           "/.ccls-cache",
           "/build",

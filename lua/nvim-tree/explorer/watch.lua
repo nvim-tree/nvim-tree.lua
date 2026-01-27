@@ -75,11 +75,11 @@ function M.create_watcher(node)
     watcher.data.outstanding_events = watcher.data.outstanding_events + 1
 
     -- disable watcher when outstanding exceeds max
-    if watcher.data.outstanding_events > M.config.filesystem_watchers.max_outstanding_events then
+    if watcher.data.outstanding_events > M.config.filesystem_watchers.max_events then
       notify.error(string.format(
         "Observed %d consecutive file system events with interval < %dms, exceeding filesystem_watchers.max_events=%s. Disabling watcher for directory '%s'. Consider adding this directory to filesystem_watchers.ignore_dirs",
         watcher.data.outstanding_events,
-        M.config.filesystem_watchers.max_outstanding_events,
+        M.config.filesystem_watchers.max_events,
         M.config.filesystem_watchers.debounce_delay,
         node.absolute_path
       ))
