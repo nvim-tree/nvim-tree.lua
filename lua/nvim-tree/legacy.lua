@@ -190,49 +190,62 @@ end
 
 ---Add meta definitions for deprecated API
 function M.api_meta(api)
-  ---@deprecated nvim_tree.api.filter.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.toggle
   function api.tree.toggle_enable_filters() end
 
-  ---@deprecated nvim_tree.api.filter.git.ignored.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.git.ignored.toggle
   function api.tree.toggle_gitignore_filter() end
 
-  ---@deprecated nvim_tree.api.filter.git.clean.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.git.clean.toggle
   function api.tree.toggle_git_clean_filter() end
 
-  ---@deprecated nvim_tree.api.filter.no_buffer.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.no_buffer.toggle
   function api.tree.toggle_no_buffer_filter() end
 
-  ---@deprecated nvim_tree.api.filter.custom.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.custom.toggle
   function api.tree.toggle_custom_filter() end
 
-  ---@deprecated nvim_tree.api.filter.dotfiles.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.dotfiles.toggle
   function api.tree.toggle_hidden_filter() end
 
-  ---@deprecated nvim_tree.api.filter.no_bookmark.toggle
+  ---@deprecated
+  ---@see nvim_tree.api.filter.no_bookmark.toggle
   function api.tree.toggle_no_bookmark_filter() end
 
   api.config = { mappings = {} }
 
-  ---@deprecated nvim_tree.api.map.keymap.current
+  ---@deprecated
+  ---@see nvim_tree.api.map.keymap.current
   function api.config.mappings.get_keymap() end
 
-  ---@deprecated nvim_tree.api.map.keymap.default
+  ---@deprecated
+  ---@see nvim_tree.api.map.keymap.default
   function api.config.mappings.get_keymap_default() end
 
   ---@deprecated nvim_tree.api.map.on_attach.default
+  ---@see nvim_tree.api.map.on_attach.default
   function api.config.mappings.default_on_attach(_) end
 
   api.live_filter = {}
 
-  ---@deprecated nvim_tree.api.filter.live.start
+  ---@deprecated
+  ---@see nvim_tree.api.filter.live.start
   function api.live_filter.start() end
 
-  ---@deprecated nvim_tree.api.filter.live.clear
+  ---@deprecated
+  ---@see nvim_tree.api.filter.live.clear
   function api.live_filter.clear() end
 
   api.diagnostics = {}
 
-  ---@deprecated nvim_tree.api.health.hi_test
+  ---@deprecated
+  ---@see nvim_tree.api.health.hi_test
   function api.diagnostics.hi_test() end
 
   return api
