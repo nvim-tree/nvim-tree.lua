@@ -1,34 +1,33 @@
 ---@meta
-
 -- Deprecated top level API modules.
 -- Remember to add mappings in legacy.lua `api_map`
 
-local M = {}
+local nvim_tree = { api = {} }
 
-M.config = {}
+nvim_tree.api.config = {}
 
-M.config.mappings = {}
+nvim_tree.api.config.mappings = {}
 
 ---@deprecated use `nvim_tree.api.map.keymap.current()`
-function M.config.mappings.get_keymap() end
+function nvim_tree.api.config.mappings.get_keymap() end
 
 ---@deprecated use `nvim_tree.api.map.keymap.default()`
-function M.config.mappings.get_keymap_default() end
+function nvim_tree.api.config.mappings.get_keymap_default() end
 
 ---@deprecated use `nvim_tree.api.map.on_attach.default()`
-function M.config.mappings.default_on_attach(bufnr) end
+function nvim_tree.api.config.mappings.default_on_attach(bufnr) end
 
-M.live_filter = {}
+nvim_tree.api.live_filter = {}
 
 ---@deprecated use `nvim_tree.api.filter.live.start()`
-function M.live_filter.start() end
+function nvim_tree.api.live_filter.start() end
 
 ---@deprecated use `nvim_tree.api.filter.live.clear()`
-function M.live_filter.clear() end
+function nvim_tree.api.live_filter.clear() end
 
-M.diagnostics = {}
+nvim_tree.api.diagnostics = {}
 
 ---@deprecated use `nvim_tree.api.health.hi_test()`
-function M.diagnostics.hi_test() end
+function nvim_tree.api.diagnostics.hi_test() end
 
-return M
+return nvim_tree.api

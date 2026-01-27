@@ -250,5 +250,4 @@ function nvim_tree.api.tree.toggle_hidden_filter() end
 ---@deprecated use `nvim_tree.api.filter.no_bookmark.toggle()`
 function nvim_tree.api.tree.toggle_no_bookmark_filter() end
 
-
 return nvim_tree.api.tree
