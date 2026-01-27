@@ -958,6 +958,10 @@ Windows WSL and PowerShell
   freeze Nvim
 - Some filesystem watcher error related to permissions will not be reported
 
+Powershell
+- Observed Nvim hanging after a runaway (infinite) number of events on a
+  single directory. See |nvim_tree.config.filesystem_watchers| {max_events}
+
 ==============================================================================
 netrw                                                        *nvim-tree-netrw*
 
@@ -1785,12 +1789,21 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
       This may be useful when a path is not in `.gitignore` or git integration
       is disabled.
 
+    After {max_events} consecutive filesystem events on a single directory
+    with an interval < {debounce_delay}:
+    • The filesystem watcher will be disabled for that directory.
+    • A warning notification will be shown.
+    • Consider adding this directory to {ignore_dirs}
+
     Fields: ~
       • {enable}?          (`boolean`) (default: `true`)
       • {debounce_delay}?  (`integer`, default: `50`) Idle milliseconds
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|(fun(path: string): boolean)`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", }`)
-                           Disable for directories.
+                           Disable for specific directories.
+      • {max_events}?      (`integer`, default: `100`) Disable for a single
+                           directory after {max_events} consecutive events
+                           with an interval < {debounce_delay}.
 
 
 
@@ -2261,6 +2274,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
+        max_events = 100,
         ignore_dirs = {
           "/.ccls-cache",
           "/build",

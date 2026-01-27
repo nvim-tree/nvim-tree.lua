@@ -154,9 +154,9 @@ local function hydrate_post(api)
   api.tree.find_file = actions.tree.find_file.fn
   api.tree.search_node = actions.finders.search_node.fn
 
-  api.tree.collapse_all = actions.tree.modifiers.collapse.all
+  api.tree.collapse_all = actions.tree.collapse.all
 
-  api.tree.expand_all = wrap_node(actions.tree.modifiers.expand.all)
+  api.tree.expand_all = wrap_node(wrap_explorer("expand_all"))
   api.tree.toggle_help = function() require("nvim-tree.help").toggle() end
   api.tree.is_tree_buf = function() require("nvim-tree.utils").is_nvim_tree_buf() end
 
@@ -219,8 +219,8 @@ local function hydrate_post(api)
   api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
   api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
 
-  api.node.expand = wrap_node(actions.tree.modifiers.expand.node)
-  api.node.collapse = wrap_node(actions.tree.modifiers.collapse.node)
+  api.node.expand = wrap_node(wrap_explorer("expand_node"))
+  api.node.collapse = wrap_node(actions.tree.collapse.node)
 
   api.node.buffer.delete = wrap_node(function(node, opts) actions.node.buffer.delete(node, opts) end)
   api.node.buffer.wipe = wrap_node(function(node, opts) actions.node.buffer.wipe(node, opts) end)
