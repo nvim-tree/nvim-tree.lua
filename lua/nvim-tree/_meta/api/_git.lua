@@ -6,4 +6,4 @@ local nvim_tree = { api = { git = {} } }
 ---
 function nvim_tree.api.git.reload() end
 
-return nvim_tree.api.config
+return nvim_tree.api.git
