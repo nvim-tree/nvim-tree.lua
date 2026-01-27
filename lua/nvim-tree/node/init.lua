@@ -144,4 +144,18 @@ function Node:clone(api_nodes)
   return clone
 end
 
+---@param _expansion_count integer
+---@param _should_descend fun(expansion_count: integer, node: Node): boolean
+---@return boolean
+function Node:should_expand(_expansion_count, _should_descend)
+  return false
+end
+
+---@param expand_opts ApiTreeExpandOpts?
+function Node:expand(expand_opts)
+  if self.parent then
+    self.parent:expand(expand_opts)
+  end
+end
+
 return Node
