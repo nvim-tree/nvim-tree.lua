@@ -1231,8 +1231,6 @@ Config                                                      *nvim-tree-config*
       • {log}?                                 (`nvim_tree.config.log`)
                                                |nvim_tree.config.log|
 
-
-
 ==============================================================================
 Config: sort                                           *nvim-tree-config-sort*
 
@@ -1270,8 +1268,6 @@ Config: sort                                           *nvim-tree-config-sort*
       • {files_first}?    (`boolean`, default: `false`) Sort files before
                           folders. Has no effect when {sorter} is a function.
                           Overrides {folders_first}.
-
-
 
 ==============================================================================
 Config: view                                           *nvim-tree-config-view*
@@ -1356,8 +1352,6 @@ Config: view                                           *nvim-tree-config-view*
                            lines when computing width.
       • {padding}?         (`nvim_tree.config.view.width.spec`, default: `1`)
                            Extra padding to the right.
-
-
 
 ==============================================================================
 Config: renderer                                   *nvim-tree-config-renderer*
@@ -1533,8 +1527,6 @@ Config: renderer                                   *nvim-tree-config-renderer*
                           • {bottom}? (`string`) (default: `"─"`)
                           • {none}? (`string`) (default: `" "`)
 
-
-
 ==============================================================================
 Config: hijack_directories               *nvim-tree-config-hijack-directories*
 
@@ -1550,8 +1542,6 @@ Config: hijack_directories               *nvim-tree-config-hijack-directories*
       • {enable}?     (`boolean`) (default: `true`)
       • {auto_open}?  (`boolean`, default: `true`) Open if the tree was
                       previously closed.
-
-
 
 ==============================================================================
 Config: update_focused_file             *nvim-tree-config-update-focused-file*
@@ -1583,8 +1573,6 @@ Config: update_focused_file             *nvim-tree-config-update-focused-file*
                         tree if the file isn't found under the current root
                         directory.
 
-
-
 ==============================================================================
 Config: system_open                             *nvim-tree-config-system-open*
 
@@ -1606,8 +1594,6 @@ Config: system_open                             *nvim-tree-config-system-open*
       • {args}?  (`string[]`, default: `{}` or `{ "/c", "start", '""' }` on
                  windows) Optional argument list. Leave empty for OS specific
                  default.
-
-
 
 ==============================================================================
 Config: git                                             *nvim-tree-config-git*
@@ -1641,8 +1627,6 @@ Config: git                                             *nvim-tree-config-git*
       • {cygwin_support}?     (`boolean`, default: `false`) Use `cygpath` if
                               available to resolve paths for git.
 
-
-
 ==============================================================================
 Config: diagnostics                             *nvim-tree-config-diagnostics*
 
@@ -1675,8 +1659,6 @@ Config: diagnostics                             *nvim-tree-config-diagnostics*
                               • {warning}? (`string`) (default: `""` )
                               • {error}? (`string`) (default: `""` )
 
-
-
 ==============================================================================
 Config: modified                                   *nvim-tree-config-modified*
 
@@ -1696,8 +1678,6 @@ Config: modified                                   *nvim-tree-config-modified*
       • {show_on_open_dirs}?  (`boolean`, default: `false`) Show modified
                               indication on open directories. Requires
                               {show_on_dirs}.
-
-
 
 ==============================================================================
 Config: filters                                     *nvim-tree-config-filters*
@@ -1752,8 +1732,6 @@ Config: filters                                     *nvim-tree-config-filters*
                         (default: `{}`)
       • {exclude}?      (`string[]`) (default: `{}`)
 
-
-
 ==============================================================================
 Config: live_filter                             *nvim-tree-config-live-filter*
 
@@ -1769,8 +1747,6 @@ Config: live_filter                             *nvim-tree-config-live-filter*
                                 the filter displayed in the buffer.
       • {always_show_folders}?  (`boolean`, default: `true`) Whether to filter
                                 folders or not.
-
-
 
 ==============================================================================
 Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
@@ -1804,8 +1780,6 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
       • {max_events}?      (`integer`, default: `100`) Disable for a single
                            directory after {max_events} consecutive events
                            with an interval < {debounce_delay}.
-
-
 
 ==============================================================================
 Config: actions                                     *nvim-tree-config-actions*
@@ -1928,8 +1902,6 @@ Config: actions                                     *nvim-tree-config-actions*
                          displays a file when removing that file from the
                          tree.
 
-
-
 ==============================================================================
 Config: trash                                         *nvim-tree-config-trash*
 
@@ -1942,8 +1914,6 @@ Config: trash                                         *nvim-tree-config-trash*
 
     Fields: ~
       • {cmd}?  (`string`) (default: `"gio trash"` or `"trash"`)
-
-
 
 ==============================================================================
 Config: tab                                             *nvim-tree-config-tab*
@@ -1964,8 +1934,6 @@ Config: tab                                             *nvim-tree-config-tab*
       • {ignore}?  (`string[]`, default: `{}`) List of filetypes or buffer
                    names on new tab that will prevent `open` and `close`
 
-
-
 ==============================================================================
 Config: notify                                       *nvim-tree-config-notify*
 
@@ -1983,8 +1951,6 @@ Config: notify                                       *nvim-tree-config-notify*
       • {absolute_path}?  (`boolean`, default: `true`) Use absolute paths in
                           FS action notifications, otherwise item names.
 
-
-
 ==============================================================================
 Config: bookmarks                                 *nvim-tree-config-bookmarks*
 
@@ -1997,8 +1963,6 @@ Config: bookmarks                                 *nvim-tree-config-bookmarks*
     Fields: ~
       • {persist}?  (`boolean|string`) (default: `false`)
 
-
-
 ==============================================================================
 Config: help                                           *nvim-tree-config-help*
 
@@ -2006,8 +1970,6 @@ Config: help                                           *nvim-tree-config-help*
 
     Fields: ~
       • {sort_by}?  (`"key"|"desc"`, default: `"key"`) Alphabetically.
-
-
 
 ==============================================================================
 Config: ui                                               *nvim-tree-config-ui*
@@ -2027,8 +1989,6 @@ Config: ui                                               *nvim-tree-config-ui*
       • {default_yes}?  (`boolean`, default: `false`) If `true` the prompt
                         will be `Y/n`, otherwise `y/N`
 
-
-
 ==============================================================================
 Config: experimental                           *nvim-tree-config-experimental*
 
@@ -2037,8 +1997,6 @@ Config: experimental                           *nvim-tree-config-experimental*
 
     In the event of a problem please disable the experiment and raise an
     issue.
-
-
 
 ==============================================================================
 Config: log                                             *nvim-tree-config-log*
@@ -2073,8 +2031,6 @@ Config: log                                             *nvim-tree-config-log*
       • {watcher}?      (`boolean`, default: `false`)
                         |nvim_tree.config.filesystem_watchers| processing,
                         verbose.
-
-
 
 ==============================================================================
 Config: Default                                     *nvim-tree-config-default*
@@ -2367,8 +2323,6 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
     }
 <
 
-
-
 ==============================================================================
 API                                                            *nvim-tree-api*
 
@@ -2443,8 +2397,6 @@ e.g. the following are functionally identical: >lua
       • {file}?  (`nvim_tree.git.XY`) status of a file node
       • {dir}?   (`table<"direct"|"indirect", nvim_tree.git.XY[]>`) direct
                  inclusive-or indirect status
-
-
 
 ==============================================================================
 API: commands                                         *nvim-tree-api-commands*
