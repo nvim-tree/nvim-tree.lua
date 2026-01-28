@@ -1,0 +1,16 @@
+diff --git a/src/gen/gen_vimdoc.lua b/src/gen/gen_vimdoc.lua
+index e90158d502..df09bc37ee 100755
+--- a/src/gen/gen_vimdoc.lua
++++ b/src/gen/gen_vimdoc.lua
+@@ -1084,9 +1084,8 @@ local function gen_target(cfg)
+     print('    Processing file:', f)
+ 
+     -- FIXME: Using f_base will confuse `_meta/protocol.lua` with `protocol.lua`
+-    local f_base = vim.fs.basename(f)
+-    sections[f_base] = make_section(
+-      f_base,
++    sections[f] = make_section(
++      f,
+       cfg,
+       briefs,
+       render_funs(funs, all_classes, cfg),
