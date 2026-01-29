@@ -125,8 +125,9 @@ end
 
 When adding to or changing:
 1. Default config
-2. `config` classes
-3. `on_attach` default mappings
+2. `Config` classes
+3. `keymap.on_attach_default`
+4. Any API
 
 You must generate help documentation. This requires neovim stable sources. You will be promted with instructions on fetching and referencing the source.
 
@@ -136,8 +137,10 @@ make help-update
 
 This will:
 1. Update config defaults in `*nvim-tree-setup*`
-2. Regenerate from `*nvim-tree-config*` to the end of the file, see `gen_vimdoc.sh`
-3. Update default mappings in `*nvim-tree-mappings-default*` and `*nvim-tree-quickstart-help*`
+2. Update default mappings in `*nvim-tree-mappings-default*` and `*nvim-tree-quickstart-help*`
+3. Regenerate from `*nvim-tree-config*` to the end of the file, see `gen_vimdoc.sh`
+  - Config classes
+  - API classes and functions
 
 Commit or stage your changes then run:
 ```sh
