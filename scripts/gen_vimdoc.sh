@@ -59,8 +59,8 @@ export LUA_PATH="${DIR_NVIM_SRC}/src/?.lua;${DIR_NVT}/scripts/?.lua"
 
 # gen_vimdoc.lua doesn't like dashes in lua module names
 #   -> use nvim_tree instead of nvim-tree
-mkdir -pv "${DIR_WORK}/lua"
-ln -sv "${DIR_NVT}/lua/nvim-tree" "${DIR_WORK}/lua/nvim_tree"
+mkdir -pv "${DIR_WORK}/runtime/lua"
+ln -sv "${DIR_NVT}/lua/nvim-tree" "${DIR_WORK}/runtime/lua/nvim_tree"
 
 # generate
 cd "${DIR_WORK}" && pwd

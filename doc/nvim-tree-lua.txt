@@ -2618,8 +2618,7 @@ trash({node})                                       *nvim_tree.api.fs.trash()*
 ==============================================================================
 API: git                                                   *nvim-tree-api-git*
 
-                               *nvim_tree.api._git.nvim_tree.api.git.reload()*
-nvim_tree.api.git.reload()
+reload()                                          *nvim_tree.api.git.reload()*
     Update the git status of the entire tree.
 
 
