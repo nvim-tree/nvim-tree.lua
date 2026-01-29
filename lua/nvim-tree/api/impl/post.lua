@@ -6,8 +6,11 @@
 ---This is expensive as there are many cascading requires and is avoided
 ---until after setup has been called, so that the user may require API cheaply.
 
-local view = require("nvim-tree.view")
 local actions = require("nvim-tree.actions")
+local help = require("nvim-tree.help")
+local keymap = require("nvim-tree.keymap")
+local utils = require("nvim-tree.utils")
+local view = require("nvim-tree.view")
 
 local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
@@ -131,7 +134,7 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
 end
 
 ---Hydrate all implementations barring those that were called during hydrate_pre
----@param api table
+---@param api table not properly typed to prevent LSP from referencing implementations
 local function hydrate_post(api)
   api.tree.open = actions.tree.open.fn
   api.tree.focus = api.tree.open
@@ -157,8 +160,8 @@ local function hydrate_post(api)
   api.tree.collapse_all = actions.tree.collapse.all
 
   api.tree.expand_all = wrap_node(wrap_explorer("expand_all"))
-  api.tree.toggle_help = function() require("nvim-tree.help").toggle() end
-  api.tree.is_tree_buf = function() require("nvim-tree.utils").is_nvim_tree_buf() end
+  api.tree.toggle_help = help.toggle
+  api.tree.is_tree_buf = utils.is_nvim_tree_buf
 
   api.tree.is_visible = view.is_visible
 
@@ -248,15 +251,15 @@ local function hydrate_post(api)
   api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
-  api.map.get_keymap = function() require("nvim-tree.keymap").get_keymap() end
+  api.map.keymap.current = keymap.get_keymap
 end
 
 ---Re-hydrate api
----@param api table
+---@param api table not properly typed to prevent LSP from referencing implementations
 return function(api)
   -- All concrete implementations
   hydrate_post(api)
 
   -- (Re)hydrate any legacy by mapping to function set above
-  require("nvim-tree.legacy").api_map(api)
+  require("nvim-tree.api.impl.legacy")(api)
 end

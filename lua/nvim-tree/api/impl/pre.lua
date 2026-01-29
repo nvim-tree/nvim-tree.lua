@@ -30,6 +30,7 @@ local function hydrate_error(t)
 end
 
 ---Hydrate implementations that may be called pre setup
+---@param api table not properly typed to prevent LSP from referencing implementations
 local function hydrate_pre(api)
   --
   -- Essential
@@ -51,7 +52,7 @@ local function hydrate_pre(api)
   --
   api.commands.get = commands.get
 
-  api.map.get_keymap_default = keymap.get_keymap_default
+  api.map.keymap.default = keymap.get_keymap_default
 
 
   --
@@ -65,6 +66,7 @@ local function hydrate_pre(api)
 end
 
 ---Hydrate api
+---@param api table not properly typed to prevent LSP from referencing implementations
 return function(api)
   -- Default: error
   hydrate_error(api)
@@ -73,5 +75,5 @@ return function(api)
   hydrate_pre(api)
 
   -- Hydrate any legacy by mapping to function set above
-  require("nvim-tree.legacy").api_map(api)
+  require("nvim-tree.api.impl.legacy")(api)
 end

@@ -2,6 +2,9 @@
 --Returned config is injected into the above.
 --See gen_vimdoc.sh
 
+--gen_vimdoc keys by filename:   -- FIXME: Using f_base will confuse `_meta/protocol.lua` with `protocol.lua`
+--Hence we must ensure that filenames are unique within each nvim.gen_vimdoc.Config[]
+
 ---@class (exact) Src
 ---@field helptag string must be globally unique
 ---@field section string arbitrary
@@ -37,7 +40,7 @@ local srcs_config = {
 
   { helptag = "nvim-tree-config-default",             section = "Config: Default",             path = pre .. "_meta/config/default.lua", },
 
-  { helptag = "nvim-tree-api",                        section = "API Placeholder",             path = pre .. "api.lua", },
+  { helptag = "nvim-tree-api",                        section = "placeholder for next Config", path = pre .. "api.lua", },
 }
 
 ---@type Src[]
@@ -89,7 +92,7 @@ local function src_by_name(name, srcs)
   error(string.format("\n\nPath for lower, extension stripped file name='%s' not found in\nsrcs=%s\n", name, vim.inspect(srcs)))
 end
 
--- @type table<string,nvim.gen_vimdoc.Config>
+-- @type nvim.gen_vimdoc.Config[]
 return {
   -- Config
   {
