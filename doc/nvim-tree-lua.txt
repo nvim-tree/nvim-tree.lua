@@ -986,9 +986,7 @@ keep using |netrw| without its browser features please ensure:
 ==============================================================================
 Legacy                                                      *nvim-tree-legacy*
 
-Breaking refactors have been made however the legacy versions will be silently
-migrated and used.
-There are no plans to remove this migration.
+Backwards compatible, silent refactors have been done.
 
 ==============================================================================
 Legacy: Config                                       *nvim-tree-legacy-config*
@@ -1012,8 +1010,7 @@ needed.
 ==============================================================================
 Legacy: API                                             *nvim-tree-legacy-api*
 
-Some API functions have been refactored however the previous function will
-continue to be available.
+Deprecated API with unchanged function signature:
 
 `api.config.mappings.get_keymap`         |nvim_tree.api.map.keymap.current()|
 `api.config.mappings.get_keymap_default` |nvim_tree.api.map.keymap.default()|
