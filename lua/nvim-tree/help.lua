@@ -45,7 +45,7 @@ local function tidy_lhs(lhs)
 end
 
 --- Remove prefix 'nvim-tree: '
---- Hardcoded to keep default_on_attach simple
+--- Hardcoded to keep on_attach_default simple
 ---@param desc string
 ---@return string
 local function tidy_desc(desc)
