@@ -60,7 +60,7 @@ make lint
 ## style
 
 1. Runs lua language server `codestyle-check` only, using `.luarc.json` settings
-1. Runs `scripts/doc-comments.sh` to validate annotated documentation
+1. Runs `scripts/doc-comments.sh` to normalise annotated documentation
 
 ```sh
 make style
@@ -86,11 +86,11 @@ Assumes `$VIMRUNTIME` is `/usr/share/nvim/runtime`. Adjust as necessary e.g.
 VIMRUNTIME="/my/path/to/runtime" make check
 ```
 
-If `lua-language-server` is not available or `--check` doesn't function (e.g. Arch Linux 3.9.1-1) you can manually install it as per `ci.yml` e.g.
+If `lua-language-server` is not available or `--check` doesn't function (e.g. Arch Linux 3.9.1-1) you can manually install it as per `ci.yml` using its current `luals_version` e.g.
 
 ```sh
 mkdir luals
-curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.9.1/lua-language-server-3.9.1-linux-x64.tar.gz" | tar zx --directory luals
+curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.15.0/lua-language-server-3.15.0-linux-x64.tar.gz" | tar zx --directory luals
 
 PATH="luals/bin:${PATH}" make check
 ```
@@ -119,39 +119,62 @@ else
 end
 ```
 
-# Documentation
+# :help Documentation
 
-## Config And Mappings
+Please update or add to `doc/nvim-tree-lua.txt` as needed.
 
-When adding to or changing:
-1. Default config
-2. `Config` classes
-3. `keymap.on_attach_default`
-4. Any API
+## Generated Content
 
-You must generate help documentation. This requires neovim stable sources. You will be promted with instructions on fetching and referencing the source.
+`doc/nvim-tree-lua.txt` content starting at `*nvim-tree-config*` will be replaced with generated content. Do not manually edit that content.
+
+### API and Config
+
+Help is generated for:
+- `nvim_tree.config` classes from `lua/nvim-tree/_meta/config/`
+- `nvim_tree.api` functions from `lua/nvim-tree/_meta/api/`
+
+Please add or update documentation when you make changes, see `:help dev-lua-doc` for docstring format.
+
+`scripts/gen_vimdoc_config.lua` contains the manifest of help sources.
+
+### Config And Mappings
+
+Help is updated for:
+- Default keymap at `keymap.on_attach_default`
+- Default config at `--- default-config-start`
+
+## Updating And Generating
+
+Nvim sources are required. You will be prompted with instructions on fetching and using the sources.
+
+See comments at the start of each script for complete details.
 
 ```sh
 make help-update
 ```
 
-This will:
-1. Update config defaults in `*nvim-tree-setup*`
-2. Update default mappings in `*nvim-tree-mappings-default*` and `*nvim-tree-quickstart-help*`
-3. Regenerate from `*nvim-tree-config*` to the end of the file, see `gen_vimdoc.sh`
-  - Config classes
-  - API classes and functions
+- `scripts/help-update.sh`
+  - Update config defaults `*nvim-tree-setup*`
+  - Update default mappings:
+    - `*nvim-tree-mappings-default*`
+    - `*nvim-tree-quickstart-help*`
 
-Commit or stage your changes then run:
+- `scripts/gen_vimdoc.sh`
+  - Remove content starting at `*nvim-tree-config*`
+  - Generate config classes `*nvim-tree-config*`
+  - Generate API `*nvim-tree-api*`
+
+## Checking And Linting
+
+This is run in CI. Commit or stage your changes and run:
+
 ```sh
 make help-check
 ```
 
-This will re-run `help-update` and check that there are no diffs. It will also lint the documentation, see `lintdoc.sh`
-
-## API
-
-When adding or changing API please update :help nvim-tree-api
+- Re-runs `make help-update`
+- Checks that `git diff` is empty, to ensure that all content has been generated. This is why a stage or commit is necessary.
+- Lints `doc/nvim-tree-lua.txt` using `scripts/lintdoc.sh` to check for no broken links etc.
 
 # Windows
 

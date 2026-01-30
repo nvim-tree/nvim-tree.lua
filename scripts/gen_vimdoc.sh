@@ -4,7 +4,9 @@
 #
 # Doesn't require Nvim to have been built.
 #
-# Shims our moudules into gen_vimdoc_config.lua, replacing Nvim's.
+# Generated from nvim-tree sources defined in scripts/gen_vimdoc_config.lua
+#
+# Shims our sources into src/gen/gen_vimdoc.lua replacing Nvim's.
 #
 # There are some hardcoded expectations which we work around as commented.
 
@@ -39,6 +41,7 @@ Please:
   mkdir -p ${DIR_NVIM_SRC_DEF}
   curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory $(dirname "${DIR_NVIM_SRC_DEF}")
   export DIR_NVIM_SRC=/tmp/src/neovim-stable
+
 EOM
 exit 1
 fi
