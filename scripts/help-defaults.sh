@@ -2,7 +2,15 @@
 
 # run after changing default config or keymap.lua M.on_attach_default
 # scrapes and updates nvim-tree-lua.txt
-# run from repository root: scripts/help-update.sh  OR  make help-update
+# run from repository root: scripts/help-defaults.sh  OR  make help-update
+
+set -e
+
+#
+# Operate on a temporary file as sed -i writes the file thousands of times.
+#
+WIP="/tmp/nvim-tree-lua.txt"
+cp "doc/nvim-tree-lua.txt" "${WIP}"
 
 
 #
@@ -19,7 +27,7 @@ sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree.lua 
 sed -e "s/^  /      /" /tmp/DEFAULT_OPTS.2.lua > /tmp/DEFAULT_OPTS.6.lua
 
 # inject then remove the placeholder
-sed -i -e "/${inject}/r /tmp/DEFAULT_OPTS.6.lua" -e "/${inject}/d" doc/nvim-tree-lua.txt
+sed -i -e "/${inject}/r /tmp/DEFAULT_OPTS.6.lua" -e "/${inject}/d" "${WIP}"
 
 #
 # Inject default mappings
@@ -33,7 +41,7 @@ sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keym
 
 # help lua
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.lua
-           }; /${end}/p; d; }" doc/nvim-tree-lua.txt
+           }; /${end}/p; d; }" "${WIP}"
 
 # help human
 echo > /tmp/ON_ATTACH_DEFAULT.help
@@ -46,4 +54,9 @@ echo >> /tmp/ON_ATTACH_DEFAULT.help
 begin="Show the mappings:"
 end="======"
 sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.help
-           }; /${end}/p; d; }" doc/nvim-tree-lua.txt
+           }; /${end}/p; d; }" "${WIP}"
+
+#
+# complete
+#
+mv "${WIP}" "doc/nvim-tree-lua.txt"
