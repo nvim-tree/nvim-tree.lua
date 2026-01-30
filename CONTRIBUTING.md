@@ -154,8 +154,8 @@ See comments at the start of each script for complete details.
 make help-update
 ```
 
-- `scripts/help-update.sh`
-  - Update config defaults `*nvim-tree-setup*`
+- `scripts/help-defaults.sh`
+  - Update config defaults `*nvim-tree-config-default*`
   - Update default mappings:
     - `*nvim-tree-mappings-default*`
     - `*nvim-tree-quickstart-help*`
