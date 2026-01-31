@@ -891,9 +891,9 @@ Require and register it during |nvim-tree-setup|:
 Contents of `my-decorator.lua`:
 >lua
   ---@class (exact) MyDecorator: nvim_tree.api.decorator.UserDecorator
-  ---@field private my_icon1 nvim_tree.api.HighlightedString
-  ---@field private my_icon2 nvim_tree.api.HighlightedString
-  ---@field private my_icon_node nvim_tree.api.HighlightedString
+  ---@field private my_icon1 nvim_tree.api.decorator.highlighted_string
+  ---@field private my_icon2 nvim_tree.api.decorator.highlighted_string
+  ---@field private my_icon_node nvim_tree.api.decorator.highlighted_string
   ---@field private my_highlight_group string
   local MyDecorator = require("nvim-tree.api").decorator.UserDecorator:extend()
 
@@ -917,7 +917,7 @@ Contents of `my-decorator.lua`:
 
   ---Override node icon
   ---@param node nvim_tree.api.Node
-  ---@return nvim_tree.api.HighlightedString? icon_node
+  ---@return nvim_tree.api.decorator.highlighted_string? icon_node
   function MyDecorator:icon_node(node)
     if node.name == "example" then
       return self.my_icon_node
@@ -928,7 +928,7 @@ Contents of `my-decorator.lua`:
 
   ---Return two icons for DecoratorIconPlacement "after"
   ---@param node nvim_tree.api.Node
-  ---@return nvim_tree.api.HighlightedString[]? icons
+  ---@return nvim_tree.api.decorator.highlighted_string[]? icons
   function MyDecorator:icons(node)
     if node.name == "example" then
       return { self.my_icon1, self.my_icon2, }
