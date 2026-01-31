@@ -26,6 +26,29 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 Questions and general support: [Discussions](https://github.com/nvim-tree/nvim-tree.lua/discussions)
 
+<!-- 
+https://github.com/jonschlinkert/markdown-toc
+markdown-toc --maxdepth=2 -i README.md
+-->
+
+<!-- toc -->
+
+- [Requirements](#requirements)
+- [Installing](#installing)
+- [Quick Start](#quick-start)
+  * [Setup](#setup)
+  * [Help](#help)
+  * [Custom Mappings](#custom-mappings)
+  * [Highlight Groups](#highlight-groups)
+- [Commands](#commands)
+- [Roadmap](#roadmap)
+- [API](#api)
+- [Contributing](#contributing)
+- [Screenshots](#screenshots)
+- [Team](#team)
+
+<!-- tocstop -->
+
 ## Requirements
 
 [neovim >=0.9.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
@@ -184,11 +207,11 @@ nvim-tree is stable and new major features will not be added. The focus is on ex
 Users are encouraged to add their own custom features via the public [API](#api).
 
 Development is focused on:
-* Bug fixes
-* Performance
-* Quality of Life improvements
-* API / Events
-* Enhancements to existing features
+- Bug fixes
+- Performance
+- Quality of Life improvements
+- API / Events
+- Enhancements to existing features
 - Multi-instance capabilities
 
 ## API
