@@ -4,16 +4,16 @@ error("Cannot require a meta file")
 local nvim_tree = { api = { decorator = {} } }
 
 ---Highlight group range as per nvim-tree.renderer.highlight_*
----@alias nvim_tree.api.decorator.HighlightRange "none" | "icon" | "name" | "all"
+---@alias nvim_tree.api.decorator.highlight_range nvim_tree.config.renderer.highlight
 
 ---Icon position as per renderer.icons.*_placement
----@alias nvim_tree.api.decorator.IconPlacement "none" | "before" | "after" | "signcolumn" | "right_align"
+---@alias nvim_tree.api.decorator.icon_placement "none"|nvim_tree.config.renderer.icons.placement
 
 ---Names of builtin decorators or your decorator classes. Builtins are ordered lowest to highest priority.
----@alias nvim_tree.api.decorator.Name "Git" | "Opened" | "Hidden" | "Modified" | "Bookmarks" | "Diagnostics" | "Copied" | "Cut" | nvim_tree.api.decorator.UserDecorator
+---@alias nvim_tree.api.decorator.types nvim_tree.api.decorator.UserDecorator|"Git"|"Opened"|"Hidden"|"Modified"|"Bookmarks"|"Diagnostics"|"Copied"|"Cut"
 
 ---A string for rendering, with optional highlight groups to apply to it
----@class (exact) nvim_tree.api.HighlightedString
+---@class (exact) nvim_tree.api.decorator.highlighted_string
 ---@field str string
 ---@field hl string[]
 
@@ -21,8 +21,8 @@ local nvim_tree = { api = { decorator = {} } }
 ---
 ---@class (exact) nvim_tree.api.decorator.UserDecorator
 ---@field protected enabled boolean
----@field protected highlight_range nvim_tree.api.decorator.HighlightRange
----@field protected icon_placement nvim_tree.api.decorator.IconPlacement
+---@field protected highlight_range nvim_tree.api.decorator.highlight_range
+---@field protected icon_placement nvim_tree.api.decorator.icon_placement
 nvim_tree.api.decorator.UserDecorator = {}
 
 ---Create your decorator class
@@ -37,13 +37,13 @@ function nvim_tree.api.decorator.UserDecorator:new() end
 ---Abstract: optionally implement to set the node's icon
 ---
 ---@param node nvim_tree.api.Node
----@return nvim_tree.api.HighlightedString? icon_node
+---@return nvim_tree.api.decorator.highlighted_string? icon_node
 function nvim_tree.api.decorator.UserDecorator:icon_node(node) end
 
 ---Abstract: optionally implement to provide icons and the highlight groups for your icon_placement.
 ---
 ---@param node nvim_tree.api.Node
----@return nvim_tree.api.HighlightedString[]? icons
+---@return nvim_tree.api.decorator.highlighted_string[]? icons
 function nvim_tree.api.decorator.UserDecorator:icons(node) end
 
 ---Abstract: optionally implement to provide one highlight group to apply to your highlight_range.
@@ -55,5 +55,5 @@ function nvim_tree.api.decorator.UserDecorator:highlight_group(node) end
 ---Define a sign. This should be called in the constructor.
 ---
 ---@protected
----@param icon nvim_tree.api.HighlightedString?
+---@param icon nvim_tree.api.decorator.highlighted_string?
 function nvim_tree.api.decorator.UserDecorator:define_sign(icon) end

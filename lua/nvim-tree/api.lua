@@ -96,10 +96,14 @@ local api = {
 
 
 --
--- Map before-setup implementations, most throw an error notification "nvim-tree setup not called".
+-- Map before-setup function implementations, most throw an error notification "nvim-tree setup not called".
 --
 require("nvim-tree.api.impl.pre")(api)
 
+
+---#TODO 3241
+---Public API classes
+-- api.decorator = require("nvim-tree.api.decorator")
 
 
 return api

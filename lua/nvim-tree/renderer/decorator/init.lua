@@ -1,10 +1,12 @@
 local Class = require("nvim-tree.classic")
 
+--- #TODO 3241 split this into abstract interface for API and concrete to return to user
+
 ---Abstract Decorator
 ---@class (exact) Decorator: Class
 ---@field protected enabled boolean
----@field protected highlight_range nvim_tree.api.decorator.HighlightRange
----@field protected icon_placement nvim_tree.api.decorator.IconPlacement
+---@field protected highlight_range nvim_tree.api.decorator.highlight_range
+---@field protected icon_placement nvim_tree.api.decorator.icon_placement
 local Decorator = Class:extend()
 
 ---@class (exact) DecoratorArgs

@@ -14,14 +14,14 @@ local GitDecorator = require("nvim-tree.renderer.decorator.git")
 local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
 local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
 local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
-local UserDecorator = require("nvim-tree.renderer.decorator.user")
+local UserDecorator = require("nvim-tree.api").decorator.UserDecorator
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----@alias HighlightedString nvim_tree.api.HighlightedString
+---@alias HighlightedString nvim_tree.api.decorator.highlighted_string
 
 -- Builtin Decorators
----@type table<nvim_tree.api.decorator.Name, Decorator>
+---@type table<nvim_tree.api.decorator.types, Decorator>
 local BUILTIN_DECORATORS = {
   Git = GitDecorator,
   Open = OpenDecorator,

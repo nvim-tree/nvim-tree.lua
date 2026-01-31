@@ -254,6 +254,8 @@ local function hydrate_post(api)
   api.map.keymap.current = keymap.get_keymap
 end
 
+---#TODO 3241 hydrate function, for clarity
+
 ---Re-hydrate api
 ---@param api table not properly typed to prevent LSP from referencing implementations
 return function(api)

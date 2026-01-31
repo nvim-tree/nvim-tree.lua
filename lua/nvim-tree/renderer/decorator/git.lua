@@ -3,7 +3,7 @@ local notify = require("nvim-tree.notify")
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) GitHighlightedString: nvim_tree.api.HighlightedString
+---@class (exact) GitHighlightedString: nvim_tree.api.decorator.highlighted_string
 ---@field ord number decreasing priority
 
 ---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"

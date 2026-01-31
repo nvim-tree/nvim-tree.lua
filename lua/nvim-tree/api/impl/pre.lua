@@ -65,6 +65,8 @@ local function hydrate_pre(api)
   api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
 end
 
+---#TODO 3241 hydrate function, for clarity
+
 ---Hydrate api
 ---@param api table not properly typed to prevent LSP from referencing implementations
 return function(api)
