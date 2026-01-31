@@ -3,10 +3,6 @@ error("Cannot require a meta file")
 
 
 
----@alias nvim_tree.config.view.width.spec string|integer|(fun(): integer|string)
-
-
-
 ---Configures the dimensions and appearance of the nvim-tree window.
 ---
 ---The window is "docked" at the left by default, however may be configured to float: [nvim_tree.config.view.float]
@@ -17,6 +13,7 @@ error("Cannot require a meta file")
 ---- `string`: `x%` string e.g. `30%`
 ---- `integer`: number of columns
 ---- `function`: returns one of the above
+---@alias nvim_tree.config.view.width.spec string|integer|(fun(): integer|string)
 ---
 ---@class nvim_tree.config.view
 ---
