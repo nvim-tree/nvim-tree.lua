@@ -1808,50 +1808,6 @@ highlight group is not, hard linking as follows: >
     NvimTreeLspDiagnosticsHintFolderText        NvimTreeDiagnosticHintFolderHL
 <
 
-==============================================================================
-Hidden Display                                      *nvim-tree-hidden-display*
-
-Show a summary of hidden files below the tree highlighted with `NvimTreeHiddenDisplay
-
-Configure via |nvim_tree.config.renderer| {hidden_display}
-
-                                    *nvim_tree.config.renderer.hidden_display*
- • `none`: disabled
- • `simple`: show how many hidden files are in a folder
- • `all`: show how many hidden and the number of hidden files by reason
- • `fun(hidden_stats: table<string, integer>): string`: returns a summary of hidden stats
-
-Example `"all"`:
-If a folder has 14 hidden items for various reasons, the display might show: >
-  (14 total git: 5, dotfile: 9)
-<
-If a function is provided, it receives a table `hidden_stats` where keys are
-reasons and values are the count of hidden files for that reason.
-
-The `hidden_stats` argument is structured as follows, where <num> is the number
-of hidden files related to the field: >
-  hidden_stats = {
-    bookmark = <num>,
-    buf = <num>,
-    custom = <num>,
-    dotfile = <num>,
-    git = <num>,
-    live_filter = <num>,
-  }
-<
-Example of function that can be passed: >lua
-  function(hidden_stats)
-    local total_count = 0
-    for reason, count in pairs(hidden_stats) do
-      total_count = total_count + count
-    end
-
-    if total_count > 0 then
-      return "(" .. tostring(total_count) .. " hidden)"
-    end
-    return nil
-  end
-<
 
 ==============================================================================
 Config                                                      *nvim-tree-config*
@@ -2104,6 +2060,19 @@ Config: renderer                                   *nvim-tree-config-renderer*
         end
 <
 
+    {hidden_display}                *nvim_tree.config.renderer.hidden_display*
+
+    Summary of hidden nodes, below the last node in the directory, highlighted
+    with `NvimTreeHiddenDisplay`.
+    • `"none"`: disabled, default
+    • `"simple"`: total number of hidden files e.g.
+      • (3 hidden)
+    • `"all"`: total and by reason: the filter that hid the node e.g.
+      • (14 total git: 5, dotfile: 9)
+    • `(fun(hidden_stats: nvim_tree.config.renderer.hidden_stats): string)`
+
+    See |nvim_tree.config.renderer.hidden_stats| for details and example.
+
     Fields: ~
       • {add_trailing}?            (`boolean`, default: `false`) Appends a
                                    trailing slash to folder and symlink folder
@@ -2121,7 +2090,7 @@ Config: renderer                                   *nvim-tree-config-renderer*
       • {indent_width}?            (`integer`, default: `2`) Number of spaces
                                    for each tree nesting level. Minimum 1.
       • {hidden_display}?          (`nvim_tree.config.renderer.hidden_display`, default: `none`)
-                                   |nvim-tree-hidden-display|
+                                   |nvim_tree.config.renderer.hidden_display|
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
                                    arrow followed by the target of the
                                    symlink.
@@ -2149,6 +2118,35 @@ Config: renderer                                   *nvim-tree-config-renderer*
                                    |nvim_tree.config.renderer.indent_markers|
       • {icons}?                   (`nvim_tree.config.renderer.icons`)
                                    |nvim_tree.config.renderer.icons|
+
+*nvim_tree.config.renderer.hidden_stats*
+    Number of hidden nodes in a directory by reason: the filter that hid the
+    node.
+
+    Passed to your |nvim_tree.config.renderer.hidden_display| function e.g. >lua
+
+        ---@param hidden_stats nvim_tree.config.renderer.hidden_stats
+        ---@return string? summary
+        local my_hidden_display = function(hidden_stats)
+         local total_count = 0
+         for reason, count in pairs(hidden_stats) do
+           total_count = total_count + count
+         end
+
+         if total_count > 0 then
+           return "(" .. tostring(total_count) .. " hidden)"
+         end
+         return nil
+        end
+<
+
+    Fields: ~
+      • {bookmark}     (`integer`)
+      • {buf}          (`integer`)
+      • {custom}       (`integer`)
+      • {dotfile}      (`integer`)
+      • {git}          (`integer`)
+      • {live_filter}  (`integer`)
 
 *nvim_tree.config.renderer.icons*
     Icons and separators
