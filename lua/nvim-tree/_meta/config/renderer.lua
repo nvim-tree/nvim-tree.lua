@@ -3,14 +3,6 @@ error("Cannot require a meta file")
 
 
 
----@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
-
----@alias nvim_tree.config.renderer.hidden_display "none"|"simple"|"all"|(fun(hidden_stats: table<string, integer>): string)
-
----@alias nvim_tree.config.renderer.icons.placement "before"|"after"|"signcolumn"|"right_align"
-
-
-
 ---Controls the appearance of the tree.
 ---
 ---See [nvim-tree-icons-highlighting] for {highlight_} and {decorators} fields.
@@ -24,6 +16,22 @@ error("Cannot require a meta file")
 ---  return ".../" .. vim.fn.fnamemodify(path, ":t")
 ---end
 ---```
+---
+---{hidden_display} [nvim_tree.config.renderer.hidden_display]()
+---
+---Summary of hidden nodes, below the last node in the directory, highlighted with `NvimTreeHiddenDisplay`.
+---- `"none"`: disabled, default
+---- `"simple"`: total number of hidden files e.g.
+---   - (3 hidden)
+---- `"all"`: total and by reason: the filter that hid the node e.g.
+---   - (14 total git: 5, dotfile: 9)
+---- `(fun(hidden_stats: nvim_tree.config.renderer.hidden_stats): string)`
+---
+---See [nvim_tree.config.renderer.hidden_stats] for details and example.
+---@alias nvim_tree.config.renderer.hidden_display "none"|"simple"|"all"|(fun(hidden_stats: nvim_tree.config.renderer.hidden_stats): string?)
+---
+---@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
+---
 ---@class nvim_tree.config.renderer
 ---
 ---Appends a trailing slash to folder and symlink folder target names.
@@ -45,7 +53,7 @@ error("Cannot require a meta file")
 ---(default: `2`)
 ---@field indent_width? integer
 ---
----[nvim-tree-hidden-display]
+---[nvim_tree.config.renderer.hidden_display]
 ---(default: `none`)
 ---@field hidden_display? nvim_tree.config.renderer.hidden_display
 ---
@@ -124,6 +132,9 @@ error("Cannot require a meta file")
 ---Icons and separators
 ---
 ---See [nvim-tree-icons-highlighting] for: {_placement} fields.
+---
+---@alias nvim_tree.config.renderer.icons.placement "before"|"after"|"signcolumn"|"right_align"
+---
 ---@class nvim_tree.config.renderer.icons
 ---
 ---(default: `before`)
@@ -301,3 +312,31 @@ error("Cannot require a meta file")
 ---@field deleted? string
 ---(default: `"◌"`)
 ---@field ignored? string
+
+---Number of hidden nodes in a directory by reason: the filter that hid the node.
+---
+---Passed to your [nvim_tree.config.renderer.hidden_display] function e.g.
+---```lua
+---
+------@param hidden_stats nvim_tree.config.renderer.hidden_stats
+------@return string? summary
+---local my_hidden_display = function(hidden_stats)
+---  local total_count = 0
+---  for reason, count in pairs(hidden_stats) do
+---    total_count = total_count + count
+---  end
+---
+---  if total_count > 0 then
+---    return "(" .. tostring(total_count) .. " hidden)"
+---  end
+---  return nil
+---end
+---```
+---
+---@class nvim_tree.config.renderer.hidden_stats
+---@field bookmark integer
+---@field buf integer
+---@field custom integer
+---@field dotfile integer
+---@field git integer
+---@field live_filter integer
