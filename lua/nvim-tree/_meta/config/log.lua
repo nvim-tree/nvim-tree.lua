@@ -28,7 +28,7 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field profile? boolean
 ---
----Options and mappings, at startup.
+---Config and mappings, at startup.
 ---(default: `false`)
 ---@field config? boolean
 ---

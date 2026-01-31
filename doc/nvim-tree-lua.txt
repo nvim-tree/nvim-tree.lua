@@ -187,7 +187,7 @@ via |nvim_tree.config| {on_attach} e.g. >lua
     vim.keymap.set("n", "?",     api.tree.toggle_help,                  opts("Help"))
   end
 
-  -- pass to setup along with your other options
+  -- pass to setup along with your other config
   require("nvim-tree").setup({
     ---
     on_attach = my_on_attach,
@@ -202,19 +202,19 @@ Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
 They can be customised before or after setup is called and will be immediately
 applied at runtime. e.g. >lua
 
-    vim.cmd([[
-        :hi      NvimTreeExecFile    guifg=#ffa0a0
-        :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
-        :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
-        :hi link NvimTreeImageFile   Title
-    ]])
+  vim.cmd([[
+      :hi      NvimTreeExecFile    guifg=#ffa0a0
+      :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+      :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+      :hi link NvimTreeImageFile   Title
+  ]])
 <
 See |nvim-tree-highlight-groups| for details.
 
 ==============================================================================
 Commands                                                  *nvim-tree-commands*
 
-Commands may be executed with a `<bang>` (`!`) or take a `path` string argument.
+Some commands may be executed with a |<bang>| `!` or take a `path` string argument.
 
 All commands execute public API.
 
@@ -1596,8 +1596,8 @@ Config: system_open                             *nvim-tree-config-system-open*
       • macOS: `open`
       • Windows: `cmd`
 
-    Once nvim-tree minimum Nvim version is updated to 0.10, these options will
-    no longer be necessary and will be removed.
+    Once nvim-tree minimum Nvim version is updated to 0.10, this configuration
+    will no longer be necessary and will be removed.
 
     Fields: ~
       • {cmd}?   (`string`) The open command itself
@@ -2059,7 +2059,7 @@ Config: log                                             *nvim-tree-config-log*
       • {all}?          (`boolean`, default: `false`) Everything.
       • {profile}?      (`boolean`, default: `false`) Timing of some
                         operations.
-      • {config}?       (`boolean`, default: `false`) Options and mappings, at
+      • {config}?       (`boolean`, default: `false`) Config and mappings, at
                         startup.
       • {copy_paste}?   (`boolean`, default: `false`) File copy and paste
                         actions.
