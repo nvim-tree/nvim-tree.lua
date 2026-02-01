@@ -18,7 +18,7 @@ local UserDecorator = require("nvim-tree.api").decorator.UserDecorator
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----@alias HighlightedString nvim_tree.api.decorator.highlighted_string
+---TODO #3241 add an alias for builtins or document the enum
 
 -- Builtin Decorators
 ---@type table<nvim_tree.api.decorator.types, Decorator>
@@ -106,7 +106,7 @@ function Builder:insert_highlight(groups, start, end_)
 end
 
 ---@private
----@param highlighted_strings HighlightedString[]
+---@param highlighted_strings nvim_tree.api.decorator.highlighted_string[]
 ---@return string
 function Builder:unwrap_highlighted_strings(highlighted_strings)
   if not highlighted_strings then
@@ -126,12 +126,12 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
 end
 
 ---@private
----@param indent_markers HighlightedString[]
----@param arrows HighlightedString[]|nil
----@param icon HighlightedString
----@param name HighlightedString
+---@param indent_markers nvim_tree.api.decorator.highlighted_string[]
+---@param arrows? nvim_tree.api.decorator.highlighted_string[]
+---@param icon nvim_tree.api.decorator.highlighted_string
+---@param name nvim_tree.api.decorator.highlighted_string
 ---@param node table
----@return HighlightedString[]
+---@return nvim_tree.api.decorator.highlighted_string[]
 function Builder:format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
   local function add_to_end(t1, t2)
@@ -231,8 +231,8 @@ end
 ---A highlight group is always calculated and upserted for the case of highlights changing.
 ---@private
 ---@param node Node
----@return HighlightedString icon
----@return HighlightedString name
+---@return nvim_tree.api.decorator.highlighted_string icon
+---@return nvim_tree.api.decorator.highlighted_string name
 function Builder:icon_name_decorated(node)
   -- use the api node for user decorators
   local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]

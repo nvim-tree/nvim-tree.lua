@@ -61,7 +61,6 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
----TODO #3241 add an alias for builtins
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.decorator.UserDecorator)[]
 ---

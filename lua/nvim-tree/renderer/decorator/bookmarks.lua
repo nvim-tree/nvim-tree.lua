@@ -2,7 +2,7 @@ local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) BookmarkDecorator: Decorator
 ---@field private explorer Explorer
----@field private icon HighlightedString?
+---@field private icon nvim_tree.api.decorator.highlighted_string?
 local BookmarkDecorator = Decorator:extend()
 
 ---@class BookmarkDecorator
@@ -28,7 +28,7 @@ end
 
 ---Bookmark icon: renderer.icons.show.bookmarks and node is marked
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.decorator.highlighted_string[]? icons
 function BookmarkDecorator:icons(node)
   if self.explorer.marks:get(node) then
     return { self.icon }

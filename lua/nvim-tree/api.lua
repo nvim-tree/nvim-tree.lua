@@ -101,9 +101,9 @@ local api = {
 require("nvim-tree.api.impl.pre")(api)
 
 
----#TODO 3241
----Public API classes
--- api.decorator = require("nvim-tree.api.decorator")
+--#TODO 3241
+--Public API classes
+--api.decorator = require("nvim-tree.api.decorator")
 
 
 return api

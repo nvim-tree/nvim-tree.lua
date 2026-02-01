@@ -50,7 +50,7 @@ function FileNode:get_git_xy()
   return self.git_status.file and { self.git_status.file }
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.decorator.highlighted_string icon
 function FileNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.file then
     return self:highlighted_icon_empty()
@@ -79,7 +79,7 @@ function FileNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@return HighlightedString name
+---@return nvim_tree.api.decorator.highlighted_string name
 function FileNode:highlighted_name()
   local hl
   if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then

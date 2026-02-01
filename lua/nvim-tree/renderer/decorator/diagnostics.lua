@@ -32,7 +32,7 @@ local ICON_KEYS = {
 
 ---@class (exact) DiagnosticsDecorator: Decorator
 ---@field private explorer Explorer
----@field private diag_icons HighlightedString[]?
+---@field private diag_icons nvim_tree.api.decorator.highlighted_string[]?
 local DiagnosticsDecorator = Decorator:extend()
 
 ---@class DiagnosticsDecorator
@@ -73,7 +73,7 @@ end
 
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.decorator.highlighted_string[]? icons
 function DiagnosticsDecorator:icons(node)
   if node and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)

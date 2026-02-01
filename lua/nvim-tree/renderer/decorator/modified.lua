@@ -5,7 +5,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) ModifiedDecorator: Decorator
 ---@field private explorer Explorer
----@field private icon HighlightedString?
+---@field private icon nvim_tree.api.decorator.highlighted_string?
 local ModifiedDecorator = Decorator:extend()
 
 ---@class ModifiedDecorator
@@ -31,7 +31,7 @@ end
 
 ---Modified icon: modified.enable, renderer.icons.show.modified and node is modified
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.decorator.highlighted_string[]? icons
 function ModifiedDecorator:icons(node)
   if buffers.is_modified(node) then
     return { self.icon }

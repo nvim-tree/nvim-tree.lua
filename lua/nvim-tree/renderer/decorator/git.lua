@@ -142,7 +142,7 @@ end
 
 ---Git icons: git.enable, renderer.icons.show.git and node has status
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.decorator.highlighted_string[]? icons
 function GitDecorator:icons(node)
   if not self.icons_by_xy then
     return nil
