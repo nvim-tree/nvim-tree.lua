@@ -5,7 +5,7 @@
 ---@field protected icon_placement nvim_tree.api.decorator.icon_placement
 local Decorator = require("nvim-tree._meta.api.decorator").Decorator:extend()
 
----TODO #3241 maybe create an internal decorator class and lose the UserDecorator
+---TODO #3241 create an internal decorator class with explorer member and lose the UserDecorator
 ---@class (exact) DecoratorArgs
 ---@field explorer Explorer
 

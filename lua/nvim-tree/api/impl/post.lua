@@ -255,7 +255,7 @@ function M.hydrate(api)
 
   api.map.keymap.current = keymap.get_keymap
 
-  -- (Re)hydrate any legacy by mapping to function set above
+  -- (Re)hydrate any legacy by mapping to concrete set above
   require("nvim-tree.api.impl.legacy").hydrate(api)
 end
 

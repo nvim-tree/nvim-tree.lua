@@ -9,7 +9,11 @@
 -- https://github.com/rxi/classic
 --
 
----@class (exact) Class
+---TODO #3241 document and rename
+---@class Class: nvim_tree.Class
+---@nodoc
+
+---@class nvim_tree.Class
 ---@field super Class
 ---@field private implements table<Class, boolean>
 local Class = {}

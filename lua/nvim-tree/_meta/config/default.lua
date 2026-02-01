@@ -9,3 +9,4 @@
 ---}
 ---```
 ---
+---placeholder for next section [nvim-tree-api]()

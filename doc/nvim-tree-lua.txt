@@ -2362,9 +2362,6 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
       },
     }
 <
-
-
-
 ==============================================================================
 API                                                            *nvim-tree-api*
 
@@ -3198,6 +3195,122 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 
     Return: ~
         (`integer?`) |window-ID|, nil if tree is not visible.
+
+
+==============================================================================
+API: Decorator                                       *nvim-tree-api-decorator*
+
+*nvim_tree.api.decorator.Decorator*
+    Extends: |nvim_tree.Class|
+
+    Abstract Decorator interface
+
+    Fields: ~
+      • {enabled}          (`boolean`)
+      • {highlight_range}  (`nvim_tree.api.decorator.highlight_range`)
+      • {icon_placement}   (`nvim_tree.api.decorator.icon_placement`)
+      • {icon_node}        (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string?`)
+                           See
+                           |nvim_tree.api.decorator.Decorator:icon_node()|.
+      • {icons}            (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string[]?`)
+                           See |nvim_tree.api.decorator.Decorator:icons()|.
+      • {highlight_group}  (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): string?`)
+                           See
+                           |nvim_tree.api.decorator.Decorator:highlight_group()|.
+      • {define_sign}      (`fun(self: nvim_tree.api.decorator.Decorator, icon: nvim_tree.api.decorator.highlighted_string?)`)
+                           See
+                           |nvim_tree.api.decorator.Decorator:define_sign()|.
+
+
+                             *nvim_tree.api.decorator.Decorator:define_sign()*
+Decorator:define_sign({icon})
+    Defines a sign. This should be called in the constructor.
+
+    Parameters: ~
+      • {icon}  (`nvim_tree.api.decorator.highlighted_string?`)
+
+                         *nvim_tree.api.decorator.Decorator:highlight_group()*
+Decorator:highlight_group({node})
+    Abstract: optionally implement to provide one highlight group to apply to
+    your highlight_range.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`string?`) highlight_group
+
+                               *nvim_tree.api.decorator.Decorator:icon_node()*
+Decorator:icon_node({node})
+    Abstract: optionally implement to set the node's icon
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`nvim_tree.api.decorator.highlighted_string?`) icon_node
+
+Decorator:icons({node})            *nvim_tree.api.decorator.Decorator:icons()*
+    Abstract: optionally implement to provide icons and the highlight groups
+    for your icon_placement.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node`)
+
+    Return: ~
+        (`nvim_tree.api.decorator.highlighted_string[]?`) icons
+
+
+==============================================================================
+API: Class                                               *nvim-tree-api-class*
+
+*nvim_tree.Class*
+
+    Fields: ~
+      • {super}      (`Class`)
+      • {extend}     (`fun(self: nvim_tree.Class)`) See
+                     |nvim_tree.Class:extend()|.
+      • {implement}  (`fun(self: nvim_tree.Class, mixin: Class)`) See
+                     |nvim_tree.Class:implement()|.
+      • {is}         (`fun(self: nvim_tree.Class, class: T): boolean`) See
+                     |nvim_tree.Class:is()|.
+      • {as}         (`fun(self: nvim_tree.Class, class: T): T?`) See
+                     |nvim_tree.Class:as()|.
+      • {nop}        (`fun(self: nvim_tree.Class, ...: any)`) See
+                     |nvim_tree.Class:nop()|.
+
+
+Class:as({class})                                       *nvim_tree.Class:as()*
+    Return object if :is otherwise nil
+
+    Parameters: ~
+      • {class}  (`any`)
+
+    Return: ~
+        (`T?`)
+
+Class:extend()                                      *nvim_tree.Class:extend()*
+    Extend a class, setting .super
+
+Class:implement({mixin})                         *nvim_tree.Class:implement()*
+    Implement the functions of a mixin Add the mixin to .implements
+
+    Parameters: ~
+      • {mixin}  (`Class`)
+
+Class:is({class})                                       *nvim_tree.Class:is()*
+    Object is an instance of class or implements a mixin
+
+    Parameters: ~
+      • {class}  (`any`)
+
+    Return: ~
+        (`boolean`)
+
+Class:nop({...})                                       *nvim_tree.Class:nop()*
+
+    Parameters: ~
+      • {...}  (`any`)
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:

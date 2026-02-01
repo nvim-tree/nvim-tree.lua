@@ -52,7 +52,7 @@ function M.hydrate(api)
   -- classes
   api.decorator.Decorator = UserDecorator:extend()
 
-  -- Hydrate any legacy by mapping to function set above
+  -- Hydrate any legacy by mapping to concrete set above
   require("nvim-tree.api.impl.legacy").hydrate(api)
 end
 

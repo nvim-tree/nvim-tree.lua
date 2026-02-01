@@ -10,6 +10,14 @@
 ---@field section string arbitrary
 ---@field path string relative to root
 
+---TODO #3241 do this for all classes, moving decorator up to nvim_tree.api.Decorator
+
+---Module overrides
+---@type table<string, string>
+local module_overrides = {
+  ["nvim_tree.classic"] = "nvim_tree"
+}
+
 local pre = "runtime/lua/nvim_tree/"
 
 ---@type Src[]
@@ -39,24 +47,24 @@ local srcs_config = {
   { helptag = "nvim-tree-config-log",                 section = "Config: log",                 path = pre .. "_meta/config/log.lua", },
 
   { helptag = "nvim-tree-config-default",             section = "Config: Default",             path = pre .. "_meta/config/default.lua", },
-
-  { helptag = "nvim-tree-api",                        section = "placeholder for next Config", path = pre .. "api.lua", },
 }
 
 ---@type Src[]
 local srcs_api = {
-  { helptag = "nvim-tree-api",          section = "API",           path = pre .. "api.lua", },
+  { helptag = "nvim-tree-api",           section = "API",            path = pre .. "api.lua", },
 
-  { helptag = "nvim-tree-api-commands", section = "API: commands", path = pre .. "_meta/api/commands.lua", },
-  { helptag = "nvim-tree-api-events",   section = "API: events",   path = pre .. "_meta/api/events.lua", },
-  { helptag = "nvim-tree-api-filter",   section = "API: filter",   path = pre .. "_meta/api/filter.lua", },
-  { helptag = "nvim-tree-api-fs",       section = "API: fs",       path = pre .. "_meta/api/fs.lua", },
-  { helptag = "nvim-tree-api-git",      section = "API: git",      path = pre .. "_meta/api/git.lua", },
-  { helptag = "nvim-tree-api-health",   section = "API: health",   path = pre .. "_meta/api/health.lua", },
-  { helptag = "nvim-tree-api-map",      section = "API: map",      path = pre .. "_meta/api/map.lua", },
-  { helptag = "nvim-tree-api-marks",    section = "API: marks",    path = pre .. "_meta/api/marks.lua", },
-  { helptag = "nvim-tree-api-node",     section = "API: node",     path = pre .. "_meta/api/node.lua", },
-  { helptag = "nvim-tree-api-tree",     section = "API: tree",     path = pre .. "_meta/api/tree.lua", },
+  { helptag = "nvim-tree-api-commands",  section = "API: commands",  path = pre .. "_meta/api/commands.lua", },
+  { helptag = "nvim-tree-api-events",    section = "API: events",    path = pre .. "_meta/api/events.lua", },
+  { helptag = "nvim-tree-api-filter",    section = "API: filter",    path = pre .. "_meta/api/filter.lua", },
+  { helptag = "nvim-tree-api-fs",        section = "API: fs",        path = pre .. "_meta/api/fs.lua", },
+  { helptag = "nvim-tree-api-git",       section = "API: git",       path = pre .. "_meta/api/git.lua", },
+  { helptag = "nvim-tree-api-health",    section = "API: health",    path = pre .. "_meta/api/health.lua", },
+  { helptag = "nvim-tree-api-map",       section = "API: map",       path = pre .. "_meta/api/map.lua", },
+  { helptag = "nvim-tree-api-marks",     section = "API: marks",     path = pre .. "_meta/api/marks.lua", },
+  { helptag = "nvim-tree-api-node",      section = "API: node",      path = pre .. "_meta/api/node.lua", },
+  { helptag = "nvim-tree-api-tree",      section = "API: tree",      path = pre .. "_meta/api/tree.lua", },
+  { helptag = "nvim-tree-api-decorator", section = "API: Decorator", path = pre .. "_meta/api/decorator.lua", },
+  { helptag = "nvim-tree-api-class",     section = "API: Class",     path = pre .. "classic.lua", },
 }
 
 ---Map paths to file names
@@ -92,6 +100,17 @@ local function src_by_name(name, srcs)
   error(string.format("\n\nPath for lower, extension stripped file name='%s' not found in\nsrcs=%s\n", name, vim.inspect(srcs)))
 end
 
+---HACK
+---Problem:
+--- Generator generates fields for a class' methods.
+--- This is a problem as method fields don't have a module and aren't transformed.
+--- Method field fun only contains: classvar, desc, name and (function) type
+---Solution:
+--- Collect a map of "class:method" to modules when the real method passes through fn_xform
+--- This works as the real method function is processed before the field method.
+---@type table<string, string>
+local modules_by_method = {}
+
 -- @type nvim.gen_vimdoc.Config[]
 return {
   -- Config
@@ -110,23 +129,42 @@ return {
     section_fmt = function(name) return src_by_name(name, srcs_api).section end,
     helptag_fmt = function(name) return src_by_name(name, srcs_api).helptag end,
 
-    -- optional, no default xform to override
     fn_xform = function(fun)
-      if (fun.module) then
-        -- generator doesn't strip meta
-        -- also cascades into fn_helptag_fmt
-        local module = fun.module:gsub("._meta", "", 1)
+      -- generator doesn't strip _meta; this propagates to fn_helptag_fmt
+      fun.module = fun.module:gsub("._meta", "", 1)
+      fun.module = module_overrides[fun.module] or fun.module
 
-        -- remove the API prefix from the left aligned function name
-        -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
-        local name, replaced = fun.name:gsub("^" .. module .. "%.", "", 1)
+      if not fun.class then
+        -- functions require the module to be stripped from the name, classes do not
+        local name, replaced = fun.name:gsub("^" .. fun.module .. "%.", "", 1)
         if (replaced ~= 1) then
-          error(string.format("\n\nfun.name='%s' does not start with _meta stripped module='%s'\nfun=%s", fun.name, module, vim.inspect(fun)))
+          error(string.format("\n\nfn_xform: fun.name='%s' does not start with _meta stripped \nfun=%s",
+            fun.name, vim.inspect(fun)))
         end
-
-        fun.module = module
         fun.name = name
+      elseif fun.class and fun.classvar and fun.name then
+        -- note the module for use by method fields
+        modules_by_method[fun.classvar .. ":" .. fun.name] = fun.module
       end
+    end,
+
+    -- fn_helptag_fmt_common modified:
+    --  module prepended to classes
+    --  module is fetched from modules_by_method when fun.module unavailable
+    fn_helptag_fmt = function(fun)
+      local fn_sfx = fun.table and "" or "()"
+      if fun.classvar then
+        local module = fun.module or modules_by_method[fun.classvar .. ":" .. fun.name]
+        if not module then
+          error(string.format("\n\nfn_helptag_fmt: no module:\nfun=%s\nmodules_by_method=%s",
+            vim.inspect(fun), vim.inspect(modules_by_method)))
+        end
+        return string.format("%s.%s:%s%s", module, fun.classvar, fun.name, fn_sfx)
+      end
+      if fun.module then
+        return string.format("%s.%s%s", fun.module, fun.name, fn_sfx)
+      end
+      return fun.name .. fn_sfx
     end,
   }
 }
