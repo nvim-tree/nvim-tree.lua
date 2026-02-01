@@ -76,7 +76,6 @@
 ---@nodoc
 local api = {
   commands = require("nvim-tree._meta.api.commands"),
-  decorator = require("nvim-tree._meta.api.decorator"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
@@ -87,7 +86,10 @@ local api = {
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
+  Decorator = require("nvim-tree._meta.api.decorator"),
+
   config = require("nvim-tree._meta.api.deprecated").config, ---@deprecated
+  decorator = require("nvim-tree._meta.api.deprecated").decorator, ---@deprecated
   diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
   live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }

@@ -72,7 +72,7 @@ function Class:is(class)
   return false
 end
 
----Return object if :is otherwise nil
+---Return object if [nvim_tree.Class:is()] otherwise nil
 ---@generic T
 ---@param class T
 ---@return T|nil
@@ -80,7 +80,7 @@ function Class:as(class)
   return self:is(class) and self or nil
 end
 
----Constructor to create instance, call :new and return
+---Constructor to create instance, call [nvim_tree.Class:new()] and return
 function Class:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)

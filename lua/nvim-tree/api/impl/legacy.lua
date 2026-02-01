@@ -25,7 +25,7 @@ function M.hydrate(api)
   api.diagnostics = api.diagnostics or {}
   api.diagnostics.hi_test = api.health.hi_test
 
-  api.decorator.UserDecorator = api.decorator.Decorator
+  api.decorator.UserDecorator = api.Decorator
 end
 
 return M

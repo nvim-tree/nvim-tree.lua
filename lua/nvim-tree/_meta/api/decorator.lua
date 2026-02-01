@@ -1,5 +1,5 @@
 ---@meta
-local nvim_tree = { api = { decorator = {} } }
+local nvim_tree = { api = {} }
 
 local Class = require("nvim-tree.classic")
 
@@ -15,7 +15,7 @@ local Class = require("nvim-tree.classic")
 ---
 ---Names of builtin decorators or your decorator classes. Builtins are ordered lowest to highest priority.
 ---
----@alias nvim_tree.api.decorator.types nvim_tree.api.decorator.Decorator|"Git"|"Opened"|"Hidden"|"Modified"|"Bookmarks"|"Diagnostics"|"Copied"|"Cut"
+---@alias nvim_tree.api.decorator.types nvim_tree.api.Decorator|"Git"|"Opened"|"Hidden"|"Modified"|"Bookmarks"|"Diagnostics"|"Copied"|"Cut"
 
 ---
 ---A string for rendering, with optional highlight groups to apply to it
@@ -27,12 +27,12 @@ local Class = require("nvim-tree.classic")
 ---
 ---Abstract Decorator interface
 ---
----@class nvim_tree.api.decorator.Decorator: nvim_tree.Class
+---@class nvim_tree.api.Decorator: nvim_tree.Class
 ---@field enabled boolean
 ---@field highlight_range nvim_tree.api.decorator.highlight_range
 ---@field icon_placement nvim_tree.api.decorator.icon_placement
 local Decorator = Class:extend()
-nvim_tree.api.decorator.Decorator = Decorator
+nvim_tree.api.Decorator = Decorator
 
 ---
 ---Abstract: optionally implement to set the node's icon
@@ -61,11 +61,4 @@ function Decorator:highlight_group(node) end
 ---@param icon nvim_tree.api.decorator.highlighted_string?
 function Decorator:define_sign(icon) end
 
----
----@class nvim_tree.api.decorator.UserDecorator: nvim_tree.api.decorator.Decorator
----@nodoc
----@deprecated use `nvim_tree.api.decorator.Decorator`
----
-nvim_tree.api.decorator.UserDecorator = nvim_tree.api.decorator.Decorator
-
-return nvim_tree.api.decorator
+return nvim_tree.api.Decorator

@@ -50,7 +50,7 @@ function M.hydrate(api)
   api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
 
   -- classes
-  api.decorator.Decorator = UserDecorator:extend()
+  api.Decorator = UserDecorator:extend()
 
   -- Hydrate any legacy by mapping to concrete set above
   require("nvim-tree.api.impl.legacy").hydrate(api)

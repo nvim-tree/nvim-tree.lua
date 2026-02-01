@@ -890,12 +890,12 @@ Require and register it during |nvim-tree-setup|:
 <
 Contents of `my-decorator.lua`:
 >lua
-  ---@class (exact) MyDecorator: nvim_tree.api.decorator.Decorator
+  ---@class (exact) MyDecorator: nvim_tree.api.Decorator
   ---@field private my_icon1 nvim_tree.api.decorator.highlighted_string
   ---@field private my_icon2 nvim_tree.api.decorator.highlighted_string
   ---@field private my_icon_node nvim_tree.api.decorator.highlighted_string
   ---@field private my_highlight_group string
-  local MyDecorator = require("nvim-tree.api").decorator.Decorator:extend()
+  local MyDecorator = require("nvim-tree.api").Decorator:extend()
   
   ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
   function MyDecorator:new()
@@ -1366,7 +1366,7 @@ Config: renderer                                   *nvim-tree-config-renderer*
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
                                    arrow followed by the target of the
                                    symlink.
-      • {decorators}?              (`(string|nvim_tree.api.decorator.Decorator)[]`)
+      • {decorators}?              (`(string|nvim_tree.api.Decorator)[]`)
                                    (default:
                                    `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
       • {highlight_git}?           (`nvim_tree.config.renderer.highlight`)
@@ -2362,6 +2362,9 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
       },
     }
 <
+
+
+
 ==============================================================================
 API                                                            *nvim-tree-api*
 
@@ -3200,7 +3203,7 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 ==============================================================================
 API: Decorator                                       *nvim-tree-api-decorator*
 
-*nvim_tree.api.decorator.Decorator*
+*nvim_tree.api.Decorator*
     Extends: |nvim_tree.Class|
 
     Abstract Decorator interface
@@ -3209,27 +3212,23 @@ API: Decorator                                       *nvim-tree-api-decorator*
       • {enabled}          (`boolean`)
       • {highlight_range}  (`nvim_tree.api.decorator.highlight_range`)
       • {icon_placement}   (`nvim_tree.api.decorator.icon_placement`)
-      • {icon_node}        (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string?`)
-                           See
-                           |nvim_tree.api.decorator.Decorator:icon_node()|.
-      • {icons}            (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string[]?`)
-                           See |nvim_tree.api.decorator.Decorator:icons()|.
-      • {highlight_group}  (`fun(self: nvim_tree.api.decorator.Decorator, node: nvim_tree.api.Node): string?`)
-                           See
-                           |nvim_tree.api.decorator.Decorator:highlight_group()|.
-      • {define_sign}      (`fun(self: nvim_tree.api.decorator.Decorator, icon: nvim_tree.api.decorator.highlighted_string?)`)
-                           See
-                           |nvim_tree.api.decorator.Decorator:define_sign()|.
+      • {icon_node}        (`fun(self: nvim_tree.api.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string?`)
+                           See |nvim_tree.api.Decorator:icon_node()|.
+      • {icons}            (`fun(self: nvim_tree.api.Decorator, node: nvim_tree.api.Node): nvim_tree.api.decorator.highlighted_string[]?`)
+                           See |nvim_tree.api.Decorator:icons()|.
+      • {highlight_group}  (`fun(self: nvim_tree.api.Decorator, node: nvim_tree.api.Node): string?`)
+                           See |nvim_tree.api.Decorator:highlight_group()|.
+      • {define_sign}      (`fun(self: nvim_tree.api.Decorator, icon: nvim_tree.api.decorator.highlighted_string?)`)
+                           See |nvim_tree.api.Decorator:define_sign()|.
 
 
-                             *nvim_tree.api.decorator.Decorator:define_sign()*
-Decorator:define_sign({icon})
+Decorator:define_sign({icon})          *nvim_tree.api.Decorator:define_sign()*
     Defines a sign. This should be called in the constructor.
 
     Parameters: ~
       • {icon}  (`nvim_tree.api.decorator.highlighted_string?`)
 
-                         *nvim_tree.api.decorator.Decorator:highlight_group()*
+                                   *nvim_tree.api.Decorator:highlight_group()*
 Decorator:highlight_group({node})
     Abstract: optionally implement to provide one highlight group to apply to
     your highlight_range.
@@ -3240,8 +3239,7 @@ Decorator:highlight_group({node})
     Return: ~
         (`string?`) highlight_group
 
-                               *nvim_tree.api.decorator.Decorator:icon_node()*
-Decorator:icon_node({node})
+Decorator:icon_node({node})              *nvim_tree.api.Decorator:icon_node()*
     Abstract: optionally implement to set the node's icon
 
     Parameters: ~
@@ -3250,7 +3248,7 @@ Decorator:icon_node({node})
     Return: ~
         (`nvim_tree.api.decorator.highlighted_string?`) icon_node
 
-Decorator:icons({node})            *nvim_tree.api.decorator.Decorator:icons()*
+Decorator:icons({node})                      *nvim_tree.api.Decorator:icons()*
     Abstract: optionally implement to provide icons and the highlight groups
     for your icon_placement.
 
@@ -3281,7 +3279,7 @@ API: Class                                               *nvim-tree-api-class*
 
 
 Class:as({class})                                       *nvim_tree.Class:as()*
-    Return object if :is otherwise nil
+    Return object if |nvim_tree.Class:is()| otherwise nil
 
     Parameters: ~
       • {class}  (`any`)

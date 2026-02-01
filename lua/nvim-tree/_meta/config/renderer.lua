@@ -62,7 +62,7 @@ error("Cannot require a meta file")
 ---@field symlink_destination? boolean
 ---
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
----@field decorators? (string|nvim_tree.api.decorator.Decorator)[]
+---@field decorators? (string|nvim_tree.api.Decorator)[]
 ---
 ---(default: `"none"`)
 ---@field highlight_git? nvim_tree.config.renderer.highlight

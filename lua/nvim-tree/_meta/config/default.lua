@@ -8,5 +8,3 @@
 ---default-config-injection-placeholder
 ---}
 ---```
----
----placeholder for next section [nvim-tree-api]()
