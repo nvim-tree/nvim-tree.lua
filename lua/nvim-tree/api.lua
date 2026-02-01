@@ -69,16 +69,14 @@
 
 
 
---
--- Load the (empty) meta definitions
---
-local deprecated = require("nvim-tree._meta.api.deprecated")
-
+---
 ---nvim-tree Public API
+---
 ---@class nvim_tree.api
 ---@nodoc
 local api = {
   commands = require("nvim-tree._meta.api.commands"),
+  decorator = require("nvim-tree._meta.api_decorator"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
@@ -89,21 +87,11 @@ local api = {
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
-  config = deprecated.config, ---@deprecated
-  diagnostics = deprecated.diagnostics, ---@deprecated
-  live_filter = deprecated.live_filter, ---@deprecated
+  config = require("nvim-tree._meta.api.deprecated").config, ---@deprecated
+  diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
+  live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }
 
-
---
--- Map before-setup function implementations, most throw an error notification "nvim-tree setup not called".
---
-require("nvim-tree.api.impl.pre")(api)
-
-
---#TODO 3241
---Public API classes
---api.decorator = require("nvim-tree.api.decorator")
-
+require("nvim-tree.api.impl.pre").hydrate(api)
 
 return api

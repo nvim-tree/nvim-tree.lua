@@ -1,6 +1,8 @@
+local M = {}
+
 ---Silently create new api entries pointing legacy functions to current
 ---@param api table not properly typed to prevent LSP from referencing implementations
-return function(api)
+function M.hydrate(api)
   api.config = api.config or {}
   api.config.mappings = api.config.mappings or {}
   api.config.mappings.get_keymap = api.map.keymap.current
@@ -22,4 +24,8 @@ return function(api)
 
   api.diagnostics = api.diagnostics or {}
   api.diagnostics.hi_test = api.health.hi_test
+
+  api.decorator.UserDecorator = api.decorator.Decorator
 end
+
+return M

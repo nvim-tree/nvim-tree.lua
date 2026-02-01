@@ -1,39 +1,13 @@
-local Class = require("nvim-tree.classic")
-
---- #TODO 3241 split this into abstract interface for API and concrete to return to user
-
----Abstract Decorator
+---Abstract Decorator implementation
 ---@class (exact) Decorator: Class
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.api.decorator.highlight_range
 ---@field protected icon_placement nvim_tree.api.decorator.icon_placement
-local Decorator = Class:extend()
+local Decorator = require("nvim-tree._meta.api_decorator").Decorator:extend()
 
+---TODO #3241 maybe create an internal decorator class and lose the UserDecorator
 ---@class (exact) DecoratorArgs
 ---@field explorer Explorer
-
----Abstract icon override, optionally implemented
----@param node Node
----@return nvim_tree.api.decorator.highlighted_string? icon_node
-function Decorator:icon_node(node)
-  return self:nop(node)
-end
-
----Abstract icons, optionally implemented
----@protected
----@param node Node
----@return nvim_tree.api.decorator.highlighted_string[]? icons
-function Decorator:icons(node)
-  self:nop(node)
-end
-
----Abstract highlight group, optionally implemented
----@protected
----@param node Node
----@return string? highlight_group
-function Decorator:highlight_group(node)
-  self:nop(node)
-end
 
 ---Maybe highlight groups for icon and name
 ---@param node Node

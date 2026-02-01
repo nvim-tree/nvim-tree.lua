@@ -16,6 +16,8 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 
+local M = {}
+
 ---Invoke a method on the singleton explorer.
 ---Print error when setup not called.
 ---@param explorer_method string explorer method name
@@ -133,9 +135,9 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
   end
 end
 
----Hydrate all implementations barring those that were called during hydrate_pre
+---Re-Hydrate api functions and classes post-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
-local function hydrate_post(api)
+function M.hydrate(api)
   api.tree.open = actions.tree.open.fn
   api.tree.focus = api.tree.open
 
@@ -252,16 +254,9 @@ local function hydrate_post(api)
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
   api.map.keymap.current = keymap.get_keymap
-end
-
----#TODO 3241 hydrate function, for clarity
-
----Re-hydrate api
----@param api table not properly typed to prevent LSP from referencing implementations
-return function(api)
-  -- All concrete implementations
-  hydrate_post(api)
 
   -- (Re)hydrate any legacy by mapping to function set above
-  require("nvim-tree.api.impl.legacy")(api)
+  require("nvim-tree.api.impl.legacy").hydrate(api)
 end
+
+return M

@@ -14,7 +14,7 @@ local GitDecorator = require("nvim-tree.renderer.decorator.git")
 local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
 local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
 local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
-local UserDecorator = require("nvim-tree.api").decorator.UserDecorator
+local UserDecorator = require("nvim-tree.renderer.decorator.user")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
