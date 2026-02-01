@@ -76,7 +76,7 @@
 ---@nodoc
 local api = {
   commands = require("nvim-tree._meta.api.commands"),
-  decorator = require("nvim-tree._meta.api_decorator"),
+  decorator = require("nvim-tree._meta.api.decorator"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
