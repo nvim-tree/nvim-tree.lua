@@ -487,7 +487,7 @@ for files and and directories.
 Highlighting is additive, with higher precedence overriding lower.
 
 |nvim_tree.config.renderer| {decorators} controls which highlighting is
-applied and its precedence. See |nvim-tree-decorators| for information on
+applied and its precedence. See |nvim-tree-api-decorator| for information on
 creating custom decorators.
 <
 `ICON`
@@ -1366,9 +1366,10 @@ Config: renderer                                   *nvim-tree-config-renderer*
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
                                    arrow followed by the target of the
                                    symlink.
-      • {decorators}?              (`(string|nvim_tree.api.Decorator)[]`)
-                                   (default:
-                                   `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
+      • {decorators}?              (`(string|nvim_tree.api.Decorator)[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
+                                   Ordered list of builtin and user decorators
+                                   to enable, see |nvim-tree-api-decorator|
+                                   and |nvim-tree-icons-highlighting|
       • {highlight_git}?           (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
       • {highlight_opened_files}?  (`nvim_tree.config.renderer.highlight`)
@@ -3203,6 +3204,38 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 ==============================================================================
 API: Decorator                                       *nvim-tree-api-decorator*
 
+Highlighting and icons for nodes are provided by Decorators, see
+|nvim-tree-icons-highlighting|. You may provide your own in addition to the
+builtin decorators.
+
+Decorators may:
+• Add icons
+• Set highlight group for the name or icons
+• Override node icon
+
+To register your decorator:
+• Create a class that extends |nvim_tree.api.Decorator|
+• Register it by adding the class to |nvim_tree.config.renderer| {decorators}
+
+Your class must:
+• |nvim_tree.Class:extend()| the interface |nvim_tree.api.Decorator|
+• Provide a no-arguments constructor |nvim_tree.Class:new()| that sets the
+  mandatory fields:
+  • {enabled}
+  • {highlight_range}
+  • {icon_placement}
+
+Your class may:
+• Implement methods to provide decorations:
+  • |nvim_tree.api.Decorator:highlight_group()|
+  • |nvim_tree.api.Decorator:icon_node()|
+  • |nvim_tree.api.Decorator:icons()|
+
+Your class must:
+• Call |nvim_tree.api.Decorator:define_sign()| in your constructor if using
+  `"signcolumn"` {icon_placement}
+
+
 *nvim_tree.api.Decorator*
     Extends: |nvim_tree.Class|
 
@@ -3266,6 +3299,8 @@ API: Class                                               *nvim-tree-api-class*
 
     Fields: ~
       • {super}      (`Class`)
+      • {new}        (`fun(self: nvim_tree.Class)`) See
+                     |nvim_tree.Class:new()|.
       • {extend}     (`fun(self: nvim_tree.Class)`) See
                      |nvim_tree.Class:extend()|.
       • {implement}  (`fun(self: nvim_tree.Class, mixin: Class)`) See
@@ -3304,6 +3339,9 @@ Class:is({class})                                       *nvim_tree.Class:is()*
 
     Return: ~
         (`boolean`)
+
+Class:new()                                            *nvim_tree.Class:new()*
+    Default constructor
 
 Class:nop({...})                                       *nvim_tree.Class:nop()*
 

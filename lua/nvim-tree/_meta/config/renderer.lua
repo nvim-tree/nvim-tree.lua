@@ -61,6 +61,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
+---Ordered list of builtin and user decorators to enable, see [nvim-tree-api-decorator] and [nvim-tree-icons-highlighting]
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? (string|nvim_tree.api.Decorator)[]
 ---

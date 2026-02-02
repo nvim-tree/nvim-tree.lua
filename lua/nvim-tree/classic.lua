@@ -20,7 +20,6 @@ local Class = {}
 Class.__index = Class ---@diagnostic disable-line: inject-field
 
 ---Default constructor
----@protected
 function Class:new(...) --luacheck: ignore 212
 end
 

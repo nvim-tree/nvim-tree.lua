@@ -157,7 +157,6 @@ return {
 
       -- strip module from name and record the module for the method
       modules_by_method[fun.classvar .. ":" .. fun.name] = fun.module
-      print(vim.inspect(modules_by_method))
     end,
 
     -- fn_helptag_fmt_common derived

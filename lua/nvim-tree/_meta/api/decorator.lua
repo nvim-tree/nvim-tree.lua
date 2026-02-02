@@ -1,4 +1,33 @@
 ---@meta
+
+---@brief
+---Highlighting and icons for nodes are provided by Decorators, see [nvim-tree-icons-highlighting]. You may provide your own in addition to the builtin decorators.
+---
+---Decorators may:
+---- Add icons
+---- Set highlight group for the name or icons
+---- Override node icon
+---
+---To register your decorator:
+---- Create a class that extends [nvim_tree.api.Decorator]
+---- Register it by adding the class to [nvim_tree.config.renderer] {decorators}
+---
+---Your class must:
+---- [nvim_tree.Class:extend()] the interface [nvim_tree.api.Decorator] 
+---- Provide a no-arguments constructor [nvim_tree.Class:new()] that sets the mandatory fields:
+---   - {enabled}
+---   - {highlight_range}
+---   - {icon_placement}
+---
+---Your class may:
+---- Implement methods to provide decorations:
+---   - [nvim_tree.api.Decorator:highlight_group()]
+---   - [nvim_tree.api.Decorator:icon_node()]
+---   - [nvim_tree.api.Decorator:icons()]
+---
+---Your class must:
+---- Call [nvim_tree.api.Decorator:define_sign()] in your constructor if using `"signcolumn"` {icon_placement}
+
 local nvim_tree = { api = {} }
 
 local Class = require("nvim-tree.classic")
