@@ -155,23 +155,39 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
 
   -- use the api node for user decorators
   local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local u
 
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_before(not d:is(UserDecorator) and node or api_node))
+    u = d:as(UserDecorator)
+    if not u then
+      add_to_end(line, d:icons_before(node))
+    elseif api_node then
+      add_to_end(line, u:icons_before(api_node))
+    end
   end
 
   add_to_end(line, { name })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_after(not d:is(UserDecorator) and node or api_node))
+    u = d:as(UserDecorator)
+    if not u then
+      add_to_end(line, d:icons_after(node))
+    elseif api_node then
+      add_to_end(line, u:icons_after(api_node))
+    end
   end
 
   local rights = {}
   for _, d in ipairs(self.decorators) do
-    add_to_end(rights, d:icons_right_align(not d:is(UserDecorator) and node or api_node))
+    u = d:as(UserDecorator)
+    if not u then
+      add_to_end(line, d:icons_right_align(node))
+    elseif api_node then
+      add_to_end(line, u:icons_right_align(api_node))
+    end
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -187,10 +203,17 @@ function Builder:build_signs(node)
   local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
 
   -- first in priority order
-  local d, sign_name
+  local d, u, sign_name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
-    sign_name = d:sign_name(not d:is(UserDecorator) and node or api_node)
+
+    u = d:as(UserDecorator)
+    if not u then
+      sign_name = d:sign_name(node)
+    elseif api_node then
+      sign_name = u:sign_name(api_node)
+    end
+
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -245,11 +268,17 @@ function Builder:icon_name_decorated(node)
   local icon_groups = {}
   local name_groups = {}
   local hl_icon, hl_name
+  local u
   for _, d in ipairs(self.decorators) do
-    -- maybe overridde icon
-    icon = d:icon_node((not d:is(UserDecorator) and node or api_node)) or icon
-
-    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(UserDecorator) and node or api_node))
+    -- maybe override icon
+    u = d:as(UserDecorator)
+    if not u then
+      icon = d:icon_node(node) or icon
+      hl_icon, hl_name = d:highlight_group_icon_name(node)
+    elseif api_node then
+      icon = u:icon_node(api_node) or icon
+      hl_icon, hl_name = u:highlight_group_icon_name(api_node)
+    end
 
     table.insert(icon_groups, hl_icon)
     table.insert(name_groups, hl_name)
