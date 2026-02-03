@@ -52,7 +52,7 @@ EOM
 exit 1
 fi
 
-function cleanup() {
+cleanup() {
 	# remove source link
 	rm -fv "${DIR_NVIM_SRC}/runtime/lua/nvim_tree"
 
