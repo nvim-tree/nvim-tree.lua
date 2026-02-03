@@ -1,6 +1,6 @@
 --nvim-tree configuration for Nvim's gen_vimdoc.lua
 --Returned config is injected into the above.
---See gen_vimdoc.sh
+--Execute with `make doc`, see scripts/vimdoc.sh for details.
 
 --gen_vimdoc keys by filename:   -- FIXME: Using f_base will confuse `_meta/protocol.lua` with `protocol.lua`
 --Hence we must ensure that filenames are unique within each nvim.gen_vimdoc.Config[]

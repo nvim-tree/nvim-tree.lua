@@ -57,7 +57,7 @@ cleanup() {
 	rm -fv "${DIR_NVIM_SRC}/runtime/lua/nvim_tree"
 
 	# remove our config
-	rm -fv "${DIR_NVIM_SRC}/src/gen/gen_vimdoc_nvim_tree.lua"
+	rm -fv "${DIR_NVIM_SRC}/src/gen/vimdoc_config.lua"
 
 	# remove generated help
 	rm -fv "${DIR_NVIM_SRC}/runtime/doc/nvim-tree-lua.txt"
