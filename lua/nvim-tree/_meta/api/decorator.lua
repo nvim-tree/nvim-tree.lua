@@ -5,7 +5,7 @@
 ---@brief
 ---Highlighting and icons for nodes are provided by Decorators, see [nvim-tree-icons-highlighting] for an overview.
 ---
----Decorators are rendered in [nvim_tree.config.renderer] {decorators} order of precedence, with later decorators applying additively over earlier.
+---Decorators are rendered in [nvim_tree.config.renderer] {decorators} order of additive precedence, with later decorators applying additively over earlier.
 ---
 ---You may provide your own in addition to the builtin decorators, see |nvim-tree-class-decorator-example|.
 ---

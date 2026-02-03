@@ -5,7 +5,39 @@ error("Cannot require a meta file")
 
 ---Controls the appearance of the tree.
 ---
----See [nvim-tree-icons-highlighting] for {highlight_} and {decorators} fields.
+---{highlight_} [nvim_tree.config.renderer.highlight]()
+---
+---See [nvim-tree-icons-highlighting]
+---
+---- `"none"`: no highlighting
+---- `"icon"`: icon only
+---- `"name"`: name only
+---- `"all"`: icon and name
+---@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
+---
+---
+---
+---{decorators} [nvim_tree.config.renderer.decorator]()
+---
+---See [nvim-tree-icons-highlighting]
+---
+---A builtin decorator name `string` or |nvim_tree.api.Decorator| class.
+---
+---Builtin decorators in their default order:
+---- `"Git"`
+---- `"Open"`
+---- `"Hidden"`
+---- `"Modified"`
+---- `"Bookmark"`
+---- `"Diagnostics"`
+---- `"Copied"`
+---- `"Cut"`
+---
+---Specify {decorators} is a list e.g. `{ "Git", MyDecorator, "Cut" }`
+---
+---@alias nvim_tree.config.renderer.decorator nvim_tree.api.Decorator|"Git"|"Open"|"Hidden"|"Modified"|"Bookmark"|"Diagnostics"|"Copied"|"Cut"
+---
+---
 ---
 ---{root_folder_label} has 3 forms:
 ---- `string`: [filename-modifiers] format string, default `":~:s?$?/..?"`
@@ -16,6 +48,8 @@ error("Cannot require a meta file")
 ---  return ".../" .. vim.fn.fnamemodify(path, ":t")
 ---end
 ---```
+---
+---
 ---
 ---{hidden_display} [nvim_tree.config.renderer.hidden_display]()
 ---
@@ -30,9 +64,7 @@ error("Cannot require a meta file")
 ---See [nvim_tree.config.renderer.hidden_stats] for details and example.
 ---@alias nvim_tree.config.renderer.hidden_display "none"|"simple"|"all"|(fun(hidden_stats: nvim_tree.config.renderer.hidden_stats): string?)
 ---
----@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
 ---
----@alias nvim_tree.config.renderer.decorator nvim_tree.api.Decorator|"Git"|"Open"|"Hidden"|"Modified"|"Bookmark"|"Diagnostics"|"Copied"|"Cut"
 ---
 ---@class nvim_tree.config.renderer
 ---
@@ -63,7 +95,7 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
----Ordered list of builtin [nvim_tree.config.renderer.decorator] names and |nvim_tree.api.Decorator| classes.
+---List in order of additive precedence.
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
 ---@field decorators? nvim_tree.config.renderer.decorator[]
 ---
@@ -134,9 +166,13 @@ error("Cannot require a meta file")
 
 ---Icons and separators
 ---
----See [nvim-tree-icons-highlighting] for: {_placement} fields.
----
+---{_placement} [nvim_tree.config.renderer.icons.placement]()
+---- `"before"`: before file/folder, after the file/folders icons
+---- `"after"`: after file/folder
+---- `"signcolumn"`: far left, requires |nvim_tree.config.view| {signcolumn}.
+---- `"right_align"`: far right
 ---@alias nvim_tree.config.renderer.icons.placement "before"|"after"|"signcolumn"|"right_align"
+---
 ---
 ---@class nvim_tree.config.renderer.icons
 ---

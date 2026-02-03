@@ -484,45 +484,29 @@ Icons may be displayed before files and directories.
 Additional icons and highlighting may be displayed to indicate various states
 for files and and directories. Highlighting is additive.
 
-Decorators are responsible for providing the icons and highlighting.
-|nvim_tree.config.renderer| {decorators} configures the decorators used,
-in ascending order of precedence.
+Decorators are responsible for providing the icons and highlighting. They
+apply additively in order of precedence.
 
-`DECORATOR`                                *nvim_tree.config.renderer.decorator*
-  A builtin decorator name or |nvim_tree.api.Decorator| class.
-  Builtin decorators in default order:
-  • `"Git"`
-  • `"Open"`
-  • `"Hidden"`
-  • `"Modified"`
-  • `"Bookmark"`
-  • `"Diagnostics"`
-  • `"Copied"`
-  • `"Cut"`
+`DECORATOR`
+  See |nvim_tree.config.renderer.decorator| for available decorators and their
+  default precedence.
 
 `ICON?`
   Enable via |nvim_tree.config.renderer.icons.show
 
 `REQUIRES`
-  Feature must be enabled to show icons and highlighting.
+  Features that must be enabled to show icons and highlighting.
 
-`PLACEMENT`                          *nvim_tree.config.renderer.icons.placement*
-  Where to place the icon: |nvim_tree.config.renderer.icons| {_placement}
-  • `before`: before file/folder, after the file/folders icons
-  • `after`: after file/folder
-  • `signcolumn`: far left, requires |nvim_tree.config.view| {signcolumn}.
-  • `right_align`: far right
+`PLACEMENT`
+  Where to place icons: |nvim_tree.config.renderer.icons.placement|
 
-`HIGHLIGHT`                                *nvim_tree.config.renderer.highlight*
-  What should be highlighted: |nvim_tree.config.renderer| {highlight_}
-  • `none`: no highlighting
-  • `icon`: icon only
-  • `name`: name only
-  • `all`: icon and name
+`HIGHLIGHT`
+  What should be highlighted: |nvim_tree.config.renderer.highlight|
 
 `DEVICONS?`
   Glyphs and their colors will be overridden by optional plugin:
-  `nvim-tree/nvim-web-devicons` |nvim_tree.config.renderer.icons.web_devicons|
+  `nvim-tree/nvim-web-devicons`
+  See |nvim_tree.config.renderer.icons.web_devicons|
 
 `GLYPHS`
   Icon glyphs definitions.
@@ -530,7 +514,8 @@ in ascending order of precedence.
 `GROUPS`
   Applicable highlight groups: |nvim-tree-highlight-groups|
 
-Some defaults noted. In ascending order of default decorator precedence:
+Some defaults noted. In ascending order of default decorator additive
+precedence:
 
 `WHAT          DECORATOR     ICON?            REQUIRES                      PLACEMENT                             HIGHLIGHT                        GLYPHS                                              DEVICONS?  GROUPS`
 File Icon      -            {file}       Y    -                             -                                     -                               |nvim_tree.config.renderer.icons.glyphs| {default}    Y          `NvimTreeNormal`, `NvimTreeFileIcon`
@@ -563,7 +548,8 @@ To view the nvim-tree highlight groups run |:NvimTreeHiTest|
 To view all active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
-The `*HL` groups are additive as per |nvim_tree.config.renderer| precedence.
+The `*HL` groups are additive according to per |nvim_tree.config.renderer|
+precedence.
 Only present attributes will clobber each other.
 In this example a modified, opened file will have magenta text, with cyan
 undercurl: >vim
@@ -1219,8 +1205,31 @@ Config: renderer                                   *nvim-tree-config-renderer*
 *nvim_tree.config.renderer*
     Controls the appearance of the tree.
 
-    See |nvim-tree-icons-highlighting| for {highlight_} and {decorators}
-    fields.
+    {highlight_}                         *nvim_tree.config.renderer.highlight*
+
+    See |nvim-tree-icons-highlighting|
+    • `"none"`: no highlighting
+    • `"icon"`: icon only
+    • `"name"`: name only
+    • `"all"`: icon and name
+
+    {decorators}                         *nvim_tree.config.renderer.decorator*
+
+    See |nvim-tree-icons-highlighting|
+
+    A builtin decorator name `string` or |nvim_tree.api.Decorator| class.
+
+    Builtin decorators in their default order:
+    • `"Git"`
+    • `"Open"`
+    • `"Hidden"`
+    • `"Modified"`
+    • `"Bookmark"`
+    • `"Diagnostics"`
+    • `"Copied"`
+    • `"Cut"`
+
+    Specify {decorators} is a list e.g. `{ "Git", MyDecorator, "Cut" }`
 
     {root_folder_label} has 3 forms:
     • `string`: |filename-modifiers| format string, default `":~:s?$?/..?"`
@@ -1267,9 +1276,7 @@ Config: renderer                                   *nvim-tree-config-renderer*
                                    arrow followed by the target of the
                                    symlink.
       • {decorators}?              (`nvim_tree.config.renderer.decorator[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
-                                   Ordered list of builtin
-                                   |nvim_tree.config.renderer.decorator| names
-                                   and |nvim_tree.api.Decorator| classes.
+                                   List in order of additive precedence.
       • {highlight_git}?           (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
       • {highlight_opened_files}?  (`nvim_tree.config.renderer.highlight`)
@@ -1324,7 +1331,11 @@ Config: renderer                                   *nvim-tree-config-renderer*
 *nvim_tree.config.renderer.icons*
     Icons and separators
 
-    See |nvim-tree-icons-highlighting| for: {_placement} fields.
+    {_placement}                   *nvim_tree.config.renderer.icons.placement*
+    • `"before"`: before file/folder, after the file/folders icons
+    • `"after"`: after file/folder
+    • `"signcolumn"`: far left, requires |nvim_tree.config.view| {signcolumn}.
+    • `"right_align"`: far right
 
     Fields: ~
       • {git_placement}?          (`nvim_tree.config.renderer.icons.placement`)
@@ -3165,7 +3176,7 @@ Highlighting and icons for nodes are provided by Decorators, see
 |nvim-tree-icons-highlighting| for an overview.
 
 Decorators are rendered in |nvim_tree.config.renderer| {decorators} order of
-precedence, with later decorators applying additively over earlier.
+additive precedence, with later decorators applying additively over earlier.
 
 You may provide your own in addition to the builtin decorators, see
 |nvim-tree-class-decorator-example|.
