@@ -136,7 +136,7 @@ Help is generated for:
 
 Please add or update documentation when you make changes, see `:help dev-lua-doc` for docstring format.
 
-`scripts/gen_vimdoc_config.lua` contains the manifest of help sources.
+`scripts/vimdoc_config.lua` contains the manifest of help sources.
 
 ### Config And Mappings
 
@@ -160,7 +160,7 @@ make help-update
     - `*nvim-tree-mappings-default*`
     - `*nvim-tree-quickstart-help*`
 
-- `scripts/gen_vimdoc.sh`
+- `scripts/vimdoc.sh doc`
   - Remove content starting at `*nvim-tree-config*`
   - Generate config classes `*nvim-tree-config*`
   - Generate API `*nvim-tree-api*`
@@ -175,7 +175,7 @@ make help-check
 
 - Re-runs `make help-update`
 - Checks that `git diff` is empty, to ensure that all content has been generated. This is why a stage or commit is necessary.
-- Lints `doc/nvim-tree-lua.txt` using `scripts/lintdoc.sh` to check for no broken links etc.
+- Lints `doc/nvim-tree-lua.txt` using `scripts/vimdoc.sh lintdoc` to check for no broken links etc.
 
 # Windows
 
