@@ -85,14 +85,14 @@ error("Cannot require a meta file")
 ---
 ---{open_win_config} is passed to [nvim_open_win()], default:
 ---```lua
----{
----  relative = "editor",
----  border = "rounded",
----  width = 30,
----  height = 30,
----  row = 1,
----  col = 1,
----}
+--- {
+---   relative = "editor",
+---   border = "rounded",
+---   width = 30,
+---   height = 30,
+---   row = 1,
+---   col = 1,
+--- }
 ---```
 ---@class nvim_tree.config.view.float
 ---

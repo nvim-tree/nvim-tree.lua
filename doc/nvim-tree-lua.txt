@@ -1094,9 +1094,9 @@ Config: sort                                           *nvim-tree-config-sort*
         ---@param nodes nvim_tree.api.Node[]
         ---@return nvim_tree.config.sort.Sorter?
         local sorter = function(nodes)
-         table.sort(nodes, function(a, b)
-           return #a.name < #b.name
-         end)
+          table.sort(nodes, function(a, b)
+            return #a.name < #b.name
+          end)
         end
 <
 
@@ -1167,12 +1167,12 @@ Config: view                                           *nvim-tree-config-view*
 
     {open_win_config} is passed to |nvim_open_win()|, default: >lua
         {
-         relative = "editor",
-         border = "rounded",
-         width = 30,
-         height = 30,
-         row = 1,
-         col = 1,
+          relative = "editor",
+          border = "rounded",
+          width = 30,
+          height = 30,
+          row = 1,
+          col = 1,
         }
 <
 
@@ -1237,7 +1237,7 @@ Config: renderer                                   *nvim-tree-config-renderer*
     • `fun(root_cwd: string): string`: return a literal string from root's
       absolute path e.g. >lua
         my_root_folder_label = function(path)
-         return ".../" .. vim.fn.fnamemodify(path, ":t")
+          return ".../" .. vim.fn.fnamemodify(path, ":t")
         end
 <
 
@@ -1308,15 +1308,15 @@ Config: renderer                                   *nvim-tree-config-renderer*
         ---@param hidden_stats nvim_tree.config.renderer.hidden_stats
         ---@return string? summary
         local my_hidden_display = function(hidden_stats)
-         local total_count = 0
-         for reason, count in pairs(hidden_stats) do
-           total_count = total_count + count
-         end
+          local total_count = 0
+          for reason, count in pairs(hidden_stats) do
+            total_count = total_count + count
+          end
 
-         if total_count > 0 then
-           return "(" .. tostring(total_count) .. " hidden)"
-         end
-         return nil
+          if total_count > 0 then
+            return "(" .. tostring(total_count) .. " hidden)"
+          end
+          return nil
         end
 <
 
@@ -1766,11 +1766,11 @@ Config: actions                                     *nvim-tree-config-actions*
 
     {open_win_config} is passed to |nvim_open_win()|, default: >lua
         {
-         col = 1,
-         row = 1,
-         relative = "cursor",
-         border = "shadow",
-         style = "minimal",
+          col = 1,
+          row = 1,
+          relative = "cursor",
+          border = "shadow",
+          style = "minimal",
         }
 <
 
@@ -3239,7 +3239,8 @@ Class:implement({mixin})                         *nvim_tree.Class:implement()*
 Class:is({class})                                       *nvim_tree.Class:is()*
     Instance of.
 
-    Test whether an object inherits {class} or implements a mixin {class}.
+    Test whether an object is {class}, inherits {class} or implements mixin
+    {class}.
 
     Parameters: ~
       • {class}  (`any`) `<T>`
@@ -3400,19 +3401,19 @@ Require and register it during |nvim-tree-setup|: >lua
     local MyDecorator = require("my-decorator")
 
     require("nvim-tree").setup({
-     renderer = {
-       decorators = {
-         "Git",
-         "Open",
-         "Hidden",
-         "Modified",
-         "Bookmark",
-         "Diagnostics",
-         "Copied",
-         MyDecorator,
-         "Cut",
-       },
-     },
+      renderer = {
+        decorators = {
+          "Git",
+          "Open",
+          "Hidden",
+          "Modified",
+          "Bookmark",
+          "Diagnostics",
+          "Copied",
+          MyDecorator,
+          "Cut",
+        },
+      },
     })
 <
 
@@ -3427,53 +3428,53 @@ Contents of `my-decorator.lua`: >lua
 
     ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
     function MyDecorator:new()
-     self.enabled            = true
-     self.highlight_range    = "name"
-     self.icon_placement     = "after"
+      self.enabled            = true
+      self.highlight_range    = "name"
+      self.icon_placement     = "after"
 
-     -- create your icons and highlights once, applied to every node
-     self.my_icon1           = { str = "1", hl = { "DiffAdd" } }
-     self.my_icon2           = { str = "2", hl = { "DiffText" } }
-     self.my_icon_node       = { str = "N", hl = { "Error" } }
-     self.my_highlight_group = "IncSearch"
+      -- create your icons and highlights once, applied to every node
+      self.my_icon1           = { str = "1", hl = { "DiffAdd" } }
+      self.my_icon2           = { str = "2", hl = { "DiffText" } }
+      self.my_icon_node       = { str = "N", hl = { "Error" } }
+      self.my_highlight_group = "IncSearch"
 
-     -- Define the icon signs only once
-     -- Only needed if you are using icon_placement = "signcolumn"
-     -- self:define_sign(self.my_icon1)
-     -- self:define_sign(self.my_icon2)
+      -- Define the icon signs only once
+      -- Only needed if you are using icon_placement = "signcolumn"
+      -- self:define_sign(self.my_icon1)
+      -- self:define_sign(self.my_icon2)
     end
 
     ---Override node icon
     ---@param node nvim_tree.api.Node
     ---@return nvim_tree.api.highlighted_string? icon_node
     function MyDecorator:icon_node(node)
-     if node.name == "example" then
-       return self.my_icon_node
-     else
-       return nil
-     end
+      if node.name == "example" then
+        return self.my_icon_node
+      else
+        return nil
+      end
     end
 
     ---Return two icons for DecoratorIconPlacement "after"
     ---@param node nvim_tree.api.Node
     ---@return nvim_tree.api.highlighted_string[]? icons
     function MyDecorator:icons(node)
-     if node.name == "example" then
-       return { self.my_icon1, self.my_icon2, }
-     else
-       return nil
-     end
+      if node.name == "example" then
+        return { self.my_icon1, self.my_icon2, }
+      else
+        return nil
+      end
     end
 
     ---Exactly one highlight group for DecoratorHighlightRange "name"
     ---@param node nvim_tree.api.Node
     ---@return string? highlight_group
     function MyDecorator:highlight_group(node)
-     if node.name == "example" then
-       return self.my_highlight_group
-     else
-       return nil
-     end
+      if node.name == "example" then
+        return self.my_highlight_group
+      else
+        return nil
+      end
     end
 
     return MyDecorator

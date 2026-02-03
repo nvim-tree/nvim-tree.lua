@@ -145,7 +145,7 @@ end
 ---
 ---Instance of.
 ---
----Test whether an object inherits {class} or implements a mixin {class}.
+---Test whether an object is {class}, inherits {class} or implements mixin {class}.
 ---
 ---@generic T
 ---@param class T `<T>`

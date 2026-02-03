@@ -44,9 +44,9 @@ error("Cannot require a meta file")
 ---- `boolean`: `true` to disable
 ---- `fun(root_cwd: string): string`: return a literal string from root's absolute path e.g.
 ---```lua
----my_root_folder_label = function(path)
----  return ".../" .. vim.fn.fnamemodify(path, ":t")
----end
+--- my_root_folder_label = function(path)
+---   return ".../" .. vim.fn.fnamemodify(path, ":t")
+--- end
 ---```
 ---
 ---
@@ -357,19 +357,19 @@ error("Cannot require a meta file")
 ---Passed to your [nvim_tree.config.renderer.hidden_display] function e.g.
 ---```lua
 ---
-------@param hidden_stats nvim_tree.config.renderer.hidden_stats
-------@return string? summary
----local my_hidden_display = function(hidden_stats)
----  local total_count = 0
----  for reason, count in pairs(hidden_stats) do
----    total_count = total_count + count
----  end
----
----  if total_count > 0 then
----    return "(" .. tostring(total_count) .. " hidden)"
----  end
----  return nil
----end
+--- ---@param hidden_stats nvim_tree.config.renderer.hidden_stats
+--- ---@return string? summary
+--- local my_hidden_display = function(hidden_stats)
+---   local total_count = 0
+---   for reason, count in pairs(hidden_stats) do
+---     total_count = total_count + count
+---   end
+--- 
+---   if total_count > 0 then
+---     return "(" .. tostring(total_count) .. " hidden)"
+---   end
+---   return nil
+--- end
 ---```
 ---
 ---@class nvim_tree.config.renderer.hidden_stats
