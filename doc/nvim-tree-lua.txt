@@ -3115,13 +3115,82 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 ==============================================================================
 Class                                                        *nvim-tree-class*
 
+nvim-tree uses the https://github.com/rxi/classic class framework adding safe
+casts, instanceof mixin and conventional destructors.
+
+The key differences between classic and ordinary Lua classes:
+• The constructor |nvim_tree.Class:new()| is not responsible for allocation:
+  `self` is available when the constructor is called.
+• Instances are constructed via the `__call` meta method: `SomeClass(args)`
+
+Classes are conventionally named using camel case e.g. `MyClass`
+
+Classes are created by extending another class: >lua
+
+    local Class = require("nvim-tree.classic")
+
+    ---@class (exact) Fruit: nvim_tree.Class
+    ---@field ...
+    local Fruit = Class:extend()
+
+    ---@class (exact) Apple: Fruit
+    ---@field ...
+    local Apple = Fruit:extend()
+<
+
+Implementing a constructor |nvim_tree.Class:new()| is optional, however it
+must call the `super` constructor: >lua
+
+    ---@protected
+    ---@param args AppleArgs
+    function Apple:new(args)
+
+      ---@type FruitArgs
+      local fruit_args = ...
+
+      Apple.super.new(self, fruit_args)
+      ---
+<
+
+Create an instance of a class using the `__call` meta method that will invoke
+the constructor: >lua
+
+    ---@type AppleArgs
+    local args = ...
+
+    local an_apple = Apple(args)
+    -- above will call `Apple:new(args)`
+<
+
+In order to strongly type instantiation, the following pattern is used to type
+the meta method `__call` with arguments and return: >lua
+
+    ---@class (exact) Fruit: nvim_tree.Class
+    ---@field ...
+    local Fruit = Class:extend()
+
+    ---@class (exact) FruitArgs
+    ---@field ...
+
+    ---@class Fruit
+    ---@overload fun(args: FruitArgs): Fruit
+
+    ---@protected
+    ---@param args FruitArgs
+    function Fruit:new(args)
+<
+
+
 *nvim_tree.Class*
 
     Fields: ~
-      • {super}      (`nvim_tree.Class`)
-      • {new}        (`fun(self: nvim_tree.Class)`) See
+      • {super}      (`nvim_tree.Class`) Parent class, `Class` for base
+                     classes.
+      • {new}        (`fun(self: nvim_tree.Class, ...: any)`) See
                      |nvim_tree.Class:new()|.
-      • {extend}     (`fun(self: nvim_tree.Class)`) See
+      • {destroy}    (`fun(self: nvim_tree.Class)`) See
+                     |nvim_tree.Class:destroy()|.
+      • {extend}     (`fun(self: nvim_tree.Class): [nvim_tree.Class]`) See
                      |nvim_tree.Class:extend()|.
       • {implement}  (`fun(self: nvim_tree.Class, mixin: nvim_tree.Class)`)
                      See |nvim_tree.Class:implement()|.
@@ -3134,36 +3203,61 @@ Class                                                        *nvim-tree-class*
 
 
 Class:as({class})                                       *nvim_tree.Class:as()*
-    Return object if |nvim_tree.Class:is()| otherwise nil
+    Type safe cast.
+
+    If instance |nvim_tree.Class:is()|, cast to {class} and return it,
+    otherwise nil.
 
     Parameters: ~
-      • {class}  (`any`)
+      • {class}  (`any`) `<T>`
 
     Return: ~
-        (`T?`)
+        (`any?`) `<T>`
+
+Class:destroy()                                    *nvim_tree.Class:destroy()*
+    Conventional destructor, optional, must be called by the owner.
+
+    Parent destructor must be invoked using the form `Parent.destroy(self)`
 
 Class:extend()                                      *nvim_tree.Class:extend()*
-    Extend a class, setting .super
+    Create a new class by extending another class.
+
+    Base classes extend `Class`
+
+    Return: ~
+        (`[nvim_tree.Class]`) child class
 
 Class:implement({mixin})                         *nvim_tree.Class:implement()*
-    Implement the functions of a mixin Add the mixin to .implements
+    Add the methods and fields of a mixin using the form
+    `SomeClass:implement(MixinClass)`
+
+    If the mixin has fields, it must implement a constructor.
 
     Parameters: ~
       • {mixin}  (`nvim_tree.Class`)
 
 Class:is({class})                                       *nvim_tree.Class:is()*
-    Object is an instance of class or implements a mixin
+    Instance of.
+
+    Test whether an object inherits {class} or implements a mixin {class}.
 
     Parameters: ~
-      • {class}  (`any`)
+      • {class}  (`any`) `<T>`
 
     Return: ~
         (`boolean`)
 
-Class:new()                                            *nvim_tree.Class:new()*
-    Default constructor
+Class:new({...})                                       *nvim_tree.Class:new()*
+    Constructor: `self` has been allocated and is available.
+
+    Super constructor must be called using the form
+    `Child.super.new(self, parent_args)`
+
+    Parameters: ~
+      • {...}  (`any`) constructor arguments
 
 Class:nop({...})                                       *nvim_tree.Class:nop()*
+    Utility method to bypass unused param warnings in abstract methods.
 
     Parameters: ~
       • {...}  (`any`)

@@ -9,19 +9,107 @@
 -- https://github.com/rxi/classic
 --
 
----TODO #3241 document
 
+---@brief
+---
+---nvim-tree uses the https://github.com/rxi/classic class framework adding safe casts, instanceof mixin and conventional destructors.
+---
+---The key differences between classic and ordinary Lua classes:
+---- The constructor [nvim_tree.Class:new()] is not responsible for allocation: `self` is available when the constructor is called.
+---- Instances are constructed via the `__call` meta method: `SomeClass(args)`
+---
+---Classes are conventionally named using camel case e.g. `MyClass`
+---
+---Classes are created by extending another class:
+---```lua
+---
+--- local Class = require("nvim-tree.classic")
+---
+--- ---@class (exact) Fruit: nvim_tree.Class
+--- ---@field ...
+--- local Fruit = Class:extend()
+---
+--- ---@class (exact) Apple: Fruit
+--- ---@field ...
+--- local Apple = Fruit:extend()
+---```
+---
+---Implementing a constructor [nvim_tree.Class:new()] is optional, however it must call the `super` constructor:
+---```lua
+---
+--- ---@protected
+--- ---@param args AppleArgs
+--- function Apple:new(args)
+---
+---   ---@type FruitArgs
+---   local fruit_args = ...
+---
+---   Apple.super.new(self, fruit_args)
+---   ---
+---```
+---
+---Create an instance of a class using the `__call` meta method that will invoke the constructor:
+---```lua
+---
+--- ---@type AppleArgs
+--- local args = ...
+---
+--- local an_apple = Apple(args)
+--- -- above will call `Apple:new(args)`
+---```
+---
+---In order to strongly type instantiation, the following pattern is used to type the meta method `__call` with arguments and return:
+---```lua
+---
+--- ---@class (exact) Fruit: nvim_tree.Class
+--- ---@field ...
+--- local Fruit = Class:extend()
+---
+--- ---@class (exact) FruitArgs
+--- ---@field ...
+---
+--- ---@class Fruit
+--- ---@overload fun(args: FruitArgs): Fruit
+---
+--- ---@protected
+--- ---@param args FruitArgs
+--- function Fruit:new(args)
+---```
+
+---
 ---@class nvim_tree.Class
+---
+---Parent class, `Class` for base classes.
 ---@field super nvim_tree.Class
+---
+---mixin classes that are implemented.
 ---@field private implements table<nvim_tree.Class, boolean>
 local Class = {}
 Class.__index = Class ---@diagnostic disable-line: inject-field
 
----Default constructor
+---
+---Constructor: `self` has been allocated and is available.
+---
+---Super constructor must be called using the form `Child.super.new(self, parent_args)`
+---
+---@param ... any constructor arguments
 function Class:new(...) --luacheck: ignore 212
 end
 
----Extend a class, setting .super
+---
+---Conventional destructor, optional, must be called by the owner.
+---
+---Parent destructor must be invoked using the form `Parent.destroy(self)`
+---
+function Class:destroy()
+end
+
+---
+---Create a new class by extending another class.
+---
+---Base classes extend `Class`
+---
+---@return [nvim_tree.Class] child class
 function Class:extend()
   local cls = {}
   for k, v in pairs(self) do
@@ -35,8 +123,11 @@ function Class:extend()
   return cls
 end
 
----Implement the functions of a mixin
----Add the mixin to .implements
+---
+---Add the methods and fields of a mixin using the form `SomeClass:implement(MixinClass)`
+---
+---If the mixin has fields, it must implement a constructor.
+---
 ---@param mixin nvim_tree.Class
 function Class:implement(mixin)
   if not rawget(self, "implements") then
@@ -51,9 +142,13 @@ function Class:implement(mixin)
   end
 end
 
----Object is an instance of class or implements a mixin
+---
+---Instance of.
+---
+---Test whether an object inherits {class} or implements a mixin {class}.
+---
 ---@generic T
----@param class T
+---@param class T `<T>`
 ---@return boolean
 function Class:is(class)
   local mt = getmetatable(self)
@@ -69,22 +164,32 @@ function Class:is(class)
   return false
 end
 
----Return object if [nvim_tree.Class:is()] otherwise nil
+---
+---Type safe cast.
+---
+---If instance [nvim_tree.Class:is()], cast to {class} and return it, otherwise nil.
+---
 ---@generic T
----@param class T
----@return T|nil
+---@param class T `<T>`
+---@return T? `<T>`
 function Class:as(class)
   return self:is(class) and self or nil
 end
 
----Constructor to create instance, call [nvim_tree.Class:new()] and return
+---
+---Constructs an instance: calls [nvim_tree.Class:new()] and returns the new instance.
+---
+---@param ... any constructor args
+---@return nvim_tree.Class
 function Class:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)
   return obj
 end
 
--- avoid unused param warnings in abstract methods
+---
+---Utility method to bypass unused param warnings in abstract methods.
+---
 ---@param ... any
 function Class:nop(...) --luacheck: ignore 212
 end
