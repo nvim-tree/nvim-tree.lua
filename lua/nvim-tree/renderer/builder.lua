@@ -21,7 +21,7 @@ local pad = require("nvim-tree.renderer.components.padding")
 ---TODO #3241 add an alias for builtins or document the enum
 
 -- Builtin Decorators
----@type table<nvim_tree.api.decorator.types, Decorator>
+---@type table<nvim_tree.config.renderer.decorator, Decorator>
 local BUILTIN_DECORATORS = {
   Git = GitDecorator,
   Open = OpenDecorator,

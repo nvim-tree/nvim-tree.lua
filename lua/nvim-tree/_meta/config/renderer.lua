@@ -32,6 +32,8 @@ error("Cannot require a meta file")
 ---
 ---@alias nvim_tree.config.renderer.highlight "none"|"icon"|"name"|"all"
 ---
+---@alias nvim_tree.config.renderer.decorator nvim_tree.api.Decorator|"Git"|"Open"|"Hidden"|"Modified"|"Bookmark"|"Diagnostics"|"Copied"|"Cut"
+---
 ---@class nvim_tree.config.renderer
 ---
 ---Appends a trailing slash to folder and symlink folder target names.
@@ -61,9 +63,9 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field symlink_destination? boolean
 ---
----Ordered list of builtin and user decorators to enable, see [nvim-tree-api-decorator] and [nvim-tree-icons-highlighting]
+---Ordered list of builtin [nvim_tree.config.renderer.decorator] names and |nvim_tree.api.Decorator| classes.
 ---(default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
----@field decorators? (string|nvim_tree.api.Decorator)[]
+---@field decorators? nvim_tree.config.renderer.decorator[]
 ---
 ---(default: `"none"`)
 ---@field highlight_git? nvim_tree.config.renderer.highlight

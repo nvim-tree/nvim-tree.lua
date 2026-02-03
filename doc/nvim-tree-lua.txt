@@ -482,15 +482,25 @@ Icons And Highlighting                          *nvim-tree-icons-highlighting*
 Icons may be displayed before files and directories.
 
 Additional icons and highlighting may be displayed to indicate various states
-for files and and directories.
+for files and and directories. Highlighting is additive.
 
-Highlighting is additive, with higher precedence overriding lower.
+Decorators are responsible for providing the icons and highlighting.
+|nvim_tree.config.renderer| {decorators} configures the decorators used,
+in ascending order of precedence.
 
-|nvim_tree.config.renderer| {decorators} controls which highlighting is
-applied and its precedence. See |nvim-tree-api-decorator| for information on
-creating custom decorators.
-<
-`ICON`
+`DECORATOR`                                *nvim_tree.config.renderer.decorator*
+  A builtin decorator name or |nvim_tree.api.Decorator| class.
+  Builtin decorators in default order:
+  • `"Git"`
+  • `"Open"`
+  • `"Hidden"`
+  • `"Modified"`
+  • `"Bookmark"`
+  • `"Diagnostics"`
+  • `"Copied"`
+  • `"Cut"`
+
+`ICON?`
   Enable via |nvim_tree.config.renderer.icons.show
 
 `REQUIRES`
@@ -510,7 +520,7 @@ creating custom decorators.
   • `name`: name only
   • `all`: icon and name
 
-`DEVICONS`
+`DEVICONS?`
   Glyphs and their colors will be overridden by optional plugin:
   `nvim-tree/nvim-web-devicons` |nvim_tree.config.renderer.icons.web_devicons|
 
@@ -520,18 +530,19 @@ creating custom decorators.
 `GROUPS`
   Applicable highlight groups: |nvim-tree-highlight-groups|
 
-Some defaults noted. In ascending order of default highlight precedence:
+Some defaults noted. In ascending order of default decorator precedence:
 
-`WHAT          ICON             REQUIRES                      PLACEMENT                             HIGHLIGHT                        GLYPHS                                              DEVICONS   GROUPS`
-File Icon     {file}       Y    -                             -                                     -                               |nvim_tree.config.renderer.icons.glyphs| {default}    Y          `NvimTreeNormal`, `NvimTreeFileIcon`
-Folder Icon   {folder}     Y    -                             -                                     -                               |nvim_tree.config.renderer.icons.glyphs.folder|       Y          `NvimTree*FolderName`, `NvimTree*FolderIcon`
-Git Status    {git}        Y   |nvim_tree.config.git|          {git_placement}        `"before"`       {highlight_git}         `"none"`   |nvim_tree.config.renderer.icons.glyphs.git|          N          `NvimTreeGit*`
-|bufloaded()|    -                -                             -                                    {highlight_opened_files}`"none"`    -                                                  N         ` NvimTreeOpened*`
-Dotfiles      {hidden}     N    -                            {hidden_placement}     `"after"`        {highlight_hidden}      `"none"`   |nvim_tree.config.renderer.icons.glyphs| {hidden}     N          `NvimTreeHidden*`
-|'modified'|    {modified}   Y   |nvim_tree.config.modified|     {modified_placement}   `"after"`        {highlight_modified}    `"none"`   |nvim_tree.config.renderer.icons.glyphs| {modified}   N          `NvimTreeModified*`
-Bookmarked    {bookmarks}  Y    -                            {bookmarks_placement}  `"signcolumn"`   {highlight_bookmarks}   `"none"`   |nvim_tree.config.renderer.icons.glyphs| {bookmark}   N          `NvimTreeBookmark*`
-Diag Status   {diagnostics}Y   |nvim_tree.config.diagnostics|  {diagnostics_placement}`"signcolumn"`   {highlight_diagnostics} `"none" `  |nvim_tree.config.diagnostics.icons|                  N          `NvimTreeDiagnostic*`
-Cut/Copied     -                -                             -                                    {highlight_clipboard}   `"name"`    -                                                  N          `NvimTreeCutHL`, `NvimTreeCopiedHL`
+`WHAT          DECORATOR     ICON?            REQUIRES                      PLACEMENT                             HIGHLIGHT                        GLYPHS                                              DEVICONS?  GROUPS`
+File Icon      -            {file}       Y    -                             -                                     -                               |nvim_tree.config.renderer.icons.glyphs| {default}    Y          `NvimTreeNormal`, `NvimTreeFileIcon`
+Folder Icon    -            {folder}     Y    -                             -                                     -                               |nvim_tree.config.renderer.icons.glyphs.folder|       Y          `NvimTree*FolderName`, `NvimTree*FolderIcon`
+Git Status    `"Git"`         {git}        Y   |nvim_tree.config.git|          {git_placement}        `"before"`       {highlight_git}         `"none"`   |nvim_tree.config.renderer.icons.glyphs.git|          N          `NvimTreeGit*`
+|bufloaded()|   `"Open"`         -                -                             -                                    {highlight_opened_files}`"none"`    -                                                  N         ` NvimTreeOpened*`
+Dotfiles      `"Hidden"`      {hidden}     N    -                            {hidden_placement}     `"after"`        {highlight_hidden}      `"none"`   |nvim_tree.config.renderer.icons.glyphs| {hidden}     N          `NvimTreeHidden*`
+|'modified'|    `"Modified"`    {modified}   Y   |nvim_tree.config.modified|     {modified_placement}   `"after"`        {highlight_modified}    `"none"`   |nvim_tree.config.renderer.icons.glyphs| {modified}   N          `NvimTreeModified*`
+Bookmarked    `"Bookmark"`    {bookmarks}  Y    -                            {bookmarks_placement}  `"signcolumn"`   {highlight_bookmarks}   `"none"`   |nvim_tree.config.renderer.icons.glyphs| {bookmark}   N          `NvimTreeBookmark*`
+Diag Status  ` "Diagnostics"` {diagnostics}Y   |nvim_tree.config.diagnostics|  {diagnostics_placement}`"signcolumn"`   {highlight_diagnostics} `"none" `  |nvim_tree.config.diagnostics.icons|                  N          `NvimTreeDiagnostic*`
+Copied        `"Copied"`       -                -                             -                                    {highlight_clipboard}   `"name"`    -                                                  N          `NvimTreeCopiedHL`
+Cut           `"Cut"`          -                -                             -                                    {highlight_clipboard}   `"name"`    -                                                  N          `NvimTreeCutHL`
 
 
 ==============================================================================
@@ -1366,10 +1377,10 @@ Config: renderer                                   *nvim-tree-config-renderer*
       • {symlink_destination}?     (`boolean`, default: `true`) Appends an
                                    arrow followed by the target of the
                                    symlink.
-      • {decorators}?              (`(string|nvim_tree.api.Decorator)[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
-                                   Ordered list of builtin and user decorators
-                                   to enable, see |nvim-tree-api-decorator|
-                                   and |nvim-tree-icons-highlighting|
+      • {decorators}?              (`nvim_tree.config.renderer.decorator[]`, default: `{ "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", }`)
+                                   Ordered list of builtin
+                                   |nvim_tree.config.renderer.decorator| names
+                                   and |nvim_tree.api.Decorator| classes.
       • {highlight_git}?           (`nvim_tree.config.renderer.highlight`)
                                    (default: `"none"`)
       • {highlight_opened_files}?  (`nvim_tree.config.renderer.highlight`)

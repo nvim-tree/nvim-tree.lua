@@ -35,14 +35,6 @@ local nvim_tree = { api = {} }
 local Class = require("nvim-tree.classic")
 
 ---
----TODO #3241 add this to config
----
----Names of builtin decorators or your decorator classes. Builtins are ordered lowest to highest priority.
----
----@alias nvim_tree.api.decorator.types nvim_tree.api.Decorator|"Git"|"Opened"|"Hidden"|"Modified"|"Bookmarks"|"Diagnostics"|"Copied"|"Cut"
-
-
----
 ---Text or glyphs with optional highlight group names to apply to it.
 ---
 ---@class nvim_tree.api.decorator.highlighted_string
