@@ -1,8 +1,8 @@
 ---Abstract Decorator implementation
 ---@class (exact) Decorator: Class
 ---@field protected enabled boolean
----@field protected highlight_range nvim_tree.api.decorator.highlight_range
----@field protected icon_placement nvim_tree.api.decorator.icon_placement
+---@field protected highlight_range nvim_tree.config.renderer.highlight
+---@field protected icon_placement "none"|nvim_tree.config.renderer.icons.placement
 local Decorator = require("nvim-tree._meta.api.decorator"):extend()
 
 ---TODO #3241 create an internal decorator class with explorer member and lose the UserDecorator
