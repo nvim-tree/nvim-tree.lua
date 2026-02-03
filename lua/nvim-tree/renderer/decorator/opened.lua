@@ -4,7 +4,7 @@ local Decorator = require("nvim-tree.renderer.decorator")
 
 ---@class (exact) OpenDecorator: Decorator
 ---@field private explorer Explorer
----@field private icon? nvim_tree.api.decorator.highlighted_string
+---@field private icon? nvim_tree.api.highlighted_string
 local OpenDecorator = Decorator:extend()
 
 ---@class OpenDecorator

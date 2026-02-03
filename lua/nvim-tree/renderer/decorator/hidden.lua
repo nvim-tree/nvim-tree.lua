@@ -3,7 +3,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) HiddenDecorator: Decorator
 ---@field private explorer Explorer
----@field private icon nvim_tree.api.decorator.highlighted_string?
+---@field private icon nvim_tree.api.highlighted_string?
 local HiddenDecorator = Decorator:extend()
 
 ---@class HiddenDecorator
@@ -29,7 +29,7 @@ end
 
 ---Hidden icon: renderer.icons.show.hidden and node starts with `.` (dotfile).
 ---@param node Node
----@return nvim_tree.api.decorator.highlighted_string[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function HiddenDecorator:icons(node)
   if node:is_dotfile() then
     return { self.icon }

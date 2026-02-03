@@ -3,7 +3,7 @@ local notify = require("nvim-tree.notify")
 local Decorator = require("nvim-tree.renderer.decorator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) GitHighlightedString: nvim_tree.api.decorator.highlighted_string
+---@class (exact) GitHighlightedString: nvim_tree.api.highlighted_string
 ---@field ord number decreasing priority
 
 ---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"
@@ -142,7 +142,7 @@ end
 
 ---Git icons: git.enable, renderer.icons.show.git and node has status
 ---@param node Node
----@return nvim_tree.api.decorator.highlighted_string[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function GitDecorator:icons(node)
   if not self.icons_by_xy then
     return nil

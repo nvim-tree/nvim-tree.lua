@@ -64,7 +64,7 @@ end
 ---@param node Node
 ---@param markers table
 ---@param early_stop integer?
----@return nvim_tree.api.decorator.highlighted_string
+---@return nvim_tree.api.highlighted_string
 function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_stop)
   local str = ""
 
@@ -83,7 +83,7 @@ function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_sto
 end
 
 ---@param node Node
----@return nvim_tree.api.decorator.highlighted_string[]?
+---@return nvim_tree.api.highlighted_string[]?
 function M.get_arrows(node)
   if not M.config.icons.show.folder_arrow then
     return

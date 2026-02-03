@@ -45,26 +45,26 @@ local srcs_config = {
 
 ---@type Src[]
 local srcs_api = {
-  { helptag = "nvim-tree-api",           section = "API",           path = pre .. "api.lua", },
+  { helptag = "nvim-tree-api",          section = "API",           path = pre .. "api.lua", },
 
-  { helptag = "nvim-tree-api-commands",  section = "API: commands", path = pre .. "_meta/api/commands.lua", },
-  { helptag = "nvim-tree-api-events",    section = "API: events",   path = pre .. "_meta/api/events.lua", },
-  { helptag = "nvim-tree-api-filter",    section = "API: filter",   path = pre .. "_meta/api/filter.lua", },
-  { helptag = "nvim-tree-api-fs",        section = "API: fs",       path = pre .. "_meta/api/fs.lua", },
-  { helptag = "nvim-tree-api-git",       section = "API: git",      path = pre .. "_meta/api/git.lua", },
-  { helptag = "nvim-tree-api-health",    section = "API: health",   path = pre .. "_meta/api/health.lua", },
-  { helptag = "nvim-tree-api-map",       section = "API: map",      path = pre .. "_meta/api/map.lua", },
-  { helptag = "nvim-tree-api-marks",     section = "API: marks",    path = pre .. "_meta/api/marks.lua", },
-  { helptag = "nvim-tree-api-node",      section = "API: node",     path = pre .. "_meta/api/node.lua", },
-  { helptag = "nvim-tree-api-tree",      section = "API: tree",     path = pre .. "_meta/api/tree.lua", },
+  { helptag = "nvim-tree-api-commands", section = "API: commands", path = pre .. "_meta/api/commands.lua", },
+  { helptag = "nvim-tree-api-events",   section = "API: events",   path = pre .. "_meta/api/events.lua", },
+  { helptag = "nvim-tree-api-filter",   section = "API: filter",   path = pre .. "_meta/api/filter.lua", },
+  { helptag = "nvim-tree-api-fs",       section = "API: fs",       path = pre .. "_meta/api/fs.lua", },
+  { helptag = "nvim-tree-api-git",      section = "API: git",      path = pre .. "_meta/api/git.lua", },
+  { helptag = "nvim-tree-api-health",   section = "API: health",   path = pre .. "_meta/api/health.lua", },
+  { helptag = "nvim-tree-api-map",      section = "API: map",      path = pre .. "_meta/api/map.lua", },
+  { helptag = "nvim-tree-api-marks",    section = "API: marks",    path = pre .. "_meta/api/marks.lua", },
+  { helptag = "nvim-tree-api-node",     section = "API: node",     path = pre .. "_meta/api/node.lua", },
+  { helptag = "nvim-tree-api-tree",     section = "API: tree",     path = pre .. "_meta/api/tree.lua", },
 
-  { helptag = "nvim-tree-api-decorator", section = "PLACEHOLDER",   path = "runtime/lua/placeholder.lua", },
+  { helptag = "nvim-tree-class",        section = "PLACEHOLDER",   path = "runtime/lua/placeholder.lua", },
 }
 
 ---@type Src[]
 local srcs_class = {
-  { helptag = "nvim-tree-api-decorator", section = "API: Decorator", path = pre .. "_meta/api/decorator.lua", },
-  { helptag = "nvim-tree-api-class",     section = "API: Class",     path = pre .. "classic.lua", },
+  { helptag = "nvim-tree-class",           section = "Class",            path = pre .. "classic.lua", },
+  { helptag = "nvim-tree-class-decorator", section = "Class: Decorator", path = pre .. "_meta/api/decorator.lua", },
 }
 
 ---Map paths to file names

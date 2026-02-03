@@ -1,5 +1,7 @@
 ---@meta
 
+---#TODO 3241 maybe rename to UserDecorator
+
 ---@brief
 ---Highlighting and icons for nodes are provided by Decorators, see [nvim-tree-icons-highlighting] for an overview. You may provide your own in addition to the builtin decorators.
 ---
@@ -37,7 +39,7 @@ local Class = require("nvim-tree.classic")
 ---
 ---Text or glyphs with optional highlight group names to apply to it.
 ---
----@class nvim_tree.api.decorator.highlighted_string
+---@class nvim_tree.api.highlighted_string
 ---
 ---One or many glyphs/characters. 
 ---@field str string
@@ -69,7 +71,7 @@ nvim_tree.api.Decorator = Decorator
 ---Abstract, optional to implement.
 ---
 ---@param node nvim_tree.api.Node
----@return nvim_tree.api.decorator.highlighted_string? icon `nil` for no override
+---@return nvim_tree.api.highlighted_string? icon `nil` for no override
 function Decorator:icon_node(node) end
 
 ---
@@ -78,7 +80,7 @@ function Decorator:icon_node(node) end
 ---Abstract, optional to implement.
 ---
 ---@param node nvim_tree.api.Node
----@return nvim_tree.api.decorator.highlighted_string[]? icons `nil` or empty table for no icons. Only the first glyph of {str} is used when {icon_placement} is `"signcolumn"`
+---@return nvim_tree.api.highlighted_string[]? icons `nil` or empty table for no icons. Only the first glyph of {str} is used when {icon_placement} is `"signcolumn"`
 function Decorator:icons(node) end
 
 ---
@@ -95,7 +97,7 @@ function Decorator:highlight_group(node) end
 ---
 ---This must be called during your constructor for all icons that you will return from [nvim_tree.api.Decorator:icons()]
 ---
----@param icon nvim_tree.api.decorator.highlighted_string? does nothing if nil
+---@param icon nvim_tree.api.highlighted_string? does nothing if nil
 function Decorator:define_sign(icon) end
 
 return nvim_tree.api.Decorator
