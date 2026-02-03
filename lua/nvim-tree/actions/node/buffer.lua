@@ -4,15 +4,13 @@ local notify = require("nvim-tree.notify")
 local M = {}
 
 ---@param node Node
----@param opts ApiNodeDeleteWipeBufferOpts|nil
----@return nil
+---@param opts? nvim_tree.api.node.buffer.RemoveOpts
 function M.delete(node, opts)
   M.delete_buffer("delete", node.absolute_path, opts)
 end
 
 ---@param node Node
----@param opts ApiNodeDeleteWipeBufferOpts|nil
----@return nil
+---@param opts? nvim_tree.api.node.buffer.RemoveOpts
 function M.wipe(node, opts)
   M.delete_buffer("wipe", node.absolute_path, opts)
 end
@@ -21,8 +19,7 @@ end
 
 ---@param mode ApiNodeDeleteWipeBufferMode
 ---@param filename string
----@param opts ApiNodeDeleteWipeBufferOpts|nil
----@return nil
+---@param opts? nvim_tree.api.node.buffer.RemoveOpts
 function M.delete_buffer(mode, filename, opts)
   if type(mode) ~= "string" then
     mode = "delete"

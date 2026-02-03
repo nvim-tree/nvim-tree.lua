@@ -9,13 +9,13 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"
 
 ---@alias GitIconsByStatus table<GitStatusStrings, GitHighlightedString> human status
----@alias GitIconsByXY table<GitXY, GitHighlightedString[]> porcelain status
+---@alias GitIconsByXY table<nvim_tree.git.XY, GitHighlightedString[]> porcelain status
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
 ---@class (exact) GitDecorator: Decorator
 ---@field private explorer Explorer
----@field private file_hl_by_xy table<GitXY, string>?
----@field private folder_hl_by_xy table<GitXY, string>?
+---@field private file_hl_by_xy table<nvim_tree.git.XY, string>?
+---@field private folder_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private icons_by_status GitIconsByStatus?
 ---@field private icons_by_xy GitIconsByXY?
 local GitDecorator = Decorator:extend()

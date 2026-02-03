@@ -12,10 +12,8 @@ check: luals
 #
 # subtasks
 #
-# TODO #3241 ensure that decorator is checked - all meta should be valid
 luacheck:
-	luacheck --codes --quiet lua --exclude-files "**/_meta/api_decorator.lua"
-	luacheck --codes --quiet scripts
+	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
 
 style-check:
 	scripts/luals-check.sh codestyle-check
@@ -36,15 +34,15 @@ style-fix:
 # utility
 #
 help-update:
-	scripts/gen_vimdoc.sh
-	scripts/help-update.sh
+	scripts/vimdoc.sh doc
+	scripts/help-defaults.sh
 
 #
 # CI
 # --ignore-blank-lines is used as nightly has removed unnecessary blank lines that stable (0.11.5) currently inserts
 #
 help-check: help-update
-	scripts/lintdoc.sh
+	scripts/vimdoc.sh lintdoc
 	git diff --ignore-blank-lines --exit-code doc/nvim-tree-lua.txt
 
 
