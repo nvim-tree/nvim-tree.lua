@@ -3118,13 +3118,13 @@ Class                                                        *nvim-tree-class*
 *nvim_tree.Class*
 
     Fields: ~
-      • {super}      (`Class`)
+      • {super}      (`nvim_tree.Class`)
       • {new}        (`fun(self: nvim_tree.Class)`) See
                      |nvim_tree.Class:new()|.
       • {extend}     (`fun(self: nvim_tree.Class)`) See
                      |nvim_tree.Class:extend()|.
-      • {implement}  (`fun(self: nvim_tree.Class, mixin: Class)`) See
-                     |nvim_tree.Class:implement()|.
+      • {implement}  (`fun(self: nvim_tree.Class, mixin: nvim_tree.Class)`)
+                     See |nvim_tree.Class:implement()|.
       • {is}         (`fun(self: nvim_tree.Class, class: T): boolean`) See
                      |nvim_tree.Class:is()|.
       • {as}         (`fun(self: nvim_tree.Class, class: T): T?`) See
@@ -3149,7 +3149,7 @@ Class:implement({mixin})                         *nvim_tree.Class:implement()*
     Implement the functions of a mixin Add the mixin to .implements
 
     Parameters: ~
-      • {mixin}  (`Class`)
+      • {mixin}  (`nvim_tree.Class`)
 
 Class:is({class})                                       *nvim_tree.Class:is()*
     Object is an instance of class or implements a mixin
