@@ -1,5 +1,5 @@
 ---Abstract Decorator implementation
----@class (exact) Decorator: Class
+---@class (exact) Decorator: nvim_tree.Class
 ---@field protected enabled boolean
 ---@field protected highlight_range nvim_tree.config.renderer.highlight
 ---@field protected icon_placement "none"|nvim_tree.config.renderer.icons.placement

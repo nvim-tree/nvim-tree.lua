@@ -1,7 +1,7 @@
 local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
----@class (exact) Node: Class
+---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.loop.hrtime() at construction time
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer

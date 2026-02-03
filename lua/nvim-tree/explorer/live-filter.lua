@@ -5,7 +5,7 @@ local Class = require("nvim-tree.classic")
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) LiveFilter: Class
+---@class (exact) LiveFilter: nvim_tree.Class
 ---@field explorer Explorer
 ---@field prefix string
 ---@field always_show_folders boolean

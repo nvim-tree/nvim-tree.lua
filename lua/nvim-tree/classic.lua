@@ -9,13 +9,11 @@
 -- https://github.com/rxi/classic
 --
 
----TODO #3241 document and rename
----@class Class: nvim_tree.Class
----@nodoc
+---TODO #3241 document
 
 ---@class nvim_tree.Class
----@field super Class
----@field private implements table<Class, boolean>
+---@field super nvim_tree.Class
+---@field private implements table<nvim_tree.Class, boolean>
 local Class = {}
 Class.__index = Class ---@diagnostic disable-line: inject-field
 
@@ -39,7 +37,7 @@ end
 
 ---Implement the functions of a mixin
 ---Add the mixin to .implements
----@param mixin Class
+---@param mixin nvim_tree.Class
 function Class:implement(mixin)
   if not rawget(self, "implements") then
     -- set on the class itself instead of parents
