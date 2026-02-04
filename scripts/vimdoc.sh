@@ -58,6 +58,7 @@ cleanup() {
 
 	# remove our config
 	rm -fv "${DIR_NVIM_SRC}/src/gen/vimdoc_config.lua"
+	rm -fv "${DIR_NVIM_SRC}/runtime/lua/placeholder.lua"
 
 	# remove generated help
 	rm -fv "${DIR_NVIM_SRC}/runtime/doc/nvim-tree-lua.txt"
@@ -84,6 +85,9 @@ if [ "${1}" = "doc" ]; then
 	# modify gen_vimdoc.lua to use our config, backing up original
 	cp "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua" "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua.org"
 	sed -i -E 's/spairs\(config\)/spairs\(require("gen.vimdoc_config")\)/g' "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua"
+
+	# leave a generic placeholder to bridge between nvim.gen_vimdoc.Config
+	echo "---@brief placeholder" > "${DIR_NVIM_SRC}/runtime/lua/placeholder.lua"
 
 	# copy our config
 	cp -v "scripts/vimdoc_config.lua" "${DIR_NVIM_SRC}/src/gen"

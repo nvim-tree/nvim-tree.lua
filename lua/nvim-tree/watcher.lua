@@ -21,7 +21,7 @@ local M = {
 ---@type Event[]
 local events = {}
 
----@class (exact) Event: Class
+---@class (exact) Event: nvim_tree.Class
 ---@field destroyed boolean
 ---@field private path string
 ---@field private fs_event uv.uv_fs_event_t?
@@ -155,7 +155,7 @@ end
 ---@type Watcher[]
 local watchers = {}
 
----@class (exact) Watcher: Class
+---@class (exact) Watcher: nvim_tree.Class
 ---@field data table user data
 ---@field destroyed boolean
 ---@field private path string

@@ -3,9 +3,8 @@
 ---
 ---```lua
 ---
-------@type nvim_tree.config
----local config = {
----default-config-injection-placeholder
----}
+--- ---@type nvim_tree.config
+--- local config = {
+--- default-config-injection-placeholder
+--- }
 ---```
----

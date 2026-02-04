@@ -15,7 +15,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@alias ClipboardActionFn fun(source: string, dest: string): boolean, string?
 
----@class (exact) Clipboard: Class
+---@class (exact) Clipboard: nvim_tree.Class
 ---@field private explorer Explorer
 ---@field private data ClipboardData
 ---@field private clipboard_name string

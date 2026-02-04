@@ -7,7 +7,8 @@ local SHORT_LEN = 50
 
 local namespace_hi_test_id = vim.api.nvim_create_namespace("NvimTreeHiTest")
 
----@class (exact) HighlightDisplay: Class for :NvimTreeHiTest
+---For :NvimTreeHiTest
+---@class (exact) HighlightDisplay: nvim_tree.Class
 ---@field group string nvim-tree highlight group name
 ---@field links string link chain to a concretely defined group
 ---@field def string :hi concrete definition after following any links

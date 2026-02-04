@@ -14,14 +14,13 @@ local GitDecorator = require("nvim-tree.renderer.decorator.git")
 local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
 local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
 local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
-local UserDecorator = require("nvim-tree.renderer.decorator.user")
+local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
----@alias HighlightedString nvim_tree.api.HighlightedString
-
 -- Builtin Decorators
----@type table<nvim_tree.api.decorator.Name, Decorator>
+---@type table<nvim_tree.config.renderer.decorator, BuiltinDecorator>
 local BUILTIN_DECORATORS = {
   Git = GitDecorator,
   Open = OpenDecorator,
@@ -74,11 +73,11 @@ function Builder:new(args)
   -- instantiate all the builtin and user decorator instances
   local builtin, user
   for _, d in ipairs(self.explorer.opts.renderer.decorators) do
-    ---@type Decorator
+    ---@type BuiltinDecorator
     builtin = BUILTIN_DECORATORS[d]
 
-    ---@type UserDecorator
-    user = type(d) == "table" and type(d.as) == "function" and d:as(UserDecorator)
+    ---@type Decorator
+    user = type(d) == "table" and type(d.as) == "function" and d:as(Decorator)
 
     if builtin then
       table.insert(self.decorators, builtin({ explorer = self.explorer }))
@@ -106,7 +105,7 @@ function Builder:insert_highlight(groups, start, end_)
 end
 
 ---@private
----@param highlighted_strings HighlightedString[]
+---@param highlighted_strings nvim_tree.api.highlighted_string[]
 ---@return string
 function Builder:unwrap_highlighted_strings(highlighted_strings)
   if not highlighted_strings then
@@ -126,12 +125,12 @@ function Builder:unwrap_highlighted_strings(highlighted_strings)
 end
 
 ---@private
----@param indent_markers HighlightedString[]
----@param arrows HighlightedString[]|nil
----@param icon HighlightedString
----@param name HighlightedString
----@param node table
----@return HighlightedString[]
+---@param indent_markers nvim_tree.api.highlighted_string[]
+---@param arrows? nvim_tree.api.highlighted_string[]
+---@param icon nvim_tree.api.highlighted_string
+---@param name nvim_tree.api.highlighted_string
+---@param node Node
+---@return nvim_tree.api.highlighted_string[]
 function Builder:format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
   local function add_to_end(t1, t2)
@@ -153,25 +152,40 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
-  -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
+  local b
 
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_before(not d:is(UserDecorator) and node or api_node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_before(node))
+    elseif api_node then
+      add_to_end(line, d:icons_before(api_node))
+    end
   end
 
   add_to_end(line, { name })
 
   for _, d in ipairs(self.decorators) do
-    add_to_end(line, d:icons_after(not d:is(UserDecorator) and node or api_node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_after(node))
+    elseif api_node then
+      add_to_end(line, d:icons_after(api_node))
+    end
   end
 
   local rights = {}
   for _, d in ipairs(self.decorators) do
-    add_to_end(rights, d:icons_right_align(not d:is(UserDecorator) and node or api_node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_right_align(node))
+    elseif api_node then
+      add_to_end(line, d:icons_right_align(api_node))
+    end
   end
   if #rights > 0 then
     self.extmarks[self.index] = rights
@@ -183,14 +197,20 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
-  -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
 
   -- first in priority order
-  local d, sign_name
+  local d, b, sign_name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
-    sign_name = d:sign_name(not d:is(UserDecorator) and node or api_node)
+
+    b = d:as(BuiltinDecorator)
+    if b then
+      sign_name = b:sign_name(node)
+    elseif api_node then
+      sign_name = d:sign_name(api_node)
+    end
+
     if sign_name then
       self.signs[self.index] = sign_name
       break
@@ -231,11 +251,10 @@ end
 ---A highlight group is always calculated and upserted for the case of highlights changing.
 ---@private
 ---@param node Node
----@return HighlightedString icon
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string icon
+---@return nvim_tree.api.highlighted_string name
 function Builder:icon_name_decorated(node)
-  -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
 
   -- base case
   local icon = node:highlighted_icon()
@@ -245,11 +264,17 @@ function Builder:icon_name_decorated(node)
   local icon_groups = {}
   local name_groups = {}
   local hl_icon, hl_name
+  local b
   for _, d in ipairs(self.decorators) do
-    -- maybe overridde icon
-    icon = d:icon_node((not d:is(UserDecorator) and node or api_node)) or icon
-
-    hl_icon, hl_name = d:highlight_group_icon_name((not d:is(UserDecorator) and node or api_node))
+    -- maybe override icon
+    b = d:as(BuiltinDecorator)
+    if b then
+      icon = b:icon_node(node) or icon
+      hl_icon, hl_name = b:highlight_group_icon_name(node)
+    elseif api_node then
+      icon = d:icon_node(api_node) or icon
+      hl_icon, hl_name = d:highlight_group_icon_name(api_node)
+    end
 
     table.insert(icon_groups, hl_icon)
     table.insert(name_groups, hl_name)

@@ -1,7 +1,7 @@
 local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
----@class (exact) Node: Class
+---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.loop.hrtime() at construction time
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
@@ -93,28 +93,28 @@ end
 
 ---Empty highlighted icon
 ---@protected
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function Node:highlighted_icon_empty()
   return { str = "", hl = {} }
 end
 
 ---Highlighted icon for the node
 ---Empty for base Node
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function Node:highlighted_icon()
   return self:highlighted_icon_empty()
 end
 
 ---Empty highlighted name
 ---@protected
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name_empty()
   return { str = "", hl = {} }
 end
 
 ---Highlighted name for the node
 ---Empty for base Node
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name()
   return self:highlighted_name_empty()
 end

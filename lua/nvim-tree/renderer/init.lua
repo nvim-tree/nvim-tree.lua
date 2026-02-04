@@ -13,7 +13,7 @@ local namespace_virtual_lines_id = vim.api.nvim_create_namespace("NvimTreeVirtua
 
 ---@alias HighlightRangeArgs { higroup:string, start:integer[], finish:integer[] } named arguments for vim.hl.range
 
----@class (exact) Renderer: Class
+---@class (exact) Renderer: nvim_tree.Class
 ---@field explorer Explorer
 local Renderer = Class:extend()
 

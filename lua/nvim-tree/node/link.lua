@@ -1,6 +1,6 @@
 local Class = require("nvim-tree.classic")
 
----@class (exact) LinkNode: Class
+---@class (exact) LinkNode: nvim_tree.Class
 ---@field link_to string
 ---@field fs_stat_target uv.fs_stat.result
 local LinkNode = Class:extend()

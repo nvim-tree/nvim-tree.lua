@@ -1,17 +1,16 @@
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
----@class (exact) BookmarkDecorator: Decorator
----@field private explorer Explorer
----@field private icon HighlightedString?
-local BookmarkDecorator = Decorator:extend()
+---@class (exact) BookmarkDecorator: BuiltinDecorator
+---@field private icon nvim_tree.api.highlighted_string?
+local BookmarkDecorator = BuiltinDecorator:extend()
 
 ---@class BookmarkDecorator
----@overload fun(args: DecoratorArgs): BookmarkDecorator
+---@overload fun(args: BuiltinDecoratorArgs): BookmarkDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function BookmarkDecorator:new(args)
-  self.explorer        = args.explorer
+  BookmarkDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_bookmarks or "none"
@@ -28,7 +27,7 @@ end
 
 ---Bookmark icon: renderer.icons.show.bookmarks and node is marked
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function BookmarkDecorator:icons(node)
   if self.explorer.marks:get(node) then
     return { self.icon }

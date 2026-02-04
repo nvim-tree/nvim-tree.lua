@@ -5,7 +5,7 @@ local Class = require("nvim-tree.classic")
 
 ---@alias FilterType "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
 
----@class (exact) Filters: Class
+---@class (exact) Filters: nvim_tree.Class
 ---@field enabled boolean
 ---@field state table<FilterType, boolean>
 ---@field private explorer Explorer

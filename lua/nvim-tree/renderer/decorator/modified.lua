@@ -1,20 +1,19 @@
 local buffers = require("nvim-tree.buffers")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) ModifiedDecorator: Decorator
----@field private explorer Explorer
----@field private icon HighlightedString?
-local ModifiedDecorator = Decorator:extend()
+---@class (exact) ModifiedDecorator: BuiltinDecorator
+---@field private icon nvim_tree.api.highlighted_string?
+local ModifiedDecorator = BuiltinDecorator:extend()
 
 ---@class ModifiedDecorator
----@overload fun(args: DecoratorArgs): ModifiedDecorator
+---@overload fun(args: BuiltinDecoratorArgs): ModifiedDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function ModifiedDecorator:new(args)
-  self.explorer        = args.explorer
+  ModifiedDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_modified or "none"
@@ -31,7 +30,7 @@ end
 
 ---Modified icon: modified.enable, renderer.icons.show.modified and node is modified
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function ModifiedDecorator:icons(node)
   if buffers.is_modified(node) then
     return { self.icon }

@@ -1,6 +1,6 @@
 local diagnostics = require("nvim-tree.diagnostics")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 -- highlight groups by severity
@@ -30,18 +30,17 @@ local ICON_KEYS = {
   ["hint"] = vim.diagnostic.severity.HINT,
 }
 
----@class (exact) DiagnosticsDecorator: Decorator
----@field private explorer Explorer
----@field private diag_icons HighlightedString[]?
-local DiagnosticsDecorator = Decorator:extend()
+---@class (exact) DiagnosticsDecorator: BuiltinDecorator
+---@field private diag_icons nvim_tree.api.highlighted_string[]?
+local DiagnosticsDecorator = BuiltinDecorator:extend()
 
 ---@class DiagnosticsDecorator
----@overload fun(args: DecoratorArgs): DiagnosticsDecorator
+---@overload fun(args: BuiltinDecoratorArgs): DiagnosticsDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function DiagnosticsDecorator:new(args)
-  self.explorer              = args.explorer
+  DiagnosticsDecorator.super.new(self, args)
 
   self.enabled               = true
   self.highlight_range       = self.explorer.opts.renderer.highlight_diagnostics or "none"
@@ -73,7 +72,7 @@ end
 
 ---Diagnostic icon: diagnostics.enable, renderer.icons.show.diagnostics and node has status
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function DiagnosticsDecorator:icons(node)
   if node and self.diag_icons then
     local diag_status = diagnostics.get_diag_status(node)

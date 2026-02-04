@@ -1,0 +1,96 @@
+---@meta
+error("Cannot require a meta file")
+
+---@brief
+---
+---A decorator class for nodes named "example", overriding all builtin decorators except for Cut.
+---- Highlights node name with `IncSearch`
+---- Creates two icons `"1"` and `"2"` placed after the node name, highlighted with `DiffAdd` and `DiffText`
+---- Replaces the node icon with `"N"`, highlighted with `Error `
+---
+---Create a class file `~/.config/nvim/lua/my-decorator.lua`
+---
+---Require and register it during |nvim-tree-setup|:
+---```lua
+---
+--- local MyDecorator = require("my-decorator")
+--- 
+--- require("nvim-tree").setup({
+---   renderer = {
+---     decorators = {
+---       "Git",
+---       "Open",
+---       "Hidden",
+---       "Modified",
+---       "Bookmark",
+---       "Diagnostics",
+---       "Copied",
+---       MyDecorator,
+---       "Cut",
+---     },
+---   },
+--- })
+---```
+---Contents of `my-decorator.lua`:
+---```lua
+---
+--- ---@class (exact) MyDecorator: nvim_tree.api.Decorator
+--- ---@field private my_icon1 nvim_tree.api.highlighted_string
+--- ---@field private my_icon2 nvim_tree.api.highlighted_string
+--- ---@field private my_icon_node nvim_tree.api.highlighted_string
+--- ---@field private my_highlight_group string
+--- local MyDecorator = require("nvim-tree.api").Decorator:extend()
+--- 
+--- ---Mandatory constructor  :new()  will be called once per tree render, with no arguments.
+--- function MyDecorator:new()
+---   self.enabled            = true
+---   self.highlight_range    = "name"
+---   self.icon_placement     = "after"
+--- 
+---   -- create your icons and highlights once, applied to every node
+---   self.my_icon1           = { str = "1", hl = { "DiffAdd" } }
+---   self.my_icon2           = { str = "2", hl = { "DiffText" } }
+---   self.my_icon_node       = { str = "N", hl = { "Error" } }
+---   self.my_highlight_group = "IncSearch"
+--- 
+---   -- Define the icon signs only once
+---   -- Only needed if you are using icon_placement = "signcolumn"
+---   -- self:define_sign(self.my_icon1)
+---   -- self:define_sign(self.my_icon2)
+--- end
+--- 
+--- ---Override node icon
+--- ---@param node nvim_tree.api.Node
+--- ---@return nvim_tree.api.highlighted_string? icon_node
+--- function MyDecorator:icon_node(node)
+---   if node.name == "example" then
+---     return self.my_icon_node
+---   else
+---     return nil
+---   end
+--- end
+--- 
+--- ---Return two icons for DecoratorIconPlacement "after"
+--- ---@param node nvim_tree.api.Node
+--- ---@return nvim_tree.api.highlighted_string[]? icons
+--- function MyDecorator:icons(node)
+---   if node.name == "example" then
+---     return { self.my_icon1, self.my_icon2, }
+---   else
+---     return nil
+---   end
+--- end
+--- 
+--- ---Exactly one highlight group for DecoratorHighlightRange "name"
+--- ---@param node nvim_tree.api.Node
+--- ---@return string? highlight_group
+--- function MyDecorator:highlight_group(node)
+---   if node.name == "example" then
+---     return self.my_highlight_group
+---   else
+---     return nil
+---   end
+--- end
+--- 
+--- return MyDecorator
+---```

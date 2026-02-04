@@ -60,13 +60,13 @@ error("Cannot require a meta file")
 ---
 ---{open_win_config} is passed to [nvim_open_win()], default:
 ---```lua
----{
----  col = 1,
----  row = 1,
----  relative = "cursor",
----  border = "shadow",
----  style = "minimal",
----}
+--- {
+---   col = 1,
+---   row = 1,
+---   relative = "cursor",
+---   border = "shadow",
+---   style = "minimal",
+--- }
 ---```
 ---You shouldn't define {width} and {height} values here. They will be overridden to fit the file_popup content.
 ---@class nvim_tree.config.actions.file_popup
