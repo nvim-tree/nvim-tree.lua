@@ -137,8 +137,18 @@ return {
 
     -- strip module from the name
     fn_xform = function(fun)
-      normalise_module(fun)
-      fun.name = fun.name:gsub("^" .. fun.module .. "%.", "", 1)
+      if (fun.module) then
+        normalise_module(fun)
+
+        -- remove the API prefix from the left aligned function name
+        -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
+        local name, replaced = fun.name:gsub("^" .. fun.module .. "%.", "", 1)
+        if (replaced ~= 2) then
+          error(string.format("\n\nfun.name='%s' does not start with module\nfun=%s", fun.name, vim.inspect(fun)))
+        end
+
+        fun.name = name
+      end
     end,
   },
   -- Classes
@@ -150,14 +160,15 @@ return {
     helptag_fmt = function(name) return src_by_name(name, srcs_class).helptag end,
 
     fn_xform = function(fun)
-      -- strip module from name and record the module for the method
-      normalise_module(fun)
+      if (fun.module) then
+        normalise_module(fun)
 
-      -- strip the class file from the module
-      fun.module = fun.module:gsub("%.[^%.]*$", "", 1)
+        -- strip the class file from the module
+        fun.module = fun.module:gsub("%.[^%.]*$", "", 1)
 
-      -- strip module from name and record the module for the method
-      modules_by_method[fun.classvar .. ":" .. fun.name] = fun.module
+        -- record the module for the method
+        modules_by_method[fun.classvar .. ":" .. fun.name] = fun.module
+      end
     end,
 
     -- fn_helptag_fmt_common derived
