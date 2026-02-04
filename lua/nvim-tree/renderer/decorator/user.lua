@@ -1,7 +1,104 @@
-local Decorator = require("nvim-tree.renderer.decorator")
+---
+---Abstract decorator implementation
+---
+---@class (exact) UserDecorator: nvim_tree.api.Decorator
+local UserDecorator = require("nvim-tree._meta.api.decorator"):extend()
 
----Exposed as nvim_tree.api.Decorator
----@class (exact) UserDecorator: Decorator
-local UserDecorator = Decorator:extend()
+---Maybe highlight groups for icon and name
+---@param node nvim_tree.api.Node
+---@return string? icon highlight group
+---@return string? name highlight group
+function UserDecorator:highlight_group_icon_name(node)
+  local icon_hl, name_hl
 
+  if self.enabled and self.highlight_range ~= "none" then
+    local hl = self:highlight_group(node)
+
+    if self.highlight_range == "all" or self.highlight_range == "icon" then
+      icon_hl = hl
+    end
+    if self.highlight_range == "all" or self.highlight_range == "name" then
+      name_hl = hl
+    end
+  end
+
+  return icon_hl, name_hl
+end
+
+---Maybe icon sign
+---@param node nvim_tree.api.Node
+---@return string? name
+function UserDecorator:sign_name(node)
+  if not self.enabled or self.icon_placement ~= "signcolumn" then
+    return
+  end
+
+  local icons = self:icons(node)
+  if icons and #icons > 0 then
+    return icons[1].hl[1]
+  end
+end
+
+---Icons when "before"
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
+function UserDecorator:icons_before(node)
+  if not self.enabled or self.icon_placement ~= "before" then
+    return
+  end
+
+  return self:icons(node)
+end
+
+---Icons when "after"
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
+function UserDecorator:icons_after(node)
+  if not self.enabled or self.icon_placement ~= "after" then
+    return
+  end
+
+  return self:icons(node)
+end
+
+---Icons when "right_align"
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
+function UserDecorator:icons_right_align(node)
+  if not self.enabled or self.icon_placement ~= "right_align" then
+    return
+  end
+
+  return self:icons(node)
+end
+
+---Define a sign
+---@protected
+---@param icon nvim_tree.api.highlighted_string?
+function UserDecorator:define_sign(icon)
+  if icon and #icon.hl > 0 then
+    local name = icon.hl[1]
+
+    if not vim.tbl_isempty(vim.fn.sign_getdefined(name)) then
+      vim.fn.sign_undefine(name)
+    end
+
+    -- don't render sign if empty
+    if #icon.str < 1 then
+      return
+    end
+
+    -- byte index of the next character, allowing for wide
+    local bi = vim.fn.byteidx(icon.str, 1)
+
+    -- first (wide) character, falls back to empty string
+    local text = string.sub(icon.str, 1, bi)
+    vim.fn.sign_define(name, {
+      text = text,
+      texthl = name,
+    })
+  end
+end
+
+---@type UserDecorator
 return UserDecorator

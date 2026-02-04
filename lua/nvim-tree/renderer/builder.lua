@@ -128,7 +128,7 @@ end
 ---@param arrows? nvim_tree.api.highlighted_string[]
 ---@param icon nvim_tree.api.highlighted_string
 ---@param name nvim_tree.api.highlighted_string
----@param node table
+---@param node Node
 ---@return nvim_tree.api.highlighted_string[]
 function Builder:format_line(indent_markers, arrows, icon, name, node)
   local added_len = 0
@@ -152,7 +152,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   end
 
   -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
   local u
 
   local line = { indent_markers, arrows }
@@ -198,7 +198,7 @@ end
 ---@param node Node
 function Builder:build_signs(node)
   -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
 
   -- first in priority order
   local d, u, sign_name
