@@ -143,7 +143,7 @@ return {
         -- remove the API prefix from the left aligned function name
         -- this will cascade into fn_helptag_fmt, which will apply the module prefix anyway
         local name, replaced = fun.name:gsub("^" .. fun.module .. "%.", "", 1)
-        if (replaced ~= 2) then
+        if (replaced ~= 1) then
           error(string.format("\n\nfun.name='%s' does not start with module\nfun=%s", fun.name, vim.inspect(fun)))
         end
 
