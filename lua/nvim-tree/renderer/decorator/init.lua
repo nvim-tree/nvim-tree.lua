@@ -1,8 +1,10 @@
+local DecoratorInterface = require("nvim-tree._meta.api.decorator")
+
 ---
----Abstract decorator implementation
+---Abstract decorator
 ---
 ---@class (exact) Decorator: nvim_tree.api.Decorator
-local Decorator = require("nvim-tree._meta.api.decorator"):extend()
+local Decorator = DecoratorInterface:extend()
 
 ---Maybe highlight groups for icon and name
 ---@param node nvim_tree.api.Node

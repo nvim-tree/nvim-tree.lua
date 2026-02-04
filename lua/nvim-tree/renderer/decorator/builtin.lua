@@ -1,6 +1,6 @@
 local Decorator = require("nvim-tree.renderer.decorator")
 
----Builtin decorator interface.
+---Abstract builtin decorator
 ---Overrides all methods to use a Node instead of nvim_tree.api.Node as we don't have generics.
 ---
 ---@class (exact) BuiltinDecorator: Decorator

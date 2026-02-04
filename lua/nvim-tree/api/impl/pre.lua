@@ -9,6 +9,8 @@
 --
 --Everything must be as lazily loaded as possible: the user must be able to require api cheaply.
 
+local legacy = require("nvim-tree.legacy")
+
 local commands = require("nvim-tree.commands") -- already required by plugin.lua
 local events = require("nvim-tree.events")     -- needed for event registration pre-setup
 local keymap = require("nvim-tree.keymap")     -- needed for default on attach
@@ -40,7 +42,6 @@ function M.hydrate(api)
   hydrate_error(api)
 
   -- eager functions
-  api.events.Event = events.Event
   api.events.subscribe = events.subscribe
   api.map.on_attach.default = keymap.on_attach_default
   api.commands.get = commands.get
@@ -51,9 +52,10 @@ function M.hydrate(api)
 
   -- classes
   api.Decorator = Decorator:extend()
+  api.events.Event = events.Event
 
   -- Hydrate any legacy by mapping to concrete set above
-  require("nvim-tree.api.impl.legacy").hydrate(api)
+  legacy.map_api(api)
 end
 
 return M

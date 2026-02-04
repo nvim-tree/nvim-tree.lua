@@ -6,6 +6,8 @@
 ---This is expensive as there are many cascading requires and is avoided
 ---until after setup has been called, so that the user may require API cheaply.
 
+local legacy = require("nvim-tree.legacy")
+
 local actions = require("nvim-tree.actions")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
@@ -256,7 +258,7 @@ function M.hydrate(api)
   api.map.keymap.current = keymap.get_keymap
 
   -- (Re)hydrate any legacy by mapping to concrete set above
-  require("nvim-tree.api.impl.legacy").hydrate(api)
+  legacy.map_api(api)
 end
 
 return M
