@@ -3113,7 +3113,7 @@ winid({opts})                                     *nvim_tree.api.tree.winid()*
 
 
 ==============================================================================
-Class                                                        *nvim-tree-class*
+Class: Class                                                 *nvim-tree-class*
 
 nvim-tree uses the https://github.com/rxi/classic class framework adding safe
 casts, instanceof mixin and conventional destructors.
