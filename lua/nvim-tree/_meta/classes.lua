@@ -5,7 +5,7 @@ error("Cannot require a meta file")
 -- TODO #2688
 -- These node subclasses are not ready for public exposure as they are:
 -- - not classic classes
--- - only used in a few locations: api.tree.get_nodes and UserDecorator
+-- - only used in a few locations: api.tree.get_nodes and Decorator
 
 ---
 ---File

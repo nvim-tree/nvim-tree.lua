@@ -1,7 +1,5 @@
 ---@meta
 
----#TODO 3241 maybe rename to UserDecorator
-
 ---@brief
 ---Highlighting and icons for nodes are provided by Decorators, see [nvim-tree-icons-highlighting] for an overview.
 ---

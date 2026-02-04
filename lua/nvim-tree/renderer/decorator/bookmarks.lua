@@ -1,15 +1,15 @@
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
----@class (exact) BookmarkDecorator: Decorator
+---@class (exact) BookmarkDecorator: BuiltinDecorator
 ---@field private explorer Explorer
 ---@field private icon nvim_tree.api.highlighted_string?
-local BookmarkDecorator = Decorator:extend()
+local BookmarkDecorator = BuiltinDecorator:extend()
 
 ---@class BookmarkDecorator
----@overload fun(args: DecoratorArgs): BookmarkDecorator
+---@overload fun(args: BuiltinDecoratorArgs): BookmarkDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function BookmarkDecorator:new(args)
   self.explorer        = args.explorer
 

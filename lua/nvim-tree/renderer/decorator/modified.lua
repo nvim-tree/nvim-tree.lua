@@ -1,18 +1,18 @@
 local buffers = require("nvim-tree.buffers")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) ModifiedDecorator: Decorator
+---@class (exact) ModifiedDecorator: BuiltinDecorator
 ---@field private explorer Explorer
 ---@field private icon nvim_tree.api.highlighted_string?
-local ModifiedDecorator = Decorator:extend()
+local ModifiedDecorator = BuiltinDecorator:extend()
 
 ---@class ModifiedDecorator
----@overload fun(args: DecoratorArgs): ModifiedDecorator
+---@overload fun(args: BuiltinDecoratorArgs): ModifiedDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function ModifiedDecorator:new(args)
   self.explorer        = args.explorer
 

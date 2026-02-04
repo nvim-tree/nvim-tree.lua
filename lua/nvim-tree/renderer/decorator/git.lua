@@ -1,6 +1,6 @@
 local notify = require("nvim-tree.notify")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) GitHighlightedString: nvim_tree.api.highlighted_string
@@ -12,19 +12,19 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitIconsByXY table<nvim_tree.git.XY, GitHighlightedString[]> porcelain status
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
----@class (exact) GitDecorator: Decorator
+---@class (exact) GitDecorator: BuiltinDecorator
 ---@field private explorer Explorer
 ---@field private file_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private folder_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private icons_by_status GitIconsByStatus?
 ---@field private icons_by_xy GitIconsByXY?
-local GitDecorator = Decorator:extend()
+local GitDecorator = BuiltinDecorator:extend()
 
 ---@class GitDecorator
----@overload fun(args: DecoratorArgs): GitDecorator
+---@overload fun(args: BuiltinDecoratorArgs): GitDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function GitDecorator:new(args)
   self.explorer        = args.explorer
 

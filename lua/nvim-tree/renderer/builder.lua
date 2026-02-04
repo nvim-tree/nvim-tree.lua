@@ -14,12 +14,13 @@ local GitDecorator = require("nvim-tree.renderer.decorator.git")
 local HiddenDecorator = require("nvim-tree.renderer.decorator.hidden")
 local ModifiedDecorator = require("nvim-tree.renderer.decorator.modified")
 local OpenDecorator = require("nvim-tree.renderer.decorator.opened")
-local UserDecorator = require("nvim-tree.renderer.decorator.user")
+local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
 local pad = require("nvim-tree.renderer.components.padding")
 
 -- Builtin Decorators
----@type table<nvim_tree.config.renderer.decorator, Decorator>
+---@type table<nvim_tree.config.renderer.decorator, BuiltinDecorator>
 local BUILTIN_DECORATORS = {
   Git = GitDecorator,
   Open = OpenDecorator,
@@ -72,11 +73,11 @@ function Builder:new(args)
   -- instantiate all the builtin and user decorator instances
   local builtin, user
   for _, d in ipairs(self.explorer.opts.renderer.decorators) do
-    ---@type Decorator
+    ---@type BuiltinDecorator
     builtin = BUILTIN_DECORATORS[d]
 
-    ---@type UserDecorator
-    user = type(d) == "table" and type(d.as) == "function" and d:as(UserDecorator)
+    ---@type Decorator
+    user = type(d) == "table" and type(d.as) == "function" and d:as(Decorator)
 
     if builtin then
       table.insert(self.decorators, builtin({ explorer = self.explorer }))
@@ -151,40 +152,39 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
-  -- use the api node for user decorators
   local api_node = self.api_nodes and self.api_nodes[node.uid_node]
-  local u
+  local b
 
   local line = { indent_markers, arrows }
   add_to_end(line, { icon })
 
   for _, d in ipairs(self.decorators) do
-    u = d:as(UserDecorator)
-    if not u then
-      add_to_end(line, d:icons_before(node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_before(node))
     elseif api_node then
-      add_to_end(line, u:icons_before(api_node))
+      add_to_end(line, d:icons_before(api_node))
     end
   end
 
   add_to_end(line, { name })
 
   for _, d in ipairs(self.decorators) do
-    u = d:as(UserDecorator)
-    if not u then
-      add_to_end(line, d:icons_after(node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_after(node))
     elseif api_node then
-      add_to_end(line, u:icons_after(api_node))
+      add_to_end(line, d:icons_after(api_node))
     end
   end
 
   local rights = {}
   for _, d in ipairs(self.decorators) do
-    u = d:as(UserDecorator)
-    if not u then
-      add_to_end(line, d:icons_right_align(node))
+    b = d:as(BuiltinDecorator)
+    if b then
+      add_to_end(line, b:icons_right_align(node))
     elseif api_node then
-      add_to_end(line, u:icons_right_align(api_node))
+      add_to_end(line, d:icons_right_align(api_node))
     end
   end
   if #rights > 0 then
@@ -197,19 +197,18 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
-  -- use the api node for user decorators
   local api_node = self.api_nodes and self.api_nodes[node.uid_node]
 
   -- first in priority order
-  local d, u, sign_name
+  local d, b, sign_name
   for i = #self.decorators, 1, -1 do
     d = self.decorators[i]
 
-    u = d:as(UserDecorator)
-    if not u then
-      sign_name = d:sign_name(node)
+    b = d:as(BuiltinDecorator)
+    if b then
+      sign_name = b:sign_name(node)
     elseif api_node then
-      sign_name = u:sign_name(api_node)
+      sign_name = d:sign_name(api_node)
     end
 
     if sign_name then
@@ -255,8 +254,7 @@ end
 ---@return nvim_tree.api.highlighted_string icon
 ---@return nvim_tree.api.highlighted_string name
 function Builder:icon_name_decorated(node)
-  -- use the api node for user decorators
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node] --[[@as Node]]
+  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
 
   -- base case
   local icon = node:highlighted_icon()
@@ -266,16 +264,16 @@ function Builder:icon_name_decorated(node)
   local icon_groups = {}
   local name_groups = {}
   local hl_icon, hl_name
-  local u
+  local b
   for _, d in ipairs(self.decorators) do
     -- maybe override icon
-    u = d:as(UserDecorator)
-    if not u then
-      icon = d:icon_node(node) or icon
-      hl_icon, hl_name = d:highlight_group_icon_name(node)
+    b = d:as(BuiltinDecorator)
+    if b then
+      icon = b:icon_node(node) or icon
+      hl_icon, hl_name = b:highlight_group_icon_name(node)
     elseif api_node then
-      icon = u:icon_node(api_node) or icon
-      hl_icon, hl_name = u:highlight_group_icon_name(api_node)
+      icon = d:icon_node(api_node) or icon
+      hl_icon, hl_name = d:highlight_group_icon_name(api_node)
     end
 
     table.insert(icon_groups, hl_icon)

@@ -1,16 +1,16 @@
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) HiddenDecorator: Decorator
+---@class (exact) HiddenDecorator: BuiltinDecorator
 ---@field private explorer Explorer
 ---@field private icon nvim_tree.api.highlighted_string?
-local HiddenDecorator = Decorator:extend()
+local HiddenDecorator = BuiltinDecorator:extend()
 
 ---@class HiddenDecorator
----@overload fun(args: DecoratorArgs): HiddenDecorator
+---@overload fun(args: BuiltinDecoratorArgs): HiddenDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function HiddenDecorator:new(args)
   self.explorer        = args.explorer
 

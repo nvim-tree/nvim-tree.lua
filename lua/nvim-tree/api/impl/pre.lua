@@ -14,7 +14,7 @@ local events = require("nvim-tree.events")     -- needed for event registration 
 local keymap = require("nvim-tree.keymap")     -- needed for default on attach
 local notify = require("nvim-tree.notify")     -- already required by events and others
 
-local UserDecorator = require("nvim-tree.renderer.decorator.user")
+local Decorator = require("nvim-tree.renderer.decorator")
 
 local M = {}
 
@@ -50,7 +50,7 @@ function M.hydrate(api)
   api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
 
   -- classes
-  api.Decorator = UserDecorator:extend()
+  api.Decorator = Decorator:extend()
 
   -- Hydrate any legacy by mapping to concrete set above
   require("nvim-tree.api.impl.legacy").hydrate(api)
