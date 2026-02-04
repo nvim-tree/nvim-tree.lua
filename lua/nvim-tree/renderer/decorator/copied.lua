@@ -1,7 +1,6 @@
 local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
 ---@class (exact) CopiedDecorator: BuiltinDecorator
----@field private explorer Explorer
 local CopiedDecorator = BuiltinDecorator:extend()
 
 ---@class CopiedDecorator
@@ -10,7 +9,7 @@ local CopiedDecorator = BuiltinDecorator:extend()
 ---@protected
 ---@param args BuiltinDecoratorArgs
 function CopiedDecorator:new(args)
-  self.explorer        = args.explorer
+  CopiedDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none"

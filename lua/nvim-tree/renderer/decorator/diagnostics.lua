@@ -31,7 +31,6 @@ local ICON_KEYS = {
 }
 
 ---@class (exact) DiagnosticsDecorator: BuiltinDecorator
----@field private explorer Explorer
 ---@field private diag_icons nvim_tree.api.highlighted_string[]?
 local DiagnosticsDecorator = BuiltinDecorator:extend()
 
@@ -41,7 +40,7 @@ local DiagnosticsDecorator = BuiltinDecorator:extend()
 ---@protected
 ---@param args BuiltinDecoratorArgs
 function DiagnosticsDecorator:new(args)
-  self.explorer              = args.explorer
+  DiagnosticsDecorator.super.new(self, args)
 
   self.enabled               = true
   self.highlight_range       = self.explorer.opts.renderer.highlight_diagnostics or "none"

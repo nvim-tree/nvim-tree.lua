@@ -5,9 +5,7 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---
 ---@class (exact) BuiltinDecorator: Decorator
 ---
----@field protected enabled boolean
----@field protected highlight_range nvim_tree.config.renderer.highlight
----@field protected icon_placement "none"|nvim_tree.config.renderer.icons.placement
+---@field protected explorer Explorer
 ---
 ---@field icon_node                 fun(self: BuiltinDecorator, node: Node): nvim_tree.api.highlighted_string?
 ---@field icons                     fun(self: BuiltinDecorator, node: Node): nvim_tree.api.highlighted_string?
@@ -19,8 +17,13 @@ local Decorator = require("nvim-tree.renderer.decorator")
 ---@field icons_right_align         fun(self: BuiltinDecorator, node: Node): nvim_tree.api.highlighted_string[]?
 local BuiltinDecorator = Decorator:extend()
 
----TODO #3241 create a common constructor
 ---@class (exact) BuiltinDecoratorArgs
 ---@field explorer Explorer
+
+---@protected
+---@param args BuiltinDecoratorArgs
+function BuiltinDecorator:new(args)
+  self.explorer = args.explorer
+end
 
 return BuiltinDecorator

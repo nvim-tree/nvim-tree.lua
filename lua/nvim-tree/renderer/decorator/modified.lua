@@ -4,7 +4,6 @@ local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) ModifiedDecorator: BuiltinDecorator
----@field private explorer Explorer
 ---@field private icon nvim_tree.api.highlighted_string?
 local ModifiedDecorator = BuiltinDecorator:extend()
 
@@ -14,7 +13,7 @@ local ModifiedDecorator = BuiltinDecorator:extend()
 ---@protected
 ---@param args BuiltinDecoratorArgs
 function ModifiedDecorator:new(args)
-  self.explorer        = args.explorer
+  ModifiedDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_modified or "none"

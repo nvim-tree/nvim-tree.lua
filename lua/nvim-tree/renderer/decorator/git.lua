@@ -13,7 +13,6 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
 ---@class (exact) GitDecorator: BuiltinDecorator
----@field private explorer Explorer
 ---@field private file_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private folder_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private icons_by_status GitIconsByStatus?
@@ -26,7 +25,7 @@ local GitDecorator = BuiltinDecorator:extend()
 ---@protected
 ---@param args BuiltinDecoratorArgs
 function GitDecorator:new(args)
-  self.explorer        = args.explorer
+  GitDecorator.super.new(self, args)
 
   self.enabled         = self.explorer.opts.git.enable
   self.highlight_range = self.explorer.opts.renderer.highlight_git or "none"
