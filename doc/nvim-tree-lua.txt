@@ -548,7 +548,7 @@ To view the nvim-tree highlight groups run |:NvimTreeHiTest|
 To view all active highlight groups run `:so $VIMRUNTIME/syntax/hitest.vim`
 as per |:highlight|
 
-The `*HL` groups are additive according to per |nvim_tree.config.renderer|
+The `*HL` groups are additive, following |nvim_tree.config.renderer.decorator|
 precedence.
 Only present attributes will clobber each other.
 In this example a modified, opened file will have magenta text, with cyan
@@ -3385,7 +3385,7 @@ Decorator:icons({node})                      *nvim_tree.api.Decorator:icons()*
 
 
 ==============================================================================
-Class: Decorator: example                  *nvim-tree-class-decorator-example*
+Class: Decorator example                   *nvim-tree-class-decorator-example*
 
 A decorator class for nodes named "example", overriding all builtin decorators
 except for Cut.

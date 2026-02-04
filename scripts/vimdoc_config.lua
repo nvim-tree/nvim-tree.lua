@@ -64,9 +64,9 @@ local srcs_api = {
 
 ---@type Src[]
 local srcs_class = {
-  { helptag = "nvim-tree-class",                   section = "Class: Class",              path = base .. "classic.lua", },
-  { helptag = "nvim-tree-class-decorator",         section = "Class: Decorator",          path = base .. "_meta/api/decorator.lua", },
-  { helptag = "nvim-tree-class-decorator-example", section = "Class: Decorator: example", path = base .. "_meta/api/decorator_example.lua", },
+  { helptag = "nvim-tree-class",                   section = "Class: Class",             path = base .. "classic.lua", },
+  { helptag = "nvim-tree-class-decorator",         section = "Class: Decorator",         path = base .. "_meta/api/decorator.lua", },
+  { helptag = "nvim-tree-class-decorator-example", section = "Class: Decorator example", path = base .. "_meta/api/decorator_example.lua", },
 }
 
 ---Map paths to file names
