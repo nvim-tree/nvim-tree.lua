@@ -3004,6 +3004,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
           "/build",
           "/node_modules",
           "/target",
+          "/.zig-cache",
         },
       },
       actions = {
