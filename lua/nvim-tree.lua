@@ -681,13 +681,11 @@ local function validate_options(conf)
 
 				if enum_value then
 					if not vim.tbl_contains(enums, v) then
-						invalid = string.format(
-							"Invalid value for field %s%s: Expected one of enum '%s', got '%s'",
+						invalid = string.format("Invalid value for field %s%s: Expected one of enum '%s', got '%s'",
 							prefix,
 							k,
 							table.concat(enums, "'|'"),
-							tostring(v)
-						)
+							tostring(v))
 					end
 				else
 					if def[k] == nil and types[k] == nil then
@@ -706,8 +704,7 @@ local function validate_options(conf)
 
 						if expected then
 							-- option is of the wrong type
-							invalid =
-								string.format("Invalid option: %s%s. Expected %s, got %s", prefix, k, expected, type(v))
+							invalid = string.format("Invalid option: %s%s. Expected %s, got %s", prefix, k, expected, type(v))
 						end
 					elseif type(v) == "string" and strs[k] and not vim.tbl_contains(strs[k], v) then
 						-- option has type `string` but value is not accepted
