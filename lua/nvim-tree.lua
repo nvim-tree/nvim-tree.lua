@@ -320,7 +320,7 @@ local DEFAULT_OPTS = { -- default-config-start
     special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
     hidden_display = "none",
     symlink_destination = true,
-    decorators = { "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut" },
+    decorators = { "Git", "Open", "Hidden", "Modified", "Bookmark", "Diagnostics", "Copied", "Cut", },
     highlight_git = "none",
     highlight_diagnostics = "none",
     highlight_opened_files = "none",
@@ -536,7 +536,8 @@ local DEFAULT_OPTS = { -- default-config-start
   bookmarks = {
     persist = false,
   },
-  experimental = {},
+  experimental = {
+  },
   log = {
     enable = false,
     truncate = false,
