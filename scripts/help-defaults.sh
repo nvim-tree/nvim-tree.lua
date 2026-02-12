@@ -16,18 +16,18 @@ cp "doc/nvim-tree-lua.txt" "${WIP}"
 #
 # Inject default config
 #
-begin="default-config-start"
-end="default-config-end"
-inject="default-config-injection-placeholder"
+begin="config-default-start"
+end="config-default-end"
+inject="config-default-injection-placeholder"
 
-# scrape DEFAULT_OPTS, indented at 2
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree.lua > /tmp/DEFAULT_OPTS.2.lua
+# scrape config.default, indented at 2
+sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/config.lua > /tmp/config.default.2.lua
 
 # indent to match help
-sed -e "s/^  /      /" /tmp/DEFAULT_OPTS.2.lua > /tmp/DEFAULT_OPTS.6.lua
+sed -e "s/^  /      /" /tmp/config.default.2.lua > /tmp/config.default.6.lua
 
 # inject then remove the placeholder
-sed -i -e "/${inject}/r /tmp/DEFAULT_OPTS.6.lua" -e "/${inject}/d" "${WIP}"
+sed -i -e "/${inject}/r /tmp/config.default.6.lua" -e "/${inject}/d" "${WIP}"
 
 #
 # Inject default mappings

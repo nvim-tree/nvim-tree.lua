@@ -55,7 +55,7 @@ function M.is_opened(node)
   return node and vim.fn.bufloaded(node.absolute_path) > 0
 end
 
----@param opts table
+---@param opts nvim_tree.config
 function M.setup(opts)
   M.config = {
     modified = opts.modified,
