@@ -26,93 +26,123 @@ Take a look at the [wiki](https://github.com/nvim-tree/nvim-tree.lua/wiki) for S
 
 Questions and general support: [Discussions](https://github.com/nvim-tree/nvim-tree.lua/discussions)
 
-## Requirements
+<!-- 
+https://github.com/jonschlinkert/markdown-toc
+markdown-toc --maxdepth=2 -i README.md
+-->
+
+<!-- toc -->
+
+- [Requirements](#requirements)
+- [Installing](#installing)
+- [Quick Start](#quick-start)
+  * [Setup](#setup)
+  * [Help](#help)
+  * [Custom Mappings](#custom-mappings)
+  * [Highlight Groups](#highlight-groups)
+- [Commands](#commands)
+- [Roadmap](#roadmap)
+- [API](#api)
+- [Contributing](#contributing)
+- [Screenshots](#screenshots)
+- [Team](#team)
+
+<!-- tocstop -->
+
+# Requirements
 
 [neovim >=0.9.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
 
 [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/). Your terminal emulator must be configured to use that font, usually "Hack Nerd Font"
 
-## Install
+# Installing
 
-Please install via your preferred package manager. See [Installation](https://github.com/nvim-tree/nvim-tree.lua/wiki/Installation) for specific package manager instructions.
-
-`nvim-tree/nvim-tree.lua`
+Please install via your preferred package manager. See [Installation](https://github.com/nvim-tree/nvim-tree.lua/wiki/Installation) for some specific package manager instructions.
 
 Major or minor versions may be specified via tags: `v<MAJOR>` e.g. `v1` or `v<MAJOR>.<MINOR>` e.g. `v1.23`
 
-`nvim-tree/nvim-web-devicons` optional, for file icons
+# Quick Start
+
+Install the plugins via your package manager:
+  `"nvim-tree/nvim-tree.lua"`
+  `"nvim-tree/nvim-web-devicons"`
 
 Disabling [netrw](https://neovim.io/doc/user/pi_netrw.html) is strongly advised, see [:help nvim-tree-netrw](doc/nvim-tree-lua.txt)
 
-## Quick Start
+## Setup
 
-### Setup
+Setup the plugin in your `init.lua`.
 
-Setup the plugin in your `init.lua`
+See [:help nvim-tree-setup](doc/nvim-tree-lua.txt) and [:help nvim-tree-config-default](doc/nvim-tree-lua.txt)
 
 ```lua
--- disable netrw at the very start of your init.lua
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+  -- disable netrw at the very start of your init.lua
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
 
--- optionally enable 24-bit colour
-vim.opt.termguicolors = true
+  -- optionally enable 24-bit colour
+  vim.opt.termguicolors = true
 
--- empty setup using defaults
-require("nvim-tree").setup()
+  -- empty setup using defaults
+  require("nvim-tree").setup()
 
--- OR setup with some options
-require("nvim-tree").setup({
-  sort = {
-    sorter = "case_sensitive",
-  },
-  view = {
-    width = 30,
-  },
-  renderer = {
-    group_empty = true,
-  },
-  filters = {
-    dotfiles = true,
-  },
-})
+  -- OR setup with a config
+
+  ---@type nvim_tree.config
+  local config = {
+    sort = {
+      sorter = "case_sensitive",
+    },
+    view = {
+      width = 30,
+    },
+    renderer = {
+      group_empty = true,
+    },
+    filters = {
+      dotfiles = true,
+    },
+  }
+  require("nvim-tree").setup(config)
 ```
 
-### Help
+## Help
 
 Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
 
-### Custom Mappings
+## Custom Mappings
 
-[:help nvim-tree-mappings-default](doc/nvim-tree-lua.txt) are applied by default however you may customise via |nvim-tree.on_attach| e.g.
+[:help nvim-tree-mappings-default](doc/nvim-tree-lua.txt) are applied by default however you may customise via [:help nvim_tree.config](doc/nvim-tree-lua.txt) `{on_attach}` e.g.
 
 ```lua
-local function my_on_attach(bufnr)
-  local api = require "nvim-tree.api"
+  local function my_on_attach(bufnr)
+    local api = require "nvim-tree.api"
 
-  local function opts(desc)
-    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    local function opts(desc)
+      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    -- default mappings
+    api.map.on_attach.default(bufnr)
+
+    -- custom mappings
+    vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent,        opts("Up"))
+    vim.keymap.set("n", "?",     api.tree.toggle_help,                  opts("Help"))
   end
 
-  -- default mappings
-  api.config.mappings.default_on_attach(bufnr)
-
-  -- custom mappings
-  vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
-  vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
-end
-
--- pass to setup along with your other options
-require("nvim-tree").setup {
-  ---
-  on_attach = my_on_attach,
-  ---
-}
+  -- pass to setup along with your other config
+  require("nvim-tree").setup({
+    ---
+    on_attach = my_on_attach,
+    ---
+  })
 ```
 
-### Highlight
+## Highlight Groups
+
+See [:help nvim-tree-highlight-groups](doc/nvim-tree-lua.txt)
 
 Run `:NvimTreeHiTest` to show all the highlights that nvim-tree uses.
 
@@ -120,43 +150,71 @@ They can be customised before or after setup is called and will be immediately
 applied at runtime. e.g.
 
 ```lua
-vim.cmd([[
-    :hi      NvimTreeExecFile    guifg=#ffa0a0
-    :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
-    :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
-    :hi link NvimTreeImageFile   Title
-]])
+  vim.cmd([[
+      :hi      NvimTreeExecFile    guifg=#ffa0a0
+      :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+      :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+      :hi link NvimTreeImageFile   Title
+  ]])
 ```
-See [:help nvim-tree-highlight](doc/nvim-tree-lua.txt) for details.
 
-## Commands
+# Commands
 
 See [:help nvim-tree-commands](doc/nvim-tree-lua.txt)
 
-Basic commands:
+Some commands may be executed with a bang `!` or take a `path` string argument.
 
-`:NvimTreeToggle` Open or close the tree. Takes an optional path argument.
+All commands execute public API.
 
-`:NvimTreeFocus` Open the tree if it is closed, and then focus on the tree.
+Some basic commands:
 
-`:NvimTreeFindFile` Move the cursor in the tree for the current buffer, opening folders if needed.
+`:NvimTreeFocus`                           [:help nvim_tree.api.tree.open()](doc/nvim-tree-lua.txt)
+```lua
+  require("nvim-tree.api").tree.open()
+```
 
-`:NvimTreeCollapse` Collapses the nvim-tree recursively.
+`:NvimTreeToggle`                          [:help nvim_tree.api.tree.toggle()](doc/nvim-tree-lua.txt)
+```lua
+  require("nvim-tree.api").tree.toggle({
+    path = "<args>",
+    find_file = false,
+    update_root = false,
+    focus = true,
+  })
+```
 
-## Roadmap
+`:NvimTreeFindFile`                        [:help nvim_tree.api.tree.find_file()](doc/nvim-tree-lua.txt)
+```lua
+  require("nvim-tree.api").tree.find_file({
+    open = true,
+    update_root = "<bang>",
+    focus = true,
+  })
+```
+
+`:NvimTreeCollapse`                        [:help nvim_tree.api.tree.collapse_all()](doc/nvim-tree-lua.txt)
+
+```lua
+  require("nvim-tree.api").tree.collapse_all({
+    keep_buffers = false
+  })
+```
+
+# Roadmap
 
 nvim-tree is stable and new major features will not be added. The focus is on existing user experience.
 
 Users are encouraged to add their own custom features via the public [API](#api).
 
 Development is focused on:
-* Bug fixes
-* Performance
-* Quality of Life improvements
-* API / Events
-* Enhancements to existing features
+- Bug fixes
+- Performance
+- Quality of Life improvements
+- API / Events
+- Enhancements to existing features
+- Multi-instance capabilities
 
-## API
+# API
 
 nvim-tree exposes a public API. This is non breaking, with additions made as necessary. See [:help nvim-tree-api](doc/nvim-tree-lua.txt)
 
@@ -166,19 +224,19 @@ Please raise a [feature request](https://github.com/nvim-tree/nvim-tree.lua/issu
 
 You may also subscribe to events that nvim-tree will dispatch in a variety of situations, see [:help nvim-tree-events](doc/nvim-tree-lua.txt)
 
-## Contributing
+# Contributing
 
 PRs are always welcome. See [CONTRIBUTING](CONTRIBUTING.md) and [wiki: Development](https://github.com/nvim-tree/nvim-tree.lua/wiki/Development) to get started.
 
 See [bug](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aissue+is%3Aopen+label%3Abug) and [PR Please](https://github.com/nvim-tree/nvim-tree.lua/issues?q=is%3Aopen+is%3Aissue+label%3A%22PR+please%22) issues if you are looking for some work to get you started.
 
-## Screenshots
+# Screenshots
 
 See [Showcases](https://github.com/nvim-tree/nvim-tree.lua/wiki/Showcases) wiki page for examples of user's configurations with sources.
 
 Please add your own!
 
-## Team
+# Team
 
 * [@alex-courtis](https://github.com/alex-courtis) Arch Linux
 * [@gegoune](https://github.com/gegoune) macOS

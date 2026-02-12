@@ -7,6 +7,7 @@ Help tag prefixes:
   • |nvim-tree-mappings|
   • |nvim-tree-config|
 • `nvim_tree.`  API and classes e.g.
+  • |nvim_tree.api.node.navigate.parent()|
   • |nvim_tree.config.filesystem_watchers|
 
 ==============================================================================
@@ -67,7 +68,7 @@ Quickstart: Setup                                 *nvim-tree-quickstart-setup*
 
 Setup the plugin in your `init.lua`.
 
-See |nvim-tree-setup| and |nvim-tree-default-config >lua
+See |nvim-tree-setup| and |nvim-tree-config-default| >lua
 
   -- disable netrw at the very start of your init.lua
   vim.g.loaded_netrw = 1
@@ -105,65 +106,65 @@ Open the tree:  `:NvimTreeOpen`
 
 Show the mappings:  `g?`
 
-`<C-]>`           CD                         |nvim-tree-api.tree.change_root_to_node()|
-`<C-e>`           Open: In Place             |nvim-tree-api.node.open.replace_tree_buffer()|
-`<C-k>`           Info                       |nvim-tree-api.node.show_info_popup()|
-`<C-r>`           Rename: Omit Filename      |nvim-tree-api.fs.rename_sub()|
-`<C-t>`           Open: New Tab              |nvim-tree-api.node.open.tab()|
-`<C-v>`           Open: Vertical Split       |nvim-tree-api.node.open.vertical()|
-`<C-x>`           Open: Horizontal Split     |nvim-tree-api.node.open.horizontal()|
-`<BS>`            Close Directory            |nvim-tree-api.node.navigate.parent_close()|
-`<CR>`            Open                       |nvim-tree-api.node.open.edit()|
-`<Del>`           Delete                     |nvim-tree-api.fs.remove()|
-`<Tab>`           Open Preview               |nvim-tree-api.node.open.preview()|
-`>`               Next Sibling               |nvim-tree-api.node.navigate.sibling.next()|
-`<`               Previous Sibling           |nvim-tree-api.node.navigate.sibling.prev()|
-`.`               Run Command                |nvim-tree-api.node.run.cmd()|
-`-`               Up                         |nvim-tree-api.tree.change_root_to_parent()|
-`a`               Create File Or Directory   |nvim-tree-api.fs.create()|
-`bd`              Delete Bookmarked          |nvim-tree-api.marks.bulk.delete()|
-`bt`              Trash Bookmarked           |nvim-tree-api.marks.bulk.trash()|
-`bmv`             Move Bookmarked            |nvim-tree-api.marks.bulk.move()|
-`B`               Toggle Filter: No Buffer   |nvim-tree-api.tree.toggle_no_buffer_filter()|
-`c`               Copy                       |nvim-tree-api.fs.copy.node()|
-`C`               Toggle Filter: Git Clean   |nvim-tree-api.tree.toggle_git_clean_filter()|
-`[c`              Prev Git                   |nvim-tree-api.node.navigate.git.prev()|
-`]c`              Next Git                   |nvim-tree-api.node.navigate.git.next()|
-`d`               Delete                     |nvim-tree-api.fs.remove()|
-`D`               Trash                      |nvim-tree-api.fs.trash()|
-`E`               Expand All                 |nvim-tree-api.tree.expand_all()|
-`e`               Rename: Basename           |nvim-tree-api.fs.rename_basename()|
-`]e`              Next Diagnostic            |nvim-tree-api.node.navigate.diagnostics.next()|
-`[e`              Prev Diagnostic            |nvim-tree-api.node.navigate.diagnostics.prev()|
-`F`               Live Filter: Clear         |nvim-tree-api.live_filter.clear()|
-`f`               Live Filter: Start         |nvim-tree-api.live_filter.start()|
-`g?`              Help                       |nvim-tree-api.tree.toggle_help()|
-`gy`              Copy Absolute Path         |nvim-tree-api.fs.copy.absolute_path()|
-`ge`              Copy Basename              |nvim-tree-api.fs.copy.basename()|
-`H`               Toggle Filter: Dotfiles    |nvim-tree-api.tree.toggle_hidden_filter()|
-`I`               Toggle Filter: Git Ignore  |nvim-tree-api.tree.toggle_gitignore_filter()|
-`J`               Last Sibling               |nvim-tree-api.node.navigate.sibling.last()|
-`K`               First Sibling              |nvim-tree-api.node.navigate.sibling.first()|
-`L`               Toggle Group Empty         |nvim-tree-api.node.open.toggle_group_empty()|
-`M`               Toggle Filter: No Bookmark |nvim-tree-api.tree.toggle_no_bookmark_filter()|
-`m`               Toggle Bookmark            |nvim-tree-api.marks.toggle()|
-`o`               Open                       |nvim-tree-api.node.open.edit()|
-`O`               Open: No Window Picker     |nvim-tree-api.node.open.no_window_picker()|
-`p`               Paste                      |nvim-tree-api.fs.paste()|
-`P`               Parent Directory           |nvim-tree-api.node.navigate.parent()|
-`q`               Close                      |nvim-tree-api.tree.close()|
-`r`               Rename                     |nvim-tree-api.fs.rename()|
-`R`               Refresh                    |nvim-tree-api.tree.reload()|
-`s`               Run System                 |nvim-tree-api.node.run.system()|
-`S`               Search                     |nvim-tree-api.tree.search_node()|
-`u`               Rename: Full Path          |nvim-tree-api.fs.rename_full()|
-`U`               Toggle Filter: Hidden      |nvim-tree-api.tree.toggle_custom_filter()|
-`W`               Collapse All               |nvim-tree-api.tree.collapse_all()|
-`x`               Cut                        |nvim-tree-api.fs.cut()|
-`y`               Copy Name                  |nvim-tree-api.fs.copy.filename()|
-`Y`               Copy Relative Path         |nvim-tree-api.fs.copy.relative_path()|
-`<2-LeftMouse>`   Open                       |nvim-tree-api.node.open.edit()|
-`<2-RightMouse>`  CD                         |nvim-tree-api.tree.change_root_to_node()|
+`<C-]>`           CD                         |nvim_tree.api.tree.change_root_to_node()|
+`<C-e>`           Open: In Place             |nvim_tree.api.node.open.replace_tree_buffer()|
+`<C-k>`           Info                       |nvim_tree.api.node.show_info_popup()|
+`<C-r>`           Rename: Omit Filename      |nvim_tree.api.fs.rename_sub()|
+`<C-t>`           Open: New Tab              |nvim_tree.api.node.open.tab()|
+`<C-v>`           Open: Vertical Split       |nvim_tree.api.node.open.vertical()|
+`<C-x>`           Open: Horizontal Split     |nvim_tree.api.node.open.horizontal()|
+`<BS>`            Close Directory            |nvim_tree.api.node.navigate.parent_close()|
+`<CR>`            Open                       |nvim_tree.api.node.open.edit()|
+`<Del>`           Delete                     |nvim_tree.api.fs.remove()|
+`<Tab>`           Open Preview               |nvim_tree.api.node.open.preview()|
+`>`               Next Sibling               |nvim_tree.api.node.navigate.sibling.next()|
+`<`               Previous Sibling           |nvim_tree.api.node.navigate.sibling.prev()|
+`.`               Run Command                |nvim_tree.api.node.run.cmd()|
+`-`               Up                         |nvim_tree.api.tree.change_root_to_parent()|
+`a`               Create File Or Directory   |nvim_tree.api.fs.create()|
+`bd`              Delete Bookmarked          |nvim_tree.api.marks.bulk.delete()|
+`bt`              Trash Bookmarked           |nvim_tree.api.marks.bulk.trash()|
+`bmv`             Move Bookmarked            |nvim_tree.api.marks.bulk.move()|
+`B`               Toggle Filter: No Buffer   |nvim_tree.api.filter.no_buffer.toggle()|
+`c`               Copy                       |nvim_tree.api.fs.copy.node()|
+`C`               Toggle Filter: Git Clean   |nvim_tree.api.filter.git.clean.toggle()|
+`[c`              Prev Git                   |nvim_tree.api.node.navigate.git.prev()|
+`]c`              Next Git                   |nvim_tree.api.node.navigate.git.next()|
+`d`               Delete                     |nvim_tree.api.fs.remove()|
+`D`               Trash                      |nvim_tree.api.fs.trash()|
+`E`               Expand All                 |nvim_tree.api.tree.expand_all()|
+`e`               Rename: Basename           |nvim_tree.api.fs.rename_basename()|
+`]e`              Next Diagnostic            |nvim_tree.api.node.navigate.diagnostics.next()|
+`[e`              Prev Diagnostic            |nvim_tree.api.node.navigate.diagnostics.prev()|
+`F`               Live Filter: Clear         |nvim_tree.api.filter.live.clear()|
+`f`               Live Filter: Start         |nvim_tree.api.filter.live.start()|
+`g?`              Help                       |nvim_tree.api.tree.toggle_help()|
+`gy`              Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
+`ge`              Copy Basename              |nvim_tree.api.fs.copy.basename()|
+`H`               Toggle Filter: Dotfiles    |nvim_tree.api.filter.dotfiles.toggle()|
+`I`               Toggle Filter: Git Ignored |nvim_tree.api.filter.git.ignored.toggle()|
+`J`               Last Sibling               |nvim_tree.api.node.navigate.sibling.last()|
+`K`               First Sibling              |nvim_tree.api.node.navigate.sibling.first()|
+`L`               Toggle Group Empty         |nvim_tree.api.node.open.toggle_group_empty()|
+`M`               Toggle Filter: No Bookmark |nvim_tree.api.filter.no_bookmark.toggle()|
+`m`               Toggle Bookmark            |nvim_tree.api.marks.toggle()|
+`o`               Open                       |nvim_tree.api.node.open.edit()|
+`O`               Open: No Window Picker     |nvim_tree.api.node.open.no_window_picker()|
+`p`               Paste                      |nvim_tree.api.fs.paste()|
+`P`               Parent Directory           |nvim_tree.api.node.navigate.parent()|
+`q`               Close                      |nvim_tree.api.tree.close()|
+`r`               Rename                     |nvim_tree.api.fs.rename()|
+`R`               Refresh                    |nvim_tree.api.tree.reload()|
+`s`               Run System                 |nvim_tree.api.node.run.system()|
+`S`               Search                     |nvim_tree.api.tree.search_node()|
+`u`               Rename: Full Path          |nvim_tree.api.fs.rename_full()|
+`U`               Toggle Filter: Custom      |nvim_tree.api.filter.custom.toggle()|
+`W`               Collapse All               |nvim_tree.api.tree.collapse_all()|
+`x`               Cut                        |nvim_tree.api.fs.cut()|
+`y`               Copy Name                  |nvim_tree.api.fs.copy.filename()|
+`Y`               Copy Relative Path         |nvim_tree.api.fs.copy.relative_path()|
+`<2-LeftMouse>`   Open                       |nvim_tree.api.node.open.edit()|
+`<2-RightMouse>`  CD                         |nvim_tree.api.tree.change_root_to_node()|
 
 ==============================================================================
 Quickstart: Custom Mappings             *nvim-tree-quickstart-custom-mappings*
@@ -179,14 +180,14 @@ via |nvim_tree.config| {on_attach} e.g. >lua
     end
 
     -- default mappings
-    api.config.mappings.default_on_attach(bufnr)
+    api.map.on_attach.default(bufnr)
 
     -- custom mappings
     vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent,        opts("Up"))
     vim.keymap.set("n", "?",     api.tree.toggle_help,                  opts("Help"))
   end
 
-  -- pass to setup along with your other options
+  -- pass to setup along with your other config
   require("nvim-tree").setup({
     ---
     on_attach = my_on_attach,
@@ -201,116 +202,95 @@ Run |:NvimTreeHiTest| to show all the highlights that nvim-tree uses.
 They can be customised before or after setup is called and will be immediately
 applied at runtime. e.g. >lua
 
-    vim.cmd([[
-        :hi      NvimTreeExecFile    guifg=#ffa0a0
-        :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
-        :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
-        :hi link NvimTreeImageFile   Title
-    ]])
+  vim.cmd([[
+      :hi      NvimTreeExecFile    guifg=#ffa0a0
+      :hi      NvimTreeSpecialFile guifg=#ff80ff gui=underline
+      :hi      NvimTreeSymlink     guifg=Yellow  gui=italic
+      :hi link NvimTreeImageFile   Title
+  ]])
 <
 See |nvim-tree-highlight-groups| for details.
 
 ==============================================================================
 Commands                                                  *nvim-tree-commands*
 
-*:NvimTreeOpen*
+Some commands may be executed with a |<bang>| `!` or take a `path` string argument.
 
-    Opens the tree. See |nvim-tree-api.tree.open()|
+All commands execute public API.
 
-    Calls: `api.tree.open({ path = "<args>" })`
+*:NvimTreeOpen*                            |nvim_tree.api.tree.open()| >lua
 
-*:NvimTreeClose*
+  require("nvim-tree.api").tree.open({
+    path = "<args>"
+  })
+<
+*:NvimTreeClose*                           |nvim_tree.api.tree.close()| >lua
 
-    Closes the tree. See |nvim-tree-api.tree.close()|
+  require("nvim-tree.api").tree.close()
+<
+*:NvimTreeToggle*                          |nvim_tree.api.tree.toggle()| >lua
 
-    Calls: `api.tree.close()`
+  require("nvim-tree.api").tree.toggle({
+    path = "<args>",
+    find_file = false,
+    update_root = false,
+    focus = true,
+  })
+<
+*:NvimTreeFocus*                           |nvim_tree.api.tree.open()| >lua
 
-*:NvimTreeToggle*
+  require("nvim-tree.api").tree.open()
+<
+*:NvimTreeRefresh*                         |nvim_tree.api.tree.reload()| >lua
 
-    Open or close the tree. See |nvim-tree-api.tree.toggle()|
+  require("nvim-tree.api").tree.reload()
+<
+*:NvimTreeFindFile*                        |nvim_tree.api.tree.find_file()| >lua
 
-    Calls: `api.tree.toggle({ path = "<args>", find_file = false, update_root = false, focus = true, })`
+  require("nvim-tree.api").tree.find_file({
+    open = true,
+    update_root = "<bang>",
+    focus = true,
+  })
+<
+*:NvimTreeFindFileToggle*                  |nvim_tree.api.tree.toggle()| >lua
 
-*:NvimTreeFocus*
+  require("nvim-tree.api").tree.toggle({
+    path = "<args>",
+    find_file = true,
+    update_root = "<bang>",
+    focus = true,
+  })
+<
+*:NvimTreeClipboard*                       |nvim_tree.api.fs.print_clipboard()| >lua
 
-    Open the tree if it is closed, and then focus on the tree.
+  require("nvim-tree.api").fs.print_clipboard()
+<
+*:NvimTreeCollapse*                        |nvim_tree.api.tree.collapse_all()| >lua
 
-    See |nvim-tree-api.tree.open()|
+  require("nvim-tree.api").tree.collapse_all({
+    keep_buffers = false
+  })
+<
+*:NvimTreeCollapseKeepBuffers*             |nvim_tree.api.tree.collapse_all()| >lua
 
-    Calls: `api.tree.open()`
+  require("nvim-tree.api").tree.collapse_all({
+    keep_buffers = true
+  })
+<
+*:NvimTreeHiTest*                          |nvim_tree.api.health.hi_test()| >lua
 
-*:NvimTreeRefresh*
+  require("nvim-tree.api").health.hi_test()
+<
+*:NvimTreeResize*                          |nvim_tree.api.tree.resize()| >lua
 
-    Refresh the tree. See |nvim-tree-api.tree.reload()|
-
-    Calls: `api.tree.reload()`
-
-*:NvimTreeFindFile*
-
-    The command will change the cursor in the tree for the current bufname.
-
-    It will also open the leafs of the tree leading to the file in the buffer
-    (if you opened a file with something else than the NvimTree, like `fzf` or
-    `:split`)
-
-    Invoke with a bang `:NvimTreeFindFile!` to update the root.
-
-    See |nvim-tree-api.tree.find_file()|
-
-    Calls: `api.tree.find_file({ update_root = <bang>, open = true, focus = true, })`
-
-*:NvimTreeFindFileToggle*
-
-    close the tree or change the cursor in the tree for the current bufname,
-    similar to combination of |:NvimTreeToggle| and |:NvimTreeFindFile|. Takes an
-    optional path argument.
-
-    Invoke with a bang `:NvimTreeFindFileToggle!` to update the root.
-
-    See |nvim-tree-api.tree.toggle()|
-
-    Calls: `api.tree.toggle({ path = "<args>", update_root = <bang>, find_file = true, focus = true, })`
-
-*:NvimTreeClipboard*
-
-    Print clipboard content for both cut and copy
-
-    See |nvim-tree-api.fs.print_clipboard()|
-
-    Calls: `api.fs.print_clipboard()`
-
-*:NvimTreeResize*
-
-    Resize the NvimTree window to the given size. Example: `:NvimTreeResize 50`
-    resizes the window to the width of 50. If the size starts with "+" or "-" it
-    adds or removes the given value to the current window width.
-    Example `:NvimTreeResize -20` removes the value 20 from the current width. And
-    `:NvimTreeResize +20` adds the value 20 to the current width.
-
-*:NvimTreeCollapse*
-
-    Collapses the nvim-tree recursively.
-
-    See |nvim-tree-api.tree.collapse_all()|
-
-    Calls: `api.tree.collapse_all({ keep_buffers = false })`
-
-*:NvimTreeCollapseKeepBuffers*
-
-    Collapses the nvim-tree recursively, but keep the directories open, which are
-    used in an open buffer.
-
-    See |nvim-tree-api.tree.collapse_all()|
-
-    Calls: `api.tree.collapse_all({ keep_buffers = true })`
-
-*:NvimTreeHiTest*
-
-    Show nvim-tree highlight groups similar to `:so $VIMRUNTIME/syntax/hitest.vim`
-
-    See |nvim-tree-api.diagnostics.hi_test()|
-
-    Calls: `api.diagnostics.hi_test()`
+  local sign = c.args:sub(1, 1)
+  if sign == "+" or sign == "-" then
+    require("nvim-tree.api").tree.resize({ relative = tonumber(c.args) })
+  else
+    require("nvim-tree.api").tree.resize({ absolute = tonumber(c.args) })
+  end
+<
 
 ==============================================================================
 Setup                                                        *nvim-tree-setup*
@@ -320,7 +300,7 @@ called again to apply a change in configuration without restarting Nvim.
 
 The `setup()` function takes one optional argument: |nvim_tree.config|. If
 omitted nvim-tree will be initialised with default configuration:
-|nvim-tree-default-config|.
+|nvim-tree-config-default|.
 
 Config can be validated with |lsp| when passed directly e.g. >lua
 
@@ -341,734 +321,6 @@ the configuration. Nothing happens until the tree is first opened.
 
 Subsequent `setup()` calls are expensive as they tear down the world before
 applying configuration.
-
-
-==============================================================================
-API                                                            *nvim-tree-api*
-
-Nvim-tree's public API can be used to access features. e.g. >lua
-    local api = require("nvim-tree.api")
-    api.tree.toggle()
-<
-This module exposes stable functionalities, it is advised to use this in order
-to avoid breaking configurations due to internal breaking changes.
-
-The api is separated in multiple modules, which can be accessed with
-`api.<module>.<function>`
-
-Functions accepting {node} as their first argument will use the node under the
-cursor when that argument is not present or nil.
-
-==============================================================================
-API: Tree                                                 *nvim-tree-api.tree*
-
-tree.open({opts})                                  *nvim-tree-api.tree.open()*
-    Open the tree, focusing it if already open.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {path}           (string)  root directory for the tree
-      • {current_window} (boolean) open the tree in the current window
-      • {winid}          (number)  open the tree in the specified |winid|,
-                                   overrides {current_window}
-      • {find_file}      (boolean) find the current buffer
-      • {update_root}    (boolean) requires {find_file}, see
-                                   |nvim_tree.config.update_focused_file| {update_root}
-
-tree.toggle({opts})                              *nvim-tree-api.tree.toggle()*
-    Open or close the tree.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {path}           (string)  root directory for the tree
-      • {current_window} (boolean) open the tree in the current window
-      • {winid}          (number)  open the tree in the specified |winid|,
-                                   overrides {current_window}
-      • {find_file}      (boolean) find the current buffer
-      • {update_root}    (boolean) requires {find_file}, see
-                                   |nvim_tree.config.update_focused_file| {update_root}
-      • {focus}          (boolean) focus the tree when opening, default true
-
-tree.close()                                      *nvim-tree-api.tree.close()*
-    Close the tree, affecting all tabs as per |nvim_tree.config.tab.sync| {close}
-
-tree.close_in_this_tab()              *nvim-tree-api.tree.close_in_this_tab()*
-    Close the tree in this tab only.
-
-tree.close_in_all_tabs()              *nvim-tree-api.tree.close_in_all_tabs()*
-    Close the tree in all tabs.
-
-tree.focus()                                      *nvim-tree-api.tree.focus()*
-    Focus the tree, opening it if necessary.
-    Retained for compatibility, use |nvim-tree-api.tree.open()| with no arguments instead.
-
-tree.reload()                                    *nvim-tree-api.tree.reload()*
-    Refresh the tree. Does nothing if closed.
-
-tree.resize({opts})                              *nvim-tree-api.tree.resize()*
-    Resize the tree, persisting the new size.
-    Resets to |nvim_tree.config.view| {width} when no {opts} provided.
-    See |:NvimTreeResize|
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {width}    (table)  new |nvim_tree.config.view| {width} value
-      • {absolute} (number) set the width
-      • {relative} (number) increase or decrease the width
-
-    Only one option is supported, in the priority order above.
-    {absolute} and {relative} do nothing when {width} is a function.
-
-tree.change_root({path})                    *nvim-tree-api.tree.change_root()*
-    Change the tree's root to a path.
-
-    Parameters: ~
-      • {path} (string) absolute or relative path
-
-                                    *nvim-tree-api.tree.change_root_to_node()*
-tree.change_root_to_node({node})
-    Change the tree's root to a folder node or the parent of a file node.
-
-    Parameters: ~
-      • {node} (Node) folder or file
-
-                                  *nvim-tree-api.tree.change_root_to_parent()*
-tree.change_root_to_parent({node})
-    Change the tree's root to the parent of a node.
-
-    Parameters: ~
-      • {node} (Node) folder or file
-
-tree.get_node_under_cursor()      *nvim-tree-api.tree.get_node_under_cursor()*
-    Retrieve the currently focused node.
-
-    Return: ~
-      node or nil if tree is not visible
-
-tree.get_nodes()                              *nvim-tree-api.tree.get_nodes()*
-    Retrieve a hierarchical list of all the nodes. This is a cloned list for
-    reference purposes only and should not be passed into other API functions.
-
-    Return: ~
-      table of nodes
-
-tree.find_file({opts})                        *nvim-tree-api.tree.find_file()*
-    Find and focus a file or folder in the tree. Finds current buffer unless
-    otherwise specified.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {buf}            (string|number)  absolute/relative path OR bufnr to find
-      • {open}           (boolean)        open the tree if necessary
-      • {current_window} (boolean)        requires {open}, open in the current window
-      • {winid}          (number)         open the tree in the specified |winid|,
-                                          overrides {current_window}
-      • {update_root}    (boolean)        see |nvim_tree.config.update_focused_file| {update_root}
-      • {focus}          (boolean)        focus the tree
-
-tree.search_node()                          *nvim-tree-api.tree.search_node()*
-    Open the search dialogue as per the search_node action.
-
-tree.collapse_all({opts})                  *nvim-tree-api.tree.collapse_all()*
-    Collapse the tree.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {keep_buffers} (boolean) do not collapse nodes with open buffers.
-
-tree.expand_all({node}, {opts})              *nvim-tree-api.tree.expand_all()*
-    Recursively expand all nodes under the tree root or specified folder.
-
-    Parameters: ~
-      • {node} (Node|nil) folder
-      • {opts} (ApiTreeExpandOpts) optional parameters
-
-    Options: ~
-      • {expand_until} ((fun(expansion_count: integer, node: Node?): boolean)?)
-            Return true if {node} should be expanded.
-            {expansion_count} is the total number of folders expanded.
-
-                                  *nvim-tree-api.tree.toggle_enable_filters()*
-tree.toggle_enable_filters()
-    Toggle |nvim_tree.config.filters| {enable} all filters.
-
-                                *nvim-tree-api.tree.toggle_gitignore_filter()*
-tree.toggle_gitignore_filter()
-    Toggle |nvim_tree.config.filters| {git_ignored} filter.
-
-                                *nvim-tree-api.tree.toggle_git_clean_filter()*
-tree.toggle_git_clean_filter()
-    Toggle |nvim_tree.config.filters| {git_clean} filter.
-
-                                *nvim-tree-api.tree.toggle_no_buffer_filter()*
-tree.toggle_no_buffer_filter()
-    Toggle |nvim_tree.config.filters| {no_buffer} filter.
-
-                              *nvim-tree-api.tree.toggle_no_bookmark_filter()*
-tree.toggle_no_bookmark_filter()
-    Toggle |nvim_tree.config.filters| {no_bookmark} filter.
-
-                                   *nvim-tree-api.tree.toggle_custom_filter()*
-tree.toggle_custom_filter()
-    Toggle |nvim_tree.config.filters| {custom} filter.
-
-                                   *nvim-tree-api.tree.toggle_hidden_filter()*
-tree.toggle_hidden_filter()
-    Toggle |nvim_tree.config.filters| {dotfiles} filter.
-
-tree.toggle_help()                          *nvim-tree-api.tree.toggle_help()*
-    Toggle help view.
-
-tree.is_tree_buf({bufnr})                   *nvim-tree-api.tree.is_tree_buf()*
-    Checks if a buffer is an nvim-tree.
-
-    Parameters: ~
-      • {bufnr} (number|nil) buffer handle, 0 or nil for current buffer
-
-    Return: ~
-      (boolean) buffer is an nvim-tree buffer
-
-tree.is_visible({opts})                      *nvim-tree-api.tree.is_visible()*
-    Checks if nvim-tree is visible on the current, specified or any tab.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {tabpage}     (number)  as per |nvim_get_current_tabpage()|
-      • {any_tabpage} (boolean) visible on any tab, default false
-
-    Return: ~
-      (boolean) nvim-tree is visible
-
-tree.winid({opts})                              *nvim-tree-api.tree.winid()*
-    Retrieve the winid of the open tree.
-
-    Parameters: ~
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {tabpage} (number|nil)  tabpage, 0 or nil for current, default nil
-
-    Return: ~
-      (number) winid or nil if tree is not visible
-
-==============================================================================
-API: File System                                            *nvim-tree-api.fs*
-
-fs.create({node})                                  *nvim-tree-api.fs.create()*
-    Prompt to create a file or directory. Use a trailing `/` for a directory.
-    Multiple directories/files may be created e.g. `foo/bar/baz`
-
-    Parameters: ~
-      • {node} (Node|nil) parent, uses the parent of a file.
-
-fs.remove({node})                                  *nvim-tree-api.fs.remove()*
-    Delete a file or folder from the file system.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.trash({node})                                    *nvim-tree-api.fs.trash()*
-    Trash a file or folder as per |nvim_tree.config.trash|
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.rename_node({node})                        *nvim-tree-api.fs.rename_node()*
-    Prompt to rename a file or folder.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.rename({node})                                  *nvim-tree-api.fs.rename()*
-    Prompt to rename a file or folder by name.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.rename_basename({node})                *nvim-tree-api.fs.rename_basename()*
-    Prompt to rename a file or folder by name with extension omitted.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.rename_sub({node})                          *nvim-tree-api.fs.rename_sub()*
-    Prompt to rename a file or folder by absolute path with name omitted.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.rename_full({node})                        *nvim-tree-api.fs.rename_full()*
-    Prompt to rename a file or folder by absolute path.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.cut({node})                                        *nvim-tree-api.fs.cut()*
-    Cut a file or folder to the nvim-tree clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.paste({node})                                    *nvim-tree-api.fs.paste()*
-    Paste a file or folder from the nvim-tree clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) destination folder, uses the parent of a file.
-
-fs.copy.node({node})                            *nvim-tree-api.fs.copy.node()*
-    Copy a file or folder from the nvim-tree clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.copy.absolute_path({node})          *nvim-tree-api.fs.copy.absolute_path()*
-    Copy the absolute path of a file or folder to the system clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.copy.basename({node})                    *nvim-tree-api.fs.copy.basename()*
-    Copy the name of a file or folder with extension omitted to the system
-    clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.copy.filename({node})                    *nvim-tree-api.fs.copy.filename()*
-    Copy the name of a file or folder to the system clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.copy.relative_path({node})          *nvim-tree-api.fs.copy.relative_path()*
-    Copy the path of a file or folder relative to the tree root to the system
-    clipboard.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-
-fs.clear_clipboard()                      *nvim-tree-api.fs.clear_clipboard()*
-    Clear the nvim-tree clipboard.
-
-fs.print_clipboard()                      *nvim-tree-api.fs.print_clipboard()*
-    Print the contents of the nvim-tree clipboard.
-
-==============================================================================
-API: Node                                                 *nvim-tree-api.node*
-
-node.open.edit({node}, {opts})                *nvim-tree-api.node.open.edit()*
-    File:   open as per |nvim_tree.config.actions.open_file|
-    Folder: expand or collapse
-    Root:   change directory up
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                               *nvim-tree-api.node.open.replace_tree_buffer()*
-node.open.replace_tree_buffer({node})
-    |nvim-tree-api.node.open.edit()|, file will be opened in place: in the
-    nvim-tree window.
-
-                                  *nvim-tree-api.node.open.no_window_picker()*
-node.open.no_window_picker({node}, {opts})
-    |nvim-tree-api.node.open.edit()|, window picker will be bypassed.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-node.open.vertical({node}, {opts})                *nvim-tree-api.node.open.vertical()*
-    |nvim-tree-api.node.open.edit()|, file will be opened in a new vertical split.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                                *nvim-tree-api.node.open.vertical_no_picker()*
-node.open.vertical_no_picker({node}, {opts})
-    |nvim-tree-api.node.open.vertical()|, window picker will be bypassed.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-node.open.horizontal({node}, {opts})            *nvim-tree-api.node.open.horizontal()*
-    |nvim-tree-api.node.open.edit()|, file will be opened in a new horizontal split.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                              *nvim-tree-api.node.open.horizontal_no_picker()*
-node.open.horizontal_no_picker({node}, {opts})
-    |nvim-tree-api.node.open.horizontal()|, window picker will be bypassed.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                                *nvim-tree-api.node.open.toggle_group_empty()*
-node.open.toggle_group_empty({node}, {opts})
-    Toggle |nvim_tree.config.renderer| {group_empty} for a specific folder.
-    Does nothing on files.
-    Needs |nvim_tree.config.renderer| {group_empty} set.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-node.open.drop({node})                        *nvim-tree-api.node.open.drop()*
-    Switch to window with selected file if it exists.
-    Open file otherwise.
-    See: `:h :drop`.
-
-    File:   open file using `:drop`
-    Folder: expand or collapse
-    Root:   change directory up
-
-node.open.tab({node}, {opts})                          *nvim-tree-api.node.open.tab()*
-    |nvim-tree-api.node.open.edit()|, file will be opened in a new tab.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                                          *nvim-tree-api.node.open.tab_drop()*
-node.open.tab_drop({node})
-    Switch to tab containing window with selected file if it exists.
-    Open file in new tab otherwise.
-
-    File:   open file using `tab :drop`
-    Folder: expand or collapse
-    Root:   change directory up
-
-node.open.preview({node}, {opts})                  *nvim-tree-api.node.open.preview()*
-    |nvim-tree-api.node.open.edit()|, file buffer will have |'bufhidden'| set to `delete`.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-                                 *nvim-tree-api.node.open.preview_no_picker()*
-node.open.preview_no_picker({node}, {opts})
-    |nvim-tree-api.node.open.edit()|, file buffer will have |'bufhidden'| set to `delete`.
-    window picker will be bypassed.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {quit_on_open} (boolean) quits the tree when opening the file
-      • {focus} (boolean) keep focus in the tree when opening the file
-
-node.navigate.git.next({node})        *nvim-tree-api.node.navigate.git.next()*
-    Navigate to the next item showing git status.
-
-                            *nvim-tree-api.node.navigate.git.next_recursive()*
-node.navigate.git.next_recursive({node})
-    Alternative to |nvim-tree-api.node.navigate.git.next()| that navigates to
-    the next file showing git status, recursively.
-    Needs |nvim_tree.config.git| {show_on_dirs} set.
-
-                      *nvim-tree-api.node.navigate.git.next_skip_gitignored()*
-node.navigate.git.next_skip_gitignored({node})
-    Same as |nvim-tree-api.node.navigate.git.next()|, but skips gitignored files.
-
-node.navigate.git.prev({node})        *nvim-tree-api.node.navigate.git.prev()*
-    Navigate to the previous item showing git status.
-
-                      *nvim-tree-api.node.navigate.git.prev_recursive()*
-node.navigate.git.prev_recursive({node})
-    Alternative to |nvim-tree-api.node.navigate.git.prev()| that navigates to
-    the previous file showing git status, recursively.
-    Needs |nvim_tree.config.git| {show_on_dirs} set.
-
-                      *nvim-tree-api.node.navigate.git.prev_skip_gitignored()*
-node.navigate.git.prev_skip_gitignored({node})
-    same as |nvim-tree-api.node.navigate.git.prev()|, but skips gitignored files.
-
-                              *nvim-tree-api.node.navigate.diagnostics.next()*
-node.navigate.diagnostics.next({node})
-    Navigate to the next item showing diagnostic status.
-
-                    *nvim-tree-api.node.navigate.diagnostics.next_recursive()*
-node.navigate.diagnostics.next_recursive({node})
-    Alternative to |nvim-tree-api.node.navigate.diagnostics.next()| that
-    navigates to the next file showing diagnostic status, recursively.
-    Needs |nvim_tree.config.diagnostics| {show_on_dirs} set.
-
-                              *nvim-tree-api.node.navigate.diagnostics.prev()*
-node.navigate.diagnostics.prev({node})
-    Navigate to the next item showing diagnostic status.
-
-                    *nvim-tree-api.node.navigate.diagnostics.prev_recursive()*
-node.navigate.diagnostics.prev_recursive({node})
-    Alternative to |nvim-tree-api.node.navigate.diagnostics.prev()| that
-    navigates to the previous file showing diagnostic status, recursively.
-    Needs |nvim_tree.config.diagnostics| {show_on_dirs} set.
-
-                                   *nvim-tree-api.node.navigate.opened.next()*
-node.navigate.opened.next({node})
-    Navigate to the next |bufloaded()| item.
-    See |nvim_tree.config.renderer| {highlight_opened_files}
-
-                                   *nvim-tree-api.node.navigate.opened.prev()*
-node.navigate.opened.prev({node})
-    Navigate to the previous |bufloaded()| item.
-    See |nvim_tree.config.renderer| {highlight_opened_files}
-
-                                  *nvim-tree-api.node.navigate.sibling.next()*
-node.navigate.sibling.next({node})
-    Navigate to the next node in the current node's folder, wraps.
-
-                                  *nvim-tree-api.node.navigate.sibling.prev()*
-node.navigate.sibling.prev({node})
-    Navigate to the previous node in the current node's folder, wraps.
-
-                                 *nvim-tree-api.node.navigate.sibling.first()*
-node.navigate.sibling.first({node})
-    Navigate to the first node in the current node's folder.
-
-                                  *nvim-tree-api.node.navigate.sibling.last()*
-node.navigate.sibling.last({node})
-    Navigate to the last node in the current node's folder.
-
-                                        *nvim-tree-api.node.navigate.parent()*
-node.navigate.parent({node})
-    Navigate to the parent folder of the current node.
-
-                                  *nvim-tree-api.node.navigate.parent_close()*
-node.navigate.parent_close({node})
-    |nvim-tree-api.node.navigate.parent()|, closing that folder.
-
-node.show_info_popup({node})            *nvim-tree-api.node.show_info_popup()*
-    Open a popup window showing: fullpath, size, accessed, modified, created.
-
-node.run.cmd({node})                            *nvim-tree-api.node.run.cmd()*
-    Enter |cmdline| with the full path of the node and the cursor at the start
-    of the line.
-
-node.run.system({node})                      *nvim-tree-api.node.run.system()*
-    Execute |nvim_tree.config.system_open|
-
-node.buffer.delete({node}, {opts})        *nvim-tree-api.node.buffer.delete()*
-    Deletes node's related buffer, if one exists.
-    Executes |:bdelete| or |:bdelete|!
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {force} (boolean) delete even if buffer is modified, default false
-
-node.buffer.wipe({node}, {opts})            *nvim-tree-api.node.buffer.wipe()*
-    Wipes node's related buffer, if one exists.
-    Executes |:bwipe| or |:bwipe|!
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {force} (boolean) wipe even if buffer is modified, default false
-
-node.expand({node}, {opts})                      *nvim-tree-api.node.expand()*
-    Recursively expand all nodes under a directory or a file's parent
-    directory.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (ApiTreeExpandOpts) optional parameters
-
-    Options: ~
-      • {expand_until} ((fun(expansion_count: integer, node: Node?): boolean)?)
-            Return true if {node} should be expanded.
-            {expansion_count} is the total number of folders expanded.
-
-node.collapse({node}, {opts})                  *nvim-tree-api.node.collapse()*
-    Collapse the tree under a directory or a file's parent directory.
-
-    Parameters: ~
-      • {node} (Node|nil) file or folder
-      • {opts} (table) optional parameters
-
-    Options: ~
-      • {keep_buffers} (boolean) do not collapse nodes with open buffers.
-
-==============================================================================
-API: Git                                                   *nvim-tree-api.git*
-
-git.reload()                                      *nvim-tree-api.git.reload()*
-    Update the git status of the entire tree.
-
-==============================================================================
-API: Events                                             *nvim-tree-api.events*
-
-                                            *nvim-tree-api.events.subscribe()*
-events.subscribe({event_type},     {callback})
-    Register a handler for an event, see |nvim-tree-events|
-
-    Parameters: ~
-      • {event_type} (string)   |nvim-tree-api.events.Event|
-      • {callback}   (function) see |nvim_tree_events_kind| for parameters
-
-events.Event                                      *nvim-tree-api.events.Event*
-    String enum: |nvim_tree_events_kind|
-
-
-==============================================================================
-API: Live Filter                                   *nvim-tree-api.live_filter*
-
-live_filter.start()                        *nvim-tree-api.live_filter.start()*
-    Enter |nvim-tree-api.live_filter| mode.
-    Opens an input window with |filetype| `"NvimTreeFilter"`
-
-live_filter.clear()                        *nvim-tree-api.live_filter.clear()*
-    Exit |nvim-tree-api.live_filter| mode.
-
-==============================================================================
-API: Marks                                               *nvim-tree-api.marks*
-
-marks.get({node})                                  *nvim-tree-api.marks.get()*
-    Return the node if it is marked.
-
-    Parameters: ~
-      • {node} (Node) folder or file
-
-marks.list()                                      *nvim-tree-api.marks.list()*
-    Retrieve all marked nodes.
-
-    Return: ~
-      (table) marked nodes
-
-marks.toggle({node})                            *nvim-tree-api.marks.toggle()*
-    Toggle node mark.
-
-    Parameters: ~
-      • {node} (Node) folder or file
-
-marks.clear()                                    *nvim-tree-api.marks.clear()*
-    Clear all marks.
-
-marks.bulk.delete()                        *nvim-tree-api.marks.bulk.delete()*
-    Delete all marked. Optionally prompts.
-
-marks.bulk.trash()                          *nvim-tree-api.marks.bulk.trash()*
-    Trash all marked. Optionally prompts.
-
-marks.bulk.move()                            *nvim-tree-api.marks.bulk.move()*
-    Prompts for a directory to move all marked nodes into.
-
-marks.navigate.next()                    *nvim-tree-api.marks.navigate.next()*
-    Navigate to the next marked node, wraps.
-    Opens files as per |nvim_tree.config.actions.open_file|
-    Works best with |nvim_tree.config.update_focused_file| enabled.
-
-marks.navigate.prev()                    *nvim-tree-api.marks.navigate.prev()*
-    As per |nvim-tree-api.marks.navigate.next()|
-
-marks.navigate.select()                *nvim-tree-api.marks.navigate.select()*
-    Prompts for selection of a marked node, sorted by absolute paths.
-    A folder will be focused, a file will be opened.
-
-==============================================================================
-API: Config                                             *nvim-tree-api.config*
-
-                           *nvim-tree-api.config.mappings.default_on_attach()*
-config.mappings.default_on_attach({bufnr})
-    Set all |nvim-tree-mappings-default|. Call from your |nvim_tree.config| {on_attach}
-
-    Parameters: ~
-      • {bufnr} (number) nvim-tree buffer number passed to |nvim_tree.config| {on_attach}
-
-                                  *nvim-tree-api.config.mappings.get_keymap()*
-config.mappings.get_keymap()
-    Retrieves all buffer local mappings for nvim-tree.
-    These are the mappings that are applied by |nvim_tree.config| {on_attach}, which
-    may include default mappings.
-
-    Return: ~
-        (table) as per |nvim_buf_get_keymap()|
-
-                          *nvim-tree-api.config.mappings.get_keymap_default()*
-config.mappings.get_keymap_default()
-    Retrieves the buffer local mappings for nvim-tree that are applied by
-    |nvim-tree-api.config.mappings.default_on_attach()|
-
-    Return: ~
-        (table) as per |nvim_buf_get_keymap()|
-
-==============================================================================
-API: Commands                                         *nvim-tree-api.commands*
-
-commands.get()                                  *nvim-tree-api.commands.get()*
-    Retrieve all commands, see |nvim-tree-commands|
-
-    Return: ~
-        (table) array containing |nvim_create_user_command()| parameters:
-        • {name}    (string)
-        • {command} (function)
-        • {opts}    (table)
-
-==============================================================================
-API: Diagnostics                                   *nvim-tree-api.diagnostics*
-
-diagnostics.hi_test()                    *nvim-tree-api.diagnostics.hi_test()*
-    Open a new buffer displaying all nvim-tree highlight groups, their link
-    chain and concrete definition.
-
-    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 ==============================================================================
 Mappings                                                  *nvim-tree-mappings*
@@ -1097,7 +349,7 @@ The `on_attach` function is passed the `bufnr` of nvim-tree. Use
     vim.keymap.set("n", "<C-e>", api.node.open.replace_tree_buffer,     opts("Open: In Place"))
     ---
     -- OR use all default mappings
-    api.config.mappings.default_on_attach(bufnr)
+    api.map.on_attach.default.on_attach_default(bufnr)
 
     -- remove a default
     vim.keymap.del("n", "<C-]>", { buffer = bufnr })
@@ -1146,7 +398,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
     return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
 
-  -- BEGIN_DEFAULT_ON_ATTACH
+  -- BEGIN_ON_ATTACH_DEFAULT
   vim.keymap.set("n", "<C-]>",          api.tree.change_root_to_node,       opts("CD"))
   vim.keymap.set("n", "<C-e>",          api.node.open.replace_tree_buffer,  opts("Open: In Place"))
   vim.keymap.set("n", "<C-k>",          api.node.show_info_popup,           opts("Info"))
@@ -1166,9 +418,9 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "bd",             api.marks.bulk.delete,              opts("Delete Bookmarked"))
   vim.keymap.set("n", "bt",             api.marks.bulk.trash,               opts("Trash Bookmarked"))
   vim.keymap.set("n", "bmv",            api.marks.bulk.move,                opts("Move Bookmarked"))
-  vim.keymap.set("n", "B",              api.tree.toggle_no_buffer_filter,   opts("Toggle Filter: No Buffer"))
+  vim.keymap.set("n", "B",              api.filter.no_buffer.toggle,        opts("Toggle Filter: No Buffer"))
   vim.keymap.set("n", "c",              api.fs.copy.node,                   opts("Copy"))
-  vim.keymap.set("n", "C",              api.tree.toggle_git_clean_filter,   opts("Toggle Filter: Git Clean"))
+  vim.keymap.set("n", "C",              api.filter.git.clean.toggle,        opts("Toggle Filter: Git Clean"))
   vim.keymap.set("n", "[c",             api.node.navigate.git.prev,         opts("Prev Git"))
   vim.keymap.set("n", "]c",             api.node.navigate.git.next,         opts("Next Git"))
   vim.keymap.set("n", "d",              api.fs.remove,                      opts("Delete"))
@@ -1177,17 +429,17 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "e",              api.fs.rename_basename,             opts("Rename: Basename"))
   vim.keymap.set("n", "]e",             api.node.navigate.diagnostics.next, opts("Next Diagnostic"))
   vim.keymap.set("n", "[e",             api.node.navigate.diagnostics.prev, opts("Prev Diagnostic"))
-  vim.keymap.set("n", "F",              api.live_filter.clear,              opts("Live Filter: Clear"))
-  vim.keymap.set("n", "f",              api.live_filter.start,              opts("Live Filter: Start"))
+  vim.keymap.set("n", "F",              api.filter.live.clear,              opts("Live Filter: Clear"))
+  vim.keymap.set("n", "f",              api.filter.live.start,              opts("Live Filter: Start"))
   vim.keymap.set("n", "g?",             api.tree.toggle_help,               opts("Help"))
   vim.keymap.set("n", "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
   vim.keymap.set("n", "ge",             api.fs.copy.basename,               opts("Copy Basename"))
-  vim.keymap.set("n", "H",              api.tree.toggle_hidden_filter,      opts("Toggle Filter: Dotfiles"))
-  vim.keymap.set("n", "I",              api.tree.toggle_gitignore_filter,   opts("Toggle Filter: Git Ignore"))
+  vim.keymap.set("n", "H",              api.filter.dotfiles.toggle,         opts("Toggle Filter: Dotfiles"))
+  vim.keymap.set("n", "I",              api.filter.git.ignored.toggle,      opts("Toggle Filter: Git Ignored"))
   vim.keymap.set("n", "J",              api.node.navigate.sibling.last,     opts("Last Sibling"))
   vim.keymap.set("n", "K",              api.node.navigate.sibling.first,    opts("First Sibling"))
   vim.keymap.set("n", "L",              api.node.open.toggle_group_empty,   opts("Toggle Group Empty"))
-  vim.keymap.set("n", "M",              api.tree.toggle_no_bookmark_filter, opts("Toggle Filter: No Bookmark"))
+  vim.keymap.set("n", "M",              api.filter.no_bookmark.toggle,      opts("Toggle Filter: No Bookmark"))
   vim.keymap.set("n", "m",              api.marks.toggle,                   opts("Toggle Bookmark"))
   vim.keymap.set("n", "o",              api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n", "O",              api.node.open.no_window_picker,     opts("Open: No Window Picker"))
@@ -1199,17 +451,17 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n", "s",              api.node.run.system,                opts("Run System"))
   vim.keymap.set("n", "S",              api.tree.search_node,               opts("Search"))
   vim.keymap.set("n", "u",              api.fs.rename_full,                 opts("Rename: Full Path"))
-  vim.keymap.set("n", "U",              api.tree.toggle_custom_filter,      opts("Toggle Filter: Hidden"))
+  vim.keymap.set("n", "U",              api.filter.custom.toggle,           opts("Toggle Filter: Custom"))
   vim.keymap.set("n", "W",              api.tree.collapse_all,              opts("Collapse All"))
   vim.keymap.set("n", "x",              api.fs.cut,                         opts("Cut"))
   vim.keymap.set("n", "y",              api.fs.copy.filename,               opts("Copy Name"))
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
   vim.keymap.set("n", "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
-  -- END_DEFAULT_ON_ATTACH
+  -- END_ON_ATTACH_DEFAULT
 <
-Alternatively, you may apply these default mappings from your |nvim_tree.config| {on_attach} via
-|nvim-tree-api.config.mappings.default_on_attach()| e.g. >lua
+Alternatively, you may apply these default mappings from your
+|nvim_tree.config| {on_attach} via |nvim_tree.api.map.on_attach.default()| e.g. >lua
 
   local function my_on_attach(bufnr)
     local api = require("nvim-tree.api")
@@ -1218,7 +470,7 @@ Alternatively, you may apply these default mappings from your |nvim_tree.config|
       return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    api.config.mappings.default_on_attach(bufnr)
+    api.map.on_attach.default.on_attach_default(bufnr)
 
     -- your removals and mappings go here
   end
@@ -1454,8 +706,8 @@ to |nvim_tree_registering_handlers| for more information.
 
 *nvim_tree_registering_handlers*
 
-Handlers are registered by calling |nvim-tree-api.events.subscribe()|
-function with an |nvim-tree-api.events.Event|
+Handlers are registered by calling |nvim_tree.api.events.subscribe()| function
+with an |nvim_tree_events_kind|.
 
 e.g. handler for node renamed: >lua
 
@@ -1573,19 +825,19 @@ can can be used to identify the type of prompt, to allow user side
 configurations for different types of prompts.
 
 - `nvimtree_overwrite_rename`
-    overwrite or rename during |nvim-tree-api.fs.paste()|
+    overwrite or rename during |nvim_tree.api.fs.paste()|
 
 - `nvimtree_remove`
-    delete during |nvim-tree-api.fs.remove()|
+    delete during |nvim_tree.api.fs.remove()|
 
 - `nvimtree_trash`
-    send to trash during |nvim-tree-api.fs.trash()|
+    send to trash during |nvim_tree.api.fs.trash()|
 
 - `nvimtree_bulk_delete`
-    delete all bookmarked during |nvim-tree-api.marks.bulk.delete()|
+    delete all bookmarked during |nvim_tree.api.marks.bulk.delete()|
 
 - `nvimtree_bulk_trash`
-    send all bookmarked to trash during |nvim-tree-api.marks.bulk.trash()|
+    send all bookmarked to trash during |nvim_tree.api.marks.bulk.trash()|
 
 ==============================================================================
 Decorators                                              *nvim-tree-decorators*
@@ -1735,12 +987,10 @@ keep using |netrw| without its browser features please ensure:
 ==============================================================================
 Legacy                                                      *nvim-tree-legacy*
 
-Breaking refactors have been made however the legacy versions will be silently
-migrated and used.
-There are no plans to remove this migration.
+Backwards compatible, silent refactors have been done.
 
 ==============================================================================
-Legacy: Config                                         *nvim-tree-legacy-opts*
+Legacy: Config                                       *nvim-tree-legacy-config*
 
 Legacy config is translated to the current, making type and value changes as
 needed.
@@ -1757,6 +1007,28 @@ needed.
 `git.ignore`                         |nvim_tree.config.filters| {git_ignored}
 `renderer.icons.webdev_colors`       |nvim_tree.config.renderer.icons.web_devicons.file| {color}
 `renderer.icons.padding`             |nvim_tree.config.renderer.icons.padding| {icon}
+
+==============================================================================
+Legacy: API                                             *nvim-tree-legacy-api*
+
+Deprecated API with unchanged function signature:
+
+`api.config.mappings.get_keymap`         |nvim_tree.api.map.keymap.current()|
+`api.config.mappings.get_keymap_default` |nvim_tree.api.map.keymap.default()|
+`api.config.mappings.default_on_attach`  |nvim_tree.api.map.on_attach.default()|
+
+`api.diagnostics.hi_test`                |nvim_tree.api.health.hi_test()|
+
+`api.live_filter.start`                  |nvim_tree.api.filter.live.start()|
+`api.live_filter.clear`                  |nvim_tree.api.filter.live.clear()|
+
+`api.tree.toggle_enable_filters`         |nvim_tree.api.filter.toggle()|
+`api.tree.toggle_gitignore_filter`       |nvim_tree.api.filter.git.ignored.toggle()|
+`api.tree.toggle_git_clean_filter`       |nvim_tree.api.filter.git.clean.toggle()|
+`api.tree.toggle_no_buffer_filter`       |nvim_tree.api.filter.no_buffer.toggle()|
+`api.tree.toggle_custom_filter`          |nvim_tree.api.filter.custom.toggle()|
+`api.tree.toggle_hidden_filter`          |nvim_tree.api.filter.dotfiles.toggle()|
+`api.tree.toggle_no_bookmark_filter`     |nvim_tree.api.filter.no_bookmark.toggle()|
 
 ==============================================================================
 Legacy: Highlight                                 *nvim-tree-legacy-highlight*
@@ -2322,8 +1594,8 @@ Config: system_open                             *nvim-tree-config-system-open*
       • macOS: `open`
       • Windows: `cmd`
 
-    Once nvim-tree minimum Nvim version is updated to 0.10, these options will
-    no longer be necessary and will be removed.
+    Once nvim-tree minimum Nvim version is updated to 0.10, this configuration
+    will no longer be necessary and will be removed.
 
     Fields: ~
       • {cmd}?   (`string`) The open command itself
@@ -2435,32 +1707,32 @@ Config: filters                                     *nvim-tree-config-filters*
     Filters can be set at startup or toggled live via API with default
     mappings.
 
-    `I     `{git_ignored}`         `|nvim-tree-api.tree.toggle_gitignore_filter()|
+    `I     `{git_ignored}`         `|nvim_tree.api.filter.git.ignored.toggle()|
     Ignore files based on `.gitignore`. Requires |nvim_tree.config.git|
 
-    `H     `{dotfiles}`            `|nvim-tree-api.tree.toggle_hidden_filter()|
+    `H     `{dotfiles}`            `|nvim_tree.api.filter.dotfiles.toggle()|
     Filter dotfiles: files/directories starting with a `.`
 
-    `C     `{git_clean}`           `|nvim-tree-api.tree.toggle_git_clean_filter()|
+    `C     `{git_clean}`           `|nvim_tree.api.filter.git.clean.toggle()|
     Filter files with no git status. `.gitignore` files will not be filtered
     when {git_ignored}, as they are effectively dirty.
 
-    `B     `{no_buffer}`           `|nvim-tree-api.tree.toggle_no_buffer_filter()|
+    `B     `{no_buffer}`           `|nvim_tree.api.filter.no_buffer.toggle()|
     Filter files that have no |buflisted()| buffer. For performance reasons
     buffer delete/wipe may not be immediately shown. A reload or filesystem
     event will always result in an update.
 
-    `M     `{no_bookmark}`         `|nvim-tree-api.tree.toggle_no_bookmark_filter()|
+    `M     `{no_bookmark}`         `|nvim_tree.api.filter.no_bookmark.toggle()|
     Filter files that are not bookmarked. Enabling this is not useful as there
     is no means yet to persist bookmarks.
 
-    `U     `{custom}`              `|nvim-tree-api.tree.toggle_custom_filter()|
+    `U     `{custom}`              `|nvim_tree.api.filter.custom.toggle()|
     Disable specific file/directory names via:
     • a list of backslash escaped |vim.regex| strings e.g. `"^\\.git""`
     • a function passed the absolute path of the directory.
 
     All filters including live filter may be disabled via {enable} and toggled
-    with |nvim-tree-api.tree.toggle_enable_filters()|
+    with |nvim_tree.api.filter.toggle()|
 
     Files/directories may be {exclude}d from filtering: they will always be
     shown, overriding {git_ignored}, {dotfiles} and {custom}.
@@ -2564,8 +1836,8 @@ Config: actions                                     *nvim-tree-config-actions*
                                to a directory above the global cwd.
 
 *nvim_tree.config.actions.expand_all*
-    Configure |nvim-tree-api.tree.expand_all()| and
-    |nvim-tree-api.node.expand()|
+    Configure |nvim_tree.api.tree.expand_all()| and
+    |nvim_tree.api.node.expand()|
 
     Fields: ~
       • {max_folder_discovery}?  (`integer`, default: `300`) Limit the number
@@ -2785,7 +2057,7 @@ Config: log                                             *nvim-tree-config-log*
       • {all}?          (`boolean`, default: `false`) Everything.
       • {profile}?      (`boolean`, default: `false`) Timing of some
                         operations.
-      • {config}?       (`boolean`, default: `false`) Options and mappings, at
+      • {config}?       (`boolean`, default: `false`) Config and mappings, at
                         startup.
       • {copy_paste}?   (`boolean`, default: `false`) File copy and paste
                         actions.
@@ -2801,7 +2073,7 @@ Config: log                                             *nvim-tree-config-log*
 
 
 ==============================================================================
-Config: Default                                     *nvim-tree-default-config*
+Config: Default                                     *nvim-tree-config-default*
 
 Following is the default configuration, see |nvim_tree.config| for details. >lua
 
@@ -3091,6 +2363,841 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
     }
 <
 
+
+
+==============================================================================
+API                                                            *nvim-tree-api*
+
+nvim-tree exposes a public API. This is non breaking, with additions made as
+necessary.
+
+Please do not require or use modules other than `nvim-tree.api`, as internal
+modules will change without notice.
+
+The API is separated into multiple modules:
+• |nvim-tree-api-commands|
+• |nvim-tree-api-events|
+• |nvim-tree-api-filter|
+• |nvim-tree-api-fs|
+• |nvim-tree-api-git|
+• |nvim-tree-api-health|
+• |nvim-tree-api-map|
+• |nvim-tree-api-marks|
+• |nvim-tree-api-node|
+• |nvim-tree-api-tree|
+
+Modules are accessed via `api.<module>.<function>`
+
+Example invocation of the `reload` function in the `tree` module: >lua
+
+    local api = require("nvim-tree.api")
+    api.tree.reload()
+<
+
+Generally, functions accepting a |nvim_tree.api.Node| as their first argument
+will use the node under the cursor when that argument is not present or nil.
+e.g. the following are functionally identical: >lua
+
+    api.node.open.edit(nil, { focus = true })
+
+    api.node.open.edit(api.tree.get_node_under_cursor(), { focus = true })
+<
+
+
+*nvim_tree.api.Node*
+    The Node class is a data class. Instances may be provided by API functions
+    for use as a:
+    • handle to pass back to API functions e.g. |nvim_tree.api.node.run.cmd()|
+    • reference in callbacks e.g. |nvim_tree.config.sort.Sorter| {sorter}
+
+    Please do not mutate the contents of any Node object.
+
+    Fields: ~
+      • {absolute_path}   (`string`) of the file or directory
+      • {name}            (`string`) file or directory name
+      • {parent}?         (`nvim_tree.api.DirectoryNode`) parent directory,
+                          nil for root
+      • {type}            (`"file"|"directory"|"link"`) |uv.fs_stat()| {type}
+      • {executable}      (`boolean`) file is executable
+      • {fs_stat}?        (`uv.fs_stat.result`) at time of last tree display,
+                          see |uv.fs_stat()|
+      • {git_status}      (`nvim_tree.git.Status?`) for files and directories
+      • {diag_severity}?  (`lsp.DiagnosticSeverity`) diagnostic status
+      • {hidden}          (`boolean`) node is not visible in the tree
+
+*nvim_tree.git.Status*
+    Git statuses for a single node.
+
+    `nvim_tree.git.XY`: 2 character string, see `man 1 git-status` "Short
+    Format"
+
+    {dir} status is derived from its contents:
+    • `direct`: inherited from child files
+    • `indirect`: inherited from child directories
+
+    Fields: ~
+      • {file}?  (`nvim_tree.git.XY`) status of a file node
+      • {dir}?   (`table<"direct"|"indirect", nvim_tree.git.XY[]>`) direct
+                 inclusive-or indirect status
+
+
+
+==============================================================================
+API: commands                                         *nvim-tree-api-commands*
+
+get()                                           *nvim_tree.api.commands.get()*
+    Retrieve all |nvim-tree-commands|
+
+    They have been created via |nvim_create_user_command()|, see also
+    |lua-guide-commands-create|
+
+    Return: ~
+        (`table[]`)
+        • {name} (`string`) name of the `:NvimTree*` command
+        • {command}
+          (`fun(args: vim.api.keyset.create_user_command.command_args)`)
+          function that the command will execute
+        • {opts} (`vim.api.keyset.user_command`) |command-attributes|
+
+
+==============================================================================
+API: events                                             *nvim-tree-api-events*
+
+subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
+    Register a handler for an event, see |nvim-tree-events|.
+
+    Parameters: ~
+      • {event_type}  (`string`) |nvim_tree_events_kind|
+      • {callback}    (`fun(payload: table?)`)
+
+
+==============================================================================
+API: filter                                             *nvim-tree-api-filter*
+
+custom.toggle()                         *nvim_tree.api.filter.custom.toggle()*
+    Toggle |nvim_tree.config.filters| {custom} filter.
+
+dotfiles.toggle()                     *nvim_tree.api.filter.dotfiles.toggle()*
+    Toggle |nvim_tree.config.filters| {dotfiles} filter.
+
+git.clean.toggle()                   *nvim_tree.api.filter.git.clean.toggle()*
+    Toggle |nvim_tree.config.filters| {git_clean} filter.
+
+git.ignored.toggle()               *nvim_tree.api.filter.git.ignored.toggle()*
+    Toggle |nvim_tree.config.filters| {git_ignored} filter.
+
+live.clear()                               *nvim_tree.api.filter.live.clear()*
+    Exit live filter mode.
+
+live.start()                               *nvim_tree.api.filter.live.start()*
+    Enter live filter mode. Opens an input window with |filetype|
+    `NvimTreeFilter`
+
+no_bookmark.toggle()               *nvim_tree.api.filter.no_bookmark.toggle()*
+    Toggle |nvim_tree.config.filters| {no_bookmark} filter.
+
+no_buffer.toggle()                   *nvim_tree.api.filter.no_buffer.toggle()*
+    Toggle |nvim_tree.config.filters| {no_buffer} filter.
+
+toggle()                                       *nvim_tree.api.filter.toggle()*
+    Toggle |nvim_tree.config.filters| {enable} which applies to ALL filters.
+
+
+==============================================================================
+API: fs                                                     *nvim-tree-api-fs*
+
+clear_clipboard()                         *nvim_tree.api.fs.clear_clipboard()*
+    Clear the nvim-tree clipboard.
+
+copy.absolute_path({node})             *nvim_tree.api.fs.copy.absolute_path()*
+    Copy the absolute path to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+copy.basename({node})                       *nvim_tree.api.fs.copy.basename()*
+    Copy the name with extension omitted to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+copy.filename({node})                       *nvim_tree.api.fs.copy.filename()*
+    Copy the name to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+copy.node({node})                               *nvim_tree.api.fs.copy.node()*
+    Copy to the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+copy.relative_path({node})             *nvim_tree.api.fs.copy.relative_path()*
+    Copy the path relative to the tree root to the system clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+create({node})                                     *nvim_tree.api.fs.create()*
+    Prompt to create a file or directory.
+
+    When {node} is a file it will be created in the parent directory.
+
+    Use a trailing `"/"` to create a directory e.g. `"foo/"`
+
+    Multiple directories/files may be created e.g. `"foo/bar/baz"`
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+cut({node})                                           *nvim_tree.api.fs.cut()*
+    Cut to the nvim-tree clipboard.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+paste({node})                                       *nvim_tree.api.fs.paste()*
+    Paste from the nvim-tree clipboard.
+
+    If {node} is a file it will pasted in the parent directory.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+print_clipboard()                         *nvim_tree.api.fs.print_clipboard()*
+    Print the contents of the nvim-tree clipboard.
+
+remove({node})                                     *nvim_tree.api.fs.remove()*
+    Delete from the file system.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+rename({node})                                     *nvim_tree.api.fs.rename()*
+    Prompt to rename by name.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+rename_basename({node})                   *nvim_tree.api.fs.rename_basename()*
+    Prompt to rename by name with extension omitted.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+rename_full({node})                           *nvim_tree.api.fs.rename_full()*
+    Prompt to rename by absolute path.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+rename_node({node})                           *nvim_tree.api.fs.rename_node()*
+    Prompt to rename.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+rename_sub({node})                             *nvim_tree.api.fs.rename_sub()*
+    Prompt to rename by absolute path with name omitted.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+trash({node})                                       *nvim_tree.api.fs.trash()*
+    Trash as per |nvim_tree.config.trash|
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+
+==============================================================================
+API: git                                                   *nvim-tree-api-git*
+
+reload()                                          *nvim_tree.api.git.reload()*
+    Update the git status of the entire tree.
+
+
+==============================================================================
+API: health                                             *nvim-tree-api-health*
+
+hi_test()                                     *nvim_tree.api.health.hi_test()*
+    Open a new buffer displaying all nvim-tree highlight groups, their link
+    chain and concrete definition.
+
+    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
+
+
+==============================================================================
+API: map                                                   *nvim-tree-api-map*
+
+keymap.current()                          *nvim_tree.api.map.keymap.current()*
+    Retrieve all buffer local mappings for nvim-tree. These are the mappings
+    that are applied by |nvim_tree.config| {on_attach}, which may include
+    default mappings.
+
+    Return: ~
+        (`vim.api.keyset.get_keymap[]`)
+
+keymap.default()                          *nvim_tree.api.map.keymap.default()*
+    Retrieves the buffer local mappings for nvim-tree that are applied by
+    |nvim_tree.api.map.on_attach.default()|
+
+    Return: ~
+        (`vim.api.keyset.get_keymap[]`)
+
+on_attach.default({bufnr})             *nvim_tree.api.map.on_attach.default()*
+    Apply all |nvim-tree-mappings-default|. Call from your |nvim_tree.config|
+    {on_attach}.
+
+    Parameters: ~
+      • {bufnr}  (`integer`) use the `bufnr` passed to {on_attach}
+
+
+==============================================================================
+API: marks                                               *nvim-tree-api-marks*
+
+bulk.delete()                              *nvim_tree.api.marks.bulk.delete()*
+    Delete all marked, prompting if |nvim_tree.config.ui.confirm| {remove}
+
+bulk.move()                                  *nvim_tree.api.marks.bulk.move()*
+    Prompts for a directory to move all marked nodes into.
+
+bulk.trash()                                *nvim_tree.api.marks.bulk.trash()*
+    Delete all marked, prompting if |nvim_tree.config.ui.confirm| {trash}
+
+clear()                                          *nvim_tree.api.marks.clear()*
+    Clear all marks.
+
+get()                                              *nvim_tree.api.marks.get()*
+    Return the node if it is marked.
+
+    Return: ~
+        (`nvim_tree.api.Node?`)
+
+list()                                            *nvim_tree.api.marks.list()*
+    Retrieve all marked nodes.
+
+    Return: ~
+        (`nvim_tree.api.Node[]`)
+
+navigate.next()                          *nvim_tree.api.marks.navigate.next()*
+    Navigate to the next marked node, wraps.
+
+navigate.prev()                          *nvim_tree.api.marks.navigate.prev()*
+    Navigate to the previous marked node, wraps.
+
+navigate.select()                      *nvim_tree.api.marks.navigate.select()*
+    Prompts for selection of a marked node, sorted by absolute paths. A folder
+    will be focused, a file will be opened.
+
+toggle({node})                                  *nvim_tree.api.marks.toggle()*
+    Toggle mark.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file or directory
+
+
+==============================================================================
+API: node                                                 *nvim-tree-api-node*
+
+buffer.delete({node}, {opts})             *nvim_tree.api.node.buffer.delete()*
+    Deletes node's related buffer, if one exists. Executes |:bdelete| or
+    |:bdelete|!
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`)
+                • {force}? (`boolean`, default: false) Proceed even if the
+                  buffer is modified.
+
+buffer.wipe({node}, {opts})                 *nvim_tree.api.node.buffer.wipe()*
+    Wipes node's related buffer, if one exists. Executes |:bwipe| or |:bwipe|!
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {force}? (`boolean`, default: false) Proceed even if the
+                  buffer is modified.
+
+collapse({node}, {opts})                       *nvim_tree.api.node.collapse()*
+    Collapse the tree under a directory or a file's parent directory.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {keep_buffers}? (`boolean`, default: false) Do not collapse
+                  nodes with open buffers.
+
+expand({node}, {opts})                           *nvim_tree.api.node.expand()*
+    Recursively expand all nodes under a directory or a file's parent
+    directory.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {expand_until}?
+                  (`fun(expansion_count: integer, node: Node): boolean`)
+                  Return `true` if `node` should be expanded.
+                  `expansion_count` is the total number of folders expanded.
+
+                              *nvim_tree.api.node.navigate.diagnostics.next()*
+navigate.diagnostics.next({node})
+    Navigate to the next item showing diagnostic status.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                    *nvim_tree.api.node.navigate.diagnostics.next_recursive()*
+navigate.diagnostics.next_recursive({node})
+    Navigate to the next item showing diagnostic status, recursively. Needs
+    |nvim_tree.config.diagnostics| {show_on_dirs}
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                              *nvim_tree.api.node.navigate.diagnostics.prev()*
+navigate.diagnostics.prev({node})
+    Navigate to the previous item showing diagnostic status.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                    *nvim_tree.api.node.navigate.diagnostics.prev_recursive()*
+navigate.diagnostics.prev_recursive({node})
+    Navigate to the previous item showing diagnostic status, recursively.
+    Needs |nvim_tree.config.diagnostics| {show_on_dirs}
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.git.next({node})             *nvim_tree.api.node.navigate.git.next()*
+    Navigate to the next item showing git status.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                            *nvim_tree.api.node.navigate.git.next_recursive()*
+navigate.git.next_recursive({node})
+    Navigate to the next item showing git status, recursively. Needs
+    |nvim_tree.config.git| {show_on_dirs}
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                      *nvim_tree.api.node.navigate.git.next_skip_gitignored()*
+navigate.git.next_skip_gitignored({node})
+    Navigate to the next item showing git status, skipping `.gitignore`
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.git.prev({node})             *nvim_tree.api.node.navigate.git.prev()*
+    Navigate to the previous item showing git status.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                            *nvim_tree.api.node.navigate.git.prev_recursive()*
+navigate.git.prev_recursive({node})
+    Navigate to the previous item showing git status, recursively. Needs
+    |nvim_tree.config.git| {show_on_dirs}
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                      *nvim_tree.api.node.navigate.git.prev_skip_gitignored()*
+navigate.git.prev_skip_gitignored({node})
+    Navigate to the previous item showing git status, skipping `.gitignore`
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                   *nvim_tree.api.node.navigate.opened.next()*
+navigate.opened.next({node})
+    Navigate to the next |bufloaded()| file.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                   *nvim_tree.api.node.navigate.opened.prev()*
+navigate.opened.prev({node})
+    Navigate to the previous |bufloaded()| file.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+navigate.parent({node})                 *nvim_tree.api.node.navigate.parent()*
+    Navigate to the parent directory of the node.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                  *nvim_tree.api.node.navigate.parent_close()*
+navigate.parent_close({node})
+    Navigate to the parent directory of the node, closing it.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                 *nvim_tree.api.node.navigate.sibling.first()*
+navigate.sibling.first({node})
+    Navigate to the first node in the current node's folder.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                  *nvim_tree.api.node.navigate.sibling.last()*
+navigate.sibling.last({node})
+    Navigate to the last node in the current node's folder.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                  *nvim_tree.api.node.navigate.sibling.next()*
+navigate.sibling.next({node})
+    Navigate to the next node in the current node's folder, wraps.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                  *nvim_tree.api.node.navigate.sibling.prev()*
+navigate.sibling.prev({node})
+    Navigate to the previous node in the current node's folder, wraps.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
+    • file: open as per |nvim_tree.config.actions.open_file|
+    • directory: expand or collapse
+    • root: change directory up
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+open.horizontal({node}, {opts})         *nvim_tree.api.node.open.horizontal()*
+    Open file in a new horizontal split.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+                              *nvim_tree.api.node.open.horizontal_no_picker()*
+open.horizontal_no_picker({node}, {opts})
+    Open file in a new horizontal split without using the window picker.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+                                  *nvim_tree.api.node.open.no_window_picker()*
+open.no_window_picker({node}, {opts})
+    Open file without using the window picker.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+open.preview({node}, {opts})               *nvim_tree.api.node.open.preview()*
+    Open file with |'bufhidden'| set to `delete`.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+                                 *nvim_tree.api.node.open.preview_no_picker()*
+open.preview_no_picker({node}, {opts})
+    Open file with |'bufhidden'| set to `delete` without using the window
+    picker.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+                               *nvim_tree.api.node.open.replace_tree_buffer()*
+open.replace_tree_buffer({node})
+    Open file in place: in the nvim-tree window.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+
+open.tab({node}, {opts})                       *nvim_tree.api.node.open.tab()*
+    Open file in a new tab.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+open.tab_drop({node})                     *nvim_tree.api.node.open.tab_drop()*
+    Switch to tab containing window with selected file if it exists. Open file
+    in new tab otherwise.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                *nvim_tree.api.node.open.toggle_group_empty()*
+open.toggle_group_empty({node}, {opts})
+    Toggle |nvim_tree.config.renderer| {group_empty} for a directory. Needs
+    {group_empty} set.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+open.vertical({node}, {opts})             *nvim_tree.api.node.open.vertical()*
+    Open file in a new vertical split.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+                                *nvim_tree.api.node.open.vertical_no_picker()*
+open.vertical_no_picker({node}, {opts})
+    Open file in a new vertical split without using the window picker.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
+
+run.cmd({node})                                 *nvim_tree.api.node.run.cmd()*
+    Enter |cmdline| with the full path of the node and the cursor at the start
+    of the line.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+run.system({node})                           *nvim_tree.api.node.run.system()*
+    Execute |nvim_tree.config.system_open|.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+show_info_popup({node})                 *nvim_tree.api.node.show_info_popup()*
+    Open a popup window showing: fullpath, size, accessed, modified, created.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+
+==============================================================================
+API: tree                                                 *nvim-tree-api-tree*
+
+change_root({path})                         *nvim_tree.api.tree.change_root()*
+    Change the tree's root to a path.
+
+    Parameters: ~
+      • {path}  (`string?`) absolute or relative path.
+
+change_root_to_node({node})         *nvim_tree.api.tree.change_root_to_node()*
+    Change the tree's root to a folder node or the parent of a file node.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+                                  *nvim_tree.api.tree.change_root_to_parent()*
+change_root_to_parent({node})
+    Change the tree's root to the parent of a node.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
+close()                                           *nvim_tree.api.tree.close()*
+    Close the tree, affecting all tabs as per |nvim_tree.config.tab.sync|
+    {close}
+
+close_in_all_tabs()                   *nvim_tree.api.tree.close_in_all_tabs()*
+    Close the tree in all tabs.
+
+close_in_this_tab()                   *nvim_tree.api.tree.close_in_this_tab()*
+    Close the tree in this tab only.
+
+collapse_all({opts})                       *nvim_tree.api.tree.collapse_all()*
+    Collapse the tree.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {keep_buffers}? (`boolean`, default: false) Do not collapse
+                  nodes with open buffers.
+
+expand_all({node}, {opts})                   *nvim_tree.api.tree.expand_all()*
+    Recursively expand all nodes under the tree root or specified folder.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory
+      • {opts}  (`table?`) optional
+                • {expand_until}?
+                  (`fun(expansion_count: integer, node: Node): boolean`)
+                  Return `true` if `node` should be expanded.
+                  `expansion_count` is the total number of folders expanded.
+
+find_file({opts})                             *nvim_tree.api.tree.find_file()*
+    Find and focus a file or folder in the tree. Finds current buffer unless
+    otherwise specified.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {buf}? (`string|integer`) Absolute/relative path OR `bufnr`
+                  to find.
+                • {open}? (`boolean`, default: false) Open the tree if
+                  necessary.
+                • {current_window}? (`boolean`, default: false) Requires
+                  {open}: open in the current window.
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
+                • {update_root}? (`boolean`, default: false) Update root after
+                  find, see |nvim_tree.config.update_focused_file|
+                  {update_root}
+                • {focus}? (`boolean`, default: false) Focus the tree window.
+
+focus()                                           *nvim_tree.api.tree.focus()*
+    Focus the tree, opening it if necessary. Retained for compatibility, use
+    |nvim_tree.api.tree.open()| with no arguments instead.
+
+get_node_under_cursor()           *nvim_tree.api.tree.get_node_under_cursor()*
+    Retrieve the currently focused node.
+
+    Return: ~
+        (`nvim_tree.api.Node?`) nil if tree is not visible.
+
+get_nodes()                                   *nvim_tree.api.tree.get_nodes()*
+    Retrieve a hierarchical list of all the nodes.
+
+    Return: ~
+        (`nvim_tree.api.Node[]`)
+
+is_tree_buf({bufnr})                        *nvim_tree.api.tree.is_tree_buf()*
+    Checks if a buffer is an nvim-tree.
+
+    Parameters: ~
+      • {bufnr}  (`integer?`) 0 or nil for current buffer.
+
+    Return: ~
+        (`boolean`)
+
+is_visible({opts})                           *nvim_tree.api.tree.is_visible()*
+    Checks if nvim-tree is visible on the current, specified or any tab.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {tabpage}? (`integer`) |tab-ID| 0 or nil for current.
+                • {any_tabpage}? (`boolean`, default: false) Visible on any
+                  tab.
+
+    Return: ~
+        (`boolean`)
+
+open({opts})                                       *nvim_tree.api.tree.open()*
+    Open the tree, focusing it if already open.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {path}? (`string`) Root directory for the tree
+                • {current_window}? (`boolean`, default: false) Open the tree
+                  in the current window
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
+                • {find_file}? (`boolean`, default: false) Find the current
+                  buffer.
+                • {update_root}? (`boolean`, default: false) Update root
+                  following {find_file}, see
+                  |nvim_tree.config.update_focused_file| {update_root}
+
+reload()                                         *nvim_tree.api.tree.reload()*
+    Refresh the tree. Does nothing if closed.
+
+resize({opts})                                   *nvim_tree.api.tree.resize()*
+    Resize the tree, persisting the new size. Resets to
+    |nvim_tree.config.view| {width} when no {opts} provided.
+
+    Only one option is supported, priority order: {width}, {absolute},
+    {relative}.
+
+    {absolute} and {relative} do nothing when |nvim_tree.config.view| {width}
+    is a function.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {width}?
+                  (`nvim_tree.config.view.width.spec|nvim_tree.config.view.width`)
+                  New |nvim_tree.config.view| {width} value.
+                • {absolute}? (`integer`) Set the width.
+                • {relative}? (`integer`) Increase or decrease the width.
+
+search_node()                               *nvim_tree.api.tree.search_node()*
+    Open the search dialogue.
+
+toggle({opts})                                   *nvim_tree.api.tree.toggle()*
+    Open or close the tree.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {path}? (`string`) Root directory for the tree
+                • {current_window}? (`boolean`, default: false) Open the tree
+                  in the current window
+                • {winid}? (`integer`) Open the tree in the specified
+                  |window-ID|, overrides {current_window}
+                • {find_file}? (`boolean`, default: false) Find the current
+                  buffer.
+                • {update_root}? (`boolean`, default: false) Update root
+                  following {find_file}, see
+                  |nvim_tree.config.update_focused_file| {update_root}
+                • {focus}? (`boolean`, default: true) Focus the tree when
+                  opening.
+
+toggle_help()                               *nvim_tree.api.tree.toggle_help()*
+    Toggle help view.
+
+winid({opts})                                     *nvim_tree.api.tree.winid()*
+    Retrieve the window of the open tree.
+
+    Parameters: ~
+      • {opts}  (`table?`) optional
+                • {tabpage}? (`integer`) |tab-ID| 0 or nil for current.
+
+    Return: ~
+        (`integer?`) |window-ID|, nil if tree is not visible.
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
