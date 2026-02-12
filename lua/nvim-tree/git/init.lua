@@ -7,34 +7,26 @@ local Watcher = require("nvim-tree.watcher").Watcher
 local Iterator = require("nvim-tree.iterators.node-iterator")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----Git short format status xy
----@alias GitXY string
-
 -- Git short-format status
----@alias GitPathXY table<string, GitXY>
+---@alias nvim_tree.git.PathXY table<string, nvim_tree.git.XY>
 
 -- Git short-format statuses
----@alias GitPathXYs table<string, GitXY[]>
-
----Git short-format statuses for a single node
----@class (exact) GitNodeStatus
----@field file GitXY?
----@field dir table<"direct" | "indirect", GitXY[]>?
+---@alias nvim_tree.git.PathXYs table<string, nvim_tree.git.XY[]>
 
 ---Git state for an entire repo
----@class (exact) GitProject
----@field files GitProjectFiles?
----@field dirs GitProjectDirs?
+---@class (exact) nvim_tree.git.Project
+---@field files nvim_tree.git.ProjectFiles?
+---@field dirs nvim_tree.git.ProjectDirs?
 ---@field watcher Watcher?
 
----@alias GitProjectFiles GitPathXY
----@alias GitProjectDirs table<"direct" | "indirect", GitPathXYs>
+---@alias nvim_tree.git.ProjectFiles nvim_tree.git.PathXY
+---@alias nvim_tree.git.ProjectDirs table<"direct" | "indirect", nvim_tree.git.PathXYs>
 
 local M = {
   config = {},
 
   ---all projects keyed by toplevel
-  ---@type table<string, GitProject>
+  ---@type table<string, nvim_tree.git.Project>
   _projects_by_toplevel = {},
 
   ---index of paths inside toplevels, false when not inside a project
@@ -58,8 +50,8 @@ local WATCHED_FILES = {
 
 ---@param toplevel string|nil
 ---@param path string|nil
----@param project GitProject
----@param project_files GitProjectFiles?
+---@param project nvim_tree.git.Project
+---@param project_files nvim_tree.git.ProjectFiles?
 local function reload_git_project(toplevel, path, project, project_files)
   if path then
     for p in pairs(project.files) do
@@ -77,7 +69,7 @@ end
 
 --- Is this path in a known ignored directory?
 ---@param path string
----@param project GitProject
+---@param project nvim_tree.git.Project
 ---@return boolean
 local function path_ignored_in_project(path, project)
   if not path or not project then
@@ -94,7 +86,7 @@ local function path_ignored_in_project(path, project)
   return false
 end
 
----@return GitProject[] maybe empty
+---@return nvim_tree.git.Project[] maybe empty
 function M.reload_all_projects()
   if not M.config.git.enable then
     return {}
@@ -112,7 +104,7 @@ end
 ---@param path string? optional path to update only
 ---@param callback function?
 function M.reload_project(toplevel, path, callback)
-  local project = M._projects_by_toplevel[toplevel] --[[@as GitProject]]
+  local project = M._projects_by_toplevel[toplevel] --[[@as nvim_tree.git.Project]]
 
   if not toplevel or not project or not M.config.git.enable then
     if callback then
@@ -138,7 +130,7 @@ function M.reload_project(toplevel, path, callback)
   }
 
   if callback then
-    ---@param path_xy GitPathXY
+    ---@param path_xy nvim_tree.git.PathXY
     args.callback = function(path_xy)
       reload_git_project(toplevel, path, project, path_xy)
       callback()
@@ -152,7 +144,7 @@ end
 
 --- Retrieve a known project
 ---@param toplevel string?
----@return GitProject? project
+---@return nvim_tree.git.Project? project
 function M.get_project(toplevel)
   return M._projects_by_toplevel[toplevel]
 end
@@ -265,7 +257,7 @@ end
 --- Load the project status for a path. Does nothing when no toplevel for path.
 --- Only fetches project status when unknown, otherwise returns existing.
 ---@param path string absolute
----@return GitProject maybe empty
+---@return nvim_tree.git.Project maybe empty
 function M.load_project(path)
   if not M.config.git.enable then
     return {}
@@ -329,7 +321,7 @@ function M.load_project(path)
 end
 
 ---@param dir DirectoryNode
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 ---@param root string?
 function M.update_parent_projects(dir, project, root)
   while project and dir do
@@ -378,7 +370,7 @@ function M.refresh_dir(dir)
 end
 
 ---@param dir DirectoryNode?
----@param projects GitProject[]
+---@param projects nvim_tree.git.Project[]
 function M.reload_node_status(dir, projects)
   dir = dir and dir:as(DirectoryNode)
   if not dir or #dir.nodes == 0 then

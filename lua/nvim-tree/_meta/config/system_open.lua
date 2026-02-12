@@ -12,7 +12,7 @@ error("Cannot require a meta file")
 ---   - macOS: `open`
 ---   - Windows: `cmd`
 ---
----Once nvim-tree minimum Nvim version is updated to 0.10, these options will no longer be necessary and will be removed.
+---Once nvim-tree minimum Nvim version is updated to 0.10, this configuration will no longer be necessary and will be removed.
 ---
 ---@class nvim_tree.config.system_open
 ---

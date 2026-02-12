@@ -8,7 +8,7 @@ local Class = require("nvim-tree.classic")
 ---@field absolute_path string
 ---@field executable boolean
 ---@field fs_stat uv.fs_stat.result?
----@field git_status GitNodeStatus?
+---@field git_status nvim_tree.git.Status?
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
@@ -45,13 +45,13 @@ end
 ---Update the git_status of the node
 ---Abstract
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function Node:update_git_status(parent_ignored, project)
   self:nop(parent_ignored, project)
 end
 
 ---Short-format statuses
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function Node:get_git_xy()
 end
 
@@ -144,14 +144,15 @@ function Node:clone(api_nodes)
   return clone
 end
 
----@param _expansion_count integer
----@param _should_descend fun(expansion_count: integer, node: Node): boolean
+---@param expansion_count integer
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return boolean
-function Node:should_expand(_expansion_count, _should_descend)
+function Node:should_expand(expansion_count, should_descend)
+  self:nop(expansion_count, should_descend)
   return false
 end
 
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function Node:expand(expand_opts)
   if self.parent then
     self.parent:expand(expand_opts)

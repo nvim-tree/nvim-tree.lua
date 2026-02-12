@@ -12,6 +12,11 @@ local nvim_tree = { api = { decorator = {} } }
 ---Names of builtin decorators or your decorator classes. Builtins are ordered lowest to highest priority.
 ---@alias nvim_tree.api.decorator.Name "Git" | "Opened" | "Hidden" | "Modified" | "Bookmarks" | "Diagnostics" | "Copied" | "Cut" | nvim_tree.api.decorator.UserDecorator
 
+---A string for rendering, with optional highlight groups to apply to it
+---@class (exact) nvim_tree.api.HighlightedString
+---@field str string
+---@field hl string[]
+
 ---Custom decorator, see :help nvim-tree-decorators
 ---
 ---@class (exact) nvim_tree.api.decorator.UserDecorator

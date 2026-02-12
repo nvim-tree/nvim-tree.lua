@@ -43,7 +43,7 @@ error("Cannot require a meta file")
 
 
 
----Configure [nvim-tree-api.tree.expand_all()] and [nvim-tree-api.node.expand()]
+---Configure [nvim_tree.api.tree.expand_all()] and [nvim_tree.api.node.expand()]
 ---@class nvim_tree.config.actions.expand_all
 ---
 ---Limit the number of folders being explored when expanding every folder. Avoids hanging Nvim when running this action on very large folders.
