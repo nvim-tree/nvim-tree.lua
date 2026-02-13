@@ -275,9 +275,6 @@ function M.purge_all_state()
 end
 
 
--- TODO #3253 ensure that we can call setup twice
-
-
 ---@param config_user? nvim_tree.config user supplied subset of config
 function M.setup(config_user)
   if vim.fn.has("nvim-0.9") == 0 then
