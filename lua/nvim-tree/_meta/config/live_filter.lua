@@ -3,7 +3,7 @@ error("Cannot require a meta file")
 
 
 
---- Live filter allows you to filter the tree nodes dynamically, based on regex matching, see [vim.regex]
+--- Live filter allows you to filter the tree nodes dynamically using [regular-expression] matching.
 ---
 --- This feature is bound to the `f` key by default. The filter can be cleared with the `F` key by default.
 ---
