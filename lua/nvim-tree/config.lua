@@ -2,14 +2,20 @@ local notify = require("nvim-tree.notify")
 local legacy = require("nvim-tree.legacy")
 local utils = require("nvim-tree.utils")
 
-local M = {}
+-- short names like g are used to keep code brief
 
--- nil until after setup
----@type nvim_tree.config
-local current
+local M = {
+  ---@type nvim_tree.config immutable default config
+  d = {},
 
----@type nvim_tree.config
-local DEFAULT = { -- config-default-start
+  ---@type nvim_tree.config? global current config, nil until after setup
+  g = nil,
+
+  ---@type nvim_tree.config? raw user config, nil when no user config supplied
+  u = nil,
+}
+
+M.d = { -- config-default-start
   on_attach = "default",
   hijack_cursor = false,
   auto_reload_on_write = true,
@@ -296,7 +302,7 @@ local DEFAULT = { -- config-default-start
 
 -- Immediately apply OS specific localisations to defaults
 if utils.is_macos or utils.is_windows then
-  DEFAULT.trash.cmd = "trash"
+  M.d.trash.cmd = "trash"
 end
 if utils.is_windows then
   DEFAULT.filesystem_watchers.max_events = 1000
@@ -392,8 +398,8 @@ local ACCEPTED_ENUMS = {
 
 ---Validate types and values of the user supplied config.
 ---Warns and removes invalid in place.
----@param config_user nvim_tree.config
-local function validate_config(config_user)
+---@param u nvim_tree.config
+local function validate_config(u)
   local msg
 
   ---@param user any
@@ -470,45 +476,54 @@ local function validate_config(config_user)
     end
   end
 
-  validate(config_user, DEFAULT, ACCEPTED_STRINGS, ACCEPTED_TYPES, ACCEPTED_ENUMS, "")
+  validate(u, M.d, ACCEPTED_STRINGS, ACCEPTED_TYPES, ACCEPTED_ENUMS, "")
 
   if msg then
-    notify.warn(msg .. "\n\nsee :help nvim-tree-opts for available configuration options")
+    notify.warn(msg .. "\n\nsee :help nvim-tree-config for available configuration options")
   end
 end
 
----Validate user config, migrate legacy and merge with defaults.
----Persists as M.current
----If no config passed, M.current will be set to defaults.
----@param config_user? nvim_tree.config user supplied subset of config
-function M.setup(config_user)
-  if not config_user or type(config_user) ~= "table" then
-    current = vim.deepcopy(DEFAULT)
+---Validate user config and migrate legacy.
+---Merge with M.d and persist as M.g
+---When no user config M.g is set to M.d and M.u is set to nil
+---@param u? nvim_tree.config user supplied subset of config
+function M.setup(u)
+  if not u or type(u) ~= "table" then
+    if u then
+      notify.warn(string.format("invalid config type \"%s\" passed to setup, using defaults", type(u)))
+    end
+    M.g = vim.deepcopy(M.d)
+    M.u = nil
     return
   end
 
-  legacy.migrate_legacy_options(config_user)
+  -- retain user for reference
+  M.u = vim.deepcopy(u)
 
-  validate_config(config_user)
+  legacy.migrate_legacy_options(u)
 
-  -- set current to the validated and populated user config
-  current = vim.tbl_deep_extend("force", DEFAULT, config_user)
+  validate_config(u)
+
+  -- set global to the validated and populated user config
+  M.g = vim.tbl_deep_extend("force", M.d, u)
 end
 
-
--- TODO #3253 consider returning M.config to avoid the function call overhead
-
-
----Return the current config
----@return nvim_tree.config returns defaults until after setup
-function M.current()
-  return current or DEFAULT
-end
-
----Return the default config
+---Deep clone defaults
 ---@return nvim_tree.config
-function M.default()
-  return DEFAULT
+function M.d_clone()
+  return vim.deepcopy(M.d)
+end
+
+---Deep clone user
+---@return nvim_tree.config? nil when no config passed to setup
+function M.u_clone()
+  return vim.deepcopy(M.u)
+end
+
+---Deep clone global
+---@return nvim_tree.config? nil when setup not called
+function M.g_clone()
+  return vim.deepcopy(M.g)
 end
 
 return M
