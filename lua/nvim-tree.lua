@@ -36,7 +36,7 @@ function M.change_root(path, bufnr)
       ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
     end
 
-    for _, value in pairs(config.current().update_focused_file.update_root.ignore_list) do
+    for _, value in pairs(config.g.update_focused_file.update_root.ignore_list) do
       if utils.str_find(path, value) or utils.str_find(ft, value) then
         return
       end
@@ -68,12 +68,12 @@ function M.change_root(path, bufnr)
   end
 
   -- otherwise test M.init_root
-  if config.current().prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
+  if config.g.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
     explorer_fn("change_dir", M.init_root)
     return
   end
   -- otherwise root_dirs
-  for _, dir in pairs(config.current().root_dirs) do
+  for _, dir in pairs(config.g.root_dirs) do
     dir = vim.fn.fnamemodify(dir, ":p")
     if utils.path_relative(path, dir) ~= path then
       explorer_fn("change_dir", dir)
@@ -95,7 +95,7 @@ function M.tab_enter()
       ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
     end
 
-    for _, filter in ipairs(config.current().tab.sync.ignore) do
+    for _, filter in ipairs(config.g.tab.sync.ignore) do
       if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
         return
       end
@@ -110,7 +110,7 @@ function M.tab_enter()
 end
 
 function M.open_on_directory()
-  local should_proceed = config.current().hijack_directories.auto_open or view.is_visible()
+  local should_proceed = config.g.hijack_directories.auto_open or view.is_visible()
   if not should_proceed then
     return
   end
@@ -131,11 +131,11 @@ function M.open_on_directory()
 end
 
 local function manage_netrw()
-  if config.current().hijack_netrw then
+  if config.g.hijack_netrw then
     vim.cmd("silent! autocmd! FileExplorer *")
     vim.cmd("autocmd VimEnter * ++once silent! autocmd! FileExplorer *")
   end
-  if config.current().disable_netrw then
+  if config.g.disable_netrw then
     vim.g.loaded_netrw = 1
     vim.g.loaded_netrwPlugin = 1
   end
@@ -147,7 +147,7 @@ function M.change_dir(name)
     explorer_fn("change_dir", name)
   end
 
-  if config.current().update_focused_file.update_root.enable then
+  if config.g.update_focused_file.update_root.enable then
     actions.tree.find_file.fn()
   end
 end
@@ -166,7 +166,7 @@ local function setup_autocommands()
       if not utils.is_nvim_tree_buf(0) then
         return
       end
-      if config.current().actions.open_file.eject then
+      if config.g.actions.open_file.eject then
         view._prevent_buffer_override()
       else
         view.abandon_current_window()
@@ -174,35 +174,35 @@ local function setup_autocommands()
     end,
   })
 
-  if config.current().tab.sync.open then
+  if config.g.tab.sync.open then
     create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
   end
-  if config.current().sync_root_with_cwd then
+  if config.g.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
         M.change_dir(vim.loop.cwd())
       end,
     })
   end
-  if config.current().update_focused_file.enable then
+  if config.g.update_focused_file.enable then
     create_nvim_tree_autocmd("BufEnter", {
       callback = function(event)
-        local exclude = config.current().update_focused_file.exclude
+        local exclude = config.g.update_focused_file.exclude
         if type(exclude) == "function" and exclude(event) then
           return
         end
-        utils.debounce("BufEnter:find_file", config.current().view.debounce_delay, function()
+        utils.debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
           actions.tree.find_file.fn()
         end)
       end,
     })
   end
 
-  if config.current().hijack_directories.enable and (config.current().disable_netrw or config.current().hijack_netrw) then
+  if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory, nested = true })
   end
 
-  if config.current().view.centralize_selection then
+  if config.g.view.centralize_selection then
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
       callback = function()
@@ -219,7 +219,7 @@ local function setup_autocommands()
     })
   end
 
-  if config.current().diagnostics.enable then
+  if config.g.diagnostics.enable then
     create_nvim_tree_autocmd("DiagnosticChanged", {
       callback = function(ev)
         log.line("diagnostics", "DiagnosticChanged")
@@ -235,7 +235,7 @@ local function setup_autocommands()
     })
   end
 
-  if config.current().view.float.enable and config.current().view.float.quit_on_focus_loss then
+  if config.g.view.float.enable and config.g.view.float.quit_on_focus_loss then
     create_nvim_tree_autocmd("WinLeave", {
       pattern = "NvimTree_*",
       callback = function()
@@ -278,8 +278,8 @@ end
 -- TODO #3253 ensure that we can call setup twice
 
 
----@param conf? nvim_tree.config
-function M.setup(conf)
+---@param config_user? nvim_tree.config user supplied subset of config
+function M.setup(config_user)
   if vim.fn.has("nvim-0.9") == 0 then
     notify.warn("nvim-tree.lua requires Neovim 0.9 or higher")
     return
@@ -287,32 +287,32 @@ function M.setup(conf)
 
   M.init_root = vim.fn.getcwd()
 
-  config.setup(conf)
+  config.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.notify").setup(config.current())
-  require("nvim-tree.log").setup(config.current())
+  require("nvim-tree.notify").setup(config.g)
+  require("nvim-tree.log").setup(config.g)
 
   if log.enabled("config") then
     log.line("config", "default config + user")
-    log.raw("config", "%s\n", vim.inspect(config.current()))
+    log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.actions").setup(config.current())
-  require("nvim-tree.keymap").setup(config.current())
+  require("nvim-tree.actions").setup(config.g)
+  require("nvim-tree.keymap").setup(config.g)
   require("nvim-tree.appearance").setup()
-  require("nvim-tree.diagnostics").setup(config.current())
-  require("nvim-tree.explorer"):setup(config.current())
-  require("nvim-tree.explorer.watch").setup(config.current())
-  require("nvim-tree.git").setup(config.current())
-  require("nvim-tree.git.utils").setup(config.current())
-  require("nvim-tree.view").setup(config.current())
-  require("nvim-tree.lib").setup(config.current())
-  require("nvim-tree.renderer.components").setup(config.current())
-  require("nvim-tree.buffers").setup(config.current())
-  require("nvim-tree.help").setup(config.current())
-  require("nvim-tree.watcher").setup(config.current())
+  require("nvim-tree.diagnostics").setup(config.g)
+  require("nvim-tree.explorer"):setup(config.g)
+  require("nvim-tree.explorer.watch").setup(config.g)
+  require("nvim-tree.git").setup(config.g)
+  require("nvim-tree.git.utils").setup(config.g)
+  require("nvim-tree.view").setup(config.g)
+  require("nvim-tree.lib").setup(config.g)
+  require("nvim-tree.renderer.components").setup(config.g)
+  require("nvim-tree.buffers").setup(config.g)
+  require("nvim-tree.help").setup(config.g)
+  require("nvim-tree.watcher").setup(config.g)
 
   setup_autocommands()
 

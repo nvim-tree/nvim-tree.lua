@@ -49,6 +49,7 @@ function M.hydrate(api)
 
   -- lazy functions
   api.appearance.hi_test = function() require("nvim-tree.appearance.hi-test")() end
+  api.config.default = function() return require("nvim-tree.config").d_clone() end
 
   -- classes
   api.Decorator = Decorator:extend()
