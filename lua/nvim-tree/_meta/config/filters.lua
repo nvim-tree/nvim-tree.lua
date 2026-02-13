@@ -26,7 +26,7 @@ error("Cannot require a meta file")
 ---
 ---`U     `{custom}`              `|nvim_tree.api.filter.custom.toggle()|
 ---Disable specific file/directory names via:
----- a list of backslash escaped |vim.regex| strings e.g. `"^\\.git""`
+---- a list of backslash escaped |regular-expression| e.g. `"^\\.git""`
 ---- a function passed the absolute path of the directory.
 ---
 ---All filters including live filter may be disabled via {enable} and toggled with |nvim_tree.api.filter.toggle()|

@@ -1640,7 +1640,7 @@ Config: filters                                     *nvim-tree-config-filters*
 
     `U     `{custom}`              `|nvim_tree.api.filter.custom.toggle()|
     Disable specific file/directory names via:
-    • a list of backslash escaped |vim.regex| strings e.g. `"^\\.git""`
+    • a list of backslash escaped |regular-expression| e.g. `"^\\.git""`
     • a function passed the absolute path of the directory.
 
     All filters including live filter may be disabled via {enable} and toggled
@@ -1666,8 +1666,8 @@ Config: filters                                     *nvim-tree-config-filters*
 Config: live_filter                             *nvim-tree-config-live-filter*
 
 *nvim_tree.config.live_filter*
-    Live filter allows you to filter the tree nodes dynamically, based on
-    regex matching, see |vim.regex|
+    Live filter allows you to filter the tree nodes dynamically using
+    |regular-expression| matching.
 
     This feature is bound to the `f` key by default. The filter can be cleared
     with the `F` key by default.
@@ -1691,7 +1691,7 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
     directory changes, resulting in better performance.
 
     Watchers may be disabled for absolute directory paths via {ignore_dirs}.
-    • A list of |vim.regex| to match a path, backslash escaped e.g.
+    • A list of |regular-expression| to match a path, backslash escaped e.g.
       `"my-proj/\\.build$"` OR
     • A function that is passed an absolute path and returns `true` to disable
       This may be useful when a path is not in `.gitignore` or git integration
