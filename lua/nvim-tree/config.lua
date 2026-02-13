@@ -1,17 +1,20 @@
+--This will be required after api, before setup.
+--This file should have minimal requires that are cheap and have no dependencies or are already required.
+
 local notify = require("nvim-tree.notify")
 local legacy = require("nvim-tree.legacy")
 local utils = require("nvim-tree.utils")
 
--- short names like g are used to keep code brief
+-- short names like g are used rather than getters to keep code brief
 
 local M = {
   ---@type nvim_tree.config immutable default config
   d = {},
 
-  ---@type nvim_tree.config? global current config, nil until after setup
+  ---@type nvim_tree.config? global current config, nil until setup called
   g = nil,
 
-  ---@type nvim_tree.config? raw user config, nil when no user config supplied
+  ---@type nvim_tree.config? raw user config, nil when no user config passed to setup
   u = nil,
 }
 
