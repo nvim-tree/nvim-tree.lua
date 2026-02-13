@@ -31,5 +31,5 @@ error("Cannot require a meta file")
 ---@field ignore_dirs? string[]|(fun(path: string): boolean)
 ---
 ---Disable for a single directory after {max_events} consecutive events with an interval < {debounce_delay}.
----(default: `100`)
+---(default: `1000`)
 ---@field max_events? integer
