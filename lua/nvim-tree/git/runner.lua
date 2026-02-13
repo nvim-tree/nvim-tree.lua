@@ -4,7 +4,7 @@ local notify = require("nvim-tree.notify")
 
 local Class = require("nvim-tree.classic")
 
----@class (exact) GitRunner: Class
+---@class (exact) GitRunner: nvim_tree.Class
 ---@field private toplevel string absolute path
 ---@field private path string? absolute path
 ---@field private list_untracked boolean

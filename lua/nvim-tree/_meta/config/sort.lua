@@ -17,14 +17,14 @@ error("Cannot require a meta file")
 ---{sorter} may be a function that is passed a list of `nvim_tree.api.Node` to be sorted in place e.g.
 ---```lua
 ---
-------Sort by name length
-------@param nodes nvim_tree.api.Node[]
-------@return nvim_tree.config.sort.Sorter?
----local sorter = function(nodes)
----  table.sort(nodes, function(a, b)
----    return #a.name < #b.name
----  end)
----end
+--- ---Sort by name length
+--- ---@param nodes nvim_tree.api.Node[]
+--- ---@return nvim_tree.config.sort.Sorter?
+--- local sorter = function(nodes)
+---   table.sort(nodes, function(a, b)
+---     return #a.name < #b.name
+---   end)
+--- end
 ---```
 ---{sorter} may be a function that returns a [nvim_tree.config.sort.Sorter]
 ---

@@ -58,7 +58,7 @@ local function load_bookmarks(opts)
   return {}
 end
 
----@class (exact) Marks: Class
+---@class (exact) Marks: nvim_tree.Class
 ---@field private explorer Explorer
 ---@field private marks table<string, Node> by absolute path
 local Marks = Class:extend()

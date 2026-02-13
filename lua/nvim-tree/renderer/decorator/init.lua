@@ -1,40 +1,13 @@
-local Class = require("nvim-tree.classic")
+local DecoratorInterface = require("nvim-tree._meta.api.decorator")
 
----Abstract Decorator
----@class (exact) Decorator: Class
----@field protected enabled boolean
----@field protected highlight_range nvim_tree.api.decorator.HighlightRange
----@field protected icon_placement nvim_tree.api.decorator.IconPlacement
-local Decorator = Class:extend()
-
----@class (exact) DecoratorArgs
----@field explorer Explorer
-
----Abstract icon override, optionally implemented
----@param node Node
----@return HighlightedString? icon_node
-function Decorator:icon_node(node)
-  return self:nop(node)
-end
-
----Abstract icons, optionally implemented
----@protected
----@param node Node
----@return HighlightedString[]? icons
-function Decorator:icons(node)
-  self:nop(node)
-end
-
----Abstract highlight group, optionally implemented
----@protected
----@param node Node
----@return string? highlight_group
-function Decorator:highlight_group(node)
-  self:nop(node)
-end
+---
+---Abstract decorator
+---
+---@class (exact) Decorator: nvim_tree.api.Decorator
+local Decorator = DecoratorInterface:extend()
 
 ---Maybe highlight groups for icon and name
----@param node Node
+---@param node nvim_tree.api.Node
 ---@return string? icon highlight group
 ---@return string? name highlight group
 function Decorator:highlight_group_icon_name(node)
@@ -55,7 +28,7 @@ function Decorator:highlight_group_icon_name(node)
 end
 
 ---Maybe icon sign
----@param node Node
+---@param node nvim_tree.api.Node
 ---@return string? name
 function Decorator:sign_name(node)
   if not self.enabled or self.icon_placement ~= "signcolumn" then
@@ -69,8 +42,8 @@ function Decorator:sign_name(node)
 end
 
 ---Icons when "before"
----@param node Node
----@return HighlightedString[]? icons
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
 function Decorator:icons_before(node)
   if not self.enabled or self.icon_placement ~= "before" then
     return
@@ -80,8 +53,8 @@ function Decorator:icons_before(node)
 end
 
 ---Icons when "after"
----@param node Node
----@return HighlightedString[]? icons
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
 function Decorator:icons_after(node)
   if not self.enabled or self.icon_placement ~= "after" then
     return
@@ -91,8 +64,8 @@ function Decorator:icons_after(node)
 end
 
 ---Icons when "right_align"
----@param node Node
----@return HighlightedString[]? icons
+---@param node nvim_tree.api.Node
+---@return nvim_tree.api.highlighted_string[]? icons
 function Decorator:icons_right_align(node)
   if not self.enabled or self.icon_placement ~= "right_align" then
     return
@@ -103,7 +76,7 @@ end
 
 ---Define a sign
 ---@protected
----@param icon HighlightedString?
+---@param icon nvim_tree.api.highlighted_string?
 function Decorator:define_sign(icon)
   if icon and #icon.hl > 0 then
     local name = icon.hl[1]
@@ -129,4 +102,5 @@ function Decorator:define_sign(icon)
   end
 end
 
+---@type Decorator
 return Decorator

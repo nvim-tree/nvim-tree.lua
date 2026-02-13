@@ -1,16 +1,15 @@
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
----@class (exact) CutDecorator: Decorator
----@field private explorer Explorer
-local CutDecorator = Decorator:extend()
+---@class (exact) CutDecorator: BuiltinDecorator
+local CutDecorator = BuiltinDecorator:extend()
 
 ---@class CutDecorator
----@overload fun(args: DecoratorArgs): CutDecorator
+---@overload fun(args: BuiltinDecoratorArgs): CutDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function CutDecorator:new(args)
-  self.explorer        = args.explorer
+  CutDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_clipboard or "none"
