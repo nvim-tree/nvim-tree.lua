@@ -9,6 +9,7 @@
 local legacy = require("nvim-tree.legacy")
 
 local actions = require("nvim-tree.actions")
+local config = require("nvim-tree.config")
 local help = require("nvim-tree.help")
 local keymap = require("nvim-tree.keymap")
 local utils = require("nvim-tree.utils")
@@ -256,6 +257,9 @@ function M.hydrate(api)
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
 
   api.map.keymap.current = keymap.get_keymap
+
+  api.config.global = config.g_clone
+  api.config.user = config.u_clone
 
   -- (Re)hydrate any legacy by mapping to concrete set above
   legacy.map_api(api)

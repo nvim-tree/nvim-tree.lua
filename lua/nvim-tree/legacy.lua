@@ -140,6 +140,9 @@ local function removed(opts)
   opts.create_in_closed_folder = nil
 end
 
+---Migrate legacy config in place.
+---Refactored are silently migrated. Deprecated and removed result in a warning.
+---@param opts nvim_tree.config user supplied subset of config
 function M.migrate_legacy_options(opts)
   -- silently move
   refactored(opts)

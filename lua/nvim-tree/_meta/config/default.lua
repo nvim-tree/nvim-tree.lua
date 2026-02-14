@@ -5,6 +5,6 @@
 ---
 --- ---@type nvim_tree.config
 --- local config = {
---- default-config-injection-placeholder
+--- config-default-injection-placeholder
 --- }
 ---```
