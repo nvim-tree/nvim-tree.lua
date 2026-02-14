@@ -48,7 +48,7 @@ function M.hydrate(api)
   api.map.keymap.default = keymap.get_keymap_default
 
   -- lazy functions
-  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
+  api.appearance.hi_test = function() require("nvim-tree.appearance.hi-test")() end
 
   -- classes
   api.Decorator = Decorator:extend()
