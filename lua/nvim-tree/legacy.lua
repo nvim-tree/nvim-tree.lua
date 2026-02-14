@@ -174,7 +174,7 @@ function M.map_api(api)
   api.tree.toggle_no_bookmark_filter = api.filter.no_bookmark.toggle
 
   api.diagnostics = api.diagnostics or {}
-  api.diagnostics.hi_test = api.health.hi_test
+  api.diagnostics.hi_test = api.appearance.hi_test
 
   api.decorator.UserDecorator = api.Decorator
 end

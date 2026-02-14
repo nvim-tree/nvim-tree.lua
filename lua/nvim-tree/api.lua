@@ -5,12 +5,12 @@
 ---
 ---The API is separated into multiple modules:
 ---
+---- [nvim-tree-api-appearance]
 ---- [nvim-tree-api-commands]
 ---- [nvim-tree-api-events]
 ---- [nvim-tree-api-filter]
 ---- [nvim-tree-api-fs]
 ---- [nvim-tree-api-git]
----- [nvim-tree-api-health]
 ---- [nvim-tree-api-map]
 ---- [nvim-tree-api-marks]
 ---- [nvim-tree-api-node]
@@ -75,12 +75,12 @@
 ---@class nvim_tree.api
 ---@nodoc
 local api = {
+  appearance = require("nvim-tree._meta.api.appearance"),
   commands = require("nvim-tree._meta.api.commands"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
   git = require("nvim-tree._meta.api.git"),
-  health = require("nvim-tree._meta.api.health"),
   map = require("nvim-tree._meta.api.map"),
   marks = require("nvim-tree._meta.api.marks"),
   node = require("nvim-tree._meta.api.node"),

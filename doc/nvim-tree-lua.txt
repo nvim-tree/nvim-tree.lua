@@ -278,9 +278,9 @@ All commands execute public API.
     keep_buffers = true
   })
 <
-*:NvimTreeHiTest*                          |nvim_tree.api.health.hi_test()| >lua
+*:NvimTreeHiTest*                         |nvim_tree.api.appearance.hi_test()| >lua
 
-  require("nvim-tree.api").health.hi_test()
+  require("nvim-tree.api").appearance.hi_test()
 <
 *:NvimTreeResize*                          |nvim_tree.api.tree.resize()| >lua
 
@@ -903,7 +903,7 @@ Deprecated API with unchanged function signature:
 `api.config.mappings.get_keymap_default` |nvim_tree.api.map.keymap.default()|
 `api.config.mappings.default_on_attach`  |nvim_tree.api.map.on_attach.default()|
 
-`api.diagnostics.hi_test`                |nvim_tree.api.health.hi_test()|
+`api.diagnostics.hi_test`                |nvim_tree.api.appearance.hi_test()|
 
 `api.live_filter.start`                  |nvim_tree.api.filter.live.start()|
 `api.live_filter.clear`                  |nvim_tree.api.filter.live.clear()|
@@ -2287,12 +2287,12 @@ Please do not require or use modules other than `nvim-tree.api`, as internal
 modules will change without notice.
 
 The API is separated into multiple modules:
+• |nvim-tree-api-appearance|
 • |nvim-tree-api-commands|
 • |nvim-tree-api-events|
 • |nvim-tree-api-filter|
 • |nvim-tree-api-fs|
 • |nvim-tree-api-git|
-• |nvim-tree-api-health|
 • |nvim-tree-api-map|
 • |nvim-tree-api-marks|
 • |nvim-tree-api-node|
@@ -2352,6 +2352,16 @@ e.g. the following are functionally identical: >lua
       • {dir}?   (`table<"direct"|"indirect", nvim_tree.git.XY[]>`) direct
                  inclusive-or indirect status
 
+
+
+==============================================================================
+API: appearance                                     *nvim-tree-api-appearance*
+
+hi_test()                                 *nvim_tree.api.appearance.hi_test()*
+    Open a new buffer displaying all nvim-tree highlight groups, their link
+    chain and concrete definition.
+
+    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 
 ==============================================================================
@@ -2528,16 +2538,6 @@ API: git                                                   *nvim-tree-api-git*
 
 reload()                                          *nvim_tree.api.git.reload()*
     Update the git status of the entire tree.
-
-
-==============================================================================
-API: health                                             *nvim-tree-api-health*
-
-hi_test()                                     *nvim_tree.api.health.hi_test()*
-    Open a new buffer displaying all nvim-tree highlight groups, their link
-    chain and concrete definition.
-
-    Similar to `:so $VIMRUNTIME/syntax/hitest.vim` as per |:highlight|
 
 
 ==============================================================================
