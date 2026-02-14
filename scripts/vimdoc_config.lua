@@ -64,7 +64,6 @@ local srcs_api = {
   { helptag = "nvim-tree-api-filter",     section = "API: filter",     path = base .. "_meta/api/filter.lua", },
   { helptag = "nvim-tree-api-fs",         section = "API: fs",         path = base .. "_meta/api/fs.lua", },
   { helptag = "nvim-tree-api-git",        section = "API: git",        path = base .. "_meta/api/git.lua", },
-  { helptag = "nvim-tree-api-health",     section = "API: health",     path = base .. "_meta/api/health.lua", },
   { helptag = "nvim-tree-api-map",        section = "API: map",        path = base .. "_meta/api/map.lua", },
   { helptag = "nvim-tree-api-marks",      section = "API: marks",      path = base .. "_meta/api/marks.lua", },
   { helptag = "nvim-tree-api-node",       section = "API: node",       path = base .. "_meta/api/node.lua", },
