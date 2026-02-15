@@ -5,7 +5,7 @@ local Class = require("nvim-tree.classic")
 
 ---@alias FilterType "custom" | "dotfiles" | "git_ignored" | "git_clean" | "no_buffer" | "no_bookmark"
 
----@class (exact) Filters: Class
+---@class (exact) Filters: nvim_tree.Class
 ---@field enabled boolean
 ---@field state table<FilterType, boolean>
 ---@field private explorer Explorer
@@ -65,7 +65,7 @@ end
 ---Check if the given path is git clean/ignored
 ---@private
 ---@param path string Absolute path
----@param project GitProject from prepare
+---@param project nvim_tree.git.Project from prepare
 ---@return boolean
 function Filters:git(path, project)
   if type(project) ~= "table" or type(project.files) ~= "table" or type(project.dirs) ~= "table" then
@@ -195,7 +195,7 @@ function Filters:custom(path)
 end
 
 ---Prepare arguments for should_filter. This is done prior to should_filter for efficiency reasons.
----@param project GitProject? optional results of git.load_projects(...)
+---@param project nvim_tree.git.Project? optional results of git.load_projects(...)
 ---@return table
 --- project: reference
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }

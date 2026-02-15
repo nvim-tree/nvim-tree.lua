@@ -58,12 +58,12 @@ end
 
 ---Update the git_status of the directory
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function DirectoryNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_dir(parent_ignored, project, self.absolute_path, nil)
 end
 
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function DirectoryNode:get_git_xy()
   if not self.git_status or not self.explorer.opts.git.show_on_dirs then
     return nil
@@ -198,7 +198,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   self.explorer.renderer:draw()
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function DirectoryNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
     return self:highlighted_icon_empty()
@@ -243,7 +243,7 @@ function DirectoryNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function DirectoryNode:highlighted_name()
   local str, hl
 
@@ -354,7 +354,7 @@ local function descend_until_empty(_, node)
   return not should_exclude
 end
 
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function DirectoryNode:expand(expand_opts)
   local expansion_count = 0
 

@@ -1,14 +1,14 @@
 local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
----@class (exact) Node: Class
+---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.loop.hrtime() at construction time
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
 ---@field executable boolean
 ---@field fs_stat uv.fs_stat.result?
----@field git_status GitNodeStatus?
+---@field git_status nvim_tree.git.Status?
 ---@field hidden boolean
 ---@field name string
 ---@field parent DirectoryNode?
@@ -45,13 +45,13 @@ end
 ---Update the git_status of the node
 ---Abstract
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function Node:update_git_status(parent_ignored, project)
   self:nop(parent_ignored, project)
 end
 
 ---Short-format statuses
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function Node:get_git_xy()
 end
 
@@ -93,28 +93,28 @@ end
 
 ---Empty highlighted icon
 ---@protected
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function Node:highlighted_icon_empty()
   return { str = "", hl = {} }
 end
 
 ---Highlighted icon for the node
 ---Empty for base Node
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function Node:highlighted_icon()
   return self:highlighted_icon_empty()
 end
 
 ---Empty highlighted name
 ---@protected
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name_empty()
   return { str = "", hl = {} }
 end
 
 ---Highlighted name for the node
 ---Empty for base Node
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name()
   return self:highlighted_name_empty()
 end
@@ -144,14 +144,15 @@ function Node:clone(api_nodes)
   return clone
 end
 
----@param _expansion_count integer
----@param _should_descend fun(expansion_count: integer, node: Node): boolean
+---@param expansion_count integer
+---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return boolean
-function Node:should_expand(_expansion_count, _should_descend)
+function Node:should_expand(expansion_count, should_descend)
+  self:nop(expansion_count, should_descend)
   return false
 end
 
----@param expand_opts ApiTreeExpandOpts?
+---@param expand_opts? nvim_tree.api.node.expand.Opts
 function Node:expand(expand_opts)
   if self.parent then
     self.parent:expand(expand_opts)

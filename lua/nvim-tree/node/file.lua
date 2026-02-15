@@ -36,12 +36,12 @@ end
 
 ---Update the GitStatus of the file
 ---@param parent_ignored boolean
----@param project GitProject?
+---@param project nvim_tree.git.Project?
 function FileNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_file(parent_ignored, project, self.absolute_path, nil)
 end
 
----@return GitXY[]?
+---@return nvim_tree.git.XY[]?
 function FileNode:get_git_xy()
   if not self.git_status then
     return nil
@@ -50,7 +50,7 @@ function FileNode:get_git_xy()
   return self.git_status.file and { self.git_status.file }
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function FileNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.file then
     return self:highlighted_icon_empty()
@@ -79,7 +79,7 @@ function FileNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function FileNode:highlighted_name()
   local hl
   if vim.tbl_contains(self.explorer.opts.renderer.special_files, self.absolute_path) or vim.tbl_contains(self.explorer.opts.renderer.special_files, self.name) then
