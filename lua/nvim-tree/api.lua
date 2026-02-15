@@ -5,12 +5,12 @@
 ---
 ---The API is separated into multiple modules:
 ---
+---- [nvim-tree-api-appearance]
 ---- [nvim-tree-api-commands]
 ---- [nvim-tree-api-events]
 ---- [nvim-tree-api-filter]
 ---- [nvim-tree-api-fs]
 ---- [nvim-tree-api-git]
----- [nvim-tree-api-health]
 ---- [nvim-tree-api-map]
 ---- [nvim-tree-api-marks]
 ---- [nvim-tree-api-node]
@@ -69,37 +69,31 @@
 
 
 
---
--- Load the (empty) meta definitions
---
-local deprecated = require("nvim-tree._meta.api.deprecated")
-
+---
 ---nvim-tree Public API
+---
 ---@class nvim_tree.api
 ---@nodoc
 local api = {
+  appearance = require("nvim-tree._meta.api.appearance"),
   commands = require("nvim-tree._meta.api.commands"),
   events = require("nvim-tree._meta.api.events"),
   filter = require("nvim-tree._meta.api.filter"),
   fs = require("nvim-tree._meta.api.fs"),
   git = require("nvim-tree._meta.api.git"),
-  health = require("nvim-tree._meta.api.health"),
   map = require("nvim-tree._meta.api.map"),
   marks = require("nvim-tree._meta.api.marks"),
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
-  config = deprecated.config, ---@deprecated
-  diagnostics = deprecated.diagnostics, ---@deprecated
-  live_filter = deprecated.live_filter, ---@deprecated
+  Decorator = require("nvim-tree._meta.api.decorator"),
+
+  config = require("nvim-tree._meta.api.deprecated").config, ---@deprecated
+  decorator = require("nvim-tree._meta.api.deprecated").decorator, ---@deprecated
+  diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
+  live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }
 
-
---
--- Map before-setup implementations, most throw an error notification "nvim-tree setup not called".
---
-require("nvim-tree.api.impl.pre")(api)
-
-
+require("nvim-tree.api.impl.pre").hydrate(api)
 
 return api

@@ -6,7 +6,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@alias SorterUser fun(nodes: Node[]): SorterType?
 
----@class (exact) Sorter: Class
+---@class (exact) Sorter: nvim_tree.Class
 ---@field private explorer Explorer
 local Sorter = Class:extend()
 

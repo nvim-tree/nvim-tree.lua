@@ -462,7 +462,7 @@ local DEFAULT_OPTS = { -- default-config-start
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
-    max_events = 100,
+    max_events = 1000,
     ignore_dirs = {
       "/.ccls-cache",
       "/build",
@@ -816,7 +816,7 @@ function M.setup(conf)
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
 
-  require("nvim-tree.api.impl.post")(api)
+  require("nvim-tree.api.impl.post").hydrate(api)
 end
 
 vim.g.NvimTreeRequired = 1

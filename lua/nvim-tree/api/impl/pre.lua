@@ -1,6 +1,7 @@
---Hydrates meta api empty definition functions with a new function:
--- - Default: error notification "nvim-tree setup not called".
--- - Exceptions: concrete implementation for API that can be called before setup.
+--Hydrates meta api empty definitions pre-setup:
+-- - Pre-setup functions will be hydrated with their concrete implementation.
+-- - Post-setup functions will notify error: "nvim-tree setup not called"
+-- - All classes will be hydrated with their implementations.
 --
 --Call it once when api is first required
 --
@@ -8,72 +9,53 @@
 --
 --Everything must be as lazily loaded as possible: the user must be able to require api cheaply.
 
+local legacy = require("nvim-tree.legacy")
+
 local commands = require("nvim-tree.commands") -- already required by plugin.lua
 local events = require("nvim-tree.events")     -- needed for event registration pre-setup
 local keymap = require("nvim-tree.keymap")     -- needed for default on attach
 local notify = require("nvim-tree.notify")     -- already required by events and others
 
-local UserDecorator = require("nvim-tree.renderer.decorator.user")
+local Decorator = require("nvim-tree.renderer.decorator")
 
----Walk the api, hydrating all functions with the error notification
----@param t table api root or sub-module
+local M = {}
+
+---Walk the api, hydrating all functions with the error notification.
+---Do not hydrate classes: anything with a metatable.
+---@param t table
 local function hydrate_error(t)
   for k, v in pairs(t) do
     if type(v) == "function" then
       t[k] = function()
         notify.error("nvim-tree setup not called")
       end
-    elseif type(v) == "table" then
+    elseif type(v) == "table" and not getmetatable(v) then
       hydrate_error(v)
     end
   end
 end
 
----Hydrate implementations that may be called pre setup
+---Hydrate api functions and classes pre-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
-local function hydrate_pre(api)
-  --
-  -- Essential
-  --
-  api.events.Event = events.Event
-  api.events.subscribe = events.subscribe
-
-  api.map.on_attach.default = keymap.on_attach_default
-
-
-  --
-  -- May be lazily requried on execution
-  --
-  api.health.hi_test = function() require("nvim-tree.appearance.hi-test")() end
-
-
-  --
-  -- Already required elsewhere
-  --
-  api.commands.get = commands.get
-
-  api.map.keymap.default = keymap.get_keymap_default
-
-
-  --
-  -- TODO #3241
-  --
-  api.decorator = {}
-  ---Create a decorator class by calling :extend()
-  ---See :help nvim-tree-decorators
-  ---@type nvim_tree.api.decorator.UserDecorator
-  api.decorator.UserDecorator = UserDecorator --[[@as nvim_tree.api.decorator.UserDecorator]]
-end
-
----Hydrate api
----@param api table not properly typed to prevent LSP from referencing implementations
-return function(api)
-  -- Default: error
+function M.hydrate(api)
+  -- default to the error message
   hydrate_error(api)
 
-  -- Exceptions: may be called
-  hydrate_pre(api)
+  -- eager functions
+  api.events.subscribe = events.subscribe
+  api.map.on_attach.default = keymap.on_attach_default
+  api.commands.get = commands.get
+  api.map.keymap.default = keymap.get_keymap_default
 
-  -- Hydrate any legacy by mapping to function set above
-  require("nvim-tree.api.impl.legacy")(api)
+  -- lazy functions
+  api.appearance.hi_test = function() require("nvim-tree.appearance.hi-test")() end
+
+  -- classes
+  api.Decorator = Decorator:extend()
+  api.events.Event = events.Event
+
+  -- Hydrate any legacy by mapping to concrete set above
+  legacy.map_api(api)
 end
+
+return M

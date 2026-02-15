@@ -1,9 +1,9 @@
 local notify = require("nvim-tree.notify")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 local DirectoryNode = require("nvim-tree.node.directory")
 
----@class (exact) GitHighlightedString: nvim_tree.api.HighlightedString
+---@class (exact) GitHighlightedString: nvim_tree.api.highlighted_string
 ---@field ord number decreasing priority
 
 ---@alias GitStatusStrings "deleted" | "ignored" | "renamed" | "staged" | "unmerged" | "unstaged" | "untracked"
@@ -12,21 +12,20 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias GitIconsByXY table<nvim_tree.git.XY, GitHighlightedString[]> porcelain status
 ---@alias GitGlyphsByStatus table<GitStatusStrings, string> from opts
 
----@class (exact) GitDecorator: Decorator
----@field private explorer Explorer
+---@class (exact) GitDecorator: BuiltinDecorator
 ---@field private file_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private folder_hl_by_xy table<nvim_tree.git.XY, string>?
 ---@field private icons_by_status GitIconsByStatus?
 ---@field private icons_by_xy GitIconsByXY?
-local GitDecorator = Decorator:extend()
+local GitDecorator = BuiltinDecorator:extend()
 
 ---@class GitDecorator
----@overload fun(args: DecoratorArgs): GitDecorator
+---@overload fun(args: BuiltinDecoratorArgs): GitDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function GitDecorator:new(args)
-  self.explorer        = args.explorer
+  GitDecorator.super.new(self, args)
 
   self.enabled         = self.explorer.opts.git.enable
   self.highlight_range = self.explorer.opts.renderer.highlight_git or "none"
@@ -142,7 +141,7 @@ end
 
 ---Git icons: git.enable, renderer.icons.show.git and node has status
 ---@param node Node
----@return HighlightedString[]? icons
+---@return nvim_tree.api.highlighted_string[]? icons
 function GitDecorator:icons(node)
   if not self.icons_by_xy then
     return nil

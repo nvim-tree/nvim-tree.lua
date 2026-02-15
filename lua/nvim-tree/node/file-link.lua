@@ -31,7 +31,7 @@ function FileLinkNode:update_git_status(parent_ignored, project)
   self.git_status = git_utils.git_status_file(parent_ignored, project, self.link_to, self.absolute_path)
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function FileLinkNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.file then
     return self:highlighted_icon_empty()
@@ -46,7 +46,7 @@ function FileLinkNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@return HighlightedString name
+---@return nvim_tree.api.highlighted_string name
 function FileLinkNode:highlighted_name()
   local str = self.name
   if self.explorer.opts.renderer.symlink_destination then

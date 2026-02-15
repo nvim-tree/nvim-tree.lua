@@ -8,7 +8,7 @@ error("Cannot require a meta file")
 ---With this feature, the tree will be partially updated on specific directory changes, resulting in better performance.
 ---
 ---Watchers may be disabled for absolute directory paths via {ignore_dirs}.
---- - A list of [vim.regex] to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
+--- - A list of [regular-expression] to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
 --- - A function that is passed an absolute path and returns `true` to disable
 ---This may be useful when a path is not in `.gitignore` or git integration is disabled.
 ---
@@ -31,5 +31,5 @@ error("Cannot require a meta file")
 ---@field ignore_dirs? string[]|(fun(path: string): boolean)
 ---
 ---Disable for a single directory after {max_events} consecutive events with an interval < {debounce_delay}.
----(default: `100`)
+---(default: `1000`)
 ---@field max_events? integer

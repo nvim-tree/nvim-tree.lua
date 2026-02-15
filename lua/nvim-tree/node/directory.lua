@@ -198,7 +198,7 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   self.explorer.renderer:draw()
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function DirectoryNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
     return self:highlighted_icon_empty()
@@ -243,7 +243,7 @@ function DirectoryNode:highlighted_icon()
   return { str = str, hl = { hl } }
 end
 
----@return HighlightedString icon
+---@return nvim_tree.api.highlighted_string icon
 function DirectoryNode:highlighted_name()
   local str, hl
 

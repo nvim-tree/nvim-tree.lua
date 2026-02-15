@@ -1,19 +1,18 @@
 local buffers = require("nvim-tree.buffers")
 
-local Decorator = require("nvim-tree.renderer.decorator")
+local BuiltinDecorator = require("nvim-tree.renderer.decorator.builtin")
 
----@class (exact) OpenDecorator: Decorator
----@field private explorer Explorer
----@field private icon HighlightedString|nil
-local OpenDecorator = Decorator:extend()
+---@class (exact) OpenDecorator: BuiltinDecorator
+---@field private icon? nvim_tree.api.highlighted_string
+local OpenDecorator = BuiltinDecorator:extend()
 
 ---@class OpenDecorator
----@overload fun(args: DecoratorArgs): OpenDecorator
+---@overload fun(args: BuiltinDecoratorArgs): OpenDecorator
 
 ---@protected
----@param args DecoratorArgs
+---@param args BuiltinDecoratorArgs
 function OpenDecorator:new(args)
-  self.explorer        = args.explorer
+  OpenDecorator.super.new(self, args)
 
   self.enabled         = true
   self.highlight_range = self.explorer.opts.renderer.highlight_opened_files or "none"
