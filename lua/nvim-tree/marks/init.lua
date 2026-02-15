@@ -238,7 +238,7 @@ function Marks:filter_descendant_nodes(nodes)
   for i, a in ipairs(nodes) do
     for j, b in ipairs(nodes) do
       if i ~= j then
-        local prefix = b.absolute_path .. "/"
+        local prefix = b.absolute_path .. utils.path_separator
         if a.absolute_path:sub(1, #prefix) == prefix then
           dominated[i] = true
           break
@@ -259,11 +259,19 @@ end
 ---@public
 ---@param nodes Node[]
 function Marks:bulk_delete_nodes(nodes)
-  if #nodes == 0 then
+  -- Filter out parent directory entries ("..") to avoid deleting the parent directory.
+  local filtered_nodes = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered_nodes, node)
+    end
+  end
+
+  if #filtered_nodes == 0 then
     return
   end
 
-  nodes = self:filter_descendant_nodes(nodes)
+  nodes = self:filter_descendant_nodes(filtered_nodes)
 
   local function execute()
     for i = #nodes, 1, -1 do
@@ -275,11 +283,23 @@ function Marks:bulk_delete_nodes(nodes)
   end
 
   if self.explorer.opts.ui.confirm.remove then
+    local default_yes = self.explorer.opts.ui.confirm.default_yes == true
     local prompt_select = string.format("Remove %d selected ?", #nodes)
-    local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_visual_delete", function(item_short)
+    local prompt_input, items_short, items_long
+
+    if default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_visual_delete", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" then
+      if item_short == "y" or (default_yes and item_short ~= "n") then
         execute()
       end
     end)
@@ -292,11 +312,19 @@ end
 ---@public
 ---@param nodes Node[]
 function Marks:bulk_trash_nodes(nodes)
-  if #nodes == 0 then
+  -- Filter out parent directory entries ("..") to avoid trashing the parent directory.
+  local filtered_nodes = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered_nodes, node)
+    end
+  end
+
+  if #filtered_nodes == 0 then
     return
   end
 
-  nodes = self:filter_descendant_nodes(nodes)
+  nodes = self:filter_descendant_nodes(filtered_nodes)
 
   local function execute()
     for i = #nodes, 1, -1 do
@@ -308,11 +336,23 @@ function Marks:bulk_trash_nodes(nodes)
   end
 
   if self.explorer.opts.ui.confirm.trash then
+    local default_yes = self.explorer.opts.ui.confirm.default_yes == true
     local prompt_select = string.format("Trash %d selected ?", #nodes)
-    local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_visual_trash", function(item_short)
+    local prompt_input, items_short, items_long
+
+    if default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_visual_trash", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" then
+      if item_short == "y" or (default_yes and item_short ~= "n") then
         execute()
       end
     end)
