@@ -182,9 +182,9 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
   for _, d in ipairs(self.decorators) do
     b = d:as(BuiltinDecorator)
     if b then
-      add_to_end(line, b:icons_right_align(node))
+      add_to_end(rights, b:icons_right_align(node))
     elseif api_node then
-      add_to_end(line, d:icons_right_align(api_node))
+      add_to_end(rights, d:icons_right_align(api_node))
     end
   end
   if #rights > 0 then
