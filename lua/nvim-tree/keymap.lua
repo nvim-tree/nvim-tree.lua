@@ -103,6 +103,12 @@ function M.on_attach_default(bufnr)
   vim.keymap.set("n", "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
   vim.keymap.set("n", "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
+
+  vim.keymap.set("x", "m",              api.marks.toggle_visual,            opts("Toggle Bookmark"))
+  vim.keymap.set("x", "d",              api.fs.remove_visual,              opts("Delete"))
+  vim.keymap.set("x", "D",              api.fs.trash_visual,               opts("Trash"))
+  vim.keymap.set("x", "c",              api.fs.copy.visual,                opts("Copy"))
+  vim.keymap.set("x", "x",              api.fs.cut_visual,                 opts("Cut"))
   -- END_ON_ATTACH_DEFAULT
 end
 

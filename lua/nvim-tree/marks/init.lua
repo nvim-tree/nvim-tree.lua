@@ -228,6 +228,139 @@ function Marks:bulk_trash()
   end
 end
 
+---Filter out nodes that are descendants of other nodes in the list.
+---When a directory is selected along with its children, only the directory needs to be operated on.
+---@private
+---@param nodes Node[]
+---@return Node[]
+function Marks:filter_descendant_nodes(nodes)
+  local dominated = {}
+  for i, a in ipairs(nodes) do
+    for j, b in ipairs(nodes) do
+      if i ~= j then
+        local prefix = b.absolute_path .. utils.path_separator
+        if a.absolute_path:sub(1, #prefix) == prefix then
+          dominated[i] = true
+          break
+        end
+      end
+    end
+  end
+  local filtered = {}
+  for i, node in ipairs(nodes) do
+    if not dominated[i] then
+      table.insert(filtered, node)
+    end
+  end
+  return filtered
+end
+
+---Delete a list of nodes with a single prompt; used for visual selection operations.
+---@public
+---@param nodes Node[]
+function Marks:bulk_delete_nodes(nodes)
+  -- Filter out parent directory entries ("..") to avoid deleting the parent directory.
+  local filtered_nodes = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered_nodes, node)
+    end
+  end
+
+  if #filtered_nodes == 0 then
+    return
+  end
+
+  nodes = self:filter_descendant_nodes(filtered_nodes)
+
+  local function execute()
+    for i = #nodes, 1, -1 do
+      remove_file.remove(nodes[i])
+    end
+    if not self.explorer.opts.filesystem_watchers.enable then
+      self.explorer:reload_explorer()
+    end
+  end
+
+  if self.explorer.opts.ui.confirm.remove then
+    local default_yes = self.explorer.opts.ui.confirm.default_yes == true
+    local prompt_select = string.format("Remove %d selected ?", #nodes)
+    local prompt_input, items_short, items_long
+
+    if default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_visual_delete", function(item_short)
+      utils.clear_prompt()
+      if item_short == "y" or (default_yes and item_short ~= "n") then
+        execute()
+      end
+    end)
+  else
+    execute()
+  end
+end
+
+---Trash a list of nodes with a single prompt; used for visual selection operations.
+---@public
+---@param nodes Node[]
+function Marks:bulk_trash_nodes(nodes)
+  -- Filter out parent directory entries ("..") to avoid trashing the parent directory.
+  local filtered_nodes = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered_nodes, node)
+    end
+  end
+
+  if #filtered_nodes == 0 then
+    return
+  end
+
+  nodes = self:filter_descendant_nodes(filtered_nodes)
+
+  local function execute()
+    for i = #nodes, 1, -1 do
+      trash.remove(nodes[i])
+    end
+    if not self.explorer.opts.filesystem_watchers.enable then
+      self.explorer:reload_explorer()
+    end
+  end
+
+  if self.explorer.opts.ui.confirm.trash then
+    local default_yes = self.explorer.opts.ui.confirm.default_yes == true
+    local prompt_select = string.format("Trash %d selected ?", #nodes)
+    local prompt_input, items_short, items_long
+
+    if default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_visual_trash", function(item_short)
+      utils.clear_prompt()
+      if item_short == "y" or (default_yes and item_short ~= "n") then
+        execute()
+      end
+    end)
+  else
+    execute()
+  end
+end
+
 ---Move marked
 ---@public
 function Marks:bulk_move()

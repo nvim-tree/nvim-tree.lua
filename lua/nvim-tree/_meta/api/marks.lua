@@ -20,6 +20,11 @@ function nvim_tree.api.marks.list() end
 function nvim_tree.api.marks.toggle(node) end
 
 ---
+---Toggle mark on all visually selected nodes.
+---
+function nvim_tree.api.marks.toggle_visual() end
+
+---
 ---Clear all marks.
 ---
 function nvim_tree.api.marks.clear() end

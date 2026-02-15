@@ -85,6 +85,47 @@ local function wrap_explorer_member(explorer_member, member_method)
   end
 end
 
+---Exit visual mode synchronously.
+local function exit_visual_mode()
+  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+end
+
+---Wrap a single-node function to operate on visual selection range.
+---@param fn fun(node: Node): any
+---@return fun(): any
+local function wrap_visual_range(fn)
+  return function()
+    local explorer = require("nvim-tree.core").get_explorer()
+    if not explorer then return end
+    local start_line = vim.fn.line("v")
+    local end_line = vim.fn.line(".")
+    if start_line > end_line then start_line, end_line = end_line, start_line end
+    local nodes = explorer:get_nodes_in_range(start_line, end_line)
+    exit_visual_mode()
+    for _, node in ipairs(nodes) do
+      fn(node)
+    end
+  end
+end
+
+---Wrap a bulk operation that collects visual nodes and passes them all at once.
+---@param member string explorer member name
+---@param method string method name to invoke on member
+---@return fun(): any
+local function wrap_visual_bulk(member, method)
+  return function()
+    local explorer = require("nvim-tree.core").get_explorer()
+    if not explorer then return end
+    local start_line = vim.fn.line("v")
+    local end_line = vim.fn.line(".")
+    if start_line > end_line then start_line, end_line = end_line, start_line end
+    local nodes = explorer:get_nodes_in_range(start_line, end_line)
+    exit_visual_mode()
+    explorer[member][method](explorer[member], nodes)
+  end
+end
+
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false
 ---@field focus boolean|nil default true
@@ -254,6 +295,12 @@ function M.hydrate(api)
   api.marks.navigate.next = wrap_explorer_member("marks", "navigate_next")
   api.marks.navigate.prev = wrap_explorer_member("marks", "navigate_prev")
   api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
+  api.marks.toggle_visual = wrap_visual_range(wrap_explorer_member("marks", "toggle"))
+
+  api.fs.copy.visual = wrap_visual_range(wrap_explorer_member("clipboard", "copy"))
+  api.fs.cut_visual = wrap_visual_range(wrap_explorer_member("clipboard", "cut"))
+  api.fs.remove_visual = wrap_visual_bulk("marks", "bulk_delete_nodes")
+  api.fs.trash_visual = wrap_visual_bulk("marks", "bulk_trash_nodes")
 
   api.map.keymap.current = keymap.get_keymap
 

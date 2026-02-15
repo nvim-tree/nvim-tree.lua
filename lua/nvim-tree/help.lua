@@ -92,9 +92,13 @@ local function compute(map)
   local head_rhs1 = "exit: q"
   local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
 
-  -- formatted lhs and desc from active keymap
+  -- formatted lhs and desc from active keymap, prefixing visual mode keys
   local mappings = vim.tbl_map(function(m)
-    return { lhs = tidy_lhs(m.lhs), desc = tidy_desc(m.desc) }
+    local lhs = tidy_lhs(m.lhs)
+    if m.mode == "x" then
+      lhs = "[v] " .. lhs
+    end
+    return { lhs = lhs, desc = tidy_desc(m.desc) }
   end, map)
 
   -- sorter function for mappings
