@@ -43,15 +43,14 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ matrix.luals_version }}-${{ github.head_ref || github.ref_name }}
+      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ matrix.luals_version }}-${{ matrix.emmyluacodestyle_version }}-${{ github.head_ref || github.ref_name }}
       cancel-in-progress: true
 
     strategy:
       matrix:
-        lua_version: [ 5.1 ]
         nvim_version: [ stable, nightly ]
         luals_version: [ 3.15.0 ]
-        emmyluacodestyle_version: [ 1.5.7 ]
+        emmyluacodestyle_version: [ 1.6.0 ]
 
     env:
       VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
@@ -73,16 +72,11 @@ jobs:
           curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${{ matrix.luals_version }}/lua-language-server-${{ matrix.luals_version }}-linux-x64.tar.gz" | tar zx --directory luals
           echo "luals/bin" >> "$GITHUB_PATH"
 
-      - name: install lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v12
-        with:
-          luaVersion: ${{ matrix.lua_version }}
-
-      - name: install luarocks
-        uses: leafo/gh-actions-luarocks@v6
-
-      - name: install emmyluacodestyle ${{ matrix.emmyluacodestyle_version }}
-        run: luarocks install emmyluacodestyle ${{ matrix.emmyluacodestyle_version }}
+      - name: install EmmyLuaCodeStyle ${{ matrix.emmyluacodestyle_version }}
+        run: |
+          mkdir -p EmmyLuaCodeStyle
+          curl -L "https://github.com/CppCXY/EmmyLuaCodeStyle/releases/download/${{ matrix.emmyluacodestyle_version }}/linux-x64.tar.gz" | tar zx --directory EmmyLuaCodeStyle
+          echo "EmmyLuaCodeStyle/linux-x64/bin" >> "$GITHUB_PATH"
 
       - run: make check
 
