@@ -15,7 +15,9 @@ markdown-toc --maxdepth=2 -i CONTRIBUTING.md
 - [Quality](#quality)
   * [lint](#lint)
   * [style](#style)
+  * [format-fix](#format-fix)
   * [check](#check)
+  * [format-check](#format-check)
 - [Diagnostics](#diagnostics)
 - [Backwards Compatibility](#backwards-compatibility)
 - [:help Documentation](#help-documentation)
@@ -36,9 +38,9 @@ Language server: [luals](https://luals.github.io)
 
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-Style Fixing: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeCheck`
-
 nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals, using an embedded [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle)
+
+Formatting: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeFormat` executable
 
 You can install them via you OS package manager e.g. `pacman`, `brew` or other via other package managers such as `cargo` or `luarocks`
 
@@ -67,10 +69,12 @@ make lint
 make style
 ```
 
-You can automatically fix style issues using `CodeCheck`:
+## format-fix
+
+You can automatically fix most style issues using `CodeFormat`:
 
 ```sh
-make style-fix
+make format-fix
 ```
 
 ## check
@@ -95,6 +99,17 @@ curl -L "https://github.com/LuaLS/lua-language-server/releases/download/3.15.0/l
 
 PATH="luals/bin:${PATH}" make check
 ```
+
+## format-check
+
+This is run in CI. Commit or stage your changes and run:
+
+```sh
+make format-check
+```
+
+- Re-runs `make format-fix`
+- Checks that `git diff` is empty, to ensure that all content has been generated. This is why a stage or commit is necessary.
 
 # Diagnostics
 
