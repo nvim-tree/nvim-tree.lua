@@ -50,8 +50,9 @@ local function move(src, src_path, src_pos, dst, dst_path, dst_pos, remove)
   end
 end
 
--- silently move, please add to help nvim-tree-legacy-opts
-local function refactored(opts)
+-- silently move, please add to help nvim-tree-legacy-config
+---@param opts nvim_tree.config user supplied subset of config
+local function refactored_config(opts)
   -- 2022/06/20
   move(opts, "update_focused_file", "update_cwd", opts, "update_focused_file", "update_root",        true)
   move(opts, "",                    "update_cwd", opts, "",                    "sync_root_with_cwd", true)
@@ -73,12 +74,12 @@ local function refactored(opts)
   -- 2023/01/15
   if type(opts.view) == "table" and opts.view.adaptive_size ~= nil then
     if opts.view.adaptive_size and type(opts.view.width) ~= "table" then
-      local width = opts.view.width
+      local width = opts.view.width --[[@as nvim_tree.config.view.width.spec]]
       opts.view.width = {
         min = width,
       }
     end
-    opts.view.adaptive_size = nil
+    opts.view["adaptive_size"] = nil
   end
 
   -- 2023/07/15
@@ -103,55 +104,57 @@ local function refactored(opts)
   -- 2024/02/15
   if type(opts.update_focused_file) == "table" then
     if type(opts.update_focused_file.update_root) ~= "table" then
-      opts.update_focused_file.update_root = { enable = opts.update_focused_file.update_root }
+      opts.update_focused_file.update_root = { enable = opts.update_focused_file.update_root == true }
     end
   end
   move(opts, "update_focused_file", "ignore_list", opts, "update_focused_file.update_root", "ignore_list", true)
 
   -- 2025/04/30
   if opts.renderer and opts.renderer.icons and type(opts.renderer.icons.padding) == "string" then
-    local icons_padding = opts.renderer.icons.padding
+    local icons_padding = opts.renderer.icons.padding --[[@as string]]
     opts.renderer.icons.padding = {}
     opts.renderer.icons.padding.icon = icons_padding
   end
 end
 
-local function deprecated(opts)
+---@param opts nvim_tree.config user supplied subset of config
+local function deprecated_config(opts)
   if type(opts.view) == "table" and opts.view.hide_root_folder then
     notify.info("view.hide_root_folder is deprecated, please set renderer.root_folder_label = false")
   end
 end
 
-local function removed(opts)
+---@param opts nvim_tree.config user supplied subset of config
+local function removed_config(opts)
   if opts.auto_close then
     notify.warn("auto close feature has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Auto-Close")
-    opts.auto_close = nil
+    opts["auto_close"] = nil
   end
 
   if opts.focus_empty_on_setup then
     notify.warn("focus_empty_on_setup has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup")
-    opts.focus_empty_on_setup = nil
+    opts["focus_empty_on_setup"] = nil
   end
 
   if opts.create_in_closed_folder then
     notify.warn(
       "create_in_closed_folder has been removed and is now the default behaviour. You may use api.fs.create to add a file under your desired node.")
   end
-  opts.create_in_closed_folder = nil
+  opts["create_in_closed_folder"] = nil
 end
 
 ---Migrate legacy config in place.
 ---Refactored are silently migrated. Deprecated and removed result in a warning.
 ---@param opts nvim_tree.config user supplied subset of config
-function M.migrate_legacy_options(opts)
+function M.migrate_config(opts)
   -- silently move
-  refactored(opts)
+  refactored_config(opts)
 
   -- warn
-  deprecated(opts)
+  deprecated_config(opts)
 
   -- warn and delete
-  removed(opts)
+  removed_config(opts)
 end
 
 ---Silently create new api entries pointing legacy functions to current

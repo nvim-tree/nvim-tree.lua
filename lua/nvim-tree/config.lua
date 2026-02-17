@@ -499,7 +499,7 @@ function M.setup(u)
   -- retain user for reference
   M.u = vim.deepcopy(u)
 
-  legacy.migrate_legacy_options(u)
+  legacy.migrate_config(u)
 
   validate_config(u)
 
