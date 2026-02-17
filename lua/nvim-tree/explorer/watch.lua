@@ -43,7 +43,6 @@ local function is_folder_ignored(path)
   end
 
   if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
-    print(vim.inspect(M.config.filesystem_watchers.ignore_dirs))
     for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
       if utils.is_windows or true then
         ignore_dir = ignore_dir:gsub("/", "\\\\") or ignore_dir
