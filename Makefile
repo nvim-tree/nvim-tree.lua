@@ -32,7 +32,7 @@ format-fix:
 
 format-check:
 	CodeFormat format --config .editorconfig --workspace lua
-	git diff --exit-code lua || printf "\n\nPlease run: make format-fix\n"
+	git diff --exit-code lua
 
 #
 # utility
