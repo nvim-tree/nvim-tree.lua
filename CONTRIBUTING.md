@@ -191,6 +191,8 @@ Please reference any issues in the description e.g. "resolves #1234", which will
 
 Please check "allow edits by maintainers" to allow nvim-tree developers to make small changes such as documentation tweaks.
 
+Do not enable or use any AI review tools (e.g. Copilot) on the Pull Request.
+
 ## Subject
 
 The merge commit message will be the subject of the PR.
