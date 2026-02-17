@@ -77,6 +77,8 @@ jobs:
 
       - run: make style-doc
 
+      - run: make format-check
+
       - name: build Nvim from source
         run: |
           mkdir -p "${DIR_NVIM_SRC}"
