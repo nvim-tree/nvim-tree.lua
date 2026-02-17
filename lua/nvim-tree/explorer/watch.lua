@@ -36,28 +36,28 @@ local IGNORED_PATHS = {
 ---@param path string
 ---@return boolean
 local function is_folder_ignored(path)
-	for _, folder in ipairs(IGNORED_PATHS) do
-		if vim.startswith(path, folder) then
-			return true
-		end
-	end
+  for _, folder in ipairs(IGNORED_PATHS) do
+    if vim.startswith(path, folder) then
+      return true
+    end
+  end
 
-	if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
-		print(vim.inspect(M.config.filesystem_watchers.ignore_dirs))
-		for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
-			if utils.is_windows or true then
-				ignore_dir = ignore_dir:gsub("/", "\\\\") or ignore_dir
-			end
+  if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
+    print(vim.inspect(M.config.filesystem_watchers.ignore_dirs))
+    for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
+      if utils.is_windows or true then
+        ignore_dir = ignore_dir:gsub("/", "\\\\") or ignore_dir
+      end
 
-			if vim.fn.match(path, ignore_dir) ~= -1 then
-				return true
-			end
-		end
-	elseif type(M.config.filesystem_watchers.ignore_dirs) == "function" then
-		return M.config.filesystem_watchers.ignore_dirs(path)
-	end
+      if vim.fn.match(path, ignore_dir) ~= -1 then
+        return true
+      end
+    end
+  elseif type(M.config.filesystem_watchers.ignore_dirs) == "function" then
+    return M.config.filesystem_watchers.ignore_dirs(path)
+  end
 
-	return false
+  return false
 end
 
 ---@param node DirectoryNode
