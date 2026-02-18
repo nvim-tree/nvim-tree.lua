@@ -41,7 +41,7 @@ local Class = require("nvim-tree.classic")
 ---
 ---@class nvim_tree.api.highlighted_string
 ---
----One or many glyphs/characters. 
+---One or many glyphs/characters.
 ---@field str string
 ---
 ---Highlight group names to apply in order. Empty table for no highlighting.
