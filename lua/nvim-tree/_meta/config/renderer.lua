@@ -364,7 +364,7 @@ error("Cannot require a meta file")
 ---   for reason, count in pairs(hidden_stats) do
 ---     total_count = total_count + count
 ---   end
---- 
+---
 ---   if total_count > 0 then
 ---     return "(" .. tostring(total_count) .. " hidden)"
 ---   end
