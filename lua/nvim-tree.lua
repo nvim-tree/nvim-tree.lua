@@ -469,6 +469,7 @@ local DEFAULT_OPTS = { -- default-config-start
       "/build",
       "/node_modules",
       "/target",
+      "/.zig-cache",
     },
   },
   actions = {
