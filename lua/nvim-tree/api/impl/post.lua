@@ -85,6 +85,90 @@ local function wrap_explorer_member(explorer_member, member_method)
   end
 end
 
+---Check if the current mode is visual (v, V, or CTRL-V).
+---@return boolean
+local function is_visual_mode()
+  local mode = vim.api.nvim_get_mode().mode
+  return mode == "v" or mode == "V" or mode == "\22" -- \22 is CTRL-V
+end
+
+---Exit visual mode synchronously.
+local function exit_visual_mode()
+  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+end
+
+---Get the visual selection range nodes, exiting visual mode.
+---@return Node[]?
+local function get_visual_nodes()
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer then
+    return nil
+  end
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  local nodes = explorer:get_nodes_in_range(start_line, end_line)
+  exit_visual_mode()
+  return nodes
+end
+
+---Wrap a single-node function to be mode-dependent: in visual mode, operate
+---on all nodes in the visual range; in normal mode, operate on a single node.
+---@param fn fun(node: Node, ...): any
+---@param filter_descendants boolean? filter out descendant nodes in visual mode
+---@return fun(node: Node?, ...): any
+local function wrap_node_or_visual(fn, filter_descendants)
+  return function(node, ...)
+    if is_visual_mode() then
+      local nodes = get_visual_nodes()
+      if nodes then
+        if filter_descendants then
+          local explorer = require("nvim-tree.core").get_explorer()
+          if explorer then
+            nodes = explorer.marks:filter_descendant_nodes(nodes)
+          end
+        end
+        for _, n in ipairs(nodes) do
+          fn(n, ...)
+        end
+      end
+    else
+      node = node or wrap_explorer("get_node_at_cursor")()
+      if node then
+        return fn(node, ...)
+      end
+    end
+  end
+end
+
+---Wrap a destructive operation to be mode-dependent: in visual mode, collect
+---nodes and call a bulk method; in normal mode, call the single-node function.
+---@param normal_fn fun(node: Node): any
+---@param bulk_member string explorer member name for bulk op
+---@param bulk_method string method name on member for bulk op
+---@return fun(node: Node?): any
+local function wrap_node_or_visual_bulk(normal_fn, bulk_member, bulk_method)
+  return function(node)
+    if is_visual_mode() then
+      local nodes = get_visual_nodes()
+      if nodes then
+        local explorer = require("nvim-tree.core").get_explorer()
+        if explorer then
+          explorer[bulk_member][bulk_method](explorer[bulk_member], nodes)
+        end
+      end
+    else
+      node = node or wrap_explorer("get_node_at_cursor")()
+      if node then
+        return normal_fn(node)
+      end
+    end
+  end
+end
+
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false
 ---@field focus boolean|nil default true
@@ -172,18 +256,18 @@ function M.hydrate(api)
   api.tree.winid = view.winid
 
   api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
-  api.fs.remove = wrap_node(actions.fs.remove_file.fn)
-  api.fs.trash = wrap_node(actions.fs.trash.fn)
+  api.fs.remove = wrap_node_or_visual_bulk(actions.fs.remove_file.fn, "marks", "bulk_delete_nodes")
+  api.fs.trash = wrap_node_or_visual_bulk(actions.fs.trash.fn, "marks", "bulk_trash_nodes")
   api.fs.rename_node = wrap_node(actions.fs.rename_file.fn(":t"))
   api.fs.rename = wrap_node(actions.fs.rename_file.fn(":t"))
   api.fs.rename_sub = wrap_node(actions.fs.rename_file.fn(":p:h"))
   api.fs.rename_basename = wrap_node(actions.fs.rename_file.fn(":t:r"))
   api.fs.rename_full = wrap_node(actions.fs.rename_file.fn(":p"))
-  api.fs.cut = wrap_node(wrap_explorer_member("clipboard", "cut"))
+  api.fs.cut = wrap_node_or_visual(wrap_explorer_member("clipboard", "cut"), true)
   api.fs.paste = wrap_node(wrap_explorer_member("clipboard", "paste"))
   api.fs.clear_clipboard = wrap_explorer_member("clipboard", "clear_clipboard")
   api.fs.print_clipboard = wrap_explorer_member("clipboard", "print_clipboard")
-  api.fs.copy.node = wrap_node(wrap_explorer_member("clipboard", "copy"))
+  api.fs.copy.node = wrap_node_or_visual(wrap_explorer_member("clipboard", "copy"), true)
   api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_absolute_path"))
   api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
   api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
@@ -229,8 +313,12 @@ function M.hydrate(api)
   api.node.expand = wrap_node(wrap_explorer("expand_node"))
   api.node.collapse = wrap_node(actions.tree.collapse.node)
 
-  api.node.buffer.delete = wrap_node(function(node, opts) actions.node.buffer.delete(node, opts) end)
-  api.node.buffer.wipe = wrap_node(function(node, opts) actions.node.buffer.wipe(node, opts) end)
+  api.node.buffer.delete = wrap_node(function(node, opts)
+    actions.node.buffer.delete(node, opts)
+  end)
+  api.node.buffer.wipe = wrap_node(function(node, opts)
+    actions.node.buffer.wipe(node, opts)
+  end)
 
   api.tree.reload_git = wrap_explorer("reload_git")
 
@@ -246,7 +334,7 @@ function M.hydrate(api)
 
   api.marks.get = wrap_node(wrap_explorer_member("marks", "get"))
   api.marks.list = wrap_explorer_member("marks", "list")
-  api.marks.toggle = wrap_node(wrap_explorer_member("marks", "toggle"))
+  api.marks.toggle = wrap_node_or_visual(wrap_explorer_member("marks", "toggle"))
   api.marks.clear = wrap_explorer_member("marks", "clear")
   api.marks.bulk.delete = wrap_explorer_member("marks", "bulk_delete")
   api.marks.bulk.trash = wrap_explorer_member("marks", "bulk_trash")

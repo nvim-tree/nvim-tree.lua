@@ -642,6 +642,22 @@ function Explorer:find_node(fn)
   return node, i
 end
 
+---Get all nodes in a line range (inclusive), for visual selection operations.
+---@param start_line integer
+---@param end_line integer
+---@return Node[]
+function Explorer:get_nodes_in_range(start_line, end_line)
+  local nodes_by_line = self:get_nodes_by_line(core.get_nodes_starting_line())
+  local nodes = {}
+  for line = start_line, end_line do
+    local node = nodes_by_line[line]
+    if node and node.absolute_path then
+      table.insert(nodes, node)
+    end
+  end
+  return nodes
+end
+
 --- Return visible nodes indexed by line
 ---@param line_start number
 ---@return table

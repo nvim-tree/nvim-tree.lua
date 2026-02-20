@@ -24,7 +24,9 @@
 ---local api = require("nvim-tree.api")
 ---api.tree.reload()
 ---```
----Generally, functions accepting a [nvim_tree.api.Node] as their first argument will use the node under the cursor when that argument is not present or nil. e.g. the following are functionally identical:
+---Generally, functions accepting a [nvim_tree.api.Node] as their first argument will use the node under the cursor when that argument is not present or nil. Some functions are mode-dependent: when invoked in visual mode they will operate on all nodes in the visual selection instead of a single node. See |nvim-tree-mappings-default| for which mappings support visual mode.
+---
+---e.g. the following are functionally identical:
 ---```lua
 ---
 ---api.node.open.edit(nil, { focus = true })

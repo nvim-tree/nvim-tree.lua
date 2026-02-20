@@ -170,27 +170,70 @@ function Marks:list()
   return list
 end
 
----Delete marked; each removal will be optionally notified
+---Filter out nodes that are descendants of other nodes in the list.
+---When a directory is selected along with its children, only the directory needs to be operated on.
 ---@public
-function Marks:bulk_delete()
-  if not next(self.marks) then
-    notify.warn("No bookmarks to delete.")
+---@param nodes Node[]
+---@return Node[]
+function Marks:filter_descendant_nodes(nodes)
+  local dominated = {}
+  for i, a in ipairs(nodes) do
+    for j, b in ipairs(nodes) do
+      if i ~= j then
+        local prefix = b.absolute_path .. utils.path_separator
+        if a.absolute_path:sub(1, #prefix) == prefix then
+          dominated[i] = true
+          break
+        end
+      end
+    end
+  end
+  local filtered = {}
+  for i, node in ipairs(nodes) do
+    if not dominated[i] then
+      table.insert(filtered, node)
+    end
+  end
+  return filtered
+end
+
+---Bulk remove or trash nodes with optional confirmation prompt.
+---@private
+---@param nodes Node[]
+---@param remove_fn fun(node: Node)
+---@param confirm boolean
+---@param prompt_select string
+---@param prompt_id string
+---@param after fun()
+function Marks:bulk_remove(nodes, remove_fn, confirm, prompt_select, prompt_id, after)
+  if #nodes == 0 then
     return
   end
 
   local function execute()
-    for _, node in ipairs(self:list()) do
-      remove_file.remove(node)
+    for i = #nodes, 1, -1 do
+      remove_fn(nodes[i])
     end
-    self:clear_reload()
+    after()
   end
 
-  if self.explorer.opts.ui.confirm.remove then
-    local prompt_select = "Remove bookmarked ?"
-    local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_bulk_delete", function(item_short)
+  if confirm then
+    local default_yes = self.explorer.opts.ui.confirm.default_yes == true
+    local prompt_input, items_short, items_long
+
+    if default_yes then
+      prompt_input = prompt_select .. " Y/n: "
+      items_short = { "", "n" }
+      items_long = { "Yes", "No" }
+    else
+      prompt_input = prompt_select .. " y/N: "
+      items_short = { "", "y" }
+      items_long = { "No", "Yes" }
+    end
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, prompt_id, function(item_short)
       utils.clear_prompt()
-      if item_short == "y" then
+      if item_short == "y" or (default_yes and item_short ~= "n") then
         execute()
       end
     end)
@@ -199,7 +242,25 @@ function Marks:bulk_delete()
   end
 end
 
----Trash marked; each removal will be optionally notified
+---Delete marked
+---@public
+function Marks:bulk_delete()
+  if not next(self.marks) then
+    notify.warn("No bookmarks to delete.")
+    return
+  end
+
+  self:bulk_remove(
+    self:list(),
+    remove_file.remove,
+    self.explorer.opts.ui.confirm.remove,
+    "Remove bookmarked ?",
+    "nvimtree_bulk_delete",
+    function() self:clear_reload() end
+  )
+end
+
+---Trash marked
 ---@public
 function Marks:bulk_trash()
   if not next(self.marks) then
@@ -207,25 +268,66 @@ function Marks:bulk_trash()
     return
   end
 
-  local function execute()
-    for _, node in ipairs(self:list()) do
-      trash.remove(node)
+  self:bulk_remove(
+    self:list(),
+    trash.remove,
+    self.explorer.opts.ui.confirm.trash,
+    "Trash bookmarked ?",
+    "nvimtree_bulk_trash",
+    function() self:clear_reload() end
+  )
+end
+
+---Delete a list of nodes with a single prompt; used for visual selection operations.
+---@public
+---@param nodes Node[]
+function Marks:bulk_delete_nodes(nodes)
+  -- Filter out parent directory entries ("..") to avoid deleting the parent directory.
+  local filtered = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered, node)
     end
-    self:clear_reload()
   end
 
-  if self.explorer.opts.ui.confirm.trash then
-    local prompt_select = "Trash bookmarked ?"
-    local prompt_input = prompt_select .. " y/N: "
-    lib.prompt(prompt_input, prompt_select, { "", "y" }, { "No", "Yes" }, "nvimtree_bulk_trash", function(item_short)
-      utils.clear_prompt()
-      if item_short == "y" then
-        execute()
+  self:bulk_remove(
+    self:filter_descendant_nodes(filtered),
+    remove_file.remove,
+    self.explorer.opts.ui.confirm.remove,
+    string.format("Remove %d selected ?", #filtered),
+    "nvimtree_visual_delete",
+    function()
+      if not self.explorer.opts.filesystem_watchers.enable then
+        self.explorer:reload_explorer()
       end
-    end)
-  else
-    execute()
+    end
+  )
+end
+
+---Trash a list of nodes with a single prompt; used for visual selection operations.
+---@public
+---@param nodes Node[]
+function Marks:bulk_trash_nodes(nodes)
+  -- Filter out parent directory entries ("..") to avoid trashing the parent directory.
+  local filtered = {}
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      table.insert(filtered, node)
+    end
   end
+
+  self:bulk_remove(
+    self:filter_descendant_nodes(filtered),
+    trash.remove,
+    self.explorer.opts.ui.confirm.trash,
+    string.format("Trash %d selected ?", #filtered),
+    "nvimtree_visual_trash",
+    function()
+      if not self.explorer.opts.filesystem_watchers.enable then
+        self.explorer:reload_explorer()
+      end
+    end
+  )
 end
 
 ---Move marked

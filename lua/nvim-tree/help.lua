@@ -92,10 +92,21 @@ local function compute(map)
   local head_rhs1 = "exit: q"
   local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
 
-  -- formatted lhs and desc from active keymap
-  local mappings = vim.tbl_map(function(m)
-    return { lhs = tidy_lhs(m.lhs), desc = tidy_desc(m.desc) }
-  end, map)
+  -- merge modes for duplicate lhs+desc entries e.g. "n" + "x" -> "nx"
+  local merged = {}
+  local mappings = {}
+  for _, m in ipairs(map) do
+    local lhs = tidy_lhs(m.lhs)
+    local desc = tidy_desc(m.desc)
+    local key = lhs .. "\0" .. desc
+    if merged[key] then
+      merged[key].mode = merged[key].mode .. m.mode
+    else
+      local entry = { lhs = lhs, desc = desc, mode = m.mode or "n" }
+      merged[key] = entry
+      table.insert(mappings, entry)
+    end
+  end
 
   -- sorter function for mappings
   local sort_fn
@@ -113,21 +124,23 @@ local function compute(map)
 
   table.sort(mappings, sort_fn)
 
-  -- longest lhs and description
+  -- longest lhs, mode and description
   local max_lhs = 0
+  local max_mode = 0
   local max_desc = 0
-  for _, l in pairs(mappings) do
+  for _, l in ipairs(mappings) do
     max_lhs = math.max(#l.lhs, max_lhs)
+    max_mode = math.max(#l.mode, max_mode)
     max_desc = math.max(#l.desc, max_desc)
   end
 
   -- increase desc if lines are shorter than the header
-  max_desc = math.max(max_desc, #head_lhs + #head_rhs1 - max_lhs)
+  max_desc = math.max(max_desc, #head_lhs + #head_rhs1 - max_lhs - max_mode)
 
   -- header text, not padded
   local lines = {
-    head_lhs .. string.rep(" ", max_desc + max_lhs - #head_lhs - #head_rhs1 + 2) .. head_rhs1,
-    string.rep(" ", max_desc + max_lhs - #head_rhs2 + 2) .. head_rhs2,
+    head_lhs .. string.rep(" ", max_lhs + max_mode + max_desc - #head_lhs - #head_rhs1 + 3) .. head_rhs1,
+    string.rep(" ", max_lhs + max_mode + max_desc - #head_rhs2 + 3) .. head_rhs2,
   }
   local width = #lines[1]
 
@@ -139,10 +152,10 @@ local function compute(map)
   }
 
   -- mappings, left padded 1
-  local fmt = string.format(" %%-%ds %%-%ds", max_lhs, max_desc)
+  local fmt = string.format(" %%-%ds %%-%ds %%-%ds", max_lhs, max_mode, max_desc)
   for i, l in ipairs(mappings) do
     -- format in left aligned columns
-    local line = string.format(fmt, l.lhs, l.desc)
+    local line = string.format(fmt, l.lhs, l.mode, l.desc)
     table.insert(lines, line)
     width = math.max(#line, width)
 
