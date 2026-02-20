@@ -86,6 +86,25 @@ local function wrap_explorer_member(explorer_member, member_method)
   end
 end
 
+---Wrap a function to be mode-dependent: in visual mode, pass all nodes in the
+---visual range; in normal mode, pass a single node. The implementation decides
+---how to handle each case.
+---@param fn fun(node_or_nodes: Node|Node[], ...): any
+---@return fun(node: Node?, ...): any
+local function wrap_node_or_visual(fn)
+  local wrapped = wrap_node(fn)
+  return function(node, ...)
+    if utils.is_visual_mode() then
+      local nodes = utils.get_visual_nodes()
+      if nodes then
+        fn(nodes, ...)
+      end
+    else
+      return wrapped(node, ...)
+    end
+  end
+end
+
 ---@class NodeEditOpts
 ---@field quit_on_open boolean|nil default false
 ---@field focus boolean|nil default true
@@ -173,18 +192,18 @@ function M.hydrate(api)
   api.tree.winid = view.winid
 
   api.fs.create = wrap_node_or_nil(actions.fs.create_file.fn)
-  api.fs.remove = wrap_node(actions.fs.remove_file.fn)
-  api.fs.trash = wrap_node(actions.fs.trash.fn)
+  api.fs.remove = wrap_node_or_visual(actions.fs.remove_file.fn)
+  api.fs.trash = wrap_node_or_visual(actions.fs.trash.fn)
   api.fs.rename_node = wrap_node(actions.fs.rename_file.fn(":t"))
   api.fs.rename = wrap_node(actions.fs.rename_file.fn(":t"))
   api.fs.rename_sub = wrap_node(actions.fs.rename_file.fn(":p:h"))
   api.fs.rename_basename = wrap_node(actions.fs.rename_file.fn(":t:r"))
   api.fs.rename_full = wrap_node(actions.fs.rename_file.fn(":p"))
-  api.fs.cut = wrap_node(wrap_explorer_member("clipboard", "cut"))
+  api.fs.cut = wrap_node_or_visual(wrap_explorer_member("clipboard", "cut"))
   api.fs.paste = wrap_node(wrap_explorer_member("clipboard", "paste"))
   api.fs.clear_clipboard = wrap_explorer_member("clipboard", "clear_clipboard")
   api.fs.print_clipboard = wrap_explorer_member("clipboard", "print_clipboard")
-  api.fs.copy.node = wrap_node(wrap_explorer_member("clipboard", "copy"))
+  api.fs.copy.node = wrap_node_or_visual(wrap_explorer_member("clipboard", "copy"))
   api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_absolute_path"))
   api.fs.copy.filename = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
   api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
@@ -247,7 +266,7 @@ function M.hydrate(api)
 
   api.marks.get = wrap_node(wrap_explorer_member("marks", "get"))
   api.marks.list = wrap_explorer_member("marks", "list")
-  api.marks.toggle = wrap_node(wrap_explorer_member("marks", "toggle"))
+  api.marks.toggle = wrap_node_or_visual(wrap_explorer_member("marks", "toggle"))
   api.marks.clear = wrap_explorer_member("marks", "clear")
   api.marks.bulk.delete = wrap_explorer_member("marks", "bulk_delete")
   api.marks.bulk.trash = wrap_explorer_member("marks", "bulk_trash")

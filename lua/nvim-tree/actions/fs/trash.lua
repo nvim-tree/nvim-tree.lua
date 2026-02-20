@@ -1,16 +1,16 @@
 local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
+local utils = require("nvim-tree.utils")
+local events = require("nvim-tree.events")
 
 local DirectoryLinkNode = require("nvim-tree.node.directory-link")
 local DirectoryNode = require("nvim-tree.node.directory")
+local RootNode = require("nvim-tree.node.root")
 
 local M = {
   config = {},
 }
-
-local utils = require("nvim-tree.utils")
-local events = require("nvim-tree.events")
 
 ---@param absolute_path string
 local function clear_buffer(absolute_path)
@@ -84,9 +84,10 @@ function M.remove(node)
   end
 end
 
+---Trash a single node with confirmation.
 ---@param node Node
-function M.fn(node)
-  if node.name == ".." then
+local function trash_one(node)
+  if node:is(RootNode) then
     return
   end
 
@@ -96,17 +97,7 @@ function M.fn(node)
 
   if M.config.ui.confirm.trash then
     local prompt_select = "Trash " .. node.name .. "?"
-    local prompt_input, items_short, items_long
-
-    if M.config.ui.confirm.default_yes then
-      prompt_input = prompt_select .. " Y/n: "
-      items_short = { "", "n" }
-      items_long = { "Yes", "No" }
-    else
-      prompt_input = prompt_select .. " y/N: "
-      items_short = { "", "y" }
-      items_long = { "No", "Yes" }
-    end
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
 
     lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_trash", function(item_short)
       utils.clear_prompt()
@@ -116,6 +107,47 @@ function M.fn(node)
     end)
   else
     do_trash()
+  end
+end
+
+---Trash multiple nodes with a single confirmation prompt.
+---@param nodes Node[]
+local function trash_many(nodes)
+  if #nodes == 0 then
+    return
+  end
+
+  nodes = utils.filter_descendant_nodes(nodes)
+
+  local function execute()
+    for _, node in ipairs(nodes) do
+      if not node:is(RootNode) then
+        M.remove(node)
+      end
+    end
+  end
+
+  if M.config.ui.confirm.trash then
+    local prompt_select = string.format("Trash %d selected?", #nodes)
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
+
+    lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_trash", function(item_short)
+      utils.clear_prompt()
+      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
+        execute()
+      end
+    end)
+  else
+    execute()
+  end
+end
+
+---@param node_or_nodes Node|Node[]
+function M.fn(node_or_nodes)
+  if type(node_or_nodes) == "table" and node_or_nodes.is then
+    trash_one(node_or_nodes)
+  else
+    trash_many(node_or_nodes)
   end
 end
 

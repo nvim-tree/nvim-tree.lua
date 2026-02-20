@@ -100,9 +100,9 @@ function Marks:clear()
   self.explorer.renderer:draw()
 end
 
----@public
+---@private
 ---@param node Node
-function Marks:toggle(node)
+function Marks:toggle_one(node)
   if node.absolute_path == nil then
     return
   end
@@ -111,6 +111,18 @@ function Marks:toggle(node)
     self.marks[node.absolute_path] = nil
   else
     self.marks[node.absolute_path] = node
+  end
+end
+
+---@public
+---@param node_or_nodes Node|Node[]
+function Marks:toggle(node_or_nodes)
+  if type(node_or_nodes) == "table" and node_or_nodes.is then
+    self:toggle_one(node_or_nodes)
+  else
+    for _, node in ipairs(node_or_nodes) do
+      self:toggle_one(node)
+    end
   end
 
   if self.explorer.opts.bookmarks.persist then
