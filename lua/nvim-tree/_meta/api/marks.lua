@@ -14,7 +14,7 @@ function nvim_tree.api.marks.get() end
 function nvim_tree.api.marks.list() end
 
 ---
----Toggle mark.
+---Toggle mark. In visual mode, toggles all nodes in the visual selection.
 ---
 ---@param node? nvim_tree.api.Node file or directory
 function nvim_tree.api.marks.toggle(node) end
