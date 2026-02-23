@@ -11,7 +11,7 @@ local M = {
 ---@return integer exit code
 local function system(cmd)
   if vim.fn.has("nvim-0.10") == 1 then
-    local obj = vim.system(cmd):wait()
+    local obj = vim.system(cmd):wait(M.opts.git.timeout)
     return obj.stdout or "", obj.code
   else
     return vim.fn.system(cmd), vim.v.shell_error
@@ -199,6 +199,7 @@ function M.setup(opts)
   if opts.git.cygwin_support then
     M.use_cygpath = vim.fn.executable("cygpath") == 1
   end
+  M.opts = opts
 end
 
 return M
