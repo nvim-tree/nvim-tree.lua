@@ -28,7 +28,7 @@ markdown-toc --maxdepth=2 -i CONTRIBUTING.md
 - [Pull Request](#pull-request)
   * [Subject](#subject)
 - [AI Usage Policy: Highly Discouraged](#ai-usage-policy-highly-discouraged)
-  * [nvim-Tree Is A Community Project](#nvim-tree-is-a-community-project)
+  * [nvim-tree Is A Community Project](#nvim-tree-is-a-community-project)
   * [The Burden Of Review Must Not Increase](#the-burden-of-review-must-not-increase)
   * [AI Generated PR Rules](#ai-generated-pr-rules)
 
@@ -42,7 +42,7 @@ Language server: [luals](https://luals.github.io)
 
 Lint: [luacheck](https://github.com/lunarmodules/luacheck/)
 
-nvim-tree.lua migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals, using an embedded [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle)
+nvim-tree migrated from stylua to EmmyLuaCodeStyle ~2024/10. `vim.lsp.buf.format()` may be used as it is the default formatter for luals, using an embedded [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle)
 
 Formatting: [EmmyLuaCodeStyle](https://github.com/CppCXY/EmmyLuaCodeStyle): `CodeFormat` executable
 
@@ -239,7 +239,7 @@ See also [The Conventional Commits ultimate cheatsheet](https://gist.github.com/
 
 # AI Usage Policy: Highly Discouraged
 
-## nvim-Tree Is A Community Project
+## nvim-tree Is A Community Project
 
 nvim-tree is a work of passion, building a community of free thinking individuals who contribute highly polished, elegant and maintainable code. Community members range from novices to professionals and all are welcome. Teaching, encouraging and celebrating the growth of less experienced developers is of great importance.
 
