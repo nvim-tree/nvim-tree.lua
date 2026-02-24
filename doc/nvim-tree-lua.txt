@@ -1709,9 +1709,11 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|(fun(path: string): boolean)`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", "/.zig-cache"}`)
                            Disable for specific directories.
-      • {max_events}?      (`integer`, default: `1000`) Disable for a single
-                           directory after {max_events} consecutive events
-                           with an interval < {debounce_delay}.
+      • {max_events}?      (`integer`, default: `0` or `1000` on windows)
+                           Disable for a single directory after {max_events}
+                           consecutive events with an interval <
+                           {debounce_delay}. Set to 0 to allow unlimited
+                           consecutive events.
 
 
 
@@ -2182,7 +2184,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
       filesystem_watchers = {
         enable = true,
         debounce_delay = 50,
-        max_events = 1000,
+        max_events = 0,
         ignore_dirs = {
           "/.ccls-cache",
           "/build",
