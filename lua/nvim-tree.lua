@@ -463,7 +463,7 @@ local DEFAULT_OPTS = { -- default-config-start
   filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
-    max_events = 1000,
+    max_events = 0,
     ignore_dirs = {
       "/.ccls-cache",
       "/build",
@@ -737,6 +737,9 @@ end
 local function localise_default_opts()
   if utils.is_macos or utils.is_windows then
     DEFAULT_OPTS.trash.cmd = "trash"
+  end
+  if utils.is_windows then
+    DEFAULT_OPTS.filesystem_watchers.max_events = 1000
   end
 end
 
