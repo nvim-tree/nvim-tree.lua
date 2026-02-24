@@ -308,7 +308,7 @@ if utils.is_macos or utils.is_windows then
   M.d.trash.cmd = "trash"
 end
 if utils.is_windows then
-  DEFAULT.filesystem_watchers.max_events = 1000
+  M.d.filesystem_watchers.max_events = 1000
 end
 
 local FIELD_SKIP_VALIDATE = {
