@@ -161,7 +161,7 @@ Please add or update documentation when you make changes, see `:help dev-lua-doc
 
 Help is updated for:
 - Default keymap at `keymap.on_attach_default`
-- Default config at `--- default-config-start`
+- Default config at `--- config-default-start`
 
 ## Updating And Generating
 

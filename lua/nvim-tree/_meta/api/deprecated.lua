@@ -4,19 +4,6 @@
 
 local nvim_tree = { api = {} }
 
-nvim_tree.api.config = {}
-
-nvim_tree.api.config.mappings = {}
-
----@deprecated use `nvim_tree.api.map.keymap.current()`
-function nvim_tree.api.config.mappings.get_keymap() end
-
----@deprecated use `nvim_tree.api.map.keymap.default()`
-function nvim_tree.api.config.mappings.get_keymap_default() end
-
----@deprecated use `nvim_tree.api.map.on_attach.default()`
-function nvim_tree.api.config.mappings.default_on_attach(bufnr) end
-
 nvim_tree.api.live_filter = {}
 
 ---@deprecated use `nvim_tree.api.filter.live.start()`

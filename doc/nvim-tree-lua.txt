@@ -2386,6 +2386,28 @@ get()                                           *nvim_tree.api.commands.get()*
 
 
 ==============================================================================
+API: config                                             *nvim-tree-api-config*
+
+default()                                     *nvim_tree.api.config.default()*
+    Default nvim-tree config.
+
+    Return: ~
+        (`nvim_tree.config`) immutable deep clone
+
+global()                                       *nvim_tree.api.config.global()*
+    Global current nvim-tree config.
+
+    Return: ~
+        (`nvim_tree.config`) immutable deep clone
+
+user()                                           *nvim_tree.api.config.user()*
+    Reference to config passed to |nvim-tree-setup|
+
+    Return: ~
+        (`nvim_tree.config?`) nil when no config passed to setup
+
+
+==============================================================================
 API: events                                             *nvim-tree-api-events*
 
 subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
