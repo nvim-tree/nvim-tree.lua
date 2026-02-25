@@ -96,7 +96,7 @@ function M.hydrate(api)
 
   api.tree.resize = actions.tree.resize.fn
 
-  api.tree.change_root = require("nvim-tree").change_dir
+  api.tree.change_root = actions.tree.change_dir.fn
 
   api.tree.change_root_to_node = wrap_node(wrap_explorer("change_dir_to_node"))
   api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
