@@ -212,20 +212,24 @@ function M.hydrate(api)
   api.node.navigate.sibling.prev = wrap_node(actions.moves.sibling.prev)
   api.node.navigate.sibling.first = wrap_node(actions.moves.sibling.first)
   api.node.navigate.sibling.last = wrap_node(actions.moves.sibling.last)
+
   api.node.navigate.parent = wrap_node(actions.moves.parent.move)
   api.node.navigate.parent_close = wrap_node(actions.moves.parent.move_close)
-  api.node.navigate.git.next = wrap_node(actions.moves.item.fn({ where = "next", what = "git" }))
-  api.node.navigate.git.next_skip_gitignored = wrap_node(actions.moves.item.fn({ where = "next", what = "git", skip_gitignored = true }))
-  api.node.navigate.git.next_recursive = wrap_node(actions.moves.item.fn({ where = "next", what = "git", recurse = true }))
-  api.node.navigate.git.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "git" }))
-  api.node.navigate.git.prev_skip_gitignored = wrap_node(actions.moves.item.fn({ where = "prev", what = "git", skip_gitignored = true }))
-  api.node.navigate.git.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "git", recurse = true }))
-  api.node.navigate.diagnostics.next = wrap_node(actions.moves.item.fn({ where = "next", what = "diag" }))
-  api.node.navigate.diagnostics.next_recursive = wrap_node(actions.moves.item.fn({ where = "next", what = "diag", recurse = true }))
-  api.node.navigate.diagnostics.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag" }))
-  api.node.navigate.diagnostics.prev_recursive = wrap_node(actions.moves.item.fn({ where = "prev", what = "diag", recurse = true }))
-  api.node.navigate.opened.next = wrap_node(actions.moves.item.fn({ where = "next", what = "opened" }))
-  api.node.navigate.opened.prev = wrap_node(actions.moves.item.fn({ where = "prev", what = "opened" }))
+
+  api.node.navigate.git.next = actions.moves.item.git_next
+  api.node.navigate.git.next_skip_gitignored = actions.moves.item.git_next_skip_gitignored
+  api.node.navigate.git.next_recursive = actions.moves.item.git_next_recursive
+  api.node.navigate.git.prev = actions.moves.item.git_prev
+  api.node.navigate.git.prev_skip_gitignored = actions.moves.item.git_prev_skip_gitignored
+  api.node.navigate.git.prev_recursive = actions.moves.item.git_prev_recursive
+
+  api.node.navigate.diagnostics.next = actions.moves.item.diagnostics_next
+  api.node.navigate.diagnostics.next_recursive = actions.moves.item.diagnostics_next_recursive
+  api.node.navigate.diagnostics.prev = actions.moves.item.diagnostics_prev
+  api.node.navigate.diagnostics.prev_recursive = actions.moves.item.diagnostics_prev_recursive
+
+  api.node.navigate.opened.next = actions.moves.item.opened_next
+  api.node.navigate.opened.prev = actions.moves.item.opened_prev
 
   api.node.expand = wrap_node(wrap_explorer("expand_node"))
   api.node.collapse = wrap_node(actions.tree.collapse.node)
