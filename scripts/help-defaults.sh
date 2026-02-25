@@ -27,7 +27,7 @@ sed -n -E "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/conf
 sed -E "s/^  /      /" /tmp/config.default.2.lua > /tmp/config.default.6.lua
 
 # inject then remove the placeholder
-sed -i -E "/${inject}/r /tmp/DEFAULT_OPTS.6.lua" "${WIP}"
+sed -i -E "/${inject}/r /tmp/config.default.6.lua" "${WIP}"
 sed -i -E "/${inject}/d" "${WIP}"
 
 #
