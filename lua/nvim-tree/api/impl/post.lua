@@ -15,10 +15,6 @@ local keymap = require("nvim-tree.keymap")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 
-local DirectoryNode = require("nvim-tree.node.directory")
-local FileLinkNode = require("nvim-tree.node.file-link")
-local RootNode = require("nvim-tree.node.root")
-
 local M = {}
 
 ---Invoke a method on the singleton explorer.
@@ -86,58 +82,6 @@ local function wrap_explorer_member(explorer_member, member_method)
   end
 end
 
----@class NodeEditOpts
----@field quit_on_open boolean|nil default false
----@field focus boolean|nil default true
-
----@param mode string
----@param node Node
----@param edit_opts NodeEditOpts?
-local function edit(mode, node, edit_opts)
-  local file_link = node:as(FileLinkNode)
-  local path = file_link and file_link.link_to or node.absolute_path
-  local cur_tabpage = vim.api.nvim_get_current_tabpage()
-
-  actions.node.open_file.fn(mode, path)
-
-  edit_opts = edit_opts or {}
-
-  local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
-  if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
-    view.close(cur_tabpage)
-  end
-
-  local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
-  local focus = edit_opts.focus == nil or edit_opts.focus == true
-  if not mode_unsupported_focus and not focus then
-    -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
-    if mode == "tabnew" then
-      vim.cmd(":tabprev")
-    end
-    view.focus()
-  end
-end
-
----@param mode string
----@param toggle_group boolean?
----@return fun(node: Node, edit_opts: NodeEditOpts?)
-local function open_or_expand_or_dir_up(mode, toggle_group)
-  ---@param node Node
-  ---@param edit_opts NodeEditOpts?
-  return function(node, edit_opts)
-    local root = node:as(RootNode)
-    local dir = node:as(DirectoryNode)
-
-    if root or node.name == ".." then
-      wrap_explorer("change_dir")("..")
-    elseif dir then
-      dir:expand_or_collapse(toggle_group)
-    elseif not toggle_group then
-      edit(mode, node, edit_opts)
-    end
-  end
-end
-
 ---Re-Hydrate api functions and classes post-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
 function M.hydrate(api)
@@ -190,19 +134,19 @@ function M.hydrate(api)
   api.fs.copy.basename = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
   api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
 
-  api.node.open.edit = wrap_node(open_or_expand_or_dir_up("edit"))
-  api.node.open.drop = wrap_node(open_or_expand_or_dir_up("drop"))
-  api.node.open.tab_drop = wrap_node(open_or_expand_or_dir_up("tab_drop"))
-  api.node.open.replace_tree_buffer = wrap_node(open_or_expand_or_dir_up("edit_in_place"))
-  api.node.open.no_window_picker = wrap_node(open_or_expand_or_dir_up("edit_no_picker"))
-  api.node.open.vertical = wrap_node(open_or_expand_or_dir_up("vsplit"))
-  api.node.open.vertical_no_picker = wrap_node(open_or_expand_or_dir_up("vsplit_no_picker"))
-  api.node.open.horizontal = wrap_node(open_or_expand_or_dir_up("split"))
-  api.node.open.horizontal_no_picker = wrap_node(open_or_expand_or_dir_up("split_no_picker"))
-  api.node.open.tab = wrap_node(open_or_expand_or_dir_up("tabnew"))
-  api.node.open.toggle_group_empty = wrap_node(open_or_expand_or_dir_up("toggle_group_empty", true))
-  api.node.open.preview = wrap_node(open_or_expand_or_dir_up("preview"))
-  api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up("preview_no_picker"))
+  api.node.open.edit = wrap_node(actions.node.open_file.edit)
+  api.node.open.drop = wrap_node(actions.node.open_file.drop)
+  api.node.open.tab_drop = wrap_node(actions.node.open_file.tab_drop)
+  api.node.open.replace_tree_buffer = wrap_node(actions.node.open_file.replace_tree_buffer)
+  api.node.open.no_window_picker = wrap_node(actions.node.open_file.no_window_picker)
+  api.node.open.vertical = wrap_node(actions.node.open_file.vertical)
+  api.node.open.vertical_no_picker = wrap_node(actions.node.open_file.vertical_no_picker)
+  api.node.open.horizontal = wrap_node(actions.node.open_file.horizontal)
+  api.node.open.horizontal_no_picker = wrap_node(actions.node.open_file.horizontal_no_picker)
+  api.node.open.tab = wrap_node(actions.node.open_file.tab)
+  api.node.open.toggle_group_empty = wrap_node(actions.node.open_file.toggle_group_empty)
+  api.node.open.preview = wrap_node(actions.node.open_file.preview)
+  api.node.open.preview_no_picker = wrap_node(actions.node.open_file.preview_no_picker)
 
   api.node.show_info_popup = wrap_node(actions.node.file_popup.toggle_file_info)
   api.node.run.cmd = wrap_node(actions.node.run_command.run_file_command)
