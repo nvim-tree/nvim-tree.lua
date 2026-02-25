@@ -141,17 +141,6 @@ local function manage_netrw()
   end
 end
 
----@param name string|nil
-function M.change_dir(name)
-  if name then
-    explorer_fn("change_dir", name)
-  end
-
-  if config.g.update_focused_file.update_root.enable then
-    actions.tree.find_file.fn()
-  end
-end
-
 local function setup_autocommands()
   local augroup_id = vim.api.nvim_create_augroup("NvimTree", { clear = true })
   local function create_nvim_tree_autocmd(name, custom_opts)
@@ -180,7 +169,7 @@ local function setup_autocommands()
   if config.g.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
-        M.change_dir(vim.loop.cwd())
+        actions.tree.change_dir.fn(vim.loop.cwd())
       end,
     })
   end
