@@ -14,11 +14,18 @@ local M = {
 
 ---@param windows integer[]
 local function close_windows(windows)
-  -- Prevent from closing when the win count equals 1 or 2,
-  -- where the win to remove could be the last opened.
-  -- For details see #2503.
-  if view.View.float.enable and #vim.api.nvim_list_wins() < 3 then
-    return
+  -- When floating, prevent closing the last non-floating window.
+  -- For details see #2503, #3187.
+  if view.View.float.enable then
+    local non_float_count = 0
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_config(win).relative == "" then
+        non_float_count = non_float_count + 1
+      end
+    end
+    if non_float_count <= 1 then
+      return
+    end
   end
 
   for _, window in ipairs(windows) do
