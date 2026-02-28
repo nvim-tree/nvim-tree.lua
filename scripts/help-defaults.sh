@@ -21,13 +21,14 @@ end="config-default-end"
 inject="config-default-injection-placeholder"
 
 # scrape config.default, indented at 2
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/config.lua > /tmp/config.default.2.lua
+sed -n -E "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/config.lua > /tmp/config.default.2.lua
 
 # indent to match help
-sed -e "s/^  /      /" /tmp/config.default.2.lua > /tmp/config.default.6.lua
+sed -E "s/^  /      /" /tmp/config.default.2.lua > /tmp/config.default.6.lua
 
 # inject then remove the placeholder
-sed -i -e "/${inject}/r /tmp/config.default.6.lua" -e "/${inject}/d" "${WIP}"
+sed -i -E "/${inject}/r /tmp/config.default.6.lua" "${WIP}"
+sed -i -E "/${inject}/d" "${WIP}"
 
 #
 # Inject default mappings
@@ -37,10 +38,10 @@ begin="BEGIN_ON_ATTACH_DEFAULT"
 end="END_ON_ATTACH_DEFAULT"
 
 # scrape ON_ATTACH_DEFAULT, indented at 2
-sed -n -e "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/ON_ATTACH_DEFAULT.lua
+sed -n -E "/${begin}/,/${end}/{ /${begin}/d; /${end}/d; p; }" lua/nvim-tree/keymap.lua > /tmp/ON_ATTACH_DEFAULT.lua
 
 # help lua
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.lua
+sed -i -E "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.lua
            }; /${end}/p; d; }" "${WIP}"
 
 # help human
@@ -53,7 +54,7 @@ done
 echo >> /tmp/ON_ATTACH_DEFAULT.help
 begin="Show the mappings:"
 end="======"
-sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.help
+sed -i -E "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.help
            }; /${end}/p; d; }" "${WIP}"
 
 #
