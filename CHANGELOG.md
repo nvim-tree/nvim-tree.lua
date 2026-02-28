@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.16.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.15.0...nvim-tree-v1.16.0) (2026-02-28)
+
+
+### Features
+
+* add &lt;Del&gt; mapping ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
+* add default &lt;Del&gt; mapping for api.fs.remove ([#3238](https://github.com/nvim-tree/nvim-tree.lua/issues/3238)) ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
+
+
+### Bug Fixes
+
+* **#3178:** handle Windows paths in ignore_dirs and add .zig-cache to defaults ([#3261](https://github.com/nvim-tree/nvim-tree.lua/issues/3261)) ([5499299](https://github.com/nvim-tree/nvim-tree.lua/commit/5499299746b95c49ef4fc89b30c29a79b577881f))
+* **#3187:** prevent closing the last non-floating window when deleting files ([#3282](https://github.com/nvim-tree/nvim-tree.lua/issues/3282)) ([018a078](https://github.com/nvim-tree/nvim-tree.lua/commit/018a078c1e149bcd0c4e65c92aabb8e12501d769))
+* **#3198:** add filesystem_watchers.max_events to handle runaway filesystem events on PowerShell ([#3232](https://github.com/nvim-tree/nvim-tree.lua/issues/3232)) ([c07ce43](https://github.com/nvim-tree/nvim-tree.lua/commit/c07ce43527e5f0242121f4eb1feb7ac0ecea8275))
+* **#3248:** bookmark filter shows contents of marked directories ([#3249](https://github.com/nvim-tree/nvim-tree.lua/issues/3249)) ([5757bcf](https://github.com/nvim-tree/nvim-tree.lua/commit/5757bcf0447d22d8f78826bc5c59b28da2824c3b))
+* **#3251:** pass git.timeout to all vim.system git calls ([#3277](https://github.com/nvim-tree/nvim-tree.lua/issues/3277)) ([e49b0d9](https://github.com/nvim-tree/nvim-tree.lua/commit/e49b0d9bfa70989cf8b5abf5557f51e6e57f68d6))
+* **#3265:** rename module api.health to api.appearance, to avoid :checkhealth detection ([#3266](https://github.com/nvim-tree/nvim-tree.lua/issues/3266)) ([1df1960](https://github.com/nvim-tree/nvim-tree.lua/commit/1df1960d0e3a26643a4100f64fa03b991b9f4b85))
+* **#3267:** renderer.icons.*_placement 'right_align' at the right hand edge, not the right of the name ([#3270](https://github.com/nvim-tree/nvim-tree.lua/issues/3270)) ([fa3c458](https://github.com/nvim-tree/nvim-tree.lua/commit/fa3c45875f9b1f56ace57711c6f2ac22484ed956))
+* **#3281:** fix a bug when a view width of -1 is returned from a function ([#3283](https://github.com/nvim-tree/nvim-tree.lua/issues/3283)) ([c988e28](https://github.com/nvim-tree/nvim-tree.lua/commit/c988e289428d9202b28ba27479647033c7dd2956))
+* allow 0 (unlimited) filesystem_watchers.max_events which is the new default, except for windows at 1000 ([#3279](https://github.com/nvim-tree/nvim-tree.lua/issues/3279)) ([87594aa](https://github.com/nvim-tree/nvim-tree.lua/commit/87594aa7c8808701b418b285e9adf690acead201))
+* increase filesystem_watchers.max_events from 100 to 1000 ([#3263](https://github.com/nvim-tree/nvim-tree.lua/issues/3263)) ([0f4d2d6](https://github.com/nvim-tree/nvim-tree.lua/commit/0f4d2d6998dc324d54d6adce94186bee43725afb))
+* restore bookmark filter for marked directories ([5757bcf](https://github.com/nvim-tree/nvim-tree.lua/commit/5757bcf0447d22d8f78826bc5c59b28da2824c3b))
+
 ## [1.15.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.14.0...nvim-tree-v1.15.0) (2026-01-11)
 
 
