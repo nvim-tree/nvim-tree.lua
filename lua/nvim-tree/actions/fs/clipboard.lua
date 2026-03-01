@@ -108,67 +108,18 @@ local function do_copy(source, destination)
   return true
 end
 
+---Paste a single item with no conflict handling.
 ---@param source string
 ---@param dest string
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
----@return boolean|nil -- success
----@return string|nil -- error message
-local function do_single_paste(source, dest, action, action_fn)
-  local notify_source = notify.render_path(source)
-
-  log.line("copy_paste", "do_single_paste '%s' -> '%s'", source, dest)
-
-  local dest_stats, err, err_name = vim.loop.fs_stat(dest)
-  if not dest_stats and err_name ~= "ENOENT" then
-    notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (err or "???"))
-    return false, err
+local function do_paste_one(source, dest, action, action_fn)
+  log.line("copy_paste", "do_paste_one '%s' -> '%s'", source, dest)
+  local success, err = action_fn(source, dest)
+  if not success then
+    notify.error("Could not " .. action .. " " .. notify.render_path(source) .. " - " .. (err or "???"))
   end
-
-  local function on_process()
-    local success, error = action_fn(source, dest)
-    if not success then
-      notify.error("Could not " .. action .. " " .. notify_source .. " - " .. (error or "???"))
-      return false, error
-    end
-
-    find_file(utils.path_remove_trailing(dest))
-  end
-
-  if dest_stats then
-    local input_opts = {
-      prompt = "Rename to ",
-      default = dest,
-      completion = "dir",
-    }
-
-    if source == dest then
-      vim.ui.input(input_opts, function(new_dest)
-        utils.clear_prompt()
-        if new_dest then
-          do_single_paste(source, new_dest, action, action_fn)
-        end
-      end)
-    else
-      local prompt_select = "Overwrite " .. dest .. " ?"
-      local prompt_input = prompt_select .. " R(ename)/y/n: "
-      lib.prompt(prompt_input, prompt_select, { "", "y", "n" }, { "Rename", "Yes", "No" }, "nvimtree_overwrite_rename", function(item_short)
-        utils.clear_prompt()
-        if item_short == "y" then
-          on_process()
-        elseif item_short == "" or item_short == "r" then
-          vim.ui.input(input_opts, function(new_dest)
-            utils.clear_prompt()
-            if new_dest then
-              do_single_paste(source, new_dest, action, action_fn)
-            end
-          end)
-        end
-      end)
-    end
-  else
-    on_process()
-  end
+  find_file(utils.path_remove_trailing(dest))
 end
 
 ---@param node Node
@@ -196,23 +147,122 @@ function Clipboard:clear_clipboard()
   self.explorer.renderer:draw()
 end
 
----Copy one node
----@param node Node
-function Clipboard:copy(node)
-  utils.array_remove(self.data.cut, node)
-  toggle(node, self.data.copy)
+---Bulk add/remove nodes to/from a clipboard list.
+---@private
+---@param nodes Node[] filtered nodes to operate on
+---@param from Node[] list to remove from (the opposite clipboard)
+---@param to Node[] list to add to
+---@param verb string notification verb ("added to" or "cut to")
+function Clipboard:bulk_clipboard(nodes, from, to, verb)
+  local added = 0
+  local removed = 0
+  for _, node in ipairs(nodes) do
+    if node.name ~= ".." then
+      utils.array_remove(from, node)
+      if utils.array_remove(to, node) then
+        removed = removed + 1
+      else
+        table.insert(to, node)
+        added = added + 1
+      end
+    end
+  end
+  if added > 0 then
+    notify.info(string.format("%d nodes %s clipboard.", added, verb))
+  elseif removed > 0 then
+    notify.info(string.format("%d nodes removed from clipboard.", removed))
+  end
   self.explorer.renderer:draw()
 end
 
----Cut one node
----@param node Node
-function Clipboard:cut(node)
-  utils.array_remove(self.data.copy, node)
-  toggle(node, self.data.cut)
+---Copy one or more nodes
+---@param node_or_nodes Node|Node[]
+function Clipboard:copy(node_or_nodes)
+  if node_or_nodes.is then
+    utils.array_remove(self.data.cut, node_or_nodes)
+    toggle(node_or_nodes, self.data.copy)
+    self.explorer.renderer:draw()
+  else
+    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "added to")
+  end
+end
+
+---Cut one or more nodes
+---@param node_or_nodes Node|Node[]
+function Clipboard:cut(node_or_nodes)
+  if node_or_nodes.is then
+    utils.array_remove(self.data.copy, node_or_nodes)
+    toggle(node_or_nodes, self.data.cut)
+    self.explorer.renderer:draw()
+  else
+    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut to")
+  end
+end
+
+---Clear clipboard for action and reload if needed.
+---@private
+---@param action ClipboardAction
+function Clipboard:finish_paste(action)
+  self.data[action] = {}
+  if not self.explorer.opts.filesystem_watchers.enable then
+    self.explorer:reload_explorer()
+  end
   self.explorer.renderer:draw()
 end
 
----Paste cut or cop
+---Resolve conflicting paste items with a single batch prompt.
+---@private
+---@param conflict {node: Node, dest: string}[]
+---@param destination string
+---@param action ClipboardAction
+---@param action_fn ClipboardActionFn
+function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
+  local prompt_select = #conflict .. " file(s) already exist"
+  local prompt_input = prompt_select .. ". R(ename suffix)/y/n: "
+
+  lib.prompt(prompt_input, prompt_select,
+    { "", "y", "n" },
+    { "Rename (suffix)", "Overwrite all", "Skip all" },
+    "nvimtree_paste_conflict",
+    function(item_short)
+      utils.clear_prompt()
+      if item_short == "y" then
+        for _, item in ipairs(conflict) do
+          do_paste_one(item.node.absolute_path, item.dest, action, action_fn)
+        end
+        self:finish_paste(action)
+      elseif item_short == "" or item_short == "r" then
+        vim.ui.input({ prompt = "Suffix: " }, function(suffix)
+          utils.clear_prompt()
+          if not suffix or suffix == "" then
+            return
+          end
+          local still_conflict = {}
+          for _, item in ipairs(conflict) do
+            local basename = vim.fn.fnamemodify(item.node.name, ":r")
+            local extension = vim.fn.fnamemodify(item.node.name, ":e")
+            local new_name = extension ~= "" and (basename .. suffix .. "." .. extension) or (item.node.name .. suffix)
+            local new_dest = utils.path_join({ destination, new_name })
+            local stats = vim.loop.fs_stat(new_dest)
+            if stats then
+              table.insert(still_conflict, { node = item.node, dest = new_dest })
+            else
+              do_paste_one(item.node.absolute_path, new_dest, action, action_fn)
+            end
+          end
+          if #still_conflict > 0 then
+            self:resolve_conflicts(still_conflict, destination, action, action_fn)
+          else
+            self:finish_paste(action)
+          end
+        end)
+      else
+        self:finish_paste(action)
+      end
+    end)
+end
+
+---Paste cut or copy with batch conflict resolution.
 ---@private
 ---@param node Node
 ---@param action ClipboardAction
@@ -243,14 +293,29 @@ function Clipboard:do_paste(node, action, action_fn)
     destination = vim.fn.fnamemodify(destination, ":p:h")
   end
 
+  -- Partition into conflict / no-conflict
+  local no_conflict = {}
+  local conflict = {}
   for _, _node in ipairs(clip) do
     local dest = utils.path_join({ destination, _node.name })
-    do_single_paste(_node.absolute_path, dest, action, action_fn)
+    local dest_stats = vim.loop.fs_stat(dest)
+    if dest_stats then
+      table.insert(conflict, { node = _node, dest = dest })
+    else
+      table.insert(no_conflict, { node = _node, dest = dest })
+    end
   end
 
-  self.data[action] = {}
-  if not self.explorer.opts.filesystem_watchers.enable then
-    self.explorer:reload_explorer()
+  -- Paste non-conflicting items immediately
+  for _, item in ipairs(no_conflict) do
+    do_paste_one(item.node.absolute_path, item.dest, action, action_fn)
+  end
+
+  -- Resolve conflicts in batch
+  if #conflict > 0 then
+    self:resolve_conflicts(conflict, destination, action, action_fn)
+  else
+    self:finish_paste(action)
   end
 end
 

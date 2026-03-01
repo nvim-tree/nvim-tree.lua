@@ -44,11 +44,20 @@ sed -i -e "/${begin}/,/${end}/{ /${begin}/{p; r /tmp/ON_ATTACH_DEFAULT.lua
            }; /${end}/p; d; }" "${WIP}"
 
 # help human
+# extract mode, lhs, api, desc; handle both "n" and {"n", "x"} mode forms
 echo > /tmp/ON_ATTACH_DEFAULT.help
-sed -E "s/^ *vim.keymap.set\(\"n\", \"(.*)\",.*api(.*),.*opts\(\"(.*)\".*$/'\`\1\`' '\3' '|nvim_tree.api\2()|'/g
-" /tmp/ON_ATTACH_DEFAULT.lua | while read -r line
+sed -E '
+  s/^ *vim\.keymap\.set\(\{([^}]+)\}, *"([^"]+)",.*api(.*),.*opts\("([^"]*)".*/\1 \2 \3 \4/
+  t reformat
+  s/^ *vim\.keymap\.set\("(.)", *"([^"]+)",.*api(.*),.*opts\("([^"]*)".*/\1 \2 \3 \4/
+  t reformat
+  d
+  :reformat
+  s/"//g
+  s/, //g
+' /tmp/ON_ATTACH_DEFAULT.lua | while read -r mode lhs apipath desc
 do
-	eval "printf '%-17.17s %-26.26s %s\n' ${line}" >> /tmp/ON_ATTACH_DEFAULT.help
+  printf ' %-17.17s %-4.4s %-26.26s %s\n' "\`${lhs}\`" "${mode}" "${desc}" "|nvim_tree.api${apipath}()|" >> /tmp/ON_ATTACH_DEFAULT.help
 done
 echo >> /tmp/ON_ATTACH_DEFAULT.help
 begin="Show the mappings:"

@@ -483,4 +483,82 @@ function M.enumerate_options(opts, was_set)
   return res
 end
 
+---Filter out nodes that are descendants of other nodes in the list.
+---When a directory is selected along with its children, only the directory needs to be operated on.
+---@param nodes Node[]
+---@return Node[]
+function M.filter_descendant_nodes(nodes)
+  local dominated = {}
+  for i, a in ipairs(nodes) do
+    for j, b in ipairs(nodes) do
+      if i ~= j then
+        local prefix = b.absolute_path .. path_separator
+        if a.absolute_path:sub(1, #prefix) == prefix then
+          dominated[i] = true
+          break
+        end
+      end
+    end
+  end
+  local filtered = {}
+  for i, node in ipairs(nodes) do
+    if not dominated[i] then
+      table.insert(filtered, node)
+    end
+  end
+  return filtered
+end
+
+---Build confirmation prompt strings based on default_yes config.
+---@param prompt_select string
+---@param default_yes boolean
+---@return string prompt_input
+---@return string[] items_short
+---@return string[] items_long
+function M.confirm_prompt(prompt_select, default_yes)
+  if default_yes then
+    return prompt_select .. " Y/n: ", { "", "n" }, { "Yes", "No" }
+  else
+    return prompt_select .. " y/N: ", { "", "y" }, { "No", "Yes" }
+  end
+end
+
+---Check if the current mode is visual or select (v, V, CTRL-V, s, S, CTRL-S).
+---@return boolean
+function M.is_visual_mode()
+  local mode = vim.api.nvim_get_mode().mode
+  local visual_modes = {
+    v = true,
+    V = true,
+    ["\22"] = true, -- \22 is CTRL-V
+    s = true,
+    S = true,
+    ["\19"] = true, -- \19 is CTRL-S
+  }
+  return visual_modes[mode] == true or false
+end
+
+---Exit visual mode synchronously.
+function M.exit_visual_mode()
+  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+end
+
+---Get the visual selection range nodes, exiting visual mode.
+---@return Node[]?
+function M.get_visual_nodes()
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer then
+    return nil
+  end
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  local nodes = explorer:get_nodes_in_range(start_line, end_line)
+  M.exit_visual_mode()
+  return nodes
+end
+
 return M
