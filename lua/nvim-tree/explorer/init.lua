@@ -187,7 +187,7 @@ function Explorer:create_autocmds()
       callback = function()
         utils.debounce("Buf:modified_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
           buffers.reload_modified()
-          self:reload_explorer()
+          self.renderer:draw()
         end)
       end,
     })
