@@ -28,6 +28,7 @@ function nvim_tree.api.fs.copy.filename(node) end
 
 ---
 ---Copy to the nvim-tree clipboard.
+---In visual mode, copies all nodes in the visual selection.
 ---
 ---@param node? nvim_tree.api.Node
 function nvim_tree.api.fs.copy.node(node) end
@@ -52,6 +53,7 @@ function nvim_tree.api.fs.create(node) end
 
 ---
 ---Cut to the nvim-tree clipboard.
+---In visual mode, cuts all nodes in the visual selection.
 ---
 ---@param node? nvim_tree.api.Node
 function nvim_tree.api.fs.cut(node) end
@@ -71,6 +73,7 @@ function nvim_tree.api.fs.print_clipboard() end
 
 ---
 ---Delete from the file system.
+---In visual mode, deletes all nodes in the visual selection with a single prompt.
 ---
 ---@param node? nvim_tree.api.Node
 function nvim_tree.api.fs.remove(node) end
@@ -106,7 +109,8 @@ function nvim_tree.api.fs.rename_node(node) end
 function nvim_tree.api.fs.rename_sub(node) end
 
 ---
----Trash as per |nvim_tree.config.trash|
+---Trash as per |nvim_tree.config.trash|.
+---In visual mode, trashes all nodes in the visual selection with a single prompt.
 ---
 ---@param node? nvim_tree.api.Node
 function nvim_tree.api.fs.trash(node) end
