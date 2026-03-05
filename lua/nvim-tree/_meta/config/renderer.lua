@@ -39,15 +39,18 @@ error("Cannot require a meta file")
 ---
 ---
 ---
----{root_folder_label} has 3 forms:
+---{root_folder_label} [nvim_tree.config.renderer.root_folder_label]()
+---
+---Controls the root folder name and visibility:
 ---- `string`: [filename-modifiers] format string, default `":~:s?$?/..?"`
----- `boolean`: `true` to disable
+---- `false`: to disable
 ---- `fun(root_cwd: string): string`: return a literal string from root's absolute path e.g.
 ---```lua
 --- my_root_folder_label = function(path)
 ---   return ".../" .. vim.fn.fnamemodify(path, ":t")
 --- end
 ---```
+---@alias nvim_tree.config.renderer.root_folder_label string|false|(fun(root_cwd: string): string)
 ---
 ---
 ---
@@ -80,8 +83,9 @@ error("Cannot require a meta file")
 ---(default: `false`)
 ---@field full_name? boolean
 ---
+---[nvim_tree.config.renderer.root_folder_label]
 ---(default: `":~:s?$?/..?"`)
----@field root_folder_label? string|boolean|(fun(root_cwd: string): string)
+---@field root_folder_label? nvim_tree.config.renderer.root_folder_label
 ---
 ---Number of spaces for each tree nesting level. Minimum 1.
 ---(default: `2`)
