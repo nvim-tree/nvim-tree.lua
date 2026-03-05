@@ -5,6 +5,16 @@ local utils = require("nvim-tree.utils")
 local full_name = require("nvim-tree.renderer.components.full-name")
 local view = require("nvim-tree.view")
 
+local DirectoryNode = require("nvim-tree.node.directory")
+local FileLinkNode = require("nvim-tree.node.file-link")
+local RootNode = require("nvim-tree.node.root")
+
+---@class NodeEditOpts
+---@field quit_on_open boolean|nil default false
+---@field focus boolean|nil default true
+
+---@alias NodeOpenFileMode ""|"change_dir"|"drop"|"edit"|"edit_in_place"|"edit_no_picker"|"preview"|"preview_no_picker"|"split"|"split_no_picker"|"tab_drop"|"tabnew"|"toggle_group_empty"|"vsplit"|"vsplit_no_picker"
+
 local M = {}
 
 ---Get single char from user input
@@ -286,6 +296,8 @@ local function set_current_win_no_autocmd(winid, autocmd)
   vim.opt.eventignore = eventignore
 end
 
+---@param filename string
+---@param mode NodeOpenFileMode
 local function open_in_new_window(filename, mode)
   if type(mode) ~= "string" then
     mode = ""
@@ -388,7 +400,7 @@ local function edit_in_current_buf(filename)
   vim.cmd("keepalt keepjumps edit " .. vim.fn.fnameescape(filename))
 end
 
----@param mode string
+---@param mode NodeOpenFileMode
 ---@param filename string
 ---@return nil
 function M.fn(mode, filename)
@@ -437,6 +449,119 @@ function M.fn(mode, filename)
   if M.quit_on_open then
     view.close()
   end
+end
+
+---@param mode string
+---@param node Node
+---@param edit_opts NodeEditOpts?
+local function edit(mode, node, edit_opts)
+  local file_link = node:as(FileLinkNode)
+  local path = file_link and file_link.link_to or node.absolute_path
+  local cur_tabpage = vim.api.nvim_get_current_tabpage()
+
+  M.fn(mode, path)
+
+  edit_opts = edit_opts or {}
+
+  local mode_unsupported_quit_on_open = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
+  if not mode_unsupported_quit_on_open and edit_opts.quit_on_open then
+    view.close(cur_tabpage)
+  end
+
+  local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
+  local focus = edit_opts.focus == nil or edit_opts.focus == true
+  if not mode_unsupported_focus and not focus then
+    -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
+    if mode == "tabnew" then
+      vim.cmd(":tabprev")
+    end
+    view.focus()
+  end
+end
+
+---@param node Node
+---@param mode NodeOpenFileMode
+---@param toggle_group boolean?
+---@param edit_opts NodeEditOpts?
+local function open_or_expand_or_dir_up(node, mode, toggle_group, edit_opts)
+  local root = node:as(RootNode)
+  local dir = node:as(DirectoryNode)
+
+  if root or node.name == ".." then
+    local explorer = require("nvim-tree.core").get_explorer()
+    if explorer then
+      explorer:change_dir("..")
+    end
+  elseif dir then
+    dir:expand_or_collapse(toggle_group)
+  elseif not toggle_group then
+    edit(mode, node, edit_opts)
+  end
+end
+
+---@param node Node
+function M.toggle_group_empty(node)
+  open_or_expand_or_dir_up(node, "toggle_group_empty", true)
+end
+
+---@param node Node
+function M.preview(node)
+  open_or_expand_or_dir_up(node, "preview")
+end
+
+---@param node Node
+function M.preview_no_picker(node)
+  open_or_expand_or_dir_up(node, "preview_no_picker")
+end
+
+---@param node Node
+function M.edit(node)
+  open_or_expand_or_dir_up(node, "edit")
+end
+
+---@param node Node
+function M.drop(node)
+  open_or_expand_or_dir_up(node, "drop")
+end
+
+---@param node Node
+function M.tab_drop(node)
+  open_or_expand_or_dir_up(node, "tab_drop")
+end
+
+---@param node Node
+function M.replace_tree_buffer(node)
+  open_or_expand_or_dir_up(node, "edit_in_place")
+end
+
+---@param node Node
+function M.no_window_picker(node)
+  open_or_expand_or_dir_up(node, "edit_no_picker")
+end
+
+---@param node Node
+function M.vertical(node)
+  open_or_expand_or_dir_up(node, "vsplit")
+end
+
+---@param node Node
+function M.vertical_no_picker(node)
+  open_or_expand_or_dir_up(node, "vsplit_no_picker")
+end
+
+---@param node Node
+function M.horizontal(node)
+  open_or_expand_or_dir_up(node, "split")
+end
+
+---@param node Node
+function M.horizontal_no_picker(node)
+  open_or_expand_or_dir_up(node, "split_no_picker")
+end
+
+---@param node Node
+function M.tab(node)
+  open_or_expand_or_dir_up(node, "tabnew")
 end
 
 function M.setup(opts)
