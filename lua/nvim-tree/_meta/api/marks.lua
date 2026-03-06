@@ -4,8 +4,9 @@ local nvim_tree = { api = { marks = {} } }
 ---
 ---Return the node if it is marked.
 ---
+---@param node? nvim_tree.api.Node file or directory
 ---@return nvim_tree.api.Node?
-function nvim_tree.api.marks.get() end
+function nvim_tree.api.marks.get(node) end
 
 ---
 ---Retrieve all marked nodes.
