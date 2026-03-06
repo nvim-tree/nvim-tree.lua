@@ -1,5 +1,5 @@
 ---Hydrates all API functions with concrete implementations.
----All "nvim-tree setup not called" error functions from pre.lua will be replaced.
+---Replace all "nvim-tree setup not called" error functions from pre.lua with their implementations.
 ---
 ---Call this after nvim-tree setup
 ---
@@ -18,205 +18,171 @@ local function keymap() return require("nvim-tree.keymap") end
 local function utils() return require("nvim-tree.utils") end
 local function view() return require("nvim-tree.view") end
 
--- TODO 3255 wrap* must be able to take a function. May be best to have that function accept (node, ...)
+---Return a function wrapper that calls fn.
+---Injects node or node at cursor as first argument.
+---Passes other arguments verbatim.
+---@param fn fun(n?: Node, ...): any
+---@return fun(n?: Node, ...): any
+local function _n(fn)
+  return function(n, ...)
+    if not n then
+      local e = core().get_explorer()
+      n = e and e:get_node_at_cursor() or nil
+    end
+    return fn(n, ...)
+  end
+end
 
----Invoke a method on the singleton explorer.
----Print error when setup not called.
----@param explorer_method string explorer method name
----@return fun(...): any
-local function wrap_explorer(explorer_method)
+---Return a function wrapper that calls fn.
+---Does nothing when no explorer instance.
+---Injects an explorer instance as first arg.
+---Passes other arguments verbatim.
+---@param fn fun(e: Explorer, ...): any
+---@return fun(e: Explorer, ...): any
+local function e_(fn)
   return function(...)
-    local explorer = core().get_explorer()
-    if explorer then
-      return explorer[explorer_method](explorer, ...)
+    local e = core().get_explorer()
+    if e then
+      return fn(e, ...)
     end
   end
 end
 
----Inject the node as the first argument if present otherwise do nothing.
----@param fn fun(node: Node, ...): any
----@return fun(node: Node?, ...): any
-local function wrap_node(fn)
-  return function(node, ...)
-    node = node or wrap_explorer("get_node_at_cursor")()
-    if node then
-      return fn(node, ...)
+---Return a function wrapper that calls fn.
+---Does nothing when no explorer instance.
+---Injects an explorer instance as first arg.
+---Injects node or node at cursor as second argument.
+---Passes other arguments verbatim.
+---@param fn fun(e: Explorer, n?: Node, ...): any
+---@return fun(e: Explorer, n?: Node, ...): any
+local function en(fn)
+  return function(n, ...)
+    local e = core().get_explorer()
+    if e then
+      return fn(e, n or e:get_node_at_cursor(), ...)
     end
   end
 end
 
----Inject the node or nil as the first argument if absent.
----@param fn fun(node: Node?, ...): any
----@return fun(node: Node?, ...): any
-local function wrap_node_or_nil(fn)
-  return function(node, ...)
-    node = node or wrap_explorer("get_node_at_cursor")()
-    return fn(node, ...)
-  end
-end
-
----Invoke a member's method on the singleton explorer.
----Print error when setup not called.
----@param explorer_member string explorer member name
----@param member_method string method name to invoke on member
----@param ... any passed to method
+---Return a function wrapper that calls fn.
+---Passes arguments verbatim.
+---Exists for formatting purposes only.
+---@param fn fun(...): any
 ---@return fun(...): any
-local function wrap_explorer_member_args(explorer_member, member_method, ...)
-  local method_args = ...
+local function __(fn)
   return function(...)
-    local explorer = core().get_explorer()
-    if explorer then
-      return explorer[explorer_member][member_method](explorer[explorer_member], method_args, ...)
-    end
+    return fn(...)
   end
-end
-
----Invoke a member's method on the singleton explorer.
----Print error when setup not called.
----@param explorer_member string explorer member name
----@param member_method string method name to invoke on member
----@return fun(...): any
-local function wrap_explorer_member(explorer_member, member_method)
-  return function(...)
-    local explorer = core().get_explorer()
-    if explorer then
-      return explorer[explorer_member][member_method](explorer[explorer_member], ...)
-    end
-  end
-end
-
-local function hydrate_config(api)
-  api.config.global = function() return config().g_clone() end
-  api.config.user   = function() return config().u_clone() end
-end
-
-local function hydrate_filter(api)
-  api.filter.custom.toggle      = wrap_explorer_member_args("filters", "toggle", "custom")
-  api.filter.dotfiles.toggle    = wrap_explorer_member_args("filters", "toggle", "dotfiles")
-  api.filter.git.clean.toggle   = wrap_explorer_member_args("filters", "toggle", "git_clean")
-  api.filter.git.ignored.toggle = wrap_explorer_member_args("filters", "toggle", "git_ignored")
-  api.filter.live.clear         = wrap_explorer_member("live_filter", "clear_filter")
-  api.filter.live.start         = wrap_explorer_member("live_filter", "start_filtering")
-  api.filter.no_bookmark.toggle = wrap_explorer_member_args("filters", "toggle", "no_bookmark")
-  api.filter.no_buffer.toggle   = wrap_explorer_member_args("filters", "toggle", "no_buffer")
-  api.filter.toggle             = wrap_explorer_member("filters", "toggle")
-end
-
-local function hydrate_fs(api)
-  api.fs.clear_clipboard    = wrap_explorer_member("clipboard", "clear_clipboard")
-  api.fs.copy.absolute_path = wrap_node(wrap_explorer_member("clipboard", "copy_absolute_path"))
-  api.fs.copy.basename      = wrap_node(wrap_explorer_member("clipboard", "copy_basename"))
-  api.fs.copy.filename      = wrap_node(wrap_explorer_member("clipboard", "copy_filename"))
-  api.fs.copy.node          = wrap_node(wrap_explorer_member("clipboard", "copy"))
-  api.fs.copy.relative_path = wrap_node(wrap_explorer_member("clipboard", "copy_path"))
-  api.fs.create             = wrap_node_or_nil(function(node) actions().fs.create_file.fn(node) end)
-  api.fs.cut                = wrap_node(wrap_explorer_member("clipboard", "cut"))
-  api.fs.paste              = wrap_node(wrap_explorer_member("clipboard", "paste"))
-  api.fs.print_clipboard    = wrap_explorer_member("clipboard", "print_clipboard")
-
-  api.fs.remove             = wrap_node(function(node) actions().fs.remove_file.fn(node) end)
-  api.fs.rename             = wrap_node(function(node) actions().fs.rename_file.rename_node(node) end)
-  api.fs.rename_basename    = wrap_node(function(node) actions().fs.rename_file.rename_basename(node) end)
-  api.fs.rename_full        = wrap_node(function(node) actions().fs.rename_file.rename_full(node) end)
-  api.fs.rename_node        = wrap_node(function(node) actions().fs.rename_file.rename_node(node) end)
-  api.fs.rename_sub         = wrap_node(function(node) actions().fs.rename_file.rename_sub(node) end)
-  api.fs.trash              = wrap_node(function(node) actions().fs.trash.fn(node) end)
-end
-
-local function hydrate_map(api)
-  api.map.keymap.current = function() return keymap().get_keymap() end
-end
-
-local function hydrate_marks(api)
-  api.marks.bulk.delete     = wrap_explorer_member("marks", "bulk_delete")
-  api.marks.bulk.move       = wrap_explorer_member("marks", "bulk_move")
-  api.marks.bulk.trash      = wrap_explorer_member("marks", "bulk_trash")
-  api.marks.clear           = wrap_explorer_member("marks", "clear")
-  api.marks.get             = wrap_node(wrap_explorer_member("marks", "get"))
-  api.marks.list            = wrap_explorer_member("marks", "list")
-  api.marks.navigate.next   = wrap_explorer_member("marks", "navigate_next")
-  api.marks.navigate.prev   = wrap_explorer_member("marks", "navigate_prev")
-  api.marks.navigate.select = wrap_explorer_member("marks", "navigate_select")
-  api.marks.toggle          = wrap_node(wrap_explorer_member("marks", "toggle"))
-end
-
-local function hydrate_node(api)
-  api.node.buffer.delete                       = wrap_node(function(node, opts) actions().node.buffer.delete(node, opts) end)
-  api.node.buffer.wipe                         = wrap_node(function(node, opts) actions().node.buffer.wipe(node, opts) end)
-  api.node.collapse                            = wrap_node(function(node) actions().tree.collapse.node(node) end)
-  api.node.expand                              = wrap_node(wrap_explorer("expand_node"))
-  api.node.navigate.diagnostics.next           = function() return actions().moves.item.diagnostics_next() end
-  api.node.navigate.diagnostics.next_recursive = function() return actions().moves.item.diagnostics_next_recursive() end
-  api.node.navigate.diagnostics.prev           = function() return actions().moves.item.diagnostics_prev() end
-  api.node.navigate.diagnostics.prev_recursive = function() return actions().moves.item.diagnostics_prev_recursive() end
-  api.node.navigate.git.next                   = function() return actions().moves.item.git_next() end
-  api.node.navigate.git.next_recursive         = function() return actions().moves.item.git_next_recursive() end
-  api.node.navigate.git.next_skip_gitignored   = function() return actions().moves.item.git_next_skip_gitignored() end
-  api.node.navigate.git.prev                   = function() return actions().moves.item.git_prev() end
-  api.node.navigate.git.prev_recursive         = function() return actions().moves.item.git_prev_recursive() end
-  api.node.navigate.git.prev_skip_gitignored   = function() return actions().moves.item.git_prev_skip_gitignored() end
-  api.node.navigate.opened.next                = function() return actions().moves.item.opened_next() end
-  api.node.navigate.opened.prev                = function() return actions().moves.item.opened_prev() end
-  api.node.navigate.parent                     = wrap_node(function(node) actions().moves.parent.move(node) end)
-  api.node.navigate.parent_close               = wrap_node(function(node) actions().moves.parent.move_close(node) end)
-  api.node.navigate.sibling.first              = wrap_node(function(node) actions().moves.sibling.first(node) end)
-  api.node.navigate.sibling.last               = wrap_node(function(node) actions().moves.sibling.last(node) end)
-  api.node.navigate.sibling.next               = wrap_node(function(node) actions().moves.sibling.next(node) end)
-  api.node.navigate.sibling.prev               = wrap_node(function(node) actions().moves.sibling.prev(node) end)
-  api.node.open.drop                           = wrap_node(function(node) actions().node.open_file.drop(node) end)
-  api.node.open.edit                           = wrap_node(function(node) actions().node.open_file.edit(node) end)
-  api.node.open.horizontal                     = wrap_node(function(node) actions().node.open_file.horizontal(node) end)
-  api.node.open.horizontal_no_picker           = wrap_node(function(node) actions().node.open_file.horizontal_no_picker(node) end)
-  api.node.open.no_window_picker               = wrap_node(function(node) actions().node.open_file.no_window_picker(node) end)
-  api.node.open.preview                        = wrap_node(function(node) actions().node.open_file.preview(node) end)
-  api.node.open.preview_no_picker              = wrap_node(function(node) actions().node.open_file.preview_no_picker(node) end)
-  api.node.open.replace_tree_buffer            = wrap_node(function(node) actions().node.open_file.replace_tree_buffer(node) end)
-  api.node.open.tab                            = wrap_node(function(node) actions().node.open_file.tab(node) end)
-  api.node.open.tab_drop                       = wrap_node(function(node) actions().node.open_file.tab_drop(node) end)
-  api.node.open.toggle_group_empty             = wrap_node(function(node) actions().node.open_file.toggle_group_empty(node) end)
-  api.node.open.vertical                       = wrap_node(function(node) actions().node.open_file.vertical(node) end)
-  api.node.open.vertical_no_picker             = wrap_node(function(node) actions().node.open_file.vertical_no_picker(node) end)
-  api.node.run.cmd                             = wrap_node(function(node) actions().node.run_command.run_file_command(node) end)
-  api.node.run.system                          = wrap_node(function(node) actions().node.system_open.fn(node) end)
-  api.node.show_info_popup                     = wrap_node(function(node) actions().node.file_popup.toggle_file_info(node) end)
-end
-
-local function hydrate_tree(api)
-  api.tree.change_root           = function() return actions().tree.change_dir.fn() end
-  api.tree.change_root_to_node   = wrap_node(wrap_explorer("change_dir_to_node"))
-  api.tree.change_root_to_parent = wrap_node(wrap_explorer("dir_up"))
-  api.tree.close                 = function() return view().close() end
-  api.tree.close_in_all_tabs     = function() return view().close_all_tabs() end
-  api.tree.close_in_this_tab     = function() return view().close_this_tab_only() end
-  api.tree.collapse_all          = function() return actions().tree.collapse.all() end
-  api.tree.expand_all            = wrap_node(wrap_explorer("expand_all"))
-  api.tree.find_file             = function() return actions().tree.find_file.fn() end
-  api.tree.focus                 = api.tree.open
-  api.tree.get_node_under_cursor = wrap_explorer("get_node_at_cursor")
-  api.tree.get_nodes             = wrap_explorer("get_nodes")
-  api.tree.is_tree_buf           = function() return utils().is_nvim_tree_buf() end
-  api.tree.is_visible            = function() return view().is_visible() end
-  api.tree.open                  = function() return actions().tree.open.fn() end
-  api.tree.reload                = wrap_explorer("reload_explorer")
-  api.tree.reload_git            = wrap_explorer("reload_git")
-  api.tree.resize                = function() return actions().tree.resize.fn() end
-  api.tree.search_node           = function() return actions().finders.search_node.fn() end
-  api.tree.toggle                = function() return actions().tree.toggle.fn() end
-  api.tree.toggle_help           = function() return help().toggle() end
-  api.tree.winid                 = function() return view().winid() end
 end
 
 ---Re-Hydrate api functions and classes post-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
 function M.hydrate(api)
-  -- hydration has been split into functions for readability and formatting
-  hydrate_config(api)
-  hydrate_filter(api)
-  hydrate_fs(api)
-  hydrate_map(api)
-  hydrate_marks(api)
-  hydrate_node(api)
-  hydrate_tree(api)
+  api.config.global                            = __(function() return config().g_clone() end)
+  api.config.user                              = __(function() return config().u_clone() end)
+
+  api.filter.custom.toggle                     = e_(function(e) e.filters:toggle("custom") end)
+  api.filter.dotfiles.toggle                   = e_(function(e) e.filters:toggle("dotfiles") end)
+  api.filter.git.clean.toggle                  = e_(function(e) e.filters:toggle("git_clean") end)
+  api.filter.git.ignored.toggle                = e_(function(e) e.filters:toggle("git_ignored") end)
+  api.filter.live.clear                        = e_(function(e) e.live_filter:clear_filter() end)
+  api.filter.live.start                        = e_(function(e) e.live_filter:start_filtering() end)
+  api.filter.no_bookmark.toggle                = e_(function(e) e.filters:toggle("no_bookmark") end)
+  api.filter.no_buffer.toggle                  = e_(function(e) e.filters:toggle("no_buffer") end)
+  api.filter.toggle                            = e_(function(e) e.filters:toggle() end)
+
+  api.fs.clear_clipboard                       = e_(function(e) e.clipboard:clear_clipboard() end)
+  api.fs.copy.absolute_path                    = en(function(e, n) e.clipboard:copy_absolute_path(n) end)
+  api.fs.copy.basename                         = en(function(e, n) e.clipboard:copy_basename(n) end)
+  api.fs.copy.filename                         = en(function(e, n) e.clipboard:copy_filename(n) end)
+  api.fs.copy.node                             = en(function(e, n) e.clipboard:copy(n) end)
+  api.fs.copy.relative_path                    = en(function(e, n) e.clipboard:copy_path(n) end)
+  api.fs.create                                = _n(function(n) actions().fs.create_file.fn(n) end)
+  api.fs.cut                                   = en(function(e, n) e.clipboard:cut(n) end)
+  api.fs.paste                                 = en(function(e, n) e.clipboard:paste(n) end)
+  api.fs.print_clipboard                       = e_(function(e) e.clipboard:print_clipboard() end)
+  api.fs.remove                                = _n(function(n) actions().fs.remove_file.fn(n) end)
+  api.fs.rename                                = _n(function(n) actions().fs.rename_file.rename_node(n) end)
+  api.fs.rename_basename                       = _n(function(n) actions().fs.rename_file.rename_basename(n) end)
+  api.fs.rename_full                           = _n(function(n) actions().fs.rename_file.rename_full(n) end)
+  api.fs.rename_node                           = _n(function(n) actions().fs.rename_file.rename_node(n) end)
+  api.fs.rename_sub                            = _n(function(n) actions().fs.rename_file.rename_sub(n) end)
+  api.fs.trash                                 = _n(function(n) actions().fs.trash.fn(n) end)
+
+  api.map.keymap.current                       = __(function() return keymap().get_keymap() end)
+
+  api.marks.bulk.delete                        = e_(function(e) e.marks:bulk_delete() end)
+  api.marks.bulk.move                          = e_(function(e) e.marks:bulk_move() end)
+  api.marks.bulk.trash                         = e_(function(e) e.marks:bulk_trash() end)
+  api.marks.clear                              = e_(function(e) e.marks:clear() end)
+  api.marks.get                                = en(function(e, n) return e.marks:get(n) end)
+  api.marks.list                               = e_(function(e) return e.marks:list() end)
+  api.marks.navigate.next                      = e_(function(e) e.marks:navigate_next() end)
+  api.marks.navigate.prev                      = e_(function(e) e.marks:navigate_prev() end)
+  api.marks.navigate.select                    = e_(function(e) e.marks:navigate_select() end)
+  api.marks.toggle                             = en(function(e, n) e.marks:toggle(n) end)
+
+  api.node.buffer.delete                       = _n(function(n, opts) actions().node.buffer.delete(n, opts) end)
+  api.node.buffer.wipe                         = _n(function(n, opts) actions().node.buffer.wipe(n, opts) end)
+  api.node.collapse                            = _n(function(n) actions().tree.collapse.node(n) end)
+  api.node.expand                              = en(function(e, n) e:expand_node(n) end)
+  api.node.navigate.diagnostics.next           = __(function() actions().moves.item.diagnostics_next() end)
+  api.node.navigate.diagnostics.next_recursive = __(function() actions().moves.item.diagnostics_next_recursive() end)
+  api.node.navigate.diagnostics.prev           = __(function() actions().moves.item.diagnostics_prev() end)
+  api.node.navigate.diagnostics.prev_recursive = __(function() actions().moves.item.diagnostics_prev_recursive() end)
+  api.node.navigate.git.next                   = __(function() actions().moves.item.git_next() end)
+  api.node.navigate.git.next_recursive         = __(function() actions().moves.item.git_next_recursive() end)
+  api.node.navigate.git.next_skip_gitignored   = __(function() actions().moves.item.git_next_skip_gitignored() end)
+  api.node.navigate.git.prev                   = __(function() actions().moves.item.git_prev() end)
+  api.node.navigate.git.prev_recursive         = __(function() actions().moves.item.git_prev_recursive() end)
+  api.node.navigate.git.prev_skip_gitignored   = __(function() actions().moves.item.git_prev_skip_gitignored() end)
+  api.node.navigate.opened.next                = __(function() actions().moves.item.opened_next() end)
+  api.node.navigate.opened.prev                = __(function() actions().moves.item.opened_prev() end)
+  api.node.navigate.parent                     = _n(function(n) actions().moves.parent.move(n) end)
+  api.node.navigate.parent_close               = _n(function(n) actions().moves.parent.move_close(n) end)
+  api.node.navigate.sibling.first              = _n(function(n) actions().moves.sibling.first(n) end)
+  api.node.navigate.sibling.last               = _n(function(n) actions().moves.sibling.last(n) end)
+  api.node.navigate.sibling.next               = _n(function(n) actions().moves.sibling.next(n) end)
+  api.node.navigate.sibling.prev               = _n(function(n) actions().moves.sibling.prev(n) end)
+  api.node.open.drop                           = _n(function(n) actions().node.open_file.drop(n) end)
+  api.node.open.edit                           = _n(function(n) actions().node.open_file.edit(n) end)
+  api.node.open.horizontal                     = _n(function(n) actions().node.open_file.horizontal(n) end)
+  api.node.open.horizontal_no_picker           = _n(function(n) actions().node.open_file.horizontal_no_picker(n) end)
+  api.node.open.no_window_picker               = _n(function(n) actions().node.open_file.no_window_picker(n) end)
+  api.node.open.preview                        = _n(function(n) actions().node.open_file.preview(n) end)
+  api.node.open.preview_no_picker              = _n(function(n) actions().node.open_file.preview_no_picker(n) end)
+  api.node.open.replace_tree_buffer            = _n(function(n) actions().node.open_file.replace_tree_buffer(n) end)
+  api.node.open.tab                            = _n(function(n) actions().node.open_file.tab(n) end)
+  api.node.open.tab_drop                       = _n(function(n) actions().node.open_file.tab_drop(n) end)
+  api.node.open.toggle_group_empty             = _n(function(n) actions().node.open_file.toggle_group_empty(n) end)
+  api.node.open.vertical                       = _n(function(n) actions().node.open_file.vertical(n) end)
+  api.node.open.vertical_no_picker             = _n(function(n) actions().node.open_file.vertical_no_picker(n) end)
+  api.node.run.cmd                             = _n(function(n) actions().node.run_command.run_file_command(n) end)
+  api.node.run.system                          = _n(function(n) actions().node.system_open.fn(n) end)
+  api.node.show_info_popup                     = _n(function(n) actions().node.file_popup.toggle_file_info(n) end)
+
+  api.tree.change_root                         = __(function(path) actions().tree.change_dir.fn(path) end)
+  api.tree.change_root_to_node                 = en(function(e, n) e:change_dir_to_node(n) end)
+  api.tree.change_root_to_parent               = en(function(e, n) e:dir_up(n) end)
+  api.tree.close                               = __(function() view().close() end)
+  api.tree.close_in_all_tabs                   = __(function() view().close_all_tabs() end)
+  api.tree.close_in_this_tab                   = __(function() view().close_this_tab_only() end)
+  api.tree.collapse_all                        = __(function() actions().tree.collapse.all() end)
+  api.tree.expand_all                          = en(function(e, n, opts) e:expand_all(n, opts) end)
+  api.tree.find_file                           = __(function() actions().tree.find_file.fn() end)
+  api.tree.focus                               = __(function() actions().tree.open.fn() end)
+  api.tree.get_node_under_cursor               = en(function(e) return e:get_node_at_cursor() end)
+  api.tree.get_nodes                           = en(function(e) return e:get_nodes() end)
+  api.tree.is_tree_buf                         = __(function() return utils().is_nvim_tree_buf() end)
+  api.tree.is_visible                          = __(function() return view().is_visible() end)
+  api.tree.open                                = __(function() actions().tree.open.fn() end)
+  api.tree.reload                              = e_(function(e) e:reload_explorer() end)
+  api.tree.reload_git                          = e_(function(e) e:reload_git() end)
+  api.tree.resize                              = __(function() actions().tree.resize.fn() end)
+  api.tree.search_node                         = __(function() actions().finders.search_node.fn() end)
+  api.tree.toggle                              = __(function() actions().tree.toggle.fn() end)
+  api.tree.toggle_help                         = __(function() help().toggle() end)
+  api.tree.winid                               = __(function() return view().winid() end)
 
   -- (Re)hydrate any legacy by mapping to concrete set above
   legacy.map_api(api)
