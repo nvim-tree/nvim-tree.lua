@@ -1,6 +1,24 @@
 ---@meta
 local nvim_tree = { api = { events = {} } }
 
+nvim_tree.api.events.Event = {
+  Ready = "Ready",
+  WillRenameNode = "WillRenameNode",
+  NodeRenamed = "NodeRenamed",
+  TreePreOpen = "TreePreOpen",
+  TreeOpen = "TreeOpen",
+  TreeClose = "TreeClose",
+  WillCreateFile = "WillCreateFile",
+  FileCreated = "FileCreated",
+  WillRemoveFile = "WillRemoveFile",
+  FileRemoved = "FileRemoved",
+  FolderCreated = "FolderCreated",
+  FolderRemoved = "FolderRemoved",
+  Resize = "Resize",
+  TreeAttachedPost = "TreeAttachedPost",
+  TreeRendered = "TreeRendered",
+}
+
 ---
 ---Register a handler for an event, see [nvim-tree-events].
 ---
