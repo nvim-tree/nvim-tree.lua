@@ -273,7 +273,6 @@ function Filters:should_filter_as_reason(path, fs_stat, status)
 end
 
 ---Toggle a type and refresh
----@private
 ---@param type FilterType? nil to disable all
 function Filters:toggle(type)
   if not type or self.state[type] == nil then
