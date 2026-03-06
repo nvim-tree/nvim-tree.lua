@@ -25,8 +25,10 @@ end
 ---Hydrate api functions and classes pre-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
 function M.hydrate(api)
-  -- default to the error message
+  -- default everything to the error message
   hydrate_error(api)
+
+  api.Decorator             = require("nvim-tree.renderer.decorator")
 
   api.appearance.hi_test    = function() require("nvim-tree.appearance.hi-test")() end
 
@@ -38,10 +40,6 @@ function M.hydrate(api)
 
   api.map.keymap.default    = function() return require("nvim-tree.keymap").get_keymap_default() end
   api.map.on_attach.default = function(bufnr) require("nvim-tree.keymap").on_attach_default(bufnr) end
-
-  -- classes
-  api.Decorator             = function() return require("nvim-tree.renderer.decorator"):extend() end
-  api.events.Event          = require("nvim-tree.events").Event -- TODO 3255 move this to meta
 
   -- Hydrate any legacy by mapping to concrete set above
   require("nvim-tree.legacy").map_api(api)
