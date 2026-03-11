@@ -46,7 +46,9 @@ local function en(fn)
   return function(n, ...)
     local e = require("nvim-tree.core").get_explorer()
     if e then
-      n = e and e:get_node_at_cursor() or nil
+      if not n then
+        n = e:get_node_at_cursor() or nil
+      end
       return fn(e, n, ...)
     end
   end
