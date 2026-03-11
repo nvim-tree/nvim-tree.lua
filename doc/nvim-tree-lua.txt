@@ -1231,9 +1231,11 @@ Config: renderer                                   *nvim-tree-config-renderer*
 
     Specify {decorators} is a list e.g. `{ "Git", MyDecorator, "Cut" }`
 
-    {root_folder_label} has 3 forms:
+    {root_folder_label}          *nvim_tree.config.renderer.root_folder_label*
+
+    Controls the root folder name and visibility:
     • `string`: |filename-modifiers| format string, default `":~:s?$?/..?"`
-    • `boolean`: `true` to disable
+    • `false`: to disable
     • `fun(root_cwd: string): string`: return a literal string from root's
       absolute path e.g. >lua
         my_root_folder_label = function(path)
@@ -1266,8 +1268,8 @@ Config: renderer                                   *nvim-tree-config-renderer*
       • {full_name}?               (`boolean`, default: `false`) Display nodes
                                    whose name length is wider than the width
                                    of nvim-tree window in floating window.
-      • {root_folder_label}?       (`string|boolean|(fun(root_cwd: string): string)`)
-                                   (default: `":~:s?$?/..?"`)
+      • {root_folder_label}?       (`nvim_tree.config.renderer.root_folder_label`, default: `":~:s?$?/..?"`)
+                                   |nvim_tree.config.renderer.root_folder_label|
       • {indent_width}?            (`integer`, default: `2`) Number of spaces
                                    for each tree nesting level. Minimum 1.
       • {hidden_display}?          (`nvim_tree.config.renderer.hidden_display`, default: `none`)

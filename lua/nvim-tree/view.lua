@@ -319,9 +319,9 @@ local function grow()
   end
 
   local final_width = M.View.initial_width
-  local max_width = math.huge
-  if M.View.max_width ~= -1 then
-    max_width = get_width(M.View.max_width)
+  local max_width = get_width(M.View.max_width)
+  if max_width == -1 then
+    max_width = math.huge
   end
 
   local ns_id = vim.api.nvim_get_namespaces()["NvimTreeExtmarks"]
