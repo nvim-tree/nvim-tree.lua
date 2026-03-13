@@ -2420,7 +2420,7 @@ subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
     Register a handler for an event, see |nvim-tree-events|.
 
     Parameters: ~
-      • {event_type}  (`string`) |nvim_tree_events_kind|
+      • {event_type}  (`nvim_tree.api.events.Event`) |nvim_tree_events_kind|
       • {callback}    (`fun(payload: table?)`)
 
 
