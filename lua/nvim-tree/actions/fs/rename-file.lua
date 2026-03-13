@@ -97,81 +97,98 @@ function M.rename(node, to)
   end
 end
 
----@param default_modifier string|nil
----@return fun(node: Node, modifier: string)
-function M.fn(default_modifier)
-  default_modifier = default_modifier or ":t"
-
-  return function(node, modifier)
-    local explorer = core.get_explorer()
-    if not explorer then
-      return
-    end
-
-    if type(node) ~= "table" then
-      node = explorer:get_node_at_cursor()
-    end
-    if not node then
-      return
-    end
-
-    if type(modifier) ~= "string" then
-      modifier = default_modifier
-    end
-
-    -- support for only specific modifiers have been implemented
-    if not ALLOWED_MODIFIERS[modifier] then
-      notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
-      return
-    end
-
-    local dir = node:as(DirectoryNode)
-    if dir then
-      node = dir:last_group_node()
-    end
-    if node.name == ".." then
-      return
-    end
-
-    local namelen = node.name:len()
-    local directory = node.absolute_path:sub(0, namelen * -1 - 1)
-    local default_path
-    local prepend = ""
-    local append = ""
-    default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
-    if modifier:sub(0, 2) == ":t" then
-      prepend = directory
-    end
-    if modifier == ":t:r" then
-      local extension = vim.fn.fnamemodify(node.name, ":e")
-      append = extension:len() == 0 and "" or "." .. extension
-    end
-    if modifier == ":p:h" then
-      default_path = default_path .. "/"
-    end
-
-    local input_opts = {
-      prompt = "Rename to ",
-      default = default_path,
-      completion = "file",
-    }
-
-    vim.ui.input(input_opts, function(new_file_path)
-      utils.clear_prompt()
-      if not new_file_path then
-        return
-      end
-
-      local full_new_path = prepend .. new_file_path .. append
-
-      M.rename(node, full_new_path)
-      if not M.config.filesystem_watchers.enable then
-        explorer:reload_explorer()
-      end
-
-      find_file(utils.path_remove_trailing(full_new_path))
-    end)
+---@param node Node
+---@param modifier? string
+local function prompt_to_rename(node, modifier)
+  if not modifier or type(modifier) ~= "string" then
+    modifier = ":t"
   end
+
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
+  end
+
+  if type(node) ~= "table" then
+    local node_at_cursor = explorer:get_node_at_cursor()
+    if not node_at_cursor then
+      return
+    end
+    node = node_at_cursor
+  end
+
+  -- support for only specific modifiers have been implemented
+  if not ALLOWED_MODIFIERS[modifier] then
+    notify.warn("Modifier " .. vim.inspect(modifier) .. " is not in allowed list : " .. table.concat(ALLOWED_MODIFIERS, ","))
+    return
+  end
+
+  local dir = node:as(DirectoryNode)
+  if dir then
+    node = dir:last_group_node()
+  end
+  if node.name == ".." then
+    return
+  end
+
+  local namelen = node.name:len()
+  local directory = node.absolute_path:sub(0, namelen * -1 - 1)
+  local default_path
+  local prepend = ""
+  local append = ""
+  default_path = vim.fn.fnamemodify(node.absolute_path, modifier)
+  if modifier:sub(0, 2) == ":t" then
+    prepend = directory
+  end
+  if modifier == ":t:r" then
+    local extension = vim.fn.fnamemodify(node.name, ":e")
+    append = extension:len() == 0 and "" or "." .. extension
+  end
+  if modifier == ":p:h" then
+    default_path = default_path .. "/"
+  end
+
+  local input_opts = {
+    prompt = "Rename to ",
+    default = default_path,
+    completion = "file",
+  }
+
+  vim.ui.input(input_opts, function(new_file_path)
+    utils.clear_prompt()
+    if not new_file_path then
+      return
+    end
+
+    local full_new_path = prepend .. new_file_path .. append
+
+    M.rename(node, full_new_path)
+    if not M.config.filesystem_watchers.enable then
+      explorer:reload_explorer()
+    end
+
+    find_file(utils.path_remove_trailing(full_new_path))
+  end)
+end
+
+---@param node Node
+function M.rename_node(node)
+  prompt_to_rename(node, ":t")
+end
+
+---@param node Node
+function M.rename_sub(node)
+  prompt_to_rename(node, ":p:h")
+end
+
+---@param node Node
+function M.rename_basename(node)
+  prompt_to_rename(node, ":t:r")
+end
+
+---@param node Node
+function M.rename_full(node)
+  prompt_to_rename(node, ":p")
 end
 
 function M.setup(opts)
