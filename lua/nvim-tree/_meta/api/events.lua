@@ -1,6 +1,7 @@
 ---@meta
 local nvim_tree = { api = { events = {} } }
 
+---@enum nvim_tree.api.events.Event
 nvim_tree.api.events.Event = {
   Ready = "Ready",
   WillRenameNode = "WillRenameNode",
@@ -22,7 +23,7 @@ nvim_tree.api.events.Event = {
 ---
 ---Register a handler for an event, see [nvim-tree-events].
 ---
----@param event_type string [nvim_tree_events_kind]
+---@param event_type nvim_tree.api.events.Event [nvim_tree_events_kind]
 ---@param callback fun(payload: table?)
 function nvim_tree.api.events.subscribe(event_type, callback) end
 
