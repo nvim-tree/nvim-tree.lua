@@ -1,26 +1,9 @@
 local notify = require("nvim-tree.notify")
+local Event = require("nvim-tree._meta.api.events").Event
 
 local M = {}
 
 local global_handlers = {}
-
-M.Event = {
-  Ready = "Ready",
-  WillRenameNode = "WillRenameNode",
-  NodeRenamed = "NodeRenamed",
-  TreePreOpen = "TreePreOpen",
-  TreeOpen = "TreeOpen",
-  TreeClose = "TreeClose",
-  WillCreateFile = "WillCreateFile",
-  FileCreated = "FileCreated",
-  WillRemoveFile = "WillRemoveFile",
-  FileRemoved = "FileRemoved",
-  FolderCreated = "FolderCreated",
-  FolderRemoved = "FolderRemoved",
-  Resize = "Resize",
-  TreeAttachedPost = "TreeAttachedPost",
-  TreeRendered = "TreeRendered",
-}
 
 ---@param event_name string
 ---@return table
@@ -49,77 +32,77 @@ end
 
 --@private
 function M._dispatch_ready()
-  dispatch(M.Event.Ready)
+  dispatch(Event.Ready)
 end
 
 --@private
 function M._dispatch_will_rename_node(old_name, new_name)
-  dispatch(M.Event.WillRenameNode, { old_name = old_name, new_name = new_name })
+  dispatch(Event.WillRenameNode, { old_name = old_name, new_name = new_name })
 end
 
 --@private
 function M._dispatch_node_renamed(old_name, new_name)
-  dispatch(M.Event.NodeRenamed, { old_name = old_name, new_name = new_name })
+  dispatch(Event.NodeRenamed, { old_name = old_name, new_name = new_name })
 end
 
 --@private
 function M._dispatch_will_remove_file(fname)
-  dispatch(M.Event.WillRemoveFile, { fname = fname })
+  dispatch(Event.WillRemoveFile, { fname = fname })
 end
 
 --@private
 function M._dispatch_file_removed(fname)
-  dispatch(M.Event.FileRemoved, { fname = fname })
+  dispatch(Event.FileRemoved, { fname = fname })
 end
 
 --@private
 function M._dispatch_will_create_file(fname)
-  dispatch(M.Event.WillCreateFile, { fname = fname })
+  dispatch(Event.WillCreateFile, { fname = fname })
 end
 
 --@private
 function M._dispatch_file_created(fname)
-  dispatch(M.Event.FileCreated, { fname = fname })
+  dispatch(Event.FileCreated, { fname = fname })
 end
 
 --@private
 function M._dispatch_folder_created(folder_name)
-  dispatch(M.Event.FolderCreated, { folder_name = folder_name })
+  dispatch(Event.FolderCreated, { folder_name = folder_name })
 end
 
 --@private
 function M._dispatch_folder_removed(folder_name)
-  dispatch(M.Event.FolderRemoved, { folder_name = folder_name })
+  dispatch(Event.FolderRemoved, { folder_name = folder_name })
 end
 
 --@private
 function M._dispatch_on_tree_pre_open()
-  dispatch(M.Event.TreePreOpen, nil)
+  dispatch(Event.TreePreOpen, nil)
 end
 
 --@private
 function M._dispatch_on_tree_open()
-  dispatch(M.Event.TreeOpen, nil)
+  dispatch(Event.TreeOpen, nil)
 end
 
 --@private
 function M._dispatch_on_tree_close()
-  dispatch(M.Event.TreeClose, nil)
+  dispatch(Event.TreeClose, nil)
 end
 
 --@private
 function M._dispatch_on_tree_resize(size)
-  dispatch(M.Event.Resize, size)
+  dispatch(Event.Resize, size)
 end
 
 --@private
 function M._dispatch_tree_attached_post(buf)
-  dispatch(M.Event.TreeAttachedPost, buf)
+  dispatch(Event.TreeAttachedPost, buf)
 end
 
 --@private
 function M._dispatch_on_tree_rendered(bufnr, winnr)
-  dispatch(M.Event.TreeRendered, { bufnr = bufnr, winnr = winnr })
+  dispatch(Event.TreeRendered, { bufnr = bufnr, winnr = winnr })
 end
 
 return M

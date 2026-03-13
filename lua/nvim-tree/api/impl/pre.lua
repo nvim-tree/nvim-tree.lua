@@ -3,20 +3,7 @@
 -- - Post-setup functions will notify error: "nvim-tree setup not called"
 -- - All classes will be hydrated with their implementations.
 --
---Call it once when api is first required
---
---This file should have minimal requires that are cheap and have no dependencies or are already required.
---
---Everything must be as lazily loaded as possible: the user must be able to require api cheaply.
-
-local legacy = require("nvim-tree.legacy")
-
-local commands = require("nvim-tree.commands") -- already required by plugin.lua
-local events = require("nvim-tree.events")     -- needed for event registration pre-setup
-local keymap = require("nvim-tree.keymap")     -- needed for default on attach
-local notify = require("nvim-tree.notify")     -- already required by events and others
-
-local Decorator = require("nvim-tree.renderer.decorator")
+--Called once when api is first required
 
 local M = {}
 
@@ -27,7 +14,7 @@ local function hydrate_error(t)
   for k, v in pairs(t) do
     if type(v) == "function" then
       t[k] = function()
-        notify.error("nvim-tree setup not called")
+        require("nvim-tree.notify").error("nvim-tree setup not called")
       end
     elseif type(v) == "table" and not getmetatable(v) then
       hydrate_error(v)
@@ -38,25 +25,24 @@ end
 ---Hydrate api functions and classes pre-setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
 function M.hydrate(api)
-  -- default to the error message
+  -- default everything to the error message
   hydrate_error(api)
 
-  -- eager functions
-  api.events.subscribe = events.subscribe
-  api.map.on_attach.default = keymap.on_attach_default
-  api.commands.get = commands.get
-  api.map.keymap.default = keymap.get_keymap_default
+  api.Decorator             = require("nvim-tree.renderer.decorator")
 
-  -- lazy functions
-  api.appearance.hi_test = function() require("nvim-tree.appearance.hi-test")() end
-  api.config.default = function() return require("nvim-tree.config").d_clone() end
+  api.appearance.hi_test    = function() require("nvim-tree.appearance.hi-test")() end
 
-  -- classes
-  api.Decorator = Decorator:extend()
-  api.events.Event = events.Event
+  api.commands.get          = function() return require("nvim-tree.commands").get() end
+
+  api.config.default        = function() return require("nvim-tree.config").d_clone() end
+
+  api.events.subscribe      = function(event_name, handler) require("nvim-tree.events").subscribe(event_name, handler) end
+
+  api.map.keymap.default    = function() return require("nvim-tree.keymap").get_keymap_default() end
+  api.map.on_attach.default = function(bufnr) require("nvim-tree.keymap").on_attach_default(bufnr) end
 
   -- Hydrate any legacy by mapping to concrete set above
-  legacy.map_api(api)
+  require("nvim-tree.legacy").map_api(api)
 end
 
 return M
