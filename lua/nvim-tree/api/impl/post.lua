@@ -5,25 +5,43 @@
 
 local M = {}
 
----Return a function wrapper that calls fn.
----Injects node or node at cursor as first argument.
----Passes other arguments verbatim.
+---Returns the node under the cursor.
+---@return Node?
+local function node_at_cursor()
+  local e = require("nvim-tree.core").get_explorer()
+  return e and e:get_node_at_cursor() or nil
+end
+
+---Returns the visually selected nodes, if we are in visual mode.
+---@return Node[]?
+local function visual_nodes()
+  local utils = require("nvim-tree.utils")
+  return utils.is_visual_mode() and utils.get_visual_nodes() or nil
+end
+
+---Injects:
+---- n: n or node at cursor
 ---@param fn fun(n?: Node, ...): any
 ---@return fun(n?: Node, ...): any
 local function _n(fn)
   return function(n, ...)
-    if not n then
-      local e = require("nvim-tree.core").get_explorer()
-      n = e and e:get_node_at_cursor() or nil
-    end
-    return fn(n, ...)
+    return fn(n or node_at_cursor(), ...)
   end
 end
 
----Return a function wrapper that calls fn.
+---Injects:
+---- n: visual nodes or n or node at cursor
+---@param fn fun(n?: Node|Node[], ...): any
+---@return fun(n?: Node|Node[], ...): any
+local function _v(fn)
+  return function(n, ...)
+    return fn(visual_nodes() or n or node_at_cursor(), ...)
+  end
+end
+
+---Injects:
+---- e: Explorer instance
 ---Does nothing when no explorer instance.
----Injects an explorer instance as first arg.
----Passes other arguments verbatim.
 ---@param fn fun(e: Explorer, ...): any
 ---@return fun(e: Explorer, ...): any
 local function e_(fn)
@@ -35,36 +53,37 @@ local function e_(fn)
   end
 end
 
----Return a function wrapper that calls fn.
+---Injects:
+---- e: Explorer instance
+---- n: n or node at cursor
 ---Does nothing when no explorer instance.
----Injects an explorer instance as first arg.
----Injects node or node at cursor as second argument.
----Passes other arguments verbatim.
 ---@param fn fun(e: Explorer, n?: Node, ...): any
 ---@return fun(e: Explorer, n?: Node, ...): any
 local function en(fn)
   return function(n, ...)
     local e = require("nvim-tree.core").get_explorer()
     if e then
-      if not n then
-        n = e:get_node_at_cursor() or nil
-      end
-      return fn(e, n, ...)
+      return fn(e, n or node_at_cursor(), ...)
     end
   end
 end
 
+---Injects:
+---- e: Explorer instance
+---- n: visual nodes or n or node at cursor
+---Does nothing when no explorer instance.
+---@param fn fun(e: Explorer, n?: Node|Node[], ...): any
+---@return fun(e: Explorer, n?: Node|Node[], ...): any
 local function ev(fn)
-  -- TODO following rebase
+  return function(n, ...)
+    local e = require("nvim-tree.core").get_explorer()
+    if e then
+      return fn(e, visual_nodes() or n or node_at_cursor(), ...)
+    end
+  end
 end
 
-local function _v(fn)
-  -- TODO following rebase
-end
-
----Return a function wrapper that calls fn.
----Passes arguments verbatim.
----Exists for formatting purposes only.
+---NOP function wrapper, exists for formatting purposes only.
 ---@param fn fun(...): any
 ---@return fun(...): any
 local function __(fn)
