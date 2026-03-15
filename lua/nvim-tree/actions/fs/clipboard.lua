@@ -208,13 +208,57 @@ function Clipboard:finish_paste(action)
   self.explorer:reload_explorer()
 end
 
----Resolve conflicting paste items with a single batch prompt.
+---Resolve conflicting paste items.
+---Single conflict: per-file prompt with full-path rename (pre-visual-mode behavior).
+---Multiple conflicts: batch prompt with suffix rename.
 ---@private
 ---@param conflict {node: Node, dest: string}[]
 ---@param destination string
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
 function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
+  if #conflict == 1 then
+    local source = conflict[1].node.absolute_path
+    local dest = conflict[1].dest
+
+    local function rename_prompt(default_dest)
+      vim.ui.input({ prompt = "Rename to ", default = default_dest, completion = "dir" }, function(new_dest)
+        utils.clear_prompt()
+        if not new_dest or new_dest == "" then
+          self:finish_paste(action)
+          return
+        end
+        if vim.loop.fs_stat(new_dest) then
+          self:resolve_conflicts({ { node = conflict[1].node, dest = new_dest } }, destination, action, action_fn)
+        else
+          do_paste_one(source, new_dest, action, action_fn)
+          self:finish_paste(action)
+        end
+      end)
+    end
+
+    if source == dest then
+      rename_prompt(dest)
+    else
+      local prompt_select = "Overwrite " .. dest .. " ?"
+      lib.prompt(prompt_select .. " R(ename)/y/n: ", prompt_select,
+        { "", "y", "n" }, { "Rename", "Yes", "No" },
+        "nvimtree_overwrite_rename",
+        function(item_short)
+          utils.clear_prompt()
+          if item_short == "y" then
+            do_paste_one(source, dest, action, action_fn)
+            self:finish_paste(action)
+          elseif item_short == "" or item_short == "r" then
+            rename_prompt(dest)
+          else
+            self:finish_paste(action)
+          end
+        end)
+    end
+    return
+  end
+
   local prompt_select = #conflict .. " file(s) already exist"
   local prompt_input = prompt_select .. ". R(ename suffix)/y/n: "
 
