@@ -6,8 +6,6 @@
 ### Features
 
 * **#2994:** add visual mode operations: copy, cut, delete, trash, toggle bookmark ([#3268](https://github.com/nvim-tree/nvim-tree.lua/issues/3268)) ([9197f3e](https://github.com/nvim-tree/nvim-tree.lua/commit/9197f3ee3f0c9a754aab5b16500db6d7da5f68fd))
-* **#2994:** add visual selection operations ([9197f3e](https://github.com/nvim-tree/nvim-tree.lua/commit/9197f3ee3f0c9a754aab5b16500db6d7da5f68fd))
-* add &lt;Del&gt; mapping ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
 * add default &lt;Del&gt; mapping for api.fs.remove ([#3238](https://github.com/nvim-tree/nvim-tree.lua/issues/3238)) ([ca8d82f](https://github.com/nvim-tree/nvim-tree.lua/commit/ca8d82fff26cb12ced239713e3222f4a9dcd0da0))
 
 
