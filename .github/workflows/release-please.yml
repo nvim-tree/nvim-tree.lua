@@ -22,7 +22,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN }}googleapis/release-please-action@github.com/.git"
+          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN }}@googleapis/release-please-action@github.com/.git"
           git tag -d       v${{ steps.release.outputs.major }}                                                                       || true
           git tag -d       v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}                                    || true
           git tag -d       v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }} || true
