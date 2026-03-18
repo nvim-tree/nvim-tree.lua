@@ -96,6 +96,6 @@ local api = {
   live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }
 
-require("nvim-tree.api.impl.pre").hydrate(api)
+require("nvim-tree.api.impl.post").hydrate_pre_setup(api)
 
 return api

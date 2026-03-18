@@ -1,7 +1,5 @@
----Hydrates all API functions with concrete implementations.
----Replace all "nvim-tree setup not called" error functions from pre.lua with their implementations.
----
----Called after nvim-tree setup
+---Hydrates API meta functions with their implementations.
+---For performance reasons, all implementation requires must be done at API call time, not when this module is required.
 
 local M = {}
 
@@ -92,9 +90,51 @@ local function __(fn)
   end
 end
 
----Re-Hydrate api functions and classes post-setup
+--Hydrates meta api empty definitions pre-setup:
+-- - Pre-setup functions will be hydrated with their implementation.
+-- - Post-setup functions will notify error: "nvim-tree setup not called"
+-- - All classes will be hydrated with their implementations.
+--Called once when api is first required
+function M.hydrate_pre_setup(api)
+
+  ---Walk the api, hydrating all functions with the error notification.
+  ---Do not hydrate classes: anything with a metatable.
+  ---@param t table
+  local function hydrate_error(t)
+    for k, v in pairs(t) do
+      if type(v) == "function" then
+        t[k] = function()
+          require("nvim-tree.notify").error("nvim-tree setup not called")
+        end
+      elseif type(v) == "table" and not getmetatable(v) then
+        hydrate_error(v)
+      end
+    end
+  end
+
+  hydrate_error(api)
+
+  api.appearance.hi_test    = __(function() require("nvim-tree.appearance.hi-test")() end)
+
+  api.commands.get          = __(function() return require("nvim-tree.commands").get() end)
+
+  api.config.default        = __(function() return require("nvim-tree.config").d_clone() end)
+
+  api.events.subscribe      = __(function(event_name, handler) require("nvim-tree.events").subscribe(event_name, handler) end)
+
+  api.map.keymap.default    = __(function() return require("nvim-tree.keymap").get_keymap_default() end)
+  api.map.on_attach.default = __(function(bufnr) require("nvim-tree.keymap").on_attach_default(bufnr) end)
+
+  api.Decorator             = require("nvim-tree.renderer.decorator")
+
+  -- Map any legacy functions to implementations above or to meta
+  require("nvim-tree.legacy").map_api(api)
+end
+
+---Re-hydrates all API functions with implementations, replacing any "nvim-tree setup not called" error functions.
+---Called explicitly after nvim-tree setup
 ---@param api table not properly typed to prevent LSP from referencing implementations
-function M.hydrate(api)
+function M.hydrate_post_setup(api)
   api.config.global                            = __(function() return require("nvim-tree.config").g_clone() end)
   api.config.user                              = __(function() return require("nvim-tree.config").u_clone() end)
 
@@ -203,7 +243,7 @@ function M.hydrate(api)
   api.tree.toggle_help                         = __(function() require("nvim-tree.help").toggle() end)
   api.tree.winid                               = __(function(opts) return require("nvim-tree.view").winid(opts) end)
 
-  -- (Re)hydrate any legacy by mapping to concrete set above
+  -- Map all legacy functions to implementations
   require("nvim-tree.legacy").map_api(api)
 end
 
