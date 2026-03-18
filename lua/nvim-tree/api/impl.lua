@@ -1,7 +1,23 @@
 ---Hydrates API meta functions with their implementations.
----For performance reasons, all implementation requires must be done at API call time, not when this module is required.
+---For startup performance reasons, all API implementation's requires must be
+---done at call time, not when this module is required.
 
 local M = {}
+
+---Walk the entire API, hydrating all functions with the error notification.
+---Do not hydrate classes i.e. anything with a metatable.
+---@param api table not properly typed to prevent LSP from referencing implementations
+local function hydrate_not_setup(api)
+  for k, v in pairs(api) do
+    if type(v) == "function" then
+      api[k] = function()
+        require("nvim-tree.notify").error("nvim-tree setup not called")
+      end
+    elseif type(v) == "table" and not getmetatable(v) then
+      hydrate_not_setup(v)
+    end
+  end
+end
 
 ---Returns the node under the cursor.
 ---@return Node?
@@ -90,29 +106,14 @@ local function __(fn)
   end
 end
 
---Hydrates meta api empty definitions pre-setup:
--- - Pre-setup functions will be hydrated with their implementation.
--- - Post-setup functions will notify error: "nvim-tree setup not called"
--- - All classes will be hydrated with their implementations.
---Called once when api is first required
+---Hydrates API meta functions pre-setup:
+--- Pre-setup functions will be hydrated with their implementation.
+--- Post-setup functions will notify error: "nvim-tree setup not called"
+--- All classes will be hydrated with their implementations.
+---Called once when api is first required
+---@param api table not properly typed to prevent LSP from referencing implementations
 function M.hydrate_pre_setup(api)
-
-  ---Walk the api, hydrating all functions with the error notification.
-  ---Do not hydrate classes: anything with a metatable.
-  ---@param t table
-  local function hydrate_error(t)
-    for k, v in pairs(t) do
-      if type(v) == "function" then
-        t[k] = function()
-          require("nvim-tree.notify").error("nvim-tree setup not called")
-        end
-      elseif type(v) == "table" and not getmetatable(v) then
-        hydrate_error(v)
-      end
-    end
-  end
-
-  hydrate_error(api)
+  hydrate_not_setup(api)
 
   api.appearance.hi_test    = __(function() require("nvim-tree.appearance.hi-test")() end)
 
