@@ -309,7 +309,7 @@ function M.setup(config_user)
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
 
-  require("nvim-tree.api.impl.post").hydrate_post_setup(api)
+  require("nvim-tree.api.impl").hydrate_post_setup(api)
 end
 
 vim.g.NvimTreeRequired = 1
