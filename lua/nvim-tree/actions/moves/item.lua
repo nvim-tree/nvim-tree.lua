@@ -215,32 +215,77 @@ end
 ---@field recurse boolean?
 
 ---@param opts NavigationItemOpts
----@return fun()
-function M.fn(opts)
-  return function()
-    local explorer = core.get_explorer()
-    if not explorer then
-      return
-    end
-
-    local recurse = false
-
-    -- recurse only valid for git and diag moves.
-    if (opts.what == "git" or opts.what == "diag") and opts.recurse ~= nil then
-      recurse = opts.recurse
-    end
-
-    if not recurse then
-      move(explorer, opts.where, opts.what, opts.skip_gitignored)
-      return
-    end
-
-    if opts.where == "next" then
-      move_next_recursive(explorer, opts.what, opts.skip_gitignored)
-    elseif opts.where == "prev" then
-      move_prev_recursive(explorer, opts.what, opts.skip_gitignored)
-    end
+local function item(opts)
+  local explorer = core.get_explorer()
+  if not explorer then
+    return
   end
+
+  local recurse = false
+
+  -- recurse only valid for git and diag moves.
+  if (opts.what == "git" or opts.what == "diag") and opts.recurse ~= nil then
+    recurse = opts.recurse
+  end
+
+  if not recurse then
+    move(explorer, opts.where, opts.what, opts.skip_gitignored)
+    return
+  end
+
+  if opts.where == "next" then
+    move_next_recursive(explorer, opts.what, opts.skip_gitignored)
+  elseif opts.where == "prev" then
+    move_prev_recursive(explorer, opts.what, opts.skip_gitignored)
+  end
+end
+
+function M.git_next()
+  item({ where = "next", what = "git" })
+end
+
+function M.git_next_skip_gitignored()
+  item({ where = "next", what = "git", skip_gitignored = true })
+end
+
+function M.git_next_recursive()
+  item({ where = "next", what = "git", recurse = true })
+end
+
+function M.git_prev()
+  item({ where = "prev", what = "git" })
+end
+
+function M.git_prev_skip_gitignored()
+  item({ where = "prev", what = "git", skip_gitignored = true })
+end
+
+function M.git_prev_recursive()
+  item({ where = "prev", what = "git", recurse = true })
+end
+
+function M.diagnostics_next()
+  item({ where = "next", what = "diag" })
+end
+
+function M.diagnostics_next_recursive()
+  item({ where = "next", what = "diag", recurse = true })
+end
+
+function M.diagnostics_prev()
+  item({ where = "prev", what = "diag" })
+end
+
+function M.diagnostics_prev_recursive()
+  item({ where = "prev", what = "diag", recurse = true })
+end
+
+function M.opened_next()
+  item({ where = "next", what = "opened" })
+end
+
+function M.opened_prev()
+  item({ where = "prev", what = "opened" })
 end
 
 return M
