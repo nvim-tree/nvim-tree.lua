@@ -192,7 +192,7 @@ function Marks:bulk_delete()
   end
 
   local function execute()
-    for _, node in ipairs(self:list()) do
+    for _, node in ipairs(utils.filter_descendant_nodes(self:list())) do
       remove_file.remove(node)
     end
     self:clear_reload()
@@ -221,7 +221,7 @@ function Marks:bulk_trash()
   end
 
   local function execute()
-    for _, node in ipairs(self:list()) do
+    for _, node in ipairs(utils.filter_descendant_nodes(self:list())) do
       trash.remove(node)
     end
     self:clear_reload()
@@ -274,7 +274,7 @@ function Marks:bulk_move()
       return
     end
 
-    for _, node in ipairs(self:list()) do
+    for _, node in ipairs(utils.filter_descendant_nodes(self:list())) do
       local head = vim.fn.fnamemodify(node.absolute_path, ":t")
       local to = utils.path_join({ location, head })
       rename_file.rename(node, to)
