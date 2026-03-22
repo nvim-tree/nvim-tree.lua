@@ -285,7 +285,6 @@ function M.setup(config_user)
   end
 
   require("nvim-tree.actions").setup(config.g)
-  require("nvim-tree.keymap").setup(config.g)
   require("nvim-tree.appearance").setup()
   require("nvim-tree.diagnostics").setup(config.g)
   require("nvim-tree.explorer"):setup(config.g)
