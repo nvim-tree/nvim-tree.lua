@@ -291,7 +291,6 @@ function M.setup(config_user)
   require("nvim-tree.git").setup(config.g)
   require("nvim-tree.git.utils").setup(config.g)
   require("nvim-tree.view").setup(config.g)
-  require("nvim-tree.lib").setup(config.g)
   require("nvim-tree.renderer.components").setup(config.g)
 
   setup_autocommands()
