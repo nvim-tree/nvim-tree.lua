@@ -41,7 +41,7 @@ end
 ---Severity is within diagnostics.severity.min, diagnostics.severity.max
 ---Alway in range when using vim.diagnostic.Opts:
 ---@see nvim_tree.config.diagnostics.diagnostic_opts
----@param severity lsp.DiagnosticSeverity
+---@param severity vim.diagnostic.Severity
 ---@return boolean
 local function is_severity_in_range(severity)
   if config.g.diagnostics.diagnostic_opts then
@@ -144,7 +144,7 @@ function M.update_lsp(ev)
 
   -- most severe (lowest) severity in user range
   for _, diagnostic in ipairs(diagnostics) do
-    if is_severity_in_range(diagnostics.severity) then
+    if is_severity_in_range(diagnostic.severity) then
       if not new_severity or diagnostic.severity < new_severity then
         new_severity = diagnostic.severity
       end
