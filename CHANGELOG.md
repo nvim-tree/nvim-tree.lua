@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.16.0...nvim-tree-v1.16.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* **#3293:** marks.bulk operations filter descendant nodes ([#3294](https://github.com/nvim-tree/nvim-tree.lua/issues/3294)) ([f37ebac](https://github.com/nvim-tree/nvim-tree.lua/commit/f37ebac81164e1445c499cdd6de86e6d8e5d57e4))
+
 ## [1.16.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.15.0...nvim-tree-v1.16.0) (2026-03-17)
 
 
