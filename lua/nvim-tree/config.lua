@@ -11,10 +11,10 @@ local M = {
   ---@type nvim_tree.config immutable default config
   d = {},
 
-  ---@type nvim_tree.config? global current config, nil until setup called
+  ---@type nvim_tree.config? global current config, nil until setup called, mutable
   g = nil,
 
-  ---@type nvim_tree.config? raw user config, nil when no user config passed to setup
+  ---@type nvim_tree.config? immutable raw user config, nil when no user config passed to setup
   u = nil,
 }
 
