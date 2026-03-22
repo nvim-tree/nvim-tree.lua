@@ -1915,9 +1915,14 @@ Config: bookmarks                                 *nvim-tree-config-bookmarks*
 Config: help                                           *nvim-tree-config-help*
 
 *nvim_tree.config.help*
+    {sort_by}                                  *nvim_tree.config.help.sort_by*
+
+    Sort help entries alphabetically by:
+    • `"key"`: map lhs
+    • `"desc"`: description
 
     Fields: ~
-      • {sort_by}?  (`"key"|"desc"`, default: `"key"`) Alphabetically.
+      • {sort_by}?  (`nvim_tree.config.help.sort_by`) (default: `"key"`)
 
 
 
