@@ -285,19 +285,11 @@ function M.setup(config_user)
   end
 
   require("nvim-tree.actions").setup(config.g)
-  require("nvim-tree.keymap").setup(config.g)
   require("nvim-tree.appearance").setup()
-  require("nvim-tree.diagnostics").setup(config.g)
   require("nvim-tree.explorer"):setup(config.g)
   require("nvim-tree.explorer.watch").setup(config.g)
-  require("nvim-tree.git").setup(config.g)
-  require("nvim-tree.git.utils").setup(config.g)
   require("nvim-tree.view").setup(config.g)
-  require("nvim-tree.lib").setup(config.g)
   require("nvim-tree.renderer.components").setup(config.g)
-  require("nvim-tree.buffers").setup(config.g)
-  require("nvim-tree.help").setup(config.g)
-  require("nvim-tree.watcher").setup(config.g)
 
   setup_autocommands()
 

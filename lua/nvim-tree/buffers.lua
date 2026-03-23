@@ -1,3 +1,5 @@
+local config = require("nvim-tree.config")
+
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -26,7 +28,7 @@ end
 ---@param node Node
 ---@return boolean
 function M.is_modified(node)
-  if not M.config.modified.enable then
+  if not config.g.modified.enable then
     return false
   end
 
@@ -36,11 +38,11 @@ function M.is_modified(node)
 
   local dir = node:as(DirectoryNode)
   if dir then
-    if not M.config.modified.show_on_dirs then
+    if not config.g.modified.show_on_dirs then
       return false
     end
 
-    if dir.open and not M.config.modified.show_on_open_dirs then
+    if dir.open and not config.g.modified.show_on_open_dirs then
       return false
     end
   end
@@ -53,13 +55,6 @@ end
 ---@return boolean
 function M.is_opened(node)
   return node and vim.fn.bufloaded(node.absolute_path) > 0
-end
-
----@param opts nvim_tree.config
-function M.setup(opts)
-  M.config = {
-    modified = opts.modified,
-  }
 end
 
 return M

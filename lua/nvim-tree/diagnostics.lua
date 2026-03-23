@@ -1,3 +1,4 @@
+local config = require("nvim-tree.config")
 local core = require("nvim-tree.core")
 local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
@@ -38,11 +39,16 @@ local function uniformize_path(path)
 end
 
 ---Severity is within diagnostics.severity.min, diagnostics.severity.max
----@param severity lsp.DiagnosticSeverity
----@param config table
+---Alway in range when using vim.diagnostic.Opts:
+---@see nvim_tree.config.diagnostics.diagnostic_opts
+---@param severity vim.diagnostic.Severity
 ---@return boolean
-local function is_severity_in_range(severity, config)
-  return config.max <= severity and severity <= config.min
+local function is_severity_in_range(severity)
+  if config.g.diagnostics.diagnostic_opts then
+    return true
+  else
+    return severity >= config.g.diagnostics.severity.max and severity <= config.g.diagnostics.severity.min
+  end
 end
 
 ---Handle any COC exceptions, preventing any propagation
@@ -86,7 +92,7 @@ local function from_coc()
     local bufname = uniformize_path(diagnostic.file)
     local coc_severity = COC_SEVERITY_LEVELS[diagnostic.severity]
     local highest_severity = buffer_severity[bufname] or coc_severity
-    if is_severity_in_range(highest_severity, M.severity) then
+    if is_severity_in_range(highest_severity) then
       buffer_severity[bufname] = math.min(highest_severity, coc_severity)
     end
   end
@@ -122,7 +128,7 @@ end
 ---On disabling LSP, a reset event will be sent for all buffers.
 ---@param ev table standard event with data.diagnostics populated
 function M.update_lsp(ev)
-  if not M.enable or not ev or not ev.data or not ev.data.diagnostics then
+  if not config.g.diagnostics.enable or not ev or not ev.data or not ev.data.diagnostics then
     return
   end
 
@@ -138,7 +144,7 @@ function M.update_lsp(ev)
 
   -- most severe (lowest) severity in user range
   for _, diagnostic in ipairs(diagnostics) do
-    if diagnostic.severity >= M.severity.max and diagnostic.severity <= M.severity.min then
+    if is_severity_in_range(diagnostic.severity) then
       if not new_severity or diagnostic.severity < new_severity then
         new_severity = diagnostic.severity
       end
@@ -150,7 +156,7 @@ function M.update_lsp(ev)
     NODE_SEVERITIES[bufname] = new_severity
     NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
 
-    utils.debounce("DiagnosticChanged redraw", M.debounce_delay, function()
+    utils.debounce("DiagnosticChanged redraw", config.g.diagnostics.debounce_delay, function()
       local profile_redraw = log.profile_start("DiagnosticChanged redraw")
 
       local explorer = core.get_explorer()
@@ -168,10 +174,10 @@ end
 ---Fired on CocDiagnosticChanged events:
 ---debounced retrieval, cache update, version increment and draw
 function M.update_coc()
-  if not M.enable then
+  if not config.g.diagnostics.enable then
     return
   end
-  utils.debounce("CocDiagnosticChanged update", M.debounce_delay, function()
+  utils.debounce("CocDiagnosticChanged update", config.g.diagnostics.debounce_delay, function()
     local profile = log.profile_start("CocDiagnosticChanged update")
     NODE_SEVERITIES = from_coc()
     NODE_SEVERITIES_VERSION = NODE_SEVERITIES_VERSION + 1
@@ -198,12 +204,12 @@ end
 ---@param node Node
 ---@return DiagStatus|nil
 function M.get_diag_status(node)
-  if not M.enable then
+  if not config.g.diagnostics.enable then
     return nil
   end
 
   -- dir but we shouldn't show on dirs at all
-  if node:is(DirectoryNode) and not M.show_on_dirs then
+  if node:is(DirectoryNode) and not config.g.diagnostics.show_on_dirs then
     return nil
   end
 
@@ -222,26 +228,10 @@ function M.get_diag_status(node)
   end
 
   -- dir is closed or we should show on open_dirs
-  if not dir.open or M.show_on_open_dirs then
+  if not dir.open or config.g.diagnostics.show_on_open_dirs then
     return node.diag_status
   end
   return nil
-end
-
-function M.setup(opts)
-  M.enable = opts.diagnostics.enable
-  M.debounce_delay = opts.diagnostics.debounce_delay
-  M.severity = opts.diagnostics.diagnostic_opts and {
-    min = vim.diagnostic.severity.HINT,
-    max = vim.diagnostic.severity.ERROR
-  } or opts.diagnostics.severity
-
-  if M.enable then
-    log.line("diagnostics", "setup")
-  end
-
-  M.show_on_dirs = opts.diagnostics.show_on_dirs
-  M.show_on_open_dirs = opts.diagnostics.show_on_open_dirs
 end
 
 return M
