@@ -1,5 +1,18 @@
 local M = {}
 
+local config = require("nvim-tree.config")
+
+---Execute the user or default on attach
+---@see nvim_tree.config.on_attach
+---@param bufnr integer
+function M.on_attach(bufnr)
+  if type(config.g.on_attach) == "function" then
+    config.g.on_attach(bufnr)
+  else
+    M.on_attach_default(bufnr)
+  end
+end
+
 --- Apply mappings to a scratch buffer and return buffer local mappings
 ---@param fn fun(bufnr: integer) on_attach or on_attach_default
 ---@return table as per vim.api.nvim_buf_get_keymap
@@ -104,14 +117,6 @@ function M.on_attach_default(bufnr)
   vim.keymap.set("n",          "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n",          "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
   -- END_ON_ATTACH_DEFAULT
-end
-
-function M.setup(opts)
-  if type(opts.on_attach) ~= "function" then
-    M.on_attach = M.on_attach_default
-  else
-    M.on_attach = opts.on_attach
-  end
 end
 
 return M

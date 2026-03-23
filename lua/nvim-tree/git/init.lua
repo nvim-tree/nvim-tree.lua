@@ -1,5 +1,6 @@
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
+local config = require("nvim-tree.config")
 local git_utils = require("nvim-tree.git.utils")
 
 local GitRunner = require("nvim-tree.git.runner")
@@ -88,7 +89,7 @@ end
 
 ---@return nvim_tree.git.Project[] maybe empty
 function M.reload_all_projects()
-  if not M.config.git.enable then
+  if not config.g.git.enable then
     return {}
   end
 
@@ -106,7 +107,7 @@ end
 function M.reload_project(toplevel, path, callback)
   local project = M._projects_by_toplevel[toplevel] --[[@as nvim_tree.git.Project]]
 
-  if not toplevel or not project or not M.config.git.enable then
+  if not toplevel or not project or not config.g.git.enable then
     if callback then
       callback()
     end
@@ -126,7 +127,7 @@ function M.reload_project(toplevel, path, callback)
     path           = path,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored   = true,
-    timeout        = M.config.git.timeout,
+    timeout        = config.g.git.timeout,
   }
 
   if callback then
@@ -161,7 +162,7 @@ function M.get_toplevel(path)
     return nil
   end
 
-  if not M.config.git.enable then
+  if not config.g.git.enable then
     return nil
   end
 
@@ -194,15 +195,15 @@ function M.get_toplevel(path)
   local toplevel_norm = vim.fn.fnamemodify(toplevel, ":p")
 
   -- ignore disabled paths
-  if type(M.config.git.disable_for_dirs) == "table" then
-    for _, disabled_for_dir in ipairs(M.config.git.disable_for_dirs) do
+  if type(config.g.git.disable_for_dirs) == "table" then
+    for _, disabled_for_dir in ipairs(config.g.git.disable_for_dirs --[[@as string[] ]]) do
       local disabled_norm = vim.fn.fnamemodify(disabled_for_dir, ":p")
       if toplevel_norm == disabled_norm then
         return nil
       end
     end
-  elseif type(M.config.git.disable_for_dirs) == "function" then
-    if M.config.git.disable_for_dirs(toplevel_norm) then
+  elseif type(config.g.git.disable_for_dirs) == "function" then
+    if config.g.git.disable_for_dirs(toplevel_norm) then
       return nil
     end
   end
@@ -220,7 +221,7 @@ function M.get_toplevel(path)
 end
 
 local function reload_tree_at(toplevel)
-  if not M.config.git.enable or not toplevel then
+  if not config.g.git.enable or not toplevel then
     return nil
   end
 
@@ -259,7 +260,7 @@ end
 ---@param path string absolute
 ---@return nvim_tree.git.Project maybe empty
 function M.load_project(path)
-  if not M.config.git.enable then
+  if not config.g.git.enable then
     return {}
   end
 
@@ -278,17 +279,17 @@ function M.load_project(path)
     toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
     list_ignored   = true,
-    timeout        = M.config.git.timeout,
+    timeout        = config.g.git.timeout,
   })
 
   local watcher = nil
-  if M.config.filesystem_watchers.enable then
+  if config.g.filesystem_watchers.enable then
     log.line("watcher", "git start")
 
     ---@param w Watcher
     local callback = function(w)
       log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
-      utils.debounce("git:watcher:" .. w.data.toplevel, M.config.filesystem_watchers.debounce_delay, function()
+      utils.debounce("git:watcher:" .. w.data.toplevel, config.g.filesystem_watchers.debounce_delay, function()
         if w.destroyed then
           return
         end
@@ -403,12 +404,7 @@ end
 function M.disable_git_integration()
   log.line("git", "disabling git integration")
   M.purge_state()
-  M.config.git.enable = false
-end
-
-function M.setup(opts)
-  M.config.git = opts.git
-  M.config.filesystem_watchers = opts.filesystem_watchers
+  config.g.git.enable = false
 end
 
 return M

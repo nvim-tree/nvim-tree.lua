@@ -1,6 +1,7 @@
 local view = require("nvim-tree.view")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
+local config = require("nvim-tree.config")
 
 ---@class LibOpenOpts
 ---@field path string|nil path
@@ -25,7 +26,7 @@ end
 ---@param cwd string
 local function handle_buf_cwd(cwd)
   local explorer = core.get_explorer()
-  if M.respect_buf_cwd and cwd ~= core.get_cwd() and explorer then
+  if config.g.respect_buf_cwd and cwd ~= core.get_cwd() and explorer then
     explorer:change_dir(cwd)
   end
 end
@@ -54,8 +55,8 @@ local function should_hijack_current_buf()
     ft = vim.api.nvim_buf_get_option(bufnr, "ft") ---@diagnostic disable-line: deprecated
   end
 
-  local should_hijack_unnamed = M.hijack_unnamed_buffer_when_opening and bufname == "" and not bufmodified and ft == ""
-  local should_hijack_dir = bufname ~= "" and vim.fn.isdirectory(bufname) == 1 and M.hijack_directories.enable
+  local should_hijack_unnamed = config.g.hijack_unnamed_buffer_when_opening and bufname == "" and not bufmodified and ft == ""
+  local should_hijack_dir = bufname ~= "" and vim.fn.isdirectory(bufname) == 1 and config.g.hijack_directories.enable
 
   return should_hijack_dir or should_hijack_unnamed
 end
@@ -76,7 +77,7 @@ function M.prompt(prompt_input, prompt_select, items_short, items_long, kind, ca
     return ""
   end
 
-  if M.select_prompts then
+  if config.g.select_prompts then
     vim.ui.select(items_short, { prompt = prompt_select, kind = kind, format_item = format_item }, function(item_short)
       callback(item_short)
     end)
@@ -130,14 +131,6 @@ function M.open(opts)
     open_view_and_draw()
   end
   view.restore_tab_state()
-end
-
-function M.setup(opts)
-  M.hijack_unnamed_buffer_when_opening = opts.hijack_unnamed_buffer_when_opening
-  M.hijack_directories = opts.hijack_directories
-  M.respect_buf_cwd = opts.respect_buf_cwd
-  M.select_prompts = opts.select_prompts
-  M.group_empty = opts.renderer.group_empty
 end
 
 return M

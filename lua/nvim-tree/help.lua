@@ -1,5 +1,6 @@
 local keymap = require("nvim-tree.keymap")
-local api = {} -- circular dependency
+local api = require("nvim-tree.api")
+local config = require("nvim-tree.config")
 
 local PAT_MOUSE = "^<.*Mouse"
 local PAT_CTRL = "^<C%-"
@@ -14,8 +15,6 @@ local WIN_HL = table.concat({
 local namespace_help_id = vim.api.nvim_create_namespace("NvimTreeHelp")
 
 local M = {
-  config = {},
-
   -- one and only buf/win
   bufnr = nil,
   winnr = nil,
@@ -90,7 +89,7 @@ end
 local function compute(map)
   local head_lhs = "nvim-tree mappings"
   local head_rhs1 = "exit: q"
-  local head_rhs2 = string.format("sort by %s: s", M.config.sort_by == "key" and "description" or "keymap")
+  local head_rhs2 = string.format("sort by %s: s", config.g.help.sort_by == "key" and "description" or "keymap")
 
   -- merge modes for duplicate lhs+desc entries e.g. "n" + "x" -> "nx"
   local merged = {}
@@ -111,7 +110,7 @@ local function compute(map)
   -- sorter function for mappings
   local sort_fn
 
-  if M.config.sort_by == "desc" then
+  if config.g.help.sort_by == "desc" then
     sort_fn = function(a, b)
       return a.desc:lower() < b.desc:lower()
     end
@@ -234,10 +233,10 @@ local function open()
 
   -- style it a bit like the tree
   vim.wo[M.winnr].winhl = WIN_HL
-  vim.wo[M.winnr].cursorline = M.config.cursorline
+  vim.wo[M.winnr].cursorline = config.g.view.cursorline
 
   local function toggle_sort()
-    M.config.sort_by = (M.config.sort_by == "desc") and "key" or "desc"
+    config.g.help.sort_by = (config.g.help.sort_by == "desc") and "key" or "desc"
     open()
   end
 
@@ -279,13 +278,6 @@ function M.toggle()
   else
     open()
   end
-end
-
-function M.setup(opts)
-  M.config.cursorline = opts.view.cursorline
-  M.config.sort_by = opts.help.sort_by
-
-  api = require("nvim-tree.api")
 end
 
 return M

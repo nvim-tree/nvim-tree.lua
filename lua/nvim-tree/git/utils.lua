@@ -1,9 +1,24 @@
 local log = require("nvim-tree.log")
 local utils = require("nvim-tree.utils")
+local config = require("nvim-tree.config")
 
-local M = {
-  use_cygpath = false,
-}
+local M = {}
+
+---@type boolean?
+local use_cygpath_cached = nil
+
+---true when cygwin enabled and present
+---@return boolean
+local function use_cygpath()
+  if use_cygpath_cached == nil then
+    if config.g.git.cygwin_support then
+      use_cygpath_cached = vim.fn.executable("cygpath") == 1
+    else
+      use_cygpath_cached = false
+    end
+  end
+  return use_cygpath_cached
+end
 
 --- Execute system command
 ---@param cmd string[]
@@ -11,7 +26,7 @@ local M = {
 ---@return integer exit code
 local function system(cmd)
   if vim.fn.has("nvim-0.10") == 1 then
-    local obj = vim.system(cmd):wait(M.opts.git.timeout)
+    local obj = vim.system(cmd):wait(config.g.git.timeout)
     return obj.stdout or "", obj.code
   else
     return vim.fn.system(cmd), vim.v.shell_error
@@ -50,7 +65,7 @@ function M.get_toplevel(cwd)
   if vim.fn.has("win32") == 1 then
     -- msys2 git support
     -- cygpath calls must in array format to avoid shell compatibility issues
-    if M.use_cygpath then
+    if use_cygpath() then
       toplevel = vim.fn.system({ "cygpath", "-w", toplevel })
       if vim.v.shell_error ~= 0 then
         return nil, nil
@@ -193,13 +208,6 @@ function M.git_status_dir(parent_ignored, project, path, path_fallback)
   end
 
   return ns
-end
-
-function M.setup(opts)
-  if opts.git.cygwin_support then
-    M.use_cygpath = vim.fn.executable("cygpath") == 1
-  end
-  M.opts = opts
 end
 
 return M
