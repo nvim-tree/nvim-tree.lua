@@ -844,6 +844,9 @@ Windows WSL and PowerShell
 - Executable file detection is disabled as this is non-performant and can
   freeze Nvim
 - Some filesystem watcher error related to permissions will not be reported
+- Filesystem watchers can experience severe performance issues. It is strongly
+  recommended to tightly control watcher usage via
+  |nvim_tree.config.filesystem_watchers| {whitelist_dirs}
 
 Powershell
 - Observed Nvim hanging after a runaway (infinite) number of events on a
@@ -1693,11 +1696,17 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
     directory changes, resulting in better performance.
 
     Watchers may be disabled for absolute directory paths via {ignore_dirs}.
+    This may be useful when a path is not in `.gitignore` or git integration
+    is disabled.
     • A list of |regular-expression| to match a path, backslash escaped e.g.
       `"my-proj/\\.build$"` OR
     • A function that is passed an absolute path and returns `true` to disable
-      This may be useful when a path is not in `.gitignore` or git integration
-      is disabled.
+
+    Watchers may be enabled only for specific directories via
+    {whitelist_dirs}. When it is empty (default), watchers are enabled for all
+    directories. Uses same semantics as {ignore_dirs} except that the function
+    returns `true` to enable watchers for that path. This is strongly
+    recommended for windows: |nvim-tree-os-specific|.
 
     After {max_events} consecutive filesystem events on a single directory
     with an interval < {debounce_delay}:
@@ -1711,6 +1720,9 @@ Config: filesystem_watchers             *nvim-tree-config-filesystem-watchers*
                            between filesystem change and tree update.
       • {ignore_dirs}?     (`string[]|(fun(path: string): boolean)`, default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", "/.zig-cache"}`)
                            Disable for specific directories.
+      • {whitelist_dirs}?  (`string[]|(fun(path: string): boolean)`, default:
+                           `{}`) Optionally enable only for specific
+                           directories, obeying {ignore_dirs}
       • {max_events}?      (`integer`, default: `0` or `1000` on windows)
                            Disable for a single directory after {max_events}
                            consecutive events with an interval <
@@ -2199,6 +2211,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
           "/target",
           "/.zig-cache",
         },
+        whitelist_dirs = {},
       },
       actions = {
         use_system_clipboard = true,
