@@ -8,7 +8,6 @@ M.buffer = require("nvim-tree.actions.node.buffer")
 
 function M.setup(opts)
   require("nvim-tree.actions.node.system-open").setup(opts)
-  require("nvim-tree.actions.node.open-file").setup(opts)
 end
 
 return M

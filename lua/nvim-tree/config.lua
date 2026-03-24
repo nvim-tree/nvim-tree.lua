@@ -488,6 +488,16 @@ local function validate_config(u)
   end
 end
 
+---Normalise the (user) config
+---@param u nvim_tree.config
+local function process_config(u)
+
+  ---Always use upper case for window pickers
+  if u.actions.open_file.window_picker.chars then
+    u.actions.open_file.window_picker.chars = tostring(u.actions.open_file.window_picker.chars):upper()
+  end
+end
+
 ---Validate user config and migrate legacy.
 ---Merge with M.d and persist as M.g
 ---When no user config M.g is set to M.d and M.u is set to nil
@@ -508,6 +518,8 @@ function M.setup(u)
   legacy.migrate_config(u)
 
   validate_config(u)
+
+  process_config(u)
 
   -- set global to the validated and populated user config
   M.g = vim.tbl_deep_extend("force", M.d, u)
