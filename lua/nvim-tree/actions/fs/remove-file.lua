@@ -4,6 +4,7 @@ local events = require("nvim-tree.events")
 local view = require("nvim-tree.view")
 local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
+local config = require("nvim-tree.config")
 
 local DirectoryLinkNode = require("nvim-tree.node.directory-link")
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -51,7 +52,7 @@ local function clear_buffer(absolute_path)
       if not view.View.float.quit_on_focus_loss then
         vim.api.nvim_set_current_win(tree_winnr)
       end
-      if M.config.actions.remove_file.close_window then
+      if config.g.actions.remove_file.close_window then
         close_windows(buf.windows)
       end
       return
@@ -141,18 +142,18 @@ local function remove_one(node)
       notify.info(notify.render_path(node.absolute_path) .. " was properly removed.")
     end
     local explorer = core.get_explorer()
-    if not M.config.filesystem_watchers.enable and explorer then
+    if not config.g.filesystem_watchers.enable and explorer then
       explorer:reload_explorer()
     end
   end
 
-  if M.config.ui.confirm.remove then
+  if config.g.ui.confirm.remove then
     local prompt_select = "Remove " .. node.name .. "?"
-    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, config.g.ui.confirm.default_yes)
 
     lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_remove", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
+      if item_short == "y" or item_short == (config.g.ui.confirm.default_yes and "") then
         do_remove()
       end
     end)
@@ -181,18 +182,18 @@ local function remove_many(nodes)
       notify.info(string.format("%d nodes properly removed.", removed))
     end
     local explorer = core.get_explorer()
-    if not M.config.filesystem_watchers.enable and explorer then
+    if not config.g.filesystem_watchers.enable and explorer then
       explorer:reload_explorer()
     end
   end
 
-  if M.config.ui.confirm.remove then
+  if config.g.ui.confirm.remove then
     local prompt_select = string.format("Remove %d selected?", #nodes)
-    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, config.g.ui.confirm.default_yes)
 
     lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_remove", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
+      if item_short == "y" or item_short == (config.g.ui.confirm.default_yes and "") then
         execute()
       end
     end)
@@ -208,12 +209,6 @@ function M.fn(node_or_nodes)
   else
     remove_many(node_or_nodes)
   end
-end
-
-function M.setup(opts)
-  M.config.ui = opts.ui
-  M.config.actions = opts.actions
-  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M
