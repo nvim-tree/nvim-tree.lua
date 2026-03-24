@@ -2,7 +2,8 @@ local api = require("nvim-tree.api")
 local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
-local actions = require("nvim-tree.actions")
+local find_file = require("nvim-tree.actions.tree.find-file")
+local change_dir = require("nvim-tree.actions.tree.change-dir")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
@@ -169,7 +170,7 @@ local function setup_autocommands()
   if config.g.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
-        actions.tree.change_dir.fn(vim.loop.cwd())
+        change_dir.fn(vim.loop.cwd())
       end,
     })
   end
@@ -181,7 +182,7 @@ local function setup_autocommands()
           return
         end
         utils.debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
-          actions.tree.find_file.fn()
+          find_file.fn()
         end)
       end,
     })
