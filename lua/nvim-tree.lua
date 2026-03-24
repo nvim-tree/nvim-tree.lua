@@ -284,7 +284,6 @@ function M.setup(config_user)
     log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.actions").setup(config.g)
   require("nvim-tree.appearance").setup()
   require("nvim-tree.explorer"):setup(config.g)
   require("nvim-tree.explorer.watch").setup(config.g)
