@@ -1,4 +1,5 @@
 local core = require("nvim-tree.core")
+local config = require("nvim-tree.config")
 local find_file = require("nvim-tree.actions.tree.find-file")
 
 local M = {}
@@ -10,14 +11,9 @@ function M.fn(name)
     explorer:change_dir(name)
   end
 
-  if M.config.update_focused_file.update_root.enable then
+  if config.g.update_focused_file.update_root.enable then
     find_file.fn()
   end
-end
-
----@param config nvim_tree.config
-function M.setup(config)
-  M.config = config
 end
 
 return M
