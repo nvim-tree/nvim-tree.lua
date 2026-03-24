@@ -323,7 +323,7 @@ local function open_in_new_window(filename, mode)
   end, vim.api.nvim_list_wins())
 
   local create_new_window = #win_ids == 1 -- This implies that the nvim-tree window is the only one
-  local new_window_side = (view.View.side == "right") and "aboveleft" or "belowright"
+  local new_window_side = (config.g.view.side == "right") and "aboveleft" or "belowright"
 
   -- Target is invalid: create new window
   if not vim.tbl_contains(win_ids, target_winid) then
@@ -355,7 +355,7 @@ local function open_in_new_window(filename, mode)
     end
   end
 
-  if (mode == "preview" or mode == "preview_no_picker") and view.View.float.enable then
+  if (mode == "preview" or mode == "preview_no_picker") and config.g.view.float.enable then
     -- ignore "WinLeave" autocmd on preview
     -- because the registered "WinLeave"
     -- will kill the floating window immediately
