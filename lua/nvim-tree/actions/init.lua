@@ -1,7 +1,6 @@
 local M = {}
 
 M.finders = require("nvim-tree.actions.finders")
-M.fs = require("nvim-tree.actions.fs")
 M.moves = require("nvim-tree.actions.moves")
 M.node = require("nvim-tree.actions.node")
 M.tree = require("nvim-tree.actions.tree")
