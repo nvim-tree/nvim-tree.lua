@@ -8,7 +8,6 @@ M.toggle = require("nvim-tree.actions.tree.toggle")
 M.resize = require("nvim-tree.actions.tree.resize")
 
 function M.setup(opts)
-  M.open.setup(opts)
   M.toggle.setup(opts)
   M.resize.setup(opts)
 end
