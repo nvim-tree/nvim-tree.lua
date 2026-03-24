@@ -6,7 +6,6 @@ M.node = require("nvim-tree.actions.node")
 M.tree = require("nvim-tree.actions.tree")
 
 function M.setup(opts)
-  M.node.setup(opts)
   M.tree.setup(opts)
 end
 

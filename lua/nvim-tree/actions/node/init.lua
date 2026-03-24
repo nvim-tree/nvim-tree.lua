@@ -6,8 +6,4 @@ M.run_command = require("nvim-tree.actions.node.run-command")
 M.system_open = require("nvim-tree.actions.node.system-open")
 M.buffer = require("nvim-tree.actions.node.buffer")
 
-function M.setup(opts)
-  require("nvim-tree.actions.node.system-open").setup(opts)
-end
-
 return M

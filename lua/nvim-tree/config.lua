@@ -304,14 +304,6 @@ M.d = { -- config-default-start
   },
 } -- config-default-end
 
--- Immediately apply OS specific localisations to defaults
-if utils.is_macos or utils.is_windows then
-  M.d.trash.cmd = "trash"
-end
-if utils.is_windows then
-  M.d.filesystem_watchers.max_events = 1000
-end
-
 local FIELD_SKIP_VALIDATE = {
   open_win_config = true,
 }
@@ -488,11 +480,24 @@ local function validate_config(u)
   end
 end
 
+---Localise the (default) config with OS specifics
+---@param d nvim_tree.config
+local function localise_config(d)
+  -- Trash
+  if utils.is_macos or utils.is_windows then
+    d.trash.cmd = "trash"
+  end
+
+  -- Watchers
+  if utils.is_windows then
+    d.filesystem_watchers.max_events = 1000
+  end
+end
+
 ---Normalise the (user) config
 ---@param u nvim_tree.config
 local function process_config(u)
-
-  ---Always use upper case for window pickers
+  -- Open
   if u.actions.open_file.window_picker.chars then
     u.actions.open_file.window_picker.chars = tostring(u.actions.open_file.window_picker.chars):upper()
   end
@@ -542,5 +547,8 @@ end
 function M.g_clone()
   return vim.deepcopy(M.g)
 end
+
+---Immediately localise the defaults once and once only
+localise_config(M.d)
 
 return M
