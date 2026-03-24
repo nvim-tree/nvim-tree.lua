@@ -2,6 +2,7 @@ local core = require("nvim-tree.core")
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
+local config = require("nvim-tree.config")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -163,7 +164,7 @@ local function prompt_to_rename(node, modifier)
     local full_new_path = prepend .. new_file_path .. append
 
     M.rename(node, full_new_path)
-    if not M.config.filesystem_watchers.enable then
+    if not config.g.filesystem_watchers.enable then
       explorer:reload_explorer()
     end
 
@@ -192,7 +193,7 @@ function M.rename_full(node)
 end
 
 function M.setup(opts)
-  M.config.filesystem_watchers = opts.filesystem_watchers
+  config.g.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M
