@@ -4,11 +4,11 @@
 --Short names like g are used rather than getters to keep code brief
 local M = {
   ---Immutable default config
-  ---@type nvim_tree.config 
+  ---@type nvim_tree.config
   d = {},
 
   ---Global current config, nil until setup called, mutable
-  ---@type nvim_tree.config? 
+  ---@type nvim_tree.config?
   g = nil,
 
   ---Immutable raw user config, nil when no user config passed to setup
