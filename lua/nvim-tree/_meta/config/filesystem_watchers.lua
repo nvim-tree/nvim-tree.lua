@@ -7,19 +7,22 @@ error("Cannot require a meta file")
 ---
 ---With this feature, the tree will be partially updated on specific directory changes, resulting in better performance.
 ---
----Watchers may be disabled for absolute directory paths via {ignore_dirs}.
----This may be useful when a path is not in `.gitignore` or git integration is disabled.
---- - A list of [regular-expression] to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
---- - A function that is passed an absolute path and returns `true` to disable
+---Blacklist watching absolute directory paths via {ignore_dirs} and optionally whitelist via {whitelist_dirs}:
+---- A table of |regular-expression| that will be passed to `vim.fn.match`
+---   - Backslashes must be escaped e.g. `"my-proj/\\.build$"`
+---   - Literal backslashes must be double escaped to avoid |/magic| e.g. `"C:\\\\src\\\\my-proj"`
+---- OR a function that is passed an absolute path and returns:
+---   - {ignore_dirs}: `true` to disable
+---   - {whitelist_dirs}: `true` to enable
 ---
----Watchers may be enabled only for specific directories via {whitelist_dirs}. When it is empty (default), watchers are enabled for all directories.
----Uses same semantics as {ignore_dirs} except that the function returns `true` to enable watchers for that path.
----This is strongly recommended for windows: [nvim-tree-os-specific].
+---{whitelist_dirs} is STRONGLY recommended for windows: [nvim-tree-os-specific].
 ---
 ---After {max_events} consecutive filesystem events on a single directory with an interval < {debounce_delay}:
 ---- The filesystem watcher will be disabled for that directory.
 ---- A warning notification will be shown.
 ---- Consider adding this directory to {ignore_dirs}
+---
+---By default, {max_events} is only enabled for windows.
 ---
 ---@class nvim_tree.config.filesystem_watchers
 ---
@@ -34,7 +37,7 @@ error("Cannot require a meta file")
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", "/.zig-cache"}`)
 ---@field ignore_dirs? string[]|(fun(path: string): boolean)
 ---
----Optionally enable only for specific directories, obeying {ignore_dirs}
+---Optionally enable only for specific directories.
 ---(default: `{}`)
 ---@field whitelist_dirs? string[]|(fun(path: string): boolean)
 ---
