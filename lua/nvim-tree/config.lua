@@ -218,6 +218,7 @@ M.d = { -- config-default-start
       "/target",
       "/.zig-cache",
     },
+    whitelist_dirs = {},
   },
   actions = {
     use_system_clipboard = true,
@@ -348,6 +349,7 @@ local ACCEPTED_TYPES = {
   },
   filesystem_watchers = {
     ignore_dirs = { "function" },
+    whitelist_dirs = { "function" },
   },
   actions = {
     open_file = {

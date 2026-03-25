@@ -7,15 +7,22 @@ error("Cannot require a meta file")
 ---
 ---With this feature, the tree will be partially updated on specific directory changes, resulting in better performance.
 ---
----Watchers may be disabled for absolute directory paths via {ignore_dirs}.
---- - A list of [regular-expression] to match a path, backslash escaped e.g. `"my-proj/\\.build$"` OR
---- - A function that is passed an absolute path and returns `true` to disable
----This may be useful when a path is not in `.gitignore` or git integration is disabled.
+---Blacklist watching absolute directory paths via {ignore_dirs} and optionally whitelist via {whitelist_dirs}:
+---- A table of |regular-expression| that will be passed to `vim.fn.match`
+---   - Backslashes must be escaped e.g. `"my-proj/\\.build$"`
+---   - Literal backslashes must be double escaped to avoid |/magic| e.g. `"C:\\\\src\\\\my-proj"`
+---- OR a `fun(path: string): boolean` that is passed an absolute path:
+---   - {ignore_dirs}: return `true` to disable
+---   - {whitelist_dirs}: return `true` to enable
+---
+---{whitelist_dirs} is STRONGLY recommended for windows: [nvim-tree-os-specific].
 ---
 ---After {max_events} consecutive filesystem events on a single directory with an interval < {debounce_delay}:
 ---- The filesystem watcher will be disabled for that directory.
 ---- A warning notification will be shown.
 ---- Consider adding this directory to {ignore_dirs}
+---
+---By default, {max_events} is only enabled for windows.
 ---
 ---@class nvim_tree.config.filesystem_watchers
 ---
@@ -29,6 +36,10 @@ error("Cannot require a meta file")
 ---Disable for specific directories.
 ---(default: `{ "/.ccls-cache", "/build", "/node_modules", "/target", "/.zig-cache"}`)
 ---@field ignore_dirs? string[]|(fun(path: string): boolean)
+---
+---Optionally enable only for specific directories.
+---(default: `{}`)
+---@field whitelist_dirs? string[]|(fun(path: string): boolean)
 ---
 ---Disable for a single directory after {max_events} consecutive events with an interval < {debounce_delay}.
 ---Set to 0 to allow unlimited consecutive events.

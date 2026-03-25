@@ -33,6 +33,9 @@ local IGNORED_PATHS = {
   "/dev",
 }
 
+---Return true when a path is:
+---- Blacklisted via {ignore_dirs}
+---- Not whitelisted via {whitelist_dirs}, when it is not an empty table.
 ---@param path string
 ---@return boolean
 local function is_folder_ignored(path)
@@ -42,18 +45,41 @@ local function is_folder_ignored(path)
     end
   end
 
-  if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
-    for _, ignore_dir in ipairs(M.config.filesystem_watchers.ignore_dirs) do
+  ---Return true when p matches an entry in dirs, escaping for windows
+  ---@param p string absolute path
+  ---@param dirs string[] absolute or relative
+  ---@return boolean
+  local function matches_dirs(p, dirs)
+    for _, dir in ipairs(dirs) do
       if utils.is_windows then
-        ignore_dir = ignore_dir:gsub("/", "\\\\") or ignore_dir
+        dir = dir:gsub("/", "\\\\") or dir
       end
 
-      if vim.fn.match(path, ignore_dir) ~= -1 then
+      if vim.fn.match(p, dir) ~= -1 then
         return true
       end
     end
+    return false
+  end
+
+  if type(M.config.filesystem_watchers.ignore_dirs) == "table" then
+    if matches_dirs(path, M.config.filesystem_watchers.ignore_dirs) then
+      return true
+    end
   elseif type(M.config.filesystem_watchers.ignore_dirs) == "function" then
-    return M.config.filesystem_watchers.ignore_dirs(path)
+    if M.config.filesystem_watchers.ignore_dirs(path) then
+      return true
+    end
+  end
+
+  if type(M.config.filesystem_watchers.whitelist_dirs) == "table" and #M.config.filesystem_watchers.whitelist_dirs > 0 then
+    if not matches_dirs(path, M.config.filesystem_watchers.whitelist_dirs) then
+      return true
+    end
+  elseif type(M.config.filesystem_watchers.whitelist_dirs) == "function" then
+    if not M.config.filesystem_watchers.whitelist_dirs(path) then
+      return true
+    end
   end
 
   return false
