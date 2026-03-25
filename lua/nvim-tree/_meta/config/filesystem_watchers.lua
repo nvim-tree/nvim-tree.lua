@@ -11,9 +11,9 @@ error("Cannot require a meta file")
 ---- A table of |regular-expression| that will be passed to `vim.fn.match`
 ---   - Backslashes must be escaped e.g. `"my-proj/\\.build$"`
 ---   - Literal backslashes must be double escaped to avoid |/magic| e.g. `"C:\\\\src\\\\my-proj"`
----- OR a function that is passed an absolute path and returns:
----   - {ignore_dirs}: `true` to disable
----   - {whitelist_dirs}: `true` to enable
+---- OR a `fun(path: string): boolean` that is passed an absolute path:
+---   - {ignore_dirs}: return `true` to disable
+---   - {whitelist_dirs}: return `true` to enable
 ---
 ---{whitelist_dirs} is STRONGLY recommended for windows: [nvim-tree-os-specific].
 ---
