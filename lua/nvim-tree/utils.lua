@@ -4,9 +4,6 @@ local M = {
   debouncers = {},
 }
 
--- false for WSL
-M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
-
 ---@param haystack string
 ---@param needle string
 ---@return boolean
