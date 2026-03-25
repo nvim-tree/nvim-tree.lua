@@ -34,7 +34,7 @@ local function err_fmt(from, to, reason)
 end
 
 local function rename_file_exists(node, to)
-  if not utils.is_macos then
+  if not config.os.macos then
     return utils.file_exists(to)
   end
 

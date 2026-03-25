@@ -2,6 +2,7 @@ local log = require("nvim-tree.log")
 local git = require("nvim-tree.git")
 local utils = require("nvim-tree.utils")
 local notify = require("nvim-tree.notify")
+local config = require("nvim-tree.config")
 local Watcher = require("nvim-tree.watcher").Watcher
 
 local M = {
@@ -51,7 +52,7 @@ local function is_folder_ignored(path)
   ---@return boolean
   local function matches_dirs(p, dirs)
     for _, dir in ipairs(dirs) do
-      if utils.is_windows then
+      if config.os.windows then
         dir = dir:gsub("/", "\\\\") or dir
       end
 

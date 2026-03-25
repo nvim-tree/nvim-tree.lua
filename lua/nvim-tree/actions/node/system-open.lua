@@ -1,5 +1,4 @@
 local notify = require("nvim-tree.notify")
-local utils = require("nvim-tree.utils")
 local config = require("nvim-tree.config")
 
 local M = {}
@@ -10,12 +9,12 @@ local function user(node)
   local args = config.g.system_open.args
 
   if #cmd == 0 then
-    if utils.is_windows then
+    if config.os.windows then
       cmd = "cmd"
       args = { "/c", "start", '""' }
-    elseif utils.is_macos then
+    elseif config.os.macos then
       cmd = "open"
-    elseif utils.is_unix then
+    elseif config.os.unix then
       cmd = "xdg-open"
     end
   end
