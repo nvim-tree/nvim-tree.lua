@@ -4,6 +4,7 @@ local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
 local find_file = require("nvim-tree.actions.tree.find-file")
 local change_dir = require("nvim-tree.actions.tree.change-dir")
+local full_name = require("nvim-tree.renderer.components.full-name")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
@@ -249,6 +250,9 @@ local function setup_autocommands()
       end
     end,
   })
+
+  -- renderer.full name
+  full_name.setup_autocommands()
 end
 
 function M.purge_all_state()
