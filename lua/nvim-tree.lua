@@ -277,7 +277,6 @@ function M.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.notify").setup(config.g)
   require("nvim-tree.log").setup(config.g)
 
   if log.enabled("config") then
