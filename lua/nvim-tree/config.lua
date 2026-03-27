@@ -511,21 +511,6 @@ local function process_config(u)
   if u.actions.open_file.window_picker.chars then
     u.actions.open_file.window_picker.chars = tostring(u.actions.open_file.window_picker.chars):upper()
   end
-
-  -- Padding and Indent Markers
-  if u.renderer.indent_width < 1 then
-    u.renderer.indent_width = 1
-  end
-  local function check_marker(symbol)
-    if #symbol == 0 then
-      return " "
-    end
-    -- return the first character from the UTF-8 encoded string; we may use utf8.codes from Lua 5.3 when available
-    return symbol:match("[%z\1-\127\194-\244][\128-\191]*")
-  end
-  for k, v in pairs(u.renderer.indent_markers.icons) do
-    u.renderer.indent_markers.icons[k] = check_marker(v)
-  end
 end
 
 ---Validate user config and migrate legacy.
