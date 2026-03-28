@@ -2,6 +2,7 @@ local events = require("nvim-tree.events")
 local utils = require("nvim-tree.utils")
 local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
+local config = require("nvim-tree.config")
 
 ---@class OpenInWinOpts
 ---@field hijack_current_buf boolean|nil default true
@@ -18,15 +19,13 @@ local DEFAULT_LINES_EXCLUDED = {
 local DEFAULT_PADDING = 1
 
 M.View = {
-  adaptive_size        = false,
-  centralize_selection = false,
-  tabpages             = {},
-  cursors              = {},
-  hide_root_folder     = false,
-  live_filter          = {
+  adaptive_size = false,
+  tabpages      = {},
+  cursors       = {},
+  live_filter   = {
     prev_focused_node = nil,
   },
-  winopts              = {
+  winopts       = {
     relativenumber = false,
     number         = false,
     list           = false,
@@ -178,17 +177,17 @@ local function set_window_options_and_buffer()
   end
 end
 
----@return table
+---@return vim.api.keyset.win_config
 local function open_win_config()
-  if type(M.View.float.open_win_config) == "function" then
-    return M.View.float.open_win_config()
+  if type(config.g.view.float.open_win_config) == "function" then
+    return config.g.view.float.open_win_config()
   else
-    return M.View.float.open_win_config
+    return config.g.view.float.open_win_config --[[ @as vim.api.keyset.win_config ]]
   end
 end
 
 local function open_window()
-  if M.View.float.enable then
+  if config.g.view.float.enable then
     vim.api.nvim_open_win(0, true, open_win_config())
   else
     vim.api.nvim_command("vsp")
@@ -275,7 +274,7 @@ end
 
 ---@param tabpage integer|nil
 function M.close(tabpage)
-  if M.View.tab.sync.close then
+  if config.g.tab.sync.close then
     M.close_all_tabs()
   elseif tabpage then
     close(tabpage)
@@ -348,7 +347,7 @@ end
 
 ---@param size string|number|nil
 function M.resize(size)
-  if M.View.float.enable and not M.View.adaptive_size then
+  if config.g.view.float.enable and not M.View.adaptive_size then
     -- if the floating windows's adaptive size is not desired, then the
     -- float size should be defined in view.float.open_win_config
     return
@@ -370,7 +369,6 @@ function M.resize(size)
 
   if size then
     M.View.width = size
-    M.View.height = size
   end
 
   if not M.is_visible() then
@@ -383,7 +381,7 @@ function M.resize(size)
 
   if new_size ~= vim.api.nvim_win_get_width(winnr) then
     vim.api.nvim_win_set_width(winnr, new_size)
-    if not M.View.preserve_window_proportions then
+    if not config.g.view.preserve_window_proportions then
       vim.cmd(":wincmd =")
     end
   end
@@ -392,7 +390,7 @@ function M.resize(size)
 end
 
 function M.reposition_window()
-  local move_to = move_tbl[M.View.side]
+  local move_to = move_tbl[config.g.view.side]
   vim.api.nvim_command("wincmd " .. move_to)
   M.resize()
 end
@@ -575,7 +573,7 @@ end
 ---@param cwd string|nil
 ---@return boolean
 function M.is_root_folder_visible(cwd)
-  return cwd ~= "/" and not M.View.hide_root_folder
+  return cwd ~= "/" and config.g.renderer.root_folder_label ~= false
 end
 
 -- used on ColorScheme event
@@ -603,9 +601,9 @@ function M.configure_width(width)
     M.View.root_excluded = vim.tbl_contains(lines_excluded, "root")
     M.View.padding = width.padding or DEFAULT_PADDING
   elseif width == nil then
-    if M.config.width ~= nil then
+    if config.g.view.width ~= nil then
       -- if we had input config - fallback to it
-      M.configure_width(M.config.width)
+      M.configure_width(config.g.view.width)
     else
       -- otherwise - restore initial width
       M.View.width = M.View.initial_width
@@ -616,23 +614,15 @@ function M.configure_width(width)
   end
 end
 
+---@param opts nvim_tree.config
 function M.setup(opts)
   local options = opts.view or {}
-  M.View.centralize_selection = options.centralize_selection
-  M.View.side = (options.side == "right") and "right" or "left"
-  M.View.height = options.height
-  M.View.hide_root_folder = opts.renderer.root_folder_label == false
-  M.View.tab = opts.tab
-  M.View.preserve_window_proportions = options.preserve_window_proportions
   M.View.winopts.cursorline = options.cursorline
   M.View.winopts.cursorlineopt = options.cursorlineopt
   M.View.winopts.number = options.number
   M.View.winopts.relativenumber = options.relativenumber
   M.View.winopts.signcolumn = options.signcolumn
-  M.View.float = options.float
-  M.on_attach = opts.on_attach
 
-  M.config = options
   M.configure_width(options.width)
 
   M.View.initial_width = get_width()

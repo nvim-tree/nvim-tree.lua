@@ -1,5 +1,6 @@
 local appearance = require("nvim-tree.appearance")
 local buffers = require("nvim-tree.buffers")
+local config = require("nvim-tree.config")
 local core = require("nvim-tree.core")
 local git = require("nvim-tree.git")
 local log = require("nvim-tree.log")
@@ -24,8 +25,6 @@ local FileNode = require("nvim-tree.node.file")
 
 local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local find_file = require("nvim-tree.actions.finders.find-file")
-
-local config
 
 ---@class (exact) Explorer: RootNode
 ---@field uid_explorer number vim.loop.hrtime() at construction time
@@ -59,7 +58,7 @@ function Explorer:new(args)
   self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
   self.open         = true
-  self.opts         = config
+  self.opts         = config.g
 
 
   self.sorters     = Sorter({ explorer = self })
@@ -300,7 +299,7 @@ function Explorer:reload(node, project)
   )
 
   local single_child = node:single_child_directory()
-  if config.renderer.group_empty and node.parent and single_child then
+  if self.opts.renderer.group_empty and node.parent and single_child then
     node.group_next = single_child
     local ns = self:reload(single_child, project)
     node.nodes = ns or {}
@@ -448,7 +447,7 @@ function Explorer:explore(node, project, parent)
 
   local is_root = not node.parent
   local single_child = node:single_child_directory()
-  if config.renderer.group_empty and not is_root and single_child then
+  if self.opts.renderer.group_empty and not is_root and single_child then
     local child_cwd = single_child.link_to or single_child.absolute_path
     local child_project = git.load_project(child_cwd)
     node.group_next = single_child
@@ -755,14 +754,14 @@ end
 ---@return boolean
 function Explorer:prevent_cwd_change(foldername)
   local is_same_cwd = foldername == self.absolute_path
-  local is_restricted_above = config.actions.change_dir.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
+  local is_restricted_above = self.opts.actions.change_dir.restrict_above_cwd and foldername < vim.fn.getcwd(-1, -1)
   return is_same_cwd or is_restricted_above
 end
 
 ---@private
 ---@return boolean
 function Explorer:should_change_dir()
-  return config.actions.change_dir.enable and vim.tbl_isempty(vim.v.event)
+  return self.opts.actions.change_dir.enable and vim.tbl_isempty(vim.v.event)
 end
 
 ---@private
@@ -782,7 +781,7 @@ function Explorer:force_dirchange(foldername, should_open_view, should_init)
   local valid_dir = vim.fn.isdirectory(foldername) == 1 -- prevent problems on non existing dirs
   if valid_dir then
     if self:should_change_dir() then
-      self:cd(config.actions.change_dir.global, foldername)
+      self:cd(self.opts.actions.change_dir.global, foldername)
     end
 
     if should_init ~= false then
@@ -833,10 +832,6 @@ function Explorer:change_dir_to_node(node)
       self:change_dir(node:last_group_node().absolute_path)
     end
   end
-end
-
-function Explorer:setup(opts)
-  config = opts
 end
 
 return Explorer

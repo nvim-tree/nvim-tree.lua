@@ -3,6 +3,7 @@ local lib = require("nvim-tree.lib")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
+local config = require("nvim-tree.config")
 
 local DirectoryLinkNode = require("nvim-tree.node.directory-link")
 local DirectoryNode = require("nvim-tree.node.directory")
@@ -32,9 +33,9 @@ end
 
 ---@param node Node
 function M.remove(node)
-  local binary = M.config.trash.cmd:gsub(" .*$", "")
+  local binary = config.g.trash.cmd:gsub(" .*$", "")
   if vim.fn.executable(binary) == 0 then
-    notify.warn(string.format("trash.cmd '%s' is not an executable.", M.config.trash.cmd))
+    notify.warn(string.format("trash.cmd '%s' is not an executable.", config.g.trash.cmd))
     return
   end
 
@@ -45,8 +46,8 @@ function M.remove(node)
 
   -- trashes a path (file or folder)
   local function trash_path(on_exit)
-    local need_sync_wait = utils.is_windows
-    local job = vim.fn.jobstart(M.config.trash.cmd .. " " .. vim.fn.shellescape(node.absolute_path), {
+    local need_sync_wait = config.os.windows
+    local job = vim.fn.jobstart(config.g.trash.cmd .. " " .. vim.fn.shellescape(node.absolute_path), {
       detach = not need_sync_wait,
       on_exit = on_exit,
       on_stderr = on_stderr,
@@ -65,7 +66,7 @@ function M.remove(node)
         return
       end
       events._dispatch_folder_removed(node.absolute_path)
-      if not M.config.filesystem_watchers.enable and explorer then
+      if not config.g.filesystem_watchers.enable and explorer then
         explorer:reload_explorer()
       end
     end)
@@ -78,7 +79,7 @@ function M.remove(node)
       end
       events._dispatch_file_removed(node.absolute_path)
       clear_buffer(node.absolute_path)
-      if not M.config.filesystem_watchers.enable and explorer then
+      if not config.g.filesystem_watchers.enable and explorer then
         explorer:reload_explorer()
       end
     end)
@@ -96,13 +97,13 @@ local function trash_one(node)
     M.remove(node)
   end
 
-  if M.config.ui.confirm.trash then
+  if config.g.ui.confirm.trash then
     local prompt_select = "Trash " .. node.name .. "?"
-    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, config.g.ui.confirm.default_yes)
 
     lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_trash", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
+      if item_short == "y" or item_short == (config.g.ui.confirm.default_yes and "") then
         do_trash()
       end
     end)
@@ -128,13 +129,13 @@ local function trash_many(nodes)
     end
   end
 
-  if M.config.ui.confirm.trash then
+  if config.g.ui.confirm.trash then
     local prompt_select = string.format("Trash %d selected?", #nodes)
-    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, M.config.ui.confirm.default_yes)
+    local prompt_input, items_short, items_long = utils.confirm_prompt(prompt_select, config.g.ui.confirm.default_yes)
 
     lib.prompt(prompt_input, prompt_select, items_short, items_long, "nvimtree_trash", function(item_short)
       utils.clear_prompt()
-      if item_short == "y" or item_short == (M.config.ui.confirm.default_yes and "") then
+      if item_short == "y" or item_short == (config.g.ui.confirm.default_yes and "") then
         execute()
       end
     end)
@@ -150,12 +151,6 @@ function M.fn(node_or_nodes)
   else
     trash_many(node_or_nodes)
   end
-end
-
-function M.setup(opts)
-  M.config.ui = opts.ui
-  M.config.trash = opts.trash
-  M.config.filesystem_watchers = opts.filesystem_watchers
 end
 
 return M

@@ -89,7 +89,7 @@ function Event:start()
       end
 
       local message = string.format("File system watcher failed (%s) for path %s, halting watcher.", err, self.path)
-      if err == "EPERM" and (utils.is_windows or utils.is_wsl) then
+      if err == "EPERM" and (config.os.windows or config.os.wsl) then
         -- on directory removal windows will cascade the filesystem events out of order
         log.line("watcher", message)
         self:destroy()
@@ -258,7 +258,7 @@ end
 ---@param path string
 ---@return boolean
 function M.is_fs_event_capable(path)
-  if not utils.is_windows then
+  if not config.os.windows then
     return true
   end
 

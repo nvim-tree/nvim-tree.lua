@@ -1,9 +1,6 @@
-local M = {}
+local config = require("nvim-tree.config")
 
-local config = {
-  threshold = vim.log.levels.INFO,
-  absolute_path = true,
-}
+local M = {}
 
 local title_support
 ---@return boolean
@@ -27,8 +24,11 @@ local modes = {
 }
 
 do
+  ---@param level vim.log.levels
+  ---@param msg string
   local dispatch = function(level, msg)
-    if level < config.threshold or not msg then
+    local threshold = config.g and config.g.notify.threshold or config.d.notify.threshold
+    if level < threshold or not msg then
       return
     end
 
@@ -52,17 +52,11 @@ end
 ---@param path string
 ---@return string
 function M.render_path(path)
-  if config.absolute_path then
+  if config.g and config.g.notify.absolute_path then
     return path
   else
     return vim.fn.fnamemodify(path .. "/", ":h:t")
   end
-end
-
-function M.setup(opts)
-  opts = opts or {}
-  config.threshold = opts.notify.threshold or vim.log.levels.INFO
-  config.absolute_path = opts.notify.absolute_path
 end
 
 return M

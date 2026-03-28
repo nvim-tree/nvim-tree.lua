@@ -1,5 +1,6 @@
 local lib = require("nvim-tree.lib")
 local view = require("nvim-tree.view")
+local config = require("nvim-tree.config")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
 
 local M = {}
@@ -52,7 +53,7 @@ function M.fn(opts, no_focus, cwd, bang)
     })
 
     -- find file
-    if M.config.update_focused_file.enable or opts.find_file then
+    if config.g.update_focused_file.enable or opts.find_file then
       -- update root
       if opts.update_root then
         require("nvim-tree").change_root(previous_path, previous_buf)
@@ -67,10 +68,6 @@ function M.fn(opts, no_focus, cwd, bang)
       vim.cmd("noautocmd wincmd p")
     end
   end
-end
-
-function M.setup(opts)
-  M.config = opts or {}
 end
 
 return M

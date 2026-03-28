@@ -1,21 +1,31 @@
 --This will be required after api, before setup.
 --This file should have minimal requires that are cheap and have no dependencies or are already required.
 
-local notify = require("nvim-tree.notify")
-local legacy = require("nvim-tree.legacy")
-local utils = require("nvim-tree.utils")
-
--- short names like g are used rather than getters to keep code brief
-
+--Short names like g are used rather than getters to keep code brief
 local M = {
-  ---@type nvim_tree.config immutable default config
+  ---Immutable default config
+  ---@type nvim_tree.config
   d = {},
 
-  ---@type nvim_tree.config? global current config, nil until setup called, mutable
+  ---Global current config, nil until setup called, mutable
+  ---@type nvim_tree.config?
   g = nil,
 
-  ---@type nvim_tree.config? immutable raw user config, nil when no user config passed to setup
+  ---Immutable raw user config, nil when no user config passed to setup
+  ---@type nvim_tree.config?
   u = nil,
+
+  ---Immutable OS, detected once on first require
+  ---@type table<"unix"|"macos"|"wsl"|"windows", boolean>
+  os = nil
+}
+
+M.os = {
+  unix = vim.fn.has("unix") == 1,
+  macos = vim.fn.has("mac") == 1 or vim.fn.has("macunix") == 1,
+  wsl = vim.fn.has("wsl") == 1,
+  -- false for WSL
+  windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1,
 }
 
 M.d = { -- config-default-start
@@ -304,14 +314,6 @@ M.d = { -- config-default-start
   },
 } -- config-default-end
 
--- Immediately apply OS specific localisations to defaults
-if utils.is_macos or utils.is_windows then
-  M.d.trash.cmd = "trash"
-end
-if utils.is_windows then
-  M.d.filesystem_watchers.max_events = 1000
-end
-
 local FIELD_SKIP_VALIDATE = {
   open_win_config = true,
 }
@@ -484,7 +486,30 @@ local function validate_config(u)
   validate(u, M.d, ACCEPTED_STRINGS, ACCEPTED_TYPES, ACCEPTED_ENUMS, "")
 
   if msg then
-    notify.warn(msg .. "\n\nsee :help nvim-tree-config for available configuration options")
+    require("nvim-tree.notify").warn(msg .. "\n\nsee :help nvim-tree-config for available configuration options")
+  end
+end
+
+---Localise the (default) config with OS specifics
+---@param d nvim_tree.config
+local function localise_config(d)
+  -- Trash
+  if M.os.macos or M.os.windows then
+    d.trash.cmd = "trash"
+  end
+
+  -- Watchers
+  if M.os.windows then
+    d.filesystem_watchers.max_events = 1000
+  end
+end
+
+---Normalise the (user) config
+---@param u nvim_tree.config
+local function process_config(u)
+  -- Open
+  if u.actions.open_file.window_picker.chars then
+    u.actions.open_file.window_picker.chars = tostring(u.actions.open_file.window_picker.chars):upper()
   end
 end
 
@@ -495,7 +520,7 @@ end
 function M.setup(u)
   if not u or type(u) ~= "table" then
     if u then
-      notify.warn(string.format("invalid config type \"%s\" passed to setup, using defaults", type(u)))
+      require("nvim-tree.notify").warn(string.format("invalid config type \"%s\" passed to setup, using defaults", type(u)))
     end
     M.g = vim.deepcopy(M.d)
     M.u = nil
@@ -505,9 +530,11 @@ function M.setup(u)
   -- retain user for reference
   M.u = vim.deepcopy(u)
 
-  legacy.migrate_config(u)
+  require("nvim-tree.legacy").migrate_config(u)
 
   validate_config(u)
+
+  process_config(u)
 
   -- set global to the validated and populated user config
   M.g = vim.tbl_deep_extend("force", M.d, u)
@@ -530,5 +557,8 @@ end
 function M.g_clone()
   return vim.deepcopy(M.g)
 end
+
+---Immediately localise the defaults once and once only
+localise_config(M.d)
 
 return M

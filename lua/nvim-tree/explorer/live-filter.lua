@@ -1,5 +1,6 @@
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
+local config = require("nvim-tree.config")
 
 local Class = require("nvim-tree.classic")
 local Iterator = require("nvim-tree.iterators.node-iterator")
@@ -56,7 +57,7 @@ local overlay_bufnr = 0
 local overlay_winnr = 0
 
 local function remove_overlay(self)
-  if view.View.float.enable and view.View.float.quit_on_focus_loss then
+  if config.g.view.float.enable and config.g.view.float.quit_on_focus_loss then
     -- return to normal nvim-tree float behaviour when filter window is closed
     vim.api.nvim_create_autocmd("WinLeave", {
       pattern = "NvimTree_*",
@@ -166,7 +167,7 @@ local function calculate_overlay_win_width(self)
 end
 
 local function create_overlay(self)
-  if view.View.float.enable then
+  if config.g.view.float.enable then
     -- don't close nvim-tree float when focus is changed to filter window
     vim.api.nvim_clear_autocmds({
       event   = "WinLeave",

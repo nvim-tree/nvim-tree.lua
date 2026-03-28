@@ -1,12 +1,8 @@
+local config = require("nvim-tree.config")
+
 local M = {
   debouncers = {},
 }
-
-M.is_unix = vim.fn.has("unix") == 1
-M.is_macos = vim.fn.has("mac") == 1 or vim.fn.has("macunix") == 1
-M.is_wsl = vim.fn.has("wsl") == 1
--- false for WSL
-M.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
 
 ---@param haystack string
 ---@param needle string
@@ -78,7 +74,7 @@ function M.path_relative(path, relative_to)
   end
 
   local norm_path = path
-  if M.is_windows then
+  if config.os.windows then
     norm_path = win_norm_path(norm_path)
   end
 
@@ -187,13 +183,13 @@ function M.rename_loaded_buffers(old_path, new_path)
 end
 
 local is_windows_drive = function(path)
-  return (M.is_windows) and (path:match("^%a:\\$") ~= nil)
+  return (config.os.windows) and (path:match("^%a:\\$") ~= nil)
 end
 
 ---@param path string path to file or directory
 ---@return boolean
 function M.file_exists(path)
-  if not (M.is_windows or M.is_wsl) then
+  if not (config.os.windows or config.os.wsl) then
     local _, error = vim.loop.fs_stat(path)
     return error == nil
   end
@@ -236,7 +232,7 @@ end
 ---@param path string
 ---@return string
 function M.canonical_path(path)
-  if M.is_windows and path:match("^%a:") then
+  if config.os.windows and path:match("^%a:") then
     return path:sub(1, 1):upper() .. path:sub(2)
   end
   return path
@@ -257,7 +253,7 @@ function M.escape_special_chars(path)
   if path == nil then
     return path
   end
-  return M.is_windows and escape_special_char_for_windows(path) or path
+  return config.os.windows and escape_special_char_for_windows(path) or path
 end
 
 local function round(value)
@@ -447,7 +443,7 @@ end
 ---@param absolute_path string
 ---@return boolean
 function M.is_executable(absolute_path)
-  if M.is_windows or M.is_wsl then
+  if config.os.windows or config.os.wsl then
     --- executable detection on windows is buggy and not performant hence it is disabled
     return false
   else

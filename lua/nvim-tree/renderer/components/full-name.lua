@@ -1,3 +1,5 @@
+local config = require("nvim-tree.config")
+
 local M = {}
 
 local utils = require("nvim-tree.utils")
@@ -33,7 +35,7 @@ local function effective_win_width()
   return win_width - win_info[1].textoff
 end
 
-local function show(opts)
+local function show()
   local line_nr = vim.api.nvim_win_get_cursor(0)[1]
   if vim.wo.wrap then
     return
@@ -96,15 +98,14 @@ local function show(opts)
       end
     end
     vim.cmd([[ setlocal nowrap noswapfile nobuflisted buftype=nofile bufhidden=wipe ]])
-    if opts.view.cursorline then
+    if config.g.view.cursorline then
       vim.cmd([[ setlocal cursorline cursorlineopt=both ]])
     end
   end)
 end
 
-M.setup = function(opts)
-  M.config = opts.renderer
-  if not M.config.full_name then
+function M.setup_autocommands()
+  if not config.g.renderer.full_name then
     return
   end
 
@@ -124,7 +125,7 @@ M.setup = function(opts)
     pattern = { "NvimTree_*" },
     callback = function()
       if utils.is_nvim_tree_buf(0) then
-        show(opts)
+        show()
       end
     end,
   })

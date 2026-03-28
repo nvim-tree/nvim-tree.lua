@@ -1,18 +1,32 @@
 local notify = require("nvim-tree.notify")
-local utils = require("nvim-tree.utils")
+local config = require("nvim-tree.config")
 
 local M = {}
 
 ---@param node Node
 local function user(node)
-  if #M.config.system_open.cmd == 0 then
-    require("nvim-tree.utils").notify.warn("Cannot open file with system application. Unrecognized platform.")
+  local cmd = config.g.system_open.cmd
+  local args = config.g.system_open.args
+
+  if #cmd == 0 then
+    if config.os.windows then
+      cmd = "cmd"
+      args = { "/c", "start", '""' }
+    elseif config.os.macos then
+      cmd = "open"
+    elseif config.os.unix then
+      cmd = "xdg-open"
+    end
+  end
+
+  if #cmd == 0 then
+    notify.warn("Cannot open file with system application. Unrecognized platform.")
     return
   end
 
   local process = {
-    cmd = M.config.system_open.cmd,
-    args = M.config.system_open.args,
+    cmd = cmd,
+    args = args,
     errors = "\n",
     stderr = vim.loop.new_pipe(false),
   }
@@ -61,30 +75,11 @@ end
 
 ---@param node Node
 function M.fn(node)
-  M.open(node)
-end
-
--- TODO #2430 always use native once 0.10 is the minimum neovim version
-function M.setup(opts)
-  M.config = {}
-  M.config.system_open = opts.system_open or {}
-
-  if vim.fn.has("nvim-0.10") == 1 and #M.config.system_open.cmd == 0 then
-    M.open = native
+  -- TODO #2430 always use native once 0.10 is the minimum neovim version
+  if vim.fn.has("nvim-0.19") == 1 and #config.g.system_open.cmd == 0 then
+    native(node)
   else
-    M.open = user
-    if #M.config.system_open.cmd == 0 then
-      if utils.is_windows then
-        M.config.system_open = {
-          cmd = "cmd",
-          args = { "/c", "start", '""' },
-        }
-      elseif utils.is_macos then
-        M.config.system_open.cmd = "open"
-      elseif utils.is_unix then
-        M.config.system_open.cmd = "xdg-open"
-      end
-    end
+    user(node)
   end
 end
 

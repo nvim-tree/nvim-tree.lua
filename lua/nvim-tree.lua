@@ -2,7 +2,9 @@ local api = require("nvim-tree.api")
 local log = require("nvim-tree.log")
 local view = require("nvim-tree.view")
 local utils = require("nvim-tree.utils")
-local actions = require("nvim-tree.actions")
+local find_file = require("nvim-tree.actions.tree.find-file")
+local change_dir = require("nvim-tree.actions.tree.change-dir")
+local full_name = require("nvim-tree.renderer.components.full-name")
 local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
@@ -169,7 +171,7 @@ local function setup_autocommands()
   if config.g.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
       callback = function()
-        actions.tree.change_dir.fn(vim.loop.cwd())
+        change_dir.fn(vim.loop.cwd())
       end,
     })
   end
@@ -181,7 +183,7 @@ local function setup_autocommands()
           return
         end
         utils.debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
-          actions.tree.find_file.fn()
+          find_file.fn()
         end)
       end,
     })
@@ -248,6 +250,9 @@ local function setup_autocommands()
       end
     end,
   })
+
+  -- renderer.full name
+  full_name.setup_autocommands()
 end
 
 function M.purge_all_state()
@@ -276,7 +281,6 @@ function M.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.notify").setup(config.g)
   require("nvim-tree.log").setup(config.g)
 
   if log.enabled("config") then
@@ -284,10 +288,7 @@ function M.setup(config_user)
     log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.actions").setup(config.g)
   require("nvim-tree.appearance").setup()
-  require("nvim-tree.explorer"):setup(config.g)
-  require("nvim-tree.explorer.watch").setup(config.g)
   require("nvim-tree.view").setup(config.g)
   require("nvim-tree.renderer.components").setup(config.g)
 

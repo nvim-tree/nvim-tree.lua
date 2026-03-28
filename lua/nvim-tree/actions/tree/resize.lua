@@ -44,8 +44,4 @@ function M.fn(opts)
   end
 end
 
-function M.setup(opts)
-  M.config = opts or {}
-end
-
 return M
