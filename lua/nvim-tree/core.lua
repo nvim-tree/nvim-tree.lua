@@ -2,6 +2,8 @@ local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
 local view = require("nvim-tree.view")
 local log = require("nvim-tree.log")
+local git = require("nvim-tree.git")
+local watcher = require("nvim-tree.watcher")
 
 local M = {}
 
@@ -62,6 +64,18 @@ function M.get_nodes_starting_line()
     return offset + 1
   end
   return offset
+end
+
+function M.purge_all_state()
+  view.close_all_tabs()
+  view.abandon_all_windows()
+  if TreeExplorer then
+    git.purge_state()
+    TreeExplorer:destroy()
+    M.reset_explorer()
+  end
+  -- purge orphaned that were not destroyed by their nodes
+  watcher.purge_watchers()
 end
 
 return M
