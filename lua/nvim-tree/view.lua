@@ -142,7 +142,6 @@ end
 ---Configure width-related config
 ---@param width string|function|number|table|nil
 function M.configure_width(width)
-  log.line("dev", "configure_width")
   if type(width) == "table" then
     M.View.adaptive_size = true
     M.View.width = width.min or DEFAULT_MIN_WIDTH
