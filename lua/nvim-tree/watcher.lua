@@ -238,7 +238,7 @@ M.Watcher = Watcher
 function M.disable_watchers(msg)
   notify.warn(string.format("Disabling watchers: %s", msg))
   config.g.filesystem_watchers.enable = false
-  require("nvim-tree").purge_all_state()
+  require("nvim-tree.core").purge_all_state()
 end
 
 function M.purge_watchers()
