@@ -9,9 +9,7 @@ local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
 
-local M = {
-  init_root = "",
-}
+local M = {}
 
 --- Helper function to execute some explorer method safely
 ---@param fn string # key of explorer
@@ -22,68 +20,6 @@ local function explorer_fn(fn, ...)
   if explorer then
     return explorer[fn](explorer, ...)
   end
-end
-
---- Update the tree root to a directory or the directory containing
----@param path string relative or absolute
----@param bufnr number|nil
-function M.change_root(path, bufnr)
-  -- skip if current file is in ignore_list
-  if type(bufnr) == "number" then
-    local ft
-
-    if vim.fn.has("nvim-0.10") == 1 then
-      ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
-    else
-      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
-    end
-
-    for _, value in pairs(config.g.update_focused_file.update_root.ignore_list) do
-      if utils.str_find(path, value) or utils.str_find(ft, value) then
-        return
-      end
-    end
-  end
-
-  -- don't find inexistent
-  if vim.fn.filereadable(path) == 0 then
-    return
-  end
-
-  local cwd = core.get_cwd()
-  if cwd == nil then
-    return
-  end
-
-  local vim_cwd = vim.fn.getcwd()
-
-  -- test if in vim_cwd
-  if utils.path_relative(path, vim_cwd) ~= path then
-    if vim_cwd ~= cwd then
-      explorer_fn("change_dir", vim_cwd)
-    end
-    return
-  end
-  -- test if in cwd
-  if utils.path_relative(path, cwd) ~= path then
-    return
-  end
-
-  -- otherwise test M.init_root
-  if config.g.prefer_startup_root and utils.path_relative(path, M.init_root) ~= path then
-    explorer_fn("change_dir", M.init_root)
-    return
-  end
-  -- otherwise root_dirs
-  for _, dir in pairs(config.g.root_dirs) do
-    dir = vim.fn.fnamemodify(dir, ":p")
-    if utils.path_relative(path, dir) ~= path then
-      explorer_fn("change_dir", dir)
-      return
-    end
-  end
-  -- finally fall back to the folder containing the file
-  explorer_fn("change_dir", vim.fn.fnamemodify(path, ":p:h"))
 end
 
 function M.tab_enter()
@@ -274,8 +210,6 @@ function M.setup(config_user)
     notify.warn("nvim-tree.lua requires Neovim 0.9 or higher")
     return
   end
-
-  M.init_root = vim.fn.getcwd()
 
   config.setup(config_user)
 
