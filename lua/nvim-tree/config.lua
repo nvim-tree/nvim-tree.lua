@@ -511,6 +511,21 @@ local function process_config(g)
   -- Open
   --
   g.actions.open_file.window_picker.chars = tostring(g.actions.open_file.window_picker.chars):upper()
+
+  --
+  -- Padding
+  --
+  if g.renderer.indent_width < 1 then
+    g.renderer.indent_width = 1
+  end
+  for k, v in pairs(g.renderer.indent_markers.icons) do
+    if #v == 0 then
+      g.renderer.indent_markers.icons[k] = " "
+    else
+      -- return the first character from the UTF-8 encoded string; we may use utf8.codes from Lua 5.3 when available
+      g.renderer.indent_markers.icons[k] = v:match("[%z\1-\127\194-\244][\128-\191]*")
+    end
+  end
 end
 
 ---Validate user config and migrate legacy.
