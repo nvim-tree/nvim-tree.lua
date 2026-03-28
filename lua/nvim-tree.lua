@@ -2,17 +2,6 @@ local config = require("nvim-tree.config")
 
 local M = {}
 
-local function manage_netrw()
-  if config.g.hijack_netrw then
-    vim.cmd("silent! autocmd! FileExplorer *")
-    vim.cmd("autocmd VimEnter * ++once silent! autocmd! FileExplorer *")
-  end
-  if config.g.disable_netrw then
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-  end
-end
-
 local function setup_autocommands()
   local augroup_id = vim.api.nvim_create_augroup("NvimTree", { clear = true })
 
@@ -151,8 +140,6 @@ function M.setup(config_user)
   end
 
   config.setup(config_user)
-
-  manage_netrw()
 
   require("nvim-tree.log").start()
 
