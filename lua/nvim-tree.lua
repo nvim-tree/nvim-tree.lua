@@ -1,6 +1,3 @@
-local api = require("nvim-tree.api")
-local log = require("nvim-tree.log")
-local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
 
 local M = {}
@@ -19,20 +16,11 @@ end
 local function setup_autocommands()
   local augroup_id = vim.api.nvim_create_augroup("NvimTree", { clear = true })
 
-  -- prevent new opened file from opening in the same window as nvim-tree
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = augroup_id,
     pattern = "NvimTree_*",
     callback = function()
-      if not require("nvim-tree.utils").is_nvim_tree_buf(0) then
-        return
-      end
-      local view = require("nvim-tree.view")
-      if config.g.actions.open_file.eject then
-        view._prevent_buffer_override()
-      else
-        view.abandon_current_window()
-      end
+      require("nvim-tree.view").wipeout()
     end,
   })
 
@@ -44,6 +32,7 @@ local function setup_autocommands()
       end)
     })
   end
+
   if config.g.sync_root_with_cwd then
     vim.api.nvim_create_autocmd("DirChanged", {
       group = augroup_id,
@@ -52,17 +41,12 @@ local function setup_autocommands()
       end,
     })
   end
+
   if config.g.update_focused_file.enable then
     vim.api.nvim_create_autocmd("BufEnter", {
       group = augroup_id,
       callback = function(event)
-        local exclude = config.g.update_focused_file.exclude
-        if type(exclude) == "function" and exclude(event) then
-          return
-        end
-        require("nvim-tree.utils").debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
-          require("nvim-tree.actions.tree.find-file").fn()
-        end)
+        require("nvim-tree.actions.tree.find-file").buf_enter(event)
       end,
     })
   end
@@ -97,15 +81,14 @@ local function setup_autocommands()
     vim.api.nvim_create_autocmd("DiagnosticChanged", {
       group = augroup_id,
       callback = function(ev)
-        log.line("diagnostics", "DiagnosticChanged")
         require("nvim-tree.diagnostics").update_lsp(ev)
       end,
     })
+
     vim.api.nvim_create_autocmd("User", {
       group = augroup_id,
       pattern = "CocDiagnosticChange",
       callback = function()
-        log.line("diagnostics", "CocDiagnosticChange")
         require("nvim-tree.diagnostics").update_coc()
       end,
     })
@@ -145,6 +128,7 @@ end
 function M.purge_all_state()
   local view = require("nvim-tree.view")
   local core = require("nvim-tree.core")
+
   view.close_all_tabs()
   view.abandon_all_windows()
   local explorer = core.get_explorer()
@@ -159,8 +143,10 @@ end
 
 ---@param config_user? nvim_tree.config user supplied subset of config
 function M.setup(config_user)
+  local log = require("nvim-tree.log")
+
   if vim.fn.has("nvim-0.9") == 0 then
-    notify.warn("nvim-tree.lua requires Neovim 0.9 or higher")
+    require("nvim-tree.notify").warn("nvim-tree.lua requires Neovim 0.9 or higher")
     return
   end
 
@@ -189,7 +175,7 @@ function M.setup(config_user)
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
 
-  require("nvim-tree.api.impl").hydrate_post_setup(api)
+  require("nvim-tree.api.impl").hydrate_post_setup(require("nvim-tree.api"))
 end
 
 vim.g.NvimTreeRequired = 1

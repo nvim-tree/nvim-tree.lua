@@ -128,6 +128,7 @@ end
 ---On disabling LSP, a reset event will be sent for all buffers.
 ---@param ev table standard event with data.diagnostics populated
 function M.update_lsp(ev)
+  log.line("diagnostics", "DiagnosticChanged")
   if not config.g.diagnostics.enable or not ev or not ev.data or not ev.data.diagnostics then
     return
   end
@@ -174,6 +175,7 @@ end
 ---Fired on CocDiagnosticChanged events:
 ---debounced retrieval, cache update, version increment and draw
 function M.update_coc()
+  log.line("diagnostics", "CocDiagnosticChange")
   if not config.g.diagnostics.enable then
     return
   end
