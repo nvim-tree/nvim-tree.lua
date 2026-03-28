@@ -11,17 +11,6 @@ local config = require("nvim-tree.config")
 
 local M = {}
 
---- Helper function to execute some explorer method safely
----@param fn string # key of explorer
----@param ... any|nil
----@return function|nil
-local function explorer_fn(fn, ...)
-  local explorer = core.get_explorer()
-  if explorer then
-    return explorer[fn](explorer, ...)
-  end
-end
-
 function M.tab_enter()
   if view.is_visible({ any_tabpage = true }) then
     local bufname = vim.api.nvim_buf_get_name(0)
@@ -45,27 +34,6 @@ function M.tab_enter()
       explorer.renderer:draw()
     end
   end
-end
-
-function M.open_on_directory()
-  local should_proceed = config.g.hijack_directories.auto_open or view.is_visible()
-  if not should_proceed then
-    return
-  end
-
-  local buf = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(buf)
-  if vim.fn.isdirectory(bufname) ~= 1 then
-    return
-  end
-
-
-  local explorer = core.get_explorer()
-  if not explorer then
-    core.init(bufname)
-  end
-
-  explorer_fn("force_dirchange", bufname, true, false)
 end
 
 local function manage_netrw()
@@ -126,7 +94,12 @@ local function setup_autocommands()
   end
 
   if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
-    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory, nested = true })
+    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, {
+      callback = function()
+        require("nvim-tree.actions.tree.open").open_on_directory()
+      end,
+      nested = true
+    })
   end
 
   if config.g.view.centralize_selection then
