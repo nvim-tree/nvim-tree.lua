@@ -74,4 +74,29 @@ function M.open_on_directory()
   end
 end
 
+function M.tab_enter()
+  if view.is_visible({ any_tabpage = true }) then
+    local bufname = vim.api.nvim_buf_get_name(0)
+
+    local ft
+    if vim.fn.has("nvim-0.10") == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
+    else
+      ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
+    end
+
+    for _, filter in ipairs(config.g.tab.sync.ignore) do
+      if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
+        return
+      end
+    end
+    view.open({ focus_tree = false })
+
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
+  end
+end
+
 return M
