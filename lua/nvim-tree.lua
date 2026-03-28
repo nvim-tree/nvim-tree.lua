@@ -11,31 +11,6 @@ local config = require("nvim-tree.config")
 
 local M = {}
 
-function M.tab_enter()
-  if view.is_visible({ any_tabpage = true }) then
-    local bufname = vim.api.nvim_buf_get_name(0)
-
-    local ft
-    if vim.fn.has("nvim-0.10") == 1 then
-      ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
-    else
-      ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
-    end
-
-    for _, filter in ipairs(config.g.tab.sync.ignore) do
-      if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
-        return
-      end
-    end
-    view.open({ focus_tree = false })
-
-    local explorer = core.get_explorer()
-    if explorer then
-      explorer.renderer:draw()
-    end
-  end
-end
-
 local function manage_netrw()
   if config.g.hijack_netrw then
     vim.cmd("silent! autocmd! FileExplorer *")
@@ -70,7 +45,9 @@ local function setup_autocommands()
   })
 
   if config.g.tab.sync.open then
-    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(M.tab_enter) })
+    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(function()
+      require("nvim-tree.actions.tree.open").tab_enter()
+    end) })
   end
   if config.g.sync_root_with_cwd then
     create_nvim_tree_autocmd("DirChanged", {
