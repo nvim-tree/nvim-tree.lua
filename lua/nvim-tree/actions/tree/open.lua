@@ -1,5 +1,6 @@
 local lib = require("nvim-tree.lib")
 local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
 local config = require("nvim-tree.config")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
 local change_root = require("nvim-tree.actions.tree.change-root")
@@ -47,6 +48,29 @@ function M.fn(opts)
 
     -- find
     finders_find_file.fn(previous_path)
+  end
+end
+
+function M.open_on_directory()
+  local should_proceed = config.g.hijack_directories.auto_open or view.is_visible()
+  if not should_proceed then
+    return
+  end
+
+  local buf = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(buf)
+  if vim.fn.isdirectory(bufname) ~= 1 then
+    return
+  end
+
+  -- instantiate an explorer if there is not one
+  if not core.get_explorer() then
+    core.init(bufname)
+  end
+
+  local explorer = core.get_explorer()
+  if explorer then
+    explorer:force_dirchange(bufname, true, false)
   end
 end
 

@@ -771,7 +771,6 @@ function Explorer:cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
 end
 
----@private
 ---@param foldername string
 ---@param should_open_view boolean|nil
 ---@param should_init boolean|nil
