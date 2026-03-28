@@ -3,6 +3,7 @@ local lib = require("nvim-tree.lib")
 local view = require("nvim-tree.view")
 local config = require("nvim-tree.config")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
+local change_root = require("nvim-tree.actions.tree.change-root")
 
 local M = {}
 
@@ -58,7 +59,7 @@ function M.fn(opts)
 
   -- update root
   if opts.update_root or config.g.update_focused_file.update_root.enable then
-    require("nvim-tree").change_root(path, bufnr)
+    change_root.fn(path, bufnr)
   end
 
   -- find

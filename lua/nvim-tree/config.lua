@@ -17,7 +17,11 @@ local M = {
 
   ---Immutable OS, detected once on first require
   ---@type table<"unix"|"macos"|"wsl"|"windows", boolean>
-  os = nil
+  os = nil,
+
+  ---Nvim cwd at setup time
+  ---@type string
+  init_root = "",
 }
 
 M.os = {
@@ -554,6 +558,9 @@ function M.setup(u)
 
   -- process merged config
   process_config(M.g)
+
+  -- store cwd
+  M.init_root = vim.fn.getcwd()
 end
 
 ---Deep clone defaults
