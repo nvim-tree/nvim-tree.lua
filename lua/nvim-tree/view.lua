@@ -639,4 +639,17 @@ function M.is_width_determined()
   return type(M.View.width) ~= "function"
 end
 
+---Called on BufWipeout
+---Prevent new opened file from opening in the same window as nvim-tree
+function M.wipeout()
+  if not utils.is_nvim_tree_buf(0) then
+    return
+  end
+  if config.g.actions.open_file.eject then
+    M._prevent_buffer_override()
+  else
+    M.abandon_current_window()
+  end
+end
+
 return M
