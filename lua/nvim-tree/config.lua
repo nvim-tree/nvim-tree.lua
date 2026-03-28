@@ -504,13 +504,13 @@ local function localise_config(d)
   end
 end
 
----Normalise the (user) config
----@param u nvim_tree.config
-local function process_config(u)
+---Normalise the (global) config: defaults and user
+---@param g nvim_tree.config
+local function process_config(g)
+  --
   -- Open
-  if u.actions.open_file.window_picker.chars then
-    u.actions.open_file.window_picker.chars = tostring(u.actions.open_file.window_picker.chars):upper()
-  end
+  --
+  g.actions.open_file.window_picker.chars = tostring(g.actions.open_file.window_picker.chars):upper()
 end
 
 ---Validate user config and migrate legacy.
@@ -534,10 +534,11 @@ function M.setup(u)
 
   validate_config(u)
 
-  process_config(u)
-
   -- set global to the validated and populated user config
   M.g = vim.tbl_deep_extend("force", M.d, u)
+
+  -- process merged config
+  process_config(M.g)
 end
 
 ---Deep clone defaults
