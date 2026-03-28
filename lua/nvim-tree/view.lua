@@ -116,7 +116,7 @@ local function create_buffer(bufnr)
   events._dispatch_tree_attached_post(M.get_bufnr())
 end
 
----@param size (fun():integer)|integer|string
+---@param size nvim_tree.config.view.width.spec
 ---@return integer
 local function get_size(size)
   if type(size) == "number" then
@@ -127,6 +127,16 @@ local function get_size(size)
   local size_as_number = tonumber(size:sub(0, -2))
   local percent_as_decimal = size_as_number / 100
   return math.floor(vim.o.columns * percent_as_decimal)
+end
+
+---Return the width as per config
+---@return integer
+local function initial_width()
+  if type(config.g.view.width) == "table" then
+    return get_size(config.g.view.width.min or DEFAULT_MIN_WIDTH)
+  else
+    return get_size(config.g.view.width --[[@as nvim_tree.config.view.width.spec]])
+  end
 end
 
 ---@param size (fun():integer)|integer|nil
@@ -317,7 +327,7 @@ local function grow()
     padding = padding + wininfo[1].textoff
   end
 
-  local final_width = M.View.initial_width
+  local final_width = initial_width()
   local max_width = get_width(M.View.max_width)
   if max_width == -1 then
     max_width = math.huge
@@ -606,7 +616,7 @@ function M.configure_width(width)
       M.configure_width(config.g.view.width)
     else
       -- otherwise - restore initial width
-      M.View.width = M.View.initial_width
+      M.View.width = initial_width()
     end
   else
     M.View.adaptive_size = false
@@ -624,8 +634,6 @@ function M.setup(opts)
   M.View.winopts.signcolumn = options.signcolumn
 
   M.configure_width(options.width)
-
-  M.View.initial_width = get_width()
 end
 
 return M
