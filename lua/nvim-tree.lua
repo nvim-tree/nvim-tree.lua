@@ -281,14 +281,14 @@ function M.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.log").setup(config.g)
+  require("nvim-tree.log").start()
 
   if log.enabled("config") then
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.appearance").setup()
+  require("nvim-tree.appearance").define_hi()
 
   setup_autocommands()
 
