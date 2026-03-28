@@ -289,7 +289,6 @@ function M.setup(config_user)
   end
 
   require("nvim-tree.appearance").setup()
-  require("nvim-tree.renderer.components").setup(config.g)
 
   require("nvim-tree.view-state").initialize()
 
