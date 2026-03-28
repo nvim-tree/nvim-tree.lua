@@ -183,7 +183,7 @@ M.LEGACY_LINKS = {
 }
 
 ---Create all highlight groups and links. Idempotent.
-function M.define_hi()
+function M.set_hl()
   -- non-linked
   for _, g in ipairs(M.HIGHLIGHT_GROUPS) do
     if g.def then
