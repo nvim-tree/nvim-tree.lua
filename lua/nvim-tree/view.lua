@@ -164,6 +164,12 @@ end
 local function set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
 
+  M.View.winopts.cursorline = config.g.view.cursorline
+  M.View.winopts.cursorlineopt = config.g.view.cursorlineopt
+  M.View.winopts.number = config.g.view.number
+  M.View.winopts.relativenumber = config.g.view.relativenumber
+  M.View.winopts.signcolumn = config.g.view.signcolumn
+
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
     vim.api.nvim_set_option_value("eventignore", "all", {})
@@ -627,12 +633,6 @@ end
 ---@param opts nvim_tree.config
 function M.setup(opts)
   local options = opts.view or {}
-  M.View.winopts.cursorline = options.cursorline
-  M.View.winopts.cursorlineopt = options.cursorlineopt
-  M.View.winopts.number = options.number
-  M.View.winopts.relativenumber = options.relativenumber
-  M.View.winopts.signcolumn = options.signcolumn
-
   M.configure_width(options.width)
 end
 
