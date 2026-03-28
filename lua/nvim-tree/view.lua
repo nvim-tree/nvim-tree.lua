@@ -139,6 +139,31 @@ local function initial_width()
   end
 end
 
+---Configure width-related config
+---@param width string|function|number|table|nil
+function M.configure_width(width)
+  log.line("dev", "configure_width")
+  if type(width) == "table" then
+    M.View.adaptive_size = true
+    M.View.width = width.min or DEFAULT_MIN_WIDTH
+    M.View.max_width = width.max or DEFAULT_MAX_WIDTH
+    local lines_excluded = width.lines_excluded or DEFAULT_LINES_EXCLUDED
+    M.View.root_excluded = vim.tbl_contains(lines_excluded, "root")
+    M.View.padding = width.padding or DEFAULT_PADDING
+  elseif width == nil then
+    if config.g.view.width ~= nil then
+      -- if we had input config - fallback to it
+      M.configure_width(config.g.view.width)
+    else
+      -- otherwise - restore initial width
+      M.View.width = initial_width()
+    end
+  else
+    M.View.adaptive_size = false
+    M.View.width = width
+  end
+end
+
 ---@param size (fun():integer)|integer|nil
 ---@return integer
 local function get_width(size)
@@ -198,7 +223,7 @@ local function open_win_config()
   if type(config.g.view.float.open_win_config) == "function" then
     return config.g.view.float.open_win_config()
   else
-    return config.g.view.float.open_win_config --[[ @as vim.api.keyset.win_config ]]
+    return config.g.view.float.open_win_config --[[@as vim.api.keyset.win_config]]
   end
 end
 
@@ -303,6 +328,10 @@ end
 function M.open(options)
   if M.is_visible() then
     return
+  end
+
+  if not M.View.width then
+    M.configure_width(config.g.view.width)
   end
 
   local profile = log.profile_start("view open")
@@ -420,6 +449,11 @@ end
 ---@param opts OpenInWinOpts|nil
 function M.open_in_win(opts)
   opts = opts or { hijack_current_buf = true, resize = true }
+
+  if not M.View.width then
+    M.configure_width(config.g.view.width)
+  end
+
   events._dispatch_on_tree_pre_open()
   if opts.winid and vim.api.nvim_win_is_valid(opts.winid) then
     vim.api.nvim_set_current_win(opts.winid)
@@ -604,36 +638,6 @@ end
 ---@return boolean
 function M.is_width_determined()
   return type(M.View.width) ~= "function"
-end
-
----Configure width-related config
----@param width string|function|number|table|nil
-function M.configure_width(width)
-  if type(width) == "table" then
-    M.View.adaptive_size = true
-    M.View.width = width.min or DEFAULT_MIN_WIDTH
-    M.View.max_width = width.max or DEFAULT_MAX_WIDTH
-    local lines_excluded = width.lines_excluded or DEFAULT_LINES_EXCLUDED
-    M.View.root_excluded = vim.tbl_contains(lines_excluded, "root")
-    M.View.padding = width.padding or DEFAULT_PADDING
-  elseif width == nil then
-    if config.g.view.width ~= nil then
-      -- if we had input config - fallback to it
-      M.configure_width(config.g.view.width)
-    else
-      -- otherwise - restore initial width
-      M.View.width = initial_width()
-    end
-  else
-    M.View.adaptive_size = false
-    M.View.width = width
-  end
-end
-
----@param opts nvim_tree.config
-function M.setup(opts)
-  local options = opts.view or {}
-  M.configure_width(options.width)
 end
 
 return M
