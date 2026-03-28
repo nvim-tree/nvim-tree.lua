@@ -1,11 +1,5 @@
 local api = require("nvim-tree.api")
 local log = require("nvim-tree.log")
-local view = require("nvim-tree.view")
-local utils = require("nvim-tree.utils")
-local find_file = require("nvim-tree.actions.tree.find-file")
-local change_dir = require("nvim-tree.actions.tree.change-dir")
-local full_name = require("nvim-tree.renderer.components.full-name")
-local core = require("nvim-tree.core")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
 
@@ -24,18 +18,16 @@ end
 
 local function setup_autocommands()
   local augroup_id = vim.api.nvim_create_augroup("NvimTree", { clear = true })
-  local function create_nvim_tree_autocmd(name, custom_opts)
-    local default_opts = { group = augroup_id }
-    vim.api.nvim_create_autocmd(name, vim.tbl_extend("force", default_opts, custom_opts))
-  end
 
   -- prevent new opened file from opening in the same window as nvim-tree
-  create_nvim_tree_autocmd("BufWipeout", {
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = augroup_id,
     pattern = "NvimTree_*",
     callback = function()
-      if not utils.is_nvim_tree_buf(0) then
+      if not require("nvim-tree.utils").is_nvim_tree_buf(0) then
         return
       end
+      local view = require("nvim-tree.view")
       if config.g.actions.open_file.eject then
         view._prevent_buffer_override()
       else
@@ -45,33 +37,39 @@ local function setup_autocommands()
   })
 
   if config.g.tab.sync.open then
-    create_nvim_tree_autocmd("TabEnter", { callback = vim.schedule_wrap(function()
-      require("nvim-tree.actions.tree.open").tab_enter()
-    end) })
+    vim.api.nvim_create_autocmd("TabEnter", {
+      group = augroup_id,
+      callback = vim.schedule_wrap(function()
+        require("nvim-tree.actions.tree.open").tab_enter()
+      end)
+    })
   end
   if config.g.sync_root_with_cwd then
-    create_nvim_tree_autocmd("DirChanged", {
+    vim.api.nvim_create_autocmd("DirChanged", {
+      group = augroup_id,
       callback = function()
-        change_dir.fn(vim.loop.cwd())
+        require("nvim-tree.actions.tree.change-dir").fn(vim.loop.cwd())
       end,
     })
   end
   if config.g.update_focused_file.enable then
-    create_nvim_tree_autocmd("BufEnter", {
+    vim.api.nvim_create_autocmd("BufEnter", {
+      group = augroup_id,
       callback = function(event)
         local exclude = config.g.update_focused_file.exclude
         if type(exclude) == "function" and exclude(event) then
           return
         end
-        utils.debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
-          find_file.fn()
+        require("nvim-tree.utils").debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
+          require("nvim-tree.actions.tree.find-file").fn()
         end)
       end,
     })
   end
 
   if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
-    create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, {
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
+      group = augroup_id,
       callback = function()
         require("nvim-tree.actions.tree.open").open_on_directory()
       end,
@@ -80,30 +78,31 @@ local function setup_autocommands()
   end
 
   if config.g.view.centralize_selection then
-    create_nvim_tree_autocmd("BufEnter", {
+    vim.api.nvim_create_autocmd("BufEnter", {
+      group = augroup_id,
       pattern = "NvimTree_*",
-      callback = function()
-        vim.schedule(function()
-          vim.api.nvim_buf_call(0, function()
-            local is_term_mode = vim.api.nvim_get_mode().mode == "t"
-            if is_term_mode then
-              return
-            end
-            vim.cmd([[norm! zz]])
-          end)
+      callback = vim.schedule_wrap(function()
+        vim.api.nvim_buf_call(0, function()
+          local is_term_mode = vim.api.nvim_get_mode().mode == "t"
+          if is_term_mode then
+            return
+          end
+          vim.cmd([[norm! zz]])
         end)
-      end,
+      end)
     })
   end
 
   if config.g.diagnostics.enable then
-    create_nvim_tree_autocmd("DiagnosticChanged", {
+    vim.api.nvim_create_autocmd("DiagnosticChanged", {
+      group = augroup_id,
       callback = function(ev)
         log.line("diagnostics", "DiagnosticChanged")
         require("nvim-tree.diagnostics").update_lsp(ev)
       end,
     })
-    create_nvim_tree_autocmd("User", {
+    vim.api.nvim_create_autocmd("User", {
+      group = augroup_id,
       pattern = "CocDiagnosticChange",
       callback = function()
         log.line("diagnostics", "CocDiagnosticChange")
@@ -113,18 +112,20 @@ local function setup_autocommands()
   end
 
   if config.g.view.float.enable and config.g.view.float.quit_on_focus_loss then
-    create_nvim_tree_autocmd("WinLeave", {
+    vim.api.nvim_create_autocmd("WinLeave", {
+      group = augroup_id,
       pattern = "NvimTree_*",
       callback = function()
-        if utils.is_nvim_tree_buf(0) then
-          view.close()
+        if require("nvim-tree.utils").is_nvim_tree_buf(0) then
+          require("nvim-tree.view").close()
         end
       end,
     })
   end
 
   -- Handles event dispatch when tree is closed by `:q`
-  create_nvim_tree_autocmd("WinClosed", {
+  vim.api.nvim_create_autocmd("WinClosed", {
+    group = augroup_id,
     pattern = "*",
     ---@param ev vim.api.keyset.create_autocmd.callback_args
     callback = function(ev)
@@ -138,10 +139,12 @@ local function setup_autocommands()
   })
 
   -- renderer.full name
-  full_name.setup_autocommands()
+  require("nvim-tree.renderer.components.full-name").setup_autocommands()
 end
 
 function M.purge_all_state()
+  local view = require("nvim-tree.view")
+  local core = require("nvim-tree.core")
   view.close_all_tabs()
   view.abandon_all_windows()
   local explorer = core.get_explorer()
