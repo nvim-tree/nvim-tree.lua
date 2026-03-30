@@ -1,5 +1,3 @@
-local config = require("nvim-tree.config")
-
 local M = {}
 
 ---`require("nvim-tree").setup` must be called once to initialise nvim-tree.
@@ -10,7 +8,13 @@ local M = {}
 ---
 ---@param config_user? nvim_tree.config subset, uses defaults when nil
 function M.setup(config_user)
+  local api = require("nvim-tree.api")
+  local api_impl = require("nvim-tree.api.impl")
+  local appearance = require("nvim-tree.appearance")
+  local autocmd = require("nvim-tree.autocmd")
+  local config = require("nvim-tree.config")
   local log = require("nvim-tree.log")
+  local view_state = require("nvim-tree.view-state")
 
   -- Nvim version check
   if vim.fn.has("nvim-0.9") == 0 then
@@ -31,13 +35,13 @@ function M.setup(config_user)
   end
 
   -- idempotent highlight definition
-  require("nvim-tree.appearance").highlight()
+  appearance.highlight()
 
   -- set the initial view state based on config
-  require("nvim-tree.view-state").initialize()
+  view_state.initialize()
 
   -- idempotent au (re)definition
-  require("nvim-tree.autocmd").global()
+  autocmd.global()
 
   -- subsequent calls to setup clear all state
   if vim.g.NvimTreeSetup == 1 then
@@ -45,7 +49,7 @@ function M.setup(config_user)
   end
 
   -- hydrate post setup API
-  require("nvim-tree.api.impl").hydrate_post_setup(require("nvim-tree.api"))
+  api_impl.hydrate_post_setup(api)
 
   vim.g.NvimTreeSetup = 1
   vim.api.nvim_exec_autocmds("User", { pattern = "NvimTreeSetup" })
