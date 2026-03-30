@@ -13,8 +13,22 @@ local initialized = false
 
 local M = {}
 
+---Wrapper around nvim-web-devicons, nils if devicons not available
+---@type devicons_get_icon
+function M.get_icon(name, ext, opts)
+  if not initialized then
+    M.initialize()
+  end
+
+  if devicons then
+    return devicons.get_icon(name, ext, opts)
+  else
+    return nil, nil
+  end
+end
+
 ---Attempt to use nvim-web-devicons if present and enabled for file or folder
-local function initialize()
+function M.initialize()
   if config.g.renderer.icons.show.file or config.g.renderer.icons.show.folder then
     local ok, di = pcall(require, "nvim-web-devicons")
     if ok then
@@ -25,20 +39,6 @@ local function initialize()
     end
   end
   initialized = true
-end
-
----Wrapper around nvim-web-devicons, nils if devicons not available
----@type devicons_get_icon
-function M.get_icon(name, ext, opts)
-  if not initialized then
-    initialize()
-  end
-
-  if devicons then
-    return devicons.get_icon(name, ext, opts)
-  else
-    return nil, nil
-  end
 end
 
 return M
