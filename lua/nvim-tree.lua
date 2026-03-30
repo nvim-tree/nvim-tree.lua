@@ -281,7 +281,7 @@ function M.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.log").start()
+  log.start()
 
   if log.enabled("config") then
     log.line("config", "default config + user")

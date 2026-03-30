@@ -120,7 +120,9 @@ function M.start()
     if config.g.log.truncate then
       os.remove(file_path)
     end
-    require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. file_path)
+    if config.g.notify.threshold <= vim.log.levels.DEBUG then
+      require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. file_path)
+    end
   end
 end
 
