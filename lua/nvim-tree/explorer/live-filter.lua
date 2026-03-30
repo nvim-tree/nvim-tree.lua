@@ -1,5 +1,4 @@
 local view = require("nvim-tree.view")
-local view_state = require("nvim-tree.view-state")
 local utils = require("nvim-tree.utils")
 local config = require("nvim-tree.config")
 
@@ -12,6 +11,7 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@field prefix string
 ---@field always_show_folders boolean
 ---@field filter string
+---@field prev_focused_node? Node
 local LiveFilter = Class:extend()
 
 ---@class LiveFilter
@@ -27,6 +27,7 @@ function LiveFilter:new(args)
   self.prefix = self.explorer.opts.live_filter.prefix
   self.always_show_folders = self.explorer.opts.live_filter.always_show_folders
   self.filter = nil
+  self.prev_focused_node = nil
 end
 
 ---@param node_ Node?
@@ -202,7 +203,7 @@ local function create_overlay(self)
 end
 
 function LiveFilter:start_filtering()
-  view_state.Active.live_filter.prev_focused_node = self.explorer:get_node_at_cursor()
+  self.prev_focused_node = self.explorer:get_node_at_cursor()
   self.filter = self.filter or ""
 
   self.explorer.renderer:draw()
@@ -217,7 +218,6 @@ end
 
 function LiveFilter:clear_filter()
   local node = self.explorer:get_node_at_cursor()
-  local last_node = view_state.Active.live_filter.prev_focused_node
 
   self.filter = nil
   reset_filter(self)
@@ -225,8 +225,8 @@ function LiveFilter:clear_filter()
 
   if node then
     self.explorer:focus_node_or_parent(node)
-  elseif last_node then
-    self.explorer:focus_node_or_parent(last_node)
+  elseif self.prev_focused_node then
+    self.explorer:focus_node_or_parent(self.prev_focused_node)
   end
 end
 

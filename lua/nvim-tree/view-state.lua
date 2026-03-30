@@ -13,9 +13,6 @@ M.Active = {
   adaptive_size = false,
   tabpages      = {},
   cursors       = {},
-  live_filter   = {
-    prev_focused_node = nil,
-  },
   winopts       = {
     relativenumber = false,
     number         = false,
