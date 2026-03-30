@@ -1,5 +1,3 @@
-local notify = require("nvim-tree.notify")
-
 local M = {}
 
 --- Create empty sub-tables if not present
@@ -120,25 +118,32 @@ end
 ---@param u nvim_tree.config user supplied subset of config
 local function deprecated_config(u)
   if type(u.view) == "table" and u.view.hide_root_folder then
-    notify.info("view.hide_root_folder is deprecated, please set renderer.root_folder_label = false")
+    require("nvim-tree.notify").info(
+      "view.hide_root_folder is deprecated, please set renderer.root_folder_label = false"
+    )
   end
 end
 
 ---@param u nvim_tree.config user supplied subset of config
 local function removed_config(u)
   if u.auto_close then
-    notify.warn("auto close feature has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Auto-Close")
+    require("nvim-tree.notify").warn(
+      "auto close feature has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Auto-Close"
+    )
     u["auto_close"] = nil
   end
 
   if u.focus_empty_on_setup then
-    notify.warn("focus_empty_on_setup has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup")
+    require("nvim-tree.notify").warn(
+      "focus_empty_on_setup has been removed: https://github.com/nvim-tree/nvim-tree.lua/wiki/Open-At-Startup"
+    )
     u["focus_empty_on_setup"] = nil
   end
 
   if u.create_in_closed_folder then
-    notify.warn(
-      "create_in_closed_folder has been removed and is now the default behaviour. You may use api.fs.create to add a file under your desired node.")
+    require("nvim-tree.notify").warn(
+      "create_in_closed_folder has been removed and is now the default behaviour. You may use api.fs.create to add a file under your desired node."
+    )
   end
   u["create_in_closed_folder"] = nil
 end
