@@ -1,4 +1,3 @@
-local notify = require("nvim-tree.notify")
 local Event = require("nvim-tree._meta.api.events").Event
 
 local M = {}
@@ -25,7 +24,7 @@ local function dispatch(event_name, payload)
   for _, handler in pairs(get_handlers(event_name)) do
     local success, error = pcall(handler, payload)
     if not success then
-      notify.error("Handler for event " .. event_name .. " errored. " .. vim.inspect(error))
+      require("nvim-tree.notify").error("Handler for event " .. event_name .. " errored. " .. vim.inspect(error))
     end
   end
 end
