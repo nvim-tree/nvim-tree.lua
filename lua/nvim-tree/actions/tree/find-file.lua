@@ -1,6 +1,5 @@
 local core = require("nvim-tree.core")
 local lib = require("nvim-tree.lib")
-local utils = require("nvim-tree.utils")
 local view = require("nvim-tree.view")
 local config = require("nvim-tree.config")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
@@ -65,17 +64,6 @@ function M.fn(opts)
 
   -- find
   finders_find_file.fn(path)
-end
-
----@param event vim.api.keyset.create_autocmd.callback_args
-function M.buf_enter(event)
-  local exclude = config.g.update_focused_file.exclude
-  if type(exclude) == "function" and exclude(event) then
-    return
-  end
-  utils.debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
-    M.fn()
-  end)
 end
 
 return M

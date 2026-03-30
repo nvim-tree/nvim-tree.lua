@@ -35,20 +35,26 @@ local function setup_autocommands()
     vim.api.nvim_create_autocmd("BufEnter", {
       group = augroup_id,
       callback = function(event)
-        require("nvim-tree.actions.tree.find-file").buf_enter(event)
+        if type(config.g.update_focused_file.exclude) == "function" and config.g.update_focused_file.exclude(event) then
+          return
+        end
+        require("nvim-tree.utils").debounce("BufEnter:find_file", config.g.view.debounce_delay, function()
+          require("nvim-tree.actions.tree.find-file").fn()
+        end)
       end,
     })
   end
 
-  if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
-    vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
-      group = augroup_id,
-      callback = function()
-        require("nvim-tree.actions.tree.open").open_on_directory()
-      end,
-      nested = true
-    })
-  end
+  -- TODO this fires on setup
+  -- if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
+  --   vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
+  --     group = augroup_id,
+  --     callback = function()
+  --       require("nvim-tree.actions.tree.open").open_on_directory()
+  --     end,
+  --     nested = true
+  --   })
+  -- end
 
   if config.g.view.centralize_selection then
     vim.api.nvim_create_autocmd("BufEnter", {
