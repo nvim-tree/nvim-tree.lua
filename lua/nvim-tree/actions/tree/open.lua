@@ -51,26 +51,21 @@ function M.fn(opts)
   end
 end
 
-function M.open_on_directory()
+---@param dirname string absolute directory path
+function M.open_on_directory(dirname)
   local should_proceed = config.g.hijack_directories.auto_open or view.is_visible()
   if not should_proceed then
     return
   end
 
-  local buf = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(buf)
-  if vim.fn.isdirectory(bufname) ~= 1 then
-    return
-  end
-
   -- instantiate an explorer if there is not one
   if not core.get_explorer() then
-    core.init(bufname)
+    core.init(dirname)
   end
 
   local explorer = core.get_explorer()
   if explorer then
-    explorer:force_dirchange(bufname, true, false)
+    explorer:force_dirchange(dirname, true, false)
   end
 end
 

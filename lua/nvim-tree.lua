@@ -45,16 +45,18 @@ local function setup_autocommands()
     })
   end
 
-  -- TODO this fires on setup
-  -- if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
-  --   vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
-  --     group = augroup_id,
-  --     callback = function()
-  --       require("nvim-tree.actions.tree.open").open_on_directory()
-  --     end,
-  --     nested = true
-  --   })
-  -- end
+  if config.g.hijack_directories.enable and (config.g.disable_netrw or config.g.hijack_netrw) then
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
+      group = augroup_id,
+      nested = true,
+      callback = function(data)
+        local bufname = vim.api.nvim_buf_get_name(data.buf)
+        if vim.fn.isdirectory(bufname) == 1 then
+          require("nvim-tree.actions.tree.open").open_on_directory(bufname)
+        end
+      end,
+    })
+  end
 
   if config.g.view.centralize_selection then
     vim.api.nvim_create_autocmd("BufEnter", {
