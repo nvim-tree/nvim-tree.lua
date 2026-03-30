@@ -288,7 +288,7 @@ function M.setup(config_user)
     log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.appearance").set_hl()
+  require("nvim-tree.appearance").highlight()
 
   require("nvim-tree.view-state").initialize()
 
