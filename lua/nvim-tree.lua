@@ -110,8 +110,24 @@ local function setup_autocommands()
     end,
   })
 
-  -- renderer.full name
-  require("nvim-tree.renderer.components.full-name").setup_autocommands()
+  if config.g.renderer.full_name then
+    local group = vim.api.nvim_create_augroup("nvim_tree_floating_node", { clear = true })
+    vim.api.nvim_create_autocmd({ "BufLeave", "CursorMoved" }, {
+      group = group,
+      pattern = { "NvimTree_*" },
+      callback = function()
+        require("nvim-tree.renderer.components.full-name").hide()
+      end,
+    })
+
+    vim.api.nvim_create_autocmd({ "CursorMoved" }, {
+      group = group,
+      pattern = { "NvimTree_*" },
+      callback = function()
+        require("nvim-tree.renderer.components.full-name").show()
+      end,
+    })
+  end
 end
 
 ---`require("nvim-tree").setup` must be called once to initialise nvim-tree.

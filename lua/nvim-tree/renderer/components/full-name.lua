@@ -5,10 +5,10 @@ local M = {}
 
 local utils = require("nvim-tree.utils")
 
-local function hide(win)
-  if win then
-    if vim.api.nvim_win_is_valid(win) then
-      vim.api.nvim_win_close(win, true)
+function M.hide()
+  if M.popup_win and utils.is_nvim_tree_buf(0) then
+    if vim.api.nvim_win_is_valid(M.popup_win) then
+      vim.api.nvim_win_close(M.popup_win, true)
     end
   end
 end
@@ -35,7 +35,11 @@ local function effective_win_width()
   return win_width - win_info[1].textoff
 end
 
-local function show()
+function M.show()
+  if not utils.is_nvim_tree_buf(0) then
+    return
+  end
+
   local line_nr = vim.api.nvim_win_get_cursor(0)[1]
   if vim.wo.wrap then
     return
@@ -102,33 +106,6 @@ local function show()
       vim.cmd([[ setlocal cursorline cursorlineopt=both ]])
     end
   end)
-end
-
-function M.setup_autocommands()
-  if not config.g.renderer.full_name then
-    return
-  end
-
-  local group = vim.api.nvim_create_augroup("nvim_tree_floating_node", { clear = true })
-  vim.api.nvim_create_autocmd({ "BufLeave", "CursorMoved" }, {
-    group = group,
-    pattern = { "NvimTree_*" },
-    callback = function()
-      if utils.is_nvim_tree_buf(0) then
-        hide(M.popup_win)
-      end
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "CursorMoved" }, {
-    group = group,
-    pattern = { "NvimTree_*" },
-    callback = function()
-      if utils.is_nvim_tree_buf(0) then
-        show()
-      end
-    end,
-  })
 end
 
 return M
