@@ -192,8 +192,4 @@ function M.rename_full(node)
   prompt_to_rename(node, ":p")
 end
 
-function M.setup(opts)
-  config.g.filesystem_watchers = opts.filesystem_watchers
-end
-
 return M

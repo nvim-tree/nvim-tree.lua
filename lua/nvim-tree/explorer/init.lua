@@ -88,7 +88,7 @@ function Explorer:create_autocmds()
   vim.api.nvim_create_autocmd("ColorScheme", {
     group = self.augroup_id,
     callback = function()
-      appearance.setup()
+      appearance.highlight()
       view.reset_winhl()
       self.renderer:draw()
     end,

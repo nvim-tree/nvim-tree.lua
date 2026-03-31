@@ -1,3 +1,5 @@
+local config = require("nvim-tree.config")
+
 ---@alias LogTypes "all" | "config" | "copy_paste" | "dev" | "diagnostics" | "git" | "profile" | "watcher"
 
 ---@type table<LogTypes, boolean>
@@ -110,14 +112,17 @@ function M.enabled(typ)
   return file_path ~= nil and (types[typ] or types.all)
 end
 
-function M.setup(opts)
-  if opts.log and opts.log.enable and opts.log.types then
-    types = opts.log.types
+--- Create the log file and enable logging, if globally configured
+function M.start()
+  if config.g.log and config.g.log.enable and config.g.log.types then
+    types = config.g.log.types
     file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"), os.date("%H:%M:%S"), vim.env.USER)
-    if opts.log.truncate then
+    if config.g.log.truncate then
       os.remove(file_path)
     end
-    require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. file_path)
+    if config.g.notify.threshold <= vim.log.levels.DEBUG then
+      require("nvim-tree.notify").debug("nvim-tree.lua logging to " .. file_path)
+    end
   end
 end
 

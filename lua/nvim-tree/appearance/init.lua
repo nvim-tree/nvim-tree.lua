@@ -182,7 +182,8 @@ M.LEGACY_LINKS = {
   NvimTreeDiagnosticHintFolderHL = "NvimTreeLspDiagnosticsHintFolderText",
 }
 
-function M.setup()
+---Create all highlight groups and links. Idempotent.
+function M.highlight()
   -- non-linked
   for _, g in ipairs(M.HIGHLIGHT_GROUPS) do
     if g.def then

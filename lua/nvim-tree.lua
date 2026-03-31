@@ -281,15 +281,14 @@ function M.setup(config_user)
 
   manage_netrw()
 
-  require("nvim-tree.log").setup(config.g)
+  log.start()
 
   if log.enabled("config") then
     log.line("config", "default config + user")
     log.raw("config", "%s\n", vim.inspect(config.g))
   end
 
-  require("nvim-tree.appearance").setup()
-  require("nvim-tree.renderer.components").setup(config.g)
+  require("nvim-tree.appearance").highlight()
 
   require("nvim-tree.view-state").initialize()
 

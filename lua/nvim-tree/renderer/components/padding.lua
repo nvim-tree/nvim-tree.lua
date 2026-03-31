@@ -1,3 +1,4 @@
+local config = require("nvim-tree.config")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 local M = {}
@@ -27,21 +28,21 @@ local function get_padding_indent_markers(depth, idx, nodes_number, markers, wit
 
   if depth > 0 then
     local has_folder_sibling = check_siblings_for_folder(node, with_arrows)
-    local indent = string.rep(" ", M.config.indent_width - 1)
+    local indent = string.rep(" ", config.g.renderer.indent_width - 1)
     markers[depth] = idx ~= nodes_number
     for i = 1, depth - early_stop do
       local glyph
       if idx == nodes_number and i == depth then
-        local bottom_width = M.config.indent_width - 2 + (with_arrows and not inline_arrows and has_folder_sibling and 2 or 0)
-        glyph = M.config.indent_markers.icons.corner
-          .. string.rep(M.config.indent_markers.icons.bottom, bottom_width)
-          .. (M.config.indent_width > 1 and " " or "")
+        local bottom_width = config.g.renderer.indent_width - 2 + (with_arrows and not inline_arrows and has_folder_sibling and 2 or 0)
+        glyph = config.g.renderer.indent_markers.icons.corner
+          .. string.rep(config.g.renderer.indent_markers.icons.bottom, bottom_width)
+          .. (config.g.renderer.indent_width > 1 and " " or "")
       elseif markers[i] and i == depth then
-        glyph = M.config.indent_markers.icons.item .. indent
+        glyph = config.g.renderer.indent_markers.icons.item .. indent
       elseif markers[i] then
-        glyph = M.config.indent_markers.icons.edge .. indent
+        glyph = config.g.renderer.indent_markers.icons.edge .. indent
       else
-        glyph = M.config.indent_markers.icons.none .. indent
+        glyph = config.g.renderer.indent_markers.icons.none .. indent
       end
 
       if not with_arrows or (inline_arrows and (depth ~= i or not node.nodes)) then
@@ -68,10 +69,10 @@ end
 function M.get_indent_markers(depth, idx, nodes_number, node, markers, early_stop)
   local str = ""
 
-  local show_arrows = M.config.icons.show.folder_arrow
-  local show_markers = M.config.indent_markers.enable
-  local inline_arrows = M.config.indent_markers.inline_arrows
-  local indent_width = M.config.indent_width
+  local show_arrows = config.g.renderer.icons.show.folder_arrow
+  local show_markers = config.g.renderer.indent_markers.enable
+  local inline_arrows = config.g.renderer.indent_markers.inline_arrows
+  local indent_width = config.g.renderer.indent_width
 
   if show_markers then
     str = str .. get_padding_indent_markers(depth, idx, nodes_number, markers, show_arrows, inline_arrows, node, early_stop or 0)
@@ -85,7 +86,7 @@ end
 ---@param node Node
 ---@return nvim_tree.api.highlighted_string[]?
 function M.get_arrows(node)
-  if not M.config.icons.show.folder_arrow then
+  if not config.g.renderer.icons.show.folder_arrow then
     return
   end
 
@@ -95,38 +96,18 @@ function M.get_arrows(node)
   local dir = node:as(DirectoryNode)
   if dir then
     if dir.open then
-      str = M.config.icons.glyphs.folder["arrow_open"] .. M.config.icons.padding.folder_arrow
+      str = config.g.renderer.icons.glyphs.folder["arrow_open"] .. config.g.renderer.icons.padding.folder_arrow
       hl = "NvimTreeFolderArrowOpen"
     else
-      str = M.config.icons.glyphs.folder["arrow_closed"] .. M.config.icons.padding.folder_arrow
+      str = config.g.renderer.icons.glyphs.folder["arrow_closed"] .. config.g.renderer.icons.padding.folder_arrow
     end
-  elseif M.config.indent_markers.enable then
+  elseif config.g.renderer.indent_markers.enable then
     str = ""
   else
-    str = " " .. string.rep(" ", #M.config.icons.padding.folder_arrow)
+    str = " " .. string.rep(" ", #config.g.renderer.icons.padding.folder_arrow)
   end
 
   return { str = str, hl = { hl } }
-end
-
-function M.setup(opts)
-  M.config = opts.renderer
-
-  if M.config.indent_width < 1 then
-    M.config.indent_width = 1
-  end
-
-  local function check_marker(symbol)
-    if #symbol == 0 then
-      return " "
-    end
-    -- return the first character from the UTF-8 encoded string; we may use utf8.codes from Lua 5.3 when available
-    return symbol:match("[%z\1-\127\194-\244][\128-\191]*")
-  end
-
-  for k, v in pairs(M.config.indent_markers.icons) do
-    M.config.indent_markers.icons[k] = check_marker(v)
-  end
 end
 
 return M
