@@ -76,7 +76,7 @@ end
 ---@param node Node
 function M.fn(node)
   -- TODO #2430 always use native once 0.10 is the minimum neovim version
-  if vim.fn.has("nvim-0.19") == 1 and #config.g.system_open.cmd == 0 then
+  if vim.fn.has("nvim-0.10") == 1 and #config.g.system_open.cmd == 0 then
     native(node)
   else
     user(node)
