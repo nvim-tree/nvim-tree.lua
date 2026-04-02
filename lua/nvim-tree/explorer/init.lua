@@ -240,8 +240,10 @@ function Explorer:reload(node, project)
 
     local abs = utils.path_join({ cwd, name })
 
-    -- path incorrectly specified as an integer
-    local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
+    -- TODO remove once 0.12 is the minimum neovim version
+    -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local stat = vim.loop.fs_lstat(abs)
 
     local filter_reason = self.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none then
@@ -399,8 +401,10 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("populate_children %s", abs)
 
-      -- path incorrectly specified as an integer
-      local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
+      -- TODO remove once 0.12 is the minimum neovim version
+      -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
+      ---@diagnostic disable-next-line: param-type-mismatch
+      local stat = vim.loop.fs_lstat(abs)
 
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
