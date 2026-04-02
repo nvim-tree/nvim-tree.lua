@@ -164,12 +164,7 @@ function M.rename_loaded_buffers(old_path, new_path)
         vim.api.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
         -- to avoid the 'overwrite existing file' error message on write for
         -- normal files
-        local buftype
-        if vim.fn.has("nvim-0.10") == 1 then
-          buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-        else
-          buftype = vim.api.nvim_buf_get_option(buf, "buftype") ---@diagnostic disable-line: deprecated
-        end
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
 
         if buftype == "" then
           vim.api.nvim_buf_call(buf, function()

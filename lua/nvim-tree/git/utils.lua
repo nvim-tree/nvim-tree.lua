@@ -25,12 +25,8 @@ end
 ---@return string stdout
 ---@return integer exit code
 local function system(cmd)
-  if vim.fn.has("nvim-0.10") == 1 then
-    local obj = vim.system(cmd):wait(config.g.git.timeout)
-    return obj.stdout or "", obj.code
-  else
-    return vim.fn.system(cmd), vim.v.shell_error
-  end
+  local obj = vim.system(cmd):wait(config.g.git.timeout)
+  return obj.stdout or "", obj.code
 end
 
 --- Retrieve the git toplevel directory

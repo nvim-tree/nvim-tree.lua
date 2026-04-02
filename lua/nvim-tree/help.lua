@@ -203,12 +203,7 @@ local function open()
 
   -- populate it
   vim.api.nvim_buf_set_lines(M.bufnr, 0, -1, false, lines)
-
-  if vim.fn.has("nvim-0.10") == 1 then
-    vim.api.nvim_set_option_value("modifiable", false, { buf = M.bufnr })
-  else
-    vim.api.nvim_buf_set_option(M.bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
-  end
+  vim.api.nvim_set_option_value("modifiable", false, { buf = M.bufnr })
 
   -- highlight it
   for _, args in ipairs(hl_range_args) do

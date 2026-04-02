@@ -10,13 +10,7 @@ local M = {}
 function M.fn(path, bufnr)
   -- skip if current file is in ignore_list
   if type(bufnr) == "number" then
-    local ft
-
-    if vim.fn.has("nvim-0.10") == 1 then
-      ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
-    else
-      ft = vim.api.nvim_buf_get_option(bufnr, "filetype") or "" ---@diagnostic disable-line: deprecated
-    end
+    local ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr }) or ""
 
     for _, value in pairs(config.g.update_focused_file.update_root.ignore_list) do
       if utils.str_find(path, value) or utils.str_find(ft, value) then

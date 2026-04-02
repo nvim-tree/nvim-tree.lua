@@ -37,20 +37,12 @@ end
 ---@param extmarks table[] extra marks for right icon placement
 ---@param virtual_lines table[] virtual lines for hidden count display
 function Renderer:_draw(bufnr, lines, hl_range_args, signs, extmarks, virtual_lines)
-  if vim.fn.has("nvim-0.10") == 1 then
-    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-  else
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", true) ---@diagnostic disable-line: deprecated
-  end
+  vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
 
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   self:render_hl(bufnr, hl_range_args)
 
-  if vim.fn.has("nvim-0.10") == 1 then
-    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-  else
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", false) ---@diagnostic disable-line: deprecated
-  end
+  vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
 
   vim.fn.sign_unplace(SIGN_GROUP)
   for i, sign_name in pairs(signs) do
