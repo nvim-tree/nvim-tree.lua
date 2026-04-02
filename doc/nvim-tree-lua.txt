@@ -52,7 +52,8 @@ Git Integration
 
 Requirements
 
-    Nvim >= 0.9
+    Nvim >= 0.10. You may use a `compat-nvim-0.X` tag for earlier Nvim
+    versions, however they will receive no updates or support.
 
 ==============================================================================
 Quickstart                                              *nvim-tree-quickstart*
