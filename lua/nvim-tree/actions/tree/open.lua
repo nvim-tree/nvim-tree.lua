@@ -1,7 +1,9 @@
 local lib = require("nvim-tree.lib")
 local view = require("nvim-tree.view")
+local core = require("nvim-tree.core")
 local config = require("nvim-tree.config")
 local finders_find_file = require("nvim-tree.actions.finders.find-file")
+local change_root = require("nvim-tree.actions.tree.change-root")
 
 local M = {}
 
@@ -41,11 +43,54 @@ function M.fn(opts)
   if config.g.update_focused_file.enable or opts.find_file then
     -- update root
     if opts.update_root then
-      require("nvim-tree").change_root(previous_path, previous_buf)
+      change_root.fn(previous_path, previous_buf)
     end
 
     -- find
     finders_find_file.fn(previous_path)
+  end
+end
+
+---@param dirname string absolute directory path
+function M.open_on_directory(dirname)
+  local should_proceed = config.g.hijack_directories.auto_open or view.is_visible()
+  if not should_proceed then
+    return
+  end
+
+  -- instantiate an explorer if there is not one
+  if not core.get_explorer() then
+    core.init(dirname)
+  end
+
+  local explorer = core.get_explorer()
+  if explorer then
+    explorer:force_dirchange(dirname, true, false)
+  end
+end
+
+function M.tab_enter()
+  if view.is_visible({ any_tabpage = true }) then
+    local bufname = vim.api.nvim_buf_get_name(0)
+
+    local ft
+    if vim.fn.has("nvim-0.10") == 1 then
+      ft = vim.api.nvim_get_option_value("filetype", { buf = 0 }) or ""
+    else
+      ft = vim.api.nvim_buf_get_option(0, "ft") ---@diagnostic disable-line: deprecated
+    end
+
+    for _, filter in ipairs(config.g.tab.sync.ignore) do
+      if bufname:match(filter) ~= nil or ft:match(filter) ~= nil then
+        return
+      end
+    end
+    view.open({ focus_tree = false })
+
+    local explorer = core.get_explorer()
+    if explorer then
+      explorer.renderer:draw()
+    end
   end
 end
 

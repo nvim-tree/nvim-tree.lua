@@ -17,7 +17,11 @@ local M = {
 
   ---Immutable OS, detected once on first require
   ---@type table<"unix"|"macos"|"wsl"|"windows", boolean>
-  os = nil
+  os = nil,
+
+  ---Nvim cwd at setup time
+  ---@type string
+  init_root = "",
 }
 
 M.os = {
@@ -528,6 +532,19 @@ local function process_config(g)
   end
 end
 
+---Hijack and disable netrw if (globally) configured
+---@param g nvim_tree.config
+local function manage_netrw(g)
+  if g.hijack_netrw then
+    vim.cmd("silent! autocmd! FileExplorer *")
+    vim.cmd("autocmd VimEnter * ++once silent! autocmd! FileExplorer *")
+  end
+  if g.disable_netrw then
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
+  end
+end
+
 ---Validate user config and migrate legacy.
 ---Merge with M.d and persist as M.g
 ---When no user config M.g is set to M.d and M.u is set to nil
@@ -554,6 +571,12 @@ function M.setup(u)
 
   -- process merged config
   process_config(M.g)
+
+  -- deal with netrw
+  manage_netrw(M.g)
+
+  -- store cwd
+  M.init_root = vim.fn.getcwd()
 end
 
 ---Deep clone defaults
