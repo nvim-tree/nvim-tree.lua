@@ -48,7 +48,7 @@ end
 ---@return boolean
 ---@return string|nil
 local function do_copy(source, destination)
-  local source_stats, err = vim.loop.fs_stat(source)
+  local source_stats, err = vim.uv.fs_stat(source)
 
   if not source_stats then
     log.line("copy_paste", "do_copy fs_stat '%s' failed '%s'", source, err)
@@ -64,7 +64,7 @@ local function do_copy(source, destination)
 
   if source_stats.type == "file" then
     local success
-    success, err = vim.loop.fs_copyfile(source, destination)
+    success, err = vim.uv.fs_copyfile(source, destination)
     if not success then
       log.line("copy_paste", "do_copy fs_copyfile failed '%s'", err)
       return false, err
@@ -72,7 +72,7 @@ local function do_copy(source, destination)
     return true
   elseif source_stats.type == "directory" then
     local handle
-    handle, err = vim.loop.fs_scandir(source)
+    handle, err = vim.uv.fs_scandir(source)
     if type(handle) == "string" then
       return false, handle
     elseif not handle then
@@ -81,14 +81,14 @@ local function do_copy(source, destination)
     end
 
     local success
-    success, err = vim.loop.fs_mkdir(destination, source_stats.mode)
+    success, err = vim.uv.fs_mkdir(destination, source_stats.mode)
     if not success then
       log.line("copy_paste", "do_copy fs_mkdir '%s' failed '%s'", destination, err)
       return false, err
     end
 
     while true do
-      local name, _ = vim.loop.fs_scandir_next(handle)
+      local name, _ = vim.uv.fs_scandir_next(handle)
       if not name then
         break
       end
@@ -228,7 +228,7 @@ function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
           self:finish_paste(action)
           return
         end
-        if vim.loop.fs_stat(new_dest) then
+        if vim.uv.fs_stat(new_dest) then
           self:resolve_conflicts({ { node = conflict[1].node, dest = new_dest } }, destination, action, action_fn)
         else
           do_paste_one(source, new_dest, action, action_fn)
@@ -285,7 +285,7 @@ function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
             local extension = vim.fn.fnamemodify(item.node.name, ":e")
             local new_name = extension ~= "" and (basename .. suffix .. "." .. extension) or (item.node.name .. suffix)
             local new_dest = utils.path_join({ destination, new_name })
-            local stats = vim.loop.fs_stat(new_dest)
+            local stats = vim.uv.fs_stat(new_dest)
             if stats then
               table.insert(still_conflict, { node = item.node, dest = new_dest })
             else
@@ -324,7 +324,7 @@ function Clipboard:do_paste(node, action, action_fn)
   end
 
   local destination = node.absolute_path
-  local stats, err, err_name = vim.loop.fs_stat(destination)
+  local stats, err, err_name = vim.uv.fs_stat(destination)
   if not stats and err_name ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, err)
     notify.error("Could not " .. action .. " " .. notify.render_path(destination) .. " - " .. (err or "???"))
@@ -340,7 +340,7 @@ function Clipboard:do_paste(node, action, action_fn)
   local conflict = {}
   for _, _node in ipairs(clip) do
     local dest = utils.path_join({ destination, _node.name })
-    local dest_stats = vim.loop.fs_stat(dest)
+    local dest_stats = vim.uv.fs_stat(dest)
     if dest_stats then
       table.insert(conflict, { node = _node, dest = dest })
     else
@@ -374,7 +374,7 @@ local function do_cut(source, destination)
   end
 
   events._dispatch_will_rename_node(source, destination)
-  local success, errmsg = vim.loop.fs_rename(source, destination)
+  local success, errmsg = vim.uv.fs_rename(source, destination)
   if not success then
     log.line("copy_paste", "do_cut fs_rename failed '%s'", errmsg)
     return false, errmsg

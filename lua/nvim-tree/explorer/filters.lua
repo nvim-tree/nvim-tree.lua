@@ -177,7 +177,7 @@ function Filters:custom(path)
   end
 
   -- filter custom regexes
-  local relpath = utils.path_relative(path, vim.loop.cwd())
+  local relpath = utils.path_relative(path, vim.uv.cwd())
   for pat, _ in pairs(self.ignore_list) do
     if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
       return true

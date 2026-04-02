@@ -2,7 +2,7 @@ local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class
----@field uid_node number vim.loop.hrtime() at construction time
+---@field uid_node number vim.uv.hrtime() at construction time
 ---@field type "file" | "directory" | "link" uv.fs_stat.result.type
 ---@field explorer Explorer
 ---@field absolute_path string
@@ -26,7 +26,7 @@ local Node = Class:extend()
 ---@protected
 ---@param args NodeArgs
 function Node:new(args)
-  self.uid_node      = vim.loop.hrtime()
+  self.uid_node      = vim.uv.hrtime()
   self.explorer      = args.explorer
   self.absolute_path = args.absolute_path
   self.executable    = false

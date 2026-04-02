@@ -59,7 +59,7 @@ end
 function M.profile_start(fmt, ...)
   local profile = {}
   if M.enabled("profile") then
-    profile.start = vim.loop.hrtime()
+    profile.start = vim.uv.hrtime()
     profile.tag = string.format((fmt or "???"), ...)
     M.line("profile", "START %s", profile.tag)
   end
@@ -71,7 +71,7 @@ end
 ---@param profile Profile returned from profile_start
 function M.profile_end(profile)
   if M.enabled("profile") and type(profile) == "table" then
-    local millis = profile.start and math.modf((vim.loop.hrtime() - profile.start) / 1000000) or -1
+    local millis = profile.start and math.modf((vim.uv.hrtime() - profile.start) / 1000000) or -1
     M.line("profile", "END   %s %dms", profile.tag or "", millis)
   end
 end

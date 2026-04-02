@@ -125,9 +125,9 @@ end
 ---@param callback function|nil
 function GitRunner:run_git_job(callback)
   local handle, pid
-  local stdout = vim.loop.new_pipe(false)
-  local stderr = vim.loop.new_pipe(false)
-  local timer = vim.loop.new_timer()
+  local stdout = vim.uv.new_pipe(false)
+  local stderr = vim.uv.new_pipe(false)
+  local timer = vim.uv.new_timer()
 
   if stdout == nil or stderr == nil or timer == nil then
     return
@@ -150,7 +150,7 @@ function GitRunner:run_git_job(callback)
 
     -- don't close the handle when killing as it will leave a zombie
     if rc == -1 then
-      pcall(vim.loop.kill, pid, "sigkill")
+      pcall(vim.uv.kill, pid, "sigkill")
     elseif handle then
       handle:close()
     end
@@ -164,7 +164,7 @@ function GitRunner:run_git_job(callback)
   log.line("git", "running job with timeout %dms", self.timeout)
   log.line("git", "git %s",                        table.concat(utils.array_remove_nils(spawn_options.args), " "))
 
-  handle, pid = vim.loop.spawn(
+  handle, pid = vim.uv.spawn(
     "git",
     spawn_options,
     vim.schedule_wrap(function(rc)
@@ -196,8 +196,8 @@ function GitRunner:run_git_job(callback)
     self:log_raw_output(data)
   end
 
-  vim.loop.read_start(stdout, vim.schedule_wrap(manage_stdout))
-  vim.loop.read_start(stderr, vim.schedule_wrap(manage_stderr))
+  vim.uv.read_start(stdout, vim.schedule_wrap(manage_stdout))
+  vim.uv.read_start(stderr, vim.schedule_wrap(manage_stderr))
 end
 
 ---@private

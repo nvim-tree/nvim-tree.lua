@@ -62,14 +62,14 @@ end
 ---@param cwd string
 ---@return boolean|nil
 local function remove_dir(cwd)
-  local handle, err = vim.loop.fs_scandir(cwd)
+  local handle, err = vim.uv.fs_scandir(cwd)
   if not handle then
     notify.error(err)
     return
   end
 
   while true do
-    local name, _ = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.uv.fs_scandir_next(handle)
     if not name then
       break
     end
@@ -77,11 +77,11 @@ local function remove_dir(cwd)
     local new_cwd = utils.path_join({ cwd, name })
 
     -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
-    local stat = vim.loop.fs_stat(new_cwd)
+    local stat = vim.uv.fs_stat(new_cwd)
     -- TODO remove once 0.12 is the minimum neovim version
     -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
     ---@diagnostic disable-next-line: param-type-mismatch
-    local lstat = vim.loop.fs_lstat(new_cwd)
+    local lstat = vim.uv.fs_lstat(new_cwd)
 
     local type = stat and stat.type or nil
     -- Checks if file is a link file to ensure deletion of the symlink instead of the file it points to
@@ -93,7 +93,7 @@ local function remove_dir(cwd)
         return false
       end
     else
-      local success = vim.loop.fs_unlink(new_cwd)
+      local success = vim.uv.fs_unlink(new_cwd)
       if not success then
         return false
       end
@@ -101,7 +101,7 @@ local function remove_dir(cwd)
     end
   end
 
-  return vim.loop.fs_rmdir(cwd)
+  return vim.uv.fs_rmdir(cwd)
 end
 
 --- Remove a node, notify errors, dispatch events
@@ -118,7 +118,7 @@ function M.remove(node)
     events._dispatch_folder_removed(node.absolute_path)
   else
     events._dispatch_will_remove_file(node.absolute_path)
-    local success = vim.loop.fs_unlink(node.absolute_path)
+    local success = vim.uv.fs_unlink(node.absolute_path)
     if not success then
       notify.error("Could not remove " .. notify_node)
       return false

@@ -172,7 +172,7 @@ function M.get_toplevel(path)
     return nil
   end
 
-  local stat, _ = vim.loop.fs_stat(path)
+  local stat, _ = vim.uv.fs_stat(path)
   if not stat or stat.type ~= "directory" then
     return nil
   end

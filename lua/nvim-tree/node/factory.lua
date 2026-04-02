@@ -17,15 +17,15 @@ function M.create(args)
 
   if args.fs_stat.type == "directory" then
     -- directory must be readable and enumerable
-    if vim.loop.fs_access(args.absolute_path, "R") and Watcher.is_fs_event_capable(args.absolute_path) then
+    if vim.uv.fs_access(args.absolute_path, "R") and Watcher.is_fs_event_capable(args.absolute_path) then
       return DirectoryNode(args)
     end
   elseif args.fs_stat.type == "file" then
     return FileNode(args)
   elseif args.fs_stat.type == "link" then
     -- link target path and stat must resolve
-    local link_to = vim.loop.fs_realpath(args.absolute_path)
-    local link_to_stat = link_to and vim.loop.fs_stat(link_to)
+    local link_to = vim.uv.fs_realpath(args.absolute_path)
+    local link_to_stat = link_to and vim.uv.fs_stat(link_to)
     if not link_to or not link_to_stat then
       return
     end

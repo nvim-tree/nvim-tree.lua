@@ -95,7 +95,7 @@ function M.open(opts)
     if opts.path then
       core.init(opts.path)
     else
-      local cwd, err = vim.loop.cwd()
+      local cwd, err = vim.uv.cwd()
       if not cwd then
         notify.error(string.format("current working directory unavailable: %s", err))
         return

@@ -66,7 +66,7 @@ function Event:start()
 
   local rc, _, name
 
-  self.fs_event, _, name = vim.loop.new_fs_event()
+  self.fs_event, _, name = vim.uv.new_fs_event()
   if not self.fs_event then
     self.fs_event = nil
     notify.warn(string.format("Could not initialize an fs_event watcher for path %s : %s", self.path, name))
@@ -262,7 +262,7 @@ function M.is_fs_event_capable(path)
     return true
   end
 
-  local fs_event = vim.loop.new_fs_event()
+  local fs_event = vim.uv.new_fs_event()
   if not fs_event then
     return false
   end

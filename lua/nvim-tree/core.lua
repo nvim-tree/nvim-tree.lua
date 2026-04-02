@@ -22,9 +22,9 @@ function M.init(foldername)
   local err, path
 
   if foldername then
-    path, err = vim.loop.fs_realpath(foldername)
+    path, err = vim.uv.fs_realpath(foldername)
   else
-    path, err = vim.loop.cwd()
+    path, err = vim.uv.cwd()
   end
   if path then
     TreeExplorer = require("nvim-tree.explorer")({ path = path })

@@ -19,7 +19,7 @@ function M.fn(path)
   end
 
   -- always match against the real path
-  local path_real = vim.loop.fs_realpath(path)
+  local path_real = vim.uv.fs_realpath(path)
   if not path_real then
     return
   end
