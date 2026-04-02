@@ -22,7 +22,6 @@ local srcs_config = {
   { helptag = "nvim-tree-config-renderer",            section = "Config: renderer",            path = base .. "_meta/config/renderer.lua", },
   { helptag = "nvim-tree-config-hijack-directories",  section = "Config: hijack_directories",  path = base .. "_meta/config/hijack_directories.lua", },
   { helptag = "nvim-tree-config-update-focused-file", section = "Config: update_focused_file", path = base .. "_meta/config/update_focused_file.lua", },
-  { helptag = "nvim-tree-config-system-open",         section = "Config: system_open",         path = base .. "_meta/config/system_open.lua", },
   { helptag = "nvim-tree-config-git",                 section = "Config: git",                 path = base .. "_meta/config/git.lua", },
   { helptag = "nvim-tree-config-diagnostics",         section = "Config: diagnostics",         path = base .. "_meta/config/diagnostics.lua", },
   { helptag = "nvim-tree-config-modified",            section = "Config: modified",            path = base .. "_meta/config/modified.lua", },

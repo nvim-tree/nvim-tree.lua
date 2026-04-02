@@ -87,9 +87,6 @@ error("Cannot require a meta file")
 ---[nvim_tree.config.update_focused_file]
 ---@field update_focused_file? nvim_tree.config.update_focused_file
 ---
----[nvim_tree.config.system_open]
----@field system_open? nvim_tree.config.system_open
----
 ---[nvim_tree.config.git]
 ---@field git? nvim_tree.config.git
 ---
