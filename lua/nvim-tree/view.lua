@@ -121,8 +121,14 @@ local function open_window()
   if config.g.view.float.enable then
     vim.api.nvim_open_win(0, true, open_win_config())
   else
-    vim.api.nvim_command("vsp")
+    local ei = vim.o.eventignore
+    vim.o.eventignore = "all"
+    vim.api.nvim_open_win(M.get_bufnr(), true, {
+      split = config.g.view.side or "left",
+      width = view_state.get_width(),
+    })
     M.reposition_window()
+    vim.o.eventignore = ei
   end
   setup_tabpage(vim.api.nvim_get_current_tabpage())
   set_window_options_and_buffer()
