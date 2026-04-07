@@ -43,11 +43,10 @@ help-update:
 
 #
 # CI
-# --ignore-blank-lines is used as nightly has removed unnecessary blank lines that stable (0.11.5) currently inserts
 #
 help-check: help-update
 	scripts/vimdoc.sh lintdoc
-	git diff --ignore-blank-lines --exit-code doc/nvim-tree-lua.txt
+	git diff --exit-code doc/nvim-tree-lua.txt
 
 
 .PHONY: all lint style check luacheck style-check style-doc luals format-fix format-check help-update help-check
