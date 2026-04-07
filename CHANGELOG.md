@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.17.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.16.0...nvim-tree-v1.17.0) (2026-04-07)
+
+
+### Features
+
+* **#3292:** add nvim_tree.config.filesystem_watchers.whitelist_dirs - strongly recommended for windows ([#3298](https://github.com/nvim-tree/nvim-tree.lua/issues/3298)) ([6eaf74c](https://github.com/nvim-tree/nvim-tree.lua/commit/6eaf74c9919d121d2806ac3c20e757e66bd29c31))
+* **#3310:** minimum neovim version 0.10 ([#3311](https://github.com/nvim-tree/nvim-tree.lua/issues/3311)) ([7adc567](https://github.com/nvim-tree/nvim-tree.lua/commit/7adc5679feb439275255aa9e95c434cca206d10c))
+
+
+### Bug Fixes
+
+* **#3257:** error when calling api.tree.find_file ([#3304](https://github.com/nvim-tree/nvim-tree.lua/issues/3304)) ([b548cfe](https://github.com/nvim-tree/nvim-tree.lua/commit/b548cfef00a79f0b3e3af24f91ae6bd14f22af95))
+* **#3293:** marks.bulk operations filter descendant nodes ([#3294](https://github.com/nvim-tree/nvim-tree.lua/issues/3294)) ([f37ebac](https://github.com/nvim-tree/nvim-tree.lua/commit/f37ebac81164e1445c499cdd6de86e6d8e5d57e4))
+* **#3301:** setup with empty config fails ([#3303](https://github.com/nvim-tree/nvim-tree.lua/issues/3303)) ([ec0efb0](https://github.com/nvim-tree/nvim-tree.lua/commit/ec0efb06b0abfa56492acfc8c34ac8958d18601e))
+* system open native requires nvim 0.10 ([#3309](https://github.com/nvim-tree/nvim-tree.lua/issues/3309)) ([02ccbcd](https://github.com/nvim-tree/nvim-tree.lua/commit/02ccbcd4af9a7fa159251f721d763c0d16f91703))
+
+
+### Performance Improvements
+
+* **#3231:** decrease setup time: optimise setup and defer requires until tree open ([#3308](https://github.com/nvim-tree/nvim-tree.lua/issues/3308)) ([31503ad](https://github.com/nvim-tree/nvim-tree.lua/commit/31503ad5d869fca61461d82a9126f62480ecb0ab))
+* **#3257:** remove setup for actions modules, full-name and explorer ([#3299](https://github.com/nvim-tree/nvim-tree.lua/issues/3299)) ([43a3bb4](https://github.com/nvim-tree/nvim-tree.lua/commit/43a3bb4b26b4578a704f24bb6a4889b454c0eb65))
+* **#3257:** remove setup for modules: buffers, diagnostics, git, help, keymap, lib, watcher ([#3295](https://github.com/nvim-tree/nvim-tree.lua/issues/3295)) ([3d385d3](https://github.com/nvim-tree/nvim-tree.lua/commit/3d385d3346e4883d60dc37cf642bd47bed78a46e))
+* **#3257:** remove setup for renderer, log, appearance ([#3307](https://github.com/nvim-tree/nvim-tree.lua/issues/3307)) ([3603f06](https://github.com/nvim-tree/nvim-tree.lua/commit/3603f069ff783c31986894a56c2a6755331b0802))
+* **#3257:** remove setup for view, extracting view-state ([#3306](https://github.com/nvim-tree/nvim-tree.lua/issues/3306)) ([4cbe795](https://github.com/nvim-tree/nvim-tree.lua/commit/4cbe79526f8bc0bdb1a500d261dc5cc1be4e77d5))
+
 ## [1.16.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.15.0...nvim-tree-v1.16.0) (2026-03-17)
 
 
