@@ -85,27 +85,14 @@ end
 local function set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
 
-  if vim.fn.has("nvim-0.10") == 1 then
-    local eventignore = vim.api.nvim_get_option_value("eventignore", {})
-    vim.api.nvim_set_option_value("eventignore", "all", {})
+  local eventignore = vim.api.nvim_get_option_value("eventignore", {})
+  vim.api.nvim_set_option_value("eventignore", "all", {})
 
-    for k, v in pairs(view_state.Active.winopts) do
-      vim.api.nvim_set_option_value(k, v, { scope = "local" })
-    end
-
-    vim.api.nvim_set_option_value("eventignore", eventignore, {})
-  else
-    local eventignore = vim.api.nvim_get_option("eventignore") ---@diagnostic disable-line: deprecated
-    vim.api.nvim_set_option("eventignore", "all") ---@diagnostic disable-line: deprecated
-
-    -- #3009 vim.api.nvim_win_set_option does not set local scope without explicit winid.
-    -- Revert to opt_local instead of propagating it through for just the 0.10 path.
-    for k, v in pairs(view_state.Active.winopts) do
-      vim.opt_local[k] = v
-    end
-
-    vim.api.nvim_set_option("eventignore", eventignore) ---@diagnostic disable-line: deprecated
+  for k, v in pairs(view_state.Active.winopts) do
+    vim.api.nvim_set_option_value(k, v, { scope = "local" })
   end
+
+  vim.api.nvim_set_option_value("eventignore", eventignore, {})
 end
 
 ---@return vim.api.keyset.win_config

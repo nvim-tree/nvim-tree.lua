@@ -38,12 +38,7 @@ local function usable_win_ids()
   return vim.tbl_filter(function(id)
     local bufid = vim.api.nvim_win_get_buf(id)
     for option, v in pairs(config.g.actions.open_file.window_picker.exclude) do
-      local ok, option_value
-      if vim.fn.has("nvim-0.10") == 1 then
-        ok, option_value = pcall(vim.api.nvim_get_option_value, option, { buf = bufid })
-      else
-        ok, option_value = pcall(vim.api.nvim_buf_get_option, bufid, option) ---@diagnostic disable-line: deprecated
-      end
+      local ok, option_value = pcall(vim.api.nvim_get_option_value, option, { buf = bufid })
 
       if ok and vim.tbl_contains(v, option_value) then
         return false
@@ -105,24 +100,14 @@ local function pick_win_id()
 
   if laststatus == 3 then
     for _, win_id in ipairs(not_selectable) do
-      local ok_status, statusline
-
-      if vim.fn.has("nvim-0.10") == 1 then
-        ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = win_id })
-      else
-        ok_status, statusline = pcall(vim.api.nvim_win_get_option, win_id, "statusline") ---@diagnostic disable-line: deprecated
-      end
+      local ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = win_id })
 
       win_opts_unselectable[win_id] = {
         statusline = ok_status and statusline or "",
       }
 
       -- Clear statusline for windows not selectable
-      if vim.fn.has("nvim-0.10") == 1 then
-        vim.api.nvim_set_option_value("statusline", " ", { win = win_id })
-      else
-        vim.api.nvim_win_set_option(win_id, "statusline", " ") ---@diagnostic disable-line: deprecated
-      end
+      vim.api.nvim_set_option_value("statusline", " ", { win = win_id })
     end
   end
 
@@ -130,14 +115,8 @@ local function pick_win_id()
   for _, id in ipairs(selectable) do
     local char = config.g.actions.open_file.window_picker.chars:sub(i, i)
 
-    local ok_status, statusline, ok_hl, winhl
-    if vim.fn.has("nvim-0.10") == 1 then
-      ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = id })
-      ok_hl, winhl = pcall(vim.api.nvim_get_option_value, "winhl", { win = id })
-    else
-      ok_status, statusline = pcall(vim.api.nvim_win_get_option, id, "statusline") ---@diagnostic disable-line: deprecated
-      ok_hl, winhl = pcall(vim.api.nvim_win_get_option, id, "winhl") ---@diagnostic disable-line: deprecated
-    end
+    local ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = id })
+    local ok_hl, winhl = pcall(vim.api.nvim_get_option_value, "winhl", { win = id })
 
     win_opts_selectable[id] = {
       statusline = ok_status and statusline or "",
@@ -145,13 +124,8 @@ local function pick_win_id()
     }
     win_map[char] = id
 
-    if vim.fn.has("nvim-0.10") == 1 then
-      vim.api.nvim_set_option_value("statusline", "%=" .. char .. "%=",                                                { win = id })
-      vim.api.nvim_set_option_value("winhl",      "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker", { win = id })
-    else
-      vim.api.nvim_win_set_option(id, "statusline", "%=" .. char .. "%=") ---@diagnostic disable-line: deprecated
-      vim.api.nvim_win_set_option(id, "winhl",      "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker") ---@diagnostic disable-line: deprecated
-    end
+    vim.api.nvim_set_option_value("statusline", "%=" .. char .. "%=",                                                { win = id })
+    vim.api.nvim_set_option_value("winhl",      "StatusLine:NvimTreeWindowPicker,StatusLineNC:NvimTreeWindowPicker", { win = id })
 
     i = i + 1
     if i > #config.g.actions.open_file.window_picker.chars then
@@ -170,11 +144,7 @@ local function pick_win_id()
   -- Restore window options
   for _, id in ipairs(selectable) do
     for opt, value in pairs(win_opts_selectable[id]) do
-      if vim.fn.has("nvim-0.10") == 1 then
-        vim.api.nvim_set_option_value(opt, value, { win = id })
-      else
-        vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
-      end
+      vim.api.nvim_set_option_value(opt, value, { win = id })
     end
   end
 
@@ -183,11 +153,7 @@ local function pick_win_id()
       -- Ensure window still exists at this point
       if vim.api.nvim_win_is_valid(id) then
         for opt, value in pairs(win_opts_unselectable[id]) do
-          if vim.fn.has("nvim-0.10") == 1 then
-            vim.api.nvim_set_option_value(opt, value, { win = id })
-          else
-            vim.api.nvim_win_set_option(id, opt, value) ---@diagnostic disable-line: deprecated
-          end
+          vim.api.nvim_set_option_value(opt, value, { win = id })
         end
       end
     end
@@ -341,12 +307,7 @@ local function open_in_new_window(filename, mode)
     -- modified, and create new split if it is.
     local target_bufid = vim.api.nvim_win_get_buf(target_winid)
 
-    local modified
-    if vim.fn.has("nvim-0.10") == 1 then
-      modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
-    else
-      modified = vim.api.nvim_buf_get_option(target_bufid, "modified") ---@diagnostic disable-line: deprecated
-    end
+    local modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
 
     if modified then
       if not mode:match("split$") then

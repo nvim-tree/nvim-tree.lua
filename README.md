@@ -51,7 +51,7 @@ markdown-toc --maxdepth=2 -i README.md
 
 # Requirements
 
-[neovim >=0.9.0](https://github.com/neovim/neovim/wiki/Installing-Neovim)
+[Nvim >= 0.10](https://github.com/neovim/neovim/wiki/Installing-Neovim). At least `n - 0.1` stable Nvim compatibility is guaranteed. You may use a `compat-nvim-0.X` tag for earlier Nvim versions, however they will receive no updates or support.
 
 [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) is optional and used to display file icons. It requires a [patched font](https://www.nerdfonts.com/). Your terminal emulator must be configured to use that font, usually "Hack Nerd Font"
 

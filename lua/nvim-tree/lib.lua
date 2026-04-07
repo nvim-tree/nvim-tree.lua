@@ -47,13 +47,8 @@ local function should_hijack_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
 
   local bufmodified, ft
-  if vim.fn.has("nvim-0.10") == 1 then
-    bufmodified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
-    ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
-  else
-    bufmodified = vim.api.nvim_buf_get_option(bufnr, "modified") ---@diagnostic disable-line: deprecated
-    ft = vim.api.nvim_buf_get_option(bufnr, "ft") ---@diagnostic disable-line: deprecated
-  end
+  bufmodified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
+  ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
 
   local should_hijack_unnamed = config.g.hijack_unnamed_buffer_when_opening and bufname == "" and not bufmodified and ft == ""
   local should_hijack_dir = bufname ~= "" and vim.fn.isdirectory(bufname) == 1 and config.g.hijack_directories.enable
@@ -100,7 +95,7 @@ function M.open(opts)
     if opts.path then
       core.init(opts.path)
     else
-      local cwd, err = vim.loop.cwd()
+      local cwd, err = vim.uv.cwd()
       if not cwd then
         notify.error(string.format("current working directory unavailable: %s", err))
         return

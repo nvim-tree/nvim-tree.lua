@@ -138,7 +138,6 @@ function M.reload_project(toplevel, path, callback)
     end
     GitRunner:run(args)
   else
-    -- TODO #1974 use callback once async/await is available
     reload_git_project(toplevel, path, project, GitRunner:run(args))
   end
 end
@@ -173,7 +172,7 @@ function M.get_toplevel(path)
     return nil
   end
 
-  local stat, _ = vim.loop.fs_stat(path)
+  local stat, _ = vim.uv.fs_stat(path)
   if not stat or stat.type ~= "directory" then
     return nil
   end

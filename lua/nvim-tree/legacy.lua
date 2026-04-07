@@ -146,6 +146,13 @@ local function removed_config(u)
     )
   end
   u["create_in_closed_folder"] = nil
+
+  if u.system_open then
+    require("nvim-tree.notify").warn(
+      "system_open has been removed, now uses the system default handler: vim.ui.open()"
+    )
+    u["system_open"] = nil
+  end
 end
 
 ---Migrate legacy config in place.

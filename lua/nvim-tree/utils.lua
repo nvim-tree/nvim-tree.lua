@@ -164,12 +164,7 @@ function M.rename_loaded_buffers(old_path, new_path)
         vim.api.nvim_buf_set_name(buf, new_path .. buf_name:sub(#old_path + 1))
         -- to avoid the 'overwrite existing file' error message on write for
         -- normal files
-        local buftype
-        if vim.fn.has("nvim-0.10") == 1 then
-          buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-        else
-          buftype = vim.api.nvim_buf_get_option(buf, "buftype") ---@diagnostic disable-line: deprecated
-        end
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
 
         if buftype == "" then
           vim.api.nvim_buf_call(buf, function()
@@ -190,7 +185,7 @@ end
 ---@return boolean
 function M.file_exists(path)
   if not (config.os.windows or config.os.wsl) then
-    local _, error = vim.loop.fs_stat(path)
+    local _, error = vim.uv.fs_stat(path)
     return error == nil
   end
 
@@ -210,14 +205,14 @@ function M.file_exists(path)
   local parent = vim.fn.fnamemodify(path, ":h")
   local filename = vim.fn.fnamemodify(path, ":t")
 
-  local handle = vim.loop.fs_scandir(parent)
+  local handle = vim.uv.fs_scandir(parent)
   if not handle then
     -- File can not exist if its parent directory does not exist
     return false
   end
 
   while true do
-    local name, _ = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.uv.fs_scandir_next(handle)
     if not name then
       break
     end
@@ -336,7 +331,7 @@ function M.debounce(context, timeout, callback)
     timer_stop_close(debouncer.timer)
   end
 
-  local timer = vim.loop.new_timer()
+  local timer = vim.uv.new_timer()
   if not timer then
     return
   end
@@ -447,7 +442,7 @@ function M.is_executable(absolute_path)
     --- executable detection on windows is buggy and not performant hence it is disabled
     return false
   else
-    return vim.loop.fs_access(absolute_path, "X") or false
+    return vim.uv.fs_access(absolute_path, "X") or false
   end
 end
 

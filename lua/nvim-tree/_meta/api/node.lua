@@ -271,7 +271,7 @@ nvim_tree.api.node.run = {}
 function nvim_tree.api.node.run.cmd(node) end
 
 ---
----Execute [nvim_tree.config.system_open].
+---Open with the system default handler: [vim.ui.open()].
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.run.system(node) end

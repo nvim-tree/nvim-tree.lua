@@ -22,8 +22,8 @@ local DirectoryNode = Node:extend()
 function DirectoryNode:new(args)
   DirectoryNode.super.new(self, args)
 
-  local handle       = vim.loop.fs_scandir(args.absolute_path)
-  local has_children = handle and vim.loop.fs_scandir_next(handle) ~= nil or false
+  local handle       = vim.uv.fs_scandir(args.absolute_path)
+  local has_children = handle and vim.uv.fs_scandir_next(handle) ~= nil or false
 
   self.type          = "directory"
 

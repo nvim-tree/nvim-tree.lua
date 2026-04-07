@@ -30,7 +30,7 @@ function M.global()
     vim.api.nvim_create_autocmd("DirChanged", {
       group = augroup_id,
       callback = function()
-        require("nvim-tree.actions.tree.change-dir").fn(vim.loop.cwd())
+        require("nvim-tree.actions.tree.change-dir").fn(vim.uv.cwd())
       end,
     })
   end

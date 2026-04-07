@@ -27,7 +27,7 @@ local FILTER_REASON = require("nvim-tree.enum").FILTER_REASON
 local find_file = require("nvim-tree.actions.finders.find-file")
 
 ---@class (exact) Explorer: RootNode
----@field uid_explorer number vim.loop.hrtime() at construction time
+---@field uid_explorer number vim.uv.hrtime() at construction time
 ---@field opts table user options
 ---@field augroup_id integer
 ---@field current_tab integer
@@ -54,7 +54,7 @@ function Explorer:new(args)
     name          = "..",
   })
 
-  self.uid_explorer = vim.loop.hrtime()
+  self.uid_explorer = vim.uv.hrtime()
   self.augroup_id   = vim.api.nvim_create_augroup("NvimTree_Explorer_" .. self.uid_explorer, {})
 
   self.open         = true
@@ -203,7 +203,7 @@ end
 ---@return Node[]?
 function Explorer:reload(node, project)
   local cwd = node.link_to or node.absolute_path
-  local handle = vim.loop.fs_scandir(cwd)
+  local handle = vim.uv.fs_scandir(cwd)
   if not handle then
     return
   end
@@ -233,15 +233,17 @@ function Explorer:reload(node, project)
   })
 
   while true do
-    local name, _ = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.uv.fs_scandir_next(handle)
     if not name then
       break
     end
 
     local abs = utils.path_join({ cwd, name })
 
-    -- path incorrectly specified as an integer
-    local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
+    -- TODO remove once 0.12 is the minimum neovim version
+    -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local stat = vim.uv.fs_lstat(abs)
 
     local filter_reason = self.filters:should_filter_as_reason(abs, stat, filter_status)
     if filter_reason == FILTER_REASON.none then
@@ -389,7 +391,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
   })
 
   while true do
-    local name, _ = vim.loop.fs_scandir_next(handle)
+    local name, _ = vim.uv.fs_scandir_next(handle)
     if not name then
       break
     end
@@ -399,8 +401,10 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("populate_children %s", abs)
 
-      -- path incorrectly specified as an integer
-      local stat = vim.loop.fs_lstat(abs) ---@diagnostic disable-line param-type-mismatch
+      -- TODO remove once 0.12 is the minimum neovim version
+      -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
+      ---@diagnostic disable-next-line: param-type-mismatch
+      local stat = vim.uv.fs_lstat(abs)
 
       local filter_reason = parent.filters:should_filter_as_reason(abs, stat, filter_status)
       if filter_reason == FILTER_REASON.none and not nodes_by_path[abs] then
@@ -436,7 +440,7 @@ end
 ---@return Node[]|nil
 function Explorer:explore(node, project, parent)
   local cwd = node.link_to or node.absolute_path
-  local handle = vim.loop.fs_scandir(cwd)
+  local handle = vim.uv.fs_scandir(cwd)
   if not handle then
     return
   end

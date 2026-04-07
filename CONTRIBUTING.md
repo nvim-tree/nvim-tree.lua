@@ -132,10 +132,10 @@ Whenever new neovim API is introduced, please ensure that it is available in old
 See `nvim-tree.setup` for the oldest supported version of neovim. If the API is not availble in that version, a backwards compatibility shim must be used e.g.
 
 ```lua
-if vim.fn.has("nvim-0.10") == 1 then
-  modified = vim.api.nvim_get_option_value("modified", { buf = target_bufid })
+if vim.fn.has("nvim-0.11") == 1 and vim.hl and vim.hl.range then
+  vim.hl.range(0, ns_id, details.hl_group, { 0, col }, { 0, details.end_col, }, {})
 else
-  modified = vim.api.nvim_buf_get_option(target_bufid, "modified") ---@diagnostic disable-line: deprecated
+  vim.api.nvim_buf_add_highlight(0, ns_id, details.hl_group, 0, col, details.end_col) ---@diagnostic disable-line: deprecated
 end
 ```
 

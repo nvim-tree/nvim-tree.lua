@@ -52,7 +52,10 @@ Git Integration
 
 Requirements
 
-    Nvim >= 0.9
+    Nvim >= 0.10.
+    At least `n - 0.1` stable Nvim compatibility is guaranteed.
+    You may use a `compat-nvim-0.X` tag for earlier Nvim versions, however
+    they will receive no updates or support.
 
 ==============================================================================
 Quickstart                                              *nvim-tree-quickstart*
@@ -1041,8 +1044,6 @@ Config                                                      *nvim-tree-config*
                                                |nvim_tree.config.hijack_directories|
       • {update_focused_file}?                 (`nvim_tree.config.update_focused_file`)
                                                |nvim_tree.config.update_focused_file|
-      • {system_open}?                         (`nvim_tree.config.system_open`)
-                                               |nvim_tree.config.system_open|
       • {git}?                                 (`nvim_tree.config.git`)
                                                |nvim_tree.config.git|
       • {diagnostics}?                         (`nvim_tree.config.diagnostics`)
@@ -1495,30 +1496,6 @@ Config: update_focused_file             *nvim-tree-config-update-focused-file*
                         filetypes that will not update the root dir of the
                         tree if the file isn't found under the current root
                         directory.
-
-
-
-==============================================================================
-Config: system_open                             *nvim-tree-config-system-open*
-
-*nvim_tree.config.system_open*
-    Open files or directories via the OS.
-
-    Nvim:
-    • `>=` 0.10 uses |vim.ui.open()| unless {cmd} is specified
-    • `<` 0.10 calls external {cmd}:
-      • UNIX: `xdg-open`
-      • macOS: `open`
-      • Windows: `cmd`
-
-    Once nvim-tree minimum Nvim version is updated to 0.10, this configuration
-    will no longer be necessary and will be removed.
-
-    Fields: ~
-      • {cmd}?   (`string`) The open command itself
-      • {args}?  (`string[]`, default: `{}` or `{ "/c", "start", '""' }` on
-                 windows) Optional argument list. Leave empty for OS specific
-                 default.
 
 
 
@@ -2153,10 +2130,6 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
           ignore_list = {},
         },
         exclude = false,
-      },
-      system_open = {
-        cmd = "",
-        args = {},
       },
       git = {
         enable = true,
@@ -2934,7 +2907,7 @@ run.cmd({node})                                 *nvim_tree.api.node.run.cmd()*
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
 run.system({node})                           *nvim_tree.api.node.run.system()*
-    Execute |nvim_tree.config.system_open|.
+    Open with the system default handler: |vim.ui.open()|.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file

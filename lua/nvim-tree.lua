@@ -17,8 +17,9 @@ function M.setup(config_user)
   local view_state = require("nvim-tree.view-state")
 
   -- Nvim version check
-  if vim.fn.has("nvim-0.9") == 0 then
-    require("nvim-tree.notify").warn("nvim-tree.lua requires Neovim 0.9 or higher")
+  if vim.fn.has("nvim-0.10") == 0 then
+    require("nvim-tree.notify").warn(
+      "nvim-tree.lua requires Nvim >= 0.10. You may use a compat-nvim-0.X tag for earlier Nvim versions, however they will receive no updates or support.")
     return
   end
 
