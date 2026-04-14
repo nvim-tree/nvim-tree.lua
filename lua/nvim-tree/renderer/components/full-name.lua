@@ -76,6 +76,7 @@ function M.show()
     height    = 1,
     noautocmd = true,
     style     = "minimal",
+    zindex    = 40,
     border    = "none"
   })
   vim.wo[M.popup_win].winhl = view_state.Active.winopts.winhl
