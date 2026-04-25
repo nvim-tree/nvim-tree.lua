@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.17.0...nvim-tree-v1.17.1) (2026-04-25)
+
+
+### Bug Fixes
+
+* **#3312:** correct cursor when full name shown, requires nvim 0.12.2+ ([#3316](https://github.com/nvim-tree/nvim-tree.lua/issues/3316)) ([d277467](https://github.com/nvim-tree/nvim-tree.lua/commit/d277467fc0d1d0e2bca88165a1de6b526f9f6fe8))
+* **full-name:** lower `zindex` to get consistent cursor shape ([d277467](https://github.com/nvim-tree/nvim-tree.lua/commit/d277467fc0d1d0e2bca88165a1de6b526f9f6fe8))
+
 ## [1.17.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.16.0...nvim-tree-v1.17.0) (2026-04-07)
 
 
