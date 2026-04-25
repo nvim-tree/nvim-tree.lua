@@ -184,7 +184,7 @@ make help-update
   - Generate config classes `*nvim-tree-config*`
   - Generate API `*nvim-tree-api*`
 
-## Checking And Linting
+## Checking
 
 This is run in CI. Commit or stage your changes and run:
 
@@ -194,7 +194,6 @@ make help-check
 
 - Re-runs `make help-update`
 - Checks that `git diff` is empty, to ensure that all content has been generated. This is why a stage or commit is necessary.
-- Lints `doc/nvim-tree-lua.txt` using `scripts/vimdoc.sh lintdoc` to check for no broken links etc.
 
 # Windows
 
