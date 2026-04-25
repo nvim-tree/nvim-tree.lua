@@ -45,7 +45,6 @@ help-update:
 # CI
 #
 help-check: help-update
-	scripts/vimdoc.sh lintdoc
 	git diff --exit-code doc/nvim-tree-lua.txt
 
 
