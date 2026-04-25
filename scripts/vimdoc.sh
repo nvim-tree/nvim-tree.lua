@@ -1,26 +1,17 @@
 #!/usr/bin/env sh
 
-# Wrapper around Nvim make targets:
+# Wrapper around Nvim make doc target:
 #
-# make doc - gen_vimdoc.lua
-#   Generates doc/nvim-tree-lua.txt 
-#   Uses nvim-tree sources defined in scripts/vimdoc_config.lua
-#   Shims above into src/gen/gen_vimdoc.lua, replacing Nvim's config.
-#
-# make lintdoc - lintdoc.lua
-#   Validates doc/nvim-tree-lua.txt 
-#   Desired:
-#   - tags valid
-#   - links valid
-#   Also:
-#   - brand spelling, notably Nvim and Lua
+# Generates doc/nvim-tree-lua.txt 
+# Uses nvim-tree sources defined in scripts/vimdoc_config.lua
+# Shims above into src/gen/gen_vimdoc.lua, replacing Nvim's config.
 #
 # There are some hardcoded expectations which we work around as commented.
 
 set -e
 
-if [ $# -ne 1 ] || [ "${1}" != "doc" ] && [ "${1}" != "lintdoc" ]; then
-	echo "usage: ${0} <doc|lintdoc>" 1>&2
+if [ $# -ne 1 ] || [ "${1}" != "doc" ]; then
+	echo "usage: ${0} <doc>" 1>&2
 	exit 1
 fi
 
@@ -38,7 +29,7 @@ fi
 if [ ! -d "${DIR_NVIM_SRC}" ]; then
 	cat << EOM
 
-Nvim source v0.11+ is required to run ${0}
+Nvim stable source is required to run ${0}
 
 Unavailable: ${DIR_NVIM_SRC_DEF} or \$DIR_NVIM_SRC=${DIR_NVIM_SRC}
 
@@ -84,7 +75,15 @@ if [ "${1}" = "doc" ]; then
 
 	# modify gen_vimdoc.lua to use our config, backing up original
 	cp "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua" "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua.org"
-	sed -i -E 's/spairs\(config\)/spairs\(require("gen.vimdoc_config")\)/g' "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua"
+	sed -i -E '
+
+	# use our config
+	s/spairs\(config\)/spairs\(require("gen.vimdoc_config") --[[injected by nvim-tree]]\)/g ;
+
+	# remove the name linter
+	s/(^run\(\)$)/\n--injected by nvim-tree\nlint.lint_names = function\(\)\nend\n\n\1 --/g
+
+	' "${DIR_NVIM_SRC}/src/gen/gen_vimdoc.lua"
 
 	# leave a generic placeholder to bridge between nvim.gen_vimdoc.Config
 	echo "---@brief placeholder" > "${DIR_NVIM_SRC}/runtime/lua/placeholder.lua"
