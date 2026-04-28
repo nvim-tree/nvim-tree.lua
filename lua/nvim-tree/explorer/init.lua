@@ -200,7 +200,7 @@ function Explorer:create_autocmds()
       })
     else
       -- BufModifiedSet event was removed in 0.13: it was a specific case of OptionSet
-      vim.api.nvim_create_autocmd({ "BufModifiedSet", "BufWritePost" }, {
+      vim.api.nvim_create_autocmd({ "BufModifiedSet", "BufWritePost" }, { ---@diagnostic disable-line: assign-type-mismatch
         group = self.augroup_id,
         callback = on_modified_or_buf_write,
       })
