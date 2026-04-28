@@ -181,15 +181,30 @@ function Explorer:create_autocmds()
   end
 
   if self.opts.modified.enable then
-    vim.api.nvim_create_autocmd({ "BufModifiedSet", "BufWritePost" }, {
-      group = self.augroup_id,
-      callback = function()
-        utils.debounce("Buf:modified_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
-          buffers.reload_modified()
-          self.renderer:draw()
-        end)
-      end,
-    })
+    local function on_modified_or_buf_write()
+      utils.debounce("Buf:modified_" .. self.uid_explorer, self.opts.view.debounce_delay, function()
+        buffers.reload_modified()
+        self.renderer:draw()
+      end)
+    end
+
+    if vim.fn.has("nvim-0.13") == 1 then
+      vim.api.nvim_create_autocmd({ "OptionSet", }, {
+        group = self.augroup_id,
+        pattern = "modified",
+        callback = on_modified_or_buf_write,
+      })
+      vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+        group = self.augroup_id,
+        callback = on_modified_or_buf_write,
+      })
+    else
+      -- BufModifiedSet event was removed in 0.13: it was a specific case of OptionSet
+      vim.api.nvim_create_autocmd({ "BufModifiedSet", "BufWritePost" }, { ---@diagnostic disable-line: assign-type-mismatch
+        group = self.augroup_id,
+        callback = on_modified_or_buf_write,
+      })
+    end
   end
 end
 
