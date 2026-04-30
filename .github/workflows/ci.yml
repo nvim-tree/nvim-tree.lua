@@ -87,6 +87,7 @@ jobs:
       - run: make format-check
 
       - name: build Nvim from source
+        if: ${{ matrix.nvim_version == 'stable' }}
         run: |
           mkdir -p "${DIR_NVIM_SRC}"
           curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory "${DIR_NVIM_SRC}/.."
@@ -94,3 +95,4 @@ jobs:
           make doc
 
       - run: make help-check
+        if: ${{ matrix.nvim_version == 'stable' }}
