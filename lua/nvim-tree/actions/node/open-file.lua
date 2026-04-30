@@ -1,5 +1,6 @@
 -- Copyright 2019 Yazdani Kiyan under MIT License
 local lib = require("nvim-tree.lib")
+local log = require("nvim-tree.log")
 local notify = require("nvim-tree.notify")
 local utils = require("nvim-tree.utils")
 local full_name = require("nvim-tree.renderer.components.full-name")
@@ -98,7 +99,12 @@ local function pick_win_id()
     return not vim.tbl_contains(selectable, id)
   end, win_ids)
 
-  if laststatus == 3 then
+  -- experiment only for #3323
+  local clear_not_selectable_statusline = false
+
+  log.line("dev", "clear_unselectable_statusline=%s", clear_not_selectable_statusline)
+
+  if clear_not_selectable_statusline then
     for _, win_id in ipairs(not_selectable) do
       local ok_status, statusline = pcall(vim.api.nvim_get_option_value, "statusline", { win = win_id })
 
@@ -148,7 +154,7 @@ local function pick_win_id()
     end
   end
 
-  if laststatus == 3 then
+  if clear_not_selectable_statusline then
     for _, id in ipairs(not_selectable) do
       -- Ensure window still exists at this point
       if vim.api.nvim_win_is_valid(id) then
