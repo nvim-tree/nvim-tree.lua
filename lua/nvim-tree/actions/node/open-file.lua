@@ -10,10 +10,6 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local FileLinkNode = require("nvim-tree.node.file-link")
 local RootNode = require("nvim-tree.node.root")
 
----@class NodeEditOpts
----@field quit_on_open boolean|nil default false
----@field focus boolean|nil default true
-
 ---@alias NodeOpenFileMode ""|"change_dir"|"drop"|"edit"|"edit_in_place"|"edit_no_picker"|"preview"|"preview_no_picker"|"split"|"split_no_picker"|"tab_drop"|"tabnew"|"toggle_group_empty"|"vsplit"|"vsplit_no_picker"
 
 local M = {}
@@ -416,7 +412,7 @@ end
 
 ---@param mode string
 ---@param node Node
----@param edit_opts NodeEditOpts?
+---@param edit_opts nvim_tree.api.node.open.Opts?
 local function edit(mode, node, edit_opts)
   local file_link = node:as(FileLinkNode)
   local path = file_link and file_link.link_to or node.absolute_path
@@ -445,7 +441,7 @@ end
 ---@param node Node
 ---@param mode NodeOpenFileMode
 ---@param toggle_group boolean?
----@param edit_opts NodeEditOpts?
+---@param edit_opts nvim_tree.api.node.open.Opts?
 local function open_or_expand_or_dir_up(node, mode, toggle_group, edit_opts)
   local root = node:as(RootNode)
   local dir = node:as(DirectoryNode)
@@ -468,18 +464,21 @@ function M.toggle_group_empty(node)
 end
 
 ---@param node Node
-function M.preview(node)
-  open_or_expand_or_dir_up(node, "preview")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.preview(node, opts)
+  open_or_expand_or_dir_up(node, "preview", false, opts)
 end
 
 ---@param node Node
-function M.preview_no_picker(node)
-  open_or_expand_or_dir_up(node, "preview_no_picker")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.preview_no_picker(node, opts)
+  open_or_expand_or_dir_up(node, "preview_no_picker", false, opts)
 end
 
 ---@param node Node
-function M.edit(node)
-  open_or_expand_or_dir_up(node, "edit")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.edit(node, opts)
+  open_or_expand_or_dir_up(node, "edit", false, opts)
 end
 
 ---@param node Node
@@ -498,33 +497,39 @@ function M.replace_tree_buffer(node)
 end
 
 ---@param node Node
-function M.no_window_picker(node)
-  open_or_expand_or_dir_up(node, "edit_no_picker")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.no_window_picker(node, opts)
+  open_or_expand_or_dir_up(node, "edit_no_picker", false, opts)
 end
 
 ---@param node Node
-function M.vertical(node)
-  open_or_expand_or_dir_up(node, "vsplit")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.vertical(node, opts)
+  open_or_expand_or_dir_up(node, "vsplit", false, opts)
 end
 
 ---@param node Node
-function M.vertical_no_picker(node)
-  open_or_expand_or_dir_up(node, "vsplit_no_picker")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.vertical_no_picker(node, opts)
+  open_or_expand_or_dir_up(node, "vsplit_no_picker", false, opts)
 end
 
 ---@param node Node
-function M.horizontal(node)
-  open_or_expand_or_dir_up(node, "split")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.horizontal(node, opts)
+  open_or_expand_or_dir_up(node, "split", false, opts)
 end
 
 ---@param node Node
-function M.horizontal_no_picker(node)
-  open_or_expand_or_dir_up(node, "split_no_picker")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.horizontal_no_picker(node, opts)
+  open_or_expand_or_dir_up(node, "split_no_picker", false, opts)
 end
 
 ---@param node Node
-function M.tab(node)
-  open_or_expand_or_dir_up(node, "tabnew")
+---@param opts nvim_tree.api.node.open.Opts?
+function M.tab(node, opts)
+  open_or_expand_or_dir_up(node, "tabnew", false, opts)
 end
 
 return M
