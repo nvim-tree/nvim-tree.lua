@@ -428,7 +428,7 @@ local function edit(mode, node, edit_opts)
   end
 
   local mode_unsupported_focus = mode == "drop" or mode == "tab_drop" or mode == "edit_in_place"
-  local focus = edit_opts.focus == nil or edit_opts.focus == true
+  local focus = edit_opts.focus == nil or edit_opts.focus == false
   if not mode_unsupported_focus and not focus then
     -- if mode == "tabnew" a new tab will be opened and we need to focus back to the previous tab
     if mode == "tabnew" then
