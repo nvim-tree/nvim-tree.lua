@@ -17,6 +17,11 @@ nvim_tree.api.node.open = {}
 
 
 ---
+---Switch to window with selected file if it exists, otherwise open, see [:drop]
+---
+---@param node? nvim_tree.api.Node directory or file
+function nvim_tree.api.node.open.drop(node) end
+---
 ---- file: open as per [nvim_tree.config.actions.open_file]
 ---- directory: expand or collapse
 ---- root: change directory up
@@ -74,7 +79,7 @@ function nvim_tree.api.node.open.replace_tree_buffer(node) end
 function nvim_tree.api.node.open.tab(node, opts) end
 
 ---
----Switch to tab containing window with selected file if it exists. Open file in new tab otherwise.
+---Switch to tab containing window with selected file if it exists, otherwise open in new tab, see [:drop]
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.open.tab_drop(node) end
