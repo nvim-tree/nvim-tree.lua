@@ -2765,6 +2765,13 @@ navigate.sibling.prev({node})
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
+open.drop({node})                             *nvim_tree.api.node.open.drop()*
+    Switch to window with selected file if it exists, otherwise open, see
+    |:drop|
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
 open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
     • file: open as per |nvim_tree.config.actions.open_file|
     • directory: expand or collapse
@@ -2856,8 +2863,8 @@ open.tab({node}, {opts})                       *nvim_tree.api.node.open.tab()*
                   when opening the file.
 
 open.tab_drop({node})                     *nvim_tree.api.node.open.tab_drop()*
-    Switch to tab containing window with selected file if it exists. Open file
-    in new tab otherwise.
+    Switch to tab containing window with selected file if it exists, otherwise
+    open in new tab, see |:drop|
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file

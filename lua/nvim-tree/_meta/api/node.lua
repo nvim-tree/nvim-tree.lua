@@ -21,6 +21,7 @@ nvim_tree.api.node.open = {}
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.open.drop(node) end
+
 ---
 ---- file: open as per [nvim_tree.config.actions.open_file]
 ---- directory: expand or collapse
