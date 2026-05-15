@@ -2765,6 +2765,13 @@ navigate.sibling.prev({node})
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
 
+open.drop({node})                             *nvim_tree.api.node.open.drop()*
+    Switch to window with selected file if it exists, otherwise open, see
+    |:drop|
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`) directory or file
+
 open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
     • file: open as per |nvim_tree.config.actions.open_file|
     • directory: expand or collapse
@@ -2778,39 +2785,64 @@ open.edit({node}, {opts})                     *nvim_tree.api.node.open.edit()*
                 • {focus}? (`boolean`, default: false) Keep focus in the tree
                   when opening the file.
 
-open.horizontal({node})                 *nvim_tree.api.node.open.horizontal()*
+open.horizontal({node}, {opts})         *nvim_tree.api.node.open.horizontal()*
     Open file in a new horizontal split.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                               *nvim_tree.api.node.open.horizontal_no_picker()*
-open.horizontal_no_picker({node})
+open.horizontal_no_picker({node}, {opts})
     Open file in a new horizontal split without using the window picker.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                   *nvim_tree.api.node.open.no_window_picker()*
-open.no_window_picker({node})
+open.no_window_picker({node}, {opts})
     Open file without using the window picker.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
-open.preview({node})                       *nvim_tree.api.node.open.preview()*
+open.preview({node}, {opts})               *nvim_tree.api.node.open.preview()*
     Open file with |'bufhidden'| set to `delete`.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                  *nvim_tree.api.node.open.preview_no_picker()*
-open.preview_no_picker({node})
+open.preview_no_picker({node}, {opts})
     Open file with |'bufhidden'| set to `delete` without using the window
     picker.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                *nvim_tree.api.node.open.replace_tree_buffer()*
 open.replace_tree_buffer({node})
@@ -2819,15 +2851,20 @@ open.replace_tree_buffer({node})
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
 
-open.tab({node})                               *nvim_tree.api.node.open.tab()*
+open.tab({node}, {opts})                       *nvim_tree.api.node.open.tab()*
     Open file in a new tab.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 open.tab_drop({node})                     *nvim_tree.api.node.open.tab_drop()*
-    Switch to tab containing window with selected file if it exists. Open file
-    in new tab otherwise.
+    Switch to tab containing window with selected file if it exists, otherwise
+    open in new tab, see |:drop|
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory or file
@@ -2840,18 +2877,28 @@ open.toggle_group_empty({node})
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) directory
 
-open.vertical({node})                     *nvim_tree.api.node.open.vertical()*
+open.vertical({node}, {opts})             *nvim_tree.api.node.open.vertical()*
     Open file in a new vertical split.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
                                 *nvim_tree.api.node.open.vertical_no_picker()*
-open.vertical_no_picker({node})
+open.vertical_no_picker({node}, {opts})
     Open file in a new vertical split without using the window picker.
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`) file
+      • {opts}  (`table?`) optional
+                • {quit_on_open}? (`boolean`, default: false) Quits the tree
+                  when opening the file.
+                • {focus}? (`boolean`, default: false) Keep focus in the tree
+                  when opening the file.
 
 run.cmd({node})                                 *nvim_tree.api.node.run.cmd()*
     Enter |cmdline| with the full path of the node and the cursor at the start
