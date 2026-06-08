@@ -1575,7 +1575,7 @@ Config: modified                                   *nvim-tree-config-modified*
 Config: filters                                     *nvim-tree-config-filters*
 
 *nvim_tree.config.filters*
-    Filters may be applied to the tree to exlude the display of
+    Filters may be applied to the tree to exclude the display of
     file/directories.
 
     Multiple filters may be applied at once.
