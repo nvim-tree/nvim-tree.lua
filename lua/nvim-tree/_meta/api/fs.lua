@@ -73,6 +73,14 @@ function nvim_tree.api.fs.cut(node) end
 function nvim_tree.api.fs.paste(node) end
 
 ---
+---Paste nodes from the nvim-tree clipboard using protocol.
+---
+---If {node} is a file it will pasted in the parent directory.
+---
+---@param node? nvim_tree.api.Node
+function nvim_tree.api.fs.paste_with_protocol(node) end
+
+---
 ---Print the contents of the nvim-tree clipboard.
 ---
 function nvim_tree.api.fs.print_clipboard() end
