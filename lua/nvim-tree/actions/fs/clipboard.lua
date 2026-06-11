@@ -43,9 +43,7 @@ function Clipboard:new(args)
 
   self.clipboard_name = self.explorer.opts.actions.use_system_clipboard and "system" or "neovim"
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
-  -- TODO
-  -- self.protocol = self.explorer.actions.clipboard.protocol or "nvim-tree"
-  self.protocol = "nvim-tree"
+  self.protocol = self.explorer.opts.actions.clipboard.protocol or "nvim-tree"
 end
 
 ---@class RegOperationOptions
