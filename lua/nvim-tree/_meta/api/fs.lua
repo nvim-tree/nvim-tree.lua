@@ -15,6 +15,12 @@ nvim_tree.api.fs.copy = {}
 function nvim_tree.api.fs.copy.absolute_path(node) end
 
 ---
+---Copy the absolute path to the system clipboard with nvim-tree protocol.
+---
+---@param node? nvim_tree.api.Node
+function nvim_tree.api.fs.copy.absolute_path_with_protocol(node) end
+
+---
 ---Copy the name with extension omitted to the system clipboard.
 ---
 ---@param node? nvim_tree.api.Node
