@@ -207,7 +207,7 @@ end
 ---Cut one or more nodes
 ---@param node_or_nodes Node|Node[]
 function Clipboard:cut(node_or_nodes)
-  if type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node) then
+  if self:is_nodes_array(node_or_nodes) == false then
     utils.array_remove(self.data.copy, node_or_nodes)
     toggle(node_or_nodes, self.data.cut)
     self.explorer.renderer:draw()
@@ -461,7 +461,8 @@ end
 
 ---@param content string
 ---@param opts? RegOperationOptions
-function Clipboard:copy_to_reg(content, opts)
+---@param msg? string
+function Clipboard:copy_to_reg(content, opts, msg)
   local use_protocol = opts and opts.use_protocol and true or false
 
   if use_protocol then
@@ -477,7 +478,7 @@ function Clipboard:copy_to_reg(content, opts)
   end)
   vim.api.nvim_buf_delete(temp_buf, {})
 
-  notify.info(string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
+  notify.info(msg or string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
 end
 
 ---@param node Node
@@ -548,10 +549,12 @@ end
 ---@param opts? RegOperationOptions
 function Clipboard:copy_absolute_path(node_or_nodes, opts)
   local content = ""
-  if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
+  local is_single = self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1
+  if is_single then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
     content = self:get_absolute_path(node)
   else
+    node_or_nodes = utils.filter_descendant_nodes(node_or_nodes)
     for i, node in ipairs(node_or_nodes) do
       if i == 1 then
         content = self:get_absolute_path(node)
@@ -561,7 +564,7 @@ function Clipboard:copy_absolute_path(node_or_nodes, opts)
     end
   end
 
-  self:copy_to_reg(content, opts)
+  self:copy_to_reg(content, opts, string.format("%s nodes copied to register", is_single and #node_or_nodes or 1))
 end
 
 ---Node is cut. Will not be copied.
