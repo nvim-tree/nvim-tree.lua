@@ -564,7 +564,7 @@ function Clipboard:copy_absolute_path(node_or_nodes, opts)
     end
   end
 
-  self:copy_to_reg(content, opts, string.format("%s nodes copied to register", is_single and #node_or_nodes or 1))
+  self:copy_to_reg(content, opts, string.format("%s nodes copied to register", is_single and 1 or #node_or_nodes))
 end
 
 ---Node is cut. Will not be copied.
