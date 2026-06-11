@@ -159,4 +159,14 @@ function Node:expand(expand_opts)
   end
 end
 
+function Node:get_basename()
+  if self.name == ".." then
+    -- root
+    return vim.fn.fnamemodify(self.explorer.absolute_path, ":t:r")
+  else
+    -- node
+    return vim.fn.fnamemodify(self.name, ":r")
+  end
+end
+
 return Node
