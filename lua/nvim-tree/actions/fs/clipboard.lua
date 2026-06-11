@@ -43,6 +43,9 @@ function Clipboard:new(args)
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
 end
 
+---@class RegOperationOptions
+---@field use_protocol? boolean
+
 ---@param source string
 ---@param destination string
 ---@return boolean
@@ -176,10 +179,20 @@ function Clipboard:bulk_clipboard(nodes, from, to, verb)
   self.explorer.renderer:draw()
 end
 
+---@private
+---@param node_or_nodes Node|Node[]
+---@return boolean
+function Clipboard:is_nodes_array(node_or_nodes)
+  if type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node) then
+    return false
+  end
+  return true
+end
+
 ---Copy one or more nodes
 ---@param node_or_nodes Node|Node[]
 function Clipboard:copy(node_or_nodes)
-  if type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node) then
+  if self:is_nodes_array(node_or_nodes) == false then
     utils.array_remove(self.data.cut, node_or_nodes)
     toggle(node_or_nodes, self.data.copy)
     self.explorer.renderer:draw()
@@ -413,7 +426,14 @@ function Clipboard:print_clipboard()
 end
 
 ---@param content string
-function Clipboard:copy_to_reg(content)
+---@param opts? RegOperationOptions
+function Clipboard:copy_to_reg(content, opts)
+  local use_protocol = opts and opts.use_protocol and true or false
+
+  if use_protocol then
+    content = "nvim-tree: " .. content
+  end
+
   -- manually firing TextYankPost does not set vim.v.event
   -- workaround: create a scratch buffer with the clipboard contents and send a yank command
   local temp_buf = vim.api.nvim_create_buf(false, true)
@@ -437,15 +457,23 @@ function Clipboard:copy_filename(node)
   end
 end
 
----@param node Node
-function Clipboard:copy_basename(node)
-  if node.name == ".." then
-    -- root
-    self:copy_to_reg(vim.fn.fnamemodify(self.explorer.absolute_path, ":t:r"))
+---@param node_or_nodes Node|Node[]
+---@param opts? RegOperationOptions
+function Clipboard:copy_basename(node_or_nodes, opts)
+  local content = ""
+  if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
+    local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
+    content = node:get_basename()
   else
-    -- node
-    self:copy_to_reg(vim.fn.fnamemodify(node.name, ":r"))
+    for i, node in ipairs(node_or_nodes) do
+      if i == 1 then
+        content = node:get_basename()
+      else
+        content = content .. ", " .. node:get_basename()
+      end
+    end
   end
+  self:copy_to_reg(content, opts)
 end
 
 ---@param node Node
@@ -470,15 +498,36 @@ function Clipboard:copy_path(node)
   end
 end
 
+---@private
 ---@param node Node
-function Clipboard:copy_absolute_path(node)
+---@return string
+function Clipboard:get_absolute_path(node)
   if node.name == ".." then
     node = self.explorer
   end
 
   local absolute_path = node.absolute_path
-  local content = node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
-  self:copy_to_reg(content)
+  return node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
+end
+
+---@param node_or_nodes Node|Node[]
+---@param opts? RegOperationOptions
+function Clipboard:copy_absolute_path(node_or_nodes, opts)
+  local content = ""
+  if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
+    local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
+    content = self:get_absolute_path(node)
+  else
+    for i, node in ipairs(node_or_nodes) do
+      if i == 1 then
+        content = self:get_absolute_path(node)
+      else
+        content = content .. ", " .. self:get_absolute_path(node)
+      end
+    end
+  end
+
+  self:copy_to_reg(content, opts)
 end
 
 ---Node is cut. Will not be copied.
