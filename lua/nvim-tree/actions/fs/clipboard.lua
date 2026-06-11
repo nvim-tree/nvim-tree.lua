@@ -9,6 +9,7 @@ local find_file = require("nvim-tree.actions.finders.find-file").fn
 
 local Class = require("nvim-tree.classic")
 local DirectoryNode = require("nvim-tree.node.directory")
+local FileNode = require("nvim-tree.node.file")
 local Node = require("nvim-tree.node")
 
 ---@alias ClipboardAction "copy" | "cut"
@@ -21,6 +22,7 @@ local Node = require("nvim-tree.node")
 ---@field private data ClipboardData
 ---@field private clipboard_name string
 ---@field private reg string
+---@field private protocol string
 local Clipboard = Class:extend()
 
 ---@class Clipboard
@@ -41,6 +43,9 @@ function Clipboard:new(args)
 
   self.clipboard_name = self.explorer.opts.actions.use_system_clipboard and "system" or "neovim"
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
+  -- TODO
+  -- self.protocol = self.explorer.actions.clipboard.protocol or "nvim-tree"
+  self.protocol = "nvim-tree"
 end
 
 ---@class RegOperationOptions
@@ -317,12 +322,42 @@ function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
     end)
 end
 
+--- Transforms the copied absolute paths with protocols to node
+---@private
+function Clipboard:get_nodes_from_reg()
+  local content = vim.fn.getreg(self.reg)
+
+  if #content == 0 then
+    return
+  end
+
+  local prefix = self.protocol .. ": "
+  if content:sub(1, #prefix) ~= prefix then
+    return
+  end
+
+  local nodes = {}
+  local absolute_paths = vim.split(content:sub(#prefix + 1, #content), ", ")
+
+  for _, absolute_path in ipairs(absolute_paths) do
+    local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
+    if absolute_path:sub(-1) == "/" then
+      node_args.name = vim.fn.fnamemodify(absolute_path:sub(1, -2), ":t")
+      table.insert(nodes, DirectoryNode(node_args))
+    else
+      table.insert(nodes, FileNode(node_args))
+    end
+  end
+  return nodes
+end
+
 ---Paste cut or copy with batch conflict resolution.
 ---@private
 ---@param node Node
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
-function Clipboard:do_paste(node, action, action_fn)
+---@param opts? RegOperationOptions
+function Clipboard:do_paste(node, action, action_fn, opts)
   if node.name == ".." then
     node = self.explorer
   else
@@ -331,7 +366,7 @@ function Clipboard:do_paste(node, action, action_fn)
       node = dir:last_group_node()
     end
   end
-  local clip = self.data[action]
+  local clip = opts and opts.use_protocol and self:get_nodes_from_reg() or self.data[action]
   if #clip == 0 then
     return
   end
@@ -399,11 +434,12 @@ end
 
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
-function Clipboard:paste(node)
+---@param opts? RegOperationOptions
+function Clipboard:paste(node, opts)
   if self.data.cut[1] ~= nil then
-    self:do_paste(node, "cut", do_cut)
-  elseif self.data.copy[1] ~= nil then
-    self:do_paste(node, "copy", do_copy)
+    self:do_paste(node, "cut", do_cut, opts)
+  elseif self.data.copy[1] ~= nil or opts and opts.use_protocol then
+    self:do_paste(node, "copy", do_copy, opts)
   end
 end
 
@@ -431,7 +467,7 @@ function Clipboard:copy_to_reg(content, opts)
   local use_protocol = opts and opts.use_protocol and true or false
 
   if use_protocol then
-    content = "nvim-tree: " .. content
+    content = self.protocol .. ": " .. content
   end
 
   -- manually firing TextYankPost does not set vim.v.event
