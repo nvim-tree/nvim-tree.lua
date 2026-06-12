@@ -17,6 +17,23 @@ function M.global()
     end,
   })
 
+  if vim.fn.has("nvim-0.13") == 1 and config.g.experimental.session_restore_nvim then
+    vim.api.nvim_create_autocmd("SessionWritePre", { ---@diagnostic disable-line: param-type-mismatch
+      group = augroup_id,
+      callback = function()
+        require("nvim-tree.session").save()
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("SessionLoadPost", {
+      group = augroup_id,
+      callback = function()
+        require("nvim-tree.session").restore()
+      end,
+    })
+  end
+
+
   if config.g.tab.sync.open then
     vim.api.nvim_create_autocmd("TabEnter", {
       group = augroup_id,
