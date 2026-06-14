@@ -232,9 +232,6 @@ M.d = { -- config-default-start
   },
   actions = {
     use_system_clipboard = true,
-    clipboard = {
-      protocol = "nvim-tree"
-    },
     change_dir = {
       enable = true,
       global = false,

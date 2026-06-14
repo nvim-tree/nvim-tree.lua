@@ -9,9 +9,6 @@ error("Cannot require a meta file")
 ---(default: `true`)
 ---@field use_system_clipboard? boolean
 ---
----[nvim_tree.config.actions.clipboard]
----@field clipboard? nvim_tree.config.actions.clipboard
----
 ---[nvim_tree.config.actions.change_dir]
 ---@field change_dir? nvim_tree.config.actions.change_dir
 ---
@@ -26,13 +23,6 @@ error("Cannot require a meta file")
 ---
 ---[nvim_tree.config.actions.remove_file]
 ---@field remove_file? nvim_tree.config.actions.remove_file
-
---- Customizes nvim-tree clipboard behaviour
----@class nvim_tree.config.actions.clipboard
----
----Change the protocol prefix to be used on multiple nvim instances operations
----(default: `nvim-tree`)
----@field protocol? string
 
 --- vim [current-directory] behaviour
 ---@class nvim_tree.config.actions.change_dir

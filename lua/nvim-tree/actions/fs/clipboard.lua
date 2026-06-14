@@ -319,7 +319,7 @@ function Clipboard:resolve_conflicts(conflict, destination, action, action_fn)
     end)
 end
 
---- Transforms the copied absolute paths with protocols to node
+--- Transforms the copied absolute paths on register to node
 ---@private
 function Clipboard:get_nodes_from_reg()
   local content = vim.fn.getreg(self.reg)
