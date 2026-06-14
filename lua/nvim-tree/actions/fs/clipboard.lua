@@ -22,7 +22,6 @@ local Node = require("nvim-tree.node")
 ---@field private data ClipboardData
 ---@field private clipboard_name string
 ---@field private reg string
----@field private protocol string
 local Clipboard = Class:extend()
 
 ---@class Clipboard
@@ -43,11 +42,11 @@ function Clipboard:new(args)
 
   self.clipboard_name = self.explorer.opts.actions.use_system_clipboard and "system" or "neovim"
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
-  self.protocol = self.explorer.opts.actions.clipboard.protocol or "nvim-tree"
 end
 
 ---@class RegOperationOptions
----@field use_protocol? boolean
+---@field use_register? boolean
+---@field cut? boolean
 
 ---@param source string
 ---@param destination string
@@ -434,9 +433,9 @@ end
 ---@param node Node
 ---@param opts? RegOperationOptions
 function Clipboard:paste(node, opts)
-  if self.data.cut[1] ~= nil then
+  if self.data.cut[1] ~= nil or opts and opts.use_register and opts.cut then
     self:do_paste(node, "cut", do_cut, opts)
-  elseif self.data.copy[1] ~= nil or opts and opts.use_protocol then
+  elseif self.data.copy[1] ~= nil or opts and opts.use_register then
     self:do_paste(node, "copy", do_copy, opts)
   end
 end
@@ -460,15 +459,8 @@ function Clipboard:print_clipboard()
 end
 
 ---@param content string
----@param opts? RegOperationOptions
 ---@param msg? string
-function Clipboard:copy_to_reg(content, opts, msg)
-  local use_protocol = opts and opts.use_protocol and true or false
-
-  if use_protocol then
-    content = self.protocol .. ": " .. content
-  end
-
+function Clipboard:copy_to_reg(content, msg)
   -- manually firing TextYankPost does not set vim.v.event
   -- workaround: create a scratch buffer with the clipboard contents and send a yank command
   local temp_buf = vim.api.nvim_create_buf(false, true)
@@ -493,8 +485,7 @@ function Clipboard:copy_filename(node)
 end
 
 ---@param node_or_nodes Node|Node[]
----@param opts? RegOperationOptions
-function Clipboard:copy_basename(node_or_nodes, opts)
+function Clipboard:copy_basename(node_or_nodes)
   local content = ""
   if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
@@ -504,11 +495,11 @@ function Clipboard:copy_basename(node_or_nodes, opts)
       if i == 1 then
         content = node:get_basename()
       else
-        content = content .. ", " .. node:get_basename()
+        content = content .. "," .. node:get_basename()
       end
     end
   end
-  self:copy_to_reg(content, opts)
+  self:copy_to_reg(content)
 end
 
 ---@param node Node
@@ -546,8 +537,7 @@ function Clipboard:get_absolute_path(node)
 end
 
 ---@param node_or_nodes Node|Node[]
----@param opts? RegOperationOptions
-function Clipboard:copy_absolute_path(node_or_nodes, opts)
+function Clipboard:copy_absolute_path(node_or_nodes)
   local content = ""
   local is_single = self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1
   if is_single then
@@ -559,12 +549,12 @@ function Clipboard:copy_absolute_path(node_or_nodes, opts)
       if i == 1 then
         content = self:get_absolute_path(node)
       else
-        content = content .. ", " .. self:get_absolute_path(node)
+        content = content .. "," .. self:get_absolute_path(node)
       end
     end
   end
 
-  self:copy_to_reg(content, opts, string.format("%s nodes copied to register", is_single and 1 or #node_or_nodes))
+  self:copy_to_reg(content, string.format("%s paths copied to register", is_single and 1 or #node_or_nodes))
 end
 
 ---Node is cut. Will not be copied.

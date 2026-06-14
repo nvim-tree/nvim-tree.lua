@@ -15,12 +15,6 @@ nvim_tree.api.fs.copy = {}
 function nvim_tree.api.fs.copy.absolute_path(node) end
 
 ---
----Copy the absolute path to the system clipboard with nvim-tree protocol.
----
----@param node? nvim_tree.api.Node
-function nvim_tree.api.fs.copy.absolute_path_with_protocol(node) end
-
----
 ---Copy the name with extension omitted to the system clipboard.
 ---
 ---@param node? nvim_tree.api.Node
@@ -73,12 +67,16 @@ function nvim_tree.api.fs.cut(node) end
 function nvim_tree.api.fs.paste(node) end
 
 ---
----Paste nodes from the nvim-tree clipboard using protocol.
+---Paste nodes from the system register as files to nvim-tree while copying.
 ---
----If {node} is a file it will pasted in the parent directory.
+---@param node_or_nodes? nvim_tree.api.Node | nvim_tree.api.Node[]
+function nvim_tree.api.fs.paste_from_register_copying(node_or_nodes) end
+
 ---
----@param node? nvim_tree.api.Node
-function nvim_tree.api.fs.paste_with_protocol(node) end
+---Paste nodes from the system register as files to nvim-tree while cutting.
+---
+---@param node_or_nodes? nvim_tree.api.Node | nvim_tree.api.Node[]
+function nvim_tree.api.fs.paste_from_register_cutting(node_or_nodes) end
 
 ---
 ---Print the contents of the nvim-tree clipboard.
