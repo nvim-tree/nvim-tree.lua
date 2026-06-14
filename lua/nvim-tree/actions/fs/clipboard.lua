@@ -44,7 +44,7 @@ function Clipboard:new(args)
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
 end
 
----@class RegOperationOptions
+---@class PasteOptions
 ---@field use_register? boolean
 ---@field cut? boolean
 
@@ -328,13 +328,8 @@ function Clipboard:get_nodes_from_reg()
     return
   end
 
-  local prefix = self.protocol .. ": "
-  if content:sub(1, #prefix) ~= prefix then
-    return
-  end
-
   local nodes = {}
-  local absolute_paths = vim.split(content:sub(#prefix + 1, #content), ", ")
+  local absolute_paths = vim.split(content:sub(1, #content), ",")
 
   for _, absolute_path in ipairs(absolute_paths) do
     local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
@@ -353,7 +348,7 @@ end
 ---@param node Node
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
----@param opts? RegOperationOptions
+---@param opts? PasteOptions
 function Clipboard:do_paste(node, action, action_fn, opts)
   if node.name == ".." then
     node = self.explorer
@@ -363,7 +358,7 @@ function Clipboard:do_paste(node, action, action_fn, opts)
       node = dir:last_group_node()
     end
   end
-  local clip = opts and opts.use_protocol and self:get_nodes_from_reg() or self.data[action]
+  local clip = opts and opts.use_register and self:get_nodes_from_reg() or self.data[action]
   if #clip == 0 then
     return
   end
@@ -431,7 +426,7 @@ end
 
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
----@param opts? RegOperationOptions
+---@param opts? PasteOptions
 function Clipboard:paste(node, opts)
   if self.data.cut[1] ~= nil or opts and opts.use_register and opts.cut then
     self:do_paste(node, "cut", do_cut, opts)
