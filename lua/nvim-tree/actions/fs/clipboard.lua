@@ -390,7 +390,18 @@ function Clipboard:do_paste(node, action, action_fn, opts)
 
   -- Paste non-conflicting items immediately
   for _, item in ipairs(no_conflict) do
-    do_paste_one(item.node.absolute_path, item.dest, action, action_fn)
+    local absolute_path = item.node.absolute_path
+    if absolute_path:sub(1, #"http") == "http" then
+      notify.info("Downloading " .. absolute_path .. " to " .. item.dest)
+      local result = vim.fn.system({ "curl", "-sL", absolute_path, "-o", item.dest })
+      if vim.v.shell_error == 0 then
+        notify.info("Downloaded " .. absolute_path .. " successfully at " .. item.dest)
+      else
+        notify.error("Error downloading " .. absolute_path .. ": " .. result)
+      end
+    else
+      do_paste_one(absolute_path, item.dest, action, action_fn)
+    end
   end
 
   -- Resolve conflicts in batch
