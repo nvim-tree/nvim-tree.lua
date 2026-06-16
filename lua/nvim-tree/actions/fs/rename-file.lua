@@ -3,6 +3,7 @@ local utils = require("nvim-tree.utils")
 local events = require("nvim-tree.events")
 local notify = require("nvim-tree.notify")
 local config = require("nvim-tree.config")
+local lib = require("nvim-tree.lib")
 
 local find_file = require("nvim-tree.actions.finders.find-file").fn
 
@@ -47,7 +48,9 @@ end
 
 ---@param node Node
 ---@param to string
-function M.rename(node, to)
+---@param opts? { notify?: boolean }
+function M.rename(node, to, opts)
+  opts = opts and opts or {}
   local notify_from = notify.render_path(node.absolute_path)
   local notify_to = notify.render_path(to)
 
@@ -92,7 +95,9 @@ function M.rename(node, to)
   end
 
   if not is_error then
-    notify.info(string.format("%s -> %s", notify_from, notify_to))
+    if opts.notify ~= false then
+      notify.info(string.format("%s -> %s", notify_from, notify_to))
+    end
     utils.rename_loaded_buffers(node.absolute_path, to)
     events._dispatch_node_renamed(node.absolute_path, to)
   end
@@ -190,6 +195,26 @@ end
 ---@param node Node
 function M.rename_full(node)
   prompt_to_rename(node, ":p")
+end
+
+---@param nodes Node[]
+---@param old_part string
+---@param new_part string
+function M.bulk_rename(nodes, old_part, new_part)
+  local prompt_select = string.format("Substitute '%s' for '%s' in %s files?", old_part, new_part, #nodes)
+
+  lib.prompt(prompt_select .. " Y/n: ", prompt_select, ({ "", "y" }), { "No", "Yes" }, "nvimtree_bulk_rename", function(answer)
+    utils.clear_prompt()
+    if answer == "n" then return end
+
+    for _, node in ipairs(nodes) do
+      local new_name = node.name:gsub(old_part, new_part)
+      local new_full_path = vim.fn.fnamemodify(node.absolute_path, ":h") .. "/" .. new_name
+      M.rename(node, new_full_path, { notify = false })
+    end
+
+    notify.info(string.format("%s nodes substituted from %s -> %s", #nodes, old_part, new_part))
+  end)
 end
 
 return M
