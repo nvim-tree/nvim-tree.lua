@@ -44,10 +44,6 @@ function Clipboard:new(args)
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
 end
 
----@class PasteOptions
----@field use_register? boolean
----@field cut? boolean
-
 ---@param source string
 ---@param destination string
 ---@return boolean
@@ -201,6 +197,7 @@ function Clipboard:copy(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "added to")
   end
+  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
 end
 
 ---Cut one or more nodes
@@ -213,6 +210,7 @@ function Clipboard:cut(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut to")
   end
+  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
 end
 
 ---Clear clipboard for action and reload to reflect filesystem changes from paste.
@@ -325,7 +323,7 @@ function Clipboard:get_nodes_from_reg()
   local content = vim.fn.getreg(self.reg)
 
   if #content == 0 then
-    return
+    return {}
   end
 
   local nodes = {}
@@ -348,8 +346,7 @@ end
 ---@param node Node
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
----@param opts? PasteOptions
-function Clipboard:do_paste(node, action, action_fn, opts)
+function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
     node = self.explorer
   else
@@ -358,7 +355,8 @@ function Clipboard:do_paste(node, action, action_fn, opts)
       node = dir:last_group_node()
     end
   end
-  local clip = opts and opts.use_register and self:get_nodes_from_reg() or self.data[action]
+  local clip = #self.data[action] > 0 and self.data[action] or self:get_nodes_from_reg()
+
   if #clip == 0 then
     return
   end
@@ -426,12 +424,13 @@ end
 
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
----@param opts? PasteOptions
+---@param opts? { cut?: boolean }
 function Clipboard:paste(node, opts)
-  if self.data.cut[1] ~= nil or opts and opts.use_register and opts.cut then
-    self:do_paste(node, "cut", do_cut, opts)
-  elseif self.data.copy[1] ~= nil or opts and opts.use_register then
-    self:do_paste(node, "copy", do_copy, opts)
+  opts = opts and opts or {}
+  if self.data.cut[1] ~= nil or opts.cut == true then
+    self:do_paste(node, "cut", do_cut)
+  else
+    self:do_paste(node, "copy", do_copy)
   end
 end
 
@@ -454,11 +453,15 @@ function Clipboard:print_clipboard()
 end
 
 ---@param content string
----@param msg? string
-function Clipboard:copy_to_reg(content, msg)
+---@param message? string
+---@param opts? { notify?: boolean }
+function Clipboard:copy_to_reg(content, message, opts)
+  opts = opts and opts or {}
   vim.fn.setreg(self.reg, type(content) == "table" and content or { content }, "v")
 
-  notify.info(msg or string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
+  if opts.notify ~= false then
+    notify.info(message or string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
+  end
 end
 
 ---@param node Node
@@ -475,7 +478,9 @@ end
 
 ---@param node_or_nodes Node|Node[]
 ---@param attribute "absolute_path" | "basename" | "filename" | "relative_path"
-function Clipboard:copy_node_attribute(node_or_nodes, attribute)
+---@param opts? { notify?: boolean }
+function Clipboard:copy_node_attribute(node_or_nodes, attribute, opts)
+  opts = opts and opts or {}
   local content
   local node_attribute_getters = {
     basename = function(n) return self:get_node_basename(n) end,
@@ -505,7 +510,7 @@ function Clipboard:copy_node_attribute(node_or_nodes, attribute)
     if not is_single then
       message = string.format("%s %s copied to register", #content, attribute:gsub("_", " ") .. "s")
     end
-    self:copy_to_reg(content, message)
+    self:copy_to_reg(content, message, opts)
   end
 end
 
