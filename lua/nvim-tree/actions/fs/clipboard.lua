@@ -484,13 +484,13 @@ function Clipboard:copy_basename(node_or_nodes)
   local content = ""
   if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
-    content = node:get_basename()
+    content = self:get_basename(node)
   else
     for i, node in ipairs(node_or_nodes) do
       if i == 1 then
-        content = node:get_basename()
+        content = self:get_basename(node)
       else
-        content = content .. "," .. node:get_basename()
+        content = content .. "," .. self:get_basename(node)
       end
     end
   end
@@ -564,6 +564,18 @@ end
 ---@return boolean
 function Clipboard:is_copied(node)
   return vim.tbl_contains(self.data.copy, node)
+end
+
+---@param node Node
+---@return string
+function Clipboard:get_basename(node)
+  if node.name == ".." then
+    -- root
+    return vim.fn.fnamemodify(node.explorer.absolute_path, ":t:r")
+  else
+    -- node
+    return vim.fn.fnamemodify(node.name, ":r")
+  end
 end
 
 return Clipboard
