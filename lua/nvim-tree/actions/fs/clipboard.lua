@@ -181,7 +181,7 @@ end
 ---@param node_or_nodes Node|Node[]
 ---@return boolean
 function Clipboard:is_nodes_array(node_or_nodes)
-  if type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node) then
+  return type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node)
     return false
   end
   return true
