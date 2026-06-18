@@ -390,7 +390,7 @@ function Clipboard:do_paste(node, action, action_fn)
   for _, item in ipairs(no_conflict) do
     local absolute_path = item.node.absolute_path
     if absolute_path:sub(1, #"http") == "http" then
-      notify.info("Downloading " .. absolute_path .. " to " .. item.dest)
+      notify.info("Downloading " .. absolute_path .. " to " .. item.dest .. "...")
       local result = vim.fn.system({ "curl", "-sL", absolute_path, "-o", item.dest })
       if vim.v.shell_error == 0 then
         notify.info("Downloaded " .. absolute_path .. " successfully at " .. item.dest)
