@@ -329,7 +329,7 @@ function Clipboard:get_nodes_from_reg()
   end
 
   local nodes = {}
-  local absolute_paths = vim.split(content:sub(1, #content), ",")
+  local absolute_paths = vim.split(content:sub(1, #content), "\n")
 
   for _, absolute_path in ipairs(absolute_paths) do
     local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
@@ -474,17 +474,14 @@ end
 
 ---@param node_or_nodes Node|Node[]
 function Clipboard:copy_basename(node_or_nodes)
-  local content = ""
+  local content
   if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
     content = self:get_basename(node)
   else
-    for i, node in ipairs(node_or_nodes) do
-      if i == 1 then
-        content = self:get_basename(node)
-      else
-        content = content .. "," .. self:get_basename(node)
-      end
+    content = {}
+    for _, node in ipairs(node_or_nodes) do
+      table.insert(content, self:get_basename(node))
     end
   end
   self:copy_to_reg(content)
@@ -526,23 +523,20 @@ end
 
 ---@param node_or_nodes Node|Node[]
 function Clipboard:copy_absolute_path(node_or_nodes)
-  local content = ""
+  local content
   local is_single = self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1
   if is_single then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
     content = self:get_absolute_path(node)
   else
     node_or_nodes = utils.filter_descendant_nodes(node_or_nodes)
-    for i, node in ipairs(node_or_nodes) do
-      if i == 1 then
-        content = self:get_absolute_path(node)
-      else
-        content = content .. "," .. self:get_absolute_path(node)
-      end
+    content = {}
+    for _, node in ipairs(node_or_nodes) do
+      table.insert(content, self:get_absolute_path(node))
     end
   end
 
-  self:copy_to_reg(content, string.format("%s paths copied to register", is_single and 1 or #node_or_nodes))
+  self:copy_to_reg(content, string.format("%s paths copied to register", is_single and 1 or #content))
 end
 
 ---Node is cut. Will not be copied.
