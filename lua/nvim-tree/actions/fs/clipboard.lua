@@ -44,10 +44,6 @@ function Clipboard:new(args)
   self.reg = self.explorer.opts.actions.use_system_clipboard and "+" or "1"
 end
 
----@class PasteOptions
----@field use_register? boolean
----@field cut? boolean
-
 ---@param source string
 ---@param destination string
 ---@return boolean
@@ -201,6 +197,7 @@ function Clipboard:copy(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "added to")
   end
+  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
 end
 
 ---Cut one or more nodes
@@ -213,6 +210,7 @@ function Clipboard:cut(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut to")
   end
+  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
 end
 
 ---Clear clipboard for action and reload to reflect filesystem changes from paste.
@@ -325,11 +323,11 @@ function Clipboard:get_nodes_from_reg()
   local content = vim.fn.getreg(self.reg)
 
   if #content == 0 then
-    return
+    return {}
   end
 
   local nodes = {}
-  local absolute_paths = vim.split(content:sub(1, #content), ",")
+  local absolute_paths = vim.split(content:sub(1, #content), "\n")
 
   for _, absolute_path in ipairs(absolute_paths) do
     local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
@@ -348,8 +346,7 @@ end
 ---@param node Node
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
----@param opts? PasteOptions
-function Clipboard:do_paste(node, action, action_fn, opts)
+function Clipboard:do_paste(node, action, action_fn)
   if node.name == ".." then
     node = self.explorer
   else
@@ -358,7 +355,8 @@ function Clipboard:do_paste(node, action, action_fn, opts)
       node = dir:last_group_node()
     end
   end
-  local clip = opts and opts.use_register and self:get_nodes_from_reg() or self.data[action]
+  local clip = #self.data[action] > 0 and self.data[action] or self:get_nodes_from_reg()
+
   if #clip == 0 then
     return
   end
@@ -437,12 +435,13 @@ end
 
 ---Paste cut (if present) or copy (if present)
 ---@param node Node
----@param opts? PasteOptions
+---@param opts? { cut?: boolean }
 function Clipboard:paste(node, opts)
-  if self.data.cut[1] ~= nil or opts and opts.use_register and opts.cut then
-    self:do_paste(node, "cut", do_cut, opts)
-  elseif self.data.copy[1] ~= nil or opts and opts.use_register then
-    self:do_paste(node, "copy", do_copy, opts)
+  opts = opts and opts or {}
+  if self.data.cut[1] ~= nil or opts.cut == true then
+    self:do_paste(node, "cut", do_cut)
+  else
+    self:do_paste(node, "copy", do_copy)
   end
 end
 
@@ -465,54 +464,73 @@ function Clipboard:print_clipboard()
 end
 
 ---@param content string
----@param msg? string
-function Clipboard:copy_to_reg(content, msg)
-  -- manually firing TextYankPost does not set vim.v.event
-  -- workaround: create a scratch buffer with the clipboard contents and send a yank command
-  local temp_buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_text(temp_buf, 0, 0, 0, 0, { content })
-  vim.api.nvim_buf_call(temp_buf, function()
-    vim.cmd(string.format('normal! "%sy$', self.reg))
-  end)
-  vim.api.nvim_buf_delete(temp_buf, {})
+---@param message? string
+---@param opts? { notify?: boolean }
+function Clipboard:copy_to_reg(content, message, opts)
+  opts = opts and opts or {}
+  vim.fn.setreg(self.reg, type(content) == "table" and content or { content }, "v")
 
-  notify.info(msg or string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
+  if opts.notify ~= false then
+    notify.info(message or string.format("Copied %s to %s clipboard!", content, self.clipboard_name))
+  end
 end
 
 ---@param node Node
-function Clipboard:copy_filename(node)
+---@return string
+function Clipboard:get_node_filename(node)
   if node.name == ".." then
     -- root
-    self:copy_to_reg(vim.fn.fnamemodify(self.explorer.absolute_path, ":t"))
+    return vim.fn.fnamemodify(self.explorer.absolute_path, ":t")
   else
     -- node
-    self:copy_to_reg(node.name)
+    return node.name
   end
 end
 
 ---@param node_or_nodes Node|Node[]
-function Clipboard:copy_basename(node_or_nodes)
-  local content = ""
-  if self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1 then
+---@param attribute "absolute_path" | "basename" | "filename" | "relative_path"
+---@param opts? { notify?: boolean }
+function Clipboard:copy_node_attribute(node_or_nodes, attribute, opts)
+  opts = opts and opts or {}
+  local content
+  local node_attribute_getters = {
+    basename = function(n) return self:get_node_basename(n) end,
+    filename = function(n) return self:get_node_filename(n) end,
+    relative_path = function(n) return self:get_node_relative_path(n) end,
+    absolute_path = function(n) return self:get_node_absolute_path(n) end,
+  }
+
+  local attribute_getter = node_attribute_getters[attribute]
+
+  local is_single = self:is_nodes_array(node_or_nodes) == false
+  if is_single then
     local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
-    content = node:get_basename()
+    content = attribute_getter(node)
   else
-    for i, node in ipairs(node_or_nodes) do
-      if i == 1 then
-        content = node:get_basename()
-      else
-        content = content .. "," .. node:get_basename()
-      end
+    node_or_nodes = utils.filter_descendant_nodes(node_or_nodes)
+    content = {}
+    for _, node in ipairs(node_or_nodes) do
+      table.insert(content, attribute_getter(node))
     end
   end
-  self:copy_to_reg(content)
+
+
+  if content ~= nil then
+    local message = nil
+
+    if not is_single then
+      message = string.format("%s %s copied to register", #content, attribute:gsub("_", " ") .. "s")
+    end
+    self:copy_to_reg(content, message, opts)
+  end
 end
 
 ---@param node Node
-function Clipboard:copy_path(node)
+---@return string|nil
+function Clipboard:get_node_relative_path(node)
   if node.name == ".." then
     -- root
-    self:copy_to_reg(utils.path_add_trailing(""))
+    return utils.path_add_trailing("")
   else
     -- node
     local absolute_path = node.absolute_path
@@ -523,9 +541,9 @@ function Clipboard:copy_path(node)
 
     local relative_path = utils.path_relative(absolute_path, cwd)
     if node:is(DirectoryNode) then
-      self:copy_to_reg(utils.path_add_trailing(relative_path))
+      return utils.path_add_trailing(relative_path)
     else
-      self:copy_to_reg(relative_path)
+      return relative_path
     end
   end
 end
@@ -533,7 +551,7 @@ end
 ---@private
 ---@param node Node
 ---@return string
-function Clipboard:get_absolute_path(node)
+function Clipboard:get_node_absolute_path(node)
   if node.name == ".." then
     node = self.explorer
   end
@@ -542,25 +560,16 @@ function Clipboard:get_absolute_path(node)
   return node.nodes ~= nil and utils.path_add_trailing(absolute_path) or absolute_path
 end
 
----@param node_or_nodes Node|Node[]
-function Clipboard:copy_absolute_path(node_or_nodes)
-  local content = ""
-  local is_single = self:is_nodes_array(node_or_nodes) == false or #node_or_nodes == 1
-  if is_single then
-    local node = #node_or_nodes == 1 and node_or_nodes[0] or node_or_nodes
-    content = self:get_absolute_path(node)
+---@param node Node
+---@return string
+function Clipboard:get_node_basename(node)
+  if node.name == ".." then
+    -- root
+    return vim.fn.fnamemodify(node.explorer.absolute_path, ":t:r")
   else
-    node_or_nodes = utils.filter_descendant_nodes(node_or_nodes)
-    for i, node in ipairs(node_or_nodes) do
-      if i == 1 then
-        content = self:get_absolute_path(node)
-      else
-        content = content .. "," .. self:get_absolute_path(node)
-      end
-    end
+    -- node
+    return vim.fn.fnamemodify(node.name, ":r")
   end
-
-  self:copy_to_reg(content, string.format("%s paths copied to register", is_single and 1 or #node_or_nodes))
 end
 
 ---Node is cut. Will not be copied.
