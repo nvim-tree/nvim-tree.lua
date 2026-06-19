@@ -17,6 +17,16 @@ function M.global()
     end,
   })
 
+  if vim.fn.has("nvim-0.13") == 1 then
+    vim.api.nvim_create_autocmd("SessionWritePre", {
+      group = augroup_id,
+      callback = function()
+        local cwd = require("nvim-tree.core").get_cwd()
+        vim.g.NvimTreeState = vim.json.encode({ cwd = cwd })
+      end,
+    })
+  end
+
   vim.api.nvim_create_autocmd("SessionLoadPost", {
     group = augroup_id,
     callback = function()
@@ -24,6 +34,9 @@ function M.global()
 
       ---@type table<integer,boolean>
       local tabs = {}
+
+      local session_state = vim.json.decode(vim.g.NvimTreeState or "{}") or {}
+      local path = session_state and session_state.cwd or nil
 
       for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
         for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
@@ -43,7 +56,7 @@ function M.global()
 
             if vim.api.nvim_win_is_valid(win) then
               vim.api.nvim_win_call(win, function()
-                api.open()
+                api.open({ path = path })
               end)
             end
           end
