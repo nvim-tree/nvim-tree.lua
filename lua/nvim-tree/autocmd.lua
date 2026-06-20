@@ -17,6 +17,54 @@ function M.global()
     end,
   })
 
+  if vim.fn.has("nvim-0.13") == 1 then
+    vim.api.nvim_create_autocmd("SessionWritePre", { ---@diagnostic disable-line: param-type-mismatch
+      group = augroup_id,
+      callback = function()
+        local cwd = require("nvim-tree.core").get_cwd()
+        vim.g.NvimTreeState = vim.json.encode({ cwd = cwd })
+      end,
+    })
+  end
+
+  vim.api.nvim_create_autocmd("SessionLoadPost", {
+    group = augroup_id,
+    callback = function()
+      local api = require("nvim-tree.api").tree
+
+      ---@type table<integer,boolean>
+      local tabs = {}
+
+      local session_state = vim.json.decode(vim.g.NvimTreeState or "{}") or {}
+      local path = session_state and session_state.cwd or nil
+
+      for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if api.is_tree_buf(buf) then
+            tabs[tab] = true
+          end
+        end
+      end
+
+      vim.schedule(function()
+        api.close_in_all_tabs()
+
+        for tab, _ in pairs(tabs) do
+          if vim.api.nvim_tabpage_is_valid(tab) then
+            local win = vim.api.nvim_tabpage_get_win(tab)
+
+            if vim.api.nvim_win_is_valid(win) then
+              vim.api.nvim_win_call(win, function()
+                api.open({ path = path })
+              end)
+            end
+          end
+        end
+      end)
+    end,
+  })
+
   if config.g.tab.sync.open then
     vim.api.nvim_create_autocmd("TabEnter", {
       group = augroup_id,
