@@ -18,7 +18,7 @@ function M.global()
   })
 
   if vim.fn.has("nvim-0.13") == 1 then
-    vim.api.nvim_create_autocmd("SessionWritePre", {
+    vim.api.nvim_create_autocmd("SessionWritePre", { ---@diagnostic disable-line: param-type-mismatch
       group = augroup_id,
       callback = function()
         local cwd = require("nvim-tree.core").get_cwd()
