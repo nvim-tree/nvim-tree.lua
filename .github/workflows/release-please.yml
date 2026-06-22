@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: tag major and minor versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
