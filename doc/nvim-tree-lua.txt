@@ -143,7 +143,7 @@ Show the mappings:  `g?`
  `f`               n    Live Filter: Start         |nvim_tree.api.filter.live.start()|
  `g?`              n    Help                       |nvim_tree.api.tree.toggle_help()|
  `gy`              nx   Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
- `ge`              nx   Copy Basename              |nvim_tree.api.fs.copy.basename()|
+ `ge`              n    Copy Basename              |nvim_tree.api.fs.copy.basename()|
  `H`               n    Toggle Filter: Dotfiles    |nvim_tree.api.filter.dotfiles.toggle()|
  `I`               n    Toggle Filter: Git Ignored |nvim_tree.api.filter.git.ignored.toggle()|
  `J`               n    Last Sibling               |nvim_tree.api.node.navigate.sibling.last()|
@@ -165,8 +165,8 @@ Show the mappings:  `g?`
  `U`               n    Toggle Filter: Custom      |nvim_tree.api.filter.custom.toggle()|
  `W`               n    Collapse All               |nvim_tree.api.tree.collapse_all()|
  `x`               nx   Cut                        |nvim_tree.api.fs.cut()|
- `y`               nx   Copy Name                  |nvim_tree.api.fs.copy.filename()|
- `Y`               nx   Copy Relative Path         |nvim_tree.api.fs.copy.relative_path()|
+ `y`               n    Copy Name                  |nvim_tree.api.fs.copy.filename()|
+ `Y`               n    Copy Relative Path         |nvim_tree.api.fs.copy.relative_path()|
  `<2-LeftMouse>`   n    Open                       |nvim_tree.api.node.open.edit()|
  `<2-RightMouse>`  n    CD                         |nvim_tree.api.tree.change_root_to_node()|
 
@@ -437,7 +437,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n",          "f",              api.filter.live.start,              opts("Live Filter: Start"))
   vim.keymap.set("n",          "g?",             api.tree.toggle_help,               opts("Help"))
   vim.keymap.set({ "n", "x" }, "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
-  vim.keymap.set({ "n", "x" }, "ge",             api.fs.copy.basename,               opts("Copy Basename"))
+  vim.keymap.set("n",          "ge",             api.fs.copy.basename,               opts("Copy Basename"))
   vim.keymap.set("n",          "H",              api.filter.dotfiles.toggle,         opts("Toggle Filter: Dotfiles"))
   vim.keymap.set("n",          "I",              api.filter.git.ignored.toggle,      opts("Toggle Filter: Git Ignored"))
   vim.keymap.set("n",          "J",              api.node.navigate.sibling.last,     opts("Last Sibling"))
@@ -459,8 +459,8 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n",          "U",              api.filter.custom.toggle,           opts("Toggle Filter: Custom"))
   vim.keymap.set("n",          "W",              api.tree.collapse_all,              opts("Collapse All"))
   vim.keymap.set({ "n", "x" }, "x",              api.fs.cut,                         opts("Cut"))
-  vim.keymap.set({ "n", "x" }, "y",              api.fs.copy.filename,               opts("Copy Name"))
-  vim.keymap.set({ "n", "x" }, "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
+  vim.keymap.set("n",          "y",              api.fs.copy.filename,               opts("Copy Name"))
+  vim.keymap.set("n",          "Y",              api.fs.copy.relative_path,          opts("Copy Relative Path"))
   vim.keymap.set("n",          "<2-LeftMouse>",  api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n",          "<2-RightMouse>", api.tree.change_root_to_node,       opts("CD"))
   -- END_ON_ATTACH_DEFAULT
@@ -2468,20 +2468,6 @@ paste({node})                                       *nvim_tree.api.fs.paste()*
 
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`)
-
-                              *nvim_tree.api.fs.paste_from_register_copying()*
-paste_from_register_copying({node_or_nodes})
-    Paste nodes from the system register as files to nvim-tree while copying.
-
-    Parameters: ~
-      • {node_or_nodes}  (`nvim_tree.api.Node|nvim_tree.api.Node[]?`)
-
-                              *nvim_tree.api.fs.paste_from_register_cutting()*
-paste_from_register_cutting({node_or_nodes})
-    Paste nodes from the system register as files to nvim-tree while cutting.
-
-    Parameters: ~
-      • {node_or_nodes}  (`nvim_tree.api.Node|nvim_tree.api.Node[]?`)
 
 print_clipboard()                         *nvim_tree.api.fs.print_clipboard()*
     Print the contents of the nvim-tree clipboard.
