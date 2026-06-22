@@ -197,7 +197,7 @@ function Clipboard:copy(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "added to")
   end
-  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
+  self:copy_absolute_path(self.data.copy, { notify = false })
 end
 
 ---Cut one or more nodes
@@ -210,7 +210,7 @@ function Clipboard:cut(node_or_nodes)
   else
     self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut to")
   end
-  self:copy_node_attribute(node_or_nodes, "absolute_path", { notify = false })
+  self:copy_absolute_path(self.data.cut, { notify = false })
 end
 
 ---Clear clipboard for action and reload to reflect filesystem changes from paste.
