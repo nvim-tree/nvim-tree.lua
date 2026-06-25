@@ -330,12 +330,14 @@ function Clipboard:get_nodes_from_reg()
   local absolute_paths = vim.split(content:sub(1, #content), "\n")
 
   for _, absolute_path in ipairs(absolute_paths) do
-    local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
-    if absolute_path:sub(-1) == "/" then
-      node_args.name = vim.fn.fnamemodify(absolute_path:sub(1, -2), ":t")
-      table.insert(nodes, DirectoryNode(node_args))
-    else
-      table.insert(nodes, FileNode(node_args))
+    if absolute_path:match("^%s*(.-)%s*s") then
+      local node_args = { absolute_path = absolute_path, name = vim.fn.fnamemodify(absolute_path, ":t"), explorer = self.explorer }
+      if absolute_path:sub(-1) == "/" then
+        node_args.name = vim.fn.fnamemodify(absolute_path:sub(1, -2), ":t")
+        table.insert(nodes, DirectoryNode(node_args))
+      else
+        table.insert(nodes, FileNode(node_args))
+      end
     end
   end
   return nodes
@@ -396,6 +398,10 @@ function Clipboard:do_paste(node, action, action_fn)
     self:resolve_conflicts(conflict, destination, action, action_fn)
   else
     self:finish_paste(action)
+  end
+
+  for _, n in ipairs(clip) do
+    n:destroy()
   end
 end
 
