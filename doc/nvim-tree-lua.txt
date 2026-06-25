@@ -2462,7 +2462,7 @@ cut({node})                                           *nvim_tree.api.fs.cut()*
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`)
 
-paste({node})                                       *nvim_tree.api.fs.paste()*
+move({node})                                         *nvim_tree.api.fs.move()*
     Paste while cutting files from:
     • current nvim-tree clipboard (if present)
     • another nvim-tree instance via system clipboard

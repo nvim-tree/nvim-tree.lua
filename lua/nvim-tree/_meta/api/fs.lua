@@ -76,7 +76,7 @@ function nvim_tree.api.fs.paste(node) end
 ---If {node} is a file it will pasted in the parent directory.
 ---
 ---@param node? nvim_tree.api.Node
-function nvim_tree.api.fs.paste(node) end
+function nvim_tree.api.fs.move(node) end
 
 ---
 ---Print the contents of the nvim-tree clipboard.
