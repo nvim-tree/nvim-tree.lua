@@ -20,7 +20,8 @@ Features
     - Git integration
     - Diagnostics integration: LSP and COC
     - (Live) filtering
-    - Cut, copy, paste, rename, delete, create
+    - Rename, delete, create
+    - Cut, copy, paste locally and between instances
     - Highly customisable
 
 File Icons
@@ -2462,7 +2463,19 @@ cut({node})                                           *nvim_tree.api.fs.cut()*
       • {node}  (`nvim_tree.api.Node?`)
 
 paste({node})                                       *nvim_tree.api.fs.paste()*
-    Paste from the nvim-tree clipboard.
+    Paste while cutting files from:
+    • current nvim-tree clipboard (if present)
+    • another nvim-tree instance via system clipboard
+
+    If {node} is a file it will pasted in the parent directory.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
+paste({node})                                       *nvim_tree.api.fs.paste()*
+    Paste files from:
+    • current nvim-tree clipboard (if present)
+    • another nvim-tree instance via system clipboard
 
     If {node} is a file it will pasted in the parent directory.
 
