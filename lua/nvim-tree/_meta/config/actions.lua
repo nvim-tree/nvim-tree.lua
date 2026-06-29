@@ -24,6 +24,8 @@ error("Cannot require a meta file")
 ---[nvim_tree.config.actions.remove_file]
 ---@field remove_file? nvim_tree.config.actions.remove_file
 
+
+
 --- vim [current-directory] behaviour
 ---@class nvim_tree.config.actions.change_dir
 ---

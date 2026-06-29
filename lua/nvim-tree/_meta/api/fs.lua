@@ -59,7 +59,9 @@ function nvim_tree.api.fs.create(node) end
 function nvim_tree.api.fs.cut(node) end
 
 ---
----Paste from the nvim-tree clipboard.
+---Paste files from:
+---- current nvim-tree clipboard (if present)
+---- another nvim-tree instance via system clipboard
 ---
 ---If {node} is a file it will pasted in the parent directory.
 ---
@@ -67,16 +69,14 @@ function nvim_tree.api.fs.cut(node) end
 function nvim_tree.api.fs.paste(node) end
 
 ---
----Paste nodes from the system register as files to nvim-tree while copying.
+---Paste while cutting files from:
+---- current nvim-tree clipboard (if present)
+---- another nvim-tree instance via system clipboard
 ---
----@param node_or_nodes? nvim_tree.api.Node | nvim_tree.api.Node[]
-function nvim_tree.api.fs.paste_from_register_copying(node_or_nodes) end
-
+---If {node} is a file it will pasted in the parent directory.
 ---
----Paste nodes from the system register as files to nvim-tree while cutting.
----
----@param node_or_nodes? nvim_tree.api.Node | nvim_tree.api.Node[]
-function nvim_tree.api.fs.paste_from_register_cutting(node_or_nodes) end
+---@param node? nvim_tree.api.Node
+function nvim_tree.api.fs.move(node) end
 
 ---
 ---Print the contents of the nvim-tree clipboard.
