@@ -340,6 +340,14 @@ function Clipboard:get_nodes_from_reg()
   return nodes
 end
 
+---@param nodes Node[]
+---@private
+function Clipboard:destroy_nodes(nodes)
+  for _, n in ipairs(nodes) do
+    n:destroy()
+  end
+end
+
 ---Paste cut or copy with batch conflict resolution.
 ---@private
 ---@param node Node
@@ -354,7 +362,8 @@ function Clipboard:do_paste(node, action, action_fn)
       node = dir:last_group_node()
     end
   end
-  local clip = #self.data[action] > 0 and self.data[action] or self:get_nodes_from_reg()
+  local is_local = #self.data[action] > 0
+  local clip = is_local and self.data[action] or self:get_nodes_from_reg()
 
   if #clip == 0 then
     return
@@ -365,6 +374,9 @@ function Clipboard:do_paste(node, action, action_fn)
   if not stats and err_name ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, err)
     notify.error("Could not " .. action .. " " .. notify.render_path(destination) .. " - " .. (err or "???"))
+    if ~is_local then
+      self:destroy_nodes(clip)
+    end
     return
   end
   local is_dir = stats and stats.type == "directory"
@@ -408,8 +420,8 @@ function Clipboard:do_paste(node, action, action_fn)
     self:finish_paste(action)
   end
 
-  for _, n in ipairs(clip) do
-    n:destroy()
+  if ~is_local then
+    self:destroy_nodes(clip)
   end
 end
 
