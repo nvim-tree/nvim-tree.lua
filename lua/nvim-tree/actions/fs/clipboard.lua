@@ -377,7 +377,7 @@ function Clipboard:do_paste(node, action, action_fn)
   if not stats and err_name ~= "ENOENT" then
     log.line("copy_paste", "do_paste fs_stat '%s' failed '%s'", destination, err)
     notify.error("Could not " .. action .. " " .. notify.render_path(destination) .. " - " .. (err or "???"))
-    if ~is_local then
+    if is_local == false then
       self:destroy_nodes(clip)
     end
     return
@@ -412,7 +412,7 @@ function Clipboard:do_paste(node, action, action_fn)
     self:finish_paste(action)
   end
 
-  if ~is_local then
+  if is_local == false then
     self:destroy_nodes(clip)
   end
 end
