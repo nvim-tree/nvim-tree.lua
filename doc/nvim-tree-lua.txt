@@ -20,7 +20,8 @@ Features
     - Git integration
     - Diagnostics integration: LSP and COC
     - (Live) filtering
-    - Cut, copy, paste, rename, delete, create
+    - Rename, delete, create
+    - Cut, copy, paste locally and between instances
     - Highly customisable
 
 File Icons
@@ -142,7 +143,7 @@ Show the mappings:  `g?`
  `F`               n    Live Filter: Clear         |nvim_tree.api.filter.live.clear()|
  `f`               n    Live Filter: Start         |nvim_tree.api.filter.live.start()|
  `g?`              n    Help                       |nvim_tree.api.tree.toggle_help()|
- `gy`              n    Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
+ `gy`              nx   Copy Absolute Path         |nvim_tree.api.fs.copy.absolute_path()|
  `ge`              n    Copy Basename              |nvim_tree.api.fs.copy.basename()|
  `H`               n    Toggle Filter: Dotfiles    |nvim_tree.api.filter.dotfiles.toggle()|
  `I`               n    Toggle Filter: Git Ignored |nvim_tree.api.filter.git.ignored.toggle()|
@@ -154,6 +155,7 @@ Show the mappings:  `g?`
  `o`               n    Open                       |nvim_tree.api.node.open.edit()|
  `O`               n    Open: No Window Picker     |nvim_tree.api.node.open.no_window_picker()|
  `p`               n    Paste                      |nvim_tree.api.fs.paste()|
+ `gp`              n    Move                       |nvim_tree.api.fs.move()|
  `P`               n    Parent Directory           |nvim_tree.api.node.navigate.parent()|
  `q`               n    Close                      |nvim_tree.api.tree.close()|
  `r`               n    Rename                     |nvim_tree.api.fs.rename()|
@@ -435,7 +437,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n",          "F",              api.filter.live.clear,              opts("Live Filter: Clear"))
   vim.keymap.set("n",          "f",              api.filter.live.start,              opts("Live Filter: Start"))
   vim.keymap.set("n",          "g?",             api.tree.toggle_help,               opts("Help"))
-  vim.keymap.set("n",          "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
+  vim.keymap.set({ "n", "x" }, "gy",             api.fs.copy.absolute_path,          opts("Copy Absolute Path"))
   vim.keymap.set("n",          "ge",             api.fs.copy.basename,               opts("Copy Basename"))
   vim.keymap.set("n",          "H",              api.filter.dotfiles.toggle,         opts("Toggle Filter: Dotfiles"))
   vim.keymap.set("n",          "I",              api.filter.git.ignored.toggle,      opts("Toggle Filter: Git Ignored"))
@@ -447,6 +449,7 @@ You are encouraged to copy these to your {on_attach} function. >lua
   vim.keymap.set("n",          "o",              api.node.open.edit,                 opts("Open"))
   vim.keymap.set("n",          "O",              api.node.open.no_window_picker,     opts("Open: No Window Picker"))
   vim.keymap.set("n",          "p",              api.fs.paste,                       opts("Paste"))
+  vim.keymap.set("n",          "gp",             api.fs.move,                        opts("Move"))
   vim.keymap.set("n",          "P",              api.node.navigate.parent,           opts("Parent Directory"))
   vim.keymap.set("n",          "q",              api.tree.close,                     opts("Close"))
   vim.keymap.set("n",          "r",              api.fs.rename,                      opts("Rename"))
@@ -2459,8 +2462,20 @@ cut({node})                                           *nvim_tree.api.fs.cut()*
     Parameters: ~
       • {node}  (`nvim_tree.api.Node?`)
 
+move({node})                                         *nvim_tree.api.fs.move()*
+    Paste while cutting files from:
+    • current nvim-tree clipboard (if present)
+    • another nvim-tree instance via system clipboard
+
+    If {node} is a file it will pasted in the parent directory.
+
+    Parameters: ~
+      • {node}  (`nvim_tree.api.Node?`)
+
 paste({node})                                       *nvim_tree.api.fs.paste()*
-    Paste from the nvim-tree clipboard.
+    Paste files from:
+    • current nvim-tree clipboard (if present)
+    • another nvim-tree instance via system clipboard
 
     If {node} is a file it will pasted in the parent directory.
 
