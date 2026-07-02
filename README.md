@@ -15,7 +15,9 @@
 
    (Live) filtering
 
-   Cut, copy, paste, rename, delete, create
+   Rename, delete, create
+
+   Cut, copy, paste locally and between instances
 
    Highly customisable
 
