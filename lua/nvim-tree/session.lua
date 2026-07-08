@@ -1,12 +1,59 @@
+local notify = require("nvim-tree.notify")
+
 local M = {}
 
-local function load_state()
-  return vim.json.decode(vim.g.NvimTreeState or "{}") or {}
+local storepath = vim.fn.stdpath("data") .. "/nvim-tree-session.json"
+
+local function decode_session_file()
+  local file = io.open(storepath, "r")
+
+  if file then
+    local content = file:read("*all")
+    file:close()
+    if content and content ~= "" then
+      return vim.json.decode(content)
+    end
+  end
+  -- Notifying on failure could be noisy, as it'd happen if the file simply did not exist
+end
+
+local function write_session_file(session_file_content)
+  local file, errmsg = io.open(storepath, "w")
+
+  if file then
+    file:write(vim.json.encode(session_file_content))
+    file:close()
+  else
+    notify.warn(string.format("Invalid session file (%s): %s", storepath, errmsg))
+  end
 end
 
 function M.save()
-  local cwd = require("nvim-tree.core").get_cwd()
-  vim.g.NvimTreeState = vim.json.encode({ cwd = cwd })
+  -- We either always save the session data, which ends up populating the storepath with empty data
+  -- Or we gate by the tree's visibility, which could create "out of sync" scenario:
+  -- if the tree is initially open and the session is saved, it won't be overridden later,
+  -- if the tree is no longer visible. However, when restoring, this is harmless.
+  if require("nvim-tree.api").tree.is_visible({ any_tabpage = true }) then
+    local ok, session_file_content = pcall(decode_session_file)
+
+    if not ok then
+      notify.warn(string.format("Failed to decode session file (%s): %s", storepath, session_file_content))
+      return
+    end
+
+    -- might be nil at this point
+    session_file_content = session_file_content or {}
+
+    local cwd = require("nvim-tree.core").get_cwd()
+
+    session_file_content[vim.v.this_session] = { cwd = cwd }
+
+    local ok2, err = pcall(write_session_file, session_file_content)
+
+    if not ok2 then
+      notify.warn(string.format("Failed to write session file (%s): %s", storepath, err))
+    end
+  end
 end
 
 function M.restore()
@@ -15,11 +62,14 @@ function M.restore()
   ---@type table<integer,boolean>
   local tabs = {}
 
-  local ok, session_state = pcall(load_state)
+  local ok, session_file_content = pcall(decode_session_file)
+
+  -- Failing to restore cwd is not fatal, we can continue
   if not ok then
-    require("nvim-tree.notify").warn(string.format("Failed to restore cwd: %s", session_state))
+    notify.warn(string.format("Failed to decode session file (%s): %s", storepath, session_file_content))
   end
-  local path = session_state and session_state.cwd or nil
+
+  local path = session_file_content and session_file_content[vim.v.this_session] and session_file_content[vim.v.this_session].cwd or nil
 
   -- Save tabs with leftover nvim-tree buffers
   for _, tab in ipairs(vim.api.nvim_list_tabpages()) do

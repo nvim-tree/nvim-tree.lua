@@ -21,7 +21,9 @@ function M.global()
     vim.api.nvim_create_autocmd("SessionWritePre", { ---@diagnostic disable-line: param-type-mismatch
       group = augroup_id,
       callback = function()
-        require("nvim-tree.session").save()
+        -- We must schedule to wait until `vim.v.this_session` is properly updated
+        -- This prevents overwriting the data if a new session is created with a new `:mksession`
+        vim.schedule(require("nvim-tree.session").save)
       end,
     })
 
