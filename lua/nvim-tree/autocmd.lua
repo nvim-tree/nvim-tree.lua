@@ -27,6 +27,9 @@ function M.global()
 
     vim.api.nvim_create_autocmd("SessionLoadPost", {
       group = augroup_id,
+      -- Workaround: this event fires multiple times (report upstream),
+      -- failure notifications could show up many times.
+      once = true,
       callback = function()
         require("nvim-tree.session").restore()
       end,

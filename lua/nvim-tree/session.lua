@@ -1,5 +1,9 @@
 local M = {}
 
+local function load_state()
+  return vim.json.decode(vim.g.NvimTreeState or "{}") or {}
+end
+
 function M.save()
   local cwd = require("nvim-tree.core").get_cwd()
   vim.g.NvimTreeState = vim.json.encode({ cwd = cwd })
@@ -11,7 +15,10 @@ function M.restore()
   ---@type table<integer,boolean>
   local tabs = {}
 
-  local session_state = vim.json.decode(vim.g.NvimTreeState or "{}") or {}
+  local ok, session_state = pcall(load_state)
+  if not ok then
+    require("nvim-tree.notify").warn(string.format("Failed to restore cwd: %s", session_state))
+  end
   local path = session_state and session_state.cwd or nil
 
   -- Save tabs with leftover nvim-tree buffers
