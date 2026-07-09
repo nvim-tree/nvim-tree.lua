@@ -1914,9 +1914,7 @@ Config: experimental                           *nvim-tree-config-experimental*
     Fields: ~
       • {session_restore_nvim}?  (`boolean`, default: `false`) Restore
                                  nvim-tree buffers when restoring vim sessions
-                                 (requires 0.13+). To restore the working
-                                 directory, ensure that |'sessionoptions'|
-                                 includes "globals"
+                                 (requires 0.13+).
 
 ==============================================================================
 Config: log                                             *nvim-tree-config-log*
