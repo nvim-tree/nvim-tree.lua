@@ -3,7 +3,7 @@ error("Cannot require a meta file")
 
 
 
----Filters may be applied to the tree to exlude the display of file/directories.
+---Filters may be applied to the tree to exclude the display of file/directories.
 ---
 ---Multiple filters may be applied at once.
 ---

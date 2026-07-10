@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.18.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.17.0...nvim-tree-v1.18.0) (2026-07-01)
+
+
+### Features
+
+* **#1549:** p will paste files from another nvim-tree instance, gp will cut/paste ([#3336](https://github.com/nvim-tree/nvim-tree.lua/issues/3336)) ([c760c92](https://github.com/nvim-tree/nvim-tree.lua/commit/c760c92667fe5febf99e2a5bb8a543b0208c743b))
+
+
+### Bug Fixes
+
+* **#3312:** correct cursor when full name shown, requires nvim 0.12.2+ ([#3316](https://github.com/nvim-tree/nvim-tree.lua/issues/3316)) ([d277467](https://github.com/nvim-tree/nvim-tree.lua/commit/d277467fc0d1d0e2bca88165a1de6b526f9f6fe8))
+* **#3324:** deprecated BufModifiedSet event replaced by OptionSet event for Nvim 0.13+ ([#3325](https://github.com/nvim-tree/nvim-tree.lua/issues/3325)) ([f9bfc00](https://github.com/nvim-tree/nvim-tree.lua/commit/f9bfc0059eca24546b69a7006110463da4808f8f))
+* **#3327:** pass nvim_tree.api.node.open.Opts to all applicable nvim_tree.api.node.open function ([#3329](https://github.com/nvim-tree/nvim-tree.lua/issues/3329)) ([07f541f](https://github.com/nvim-tree/nvim-tree.lua/commit/07f541fcaa4a5ae019598240362449ab7e9812b3))
+* **full-name:** lower `zindex` to get consistent cursor shape ([d277467](https://github.com/nvim-tree/nvim-tree.lua/commit/d277467fc0d1d0e2bca88165a1de6b526f9f6fe8))
+
 ## [1.17.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.16.0...nvim-tree-v1.17.0) (2026-04-07)
 
 

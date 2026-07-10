@@ -17,6 +17,12 @@ nvim_tree.api.node.open = {}
 
 
 ---
+---Switch to window with selected file if it exists, otherwise open, see [:drop]
+---
+---@param node? nvim_tree.api.Node directory or file
+function nvim_tree.api.node.open.drop(node) end
+
+---
 ---- file: open as per [nvim_tree.config.actions.open_file]
 ---- directory: expand or collapse
 ---- root: change directory up
@@ -29,31 +35,36 @@ function nvim_tree.api.node.open.edit(node, opts) end
 ---Open file in a new horizontal split.
 ---
 ---@param node? nvim_tree.api.Node file
-function nvim_tree.api.node.open.horizontal(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.horizontal(node, opts) end
 
 ---
 ---Open file in a new horizontal split without using the window picker.
 ---
 ---@param node? nvim_tree.api.Node file
-function nvim_tree.api.node.open.horizontal_no_picker(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.horizontal_no_picker(node, opts) end
 
 ---
 ---Open file without using the window picker.
 ---
 ---@param node? nvim_tree.api.Node file
-function nvim_tree.api.node.open.no_window_picker(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.no_window_picker(node, opts) end
 
 ---
 ---Open file with ['bufhidden'] set to `delete`.
 ---
 ---@param node? nvim_tree.api.Node directory or file
-function nvim_tree.api.node.open.preview(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.preview(node, opts) end
 
 ---
 ---Open file with ['bufhidden'] set to `delete` without using the window picker.
 ---
 ---@param node? nvim_tree.api.Node directory or file
-function nvim_tree.api.node.open.preview_no_picker(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.preview_no_picker(node, opts) end
 
 ---
 ---Open file in place: in the nvim-tree window.
@@ -65,10 +76,11 @@ function nvim_tree.api.node.open.replace_tree_buffer(node) end
 ---Open file in a new tab.
 ---
 ---@param node? nvim_tree.api.Node directory or file
-function nvim_tree.api.node.open.tab(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.tab(node, opts) end
 
 ---
----Switch to tab containing window with selected file if it exists. Open file in new tab otherwise.
+---Switch to tab containing window with selected file if it exists, otherwise open in new tab, see [:drop]
 ---
 ---@param node? nvim_tree.api.Node directory or file
 function nvim_tree.api.node.open.tab_drop(node) end
@@ -83,13 +95,15 @@ function nvim_tree.api.node.open.toggle_group_empty(node) end
 ---Open file in a new vertical split.
 ---
 ---@param node? nvim_tree.api.Node file
-function nvim_tree.api.node.open.vertical(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.vertical(node, opts) end
 
 ---
 ---Open file in a new vertical split without using the window picker.
 ---
 ---@param node? nvim_tree.api.Node file
-function nvim_tree.api.node.open.vertical_no_picker(node) end
+---@param opts? nvim_tree.api.node.open.Opts optional
+function nvim_tree.api.node.open.vertical_no_picker(node, opts) end
 
 ---
 ---@class nvim_tree.api.node.buffer.RemoveOpts
