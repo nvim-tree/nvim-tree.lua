@@ -17,6 +17,28 @@ function M.global()
     end,
   })
 
+  if vim.fn.has("nvim-0.13") == 1 and config.g.experimental.session_restore_nvim then
+    vim.api.nvim_create_autocmd("SessionWritePre", { ---@diagnostic disable-line: param-type-mismatch
+      group = augroup_id,
+      callback = function()
+        -- We must schedule to wait until `vim.v.this_session` is properly updated
+        -- This prevents overwriting the data if a new session is created with a new `:mksession`
+        vim.schedule(require("nvim-tree.session").save)
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("SessionLoadPost", {
+      group = augroup_id,
+      -- Workaround: this event fires multiple times (report upstream),
+      -- failure notifications could show up many times.
+      once = true,
+      callback = function()
+        require("nvim-tree.session").restore()
+      end,
+    })
+  end
+
+
   if config.g.tab.sync.open then
     vim.api.nvim_create_autocmd("TabEnter", {
       group = augroup_id,
