@@ -71,7 +71,7 @@ end
 
 ---Configure width-related config
 ---@param width string|function|number|table|nil
-local function configure_width(width)
+function M.configure_width(width)
   if type(width) == "table" then
     M.Active.adaptive_size = true
     M.Active.width = width.min or DEFAULT_MIN_WIDTH
@@ -101,7 +101,7 @@ function M.initialize()
   M.Active.winopts.relativenumber = config.g.view.relativenumber
   M.Active.winopts.signcolumn = config.g.view.signcolumn
 
-  configure_width(config.g.view.width)
+  M.configure_width(config.g.view.width)
 
   M.Active.initial_width = M.get_width()
 end

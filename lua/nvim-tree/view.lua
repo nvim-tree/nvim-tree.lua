@@ -298,7 +298,7 @@ function M.resize(size)
   local new_size = view_state.get_width()
 
   if new_size ~= vim.api.nvim_win_get_width(winnr) then
-    vim.api.nvim_win_set_width(winnr, new_size)
+    vim.api.nvim_win_set_width(winnr, new_size) ---@diagnostic disable-line: deprecated see #3344
     if not config.g.view.preserve_window_proportions then
       vim.cmd(":wincmd =")
     end
