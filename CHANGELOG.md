@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.19.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.18.0...nvim-tree-v1.19.0) (2026-07-15)
+
+
+### Features
+
+* experiment: restore nvim-tree on session load, see https://github.com/nvim-tree/nvim-tree.lua/issues/3343 ([#3335](https://github.com/nvim-tree/nvim-tree.lua/issues/3335)) ([cf18a66](https://github.com/nvim-tree/nvim-tree.lua/commit/cf18a662cd5f200361b6fedfb794eed583e075e1))
+
+
+### Bug Fixes
+
+* **#3346:** api.tree.resize: 'configure_width' (a nil value) ([#3347](https://github.com/nvim-tree/nvim-tree.lua/issues/3347)) ([a797d5e](https://github.com/nvim-tree/nvim-tree.lua/commit/a797d5e20133fc031fba4aa7d1272f5b1d950a1c))
+
 ## [1.18.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.17.0...nvim-tree-v1.18.0) (2026-07-01)
 
 
