@@ -49,7 +49,7 @@ function M.fn(node)
   local containing_folder = utils.path_add_trailing(dir.absolute_path)
 
   local input_opts = {
-    prompt = "Create file ",
+    prompt = "Create ",
     default = containing_folder,
     completion = "file",
   }
