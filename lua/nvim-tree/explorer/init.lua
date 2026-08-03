@@ -517,7 +517,7 @@ function Explorer:reload_explorer()
 end
 
 function Explorer:reload_git()
-  if not git.config.git.enable or event_running then
+  if not git.config.git or not git.config.git.enable or event_running then
     return
   end
   event_running = true
