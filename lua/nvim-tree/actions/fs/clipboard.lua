@@ -181,7 +181,7 @@ end
 ---@param node_or_nodes Node|Node[]
 ---@return boolean
 function Clipboard:is_nodes_array(node_or_nodes)
-  return type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node)
+  return not (type(node_or_nodes) == "table" and node_or_nodes.is and node_or_nodes:is(Node))
 end
 
 ---Copy one or more nodes
