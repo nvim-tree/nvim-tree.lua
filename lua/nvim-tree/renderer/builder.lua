@@ -339,11 +339,6 @@ function Builder:add_hidden_count_string(node, idx, num_children)
 
     local indent_padding = string.rep(" ", indent_width)
     local indent_string = indent_padding .. indent_markers.str
-
-    -- The count hangs under the last line that was drawn. The root has no
-    -- such line when every one of its children is filtered out: line 0 is
-    -- the empty line the buffer is left with, and is where the count goes
-    -- instead of line -1, which nvim_buf_set_extmark rejects.
     local line_nr = math.max(#self.lines - 1, 0)
     self.virtual_lines[line_nr] = self.virtual_lines[line_nr] or {}
 
