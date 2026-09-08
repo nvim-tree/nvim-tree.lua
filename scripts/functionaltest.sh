@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# TODO this will be shipped as part of the vim runtime https://github.com/neovim/neovim/issues/34592
+
 set -e
 
 # neovim source
