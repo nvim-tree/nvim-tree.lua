@@ -1,5 +1,3 @@
--- TODO lsp defs for test utils
-
 local t = require('test.testutil')
 local n = require('test.functional.testnvim')()
 local Screen = require('test.functional.ui.screen')
