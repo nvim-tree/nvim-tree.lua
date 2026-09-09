@@ -5,7 +5,7 @@
     "library": [
       "$VIMRUNTIME/lua/vim",
       "${3rd}/luv/library",
-      "${DIR_NVIM_SRC}/test",
+      "$DIR_NVIM_SRC/test",
       "/tmp/src/neovim-stable/test"
     ]
   },
