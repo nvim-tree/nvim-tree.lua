@@ -53,14 +53,11 @@ describe("api_open", function()
   local screen
 
   setup(function()
-    -- TODO this can be done without -u and a direct vim.pack.add
-    clear({ args_rm = { "-u" } })
-
-    n.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
-
-    screen = Screen.new(40, 20)
+    clear()
 
     exec_lua(function()
+      vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+
       require("nvim-tree").setup({
         renderer = {
           root_folder_label = false,
@@ -68,7 +65,8 @@ describe("api_open", function()
       })
     end)
 
-    -- TODO setting all hl groups causes expect to take much longer to execute
+    screen = Screen.new(40, 20)
+
     nvt_hl_attr_ids(screen)
   end)
 
