@@ -10,6 +10,7 @@ describe("api_open", function()
   local screen
 
   setup(function()
+    -- TODO this can be done without -u and a direct vim.pack.add
     clear({ args_rm = { "-u" } })
 
     command("packadd nvim-tree.lua")
@@ -38,26 +39,43 @@ describe("api_open", function()
       ]])
   end)
 
-  local function nvt_hl_attr_ids(hl_groups)
+  local function nvt_hl_attr_ids()
     local attr_ids = {}
 
-    -- build the cursor line first
+    -- build the cursor line first, background only
     local hl_cursor_line = n.api.nvim_get_hl(0, { name = "NvimTreeCursorLine", link = false })
     assert(hl_cursor_line)
-    local attr_cursor_line = { foreground = hl_cursor_line.fg, background = hl_cursor_line.bg }
+    local attr_cursor_line = { background = hl_cursor_line.bg }
     attr_ids["NvimTreeCursorLine"] = attr_cursor_line
 
-    for group in pairs(n.api.nvim_get_hl(0, {})) do
-      if vim.tbl_contains(hl_groups, group) and group ~= "NvimTreeCursorLine" then
-        -- add the group's concrete definition
-        local hl = n.api.nvim_get_hl(0, { name = group, link = false })
-        local attr = { foreground = hl.fg, background = hl.bg }
-        attr_ids[group] = attr
+    -- unique colour for each group, descending from #fefefe
+    local i = 1
+    local r, g, b = 254, 254, 254
 
-        -- create a CL variant if background differs
-        if attr.background ~= attr_cursor_line.background then
-          attr_ids[group .. "CL"] = vim.tbl_extend("force", attr_ids[group], attr_ids["NvimTreeCursorLine"])
+    for group, _ in pairs(n.api.nvim_get_hl(0, { create = false })) do
+      if group ~= "NvimTreeCursorLine" and group:match("^NvimTree.*") then
+        local rgb = r * 256 * 256 + g * 256 + b
+        i = i + 1
+        if (i % 256 == 0) then
+          b = 254
+          g = 254
+          r = r - 1
+        elseif (i % 16 == 0) then
+          b = 254
+          g = g - 1
+        else
+          b = b - 1
         end
+        -- print(string.format("#%x", rgb))
+
+        -- add the group's concrete definition with fg only
+        local attr = { foreground = rgb }
+        attr_ids[group] = attr
+        n.api.nvim_set_hl(0, group, { fg = string.format("#%x", rgb) })
+
+        -- create an NvimTreeCursorLine variant
+        attr_ids[group .. "CL"] = { foreground = rgb, background = hl_cursor_line.bg }
+        n.api.nvim_set_hl(0, group .. "CL", { fg = string.format("#%x", rgb), bg = string.format("#%x", hl_cursor_line.bg) })
       end
     end
 
@@ -70,20 +88,18 @@ describe("api_open", function()
       api.tree.open()
       ]])
 
-    screen:add_extra_attr_ids(nvt_hl_attr_ids({
-      "NvimTreeFolderName",
-      "NvimTreeFolderIcon",
-      "NvimTreeCursorLine",
-    }))
+    -- TODO this takes some time to execute
+    screen:add_extra_attr_ids(nvt_hl_attr_ids())
 
+    -- TODO why does file have NvimTreeFolderArrowClosed ?
     screen:expect({
       grid = [[
-        {NvimTreeFolderIconCL:^ }{NvimTreeCursorLine: }{NvimTreeFolderNameCL:dir1}{NvimTreeCursorLine:                    }│         |
-        {NvimTreeFolderIcon: } {NvimTreeFolderName:dir2}                    │{1:~        }|
-        {NvimTreeFolderIcon:  } file1                   │{1:~        }|
-        {NvimTreeFolderIcon:  } file2                   │{1:~        }|
-      {1:~                             }│{1:~        }|*14
-      {3:NvimTree_1 [-]                 }{2:<o Name] }|
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^ }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalCL:                    }{NvimTreeWinSeparator:│}         |
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~        }|
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file1                   }{NvimTreeWinSeparator:│}{1:~        }|
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file2                   }{NvimTreeWinSeparator:│}{1:~        }|
+      {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~        }|*14
+      {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:<o Name] }|
                                               |
     ]],
     })
