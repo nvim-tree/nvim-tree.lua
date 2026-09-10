@@ -42,19 +42,23 @@ describe("api_open", function()
   local function nvt_hl_attr_ids()
     local attr_ids = {}
 
+    -- math.random(tonumber('0x707070'),tonumber('0x909090'))
+    local bg_rgb, bg_hex = 8758352, "#85a450"
+
     -- build the cursor line first, background only
-    local hl_cursor_line = n.api.nvim_get_hl(0, { name = "NvimTreeCursorLine", link = false })
-    assert(hl_cursor_line)
-    local attr_cursor_line = { background = hl_cursor_line.bg }
-    attr_ids["NvimTreeCursorLine"] = attr_cursor_line
+    attr_ids["NvimTreeCursorLine"] = { background = bg_rgb }
+    n.api.nvim_set_hl(0, "NvimTreeCursorLine", { bg = bg_hex })
 
     -- unique colour for each group, descending from #fefefe
-    local i = 1
-    local r, g, b = 254, 254, 254
+    local i, r, g, b = 1, 254, 254, 254
+    local rgb, hex
 
     for group, _ in pairs(n.api.nvim_get_hl(0, { create = false })) do
       if group ~= "NvimTreeCursorLine" and group:match("^NvimTree.*") then
-        local rgb = r * 256 * 256 + g * 256 + b
+
+        -- next unique fg colour
+        rgb = r * 256 * 256 + g * 256 + b
+        hex = string.format("#%x", rgb)
         i = i + 1
         if (i % 256 == 0) then
           b = 254
@@ -66,16 +70,14 @@ describe("api_open", function()
         else
           b = b - 1
         end
-        -- print(string.format("#%x", rgb))
 
         -- add the group's concrete definition with fg only
-        local attr = { foreground = rgb }
-        attr_ids[group] = attr
-        n.api.nvim_set_hl(0, group, { fg = string.format("#%x", rgb) })
+        attr_ids[group] = { foreground = rgb }
+        n.api.nvim_set_hl(0, group, { fg = hex })
 
         -- create an NvimTreeCursorLine variant
-        attr_ids[group .. "CL"] = { foreground = rgb, background = hl_cursor_line.bg }
-        n.api.nvim_set_hl(0, group .. "CL", { fg = string.format("#%x", rgb), bg = string.format("#%x", hl_cursor_line.bg) })
+        attr_ids[group .. "CL"] = { foreground = rgb, background = bg_rgb }
+        n.api.nvim_set_hl(0, group .. "CL", { fg = hex, bg = bg_hex })
       end
     end
 
@@ -88,10 +90,11 @@ describe("api_open", function()
       api.tree.open()
       ]])
 
-    -- TODO this takes some time to execute
-    screen:add_extra_attr_ids(nvt_hl_attr_ids())
+    -- TODO setting all hl groups causes expect to take much longer to execute
+    local attr_ids = nvt_hl_attr_ids()
+    screen:add_extra_attr_ids(attr_ids)
 
-    -- TODO why does file have NvimTreeFolderArrowClosed ?
+    -- TODO NvimTreeFolderArrowClosed is always set by Padding:get_arrows, it should only be set for DirectoryNode
     screen:expect({
       grid = [[
       {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^ }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalCL:                    }{NvimTreeWinSeparator:│}         |
