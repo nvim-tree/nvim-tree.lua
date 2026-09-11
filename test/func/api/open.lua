@@ -3,6 +3,7 @@ local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local clear = n.clear
 local exec_lua = n.exec_lua
+local command = n.command
 
 local function nvt_hl_attr_ids(screen)
   local attr_ids = {}
@@ -57,7 +58,9 @@ describe("api_open", function()
 
     exec_lua(function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+    end)
 
+    exec_lua(function()
       require("nvim-tree").setup({
         renderer = {
           root_folder_label = false,
@@ -79,13 +82,55 @@ describe("api_open", function()
     assert(t.mkdir(tmp .. "/dir1"))
     assert(t.mkdir(tmp .. "/dir2"))
 
-    n.api.nvim_cmd({ cmd = "cd", args = { tmp } }, {})
+    -- n.api.nvim_cmd({ cmd = "cd", args = { tmp } }, {})
+    command("sil cd " .. tmp)
+
+    exec_lua(function()
+      require("nvim-tree").setup({
+        renderer = {
+          root_folder_label = false,
+        },
+      })
+    end)
+  end)
+
+  it("api_tree_open_populated_unfocussed_text_only", function()
+    exec_lua(function()
+      require("nvim-tree.api").tree.open()
+    end)
+
+    n.feed("<c-w><c-w>")
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+    dir1         │^                    |
+    dir2         │~                   |
+     file1        │~                   |
+     file2        │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+~                  │~                   |
+NvimTree_1 [-]      [No Name]           |
+                                        |
+    ]],
+    })
   end)
 
   it("api_tree_open_populated_focussed", function()
     exec_lua(function()
-      local api = require("nvim-tree.api")
-      api.tree.open()
+      require("nvim-tree.api").tree.open()
     end)
 
     -- TODO NvimTreeFolderArrowClosed is always set by Padding:get_arrows, it should only be set for DirectoryNode
@@ -103,18 +148,17 @@ describe("api_open", function()
   end)
 
   it("api_tree_open_populated_unfocussed", function()
-    -- TODO consider resetting tree after each test, they are order dependent
-    -- exec_lua(function()
-    --   local api = require("nvim-tree.api")
-    --   api.tree.open()
-    -- end)
+    exec_lua(function()
+      require("nvim-tree.api").tree.open()
+    end)
 
+    n.feed("<down>")
     n.feed("<c-w><c-w>")
 
     screen:expect({
       grid = [[
-      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalNCCL:         }{NvimTreeWinSeparator:│}^                    |
-      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormalNC:         }{NvimTreeWinSeparator:│}{1:~                   }|
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeEmptyFolderName:dir1}{NvimTreeNormalNC:         }{NvimTreeWinSeparator:│}^                    |
+      {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir2}{NvimTreeNormalNCCL:         }{NvimTreeWinSeparator:│}{1:~                   }|
       {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file1        }{NvimTreeWinSeparator:│}{1:~                   }|
       {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file2        }{NvimTreeWinSeparator:│}{1:~                   }|
       {NvimTreeEndOfBuffer:~                  }{NvimTreeWinSeparator:│}{1:~                   }|*14
