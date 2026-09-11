@@ -4,6 +4,10 @@ local Screen = require("test.functional.ui.screen")
 local clear = n.clear
 local exec_lua = n.exec_lua
 
+--- Reset all NvimTree* highlight groups to just a unique foreground colour
+--- Add a CL variant with the same background colour as NvimTreeCursorLine
+--- May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
+--- @param screen test.functional.ui.screen
 local function nvt_hl_attr_ids(screen)
   local attr_ids = {}
 
@@ -19,7 +23,7 @@ local function nvt_hl_attr_ids(screen)
   local rgb, hex
 
   for group, _ in pairs(n.api.nvim_get_hl(0, { create = false })) do
-    if group ~= "NvimTreeCursorLine" and group:match("^NvimTree.*") then
+    if group ~= "NvimTreeCursorLine" and group:match("^NvimTree.*") and not group:match(".*CL$") then
       -- next unique fg colour
       rgb = r * 256 * 256 + g * 256 + b
       hex = string.format("#%x", rgb)
@@ -60,16 +64,6 @@ describe("api_open", function()
     exec_lua(function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
     end)
-
-    exec_lua(function()
-      require("nvim-tree").setup({
-        renderer = {
-          root_folder_label = false,
-        },
-      })
-    end)
-
-    nvt_hl_attr_ids(screen)
   end)
 
   before_each(function()
@@ -90,6 +84,8 @@ describe("api_open", function()
         },
       })
     end)
+
+    nvt_hl_attr_ids(screen)
   end)
 
   it("api_tree_open_populated_unfocussed_text_only", function()
@@ -155,7 +151,7 @@ NvimTree_1 [-]                 [No Name]                                        
       require("nvim-tree.api").tree.open()
     end)
 
-    -- TODO this cursor position will be set to view_state.Active.cursors even when tree is destroyed, 
+    -- TODO this cursor position will be set to view_state.Active.cursors even when tree is destroyed
     n.feed("<down>")
     n.feed("<c-w><c-w>")
 
