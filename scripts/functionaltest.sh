@@ -52,8 +52,8 @@ make
 
 ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
 
-# make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/api/tree/open.lua"
-make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/map/node_open.lua"
+make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/api/tree/open.lua"
+# make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/map/node_open.lua"
 
 cd -
 
