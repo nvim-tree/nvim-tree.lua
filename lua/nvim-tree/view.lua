@@ -354,6 +354,12 @@ function M.abandon_all_windows()
   end
 end
 
+function M.purge_state()
+  M.close_all_tabs()
+  M.abandon_all_windows()
+  view_state.Active.cursors = {}
+end
+
 ---@param opts table|nil
 ---@return boolean
 function M.is_visible(opts)

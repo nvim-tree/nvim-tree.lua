@@ -67,8 +67,7 @@ function M.get_nodes_starting_line()
 end
 
 function M.purge_all_state()
-  view.close_all_tabs()
-  view.abandon_all_windows()
+  view.purge_state()
   if TreeExplorer then
     git.purge_state()
     TreeExplorer:destroy()
