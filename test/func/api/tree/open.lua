@@ -52,7 +52,7 @@ local function nvt_hl_attr_ids(screen)
   screen:add_extra_attr_ids(attr_ids)
 end
 
-describe("api_open", function()
+describe("api_tree_open", function()
   --- @type test.functional.ui.screen
   local screen
 
