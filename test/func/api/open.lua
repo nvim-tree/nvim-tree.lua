@@ -155,6 +155,7 @@ NvimTree_1 [-]                 [No Name]                                        
       require("nvim-tree.api").tree.open()
     end)
 
+    -- TODO this cursor position will be set to view_state.Active.cursors even when tree is destroyed, 
     n.feed("<down>")
     n.feed("<c-w><c-w>")
 
