@@ -59,7 +59,7 @@ describe("api_tree_open", function()
   setup(function()
     clear()
 
-    screen = Screen.new(80, 25)
+    screen = Screen.new(80, 24)
 
     exec_lua(function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
@@ -120,7 +120,6 @@ describe("api_tree_open", function()
 ~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
-~                             │~                                                |
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
@@ -139,7 +138,7 @@ NvimTree_1 [-]                 [No Name]                                        
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*19
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*18
 {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
                                                                                 |
     ]],
@@ -161,7 +160,7 @@ NvimTree_1 [-]                 [No Name]                                        
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir2}{NvimTreeNormalNCCL:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*19
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*18
 {NvimTreeStatusLineNC:NvimTree_1 [-]                 }{3:[No Name]                                        }|
                                                                                 |
     ]],
