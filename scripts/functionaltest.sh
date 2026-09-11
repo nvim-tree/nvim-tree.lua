@@ -4,15 +4,21 @@
 
 set -e
 
+# code under test
+DIR_NVT="${PWD}"
+
 # neovim source
 DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
+
+# nvim-tree linked as a package for the tests to add before run
+DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 
 cleanup() {
 	rm -fv "${DIR_NVT_PACK}"
 }
 
 # TODO extract common functionality from vimdoc.sh
-if [ ! -d "lua/nvim-tree" ]; then
+if [ ! -d "${DIR_NVT}/lua/nvim-tree" ]; then
 	echo "Must be run from nvim-tree root" 1>&2
 	exit 1
 fi
@@ -38,14 +44,13 @@ EOM
 exit 1
 fi
 
-# nvim-tree linked as a package for the tests to add before run
-DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
-
 cleanup
 
-ln -sv "${PWD}" "${DIR_NVT_PACK}"
-
 cd "${DIR_NVIM_SRC}"
+
+make
+
+ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
 
 make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/api/open.lua"
 
