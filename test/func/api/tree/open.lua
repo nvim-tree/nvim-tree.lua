@@ -3,6 +3,8 @@ local Screen = require("test.functional.ui.screen")
 local clear = n.clear
 local exec_lua = n.exec_lua
 
+-- TODO extract nvt test utils
+
 --- Reset all NvimTree* highlight groups to just a unique foreground colour
 --- Add a CL variant with the same background colour as NvimTreeCursorLine
 --- May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
@@ -162,3 +164,5 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 end)
+
+-- vim:colorcolumn=80
