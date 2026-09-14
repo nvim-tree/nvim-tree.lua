@@ -3,9 +3,6 @@ local Screen = require("test.functional.ui.screen")
 local clear = n.clear
 local exec_lua = n.exec_lua
 
--- TODO create doc:
--- - to create expect grid start with   nvim -nu nvt_min.lua --cmd ':set columns=80 lines=24'
-
 describe("map_node_open", function()
   --- @type test.functional.ui.screen
   local screen
@@ -115,3 +112,5 @@ NvimTree_1 [-]                 f1                                               
     })
   end)
 end)
+
+-- vim:colorcolumn=80

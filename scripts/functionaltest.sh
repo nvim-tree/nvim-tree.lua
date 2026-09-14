@@ -17,11 +17,12 @@ DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 DIR_DATA_WORKING="/tmp/nvt_test_func/data"
 
 usage() {
-	echo "Usage: $0 [-h] [-t <file>] [-d <dir>]"
+	echo "Usage: $0 [-h] [-t <file>] [-d <dir>] [-l]"
 	echo
 	echo "    OPTION:"
 	echo "        -t  Execute single test"
 	echo "        -d  Execute all tests in dir"
+	echo "        -l  Live environment"
 	echo "        -h  Show this help"
 }
 
@@ -33,7 +34,7 @@ files_test_add_dir() {
 	rm /tmp/nvt_files_test
 }
 
-while getopts "ht:d:" o; do
+while getopts "hlt:d:" o; do
 	case "$o" in
 		h) 
 			usage
@@ -45,17 +46,15 @@ while getopts "ht:d:" o; do
 		t) 
 			FILES_TEST="${FILES_TEST} ${OPTARG:-}"
 			;;
+		l)
+			LIVE=true
+			;;
 		\?)
 			usage >&2
 			exit 1
 			;;
 	esac
 done
-
-# run all tests if none specified
-if [ -z "${FILES_TEST}" ]; then
-	files_test_add_dir "test/func"
-fi
 
 # TODO extract common functionality from vimdoc.sh
 if [ ! -d "${DIR_NVT}/lua/nvim-tree" ]; then
@@ -84,6 +83,11 @@ EOM
 exit 1
 fi
 
+# run all tests if none specified
+if [ -z "${FILES_TEST}" ]; then
+	files_test_add_dir "test/func"
+fi
+
 cleanup() {
 	rm -fv "${DIR_NVT_PACK}"
 
@@ -98,6 +102,23 @@ prepare() {
 	make
 
 	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
+}
+
+live() {
+	# TODO add command line argument to cd to a data directory first, mandatory should be OK
+
+	# extracted from testnvim.lua new_session
+	nvim \
+		--clean \
+		-u NONE \
+		-i NONE \
+		--cmd "set shortmess+=IS                  noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
+		--cmd "set packpath^=${DIR_NVIM_SRC}/runtime/" \
+		--cmd "set columns=80 lines=24" \
+		--cmd "packadd nvim-tree.lua" \
+		--cmd "lua require('nvim-tree').setup()"
+
+	exit 0
 }
 
 execute() {
@@ -122,8 +143,12 @@ cleanup
 
 prepare
 
-for f in ${FILES_TEST}; do
-	execute "${f}"
-done
+if [ -n "${LIVE}" ]; then
+	live
+else
+	for f in ${FILES_TEST}; do
+		execute "${f}"
+	done
+fi
 
 cleanup
