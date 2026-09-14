@@ -1,4 +1,3 @@
-local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local clear = n.clear
@@ -22,21 +21,13 @@ describe("map_node_open", function()
   end)
 
   before_each(function()
-    -- TODO think about copying contents of an actual directory into tmp rather than copying
-    local tmp = t.tmpname(false)
-    assert(t.mkdir(tmp))
+    -- TODO maybe recursively copy contents
+    local nvt_test_data = os.getenv("NVT_TEST_DATA")
+    if nvt_test_data then
+      n.api.nvim_set_current_dir(nvt_test_data)
+    end
 
-    assert(t.mkdir(tmp .. "/d1"))
-    t.write_file(tmp .. "/d1/f1", "d1f1", true)
-    t.write_file(tmp .. "/d1/f2", "d1f2", true)
-
-    assert(t.mkdir(tmp .. "/d2"))
-
-    t.write_file(tmp .. "/f1", "f1", true)
-    t.write_file(tmp .. "/f2", "f2", true)
-
-    n.api.nvim_set_current_dir(tmp)
-
+    -- TODO helper to test root folder name
     exec_lua(function()
       require("nvim-tree").setup({
         renderer = {
