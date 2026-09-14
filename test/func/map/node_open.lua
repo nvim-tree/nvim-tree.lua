@@ -46,7 +46,7 @@ describe("map_node_open", function()
     end)
   end)
 
-  it("map_node_open_dir", function()
+  it("dir", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -85,7 +85,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
-  it("map_node_open_file", function()
+  it("file", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)

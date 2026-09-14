@@ -88,7 +88,7 @@ describe("api_tree_open", function()
     nvt_hl_attr_ids(screen)
   end)
 
-  it("api_tree_open_populated_unfocussed_text_only", function()
+  it("populated_unfocussed_text_only", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -126,7 +126,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
-  it("api_tree_open_populated_focussed", function()
+  it("populated_focussed", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -145,7 +145,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
-  it("api_tree_open_populated_unfocussed", function()
+  it("populated_unfocussed", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)

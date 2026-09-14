@@ -13,9 +13,46 @@ DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 # nvim-tree linked as a package for the tests to add before run
 DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 
-cleanup() {
-	rm -fv "${DIR_NVT_PACK}"
+usage() {
+	echo "Usage: $0 [-h] [-t <file>] [-d <dir>]"
+	echo
+	echo "    OPTION:"
+	echo "        -t  Execute single test"
+	echo "        -d  Execute all tests in dir"
+	echo "        -h  Show this help"
 }
+
+files_test_add_dir() {
+	find "${1}" -type f -iname '*lua' > /tmp/nvt_files_test
+	while IFS= read -r f; do
+		FILES_TEST="${FILES_TEST} ${f}"
+	done < /tmp/nvt_files_test
+	rm /tmp/nvt_files_test
+}
+
+while getopts "ht:d:" o; do
+	case "$o" in
+		h) 
+			usage
+			exit 0
+			;;
+		d) 
+			files_test_add_dir "${OPTARG:-}"
+			;;
+		t) 
+			FILES_TEST="${FILES_TEST} ${OPTARG:-}"
+			;;
+		\?)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
+
+# run all tests if none specified
+if [ -z "${FILES_TEST}" ]; then
+	files_test_add_dir "test/func"
+fi
 
 # TODO extract common functionality from vimdoc.sh
 if [ ! -d "${DIR_NVT}/lua/nvim-tree" ]; then
@@ -44,17 +81,24 @@ EOM
 exit 1
 fi
 
+cleanup() {
+	rm -fv "${DIR_NVT_PACK}"
+}
+
+prepare() {
+	cd "${DIR_NVIM_SRC}"
+
+	make
+
+	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
+}
+
 cleanup
 
-cd "${DIR_NVIM_SRC}"
+prepare
 
-make
-
-ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
-
-make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/api/tree/open.lua"
-# make functionaltest TEST_FILE="${DIR_NVT_PACK}/test/func/map/node_open.lua"
-
-cd -
+for f in ${FILES_TEST}; do
+	make functionaltest TEST_FILE="${DIR_NVT_PACK}/${f}"
+done
 
 cleanup
