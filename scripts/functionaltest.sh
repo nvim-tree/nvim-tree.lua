@@ -13,6 +13,9 @@ DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 # nvim-tree linked as a package for the tests to add before run
 DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 
+# working copy of test data
+DIR_DATA_WORKING="/tmp/nvt_test_func/data"
+
 usage() {
 	echo "Usage: $0 [-h] [-t <file>] [-d <dir>]"
 	echo
@@ -83,9 +86,13 @@ fi
 
 cleanup() {
 	rm -fv "${DIR_NVT_PACK}"
+
+	rm -rf "$(dirname "${DIR_DATA_WORKING}")"
 }
 
 prepare() {
+	mkdir -p "$(dirname "${DIR_DATA_WORKING}")"
+
 	cd "${DIR_NVIM_SRC}"
 
 	make
@@ -93,12 +100,30 @@ prepare() {
 	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
 }
 
+execute() {
+	NVT_TEST_FILE="${DIR_NVT_PACK}/${1}"
+
+	# copy the data directory to work
+	rm -rf "${DIR_DATA_WORKING}"
+	DIR_TEST="$(dirname "${NVT_TEST_FILE}")"
+	if [ -d "${DIR_TEST}/data" ]; then
+		cp -pr "${DIR_TEST}/data" "${DIR_DATA_WORKING}"
+		export NVT_TEST_DATA="${DIR_DATA_WORKING}"
+	else
+		export NVT_TEST_DATA=
+	fi
+
+	make functionaltest TEST_FILE="${NVT_TEST_FILE}"
+
+	rm -rf "${DIR_DATA_WORKING}"
+}
+
 cleanup
 
 prepare
 
 for f in ${FILES_TEST}; do
-	make functionaltest TEST_FILE="${DIR_NVT_PACK}/${f}"
+	execute "${f}"
 done
 
 cleanup
