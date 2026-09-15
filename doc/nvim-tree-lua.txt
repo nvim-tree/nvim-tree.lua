@@ -1912,7 +1912,7 @@ Config: experimental                           *nvim-tree-config-experimental*
     issue.
 
     Fields: ~
-      • {session_restore_nvim}?  (`boolean`, default: `false`) Restore
+      • {session_restore_nvim}?  (`boolean`, default: `true`) Restore
                                  nvim-tree buffers when restoring vim sessions
                                  (requires 0.13+).
 
@@ -2221,7 +2221,7 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
         persist = false,
       },
       experimental = {
-        session_restore_nvim = false
+        session_restore_nvim = true
       },
       log = {
         enable = false,

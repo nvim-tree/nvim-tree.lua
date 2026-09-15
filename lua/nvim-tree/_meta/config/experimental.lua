@@ -10,7 +10,7 @@ error("Cannot require a meta file")
 ---@class nvim_tree.config.experimental
 ---
 ---Restore nvim-tree buffers when restoring vim sessions (requires 0.13+).
----(default: `false`)
+---(default: `true`)
 ---@field session_restore_nvim? boolean
 --Example below for future reference:
 --
