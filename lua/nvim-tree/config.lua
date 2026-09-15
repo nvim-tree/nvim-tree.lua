@@ -297,7 +297,7 @@ M.d = { -- config-default-start
     persist = false,
   },
   experimental = {
-    session_restore_nvim = false
+    session_restore_nvim = true
   },
   log = {
     enable = false,
