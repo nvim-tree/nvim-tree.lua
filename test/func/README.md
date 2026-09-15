@@ -10,3 +10,5 @@ This will open an interactive vim session that closely matches the test headless
 
 The dump will have `|` appended to each line, with a caret `^` at the cursor position.
 
+The sessions should have screen size 80x24. Use `<leader>r` to reset the size if the terminal has changed it.
+
