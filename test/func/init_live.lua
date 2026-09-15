@@ -1,4 +1,4 @@
-local dump_path = "/tmp/live_dump.txt"
+local dump_path = "/tmp/nvt_test_func/dump.txt"
 
 -- match the test screen size: <Leader>r to reapply if the terminal is not cooperating
 local function screen_resize()
@@ -9,7 +9,7 @@ end
 ---dump the screen to dump_path: <Leader>d
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
----this is global so that we can call it without changing cursor position
+---this is global so that we can execute it as a command, without changing cursor position
 ---@diagnostic disable-next-line: missing-global-doc, global-element
 function LIVE_DUMP()
   screen_resize()
