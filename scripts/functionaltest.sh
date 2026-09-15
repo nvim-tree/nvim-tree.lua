@@ -107,17 +107,15 @@ prepare() {
 live() {
 	# TODO add command line argument to cd to a data directory first, mandatory should be OK
 
-	# extracted from testnvim.lua new_session
+	# most options extracted from testnvim.lua new_session
 	nvim \
 		--clean \
-		-u NONE \
+		-u "${DIR_NVT}/test/func/init_live.lua" \
+		--noplugin \
 		-i NONE \
 		--cmd "set shortmess+=IS                  noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
 		--cmd "set packpath^=${DIR_NVIM_SRC}/runtime/" \
-		--cmd "set columns=80 lines=24" \
-		--cmd "packadd nvim-tree.lua" \
-		--cmd "lua require('nvim-tree').setup()"
-
+		--cmd "packadd nvim-tree.lua"
 	exit 0
 }
 
