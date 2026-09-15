@@ -41,11 +41,15 @@ function LIVE_DUMP()
   vim.ui.open(dump_path)
 end
 
-vim.keymap.set("n", "<Leader>r", screen_resize,              { remap = false, })
 vim.keymap.set("n", "<Leader>d", "<Cmd>lua LIVE_DUMP()<CR>", { remap = false, })
+vim.keymap.set("n", "<Leader>r", screen_resize,              { remap = false, })
 
 ---set the screen size to match tests
 screen_resize()
 
+-- use dark background for readability under dark and light
+vim.o.background = "dark"
+
 ---add the plugin under test
+vim.api.nvim_command("packadd nvim-tree.lua")
 require("nvim-tree").setup({ renderer = { root_folder_label = false, }, })
