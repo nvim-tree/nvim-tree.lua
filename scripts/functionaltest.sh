@@ -17,12 +17,12 @@ DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 DIR_DATA_WORKING="/tmp/nvt_test_func/data"
 
 usage() {
-	echo "Usage: $0 [-h] [-t <file>] [-d <dir>] [-l]"
+	echo "Usage: $0 [-h] [-t <file>] [-d <dir>] [-l <dir data>]"
 	echo
 	echo "    OPTION:"
 	echo "        -t  Execute single test"
 	echo "        -d  Execute all tests in dir"
-	echo "        -l  Live environment"
+	echo "        -l  Live environment in data"
 	echo "        -h  Show this help"
 }
 
@@ -34,7 +34,7 @@ files_test_add_dir() {
 	rm /tmp/nvt_files_test
 }
 
-while getopts "hlt:d:" o; do
+while getopts "hl:t:d:" o; do
 	case "$o" in
 		h) 
 			usage
@@ -47,7 +47,7 @@ while getopts "hlt:d:" o; do
 			FILES_TEST="${FILES_TEST} ${OPTARG:-}"
 			;;
 		l)
-			LIVE=true
+			DIR_LIVE="$(realpath "${OPTARG:-}")"
 			;;
 		\?)
 			usage >&2
@@ -90,33 +90,29 @@ fi
 
 cleanup() {
 	rm -fv "${DIR_NVT_PACK}"
-
 	rm -rf "$(dirname "${DIR_DATA_WORKING}")"
 }
 
 prepare() {
 	mkdir -p "$(dirname "${DIR_DATA_WORKING}")"
-
 	cd "${DIR_NVIM_SRC}"
-
 	make
-
 	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
+	cd "${DIR_NVT}"
 }
 
 live() {
-	# TODO add command line argument to cd to a data directory first, mandatory should be OK
-
-	# most options extracted from testnvim.lua new_session
+	# options extracted from testnvim.lua nvim_argv, nvim_set
 	nvim \
 		--clean \
-		-u "${DIR_NVT}/test/func/init_live.lua" \
 		--noplugin \
+		-u "${DIR_NVT}/test/func/init_live.lua" \
 		-i NONE \
-		--cmd "set shortmess+=IS                  noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
+		--cmd "set shortmess+=IS background=light noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
+		--cmd "comclear | mapclear | mapclear!" \
 		--cmd "set packpath^=${DIR_NVIM_SRC}/runtime/" \
-		--cmd "packadd nvim-tree.lua"
-	exit 0
+		--cmd "lua dofile('${DIR_NVIM_SRC}/runtime/colors/vim.lua')" \
+		--cmd "unlet g:colors_name"
 }
 
 execute() {
@@ -141,9 +137,13 @@ cleanup
 
 prepare
 
-if [ -n "${LIVE}" ]; then
+if [ -n "${DIR_LIVE}" ]; then
+	cd "${DIR_LIVE}"
+
 	live
 else
+	cd "${DIR_NVIM_SRC}"
+
 	for f in ${FILES_TEST}; do
 		execute "${f}"
 	done
