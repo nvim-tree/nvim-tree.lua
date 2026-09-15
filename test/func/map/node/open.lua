@@ -18,7 +18,6 @@ describe("map_node_open", function()
   end)
 
   before_each(function()
-    -- TODO maybe recursively copy contents
     local nvt_test_data = os.getenv("NVT_TEST_DATA")
     if nvt_test_data then
       n.api.nvim_set_current_dir(nvt_test_data)
