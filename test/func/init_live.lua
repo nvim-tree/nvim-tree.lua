@@ -17,9 +17,6 @@ function LIVE_DUMP()
   -- absolute cursor position
   local cursor = { col = vim.fn.screencol(), row = vim.fn.screenrow(), }
 
-  -- clear the command line
-  vim.api.nvim_command("echo")
-
   -- capture all screen lines
   local lines = {}
   for row = 1, vim.o.lines do
