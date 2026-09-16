@@ -73,13 +73,8 @@ describe("api_tree_open", function()
       n.api.nvim_set_current_dir(nvt_test_data)
     end
 
-    -- TODO helper to test root folder name
     exec_lua(function()
-      require("nvim-tree").setup({
-        renderer = {
-          root_folder_label = false,
-        },
-      })
+      require("nvim-tree").setup({})
     end)
 
     nvt_hl_attr_ids(screen)
@@ -95,11 +90,11 @@ describe("api_tree_open", function()
     screen:expect({
       attr_ids = {},
       grid = [[
-    dir1                    │^                                                 |
+  /tmp/nvt_test_func/data/..  │^                                                 |
+    dir1                    │~                                                |
     dir2                    │~                                                |
      file1                   │~                                                |
      file2                   │~                                                |
-~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
@@ -123,7 +118,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
-  it("populated_focussed", function()
+  it("populated_unfocussed_hl_attrs", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -131,18 +126,19 @@ NvimTree_1 [-]                 [No Name]                                        
     -- TODO NvimTreeFolderArrowClosed is always set by Padding:get_arrows, it should only be set for DirectoryNode
     screen:expect({
       grid = [[
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^ }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalCL:                    }{NvimTreeWinSeparator:│}                                                 |
+{NvimTreeSignColumn:  }{NvimTreeRootFolderCL:^/tmp/nvt_test_func/data/..}{NvimTreeNormalCL:  }{NvimTreeWinSeparator:│}                                                 |
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir1}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*18
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
 {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
                                                                                 |
     ]],
     })
   end)
 
-  it("populated_unfocussed", function()
+  it("populated_unfocussed_hl_attrs", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -152,11 +148,12 @@ NvimTree_1 [-]                 [No Name]                                        
 
     screen:expect({
       grid = [[
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeEmptyFolderName:dir1}{NvimTreeNormalNC:                    }{NvimTreeWinSeparator:│}^                                                 |
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir2}{NvimTreeNormalNCCL:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_test_func/data/..}{NvimTreeNormalNC:  }{NvimTreeWinSeparator:│}^                                                 |
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalNCCL:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormalNC:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*18
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
 {NvimTreeStatusLineNC:NvimTree_1 [-]                 }{3:[No Name]                                        }|
                                                                                 |
     ]],
