@@ -40,7 +40,7 @@ files_test_add() {
 	if [ -f "${1}" ]; then
 		FILES_TEST="${FILES_TEST} ${DIR_NVT_PACK}/${1}"
 	elif [ -d "${1}" ]; then
-		find "${1}" -type f -iname '*lua' -not -iname 'init*.lua' > /tmp/nvt_files_test
+		find "${1}" -type f -iname '*lua' -not -iname 'init_live.lua' > /tmp/nvt_files_test
 		while IFS= read -r f; do
 			FILES_TEST="${FILES_TEST} ${DIR_NVT_PACK}/${f}"
 		done < /tmp/nvt_files_test
