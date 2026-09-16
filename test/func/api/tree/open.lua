@@ -68,7 +68,7 @@ describe("api_tree_open", function()
   end)
 
   before_each(function()
-    local nvt_test_data = os.getenv("NVT_TEST_DATA")
+    local nvt_test_data = os.getenv("NVT_DIR_TEST_DATA")
     if nvt_test_data then
       n.api.nvim_set_current_dir(nvt_test_data)
     end
