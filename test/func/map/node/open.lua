@@ -23,13 +23,8 @@ describe("map_node_open", function()
       n.api.nvim_set_current_dir(nvt_test_data)
     end
 
-    -- TODO helper to test root folder name
     exec_lua(function()
-      require("nvim-tree").setup({
-        renderer = {
-          root_folder_label = false,
-        },
-      })
+      require("nvim-tree").setup({})
     end)
   end)
 
@@ -39,18 +34,19 @@ describe("map_node_open", function()
     end)
 
     n.feed("gg")
+    n.feed("<Down>")
     n.feed("<CR>")
 
     screen:expect({
       attr_ids = {},
       grid = [[
-  ^  d1                      │                                                 |
+  /tmp/nvt_test_func/data/..  │                                                 |
+  ^  d1                      │~                                                |
        f1                    │~                                                |
        f2                    │~                                                |
     d2                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
@@ -77,17 +73,17 @@ NvimTree_1 [-]                 [No Name]                                        
       require("nvim-tree.api").tree.open()
     end)
 
-    n.feed("<down><down>")
+    n.feed("<down><down><down>")
     n.feed("<CR>")
 
     screen:expect({
       attr_ids = {},
       grid = [[
-    d1                      │^f1                                               |
+  /tmp/nvt_test_func/data/..  │^f1                                               |
+    d1                      │~                                                |
     d2                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
 ~                             │~                                                |
