@@ -7,9 +7,7 @@ end
 ---dump the screen to $NVT_TMP_FUNC/dump.txt: <Leader>d
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
----this is global so that we can execute it as a command, without changing cursor position
----@diagnostic disable-next-line: missing-global-doc, global-element
-function LIVE_DUMP()
+local function live_dump()
   screen_resize()
 
   -- absolute cursor position
@@ -38,8 +36,8 @@ function LIVE_DUMP()
   vim.ui.open(dump_path)
 end
 
-vim.keymap.set("n", "<Leader>d", "<Cmd>lua LIVE_DUMP()<CR>", { remap = false, })
-vim.keymap.set("n", "<Leader>r", screen_resize,              { remap = false, })
+vim.keymap.set("n", "<Leader>d", live_dump,     { remap = false, })
+vim.keymap.set("n", "<Leader>r", screen_resize, { remap = false, })
 
 ---set the screen size to match tests
 screen_resize()
