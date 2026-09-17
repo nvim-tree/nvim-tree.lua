@@ -14,24 +14,24 @@ DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 # nvim-tree linked as a package under source
 DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 
-# working directory to copy test data into
-DIR_WORK="/tmp/nvt_test_func"
-
 # absolute paths of test files under nvim source
 FILES_TEST=
 
 # live directory, must contain data
 DIR_LIVE=
 
-# optional test data directory exported for tests
-NVT_DIR_TEST_DATA=
+# working directory to copy test data into, cleared before each test
+export NVT_TMP_FUNC="/tmp/nvt_func"
+
+# optional data directory under $NVT_TMP_FUNC
+export NVT_TMP_FUNC_DATA=
 
 usage() {
-	echo "Usage: ${0} [-h] [-t <file or dir>] [-l <dir>]"
+	echo "Usage: ${0} [-h] [-t <file or dir>] [-l <file or dir>]"
 	echo
 	echo "    OPTION:"
 	echo "        -t  Execute single test file or all in directory"
-	echo "        -l  Live environment in test data directory"
+	echo "        -l  Live environment in test's data directory"
 	echo "        -h  Show this help"
 }
 
@@ -91,7 +91,7 @@ if [ ! -d "${DIR_NVT}/lua/nvim-tree" ]; then
 fi
 
 if [ -z "${DIR_NVIM_SRC}" ] && [ -d "${DIR_NVIM_SRC_DEF}" ]; then
-	export DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
+	DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
 fi
 
 if [ ! -d "${DIR_NVIM_SRC}" ]; then
@@ -114,7 +114,7 @@ fi
 # after all tests
 teardown() {
 	rm -fv "${DIR_NVT_PACK}"
-	rm -rf "${DIR_WORK}"
+	rm -rf "${NVT_TMP_FUNC}"
 }
 
 # before all tests: builds nvim and links nvim-tree as a package under nvim source
@@ -125,15 +125,15 @@ setup() {
 	cd "${DIR_NVT}"
 }
 
-# if present, copies data directory in $1 to $DIR_WORK/data and sets $NVT_DIR_TEST_DATA
+# if present, copies data directory in $1 to $NVT_TMP_FUNC/data and sets $NVT_TMP_FUNC_DATA
 before_each() {
-	rm -rf "${DIR_WORK}"
-	mkdir -p "${DIR_WORK}"
+	rm -rf "${NVT_TMP_FUNC}"
+	mkdir -p "${NVT_TMP_FUNC}"
 	if [ -d "${1}/data" ]; then
-		cp -pr "${1}/data" "${DIR_WORK}"
-		export NVT_DIR_TEST_DATA="${DIR_WORK}/data"
+		cp -pr "${1}/data" "${NVT_TMP_FUNC}"
+		NVT_TMP_FUNC_DATA="${NVT_TMP_FUNC}/data"
 	else
-		export NVT_DIR_TEST_DATA=
+		NVT_TMP_FUNC_DATA=
 	fi
 }
 
