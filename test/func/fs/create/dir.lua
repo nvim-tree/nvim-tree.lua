@@ -45,24 +45,7 @@ describe("single", function()
     d1                      │~                                                |
   ^  direct                  │~                                                |
      f1                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
+~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/direct/ was properly created                      |
     ]],
