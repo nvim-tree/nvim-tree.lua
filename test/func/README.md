@@ -4,15 +4,17 @@ Execute `scripts/functionaltest.sh -l <file or dir>`
 
 This will open an interactive vim session that closely matches the test headless session, using the init: `test/func/init_live.lua`
 
+- `<Leader>u` to dump the entire screen to `/tmp/nvt_func/dump.txt` and open it
+- `<Leader>c` to dump with identical lines collapsed
+- `<Leader>r` to resize the screen to 80 x 24, to match tests
+
 ## Text Only: `attr_ids = {}`
 
 1. Perform the actions to be tested
-2. Dump the screen `<leader>d` to `/tmp/nvt_func/dump.txt`
+2. Dump the screen `<Leader>u` or `<Leader>c>` to `/tmp/nvt_func/dump.txt`
 3. Add the dump to `screen:expect` `grid`, with `attr_ids = {}`
 
 The dump will have `|` appended to each line, with a caret `^` at the cursor position.
-
-The sessions should have screen size 80x24. Use `<leader>r` to reset the size if the terminal has changed it.
 
 ## Text And Highlight
 
