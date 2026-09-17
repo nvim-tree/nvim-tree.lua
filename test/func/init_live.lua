@@ -1,12 +1,10 @@
-local dump_path = "/tmp/nvt_test_func/dump.txt"
-
 -- match the test screen size: <Leader>r to reapply if the terminal is not cooperating
 local function screen_resize()
   vim.o.columns = 80
   vim.o.lines = 24
 end
 
----dump the screen to dump_path: <Leader>d
+---dump the screen to $NVT_TMP_FUNC/dump.txt: <Leader>d
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
 ---this is global so that we can execute it as a command, without changing cursor position
@@ -30,6 +28,8 @@ function LIVE_DUMP()
     lines[row] = line .. "|"
   end
 
+  local dump_path = os.getenv("NVT_TMP_FUNC") .. "/dump.txt"
+
   -- dump to file
   vim.fn.writefile(lines, dump_path)
   vim.api.nvim_command("echo 'dumped screen to " .. dump_path .. "'")
@@ -48,10 +48,7 @@ screen_resize()
 vim.o.background = "dark"
 
 -- move to the data directory
-local nvt_test_data = os.getenv("NVT_DIR_TEST_DATA")
-if nvt_test_data then
-  vim.api.nvim_set_current_dir(nvt_test_data)
-end
+vim.api.nvim_set_current_dir(os.getenv("NVT_TMP_FUNC_DATA") or "")
 
 ---add the plugin under test
 vim.api.nvim_command("packadd nvim-tree.lua")

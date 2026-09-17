@@ -18,10 +18,7 @@ describe("map_node_open", function()
   end)
 
   before_each(function()
-    local nvt_test_data = os.getenv("NVT_DIR_TEST_DATA")
-    if nvt_test_data then
-      n.api.nvim_set_current_dir(nvt_test_data)
-    end
+    n.api.nvim_set_current_dir(os.getenv("NVT_TMP_FUNC_DATA") or "")
 
     exec_lua(function()
       require("nvim-tree").setup({})
@@ -40,7 +37,7 @@ describe("map_node_open", function()
     screen:expect({
       attr_ids = {},
       grid = [[
-  /tmp/nvt_test_func/data/..  │                                                 |
+  /tmp/nvt_func/data/..       │                                                 |
   ^  d1                      │~                                                |
        f1                    │~                                                |
        f2                    │~                                                |
@@ -79,7 +76,7 @@ NvimTree_1 [-]                 [No Name]                                        
     screen:expect({
       attr_ids = {},
       grid = [[
-  /tmp/nvt_test_func/data/..  │^f1                                               |
+  /tmp/nvt_func/data/..       │^f1                                               |
     d1                      │~                                                |
     d2                      │~                                                |
      f1                      │~                                                |
