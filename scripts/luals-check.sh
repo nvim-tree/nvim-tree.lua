@@ -34,6 +34,7 @@ esac
 # neovim source needed for tests
 if [ "${TARGET}" = "test" ]; then
 	. scripts/check-nvim-src.sh
+	export VIMRUNTIME="${DIR_NVIM_SRC}/runtime"
 fi
 
 DIR_NVT="${PWD}"
