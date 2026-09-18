@@ -15,33 +15,13 @@ if [ $# -ne 1 ] || [ "${1}" != "doc" ]; then
 	exit 1
 fi
 
-DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
-
 if [ ! -d "lua/nvim-tree" ]; then
 	echo "Must be run from nvim-tree root" 1>&2
 	exit 1
 fi
 
-if [ -z "${DIR_NVIM_SRC}" ] && [ -d "${DIR_NVIM_SRC_DEF}" ]; then
-	export DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
-fi
-
-if [ ! -d "${DIR_NVIM_SRC}" ]; then
-	cat << EOM
-
-Nvim stable source is required to run ${0}
-
-Unavailable: ${DIR_NVIM_SRC_DEF} or \$DIR_NVIM_SRC=${DIR_NVIM_SRC}
-
-Please:
-  mkdir -p ${DIR_NVIM_SRC_DEF}
-  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory $(dirname "${DIR_NVIM_SRC_DEF}")
-	or use your own e.g.
-  export DIR_NVIM_SRC="\${HOME}/src/neovim"
-
-EOM
-exit 1
-fi
+# define $DIR_NVIM_SRC
+. scripts/check-nvim-src.sh
 
 cleanup() {
 	# remove source link

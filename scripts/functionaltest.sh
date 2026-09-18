@@ -5,11 +5,16 @@
 
 set -e
 
+if [ ! -d "test/func" ]; then
+	echo "Must be run from nvim-tree root" 1>&2
+	exit 1
+fi
+
+# define $DIR_NVIM_SRC
+. scripts/check-nvim-src.sh
+
 # code under test
 DIR_NVT="${PWD}"
-
-# neovim source
-DIR_NVIM_SRC_DEF="/tmp/src/neovim-stable"
 
 # nvim-tree linked as a package under source
 DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
@@ -83,33 +88,6 @@ while getopts "hl:t:" o; do
 			;;
 	esac
 done
-
-# TODO extract common functionality from vimdoc.sh
-if [ ! -d "${DIR_NVT}/lua/nvim-tree" ]; then
-	echo "Must be run from nvim-tree root" 1>&2
-	exit 1
-fi
-
-if [ -z "${DIR_NVIM_SRC}" ] && [ -d "${DIR_NVIM_SRC_DEF}" ]; then
-	DIR_NVIM_SRC="${DIR_NVIM_SRC_DEF}"
-fi
-
-if [ ! -d "${DIR_NVIM_SRC}" ]; then
-	cat << EOM
-
-Nvim stable source is required to run ${0}
-
-Unavailable: ${DIR_NVIM_SRC_DEF} or \$DIR_NVIM_SRC=${DIR_NVIM_SRC}
-
-Please:
-  mkdir -p ${DIR_NVIM_SRC_DEF}
-  curl -L 'https://github.com/neovim/neovim/archive/refs/tags/stable.tar.gz' | tar zx --directory $(dirname "${DIR_NVIM_SRC_DEF}")
-	or use your own e.g.
-  export DIR_NVIM_SRC="\${HOME}/src/neovim"
-
-EOM
-exit 1
-fi
 
 # after all tests
 teardown() {
