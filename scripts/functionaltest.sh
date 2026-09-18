@@ -70,6 +70,7 @@ live_add() {
 	fi
 }
 
+# TODO fail on scripts/functionaltest.sh foo
 while getopts "hl:t:" o; do
 	case "$o" in
 		h)

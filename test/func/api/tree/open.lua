@@ -1,7 +1,14 @@
+local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local clear = n.clear
 local exec_lua = n.exec_lua
+
+-- 0.13 global compatibility
+local describe = t.describe or describe
+local before_each = t.before_each or before_each
+local it = t.it or it
+local setup = t.setup or setup
 
 --- Reset all NvimTree* highlight groups to just a unique foreground colour
 --- Add a CL variant with the same background colour as NvimTreeCursorLine
