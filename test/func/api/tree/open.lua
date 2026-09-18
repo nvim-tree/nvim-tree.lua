@@ -86,8 +86,8 @@ describe("api_tree_open", function()
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │^                                                 |
-    dir1                    │~                                                |
-    dir2                    │~                                                |
+    dir1                    │~                                                |
+    dir2                    │~                                                |
      file1                   │~                                                |
      file2                   │~                                                |
 ~                             │~                                                |
@@ -122,8 +122,8 @@ NvimTree_1 [-]                 [No Name]                                        
     screen:expect({
       grid = [[
 {NvimTreeSignColumn:  }{NvimTreeRootFolderCL:^/tmp/nvt_func/data/..}{NvimTreeNormalCL:       }{NvimTreeWinSeparator:│}                                                 |
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir1}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:dir1}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:dir2}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
@@ -144,8 +144,8 @@ NvimTree_1 [-]                 [No Name]                                        
     screen:expect({
       grid = [[
 {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormalNC:       }{NvimTreeWinSeparator:│}^                                                 |
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeEmptyFolderNameCL:dir1}{NvimTreeNormalNCCL:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeEmptyFolderName:dir2}{NvimTreeNormalNC:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalNCCL: }{NvimTreeFolderNameCL:dir1}{NvimTreeNormalNCCL:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormalNC: }{NvimTreeFolderName:dir2}{NvimTreeNormalNC:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file1                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormalNC: file2                   }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17

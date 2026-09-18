@@ -41,7 +41,7 @@ describe("map_node_open", function()
   ^  d1                      │~                                                |
        f1                    │~                                                |
        f2                    │~                                                |
-    d2                      │~                                                |
+    d2                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
 ~                             │~                                                |
@@ -78,7 +78,7 @@ NvimTree_1 [-]                 [No Name]                                        
       grid = [[
   /tmp/nvt_func/data/..       │^f1                                               |
     d1                      │~                                                |
-    d2                      │~                                                |
+    d2                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
 ~                             │~                                                |
