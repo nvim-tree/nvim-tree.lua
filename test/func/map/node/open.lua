@@ -1,4 +1,4 @@
-local t = require('test.testutil')
+local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local clear = n.clear
