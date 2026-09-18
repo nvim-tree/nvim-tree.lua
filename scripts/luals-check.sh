@@ -8,6 +8,7 @@
 #
 # lua-language-server is inconsisent about which parameters must be absolute paths therefore we pass every path as absolute
 
+# TODO change to an optional -c argument
 usage() {
 	echo "usage: ${0} [codestyle-check] <lua|scripts|test>" 1>&2
 }
