@@ -125,4 +125,4 @@ jobs:
           cd "${DIR_NVIM_SRC}"
           make
 
-      - run: make functionaltest
+      - run: scripts/functionaltest.sh
