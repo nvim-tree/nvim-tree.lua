@@ -126,3 +126,7 @@ jobs:
           make
 
       - run: scripts/functionaltest.sh
+
+      - run: scripts/luals-check.sh test
+
+      - run: scripts/luals-check.sh codestyle-check test
