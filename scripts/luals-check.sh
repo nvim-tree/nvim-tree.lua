@@ -1,15 +1,39 @@
 #!/usr/bin/env sh
 
-# Performs a lua-language-server check on all lua files.
+# Performs a lua-language-server check.
 # $VIMRUNTIME specifies neovim runtime path, defaults to "/usr/share/nvim/runtime" if unset.
+# $DIR_NVIM_SRC will be checked and set for test files.
 #
 # Call with codestyle-check param to enable only codestyle-check
 #
 # lua-language-server is inconsisent about which parameters must be absolute paths therefore we pass every path as absolute
 
-if [ $# -eq 1 ] && [ "${1}" != "codestyle-check" ] || [ $# -gt 1 ] ; then
-	echo "usage: ${0} [codestyle-check]" 1>&2
-	exit 1
+usage() {
+	echo "usage: ${0} [codestyle-check] <lua|scripts|test>" 1>&2
+}
+
+if [ $# -eq 2 ]; then
+	if [ "${1}" != "codestyle-check" ]; then
+		usage
+		exit 1
+	fi
+	STYLE=true
+	shift
+fi
+
+case "${1}" in
+	lua|scripts|test)
+		TARGET="${1}"
+		;;
+	*)
+		usage
+		exit 0
+		;;
+esac
+
+# neovim source needed for tests
+if [ "${TARGET}" = "test" ]; then
+	. scripts/check-nvim-src.sh
 fi
 
 DIR_NVT="${PWD}"
@@ -38,28 +62,22 @@ rm -rf "${DIR_OUT}"
 mkdir "${DIR_OUT}"
 
 # create the luarc.json for the requested check
-case "${1}" in
-	"codestyle-check")
-		jq \
-			'.diagnostics.neededFileStatus[] = "None" | .diagnostics.neededFileStatus."codestyle-check" = "Any"' \
-			"${DIR_NVT}/.luarc.json" > "${LUARC}"
+if [ -n "${STYLE}" ]; then
+	jq \
+		'.diagnostics.neededFileStatus[] = "None" | .diagnostics.neededFileStatus."codestyle-check" = "Any"' \
+		"${DIR_NVT}/.luarc.json" > "${LUARC}"
+else
+	cp "${DIR_NVT}/.luarc.json" "${LUARC}"
+fi
 
-		;;
-	*)
-		cp "${DIR_NVT}/.luarc.json" "${LUARC}"
-		;;
-esac
+DIR_SRC="${DIR_NVT}/${TARGET}"
+FILE_OUT="${DIR_OUT}/out.${TARGET}.log"
+echo "Checking ${TARGET}/"
 
-for SRC in lua scripts test; do
-	DIR_SRC="${DIR_NVT}/${SRC}"
-	FILE_OUT="${DIR_OUT}/out.${SRC}.log"
-	echo "Checking ${SRC}/"
+lua-language-server --check="${DIR_SRC}" --configpath="${LUARC}" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error 2>&1 | tee "${FILE_OUT}"
 
-	lua-language-server --check="${DIR_SRC}" --configpath="${LUARC}" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error 2>&1 | tee "${FILE_OUT}"
-
-	if ! grep --quiet "Diagnosis completed, no problems found" "${FILE_OUT}"; then
-		RC=1
-	fi
-done
+if ! grep --quiet "Diagnosis completed, no problems found" "${FILE_OUT}"; then
+	RC=1
+fi
 
 exit "${RC}"

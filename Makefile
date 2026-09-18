@@ -17,13 +17,15 @@ luacheck:
 	luacheck --codes --quiet test
 
 style-check:
-	scripts/luals-check.sh codestyle-check
+	scripts/luals-check.sh codestyle-check lua
+	scripts/luals-check.sh codestyle-check scripts
 
 style-doc:
 	scripts/doc-comments.sh
 
 luals:
-	scripts/luals-check.sh
+	scripts/luals-check.sh lua
+	scripts/luals-check.sh scripts
 
 #
 # format
