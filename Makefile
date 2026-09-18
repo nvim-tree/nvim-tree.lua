@@ -48,11 +48,5 @@ help-update:
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
-#
-# tests
-#
-functionaltest:
-	scripts/functionaltest.sh
-
 .PHONY: all lint style check luacheck style-check style-doc luals format-fix format-check help-update help-check
 
