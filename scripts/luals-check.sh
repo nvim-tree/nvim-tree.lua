@@ -50,7 +50,7 @@ case "${1}" in
 		;;
 esac
 
-for SRC in lua scripts; do
+for SRC in lua scripts test; do
 	DIR_SRC="${DIR_NVT}/${SRC}"
 	FILE_OUT="${DIR_OUT}/out.${SRC}.log"
 	echo "Checking ${SRC}/"
