@@ -98,3 +98,33 @@ jobs:
 
       - run: make help-check
         if: ${{ matrix.nvim_version == 'stable' }}
+
+  functionaltest:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.nvim_version }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+
+    strategy:
+      matrix:
+        nvim_version: [ stable, nightly ]
+
+    env:
+      VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim_version }}/share/nvim/runtime
+      DIR_NVIM_SRC: /home/runner/src/neovim-${{ matrix.nvim_version }}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: build Nvim from source
+        if: ${{ matrix.nvim_version == 'stable' }}
+        run: |
+          mkdir -p "${DIR_NVIM_SRC}"
+          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory "${DIR_NVIM_SRC}/.."
+          cd "${DIR_NVIM_SRC}"
+          make
+
+      - run: make functionaltest
+        if: ${{ matrix.nvim_version == 'stable' }}
