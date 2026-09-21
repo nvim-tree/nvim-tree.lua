@@ -22,14 +22,14 @@ DIR_NVT_PACK="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 # absolute paths of test files under nvim source
 FILES_TEST=
 
-# live directory, must contain data
+# live source directory
 DIR_LIVE=
 
-# working directory to copy test data into, cleared before each test
-export NVT_TMP_FUNC="/tmp/nvt_func"
+# working directory for tests, which are responsible for creating and removing
+export NVT_FUNC_TMP="/tmp/nvt_func"
 
-# optional data directory under $NVT_TMP_FUNC
-export NVT_TMP_FUNC_DATA=
+# test source, which tests may copy data from
+export NVT_FUNC_SRC=
 
 usage() {
 	echo "Usage: ${0} [-h] [-t <file or dir>] [-l <file or dir>]"
@@ -56,7 +56,7 @@ files_test_add() {
 	fi
 }
 
-# create DIR_LIVE if data dir present next to file $1 or in directory $1
+# set DIR_LIVE for directory or test file
 live_add() {
 	if [ -f "${1}" ]; then
 		DIR_LIVE="$(dirname "${1}")"
@@ -64,8 +64,10 @@ live_add() {
 		DIR_LIVE="${1}"
 	fi
 
-	if [ ! -d "${DIR_LIVE}/data" ]; then
-		echo "${DIR_LIVE}/data inexistent"
+	DIR_LIVE="$(realpath "${DIR_LIVE}")"
+
+	if [ ! -d "${DIR_LIVE}" ]; then
+		echo "${DIR_LIVE} inexistent"
 		exit 1
 	fi
 }
@@ -90,33 +92,20 @@ while getopts "hl:t:" o; do
 	esac
 done
 
-# after all tests
+# before all tests: links nvim-tree as a package under nvim source
+setup() {
+	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
+}
+
+# after all tests: remove package link and temp
 teardown() {
 	rm -fv "${DIR_NVT_PACK}"
-	rm -rf "${NVT_TMP_FUNC}"
-}
-
-# before all tests: builds nvim and links nvim-tree as a package under nvim source
-setup() {
-	cd "${DIR_NVIM_SRC}"
-	make
-	ln -sv "${DIR_NVT}" "${DIR_NVT_PACK}"
-	cd "${DIR_NVT}"
-}
-
-# if present, copies data directory in $1 to $NVT_TMP_FUNC/data and sets $NVT_TMP_FUNC_DATA
-before_each() {
-	rm -rf "${NVT_TMP_FUNC}"
-	mkdir -p "${NVT_TMP_FUNC}"
-	if [ -d "${1}/data" ]; then
-		cp -pr "${1}/data" "${NVT_TMP_FUNC}"
-		NVT_TMP_FUNC_DATA="${NVT_TMP_FUNC}/data"
-	else
-		NVT_TMP_FUNC_DATA=
-	fi
+	rm -rf "${NVT_FUNC_TMP}"
 }
 
 live() {
+	NVT_FUNC_SRC="${DIR_LIVE}"
+
 	# options extracted from testnvim.lua nvim_argv, nvim_set
 	nvim \
 		--clean \
@@ -135,8 +124,6 @@ teardown
 setup
 
 if [ -n "${DIR_LIVE}" ]; then
-	before_each "${DIR_LIVE}"
-
 	live
 else
 	# run all tests if none specified
@@ -144,13 +131,12 @@ else
 		files_test_add "test/func"
 	fi
 
-	# run from nvim source root
+	# must run from nvim source root
 	cd "${DIR_NVIM_SRC}"
 
 	# execute all tests
 	for f in ${FILES_TEST}; do
-		before_each "$(dirname "${f}")"
-
+		NVT_FUNC_SRC="$(dirname "${f}")"
 		make functionaltest TEST_FILE="${f}"
 	done
 fi
