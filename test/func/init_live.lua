@@ -4,12 +4,12 @@ local function screen_resize()
   vim.o.lines = 24
 end
 
----dump the screen to $NVT_TMP_FUNC/dump.txt: <Leader>d for raw, <Leader>c for collapsed
+---dump the screen to $NVT_FUNC_TMP/dump.txt: <Leader>d for raw, <Leader>c for collapsed
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
 ---@param collapse boolean identical lines collapsed with "*n" appended
 local function live_dump(collapse)
-  local dump_path = os.getenv("NVT_TMP_FUNC") .. "/dump.txt"
+  local dump_path = os.getenv("NVT_FUNC_TMP") .. "/dump.txt"
 
   local function cap_lines()
     -- absolute cursor position
@@ -75,9 +75,34 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
--- move to the data directory
-vim.api.nvim_set_current_dir(os.getenv("NVT_TMP_FUNC_DATA") or "")
-
 ---add the plugin under test
 vim.api.nvim_command("packadd nvim-tree.lua")
 require("nvim-tree").setup({})
+
+-- remove $NVT_FUNC_TMP
+-- cd to $NVT_FUNC_TMP
+-- if $NVT_FUNC_SRC/data exists:recursively copy it to $NVT_FUNC_TMP and cd
+local function setup_dirs()
+  local n = vim
+  local tmp = os.getenv("NVT_FUNC_TMP")
+  if not tmp then
+    return
+  end
+
+  -- blow away temp
+  print(n.fn.system({ "rm", "-r", "-f", "-v", tmp }))
+  print(n.fn.system({ "mkdir", "-p", "-v", tmp }))
+
+  -- always cd to tmp
+  n.api.nvim_set_current_dir(tmp)
+
+  -- maybe copy data and cd
+  local src = os.getenv("NVT_FUNC_SRC")
+  if src then
+    -- TODO handle data not present
+    print(n.fn.system({ "cp", "-p", "-r", "-v", src .. "/data", tmp .. "/data" }))
+    n.api.nvim_set_current_dir(tmp .. "/data")
+  end
+end
+
+setup_dirs()
