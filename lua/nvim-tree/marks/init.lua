@@ -349,6 +349,7 @@ end
 ---A folder will be focused, a file will be opened.
 ---@public
 function Marks:navigate_select()
+  ---@type string[]
   local list = vim.tbl_map(function(n)
     return n.absolute_path
   end, self:list())
