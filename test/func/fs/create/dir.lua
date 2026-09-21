@@ -14,31 +14,55 @@ local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
 
 -- TODO extract nvt test utils
+-- TODO use vim.system instead of vim.fn.system
 
--- TODO file system state persists between tests; consider a mechanism to copy a fresh data directory before each or all
+-- remove $NVT_FUNC_TMP
+-- cd to $NVT_FUNC_TMP
+-- if $NVT_FUNC_SRC/data exists:recursively copy it to $NVT_FUNC_TMP and cd
+local function setup_dirs()
+  local tmp = os.getenv("NVT_FUNC_TMP")
+  if not tmp then
+    return
+  end
+
+  -- blow away temp
+  print(n.fn.system({ "rm", "-r", "-f", "-v", tmp }))
+  print(n.fn.system({ "mkdir", "-p", "-v", tmp }))
+
+  -- always cd to tmp
+  n.api.nvim_set_current_dir(tmp)
+
+  -- maybe copy data and cd
+  local src = os.getenv("NVT_FUNC_SRC")
+  if src then
+    -- TODO handle data not present
+    print(n.fn.system({ "cp", "-p", "-r", "-v", src .. "/data", tmp .. "/data" }))
+    n.api.nvim_set_current_dir(tmp .. "/data")
+  end
+end
 
 --- @type test.functional.ui.screen
 local screen
 
-setup(function()
-  clear()
-
-  screen = Screen.new(80, 24)
-
-  exec_lua(function()
-    vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
-  end)
-end)
-
 before_each(function()
-  n.api.nvim_set_current_dir(os.getenv("NVT_TMP_FUNC_DATA") or "")
-
   exec_lua(function()
     require("nvim-tree").setup({})
   end)
 end)
 
 describe("single", function()
+  setup(function()
+    clear()
+
+    screen = Screen.new(80, 24)
+
+    exec_lua(function()
+      vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+    end)
+
+    setup_dirs()
+  end)
+
   it("direct", function()
     n.feed(
       ":NvimTreeOpen<CR>",
