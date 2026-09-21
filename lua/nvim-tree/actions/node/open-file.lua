@@ -79,13 +79,18 @@ local function pick_win_id()
   local laststatus = vim.o.laststatus
   vim.o.laststatus = 2
   local fillchars = vim.opt.fillchars:get()
-  local stl = fillchars.stl
-  local stlnc = fillchars.stlnc
+  local stl = fillchars and fillchars.stl
+  local stlnc = fillchars and fillchars.stlnc
   fillchars.stl = nil
   fillchars.stlnc = nil
+
+  --- TODO see #3357 - Option:remove and Option:append should be used instead of directly assigning to the Option
+  ---@diagnostic disable-next-line: assign-type-mismatch
   vim.opt.fillchars = fillchars
-  fillchars.stl = stl
-  fillchars.stlnc = stlnc
+  if fillchars then
+    fillchars.stl = stl
+    fillchars.stlnc = stlnc
+  end
 
   local tabpage = vim.api.nvim_get_current_tabpage()
   local win_ids = vim.api.nvim_tabpage_list_wins(tabpage)

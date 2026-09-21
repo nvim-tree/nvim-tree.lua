@@ -9,6 +9,7 @@ local M = {}
 
 ---@return fun(path: string): boolean
 local function buf_match()
+  ---@type string[]
   local buffer_paths = vim.tbl_map(function(buffer)
     return vim.api.nvim_buf_get_name(buffer)
   end, vim.api.nvim_list_bufs())
