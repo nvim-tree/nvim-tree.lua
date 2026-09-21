@@ -787,7 +787,22 @@ end
 ---@param global boolean
 ---@param path string
 function Explorer:cd(global, path)
-  vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
+  local escaped = vim.fn.fnameescape(path)
+
+  if global then
+    vim.cmd("cd " .. escaped)
+    return
+  end
+  vim.cmd("lcd " .. escaped)
+
+  if vim.api.nvim_get_current_win() == view.get_winnr() then
+    local target = require("nvim-tree.lib").target_winid
+    if target and target ~= 0 and vim.api.nvim_win_is_valid(target) then
+      vim.api.nvim_win_call(target, function()
+        vim.cmd("lcd " .. escaped)
+      end)
+    end
+  end
 end
 
 ---@param foldername string
