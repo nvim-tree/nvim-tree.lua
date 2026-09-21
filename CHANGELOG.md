@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.19.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.18.0...nvim-tree-v1.19.0) (2026-09-21)
+
+
+### Features
+
+* enable experimental.session_restore_nvim by default ([#3356](https://github.com/nvim-tree/nvim-tree.lua/issues/3356)) ([8d81449](https://github.com/nvim-tree/nvim-tree.lua/commit/8d814495983e8db87d02d2f1da293f25b2fd1bdc))
+* enable session restore by default ([8d81449](https://github.com/nvim-tree/nvim-tree.lua/commit/8d814495983e8db87d02d2f1da293f25b2fd1bdc))
+* experiment: restore nvim-tree on session load, see https://github.com/nvim-tree/nvim-tree.lua/issues/3343 ([#3335](https://github.com/nvim-tree/nvim-tree.lua/issues/3335)) ([cf18a66](https://github.com/nvim-tree/nvim-tree.lua/commit/cf18a662cd5f200361b6fedfb794eed583e075e1))
+
+
+### Bug Fixes
+
+* "invalid 'line'" when hidden_display is set and tree is empty ([#3354](https://github.com/nvim-tree/nvim-tree.lua/issues/3354)) ([882c54f](https://github.com/nvim-tree/nvim-tree.lua/commit/882c54f2815bf6d02663d482c2cf9dbadf4e9b07))
+* **#3346:** api.tree.resize: 'configure_width' (a nil value) ([#3347](https://github.com/nvim-tree/nvim-tree.lua/issues/3347)) ([a797d5e](https://github.com/nvim-tree/nvim-tree.lua/commit/a797d5e20133fc031fba4aa7d1272f5b1d950a1c))
+* null deref in case git.config is empty ([#3351](https://github.com/nvim-tree/nvim-tree.lua/issues/3351)) ([b2aadda](https://github.com/nvim-tree/nvim-tree.lua/commit/b2aadda94b107480c48e548d6db51c6840b7b33c))
+
 ## [1.18.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.17.0...nvim-tree-v1.18.0) (2026-07-01)
 
 
