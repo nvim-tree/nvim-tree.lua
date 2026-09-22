@@ -13,9 +13,6 @@ local it = t.it or it
 local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
 
--- TODO extract nvt test utils
--- TODO use vim.system instead of vim.fn.system
-
 -- remove $NVT_FUNC_TMP
 -- cd to $NVT_FUNC_TMP
 -- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
@@ -62,11 +59,7 @@ describe("single", function()
   end)
 
   it("direct", function()
-    exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
     n.feed(
-    -- TODO why does this command not work? timing?
       ":NvimTreeOpen<CR>",
       "a",
       "direct/<CR>"
@@ -91,10 +84,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("indirect", function()
-    exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
     n.feed(
+      ":NvimTreeOpen<CR>",
       "gg",
       "a",
       "d1/indirect/<CR>"
@@ -136,10 +127,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("dir_exists", function()
-    exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
     n.feed(
+      ":NvimTreeOpen<CR>",
       "gg",
       "a",
       "d1/<CR>"
@@ -177,10 +166,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("file_exists", function()
-    exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
     n.feed(
+      ":NvimTreeOpen<CR>",
       "gg",
       "a",
       "d1/d1f1/<CR>"

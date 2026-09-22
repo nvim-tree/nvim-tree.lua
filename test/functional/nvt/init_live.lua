@@ -105,5 +105,3 @@ local function setup_dirs()
 end
 
 setup_dirs()
-
-require("nvim-tree.api").tree.open()
