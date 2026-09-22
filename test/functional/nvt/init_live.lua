@@ -1,3 +1,5 @@
+local nf = require("test.functional.nvt.fixtures")
+
 -- match the test screen size: <Leader>r to reapply if the terminal is not cooperating
 local function screen_resize()
   vim.o.columns = 80
@@ -79,29 +81,4 @@ vim.o.background = "dark"
 vim.api.nvim_command("packadd nvim-tree.lua")
 require("nvim-tree").setup({})
 
--- remove $NVT_FUNC_TMP
--- cd to $NVT_FUNC_TMP
--- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
-local function setup_dirs()
-  local n = vim
-
-  local tmp = os.getenv("NVT_FUNC_TMP")
-  if not tmp then
-    return
-  end
-
-  -- blow away temp
-  print(n.fn.system({ "rm", "-r", "-f", "-v", tmp }))
-  print(n.fn.system({ "mkdir", "-p", "-v", tmp }))
-
-  -- always cd to tmp
-  n.api.nvim_set_current_dir(tmp)
-
-  local data = os.getenv("NVT_FUNC_DATA")
-  if data and vim.uv.fs_stat(data) then
-    print(n.fn.system({ "cp", "-p", "-r", "-v", data, tmp }))
-    n.api.nvim_set_current_dir(tmp .. "/data")
-  end
-end
-
-setup_dirs()
+nf.setup_dirs()
