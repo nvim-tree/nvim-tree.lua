@@ -2,29 +2,6 @@ local n = require("test.functional.testnvim")()
 
 local M = {}
 
--- remove $NVT_FUNC_TMP
--- cd to $NVT_FUNC_TMP
--- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
-function M.setup_dirs()
-  local tmp = os.getenv("NVT_FUNC_TMP")
-  if not tmp then
-    return
-  end
-
-  -- blow away temp
-  print(n.fn.system({ "rm", "-r", "-f", "-v", tmp }))
-  print(n.fn.system({ "mkdir", "-p", "-v", tmp }))
-
-  -- always cd to tmp
-  n.api.nvim_set_current_dir(tmp)
-
-  local data = os.getenv("NVT_FUNC_DATA")
-  if data and vim.uv.fs_stat(data) then
-    print(n.fn.system({ "cp", "-p", "-r", "-v", data, tmp }))
-    n.api.nvim_set_current_dir(tmp .. "/data")
-  end
-end
-
 --- Reset all NvimTree* highlight groups to just a unique foreground colour
 --- Return attr_ids to match
 --- Add a CL variant with the same background colour as NvimTreeCursorLine
