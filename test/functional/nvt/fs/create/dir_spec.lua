@@ -1,5 +1,5 @@
 local t = require("test.testutil")
-local nt = require("test.functional.nvt.testutil")
+local nf = require("test.functional.nvt.fixtures")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local eq = t.eq
@@ -33,7 +33,7 @@ describe("single", function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
     end)
 
-    nt.setup_dirs()
+    nf.setup_dirs()
   end)
 
   it("direct", function()
