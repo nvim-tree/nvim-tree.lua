@@ -1,4 +1,5 @@
 local t = require("test.testutil")
+local nt = require("test.functional.nvt.testutil")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local eq = t.eq
@@ -12,29 +13,6 @@ local before_each = t.before_each or before_each
 local it = t.it or it
 local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
-
--- remove $NVT_FUNC_TMP
--- cd to $NVT_FUNC_TMP
--- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
-local function setup_dirs()
-  local tmp = os.getenv("NVT_FUNC_TMP")
-  if not tmp then
-    return
-  end
-
-  -- blow away temp
-  print(n.fn.system({ "rm", "-r", "-f", "-v", tmp }))
-  print(n.fn.system({ "mkdir", "-p", "-v", tmp }))
-
-  -- always cd to tmp
-  n.api.nvim_set_current_dir(tmp)
-
-  local data = os.getenv("NVT_FUNC_DATA")
-  if data and vim.uv.fs_stat(data) then
-    print(n.fn.system({ "cp", "-p", "-r", "-v", data, tmp }))
-    n.api.nvim_set_current_dir(tmp .. "/data")
-  end
-end
 
 --- @type test.functional.ui.screen
 local screen
@@ -55,7 +33,7 @@ describe("single", function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
     end)
 
-    setup_dirs()
+    nt.setup_dirs()
   end)
 
   it("direct", function()
