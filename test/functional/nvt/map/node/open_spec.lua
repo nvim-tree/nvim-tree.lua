@@ -11,10 +11,10 @@ local before_each = t.before_each or before_each
 local it = t.it or it
 local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
----
+
 -- remove $NVT_FUNC_TMP
 -- cd to $NVT_FUNC_TMP
--- if $NVT_FUNC_SRC/data exists:recursively copy it to $NVT_FUNC_TMP and cd
+-- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
 local function setup_dirs()
   local tmp = os.getenv("NVT_FUNC_TMP")
   if not tmp then
@@ -28,11 +28,9 @@ local function setup_dirs()
   -- always cd to tmp
   n.api.nvim_set_current_dir(tmp)
 
-  -- maybe copy data and cd
-  local src = os.getenv("NVT_FUNC_SRC")
-  if src then
-    -- TODO handle data not present
-    print(n.fn.system({ "cp", "-p", "-r", "-v", src .. "/data", tmp .. "/data" }))
+  local data = os.getenv("NVT_FUNC_DATA")
+  if data and vim.uv.fs_stat(data) then
+    print(n.fn.system({ "cp", "-p", "-r", "-v", data, tmp }))
     n.api.nvim_set_current_dir(tmp .. "/data")
   end
 end
