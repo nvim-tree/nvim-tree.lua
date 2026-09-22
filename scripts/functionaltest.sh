@@ -85,20 +85,28 @@ while getopts "hl:t:" o; do
 	esac
 done
 
-# before all tests: links nvim-tree lua and test under
+# before all tests: links plugin and tests in their appropriate places under neovim source
 setup() {
+	# plugin runtime package
 	mkdir -p "${DIR_NVT_PACK}"
+	ln -sv "${DIR_NVT}/doc" "${DIR_NVT_PACK}"
 	ln -sv "${DIR_NVT}/lua" "${DIR_NVT_PACK}"
+	ln -sv "${DIR_NVT}/plugin" "${DIR_NVT_PACK}"
 
+	# tests
 	ln -sv "${DIR_NVT}/test/functional/nvt" "${DIR_NVIM_SRC}/test/functional"
 }
 
 # after all tests: remove lua/test links and temp
 teardown() {
-	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
-
+	# plugin runtime package
+	rm -fv "${DIR_NVT_PACK}/doc"
 	rm -fv "${DIR_NVT_PACK}/lua"
+	rm -fv "${DIR_NVT_PACK}/plugin"
 	rm -rf "${DIR_NVT_PACK}"
+
+	# tests
+	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
 }
 
 # export variables for individual test
