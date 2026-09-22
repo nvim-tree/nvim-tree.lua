@@ -1,5 +1,6 @@
 local t = require("test.testutil")
-local nt = require("test.functional.nvt.testutil")
+local nf = require("test.functional.nvt.fixtures")
+local nt = require("test.functional.nvt.utils")
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local clear = n.clear
@@ -26,7 +27,7 @@ describe("api_tree_open", function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
     end)
 
-    nt.setup_dirs()
+    nf.setup_dirs()
   end)
 
   before_each(function()
