@@ -1,7 +1,4 @@
-local n = vim
-if not n.fn then
-  n = require("test.functional.testnvim")()
-end
+local n = vim.fn and vim or require("test.functional.testnvim")()
 
 local M = {}
 
