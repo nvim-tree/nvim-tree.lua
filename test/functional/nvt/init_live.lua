@@ -6,12 +6,12 @@ local function screen_resize()
   vim.o.lines = 24
 end
 
----dump the screen to $NVT_FUNC_TMP/dump.txt: <Leader>d for raw, <Leader>c for collapsed
+---dump the screen to /tmp/nvt_live_dump.txt: <Leader>d for raw, <Leader>c for collapsed
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
 ---@param collapse boolean identical lines collapsed with "*n" appended
 local function live_dump(collapse)
-  local dump_path = os.getenv("NVT_FUNC_TMP") .. "/dump.txt"
+  local dump_path = "/tmp/nvt_live_dump.txt"
 
   local function cap_lines()
     -- absolute cursor position
