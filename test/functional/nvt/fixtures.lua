@@ -5,7 +5,7 @@ local M = {}
 ---@param system fun(cmd: string|string[], input?: string|string[]|integer): string vim.fn.system to use as it depends on the context
 ---@return string path
 function M.create_test_dir(system)
-  local out = system({ "/home/alex/src/nvim-tree/test-neovim-functionaltest/test/functional/nvt/create_test_cwd.sh" })
+  local out = system({ os.getenv("NVT_FUNC_NVT_ROOT") .. "/test/functional/nvt/create_test_cwd.sh" })
 
   return out:match("^DIR=(.*)$") or error(out)
 end
