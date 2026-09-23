@@ -7,7 +7,7 @@ local M = {}
 function M.create_test_dir(system)
   local out = system({ "/home/alex/src/nvim-tree/test-neovim-functionaltest/test/functional/nvt/create_test_cwd.sh" })
 
-  return out:match("^PATH=(.*)$") or error(out)
+  return out:match("^DIR=(.*)$") or error(out)
 end
 
 return M
