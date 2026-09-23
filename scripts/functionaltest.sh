@@ -25,11 +25,8 @@ FILES_TEST=
 # live source directory
 DIR_LIVE=
 
-# working directory for tests, which are responsible for creating and removing
-NVT_FUNC_TMP="/tmp/nvt_func"
-
-# optional test data
-NVT_FUNC_DATA=
+# absolute path of the test, under DIR_NVT
+export NVT_FUNC_TEST_SOURCE=
 
 usage() {
 	echo "Usage: ${0} [-h] [-t <file or dir>] [-l [<dir>]]"
@@ -109,23 +106,12 @@ teardown() {
 	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
 }
 
-# export variables for individual test
-before_each() {
-	# test will execute in this directory
-	rm -rf "${NVT_FUNC_TMP}"
-	export NVT_FUNC_TMP
-
-	# test will recursively copy data if it exists
-	NVT_FUNC_DATA="$(realpath "$(dirname "${1}")/data")"
-	if [ -d "${NVT_FUNC_DATA}" ]; then
-		export NVT_FUNC_DATA
-	else
-		unset NVT_FUNC_DATA
-	fi
-}
-
 live() {
-	before_each "${DIR_LIVE}"
+	if [ "$(basename "${DIR_LIVE}")" = "data" ]; then
+		NVT_FUNC_TEST_SOURCE="$(realpath "$(dirname "${DIR_LIVE}")")"
+	else
+		NVT_FUNC_TEST_SOURCE="$(realpath "${DIR_LIVE}")"
+	fi
 
 	# options extracted from testnvim.lua nvim_argv, nvim_set
 	nvim \
@@ -157,7 +143,7 @@ else
 
 	# execute all tests
 	for f in ${FILES_TEST}; do
-		before_each "${f}"
+		NVT_FUNC_TEST_SOURCE="$(realpath "$(dirname "${f}")")"
 		make functionaltest TEST_FILE="${f}"
 	done
 fi
