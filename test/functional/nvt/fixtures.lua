@@ -1,29 +1,13 @@
-local n = vim.fn and vim or require("test.functional.testnvim")()
-
 local M = {}
 
--- remove $NVT_FUNC_TMP
--- cd to $NVT_FUNC_TMP
--- if $NVT_FUNC_DATA exists:recursively copy it to $NVT_FUNC_TMP and cd
-function M.setup_dirs()
-  local tmp = os.getenv("NVT_FUNC_TMP")
-  if not tmp then
-    return
-  end
+---create and return the absolute path of the directory to execute tests in
+---recursively copies data if present
+---@param system fun(cmd: string|string[], input?: string|string[]|integer): string vim.fn.system to use as it depends on the context
+---@return string path
+function M.create_test_dir(system)
+  local out = system({ "/home/alex/src/nvim-tree/test-neovim-functionaltest/test/functional/nvt/create_test_cwd.sh" })
 
-  -- blow away temp
-  n.fn.system({ "rm", "-r", "-f", "-v", tmp })
-  n.fn.system({ "mkdir", "-p", "-v", tmp })
-
-  -- always cd to tmp
-  n.api.nvim_set_current_dir(tmp)
-
-  -- maybe copy entire data directory
-  local data = os.getenv("NVT_FUNC_DATA")
-  if data and vim.uv.fs_stat(data) then
-    n.fn.system({ "cp", "-p", "-r", "-v", data, tmp })
-    n.api.nvim_set_current_dir(tmp .. "/data")
-  end
+  return out:match("^PATH=(.*)$") or error(out)
 end
 
 return M
