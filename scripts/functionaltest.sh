@@ -25,6 +25,9 @@ FILES_TEST=
 # live source directory
 DIR_LIVE=
 
+# absolute path of the source: DIR_NVT
+export NVT_FUNC_NVT_ROOT="${DIR_NVT}"
+
 # absolute path of the test, under DIR_NVT
 export NVT_FUNC_TEST_SOURCE=
 
