@@ -33,7 +33,7 @@ describe("single", function()
       vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
     end)
 
-    nf.setup_dirs()
+    n.api.nvim_set_current_dir(nf.create_test_dir(n.fn.system))
   end)
 
   it("direct", function()

@@ -77,8 +77,9 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
----add the plugin under test
+-- add the plugin under test
 vim.api.nvim_command("packadd nvim-tree.lua")
 require("nvim-tree").setup({})
 
-nf.setup_dirs()
+-- create and change to the directory the test will execute from
+vim.api.nvim_set_current_dir(nf.create_test_dir(vim.fn.system))
