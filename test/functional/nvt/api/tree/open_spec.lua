@@ -1,9 +1,6 @@
 local t = require("test.testutil")
 local nf = require("test.functional.nvt.fixtures")
-local nt = require("test.functional.nvt.utils")
 local n = require("test.functional.testnvim")()
-local Screen = require("test.functional.ui.screen")
-local clear = n.clear
 local exec_lua = n.exec_lua
 
 -- 0.13 global compatibility
@@ -19,15 +16,7 @@ describe("api_tree_open", function()
   local screen
 
   setup(function()
-    clear()
-
-    screen = Screen.new(80, 24)
-
-    exec_lua(function()
-      vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
-    end)
-
-    n.api.nvim_set_current_dir(nf.create_test_dir(n.fn.system))
+    screen = nf.create_session()
   end)
 
   before_each(function()
@@ -35,7 +24,7 @@ describe("api_tree_open", function()
       require("nvim-tree").setup({})
     end)
 
-    screen:add_extra_attr_ids(nt.simple_attr_ids())
+    screen:add_extra_attr_ids(nf.simple_attr_ids())
   end)
 
   it("populated_unfocussed_text_only", function()
