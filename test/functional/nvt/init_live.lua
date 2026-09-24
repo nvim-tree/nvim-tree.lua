@@ -1,5 +1,3 @@
-local nf = require("test.functional.nvt.fixtures")
-
 -- match the test screen size: <Leader>r to reapply if the terminal is not cooperating
 local function screen_resize()
   vim.o.columns = 80
@@ -78,7 +76,9 @@ vim.api.nvim_command("packadd nvim-tree.lua")
 require("nvim-tree").setup({})
 
 -- create and change to the directory the test will execute from
-vim.api.nvim_set_current_dir(nf.create_test_dir(vim.fn.system))
+local out = vim.fn.system({ os.getenv("NVT_FUNC_DIR_ROOT") .. "/test/functional/nvt/create_test_cwd.sh" })
+local dir = out:match("^DIR=(.*)$") or error(out)
+vim.api.nvim_set_current_dir(dir)
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,    { remap = false, })
