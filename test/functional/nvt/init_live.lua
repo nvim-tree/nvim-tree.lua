@@ -67,10 +67,6 @@ local function live_dump(collapse)
   vim.ui.open(dump_path)
 end
 
-vim.keymap.set("n", "<Leader>u", function() live_dump(false) end, { remap = false, })
-vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,  { remap = false, })
-vim.keymap.set("n", "<Leader>r", screen_resize,                   { remap = false, })
-
 ---set the screen size to match tests
 screen_resize()
 
@@ -83,3 +79,9 @@ require("nvim-tree").setup({})
 
 -- create and change to the directory the test will execute from
 vim.api.nvim_set_current_dir(nf.create_test_dir(vim.fn.system))
+
+-- mappings
+vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,    { remap = false, })
+vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,     { remap = false, })
+vim.keymap.set("n", "<Leader>r", screen_resize,                      { remap = false, })
+vim.keymap.set("n", "<Leader>o", require("nvim-tree.api").tree.open, { remap = false, })
