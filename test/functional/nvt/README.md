@@ -1,12 +1,15 @@
 # Generating Test Data
 
-Execute `scripts/functionaltest.sh -l <file or dir>`
+Execute `scripts/functionaltest.sh -l [ <data dir> ]`
 
 This will open an interactive vim session that closely matches the test headless session, using the init: `test/func/init_live.lua`
+
+Test's `data` directory should be specified if present.
 
 - `<Leader>u` to dump the entire screen to `/tmp/nvt_func/dump.txt` and open it
 - `<Leader>c` to dump with identical lines collapsed
 - `<Leader>r` to resize the screen to 80 x 24, to match tests
+- `<Leader>o` to execute `api.tree.open()`
 
 ## Text Only: `attr_ids = {}`
 
