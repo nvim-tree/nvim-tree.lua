@@ -1,5 +1,5 @@
 local t = require("test.testutil")
-local nu = require("test.functional.nvt.utils")
+local nf = require("test.functional.nvt.fixtures")
 local n = require("test.functional.testnvim")()
 local eq = t.eq
 
@@ -14,7 +14,7 @@ local it = t.it or it
 local screen
 
 before_each(function()
-  screen = nu.create_session({ ext_cmdline = true })
+  screen = nf.create_session({ ext_cmdline = true })
 end)
 
 describe("single dir", function()
