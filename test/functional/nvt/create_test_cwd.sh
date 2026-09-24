@@ -20,8 +20,8 @@ rm -r -f "${DIR}"
 mkdir -p "${DIR}"
 
 # maybe copy entire data directory and use it
-if [ -d "${NVT_FUNC_TEST_SOURCE}/data" ]; then
-	cp -p -r "${NVT_FUNC_TEST_SOURCE}/data" "${DIR}"
+if [ -d "${NVT_FUNC_DIR_TEST}/data" ]; then
+	cp -p -r "${NVT_FUNC_DIR_TEST}/data" "${DIR}"
 	DIR="${DIR}/data"
 fi
 
