@@ -1,6 +1,27 @@
 local n = require("test.functional.testnvim")()
+local nf = require("test.functional.nvt.fixtures")
+local Screen = require("test.functional.ui.screen")
 
 local M = {}
+
+---Create a new neovim session with
+---- nvim-tree.lua package added
+---- fresh test data directory created and cd'd into
+---@param options? test.functional.ui.screen.Opts
+---@return test.functional.ui.screen
+function M.create_session(options)
+  n.clear()
+
+  local screen = Screen.new(80, 24, options)
+
+  n.exec_lua(function()
+    vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+  end)
+
+  n.api.nvim_set_current_dir(nf.create_test_dir(n.fn.system))
+
+  return screen
+end
 
 --- Reset all NvimTree* highlight groups to just a unique foreground colour
 --- Return attr_ids to match
