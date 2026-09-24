@@ -1,45 +1,41 @@
 local t = require("test.testutil")
-local nf = require("test.functional.nvt.fixtures")
+local nu = require("test.functional.nvt.utils")
 local n = require("test.functional.testnvim")()
-local Screen = require("test.functional.ui.screen")
 local eq = t.eq
-local clear = n.clear
-local exec_lua = n.exec_lua
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
 local describe = t.describe or describe
 local before_each = t.before_each or before_each
 local it = t.it or it
-local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
 local screen
 
 before_each(function()
-  exec_lua(function()
-    require("nvim-tree").setup({})
-  end)
+  screen = nu.create_session({ ext_cmdline = true })
 end)
 
-describe("single", function()
-  setup(function()
-    clear()
-
-    screen = Screen.new(80, 24)
-
-    exec_lua(function()
-      vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+describe("single dir", function()
+  before_each(function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({})
     end)
-
-    n.api.nvim_set_current_dir(nf.create_test_dir(n.fn.system))
   end)
 
-  it("direct", function()
+  it("direct ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
-      "a",
+      "a"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+    })
+
+    n.feed(
       "direct/<CR>"
     )
 
@@ -61,7 +57,7 @@ NvimTree_1 [-]                 [No Name]                                        
     eq(stat and stat.type, "directory")
   end)
 
-  it("indirect", function()
+  it("indirect ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
@@ -76,24 +72,8 @@ NvimTree_1 [-]                 [No Name]                                        
     d1                      │~                                                |
   ^    indirect              │~                                                |
        d1f1                  │~                                                |
-    direct                  │~                                                |
      f1                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
+~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1/indirect/ was properly created                 |
     ]],
@@ -104,7 +84,7 @@ NvimTree_1 [-]                 [No Name]                                        
     eq(stat and stat.type, "directory")
   end)
 
-  it("dir_exists", function()
+  it("existing dir", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
@@ -117,33 +97,15 @@ NvimTree_1 [-]                 [No Name]                                        
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
-    direct                  │~                                                |
      f1                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
+~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] Cannot create: file already exists                                   |
-    ]],
+      ]],
     })
   end)
 
-  it("file_exists", function()
+  it("existing file", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
@@ -151,36 +113,19 @@ NvimTree_1 [-]                 [No Name]                                        
       "d1/d1f1/<CR>"
     )
 
-    -- TODO BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created"
-    --     screen:expect({
-    --       attr_ids = {},
-    --       grid = [[
-    --   ^/tmp/nvt_func/data/..       │                                                 |
-    --     d1                      │~                                                |
-    --     direct                  │~                                                |
-    --      f1                      │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- ~                             │~                                                |
-    -- NvimTree_1 [-]                 [No Name]                                        |
-    -- [NvimTree] Cannot create: file already exists                                   |
-    --     ]],
-    --     })
+    -- TODO BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created" and focuses the file
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+  ^     d1f1                  │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*18
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1/d1f1/ was properly created                     |
+        ]],
+    })
   end)
 end)
 
