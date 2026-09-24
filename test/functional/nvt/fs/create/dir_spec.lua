@@ -61,7 +61,15 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
-      "a",
+      "a"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+    })
+
+    n.feed(
       "d1/indirect/<CR>"
     )
 
@@ -88,7 +96,15 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
-      "a",
+      "a"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+    })
+
+    n.feed(
       "d1/<CR>"
     )
 
@@ -109,7 +125,15 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       ":NvimTreeOpen<CR>",
       "gg",
-      "a",
+      "a"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+    })
+
+    n.feed(
       "d1/d1f1/<CR>"
     )
 
