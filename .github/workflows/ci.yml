@@ -132,7 +132,7 @@ jobs:
           cd "${DIR_NVIM_SRC}"
           make
 
-      - run: scripts/functionaltest.sh
+      - run: scripts/functionaltest.sh -a
 
       - run: scripts/luals-check.sh test
 
