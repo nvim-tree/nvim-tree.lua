@@ -33,6 +33,8 @@ function M.create_session(options)
   return screen
 end
 
+-- TODO consider always subscribing to all events
+
 ---Subscribe to an event, to be recorded in session global NVT_FUNCTEST_EVENTS nvt.functest.event[]
 ---Assert events via events_received
 ---@param event_type string value of nvim_tree.api.events.Event
