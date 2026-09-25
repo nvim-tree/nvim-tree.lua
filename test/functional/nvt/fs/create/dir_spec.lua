@@ -14,10 +14,6 @@ local it = t.it or it
 local screen
 
 
--- TODO
--- test creating in an illegal location e.g. /foo
-
-
 before_each(function()
   screen = nf.create_session({ ext_cmdline = true })
 
@@ -76,7 +72,6 @@ NvimTree_1 [-]                 [No Name]                                        
   it("indirect ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
-      "gg",
       "a",
       "d1/indirect/<CR>"
     )
@@ -106,7 +101,6 @@ NvimTree_1 [-]                 [No Name]                                        
   it("existing dir", function()
     n.feed(
       ":NvimTreeOpen<CR>",
-      "gg",
       "a",
       "d1/<CR>"
     )
@@ -130,7 +124,6 @@ NvimTree_1 [-]                 [No Name]                                        
   it("existing file", function()
     n.feed(
       ":NvimTreeOpen<CR>",
-      "gg",
       "a",
       "d1/d1f1/<CR>"
     )
@@ -147,6 +140,30 @@ NvimTree_1 [-]                 [No Name]                                        
 ~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1/d1f1/ was properly created                     |
+        ]],
+    })
+
+    na.events_received({})
+  end)
+
+
+  it("invalid path", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "a",
+      "<C-U>",
+      "/foo/bar<CR>"
+    )
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] Could not create folder /foo                                         |
         ]],
     })
 
