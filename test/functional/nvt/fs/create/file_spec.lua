@@ -15,23 +15,24 @@ local screen
 
 
 -- TODO
--- test events
 -- test creating in an illegal location e.g. /foo
 
 
 before_each(function()
   screen = nf.create_session({ ext_cmdline = true })
+
+  n.exec_lua(function()
+    require("nvim-tree").setup({})
+  end)
+
+  nf.event_subscribe("FileCreated")
+  nf.event_subscribe("WillCreateFile")
+  nf.event_subscribe("FolderCreated")
 end)
 
 
 describe("prompt", function()
-  before_each(function()
-    n.exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-  end)
-
-  it("prompt", function()
+  it("ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a"
@@ -46,13 +47,6 @@ end)
 
 
 describe("single file", function()
-  before_each(function()
-    n.exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-  end)
-
-
   it("direct ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -74,6 +68,11 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.file_exists("/tmp/nvt_func/data/direct")
+
+    na.events_received({
+      { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/direct", }, },
+      { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/direct", }, },
+    })
   end)
 
 
@@ -99,6 +98,11 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.file_exists("/tmp/nvt_func/data/d1/indirect")
+
+    na.events_received({
+      { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
+      { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
+    })
   end)
 
 
@@ -122,6 +126,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.file_exists("/tmp/nvt_func/data/f1")
+
+    na.events_received({})
   end)
 
 
@@ -145,6 +151,40 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.dir_exists("/tmp/nvt_func/data/d1")
+
+    na.events_received({})
+  end)
+
+
+  it("nested dir", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "a",
+      "newdir/newfile<CR>"
+    )
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    newdir                  │~                                                |
+  ^     newfile               │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/newdir/newfile was properly created               |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d1")
+
+    na.events_received({
+      -- TODO BUG this should be "/tmp/nvt_func/data/newdir/"
+      { event_type = "FolderCreated",  payload = { folder_name = "/tmp/nvt_func/data/newdir/newfile", }, },
+      { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
+      { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
+    })
   end)
 end)
 
