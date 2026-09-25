@@ -30,7 +30,7 @@ end)
 
 
 describe("prompt", function()
-  it("prompt", function()
+  it("ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a"
@@ -68,12 +68,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/direct")
 
     na.events_received({
-      {
-        event_type = "FolderCreated",
-        payload = {
-          folder_name = "/tmp/nvt_func/data/direct/",
-        },
-      },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct/", }, },
     })
   end)
 
@@ -103,12 +98,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
-      {
-        event_type = "FolderCreated",
-        payload = {
-          folder_name = "/tmp/nvt_func/data/d1/indirect/",
-        },
-      },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
     })
   end)
 
@@ -191,19 +181,9 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/direct1/direct2")
 
     na.events_received({
-      {
-        event_type = "FolderCreated",
-        payload = {
-          -- TODO BUG this should be "/tmp/nvt_func/data/direct1/"
-          folder_name = "/tmp/nvt_func/data/direct1/direct2/",
-        },
-      },
-      {
-        event_type = "FolderCreated",
-        payload = {
-          folder_name = "/tmp/nvt_func/data/direct1/direct2/",
-        },
-      },
+      -- TODO BUG this should be "/tmp/nvt_func/data/direct1/"
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
     })
   end)
 
@@ -234,19 +214,9 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/d1/indirect1/indirect2")
 
     na.events_received({
-      {
-        event_type = "FolderCreated",
-        payload = {
-          -- TODO BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
-          folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/",
-        },
-      },
-      {
-        event_type = "FolderCreated",
-        payload = {
-          folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/",
-        },
-      },
+      -- TODO BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
     })
   end)
 end)
