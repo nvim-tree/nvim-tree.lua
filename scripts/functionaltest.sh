@@ -190,10 +190,10 @@ setup
 
 case "${mode}" in
 	l)
-		live
+		live || teardown
 		;;
 	a|t)
-		files_test_execute
+		files_test_execute || teardown
 		;;
 	*)
 		;;
