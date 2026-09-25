@@ -3,6 +3,10 @@ local Screen = require("test.functional.ui.screen")
 
 local M = {}
 
+---@class (exact) nvt.functest.event
+---@field event_type nvim_tree.api.events.Event [nvim_tree_events_kind]
+---@field payload table deep copy
+
 ---Create a new neovim session with
 ---- nvim-tree.lua package added
 ---- fresh test data directory created and cd'd into
@@ -15,6 +19,9 @@ function M.create_session(options)
 
   n.exec_lua(function()
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
+
+    ---@type nvt.functest.event[]
+    NVT_FUNCTEST_EVENTS = NVT_FUNCTEST_EVENTS or {} ---@diagnostic disable-line: global-element
   end)
 
   -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
@@ -24,6 +31,22 @@ function M.create_session(options)
   n.api.nvim_set_current_dir(dir)
 
   return screen
+end
+
+---Subscribe to an event, to be recorded in session global NVT_FUNCTEST_EVENTS nvt.functest.event[]
+---Assert events via events_received
+---@param event_type nvim_tree.api.events.Event [nvim_tree_events_kind]
+function M.event_subscribe(event_type)
+  n.exec_lua(function()
+    local api = require("nvim-tree.api")
+
+    api.events.subscribe(event_type, function(payload)
+      table.insert(NVT_FUNCTEST_EVENTS, {
+        event_type = event_type,
+        payload = vim.deepcopy(payload),
+      })
+    end)
+  end)
 end
 
 --- Reset all NvimTree* highlight groups to just a unique foreground colour
