@@ -4,7 +4,7 @@ local Screen = require("test.functional.ui.screen")
 local M = {}
 
 ---@class (exact) nvt.functest.event
----@field event_type nvim_tree.api.events.Event [nvim_tree_events_kind]
+---@field event_type string value of nvim_tree.api.events.Event
 ---@field payload table deep copy
 
 ---Create a new neovim session with
@@ -35,7 +35,7 @@ end
 
 ---Subscribe to an event, to be recorded in session global NVT_FUNCTEST_EVENTS nvt.functest.event[]
 ---Assert events via events_received
----@param event_type nvim_tree.api.events.Event [nvim_tree_events_kind]
+---@param event_type string value of nvim_tree.api.events.Event
 function M.event_subscribe(event_type)
   n.exec_lua(function()
     local api = require("nvim-tree.api")
