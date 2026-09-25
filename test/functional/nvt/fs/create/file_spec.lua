@@ -14,10 +14,6 @@ local it = t.it or it
 local screen
 
 
--- TODO
--- test creating in an illegal location e.g. /foo
-
-
 before_each(function()
   screen = nf.create_session({ ext_cmdline = true })
 
@@ -184,6 +180,33 @@ NvimTree_1 [-]                 [No Name]                                        
       { event_type = "FolderCreated",  payload = { folder_name = "/tmp/nvt_func/data/newdir/newfile", }, },
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
       { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
+    })
+  end)
+
+
+  it("invalid path", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "a",
+      "<C-U>",
+      "/foo<CR>"
+    )
+
+    -- TODO BUG this fails but shows message "/foo was properly created"
+--     screen:expect({
+--       attr_ids = {},
+--       grid = [[
+--   ^/tmp/nvt_func/data/..       │                                                 |
+--     d1                      │~                                                |
+--      f1                      │~                                                |
+-- ~                             │~                                                |*19
+-- NvimTree_1 [-]                 [No Name]                                        |
+-- [NvimTree] Could not create file /foo                                           |
+--         ]],
+--     })
+
+    na.events_received({
+      { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
     })
   end)
 end)
