@@ -19,6 +19,8 @@ M.globals = {
   "after_each",
   "teardown",
   "finally",
+  -- Global nvt functiontest data
+  "NVT_FUNCTEST_EVENTS",
 }
 
 return M
