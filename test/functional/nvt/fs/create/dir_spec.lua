@@ -15,22 +15,21 @@ local screen
 
 
 -- TODO
--- test events
 -- test creating in an illegal location e.g. /foo
 
 
 before_each(function()
   screen = nf.create_session({ ext_cmdline = true })
+
+  n.exec_lua(function()
+    require("nvim-tree").setup({})
+  end)
+
+  nf.event_subscribe("FolderCreated")
 end)
 
 
 describe("prompt", function()
-  before_each(function()
-    n.exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-  end)
-
   it("prompt", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -46,13 +45,6 @@ end)
 
 
 describe("single dir", function()
-  before_each(function()
-    n.exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-  end)
-
-
   it("direct ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -74,6 +66,15 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.dir_exists("/tmp/nvt_func/data/direct")
+
+    na.events_received({
+      {
+        event_type = "FolderCreated",
+        payload = {
+          folder_name = "/tmp/nvt_func/data/direct/",
+        },
+      },
+    })
   end)
 
 
@@ -100,6 +101,15 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.dir_exists("/tmp/nvt_func/data/d1/indirect")
+
+    na.events_received({
+      {
+        event_type = "FolderCreated",
+        payload = {
+          folder_name = "/tmp/nvt_func/data/d1/indirect/",
+        },
+      },
+    })
   end)
 
 
@@ -122,6 +132,8 @@ NvimTree_1 [-]                 [No Name]                                        
 [NvimTree] Cannot create: file already exists                                   |
       ]],
     })
+
+    na.events_received({})
   end)
 
 
@@ -147,17 +159,13 @@ NvimTree_1 [-]                 [No Name]                                        
 [NvimTree] /tmp/nvt_func/data/d1/d1f1/ was properly created                     |
         ]],
     })
+
+    na.events_received({})
   end)
 end)
 
 
 describe("multiple dirs", function()
-  before_each(function()
-    n.exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-  end)
-
   it("direct ok", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -181,6 +189,22 @@ NvimTree_1 [-]                 [No Name]                                        
 
     na.dir_exists("/tmp/nvt_func/data/direct1")
     na.dir_exists("/tmp/nvt_func/data/direct1/direct2")
+
+    na.events_received({
+      {
+        event_type = "FolderCreated",
+        payload = {
+          -- TODO BUG this should be "/tmp/nvt_func/data/direct1/"
+          folder_name = "/tmp/nvt_func/data/direct1/direct2/",
+        },
+      },
+      {
+        event_type = "FolderCreated",
+        payload = {
+          folder_name = "/tmp/nvt_func/data/direct1/direct2/",
+        },
+      },
+    })
   end)
 
 
@@ -208,6 +232,22 @@ NvimTree_1 [-]                 [No Name]                                        
 
     na.dir_exists("/tmp/nvt_func/data/d1/indirect1")
     na.dir_exists("/tmp/nvt_func/data/d1/indirect1/indirect2")
+
+    na.events_received({
+      {
+        event_type = "FolderCreated",
+        payload = {
+          -- TODO BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
+          folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/",
+        },
+      },
+      {
+        event_type = "FolderCreated",
+        payload = {
+          folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/",
+        },
+      },
+    })
   end)
 end)
 
