@@ -193,17 +193,6 @@ NvimTree_1 [-]                 [No Name]                                        
     )
 
     -- TODO BUG this fails but shows message "/foo was properly created"
---     screen:expect({
---       attr_ids = {},
---       grid = [[
---   ^/tmp/nvt_func/data/..       │                                                 |
---     d1                      │~                                                |
---      f1                      │~                                                |
--- ~                             │~                                                |*19
--- NvimTree_1 [-]                 [No Name]                                        |
--- [NvimTree] Could not create file /foo                                           |
---         ]],
---     })
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
