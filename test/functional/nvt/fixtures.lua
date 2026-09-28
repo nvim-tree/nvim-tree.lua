@@ -86,7 +86,7 @@ function M.unique_highlight_groups(screen)
     if (i % 256 == 0) then
       b, g, r = 254, 254, r - 1
     elseif (i % 16 == 0) then
-       b, g = 254, g - 1
+      b, g = 254, g - 1
     else
       b = b - 1
     end

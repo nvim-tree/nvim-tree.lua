@@ -29,6 +29,9 @@ dir_live=
 # number of test failures
 failures=0
 
+# add nvim-tree source to test environment so that tests themselves may access it
+test_args="--lpath=${dir_nvt}/lua/?.lua --lpath=${dir_nvt}/lua/?/init.lua"
+
 # absolute path of the source: $dir_nvt
 export NVT_FUNC_DIR_ROOT="${dir_nvt}"
 
@@ -140,9 +143,6 @@ setup() {
 	ln -sv "${dir_nvt}/lua" "${dir_nvt_pack}"
 	ln -sv "${dir_nvt}/plugin" "${dir_nvt_pack}"
 
-	# nvim-tree source, for use by tests
-	ln -sv "${dir_nvt}/lua/nvim-tree" "${DIR_NVIM_SRC}"
-
 	# tests
 	ln -sv "${dir_nvt}/test/functional/nvt" "${DIR_NVIM_SRC}/test/functional"
 }
@@ -154,9 +154,6 @@ teardown() {
 	rm -fv "${dir_nvt_pack}/lua"
 	rm -fv "${dir_nvt_pack}/plugin"
 	rm -rf "${dir_nvt_pack}"
-
-	# nvim-tree source, for use by tests
-	rm -fv "${DIR_NVIM_SRC}/nvim-tree"
 
 	# tests
 	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
@@ -190,7 +187,7 @@ files_test_execute() {
 		NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${f}")")"
 
 		# don't exit on failure, just note it
-		make functionaltest TEST_FILE="${f}" || failures=$((failures + 1))
+		make functionaltest TEST_ARGS="${test_args}" TEST_FILE="${f}"|| failures=$((failures + 1))
 	done
 }
 
