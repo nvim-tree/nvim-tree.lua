@@ -1,5 +1,6 @@
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
+local appearance = require("nvim-tree.appearance")
 
 local M = {}
 
@@ -49,52 +50,57 @@ function M.event_subscribe(event_type)
   end)
 end
 
---- Reset all NvimTree* highlight groups to just a unique foreground colour
---- Return attr_ids to match
---- Add a CL variant with the same background colour as NvimTreeCursorLine
---- May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
-function M.simple_attr_ids()
+-- TODO events_clear
+
+---Reset all NvimTree* highlight groups to just a unique foreground colour
+---Return attr_ids to match
+---Add a CL variant with the same background colour as NvimTreeCursorLine
+---May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
+---@param screen test.functional.ui.screen
+function M.unique_highlight_groups(screen)
   local attr_ids = {}
 
-  -- math.random(tonumber('0x707070'),tonumber('0x909090'))
-  local bg_rgb, bg_hex = 8758352, "#85a450"
-
-  -- build the cursor line first, background only
-  attr_ids["NvimTreeCursorLine"] = { background = bg_rgb }
-  n.api.nvim_set_hl(0, "NvimTreeCursorLine", { bg = bg_hex })
+  -- arbitrary "unique" value: math.random(tonumber('0x707070'),tonumber('0x909090'))
+  local rgb_cl, hex_cl = 8758352, "#85a450"
 
   -- unique colour for each group, descending from #fefefe
   local i, r, g, b = 1, 254, 254, 254
   local rgb, hex
 
-  for group, _ in pairs(n.api.nvim_get_hl(0, { create = false })) do
-    if group ~= "NvimTreeCursorLine" and group:match("^NvimTree.*") and not group:match(".*CL$") then
-      -- next unique fg colour
-      rgb = r * 256 * 256 + g * 256 + b
-      hex = string.format("#%x", rgb)
-      i = i + 1
-      if (i % 256 == 0) then
-        b = 254
-        g = 254
-        r = r - 1
-      elseif (i % 16 == 0) then
-        b = 254
-        g = g - 1
-      else
-        b = b - 1
-      end
-
-      -- add the group's concrete definition with fg only
-      attr_ids[group] = { foreground = rgb }
-      n.api.nvim_set_hl(0, group, { fg = hex })
-
-      -- create an NvimTreeCursorLine variant
-      attr_ids[group .. "CL"] = { foreground = rgb, background = bg_rgb }
-      n.api.nvim_set_hl(0, group .. "CL", { fg = hex, bg = bg_hex })
+  -- build the cursor line first, background only
+  local hgs = vim.tbl_filter(function(hg)
+    if hg.group == "NvimTreeCursorLine" then
+      attr_ids["NvimTreeCursorLine"] = { background = rgb_cl }
+      n.api.nvim_set_hl(0, "NvimTreeCursorLine", { bg = hex_cl })
+      return false
+    else
+      return true
     end
+  end, appearance.HIGHLIGHT_GROUPS)
+
+  for _, hg in ipairs(hgs) do
+    -- next unique fg colour
+    rgb = r * 256 * 256 + g * 256 + b
+    hex = string.format("#%x", rgb)
+    i = i + 1
+    if (i % 256 == 0) then
+      b, g, r = 254, 254, r - 1
+    elseif (i % 16 == 0) then
+       b, g = 254, g - 1
+    else
+      b = b - 1
+    end
+
+    -- add the group's concrete definition with fg only
+    attr_ids[hg.group] = { foreground = rgb }
+    n.api.nvim_set_hl(0, hg.group, { fg = hex })
+
+    -- create an NvimTreeCursorLine variant
+    attr_ids[hg.group .. "CL"] = { foreground = rgb, background = rgb_cl }
+    n.api.nvim_set_hl(0, hg.group .. "CL", { fg = hex, bg = hex_cl })
   end
 
-  return attr_ids
+  screen:add_extra_attr_ids(attr_ids)
 end
 
 return M
