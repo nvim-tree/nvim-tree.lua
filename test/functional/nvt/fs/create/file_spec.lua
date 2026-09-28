@@ -137,7 +137,7 @@ NvimTree_1 [-]                 [No Name]                                        
     screen:expect({
       attr_ids = {},
       grid = [[
-  ^/tmp/nvt_func/data/..       │                                                 |
+  ^/mp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
      f1                      │~                                                |
 ~                             │~                                                |*19
