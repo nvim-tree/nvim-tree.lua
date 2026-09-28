@@ -140,6 +140,9 @@ setup() {
 	ln -sv "${dir_nvt}/lua" "${dir_nvt_pack}"
 	ln -sv "${dir_nvt}/plugin" "${dir_nvt_pack}"
 
+	# nvim-tree source, for use by tests
+	ln -sv "${dir_nvt}/lua/nvim-tree" "${DIR_NVIM_SRC}"
+
 	# tests
 	ln -sv "${dir_nvt}/test/functional/nvt" "${DIR_NVIM_SRC}/test/functional"
 }
@@ -151,6 +154,9 @@ teardown() {
 	rm -fv "${dir_nvt_pack}/lua"
 	rm -fv "${dir_nvt_pack}/plugin"
 	rm -rf "${dir_nvt_pack}"
+
+	# nvim-tree source, for use by tests
+	rm -fv "${DIR_NVIM_SRC}/nvim-tree"
 
 	# tests
 	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
