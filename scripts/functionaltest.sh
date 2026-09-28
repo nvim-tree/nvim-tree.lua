@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # neovim func test driver, see test/func/README.md
+# exits with number of tests failed
 # this will be eventually be shipped as part of the vim runtime https://github.com/neovim/neovim/issues/34592
 
 set -e
@@ -24,6 +25,9 @@ files_test=
 
 # live data directory or "none"
 dir_live=
+
+# number of test failures
+failures=0
 
 # absolute path of the source: $dir_nvt
 export NVT_FUNC_DIR_ROOT="${dir_nvt}"
@@ -167,7 +171,8 @@ live() {
 		--cmd "comclear | mapclear | mapclear!" \
 		--cmd "set packpath^=${DIR_NVIM_SRC}/runtime/" \
 		--cmd "lua dofile('${DIR_NVIM_SRC}/runtime/colors/vim.lua')" \
-		--cmd "unlet g:colors_name"
+		--cmd "unlet g:colors_name" \
+		|| failures=1
 }
 
 files_test_execute() {
@@ -177,7 +182,9 @@ files_test_execute() {
 	# execute all tests
 	for f in ${files_test}; do
 		NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${f}")")"
-		make functionaltest TEST_FILE="${f}"
+
+		# don't exit on failure, just note it
+		make functionaltest TEST_FILE="${f}" || failures=$((failures + 1))
 	done
 }
 
@@ -190,13 +197,15 @@ setup
 
 case "${mode}" in
 	l)
-		live || teardown
+		live
 		;;
 	a|t)
-		files_test_execute || teardown
+		files_test_execute
 		;;
 	*)
 		;;
 esac
 
 teardown
+
+exit "${failures}"
