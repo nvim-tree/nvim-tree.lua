@@ -21,9 +21,10 @@ before_each(function()
     require("nvim-tree").setup({})
   end)
 
-  nf.event_subscribe("FileCreated")
-  nf.event_subscribe("WillCreateFile")
-  nf.event_subscribe("FolderCreated")
+  local Event = require("nvim-tree._meta.api.events").Event
+  nf.event_subscribe(Event.FileCreated)
+  nf.event_subscribe(Event.WillCreateFile)
+  nf.event_subscribe(Event.FolderCreated)
 end)
 
 

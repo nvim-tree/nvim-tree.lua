@@ -32,13 +32,17 @@ case "${1}" in
 		;;
 esac
 
-# neovim source needed for tests
+DIR_NVT="${PWD}"
+
 if [ "${TARGET}" = "test" ]; then
+	# neovim and nvim-tree source needed for tests; check everything
 	. scripts/check-nvim-src.sh
 	export VIMRUNTIME="${DIR_NVIM_SRC}/runtime"
+	DIR_CHECK="${DIR_NVT}"
+else
+	# otherwise just the source
+	DIR_CHECK="${DIR_NVT}/${TARGET}"
 fi
-
-DIR_NVT="${PWD}"
 
 if [ ! -f "${DIR_NVT}/scripts/luals-check.sh" ]; then
 	echo "Must be run from nvim-tree root" 1>&2
@@ -72,11 +76,10 @@ else
 	cp "${DIR_NVT}/.luarc.json" "${LUARC}"
 fi
 
-DIR_SRC="${DIR_NVT}/${TARGET}"
 FILE_OUT="${DIR_OUT}/out.${TARGET}.log"
-echo "Checking ${TARGET}/"
+echo "Checking ${TARGET}: ${DIR_CHECK} -> ${FILE_OUT}"
 
-lua-language-server --check="${DIR_SRC}" --configpath="${LUARC}" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error 2>&1 | tee "${FILE_OUT}"
+lua-language-server --check="${DIR_CHECK}" --configpath="${LUARC}" --checklevel=Information --logpath="${DIR_OUT}" --loglevel=error 2>&1 | tee "${FILE_OUT}"
 
 if ! grep --quiet "Diagnosis completed, no problems found" "${FILE_OUT}"; then
 	RC=1
