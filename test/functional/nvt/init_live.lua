@@ -71,14 +71,13 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
--- add the plugin under test
-vim.api.nvim_command("packadd nvim-tree.lua")
-require("nvim-tree").setup({})
-
 -- create and change to the directory the test will execute from
-local out = vim.fn.system({ os.getenv("NVT_FUNC_DIR_ROOT") .. "/test/functional/nvt/create_test_cwd.sh" })
+local out = vim.fn.system({ os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD") })
 local dir = out:match("^DIR=(.*)$") or error(out)
 vim.api.nvim_set_current_dir(dir)
+
+-- setup with defaults
+require("nvim-tree").setup({})
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,    { remap = false, })
