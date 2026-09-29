@@ -1,5 +1,5 @@
 local t = require("test.testutil")
-local nf = require("test.functional.nvt.fixtures")
+local nf = require("test.nvt.func.fixtures")
 local n = require("test.functional.testnvim")()
 local exec_lua = n.exec_lua
 
