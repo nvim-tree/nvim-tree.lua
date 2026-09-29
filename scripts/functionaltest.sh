@@ -6,7 +6,7 @@
 
 set -e
 
-if [ ! -d "test/functional/nvt" ]; then
+if [ ! -d "test/nvt/func" ]; then
 	echo "Must be run from nvim-tree root" 1>&2
 	exit 1
 fi
@@ -27,7 +27,7 @@ export NVT_FUNC_DIR_ROOT="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 export NVT_FUNC_DIR_TEST=
 
 # absolute path of script to execute to setup the test execution directory
-export NVT_FUNC_SCRIPT_CREATE_TEST_CWD="${NVT_FUNC_DIR_ROOT}/test/functional/nvt/create_test_cwd.sh"
+export NVT_FUNC_SCRIPT_CREATE_TEST_CWD="${NVT_FUNC_DIR_ROOT}/test/nvt/func/create_test_cwd.sh"
 
 # absolute paths of test spec files to execute, under Nvim source
 files_test_lua=
@@ -105,7 +105,7 @@ while getopts "ahlt:" o; do
 	case "${o}" in
 		a)
 			mode_set "${o}"
-			files_test_lua_add "test/functional/nvt"
+			files_test_lua_add "test/nvt/func"
 			;;
 		h)
 			usage
@@ -159,7 +159,7 @@ live() {
 	nvim \
 		--clean \
 		--noplugin \
-		-u "test/functional/nvt/init_live.lua" \
+		-u "test/nvt/func/init_live.lua" \
 		-i NONE \
 		--cmd "set shortmess+=IS background=light noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
 		--cmd "comclear | mapclear | mapclear!" \
