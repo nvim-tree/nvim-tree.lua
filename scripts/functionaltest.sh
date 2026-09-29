@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# neovim func test driver, see test/func/README.md
+# Nvim func test driver, see test/func/README.md
 # exits with number of tests failed
 # this will be eventually be shipped as part of the vim runtime https://github.com/neovim/neovim/issues/34592
 
@@ -17,30 +17,29 @@ fi
 # root of code under test
 dir_nvt="${PWD}"
 
-# nvim-tree linked as a package under source
-dir_nvt_pack="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
+# parent directory under which nvim-tree is linked under Nvim source
+# uses src (not test or runtime) to prevent luals from finding it 
+# src can be found in build/Xtest_xdg, which contains only links to runtime, src and test
+# pack/dist/opt is added underneath to satisfy :packadd convention
+export NVT_FUNC_PACKPATH="${DIR_NVIM_SRC}/src/nvt"
 
-# nvim-tree linked under the neovim source: under src (not test) to prevent luals from finding it
-# this is necessary so that the test may be found relative to test startup directory build/Xtest_xdg, which contains only links to runtime, src and test
-dir_nvt_linked="${DIR_NVIM_SRC}/src/nvt"
+# absolute link to nvim-tree source root under Nvim source
+export NVT_FUNC_DIR_ROOT="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 
-# test spec files to execute, relative to $dir_nvt
+# absolute path of the test directory under Nvim source
+export NVT_FUNC_DIR_TEST=
+
+# absolute path of script to execute to setup the test execution directory
+export NVT_FUNC_SCRIPT_CREATE_TEST_CWD="${NVT_FUNC_DIR_ROOT}/test/functional/nvt/create_test_cwd.sh"
+
+# absolute paths of test spec files to execute, under Nvim source
 files_test_lua=
 
-# live data directory or "none"
+# live data directory or "none", empty when -l not specified
 dir_live=
 
 # number of test failures
 failures=0
-
-# add absolute paths of linked nvim-tree source to test environment so that tests themselves may access it
-test_args="--lpath=${dir_nvt_linked}/?.lua --lpath=${dir_nvt_linked}/lua/?.lua --lpath=${dir_nvt_linked}/lua/?/init.lua"
-
-# absolute path of the source: $dir_nvt
-export NVT_FUNC_DIR_ROOT="${dir_nvt}"
-
-# absolute path of the test directory, under $dir_nvt
-export NVT_FUNC_DIR_TEST=
 
 # a, t or l
 mode=
@@ -56,7 +55,7 @@ usage() {
 }
 
 #
-# setup
+# CLI args
 #
 
 # set $mode to $1, fail if another $mode already set 
@@ -71,11 +70,11 @@ mode_set() {
 # add a single file $1 or all _spec.lua files under directory $1 to $files_test_lua
 files_test_lua_add() {
 	if [ -f "${1}" ]; then
-		files_test_lua="${files_test_lua} ${1}"
+		files_test_lua="${files_test_lua} ${NVT_FUNC_DIR_ROOT}/${1}"
 	elif [ -d "${1}" ]; then
 		find "${1}" -type f -iname '*_spec.lua' > /tmp/nvt_files_test_lua
 		while IFS= read -r f; do
-			files_test_lua="${files_test_lua} ${f}"
+			files_test_lua="${files_test_lua} ${NVT_FUNC_DIR_ROOT}/${f}"
 		done < /tmp/nvt_files_test_lua
 		rm /tmp/nvt_files_test_lua
 	else
@@ -139,37 +138,25 @@ fi
 # test harness
 #
 
-# before all tests: links plugin and tests in their appropriate places under neovim source
+# before all tests: links plugin and tests in their appropriate places under Nvim source root
 setup() {
 	teardown
 
-	# complete nvim-tree source
-	ln -sv "${dir_nvt}" "${dir_nvt_linked}"
-
-	# TODO can we relocate this to a distinct packpath?
-	# plugin runtime package
-	mkdir -pv "${dir_nvt_pack}"
-	ln -sv "${dir_nvt}/doc" "${dir_nvt_pack}"
-	ln -sv "${dir_nvt}/lua" "${dir_nvt_pack}"
-	ln -sv "${dir_nvt}/plugin" "${dir_nvt_pack}"
+	# nvim-tree source link
+	mkdir -p "$(dirname "${NVT_FUNC_DIR_ROOT}")"
+	ln -sv "${dir_nvt}" "${NVT_FUNC_DIR_ROOT}"
 }
 
-# after all tests: remove plugin and test links from neovim source
+# after all tests: remove plugin and test links from Nvim source root
 teardown() {
-	# plugin runtime package
-	rm -fv "${dir_nvt_pack}/doc"
-	rm -fv "${dir_nvt_pack}/lua"
-	rm -fv "${dir_nvt_pack}/plugin"
-	rm -rf "${dir_nvt_pack}"
-
-	# complete nvim-tree source
-	rm -fv  "${dir_nvt_linked}"
+	# nvim-tree source link
+	rm -fv  "${NVT_FUNC_DIR_ROOT}"
 }
 
 # TODO could this completely bypass setup?
 live() {
 	if [ "${dir_live}" != "none" ]; then
-		NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${dir_live}")")"
+		export NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${dir_live}")")"
 	fi
 
 	# options extracted from testnvim.lua nvim_argv, nvim_set
@@ -186,23 +173,25 @@ live() {
 		|| failures=1
 }
 
-files_test_lua_execute() {
+run_tests() {
 	# cmake must be run from nvim source root
 	cd "${DIR_NVIM_SRC}"
 
 	# execute all requested tests
 	for f in ${files_test_lua}; do
-		file_test_lua="${dir_nvt_linked}/${f}"
+		export NVT_FUNC_DIR_TEST="$(dirname "${f}")"
 
-		NVT_FUNC_DIR_TEST="$(dirname "${file_test_lua}")"
-
+		# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
 		# don't exit on failure, just note it
-		make functionaltest TEST_ARGS="${test_args}" TEST_FILE="${file_test_lua}" || failures=$((failures + 1))
-	done
+		make functionaltest \
+			TEST_FILE="${f}" \
+			TEST_ARGS="--lpath=${NVT_FUNC_DIR_ROOT}/?.lua --lpath=${NVT_FUNC_DIR_ROOT}/lua/?.lua --lpath=${NVT_FUNC_DIR_ROOT}/lua/?/init.lua" \
+			|| failures=$((failures + 1)) 
+		done
 }
 
 #
-# act
+# execute
 #
 
 setup
@@ -212,7 +201,7 @@ case "${mode}" in
 		live
 		;;
 	a|t)
-		files_test_lua_execute
+		run_tests
 		;;
 	*)
 		;;
