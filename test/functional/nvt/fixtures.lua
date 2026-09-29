@@ -19,6 +19,10 @@ function M.create_session(options)
   local screen = Screen.new(80, 24, options)
 
   n.exec_lua(function()
+    local packpath = os.getenv("NVT_FUNC_PACKPATH")
+    assert(packpath, "NVT_FUNC_PACKPATH not set")
+    vim.opt.packpath:append(packpath)
+
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
     ---@type nvt.functest.event[]
@@ -26,7 +30,9 @@ function M.create_session(options)
   end)
 
   -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
-  local out = n.fn.system({ os.getenv("NVT_FUNC_DIR_ROOT") .. "/test/functional/nvt/create_test_cwd.sh" })
+  local create_test_cwd = os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD")
+  assert(create_test_cwd, "NVT_FUNC_SCRIPT_CREATE_TEST_CWD not set")
+  local out = n.fn.system({ create_test_cwd, })
   local dir = out:match("^DIR=(.*)$") or error(out)
 
   n.api.nvim_set_current_dir(dir)
