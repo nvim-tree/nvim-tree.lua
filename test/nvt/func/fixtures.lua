@@ -51,7 +51,12 @@ function M.event_subscribe(event_type)
   end)
 end
 
--- TODO events_clear
+---Clear all recorded events in NVT_FUNCTEST_EVENTS
+function M.events_clear()
+  n.exec_lua(function()
+    NVT_FUNCTEST_EVENTS = {} ---@diagnostic disable-line: global-element
+  end)
+end
 
 ---Reset all NvimTree* highlight groups to just a unique foreground colour
 ---Return attr_ids to match
