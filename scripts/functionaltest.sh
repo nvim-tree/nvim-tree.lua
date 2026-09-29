@@ -14,9 +14,6 @@ fi
 # define $DIR_NVIM_SRC
 . scripts/check-nvim-src.sh
 
-# root of code under test
-dir_nvt="${PWD}"
-
 # parent directory under which nvim-tree is linked under Nvim source
 # uses src (not test or runtime) to prevent luals from finding it 
 # src can be found in build/Xtest_xdg, which contains only links to runtime, src and test
@@ -26,7 +23,7 @@ export NVT_FUNC_PACKPATH="${DIR_NVIM_SRC}/src/nvt"
 # absolute link to nvim-tree source root under Nvim source
 export NVT_FUNC_DIR_ROOT="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 
-# absolute path of the test directory under Nvim source
+# absolute path of the test's directory under Nvim source
 export NVT_FUNC_DIR_TEST=
 
 # absolute path of script to execute to setup the test execution directory
@@ -144,7 +141,7 @@ setup() {
 
 	# nvim-tree source link
 	mkdir -p "$(dirname "${NVT_FUNC_DIR_ROOT}")"
-	ln -sv "${dir_nvt}" "${NVT_FUNC_DIR_ROOT}"
+	ln -sv "${PWD}" "${NVT_FUNC_DIR_ROOT}"
 }
 
 # after all tests: remove plugin and test links from Nvim source root
@@ -153,10 +150,9 @@ teardown() {
 	rm -fv  "${NVT_FUNC_DIR_ROOT}"
 }
 
-# TODO could this completely bypass setup?
 live() {
 	if [ "${dir_live}" != "none" ]; then
-		export NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${dir_live}")")"
+		NVT_FUNC_DIR_TEST="$(dirname "${dir_live}")"
 	fi
 
 	# options extracted from testnvim.lua nvim_argv, nvim_set
@@ -167,9 +163,10 @@ live() {
 		-i NONE \
 		--cmd "set shortmess+=IS background=light noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
 		--cmd "comclear | mapclear | mapclear!" \
-		--cmd "set packpath^=${DIR_NVIM_SRC}/runtime/" \
+		--cmd "set packpath^=${NVT_FUNC_PACKPATH}" \
 		--cmd "lua dofile('${DIR_NVIM_SRC}/runtime/colors/vim.lua')" \
 		--cmd "unlet g:colors_name" \
+		--cmd "packadd nvim-tree.lua" \
 		|| failures=1
 }
 
@@ -179,7 +176,7 @@ run_tests() {
 
 	# execute all requested tests
 	for f in ${files_test_lua}; do
-		export NVT_FUNC_DIR_TEST="$(dirname "${f}")"
+		NVT_FUNC_DIR_TEST="$(dirname "${f}")"
 
 		# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
 		# don't exit on failure, just note it
