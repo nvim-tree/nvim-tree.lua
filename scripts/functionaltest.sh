@@ -20,8 +20,12 @@ dir_nvt="${PWD}"
 # nvim-tree linked as a package under source
 dir_nvt_pack="${DIR_NVIM_SRC}/runtime/pack/dist/opt/nvim-tree.lua"
 
-# test spec files to execute, relative to neovim source $DIR_NVIM_SRC
-files_test=
+# nvim-tree linked under the neovim source: under src (not test) to prevent luals from finding it
+# this is necessary so that the test may be found relative to test startup directory build/Xtest_xdg, which contains only links to runtime, src and test
+dir_nvt_linked="${DIR_NVIM_SRC}/src/nvt"
+
+# test spec files to execute, relative to $dir_nvt
+files_test_lua=
 
 # live data directory or "none"
 dir_live=
@@ -29,8 +33,8 @@ dir_live=
 # number of test failures
 failures=0
 
-# add nvim-tree source to test environment so that tests themselves may access it
-test_args="--lpath=${dir_nvt}/lua/?.lua --lpath=${dir_nvt}/lua/?/init.lua"
+# add absolute paths of linked nvim-tree source to test environment so that tests themselves may access it
+test_args="--lpath=${dir_nvt_linked}/?.lua --lpath=${dir_nvt_linked}/lua/?.lua --lpath=${dir_nvt_linked}/lua/?/init.lua"
 
 # absolute path of the source: $dir_nvt
 export NVT_FUNC_DIR_ROOT="${dir_nvt}"
@@ -64,21 +68,21 @@ mode_set() {
 	mode="${1}"
 }
 
-# add a single file $1 or all _spec.lua files under directory $1 to $files_test
-files_test_add() {
+# add a single file $1 or all _spec.lua files under directory $1 to $files_test_lua
+files_test_lua_add() {
 	if [ -f "${1}" ]; then
-		files_test="${files_test} ${1}"
+		files_test_lua="${files_test_lua} ${1}"
 	elif [ -d "${1}" ]; then
-		find "${1}" -type f -iname '*_spec.lua' > /tmp/nvt_files_test
+		find "${1}" -type f -iname '*_spec.lua' > /tmp/nvt_files_test_lua
 		while IFS= read -r f; do
-			files_test="${files_test} ${f}"
-		done < /tmp/nvt_files_test
-		rm /tmp/nvt_files_test
+			files_test_lua="${files_test_lua} ${f}"
+		done < /tmp/nvt_files_test_lua
+		rm /tmp/nvt_files_test_lua
 	else
 		echo "${1} inexistent" >&2
 		exit 1
 	fi
-	if [ -z "${files_test}" ]; then
+	if [ -z "${files_test_lua}" ]; then
 		echo "no tests found in ${1}" >&2
 		exit 1
 	fi
@@ -105,7 +109,7 @@ while getopts "ahlt:" o; do
 	case "${o}" in
 		a)
 			mode_set "${o}"
-			files_test_add "test/functional/nvt"
+			files_test_lua_add "test/functional/nvt"
 			;;
 		h)
 			usage
@@ -118,7 +122,7 @@ while getopts "ahlt:" o; do
 			;;
 		t)
 			mode_set "${o}"
-			files_test_add "${OPTARG}"
+			files_test_lua_add "${OPTARG}"
 			;;
 		*)
 			usage >&2
@@ -137,14 +141,17 @@ fi
 
 # before all tests: links plugin and tests in their appropriate places under neovim source
 setup() {
+	teardown
+
+	# complete nvim-tree source
+	ln -sv "${dir_nvt}" "${dir_nvt_linked}"
+
+	# TODO can we relocate this to a distinct packpath?
 	# plugin runtime package
 	mkdir -pv "${dir_nvt_pack}"
 	ln -sv "${dir_nvt}/doc" "${dir_nvt_pack}"
 	ln -sv "${dir_nvt}/lua" "${dir_nvt_pack}"
 	ln -sv "${dir_nvt}/plugin" "${dir_nvt_pack}"
-
-	# tests
-	ln -sv "${dir_nvt}/test/functional/nvt" "${DIR_NVIM_SRC}/test/functional"
 }
 
 # after all tests: remove plugin and test links from neovim source
@@ -155,10 +162,11 @@ teardown() {
 	rm -fv "${dir_nvt_pack}/plugin"
 	rm -rf "${dir_nvt_pack}"
 
-	# tests
-	rm -fv "${DIR_NVIM_SRC}/test/functional/nvt"
+	# complete nvim-tree source
+	rm -fv  "${dir_nvt_linked}"
 }
 
+# TODO could this completely bypass setup?
 live() {
 	if [ "${dir_live}" != "none" ]; then
 		NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${dir_live}")")"
@@ -168,7 +176,7 @@ live() {
 	nvim \
 		--clean \
 		--noplugin \
-		-u "${DIR_NVIM_SRC}/test/functional/nvt/init_live.lua" \
+		-u "test/functional/nvt/init_live.lua" \
 		-i NONE \
 		--cmd "set shortmess+=IS background=light noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
 		--cmd "comclear | mapclear | mapclear!" \
@@ -178,23 +186,24 @@ live() {
 		|| failures=1
 }
 
-files_test_execute() {
+files_test_lua_execute() {
 	# cmake must be run from nvim source root
 	cd "${DIR_NVIM_SRC}"
 
-	# execute all tests
-	for f in ${files_test}; do
-		NVT_FUNC_DIR_TEST="$(realpath "$(dirname "${f}")")"
+	# execute all requested tests
+	for f in ${files_test_lua}; do
+		file_test_lua="${dir_nvt_linked}/${f}"
+
+		NVT_FUNC_DIR_TEST="$(dirname "${file_test_lua}")"
 
 		# don't exit on failure, just note it
-		make functionaltest TEST_ARGS="${test_args}" TEST_FILE="${f}"|| failures=$((failures + 1))
+		make functionaltest TEST_ARGS="${test_args}" TEST_FILE="${file_test_lua}" || failures=$((failures + 1))
 	done
 }
 
 #
 # act
 #
-teardown
 
 setup
 
@@ -203,7 +212,7 @@ case "${mode}" in
 		live
 		;;
 	a|t)
-		files_test_execute
+		files_test_lua_execute
 		;;
 	*)
 		;;
