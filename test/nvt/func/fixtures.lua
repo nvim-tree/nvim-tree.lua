@@ -19,7 +19,7 @@ function M.create_session(options)
   local screen = Screen.new(80, 24, options)
 
   n.exec_lua(function()
-    vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH"))
+    vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
     ---@type nvt.functest.event[]
