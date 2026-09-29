@@ -1,6 +1,6 @@
 local t = require("test.testutil")
-local nf = require("test.functional.nvt.fixtures")
-local na = require("test.functional.nvt.asserts")
+local nf = require("test.nvt.func.fixtures")
+local na = require("test.nvt.func.asserts")
 local n = require("test.functional.testnvim")()
 
 -- 0.13 global compatibility
