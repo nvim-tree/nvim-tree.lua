@@ -14,7 +14,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session({ ext_cmdline = true })
+  screen = nf.create_session()
 
   n.exec_lua(function()
     require("nvim-tree").setup({
@@ -38,7 +38,6 @@ describe("single", function()
       "<down>",
       "<down>",
       "<down>",
-      "<down>",
       "c"
     )
 
@@ -50,10 +49,9 @@ describe("single", function()
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
     d2                      │~                                                |
-    d3                      │~                                                |
   ^   f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*16
+~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
     ]],
@@ -65,10 +63,9 @@ NvimTree_1 [-]                 [No Name]                                        
   {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeEmptyFolderName:d3}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCopiedHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*16
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
   [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
     ]],
