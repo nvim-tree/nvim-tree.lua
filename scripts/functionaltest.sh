@@ -42,7 +42,7 @@ failures=0
 mode=
 
 usage() {
-	echo "Usage: ${0} [-a] [-h] [-t <file or dir>] [-l [<data dir>]]"
+	echo "Usage: ${0} [-a] [-h] [-t <file or dir>] [-l [<file or dir>]]"
 	echo
 	echo "    OPTION:"
 	echo "        -a  Execute all tests"
@@ -84,20 +84,21 @@ files_test_lua_add() {
 	fi
 }
 
-# set $dir_live to directory or "none"
+# set $dir_live to "none" when not passed, otherwise test directory 
 dir_live_set() {
-	if [ -n "${1}" ]; then
-		dir_live="${1}"
-		if [ ! -d "${dir_live}" ]; then
-			echo "${dir_live} inexistent" >&2
-			exit 1
-		fi
-		if [ "$(basename "${dir_live}")" != "data" ]; then
-			echo "${dir_live} not a directory named data" >&2
-			exit 1
+	if [ -z "${1}" ]; then
+		dir_live="none"
+	elif [ -f "${1}" ]; then
+		dir_live="$(dirname "${1}")"
+	elif [ -d "${1}" ]; then
+		if [ "$(basename "${1}")" = "data" ]; then
+			dir_live="$(dirname "${1}")"
+		else
+			dir_live="${1}"
 		fi
 	else
-		dir_live="none"
+		echo "${1} inexistent" >&2
+		exit 1
 	fi
 }
 
@@ -152,7 +153,7 @@ teardown() {
 
 live() {
 	if [ "${dir_live}" != "none" ]; then
-		NVT_FUNC_DIR_TEST="$(dirname "${dir_live}")"
+		NVT_FUNC_DIR_TEST="$(realpath "${dir_live}")"
 	fi
 
 	# options extracted from testnvim.lua nvim_argv, nvim_set
