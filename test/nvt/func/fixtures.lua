@@ -11,12 +11,14 @@ local M = {}
 ---Create a new neovim session with
 ---- nvim-tree.lua package added
 ---- fresh test data directory created and cd'd into
+---@param width? integer
+---@param height? integer
 ---@param options? test.functional.ui.screen.Opts
 ---@return test.functional.ui.screen
-function M.create_session(options)
+function M.create_session(width, height, options)
   n.clear()
 
-  local screen = Screen.new(80, 24, options)
+  local screen = Screen.new(width or 80, height or 24, options)
 
   n.exec_lua(function()
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
