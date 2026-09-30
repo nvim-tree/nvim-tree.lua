@@ -27,15 +27,79 @@ end)
 
 
 describe("prompt", function()
-  it("ok", function()
+  it("tree focused", function()
     n.feed(
       ":NvimTreeOpen<CR>",
+      "<Down>",
       "a"
     )
 
     screen:expect({
       mode = "cmdline_normal",
-      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/d1/" } }, pos = 22, } },
+    })
+  end)
+
+
+  it("tree not focused", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<Down>",
+      "<c-w><c-w>",
+      ":lua require('nvim-tree.api').fs.create()<CR>"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/d1/" } }, pos = 22, } },
+    })
+  end)
+end)
+
+
+describe("existing", function()
+  it("nop", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<Down>",
+      "a",
+      "<CR>"
+    )
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+  ^  d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+  end)
+end)
+
+
+describe("cancelled", function()
+  it("nop", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "a",
+      "foo",
+      "<Esc>"
+    )
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
     })
   end)
 end)

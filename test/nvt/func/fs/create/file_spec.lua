@@ -29,7 +29,7 @@ end)
 
 
 describe("prompt", function()
-  it("ok", function()
+  it("tree focused", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a"
