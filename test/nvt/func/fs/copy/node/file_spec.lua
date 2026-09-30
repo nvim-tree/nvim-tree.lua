@@ -19,13 +19,14 @@ before_each(function()
   n.exec_lua(function()
     require("nvim-tree").setup({
       actions = {
-        -- don't use system clipboard for most tests as it is async
         use_system_clipboard = false,
       },
     })
   end)
 end)
 
+
+-- TODO system clipboard + with dummy provider, see :help clipboard
 
 describe("single", function()
   it("file highlight", function()
@@ -165,7 +166,9 @@ NvimTree_1 [-]                 [No Name]                                        
 end)
 
 describe("multiple", function()
-  it("dir overriding file", function()
+  it("dir overriding file highlight", function()
+    nf.unique_highlight_groups(screen)
+
     n.fn.setreg("1", "foo")
 
     n.feed(
@@ -200,6 +203,23 @@ describe("multiple", function()
 ~                             │~                                                |*14
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] 3 nodes added to clipboard.                                          |
+    ]],
+    })
+
+    screen:expect({
+      unchanged = true,
+      grid = [[
+  {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d1f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d1f2}{NvimTreeNormal:                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d2f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCopiedHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*14
+  {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+  [NvimTree] 3 nodes added to clipboard.                                          |
     ]],
     })
   end)
