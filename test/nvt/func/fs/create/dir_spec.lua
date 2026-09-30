@@ -15,7 +15,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session({ ext_cmdline = true })
+  screen = nf.create_session(nil, nil, { ext_cmdline = true })
 
   n.exec_lua(function()
     require("nvim-tree").setup({})
