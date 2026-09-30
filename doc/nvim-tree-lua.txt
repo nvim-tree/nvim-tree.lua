@@ -1708,7 +1708,7 @@ Config: actions                                     *nvim-tree-config-actions*
       • {use_system_clipboard}?  (`boolean`, default: `true`) Use the system
                                  clipboard for copy/paste. Copied text will be
                                  stored in registers `+` (system), otherwise,
-                                 it will be stored in `1` and `"`
+                                 it will be stored in `1`
 
 *nvim_tree.config.actions.change_dir*
     vim |current-directory| behaviour
