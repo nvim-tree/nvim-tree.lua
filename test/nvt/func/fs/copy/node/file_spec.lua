@@ -20,7 +20,7 @@ before_each(function()
     require("nvim-tree").setup({
       actions = {
         -- don't use system clipboard for most tests as it is async
-        -- use_system_clipboard = false,
+        use_system_clipboard = false,
       },
     })
   end)
