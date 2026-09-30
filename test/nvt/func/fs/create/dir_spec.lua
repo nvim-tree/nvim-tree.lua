@@ -54,6 +54,21 @@ describe("prompt", function()
       cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/d1/" } }, pos = 22, } },
     })
   end)
+
+
+  it("file focused", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<Down>",
+      "<Down>",
+      "a"
+    )
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+    })
+  end)
 end)
 
 
