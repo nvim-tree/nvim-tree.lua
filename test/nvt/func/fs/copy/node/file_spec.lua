@@ -17,22 +17,17 @@ before_each(function()
   screen = nf.create_session()
 
   n.exec_lua(function()
-    require("nvim-tree").setup({
-      actions = {
-        use_system_clipboard = false,
-      },
-    })
+    require("nvim-tree").setup({})
   end)
 end)
 
-
--- TODO system clipboard + with dummy provider, see :help clipboard
 
 describe("single", function()
   it("file highlight", function()
     nf.unique_highlight_groups(screen)
 
     n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
 
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -42,7 +37,8 @@ describe("single", function()
       "c"
     )
 
-    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("1"))
+    t.eq("foo",                   n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -76,7 +72,7 @@ NvimTree_1 [-]                 [No Name]                                        
   it("dir highlight", function()
     nf.unique_highlight_groups(screen)
 
-    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
 
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -85,7 +81,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "c"
     )
 
-    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -117,7 +113,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("toggle", function()
-    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
 
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -127,7 +123,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "c"
     )
 
-    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -147,7 +143,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "c"
     )
 
-    t.eq("", n.fn.getreg("1"))
+    t.eq("", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -163,13 +159,51 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
+
+  it("no system clipboard", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        actions = {
+          use_system_clipboard = false,
+        },
+      })
+    end)
+
+    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
+    --
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "c"
+    )
+
+    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("1"))
+    t.eq("foo",                   n.fn.getreg("+"))
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+      /tmp/nvt_func/data/..       │                                                 |
+        d1                      │~                                                |
+        d2                      │~                                                |
+      ^   f1                      │~                                                |
+         f2                      │~                                                |
+    ~                             │~                                                |*17
+    NvimTree_1 [-]                 [No Name]                                        |
+    [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+        ]],
+    })
+  end)
 end)
 
 describe("multiple", function()
   it("dir overriding file highlight", function()
     nf.unique_highlight_groups(screen)
 
-    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
 
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -187,7 +221,7 @@ describe("multiple", function()
     t.eq([[
 /tmp/nvt_func/data/d1/d1f2
 /tmp/nvt_func/data/d2/
-/tmp/nvt_func/data/f1]], n.fn.getreg("1"))
+/tmp/nvt_func/data/f1]], n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -225,7 +259,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("toggle", function()
-    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
 
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -233,7 +267,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "c"
     )
 
-    t.eq("/tmp/nvt_func/data/d1/", n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/d1/", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
@@ -255,7 +289,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "c"
     )
 
-    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
 
     screen:expect({
       attr_ids = {},
