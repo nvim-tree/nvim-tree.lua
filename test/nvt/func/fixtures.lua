@@ -2,6 +2,18 @@ local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 local appearance = require("nvim-tree.appearance")
 
+---Globals used within test session context, noted in this test context only for type definition
+---@diagnostic disable: global-element
+
+---@type nvt.functest.event[]
+NVT_FUNCTEST_EVENTS = {}
+
+---@type string[]
+NVT_DUMMY_CLIPBOARD_LINES = {}
+
+---@diagnostic enable: global-element
+
+
 local M = {}
 
 ---@class (exact) nvt.functest.event
@@ -24,8 +36,8 @@ function M.create_session(width, height, options)
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
-    ---@type nvt.functest.event[]
-    NVT_FUNCTEST_EVENTS = NVT_FUNCTEST_EVENTS or {} ---@diagnostic disable-line: global-element
+    NVT_FUNCTEST_EVENTS = {} ---@diagnostic disable-line: global-element
+    NVT_DUMMY_CLIPBOARD_LINES = {} ---@diagnostic disable-line: global-element
   end)
 
   -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
@@ -33,6 +45,8 @@ function M.create_session(width, height, options)
   local dir = out:match("^DIR=(.*)$") or error(out)
 
   n.api.nvim_set_current_dir(dir)
+
+  M.setup_dummy_clipboard()
 
   return screen
 end
@@ -57,6 +71,25 @@ end
 function M.events_clear()
   n.exec_lua(function()
     NVT_FUNCTEST_EVENTS = {} ---@diagnostic disable-line: global-element
+  end)
+end
+
+---Setup a dummy clipboard using the global NVT_DUMMY_CLIPBOARD_LINES
+function M.setup_dummy_clipboard()
+  n.exec_lua(function()
+    vim.g.clipboard = {
+      name = "NVT_DUMMY_CLIPBOARD",
+      copy = {
+        ["+"] = function(lines)
+          NVT_DUMMY_CLIPBOARD_LINES = lines ---@diagnostic disable-line: global-element
+        end
+      },
+      paste = {
+        ["+"] = function()
+          return NVT_DUMMY_CLIPBOARD_LINES
+        end
+      },
+    }
   end)
 end
 
