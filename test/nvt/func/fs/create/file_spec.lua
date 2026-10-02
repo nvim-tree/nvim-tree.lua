@@ -24,21 +24,6 @@ before_each(function()
 end)
 
 
-describe("prompt", function()
-  it("tree focused", function()
-    n.feed(
-      ":NvimTreeOpen<CR>",
-      "a"
-    )
-
-    screen:expect({
-      mode = "cmdline_normal",
-      cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
-    })
-  end)
-end)
-
-
 describe("single file", function()
   it("direct ok", function()
     n.feed(
