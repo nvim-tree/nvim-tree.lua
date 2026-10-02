@@ -20,8 +20,9 @@ M.globals = {
   "teardown",
   "finally",
   -- Global nvt functiontest fixtures
+  "NVT_FUNCTEST_CONTEXT",
   "NVT_FUNCTEST_EVENTS",
-  "NVT_DUMMY_CLIPBOARD_LINES",
+  "NVT_FUNCTEST_CLIPBOARD_LINES",
 }
 
 return M
