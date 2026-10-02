@@ -99,6 +99,16 @@ end
 ---May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
 ---@param screen test.functional.ui.screen
 function M.unique_highlight_groups(screen)
+  if screen._options.ext_linegrid == nil or screen._options.ext_linegrid == true then
+    print([[
+
+warning: test.functional.ui.screen.Opts.ext_linegrid is set
+This can cause severe (x10) performance problems when all NvimTree attr_ids are set, due to the number of :help ui-event-hl_attr_define events
+Recommended: disable test.functional.ui.screen.Opts.ext_linegrid when calling create_session
+Exceptions: when testing extmarks based functionality e.g. right aligned icons, full name etc.
+]])
+  end
+
   local attr_ids = {}
 
   -- arbitrary "unique" value: math.random(tonumber('0x707070'),tonumber('0x909090'))
