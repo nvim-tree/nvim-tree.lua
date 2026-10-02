@@ -24,14 +24,18 @@ NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 local M = {}
 
----Create a new neovim session with
+---Create a new neovim functest session with
 ---- nvim-tree.lua package added
 ---- fresh test data directory created and cd'd into
----@param width? integer
----@param height? integer
+---- nvim-tree setup called
+---- nvim-tree HL attr_ids added
+---- dummy clipboard setup
+---@param config? nvim_tree.config passed to nvim-tree.setup
+---@param width? integer default 80
+---@param height? integer default 24
 ---@param options? test.functional.ui.screen.Opts
 ---@return test.functional.ui.screen
-function M.create_session(width, height, options)
+function M.create_session(config, width, height, options)
   n.clear()
 
   local screen = Screen.new(width or 80, height or 24, options)
@@ -47,13 +51,19 @@ function M.create_session(width, height, options)
     ---@diagnostic enable: global-element
   end)
 
+  -- Change to the temp test (data) directory
   -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
   local out = n.fn.system({ os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD"), })
   local dir = out:match("^DIR=(.*)$") or error(out)
-
   n.api.nvim_set_current_dir(dir)
 
-  M.setup_dummy_clipboard()
+  n.exec_lua(function()
+    require("nvim-tree").setup(config)
+  end)
+
+  M.add_nvt_attr_ids(screen)
+
+  M.use_dummy_clipboard()
 
   return screen
 end
@@ -82,7 +92,7 @@ function M.events_clear()
 end
 
 ---Setup a dummy clipboard using the global NVT_DUMMY_CLIPBOARD_LINES
-function M.setup_dummy_clipboard()
+function M.use_dummy_clipboard()
   n.exec_lua(function()
     vim.g.clipboard = {
       name = "NVT_DUMMY_CLIPBOARD",
