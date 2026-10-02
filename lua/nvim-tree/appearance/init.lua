@@ -268,7 +268,7 @@ end
 
 ---Create all highlight groups and links. Idempotent.
 function M.highlight()
-  if NVT_FUNCTEST_CONTEXT then
+  if NVT_FUNCTEST_CONTEXT then ---@diagnostic disable-line: undefined-global
     highlight_functest()
   else
     highlight_main()
