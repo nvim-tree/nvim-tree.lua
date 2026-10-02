@@ -1,24 +1,28 @@
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
-local appearance = require("nvim-tree.appearance")
+
+
+---@class (exact) nvt.functest.event
+---@field event_type string value of nvim_tree.api.events.Event
+---@field payload table deep copy
+
 
 ---Globals used within test session context, noted in this test context only for type definition
 ---@diagnostic disable: global-element
+
+---@type boolean
+NVT_FUNCTEST_CONTEXT = true
 
 ---@type nvt.functest.event[]
 NVT_FUNCTEST_EVENTS = {}
 
 ---@type string[]
-NVT_DUMMY_CLIPBOARD_LINES = {}
+NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 ---@diagnostic enable: global-element
 
 
 local M = {}
-
----@class (exact) nvt.functest.event
----@field event_type string value of nvim_tree.api.events.Event
----@field payload table deep copy
 
 ---Create a new neovim session with
 ---- nvim-tree.lua package added
@@ -36,8 +40,11 @@ function M.create_session(width, height, options)
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
-    NVT_FUNCTEST_EVENTS = {} ---@diagnostic disable-line: global-element
-    NVT_DUMMY_CLIPBOARD_LINES = {} ---@diagnostic disable-line: global-element
+    ---@diagnostic disable: global-element
+    NVT_FUNCTEST_CONTEXT = true
+    NVT_FUNCTEST_EVENTS = {}
+    NVT_FUNCTEST_CLIPBOARD_LINES = {}
+    ---@diagnostic enable: global-element
   end)
 
   -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
@@ -81,74 +88,29 @@ function M.setup_dummy_clipboard()
       name = "NVT_DUMMY_CLIPBOARD",
       copy = {
         ["+"] = function(lines)
-          NVT_DUMMY_CLIPBOARD_LINES = lines ---@diagnostic disable-line: global-element
+          NVT_FUNCTEST_CLIPBOARD_LINES = lines ---@diagnostic disable-line: global-element
         end
       },
       paste = {
         ["+"] = function()
-          return NVT_DUMMY_CLIPBOARD_LINES
+          return NVT_FUNCTEST_CLIPBOARD_LINES
         end
       },
     }
   end)
 end
 
----Reset all NvimTree* highlight groups to just a unique foreground colour
----Return attr_ids to match
----Add a CL variant with the same background colour as NvimTreeCursorLine
----May be executed repeatedly however results are not idempotent: foreground colours will be different, depending on vim.api.nvim_get_hl iteration order
+---Set concrete attr_ids for all nvim-tree highlight groups
+---Must be called after nvim-tree setup
+---These groups are uniquely defined in the test context in TODO
 ---@param screen test.functional.ui.screen
-function M.unique_highlight_groups(screen)
-  if screen._options.ext_linegrid == nil or screen._options.ext_linegrid == true then
-    print([[
-
-warning: test.functional.ui.screen.Opts.ext_linegrid is set
-This can cause severe (x10) performance problems when all NvimTree attr_ids are set, due to the number of :help ui-event-hl_attr_define events
-Recommended: disable test.functional.ui.screen.Opts.ext_linegrid when calling create_session
-Exceptions: when testing extmarks based functionality e.g. right aligned icons, full name etc.
-]])
-  end
-
+function M.add_nvt_attr_ids(screen)
   local attr_ids = {}
 
-  -- arbitrary "unique" value: math.random(tonumber('0x707070'),tonumber('0x909090'))
-  local rgb_cl, hex_cl = 8758352, "#85a450"
-
-  -- unique colour for each group, descending from #fefefe
-  local i, r, g, b = 1, 254, 254, 254
-  local rgb, hex
-
-  -- build the cursor line first, background only
-  local hgs = vim.tbl_filter(function(hg)
-    if hg.group == "NvimTreeCursorLine" then
-      attr_ids["NvimTreeCursorLine"] = { background = rgb_cl }
-      n.api.nvim_set_hl(0, "NvimTreeCursorLine", { bg = hex_cl })
-      return false
-    else
-      return true
+  for name, hl in pairs(n.api.nvim_get_hl(0, { create = false, link = true, })) do
+    if name:match("^NvimTree.*") then
+      attr_ids[name] = { foreground = hl.fg, background = hl.bg }
     end
-  end, appearance.HIGHLIGHT_GROUPS)
-
-  for _, hg in ipairs(hgs) do
-    -- next unique fg colour
-    rgb = r * 256 * 256 + g * 256 + b
-    hex = string.format("#%x", rgb)
-    i = i + 1
-    if (i % 256 == 0) then
-      b, g, r = 254, 254, r - 1
-    elseif (i % 16 == 0) then
-      b, g = 254, g - 1
-    else
-      b = b - 1
-    end
-
-    -- add the group's concrete definition with fg only
-    attr_ids[hg.group] = { foreground = rgb }
-    n.api.nvim_set_hl(0, hg.group, { fg = hex })
-
-    -- create an NvimTreeCursorLine variant
-    attr_ids[hg.group .. "CL"] = { foreground = rgb, background = rgb_cl }
-    n.api.nvim_set_hl(0, hg.group .. "CL", { fg = hex, bg = hex_cl })
   end
 
   screen:add_extra_attr_ids(attr_ids)

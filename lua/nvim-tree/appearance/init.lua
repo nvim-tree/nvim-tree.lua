@@ -182,8 +182,7 @@ M.LEGACY_LINKS = {
   NvimTreeDiagnosticHintFolderHL = "NvimTreeLspDiagnosticsHintFolderText",
 }
 
----Create all highlight groups and links. Idempotent.
-function M.highlight()
+local function highlight_main()
   -- non-linked
   for _, g in ipairs(M.HIGHLIGHT_GROUPS) do
     if g.def then
@@ -206,6 +205,61 @@ function M.highlight()
       vim.api.nvim_command("hi def link " .. g.group .. " " .. g.link)
     end
   end
+end
+
+---Create all NvimTree* highlight groups with just a unique foreground colour
+---NvimTreeCursorLine has just a background colour
+---Add a CL variant for each group with the same background colour as NvimTreeCursorLine
+---This is done here, as redefining groups in the test context is a performance issue, due to the number of :help ui-event-hl_attr_define events
+local function highlight_functest()
+
+  -- arbitrary cursor line "unique" value: math.random(tonumber('0x707070'),tonumber('0x909090'))
+  local hex_bg = "#85a450"
+
+  -- unique colour for each group, descending from #fefefe
+  local i, r, g, b = 1, 254, 254, 254
+  local rgb_fg, hex_fg
+
+  -- build the cursor line first, background only
+  local hgs = vim.tbl_filter(function(hg)
+    if hg.group == "NvimTreeCursorLine" then
+      vim.api.nvim_set_hl(0, "NvimTreeCursorLine", { bg = hex_bg })
+      return false
+    else
+      return true
+    end
+  end, M.HIGHLIGHT_GROUPS)
+
+  -- define the remainder with unique foregrounds
+  for _, hg in ipairs(hgs) do
+    -- next unique fg colour
+    rgb_fg = r * 256 * 256 + g * 256 + b
+    hex_fg = string.format("#%x", rgb_fg)
+    i = i + 1
+    if (i % 256 == 0) then
+      b, g, r = 254, 254, r - 1
+    elseif (i % 16 == 0) then
+      b, g = 254, g - 1
+    else
+      b = b - 1
+    end
+
+    -- add the group's concrete definition with fg only
+    vim.api.nvim_set_hl(0, hg.group, { fg = hex_fg })
+
+    -- create an NvimTreeCursorLine variant
+    vim.api.nvim_set_hl(0, hg.group .. "CL", { fg = hex_fg, bg = hex_bg })
+  end
+end
+
+---Create all highlight groups and links. Idempotent.
+function M.highlight()
+  if NVT_FUNCTEST_CONTEXT then
+    highlight_functest()
+  else
+    highlight_main()
+  end
+
 end
 
 return M
