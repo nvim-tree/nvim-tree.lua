@@ -14,7 +14,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session(nil, nil, { ext_linegrid = false })
+  screen = nf.create_session()
 
   n.exec_lua(function()
     require("nvim-tree").setup({})
@@ -24,8 +24,6 @@ end)
 
 describe("single", function()
   it("file highlight", function()
-    nf.unique_highlight_groups(screen)
-
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -40,22 +38,9 @@ describe("single", function()
     t.eq("foo",                   n.fn.getreg("1"))
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
 
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-    d2                      │~                                                |
-  ^   f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*17
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
-    ]],
-    })
+    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
-      unchanged = true,
       grid = [[
   {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
@@ -70,8 +55,6 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("dir highlight", function()
-    nf.unique_highlight_groups(screen)
-
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -83,22 +66,9 @@ NvimTree_1 [-]                 [No Name]                                        
 
     t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
 
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-  ^  d2                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*17
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d2 added to clipboard.                            |
-    ]],
-    })
+    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
-      unchanged = true,
       grid = [[
   {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
@@ -201,8 +171,6 @@ end)
 
 describe("multiple", function()
   it("dir overriding file highlight", function()
-    nf.unique_highlight_groups(screen)
-
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -223,25 +191,9 @@ describe("multiple", function()
 /tmp/nvt_func/data/d2/
 /tmp/nvt_func/data/f1]], n.fn.getreg("+"))
 
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-       d1f1                  │~                                                |
-       d1f2                  │~                                                |
-    d2                      │~                                                |
-       d2f1                  │~                                                |
-  ^   f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*14
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] 3 nodes added to clipboard.                                          |
-    ]],
-    })
+    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
-      unchanged = true,
       grid = [[
   {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
