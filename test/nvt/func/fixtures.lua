@@ -112,7 +112,7 @@ end
 
 ---Set concrete attr_ids for all nvim-tree highlight groups
 ---Must be called after nvim-tree setup
----These groups are uniquely defined in the test context in TODO
+---These groups are uniquely defined in the test context by appearance/init.lua highlight_functest
 ---@param screen test.functional.ui.screen
 function M.add_nvt_attr_ids(screen)
   local attr_ids = {}
