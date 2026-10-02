@@ -15,10 +15,6 @@ local screen
 
 before_each(function()
   screen = nf.create_session()
-
-  n.exec_lua(function()
-    require("nvim-tree").setup({})
-  end)
 end)
 
 
@@ -37,8 +33,6 @@ describe("single", function()
 
     t.eq("foo",                   n.fn.getreg("1"))
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
-
-    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
       grid = [[
@@ -65,8 +59,6 @@ describe("single", function()
     )
 
     t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
-
-    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
       grid = [[
@@ -190,8 +182,6 @@ describe("multiple", function()
 /tmp/nvt_func/data/d1/d1f2
 /tmp/nvt_func/data/d2/
 /tmp/nvt_func/data/f1]], n.fn.getreg("+"))
-
-    nf.add_nvt_attr_ids(screen)
 
     screen:expect({
       grid = [[
