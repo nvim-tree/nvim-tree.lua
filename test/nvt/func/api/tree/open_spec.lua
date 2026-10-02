@@ -8,25 +8,21 @@ local exec_lua = n.exec_lua
 local describe = t.describe or describe
 local before_each = t.before_each or before_each
 local it = t.it or it
-local setup = t.setup or setup
 ---@diagnostic enable: undefined-global
 
+--- @type test.functional.ui.screen
+local screen
+
+
+before_each(function()
+  screen = nf.create_session(nil, nil, { ext_linegrid = false })
+
+  n.exec_lua(function()
+    require("nvim-tree").setup({})
+  end)
+end)
+
 describe("api_tree_open", function()
-  --- @type test.functional.ui.screen
-  local screen
-
-  setup(function()
-    screen = nf.create_session()
-  end)
-
-  before_each(function()
-    exec_lua(function()
-      require("nvim-tree").setup({})
-    end)
-
-    nf.unique_highlight_groups(screen)
-  end)
-
   it("populated_unfocussed_text_only", function()
     exec_lua(function()
       require("nvim-tree.api").tree.open()
@@ -66,6 +62,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("populated_unfocussed_hl_attrs", function()
+    nf.unique_highlight_groups(screen)
+
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
@@ -86,6 +84,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   it("populated_unfocussed_hl_attrs", function()
+    nf.unique_highlight_groups(screen)
+
     exec_lua(function()
       require("nvim-tree.api").tree.open()
     end)
