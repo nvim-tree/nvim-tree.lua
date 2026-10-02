@@ -19,7 +19,7 @@ end)
 
 
 describe("single", function()
-  it("file highlight", function()
+  it("file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -48,7 +48,7 @@ describe("single", function()
     })
   end)
 
-  it("dir highlight", function()
+  it("dir", function()
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -162,7 +162,7 @@ NvimTree_1 [-]                 [No Name]                                        
 end)
 
 describe("multiple", function()
-  it("dir overriding file highlight", function()
+  it("dir overriding file", function()
     n.fn.setreg("+", "foo")
 
     n.feed(
