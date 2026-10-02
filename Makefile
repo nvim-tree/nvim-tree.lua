@@ -1,3 +1,5 @@
+# TODO functest move any checks from ci.yml into here, adding any missing e.g. codeformat
+
 all: lint style check
 
 #
