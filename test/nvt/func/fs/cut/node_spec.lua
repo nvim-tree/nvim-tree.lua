@@ -163,6 +163,52 @@ NvimTree_1 [-]                 [No Name]                                        
         ]],
     })
   end)
+
+  it("overrides copy", function()
+    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
+
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "c"
+    )
+
+    t.eq("foo",                   n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
+
+    screen:expect({
+      grid = [[
+  {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCopiedHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
+  {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+
+    n.feed(
+      "x"
+    )
+
+    screen:expect({
+      grid = [[
+  {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCutHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
+  {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+  end)
 end)
 
 describe("multiple", function()
@@ -250,6 +296,76 @@ NvimTree_1 [-]                 [No Name]                                        
 [NvimTree] 1 nodes cut to clipboard.                                            |
     ]],
     })
+  end)
+
+
+  it("overrides copy", function()
+    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
+
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "c",
+      "<down>",
+      "<CR>",
+      "<down>",
+      "c",
+      "<down>",
+      "c"
+    )
+
+    t.eq("foo", n.fn.getreg("1"))
+    t.eq([[
+/tmp/nvt_func/data/d1/
+/tmp/nvt_func/data/d2/d2f1
+/tmp/nvt_func/data/f1]], n.fn.getreg("+"))
+
+    screen:expect({
+      grid = [[
+{NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d2f1}{NvimTreeNormal:                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCopiedHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*16
+{NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+
+    n.feed(
+      "gg",
+      "<down>",
+      "<S-v>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "x"
+    )
+
+    screen:expect({
+      grid = [[
+{NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeCutHL:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeCutHL:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d2f1}{NvimTreeNormal:                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCutHL:f1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCutHLCL:f2}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*16
+{NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+[NvimTree] 4 nodes cut to clipboard.                                            |
+    ]],
+    })
+
+    t.eq("foo", n.fn.getreg("1"))
+    t.eq([[
+/tmp/nvt_func/data/d1/
+/tmp/nvt_func/data/d2/
+/tmp/nvt_func/data/f1
+/tmp/nvt_func/data/f2]], n.fn.getreg("+"))
   end)
 end)
 
