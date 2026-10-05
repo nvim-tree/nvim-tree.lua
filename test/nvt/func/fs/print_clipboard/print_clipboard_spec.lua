@@ -19,8 +19,50 @@ before_each(function()
 end)
 
 
-describe("multiple", function()
-  it("initial", function()
+describe("fs.print_clipboard", function()
+  it("none", function()
+    n.feed(
+      ":NvimTreeOpen<CR>"
+    )
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.print_clipboard()
+    end)
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+                                                                                |
+[NvimTree]                                                                      |
+                                                                                |
+Press ENTER or type command to continue^                                         |
+    ]],
+    })
+
+  end)
+
+
+  it("many", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -68,10 +110,6 @@ Copy                                                                            
 Press ENTER or type command to continue^                                         |
     ]],
     })
-  end)
-
-  it("override", function()
-    -- TODO retain state from previous or just use one test
   end)
 end)
 
