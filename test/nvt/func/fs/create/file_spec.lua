@@ -24,8 +24,8 @@ before_each(function()
 end)
 
 
-describe("single file", function()
-  it("direct ok", function()
+describe("fs.create file", function()
+  it("direct", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
@@ -54,7 +54,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("indirect ok", function()
+  it("indirect", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
@@ -84,7 +84,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("existing file", function()
+  it("fails when file exists", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
@@ -109,7 +109,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("existing dir", function()
+  it("fails when dir exists", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
@@ -134,7 +134,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("nested dir", function()
+  it("indirect creates dirs", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
@@ -166,7 +166,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("invalid path", function()
+  it("fails on invalid path", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "a",
