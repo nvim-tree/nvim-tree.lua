@@ -18,7 +18,7 @@ before_each(function()
 end)
 
 
-describe("prompt", function()
+describe("fs.create prompt", function()
   it("tree focused", function()
     n.feed(
       ":NvimTreeOpen<CR>",
