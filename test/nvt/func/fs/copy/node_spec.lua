@@ -18,8 +18,8 @@ before_each(function()
 end)
 
 
-describe("single", function()
-  it("file", function()
+describe("fs.copy.node", function()
+  it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -48,7 +48,8 @@ describe("single", function()
     })
   end)
 
-  it("dir", function()
+
+  it("single dir", function()
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -74,7 +75,8 @@ describe("single", function()
     })
   end)
 
-  it("toggle", function()
+
+  it("toggle one", function()
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -122,6 +124,56 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
+
+  it("toggle many", function()
+    n.fn.setreg("+", "foo")
+
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<Down>",
+      "c"
+    )
+
+    t.eq("/tmp/nvt_func/data/d1/", n.fn.getreg("+"))
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+  ^  d1                      │~                                                |
+    d2                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+    ]],
+    })
+
+    n.feed(
+      "<S-v>",
+      "<Down>",
+      "c"
+    )
+
+    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+  ^  d2                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] 1 nodes added to clipboard.                                          |
+    ]],
+    })
+  end)
+
+
   it("no system clipboard", function()
     n.exec_lua(function()
       require("nvim-tree").setup({
@@ -159,6 +211,7 @@ NvimTree_1 [-]                 [No Name]                                        
         ]],
     })
   end)
+
 
   it("overrides cut", function()
     n.fn.setreg("1", "foo")
@@ -205,10 +258,9 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
-end)
 
-describe("multiple", function()
-  it("dir overriding file", function()
+
+  it("dir overrides file", function()
     n.fn.setreg("+", "foo")
 
     n.feed(
@@ -242,54 +294,6 @@ describe("multiple", function()
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*14
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
   [NvimTree] 3 nodes added to clipboard.                                          |
-    ]],
-    })
-  end)
-
-  it("toggle", function()
-    n.fn.setreg("+", "foo")
-
-    n.feed(
-      ":NvimTreeOpen<CR>",
-      "<Down>",
-      "c"
-    )
-
-    t.eq("/tmp/nvt_func/data/d1/", n.fn.getreg("+"))
-
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-  ^  d1                      │~                                                |
-    d2                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*17
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
-    ]],
-    })
-
-    n.feed(
-      "<S-v>",
-      "<Down>",
-      "c"
-    )
-
-    t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
-
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-  ^  d2                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*17
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] 1 nodes added to clipboard.                                          |
     ]],
     })
   end)
