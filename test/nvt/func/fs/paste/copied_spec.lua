@@ -199,7 +199,6 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  -- TODO BUG this should prompt again when the file exists
   it("single dir conflict second conflict overwrite", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -373,6 +372,8 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
   -- TODO multiple, needs same conflict checking as single, as the codepaths in Clipboard:resolve_conflicts are different
+
+  -- TODO partial partition
 
   -- TODO test API
 end)
