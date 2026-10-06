@@ -180,6 +180,8 @@ NvimTree_1 [-]                 [No Name]                                        
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
     })
   end)
+
+  -- TODO test API
 end)
 
 -- vim:colorcolumn=80

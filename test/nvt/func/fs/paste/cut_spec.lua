@@ -20,7 +20,7 @@ end)
 
 
 describe("fs.paste.node cut", function()
-  it("cut single dir", function()
+  it("single dir", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -31,6 +31,7 @@ describe("fs.paste.node cut", function()
     )
 
     screen:expect({
+      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
@@ -56,7 +57,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("cut single file", function()
+  it("single file", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -69,6 +70,7 @@ NvimTree_1 [-]                 [No Name]                                        
     )
 
     screen:expect({
+      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
@@ -88,6 +90,10 @@ NvimTree_1 [-]                 [No Name]                                        
 
     na.not_path_exists("/tmp/nvt_func/data/f1")
   end)
+
+  -- TODO complete as per copied
+
+  -- TODO test API
 end)
 
 -- vim:colorcolumn=80
