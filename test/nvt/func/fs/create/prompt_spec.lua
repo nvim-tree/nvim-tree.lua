@@ -83,6 +83,8 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
+
+  -- TODO test API
 end)
 
 -- vim:colorcolumn=80
