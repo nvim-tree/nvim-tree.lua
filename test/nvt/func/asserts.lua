@@ -19,6 +19,13 @@ function M.file_exists(path)
   t.eq("file", stat and stat.type, path)
 end
 
+---Assert path does not exist
+---@param path string absolute
+function M.not_path_exists(path)
+  local stat = vim.uv.fs_stat(path)
+  t.eq(nil, stat, path)
+end
+
 ---Assert events received during a functest, recorded in session global NVT_FUNCTEST_EVENTS
 ---Must be subscribed via event_subscribe
 ---@param events nvt.functest.event[]
