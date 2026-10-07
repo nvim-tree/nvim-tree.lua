@@ -18,6 +18,12 @@ before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true })
 end)
 
+-- common copy/paste codepaths are tested here except for API
+
+-- TODO multiple, needs same conflict checking as single, as the codepaths in Clipboard:resolve_conflicts are different
+
+-- TODO partial partition
+
 
 describe("fs.paste.node copied", function()
   it("single file", function()
@@ -370,12 +376,6 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
-
-  -- TODO multiple, needs same conflict checking as single, as the codepaths in Clipboard:resolve_conflicts are different
-
-  -- TODO partial partition
-
-  -- TODO test API
 end)
 
 -- vim:colorcolumn=80
