@@ -193,10 +193,24 @@ function M.highlight()
 
   -- hard link override when legacy only is present
   for from, to in pairs(M.LEGACY_LINKS) do
-    local hl_from = vim.api.nvim_get_hl(0, { name = from })
     local hl_to = vim.api.nvim_get_hl(0, { name = to })
-    if vim.tbl_isempty(hl_from) and not vim.tbl_isempty(hl_to) then
-      vim.api.nvim_command("hi link " .. from .. " " .. to)
+    if not vim.tbl_isempty(hl_to) then
+      local hl_from = vim.api.nvim_get_hl(0, { name = from })
+
+      -- check if it simply links to the default
+      local link_default = false
+      if hl_from.link then
+        for _, g in ipairs(M.HIGHLIGHT_GROUPS) do
+          if g.group == from then
+            link_default = (hl_from.link == g.link)
+            break
+          end
+        end
+      end
+
+      if vim.tbl_isempty(hl_from) or link_default then
+        vim.api.nvim_command("hi link " .. from .. " " .. to)
+      end
     end
   end
 
