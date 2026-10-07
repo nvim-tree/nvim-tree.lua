@@ -14,7 +14,7 @@ local it = t.it or it
 local screen
 
 
--- common copy/paste codepaths are tested in copied_spec.lua
+-- common copy/paste codepaths are tested in copied_spec.lua except for API
 
 
 before_each(function()
@@ -124,7 +124,78 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
     )
   end)
 
-  -- TODO test API
+
+  it("api clipboard", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "x",
+      "<down>"
+    )
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.paste()
+    end)
+
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f1")
+    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f2")
+
+    na.not_path_exists("/tmp/nvt_func/data/d1")
+
+    na.events_received({ {
+      event_type = "NodeRenamed",
+      payload = {
+        old_name = "/tmp/nvt_func/data/d1",
+        new_name = "/tmp/nvt_func/data/d2/d1",
+      },
+    }, })
+  end)
+
+
+  it("api node under cursor", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "x",
+      "<down>"
+    )
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.paste()
+    end)
+
+    screen:expect({
+      cmdline = {},
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d2                      │~                                                |
+  ^    d1                    │~                                                |
+       d2f1                  │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*15
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f1")
+    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f2")
+
+    na.not_path_exists("/tmp/nvt_func/data/d1")
+
+    na.events_received({ {
+      event_type = "NodeRenamed",
+      payload = {
+        old_name = "/tmp/nvt_func/data/d1",
+        new_name = "/tmp/nvt_func/data/d2/d1",
+      },
+    }, })
+  end)
 end)
 
 -- vim:colorcolumn=80
