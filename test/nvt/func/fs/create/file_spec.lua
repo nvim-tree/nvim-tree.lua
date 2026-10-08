@@ -158,7 +158,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/d1")
 
     na.events_received({
-      -- TODO BUG this should be "/tmp/nvt_func/data/newdir/"
+      -- BUG this should be "/tmp/nvt_func/data/newdir/"
       { event_type = "FolderCreated",  payload = { folder_name = "/tmp/nvt_func/data/newdir/newfile", }, },
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
       { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
@@ -174,7 +174,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "/foo<CR>"
     )
 
-    -- TODO BUG this fails but shows message "/foo was properly created"
+    -- BUG this fails but shows message "/foo was properly created"
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },

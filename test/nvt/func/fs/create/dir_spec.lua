@@ -105,7 +105,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/direct1/direct2")
 
     na.events_received({
-      -- TODO BUG this should be "/tmp/nvt_func/data/direct1/"
+      -- BUG this should be "/tmp/nvt_func/data/direct1/"
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
     })
@@ -138,7 +138,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.dir_exists("/tmp/nvt_func/data/d1/indirect1/indirect2")
 
     na.events_received({
-      -- TODO BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
+      -- BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
     })
@@ -175,8 +175,8 @@ NvimTree_1 [-]                 [No Name]                                        
       "d1/d1f1/<CR>"
     )
 
-    -- TODO BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created" and focuses the file
-    -- TODO add similar test for multiple dirs when fixed
+    -- BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created" and focuses the file
+    -- add similar test for multiple dirs when fixed
     screen:expect({
       attr_ids = {},
       grid = [[
