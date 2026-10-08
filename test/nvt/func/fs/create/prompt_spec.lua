@@ -33,7 +33,7 @@ describe("fs.create prompt", function()
   end)
 
 
-  it("tree not focused", function()
+  it("api tree not focused", function()
     n.feed(
       ":NvimTreeOpen<CR>",
       "<Down>",
@@ -83,8 +83,6 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
-
-  -- TODO test API
 end)
 
 -- vim:colorcolumn=80
