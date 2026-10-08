@@ -125,34 +125,6 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
   end)
 
 
-  it("api clipboard", function()
-    n.feed(
-      ":NvimTreeOpen<CR>",
-      "<down>",
-      "x",
-      "<down>"
-    )
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.paste()
-    end)
-
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f1")
-    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f2")
-
-    na.not_path_exists("/tmp/nvt_func/data/d1")
-
-    na.events_received({ {
-      event_type = "NodeRenamed",
-      payload = {
-        old_name = "/tmp/nvt_func/data/d1",
-        new_name = "/tmp/nvt_func/data/d2/d1",
-      },
-    }, })
-  end)
-
-
   it("api node under cursor", function()
     n.feed(
       ":NvimTreeOpen<CR>",
@@ -193,6 +165,60 @@ NvimTree_1 [-]                 [No Name]                                        
       payload = {
         old_name = "/tmp/nvt_func/data/d1",
         new_name = "/tmp/nvt_func/data/d2/d1",
+      },
+    }, })
+  end)
+
+
+  it("api node specified", function()
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "x"
+    )
+
+    n.exec_lua(function()
+      -- BUG #3362, replace with commented below when complete
+      local explorer = require("nvim-tree.core").get_explorer()
+      if explorer then
+        local node = explorer.nodes[3] -- d3
+        explorer.clipboard:paste(node)
+      end
+
+      -- local api = require("nvim-tree.api")
+      -- local explorer = api.tree.get_nodes()
+      -- local node = explorer.nodes[3] -- d3
+      -- api.fs.paste(node)
+    end)
+
+    screen:expect({
+      cmdline = {},
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d2                      │~                                                |
+    d3                      │~                                                |
+  ^    d1                    │~                                                |
+       d3f1                  │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*15
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d3/d1")
+    na.file_exists("/tmp/nvt_func/data/d3/d1/d1f1")
+    na.file_exists("/tmp/nvt_func/data/d3/d1/d1f2")
+
+    na.not_path_exists("/tmp/nvt_func/data/d1")
+
+    na.events_received({ {
+      event_type = "NodeRenamed",
+      payload = {
+        old_name = "/tmp/nvt_func/data/d1",
+        new_name = "/tmp/nvt_func/data/d3/d1",
       },
     }, })
   end)
