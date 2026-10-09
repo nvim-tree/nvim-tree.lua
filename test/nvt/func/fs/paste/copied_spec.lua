@@ -61,6 +61,59 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
+  it("multiple files", function()
+    n.exec_lua(function()
+      require("nvim-tree.api").tree.open()
+    end)
+
+    n.feed(
+      "<down>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "<S-v>",
+      "<down>"
+    )
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.copy.node()
+    end)
+
+    n.feed(
+      "<up>",
+      "<up>"
+    )
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.paste()
+    end)
+
+    screen:expect({
+      cmdline = {},
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+    d3                      │~                                                |
+       d3f1                  │~                                                |
+       f1                    │~                                                |
+  ^     f2                    │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*13
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] 2 nodes added to clipboard.                                          |
+        ]],
+    })
+
+    na.file_exists("/tmp/nvt_func/data/f1")
+    na.file_exists("/tmp/nvt_func/data/f2")
+    na.file_exists("/tmp/nvt_func/data/d3/f1")
+    na.file_exists("/tmp/nvt_func/data/d3/f2")
+  end)
+
+
   it("single dir", function()
     n.feed(
       ":NvimTreeOpen<CR>",
