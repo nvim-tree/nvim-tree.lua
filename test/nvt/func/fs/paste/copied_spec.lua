@@ -37,6 +37,7 @@ describe("fs.paste.node copied", function()
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -62,11 +63,9 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("multiple files", function()
-    n.exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
-
+    -- visual selection is separate operation before copy to ensure synchronised state
     n.feed(
+      ":NvimTreeOpen<CR>",
       "<down>",
       "<down>",
       "<down>",
@@ -74,19 +73,15 @@ NvimTree_1 [-]                 [No Name]                                        
       "<S-v>",
       "<down>"
     )
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.copy.node()
-    end)
+    n.poke_eventloop()
 
     n.feed(
+      "c",
       "<up>",
-      "<up>"
+      "<up>",
+      "p"
     )
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.paste()
-    end)
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -124,6 +119,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "gg",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -164,6 +160,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -175,6 +172,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "gg",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -217,6 +215,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -226,6 +225,7 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       "<Esc>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -235,6 +235,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "gg",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -266,6 +267,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -275,6 +277,7 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       "<BS>2<CR>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -284,6 +287,7 @@ NvimTree_1 [-]                 [No Name]                                        
     n.feed(
       "y<CR>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -326,6 +330,7 @@ Press ENTER or type command to continue^                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -335,6 +340,7 @@ Press ENTER or type command to continue^                                        
     n.feed(
       "<BS>2<CR>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -346,6 +352,7 @@ Press ENTER or type command to continue^                                        
       "gg",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -376,6 +383,7 @@ Press ENTER or type command to continue^                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -385,6 +393,7 @@ Press ENTER or type command to continue^                                        
     n.feed(
       "<BS>2<CR>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -394,6 +403,7 @@ Press ENTER or type command to continue^                                        
     n.feed(
       "R<CR>"
     )
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
@@ -405,6 +415,7 @@ Press ENTER or type command to continue^                                        
       "gg",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = { { abort = true } },

@@ -35,6 +35,7 @@ describe("fs.paste.node cut", function()
       "p",
       "E"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -84,6 +85,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "<up>",
       "p"
     )
+    n.poke_eventloop()
 
     screen:expect({
       cmdline = {},
@@ -132,6 +134,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
       "x",
       "<down>"
     )
+    n.poke_eventloop()
 
     n.exec_lua(function()
       require("nvim-tree.api").fs.paste()
@@ -176,6 +179,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "<down>",
       "x"
     )
+    n.poke_eventloop()
 
     n.exec_lua(function()
       -- BUG #3362, replace with commented below when complete

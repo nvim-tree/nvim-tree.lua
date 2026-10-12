@@ -38,6 +38,7 @@ describe("fs.create prompt", function()
       ":NvimTreeOpen<CR>",
       "<Down>",
       "<c-w><c-w>",
+      -- TODO why can't we execute this from exec_lua ?
       ":lua require('nvim-tree.api').fs.create()<CR>"
     )
 
