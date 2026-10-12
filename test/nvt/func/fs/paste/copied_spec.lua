@@ -27,21 +27,16 @@ end)
 
 describe("fs.paste.node copied", function()
   it("single file", function()
-    n.exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
-
-    n.feed("<down><down><down><down>")
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.copy.node()
-    end)
-
-    n.feed("<up>")
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.paste()
-    end)
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "c",
+      "<up>",
+      "p"
+    )
 
     screen:expect({
       cmdline = {},
@@ -72,7 +67,10 @@ NvimTree_1 [-]                 [No Name]                                        
     end)
 
     n.feed(
-      "<down><down><down><down>",
+      "<down>",
+      "<down>",
+      "<down>",
+      "<down>",
       "<S-v>",
       "<down>"
     )
@@ -81,7 +79,10 @@ NvimTree_1 [-]                 [No Name]                                        
       require("nvim-tree.api").fs.copy.node()
     end)
 
-    n.feed("<up><up>")
+    n.feed(
+      "<up>",
+      "<up>"
+    )
 
     n.exec_lua(function()
       require("nvim-tree.api").fs.paste()
@@ -114,39 +115,34 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir", function()
-    n.exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
-
-    n.feed("<down>")
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.copy.node()
-    end)
-
-    n.feed("<down>")
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.paste()
-    end)
-
-    n.feed("<CR>")
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "c",
+      "<down>",
+      "p",
+      "gg",
+      "E"
+    )
 
     screen:expect({
       cmdline = {},
       attr_ids = {},
       grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+       d1f1                  │~                                                |
+       d1f2                  │~                                                |
     d2                      │~                                                |
-  ^    d1                    │~                                                |
+      d1                    │~                                                |
          d1f1                │~                                                |
          d1f2                │~                                                |
        d2f1                  │~                                                |
-    d3                      │~                                                |
+    d3                      │~                                                |
+       d3f1                  │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*12
+~                             │~                                                |*9
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
     ]],
@@ -161,40 +157,43 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir conflict resolved", function()
-    n.exec_lua(function()
-      require("nvim-tree.api").tree.open()
-    end)
-
-    n.feed("<down>")
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.copy.node()
-    end)
-
-    n.feed("<up>")
-
-    -- TODO need a mechanism to await feedback
-    n.feed("p")
+    n.feed(
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "c",
+      "<up>",
+      "p"
+    )
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed("_copy<CR>")
+    n.feed(
+      "_copy<CR>",
+      "gg",
+      "E"
+    )
 
     screen:expect({
       cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-  ^  d1_copy                 │~                                                |
-    d2                      │~                                                |
-    d3                      │~                                                |
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+       d1f1                  │~                                                |
+       d1f2                  │~                                                |
+    d1_copy                 │~                                                |
+       d1f1                  │~                                                |
+       d1f2                  │~                                                |
+    d2                      │~                                                |
+       d2f1                  │~                                                |
+    d3                      │~                                                |
+       d3f1                  │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*15
+~                             │~                                                |*9
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
@@ -209,7 +208,6 @@ NvimTree_1 [-]                 [No Name]                                        
     na.file_exists("/tmp/nvt_func/data/d1_copy/d1f1")
   end)
 
-  -- TODO replace remainder of n.feed calls
 
   it("single dir conflict cancelled", function()
     n.feed(
