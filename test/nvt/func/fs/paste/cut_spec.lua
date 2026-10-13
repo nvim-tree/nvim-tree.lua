@@ -4,7 +4,7 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 local nu = require("test.nvt.func.util")
 
--- 0.13 global compatibility
+-- 0.12 global compatibility, remove when 0.13 is stable
 ---@diagnostic disable: undefined-global
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 ---@diagnostic enable: undefined-global
