@@ -14,15 +14,12 @@ local it = t.it or it
 local screen
 
 
+-- common copy/paste codepaths are tested here except for API
+
+
 before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true })
 end)
-
--- common copy/paste codepaths are tested here except for API
-
--- TODO multiple, needs same conflict checking as single, as the codepaths in Clipboard:resolve_conflicts are different
-
--- TODO partial partition
 
 
 describe("fs.paste.node copied", function()
@@ -493,7 +490,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict rename all", function()
+  it("multiple conflict rename suffix", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -551,6 +548,134 @@ NvimTree_1 [-]                 [No Name]                                        
     na.file_exists("/tmp/nvt_func/data/d2/f2")
 
     na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3.renamed")
+    na.file_exists("/tmp/nvt_func/data/d2/d3.renamed/d3f1")
+  end)
+
+
+  it("multiple conflict rename cancel", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<s-v>",
+      "G",
+      "c",
+      "<up><up><up>",
+      "c",
+      "p",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "<CR>",
+      "<CR>",
+    })
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+      d1                    │~                                                |
+      d3                    │~                                                |
+  ^     f1                    │~                                                |
+       f2                    │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*12
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f2")
+  end)
+
+
+  it("multiple conflict rename second conflict", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down><down>",
+      "a",
+      "f2.renamed<CR>",
+    })
+
+    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
+
+    nu.feed_sync({
+      "W",
+      "gg",
+      "<down>",
+      "<s-v>",
+      "G",
+      "c",
+      "<up><up><up>",
+      "c",
+      "p",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "<CR>",
+      ".renamed<CR>",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2/f2.renamed ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "<CR>",
+      ".again<CR>",
+    })
+
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+      d1                    │~                                                |
+      d3                    │~                                                |
+      d3.renamed            │~                                                |
+       f1                    │~                                                |
+       f2                    │~                                                |
+       f2.renamed            │~                                                |
+  ^     f2.renamed.again      │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*9
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+--
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f2")
+
+    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
+    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed.again")
     na.dir_exists("/tmp/nvt_func/data/d2/d3.renamed")
     na.file_exists("/tmp/nvt_func/data/d2/d3.renamed/d3f1")
   end)
