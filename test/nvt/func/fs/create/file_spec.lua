@@ -83,6 +83,46 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
+  t.it("api indirect", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+    })
+
+    -- schedule this as it blocks on vim.ui.input
+    n.exec_lua(function()
+      vim.schedule(require("nvim-tree.api").fs.create)
+    end)
+
+    -- wait for the input
+    n.poke_eventloop()
+
+    nu.feed_sync({
+      "d1/indirect<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+       d1f1                  │~                                                |
+  ^     indirect              │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1/indirect was properly created                  |
+    ]],
+    })
+
+    na.file_exists("/tmp/nvt_func/data/d1/indirect")
+
+    na.events_received({
+      { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
+      { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
+    })
+  end)
+
+
   t.it("fails when file exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
@@ -181,8 +221,6 @@ NvimTree_1 [-]                 [No Name]                                        
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
     })
   end)
-
-  -- TODO test API
 end)
 
 -- vim:colorcolumn=80
