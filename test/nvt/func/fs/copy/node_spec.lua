@@ -1,6 +1,7 @@
 local t = require("test.testutil")
-local nf = require("test.nvt.func.fixtures")
 local n = require("test.functional.testnvim")()
+local nf = require("test.nvt.func.fixtures")
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -23,13 +24,11 @@ describe("fs.copy.node", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "c"
-    )
+      "<down><down><down>",
+      "c",
+    })
 
     t.eq("foo",                   n.fn.getreg("1"))
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
@@ -52,12 +51,11 @@ describe("fs.copy.node", function()
   it("single dir", function()
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "c"
-    )
+      "<down><down>",
+      "c",
+    })
 
     t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
 
@@ -79,13 +77,11 @@ describe("fs.copy.node", function()
   it("toggle one", function()
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "c"
-    )
+      "<down><down><down>",
+      "c",
+    })
 
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
 
@@ -103,9 +99,9 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    n.feed(
-      "c"
-    )
+    nu.feed_sync({
+      "c",
+    })
 
     t.eq("", n.fn.getreg("+"))
 
@@ -128,11 +124,11 @@ NvimTree_1 [-]                 [No Name]                                        
   it("toggle many", function()
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
-      "c"
-    )
+      "c",
+    })
 
     t.eq("/tmp/nvt_func/data/d1/", n.fn.getreg("+"))
 
@@ -150,11 +146,11 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    n.feed(
+    nu.feed_sync({
       "<S-v>",
       "<Down>",
-      "c"
-    )
+      "c",
+    })
 
     t.eq("/tmp/nvt_func/data/d2/", n.fn.getreg("+"))
 
@@ -186,13 +182,11 @@ NvimTree_1 [-]                 [No Name]                                        
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
     --
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "c"
-    )
+      "<down><down><down>",
+      "c",
+    })
 
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("1"))
     t.eq("foo",                   n.fn.getreg("+"))
@@ -217,13 +211,11 @@ NvimTree_1 [-]                 [No Name]                                        
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "x"
-    )
+      "<down><down><down>",
+      "x",
+    })
 
     t.eq("foo",                   n.fn.getreg("1"))
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
@@ -241,9 +233,9 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    n.feed(
-      "c"
-    )
+    nu.feed_sync({
+      "c",
+    })
 
     screen:expect({
       grid = [[
@@ -263,18 +255,14 @@ NvimTree_1 [-]                 [No Name]                                        
   it("dir overrides file", function()
     n.fn.setreg("+", "foo")
 
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "E",
-      "<Down>",
-      "<Down>",
-      "<Down>",
+      "<down><down><down>",
       "<S-v>",
-      "<Down>",
-      "<Down>",
-      "<Down>",
-      "c"
-    )
+      "<down><down><down>",
+      "c",
+    })
 
     t.eq([[
 /tmp/nvt_func/data/d1/d1f2
