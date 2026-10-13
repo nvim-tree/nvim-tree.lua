@@ -1,7 +1,7 @@
 local t = require("test.testutil")
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local n = require("test.functional.testnvim")()
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -27,7 +27,7 @@ end)
 
 describe("fs.paste.node copied", function()
   it("single file", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<down>",
@@ -35,9 +35,8 @@ describe("fs.paste.node copied", function()
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       cmdline = {},
@@ -63,25 +62,19 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("multiple files", function()
-    -- visual selection is separate operation before copy to ensure synchronised state
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<down>",
       "<down>",
       "<down>",
       "<S-v>",
-      "<down>"
-    )
-    n.poke_eventloop()
-
-    n.feed(
+      "<down>",
       "c",
       "<up>",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       cmdline = {},
@@ -110,16 +103,15 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<down>",
       "p",
       "gg",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = {},
@@ -153,26 +145,24 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir conflict resolved", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed(
+    nu.feed_sync({
       "_copy<CR>",
       "gg",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -208,34 +198,31 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir conflict cancelled", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed(
-      "<Esc>"
-    )
-    n.poke_eventloop()
+    nu.feed_sync({
+      "<Esc>",
+    })
 
     screen:expect({
       cmdline = { { abort = true } },
     })
 
-    n.feed(
+    nu.feed_sync({
       "gg",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = {},
@@ -260,34 +247,31 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single dir conflict second conflict overwrite", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed(
+    nu.feed_sync({
       "<BS>2<CR>"
-    )
-    n.poke_eventloop()
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    n.feed(
-      "y<CR>"
-    )
-    n.poke_eventloop()
+    nu.feed_sync({
+      "y<CR>",
+    })
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -323,36 +307,33 @@ Press ENTER or type command to continue^                                        
 
 
   it("single dir conflict second conflict cancel", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed(
-      "<BS>2<CR>"
-    )
-    n.poke_eventloop()
+    nu.feed_sync({
+      "<BS>2<CR>",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    n.feed(
+    nu.feed_sync({
       "n<CR>",
       "gg",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = { { abort = true } },
@@ -376,46 +357,42 @@ Press ENTER or type command to continue^                                        
 
 
   it("single dir conflict second conflict resolved", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    n.feed(
-      "<BS>2<CR>"
-    )
-    n.poke_eventloop()
+    nu.feed_sync({
+      "<BS>2<CR>",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    n.feed(
-      "R<CR>"
-    )
-    n.poke_eventloop()
+    nu.feed_sync({
+      "R<CR>",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d2" } }, pos = 21, } },
     })
 
-    n.feed(
+    nu.feed_sync({
       "<BS>1_copy<CR>",
       "gg",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = { { abort = true } },

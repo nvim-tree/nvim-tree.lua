@@ -1,7 +1,8 @@
 local t = require("test.testutil")
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local n = require("test.functional.testnvim")()
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -27,15 +28,14 @@ end)
 
 describe("fs.paste.node cut", function()
   it("single dir", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "x",
       "<down>",
       "p",
-      "E"
-    )
-    n.poke_eventloop()
+      "E",
+    })
 
     screen:expect({
       cmdline = {},
@@ -73,7 +73,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single file", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<down>",
@@ -83,9 +83,8 @@ NvimTree_1 [-]                 [No Name]                                        
       "<CR>",
       "<C-W><C-W>",
       "<up>",
-      "p"
-    )
-    n.poke_eventloop()
+      "p",
+    })
 
     screen:expect({
       cmdline = {},
@@ -128,13 +127,12 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
 
 
   it("api node under cursor", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "x",
-      "<down>"
-    )
-    n.poke_eventloop()
+      "<down>",
+    })
 
     n.exec_lua(function()
       require("nvim-tree.api").fs.paste()
@@ -174,12 +172,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("api node specified", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
-      "x"
-    )
-    n.poke_eventloop()
+      "x",
+    })
 
     n.exec_lua(function()
       -- BUG #3362, replace with commented below when complete

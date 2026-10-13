@@ -29,20 +29,11 @@ Use `Snapshot: screen:expect([[` contents from test log as the `grid`, visually 
 
 # Test Inputs
 
-## Synchronisation
-
-TODO: this isn't great and results in a lot of test boilerplate; maybe write a `feed_sync` util, if there is not anything available
 TODO: how to handle asynchronous operations e.g. fs/git update
 
-### `feed()`
+## Synchronisation
 
-`test.functional.testnvim` `feed` is asynchronous and does not block the test thread: all inputs are all sent consecutively via `nvim_input()` and the function returns immediately. Nvim will effectively execute each input synchronously when the input blocks the main loop i.e. no threads or processes spawned.
+The Nvim functional test framework's inputs are handled asynchronously via the commonly used `test.functional.testnvim` `feed` (non-deferred). It will execute all the inputs _immediately_ without waiting for them to complete, most notably lua callbacks such as nvim-tree mappings as well as some visual mode operations. See `:help api-fast`
 
-Before asserts, `screen:expect` etc., `poke_eventloop()` should be called, to ensure that all inputs have been processed by the main loop.
-
-_Exception:_ visual operations (e.g. select multiple for copy) do not appear to be executed synchronously. `poke_eventloop()` after those inputs to ensure synchronisation.
-
-### `exec_lua()`
-
-`test.functional.testnvim` `exec_lua` is synchronous: it will block the test thread until completion.
+Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
 
