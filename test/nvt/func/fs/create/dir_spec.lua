@@ -6,14 +6,16 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
+local describe = t.describe or describe
+local before_each = t.before_each or before_each
+local it = t.it or it
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
 local screen
 
 
-t.before_each(function()
+before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true })
 
   local Event = require("nvim-tree._meta.api.events").Event
@@ -21,8 +23,8 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.create dir", function()
-  t.it("single direct", function()
+describe("fs.create dir", function()
+  it("single direct", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -50,7 +52,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("single indirect", function()
+  it("single indirect", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -79,7 +81,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("api single indirect", function()
+  it("api single indirect", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
     })
@@ -118,7 +120,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("multiple direct", function()
+  it("multiple direct", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -150,7 +152,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("multiple indirect", function()
+  it("multiple indirect", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -183,7 +185,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails when file exists", function()
+  it("fails when file exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -206,7 +208,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails when file exists", function()
+  it("fails when file exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -232,7 +234,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails on invalid path", function()
+  it("fails on invalid path", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -256,7 +258,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails when dir exists", function()
+  it("fails when dir exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
