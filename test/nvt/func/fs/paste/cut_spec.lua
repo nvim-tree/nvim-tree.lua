@@ -34,7 +34,7 @@ describe("fs.paste.node cut", function()
       "x",
       "<down>",
       "p",
-      "E",
+      "<CR>",
     })
 
     screen:expect({
@@ -46,11 +46,12 @@ describe("fs.paste.node cut", function()
   ^    d1                    │~                                                |
          d1f1                │~                                                |
          d1f2                │~                                                |
-       d2f1                  │~                                                |
+      d3                    │~                                                |
+       f2                    │~                                                |
     d3                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*13
+~                             │~                                                |*12
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
     ]],
@@ -75,10 +76,7 @@ NvimTree_1 [-]                 [No Name]                                        
   it("single file", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "<down>",
+      "<down><down><down><down>",
       "x",
       "<CR>",
       "<C-W><C-W>",
@@ -145,11 +143,12 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
   /tmp/nvt_func/data/..       │                                                 |
     d2                      │~                                                |
   ^    d1                    │~                                                |
-       d2f1                  │~                                                |
+      d3                    │~                                                |
+       f2                    │~                                                |
     d3                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*15
+~                             │~                                                |*14
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
     ]],
