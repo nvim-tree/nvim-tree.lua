@@ -5,22 +5,20 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true })
 end)
 
 
-describe("fs.create prompt", function()
-  it("tree focused", function()
+t.describe("fs.create prompt", function()
+  t.it("tree focused", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
@@ -34,7 +32,7 @@ describe("fs.create prompt", function()
   end)
 
 
-  it("api tree not focused", function()
+  t.it("api tree not focused", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
@@ -56,7 +54,7 @@ describe("fs.create prompt", function()
   end)
 
 
-  it("file focused", function()
+  t.it("file focused", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down><Down>",
@@ -70,7 +68,7 @@ describe("fs.create prompt", function()
   end)
 
 
-  it("cancelled", function()
+  t.it("cancelled", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",

@@ -5,22 +5,20 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session()
 end)
 
 
-describe("fs.copy.node", function()
-  it("single file", function()
+t.describe("fs.copy.node", function()
+  t.it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -48,7 +46,7 @@ describe("fs.copy.node", function()
   end)
 
 
-  it("single dir", function()
+  t.it("single dir", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -74,7 +72,7 @@ describe("fs.copy.node", function()
   end)
 
 
-  it("toggle one", function()
+  t.it("toggle one", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -121,7 +119,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("toggle many", function()
+  t.it("toggle many", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -170,7 +168,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("no system clipboard", function()
+  t.it("no system clipboard", function()
     n.exec_lua(function()
       require("nvim-tree").setup({
         actions = {
@@ -207,7 +205,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("overrides cut", function()
+  t.it("overrides cut", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -252,7 +250,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("dir overrides file", function()
+  t.it("dir overrides file", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
