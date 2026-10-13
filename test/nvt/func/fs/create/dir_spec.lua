@@ -1,4 +1,5 @@
 local t = require("test.testutil")
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 local nu = require("test.nvt.func.util")
@@ -53,6 +54,45 @@ NvimTree_1 [-]                 [No Name]                                        
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
+      "d1/indirect/<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+  ^    indirect              │~                                                |
+       d1f1                  │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/d1/indirect/ was properly created                 |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d1/indirect")
+
+    na.events_received({
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
+    })
+  end)
+
+
+  t.it("api single indirect", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+    })
+
+    -- schedule this as it blocks on vim.ui.input
+    n.exec_lua(function()
+      vim.schedule(require("nvim-tree.api").fs.create)
+    end)
+
+    -- wait for the input
+    n.poke_eventloop()
+
+    nu.feed_sync({
       "d1/indirect/<CR>",
     })
 
@@ -236,8 +276,6 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
   end)
-
-  -- TODO test API
 end)
 
 -- vim:colorcolumn=80

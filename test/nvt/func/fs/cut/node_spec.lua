@@ -21,7 +21,7 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.cut.node", function()
+t.describe("fs.cut", function()
   t.it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
@@ -31,6 +31,37 @@ t.describe("fs.cut.node", function()
       "<down><down><down>",
       "x",
     })
+
+    t.eq("foo",                   n.fn.getreg("1"))
+    t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
+
+    screen:expect({
+      grid = [[
+  {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCutHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
+  {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+  end)
+
+
+  t.it("api single file", function()
+    n.fn.setreg("1", "foo")
+    n.fn.setreg("+", "foo")
+
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down><down><down>",
+    })
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.cut()
+    end)
 
     t.eq("foo",                   n.fn.getreg("1"))
     t.eq("/tmp/nvt_func/data/f1", n.fn.getreg("+"))
