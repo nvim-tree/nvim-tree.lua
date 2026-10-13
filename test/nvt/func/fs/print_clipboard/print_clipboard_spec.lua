@@ -1,6 +1,7 @@
 local t = require("test.testutil")
-local nf = require("test.nvt.func.fixtures")
 local n = require("test.functional.testnvim")()
+local nf = require("test.nvt.func.fixtures")
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -21,9 +22,9 @@ end)
 
 describe("fs.print_clipboard", function()
   it("none", function()
-    n.feed(
-      ":NvimTreeOpen<CR>"
-    )
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+    })
 
     n.exec_lua(function()
       require("nvim-tree.api").fs.print_clipboard()
@@ -63,7 +64,7 @@ Press ENTER or type command to continue^                                        
 
 
   it("many", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",
@@ -74,8 +75,8 @@ Press ENTER or type command to continue^                                        
       "<down>",
       "c",
       "<down>",
-      "x"
-    )
+      "x",
+    })
 
     n.exec_lua(function()
       require("nvim-tree.api").fs.print_clipboard()
