@@ -1,7 +1,7 @@
 local t = require("test.testutil")
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local n = require("test.functional.testnvim")()
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -24,11 +24,11 @@ end)
 
 describe("fs.create dir", function()
   it("single direct", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "direct/<CR>"
-    )
+      "direct/<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -52,11 +52,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("single indirect", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/indirect/<CR>"
-    )
+      "d1/indirect/<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -81,11 +81,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("multiple direct", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "direct1/direct2/<CR>"
-    )
+      "direct1/direct2/<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -113,11 +113,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("multiple indirect", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/indirect1/indirect2/<CR>"
-    )
+      "d1/indirect1/indirect2/<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -146,11 +146,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails when file exists", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/<CR>"
-    )
+      "d1/<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -169,11 +169,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails when file exists", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/d1f1/<CR>"
-    )
+      "d1/d1f1/<CR>",
+    })
 
     -- BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created" and focuses the file
     -- add similar test for multiple dirs when fixed
@@ -195,12 +195,12 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails on invalid path", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
       "<C-U>",
-      "/foo/bar<CR>"
-    )
+      "/foo/bar<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -219,12 +219,12 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails when dir exists", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
       "a",
-      "<CR>"
-    )
+      "<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
