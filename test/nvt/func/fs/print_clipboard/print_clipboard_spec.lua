@@ -5,9 +5,7 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 ---@diagnostic enable: undefined-global
 
 
@@ -15,13 +13,13 @@ local it = t.it or it
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session()
 end)
 
 
-describe("fs.print_clipboard", function()
-  it("none", function()
+t.describe("fs.print_clipboard", function()
+  t.it("none", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
     })
@@ -63,7 +61,7 @@ Press ENTER or type command to continue^                                        
   end)
 
 
-  it("many", function()
+  t.it("many", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
