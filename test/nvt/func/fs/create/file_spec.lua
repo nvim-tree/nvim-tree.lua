@@ -6,16 +6,14 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session({}, nil, nil, { ext_cmdline = true })
 
   local Event = require("nvim-tree._meta.api.events").Event
@@ -25,8 +23,8 @@ before_each(function()
 end)
 
 
-describe("fs.create file", function()
-  it("direct", function()
+t.describe("fs.create file", function()
+  t.it("direct", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -55,7 +53,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("indirect", function()
+  t.it("indirect", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -85,7 +83,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("fails when file exists", function()
+  t.it("fails when file exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -110,7 +108,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("fails when dir exists", function()
+  t.it("fails when dir exists", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -135,7 +133,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("indirect creates dirs", function()
+  t.it("indirect creates dirs", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -167,7 +165,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("fails on invalid path", function()
+  t.it("fails on invalid path", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
