@@ -5,7 +5,9 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
+local describe = t.describe or describe
+local before_each = t.before_each or before_each
+local it = t.it or it
 ---@diagnostic enable: undefined-global
 
 
@@ -16,13 +18,13 @@ t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_e
 local screen
 
 
-t.before_each(function()
+before_each(function()
   screen = nf.create_session()
 end)
 
 
-t.describe("fs.cut", function()
-  t.it("single file", function()
+describe("fs.cut.node", function()
+  it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -50,7 +52,7 @@ t.describe("fs.cut", function()
   end)
 
 
-  t.it("api single file", function()
+  it("api single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -81,7 +83,7 @@ t.describe("fs.cut", function()
   end)
 
 
-  t.it("single dir", function()
+  it("single dir", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -106,7 +108,7 @@ t.describe("fs.cut", function()
     })
   end)
 
-  t.it("toggle one", function()
+  it("toggle one", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -153,7 +155,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("toggle many", function()
+  it("toggle many", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({
@@ -202,7 +204,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("no system clipboard", function()
+  it("no system clipboard", function()
     n.exec_lua(function()
       require("nvim-tree").setup({
         actions = {
@@ -239,7 +241,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("single overrides copy", function()
+  it("single overrides copy", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -284,7 +286,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("multiple overrides copy", function()
+  it("multiple overrides copy", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
@@ -351,7 +353,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("dir overrides file", function()
+  it("dir overrides file", function()
     n.fn.setreg("+", "foo")
 
     nu.feed_sync({

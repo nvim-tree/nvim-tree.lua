@@ -6,7 +6,9 @@ local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
+local describe = t.describe or describe
+local before_each = t.before_each or before_each
+local it = t.it or it
 ---@diagnostic enable: undefined-global
 
 --- @type test.functional.ui.screen
@@ -16,7 +18,7 @@ local screen
 -- common copy/paste codepaths are tested in copied_spec.lua except for API
 
 
-t.before_each(function()
+before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true, })
 
   local Event = require("nvim-tree._meta.api.events").Event
@@ -24,8 +26,8 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.paste.node cut", function()
-  t.it("single dir", function()
+describe("fs.paste.node cut", function()
+  it("single dir", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -70,7 +72,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("single file", function()
+  it("single file", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -124,7 +126,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
   end)
 
 
-  t.it("api node under cursor", function()
+  it("api node under cursor", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -169,7 +171,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("api node specified", function()
+  it("api node specified", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
