@@ -1,6 +1,6 @@
 local t = require("test.testutil")
 local nf = require("test.nvt.func.fixtures")
-local n = require("test.functional.testnvim")()
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -20,11 +20,11 @@ end)
 
 describe("fs.create prompt", function()
   it("tree focused", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
-      "a"
-    )
+      "a",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
@@ -34,13 +34,13 @@ describe("fs.create prompt", function()
 
 
   it("api tree not focused", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
       "<c-w><c-w>",
       -- TODO why can't we execute this from exec_lua ?
-      ":lua require('nvim-tree.api').fs.create()<CR>"
-    )
+      ":lua require('nvim-tree.api').fs.create()<CR>",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
@@ -50,12 +50,11 @@ describe("fs.create prompt", function()
 
 
   it("file focused", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<Down>",
-      "<Down>",
-      "a"
-    )
+      "<Down><Down>",
+      "a",
+    })
 
     screen:expect({
       mode = "cmdline_normal",
@@ -65,12 +64,12 @@ describe("fs.create prompt", function()
 
 
   it("cancelled", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
       "foo",
-      "<Esc>"
-    )
+      "<Esc>",
+    })
 
     screen:expect({
       attr_ids = {},

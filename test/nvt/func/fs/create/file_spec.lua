@@ -1,7 +1,8 @@
 local t = require("test.testutil")
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local n = require("test.functional.testnvim")()
+local nu = require("test.nvt.func.util")
 
 -- 0.13 global compatibility
 ---@diagnostic disable: undefined-global
@@ -26,11 +27,11 @@ end)
 
 describe("fs.create file", function()
   it("direct", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "direct<CR>"
-    )
+      "direct<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -55,11 +56,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("indirect", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/indirect<CR>"
-    )
+      "d1/indirect<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -85,11 +86,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails when file exists", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "f1<CR>"
-    )
+      "f1<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -110,11 +111,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails when dir exists", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1<CR>"
-    )
+      "d1<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -135,11 +136,11 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("indirect creates dirs", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "newdir/newfile<CR>"
-    )
+      "newdir/newfile<CR>",
+    })
 
     screen:expect({
       attr_ids = {},
@@ -167,14 +168,16 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   it("fails on invalid path", function()
-    n.feed(
+    nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
       "<C-U>",
-      "/foo<CR>"
-    )
+    })
 
     -- BUG this fails but shows message "/foo was properly created"
+    n.feed(
+      "/foo<CR>"
+    )
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
