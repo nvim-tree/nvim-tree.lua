@@ -29,10 +29,7 @@ describe("fs.paste.node copied", function()
   it("single file", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "<down>",
+      "<down><down><down><down>",
       "c",
       "<up>",
       "p",
@@ -64,10 +61,7 @@ NvimTree_1 [-]                 [No Name]                                        
   it("multiple files", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<down>",
-      "<down>",
-      "<down>",
+      "<down><down><down><down>",
       "<S-v>",
       "<down>",
       "c",
@@ -109,28 +103,25 @@ NvimTree_1 [-]                 [No Name]                                        
       "c",
       "<down>",
       "p",
-      "gg",
-      "E",
+      "<CR>",
     })
 
     screen:expect({
       cmdline = {},
       attr_ids = {},
       grid = [[
-  ^/tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-       d1f1                  │~                                                |
-       d1f2                  │~                                                |
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
     d2                      │~                                                |
-      d1                    │~                                                |
+  ^    d1                    │~                                                |
          d1f1                │~                                                |
          d1f2                │~                                                |
-       d2f1                  │~                                                |
-    d3                      │~                                                |
-       d3f1                  │~                                                |
+      d3                    │~                                                |
+       f2                    │~                                                |
+    d3                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*9
+~                             │~                                                |*11
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
     ]],
@@ -160,28 +151,23 @@ NvimTree_1 [-]                 [No Name]                                        
 
     nu.feed_sync({
       "_copy<CR>",
-      "gg",
-      "E",
+      "<CR>",
     })
 
     screen:expect({
       cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
-  ^/tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+  ^  d1_copy                 │~                                                |
        d1f1                  │~                                                |
        d1f2                  │~                                                |
-    d1_copy                 │~                                                |
-       d1f1                  │~                                                |
-       d1f2                  │~                                                |
-    d2                      │~                                                |
-       d2f1                  │~                                                |
-    d3                      │~                                                |
-       d3f1                  │~                                                |
+    d2                      │~                                                |
+    d3                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*9
+~                             │~                                                |*13
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
@@ -233,12 +219,14 @@ NvimTree_1 [-]                 [No Name]                                        
        d1f1                  │~                                                |
        d1f2                  │~                                                |
     d2                      │~                                                |
-       d2f1                  │~                                                |
+      d3                    │~                                                |
+         d3f1                │~                                                |
+       f2                    │~                                                |
     d3                      │~                                                |
        d3f1                  │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*12
+~                             │~                                                |*10
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
@@ -343,12 +331,14 @@ Press ENTER or type command to continue^                                        
   {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d1f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d1f2                  }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d2f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d3}{NvimTreeNormal:                    }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:    }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d3f1                }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                    }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d3}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d3f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f1                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*12
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*10
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
                                                                                   |
     ]],
@@ -390,32 +380,239 @@ Press ENTER or type command to continue^                                        
 
     nu.feed_sync({
       "<BS>1_copy<CR>",
-      "gg",
-      "E",
+      "<CR>",
     })
 
     screen:expect({
       cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
-  ^/tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+  ^  d1_copy                 │~                                                |
        d1f1                  │~                                                |
        d1f2                  │~                                                |
-    d1_copy                 │~                                                |
-       d1f1                  │~                                                |
-       d1f2                  │~                                                |
-    d2                      │~                                                |
-       d2f1                  │~                                                |
-    d3                      │~                                                |
-       d3f1                  │~                                                |
+    d2                      │~                                                |
+    d3                      │~                                                |
      f1                      │~                                                |
      f2                      │~                                                |
-~                             │~                                                |*9
+~                             │~                                                |*13
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
     })
+  end)
+
+
+  it("multiple", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "c",
+      "<down><down><down>",
+      "c",
+      "<up><up>",
+      "p",
+      "<up><up>",
+      "<CR>",
+    })
+
+    screen:expect({
+      cmdline = {},
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+  ^    d1                    │~                                                |
+         d1f1                │~                                                |
+         d1f2                │~                                                |
+      d3                    │~                                                |
+       f1                    │~                                                |
+       f2                    │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*10
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
+  end)
+
+
+  it("multiple conflict no rename", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<s-v>",
+      "G",
+      "c",
+      "<up><up><up>",
+      "c",
+      "p",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "n<CR>",
+    })
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+      d1                    │~                                                |
+      d3                    │~                                                |
+  ^     f1                    │~                                                |
+       f2                    │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*12
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f2")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
+  end)
+
+
+  it("multiple conflict rename all", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<s-v>",
+      "G",
+      "c",
+      "<up><up><up>",
+      "c",
+      "p",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "r<CR>",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Suffix: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      ".renamed<CR>",
+    })
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+      d1                    │~                                                |
+      d3                    │~                                                |
+      d3.renamed            │~                                                |
+       f1                    │~                                                |
+       f2                    │~                                                |
+  ^     f2.renamed            │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*10
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f2")
+
+    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3.renamed")
+    na.file_exists("/tmp/nvt_func/data/d2/d3.renamed/d3f1")
+  end)
+
+
+  it("multiple conflict overwrite", function()
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<s-v>",
+      "G",
+      "c",
+      "<up><up><up>",
+      "c",
+      "p",
+    })
+
+    -- BUG: this should read as per single prompt: "2 file(s) already exist. R(ename suffix)/y/n: "
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+      d1                    │~                                                |
+      d3                    │~                                                |
+       f1                    │~                                                |
+       f2                    │~                                                |
+    d3                      │~                                                |
+     f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+                                                                                |
+[NvimTree] Could not copy /tmp/nvt_func/data/d3 - EEXIST: file already exists: /|
+tmp/nvt_func/data/d2/d3                                                         |
+Press ENTER or type command to continue^                                         |
+    ]],
+    })
+
+    na.dir_exists("/tmp/nvt_func/data/d2/d1")
+    na.dir_exists("/tmp/nvt_func/data/d2/d3")
+    na.file_exists("/tmp/nvt_func/data/d2/f1")
+    na.file_exists("/tmp/nvt_func/data/d2/f2")
   end)
 end)
 

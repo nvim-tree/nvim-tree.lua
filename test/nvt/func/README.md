@@ -1,10 +1,12 @@
 # Generating Test Data
 
-Execute `scripts/functionaltest.sh -l [ <data dir> ]`
+Execute `scripts/functionaltest.sh -l [ <file or dir> ]`
 
 This will open an interactive vim session that closely matches the test headless session, using the init: `test/func/init_live.lua`
 
-Test's `data` directory should be specified if present.
+If a `data` directory is present, it will be copied and the session will execute in `/tmp/nvt_func/data` otherwise `/tmp/nvt_func`.
+
+Test's `data` directory will be used if present.
 
 - `<Leader>u` to dump the entire screen to `/tmp/nvt_func/dump.txt` and open it
 - `<Leader>c` to dump with identical lines collapsed
