@@ -1,4 +1,5 @@
 local t = require("test.testutil")
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local nu = require("test.nvt.func.util")
 
@@ -38,9 +39,15 @@ describe("fs.create prompt", function()
       ":NvimTreeOpen<CR>",
       "<Down>",
       "<c-w><c-w>",
-      -- TODO why can't we execute this from exec_lua ?
-      ":lua require('nvim-tree.api').fs.create()<CR>",
     })
+
+    -- schedule this as it blocks on vim.ui.input
+    n.exec_lua(function()
+      vim.schedule(require("nvim-tree.api").fs.create)
+    end)
+
+    -- wait for the input
+    n.poke_eventloop()
 
     screen:expect({
       mode = "cmdline_normal",
