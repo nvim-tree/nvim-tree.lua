@@ -59,7 +59,6 @@ describe("fs.print_clipboard", function()
 Press ENTER or type command to continue^                                         |
     ]],
     })
-
   end)
 
 
