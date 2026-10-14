@@ -22,7 +22,7 @@ before_each(function()
 end)
 
 
-describe("fs.paste.node copied", function()
+describe("fs.paste copied", function()
   it("single file", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
