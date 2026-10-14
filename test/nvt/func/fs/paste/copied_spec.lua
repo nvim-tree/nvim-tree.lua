@@ -668,7 +668,7 @@ NvimTree_1 [-]                 [No Name]                                        
                                                                                 |
     ]],
     })
---
+    --
     na.dir_exists("/tmp/nvt_func/data/d2/d1")
     na.dir_exists("/tmp/nvt_func/data/d2/d3")
     na.file_exists("/tmp/nvt_func/data/d2/f1")
