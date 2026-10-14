@@ -15,7 +15,6 @@ local screen
 
 
 -- TODO test:
--- many
 -- failed file and dir
 
 ---@param config nvim_tree.config
@@ -54,7 +53,7 @@ describe("fs.trash", function()
 
     screen:expect({
       mode = "cmdline_normal",
-      cmdline = { { prompt = "Trash d1f1? y/N: ", content = { { "" } }, pos = 0, } },
+      cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
     nu.feed_sync({
@@ -66,20 +65,20 @@ describe("fs.trash", function()
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..                                                         |
-    d1                                                                        |
-  ^  d2                                                                        |
-     f1                                                                        |
+    d 1                                                                       |
+  ^  d 2                                                                       |
+     f 1                                                                       |
 ~                                                                               |*19
                                                                                 |
     ]],
     })
 
-    na.not_path_exists("/tmp/nvt_func/data/d1/d1f1")
-    na.not_buf_exists("/tmp/nvt_func/data/d1/d1f1")
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.not_buf_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
 
     na.events_received({
-      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d1/d1f1", }, },
-      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d1/d1f1", }, },
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
     })
   end)
 
@@ -101,7 +100,7 @@ describe("fs.trash", function()
 
     screen:expect({
       mode = "cmdline_normal",
-      cmdline = { { prompt = "Trash d1? y/N: ", content = { { "" } }, pos = 0, } },
+      cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
     nu.feed_sync({
@@ -115,20 +114,76 @@ describe("fs.trash", function()
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
-    d2                      │~                                                |
-       d2f1                  │~                                                |
-     f1                      │~                                                |
+    d 2                     │~                                                |
+       d 2 f 1               │~                                                |
+     f 1                     │~                                                |
 ~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
     })
 
-    na.not_path_exists("/tmp/nvt_func/data/d1")
+    na.not_path_exists("/tmp/nvt_func/data/d 1")
 
     na.events_received({
-      { event_type = "FolderRemoved", payload = { folder_name = "/tmp/nvt_func/data/d1", }, },
+      { event_type = "FolderRemoved", payload = { folder_name = "/tmp/nvt_func/data/d 1", }, },
     })
+  end)
+
+
+  it("many", function()
+    screen = create_trash_session({
+      trash = {
+        -- TODO this executes async, need to wait for completion and tree to update, maybe disable watchers
+        -- cmd = "sleep 1; rm -rf ",
+        cmd = "rm -rf ",
+      }
+    })
+
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<CR>",
+      "<down>",
+      "<s-v>",
+      "<down><down>",
+      "D",
+    })
+
+    screen:expect({
+      mode = "cmdline_normal",
+      cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nu.feed_sync({
+      "y<CR>",
+      "gg",
+      "E",
+    })
+
+    screen:expect({
+      cmdline = { { abort = true } },
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d 1                     │~                                                |
+~                             │~                                                |*20
+NvimTree_1 [-]                 [No Name]                                        |
+                                                                                |
+    ]],
+    })
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+      { event_type = "FolderRemoved",  payload = { folder_name = "/tmp/nvt_func/data/d 2", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.not_path_exists("/tmp/nvt_func/data/d 2")
+    na.not_path_exists("/tmp/nvt_func/data/f 1")
   end)
 
 
@@ -149,7 +204,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
     screen:expect({
       mode = "cmdline_normal",
-      cmdline = { { prompt = "Trash d1f1? y/N: ", content = { { "" } }, pos = 0, } },
+      cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
     nu.feed_sync({
@@ -161,17 +216,17 @@ NvimTree_1 [-]                 [No Name]                                        
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-  ^     d1f1                  │~                                                |
-    d2                      │~                                                |
-     f1                      │~                                                |
+    d 1                     │~                                                |
+  ^     d 1 f 1               │~                                                |
+    d 2                     │~                                                |
+     f 1                     │~                                                |
 ~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
 [NvimTree] trash.cmd 'foobarbaz' is not an executable.                          |
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/d1/d1f1")
+    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
 
     na.events_received({})
   end)
@@ -190,20 +245,20 @@ NvimTree_1 [-]                 [No Name]                                        
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-    d2                      │~                                                |
-     f1                      │~                                                |
+    d 1                     │~                                                |
+    d 2                     │~                                                |
+     f 1                     │~                                                |
 ~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
                                                                                 |
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1")
-    na.file_exists("/tmp/nvt_func/data/d1/d1f1")
-    na.dir_exists("/tmp/nvt_func/data/d2")
-    na.file_exists("/tmp/nvt_func/data/d2/d2f1")
-    na.file_exists("/tmp/nvt_func/data/f1")
+    na.dir_exists("/tmp/nvt_func/data/d 1")
+    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.dir_exists("/tmp/nvt_func/data/d 2")
+    na.file_exists("/tmp/nvt_func/data/d 2/d 2 f 1")
+    na.file_exists("/tmp/nvt_func/data/f 1")
 
     na.events_received({})
   end)
