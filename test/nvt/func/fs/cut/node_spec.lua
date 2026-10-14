@@ -23,7 +23,7 @@ before_each(function()
 end)
 
 
-describe("fs.cut.node", function()
+describe("fs.cut", function()
   it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
