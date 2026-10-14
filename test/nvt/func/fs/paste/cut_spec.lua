@@ -113,14 +113,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
       },
     }, })
 
-    t.eq(true,
-      vim.tbl_contains(n.api.nvim_list_bufs(),
-        function(buf)
-          return n.api.nvim_buf_get_name(buf) == "/tmp/nvt_func/data/d3/f1" and n.api.nvim_buf_is_loaded(buf)
-        end, { predicate = true }
-      ),
-      "buffer for /tmp/nvt_func/data/d3/f1 present and loaded"
-    )
+    na.buf_exists("/tmp/nvt_func/data/d3/f1")
   end)
 
 

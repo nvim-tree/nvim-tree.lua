@@ -35,4 +35,27 @@ function M.events_received(events)
   end))
 end
 
+---buffer with name exists and is loaded
+---@param name string buffer name
+---@return boolean
+local function buf_loaded(name)
+  return vim.tbl_contains(n.api.nvim_list_bufs(),
+    function(buf)
+      return n.api.nvim_buf_get_name(buf) == name and n.api.nvim_buf_is_loaded(buf)
+    end, { predicate = true }
+  )
+end
+
+---Assert buffer with name exists and is loaded
+---@param name string buffer name
+function M.buf_exists(name)
+  t.eq(true, buf_loaded(name), "buffer '" .. name .. "' should be present and loaded")
+end
+
+---Assert buffer with name does not exist
+---@param name string buffer name
+function M.not_buf_exists(name)
+  t.eq(false, buf_loaded(name), "buffer '" .. name .. "' should not be present")
+end
+
 return M
