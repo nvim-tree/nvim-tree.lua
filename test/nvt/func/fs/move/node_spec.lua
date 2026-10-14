@@ -19,7 +19,7 @@ local screen
 before_each(function()
   screen = nf.create_session()
 end)
-   
+
 
 describe("fs.move", function()
   it("nothing", function()

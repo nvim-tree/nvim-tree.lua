@@ -11,7 +11,7 @@ local it = t.it or it
 ---@diagnostic enable: undefined-global
 
 
--- BUG singe operations report "added to clipboard", not "cut to clipboard" as per bulk operations
+-- BUG single operations report "added to clipboard", not "cut to clipboard" as per bulk operations
 
 
 --- @type test.functional.ui.screen
