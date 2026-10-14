@@ -96,7 +96,6 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    -- TODO remove hardcoding
     na.dir_exists("/tmp/nvt_func/data/dst")
     na.file_exists("/tmp/nvt_func/data/dst/f1")
     na.not_path_exists("/tmp/nvt_func/data/src/f1")
