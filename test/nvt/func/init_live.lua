@@ -77,7 +77,11 @@ local dir = out:match("^DIR=(.*)$") or error(out)
 vim.api.nvim_set_current_dir(dir)
 
 -- setup with defaults
-require("nvim-tree").setup({})
+require("nvim-tree").setup({
+  trash = {
+    cmd = "rm -rf ",
+  }
+})
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,    { remap = false, })
