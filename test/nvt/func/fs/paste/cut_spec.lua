@@ -26,7 +26,7 @@ before_each(function()
 end)
 
 
-describe("fs.paste.node cut", function()
+describe("fs.paste cut", function()
   it("single dir", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
