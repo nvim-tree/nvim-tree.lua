@@ -16,7 +16,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session()
+  screen = nf.create_session({}, nil, nil, { ext_messages = true, })
 end)
 
 
@@ -31,33 +31,7 @@ describe("fs.print_clipboard", function()
     end)
 
     screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-    d2                      │~                                                |
-    d3                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-                                                                                |
-[NvimTree]                                                                      |
-                                                                                |
-Press ENTER or type command to continue^                                         |
-    ]],
+      messages = { { content = { { "[NvimTree]\n\n", } }, history = true, kind = "echomsg", } },
     })
   end)
 
@@ -77,38 +51,32 @@ Press ENTER or type command to continue^                                        
       "x",
     })
 
+    screen:expect({
+      messages = {
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 added to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 added to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d2 added to clipboard." } },      history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 added to clipboard." } },      history = true, kind = "echomsg" },
+      },
+    })
+
     n.exec_lua(function()
       require("nvim-tree.api").fs.print_clipboard()
     end)
 
     screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-       d1f1                  │~                                                |
-       d1f2                  │~                                                |
-    d2                      │~                                                |
-    d3                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-                                                                                |
-[NvimTree]                                                                      |
-Cut                                                                             |
- * /tmp/nvt_func/data/d1/d1f2                                                   |
- * /tmp/nvt_func/data/d3                                                        |
-Copy                                                                            |
- * /tmp/nvt_func/data/d1/d1f1                                                   |
- * /tmp/nvt_func/data/d2                                                        |
-Press ENTER or type command to continue^                                         |
-    ]],
+      messages = { {
+        history = true,
+        kind = "echomsg",
+        content = { { [[[NvimTree]
+Cut
+ * /tmp/nvt_func/data/d1/d1f2
+ * /tmp/nvt_func/data/d3
+Copy
+ * /tmp/nvt_func/data/d1/d1f1
+ * /tmp/nvt_func/data/d2
+]], } },
+      } },
     })
   end)
 end)
