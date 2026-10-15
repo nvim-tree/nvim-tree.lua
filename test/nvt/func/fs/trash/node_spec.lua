@@ -3,11 +3,8 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 local nu = require("test.nvt.func.util")
 
--- 0.13 global compatibility
----@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local it = t.it or it
----@diagnostic enable: undefined-global
+-- 0.12 global compatibility
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
 
 
 --- @type test.functional.ui.screen
@@ -32,8 +29,8 @@ local function create_trash_session(config)
 end
 
 
-describe("fs.trash", function()
-  it("single file buffer deleted", function()
+t.describe("fs.trash", function()
+  t.it("single file buffer deleted", function()
     screen = create_trash_session({
       trash = {
         cmd = "rm -rf ",
@@ -80,7 +77,7 @@ describe("fs.trash", function()
   end)
 
 
-  it("single dir", function()
+  t.it("single dir", function()
     screen = create_trash_session({
       trash = {
         cmd = "rm -rf ",
@@ -124,7 +121,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("many", function()
+  t.it("many", function()
     screen = create_trash_session({
       trash = {
         cmd = "rm -rf ",
@@ -177,7 +174,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("invalid trash.cmd", function()
+  t.it("invalid trash.cmd", function()
     screen = create_trash_session({
       trash = {
         cmd = "foobarbaz",
@@ -221,7 +218,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("ignore root", function()
+  t.it("ignore root", function()
     screen = create_trash_session({})
 
     nu.feed_sync({
@@ -252,7 +249,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("many multiple failures", function()
+  t.it("many multiple failures", function()
     screen = create_trash_session({
       trash = {
         -- fails unless "/tmp/nvt_func/data/f 1", prints same error message as execution completion is nondeterministic
