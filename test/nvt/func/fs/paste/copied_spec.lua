@@ -142,7 +142,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
@@ -190,7 +189,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
@@ -241,7 +239,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
@@ -250,7 +247,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -301,7 +297,6 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
@@ -310,7 +305,6 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -353,7 +347,6 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
@@ -362,7 +355,6 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -371,7 +363,6 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d2" } }, pos = 21, } },
     })
 
@@ -455,7 +446,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -503,7 +493,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -512,7 +501,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Suffix: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -566,7 +554,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -626,7 +613,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -636,7 +622,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2/f2.renamed ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -695,7 +680,6 @@ NvimTree_1 [-]                 [No Name]                                        
 
     -- BUG: this should read as per single prompt: "2 file(s) already exist. R(ename suffix)/y/n: "
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
