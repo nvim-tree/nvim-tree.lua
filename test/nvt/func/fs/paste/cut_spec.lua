@@ -19,7 +19,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session(nil, nil, nil, { ext_cmdline = true, })
+  screen = nf.create_session()
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.NodeRenamed)
@@ -38,7 +38,6 @@ describe("fs.paste cut", function()
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
@@ -85,7 +84,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │f1                                               |
@@ -130,7 +128,6 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
     end)
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
@@ -185,7 +182,6 @@ NvimTree_1 [-]                 [No Name]                                        
     end)
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
