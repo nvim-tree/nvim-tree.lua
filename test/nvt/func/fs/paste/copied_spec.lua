@@ -3,12 +3,8 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 local nu = require("test.nvt.func.util")
 
--- 0.13 global compatibility
----@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
----@diagnostic enable: undefined-global
+-- 0.12 global compatibility
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
 
 --- @type test.functional.ui.screen
 local screen
@@ -17,13 +13,13 @@ local screen
 -- common copy/paste codepaths are tested here except for API
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session(nil, nil, nil, { ext_cmdline = true })
 end)
 
 
-describe("fs.paste copied", function()
-  it("single file", function()
+t.describe("fs.paste copied", function()
+  t.it("single file", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down><down>",
@@ -55,7 +51,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple files", function()
+  t.it("multiple files", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down><down>",
@@ -93,7 +89,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("single dir", function()
+  t.it("single dir", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -132,7 +128,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("single dir conflict resolved", function()
+  t.it("single dir conflict resolved", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -179,7 +175,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("single dir conflict cancelled", function()
+  t.it("single dir conflict cancelled", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -229,7 +225,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("single dir conflict second conflict overwrite", function()
+  t.it("single dir conflict second conflict overwrite", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -287,7 +283,7 @@ Press ENTER or type command to continue^                                        
   end)
 
 
-  it("single dir conflict second conflict cancel", function()
+  t.it("single dir conflict second conflict cancel", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -337,7 +333,7 @@ Press ENTER or type command to continue^                                        
   end)
 
 
-  it("single dir conflict second conflict resolved", function()
+  t.it("single dir conflict second conflict resolved", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -392,7 +388,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple", function()
+  t.it("multiple", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -433,7 +429,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict no rename", function()
+  t.it("multiple conflict no rename", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -480,7 +476,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict rename suffix", function()
+  t.it("multiple conflict rename suffix", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -541,7 +537,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict rename cancel", function()
+  t.it("multiple conflict rename cancel", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -590,7 +586,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict rename second conflict", function()
+  t.it("multiple conflict rename second conflict", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down>",
@@ -666,7 +662,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("multiple conflict overwrite", function()
+  t.it("multiple conflict overwrite", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
