@@ -41,6 +41,10 @@ Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), b
 
 # Test Mechanisms
 
+## Screen Grid
+
+TODO
+
 ## Command Line
 
 `Screen:expect` `cmdline` may be used to assert command line state. `test.functional.ui.screen.Opts` `ext_cmdline` must be enabled, e.g.
@@ -71,3 +75,20 @@ screen:expect({
 })
 ```
 
+## nvim-tree Events
+
+Specific nvim-tree events may be subscribed to via `test.nvt.func.fixtures` `event_subscribe`, recorded as `nvt.functest.event[]` and the entire collection asserted in order via `test.nvt.func.asserts` `events_received`
+
+After assertion, the collected events are cleared.
+
+e.g.
+```lua
+local Event = require("nvim-tree._meta.api.events").Event
+nf.event_subscribe(Event.FileRemoved)
+nf.event_subscribe(Event.WillRemoveFile)
+---
+na.events_received({
+  { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+  { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+})
+```
