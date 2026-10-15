@@ -8,18 +8,12 @@ local Screen = require("test.functional.ui.screen")
 
 
 ---Globals used within test session context, noted in this test context only for type definition
----@diagnostic disable: global-element
-
 ---@type boolean
 NVT_FUNCTEST_CONTEXT = true
-
 ---@type nvt.functest.event[]
 NVT_FUNCTEST_EVENTS = {}
-
 ---@type string[]
 NVT_FUNCTEST_CLIPBOARD_LINES = {}
-
----@diagnostic enable: global-element
 
 
 local M = {}
@@ -44,11 +38,9 @@ function M.create_session(config, width, height, options)
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
-    ---@diagnostic disable: global-element
     NVT_FUNCTEST_CONTEXT = true
     NVT_FUNCTEST_EVENTS = {}
     NVT_FUNCTEST_CLIPBOARD_LINES = {}
-    ---@diagnostic enable: global-element
   end)
 
   -- Change to the temp test (data) directory
@@ -87,18 +79,18 @@ end
 ---Clear all recorded events in NVT_FUNCTEST_EVENTS
 function M.events_clear()
   n.exec_lua(function()
-    NVT_FUNCTEST_EVENTS = {} ---@diagnostic disable-line: global-element
+    NVT_FUNCTEST_EVENTS = {}
   end)
 end
 
----Setup a dummy clipboard using the global NVT_DUMMY_CLIPBOARD_LINES
+---Setup a dummy clipboard named NVT_FUNCTEST_CLIPBOARD containing the global NVT_FUNCTEST_CLIPBOARD_LINES
 function M.use_dummy_clipboard()
   n.exec_lua(function()
     vim.g.clipboard = {
-      name = "NVT_DUMMY_CLIPBOARD",
+      name = "NVT_FUNCTEST_CLIPBOARD",
       copy = {
         ["+"] = function(lines)
-          NVT_FUNCTEST_CLIPBOARD_LINES = lines ---@diagnostic disable-line: global-element
+          NVT_FUNCTEST_CLIPBOARD_LINES = lines
         end
       },
       paste = {
