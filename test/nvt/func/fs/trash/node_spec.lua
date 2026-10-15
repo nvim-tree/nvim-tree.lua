@@ -272,7 +272,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
     screen:expect({
       cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
-      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } }
+      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
     })
 
     nu.feed_sync({

@@ -16,7 +16,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session({}, nil, nil, { ext_cmdline = true })
+  screen = nf.create_session()
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.FileCreated)
