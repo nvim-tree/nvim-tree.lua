@@ -11,10 +11,6 @@ t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_e
 local screen
 
 
--- TODO the command executes async, need to wait for completion and tree to update, maybe disable watchers or wait for TreeRendered event
--- cmd = "sleep 5; rm -rf ",
-
-
 ---@param config nvim_tree.config
 ---@return test.functional.ui.screen
 local function create_trash_session(config)
