@@ -14,7 +14,7 @@ function M.feed_sync(inputs)
     n.feed(v)
 
     -- defer until complete
-    -- n.poke_eventloop()
+    n.poke_eventloop()
   end
 end
 
