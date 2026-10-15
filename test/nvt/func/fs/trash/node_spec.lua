@@ -14,13 +14,14 @@ local it = t.it or it
 local screen
 
 
--- TODO test:
--- failed file and dir
+-- TODO the command executes async, need to wait for completion and tree to update, maybe disable watchers or wait for TreeRendered event
+-- cmd = "sleep 5; rm -rf ",
+
 
 ---@param config nvim_tree.config
 ---@return test.functional.ui.screen
 local function create_trash_session(config)
-  screen = nf.create_session(config, nil, nil, { ext_cmdline = true, })
+  screen = nf.create_session(config, nil, nil, { ext_messages = true, })
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.FileRemoved)
@@ -35,9 +36,7 @@ describe("fs.trash", function()
   it("single file buffer deleted", function()
     screen = create_trash_session({
       trash = {
-        -- TODO this executes async, need to wait for completion and tree to update, maybe disable watchers
-        -- cmd = "sleep 1; rm ",
-        cmd = "rm ",
+        cmd = "rm -rf ",
       }
     })
 
@@ -52,7 +51,6 @@ describe("fs.trash", function()
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -61,16 +59,15 @@ describe("fs.trash", function()
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..                                                         |
     d 1                                                                       |
   ^  d 2                                                                       |
      f 1                                                                       |
+     trash_fail.sh                                                             |
 ~                                                                               |*19
-                                                                                |
-    ]],
+      ]],
     })
 
     na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
@@ -86,8 +83,6 @@ describe("fs.trash", function()
   it("single dir", function()
     screen = create_trash_session({
       trash = {
-        -- TODO this executes async, need to wait for completion and tree to update, maybe disable watchers
-        -- cmd = "sleep 1; rm -rf ",
         cmd = "rm -rf ",
       }
     })
@@ -99,7 +94,6 @@ describe("fs.trash", function()
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -110,16 +104,15 @@ describe("fs.trash", function()
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
     d 2                     │~                                                |
        d 2 f 1               │~                                                |
      f 1                     │~                                                |
+     trash_fail.sh           │~                                                |
 ~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
-                                                                                |
     ]],
     })
 
@@ -134,8 +127,6 @@ NvimTree_1 [-]                 [No Name]                                        
   it("many", function()
     screen = create_trash_session({
       trash = {
-        -- TODO this executes async, need to wait for completion and tree to update, maybe disable watchers
-        -- cmd = "sleep 1; rm -rf ",
         cmd = "rm -rf ",
       }
     })
@@ -151,8 +142,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
+      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
     })
 
     nu.feed_sync({
@@ -162,14 +153,13 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
     d 1                     │~                                                |
+     trash_fail.sh           │~                                                |
 ~                             │~                                                |*20
 NvimTree_1 [-]                 [No Name]                                        |
-                                                                                |
     ]],
     })
 
@@ -203,7 +193,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      mode = "cmdline_normal",
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -212,7 +201,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
@@ -220,10 +208,11 @@ NvimTree_1 [-]                 [No Name]                                        
   ^     d 1 f 1               │~                                                |
     d 2                     │~                                                |
      f 1                     │~                                                |
+     trash_fail.sh           │~                                                |
 ~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] trash.cmd 'foobarbaz' is not an executable.                          |
     ]],
+      messages = { { content = { { "[NvimTree] trash.cmd 'foobarbaz' is not an executable.", "WarningMsg" } }, history = true, kind = "echomsg" }, }
     })
 
     na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
@@ -241,16 +230,15 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
     d 1                     │~                                                |
     d 2                     │~                                                |
      f 1                     │~                                                |
+     trash_fail.sh           │~                                                |
 ~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
-                                                                                |
     ]],
     })
 
@@ -261,6 +249,62 @@ NvimTree_1 [-]                 [No Name]                                        
     na.file_exists("/tmp/nvt_func/data/f 1")
 
     na.events_received({})
+  end)
+
+
+  it("many multiple failures", function()
+    screen = create_trash_session({
+      trash = {
+        -- fails unless "/tmp/nvt_func/data/f 1", prints same error message as execution completion is nondeterministic
+        cmd = "./trash_fail.sh",
+      }
+    })
+
+    nu.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<CR>",
+      "<down>",
+      "<s-v>",
+      "<down><down>",
+      "D",
+    })
+
+    screen:expect({
+      cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
+      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } }
+    })
+
+    nu.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d 1                     │~                                                |
+       d 1 f 1               │~                                                |
+    d 2                     │~                                                |
+  ^   trash_fail.sh           │~                                                |
+~                             │~                                                |*18
+NvimTree_1 [-]                 [No Name]                                        |
+          ]],
+      messages = {
+        { content = { { "[NvimTree] trash failed: synthetic trash failure; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] trash failed: synthetic trash failure; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" }
+      },
+    })
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+    })
+
+    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.dir_exists("/tmp/nvt_func/data/d 2")
+    na.not_path_exists("/tmp/nvt_func/data/f 1")
   end)
 end)
 
