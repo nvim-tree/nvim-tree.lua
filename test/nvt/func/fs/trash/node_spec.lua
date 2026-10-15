@@ -248,7 +248,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("many multiple failures", function()
     screen = create_trash_session({
       trash = {
-        -- fails unless "/tmp/nvt_func/data/f 1", prints same error message as execution completion is nondeterministic
+        -- fails unless "/tmp/nvt_func/data/f 1", prints identical error message as vim.fn.jobstart completion time is nondeterministic
         cmd = "./trash_fail.sh",
       }
     })
