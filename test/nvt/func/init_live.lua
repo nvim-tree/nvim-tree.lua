@@ -76,15 +76,12 @@ local out = vim.fn.system({ os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD") })
 local dir = out:match("^DIR=(.*)$") or error(out)
 vim.api.nvim_set_current_dir(dir)
 
--- setup with defaults
-require("nvim-tree").setup({
-  trash = {
-    cmd = "rm -rf ",
-  }
-})
-
 -- mappings
-vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,    { remap = false, })
-vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,     { remap = false, })
-vim.keymap.set("n", "<Leader>r", screen_resize,                      { remap = false, })
-vim.keymap.set("n", "<Leader>o", require("nvim-tree.api").tree.open, { remap = false, })
+vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })
+vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,                      { remap = false, })
+vim.keymap.set("n", "<Leader>r", screen_resize,                                       { remap = false, })
+vim.keymap.set("n", "<Leader>o", function() require("nvim-tree.api").tree.open() end, { remap = false, })
+
+-- add test specific setup here
+require("nvim-tree").setup({
+})

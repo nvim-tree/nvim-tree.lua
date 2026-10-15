@@ -2,7 +2,7 @@
 
 Execute `scripts/functionaltest.sh -l [ <file or dir> ]`
 
-This will open an interactive vim session that closely matches the test headless session, using the init: `test/func/init_live.lua`
+This will open an interactive vim session that closely matches the test headless session, using the init: `test/func/init_live.lua`. Add any test specific config to `require("nvim-tree").setup` when needed.
 
 If a `data` directory is present, it will be copied and the session will execute in `/tmp/nvt_func/data` otherwise `/tmp/nvt_func`.
 
