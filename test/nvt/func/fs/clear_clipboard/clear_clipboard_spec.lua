@@ -16,7 +16,7 @@ local screen
 
 
 before_each(function()
-  screen = nf.create_session()
+  screen = nf.create_session({}, nil, nil, { ext_messages = true, })
 end)
 
 
@@ -31,18 +31,7 @@ describe("fs.clear_clipboard", function()
     end)
 
     screen:expect({
-      attr_ids = {},
-      grid = [[
-  ^/tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-    d2                      │~                                                |
-    d3                      │~                                                |
-     f1                      │~                                                |
-     f2                      │~                                                |
-~                             │~                                                |*16
-NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Clipboard has been emptied.                                          |
-    ]],
+      messages = { { content = { { "[NvimTree] Clipboard has been emptied." } }, history = true, kind = "echomsg" }, }
     })
   end)
 
@@ -62,35 +51,44 @@ NvimTree_1 [-]                 [No Name]                                        
       "x",
     })
 
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.print_clipboard()
-    end)
-
     screen:expect({
+      messages = {
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 added to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 added to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d2 added to clipboard." } },      history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 added to clipboard." } },      history = true, kind = "echomsg" },
+      },
       grid = [[
 {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d1f1}{NvimTreeNormal:                  }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: }{NvimTreeCutHL:d1f2}{NvimTreeNormal:                  }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeCopiedHL:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeCutHLCL:d3}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^ }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeCutHLCL:d3}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f1                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*7
-{3:                                                                                }|
-[NvimTree]                                                                      |
-Cut                                                                             |
- * /tmp/nvt_func/data/d1/d1f2                                                   |
- * /tmp/nvt_func/data/d3                                                        |
-Copy                                                                            |
- * /tmp/nvt_func/data/d1/d1f1                                                   |
- * /tmp/nvt_func/data/d2                                                        |
-{6:Press ENTER or type command to continue}^                                         |
-    ]],
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*15
+{NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+]],
     })
 
-    nu.feed_sync({
-      "<CR>",
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.print_clipboard()
+    end)
+
+    screen:expect({
+      messages = { {
+        history = true,
+        kind = "echomsg",
+        content = { { [[[NvimTree]
+Cut
+ * /tmp/nvt_func/data/d1/d1f2
+ * /tmp/nvt_func/data/d3
+Copy
+ * /tmp/nvt_func/data/d1/d1f1
+ * /tmp/nvt_func/data/d2
+]], } },
+      } },
     })
 
     n.exec_lua(function()
@@ -98,6 +96,15 @@ Copy                                                                            
     end)
 
     screen:expect({
+      messages = { { content = { { "[NvimTree] Clipboard has been emptied.", } }, history = true, kind = "echomsg", } },
+    })
+
+    n.exec_lua(function()
+      require("nvim-tree.api").fs.print_clipboard()
+    end)
+
+    screen:expect({
+      messages = { { content = { { "[NvimTree]\n\n", } }, history = true, kind = "echomsg", } },
       grid = [[
 {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
@@ -107,32 +114,9 @@ Copy                                                                            
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^ }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeFolderNameCL:d3}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f1                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*14
+{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*15
 {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-[NvimTree] Clipboard has been emptied.                                          |
-    ]],
-    })
-
-    n.exec_lua(function()
-      require("nvim-tree.api").fs.print_clipboard()
-    end)
-
-    screen:expect({
-      grid = [[
-{NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowOpen: }{NvimTreeOpenedFolderIcon:}{NvimTreeNormal: }{NvimTreeOpenedFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d1f1                  }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeIndentMarker:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: d1f2                  }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL: }{NvimTreeClosedFolderIconCL:}{NvimTreeNormalCL: }{NvimTreeFolderNameCL:d3}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f1                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
-{NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*12
-{3:                                                                                }|
-[NvimTree]                                                                      |
-                                                                                |
-{6:Press ENTER or type command to continue}^                                         |
-    ]],
+  ]],
     })
   end)
 end)
