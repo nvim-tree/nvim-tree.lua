@@ -39,3 +39,35 @@ The Nvim functional test framework's inputs are handled asynchronously via the c
 
 Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
 
+# Test Mechanisms
+
+## Command Line
+
+`Screen:expect` `cmdline` may be used to assert command line state. `test.functional.ui.screen.Opts` `ext_cmdline` must be enabled, e.g.
+
+```lua
+screen = nf.create_session({}, nil, nil, { ext_cmdline = true })
+---
+screen:expect({
+  cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
+})
+```
+
+## Messages
+
+Messages may be usually be asserted simply via `Screen:expect` `grid`
+
+In the case of complex or multiline messages, `test.functional.ui.screen.Opts` `ext_messages` may be used to capture messages for finer grained assertion. This will:
+
+- implicitly set `ext_cmdline`
+- remove the command line from the screen `grid`; which you may need to adjust to match
+
+e.g.
+```lua
+screen = nf.create_session({}, nil, nil, { ext_messages = true, })
+---
+screen:expect({
+  messages = { { content = { { "[NvimTree] trash.cmd 'foobarbaz' is not an executable.", "WarningMsg" } }, history = true, kind = "echomsg" }, }
+})
+```
+

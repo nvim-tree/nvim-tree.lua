@@ -21,7 +21,7 @@ local screen
 ---@param config nvim_tree.config
 ---@return test.functional.ui.screen
 local function create_trash_session(config)
-  screen = nf.create_session(config, nil, nil, { ext_messages = true, })
+  screen = nf.create_session(config, nil, nil, { ext_messages = true, ext_cmdline = true, })
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.FileRemoved)
