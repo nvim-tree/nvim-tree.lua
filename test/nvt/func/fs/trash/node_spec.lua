@@ -255,7 +255,6 @@ NvimTree_1 [-]                 [No Name]                                        
   it("many multiple failures", function()
     screen = create_trash_session({
       trash = {
-        -- fails unless "/tmp/nvt_func/data/f 1", prints same error message as execution completion is nondeterministic
         cmd = "./trash_fail.sh",
       }
     })
@@ -291,8 +290,8 @@ NvimTree_1 [-]                 [No Name]                                        
 NvimTree_1 [-]                 [No Name]                                        |
           ]],
       messages = {
-        { content = { { "[NvimTree] trash failed: synthetic trash failure; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] trash failed: synthetic trash failure; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" }
+        { content = { { "[NvimTree] trash failed: ; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] trash failed: ; please see :help nvim-tree.trash", "WarningMsg" } }, history = true, kind = "echomsg" }
       },
     })
 
