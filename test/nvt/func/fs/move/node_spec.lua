@@ -4,25 +4,21 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 local nu = require("test.nvt.func.util")
 
--- 0.13 global compatibility
----@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
----@diagnostic enable: undefined-global
+-- 0.12 global compatibility
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
 
 
 --- @type test.functional.ui.screen
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session()
 end)
 
 
-describe("fs.move", function()
-  it("nothing", function()
+t.describe("fs.move", function()
+  t.it("nothing", function()
     n.fn.setreg("+", "")
 
     nu.feed_sync({
@@ -47,7 +43,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("inexistent", function()
+  t.it("inexistent", function()
     n.fn.setreg("+", "/tmp/nvt_func/data/inexistent")
 
     nu.feed_sync({
@@ -72,7 +68,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  it("present", function()
+  t.it("present", function()
     n.fn.setreg("+", "/tmp/nvt_func/data/src/f1")
 
     nu.feed_sync({
