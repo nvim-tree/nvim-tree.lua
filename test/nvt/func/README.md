@@ -31,8 +31,6 @@ Use `Snapshot: screen:expect([[` contents from test log as the `grid`, visually 
 
 # Test Inputs
 
-TODO: how to handle asynchronous operations e.g. fs/git update
-
 ## Synchronisation
 
 The Nvim functional test framework's inputs are handled asynchronously via the commonly used `test.functional.testnvim` `feed` (non-deferred). It will execute all the inputs _immediately_ without waiting for them to complete, most notably lua callbacks such as nvim-tree mappings as well as some visual mode operations. See `:help api-fast`
@@ -48,6 +46,8 @@ Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), b
 Nvim tests almost always asserts highlights and extmarks however they can be difficult to prepare and read. nvim-tree usually asserts only text, asserting highlights only when necessary for the test e.g. copy, git status.
 
 Unique nvim-tree highlight groups `attr_ids` are defined during `test.nvt.func.fixtures` `create_session`. An addition variant for each group when in the cursor line suffixed with `CL` e.g. `NvimTreeFileIconCL` for file icons within the cursor line.
+
+`expect` will continually validate the contents of the screen after each update until it matches the expected. This allows for for asynchronous updates such as git/filesystem changes, however it will timeout and fail if the expected state is not reached after `timeout` ms, default 3500.
 
 ### Text Only
 
