@@ -39,11 +39,63 @@ The Nvim functional test framework's inputs are handled asynchronously via the c
 
 Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
 
-# Test Mechanisms
+# Test Assertions
 
 ## Screen Grid
 
-TODO
+`Screen:expect` `grid` is the main assertion mechanism, validating the contents of the entire screen, optionally including highlights and extmarks, referred to as `attr_ids`.
+
+Nvim tests almost always asserts highlights and extmarks however they can be difficult to prepare and read. nvim-tree usually asserts only text, asserting highlights only when necessary for the test e.g. copy, git status.
+
+Unique nvim-tree highlight groups `attr_ids` are defined during `test.nvt.func.fixtures` `create_session`. An addition variant for each group when in the cursor line suffixed with `CL` e.g. `NvimTreeFileIconCL` for file icons within the cursor line.
+
+### Text Only
+
+Set `attr_ids = {}` when calling `expect` to direct a text only assertion.
+
+See [Generating Test Data](TODO link) to dump the screen contents to a file.
+
+Contents are inserted directly into a text block `grid` e.g.
+
+```lua
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+    d2                      │~                                                |
+  ^   f1                      │~                                                |
+     f2                      │~                                                |
+~                             │~                                                |*17
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    ]],
+    })
+```
+
+Note the 17 repeated lines suffixed with `*17` which is optional; the entire screen may be inserted.
+
+### Complete
+
+It is impractical to generate the `grid` manually, due to the number of `attr_ids` that must be specified, combined and turned on and off.
+
+- Create a passing `screen:expect` with text only
+- Remove `attr_ids = {}` and re-run the test
+- On failure, the test will print the expected `grid` to use e.g.
+
+```lua
+Snapshot:
+screen:expect([[
+  {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d1}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed: }{NvimTreeClosedFolderIcon:}{NvimTreeNormal: }{NvimTreeFolderName:d2}{NvimTreeNormal:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosedCL:^  }{NvimTreeFileIconCL:}{NvimTreeNormalCL: }{NvimTreeCopiedHLCL:f1}{NvimTreeNormalCL:                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
+  {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
+  {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
+  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+]])
+```
 
 ## Command Line
 
