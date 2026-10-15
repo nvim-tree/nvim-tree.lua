@@ -3,25 +3,21 @@ local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local nu = require("test.nvt.func.util")
 
--- 0.13 global compatibility
----@diagnostic disable: undefined-global
-local describe = t.describe or describe
-local before_each = t.before_each or before_each
-local it = t.it or it
----@diagnostic enable: undefined-global
+-- 0.12 global compatibility
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
 
 
 --- @type test.functional.ui.screen
 local screen
 
 
-before_each(function()
+t.before_each(function()
   screen = nf.create_session({}, nil, nil, { ext_messages = true, })
 end)
 
 
-describe("fs.clear_clipboard", function()
-  it("empty", function()
+t.describe("fs.clear_clipboard", function()
+  t.it("empty", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
     })
@@ -36,7 +32,7 @@ describe("fs.clear_clipboard", function()
   end)
 
 
-  it("many", function()
+  t.it("many", function()
     nu.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
