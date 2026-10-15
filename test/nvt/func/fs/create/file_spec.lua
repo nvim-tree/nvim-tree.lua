@@ -214,9 +214,43 @@ NvimTree_1 [-]                 [No Name]                                        
       "<C-U>",
     })
 
-    -- BUG this fails but shows message "/foo was properly created"
     n.feed(
       "/foo<CR>"
+    )
+
+    -- BUG this fails but shows message "/foo was properly created"
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+~                             │~                                                |
+                                                                                |
+[NvimTree] Couldn't create file /foo                                            |
+[NvimTree] /foo was properly created                                            |
+Press ENTER or type command to continue^                                         |
+    ]],
+    })
+
+    n.feed(
+      "<CR>"
     )
 
     na.events_received({
