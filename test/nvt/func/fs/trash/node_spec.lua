@@ -1,7 +1,6 @@
 local t = require("test.testutil")
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -33,7 +32,7 @@ t.describe("fs.trash", function()
       }
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",
@@ -47,7 +46,7 @@ t.describe("fs.trash", function()
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
     })
 
@@ -80,7 +79,7 @@ t.describe("fs.trash", function()
       }
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "D",
@@ -90,7 +89,7 @@ t.describe("fs.trash", function()
       cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
       "gg",
       "E",
@@ -124,7 +123,7 @@ NvimTree_1 [-]                 [No Name]                                        
       }
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",
@@ -139,7 +138,7 @@ NvimTree_1 [-]                 [No Name]                                        
       showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
       "gg",
       "E",
@@ -177,7 +176,7 @@ NvimTree_1 [-]                 [No Name]                                        
       }
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",
@@ -189,7 +188,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
     })
 
@@ -217,7 +216,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("ignore root", function()
     screen = create_trash_session({})
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "D",
     })
@@ -253,7 +252,7 @@ NvimTree_1 [-]                 [No Name]                                        
       }
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",
@@ -268,7 +267,7 @@ NvimTree_1 [-]                 [No Name]                                        
       showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
     })
 
