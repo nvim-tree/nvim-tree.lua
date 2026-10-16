@@ -2,11 +2,6 @@ local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
 
 
----@class (exact) nvt.functest.event
----@field event_type string value of nvim_tree.api.events.Event
----@field payload table deep copy
-
-
 ---Globals used within test session context, noted in this test context only for type definition
 ---@type boolean
 NVT_FUNCTEST_CONTEXT = true
@@ -17,6 +12,48 @@ NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 
 local M = {}
+
+---Create /tmp/nvt_func or /tmp/nvt_func/data if present
+---Change running instance's directory to above
+local function setup_cwd()
+  ---Return the value of an environment variable, asserting presence
+  ---return @string
+  local function env(var)
+    local val = os.getenv(var)
+    assert(val, "$" .. var .. " not set")
+    return val
+  end
+
+  ---Execute vim.system and waits
+  ---Assers RC=0 only for nvim > 0.12
+  ---@param cmd string[] Command to execute
+  local function sys(cmd)
+    if vim.fn and vim.fn.has("nvim-0.13") == 1 then
+      local out = vim.system(cmd):wait()
+      assert(out.code == 0, vim.inspect(out))
+    else
+      -- vim.system and n.system are not available for neovim 0.12 func tests
+      -- this will fail silently
+      n.fn.system(cmd)
+    end
+  end
+
+  local dir_cwd, dir_test = env("NVT_FUNC_DIR_CWD"), env("NVT_FUNC_DIR_TEST")
+
+  -- always blow away and recreate the cwd of the test instance
+  sys({ "rm", "-rf", dir_cwd })
+  sys({ "mkdir", "-p", dir_cwd })
+
+  -- if data is present, recursively copy it and use that as cwd
+  local dir_test_data = dir_test .. "/data"
+  if vim.uv.fs_stat(dir_test_data) then
+    sys({ "cp", "-p", "-r", dir_test_data, dir_cwd })
+    dir_cwd = dir_cwd .. "/data"
+  end
+
+  -- set the cwd of the running test instance
+  n.api.nvim_set_current_dir(dir_cwd)
+end
 
 ---Create a new neovim functest session with
 ---- nvim-tree.lua package added
@@ -34,6 +71,7 @@ function M.create_session(config, width, height, options)
 
   local screen = Screen.new(width or 80, height or 24, options)
 
+  -- add the nvim-tree package and setup globals
   n.exec_lua(function()
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
@@ -43,11 +81,8 @@ function M.create_session(config, width, height, options)
     NVT_FUNCTEST_CLIPBOARD_LINES = {}
   end)
 
-  -- Change to the temp test (data) directory
-  -- TODO neovim 0.13: replace with vim.system calls; vim.system is not currenctly available in neovim 0.12 func tests
-  local out = n.fn.system({ os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD"), })
-  local dir = out:match("^DIR=(.*)$") or error(out)
-  n.api.nvim_set_current_dir(dir)
+  -- create the test instance cwd and change directory to it
+  setup_cwd()
 
   n.exec_lua(function()
     require("nvim-tree").setup(config)
@@ -59,6 +94,11 @@ function M.create_session(config, width, height, options)
 
   return screen
 end
+
+---Subscribed events captured during test execution
+---@class (exact) nvt.functest.event
+---@field event_type string value of nvim_tree.api.events.Event
+---@field payload table deep copy
 
 ---Subscribe to an event, to be recorded in session global NVT_FUNCTEST_EVENTS nvt.functest.event[]
 ---Assert events via events_received
