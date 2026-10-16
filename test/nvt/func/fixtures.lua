@@ -1,5 +1,6 @@
 local n = require("test.functional.testnvim")()
 local Screen = require("test.functional.ui.screen")
+local nu = require("test.nvt.func.util")
 
 
 ---Globals used within test session context, noted in this test context only for type definition
@@ -12,47 +13,6 @@ NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 
 local M = {}
-
----Create /tmp/nvt_func or populated /tmp/nvt_func/data
----@return string absolute path
-local function setup_cwd()
-  ---Return the value of an environment variable, asserting presence
-  ---return @string
-  local function env(var)
-    local val = os.getenv(var)
-    assert(val, "$" .. var .. " not set")
-    return val
-  end
-
-  ---Execute vim.system and waits
-  ---Assers RC=0 only for nvim > 0.12
-  ---@param cmd string[] Command to execute
-  local function sys(cmd)
-    if vim.fn and vim.fn.has("nvim-0.13") == 1 then
-      local out = vim.system(cmd):wait()
-      assert(out.code == 0, vim.inspect(out))
-    else
-      -- vim.system and n.system are not available for neovim 0.12 func tests
-      -- this will fail silently
-      n.fn.system(cmd)
-    end
-  end
-
-  local cwd, dir_test = env("NVT_FUNC_DIR_CWD"), env("NVT_FUNC_DIR_TEST")
-
-  -- always blow away and recreate the cwd of the test instance
-  sys({ "rm", "-rf", cwd })
-  sys({ "mkdir", "-p", cwd })
-
-  -- if data is present, recursively copy it and use that as cwd
-  local dir_test_data = dir_test .. "/data"
-  if vim.uv.fs_stat(dir_test_data) then
-    sys({ "cp", "-p", "-r", dir_test_data, cwd })
-    cwd = cwd .. "/data"
-  end
-
-  return cwd
-end
 
 ---Create a new neovim functest session with
 ---- nvim-tree.lua package added
@@ -67,18 +27,19 @@ end
 ---@return test.functional.ui.screen
 function M.create_session(config, width, height, options)
   -- instantiate a new session (nvim instance) and its screen
-  n.clear()
+  n.clear({
+    args = {
+      "--cmd", "set packpath^=" .. os.getenv("NVT_FUNC_PACKPATH"),
+      "--cmd", "packadd nvim-tree.lua",
+    }
+  })
   local screen = Screen.new(width or 80, height or 24, options)
 
   -- create the test instance cwd
-  local cwd = setup_cwd()
+  local cwd = nu.setup_cwd()
 
   -- add the nvim-tree package, setup globals and cd
   n.exec_lua(function()
-    -- add the nvim-tree package
-    vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
-    vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
-
     -- setup globals
     NVT_FUNCTEST_CONTEXT = true
     NVT_FUNCTEST_EVENTS = {}
@@ -161,6 +122,21 @@ function M.add_nvt_attr_ids(screen)
   end
 
   screen:add_extra_attr_ids(attr_ids)
+end
+
+---Feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
+---This is needed as api-fast input will execute lua callbacks (such as nvim-tree mappings) then execute the next input without waiting for the callback to complete.
+---Calls feedkeys() (non-deferred, api-fast) then poke_eventloop() for each input passed.
+---See :help api-fast
+---@param inputs string[]
+function M.feed_sync(inputs)
+  for _, v in ipairs(inputs) do
+    -- api-fast, does not wait for callbacks or input to complete
+    n.feed(v)
+
+    -- defer until complete
+    n.poke_eventloop()
+  end
 end
 
 return M

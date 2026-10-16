@@ -71,10 +71,8 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
--- create and change to the directory the test will execute from
-local out = vim.fn.system({ os.getenv("NVT_FUNC_SCRIPT_CREATE_TEST_CWD") })
-local dir = out:match("^DIR=(.*)$") or error(out)
-vim.api.nvim_set_current_dir(dir)
+-- test instance cwd
+vim.api.nvim_set_current_dir(require("test.nvt.func.dirs").setup_cwd())
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })
