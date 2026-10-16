@@ -149,8 +149,12 @@ setup() {
 teardown() {
 	# nvim-tree source link
 	rm -fv  "${NVT_FUNC_DIR_ROOT}"
+
+	# test/live instance cwd
+	rm -rf "${NVT_FUNC_DIR_CWD}"
 }
 
+# TODO run with the compiled nvim version under test
 live() {
 	if [ "${dir_live}" != "none" ]; then
 		NVT_FUNC_DIR_TEST="$(realpath "${dir_live}")"
@@ -171,6 +175,7 @@ live() {
 		|| failures=1
 }
 
+# TODO we can probably run this with a directory now instead of individual files
 run_tests() {
 	# cmake must be run from nvim source root
 	cd "${DIR_NVIM_SRC}"
