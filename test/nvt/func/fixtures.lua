@@ -13,8 +13,8 @@ NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 local M = {}
 
----Create /tmp/nvt_func or /tmp/nvt_func/data if present
----Change running instance's directory to above
+---Create /tmp/nvt_func or populated /tmp/nvt_func/data
+---@return string absolute path
 local function setup_cwd()
   ---Return the value of an environment variable, asserting presence
   ---return @string
@@ -38,21 +38,20 @@ local function setup_cwd()
     end
   end
 
-  local dir_cwd, dir_test = env("NVT_FUNC_DIR_CWD"), env("NVT_FUNC_DIR_TEST")
+  local cwd, dir_test = env("NVT_FUNC_DIR_CWD"), env("NVT_FUNC_DIR_TEST")
 
   -- always blow away and recreate the cwd of the test instance
-  sys({ "rm", "-rf", dir_cwd })
-  sys({ "mkdir", "-p", dir_cwd })
+  sys({ "rm", "-rf", cwd })
+  sys({ "mkdir", "-p", cwd })
 
   -- if data is present, recursively copy it and use that as cwd
   local dir_test_data = dir_test .. "/data"
   if vim.uv.fs_stat(dir_test_data) then
-    sys({ "cp", "-p", "-r", dir_test_data, dir_cwd })
-    dir_cwd = dir_cwd .. "/data"
+    sys({ "cp", "-p", "-r", dir_test_data, cwd })
+    cwd = cwd .. "/data"
   end
 
-  -- set the cwd of the running test instance
-  n.api.nvim_set_current_dir(dir_cwd)
+  return cwd
 end
 
 ---Create a new neovim functest session with
@@ -67,29 +66,35 @@ end
 ---@param options? test.functional.ui.screen.Opts
 ---@return test.functional.ui.screen
 function M.create_session(config, width, height, options)
+  -- instantiate a new session (nvim instance) and its screen
   n.clear()
-
   local screen = Screen.new(width or 80, height or 24, options)
 
-  -- add the nvim-tree package and setup globals
+  -- create the test instance cwd
+  local cwd = setup_cwd()
+
+  -- add the nvim-tree package, setup globals and cd
   n.exec_lua(function()
+    -- add the nvim-tree package
     vim.opt.packpath:append(os.getenv("NVT_FUNC_PACKPATH") or "")
     vim.api.nvim_cmd({ cmd = "packadd", args = { "nvim-tree.lua" } }, {})
 
+    -- setup globals
     NVT_FUNCTEST_CONTEXT = true
     NVT_FUNCTEST_EVENTS = {}
     NVT_FUNCTEST_CLIPBOARD_LINES = {}
-  end)
 
-  -- create the test instance cwd and change directory to it
-  setup_cwd()
+    -- test intance dir
+    vim.api.nvim_set_current_dir(cwd)
 
-  n.exec_lua(function()
+    -- setup nvim-tree with requested config
     require("nvim-tree").setup(config)
   end)
 
+  -- create attr_ids for all nvim-tree test highlight groups
   M.add_nvt_attr_ids(screen)
 
+  -- instantiate the test clipboard
   M.use_dummy_clipboard()
 
   return screen
