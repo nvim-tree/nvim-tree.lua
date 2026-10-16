@@ -29,7 +29,7 @@ function M.create_session(config, width, height, options)
   -- instantiate a new session (nvim instance) and its screen
   n.clear({
     args = {
-      "--cmd", "set packpath^=" .. os.getenv("NVT_FUNC_PACKPATH"),
+      "--cmd", "set packpath^=" .. nu.env("NVT_FUNC_PACKPATH"),
       "--cmd", "packadd nvim-tree.lua",
     }
   })
