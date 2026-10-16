@@ -26,8 +26,8 @@ export NVT_FUNC_DIR_ROOT="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 # absolute path of the test's directory under Nvim source
 export NVT_FUNC_DIR_TEST=
 
-# absolute path of script to execute to setup the test execution directory
-export NVT_FUNC_SCRIPT_CREATE_TEST_CWD="${NVT_FUNC_DIR_ROOT}/test/nvt/func/create_test_cwd.sh"
+# absolute path of the test instance cwd
+export NVT_FUNC_DIR_CWD="/tmp/nvt_func"
 
 # absolute paths of test spec files to execute, under Nvim source
 files_test_lua=
