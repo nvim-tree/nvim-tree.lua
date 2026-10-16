@@ -1,7 +1,6 @@
 local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -18,7 +17,7 @@ end)
 
 t.describe("fs.print_clipboard", function()
   t.it("none", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
     })
 
@@ -33,7 +32,7 @@ t.describe("fs.print_clipboard", function()
 
 
   t.it("many", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<CR>",

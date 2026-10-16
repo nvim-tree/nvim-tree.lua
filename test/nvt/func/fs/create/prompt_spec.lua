@@ -1,7 +1,6 @@
 local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -17,7 +16,7 @@ end)
 
 t.describe("fs.create prompt", function()
   t.it("tree focused", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
       "a",
@@ -30,7 +29,7 @@ t.describe("fs.create prompt", function()
 
 
   t.it("api tree not focused", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
       "<c-w><c-w>",
@@ -51,7 +50,7 @@ t.describe("fs.create prompt", function()
 
 
   t.it("file focused", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down><Down>",
       "a",
@@ -64,7 +63,7 @@ t.describe("fs.create prompt", function()
 
 
   t.it("cancelled", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
       "foo",
