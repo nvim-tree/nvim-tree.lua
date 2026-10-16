@@ -1,7 +1,6 @@
 local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -20,7 +19,7 @@ t.describe("fs.copy", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
       "c",
@@ -48,7 +47,7 @@ t.describe("fs.copy", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
     })
@@ -77,7 +76,7 @@ t.describe("fs.copy", function()
   t.it("single dir", function()
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down>",
       "c",
@@ -103,7 +102,7 @@ t.describe("fs.copy", function()
   t.it("toggle one", function()
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
       "c",
@@ -125,7 +124,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "c",
     })
 
@@ -150,7 +149,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("toggle many", function()
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<Down>",
       "c",
@@ -172,7 +171,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<S-v>",
       "<Down>",
       "c",
@@ -208,7 +207,7 @@ NvimTree_1 [-]                 [No Name]                                        
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
     --
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
       "c",
@@ -237,7 +236,7 @@ NvimTree_1 [-]                 [No Name]                                        
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
       "x",
@@ -259,7 +258,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "c",
     })
 
@@ -281,7 +280,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("dir overrides file", function()
     n.fn.setreg("+", "foo")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "E",
       "<down><down><down>",

@@ -1,7 +1,6 @@
 local t = require("test.testutil")
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -20,7 +19,7 @@ end)
 
 t.describe("fs.paste copied", function()
   t.it("single file", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down><down>",
       "c",
@@ -52,7 +51,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple files", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down><down>",
       "<S-v>",
@@ -90,7 +89,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("single dir", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -129,7 +128,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("single dir conflict resolved", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -141,7 +140,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "_copy<CR>",
       "<CR>",
     })
@@ -176,7 +175,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("single dir conflict cancelled", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -188,7 +187,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<Esc>",
     })
 
@@ -196,7 +195,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { abort = true } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "gg",
       "E",
     })
@@ -226,7 +225,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("single dir conflict second conflict overwrite", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -238,7 +237,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<BS>2<CR>"
     })
 
@@ -246,7 +245,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
     })
 
@@ -284,7 +283,7 @@ Press ENTER or type command to continue^                                        
 
 
   t.it("single dir conflict second conflict cancel", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -296,7 +295,7 @@ Press ENTER or type command to continue^                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<BS>2<CR>",
     })
 
@@ -304,7 +303,7 @@ Press ENTER or type command to continue^                                        
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "n<CR>",
       "gg",
       "E",
@@ -334,7 +333,7 @@ Press ENTER or type command to continue^                                        
 
 
   t.it("single dir conflict second conflict resolved", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -346,7 +345,7 @@ Press ENTER or type command to continue^                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d1" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<BS>2<CR>",
     })
 
@@ -354,7 +353,7 @@ Press ENTER or type command to continue^                                        
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2 ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "R<CR>",
     })
 
@@ -362,7 +361,7 @@ Press ENTER or type command to continue^                                        
       cmdline = { { prompt = "Rename to ", content = { { "/tmp/nvt_func/data/d2" } }, pos = 21, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<BS>1_copy<CR>",
       "<CR>",
     })
@@ -389,7 +388,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "c",
@@ -430,7 +429,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple conflict no rename", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<s-v>",
@@ -445,7 +444,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "n<CR>",
     })
 
@@ -477,7 +476,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple conflict rename suffix", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<s-v>",
@@ -492,7 +491,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "r<CR>",
     })
 
@@ -500,7 +499,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Suffix: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       ".renamed<CR>",
     })
 
@@ -538,7 +537,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple conflict rename cancel", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<s-v>",
@@ -553,7 +552,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<CR>",
       "<CR>",
     })
@@ -587,7 +586,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple conflict rename second conflict", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down>",
       "a",
@@ -596,7 +595,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
     na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
 
-    nu.feed_sync({
+    nf.feed_sync({
       "W",
       "gg",
       "<down>",
@@ -612,7 +611,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<CR>",
       ".renamed<CR>",
     })
@@ -621,7 +620,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "Overwrite /tmp/nvt_func/data/d2/f2.renamed ? R(ename)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "<CR>",
       ".again<CR>",
     })
@@ -663,7 +662,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("multiple conflict overwrite", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "<s-v>",
@@ -679,7 +678,7 @@ NvimTree_1 [-]                 [No Name]                                        
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
     })
 
-    nu.feed_sync({
+    nf.feed_sync({
       "y<CR>",
     })
 

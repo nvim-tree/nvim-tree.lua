@@ -2,7 +2,6 @@ local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -21,7 +20,7 @@ t.describe("fs.move", function()
   t.it("nothing", function()
     n.fn.setreg("+", "")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "gp",
       "E",
@@ -46,7 +45,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("inexistent", function()
     n.fn.setreg("+", "/tmp/nvt_func/data/inexistent")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "gp",
       "E",
@@ -71,7 +70,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("present", function()
     n.fn.setreg("+", "/tmp/nvt_func/data/src/f1")
 
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "E",
       "<down>",

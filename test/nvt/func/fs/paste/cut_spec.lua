@@ -2,7 +2,6 @@ local t = require("test.testutil")
 local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
-local nu = require("test.nvt.func.util")
 
 -- 0.12 global compatibility
 t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
@@ -24,7 +23,7 @@ end)
 
 t.describe("fs.paste cut", function()
   t.it("single dir", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "x",
@@ -69,7 +68,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("single file", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down><down>",
       "x",
@@ -112,7 +111,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
 
 
   t.it("api node under cursor", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "x",
@@ -157,7 +156,7 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
   t.it("api node specified", function()
-    nu.feed_sync({
+    nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
       "x",
