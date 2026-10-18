@@ -6,7 +6,7 @@ local nu = require("test.nvt.func.util")
 ---Globals used within test session context, noted in this test context only for type definition
 ---@type boolean
 NVT_FUNCTEST_CONTEXT = true
----@type nvt.functest.event[]
+---@type test.nvt.func.fixtures.Event[]
 NVT_FUNCTEST_EVENTS = {}
 ---@type string[]
 NVT_FUNCTEST_CLIPBOARD_LINES = {}
@@ -14,18 +14,25 @@ NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 local M = {}
 
+
+---@class (exact) test.nvt.func.fixtures.create_session.Opts
+---@field data? string relative path of data directory to copy for test instance cwd
+---@field config? nvim_tree.config passed to nvim-tree.setup
+---@field width? integer default 80
+---@field height? integer default 24
+---@field screen_opts? test.functional.ui.screen.Opts
+
 ---Create a new neovim functest session with
 ---- nvim-tree.lua package added
 ---- fresh test data directory created and cd'd into
 ---- nvim-tree setup called
 ---- nvim-tree HL attr_ids added
 ---- dummy clipboard setup
----@param config? nvim_tree.config passed to nvim-tree.setup
----@param width? integer default 80
----@param height? integer default 24
----@param options? test.functional.ui.screen.Opts
+---@param opts? test.nvt.func.fixtures.create_session.Opts
 ---@return test.functional.ui.screen
-function M.create_session(config, width, height, options)
+function M.create_session(opts)
+  opts = opts or {}
+
   -- instantiate a new session (nvim instance) and its screen
   n.clear({
     args = {
@@ -33,10 +40,10 @@ function M.create_session(config, width, height, options)
       "--cmd", "packadd nvim-tree.lua",
     }
   })
-  local screen = Screen.new(width or 80, height or 24, options)
+  local screen = Screen.new(opts.width or 80, opts.height or 24, opts.screen_opts)
 
   -- create the test instance cwd
-  local cwd = nu.setup_cwd()
+  local cwd = nu.setup_cwd(opts.data)
 
   -- add the nvim-tree package, setup globals and cd
   n.exec_lua(function()
@@ -49,7 +56,7 @@ function M.create_session(config, width, height, options)
     vim.api.nvim_set_current_dir(cwd)
 
     -- setup nvim-tree with requested config
-    require("nvim-tree").setup(config)
+    require("nvim-tree").setup(opts.config)
   end)
 
   -- create attr_ids for all nvim-tree test highlight groups
@@ -61,8 +68,7 @@ function M.create_session(config, width, height, options)
   return screen
 end
 
----Subscribed events captured during test execution
----@class (exact) nvt.functest.event
+---@class (exact) test.nvt.func.fixtures.Event
 ---@field event_type string value of nvim_tree.api.events.Event
 ---@field payload table deep copy
 
