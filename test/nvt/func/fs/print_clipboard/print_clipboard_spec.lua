@@ -3,7 +3,8 @@ local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 
 -- 0.12 global compatibility
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
+---@diagnostic disable-next-line: inject-field, undefined-global
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 
 --- @type test.functional.ui.screen
@@ -11,7 +12,10 @@ local screen
 
 
 t.before_each(function()
-  screen = nf.create_session({}, nil, nil, { ext_messages = true, })
+  screen = nf.create_session({
+    data = "test/nvt/func/fs/print_clipboard/data",
+    screen_opts = { ext_messages = true },
+  })
 end)
 
 
