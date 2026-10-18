@@ -4,7 +4,8 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
+---@diagnostic disable-next-line: inject-field, undefined-global
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
@@ -14,7 +15,7 @@ local screen
 
 
 t.before_each(function()
-  screen = nf.create_session()
+  screen = nf.create_session({ data = "test/nvt/func/fs/paste/data", })
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.NodeRenamed)

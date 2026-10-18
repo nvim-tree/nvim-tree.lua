@@ -29,7 +29,7 @@ end
 ---Assert events received during a functest, recorded in session global NVT_FUNCTEST_EVENTS
 ---Must be subscribed via event_subscribe
 ---Clears events as per ext_messages
----@param events nvt.functest.event[]
+---@param events test.nvt.func.fixtures.Event[]
 function M.events_received(events)
   t.eq(events, n.exec_lua(function()
     local ev = vim.deepcopy(NVT_FUNCTEST_EVENTS)
