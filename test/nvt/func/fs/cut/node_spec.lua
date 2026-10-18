@@ -3,7 +3,8 @@ local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 
 -- 0.12 global compatibility
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
+---@diagnostic disable-next-line: inject-field, undefined-global
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 
 -- BUG single operations report "added to clipboard", not "cut to clipboard" as per bulk operations
@@ -14,7 +15,7 @@ local screen
 
 
 t.before_each(function()
-  screen = nf.create_session()
+  screen = nf.create_session({ data = "test/nvt/func/fs/cut/data", })
 end)
 
 

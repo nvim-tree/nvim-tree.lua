@@ -23,9 +23,6 @@ export NVT_FUNC_PACKPATH="${DIR_NVIM_SRC}/src/nvt"
 # absolute link to nvim-tree source root under Nvim source
 export NVT_FUNC_DIR_ROOT="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 
-# absolute path of the test's directory under Nvim source
-export NVT_FUNC_DIR_TEST=
-
 # absolute path of the test instance cwd
 export NVT_FUNC_DIR_CWD="/tmp/nvt_func"
 
@@ -182,7 +179,6 @@ run_tests() {
 
 	# execute all requested tests
 	for f in ${files_test_lua}; do
-		NVT_FUNC_DIR_TEST="$(dirname "${f}")"
 
 		# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
 		# don't exit on failure, just note it
