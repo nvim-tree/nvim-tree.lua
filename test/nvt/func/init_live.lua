@@ -71,8 +71,9 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
+-- TODO find and pass dir_data if present
 -- test instance cwd
-vim.api.nvim_set_current_dir(require("test.nvt.func.dirs").setup_cwd())
+vim.api.nvim_set_current_dir(require("test.nvt.func.util").setup_cwd())
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })

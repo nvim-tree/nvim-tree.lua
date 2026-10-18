@@ -3,7 +3,8 @@ local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each ---@diagnostic disable-line: inject-field, undefined-global
+---@diagnostic disable-next-line: inject-field, undefined-global
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 
 --- @type test.functional.ui.screen
@@ -13,7 +14,11 @@ local screen
 ---@param config nvim_tree.config
 ---@return test.functional.ui.screen
 local function create_trash_session(config)
-  screen = nf.create_session(config, nil, nil, { ext_messages = true, ext_cmdline = true, })
+  screen = nf.create_session({
+    config = config,
+    data = "test/nvt/func/fs/trash/data",
+    screen_opts = { ext_messages = true, ext_cmdline = true, },
+  })
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.FileRemoved)
