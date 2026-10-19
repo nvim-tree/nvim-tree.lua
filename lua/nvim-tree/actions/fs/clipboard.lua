@@ -357,7 +357,7 @@ end
 ---@param action ClipboardAction
 ---@param action_fn ClipboardActionFn
 function Clipboard:do_paste(node, action, action_fn)
-  if node.name == ".." then
+  if not node or node.name == ".." then
     node = self.explorer
   else
     local dir = node:as(DirectoryNode)
