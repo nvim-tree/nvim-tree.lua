@@ -17,6 +17,7 @@ fi
 # absolute path of nvim-tree source
 export NVT_DIR_SRC="${PWD}"
 
+# TODO just hardcode this
 # absolute path of the test instance cwd
 export NVT_FUNC_DIR_CWD="/tmp/nvt_func"
 
@@ -29,11 +30,11 @@ export NVT_DIR_LIVE=
 # pack/dist/opt is added underneath to satisfy :packadd convention
 export NVT_FUNC_PACKPATH="${DIR_NVIM_SRC}/src/nvt"
 
+# passed to make functionaltest; underneath Nvim source
+export TEST_FILE=
+
 # absolute link to nvim-tree source root under Nvim source
 dir_src_linked="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
-
-# absolute paths of test spec files to execute, under Nvim source
-files_test_lua=
 
 # number of test failures
 failures=0
@@ -41,12 +42,13 @@ failures=0
 # a, t or l
 mode=
 
+# TODO clarify messages
 usage() {
 	echo "Usage: ${0} [-a] [-h] [-t <file or dir>] [-l [<data dir>]]"
 	echo
 	echo "    OPTION:"
 	echo "        -a  Execute all tests"
-	echo "        -t  Execute single test file or all under directory"
+	echo "        -t  Executes single test file or all under directory, passed as TEST_FILE to Nvim make functionaltest"
 	echo "        -l  Live environment, optionally using a data directory"
 	echo "        -h  Show this help"
 }
@@ -55,6 +57,7 @@ usage() {
 # CLI args
 #
 
+# TODO remove, this is too complex
 # set $mode to $1, fail if another $mode already set 
 mode_set() {
 	if [ -n "${mode}" ] && [ "${mode}" != "${1}" ]; then
@@ -64,43 +67,11 @@ mode_set() {
 	mode="${1}"
 }
 
-# add a single file $1 or all _spec.lua files under directory $1 to $files_test_lua
-files_test_lua_add() {
-	if [ -f "${1}" ]; then
-		files_test_lua="${files_test_lua} ${dir_src_linked}/${1}"
-	elif [ -d "${1}" ]; then
-		find "${1}" -type f -iname '*_spec.lua' > /tmp/nvt_files_test_lua
-		while IFS= read -r f; do
-			files_test_lua="${files_test_lua} ${dir_src_linked}/${f}"
-		done < /tmp/nvt_files_test_lua
-		rm /tmp/nvt_files_test_lua
-	else
-		echo "${1} inexistent" >&2
-		exit 1
-	fi
-	if [ -z "${files_test_lua}" ]; then
-		echo "no tests found in ${1}" >&2
-		exit 1
-	fi
-}
-
-# set $NVT_DIR_LIVE if present otherwise unset
-dir_live_set() {
-	if [ -z "${1}" ]; then
-		unset NVT_DIR_LIVE
-	elif [ -d "${1}" ]; then
-		NVT_DIR_LIVE="${1}"
-	else
-		echo "${1} not a directory" >&2
-		exit 1
-	fi
-}
-
 while getopts "ahlt:" o; do
 	case "${o}" in
 		a)
 			mode_set "${o}"
-			files_test_lua_add "test/nvt/func"
+			TEST_FILE="${dir_src_linked}/test/nvt/func"
 			;;
 		h)
 			usage
@@ -109,11 +80,11 @@ while getopts "ahlt:" o; do
 		l)
 			shift
 			mode_set "${o}"
-			dir_live_set "${1}"
+			NVT_DIR_LIVE="${1}"
 			;;
 		t)
 			mode_set "${o}"
-			files_test_lua_add "${OPTARG}"
+			TEST_FILE="${dir_src_linked}/${OPTARG}"
 			;;
 		*)
 			usage >&2
@@ -164,20 +135,17 @@ live() {
 		|| failures=1
 }
 
-# TODO we can probably run this with a directory now instead of individual files
 run_tests() {
 	# cmake must be run from nvim source root
 	cd "${DIR_NVIM_SRC}"
 
-	# execute all requested tests
-	for f in ${files_test_lua}; do
-		# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
-		# don't exit on failure, just note it
-		make functionaltest \
-			TEST_FILE="${f}" \
-			TEST_ARGS="--lpath=${dir_src_linked}/?.lua --lpath=${dir_src_linked}/lua/?.lua --lpath=${dir_src_linked}/lua/?/init.lua" \
-			|| failures=$((failures + 1)) 
-		done
+	# export TEST_COLOURS=false
+
+	# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
+	export TEST_ARGS="--lpath=${dir_src_linked}/?.lua --lpath=${dir_src_linked}/lua/?.lua --lpath=${dir_src_linked}/lua/?/init.lua"
+
+	# don't exit on failure, just note it
+	make functionaltest || failures=$((failures + 1)) 
 }
 
 #

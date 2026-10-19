@@ -74,7 +74,8 @@ screen_resize()
 vim.o.background = "dark"
 
 -- test instance cwd
-vim.api.nvim_set_current_dir(nu.setup_cwd(os.getenv("NVT_DIR_LIVE"), true))
+local cwd = nu.setup_cwd(os.getenv("NVT_DIR_LIVE"))
+vim.api.nvim_set_current_dir(cwd)
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })
