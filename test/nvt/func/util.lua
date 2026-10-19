@@ -26,8 +26,9 @@ end
 
 ---Create /tmp/nvt_func or populated /tmp/nvt_func/data
 ---@param dir_data? string relative path of data directory to copy for test instance cwd
+---@param quiet? boolean do not print notices, default false
 ---@return string absolute path
-function M.setup_cwd(dir_data)
+function M.setup_cwd(dir_data, quiet)
   local cwd = M.env("NVT_FUNC_DIR_CWD")
 
   -- always blow away and recreate the cwd of the test instance
@@ -36,16 +37,20 @@ function M.setup_cwd(dir_data)
 
   -- if data is present, recursively copy it and use that as cwd
   if dir_data then
-    local abs_dir_data = M.env("NVT_FUNC_DIR_ROOT") .. "/" .. dir_data
+    local abs_dir_data = M.env("NVT_DIR_SRC") .. "/" .. dir_data
     local _, err = vim.uv.fs_stat(abs_dir_data)
     assert(not err, err)
 
-    M.sys({ "cp", "-p", "-r", abs_dir_data, cwd })
     cwd = cwd .. "/data"
+    M.sys({ "cp", "-p", "-r", abs_dir_data, cwd })
 
-    print("  created test cwd " .. cwd .. " from " .. abs_dir_data)
+    if not quiet then
+      print("  created test cwd " .. cwd .. " from " .. abs_dir_data)
+    end
   else
-    print("  created empty test cwd " .. cwd)
+    if not quiet then
+      print("  created empty test cwd " .. cwd)
+    end
   end
 
   return cwd
