@@ -1,3 +1,5 @@
+local nu = require("test.nvt.func.util")
+
 -- match the test screen size: <Leader>r to reapply if the terminal is not cooperating
 local function screen_resize()
   vim.o.columns = 80
@@ -71,9 +73,8 @@ screen_resize()
 -- use dark background for readability under dark and light
 vim.o.background = "dark"
 
--- TODO find and pass dir_data if present
 -- test instance cwd
-vim.api.nvim_set_current_dir(require("test.nvt.func.util").setup_cwd())
+vim.api.nvim_set_current_dir(nu.setup_cwd(os.getenv("NVT_DIR_LIVE"), true))
 
 -- mappings
 vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })
