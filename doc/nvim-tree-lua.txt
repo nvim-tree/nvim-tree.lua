@@ -880,6 +880,13 @@ keep using |netrw| without its browser features please ensure:
 |nvim_tree.config| {hijack_netrw}`  = true`
 
 ==============================================================================
+Sessions                                                  *nvim-tree-sessions*
+
+nvim-tree restores its buffers when restoring vim sessions (for nvim 0.13+).
+Persistent storage is located in 
+`vim.fn.stdpath("data") .. "/nvim-tree-session.json"`.
+
+==============================================================================
 Legacy                                                      *nvim-tree-legacy*
 
 Backwards compatible, silent refactors have been done.
@@ -1911,11 +1918,6 @@ Config: experimental                           *nvim-tree-config-experimental*
     In the event of a problem please disable the experiment and raise an
     issue.
 
-    Fields: ~
-      • {session_restore_nvim}?  (`boolean`, default: `true`) Restore
-                                 nvim-tree buffers when restoring vim sessions
-                                 (requires 0.13+).
-
 ==============================================================================
 Config: log                                             *nvim-tree-config-log*
 
@@ -2221,7 +2223,6 @@ Following is the default configuration, see |nvim_tree.config| for details. >lua
         persist = false,
       },
       experimental = {
-        session_restore_nvim = true
       },
       log = {
         enable = false,
