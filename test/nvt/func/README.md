@@ -1,3 +1,23 @@
+# Overview
+
+## Directories
+
+Test instances always execute under the hardcoded `/tmp/nvt_func` directory, so that assertions match that root folder.
+
+If a test data directory is passed to `test.nvt.func.fixtures` `create_session`, it will be copied to `/tmp/nvt_func/data` and the test instance will execute in that directory.
+
+The `nvim-tree.lua` source directory is temporarily linked as `src/nvt/pack/dist/opt/nvim-tree.lua` under the Nvim source.
+
+When running functional tests, a temporary `build/Xtest_xdg` directory is created, which contains only links to `runtime`, `src` and `test`, hence we link in a directory that is available at test time.
+
+`src` is used instead of `test` to prevent your lua-language-server from finding it during test execution.
+
+## Execution
+
+The test harness `scripts/functionaltest.sh` is used to run one or many tests or a live test instance for generating test data.
+
+Nvim sources are required. You will be prompted with instructions on fetching and using the sources.
+
 # Generating Test Data
 
 Execute `scripts/functionaltest.sh -l [ <data dir> ]`

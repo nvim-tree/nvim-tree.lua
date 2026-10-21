@@ -17,30 +17,23 @@ fi
 # absolute path of nvim-tree source
 export NVT_DIR_SRC="${PWD}"
 
-# TODO just hardcode this
-# absolute path of the test instance cwd
-export NVT_FUNC_DIR_CWD="/tmp/nvt_func"
-
-# optional argument of -l
-export NVT_DIR_LIVE=
-
 # parent directory under which nvim-tree is linked under Nvim source
 # uses src (not test or runtime) to prevent luals from finding it 
 # src can be found in build/Xtest_xdg, which contains only links to runtime, src and test
 # pack/dist/opt is added underneath to satisfy :packadd convention
 export NVT_FUNC_PACKPATH="${DIR_NVIM_SRC}/src/nvt"
 
-# passed to make functionaltest; underneath Nvim source
+# used by make functionaltest; underneath Nvim source
 export TEST_FILE=
+
+# optional argument of -l
+NVT_DIR_LIVE=
 
 # absolute link to nvim-tree source root under Nvim source
 dir_src_linked="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 
-# number of test failures
-failures=0
-
-# a, t or l
-mode=
+# $RC from tests/live, returned after teardown
+rc=0
 
 # TODO clarify messages
 usage() {
@@ -53,74 +46,39 @@ usage() {
 	echo "        -h  Show this help"
 }
 
-#
-# CLI args
-#
-
-# TODO remove, this is too complex
-# set $mode to $1, fail if another $mode already set 
-mode_set() {
-	if [ -n "${mode}" ] && [ "${mode}" != "${1}" ]; then
-		echo "specify only one of -a, -t or -l" >&2
-		exit 1
-	fi
-	mode="${1}"
-}
-
-while getopts "ahlt:" o; do
-	case "${o}" in
-		a)
-			mode_set "${o}"
-			TEST_FILE="${dir_src_linked}/test/nvt/func"
-			;;
-		h)
-			usage
-			exit 0
-			;;
-		l)
-			shift
-			mode_set "${o}"
-			NVT_DIR_LIVE="${1}"
-			;;
-		t)
-			mode_set "${o}"
-			TEST_FILE="${dir_src_linked}/${OPTARG}"
-			;;
-		*)
-			usage >&2
-			exit 1
-			;;
-	esac
-done
-if [ -z "${mode}" ]; then
-	usage >&2
-	exit 1
-fi
-
-#
-# test harness
-#
-
 # before all tests: links plugin and tests in their appropriate places under Nvim source root
 setup() {
 	teardown
 
 	# nvim-tree source link
 	mkdir -p "$(dirname "${dir_src_linked}")"
-	ln -sv "${PWD}" "${dir_src_linked}"
+	ln -s "${PWD}" "${dir_src_linked}"
 }
 
 # after all tests: remove plugin and test links from Nvim source root
 teardown() {
 	# nvim-tree source link
-	rm -fv  "${dir_src_linked}"
+	rm -f  "${dir_src_linked}"
 
 	# test/live instance cwd
-	rm -rf "${NVT_FUNC_DIR_CWD}"
+	rm -rf "/tmp/nvt_func"
 }
 
 # TODO run with the compiled nvim version under test
+# start a live Nvim session for generating test data
+# $1: optional $NVT_DIR_LIVE
 live() {
+	if [ -n "${1}" ]; then
+		if [ ! -d "${1}" ]; then
+			printf "%s inexistent\n" "${1}" 1>&2
+			exit 1
+		fi
+		export NVT_DIR_LIVE="${1}"
+	fi
+
+	# TODO do we need to setup? we could just run here
+	setup
+
 	nvim \
 		--clean \
 		--noplugin \
@@ -132,39 +90,62 @@ live() {
 		--cmd "lua dofile('${DIR_NVIM_SRC}/runtime/colors/vim.lua')" \
 		--cmd "unlet g:colors_name" \
 		--cmd "packadd nvim-tree.lua" \
-		|| failures=1
+		|| rc=$?
+
+	teardown
 }
 
-run_tests() {
-	# cmake must be run from nvim source root
-	cd "${DIR_NVIM_SRC}"
+# execute make functionaltest, exporting necessary TEST_* variables
+# $1: TEST_FILE relative path
+make_functionaltest() {
+	if [ ! -f "${1}" ] && [ ! -d "${1}" ]; then
+		printf "%s inexistent\n" "${1}" 1>&2
+		exit 1
+	fi
 
-	# export TEST_COLOURS=false
+	setup
+
+	export TEST_FILE="${dir_src_linked}/${1}"
 
 	# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
 	export TEST_ARGS="--lpath=${dir_src_linked}/?.lua --lpath=${dir_src_linked}/lua/?.lua --lpath=${dir_src_linked}/lua/?/init.lua"
 
+	# export TEST_COLORS=false
+
+	# cmake must be run from nvim source root
+	cd "${DIR_NVIM_SRC}"
+
 	# don't exit on failure, just note it
-	make functionaltest || failures=$((failures + 1)) 
+	make functionaltest || rc=$?
+
+	teardown
 }
 
-#
-# execute
-#
+if [ ${#} -lt 1 ]; then
+	usage >&2
+	exit 1
+fi
+while getopts "ahlt:" o; do
+	case "${o}" in
+		a)
+			make_functionaltest "test/nvt/func"
+			;;
+		h)
+			usage
+			exit 0
+			;;
+		l)
+			shift
+			live "${1}"
+			;;
+		t)
+			make_functionaltest "${OPTARG}"
+			;;
+		*)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
 
-setup
-
-case "${mode}" in
-	l)
-		live
-		;;
-	a|t)
-		run_tests
-		;;
-	*)
-		;;
-esac
-
-teardown
-
-exit "${failures}"
+exit "${rc}"
