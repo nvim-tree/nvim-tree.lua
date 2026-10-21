@@ -59,7 +59,6 @@ function M.create_session(opts)
     require("nvim-tree").setup(opts.config)
   end)
 
-  -- TODO this is causing performance issues when running all as a single test execution, and they persist
   -- create attr_ids for all nvim-tree test highlight groups
   M.add_nvt_attr_ids(screen)
 
