@@ -28,7 +28,7 @@ end
 ---@param dir_data? string relative path of data directory to copy for test instance cwd
 ---@return string absolute path
 function M.setup_cwd(dir_data)
-  local cwd = M.env("NVT_FUNC_DIR_CWD")
+  local cwd = "/tmp/nvt_func"
 
   -- always blow away and recreate the cwd of the test instance
   M.sys({ "rm", "-rf", cwd })
