@@ -15,7 +15,7 @@ local screen
 
 
 t.before_each(function()
-  screen = nf.create_session({ data = "test/nvt/func/fs/0paste/data", })
+  screen = nf.create_session({ data = "test/nvt/func/fs/paste/data", })
 
   local Event = require("nvim-tree._meta.api.events").Event
   nf.event_subscribe(Event.NodeRenamed)
