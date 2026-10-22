@@ -160,12 +160,10 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.events_received({
+    na.events_received_unordered({
       { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
       { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
       { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
-
-      -- TODO these last two can be out of order
       { event_type = "FolderRemoved",  payload = { folder_name = "/tmp/nvt_func/data/d 2", }, },
       { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
     })

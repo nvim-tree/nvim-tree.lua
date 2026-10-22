@@ -35,7 +35,43 @@ function M.events_received(events)
     local ev = vim.deepcopy(NVT_FUNCTEST_EVENTS)
     NVT_FUNCTEST_EVENTS = {}
     return ev
-  end))
+  end), "events_received")
+end
+
+---Assert events received during a functest, recorded in session global NVT_FUNCTEST_EVENTS
+---Must be subscribed via event_subscribe
+---Clears events as per ext_messages
+---@param events test.nvt.func.fixtures.Event[]
+function M.events_received_unordered(events)
+  -- expected values removed when found
+  local expected = vim.deepcopy(events)
+
+  local actual = n.exec_lua(function()
+    local ev = vim.deepcopy(NVT_FUNCTEST_EVENTS)
+    NVT_FUNCTEST_EVENTS = {}
+    return ev
+  end)
+
+  for _, a in pairs(actual) do
+    local found = 0
+
+    for i, e in ipairs(expected) do
+      if vim.deep_equal(a, e) then
+        found = i
+        break
+      end
+    end
+
+    if found == 0 then
+      t.eq(events, actual, "events_received_unordered")
+    end
+
+    table.remove(expected, found)
+  end
+
+  if #expected > 0 then
+    t.eq(events, actual, "events_received_unordered")
+  end
 end
 
 ---buffer with name exists and is loaded

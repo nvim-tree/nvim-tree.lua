@@ -35,7 +35,6 @@ dir_src_linked="${NVT_FUNC_PACKPATH}/pack/dist/opt/nvim-tree.lua"
 # $RC from tests/live, returned after teardown
 rc=0
 
-# TODO clarify messages
 usage() {
 	echo "Usage: ${0} [-a] [-h] [-t <file or dir>] [-l [<data dir>]]"
 	echo
@@ -46,7 +45,7 @@ usage() {
 	echo "        -h  Show this help"
 }
 
-# before all tests: links plugin and tests in their appropriate places under Nvim source root
+# before all tests: links nvim-tree under Nvim source
 setup() {
 	teardown
 
@@ -55,7 +54,7 @@ setup() {
 	ln -s "${PWD}" "${dir_src_linked}"
 }
 
-# after all tests: remove plugin and test links from Nvim source root
+# after all tests: remove links and test instance directory
 teardown() {
 	# nvim-tree source link
 	rm -f  "${dir_src_linked}"
@@ -76,7 +75,6 @@ live() {
 		export NVT_DIR_LIVE="${1}"
 	fi
 
-	# TODO do we need to setup? we could just run here
 	setup
 
 	nvim \
