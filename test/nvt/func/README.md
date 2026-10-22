@@ -2,7 +2,12 @@
 
 ## Test Framework
 
-TODO
+Neovim's functional test framework is used. Useful references:
+
+- `:help dev_test`
+- `test/functional/ui/screen.lua`
+
+When running all tests, some `Screen:expect` calls may execute ~3-4 slower than normal. The source of this nondeterministic behaviour is unknown. Renaming `paste` to `0paste` so that it is executed first appears to "fix" this.
 
 ## Directories
 

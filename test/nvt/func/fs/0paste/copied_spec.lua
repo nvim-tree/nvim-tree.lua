@@ -15,7 +15,7 @@ local screen
 
 t.before_each(function()
   screen = nf.create_session({
-    data = "test/nvt/func/fs/paste/data",
+    data = "test/nvt/func/fs/0paste/data",
     screen_opts = { ext_cmdline = true },
   })
 end)
