@@ -63,21 +63,23 @@ teardown() {
 	rm -rf "/tmp/nvt_func"
 }
 
-# TODO run with the compiled nvim version under test
 # start a live Nvim session for generating test data
 # $1: optional $NVT_DIR_LIVE
 live() {
 	if [ -n "${1}" ]; then
-		if [ ! -d "${1}" ]; then
+		rel="$(realpath --relative-to "${PWD}" "${1}")"
+		if [ ! -d "${rel}" ]; then
 			printf "%s inexistent\n" "${1}" 1>&2
 			exit 1
 		fi
-		export NVT_DIR_LIVE="${1}"
+		export NVT_DIR_LIVE="${rel}"
 	fi
 
 	setup
 
-	nvim \
+	export VIMRUNTIME="${DIR_NVIM_SRC}/runtime"
+
+	"${DIR_NVIM_SRC}/build/bin/nvim" \
 		--clean \
 		--noplugin \
 		-u "test/nvt/func/init_live.lua" \
@@ -85,7 +87,7 @@ live() {
 		--cmd "set shortmess+=IS background=light noswapfile noautoindent startofline laststatus=1 undodir=. directory=. viewdir=. backupdir=. belloff= wildoptions-=pum joinspaces noshowcmd noruler nomore redrawdebug=invalid shada=!,'100,<50,s10,h statusline=%<%f\ %{%nvim_eval_statusline('%h%w%m%r',\ {'maxwidth':\ 30}).width\ >\ 0\ ?\ '%h%w%m%r\ '\ :\ ''%}%=%{%\ &showcmdloc\ ==\ 'statusline'\ ?\ '%-10.S\ '\ :\ ''\ %}%{%\ exists('b:keymap_name')\ ?\ '<'..b:keymap_name..'>\ '\ :\ ''\ %}%{%\ &ruler\ ?\ (\ &rulerformat\ ==\ ''\ ?\ '%-14.(%l,%c%V%)\ %P'\ :\ &rulerformat\ )\ :\ ''\ %}" \
 		--cmd "comclear | mapclear | mapclear!" \
 		--cmd "set packpath^=${NVT_FUNC_PACKPATH}" \
-		--cmd "lua dofile('${DIR_NVIM_SRC}/runtime/colors/vim.lua')" \
+		--cmd "lua dofile('${VIMRUNTIME}/colors/vim.lua')" \
 		--cmd "unlet g:colors_name" \
 		--cmd "packadd nvim-tree.lua" \
 		|| rc=$?
@@ -96,7 +98,8 @@ live() {
 # execute make functionaltest, exporting necessary TEST_* variables
 # $1: TEST_FILE relative path
 make_functionaltest() {
-	if [ ! -f "${1}" ] && [ ! -d "${1}" ]; then
+	rel="$(realpath --relative-to "${PWD}" "${1}")"
+	if [ ! -f "${rel}" ] && [ ! -d "${rel}" ]; then
 		printf "%s inexistent\n" "${1}" 1>&2
 		exit 1
 	fi
