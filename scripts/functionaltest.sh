@@ -64,6 +64,7 @@ teardown() {
 }
 
 # start a live Nvim session for generating test data
+# nvim startup loosely copied from testnvim.lua
 # $1: optional $NVT_DIR_LIVE
 live() {
 	if [ -n "${1}" ]; then
