@@ -32,8 +32,8 @@ t.describe("fs.paste copied", function()
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
+      cmdline = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -67,8 +67,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
+      cmdline = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -103,8 +103,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
+      cmdline = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -151,8 +151,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -208,8 +208,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
+      cmdline = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -259,8 +259,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -381,8 +381,8 @@ Press ENTER or type command to continue^                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -415,8 +415,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = {},
       attr_ids = {},
+      cmdline = {},
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -464,8 +464,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -521,8 +521,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -576,8 +576,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -647,8 +647,8 @@ NvimTree_1 [-]                 [No Name]                                        
 
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
@@ -704,8 +704,8 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      cmdline = { { abort = true } },
       attr_ids = {},
+      cmdline = { { abort = true } },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
