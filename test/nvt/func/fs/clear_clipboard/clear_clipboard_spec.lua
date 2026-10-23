@@ -30,6 +30,7 @@ t.describe("fs.clear_clipboard", function()
     end)
 
     screen:expect({
+      attr_ids = {},
       messages = { { content = { { "[NvimTree] Clipboard has been emptied." } }, history = true, kind = "echomsg" }, }
     })
   end)
@@ -76,6 +77,7 @@ t.describe("fs.clear_clipboard", function()
     end)
 
     screen:expect({
+      attr_ids = {},
       messages = { {
         history = true,
         kind = "echomsg",
@@ -95,6 +97,7 @@ Copy
     end)
 
     screen:expect({
+      attr_ids = {},
       messages = { { content = { { "[NvimTree] Clipboard has been emptied.", } }, history = true, kind = "echomsg", } },
     })
 
