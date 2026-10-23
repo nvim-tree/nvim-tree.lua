@@ -1,3 +1,5 @@
+# TODO functest move any checks from ci.yml into here, adding any missing e.g. codeformat
+
 all: lint style check
 
 #
@@ -14,15 +16,18 @@ check: luals
 #
 luacheck:
 	luacheck --codes --quiet lua --exclude-files "**/_meta/**"
+	luacheck --codes --quiet test
 
 style-check:
-	scripts/luals-check.sh codestyle-check
+	scripts/luals-check.sh codestyle-check lua
+	scripts/luals-check.sh codestyle-check scripts
 
 style-doc:
 	scripts/doc-comments.sh
 
 luals:
-	scripts/luals-check.sh
+	scripts/luals-check.sh lua
+	scripts/luals-check.sh scripts
 
 #
 # format
@@ -46,7 +51,6 @@ help-update:
 #
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
-
 
 .PHONY: all lint style check luacheck style-check style-doc luals format-fix format-check help-update help-check
 
