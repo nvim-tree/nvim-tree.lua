@@ -48,6 +48,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -91,6 +92,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -139,8 +141,9 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
-      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
+      showmode = { { "-- VISUAL LINE --", "ModeMsg" } },
     })
 
     nf.feed_sync({
@@ -190,6 +193,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -268,8 +272,9 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Trash 3 selected? y/N: ", content = { { "" } }, pos = 0, } },
-      showmode = { { "-- VISUAL LINE --", 5, "ModeMsg" } },
+      showmode = { { "-- VISUAL LINE --", "ModeMsg" } },
     })
 
     nf.feed_sync({
