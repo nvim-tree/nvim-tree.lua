@@ -27,6 +27,7 @@ t.describe("fs.create prompt", function()
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/d1/" } }, pos = 22, } },
     })
   end)
@@ -48,6 +49,7 @@ t.describe("fs.create prompt", function()
     n.poke_eventloop()
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/d1/" } }, pos = 22, } },
     })
   end)
@@ -61,6 +63,7 @@ t.describe("fs.create prompt", function()
     })
 
     screen:expect({
+      attr_ids = {},
       cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
     })
   end)
