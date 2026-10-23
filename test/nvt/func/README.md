@@ -7,8 +7,6 @@ Neovim's functional test framework is used. Useful references:
 - `:help dev_test`
 - `test/functional/ui/screen.lua`
 
-When running all tests, some `Screen:expect` calls may execute ~3-4 slower than normal. The source of this nondeterministic behaviour is unknown. Renaming `paste` to `0paste` so that it is executed first appears to "fix" this.
-
 ## Directories
 
 Test instances always execute under the hardcoded `/tmp/nvt_func` directory, so that assertions match that root folder.
@@ -68,17 +66,25 @@ Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), b
 
 # Test Assertions
 
-## Screen Grid
+## Screen
 
-`Screen:expect` `grid` is the main assertion mechanism, validating the contents of the entire screen, optionally including highlights and extmarks, referred to as `attr_ids`.
+`Screen:expect` is the main assertion mechanism, validating the contents of the entire screen, message area, command line etc., 
+
+`expect` will continually validate the contents of the screen after each update until it matches the expected. This allows for for asynchronous updates such as git/filesystem changes, however it will timeout and fail if the expected state is not reached after `timeout` ms, default 3500.
+
+### Highlighting: attr_ids
+
+Assertions may optionally include highlights and extmarks, referred to as `attr_ids`.
+
+_Important_: `attr_ids = {}` should always be set when invoking `Screen:expect` except when asserting a highlighted grid. The performance impact of asserting attributes is ~8x
 
 Nvim tests almost always asserts highlights and extmarks however they can be difficult to prepare and read. nvim-tree usually asserts only text, asserting highlights only when necessary for the test e.g. copy, git status.
 
 Unique nvim-tree highlight groups `attr_ids` are defined during `test.nvt.func.fixtures` `create_session`. An addition variant for each group when in the cursor line suffixed with `CL` e.g. `NvimTreeFileIconCL` for file icons within the cursor line.
 
-`expect` will continually validate the contents of the screen after each update until it matches the expected. This allows for for asynchronous updates such as git/filesystem changes, however it will timeout and fail if the expected state is not reached after `timeout` ms, default 3500.
+### Grid
 
-### Text Only
+#### Text Only
 
 Set `attr_ids = {}` when calling `expect` to direct a text only assertion.
 
@@ -104,9 +110,9 @@ NvimTree_1 [-]                 [No Name]                                        
 
 Note the 17 repeated lines suffixed with `*17` which is optional; the entire screen may be inserted.
 
-### Complete
+#### Higlighted
 
-It is impractical to generate the `grid` manually, due to the number of `attr_ids` that must be specified, combined and turned on and off.
+It is impractical to generate the `grid` manually, due to the number of `attr_ids` that must be specified, combined and turned on and off. It also has a great performance impact.
 
 - Create a passing `screen:expect` with text only
 - Remove `attr_ids = {}` and re-run the test
@@ -134,6 +140,7 @@ screen:expect([[
 screen = nf.create_session({}, nil, nil, { ext_cmdline = true })
 ---
 screen:expect({
+  attr_ids = {},
   cmdline = { { prompt = "Create ", content = { { "/tmp/nvt_func/data/" } }, pos = 19, } },
 })
 ```
@@ -152,6 +159,7 @@ e.g.
 screen = nf.create_session({}, nil, nil, { ext_messages = true, })
 ---
 screen:expect({
+  attr_ids = {},
   messages = { { content = { { "[NvimTree] trash.cmd 'foobarbaz' is not an executable.", "WarningMsg" } }, history = true, kind = "echomsg" }, }
 })
 ```
