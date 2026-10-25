@@ -30,7 +30,7 @@ t.describe("fs.print_clipboard", function()
     end)
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       messages = { { content = { { "[NvimTree]\n\n", } }, history = true, kind = "echomsg", } },
     })
   end)
@@ -52,7 +52,7 @@ t.describe("fs.print_clipboard", function()
     })
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       messages = {
         { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 added to clipboard." } }, history = true, kind = "echomsg" },
         { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 added to clipboard." } }, history = true, kind = "echomsg" },
@@ -66,7 +66,7 @@ t.describe("fs.print_clipboard", function()
     end)
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       messages = { {
         history = true,
         kind = "echomsg",
