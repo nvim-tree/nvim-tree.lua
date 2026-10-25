@@ -24,8 +24,6 @@ local DirectoryNode = require("nvim-tree.node.directory")
 ---@alias nvim_tree.git.ProjectDirs table<"direct" | "indirect", nvim_tree.git.PathXYs>
 
 local M = {
-  config = {},
-
   ---all projects keyed by toplevel
   ---@type table<string, nvim_tree.git.Project>
   _projects_by_toplevel = {},
