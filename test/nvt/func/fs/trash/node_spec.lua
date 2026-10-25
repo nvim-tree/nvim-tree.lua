@@ -48,7 +48,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -92,7 +92,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -193,7 +193,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      attr_ids = {},
+      -- attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
