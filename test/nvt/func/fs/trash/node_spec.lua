@@ -220,7 +220,7 @@ NvimTree_1 [-]                 [No Name]                                        
       messages = { { content = { { "[NvimTree] trash.cmd 'foobarbaz' is not an executable.", "WarningMsg" } }, history = true, kind = "echomsg" }, }
     })
 
-    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.path_exists("file", "/tmp/nvt_func/data/d 1/d 1 f 1")
 
     na.events_received({})
   end)
@@ -247,11 +247,11 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d 1")
-    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
-    na.dir_exists("/tmp/nvt_func/data/d 2")
-    na.file_exists("/tmp/nvt_func/data/d 2/d 2 f 1")
-    na.file_exists("/tmp/nvt_func/data/f 1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d 1")
+    na.path_exists("file", "/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d 2")
+    na.path_exists("file", "/tmp/nvt_func/data/d 2/d 2 f 1")
+    na.path_exists("file", "/tmp/nvt_func/data/f 1")
 
     na.events_received({})
   end)
@@ -308,8 +308,8 @@ NvimTree_1 [-]                 [No Name]                                        
       { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
     })
 
-    na.file_exists("/tmp/nvt_func/data/d 1/d 1 f 1")
-    na.dir_exists("/tmp/nvt_func/data/d 2")
+    na.path_exists("file", "/tmp/nvt_func/data/d 1/d 1 f 1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d 2")
     na.not_path_exists("/tmp/nvt_func/data/f 1")
   end)
 end)
