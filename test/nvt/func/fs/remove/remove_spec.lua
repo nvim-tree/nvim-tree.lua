@@ -57,7 +57,8 @@ t.describe("fs.remove", function()
     d 1                                                                       |
   ^  d 2                                                                       |
      f 1                                                                       |
-~                                                                               |*20
+     f 1 link ➛ f 1                                                            |
+~                                                                               |*19
       ]],
     })
 
@@ -69,6 +70,7 @@ t.describe("fs.remove", function()
       { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 1/d 1 f 1", }, },
     })
   end)
+
 
   t.it("single dir", function()
     nf.feed_sync({
@@ -96,7 +98,8 @@ t.describe("fs.remove", function()
     d 2                     │~                                                |
        d 2 f 1               │~                                                |
      f 1                     │~                                                |
-~                             │~                                                |*19
+     f 1 link ➛ f 1          │~                                                |
+~                             │~                                                |*18
 NvimTree_1 [-]                 [No Name]                                        |
     ]],
     })
@@ -108,14 +111,56 @@ NvimTree_1 [-]                 [No Name]                                        
     })
   end)
 
+
+  t.it("single file link", function()
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down><down><down>",
+      "<CR>",
+      ":NvimTreeFocus<CR>", -- opens f 1, not f 1 link
+      "<down>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove f 1 link? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/f 1 link was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+  /tmp/nvt_func/data/..       │f 1                                              |
+    d 1                     │~                                                |
+    d 2                     │~                                                |
+  ^   f 1                     │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 f 1                                              |
+      ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/f 1 link")
+    na.buf_exists("/tmp/nvt_func/data/f 1") -- buffer is f 1, not f 1 link
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1 link", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1 link", }, },
+    })
+  end)
+
+
   t.it("many", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<CR>",
-      "<down>",
-      "<s-v>",
+      "E",
       "<down><down>",
+      "<s-v>",
+      "<down><down><down>", -- selects d 2 and d 2 f 1
       "<Del>",
     })
 
@@ -134,8 +179,9 @@ NvimTree_1 [-]                 [No Name]                                        
       messages = { { content = { { "[NvimTree] 3 nodes properly removed." } }, history = true, kind = "echomsg" }, },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
-  ^  d 1                     │~                                                |
-~                             │~                                                |*21
+    d 1                     │~                                                |
+  ^   f 1 link ➛ f 1          │~                                                |
+~                             │~                                                |*20
 NvimTree_1 [-]                 [No Name]                                        |
     ]],
     })
@@ -153,6 +199,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.not_path_exists("/tmp/nvt_func/data/f 1")
   end)
 
+
   t.it("ignore root", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
@@ -169,7 +216,8 @@ NvimTree_1 [-]                 [No Name]                                        
     d 2                     │~                                                |
        d 2 f 1               │~                                                |
      f 1                     │~                                                |
-~                             │~                                                |*17
+     f 1 link ➛ f 1          │~                                                |
+~                             │~                                                |*16
 NvimTree_1 [-]                 [No Name]                                        |
     ]],
     })
