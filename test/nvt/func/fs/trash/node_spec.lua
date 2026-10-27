@@ -17,7 +17,11 @@ local function create_trash_session(config)
   screen = nf.create_session({
     config = config,
     data = "test/nvt/func/fs/trash/data",
-    screen_opts = { ext_messages = true, ext_cmdline = true, },
+    screen_opts = {
+      ext_messages = true,
+      ext_cmdline = false,
+      ext_linegrid = true
+    },
   })
 
   local Event = require("nvim-tree._meta.api.events").Event
@@ -48,7 +52,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -92,7 +96,7 @@ t.describe("fs.trash", function()
     })
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
@@ -193,7 +197,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       cmdline = { { prompt = "Trash d 1 f 1? y/N: ", content = { { "" } }, pos = 0, } },
     })
 
