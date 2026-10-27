@@ -44,7 +44,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/direct")
+    na.path_exists("file", "/tmp/nvt_func/data/direct")
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/direct", }, },
@@ -74,7 +74,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/d1/indirect")
+    na.path_exists("file", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
@@ -114,7 +114,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/d1/indirect")
+    na.path_exists("file", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/d1/indirect", }, },
@@ -142,7 +142,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/f1")
 
     na.events_received({})
   end)
@@ -167,7 +167,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1")
 
     na.events_received({})
   end)
@@ -194,7 +194,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1")
 
     na.events_received({
       -- BUG this should be "/tmp/nvt_func/data/newdir/"

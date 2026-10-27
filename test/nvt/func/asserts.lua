@@ -3,20 +3,16 @@ local t = require("test.testutil")
 
 local M = {}
 
----Assert path exists and is a directory
+---Assert path exists and is type
+---@param type "file" | "directory" | "link" [uv.fs_stat()] {type}
 ---@param path string absolute
-function M.dir_exists(path)
-  local stat, err = vim.uv.fs_stat(path)
-  t.eq(nil,         err,                path)
-  t.eq("directory", stat and stat.type, path)
-end
-
----Assert path exists and is a file
----@param path string absolute
-function M.file_exists(path)
-  local stat, err = vim.uv.fs_stat(path)
-  t.eq(nil,    err,                path)
-  t.eq("file", stat and stat.type, path)
+function M.path_exists(type, path)
+  -- TODO remove once 0.12 is the minimum neovim version
+  -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
+  ---@diagnostic disable-next-line: param-type-mismatch
+  local stat, err = vim.uv.fs_lstat(path)
+  t.eq(nil,  err,                path)
+  t.eq(type, stat and stat.type, path)
 end
 
 ---Assert path does not exist
