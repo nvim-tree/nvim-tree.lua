@@ -42,7 +42,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/direct")
+    na.path_exists("directory", "/tmp/nvt_func/data/direct")
 
     na.events_received({
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct/", }, },
@@ -71,7 +71,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1/indirect")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
@@ -110,7 +110,7 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1/indirect")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
       { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
@@ -139,8 +139,8 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/direct1")
-    na.dir_exists("/tmp/nvt_func/data/direct1/direct2")
+    na.path_exists("directory", "/tmp/nvt_func/data/direct1")
+    na.path_exists("directory", "/tmp/nvt_func/data/direct1/direct2")
 
     na.events_received({
       -- BUG this should be "/tmp/nvt_func/data/direct1/"
@@ -172,8 +172,8 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1/indirect1")
-    na.dir_exists("/tmp/nvt_func/data/d1/indirect1/indirect2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect1/indirect2")
 
     na.events_received({
       -- BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
