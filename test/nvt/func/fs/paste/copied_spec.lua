@@ -49,8 +49,8 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/f1")
-    na.file_exists("/tmp/nvt_func/data/d3/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d3/f1")
   end)
 
 
@@ -85,10 +85,10 @@ NvimTree_1 [-]                 [No Name]                                        
         ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/f1")
-    na.file_exists("/tmp/nvt_func/data/f2")
-    na.file_exists("/tmp/nvt_func/data/d3/f1")
-    na.file_exists("/tmp/nvt_func/data/d3/f2")
+    na.path_exists("file", "/tmp/nvt_func/data/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/f2")
+    na.path_exists("file", "/tmp/nvt_func/data/d3/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d3/f2")
   end)
 
 
@@ -123,11 +123,11 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f1")
-    na.file_exists("/tmp/nvt_func/data/d2/d1/d1f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d1/d1f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d1/d1f2")
 
-    na.dir_exists("/tmp/nvt_func/data/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1")
   end)
 
 
@@ -169,13 +169,13 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d1")
-    na.file_exists("/tmp/nvt_func/data/d1/d1f1")
-    na.file_exists("/tmp/nvt_func/data/d1/d1f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1")
+    na.path_exists("file", "/tmp/nvt_func/data/d1/d1f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d1/d1f2")
 
-    na.dir_exists("/tmp/nvt_func/data/d1_copy")
-    na.file_exists("/tmp/nvt_func/data/d1_copy/d1f1")
-    na.file_exists("/tmp/nvt_func/data/d1_copy/d1f1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d1_copy")
+    na.path_exists("file", "/tmp/nvt_func/data/d1_copy/d1f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d1_copy/d1f1")
   end)
 
 
@@ -436,9 +436,9 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d3/d3f1")
   end)
 
 
@@ -483,10 +483,10 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f2")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d3/d3f1")
   end)
 
 
@@ -542,14 +542,14 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2")
 
-    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3.renamed")
-    na.file_exists("/tmp/nvt_func/data/d2/d3.renamed/d3f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2.renamed")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3.renamed")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d3.renamed/d3f1")
   end)
 
 
@@ -595,11 +595,11 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/d3/d3f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d3/d3f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2")
   end)
 
 
@@ -611,7 +611,7 @@ NvimTree_1 [-]                 [No Name]                                        
       "f2.renamed<CR>",
     })
 
-    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2.renamed")
 
     nf.feed_sync({
       "W",
@@ -669,15 +669,15 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
     --
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2")
 
-    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed")
-    na.file_exists("/tmp/nvt_func/data/d2/f2.renamed.again")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3.renamed")
-    na.file_exists("/tmp/nvt_func/data/d2/d3.renamed/d3f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2.renamed")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2.renamed.again")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3.renamed")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/d3.renamed/d3f1")
   end)
 
 
@@ -734,10 +734,10 @@ Press ENTER or type command to continue^                                        
     ]],
     })
 
-    na.dir_exists("/tmp/nvt_func/data/d2/d1")
-    na.dir_exists("/tmp/nvt_func/data/d2/d3")
-    na.file_exists("/tmp/nvt_func/data/d2/f1")
-    na.file_exists("/tmp/nvt_func/data/d2/f2")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d2/d3")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f1")
+    na.path_exists("file", "/tmp/nvt_func/data/d2/f2")
   end)
 end)
 
