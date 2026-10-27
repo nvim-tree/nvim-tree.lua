@@ -527,19 +527,25 @@ function M.exit_visual_mode()
 end
 
 ---Get the visual selection range nodes, exiting visual mode.
+---@param opts? { should_exit?: boolean, use_native?: boolean }
 ---@return Node[]?
-function M.get_visual_nodes()
+function M.get_visual_nodes(opts)
+  opts = opts and opts or {}
+
   local explorer = require("nvim-tree.core").get_explorer()
   if not explorer then
     return nil
   end
-  local start_line = vim.fn.line("v")
-  local end_line = vim.fn.line(".")
+  local start_line = vim.fn.line(opts.use_native == true and "'<" or "v")
+  local end_line = vim.fn.line(opts.use_native == true and "'>" or ".")
   if start_line > end_line then
     start_line, end_line = end_line, start_line
   end
   local nodes = explorer:get_nodes_in_range(start_line, end_line)
-  M.exit_visual_mode()
+
+  if opts.should_exit ~= false then
+    M.exit_visual_mode()
+  end
   return nodes
 end
 
