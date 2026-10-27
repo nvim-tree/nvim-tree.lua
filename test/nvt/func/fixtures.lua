@@ -125,15 +125,18 @@ function M.use_dummy_clipboard()
   end)
 end
 
+local attr_ids = nil
+
 ---Set concrete attr_ids for all nvim-tree highlight groups
 ---Must be called after nvim-tree setup
 ---These groups are uniquely defined in the test context by appearance/init.lua highlight_functest
 ---@param screen test.functional.ui.screen
 function M.add_nvt_attr_ids(screen)
+  if not attr_ids then
   -- TODO only 2 necessary entries merged then set_default_attr_ids results in less spikey performance
   -- no obvious pattern RE string vs int indexed
   -- this would be good to use Normal instead of 1
-  local attr_ids = {
+  attr_ids = {
     [1] = { foreground = Screen.colors.Blue1, bold = true },
     [2] = { reverse = true },
   }
@@ -144,6 +147,7 @@ function M.add_nvt_attr_ids(screen)
       attr_ids[name] = { foreground = hl.fg, background = hl.bg }
     end
   end
+end
 
   -- screen:add_extra_attr_ids(attr_ids)
   screen:set_default_attr_ids(attr_ids)
