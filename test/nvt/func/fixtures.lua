@@ -131,13 +131,6 @@ end
 ---@param screen test.functional.ui.screen
 function M.add_nvt_attr_ids(screen)
   local attr_ids = {}
-  -- TODO only 2 necessary entries merged then set_default_attr_ids results in less spikey performance
-  -- no obvious pattern RE string vs int indexed
-  -- this would be good to use Normal instead of 1
-  -- local attr_ids = {
-  --   [1] = { foreground = Screen.colors.Blue1, bold = true },
-  --   [2] = { reverse = true },
-  -- }
 
   for name, hl in pairs(n.api.nvim_get_hl(0, { create = false, link = true, })) do
     if name:match("^NvimTree.*") then
