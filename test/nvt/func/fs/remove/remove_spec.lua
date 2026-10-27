@@ -33,6 +33,7 @@ t.describe("fs.remove", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
+      "<down>",
       "<CR>",
       "<down>",
       "<CR>",
@@ -54,12 +55,13 @@ t.describe("fs.remove", function()
       messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/d 2/d 2 f 1 was properly removed." } }, history = true, kind = "echomsg" }, },
       grid = [[
   /tmp/nvt_func/data/..                                                         |
+    d 1                                                                       |
     d 2                                                                       |
   ^  d 2 link ➛ d 2                                                            |
     d 3                                                                       |
      f 1                                                                       |
      f 1 link ➛ f 1                                                            |
-~                                                                               |*18
+~                                                                               |*17
       ]],
     })
 
@@ -76,7 +78,7 @@ t.describe("fs.remove", function()
   t.it("single dir", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down>",
+      "<down><down>",
       "<Del>",
     })
 
@@ -96,12 +98,17 @@ t.describe("fs.remove", function()
       messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/d 2 was properly removed." } }, history = true, kind = "echomsg" }, },
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
+    d 1                     │~                                                |
+      d 1 d 1               │~                                                |
+         d 1 d 1 f 1         │~                                                |
+      d 1 d 2               │~                                                |
+         d 1 d 2 f 1         │~                                                |
     d 2 link ➛ d 2          │~                                                |
     d 3                     │~                                                |
        d 3 f 1               │~                                                |
      f 1                     │~                                                |
      f 1 link ➛ f 1          │~                                                |
-~                             │~                                                |*17
+~                             │~                                                |*12
 NvimTree_1 [-]                 [No Name]                                        |
     ]],
     })
@@ -117,7 +124,7 @@ NvimTree_1 [-]                 [No Name]                                        
   t.it("single file link", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
-      "<down><down><down><down>",
+      "<down><down><down><down><down>",
       "<CR>",
       ":NvimTreeFocus<CR>", -- opens f 1, not f 1 link
       "<down>",
@@ -138,11 +145,12 @@ NvimTree_1 [-]                 [No Name]                                        
       messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/f 1 link was properly removed." } }, history = true, kind = "echomsg" }, },
       grid = [[
   /tmp/nvt_func/data/..       │f 1                                              |
+    d 1                     │~                                                |
     d 2                     │~                                                |
     d 2 link ➛ d 2          │~                                                |
     d 3                     │~                                                |
   ^   f 1                     │~                                                |
-~                             │~                                                |*18
+~                             │~                                                |*17
 NvimTree_1 [-]                 f 1                                              |
       ]],
     })
@@ -160,10 +168,11 @@ NvimTree_1 [-]                 f 1                                              
   t.it("many", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
-      "E",
       "<down><down>",
+      "<CR>",
+      "<down>",
       "<s-v>",
-      "<down><down><down><down><down>",
+      "<down><down><down>",
       "<Del>",
     })
 
@@ -182,9 +191,10 @@ NvimTree_1 [-]                 f 1                                              
       messages = { { content = { { "[NvimTree] 4 nodes properly removed." } }, history = true, kind = "echomsg" }, },
       grid = [[
   /tmp/nvt_func/data/..       │                                                 |
-    d 2                     │~                                                |
+    d 1                     │~                                                |
+    d 2                     │~                                                |
   ^   f 1 link ➛ f 1          │~                                                |
-~                             │~                                                |*20
+~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
     ]],
     })
@@ -203,7 +213,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.path_exists("directory", "/tmp/nvt_func/data/d 2")
-    na.path_exists("link", "/tmp/nvt_func/data/f 1 link")
+    na.path_exists("link",      "/tmp/nvt_func/data/f 1 link")
 
     na.not_path_exists("/tmp/nvt_func/data/d 2/d 2 f 1")
     na.not_path_exists("/tmp/nvt_func/data/d 2 link")
@@ -223,6 +233,11 @@ NvimTree_1 [-]                 [No Name]                                        
       attr_ids = {},
       grid = [[
   ^/tmp/nvt_func/data/..       │                                                 |
+    d 1                     │~                                                |
+      d 1 d 1               │~                                                |
+         d 1 d 1 f 1         │~                                                |
+      d 1 d 2               │~                                                |
+         d 1 d 2 f 1         │~                                                |
     d 2                     │~                                                |
        d 2 f 1               │~                                                |
     d 2 link ➛ d 2          │~                                                |
@@ -231,16 +246,24 @@ NvimTree_1 [-]                 [No Name]                                        
        d 3 f 1               │~                                                |
      f 1                     │~                                                |
      f 1 link ➛ f 1          │~                                                |
-~                             │~                                                |*14
+~                             │~                                                |*9
 NvimTree_1 [-]                 [No Name]                                        |
       ]],
     })
 
+    na.path_exists("directory", "/tmp/nvt_func/data/d 1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d 1/d 1 d 1")
+    na.path_exists("file",      "/tmp/nvt_func/data/d 1/d 1 d 1/d 1 d 1 f 1")
+    na.path_exists("directory", "/tmp/nvt_func/data/d 1/d 1 d 2")
+    na.path_exists("file",      "/tmp/nvt_func/data/d 1/d 1 d 2/d 1 d 2 f 1")
+
     na.path_exists("directory", "/tmp/nvt_func/data/d 2")
     na.path_exists("file",      "/tmp/nvt_func/data/d 2/d 2 f 1")
     na.path_exists("link",      "/tmp/nvt_func/data/d 2 link")
+
     na.path_exists("directory", "/tmp/nvt_func/data/d 3")
     na.path_exists("file",      "/tmp/nvt_func/data/d 3/d 3 f 1")
+
     na.path_exists("file",      "/tmp/nvt_func/data/f 1")
 
     na.events_received({})
