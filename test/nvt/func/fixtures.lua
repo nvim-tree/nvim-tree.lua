@@ -130,22 +130,23 @@ end
 ---These groups are uniquely defined in the test context by appearance/init.lua highlight_functest
 ---@param screen test.functional.ui.screen
 function M.add_nvt_attr_ids(screen)
-  local attr_ids = {}
   -- TODO only 2 necessary entries merged then set_default_attr_ids results in less spikey performance
   -- no obvious pattern RE string vs int indexed
   -- this would be good to use Normal instead of 1
-  -- local attr_ids = {
-  --   [1] = { foreground = Screen.colors.Blue1, bold = true },
-  --   [2] = { reverse = true },
-  -- }
+  local attr_ids = {
+    [1] = { foreground = Screen.colors.Blue1, bold = true },
+    [2] = { reverse = true },
+  }
 
+  -- local attr_ids = {}
   for name, hl in pairs(n.api.nvim_get_hl(0, { create = false, link = true, })) do
     if name:match("^NvimTree.*") then
       attr_ids[name] = { foreground = hl.fg, background = hl.bg }
     end
   end
 
-  screen:add_extra_attr_ids(attr_ids)
+  -- screen:add_extra_attr_ids(attr_ids)
+  screen:set_default_attr_ids(attr_ids)
 end
 
 ---Feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
