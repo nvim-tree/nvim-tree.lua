@@ -14,7 +14,10 @@ local screen
 t.before_each(function()
   screen = nf.create_session({
     data = "test/nvt/func/fs/clear_clipboard/data",
-    screen_opts = { ext_messages = true, },
+    screen_opts = {
+      ext_messages = true,
+      ext_linegrid = true,
+    },
   })
 end)
 
@@ -30,7 +33,7 @@ t.describe("fs.clear_clipboard", function()
     end)
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       messages = { { content = { { "[NvimTree] Clipboard has been emptied." } }, history = true, kind = "echomsg" }, }
     })
   end)
@@ -77,7 +80,7 @@ t.describe("fs.clear_clipboard", function()
     end)
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       messages = { {
         history = true,
         kind = "echomsg",
@@ -97,7 +100,7 @@ Copy
     end)
 
     screen:expect({
-      -- attr_ids = {},
+      attr_ids = {},
       messages = { { content = { { "[NvimTree] Clipboard has been emptied.", } }, history = true, kind = "echomsg", } },
     })
 

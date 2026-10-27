@@ -110,7 +110,7 @@ make_functionaltest() {
 	export TEST_FILE="${dir_src_linked}/${1}"
 
 	# append nvim-tree lua/test to package.path, so that tests themselves may access nvim-tree source
-	export TEST_ARGS="--lpath=${dir_src_linked}/?.lua --lpath=${dir_src_linked}/lua/?.lua --lpath=${dir_src_linked}/lua/?/init.lua"
+	export TEST_ARGS="${TEST_ARGS} --lpath=${dir_src_linked}/?.lua --lpath=${dir_src_linked}/lua/?.lua --lpath=${dir_src_linked}/lua/?/init.lua"
 
 	# export TEST_COLORS=false
 
