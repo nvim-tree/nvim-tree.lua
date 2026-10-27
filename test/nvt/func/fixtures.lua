@@ -11,16 +11,24 @@ NVT_FUNCTEST_EVENTS = {}
 ---@type string[]
 NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
-
-local M = {}
-
+local M = {
+  --- Minimal default screen options for create_session, for considerable performance optimisation
+  --- Override as needed via test.functional.ui.screen.Opts.screen_opts
+  --- @type test.functional.ui.screen.Opts
+  default_screen_opts = {
+    ext_linegrid = false,
+    ext_multigrid = false,
+    ext_popupmenu = false,
+    ext_wildmenu = false,
+  },
+}
 
 ---@class (exact) test.nvt.func.fixtures.create_session.Opts
 ---@field data? string relative path of data directory to copy for test instance cwd
 ---@field config? nvim_tree.config passed to nvim-tree.setup
 ---@field width? integer default 80
 ---@field height? integer default 24
----@field screen_opts? test.functional.ui.screen.Opts
+---@field screen_opts? test.functional.ui.screen.Opts overrides M.default_screen_opts
 
 ---Create a new neovim functest session with
 ---- nvim-tree.lua package added
@@ -32,6 +40,9 @@ local M = {}
 ---@return test.functional.ui.screen
 function M.create_session(opts)
   opts = opts or {}
+  opts.width = opts.width or 80
+  opts.height = opts.height or 24
+  local screen_opts = vim.tbl_deep_extend("force", M.default_screen_opts, opts.screen_opts or {})
 
   -- instantiate a new session (nvim instance) and its screen
   n.clear({
@@ -40,7 +51,7 @@ function M.create_session(opts)
       "--cmd", "packadd nvim-tree.lua",
     }
   })
-  local screen = Screen.new(opts.width or 80, opts.height or 24, opts.screen_opts)
+  local screen = Screen.new(opts.width, opts.height, screen_opts)
 
   -- create the test instance cwd
   local cwd = nu.setup_cwd(opts.data)
@@ -120,6 +131,13 @@ end
 ---@param screen test.functional.ui.screen
 function M.add_nvt_attr_ids(screen)
   local attr_ids = {}
+  -- TODO only 2 necessary entries merged then set_default_attr_ids results in less spikey performance
+  -- no obvious pattern RE string vs int indexed
+  -- this would be good to use Normal instead of 1
+  -- local attr_ids = {
+  --   [1] = { foreground = Screen.colors.Blue1, bold = true },
+  --   [2] = { reverse = true },
+  -- }
 
   for name, hl in pairs(n.api.nvim_get_hl(0, { create = false, link = true, })) do
     if name:match("^NvimTree.*") then
