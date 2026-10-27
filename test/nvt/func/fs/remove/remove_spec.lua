@@ -75,7 +75,7 @@ t.describe("fs.remove", function()
   end)
 
 
-  t.it("single dir", function()
+  t.it("empty dir", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down>",
@@ -117,6 +117,56 @@ NvimTree_1 [-]                 [No Name]                                        
 
     na.events_received({
       { event_type = "FolderRemoved", payload = { folder_name = "/tmp/nvt_func/data/d 2", }, },
+    })
+  end)
+
+
+  t.it("recursive dir", function()
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove d 1? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+      "gg",
+      "E",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/d 1 was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d 2                     │~                                                |
+       d 2 f 1               │~                                                |
+    d 2 link ➛ d 2          │~                                                |
+       d 2 f 1               │~                                                |
+    d 3                     │~                                                |
+       d 3 f 1               │~                                                |
+     f 1                     │~                                                |
+     f 1 link ➛ f 1          │~                                                |
+~                             │~                                                |*14
+NvimTree_1 [-]                 [No Name]                                        |
+    ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/d 1")
+
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 d 1")
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 d 1/d 1 d 1 f 1")
+
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 d 2")
+    na.not_path_exists("/tmp/nvt_func/data/d 1/d 1 d 2/d 1 d 2 f 1")
+
+    na.events_received({
+      { event_type = "FolderRemoved", payload = { folder_name = "/tmp/nvt_func/data/d 1", }, },
     })
   end)
 
