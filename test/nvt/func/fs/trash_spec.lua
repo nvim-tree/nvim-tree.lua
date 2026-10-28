@@ -17,7 +17,7 @@ local screen
 local function create_trash_session(config)
   screen = nf.create_session({
     config = config,
-    data = "test/nvt/func/fs/trash/data",
+    data = "test/nvt/func/fs/trash_data",
     screen_opts = {
       ext_messages = true,
       ext_cmdline = false,
