@@ -13,7 +13,7 @@ local screen
 
 t.before_each(function()
   screen = nf.create_session({
-    data = "test/nvt/func/fs/clear_clipboard/data",
+    data = "test/nvt/func/fs/clear_clipboard_data",
     screen_opts = {
       ext_messages = true,
       ext_linegrid = true,
