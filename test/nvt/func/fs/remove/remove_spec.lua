@@ -29,7 +29,7 @@ end)
 
 
 t.describe("fs.remove", function()
-  t.it("single file window closed", function()
+  t.it("single file actions.remove_file.close_window = true", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
