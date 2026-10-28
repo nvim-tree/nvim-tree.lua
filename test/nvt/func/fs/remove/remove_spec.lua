@@ -287,7 +287,7 @@ NvimTree_1 [-]                 f 1                      f 1                     
   end)
 
 
-  t.it("empty dir", function()
+  t.it("single dir", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down>",
