@@ -1,4 +1,5 @@
 local t = require("test.testutil")
+require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 
