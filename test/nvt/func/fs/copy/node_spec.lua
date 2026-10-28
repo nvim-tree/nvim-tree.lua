@@ -17,7 +17,7 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.copy", function()
+t.describe("fs.copy.node", function()
   t.it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
