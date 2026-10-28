@@ -21,7 +21,7 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.copy_absolute_path", function()
+t.describe("fs.copy.absolute_path", function()
   t.it("single file", function()
     n.fn.setreg("+", "foo")
 
