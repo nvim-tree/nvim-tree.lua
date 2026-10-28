@@ -1,4 +1,5 @@
 local t = require("test.testutil")
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 local na = require("test.nvt.func.asserts")
 
@@ -133,6 +134,155 @@ NvimTree_1 [-]                 f 1                      f 1                     
     na.events_received({
       { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 2/d 2 f 1", }, },
       { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 2/d 2 f 1", }, },
+    })
+  end)
+
+
+  t.it("single file view.float.enable = true single window", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        view = {
+          float = {
+            enable = true,
+          },
+        },
+      })
+    end)
+
+    nf.feed_sync({
+      ":e d 1/d 1 d 1/d 1 d 1 f 1<CR>",
+      ":e f 1<CR>",
+      ":NvimTreeOpen<CR>",
+      "<down><down><down><down><down>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove f 1? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/f 1 was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+^d 1 d 1 f 1                                                                     |
+~                                                                               |*23
+      ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/f 1")
+    na.not_buf_exists("/tmp/nvt_func/data/f 1")
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+    })
+  end)
+
+
+  t.it("single file view.float.enable = true multiple windows", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        view = {
+          float = {
+            enable = true,
+          },
+        },
+      })
+    end)
+
+    nf.feed_sync({
+      ":e d 1/d 1 d 1/d 1 d 1 f 1<CR>",
+      "<C-w><C-v>",
+      ":e f 1<CR>",
+      ":NvimTreeOpen<CR>",
+      "<down><down><down><down><down>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove f 1? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/f 1 was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+^d 1 d 1 f 1                                                                     |
+~                                                                               |*23
+      ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/f 1")
+    na.not_buf_exists("/tmp/nvt_func/data/f 1")
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+    })
+  end)
+
+
+  t.it("single file view.float.quit_on_focus_loss = false", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        view = {
+          float = {
+            enable = true,
+            quit_on_focus_loss = false,
+          },
+        },
+      })
+    end)
+
+    nf.feed_sync({
+      ":e f 1<CR>",
+      ":NvimTreeOpen<CR>",
+      "<down><down><down><down><down>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove f 1? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/f 1 was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+ ╭──────────────────────────────╮                                               |
+~│  /tmp/nvt_func/data/..       │                                               |
+~│    d 1                     │                                               |
+~│    d 2                     │                                               |
+~│    d 2 link ➛ d 2          │                                               |
+~│    d 3                     │                                               |
+~│  ^   f 1 link ➛ f 1          │                                               |
+~│~                             │                                               |*16
+~╰──────────────────────────────╯                                               |
+      ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/f 1")
+    na.not_buf_exists("/tmp/nvt_func/data/f 1")
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/f 1", }, },
     })
   end)
 
