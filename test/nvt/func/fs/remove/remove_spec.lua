@@ -78,6 +78,65 @@ NvimTree_1 [-]                 f 1                                              
   end)
 
 
+  t.it("single file actions.remove_file.close_window = false", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        actions = {
+          remove_file = {
+            close_window = false,
+          },
+        },
+      })
+    end)
+
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "<down>",
+      "<down>",
+      "<CR>",
+      "<down>",
+      "<CR>",
+      "<C-w><C-v>",
+      ":e f 1<CR>",
+      ":NvimTreeFocus<CR>",
+      "<Del>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      cmdline = { { prompt = "Remove d 2 f 1? y/N: ", content = { { "" } }, pos = 0, } },
+    })
+
+    nf.feed_sync({
+      "y<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      messages = { { content = { { "[NvimTree] /tmp/nvt_func/data/d 2/d 2 f 1 was properly removed." } }, history = true, kind = "echomsg" }, },
+      grid = [[
+  /tmp/nvt_func/data/..       │f 1                     │^f 1                     |
+    d 1                     │~                       │~                       |
+    d 2                     │~                       │~                       |
+    d 2 link ➛ d 2          │~                       │~                       |
+    d 3                     │~                       │~                       |
+     f 1                     │~                       │~                       |
+     f 1 link ➛ f 1          │~                       │~                       |
+~                             │~                       │~                       |*16
+NvimTree_1 [-]                 f 1                      f 1                     |
+      ]],
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/d 2/d 2 f 1")
+    na.not_buf_exists("/tmp/nvt_func/data/d 2/d 2 f 1")
+
+    na.events_received({
+      { event_type = "WillRemoveFile", payload = { fname = "/tmp/nvt_func/data/d 2/d 2 f 1", }, },
+      { event_type = "FileRemoved",    payload = { fname = "/tmp/nvt_func/data/d 2/d 2 f 1", }, },
+    })
+  end)
+
+
   t.it("empty dir", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
