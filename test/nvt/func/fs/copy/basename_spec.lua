@@ -21,7 +21,7 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.basename", function()
+t.describe("fs.copy.basename", function()
   t.it("file", function()
     n.fn.setreg("+", "foo")
 
