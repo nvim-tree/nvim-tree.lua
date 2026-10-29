@@ -157,7 +157,7 @@ local function prompt_to_rename(node, modifier)
 
   vim.ui.input(input_opts, function(new_file_path)
     utils.clear_prompt()
-    if not new_file_path then
+    if not new_file_path or #new_file_path == 0 then
       return
     end
 
