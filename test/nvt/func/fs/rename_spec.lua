@@ -5,7 +5,7 @@ local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.before_each, t.pending = t.describe or describe, t.it or it, t.before_each or before_each, t.pending or pending
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
@@ -194,8 +194,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d1/d1d2/fz                    
   end)
 
 
-  -- BUG attempts to rename to root instead of cancelling
-  t.pending("file name cancel", function()
+  t.it("file name cancel", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down><down><down>",
