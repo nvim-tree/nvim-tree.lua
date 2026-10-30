@@ -186,7 +186,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails when file exists", function()
+  t.it("fails when dir exists", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -213,23 +213,47 @@ NvimTree_1 [-]                 [No Name]                                        
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
-      "d1/d1f1/<CR>",
+      "f1/<CR>",
     })
 
-    -- BUG this fails but shows message "/tmp/nvt_func/data/d1/d1f1/ was properly created" and focuses the file
-    -- add similar test for multiple dirs when fixed
     screen:expect({
       attr_ids = {},
       grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-    d1                      │~                                                |
-  ^     d1f1                  │~                                                |
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
      f1                      │~                                                |
-~                             │~                                                |*18
+~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1/d1f1/ was properly created                     |
+[NvimTree] Cannot create: file already exists                                   |
         ]],
     })
+
+    na.path_exists("file", "/tmp/nvt_func/data/f1")
+
+    na.events_received({})
+  end)
+
+
+  t.it("multiple fails when file exists", function()
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "a",
+      "d1/d1f1/<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] Cannot create: file already exists                                   |
+        ]],
+    })
+
+    na.path_exists("file", "/tmp/nvt_func/data/d1/d1f1")
 
     na.events_received({})
   end)
@@ -256,28 +280,6 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.events_received({})
-  end)
-
-
-  t.it("fails when dir exists", function()
-    nf.feed_sync({
-      ":NvimTreeOpen<CR>",
-      "<Down>",
-      "a",
-      "<CR>",
-    })
-
-    screen:expect({
-      attr_ids = {},
-      grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
-  ^  d1                      │~                                                |
-     f1                      │~                                                |
-~                             │~                                                |*19
-NvimTree_1 [-]                 [No Name]                                        |
-                                                                                |
-    ]],
-    })
   end)
 end)
 
@@ -462,7 +464,8 @@ NvimTree_1 [-]                 [No Name]                                        
     ]],
     })
 
-    na.path_exists("directory", "/tmp/nvt_func/data/d1")
+    na.path_exists("directory", "/tmp/nvt_func/data/newdir")
+    na.path_exists("file",      "/tmp/nvt_func/data/newdir/newfile")
 
     na.events_received({
       -- BUG this should be "/tmp/nvt_func/data/newdir/"
