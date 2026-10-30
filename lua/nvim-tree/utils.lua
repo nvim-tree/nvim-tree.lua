@@ -185,6 +185,9 @@ end
 ---@return boolean
 function M.file_exists(path)
   if not (config.os.windows or config.os.wsl) then
+    -- strip trailing slash to ensure both files and directories are matched
+    path = path:gsub("/$", "", 1)
+
     local _, error = vim.uv.fs_stat(path)
     return error == nil
   end
