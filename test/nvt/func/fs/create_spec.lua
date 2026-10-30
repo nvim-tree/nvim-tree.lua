@@ -201,7 +201,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f1                      │~                                                |
 ~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Cannot create: file already exists                                   |
+[NvimTree] Cannot create: path already exists: /tmp/nvt_func/data/d1/           |
       ]],
     })
 
@@ -224,7 +224,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f1                      │~                                                |
 ~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Cannot create: file already exists                                   |
+[NvimTree] Cannot create: path already exists: /tmp/nvt_func/data/f1/           |
         ]],
     })
 
@@ -249,7 +249,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f1                      │~                                                |
 ~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Cannot create: file already exists                                   |
+[NvimTree] Cannot create: path already exists: /tmp/nvt_func/data/d1/d1f1/      |
         ]],
     })
 
@@ -408,7 +408,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f1                      │~                                                |
 ~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Cannot create: file already exists                                   |
+[NvimTree] Cannot create: path already exists: /tmp/nvt_func/data/f1            |
     ]],
     })
 
@@ -433,7 +433,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f1                      │~                                                |
 ~                             │~                                                |*19
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] Cannot create: file already exists                                   |
+[NvimTree] Cannot create: path already exists: /tmp/nvt_func/data/d1            |
     ]],
     })
 
