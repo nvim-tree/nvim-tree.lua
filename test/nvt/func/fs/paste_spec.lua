@@ -694,7 +694,6 @@ NvimTree_1 [-]                 [No Name]                                        
       "p",
     })
 
-    -- BUG: this should read as per single prompt: "2 file(s) already exist. R(ename suffix)/y/n: "
     screen:expect({
       attr_ids = {},
       cmdline = { { prompt = "2 file(s) already exist. R(ename suffix)/y/n: ", content = { { "" } }, pos = 0, } },
