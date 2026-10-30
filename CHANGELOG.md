@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.19.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.19.0...nvim-tree-v1.19.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* **#3366:** api.git.reload() not functional when filesystem_watchers.enable = false ([#3367](https://github.com/nvim-tree/nvim-tree.lua/issues/3367)) ([3be8cad](https://github.com/nvim-tree/nvim-tree.lua/commit/3be8cad084e79e84833ef98cef88116c26a224ff))
+* **#3366:** fix git status reload after config migration ([3be8cad](https://github.com/nvim-tree/nvim-tree.lua/commit/3be8cad084e79e84833ef98cef88116c26a224ff))
+* **create:** always fail when directory cannot be created, add more detailed messaging ([#3374](https://github.com/nvim-tree/nvim-tree.lua/issues/3374)) ([45f82f7](https://github.com/nvim-tree/nvim-tree.lua/commit/45f82f7b2c68c3e2bedbf6ad1d8d687a78e6faf4))
+* **rename:** cancel operation on empty name entered ([#3373](https://github.com/nvim-tree/nvim-tree.lua/issues/3373)) ([96b6d0e](https://github.com/nvim-tree/nvim-tree.lua/commit/96b6d0ea594a1e519abd58fd8b60a39a9dec1869))
+
 ## [1.19.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.18.0...nvim-tree-v1.19.0) (2026-10-20)
 
 
