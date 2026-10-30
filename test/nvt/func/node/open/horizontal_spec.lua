@@ -1,5 +1,5 @@
 local t = require("test.testutil")
-require("test.functional.testnvim")()
+local n = require("test.functional.testnvim")()
 local nf = require("test.nvt.func.fixtures")
 
 -- 0.12 global compatibility
@@ -23,17 +23,14 @@ end)
 t.describe("node.open.horizontal", function()
   t.it("one file window", function()
     nf.feed_sync({
+      ":e f1<CR>",
       ":NvimTreeOpen<CR>",
-      "<down>",
-      "<CR>",
-      "<C-w><C-w>",
-      "<down>",
+      "<down><down>",
       "<C-x>",
     })
 
     screen:expect({
       attr_ids = {},
-      messages = {},
       grid = [[
   /tmp/nvt_func/data/..       │^f2                                               |
      f1                      │~                                                |
@@ -49,7 +46,7 @@ NvimTree_1 [-]                 f1                                               
   end)
 
 
-  t.it("pick two file windows", function()
+  t.it("two file windows", function()
     nf.feed_sync({
       ":e f1<CR>",
       "<C-w><C-v>",
@@ -85,6 +82,38 @@ Pick window: ^                                                                  
 ~                             │~                       │~                       |*9
 NvimTree_1 [-]                 f1                       f1                      |
                                                                                 |
+      ]],
+    })
+  end)
+
+
+  t.it("two file windows window_picker.enable = false", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        actions = { open_file = { window_picker = { enable = false } } },
+      })
+    end)
+
+    nf.feed_sync({
+      ":e f1<CR>",
+      "<C-w><C-v>",
+      ":NvimTreeOpen<CR>",
+      "<down><down>",
+      "<C-x>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │^f2                      │f1                      |
+     f1                      │~                       │~                       |
+     f2                      │~                       │~                       |
+~                             │~                       │~                       |*8
+~                             │f2                      │~                       |
+~                             │f1                      │~                       |
+~                             │~                       │~                       |*9
+NvimTree_1 [-]                 f1                       f1                      |
+:NvimTreeOpen                                                                   |
       ]],
     })
   end)
@@ -130,6 +159,37 @@ NvimTree_1 [-]                 f2                                               
      f2                      │~                       │~                       |
 ~                             │~                       │~                       |*19
 NvimTree_1 [-]                 f2                       f1                      |
+:NvimTreeOpen                                                                   |
+      ]],
+    })
+  end)
+end)
+
+
+t.describe("node.open.horizontal_no_picker", function()
+  t.it("two file windows", function()
+    nf.feed_sync({
+      ":e f1<CR>",
+      "<C-w><C-v>",
+      ":NvimTreeOpen<CR>",
+      "<down><down>",
+    })
+
+    n.exec_lua(function()
+      require("nvim-tree.api").node.open.horizontal_no_picker()
+    end)
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  /tmp/nvt_func/data/..       │^f2                      │f1                      |
+     f1                      │~                       │~                       |
+     f2                      │~                       │~                       |
+~                             │~                       │~                       |*8
+~                             │f2                      │~                       |
+~                             │f1                      │~                       |
+~                             │~                       │~                       |*9
+NvimTree_1 [-]                 f1                       f1                      |
 :NvimTreeOpen                                                                   |
       ]],
     })
