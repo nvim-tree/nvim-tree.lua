@@ -11,15 +11,17 @@ local DirectoryNode = require("nvim-tree.node.directory")
 local M = {}
 
 ---@param file string
+---@return boolean
 local function create_and_notify(file)
   events._dispatch_will_create_file(file)
   local ok, fd = pcall(vim.uv.fs_open, file, "w", 420)
   if not ok or type(fd) ~= "number" then
-    notify.error("Couldn't create file " .. notify.render_path(file))
-    return
+    notify.error("Could not create file " .. notify.render_path(file))
+    return false
   end
   vim.uv.fs_close(fd)
   events._dispatch_file_created(file)
+  return true
 end
 
 ---@param iter function iterable
@@ -82,7 +84,9 @@ function M.fn(node)
         path_to_create = utils.path_join({ path_to_create, p })
       end
       if is_last_path_file and idx == num_nodes then
-        create_and_notify(path_to_create)
+        if not create_and_notify(path_to_create) then
+          return
+        end
       elseif not utils.file_exists(path_to_create) then
         local success = vim.uv.fs_mkdir(path_to_create, 493)
         if not success then
@@ -90,7 +94,7 @@ function M.fn(node)
           is_error = true
           break
         end
-        events._dispatch_folder_created(new_file_path)
+        events._dispatch_folder_created(path_to_create)
       end
     end
     if not is_error then
