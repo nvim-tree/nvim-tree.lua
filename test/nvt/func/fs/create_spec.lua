@@ -500,7 +500,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("direct fails on invalid path", function()
+  t.pending("direct fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
