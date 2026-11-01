@@ -94,7 +94,7 @@ function M.fn(node)
           is_error = true
           break
         end
-        events._dispatch_folder_created(new_file_path)
+        events._dispatch_folder_created(path_to_create)
       end
     end
     if not is_error then
