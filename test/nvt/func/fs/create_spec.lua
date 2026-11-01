@@ -5,13 +5,10 @@ local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.pending, t.before_each = t.describe or describe, t.it or it, t.pending or pending, t.before_each or before_each
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
-
-
--- TODO BUG merge fix-fs-create-messages-and-events and remove pending
 
 
 t.before_each(function()
@@ -28,7 +25,7 @@ t.describe("fs.create dir", function()
     nf.event_subscribe(Event.FolderCreated)
   end)
 
-  t.pending("single direct", function()
+  t.it("single direct", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -56,7 +53,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("single indirect", function()
+  t.it("single indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -85,7 +82,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("api single indirect", function()
+  t.it("api single indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
     })
@@ -124,7 +121,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("multiple direct", function()
+  t.it("multiple direct", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -155,7 +152,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("multiple indirect", function()
+  t.it("multiple indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -468,7 +465,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("indirect creates dirs", function()
+  t.it("indirect creates dirs", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -500,7 +497,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("direct fails on invalid path", function()
+  t.it("direct fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -533,7 +530,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("indirect fails on invalid path", function()
+  t.it("indirect fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
