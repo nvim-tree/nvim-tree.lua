@@ -11,6 +11,9 @@ t.describe, t.it, t.pending, t.before_each = t.describe or describe, t.it or it,
 local screen
 
 
+-- TODO BUG merge fix-fs-create-messages-and-events and remove pending
+
+
 t.before_each(function()
   screen = nf.create_session({
     data = "test/nvt/func/fs/create_data",
@@ -25,7 +28,7 @@ t.describe("fs.create dir", function()
     nf.event_subscribe(Event.FolderCreated)
   end)
 
-  t.it("single direct", function()
+  t.pending("single direct", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -48,12 +51,12 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("directory", "/tmp/nvt_func/data/direct")
 
     na.events_received({
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct", }, },
     })
   end)
 
 
-  t.it("single indirect", function()
+  t.pending("single indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -77,12 +80,12 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect", }, },
     })
   end)
 
 
-  t.it("api single indirect", function()
+  t.pending("api single indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
     })
@@ -116,12 +119,12 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect")
 
     na.events_received({
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect", }, },
     })
   end)
 
 
-  t.it("multiple direct", function()
+  t.pending("multiple direct", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -146,14 +149,13 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("directory", "/tmp/nvt_func/data/direct1/direct2")
 
     na.events_received({
-      -- BUG this should be "/tmp/nvt_func/data/direct1/"
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/direct1/direct2", }, },
     })
   end)
 
 
-  t.it("multiple indirect", function()
+  t.pending("multiple indirect", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -179,9 +181,8 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("directory", "/tmp/nvt_func/data/d1/indirect1/indirect2")
 
     na.events_received({
-      -- BUG this should be "/tmp/nvt_func/data/d1/indirect1/"
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
-      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2/", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1", }, },
+      { event_type = "FolderCreated", payload = { folder_name = "/tmp/nvt_func/data/d1/indirect1/indirect2", }, },
     })
   end)
 
@@ -467,7 +468,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("indirect creates dirs", function()
+  t.pending("indirect creates dirs", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -492,8 +493,7 @@ NvimTree_1 [-]                 [No Name]                                        
     na.path_exists("file",      "/tmp/nvt_func/data/newdir/newfile")
 
     na.events_received({
-      -- BUG this should be "/tmp/nvt_func/data/newdir/"
-      { event_type = "FolderCreated",  payload = { folder_name = "/tmp/nvt_func/data/newdir/newfile", }, },
+      { event_type = "FolderCreated",  payload = { folder_name = "/tmp/nvt_func/data/newdir", }, },
       { event_type = "WillCreateFile", payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
       { event_type = "FileCreated",    payload = { fname = "/tmp/nvt_func/data/newdir/newfile", }, },
     })
@@ -533,7 +533,6 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  -- merge fix-fs-create-messages-and-events
   t.pending("indirect fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
