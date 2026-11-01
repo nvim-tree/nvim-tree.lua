@@ -5,7 +5,7 @@ local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
+t.describe, t.it, t.pending, t.before_each = t.describe or describe, t.it or it, t.pending or pending, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
@@ -259,12 +259,36 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails on invalid path", function()
+  t.it("single fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
       "<C-U>",
-      "/foo/bar<CR>",
+      "/foo/<CR>",
+    })
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] Could not create folder /foo                                         |
+        ]],
+    })
+
+    na.events_received({})
+  end)
+
+
+  t.it("indirect fails on invalid path", function()
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "a",
+      "<C-U>",
+      "/foo/bar/<CR>",
     })
 
     screen:expect({
@@ -476,7 +500,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("fails on invalid path", function()
+  t.it("direct fails on invalid path", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "a",
@@ -487,34 +511,15 @@ NvimTree_1 [-]                 [No Name]                                        
       "/foo<CR>"
     )
 
-    -- BUG this fails but shows message "/foo was properly created"
     screen:expect({
       attr_ids = {},
       grid = [[
-  /tmp/nvt_func/data/..       │                                                 |
+  ^/tmp/nvt_func/data/..       │                                                 |
     d1                      │~                                                |
      f1                      │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-~                             │~                                                |
-                                                                                |
-[NvimTree] Couldn't create file /foo                                            |
-[NvimTree] /foo was properly created                                            |
-Press ENTER or type command to continue^                                         |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] Could not create file /foo                                           |
     ]],
     })
 
@@ -525,6 +530,38 @@ Press ENTER or type command to continue^                                        
     na.events_received({
       { event_type = "WillCreateFile", payload = { fname = "/foo", }, },
     })
+  end)
+
+
+  -- merge fix-fs-create-messages-and-events
+  t.pending("indirect fails on invalid path", function()
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "a",
+      "<C-U>",
+    })
+
+    n.feed(
+      "/foo/bar/baz<CR>"
+    )
+
+    screen:expect({
+      attr_ids = {},
+      grid = [[
+  ^/tmp/nvt_func/data/..       │                                                 |
+    d1                      │~                                                |
+     f1                      │~                                                |
+~                             │~                                                |*19
+NvimTree_1 [-]                 [No Name]                                        |
+[NvimTree] Could not create folder /foo                                         |
+    ]],
+    })
+
+    n.feed(
+      "<CR>"
+    )
+
+    na.events_received({})
   end)
 end)
 
