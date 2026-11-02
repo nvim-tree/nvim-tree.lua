@@ -7,7 +7,7 @@ local M = {}
 ---@param type "file" | "directory" | "link" [uv.fs_stat()] {type}
 ---@param path string absolute
 function M.path_exists(type, path)
-  -- TODO remove once 0.12 is the minimum neovim version
+  -- remove once 0.12 is the minimum neovim version
   -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
   ---@diagnostic disable-next-line: param-type-mismatch
   local stat, err = vim.uv.fs_lstat(path)

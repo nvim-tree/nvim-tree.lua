@@ -88,7 +88,7 @@ Unique nvim-tree highlight groups `attr_ids` are defined during `test.nvt.func.f
 
 Set `attr_ids = {}` when calling `expect` to direct a text only assertion.
 
-See [Generating Test Data](TODO link) to dump the screen contents to a file.
+See [Generating Test Data Missing Link](link) to dump the screen contents to a file.
 
 Contents are inserted directly into a text block `grid` e.g.
 
