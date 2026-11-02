@@ -17,6 +17,12 @@ local Node = require("nvim-tree.node")
 
 ---@alias ClipboardActionFn fun(source: string, dest: string): boolean, string?
 
+---@type table<ClipboardAction, string>
+local action_adjective = {
+  copy = "copied",
+  cut = "cut",
+}
+
 ---@class (exact) Clipboard: nvim_tree.Class
 ---@field private explorer Explorer
 ---@field private data ClipboardData
@@ -126,7 +132,8 @@ end
 
 ---@param node Node
 ---@param clip ClipboardData
-local function toggle(node, clip)
+---@param action ClipboardAction
+local function toggle(node, clip, action)
   if node.name == ".." then
     return
   end
@@ -138,7 +145,7 @@ local function toggle(node, clip)
   end
 
   table.insert(clip, node)
-  notify.info(notify_node .. " added to clipboard.")
+  notify.info(string.format("%s %s to clipboard.", notify_node, action_adjective[action]))
 end
 
 ---Clear copied and cut
@@ -154,8 +161,8 @@ end
 ---@param nodes Node[] filtered nodes to operate on
 ---@param from Node[] list to remove from (the opposite clipboard)
 ---@param to Node[] list to add to
----@param verb string notification verb ("added to" or "cut to")
-function Clipboard:bulk_clipboard(nodes, from, to, verb)
+---@param action ClipboardAction
+function Clipboard:bulk_clipboard(nodes, from, to, action)
   local added = 0
   local removed = 0
   for _, node in ipairs(nodes) do
@@ -170,7 +177,7 @@ function Clipboard:bulk_clipboard(nodes, from, to, verb)
     end
   end
   if added > 0 then
-    notify.info(string.format("%d nodes %s clipboard.", added, verb))
+    notify.info(string.format("%d nodes %s to clipboard.", added, action_adjective[action]))
   elseif removed > 0 then
     notify.info(string.format("%d nodes removed from clipboard.", removed))
   end
@@ -192,10 +199,10 @@ end
 function Clipboard:copy(node_or_nodes)
   if self:is_nodes_array(node_or_nodes) == false then
     utils.array_remove(self.data.cut, node_or_nodes)
-    toggle(node_or_nodes, self.data.copy)
+    toggle(node_or_nodes, self.data.copy, "copy")
     self.explorer.renderer:draw()
   else
-    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "added to")
+    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.cut, self.data.copy, "copy")
   end
   self:copy_absolute_path(self.data.copy, { notify = false })
 end
@@ -205,10 +212,10 @@ end
 function Clipboard:cut(node_or_nodes)
   if self:is_nodes_array(node_or_nodes) == false then
     utils.array_remove(self.data.copy, node_or_nodes)
-    toggle(node_or_nodes, self.data.cut)
+    toggle(node_or_nodes, self.data.cut, "cut")
     self.explorer.renderer:draw()
   else
-    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut to")
+    self:bulk_clipboard(utils.filter_descendant_nodes(node_or_nodes), self.data.copy, self.data.cut, "cut")
   end
   self:copy_absolute_path(self.data.cut, { notify = false })
 end
