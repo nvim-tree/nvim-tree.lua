@@ -3023,10 +3023,10 @@ get_node_under_cursor()           *nvim_tree.api.tree.get_node_under_cursor()*
         (`nvim_tree.api.Node?`) nil if tree is not visible.
 
 get_nodes()                                   *nvim_tree.api.tree.get_nodes()*
-    Retrieve a hierarchical list of all the nodes.
+    Retrieve the root node, populated with complete tree.
 
     Return: ~
-        (`nvim_tree.api.Node[]`)
+        (`nvim_tree.api.DirectoryNode?`) nil if tree is not visible.
 
 is_tree_buf({bufnr})                        *nvim_tree.api.tree.is_tree_buf()*
     Checks if a buffer is an nvim-tree.
