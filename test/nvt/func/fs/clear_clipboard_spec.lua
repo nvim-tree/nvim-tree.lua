@@ -56,10 +56,10 @@ t.describe("fs.clear_clipboard", function()
 
     screen:expect({
       messages = {
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 added to clipboard." } }, history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 added to clipboard." } }, history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d2 added to clipboard." } },      history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 added to clipboard." } },      history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 copied to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 cut to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d2 copied to clipboard." } },      history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 cut to clipboard." } },      history = true, kind = "echomsg" },
       },
       grid = [[
 {NvimTreeSignColumn:  }{NvimTreeRootFolder:/tmp/nvt_func/data/..}{NvimTreeNormal:       }{NvimTreeWinSeparator:│}                                                 |

@@ -46,7 +46,7 @@ t.describe("fs.paste copied", function()
      f2                      │~                                                |
 ~                             │~                                                |*14
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/f1 copied to clipboard.                           |
     ]],
     })
 
@@ -82,7 +82,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*13
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] 2 nodes added to clipboard.                                          |
+[NvimTree] 2 nodes copied to clipboard.                                         |
         ]],
     })
 
@@ -120,7 +120,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*11
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/d1 copied to clipboard.                           |
     ]],
     })
 
@@ -433,7 +433,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*10
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/f1 copied to clipboard.                           |
     ]],
     })
 
@@ -769,7 +769,7 @@ t.describe("fs.paste cut", function()
      f2                      │~                                                |
 ~                             │~                                                |*12
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/d1 cut to clipboard.                              |
     ]],
     })
 
@@ -812,7 +812,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*15
 NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         |
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
     ]],
     })
 
@@ -857,7 +857,7 @@ NvimTree_1 [-]                 /tmp/nvt_func/data/d3/f1                         
      f2                      │~                                                |
 ~                             │~                                                |*14
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/d1 cut to clipboard.                              |
     ]],
     })
 
@@ -910,7 +910,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*15
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/d1 cut to clipboard.                              |
     ]],
     })
 
