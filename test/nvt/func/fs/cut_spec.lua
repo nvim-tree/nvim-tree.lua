@@ -4,7 +4,7 @@ local nf = require("test.nvt.func.fixtures")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.pending, t.describe, t.it, t.before_each = t.pending or pending, t.describe or describe, t.it or it, t.before_each or before_each
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 
 --- @type test.functional.ui.screen
@@ -18,7 +18,7 @@ t.before_each(function()
 end)
 
 
-t.pending("fs.cut", function()
+t.describe("fs.cut", function()
   t.it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
