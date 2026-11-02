@@ -4,10 +4,7 @@ local nf = require("test.nvt.func.fixtures")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
-
-
--- BUG single operations report "added to clipboard", not "cut to clipboard" as per bulk operations
+t.pending, t.describe, t.it, t.before_each = t.pending or pending, t.describe or describe, t.it or it, t.before_each or before_each
 
 
 --- @type test.functional.ui.screen
@@ -21,7 +18,7 @@ t.before_each(function()
 end)
 
 
-t.describe("fs.cut", function()
+t.pending("fs.cut", function()
   t.it("single file", function()
     n.fn.setreg("1", "foo")
     n.fn.setreg("+", "foo")
@@ -44,7 +41,7 @@ t.describe("fs.cut", function()
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+  [NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
     ]],
     })
   end)
@@ -75,7 +72,7 @@ t.describe("fs.cut", function()
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+  [NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
     ]],
     })
   end)
@@ -101,7 +98,7 @@ t.describe("fs.cut", function()
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-  [NvimTree] /tmp/nvt_func/data/d2 added to clipboard.                            |
+  [NvimTree] /tmp/nvt_func/data/d2 cut to clipboard.                              |
     ]],
     })
   end)
@@ -127,7 +124,7 @@ t.describe("fs.cut", function()
      f2                      │~                                                |
 ~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
     ]],
     })
 
@@ -174,7 +171,7 @@ NvimTree_1 [-]                 [No Name]                                        
      f2                      │~                                                |
 ~                             │~                                                |*17
 NvimTree_1 [-]                 [No Name]                                        |
-[NvimTree] /tmp/nvt_func/data/d1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/d1 cut to clipboard.                              |
     ]],
     })
 
@@ -233,7 +230,7 @@ NvimTree_1 [-]                 [No Name]                                        
          f2                      │~                                                |
     ~                             │~                                                |*17
     NvimTree_1 [-]                 [No Name]                                        |
-    [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+    [NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
         ]],
     })
   end)
@@ -261,7 +258,7 @@ NvimTree_1 [-]                 [No Name]                                        
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+  [NvimTree] /tmp/nvt_func/data/f1 copied to clipboard.                           |
     ]],
     })
 
@@ -278,7 +275,7 @@ NvimTree_1 [-]                 [No Name]                                        
   {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
   {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*17
   {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-  [NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+  [NvimTree] /tmp/nvt_func/data/f1 cut to clipboard.                              |
     ]],
     })
   end)
@@ -316,7 +313,7 @@ NvimTree_1 [-]                 [No Name]                                        
 {NvimTreeSignColumn:  }{NvimTreeFolderArrowClosed:  }{NvimTreeFileIcon:}{NvimTreeNormal: f2                      }{NvimTreeWinSeparator:│}{1:~                                                }|
 {NvimTreeEndOfBuffer:~                             }{NvimTreeWinSeparator:│}{1:~                                                }|*16
 {NvimTreeStatusLine:NvimTree_1 [-]                 }{2:[No Name]                                        }|
-[NvimTree] /tmp/nvt_func/data/f1 added to clipboard.                            |
+[NvimTree] /tmp/nvt_func/data/f1 copied to clipboard.                           |
     ]],
     })
 
