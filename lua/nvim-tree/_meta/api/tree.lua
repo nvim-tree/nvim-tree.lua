@@ -131,9 +131,9 @@ function nvim_tree.api.tree.change_root_to_parent(node) end
 function nvim_tree.api.tree.get_node_under_cursor() end
 
 ---
----Retrieve a hierarchical list of all the nodes.
+---Retrieve the root node, populated with complete tree.
 ---
----@return nvim_tree.api.Node[]
+---@return nvim_tree.api.DirectoryNode? nil if tree is not visible.
 function nvim_tree.api.tree.get_nodes() end
 
 ---
