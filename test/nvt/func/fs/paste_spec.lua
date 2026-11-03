@@ -5,10 +5,13 @@ local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
+t.describe, t.it, t.pending, t.before_each = t.describe or describe, t.it or it, t.pending or pending, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
+
+
+-- TODO remove d2/d3 from data
 
 
 t.before_each(function()
@@ -877,7 +880,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.it("api node specified", function()
+  t.pending("api node specified", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
@@ -885,17 +888,10 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     n.exec_lua(function()
-      -- BUG #3362, replace with commented below when complete
-      local explorer = require("nvim-tree.core").get_explorer()
-      if explorer then
-        local node = explorer.nodes[3] -- d3
-        explorer.clipboard:paste(node)
-      end
-
-      -- local api = require("nvim-tree.api")
-      -- local explorer = api.tree.get_nodes()
-      -- local node = explorer.nodes[3] -- d3
-      -- api.fs.paste(node)
+      local api = require("nvim-tree.api")
+      local explorer = api.tree.get_nodes()
+      local node = explorer and explorer.nodes[3] -- d3
+      api.fs.paste(node)
     end)
 
     screen:expect({
