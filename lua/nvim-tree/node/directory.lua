@@ -402,4 +402,15 @@ function DirectoryNode:expand_dir_node()
   end
 end
 
+---Find a (child) node matching uuid_node
+---@param uid_node number
+---@return Node|nil
+function DirectoryNode:node_with_uid_node(uid_node)
+  return Iterator.builder({ self })
+  :matcher(function(node)
+    return node.uid_node == uid_node
+  end)
+  :iterate()
+end
+
 return DirectoryNode
