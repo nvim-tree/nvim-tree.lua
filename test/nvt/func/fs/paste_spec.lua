@@ -5,13 +5,10 @@ local na = require("test.nvt.func.asserts")
 
 -- 0.12 global compatibility
 ---@diagnostic disable-next-line: inject-field, undefined-global
-t.describe, t.it, t.pending, t.before_each = t.describe or describe, t.it or it, t.pending or pending, t.before_each or before_each
+t.describe, t.it, t.before_each = t.describe or describe, t.it or it, t.before_each or before_each
 
 --- @type test.functional.ui.screen
 local screen
-
-
--- TODO remove d2/d3 from data
 
 
 t.before_each(function()
@@ -880,7 +877,7 @@ NvimTree_1 [-]                 [No Name]                                        
   end)
 
 
-  t.pending("api node specified", function()
+  t.it("api node specified", function()
     nf.feed_sync({
       ":NvimTreeOpen<CR>",
       "<down>",
