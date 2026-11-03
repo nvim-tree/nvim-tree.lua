@@ -19,11 +19,32 @@ local function hydrate_not_setup(api)
   end
 end
 
----Returns the node under the cursor.
+---Return a Node based on n's type
+---- Node: return n
+---- nvim_tree.api.Node or has uuid_node: matching Node from explorer or node under the cursor
+---- nil: node under the cursor
+---@param n? nvim_tree.api.Node|Node
 ---@return Node?
-local function node_at_cursor()
+local function unwrap_node(n)
+  local node = n and n.as and n:as(require("nvim-tree.node"))
+  if node then
+    -- real Node
+    return node
+  end
+
   local e = require("nvim-tree.core").get_explorer()
-  return e and e:get_node_at_cursor() or nil
+  if not e then
+    return nil
+  end
+
+  node = n and n.uid_node and e:node_with_uid_node(n.uid_node)
+  if node then
+    -- api node
+    return node
+  else
+    -- node under cursor
+    return e:get_node_at_cursor()
+  end
 end
 
 ---Returns the visually selected nodes, if we are in visual mode.
@@ -39,7 +60,7 @@ end
 ---@return fun(n?: Node, ...): any
 local function _n(fn)
   return function(n, ...)
-    return fn(n or node_at_cursor(), ...)
+    return fn(unwrap_node(n), ...)
   end
 end
 
@@ -49,7 +70,7 @@ end
 ---@return fun(n?: Node|Node[], ...): any
 local function _v(fn)
   return function(n, ...)
-    return fn(visual_nodes() or n or node_at_cursor(), ...)
+    return fn(visual_nodes() or unwrap_node(n), ...)
   end
 end
 
@@ -77,7 +98,7 @@ local function en(fn)
   return function(n, ...)
     local e = require("nvim-tree.core").get_explorer()
     if e then
-      return fn(e, n or node_at_cursor(), ...)
+      return fn(e, unwrap_node(n), ...)
     end
   end
 end
@@ -92,7 +113,7 @@ local function ev(fn)
   return function(n, ...)
     local e = require("nvim-tree.core").get_explorer()
     if e then
-      return fn(e, visual_nodes() or n or node_at_cursor(), ...)
+      return fn(e, visual_nodes() or unwrap_node(n), ...)
     end
   end
 end
