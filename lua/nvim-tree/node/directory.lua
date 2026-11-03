@@ -407,10 +407,10 @@ end
 ---@return Node|nil
 function DirectoryNode:node_with_uid_node(uid_node)
   return Iterator.builder({ self })
-  :matcher(function(node)
-    return node.uid_node == uid_node
-  end)
-  :iterate()
+    :matcher(function(node)
+      return node.uid_node == uid_node
+    end)
+    :iterate()
 end
 
 return DirectoryNode
