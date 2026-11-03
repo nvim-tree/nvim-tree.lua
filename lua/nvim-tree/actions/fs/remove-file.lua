@@ -78,7 +78,7 @@ local function remove_dir(cwd)
 
     -- Type must come from fs_stat and not fs_scandir_next to maintain sshfs compatibility
     local stat = vim.uv.fs_stat(new_cwd)
-    -- TODO remove once 0.12 is the minimum neovim version
+    -- remove once 0.12 is the minimum neovim version
     -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
     ---@diagnostic disable-next-line: param-type-mismatch
     local lstat = vim.uv.fs_lstat(new_cwd)

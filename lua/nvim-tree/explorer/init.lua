@@ -255,7 +255,7 @@ function Explorer:reload(node, project)
 
     local abs = utils.path_join({ cwd, name })
 
-    -- TODO remove once 0.12 is the minimum neovim version
+    -- remove once 0.12 is the minimum neovim version
     -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
     ---@diagnostic disable-next-line: param-type-mismatch
     local stat = vim.uv.fs_lstat(abs)
@@ -416,7 +416,7 @@ function Explorer:populate_children(handle, cwd, node, project, parent)
     if Watcher.is_fs_event_capable(abs) then
       local profile = log.profile_start("populate_children %s", abs)
 
-      -- TODO remove once 0.12 is the minimum neovim version
+      -- remove once 0.12 is the minimum neovim version
       -- path incorrectly specified as an integer, fixed upstream for neovim 0.12 https://github.com/neovim/neovim/pull/33872
       ---@diagnostic disable-next-line: param-type-mismatch
       local stat = vim.uv.fs_lstat(abs)
@@ -810,7 +810,7 @@ function Explorer:force_dirchange(foldername, should_open_view, should_init)
   if should_open_view then
     require("nvim-tree.lib").open()
   else
-    -- TODO #2255
+    -- see #2255
     -- The call to core.init destroyed this Explorer instance hence we need to fetch the new instance.
     -- Problem is described at https://github.com/nvim-tree/nvim-tree.lua/pull/3233#issuecomment-3704402527
     local explorer = core.get_explorer()
