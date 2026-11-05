@@ -82,7 +82,7 @@ local FileNode = Node:extend()
 ---
 ---Link mixin
 ---
----@class (exact) nvim_tree.api.LinkNode
+---@class (exact) nvim_tree.api.LinkNode: nvim_tree.Class
 ---@field link_to string
 ---@field fs_stat_target uv.fs_stat.result
 local LinkNode = Class:extend()
@@ -159,7 +159,6 @@ local api = {
 -- local nvim_tree = { api = {} }
 
 ---@class nvim_tree.api.Node: nvim_tree.Class
----@overload fun(args: Node): nvim_tree.api.Node
 ---@field private uid_node number
 
 ---@param node Node
@@ -179,13 +178,8 @@ function Node:new(node)
   self.diag_severity = node.diag_status and node.diag_status.value or nil
 end
 
-
-
----@class (exact) nvim_tree.api.DirectoryNode: nvim_tree.api.Node
----@overload fun(args: DirectoryNode): nvim_tree.api.DirectoryNode
-
 ---@param n DirectoryNode
-function DirectoryNode:new(n, api_nodes)
+function DirectoryNode:new(n)
   if not n then
     return
   end
@@ -198,16 +192,11 @@ function DirectoryNode:new(n, api_nodes)
 
   local child_node
   for _, child in ipairs(n.nodes) do
-    child_node = child:clone(api_nodes)
+    child_node = child:to_api_node()
     child_node.parent = self
     table.insert(self.nodes, child_node)
   end
 end
-
-
-
----@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
----@overload fun(args: RootNode): nvim_tree.api.RootNode
 
 ---@param n RootNode
 function RootNode:new(n)
@@ -217,11 +206,6 @@ function RootNode:new(n)
 
   RootNode.super.new(self, n)
 end
-
-
-
----@class (exact) nvim_tree.api.FileNode: nvim_tree.api.Node
----@overload fun(args: FileNode): nvim_tree.api.FileNode
 
 ---@param n FileNode
 function FileNode:new(n)
@@ -234,11 +218,6 @@ function FileNode:new(n)
   self.extension = n.extension
 end
 
-
----@class (exact) nvim_tree.api.LinkNode: nvim_tree.Class
----@overload fun(args: LinkNode): nvim_tree.api.LinkNode
-
--- TODO should these be protected?
 ---@param n LinkNode
 function LinkNode:new(n)
   if not n then
@@ -248,10 +227,6 @@ function LinkNode:new(n)
   self.link_to = n.link_to
   self.fs_stat_target = n.fs_stat_target
 end
-
-
----@class (exact) nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
----@overload fun(args: DirectoryLinkNode): nvim_tree.api.DirectoryLinkNode
 
 ---@param n DirectoryLinkNode
 function DirectoryLinkNode:new(n)
@@ -264,10 +239,6 @@ function DirectoryLinkNode:new(n)
   DirectoryLinkNode.super.new(self, n)
 end
 
----@class (exact) nvim_tree.api.FileLinkNode: nvim_tree.api.FileNode, nvim_tree.api.LinkNode
----@overload fun(args: FileLinkNode): nvim_tree.api.FileLinkNode
-
----@protected
 ---@param args FileLinkNode
 function FileLinkNode:new(args)
   LinkNode.new(self, args)
@@ -275,7 +246,6 @@ function FileLinkNode:new(args)
 
   self.type = "link"
 end
-
 
 require("nvim-tree.api.impl").hydrate_pre_setup(api)
 

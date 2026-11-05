@@ -22,10 +22,11 @@ function DirectoryLinkNode:new(args)
   args.absolute_path = args.link_to
   DirectoryLinkNode.super.new(self, args)
 
-  self.type          = "link"
+  self.api_node_class = api.DirectoryLinkNode
+  self.type           = "link"
 
   -- reset absolute path to the link itself
-  self.absolute_path = absolute_path
+  self.absolute_path  = absolute_path
 end
 
 function DirectoryLinkNode:destroy()
@@ -74,13 +75,6 @@ function DirectoryLinkNode:highlighted_name()
   end
 
   return name
-end
-
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.DirectoryLinkNode cloned
-function DirectoryLinkNode:clone(api_nodes)
-  return api.DirectoryLinkNode(self)
 end
 
 return DirectoryLinkNode

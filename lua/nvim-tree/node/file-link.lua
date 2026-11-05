@@ -18,7 +18,8 @@ function FileLinkNode:new(args)
   LinkNode.new(self, args)
   FileLinkNode.super.new(self, args)
 
-  self.type = "link"
+  self.api_node_class = api.FileLinkNode
+  self.type           = "link"
 end
 
 function FileLinkNode:destroy()
@@ -56,13 +57,6 @@ function FileLinkNode:highlighted_name()
   end
 
   return { str = str, hl = { "NvimTreeSymlink" } }
-end
-
----Create a sanitized partial copy of a node
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.FileLinkNode cloned
-function FileLinkNode:clone(api_nodes)
-  return api.FileLinkNode(self)
 end
 
 return FileLinkNode
