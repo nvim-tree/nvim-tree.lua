@@ -20,7 +20,7 @@ local function is_git(path)
   -- fnamemodify :p resolves the path and is called for every directory node: only do so when GIT_DIR is set
   if vim.env.GIT_DIR and vim.fn.fnamemodify(path, ":p") == vim.fn.fnamemodify(vim.env.GIT_DIR, ":p") then
     return true
-  elseif utils.path_basename(path) == ".git" then -- pure lua equivalent of fnamemodify :t
+  elseif utils.path_basename(path) == ".git" then
     return true
   else
     return false
