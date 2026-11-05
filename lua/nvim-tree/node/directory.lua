@@ -23,18 +23,19 @@ local DirectoryNode = Node:extend()
 function DirectoryNode:new(args)
   DirectoryNode.super.new(self, args)
 
-  local handle       = vim.uv.fs_scandir(args.absolute_path)
-  local has_children = handle and vim.uv.fs_scandir_next(handle) ~= nil or false
+  local handle        = vim.uv.fs_scandir(args.absolute_path)
+  local has_children  = handle and vim.uv.fs_scandir_next(handle) ~= nil or false
 
-  self.type          = "directory"
+  self.api_node_class = api.DirectoryNode
+  self.type           = "directory"
 
-  self.has_children  = has_children
-  self.group_next    = nil
-  self.nodes         = {}
-  self.open          = false
-  self.hidden_stats  = nil
+  self.has_children   = has_children
+  self.group_next     = nil
+  self.nodes          = {}
+  self.open           = false
+  self.hidden_stats   = nil
 
-  self.watcher       = require("nvim-tree.explorer.watch").create_watcher(self)
+  self.watcher        = require("nvim-tree.explorer.watch").create_watcher(self)
 end
 
 function DirectoryNode:destroy()
@@ -277,13 +278,6 @@ function DirectoryNode:highlighted_name()
   return { str = str, hl = { hl } }
 end
 
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.DirectoryNode cloned
-function DirectoryNode:clone(api_nodes)
-  return api.DirectoryNode(self)
-end
-
 ---@private
 ---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return fun(expansion_count: integer, node: Node): boolean
@@ -391,12 +385,15 @@ function DirectoryNode:expand_dir_node()
 end
 
 ---Find a (child) node matching uuid_node
----@param uid_node number
+---@param api_node nvim_tree.api.Node?
 ---@return Node|nil
-function DirectoryNode:node_with_uid_node(uid_node)
+function DirectoryNode:node_with_uid_node(api_node)
+  if not api_node or not api_node.as or not api_node:as(api.Node) then
+    return nil
+  end
   return Iterator.builder({ self })
     :matcher(function(node)
-      return node.uid_node == uid_node
+      return node.uid_node == api_node.uid_node
     end)
     :iterate()
 end

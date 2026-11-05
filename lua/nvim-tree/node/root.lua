@@ -11,6 +11,8 @@ local RootNode = DirectoryNode:extend()
 ---@param args NodeArgs
 function RootNode:new(args)
   RootNode.super.new(self, args)
+
+  self.api_node_class = api.RootNode
 end
 
 ---Root is never a dotfile
@@ -21,13 +23,6 @@ end
 
 function RootNode:destroy()
   DirectoryNode.destroy(self)
-end
-
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.RootNode cloned
-function RootNode:clone(api_nodes)
-  return api.RootNode(self)
 end
 
 return RootNode

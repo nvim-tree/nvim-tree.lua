@@ -14,6 +14,7 @@ local Class = require("nvim-tree.classic")
 ---@field name string
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
+---@field protected api_node_class nvim_tree.Class used to instantiate an api node
 ---@field private is_dot boolean cached is_dotfile
 local Node = Class:extend()
 
@@ -27,17 +28,18 @@ local Node = Class:extend()
 ---@protected
 ---@param args NodeArgs
 function Node:new(args)
-  self.uid_node      = vim.uv.hrtime()
-  self.explorer      = args.explorer
-  self.absolute_path = args.absolute_path
-  self.executable    = false
-  self.fs_stat       = args.fs_stat
-  self.git_status    = nil
-  self.hidden        = false
-  self.name          = args.name
-  self.parent        = args.parent
-  self.diag_status   = nil
-  self.is_dot        = false
+  self.api_node_class = api.Node
+  self.uid_node       = vim.uv.hrtime()
+  self.explorer       = args.explorer
+  self.absolute_path  = args.absolute_path
+  self.executable     = false
+  self.fs_stat        = args.fs_stat
+  self.git_status     = nil
+  self.hidden         = false
+  self.name           = args.name
+  self.parent         = args.parent
+  self.diag_status    = nil
+  self.is_dot         = false
 end
 
 function Node:destroy()
@@ -120,6 +122,7 @@ function Node:highlighted_name()
   return self:highlighted_name_empty()
 end
 
+--- TODO add api_nodes to constructor or to_api_node and have decorator call it
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.Node cloned
@@ -131,6 +134,12 @@ function Node:clone(api_nodes)
   end
 
   return api_node
+end
+
+---(Recursively) instantiate an api node 
+---@return nvim_tree.api.Node
+function Node:to_api_node()
+  return self:api_node_class()
 end
 
 ---@param expansion_count integer

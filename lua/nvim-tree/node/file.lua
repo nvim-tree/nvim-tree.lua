@@ -26,9 +26,10 @@ local FileNode = Node:extend()
 function FileNode:new(args)
   FileNode.super.new(self, args)
 
-  self.type       = "file"
-  self.extension  = string.match(args.name, ".?[^.]+%.(.*)") or ""
-  self.executable = utils.is_executable(args.absolute_path)
+  self.api_node_class = api.FileNode
+  self.type           = "file"
+  self.extension      = string.match(args.name, ".?[^.]+%.(.*)") or ""
+  self.executable     = utils.is_executable(args.absolute_path)
 end
 
 function FileNode:destroy()
@@ -92,13 +93,6 @@ function FileNode:highlighted_name()
   end
 
   return { str = self.name, hl = { hl } }
-end
-
----Create a sanitized partial copy of a node
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.FileNode cloned
-function FileNode:clone(api_nodes)
-  return api.FileNode(self)
 end
 
 return FileNode
