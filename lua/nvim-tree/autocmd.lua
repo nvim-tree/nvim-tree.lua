@@ -162,6 +162,52 @@ function M.global()
       end,
     })
   end
+
+  vim.api.nvim_create_autocmd("CmdlineLeave", {
+    group = augroup_id,
+    pattern = ":",
+    callback = function(ev)
+      if require("nvim-tree.view").get_bufnr() == ev.buf then
+        local cmd = vim.fn.getcmdline()
+
+        if cmd:match("s([^%w])") then
+          local delimiter = cmd:match("s([^%w])")
+          local escaped_delim = delimiter:gsub("[%%%.%+%-%*%?%^%$%(%)%[%]]", "%%%1")
+
+          -- Looks for: s <delimiter> <old> <delimiter> <new> <delimiter or end>
+          local pattern = "s" .. escaped_delim .. "([^" .. escaped_delim .. "]*)" .. escaped_delim .. "([^" .. escaped_delim .. "]*)"
+
+          local old_part, new_part = cmd:match(pattern)
+
+          local core = require("nvim-tree.core")
+          local explorer = core.get_explorer()
+          local utils = require("nvim-tree.utils")
+          local bulk_rename = require("nvim-tree.actions.fs.rename-file").bulk_rename
+
+          local visual_marker = "'<,'>"
+          local nodes = cmd:sub(1, #visual_marker) == visual_marker and
+            utils.get_visual_nodes({ use_native = true, should_exit = false }) or
+            explorer and explorer:get_nodes_by_line(core.get_nodes_starting_line()) or {}
+          local matching_nodes = {}
+
+          for i = #nodes, 1, -1 do
+            local node = nodes[i]
+            if node and node.name:find(old_part) ~= nil then
+              table.insert(matching_nodes, node)
+            end
+          end
+
+          if #matching_nodes > 0 then
+            bulk_rename(matching_nodes, old_part, new_part)
+          else
+            require("nvim-tree.notify").notify(string.format("Not matching nodes with '%s'", old_part))
+          end
+
+          vim.fn.setcmdline("")
+        end
+      end
+    end
+  })
 end
 
 return M
