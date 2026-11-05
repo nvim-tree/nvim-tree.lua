@@ -83,6 +83,16 @@ vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,                
 vim.keymap.set("n", "<Leader>r", screen_resize,                                       { remap = false, })
 vim.keymap.set("n", "<Leader>o", function() require("nvim-tree.api").tree.open() end, { remap = false, })
 
+vim.keymap.set("n", "<Leader>g", function()
+  local api = require("nvim-tree.api")
+  api.tree.open()
+  api.tree.expand_all()
+
+  local root = assert(api.tree.get_nodes())
+
+  -- print(vim.inspect(root.nodes[2], { depth = 1 }))
+end, { remap = false, })
+
 -- add test specific setup here
 require("nvim-tree").setup({
 })

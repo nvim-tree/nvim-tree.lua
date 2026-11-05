@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local DirectoryNode = require("nvim-tree.node.directory")
 
 ---@class (exact) RootNode: DirectoryNode
@@ -26,9 +27,7 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.RootNode cloned
 function RootNode:clone(api_nodes)
-  local clone = DirectoryNode.clone(self, api_nodes) --[[@as nvim_tree.api.RootNode]]
-
-  return clone
+  return api.RootNode(self)
 end
 
 return RootNode

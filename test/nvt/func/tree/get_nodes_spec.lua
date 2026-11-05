@@ -30,6 +30,7 @@ t.describe("tree.get_nodes", function()
       -- TODO test the uuids
 
       -- root
+      assert(root:is(api.RootNode))
       assert(root:is(api.DirectoryNode))
       assert(root.type == "directory")
       assert(root.absolute_path == "/tmp/nvt_func/data")
@@ -49,8 +50,9 @@ t.describe("tree.get_nodes", function()
       assert(d1link.type == "link")
       assert(d1link.absolute_path == "/tmp/nvt_func/data/d1link")
       assert(d1link.link_to == "/tmp/nvt_func/data/d1")
+      -- TODO should there be nodes?
       print(#d1link.nodes)
-      -- assert(#d1link.nodes == 1)
+      assert(#d1link.nodes == 1)
 
       -- linked file
       local d1f1link = root.nodes[3]
