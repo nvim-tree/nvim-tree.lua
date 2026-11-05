@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
@@ -61,12 +62,9 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.FileLinkNode cloned
 function FileLinkNode:clone(api_nodes)
-  local clone = FileNode.clone(self, api_nodes) --[[@as nvim_tree.api.FileLinkNode]]
+  local api_node = api.FileLinkNode(self)
 
-  clone.link_to = self.link_to
-  clone.fs_stat_target = self.fs_stat_target
-
-  return clone
+  return api_node
 end
 
 return FileLinkNode

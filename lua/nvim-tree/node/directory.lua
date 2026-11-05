@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
@@ -280,20 +281,17 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.DirectoryNode cloned
 function DirectoryNode:clone(api_nodes)
-  local clone        = Node.clone(self, api_nodes) --[[@as nvim_tree.api.DirectoryNode]]
+  local api_node = api.DirectoryNode(self)
 
-  clone.has_children = self.has_children
-  clone.nodes        = {}
-  clone.open         = self.open
+  local child_node
 
-  local clone_child
   for _, child in ipairs(self.nodes) do
-    clone_child = child:clone(api_nodes)
-    clone_child.parent = clone
-    table.insert(clone.nodes, clone_child)
+    child_node = child:clone(api_nodes)
+    child_node.parent = api_node
+    table.insert(api_node.nodes, child_node)
   end
 
-  return clone
+  return api_node
 end
 
 ---@private
