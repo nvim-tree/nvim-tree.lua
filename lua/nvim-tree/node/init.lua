@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
 
 ---Abstract Node class.
@@ -123,25 +124,13 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.Node cloned
 function Node:clone(api_nodes)
-  ---@type nvim_tree.api.Node
-  local clone = {
-    uid_node      = self.uid_node,
-    type          = self.type,
-    absolute_path = self.absolute_path,
-    executable    = self.executable,
-    fs_stat       = self.fs_stat,
-    git_status    = self.git_status,
-    hidden        = self.hidden,
-    name          = self.name,
-    parent        = nil,
-    diag_severity = self.diag_status and self.diag_status.value or nil,
-  }
+  local api_node = api.Node(self)
 
   if api_nodes then
-    api_nodes[self.uid_node] = clone
+    api_nodes[self.uid_node] = api_node
   end
 
-  return clone
+  return api_node
 end
 
 ---@param expansion_count integer

@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local utils = require("nvim-tree.utils")
@@ -97,11 +98,11 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.FileNode cloned
 function FileNode:clone(api_nodes)
-  local clone = Node.clone(self, api_nodes) --[[@as nvim_tree.api.FileNode]]
+  -- TODO put api_nodes into constructors
+  -- TODO somehow need to test api_nodes in a func test
+  local api_node = api.FileNode(self)
 
-  clone.extension = self.extension
-
-  return clone
+  return api_node
 end
 
 return FileNode
