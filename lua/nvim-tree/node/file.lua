@@ -98,11 +98,7 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.FileNode cloned
 function FileNode:clone(api_nodes)
-  -- TODO put api_nodes into constructors
-  -- TODO somehow need to test api_nodes in a func test
-  local api_node = api.FileNode(self)
-
-  return api_node
+  return api.FileNode(self)
 end
 
 return FileNode

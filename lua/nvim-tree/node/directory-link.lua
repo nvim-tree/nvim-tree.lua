@@ -80,9 +80,7 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.DirectoryLinkNode cloned
 function DirectoryLinkNode:clone(api_nodes)
-  local api_node = api.DirectoryLinkNode(self)
-
-  return api_node
+  return api.DirectoryLinkNode(self)
 end
 
 return DirectoryLinkNode

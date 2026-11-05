@@ -66,6 +66,12 @@ local Node = Class:extend()
 local DirectoryNode = Node:extend()
 
 ---
+---Root Node
+---
+---@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
+local RootNode = DirectoryNode:extend()
+
+---
 ---File
 ---
 ---@class (exact) nvim_tree.api.FileNode: nvim_tree.api.Node
@@ -132,13 +138,15 @@ local api = {
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
-  Decorator = require("nvim-tree._meta.api.decorator"),
   Node = Node,
-  LinkNode = LinkNode,
-  FileNode = FileNode,
-  FileLinkNode = FileLinkNode,
   DirectoryNode = DirectoryNode,
+  RootNode = RootNode,
+  FileNode = FileNode,
+  LinkNode = LinkNode,
+  FileLinkNode = FileLinkNode,
   DirectoryLinkNode = DirectoryLinkNode,
+
+  Decorator = require("nvim-tree._meta.api.decorator"),
 
   decorator = require("nvim-tree._meta.api.deprecated").decorator, ---@deprecated
   diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
@@ -177,7 +185,7 @@ end
 ---@overload fun(args: DirectoryNode): nvim_tree.api.DirectoryNode
 
 ---@param n DirectoryNode
-function DirectoryNode:new(n)
+function DirectoryNode:new(n, api_nodes)
   if not n then
     return
   end
@@ -187,6 +195,27 @@ function DirectoryNode:new(n)
   self.has_children = n.has_children
   self.nodes        = {}
   self.open         = n.open
+
+  local child_node
+  for _, child in ipairs(n.nodes) do
+    child_node = child:clone(api_nodes)
+    child_node.parent = self
+    table.insert(self.nodes, child_node)
+  end
+end
+
+
+
+---@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
+---@overload fun(args: RootNode): nvim_tree.api.RootNode
+
+---@param n RootNode
+function RootNode:new(n)
+  if not n then
+    return
+  end
+
+  RootNode.super.new(self, n)
 end
 
 

@@ -281,17 +281,7 @@ end
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.DirectoryNode cloned
 function DirectoryNode:clone(api_nodes)
-  local api_node = api.DirectoryNode(self)
-
-  local child_node
-
-  for _, child in ipairs(self.nodes) do
-    child_node = child:clone(api_nodes)
-    child_node.parent = api_node
-    table.insert(api_node.nodes, child_node)
-  end
-
-  return api_node
+  return api.DirectoryNode(self)
 end
 
 ---@private

@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local appearance = require("nvim-tree.appearance")
 local buffers = require("nvim-tree.buffers")
 local config = require("nvim-tree.config")
@@ -716,9 +717,9 @@ function Explorer:dir_up(node)
 end
 
 ---Api.tree.get_nodes
----@return nvim_tree.api.Node
+---@return nvim_tree.api.RootNode
 function Explorer:get_nodes()
-  return self:clone()
+  return api.RootNode(self)
 end
 
 ---Expand the directory node or the root
