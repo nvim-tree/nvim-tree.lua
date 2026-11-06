@@ -176,7 +176,8 @@ function Filters:custom(path, cwd)
   end
 
   -- no custom patterns: skip computing the relative path, which is the expensive part
-  if next(self.ignore_list) == nil then
+  -- cwd is nil when there are no patterns or getcwd failed
+  if not cwd or next(self.ignore_list) == nil then
     return false
   end
 
@@ -184,7 +185,7 @@ function Filters:custom(path, cwd)
 
   -- filter custom regexes
   -- cwd is resolved once per directory by prepare as getcwd is slow on some platforms e.g. ~60us on macOS
-  local relpath = utils.path_relative(path, cwd or vim.uv.cwd())
+  local relpath = utils.path_relative(path, cwd)
   for pat, _ in pairs(self.ignore_list) do
     if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
       return true
