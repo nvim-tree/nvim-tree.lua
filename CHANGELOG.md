@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.19.1](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.19.0...nvim-tree-v1.19.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **#3362:** correctly handle any nvim_tree.api.Node passed to api ([#3378](https://github.com/nvim-tree/nvim-tree.lua/issues/3378)) ([69eb0c3](https://github.com/nvim-tree/nvim-tree.lua/commit/69eb0c34ed3d836d5a0d92d913b77dd73b054f2f))
+* **#3366:** api.git.reload() not functional when filesystem_watchers.enable = false ([#3367](https://github.com/nvim-tree/nvim-tree.lua/issues/3367)) ([3be8cad](https://github.com/nvim-tree/nvim-tree.lua/commit/3be8cad084e79e84833ef98cef88116c26a224ff))
+* **#3366:** fix git status reload after config migration ([3be8cad](https://github.com/nvim-tree/nvim-tree.lua/commit/3be8cad084e79e84833ef98cef88116c26a224ff))
+* **clipboard:** consistent 'copied to' and 'cut to' messages ([#3376](https://github.com/nvim-tree/nvim-tree.lua/issues/3376)) ([d8394fe](https://github.com/nvim-tree/nvim-tree.lua/commit/d8394fe4296facd90bb1a913e49a2f4d83d31ecb))
+* **create:** always fail when directory cannot be created, add more detailed messaging ([#3374](https://github.com/nvim-tree/nvim-tree.lua/issues/3374)) ([45f82f7](https://github.com/nvim-tree/nvim-tree.lua/commit/45f82f7b2c68c3e2bedbf6ad1d8d687a78e6faf4))
+* **create:** correct messages and FolderCreated event paths ([#3375](https://github.com/nvim-tree/nvim-tree.lua/issues/3375)) ([6936e3c](https://github.com/nvim-tree/nvim-tree.lua/commit/6936e3c4cf9775786d9f989f41a9593f4b612d96))
+* **rename:** cancel operation on empty name entered ([#3373](https://github.com/nvim-tree/nvim-tree.lua/issues/3373)) ([96b6d0e](https://github.com/nvim-tree/nvim-tree.lua/commit/96b6d0ea594a1e519abd58fd8b60a39a9dec1869))
+
+
+### Performance Improvements
+
+* **#3384:** skip fnamemodify in is_git when GIT_DIR unset ([#3388](https://github.com/nvim-tree/nvim-tree.lua/issues/3388)) ([4cb1232](https://github.com/nvim-tree/nvim-tree.lua/commit/4cb123287efe9a7191cce287a005d4a9c8bed4a0))
+* **#3386:** skip getcwd per file in custom filter ([#3387](https://github.com/nvim-tree/nvim-tree.lua/issues/3387)) ([7e1da84](https://github.com/nvim-tree/nvim-tree.lua/commit/7e1da84aaffb413e1fa47b3895e5caa12501142d))
+
 ## [1.19.0](https://github.com/nvim-tree/nvim-tree.lua/compare/nvim-tree-v1.18.0...nvim-tree-v1.19.0) (2026-10-20)
 
 
