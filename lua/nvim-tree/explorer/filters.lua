@@ -163,21 +163,29 @@ end
 
 ---@private
 ---@param path string
+---@param cwd string? from prepare
 ---@return boolean
-function Filters:custom(path)
+function Filters:custom(path, cwd)
   if not self.state.custom then
     return false
   end
-
-  local basename = utils.path_basename(path)
 
   -- filter user's custom function
   if self.custom_function and self.custom_function(path) then
     return true
   end
 
+  -- no custom patterns: skip computing the relative path, which is the expensive part
+  -- cwd is nil when there are no patterns or getcwd failed
+  if not cwd or next(self.ignore_list) == nil then
+    return false
+  end
+
+  local basename = utils.path_basename(path)
+
   -- filter custom regexes
-  local relpath = utils.path_relative(path, vim.uv.cwd())
+  -- cwd is resolved once per directory by prepare as getcwd is slow on some platforms e.g. ~60us on macOS
+  local relpath = utils.path_relative(path, cwd)
   for pat, _ in pairs(self.ignore_list) do
     if vim.fn.match(relpath, pat) ~= -1 or vim.fn.match(basename, pat) ~= -1 then
       return true
@@ -200,11 +208,13 @@ end
 --- project: reference
 --- bufinfo: empty unless no_buffer set: vim.fn.getbufinfo { buflisted = 1 }
 --- bookmarks: absolute paths to boolean
+--- cwd: vim.uv.cwd() when there are filters.custom patterns
 function Filters:prepare(project)
   local status = {
     project = project or {},
     bufinfo = {},
     bookmarks = {},
+    cwd = next(self.ignore_list) and vim.uv.cwd() or nil, -- only needed by custom patterns
   }
 
   if self.state.no_buffer then
@@ -239,7 +249,7 @@ function Filters:should_filter(path, fs_stat, status)
   return self:git(path, status.project)
     or self:buf(path, status.bufinfo)
     or self:dotfile(path)
-    or self:custom(path)
+    or self:custom(path, status.cwd)
     or self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks)
 end
 
@@ -263,7 +273,7 @@ function Filters:should_filter_as_reason(path, fs_stat, status)
     return FILTER_REASON.buf
   elseif self:dotfile(path) then
     return FILTER_REASON.dotfile
-  elseif self:custom(path) then
+  elseif self:custom(path, status.cwd) then
     return FILTER_REASON.custom
   elseif self:bookmark(path, fs_stat and fs_stat.type, status.bookmarks) then
     return FILTER_REASON.bookmark
