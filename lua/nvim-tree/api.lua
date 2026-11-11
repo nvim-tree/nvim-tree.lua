@@ -37,6 +37,7 @@ local Class = require("nvim-tree.classic")
 ---```
 
 
+-- TODO #3379 move to a meta file
 
 ---The Node class is a data class. Instances may be provided by API functions for use as a:
 ---- handle to pass back to API functions e.g. [nvim_tree.api.node.run.cmd()]
@@ -152,100 +153,6 @@ local api = {
   diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
   live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }
-
-
----TODO move to somewhere in hydration as per Decorator
----Refer to nodes using the same namespace as public API, for reference by the language server
--- local nvim_tree = { api = {} }
-
----@class nvim_tree.api.Node: nvim_tree.Class
----@field private uid_node number
-
----@param node Node
-function Node:new(node)
-  if not node then
-    return
-  end
-  self.uid_node      = node.uid_node
-  self.type          = node.type
-  self.absolute_path = node.absolute_path
-  self.executable    = node.executable
-  self.fs_stat       = node.fs_stat
-  self.git_status    = node.git_status
-  self.hidden        = node.hidden
-  self.name          = node.name
-  self.parent        = nil
-  self.diag_severity = node.diag_status and node.diag_status.value or nil
-end
-
----@param n DirectoryNode
-function DirectoryNode:new(n)
-  if not n then
-    return
-  end
-
-  DirectoryNode.super.new(self, n)
-
-  self.has_children = n.has_children
-  self.nodes        = {}
-  self.open         = n.open
-
-  local child_node
-  for _, child in ipairs(n.nodes) do
-    child_node = child:to_api_node()
-    child_node.parent = self
-    table.insert(self.nodes, child_node)
-  end
-end
-
----@param n RootNode
-function RootNode:new(n)
-  if not n then
-    return
-  end
-
-  RootNode.super.new(self, n)
-end
-
----@param n FileNode
-function FileNode:new(n)
-  if not n then
-    return
-  end
-
-  FileNode.super.new(self, n)
-
-  self.extension = n.extension
-end
-
----@param n LinkNode
-function LinkNode:new(n)
-  if not n then
-    return
-  end
-
-  self.link_to = n.link_to
-  self.fs_stat_target = n.fs_stat_target
-end
-
----@param n DirectoryLinkNode
-function DirectoryLinkNode:new(n)
-  if not n then
-    return
-  end
-
-  LinkNode.new(self, n)
-
-  DirectoryLinkNode.super.new(self, n)
-end
-
----@param args FileLinkNode
-function FileLinkNode:new(args)
-  LinkNode.new(self, args)
-  FileLinkNode.super.new(self, args)
-
-  self.type = "link"
-end
 
 require("nvim-tree.api.impl").hydrate_pre_setup(api)
 
