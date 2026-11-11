@@ -37,90 +37,6 @@ local Class = require("nvim-tree.classic")
 ---```
 
 
--- TODO #3379 move to a meta file
-
----The Node class is a data class. Instances may be provided by API functions for use as a:
----- handle to pass back to API functions e.g. [nvim_tree.api.node.run.cmd()]
----- reference in callbacks e.g. [nvim_tree.config.sort.Sorter] {sorter}
----
----Please do not mutate the contents of any Node object.
----
----@class (exact) nvim_tree.api.Node: nvim_tree.Class
----@field absolute_path string of the file or directory
----@field name string file or directory name
----@field parent? nvim_tree.api.DirectoryNode parent directory, nil for root
----@field type "file" | "directory" | "link" [uv.fs_stat()] {type}
----@field executable boolean file is executable
----@field fs_stat? uv.fs_stat.result at time of last tree display, see [uv.fs_stat()]
----@field git_status nvim_tree.git.Status? for files and directories
----@field diag_severity? lsp.DiagnosticSeverity diagnostic status
----@field hidden boolean node is not visible in the tree
-local Node = Class:extend()
-
----
----Directory
----
----@class (exact) nvim_tree.api.DirectoryNode: nvim_tree.api.Node
----@field has_children boolean
----@field nodes nvim_tree.api.Node[]
----@field open boolean
-local DirectoryNode = Node:extend()
-
----
----Root Node
----
----@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
-local RootNode = DirectoryNode:extend()
-
----
----File
----
----@class (exact) nvim_tree.api.FileNode: nvim_tree.api.Node
----@field extension string
-local FileNode = Node:extend()
-
-
----
----Link mixin
----
----@class (exact) nvim_tree.api.LinkNode: nvim_tree.Class
----@field link_to string
----@field fs_stat_target uv.fs_stat.result
-local LinkNode = Class:extend()
-
-
----
----DirectoryLink
----
----@class (exact) nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
-local DirectoryLinkNode = DirectoryNode:extend()
-DirectoryLinkNode:implement(LinkNode)
-
-
----
----File Link
----
----@class (exact) nvim_tree.api.FileLinkNode: nvim_tree.api.FileNode, nvim_tree.api.LinkNode
-local FileLinkNode = FileNode:extend()
-FileLinkNode:implement(LinkNode)
-
-
----
----Git statuses for a single node.
----
----`nvim_tree.git.XY`: 2 character string, see `man 1 git-status` "Short Format"
----@alias nvim_tree.git.XY string
----
----{dir} status is derived from its contents:
----- `direct`: inherited from child files
----- `indirect`: inherited from child directories
----
----@class nvim_tree.git.Status
----@field file? nvim_tree.git.XY status of a file node
----@field dir? table<"direct" | "indirect", nvim_tree.git.XY[]> direct inclusive-or indirect status
-
-
-
 ---
 ---nvim-tree Public API
 ---
@@ -139,20 +55,94 @@ local api = {
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
-  Node = Node,
-  DirectoryNode = DirectoryNode,
-  RootNode = RootNode,
-  FileNode = FileNode,
-  LinkNode = LinkNode,
-  FileLinkNode = FileLinkNode,
-  DirectoryLinkNode = DirectoryLinkNode,
-
   Decorator = require("nvim-tree._meta.api.decorator"),
 
   decorator = require("nvim-tree._meta.api.deprecated").decorator, ---@deprecated
   diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
   live_filter = require("nvim-tree._meta.api.deprecated").live_filter, ---@deprecated
 }
+
+
+---The Node class is an abstract data class with many implementations.
+---Instances may be provided by API functions for use as a:
+---- handle to pass back to API functions e.g. [nvim_tree.api.node.run.cmd()]
+---- reference in callbacks e.g. [nvim_tree.config.sort.Sorter] {sorter}
+---
+---Please do not mutate the contents of any Node object.
+---
+---@class (exact) nvim_tree.api.Node: nvim_tree.Class
+---@field absolute_path string of the file or directory
+---@field name string file or directory name
+---@field parent? nvim_tree.api.DirectoryNode parent directory, nil for root
+---@field type "file" | "directory" | "link" [uv.fs_stat()] {type}
+---@field executable boolean file is executable
+---@field fs_stat? uv.fs_stat.result at time of last tree display, see [uv.fs_stat()]
+---@field git_status nvim_tree.git.Status? for files and directories
+---@field diag_severity? lsp.DiagnosticSeverity diagnostic status
+---@field hidden boolean node is not visible in the tree
+api.Node = Class:extend()
+
+---
+---Directory
+---
+---@class (exact) nvim_tree.api.DirectoryNode: nvim_tree.api.Node
+---@field has_children boolean child {nodes} are present
+---@field nodes nvim_tree.api.Node[] child nodes
+---@field open boolean directory is open
+api.DirectoryNode = api.Node:extend()
+
+---
+---Root Directory
+---
+---@class (exact) nvim_tree.api.RootNode: nvim_tree.api.DirectoryNode
+api.RootNode = api.DirectoryNode:extend()
+
+---
+---File
+---
+---@class (exact) nvim_tree.api.FileNode: nvim_tree.api.Node
+---@field extension string
+api.FileNode = api.Node:extend()
+
+
+---
+---Abstract Link
+---
+---@class (exact) nvim_tree.api.LinkNode: nvim_tree.Class
+---@field link_to string absolute path of the file or directory linked to
+---@field fs_stat_target uv.fs_stat.result stat of the linked file or directory
+api.LinkNode = Class:extend()
+
+
+---
+---Directory Link
+---
+---@class (exact) nvim_tree.api.DirectoryLinkNode: nvim_tree.api.DirectoryNode, nvim_tree.api.LinkNode
+api.DirectoryLinkNode = api.DirectoryNode:extend()
+api.DirectoryLinkNode:implement(api.LinkNode)
+
+
+---
+---File Link
+---
+---@class (exact) nvim_tree.api.FileLinkNode: nvim_tree.api.FileNode, nvim_tree.api.LinkNode
+api.FileLinkNode = api.FileNode:extend()
+api.FileLinkNode:implement(api.LinkNode)
+
+
+---
+---Git statuses for a single node.
+---
+---`nvim_tree.git.XY`: 2 character string, see `man 1 git-status` "Short Format"
+---@alias nvim_tree.git.XY string
+---
+---{dir} status is derived from its contents:
+---- `direct`: inherited from child files
+---- `indirect`: inherited from child directories
+---
+---@class nvim_tree.git.Status
+---@field file? nvim_tree.git.XY status of a file node
+---@field dir? table<"direct" | "indirect", nvim_tree.git.XY[]> direct inclusive-or indirect status
 
 require("nvim-tree.api.impl").hydrate_pre_setup(api)
 
