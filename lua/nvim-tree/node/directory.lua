@@ -393,7 +393,7 @@ function DirectoryNode:node_with_uid_node(api_node)
   end
   return Iterator.builder({ self })
     :matcher(function(node)
-      return node.uid_node == api_node.uid_node
+      return node.uid_node == api_node:get_uid_node()
     end)
     :iterate()
 end
