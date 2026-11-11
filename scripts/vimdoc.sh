@@ -23,6 +23,12 @@ fi
 # define $DIR_NVIM_SRC
 . scripts/check-nvim-src.sh
 
+# don't use user's local nvim config e.g. treesitter parsers
+export XDG_CACHE_HOME=
+export XDG_CONFIG_HOME=
+export XDG_DATA_HOME=
+export XDG_STATE_HOME=
+
 cleanup() {
 	# remove source link
 	rm -fv "${DIR_NVIM_SRC}/runtime/lua/nvim_tree"
