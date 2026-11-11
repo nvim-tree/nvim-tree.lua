@@ -1,6 +1,9 @@
 local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
 
+-- TODO #3379 nicer place to hydrate
+require("nvim-tree.node.api_nodes")
+
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.uv.hrtime() at construction time
@@ -24,6 +27,9 @@ local Node = Class:extend()
 ---@field absolute_path string
 ---@field name string
 ---@field fs_stat uv.fs_stat.result?
+
+---@class Node
+---@overload fun(args: NodeArgs): Node
 
 ---@protected
 ---@param args NodeArgs
@@ -136,7 +142,7 @@ function Node:clone(api_nodes)
   return api_node
 end
 
----(Recursively) instantiate an api node 
+---(Recursively) instantiate an api node
 ---@return nvim_tree.api.Node
 function Node:to_api_node()
   return self:api_node_class()
