@@ -84,7 +84,7 @@ local function pick_win_id()
   fillchars.stl = nil
   fillchars.stlnc = nil
 
-  --- TODO see #3357 - Option:remove and Option:append should be used instead of directly assigning to the Option
+  -- see #3357 - Option:remove and Option:append should be used instead of directly assigning to the Option
   ---@diagnostic disable-next-line: assign-type-mismatch
   vim.opt.fillchars = fillchars
   if fillchars then
