@@ -1,9 +1,6 @@
 local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
 
--- TODO #3379 nicer place to hydrate
-require("nvim-tree.node.api_nodes")
-
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.uv.hrtime() at construction time
