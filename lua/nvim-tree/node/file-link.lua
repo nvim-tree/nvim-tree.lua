@@ -22,11 +22,17 @@ function FileLinkNode:new(args)
   self.type           = "link"
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node FileLinkNode
-function api.FileLinkNode:new(node)
+function api.FileLinkNode:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
   api.LinkNode.new(self, node)
-  api.FileLinkNode.super.new(self, node)
+
+  api.FileLinkNode.super.new(self, node, api_node_uid_map)
 end
 
 function FileLinkNode:destroy()

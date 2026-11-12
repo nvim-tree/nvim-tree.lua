@@ -32,14 +32,15 @@ function FileNode:new(args)
   self.executable     = utils.is_executable(args.absolute_path)
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node FileNode
-function api.FileNode:new(node)
+function api.FileNode:new(node, api_node_uid_map)
   if not node then
     return
   end
 
-  api.FileNode.super.new(self, node)
+  api.FileNode.super.new(self, node, api_node_uid_map)
 
   self.extension = node.extension
 end
