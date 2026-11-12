@@ -29,6 +29,18 @@ function DirectoryLinkNode:new(args)
   self.absolute_path  = absolute_path
 end
 
+---API node constructor
+---@param node DirectoryLinkNode
+function api.DirectoryLinkNode:new(node)
+  if not node then
+    return
+  end
+
+  api.LinkNode.new(self, node)
+
+  api.DirectoryLinkNode.super.new(self, node)
+end
+
 function DirectoryLinkNode:destroy()
   DirectoryNode.destroy(self)
 end

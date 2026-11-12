@@ -32,6 +32,18 @@ function FileNode:new(args)
   self.executable     = utils.is_executable(args.absolute_path)
 end
 
+---API node constructor
+---@param node FileNode
+function api.FileNode:new(node)
+  if not node then
+    return
+  end
+
+  api.FileNode.super.new(self, node)
+
+  self.extension = node.extension
+end
+
 function FileNode:destroy()
   Node.destroy(self)
 end

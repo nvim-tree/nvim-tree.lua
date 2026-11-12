@@ -22,6 +22,13 @@ function FileLinkNode:new(args)
   self.type           = "link"
 end
 
+---API node constructor
+---@param node FileLinkNode
+function api.FileLinkNode:new(node)
+  api.LinkNode.new(self, node)
+  api.FileLinkNode.super.new(self, node)
+end
+
 function FileLinkNode:destroy()
   FileNode.destroy(self)
 end

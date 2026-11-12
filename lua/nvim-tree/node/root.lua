@@ -15,6 +15,16 @@ function RootNode:new(args)
   self.api_node_class = api.RootNode
 end
 
+---API node constructor
+---@param node RootNode
+function api.RootNode:new(node)
+  if not node then
+    return
+  end
+
+  api.RootNode.super.new(self, node)
+end
+
 ---Root is never a dotfile
 ---@return boolean
 function RootNode:is_dotfile()

@@ -277,9 +277,6 @@ function M.hydrate_post_setup(api)
 
   -- Map all legacy functions to implementations
   require("nvim-tree.legacy").map_api(api)
-
-  -- Hydrate api node class methods
-  require("nvim-tree.node.api_nodes")
 end
 
 return M
