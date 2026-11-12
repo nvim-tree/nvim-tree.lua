@@ -45,6 +45,25 @@ function Node:new(args)
   self.is_dot         = false
 end
 
+---API node constructor
+---@param node Node
+function api.Node:new(node)
+  if not node then
+    return
+  end
+
+  self.uid_node      = node.uid_node
+  self.type          = node.type
+  self.absolute_path = node.absolute_path
+  self.executable    = node.executable
+  self.fs_stat       = node.fs_stat
+  self.git_status    = node.git_status
+  self.hidden        = node.hidden
+  self.name          = node.name
+  self.parent        = nil
+  self.diag_severity = node.diag_status and node.diag_status.value or nil
+end
+
 function Node:destroy()
 end
 
@@ -126,6 +145,7 @@ function Node:highlighted_name()
 end
 
 --- TODO add api_nodes to constructor or to_api_node and have decorator call it
+--- TODO remove this
 ---Create a sanitized partial copy of a node, populating children recursively.
 ---@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
 ---@return nvim_tree.api.Node cloned

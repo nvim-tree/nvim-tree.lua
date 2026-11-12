@@ -2284,9 +2284,50 @@ e.g. the following are functionally identical: >lua
 <
 
 
+*nvim_tree.api.DirectoryLinkNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    Directory Link
+
+*nvim_tree.api.DirectoryNode*
+    Extends: |nvim_tree.api.Node|
+
+    Directory
+
+    Fields: ~
+      • {has_children}  (`boolean`) child {nodes} are present
+      • {nodes}         (`nvim_tree.api.Node[]`) child nodes
+      • {open}          (`boolean`) directory is open
+
+*nvim_tree.api.FileLinkNode*
+    Extends: |nvim_tree.api.FileNode|
+
+    File Link
+
+*nvim_tree.api.FileNode*
+    Extends: |nvim_tree.api.Node|
+
+    File
+
+    Fields: ~
+      • {extension}  (`string`)
+
+*nvim_tree.api.LinkNode*
+    Extends: |nvim_tree.Class|
+
+    Abstract Link
+
+    Fields: ~
+      • {fs_stat_target}  (`uv.fs_stat.result`) stat of the linked file or
+                          directory
+      • {link_to}         (`string`) absolute path of the file or directory
+                          linked to
+
 *nvim_tree.api.Node*
-    The Node class is a data class. Instances may be provided by API functions
-    for use as a:
+    Extends: |nvim_tree.Class|
+
+    The Node class is an abstract data class with many implementations.
+    Instances may be provided by API functions for use as a:
     • handle to pass back to API functions e.g. |nvim_tree.api.node.run.cmd()|
     • reference in callbacks e.g. |nvim_tree.config.sort.Sorter| {sorter}
 
@@ -2304,6 +2345,12 @@ e.g. the following are functionally identical: >lua
       • {parent}?         (`nvim_tree.api.DirectoryNode`) parent directory,
                           nil for root
       • {type}            (`"file"|"directory"|"link"`) |uv.fs_stat()| {type}
+      • {uid_node}        (`number`) internal use only
+
+*nvim_tree.api.RootNode*
+    Extends: |nvim_tree.api.DirectoryNode|
+
+    Root Directory
 
 *nvim_tree.git.Status*
     Git statuses for a single node.
