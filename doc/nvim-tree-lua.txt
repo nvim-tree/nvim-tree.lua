@@ -3243,7 +3243,7 @@ The |nvim_tree.api.Node| classes represent a single entry in the tree: a file
 or a folder.
 
 |nvim_tree.api.Node| and |nvim_tree.api.LinkNode| are abstract, you will
-always be provided with a implementation.
+always be provided with a concrete implementation.
 
 Instances may be provided by API functions for use as a:
 • handle to pass back to API functions e.g. |nvim_tree.api.node.run.cmd()|
