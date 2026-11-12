@@ -15,14 +15,15 @@ function RootNode:new(args)
   self.api_node_class = api.RootNode
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node RootNode
-function api.RootNode:new(node)
+function api.RootNode:new(node, api_node_uid_map)
   if not node then
     return
   end
 
-  api.RootNode.super.new(self, node)
+  api.RootNode.super.new(self, node, api_node_uid_map)
 end
 
 ---Root is never a dotfile

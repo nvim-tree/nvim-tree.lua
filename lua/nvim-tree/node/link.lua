@@ -17,7 +17,7 @@ function LinkNode:new(args)
   self.fs_stat_target = args.fs_stat_target
 end
 
----API node constructor
+---api node constructor
 ---@param node LinkNode
 function api.LinkNode:new(node)
   if not node then

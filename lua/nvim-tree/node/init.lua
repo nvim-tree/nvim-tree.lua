@@ -1,6 +1,8 @@
 local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
 
+---@alias ApiNodeUidMap table<number, nvim_tree.api.Node>? map of uids to api node to populate, for caching
+
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class
 ---@field uid_node number vim.uv.hrtime() at construction time
@@ -14,7 +16,7 @@ local Class = require("nvim-tree.classic")
 ---@field name string
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
----@field protected api_node_class nvim_tree.Class used to instantiate an api node
+---@field protected api_node_class nvim_tree.api.Node corresponding api node class
 ---@field private is_dot boolean cached is_dotfile
 local Node = Class:extend()
 
@@ -45,9 +47,10 @@ function Node:new(args)
   self.is_dot         = false
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node Node
-function api.Node:new(node)
+function api.Node:new(node, api_node_uid_map)
   if not node then
     return
   end
@@ -62,6 +65,17 @@ function api.Node:new(node)
   self.name          = node.name
   self.parent        = nil
   self.diag_severity = node.diag_status and node.diag_status.value or nil
+
+  if api_node_uid_map then
+    api_node_uid_map[self.uid_node] = self
+  end
+end
+
+---(Recursively) instantiate an api node
+---@param api_node_uid_map? ApiNodeUidMap
+---@return nvim_tree.api.Node
+function Node:to_api_node(api_node_uid_map)
+  return self:api_node_class(api_node_uid_map)
 end
 
 function Node:destroy()
@@ -142,27 +156,6 @@ end
 ---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name()
   return self:highlighted_name_empty()
-end
-
---- TODO add api_nodes to constructor or to_api_node and have decorator call it
---- TODO remove this
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.Node cloned
-function Node:clone(api_nodes)
-  local api_node = api.Node(self)
-
-  if api_nodes then
-    api_nodes[self.uid_node] = api_node
-  end
-
-  return api_node
-end
-
----(Recursively) instantiate an api node
----@return nvim_tree.api.Node
-function Node:to_api_node()
-  return self:api_node_class()
 end
 
 ---@param expansion_count integer

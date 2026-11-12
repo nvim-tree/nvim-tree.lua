@@ -29,16 +29,17 @@ function DirectoryLinkNode:new(args)
   self.absolute_path  = absolute_path
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node DirectoryLinkNode
-function api.DirectoryLinkNode:new(node)
+function api.DirectoryLinkNode:new(node, api_node_uid_map)
   if not node then
     return
   end
 
   api.LinkNode.new(self, node)
 
-  api.DirectoryLinkNode.super.new(self, node)
+  api.DirectoryLinkNode.super.new(self, node, api_node_uid_map)
 end
 
 function DirectoryLinkNode:destroy()

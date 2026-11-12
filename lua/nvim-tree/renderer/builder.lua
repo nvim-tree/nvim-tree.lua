@@ -45,7 +45,7 @@ local BUILTIN_DECORATORS = {
 ---@field private markers boolean[] indent markers
 ---@field private decorators Decorator[]
 ---@field private hidden_display fun(node: Node): string|nil
----@field private api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node for user decorators
+---@field private api_node_uid_map? ApiNodeUidMap
 local Builder = Class:extend()
 
 ---@class Builder
@@ -85,9 +85,9 @@ function Builder:new(args)
       table.insert(self.decorators, user())
 
       -- clone user nodes once
-      if not self.api_nodes then
-        self.api_nodes = {}
-        self.explorer:clone(self.api_nodes)
+      if not self.api_node_uid_map then
+        self.api_node_uid_map = {}
+        self.explorer:to_api_node(self.api_node_uid_map)
       end
     end
   end
@@ -152,7 +152,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
+  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
   local b
 
   local line = { indent_markers, arrows }
@@ -197,7 +197,7 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
+  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
 
   -- first in priority order
   local d, b, sign_name
@@ -254,7 +254,7 @@ end
 ---@return nvim_tree.api.highlighted_string icon
 ---@return nvim_tree.api.highlighted_string name
 function Builder:icon_name_decorated(node)
-  local api_node = self.api_nodes and self.api_nodes[node.uid_node]
+  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
 
   -- base case
   local icon = node:highlighted_icon()

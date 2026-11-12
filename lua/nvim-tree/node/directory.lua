@@ -38,14 +38,15 @@ function DirectoryNode:new(args)
   self.watcher        = require("nvim-tree.explorer.watch").create_watcher(self)
 end
 
----API node constructor
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
 ---@param node DirectoryNode
-function api.DirectoryNode:new(node)
+function api.DirectoryNode:new(node, api_node_uid_map)
   if not node then
     return
   end
 
-  api.DirectoryNode.super.new(self, node)
+  api.DirectoryNode.super.new(self, node, api_node_uid_map)
 
   self.has_children = node.has_children
   self.nodes        = {}
@@ -53,7 +54,7 @@ function api.DirectoryNode:new(node)
 
   local child_node
   for _, child in ipairs(node.nodes) do
-    child_node = child:to_api_node()
+    child_node = child:to_api_node(api_node_uid_map)
     child_node.parent = self
     table.insert(self.nodes, child_node)
   end
