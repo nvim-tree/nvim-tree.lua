@@ -147,7 +147,6 @@ function M.hydrate_pre_setup(api)
   api.map.keymap.default    = __(function() return require("nvim-tree.keymap").get_keymap_default() end)
   api.map.on_attach.default = __(function(bufnr) require("nvim-tree.keymap").on_attach_default(bufnr) end)
 
-  -- TODO #3379 is this necessary?
   api.Decorator             = require("nvim-tree.renderer.decorator")
 
   -- Map any legacy functions to implementations above or to meta
