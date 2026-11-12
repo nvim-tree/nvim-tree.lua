@@ -152,7 +152,7 @@ function Builder:format_line(indent_markers, arrows, icon, name, node)
     end
   end
 
-  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
+  local api_node = self.api_node_uid_map and self.api_node_uid_map[node.uid_node]
   local b
 
   local line = { indent_markers, arrows }
@@ -197,7 +197,7 @@ end
 ---@private
 ---@param node Node
 function Builder:build_signs(node)
-  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
+  local api_node = self.api_node_uid_map and self.api_node_uid_map[node.uid_node]
 
   -- first in priority order
   local d, b, sign_name
@@ -254,7 +254,7 @@ end
 ---@return nvim_tree.api.highlighted_string icon
 ---@return nvim_tree.api.highlighted_string name
 function Builder:icon_name_decorated(node)
-  local api_node = self.api_node_api_node_uid_map and self.api_node_api_node_uid_map[node.uid_node]
+  local api_node = self.api_node_uid_map and self.api_node_uid_map[node.uid_node]
 
   -- base case
   local icon = node:highlighted_icon()
