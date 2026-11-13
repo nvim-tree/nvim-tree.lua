@@ -1,7 +1,7 @@
 local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
 
----@alias ApiNodeUidMap table<number, nvim_tree.api.Node>? map of uids to api node to populate, for caching
+---@alias ApiNodeUidMap table<number, nvim_tree.api.Node> map of uids to api node to populate, for caching
 
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class

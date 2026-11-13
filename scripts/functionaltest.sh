@@ -89,7 +89,6 @@ live() {
 		--cmd "comclear | mapclear | mapclear!" \
 		--cmd "set packpath^=${NVT_FUNC_PACKPATH}" \
 		--cmd "lua dofile('${VIMRUNTIME}/colors/vim.lua')" \
-		--cmd "unlet g:colors_name" \
 		--cmd "packadd nvim-tree.lua" \
 		|| rc=$?
 
