@@ -11,6 +11,10 @@ NVT_FUNCTEST_EVENTS = {}
 ---@type string[]
 NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
+---Extra test specific highlight groups
+---@see vim.api.nvim_set_hl
+---@alias test.nvt.func.fixtures.HiDefs table<string, vim.api.keyset.highlight>
+
 local M = {
   --- Minimal default screen options for create_session, for considerable performance optimisation
   --- Override as needed via test.functional.ui.screen.Opts.screen_opts
@@ -28,13 +32,15 @@ local M = {
 ---@field config? nvim_tree.config passed to nvim-tree.setup
 ---@field width? integer default 80
 ---@field height? integer default 24
+---@field hi_defs? test.nvt.func.fixtures.HiDefs additional highlight groups to create and add to attr_ids
 ---@field screen_opts? test.functional.ui.screen.Opts overrides M.default_screen_opts
 
 ---Create a new neovim functest session with
 ---- nvim-tree.lua package added
 ---- fresh test data directory created and cd'd into
 ---- nvim-tree setup called
----- nvim-tree HL attr_ids added
+---- test specific HL added
+---- nvim-tree and test HL attr_ids added
 ---- dummy clipboard setup
 ---@param opts? test.nvt.func.fixtures.create_session.Opts
 ---@return test.functional.ui.screen
@@ -71,7 +77,7 @@ function M.create_session(opts)
   end)
 
   -- create attr_ids for all nvim-tree test highlight groups
-  M.add_nvt_attr_ids(screen)
+  M.add_nvt_attr_ids(screen, opts.hi_defs)
 
   -- instantiate the test clipboard
   M.use_dummy_clipboard()
@@ -125,16 +131,23 @@ function M.use_dummy_clipboard()
   end)
 end
 
----Set concrete attr_ids for all nvim-tree highlight groups
+---Set concrete attr_ids for all nvim-tree highlight groups and extra test specific groups
 ---Must be called after nvim-tree setup
 ---These groups are uniquely defined in the test context by appearance/init.lua highlight_functest
 ---@param screen test.functional.ui.screen
-function M.add_nvt_attr_ids(screen)
+---@param hi_defs? test.nvt.func.fixtures.HiDefs
+function M.add_nvt_attr_ids(screen, hi_defs)
   local attr_ids = {}
 
+  -- optionally create/override extra highlight groups
+  for name, hl in pairs(hi_defs or {}) do
+    n.api.nvim_set_hl(0, name, hl)
+  end
+
+  -- map attr_ids for all nvim_tree groups and above
   for name, hl in pairs(n.api.nvim_get_hl(0, { create = false, link = true, })) do
-    if name:match("^NvimTree.*") then
-      attr_ids[name] = { foreground = hl.fg, background = hl.bg }
+    if name:match("^NvimTree.*") or hi_defs and hi_defs[name] then
+      attr_ids[name] = { foreground = hl.fg, background = hl.bg, }
     end
   end
 
