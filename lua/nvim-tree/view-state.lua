@@ -24,6 +24,7 @@ M.Active = {
     signcolumn     = "yes",
     foldmethod     = "manual",
     foldcolumn     = "0",
+    statuscolumn   = "",
     cursorcolumn   = false,
     cursorline     = true,
     cursorlineopt  = "both",
