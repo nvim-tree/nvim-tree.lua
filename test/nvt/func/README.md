@@ -36,14 +36,13 @@ If a `data` directory is given, it will be recursively copied to cwd `/tmp/nvt_f
 Test's `data` directory will be used if present.
 
 - `<Leader>u` to dump the entire screen to `/tmp/nvt_func/dump.txt` and open it
-- `<Leader>c` to dump with identical lines collapsed
 - `<Leader>r` to resize the screen to 80 x 24, to match tests
 - `<Leader>o` to execute `api.tree.open()`
 
 ## Text Only: `attr_ids = {}`
 
 1. Perform the actions to be tested
-2. Dump the screen `<Leader>u` or `<Leader>c>` to `/tmp/nvt_func/dump.txt`
+2. Dump the screen `<Leader>u` to `/tmp/nvt_func/dump.txt`
 3. Add the dump to `screen:expect` `grid`, with `attr_ids = {}`
 
 The dump will have `|` appended to each line, with a caret `^` at the cursor position.

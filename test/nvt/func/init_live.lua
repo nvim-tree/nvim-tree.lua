@@ -6,7 +6,7 @@ local function screen_resize()
   vim.o.lines = 24
 end
 
----dump the screen to /tmp/nvt_live_dump.txt: <Leader>d for raw, <Leader>c for collapsed
+---dump the screen to /tmp/nvt_live_dump.txt: <Leader>u
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
 ---identical lines collapsed with "*n" appended
