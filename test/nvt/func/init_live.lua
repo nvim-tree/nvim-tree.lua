@@ -9,8 +9,8 @@ end
 ---dump the screen to /tmp/nvt_live_dump.txt: <Leader>d for raw, <Leader>c for collapsed
 ---pipe is appended to each line
 ---caret is inserted at the cursor position
----@param collapse boolean identical lines collapsed with "*n" appended
-local function live_dump(collapse)
+---identical lines collapsed with "*n" appended
+local function live_dump()
   local dump_path = "/tmp/nvt_live_dump.txt"
 
   local function cap_lines()
@@ -54,10 +54,7 @@ local function live_dump(collapse)
   end
 
   local lines = cap_lines()
-
-  if collapse then
-    lines = compress_lines(lines)
-  end
+  lines = compress_lines(lines)
 
   -- dump to file
   vim.fn.writefile(lines, dump_path)
@@ -77,12 +74,11 @@ vim.o.background = "dark"
 local cwd = nu.setup_cwd(os.getenv("NVT_DIR_LIVE"))
 vim.api.nvim_set_current_dir(cwd)
 
--- mappings
-vim.keymap.set("n", "<Leader>u", function() live_dump(false) end,                     { remap = false, })
-vim.keymap.set("n", "<Leader>c", function() live_dump(true) end,                      { remap = false, })
-vim.keymap.set("n", "<Leader>r", screen_resize,                                       { remap = false, })
-vim.keymap.set("n", "<Leader>o", function() require("nvim-tree.api").tree.open() end, { remap = false, })
-
 -- add test specific setup here
 require("nvim-tree").setup({
 })
+
+-- mappings
+vim.keymap.set("n", "<Leader>u", live_dump)
+vim.keymap.set("n", "<Leader>r", screen_resize)
+vim.keymap.set("n", "<Leader>o", require("nvim-tree.api").tree.open)
