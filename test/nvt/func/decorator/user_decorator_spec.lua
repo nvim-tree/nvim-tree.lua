@@ -24,7 +24,7 @@ end)
 
 
 t.describe("Decorator user", function()
-  t.it("inline", function()
+  t.it("overrides", function()
     n.exec_lua(function()
       require("nvim-tree").setup({
         renderer = {
@@ -60,7 +60,7 @@ t.describe("Decorator user", function()
     })
   end)
 
-  t.it("sign col", function()
+  t.it("signcolumn", function()
     n.exec_lua(function()
       require("nvim-tree").setup({
         renderer = {
