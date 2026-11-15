@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local notify = require("nvim-tree.notify")
@@ -22,18 +23,41 @@ local DirectoryNode = Node:extend()
 function DirectoryNode:new(args)
   DirectoryNode.super.new(self, args)
 
-  local handle       = vim.uv.fs_scandir(args.absolute_path)
-  local has_children = handle and vim.uv.fs_scandir_next(handle) ~= nil or false
+  local handle        = vim.uv.fs_scandir(args.absolute_path)
+  local has_children  = handle and vim.uv.fs_scandir_next(handle) ~= nil or false
 
-  self.type          = "directory"
+  self.api_node_class = api.DirectoryNode
+  self.type           = "directory"
 
-  self.has_children  = has_children
-  self.group_next    = nil
-  self.nodes         = {}
-  self.open          = false
-  self.hidden_stats  = nil
+  self.has_children   = has_children
+  self.group_next     = nil
+  self.nodes          = {}
+  self.open           = false
+  self.hidden_stats   = nil
 
-  self.watcher       = require("nvim-tree.explorer.watch").create_watcher(self)
+  self.watcher        = require("nvim-tree.explorer.watch").create_watcher(self)
+end
+
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
+---@param node DirectoryNode
+function api.DirectoryNode:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
+  api.DirectoryNode.super.new(self, node, api_node_uid_map)
+
+  self.has_children = node.has_children
+  self.nodes        = {}
+  self.open         = node.open
+
+  local child_node
+  for _, child in ipairs(node.nodes) do
+    child_node = child:to_api_node(api_node_uid_map)
+    child_node.parent = self
+    table.insert(self.nodes, child_node)
+  end
 end
 
 function DirectoryNode:destroy()
@@ -276,26 +300,6 @@ function DirectoryNode:highlighted_name()
   return { str = str, hl = { hl } }
 end
 
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.DirectoryNode cloned
-function DirectoryNode:clone(api_nodes)
-  local clone        = Node.clone(self, api_nodes) --[[@as nvim_tree.api.DirectoryNode]]
-
-  clone.has_children = self.has_children
-  clone.nodes        = {}
-  clone.open         = self.open
-
-  local clone_child
-  for _, child in ipairs(self.nodes) do
-    clone_child = child:clone(api_nodes)
-    clone_child.parent = clone
-    table.insert(clone.nodes, clone_child)
-  end
-
-  return clone
-end
-
 ---@private
 ---@param should_descend fun(expansion_count: integer, node: Node): boolean
 ---@return fun(expansion_count: integer, node: Node): boolean
@@ -403,12 +407,15 @@ function DirectoryNode:expand_dir_node()
 end
 
 ---Find a (child) node matching uuid_node
----@param uid_node number
+---@param api_node nvim_tree.api.Node?
 ---@return Node|nil
-function DirectoryNode:node_with_uid_node(uid_node)
+function DirectoryNode:node_with_uid_node(api_node)
+  if not api_node or not api_node.as or not api_node:as(api.Node) then
+    return nil
+  end
   return Iterator.builder({ self })
     :matcher(function(node)
-      return node.uid_node == uid_node
+      return node.uid_node == api_node.uid_node
     end)
     :iterate()
 end

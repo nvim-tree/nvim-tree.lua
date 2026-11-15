@@ -1,4 +1,4 @@
-local DecoratorInterface = require("nvim-tree._meta.api.decorator")
+local DecoratorInterface = require("nvim-tree._meta.api.decorator_class")
 
 ---
 ---Abstract decorator

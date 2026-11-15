@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
@@ -21,10 +22,24 @@ function DirectoryLinkNode:new(args)
   args.absolute_path = args.link_to
   DirectoryLinkNode.super.new(self, args)
 
-  self.type          = "link"
+  self.api_node_class = api.DirectoryLinkNode
+  self.type           = "link"
 
   -- reset absolute path to the link itself
-  self.absolute_path = absolute_path
+  self.absolute_path  = absolute_path
+end
+
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
+---@param node DirectoryLinkNode
+function api.DirectoryLinkNode:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
+  api.LinkNode.new(self, node)
+
+  api.DirectoryLinkNode.super.new(self, node, api_node_uid_map)
 end
 
 function DirectoryLinkNode:destroy()
@@ -73,18 +88,6 @@ function DirectoryLinkNode:highlighted_name()
   end
 
   return name
-end
-
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.DirectoryLinkNode cloned
-function DirectoryLinkNode:clone(api_nodes)
-  local clone = DirectoryNode.clone(self, api_nodes) --[[@as nvim_tree.api.DirectoryLinkNode]]
-
-  clone.link_to = self.link_to
-  clone.fs_stat_target = self.fs_stat_target
-
-  return clone
 end
 
 return DirectoryLinkNode
