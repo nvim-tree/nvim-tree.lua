@@ -3237,7 +3237,7 @@ Class:nop({...})                                       *nvim_tree.Class:nop()*
 
 
 ==============================================================================
-Class: Node*                                           *nvim-tree-class-nodes*
+Class: Node                                             *nvim-tree-class-node*
 
 The |nvim_tree.api.Node| classes represent a single entry in the tree: a file
 or a folder.
