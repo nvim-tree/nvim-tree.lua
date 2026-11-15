@@ -53,15 +53,15 @@ local api = {
   node = require("nvim-tree._meta.api.node"),
   tree = require("nvim-tree._meta.api.tree"),
 
-  Node = require("nvim-tree._meta.api.nodes").Node,
-  DirectoryNode = require("nvim-tree._meta.api.nodes").DirectoryNode,
-  RootNode = require("nvim-tree._meta.api.nodes").RootNode,
-  FileNode = require("nvim-tree._meta.api.nodes").FileNode,
-  LinkNode = require("nvim-tree._meta.api.nodes").LinkNode,
-  DirectoryLinkNode = require("nvim-tree._meta.api.nodes").DirectoryLinkNode,
-  FileLinkNode = require("nvim-tree._meta.api.nodes").FileLinkNode,
+  Node = require("nvim-tree._meta.api.node_class").Node,
+  DirectoryNode = require("nvim-tree._meta.api.node_class").DirectoryNode,
+  RootNode = require("nvim-tree._meta.api.node_class").RootNode,
+  FileNode = require("nvim-tree._meta.api.node_class").FileNode,
+  LinkNode = require("nvim-tree._meta.api.node_class").LinkNode,
+  DirectoryLinkNode = require("nvim-tree._meta.api.node_class").DirectoryLinkNode,
+  FileLinkNode = require("nvim-tree._meta.api.node_class").FileLinkNode,
 
-  Decorator = require("nvim-tree._meta.api.decorator"),
+  Decorator = require("nvim-tree._meta.api.decorator_class"),
 
   decorator = require("nvim-tree._meta.api.deprecated").decorator, ---@deprecated
   diagnostics = require("nvim-tree._meta.api.deprecated").diagnostics, ---@deprecated
