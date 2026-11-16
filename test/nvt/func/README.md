@@ -1,3 +1,7 @@
+# TODO
+
+- add note about .luarc.json $DIR_NVIM_SRC here and Development wiki page
+
 # Overview
 
 ## Test Framework
