@@ -314,6 +314,40 @@ NvimTree_1 [-]                 [No Name]                                        
       ]],
     })
   end)
+
+
+  t.it("file notify.absolute_path = false", function()
+    n.exec_lua(function()
+      require("nvim-tree").setup({
+        notify = {
+          absolute_path = false,
+        }
+      })
+    end)
+
+    nf.feed_sync({
+      ":NvimTreeOpen<CR>",
+      "E",
+      "<down><down>",
+      "r",
+      "<C-U>",
+      "f1<CR>", -- same as file in root, tests #3392
+    })
+
+    screen:expect({
+      messages = {
+        { content = { { "[NvimTree] d1f1.ext -> f1" } }, history = true, kind = "echomsg", },
+      },
+    })
+
+    na.not_path_exists("/tmp/nvt_func/data/d1/d1f1.ext")
+    na.path_exists("file", "/tmp/nvt_func/data/d1/f1")
+
+    na.events_received({
+      { event_type = "WillRenameNode", payload = { old_name = "/tmp/nvt_func/data/d1/d1f1.ext", new_name = "/tmp/nvt_func/data/d1/f1", }, },
+      { event_type = "NodeRenamed",    payload = { old_name = "/tmp/nvt_func/data/d1/d1f1.ext", new_name = "/tmp/nvt_func/data/d1/f1", }, },
+    })
+  end)
 end)
 
 
