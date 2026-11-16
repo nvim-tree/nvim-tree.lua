@@ -33,12 +33,12 @@ local function err_fmt(from, to, reason)
   return string.format("Cannot rename %s -> %s: %s", from, to, reason)
 end
 
-local function rename_file_exists(node, to)
+local function rename_file_exists(from, to)
   if not config.os.macos then
     return utils.file_exists(to)
   end
 
-  if string.lower(node) == string.lower(to) then
+  if string.lower(from) == string.lower(to) then
     return false
   end
 
@@ -51,7 +51,7 @@ function M.rename(node, to)
   local notify_from = notify.render_path(node.absolute_path)
   local notify_to = notify.render_path(to)
 
-  if rename_file_exists(notify_from, notify_to) then
+  if rename_file_exists(node.absolute_path, to) then
     notify.warn(err_fmt(notify_from, notify_to, "file already exists"))
     return
   end
@@ -80,7 +80,7 @@ function M.rename(node, to)
         notify.warn(err_fmt(notify_from, notify_to, err))
         return
       end
-    elseif not rename_file_exists(notify_from, path_to_create) then
+    elseif not rename_file_exists(node.absolute_path, path_to_create) then
       local success = vim.uv.fs_mkdir(path_to_create, 493)
       if not success then
         notify.error("Could not create folder " .. notify.render_path(path_to_create))
