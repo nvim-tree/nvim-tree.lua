@@ -4,8 +4,6 @@ local nu = require("test.nvt.func.util")
 
 
 ---Globals used within test session context, noted in this test context only for type definition
----@type boolean
-NVT_FUNCTEST_CONTEXT = true
 ---@type test.nvt.func.fixtures.Event[]
 NVT_FUNCTEST_EVENTS = {}
 ---@type string[]
@@ -65,7 +63,6 @@ function M.create_session(opts)
   -- add the nvim-tree package, setup globals and cd
   n.exec_lua(function()
     -- setup globals
-    NVT_FUNCTEST_CONTEXT = true
     NVT_FUNCTEST_EVENTS = {}
     NVT_FUNCTEST_CLIPBOARD_LINES = {}
 

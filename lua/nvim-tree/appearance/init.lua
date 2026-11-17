@@ -225,7 +225,7 @@ end
 ---NvimTreeCursorLine has just a background colour
 ---Add a CL variant for each group with the same background colour as NvimTreeCursorLine
 ---This is done here, as redefining groups in the test context is a performance issue, due to the number of :help ui-event-hl_attr_define events
-local function highlight_functest()
+local function highlight_test()
   -- arbitrary cursor line "unique" value: math.random(tonumber('0x707070'),tonumber('0x909090'))
   local hex_bg = "#85a450"
 
@@ -267,8 +267,8 @@ end
 
 ---Create all highlight groups and links. Idempotent.
 function M.highlight()
-  if NVT_FUNCTEST_CONTEXT then ---@diagnostic disable-line: undefined-global
-    highlight_functest()
+  if os.getenv("NVIM_TEST") == "1" then
+    highlight_test()
   else
     highlight_main()
   end
