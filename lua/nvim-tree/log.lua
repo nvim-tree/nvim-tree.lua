@@ -83,25 +83,29 @@ end
 ---@param ... any arguments for string.format
 function M.line(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???")), ...)
+    local time = vim.uv.clock_gettime("realtime")
+    M.raw(typ, string.format("[%s.%03d] [%s] %s\n", os.date("%Y-%m-%d %H.%M.%S", time.sec), time.nsec / 1000000, typ, (fmt or "???")), ...)
   end
 end
 
-local inspect_opts = {}
-
----@param opts table
-function M.set_inspect_opts(opts)
-  inspect_opts = opts
-end
-
---- Write to log file the inspection of a node
+--- Write to log file with stack appended after newline
+--- Use :cfile or :lfile on the log to enable qf/loc navigation
 ---@param typ LogTypes as per log.types config
----@param node Node node to be inspected
 ---@param fmt string for string.format
 ---@param ... any arguments for string.format
-function M.node(typ, node, fmt, ...)
+function M.stack(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n%s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???"), vim.inspect(node, inspect_opts)), ...)
+    local stack = ""
+    local level = 2 -- exclude getinfo and this function
+    local info = debug.getinfo(level)
+    while info do
+      stack = string.format("%s%s:%d: %s\n", stack, info.source:gsub("^@", ""), info.currentline, info.name or "")
+      level = level + 1
+      info = debug.getinfo(level)
+    end
+
+    M.line(typ, fmt, ...)
+    M.raw(typ, "%s", stack)
   end
 end
 
