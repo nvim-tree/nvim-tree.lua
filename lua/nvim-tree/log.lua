@@ -104,7 +104,6 @@ function M.stack(typ, fmt, ...)
       for pos = 1, info.nparams, 1 do
         local name, val = debug.getlocal(level, pos)
         params = string.format("%s%s%s=%s", params, (pos == 1 and "" or ", "), tostring(name), tostring(val))
-        pos = pos + 1
       end
 
       -- tidy source and attempt to normalise to a relative path
