@@ -96,10 +96,19 @@ end
 function M.stack(typ, fmt, ...)
   if M.enabled(typ) then
     local stack = ""
-    local level = 2 -- exclude getinfo and this function
+    local level = 2 -- exclude getinfo and this stack function
     local info = debug.getinfo(level)
     while info do
-      stack = string.format("%s%s:%d: %s\n", stack, info.source:gsub("^@", ""), info.currentline, info.name or "")
+      -- maybe get params
+      local params = ""
+      for pos = 1, info.nparams, 1 do
+        local name, val = debug.getlocal(level, pos)
+        params = string.format("%s%s%s=%s", params, (pos == 1 and "" or ", "), tostring(name), tostring(val))
+        pos = pos + 1
+      end
+
+      -- get stack
+      stack = string.format("%s%s:%d: %s %s\n", stack, info.source:gsub("^@", ""), info.currentline, info.name or "", params)
       level = level + 1
       info = debug.getinfo(level)
     end
