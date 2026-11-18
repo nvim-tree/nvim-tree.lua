@@ -107,8 +107,12 @@ function M.stack(typ, fmt, ...)
         pos = pos + 1
       end
 
-      -- get stack
-      stack = string.format("%s%s:%d: %s %s\n", stack, info.source:gsub("^@", ""), info.currentline, info.name or "", params)
+      -- tidy source and attempt to normalise to a relative path
+      -- this could be done via vim.pack however that is still a work in progress, notably functests still use :packadd
+      local source = info.source:gsub("^@", ""):gsub(".*(lua/nvim%-tree/.*)", "%1")
+
+      -- render stack,
+      stack = string.format("%s%s:%d: %s %s\n", stack, source, info.currentline, info.name or "", params)
       level = level + 1
       info = debug.getinfo(level)
     end
@@ -129,7 +133,11 @@ end
 function M.start()
   if config.g.log and config.g.log.enable and config.g.log.types then
     types = config.g.log.types
-    file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"), os.date("%H:%M:%S"), vim.env.USER)
+    if os.getenv("NVIM_TEST") ~= "1" then
+      file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"))
+    else
+      file_path = "/tmp/nvt_test.log"
+    end
     if config.g.log.truncate then
       os.remove(file_path)
     end

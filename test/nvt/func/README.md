@@ -29,6 +29,15 @@ The test harness `scripts/functionaltest.sh` is used to run one or many tests or
 
 Nvim sources are required. You will be prompted with instructions on fetching and using the sources.
 
+## Test Instance Environment
+
+Test instances have `$NVIM_TEST=1`
+
+When this is set:
+
+- Logs will be located at `/tmp/nvt_test.log`
+- `appearance` will define alternate highlight groups for testing
+
 # Generating Test Data
 
 Execute `scripts/functionaltest.sh -l [ <data dir> ]`
