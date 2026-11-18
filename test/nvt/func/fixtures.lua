@@ -5,9 +5,9 @@ local nu = require("test.nvt.func.util")
 
 ---Globals used within test session context, noted in this test context only for type definition
 ---@type test.nvt.func.fixtures.Event[]
-NVT_FUNCTEST_EVENTS = {}
+_G.NVT_FUNCTEST_EVENTS = {}
 ---@type string[]
-NVT_FUNCTEST_CLIPBOARD_LINES = {}
+_G.NVT_FUNCTEST_CLIPBOARD_LINES = {}
 
 ---Extra test specific highlight groups
 ---@see vim.api.nvim_set_hl
@@ -61,17 +61,18 @@ function M.create_session(opts)
   local cwd = nu.setup_cwd(opts.data)
 
   -- add the nvim-tree package, setup globals and cd
-  n.exec_lua(function()
+  n.exec_lua(function(nvim_test_id)
     -- setup globals
-    NVT_FUNCTEST_EVENTS = {}
-    NVT_FUNCTEST_CLIPBOARD_LINES = {}
+    _G.NVT_FUNCTEST_EVENTS = {}
+    _G.NVT_FUNCTEST_CLIPBOARD_LINES = {}
+    _G._nvim_test_id = nvim_test_id -- used for log file name
 
     -- test intance dir
     vim.api.nvim_set_current_dir(cwd)
 
     -- setup nvim-tree with requested config
     require("nvim-tree").setup(opts.config)
-  end)
+  end, _G._nvim_test_id)
 
   -- create attr_ids for all nvim-tree test highlight groups
   M.add_nvt_attr_ids(screen, opts.hi_defs)
@@ -94,7 +95,7 @@ function M.event_subscribe(event_type)
     local api = require("nvim-tree.api")
 
     api.events.subscribe(event_type, function(payload)
-      table.insert(NVT_FUNCTEST_EVENTS, {
+      table.insert(_G.NVT_FUNCTEST_EVENTS, {
         event_type = event_type,
         payload = vim.deepcopy(payload),
       })
@@ -105,7 +106,7 @@ end
 ---Clear all recorded events in NVT_FUNCTEST_EVENTS
 function M.events_clear()
   n.exec_lua(function()
-    NVT_FUNCTEST_EVENTS = {}
+    _G.NVT_FUNCTEST_EVENTS = {}
   end)
 end
 
@@ -116,12 +117,12 @@ function M.use_dummy_clipboard()
       name = "NVT_FUNCTEST_CLIPBOARD",
       copy = {
         ["+"] = function(lines)
-          NVT_FUNCTEST_CLIPBOARD_LINES = lines
+          _G.NVT_FUNCTEST_CLIPBOARD_LINES = lines
         end
       },
       paste = {
         ["+"] = function()
-          return NVT_FUNCTEST_CLIPBOARD_LINES
+          return _G.NVT_FUNCTEST_CLIPBOARD_LINES
         end
       },
     }

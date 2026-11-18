@@ -135,7 +135,11 @@ function M.start()
     if os.getenv("NVIM_TEST") ~= "1" then
       file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"))
     else
-      file_path = "/tmp/nvt_test.log"
+      if _G._nvim_test_id then
+        file_path = "/tmp/nvt_test." .. _G._nvim_test_id .. ".log"
+      else
+        file_path = "/tmp/nvt_test.log"
+      end
     end
     if config.g.log.truncate then
       os.remove(file_path)

@@ -35,7 +35,7 @@ Test instances have `$NVIM_TEST=1`
 
 When this is set:
 
-- Logs will be located at `/tmp/nvt_test.log`
+- Logs will be located at `/tmp/nvt_test.TXX.log`
 - `appearance` will define alternate highlight groups for testing
 
 # Generating Test Data

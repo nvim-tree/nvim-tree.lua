@@ -28,8 +28,8 @@ end
 ---@param events test.nvt.func.fixtures.Event[]
 function M.events_received(events)
   t.eq(events, n.exec_lua(function()
-    local ev = vim.deepcopy(NVT_FUNCTEST_EVENTS)
-    NVT_FUNCTEST_EVENTS = {}
+    local ev = vim.deepcopy(_G.NVT_FUNCTEST_EVENTS)
+    _G.NVT_FUNCTEST_EVENTS = {}
     return ev
   end), "events_received")
 end
@@ -43,8 +43,8 @@ function M.events_received_unordered(events)
   local expected = vim.deepcopy(events)
 
   local actual = n.exec_lua(function()
-    local ev = vim.deepcopy(NVT_FUNCTEST_EVENTS)
-    NVT_FUNCTEST_EVENTS = {}
+    local ev = vim.deepcopy(_G.NVT_FUNCTEST_EVENTS)
+    _G.NVT_FUNCTEST_EVENTS = {}
     return ev
   end)
 

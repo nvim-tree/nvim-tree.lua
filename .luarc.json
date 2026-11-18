@@ -23,10 +23,6 @@
   },
   "diagnostics": {
     "libraryFiles": "Disable",
-    "globals": [
-      "NVT_FUNCTEST_EVENTS",
-      "NVT_FUNCTEST_CLIPBOARD_LINES"
-    ],
     "neededFileStatus": {
       "ambiguity-1": "Any",
       "assign-type-mismatch": "Any",
