@@ -1,3 +1,5 @@
+# nvim-tree Functional Testing
+
 <!-- 
 https://github.com/jonschlinkert/markdown-toc
 markdown-toc -i test/nvt/func/README.md
@@ -34,11 +36,11 @@ markdown-toc -i test/nvt/func/README.md
 - Run the tests to ensure everything is setup: `scripts/functionaltest.sh -a` (see [Execution](#execution))
 - Create a new spec file e.g. `test/nvt/func/fs/paste_spec.lua`
 - Copy contents of an existing spec file to get started
-- Create a new data directory e.g. `test/nvt/func/fs/paste_data` and populate it
+- Create a new data directory e.g. `test/nvt/func/fs/paste_data` and populate it with files/directories/links
 - Plan your test (see [Generating Test Data](#generating-test-data))
   - Run the live environment with `-l` e.g. `scripts/functionaltest.sh -l test/nvt/func/fs/paste_data`
   - Execute test actions, note them as `nf.feed_sync` data
-  - Dump the expected screen state with `<leader>u`
+  - Dump the expected screen state with `<leader>u` for use as `screen:expect` `grid`
 - Build your test
   - Pass your data directory to `nf.create_session` in `before_each`
   - Pass any nvim-tree config to `nf.create_session`
@@ -53,7 +55,7 @@ markdown-toc -i test/nvt/func/README.md
 Nvim's functional test framework is used. Useful references:
 
 - `:help dev_test`
-- `test/functional/ui/screen.lua`
+- [`test/functional/ui/screen.lua`](https://github.com/neovim/neovim/blob/master/test/functional/ui/screen.lua)
 
 Test instances have:
 
@@ -75,7 +77,7 @@ The `nvim-tree.lua` source directory is temporarily linked as `src/nvt/pack/dist
 
 When running functional tests, a temporary `build/Xtest_xdg` directory is created, which contains only links to `runtime`, `src` and `test`, hence we link in a directory that is available at test time.
 
-`src` is used instead of `test` to prevent your lua-language-server from finding it during test execution.
+`src` is used instead of `test` to prevent the lua-language-server from finding it during test execution.
 
 ### Logs
 
@@ -227,7 +229,7 @@ Messages may be usually be asserted simply via `Screen:expect` `grid`
 In the case of complex or multiline messages, `test.functional.ui.screen.Opts` `ext_messages` may be used to capture messages for finer grained assertion. This will:
 
 - implicitly set `ext_cmdline`
-- remove the command line from the screen `grid`; which you may need to adjust to match
+- remove the command line from the screen `grid`; which may need to be adjusted to match
 
 e.g.
 ```lua
