@@ -1,19 +1,73 @@
-# TODO
+<!-- 
+https://github.com/jonschlinkert/markdown-toc
+markdown-toc -i test/nvt/func/README.md
+-->
 
-- add note about .luarc.json $DIR_NVIM_SRC here and Development wiki page
+<!-- toc -->
+
+- [Quick Start](#quick-start)
+- [Overview](#overview)
+  * [Test Framework](#test-framework)
+  * [Directories](#directories)
+    + [Logs](#logs)
+  * [Execution](#execution)
+- [Generating Test Data](#generating-test-data)
+  * [Text Only: `attr_ids = {}`](#text-only-attr_ids--)
+  * [Text And Highlight](#text-and-highlight)
+- [Test Inputs](#test-inputs)
+  * [Key Synchronisation](#key-synchronisation)
+  * [Direct Lua Execution](#direct-lua-execution)
+- [Test Assertions](#test-assertions)
+  * [Screen](#screen)
+    + [Highlighting: attr_ids](#highlighting-attr_ids)
+    + [Grid](#grid)
+      - [Text Only](#text-only)
+      - [Higlighted](#higlighted)
+  * [Command Line](#command-line)
+  * [Messages](#messages)
+  * [nvim-tree Events](#nvim-tree-events)
+
+<!-- tocstop -->
+
+# Quick Start
+
+- Run the tests to ensure everything is setup: `scripts/functionaltest.sh -a` (see [Execution](#execution))
+- Create a new spec file e.g. `test/nvt/func/fs/paste_spec.lua`
+- Copy contents of an existing spec file to get started
+- Create a new data directory e.g. `test/nvt/func/fs/paste_data` and populate it
+- Plan your test (see [Generating Test Data](#generating-test-data))
+  - Run the live environment with `-l` e.g. `scripts/functionaltest.sh -l test/nvt/func/fs/paste_data`
+  - Execute test actions, note them as `nf.feed_sync` data
+  - Dump the expected screen state with `<leader>u`
+- Build your test
+  - Pass your data directory to `nf.create_session` in `before_each`
+  - Pass any nvim-tree config to `nf.create_session`
+  - Add `nf.feed_sync` and `n.exec_lua` (see [Test Inputs](#test-inputs))
+  - Add `screen:expect` and any other asserts (see [Test Assertions](#test-assertions))
+- Run your test with `-t`, (see [Execution](#execution)) e.g. `scripts/functionaltest.sh -t test/nvt/func/fs/paste_spec.lua`
 
 # Overview
 
 ## Test Framework
 
-Neovim's functional test framework is used. Useful references:
+Nvim's functional test framework is used. Useful references:
 
 - `:help dev_test`
 - `test/functional/ui/screen.lua`
 
+Test instances have:
+
+- `$NVIM_TEST=1`
+- `_G._nvim_test_id` set to individual test id `TXX`
+
+Nvim sources are required by lua-language-server for test source (see [Execution](#execution)) one of:
+
+- `$DIR_NVIM_SRC/test`
+- `/tmp/src/neovim-stable/test`
+
 ## Directories
 
-Test instances always execute under the hardcoded `/tmp/nvt_func` directory, so that assertions match that root folder.
+Test instances always execute under the hardcoded `/tmp/nvt_func` directory, so that assertions match that root folder. This directory is removed after test execution.
 
 If a test data directory is passed to `test.nvt.func.fixtures` `create_session`, it will be copied to `/tmp/nvt_func/data` and the test instance will execute in that directory.
 
@@ -23,20 +77,23 @@ When running functional tests, a temporary `build/Xtest_xdg` directory is create
 
 `src` is used instead of `test` to prevent your lua-language-server from finding it during test execution.
 
+### Logs
+
+When `log.enable` is set, individual test logs will be persistently located at `/tmp/nvt_test.TXX.log`, as `stdpath("log")` is removed after test execution.
+
 ## Execution
 
 The test harness `scripts/functionaltest.sh` is used to run one or many tests or a live test instance for generating test data.
 
-Nvim sources are required. You will be prompted with instructions on fetching and using the sources.
+See `scripts/functionaltest.sh -h`
 
-## Test Instance Environment
+You will be prompted with instructions on fetching and using the Nvim sources.
 
-Test instances have `$NVIM_TEST=1`
+`scripts/functionaltest.sh -a` executes all tests
 
-When this is set:
+`scripts/functionaltest.sh -t <foo_spec.lua>` executes a single test
 
-- Logs will be located at `/tmp/nvt_test.TXX.log`
-- `appearance` will define alternate highlight groups for testing
+`scripts/functionaltest.sh -t <dir>` executes all tests in a directory
 
 # Generating Test Data
 
@@ -70,11 +127,15 @@ Use `Snapshot: screen:expect([[` contents from test log as the `grid`, visually 
 
 # Test Inputs
 
-## Synchronisation
+## Key Synchronisation
 
 The Nvim functional test framework's inputs are handled asynchronously via the commonly used `test.functional.testnvim` `feed` (non-deferred). It will execute all the inputs _immediately_ without waiting for them to complete, most notably lua callbacks such as nvim-tree mappings as well as some visual mode operations. See `:help api-fast`
 
 Prefer `test.nvt.func.util` `feed_sync` to feed keys synchronously (deferred), blocking the test thread and instance until the instance's main loop is complete.
+
+## Direct Lua Execution
+
+Execute lua inside the test instance via `n.exec_lua`
 
 # Test Assertions
 
@@ -100,7 +161,7 @@ Unique nvim-tree highlight groups `attr_ids` are defined during `test.nvt.func.f
 
 Set `attr_ids = {}` when calling `expect` to direct a text only assertion.
 
-See [Generating Test Data Missing Link](link) to dump the screen contents to a file.
+See [Generating Test Data](#generating-test-data) to dump the screen contents to a file.
 
 Contents are inserted directly into a text block `grid` e.g.
 
@@ -125,6 +186,8 @@ Note the 17 repeated lines suffixed with `*17` which is optional; the entire scr
 #### Higlighted
 
 It is impractical to generate the `grid` manually, due to the number of `attr_ids` that must be specified, combined and turned on and off. It also has a great performance impact.
+
+Test specific highlight groups may be added via `nf.create_session` `test.nvt.func.fixtures.HiDefs`
 
 - Create a passing `screen:expect` with text only
 - Remove `attr_ids = {}` and re-run the test
