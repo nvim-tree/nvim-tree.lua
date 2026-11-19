@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local utils = require("nvim-tree.utils")
 
@@ -17,7 +18,21 @@ function FileLinkNode:new(args)
   LinkNode.new(self, args)
   FileLinkNode.super.new(self, args)
 
-  self.type = "link"
+  self.api_node_class = api.FileLinkNode
+  self.type           = "link"
+end
+
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
+---@param node FileLinkNode
+function api.FileLinkNode:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
+  api.LinkNode.new(self, node)
+
+  api.FileLinkNode.super.new(self, node, api_node_uid_map)
 end
 
 function FileLinkNode:destroy()
@@ -55,18 +70,6 @@ function FileLinkNode:highlighted_name()
   end
 
   return { str = str, hl = { "NvimTreeSymlink" } }
-end
-
----Create a sanitized partial copy of a node
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.FileLinkNode cloned
-function FileLinkNode:clone(api_nodes)
-  local clone = FileNode.clone(self, api_nodes) --[[@as nvim_tree.api.FileLinkNode]]
-
-  clone.link_to = self.link_to
-  clone.fs_stat_target = self.fs_stat_target
-
-  return clone
 end
 
 return FileLinkNode

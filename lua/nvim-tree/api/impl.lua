@@ -37,10 +37,10 @@ local function unwrap_node(n)
     return nil
   end
 
-  node = n and n.uid_node and e:node_with_uid_node(n.uid_node)
-  if node then
+  local api_node = n and n.as and n:as(require("nvim-tree.api").Node)
+  if api_node then
     -- api node
-    return node
+    return e:node_with_uid_node(api_node)
   else
     -- node under cursor
     return e:get_node_at_cursor()
@@ -262,7 +262,7 @@ function M.hydrate_post_setup(api)
   api.tree.find_file                           = __(function(o) require("nvim-tree.actions.tree.find-file").fn(o) end)
   api.tree.focus                               = __(function(o) require("nvim-tree.actions.tree.open").fn(o) end)
   api.tree.get_node_under_cursor               = en(function(e) return e:get_node_at_cursor() end)
-  api.tree.get_nodes                           = en(function(e) return e:get_nodes() end)
+  api.tree.get_nodes                           = en(function(e) return e:to_api_node() end)
   api.tree.is_tree_buf                         = __(function(bufnr) return require("nvim-tree.utils").is_nvim_tree_buf(bufnr) end)
   api.tree.is_visible                          = __(function(o) return require("nvim-tree.view").is_visible(o) end)
   api.tree.open                                = __(function(o) require("nvim-tree.actions.tree.open").fn(o) end)

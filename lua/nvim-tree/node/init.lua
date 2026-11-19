@@ -1,4 +1,7 @@
+local api = require("nvim-tree.api")
 local Class = require("nvim-tree.classic")
+
+---@alias ApiNodeUidMap table<number, nvim_tree.api.Node> map of uids to api node to populate, for caching
 
 ---Abstract Node class.
 ---@class (exact) Node: nvim_tree.Class
@@ -13,6 +16,7 @@ local Class = require("nvim-tree.classic")
 ---@field name string
 ---@field parent DirectoryNode?
 ---@field diag_status DiagStatus?
+---@field protected api_node_class nvim_tree.api.Node corresponding api node class
 ---@field private is_dot boolean cached is_dotfile
 local Node = Class:extend()
 
@@ -23,20 +27,55 @@ local Node = Class:extend()
 ---@field name string
 ---@field fs_stat uv.fs_stat.result?
 
+---@class Node
+---@overload fun(args: NodeArgs): Node
+
 ---@protected
 ---@param args NodeArgs
 function Node:new(args)
-  self.uid_node      = vim.uv.hrtime()
-  self.explorer      = args.explorer
-  self.absolute_path = args.absolute_path
-  self.executable    = false
-  self.fs_stat       = args.fs_stat
-  self.git_status    = nil
-  self.hidden        = false
-  self.name          = args.name
-  self.parent        = args.parent
-  self.diag_status   = nil
-  self.is_dot        = false
+  self.api_node_class = api.Node
+  self.uid_node       = vim.uv.hrtime()
+  self.explorer       = args.explorer
+  self.absolute_path  = args.absolute_path
+  self.executable     = false
+  self.fs_stat        = args.fs_stat
+  self.git_status     = nil
+  self.hidden         = false
+  self.name           = args.name
+  self.parent         = args.parent
+  self.diag_status    = nil
+  self.is_dot         = false
+end
+
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
+---@param node Node
+function api.Node:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
+  self.uid_node      = node.uid_node
+  self.type          = node.type
+  self.absolute_path = node.absolute_path
+  self.executable    = node.executable
+  self.fs_stat       = node.fs_stat
+  self.git_status    = node.git_status
+  self.hidden        = node.hidden
+  self.name          = node.name
+  self.parent        = nil
+  self.diag_severity = node.diag_status and node.diag_status.value or nil
+
+  if api_node_uid_map then
+    api_node_uid_map[self.uid_node] = self
+  end
+end
+
+---(Recursively) instantiate an api node
+---@param api_node_uid_map? ApiNodeUidMap
+---@return nvim_tree.api.Node
+function Node:to_api_node(api_node_uid_map)
+  return self:api_node_class(api_node_uid_map)
 end
 
 function Node:destroy()
@@ -117,31 +156,6 @@ end
 ---@return nvim_tree.api.highlighted_string name
 function Node:highlighted_name()
   return self:highlighted_name_empty()
-end
-
----Create a sanitized partial copy of a node, populating children recursively.
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.Node cloned
-function Node:clone(api_nodes)
-  ---@type nvim_tree.api.Node
-  local clone = {
-    uid_node      = self.uid_node,
-    type          = self.type,
-    absolute_path = self.absolute_path,
-    executable    = self.executable,
-    fs_stat       = self.fs_stat,
-    git_status    = self.git_status,
-    hidden        = self.hidden,
-    name          = self.name,
-    parent        = nil,
-    diag_severity = self.diag_status and self.diag_status.value or nil,
-  }
-
-  if api_nodes then
-    api_nodes[self.uid_node] = clone
-  end
-
-  return clone
 end
 
 ---@param expansion_count integer

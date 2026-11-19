@@ -1,3 +1,4 @@
+local api = require("nvim-tree.api")
 local git_utils = require("nvim-tree.git.utils")
 local icons = require("nvim-tree.renderer.components.devicons")
 local utils = require("nvim-tree.utils")
@@ -25,9 +26,23 @@ local FileNode = Node:extend()
 function FileNode:new(args)
   FileNode.super.new(self, args)
 
-  self.type       = "file"
-  self.extension  = string.match(args.name, ".?[^.]+%.(.*)") or ""
-  self.executable = utils.is_executable(args.absolute_path)
+  self.api_node_class = api.FileNode
+  self.type           = "file"
+  self.extension      = string.match(args.name, ".?[^.]+%.(.*)") or ""
+  self.executable     = utils.is_executable(args.absolute_path)
+end
+
+---api node constructor
+---@param api_node_uid_map? ApiNodeUidMap
+---@param node FileNode
+function api.FileNode:new(node, api_node_uid_map)
+  if not node then
+    return
+  end
+
+  api.FileNode.super.new(self, node, api_node_uid_map)
+
+  self.extension = node.extension
 end
 
 function FileNode:destroy()
@@ -91,17 +106,6 @@ function FileNode:highlighted_name()
   end
 
   return { str = self.name, hl = { hl } }
-end
-
----Create a sanitized partial copy of a node
----@param api_nodes table<number, nvim_tree.api.Node>? optional map of uids to api node to populate
----@return nvim_tree.api.FileNode cloned
-function FileNode:clone(api_nodes)
-  local clone = Node.clone(self, api_nodes) --[[@as nvim_tree.api.FileNode]]
-
-  clone.extension = self.extension
-
-  return clone
 end
 
 return FileNode
