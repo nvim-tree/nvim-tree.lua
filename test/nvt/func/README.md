@@ -67,6 +67,11 @@ Nvim sources are required by lua-language-server for test source (see [Execution
 - `$DIR_NVIM_SRC/test`
 - `/tmp/src/neovim-stable/test`
 
+nvim-tree specific plumbing and helpers have been added:
+
+- `test/nvt/func/fixtures.lua`
+- `test/nvt/func/asserts.lua`
+
 ## Directories
 
 Test instances always execute under the hardcoded `/tmp/nvt_func` directory, so that assertions match that root folder. This directory is removed after test execution.
@@ -189,7 +194,11 @@ Note the 17 repeated lines suffixed with `*17` which is optional; the entire scr
 
 It is impractical to generate the `grid` manually, due to the number of `attr_ids` that must be specified, combined and turned on and off. It also has a great performance impact.
 
+Test instances have alternate, simple `NvimTree*` highlight groups defined to allow unambiguous testing, see `appearance/init.lua` definitions when `$NVIM_TEST=1`
+
 Test specific highlight groups may be added via `nf.create_session` `test.nvt.func.fixtures.HiDefs`
+
+Highlighted asserting:
 
 - Create a passing `screen:expect` with text only
 - Remove `attr_ids = {}` and re-run the test
