@@ -89,6 +89,7 @@ jobs:
           make doc
 
       - run: make check
+        if: ${{ matrix.nvim_version == 'stable' }}
 
       - run: make style
 
