@@ -95,7 +95,7 @@ NvimTree_1 [-]                 [No Name]                                        
     })
 
     na.path_exists("directory", "/tmp/nvt_func/data/dst")
-    na.path_exists("file", "/tmp/nvt_func/data/dst/f1")
+    na.path_exists("file",      "/tmp/nvt_func/data/dst/f1")
     na.not_path_exists("/tmp/nvt_func/data/src/f1")
   end)
 end)

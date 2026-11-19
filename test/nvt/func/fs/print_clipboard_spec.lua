@@ -58,9 +58,9 @@ t.describe("fs.print_clipboard", function()
       attr_ids = {},
       messages = {
         { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f1 copied to clipboard." } }, history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 cut to clipboard." } }, history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d1/d1f2 cut to clipboard." } },    history = true, kind = "echomsg" },
         { content = { { "[NvimTree] /tmp/nvt_func/data/d2 copied to clipboard." } },      history = true, kind = "echomsg" },
-        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 cut to clipboard." } },      history = true, kind = "echomsg" },
+        { content = { { "[NvimTree] /tmp/nvt_func/data/d3 cut to clipboard." } },         history = true, kind = "echomsg" },
       },
     })
 
