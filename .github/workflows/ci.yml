@@ -80,14 +80,6 @@ jobs:
           curl -L "https://github.com/CppCXY/EmmyLuaCodeStyle/releases/download/${{ matrix.emmyluacodestyle_version }}/linux-x64.tar.gz" | tar zx --directory EmmyLuaCodeStyle
           echo "EmmyLuaCodeStyle/linux-x64/bin" >> "$GITHUB_PATH"
 
-      - name: build Nvim from source
-        if: ${{ matrix.nvim_version == 'stable' }}
-        run: |
-          mkdir -p "${DIR_NVIM_SRC}"
-          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory "${DIR_NVIM_SRC}/.."
-          cd "${DIR_NVIM_SRC}"
-          make doc
-
       - run: make check
 
       - run: make style
@@ -95,6 +87,14 @@ jobs:
       - run: make style-doc
 
       - run: make format-check
+
+      - name: build Nvim from source
+        if: ${{ matrix.nvim_version == 'stable' }}
+        run: |
+          mkdir -p "${DIR_NVIM_SRC}"
+          curl -L "https://github.com/neovim/neovim/archive/refs/tags/${{ matrix.nvim_version }}.tar.gz" | tar zx --directory "${DIR_NVIM_SRC}/.."
+          cd "${DIR_NVIM_SRC}"
+          make doc
 
       - run: make help-check
         if: ${{ matrix.nvim_version == 'stable' }}
