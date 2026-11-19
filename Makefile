@@ -59,5 +59,5 @@ help-update:
 help-check: help-update
 	git diff --exit-code doc/nvim-tree-lua.txt
 
-.PHONY: all lint style check luacheck style-check style-doc luals format-fix format-check help-update help-check
+.PHONY: all lint style check luacheck style-check style-check-test style-doc luals-check luals-check-test format-fix format-check help-update help-check
 
