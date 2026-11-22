@@ -263,6 +263,7 @@ local function create_git_watcher(toplevel)
 
   log.line("watcher", "git start")
 
+  -- moved unchanged from load_project, so that the synchronous and asynchronous loads share it
   ---@param w Watcher
   local callback = function(w)
     log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
@@ -274,6 +275,7 @@ local function create_git_watcher(toplevel)
     end)
   end
 
+  -- the git dir is not always <toplevel>/.git e.g. worktrees and submodules
   local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
   return Watcher:create({
     path     = git_dir,
@@ -301,7 +303,8 @@ local function reload_project_nodes(toplevel)
   -- reloading may remove lines above the cursor, e.g. git_ignored files, so keep the cursor on its node, not its line
   local cursor_node = explorer:get_node_at_cursor()
 
-  -- same walk as Explorer:refresh_nodes: open directories and grouped directories
+  -- unlike Explorer:refresh_nodes, also walk into closed directories that have been explored:
+  -- their children were filtered against the empty status too, and reopening them does not explore them again
   Iterator.builder({ explorer })
     :applier(function(n)
       local dir = n:as(DirectoryNode)
@@ -316,7 +319,7 @@ local function reload_project_nodes(toplevel)
       end
     end)
     :recursor(function(n)
-      return n.group_next and { n.group_next } or (n.open and n.nodes)
+      return n.group_next and { n.group_next } or (n.nodes and #n.nodes > 0 and n.nodes)
     end)
     :iterate()
 
@@ -385,10 +388,12 @@ function M.load_project(path)
     return project
   end
 
+  -- experimental: return an empty project now and fill it in when git status completes
   if config.g.experimental.git_async_load then
     return load_project_async(toplevel)
   end
 
+  -- block until git status completes
   local path_xys = GitRunner:run({
     toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),

@@ -15,6 +15,12 @@ error("Cannot require a meta file")
 ---|nvim_tree.config.filters| see no status: {git_ignored} files are shown and {git_clean}
 ---hides every file, so |nvim_tree.config.update_focused_file| cannot find a file that is
 ---only shown once the status is known.
+---
+---{timeout} of |nvim_tree.config.git| still applies: a large repository may need a larger
+---{timeout} for `git status` to complete.
+---
+---Only the first load is in the background. Reloads such as |nvim_tree.api.tree.reload()|
+---still block, including those that run while the first load is in progress.
 ---(default: `false`)
 ---@field git_async_load? boolean
 ---

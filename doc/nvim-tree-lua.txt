@@ -1931,6 +1931,15 @@ Config: experimental                           *nvim-tree-config-experimental*
                            |nvim_tree.config.update_focused_file| cannot find
                            a file that is only shown once the status is known.
 
+                           {timeout} of |nvim_tree.config.git| still applies:
+                           a large repository may need a larger {timeout} for
+                           `git status` to complete.
+
+                           Only the first load is in the background. Reloads
+                           such as |nvim_tree.api.tree.reload()| still block,
+                           including those that run while the first load is in
+                           progress.
+
 ==============================================================================
 Config: log                                             *nvim-tree-config-log*
 
