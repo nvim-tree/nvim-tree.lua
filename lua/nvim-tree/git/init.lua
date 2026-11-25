@@ -252,8 +252,7 @@ local function reload_tree_at(toplevel)
   end)
 end
 
----Watch the files under the git dir of a project that signal a status change, see WATCHED_FILES.
----Returns nil when filesystem watchers are disabled.
+---Watch the files under the git dir of a project that signal a status change.
 ---@param toplevel string
 ---@return Watcher?
 local function create_git_watcher(toplevel)
@@ -263,7 +262,6 @@ local function create_git_watcher(toplevel)
 
   log.line("watcher", "git start")
 
-  -- moved unchanged from load_project, so that the synchronous and asynchronous loads share it
   ---@param w Watcher
   local callback = function(w)
     log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
@@ -275,7 +273,6 @@ local function create_git_watcher(toplevel)
     end)
   end
 
-  -- the git dir is not always <toplevel>/.git e.g. worktrees and submodules
   local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
   return Watcher:create({
     path     = git_dir,
@@ -287,10 +284,7 @@ local function create_git_watcher(toplevel)
   })
 end
 
----Reload every explored directory inside a project, so that the git filters and statuses use its current status.
----Updating the statuses alone, as reload_tree_at does, is not enough after the first load:
----the directories were explored with an empty status, so git_ignored files were not filtered out.
----Nested projects are left alone, they have their own status.
+---Reload the explored directories of a project with its current status.
 ---@param toplevel string
 local function reload_project_nodes(toplevel)
   local explorer = require("nvim-tree.core").get_explorer()
@@ -300,18 +294,11 @@ local function reload_project_nodes(toplevel)
 
   local project = M._projects_by_toplevel[toplevel]
 
-  -- reloading may remove lines above the cursor, e.g. git_ignored files, so keep the cursor on its node, not its line
   local cursor_node = explorer:get_node_at_cursor()
 
-  -- unlike Explorer:refresh_nodes, also walk into closed directories that have been explored:
-  -- their children were filtered against the empty status too, and reopening them does not explore them again
   Iterator.builder({ explorer })
     :applier(function(n)
       local dir = n:as(DirectoryNode)
-      -- skip the closed directories that have never been explored: they will be explored with the loaded status
-      -- when opened, and reloading them now would explore them and change their grouping.
-      -- The root and open directories are always reloaded: with filters.git_clean every child was filtered out
-      -- against the empty status, so they may have no children yet.
       if dir
         and (not dir.parent or dir.open or #dir.nodes > 0 or dir.group_next)
         and M.get_toplevel(dir.cwd or dir.link_to or dir.absolute_path) == toplevel then
@@ -325,17 +312,12 @@ local function reload_project_nodes(toplevel)
 
   explorer.renderer:draw()
 
-  -- moves to the nearest visible parent when the node itself is now filtered out
   if cursor_node then
     explorer:focus_node_or_parent(cursor_node)
   end
 end
 
----First load of a project without blocking: experimental.git_async_load
----Registers an empty project straight away and returns it, so the tree can be drawn before git status completes.
----The registered project also marks the load as in flight: later load_project calls return it instead of
----starting another git status, and reload_project can run against it as its files are never nil.
----When git status completes the project is filled in and its explored directories are reloaded.
+---Register an empty project and load its git status in the background.
 ---@param toplevel string
 ---@return nvim_tree.git.Project empty until git status completes
 local function load_project_async(toplevel)
@@ -353,13 +335,10 @@ local function load_project_async(toplevel)
     list_ignored   = true,
     timeout        = config.g.git.timeout,
     callback       = function(path_xys)
-      -- while git ran, git integration may have been disabled after too many timeouts,
-      -- or the state purged and the project loaded again
       if not config.g.git.enable or M._projects_by_toplevel[toplevel] ~= project then
         return
       end
 
-      -- a timed out job delivers the statuses read so far, the same as the synchronous load
       reload_git_project(toplevel, nil, project, path_xys)
       reload_project_nodes(toplevel)
     end,
@@ -388,12 +367,10 @@ function M.load_project(path)
     return project
   end
 
-  -- experimental: return an empty project now and fill it in when git status completes
   if config.g.experimental.git_async_load then
     return load_project_async(toplevel)
   end
 
-  -- block until git status completes
   local path_xys = GitRunner:run({
     toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
