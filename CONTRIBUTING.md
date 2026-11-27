@@ -271,7 +271,7 @@ The description must:
 - List which code and documentation was written by a human and which was written by AI
 - Detail all testing performed
 
-There must be far greater than usual number of detailed, explicit comments:
+There must be far greater than usual number of detailed, explicit PR comments:
 
 - File level: overview of the changes made
 - Line level: 1-2 comments per function/method
