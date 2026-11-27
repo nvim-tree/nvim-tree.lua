@@ -2341,7 +2341,24 @@ subscribe({event_type}, {callback})         *nvim_tree.api.events.subscribe()*
 
     Parameters: ~
       • {event_type}  (`nvim_tree.api.events.Event`) |nvim_tree_events_kind|
-      • {callback}    (`fun(payload: table?)`)
+      • {callback}    (`fun(payload: table)`)
+
+    Overloads: ~
+      • `fun(event_type: "Ready", callback: fun())`
+      • `fun(event_type: "TreePreOpen", callback: fun())`
+      • `fun(event_type: "TreeOpen", callback: fun())`
+      • `fun(event_type: "TreeClose", callback: fun())`
+      • `fun(event_type: "Resize", callback: fun(size: number))`
+      • `fun(event_type: "WillRenameNode", callback: fun(payload: {old_name: string, new_name: string}))`
+      • `fun(event_type: "NodeRenamed", callback: fun(payload: {old_name: string, new_name: string}))`
+      • `fun(event_type: "WillCreateFile", callback: fun(payload: {fname: string}))`
+      • `fun(event_type: "FileCreated", callback: fun(payload: {fname: string}))`
+      • `fun(event_type: "WillRemoveFile", callback: fun(payload: {fname: string}))`
+      • `fun(event_type: "FileRemoved", callback: fun(payload: {fname: string}))`
+      • `fun(event_type: "FolderCreated", callback: fun(payload: {folder_name: string}))`
+      • `fun(event_type: "FolderRemoved", callback: fun(payload: {folder_name: string}))`
+      • `fun(event_type: "TreeAttachedPost", callback: fun(buf: integer))`
+      • `fun(event_type: "TreeRendered", callback: fun(payload: {bufnr: integer, winnr: integer}))`
 
 
 ==============================================================================
