@@ -297,6 +297,7 @@ M.d = { -- config-default-start
     persist = false,
   },
   experimental = {
+    git_async_load = false,
   },
   log = {
     enable = false,

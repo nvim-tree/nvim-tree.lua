@@ -252,6 +252,101 @@ local function reload_tree_at(toplevel)
   end)
 end
 
+---Watch the files under the git dir of a project that signal a status change.
+---@param toplevel string
+---@return Watcher?
+local function create_git_watcher(toplevel)
+  if not config.g.filesystem_watchers.enable then
+    return nil
+  end
+
+  log.line("watcher", "git start")
+
+  ---@param w Watcher
+  local callback = function(w)
+    log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
+    utils.debounce("git:watcher:" .. w.data.toplevel, config.g.filesystem_watchers.debounce_delay, function()
+      if w.destroyed then
+        return
+      end
+      reload_tree_at(w.data.toplevel)
+    end)
+  end
+
+  local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
+  return Watcher:create({
+    path     = git_dir,
+    files    = WATCHED_FILES,
+    callback = callback,
+    data     = {
+      toplevel = toplevel,
+    }
+  })
+end
+
+---Reload the explored directories of a project with its current status.
+---@param toplevel string
+local function reload_project_nodes(toplevel)
+  local explorer = require("nvim-tree.core").get_explorer()
+  if not explorer then
+    return
+  end
+
+  local project = M._projects_by_toplevel[toplevel]
+
+  local cursor_node = explorer:get_node_at_cursor()
+
+  Iterator.builder({ explorer })
+    :applier(function(n)
+      local dir = n:as(DirectoryNode)
+      if dir
+        and (not dir.parent or dir.open or #dir.nodes > 0 or dir.group_next)
+        and M.get_toplevel(dir.cwd or dir.link_to or dir.absolute_path) == toplevel then
+        explorer:reload(dir, project)
+      end
+    end)
+    :recursor(function(n)
+      return n.group_next and { n.group_next } or (n.nodes and #n.nodes > 0 and n.nodes)
+    end)
+    :iterate()
+
+  explorer.renderer:draw()
+
+  if cursor_node then
+    explorer:focus_node_or_parent(cursor_node)
+  end
+end
+
+---Register an empty project and load its git status in the background.
+---@param toplevel string
+---@return nvim_tree.git.Project empty until git status completes
+local function load_project_async(toplevel)
+  ---@type nvim_tree.git.Project
+  local project = {
+    files   = {},
+    dirs    = git_utils.project_files_to_project_dirs({}, toplevel),
+    watcher = create_git_watcher(toplevel),
+  }
+  M._projects_by_toplevel[toplevel] = project
+
+  GitRunner:run({
+    toplevel       = toplevel,
+    list_untracked = git_utils.should_show_untracked(toplevel),
+    list_ignored   = true,
+    timeout        = config.g.git.timeout,
+    callback       = function(path_xys)
+      if not config.g.git.enable or M._projects_by_toplevel[toplevel] ~= project then
+        return
+      end
+
+      reload_git_project(toplevel, nil, project, path_xys)
+      reload_project_nodes(toplevel)
+    end,
+  })
+
+  return project
+end
+
 --- Load the project status for a path. Does nothing when no toplevel for path.
 --- Only fetches project status when unknown, otherwise returns existing.
 ---@param path string absolute
@@ -272,6 +367,10 @@ function M.load_project(path)
     return project
   end
 
+  if config.g.experimental.git_async_load then
+    return load_project_async(toplevel)
+  end
+
   local path_xys = GitRunner:run({
     toplevel       = toplevel,
     list_untracked = git_utils.should_show_untracked(toplevel),
@@ -279,31 +378,7 @@ function M.load_project(path)
     timeout        = config.g.git.timeout,
   })
 
-  local watcher = nil
-  if config.g.filesystem_watchers.enable then
-    log.line("watcher", "git start")
-
-    ---@param w Watcher
-    local callback = function(w)
-      log.line("watcher", "git event scheduled '%s'", w.data.toplevel)
-      utils.debounce("git:watcher:" .. w.data.toplevel, config.g.filesystem_watchers.debounce_delay, function()
-        if w.destroyed then
-          return
-        end
-        reload_tree_at(w.data.toplevel)
-      end)
-    end
-
-    local git_dir = vim.env.GIT_DIR or M._git_dirs_by_toplevel[toplevel] or utils.path_join({ toplevel, ".git" })
-    watcher = Watcher:create({
-      path     = git_dir,
-      files    = WATCHED_FILES,
-      callback = callback,
-      data     = {
-        toplevel = toplevel,
-      }
-    })
-  end
+  local watcher = create_git_watcher(toplevel)
 
   if path_xys then
     M._projects_by_toplevel[toplevel] = {
