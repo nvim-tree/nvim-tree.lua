@@ -83,25 +83,41 @@ end
 ---@param ... any arguments for string.format
 function M.line(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???")), ...)
+    local time = vim.uv.clock_gettime("realtime")
+    M.raw(typ, string.format("[%s.%03d] [%s] %s\n", os.date("%Y-%m-%d %H.%M.%S", time.sec), time.nsec / 1000000, typ, (fmt or "???")), ...)
   end
 end
 
-local inspect_opts = {}
-
----@param opts table
-function M.set_inspect_opts(opts)
-  inspect_opts = opts
-end
-
---- Write to log file the inspection of a node
+--- Write to log file with stack appended after newline
+--- Use :cfile or :lfile on the log to enable qf/loc navigation
 ---@param typ LogTypes as per log.types config
----@param node Node node to be inspected
 ---@param fmt string for string.format
 ---@param ... any arguments for string.format
-function M.node(typ, node, fmt, ...)
+function M.stack(typ, fmt, ...)
   if M.enabled(typ) then
-    M.raw(typ, string.format("[%s] [%s] %s\n%s\n", os.date("%Y-%m-%d %H:%M:%S"), typ, (fmt or "???"), vim.inspect(node, inspect_opts)), ...)
+    local stack = ""
+    local level = 2 -- exclude getinfo and this stack function
+    local info = debug.getinfo(level)
+    while info do
+      -- maybe get params
+      local params = ""
+      for pos = 1, info.nparams, 1 do
+        local name, val = debug.getlocal(level, pos)
+        params = string.format("%s%s%s=%s", params, (pos == 1 and "" or ", "), tostring(name), tostring(val))
+      end
+
+      -- tidy source and attempt to normalise to a relative path
+      -- this could be done via vim.pack however that is still a work in progress, notably functests still use :packadd
+      local source = info.source:gsub("^@", ""):gsub(".*(lua/nvim%-tree/.*)", "%1")
+
+      -- render stack,
+      stack = string.format("%s%s:%d: %s %s\n", stack, source, info.currentline, info.name or "", params)
+      level = level + 1
+      info = debug.getinfo(level)
+    end
+
+    M.line(typ, fmt, ...)
+    M.raw(typ, "%s", stack)
   end
 end
 
@@ -116,7 +132,15 @@ end
 function M.start()
   if config.g.log and config.g.log.enable and config.g.log.types then
     types = config.g.log.types
-    file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"), os.date("%H:%M:%S"), vim.env.USER)
+    if os.getenv("NVIM_TEST") ~= "1" then
+      file_path = string.format("%s/nvim-tree.log", vim.fn.stdpath("log"))
+    else
+      if _G._nvim_test_id then
+        file_path = "/tmp/nvt_test." .. _G._nvim_test_id .. ".log"
+      else
+        file_path = "/tmp/nvt_test.log"
+      end
+    end
     if config.g.log.truncate then
       os.remove(file_path)
     end

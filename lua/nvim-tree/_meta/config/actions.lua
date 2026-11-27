@@ -5,7 +5,7 @@ error("Cannot require a meta file")
 
 ---@class nvim_tree.config.actions
 ---
----Use the system clipboard for copy/paste. Copied text will be stored in registers `+` (system), otherwise, it will be stored in `1` and `"`
+---Use the system clipboard for copy/paste. Copied text will be stored in registers `+` (system), otherwise, it will be stored in `1`
 ---(default: `true`)
 ---@field use_system_clipboard? boolean
 ---
